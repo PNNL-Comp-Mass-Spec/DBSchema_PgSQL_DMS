@@ -1,0 +1,28 @@
+--
+-- Name: t_old_managers; Type: TABLE; Schema: mc; Owner: d3l243
+--
+
+CREATE TABLE mc.t_old_managers (
+    m_id integer NOT NULL,
+    m_name public.citext NOT NULL,
+    m_type_id integer NOT NULL,
+    m_parm_value_changed smallint NOT NULL,
+    m_control_from_website smallint NOT NULL,
+    m_comment public.citext
+);
+
+
+ALTER TABLE mc.t_old_managers OWNER TO d3l243;
+
+--
+-- Name: t_old_managers pk_t_old_managers; Type: CONSTRAINT; Schema: mc; Owner: d3l243
+--
+
+ALTER TABLE ONLY mc.t_old_managers
+    ADD CONSTRAINT pk_t_old_managers PRIMARY KEY (m_id);
+
+--
+-- Name: TABLE t_old_managers; Type: ACL; Schema: mc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE mc.t_old_managers TO readaccess;
