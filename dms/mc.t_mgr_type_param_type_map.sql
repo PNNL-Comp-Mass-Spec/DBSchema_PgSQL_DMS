@@ -7,7 +7,7 @@ CREATE TABLE mc.t_mgr_type_param_type_map (
     param_type_id integer NOT NULL,
     default_value public.citext,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    entered_by public.citext DEFAULT CURRENT_USER
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

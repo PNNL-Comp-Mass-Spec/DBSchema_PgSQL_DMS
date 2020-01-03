@@ -9,7 +9,7 @@ CREATE TABLE mc.t_event_log (
     target_state smallint,
     prev_target_state smallint,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    entered_by public.citext DEFAULT CURRENT_USER
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

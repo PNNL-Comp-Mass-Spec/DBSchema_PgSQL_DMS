@@ -8,7 +8,7 @@ CREATE TABLE mc.t_log_entries (
     posting_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     type public.citext,
     message public.citext,
-    entered_by public.citext DEFAULT CURRENT_USER
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

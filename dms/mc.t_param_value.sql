@@ -9,7 +9,7 @@ CREATE TABLE mc.t_param_value (
     mgr_id integer NOT NULL,
     comment public.citext,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    entered_by public.citext DEFAULT CURRENT_USER
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 
