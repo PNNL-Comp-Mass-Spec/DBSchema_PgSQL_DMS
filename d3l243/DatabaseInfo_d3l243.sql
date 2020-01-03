@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.0
+-- Dumped from database version 12.1
 -- Dumped by pg_dump version 12.0
 
 SET statement_timeout = 0;
