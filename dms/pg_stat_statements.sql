@@ -3,3 +3,4 @@
 --
 
 GRANT SELECT ON TABLE public.pg_stat_statements TO readaccess;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.pg_stat_statements TO writeaccess;
