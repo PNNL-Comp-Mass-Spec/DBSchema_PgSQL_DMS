@@ -25,7 +25,7 @@ ALTER TABLE ONLY mc.t_mgr_type_param_type_map
 --
 
 ALTER TABLE ONLY mc.t_mgr_type_param_type_map
-    ADD CONSTRAINT fk_t_mgr_type_param_type_map_t_mgr_types FOREIGN KEY (mgr_type_id) REFERENCES mc.t_mgr_types(mt_type_id);
+    ADD CONSTRAINT fk_t_mgr_type_param_type_map_t_mgr_types FOREIGN KEY (mgr_type_id) REFERENCES mc.t_mgr_types(mgr_type_id);
 
 --
 -- Name: t_mgr_type_param_type_map fk_t_mgr_type_param_type_map_t_param_type; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243

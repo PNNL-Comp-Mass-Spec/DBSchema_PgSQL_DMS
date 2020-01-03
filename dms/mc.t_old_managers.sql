@@ -5,10 +5,10 @@
 CREATE TABLE mc.t_old_managers (
     m_id integer NOT NULL,
     m_name public.citext NOT NULL,
-    m_type_id integer NOT NULL,
-    m_parm_value_changed smallint NOT NULL,
-    m_control_from_website smallint NOT NULL,
-    m_comment public.citext
+    mgr_type_id integer NOT NULL,
+    param_value_changed smallint NOT NULL,
+    control_from_website smallint NOT NULL,
+    comment public.citext
 );
 
 

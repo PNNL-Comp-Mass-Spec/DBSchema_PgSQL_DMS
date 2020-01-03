@@ -5,10 +5,10 @@
 CREATE TABLE mc.t_mgrs (
     m_id integer NOT NULL,
     m_name public.citext NOT NULL,
-    m_type_id integer NOT NULL,
-    m_parm_value_changed smallint DEFAULT 1 NOT NULL,
-    m_control_from_website smallint DEFAULT 0 NOT NULL,
-    m_comment public.citext
+    mgr_type_id integer NOT NULL,
+    param_value_changed smallint DEFAULT 1 NOT NULL,
+    control_from_website smallint DEFAULT 0 NOT NULL,
+    comment public.citext
 );
 
 
@@ -52,7 +52,7 @@ CREATE UNIQUE INDEX ix_t_mgrs_m_name ON mc.t_mgrs USING btree (m_name);
 --
 
 ALTER TABLE ONLY mc.t_mgrs
-    ADD CONSTRAINT fk_t_mgrs_t_mgr_types FOREIGN KEY (m_type_id) REFERENCES mc.t_mgr_types(mt_type_id);
+    ADD CONSTRAINT fk_t_mgrs_t_mgr_types FOREIGN KEY (mgr_type_id) REFERENCES mc.t_mgr_types(mgr_type_id);
 
 --
 -- Name: TABLE t_mgrs; Type: ACL; Schema: mc; Owner: d3l243

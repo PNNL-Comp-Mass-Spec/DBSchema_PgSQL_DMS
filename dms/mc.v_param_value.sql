@@ -4,7 +4,7 @@
 
 CREATE VIEW mc.v_param_value AS
  SELECT m.m_name,
-    pt.param_name AS paramname,
+    pt.param_name,
     pv.entry_id,
     pv.type_id,
     pv.value,
@@ -12,7 +12,7 @@ CREATE VIEW mc.v_param_value AS
     pv.comment,
     pv.last_affected,
     pv.entered_by,
-    m.m_type_id
+    m.mgr_type_id
    FROM ((mc.t_param_value pv
      JOIN mc.t_mgrs m ON ((pv.mgr_id = m.m_id)))
      JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)));

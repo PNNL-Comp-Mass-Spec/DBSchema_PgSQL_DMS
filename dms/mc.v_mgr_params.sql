@@ -5,7 +5,7 @@
 CREATE VIEW mc.v_mgr_params AS
  SELECT pv.mgr_id AS managerid,
     m.m_name AS managername,
-    mt.mt_type_name AS managertype,
+    mt.mgr_type_name AS managertype,
     pt.param_name AS parametername,
     pv.value AS parametervalue,
     pv.comment,
@@ -13,7 +13,7 @@ CREATE VIEW mc.v_mgr_params AS
     pv.last_affected,
     pv.entered_by
    FROM (((mc.t_mgrs m
-     JOIN mc.t_mgr_types mt ON ((m.m_type_id = mt.mt_type_id)))
+     JOIN mc.t_mgr_types mt ON ((m.mgr_type_id = mt.mgr_type_id)))
      JOIN mc.t_param_value pv ON ((m.m_id = pv.mgr_id)))
      JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)));
 

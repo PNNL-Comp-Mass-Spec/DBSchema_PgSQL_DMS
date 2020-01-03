@@ -36,16 +36,16 @@ ALTER TABLE ONLY mc.t_param_value
     ADD CONSTRAINT pk_t_param_value PRIMARY KEY (entry_id);
 
 --
--- Name: ix_t_param_value_mgr_id_type_id; Type: INDEX; Schema: mc; Owner: d3l243
+-- Name: ix_t_param_value; Type: INDEX; Schema: mc; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_param_value_mgr_id_type_id ON mc.t_param_value USING btree (mgr_id, type_id);
+CREATE UNIQUE INDEX ix_t_param_value ON mc.t_param_value USING btree (mgr_id, type_id);
 
 --
 -- Name: ix_t_param_value_type_id_include_entry_id_mgr_id; Type: INDEX; Schema: mc; Owner: d3l243
 --
 
-CREATE INDEX ix_t_param_value_type_id_include_entry_id_mgr_id ON mc.t_param_value USING btree (type_id) INCLUDE (mgr_id);
+CREATE INDEX ix_t_param_value_type_id_include_entry_id_mgr_id ON mc.t_param_value USING btree (type_id) INCLUDE (entry_id, mgr_id);
 
 --
 -- Name: t_param_value fk_t_param_value_t_mgrs; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243

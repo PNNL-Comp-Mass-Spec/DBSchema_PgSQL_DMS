@@ -3,20 +3,20 @@
 --
 
 CREATE VIEW mc.v_manager_type_report AS
- SELECT mt.mt_type_name AS "Manager Type",
-    mt.mt_type_id AS id,
+ SELECT mt.mgr_type_name AS "Manager Type",
+    mt.mgr_type_id AS id,
     COALESCE(activemanagersq.managercountactive, (0)::bigint) AS "Manager Count Active",
     COALESCE(activemanagersq.managercountinactive, (0)::bigint) AS "Manager Count Inactive"
    FROM (mc.t_mgr_types mt
-     LEFT JOIN ( SELECT v_manager_list_by_type.m_type_id,
+     LEFT JOIN ( SELECT v_manager_list_by_type.mgr_type_id,
             v_manager_list_by_type."Manager Type",
             count(*) FILTER (WHERE (v_manager_list_by_type.active OPERATOR(public.=) 'True'::public.citext)) AS managercountactive,
             count(*) FILTER (WHERE (v_manager_list_by_type.active OPERATOR(public.<>) 'True'::public.citext)) AS managercountinactive
            FROM mc.v_manager_list_by_type
-          GROUP BY v_manager_list_by_type.m_type_id, v_manager_list_by_type."Manager Type") activemanagersq ON ((mt.mt_type_id = activemanagersq.m_type_id)))
-  WHERE (mt.mt_type_id IN ( SELECT t_mgrs.m_type_id
+          GROUP BY v_manager_list_by_type.mgr_type_id, v_manager_list_by_type."Manager Type") activemanagersq ON ((mt.mgr_type_id = activemanagersq.mgr_type_id)))
+  WHERE (mt.mgr_type_id IN ( SELECT t_mgrs.mgr_type_id
            FROM mc.t_mgrs
-          WHERE (t_mgrs.m_control_from_website > 0)));
+          WHERE (t_mgrs.control_from_website > 0)));
 
 
 ALTER TABLE mc.v_manager_type_report OWNER TO d3l243;

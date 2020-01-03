@@ -13,7 +13,7 @@ CREATE VIEW mc.v_analysis_mgr_params_active_and_debug_level AS
    FROM ((mc.t_param_value pv
      JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)))
      JOIN mc.t_mgrs m ON ((pv.mgr_id = m.m_id)))
-  WHERE ((pt.param_name OPERATOR(public.=) ANY (ARRAY['mgractive'::public.citext, 'debuglevel'::public.citext, 'ManagerErrorCleanupMode'::public.citext])) AND (m.m_type_id = ANY (ARRAY[11, 15])));
+  WHERE ((pt.param_name OPERATOR(public.=) ANY (ARRAY['mgractive'::public.citext, 'debuglevel'::public.citext, 'ManagerErrorCleanupMode'::public.citext])) AND (m.mgr_type_id = ANY (ARRAY[11, 15])));
 
 
 ALTER TABLE mc.v_analysis_mgr_params_active_and_debug_level OWNER TO d3l243;

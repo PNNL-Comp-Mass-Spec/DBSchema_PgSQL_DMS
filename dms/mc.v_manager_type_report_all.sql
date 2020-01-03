@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW mc.v_manager_type_report_all AS
- SELECT DISTINCT mt.mt_type_name AS "Manager Type",
-    mt.mt_type_id AS id
+ SELECT DISTINCT mt.mgr_type_name AS "Manager Type",
+    mt.mgr_type_id AS id
    FROM ((mc.t_mgr_types mt
-     JOIN mc.t_mgrs m ON ((m.m_type_id = mt.mt_type_id)))
-     JOIN mc.t_param_value pv ON (((pv.mgr_id = m.m_id) AND (m.m_type_id = mt.mt_type_id))));
+     JOIN mc.t_mgrs m ON ((m.mgr_type_id = mt.mgr_type_id)))
+     JOIN mc.t_param_value pv ON (((pv.mgr_id = m.m_id) AND (m.mgr_type_id = mt.mgr_type_id))));
 
 
 ALTER TABLE mc.v_manager_type_report_all OWNER TO d3l243;

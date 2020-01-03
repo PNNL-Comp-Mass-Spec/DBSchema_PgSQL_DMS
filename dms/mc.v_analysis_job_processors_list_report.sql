@@ -5,9 +5,9 @@
 CREATE VIEW mc.v_analysis_job_processors_list_report AS
  SELECT m.m_id AS id,
     m.m_name AS name,
-    mt.mt_type_name AS "Type"
+    mt.mgr_type_name AS "Type"
    FROM (mc.t_mgrs m
-     JOIN mc.t_mgr_types mt ON ((m.m_type_id = mt.mt_type_id)));
+     JOIN mc.t_mgr_types mt ON ((m.mgr_type_id = mt.mgr_type_id)));
 
 
 ALTER TABLE mc.v_analysis_job_processors_list_report OWNER TO d3l243;

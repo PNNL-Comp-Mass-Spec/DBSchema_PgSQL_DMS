@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW mc.v_manager_update_required AS
- SELECT t_mgrs.m_name,
+ SELECT m.m_name,
     pt.param_name,
     pv.value
-   FROM ((mc.t_mgrs
-     JOIN mc.t_param_value pv ON ((t_mgrs.m_id = pv.mgr_id)))
+   FROM ((mc.t_mgrs m
+     JOIN mc.t_param_value pv ON ((m.m_id = pv.mgr_id)))
      JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)))
   WHERE (pt.param_name OPERATOR(public.=) 'ManagerUpdateRequired'::public.citext);
 

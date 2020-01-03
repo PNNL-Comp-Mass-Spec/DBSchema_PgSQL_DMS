@@ -9,7 +9,7 @@ CREATE VIEW mc.v_mgr_work_dir AS
             ELSE ('\\ServerName\'::text || public.replace(v_param_value.value, ':\'::public.citext, '$\'::public.citext))
         END AS workdir_adminshare
    FROM mc.v_param_value
-  WHERE (v_param_value.paramname OPERATOR(public.=) 'workdir'::public.citext);
+  WHERE (v_param_value.param_name OPERATOR(public.=) 'workdir'::public.citext);
 
 
 ALTER TABLE mc.v_mgr_work_dir OWNER TO d3l243;
