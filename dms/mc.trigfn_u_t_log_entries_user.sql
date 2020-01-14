@@ -18,6 +18,8 @@ DECLARE
     _userInfo text;
     _sepChar text;
 BEGIN
+    -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
+
     _userInfo := Coalesce(udf_timestamp_text(localtimestamp) || '; ' || SESSION_USER, '');
 
     _sepChar := ' (';

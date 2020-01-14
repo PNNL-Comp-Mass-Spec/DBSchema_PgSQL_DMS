@@ -15,7 +15,7 @@ CREATE FUNCTION mc.trigfn_d_t_param_value() RETURNS trigger
 **
 *****************************************************/
 BEGIN
-    RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
+    -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
 
     -- Add a new row to t_event_log
     INSERT INTO t_event_log( target_type,

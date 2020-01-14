@@ -16,7 +16,7 @@ CREATE FUNCTION mc.trigfn_u_t_param_value() RETURNS trigger
 **
 *****************************************************/
 BEGIN
-    RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
+    -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
 
     -- Update the last_affected and entered_by columns in t_param_value
     UPDATE mc.t_param_value

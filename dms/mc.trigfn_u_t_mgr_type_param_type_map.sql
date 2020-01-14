@@ -15,7 +15,7 @@ CREATE FUNCTION mc.trigfn_u_t_mgr_type_param_type_map() RETURNS trigger
 **
 *****************************************************/
 BEGIN
-    RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
+    -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
 
     -- Update the last_affected and entered_by columns in t_mgr_type_param_type_map
     UPDATE mc.t_mgr_type_param_type_map
