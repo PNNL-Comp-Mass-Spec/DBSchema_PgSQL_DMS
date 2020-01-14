@@ -48,6 +48,24 @@ CREATE UNIQUE INDEX ix_t_param_value ON mc.t_param_value USING btree (mgr_id, ty
 CREATE INDEX ix_t_param_value_type_id_include_entry_id_mgr_id ON mc.t_param_value USING btree (type_id) INCLUDE (entry_id, mgr_id);
 
 --
+-- Name: t_param_value trig_d_t_param_value; Type: TRIGGER; Schema: mc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_d_t_param_value AFTER DELETE ON mc.t_param_value REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION mc.trigfn_d_t_param_value();
+
+--
+-- Name: t_param_value trig_i_t_param_value; Type: TRIGGER; Schema: mc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_i_t_param_value AFTER INSERT ON mc.t_param_value REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION mc.trigfn_i_t_param_value();
+
+--
+-- Name: t_param_value trig_u_t_param_value; Type: TRIGGER; Schema: mc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_u_t_param_value AFTER UPDATE OF type_id, value, mgr_id ON mc.t_param_value FOR EACH ROW EXECUTE FUNCTION mc.trigfn_u_t_param_value();
+
+--
 -- Name: t_param_value fk_t_param_value_t_mgrs; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243
 --
 

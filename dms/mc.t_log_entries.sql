@@ -35,6 +35,12 @@ ALTER TABLE ONLY mc.t_log_entries
     ADD CONSTRAINT pk_t_log_entries PRIMARY KEY (entry_id);
 
 --
+-- Name: t_log_entries trig_u_t_log_entries; Type: TRIGGER; Schema: mc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_u_t_log_entries AFTER UPDATE OF posted_by, posting_time, type, message ON mc.t_log_entries FOR EACH ROW EXECUTE FUNCTION mc.trigfn_u_t_log_entries_user();
+
+--
 -- Name: TABLE t_log_entries; Type: ACL; Schema: mc; Owner: d3l243
 --
 
