@@ -22,3 +22,4 @@ COMMENT ON FUNCTION public.get_stat_activity() IS 'created for pgwatch2';
 --
 
 GRANT ALL ON FUNCTION public.get_stat_activity() TO pgwatch2;
+

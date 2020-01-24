@@ -35,3 +35,4 @@ CREATE INDEX ix_t_sp_authorization_proc_name ON mc.t_sp_authorization USING btre
 --
 
 GRANT SELECT ON TABLE mc.t_sp_authorization TO readaccess;
+

@@ -9,3 +9,4 @@ CREATE EXTENSION IF NOT EXISTS plpythonu WITH SCHEMA pg_catalog;
 --
 
 COMMENT ON EXTENSION plpythonu IS 'PL/PythonU untrusted procedural language';
+

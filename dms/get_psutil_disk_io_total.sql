@@ -24,3 +24,4 @@ COMMENT ON FUNCTION public.get_psutil_disk_io_total(OUT read_count double precis
 --
 
 GRANT ALL ON FUNCTION public.get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision) TO pgwatch2;
+

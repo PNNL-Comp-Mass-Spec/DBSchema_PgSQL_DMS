@@ -9,3 +9,4 @@ CREATE EXTENSION IF NOT EXISTS pgstattuple WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pgstattuple IS 'show tuple-level statistics';
+

@@ -15,3 +15,4 @@ ALTER TABLE mc.v_manager_type_detail OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_manager_type_detail TO readaccess;
+

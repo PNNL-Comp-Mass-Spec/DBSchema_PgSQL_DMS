@@ -17,3 +17,4 @@ ALTER TABLE mc.v_param_name_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_param_name_picklist TO readaccess;
+

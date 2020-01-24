@@ -30,3 +30,4 @@ $$;
 
 
 ALTER FUNCTION mc.trigfn_u_t_mgr_type_param_type_map() OWNER TO d3l243;
+

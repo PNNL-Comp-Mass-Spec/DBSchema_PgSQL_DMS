@@ -17,3 +17,4 @@ ALTER TABLE mc.v_analysis_job_processors_list_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_analysis_job_processors_list_report TO readaccess;
+

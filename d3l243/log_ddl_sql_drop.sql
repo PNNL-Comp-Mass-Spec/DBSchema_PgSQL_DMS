@@ -34,3 +34,4 @@ $$;
 
 
 ALTER FUNCTION public.log_ddl_sql_drop() OWNER TO d3l243;
+

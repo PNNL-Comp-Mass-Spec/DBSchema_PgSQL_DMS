@@ -19,3 +19,4 @@ ALTER TABLE mc.v_mgr_work_dir OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_mgr_work_dir TO readaccess;
+

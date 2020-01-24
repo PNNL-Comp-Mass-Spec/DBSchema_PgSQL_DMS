@@ -37,3 +37,4 @@ $$;
 
 
 ALTER FUNCTION public.log_ddl_command_end() OWNER TO d3l243;
+

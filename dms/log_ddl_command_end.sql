@@ -43,3 +43,4 @@ ALTER FUNCTION public.log_ddl_command_end() OWNER TO d3l243;
 --
 
 COMMENT ON FUNCTION public.log_ddl_command_end() IS 'Adds log entries to t_schema_change_log regarding DDL updates';
+

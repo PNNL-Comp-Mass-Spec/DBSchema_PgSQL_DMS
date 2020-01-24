@@ -23,3 +23,4 @@ ALTER TABLE ONLY mc.t_usage_stats
 --
 
 GRANT SELECT ON TABLE mc.t_usage_stats TO readaccess;
+

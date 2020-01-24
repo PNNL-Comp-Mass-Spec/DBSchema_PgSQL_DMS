@@ -6,3 +6,4 @@ CREATE SCHEMA pgwatch2;
 
 
 ALTER SCHEMA pgwatch2 OWNER TO pgwatch2;
+

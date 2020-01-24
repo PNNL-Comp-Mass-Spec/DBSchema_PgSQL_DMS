@@ -43,3 +43,4 @@ CREATE UNIQUE INDEX ix_t_param_type_param_name ON mc.t_param_type USING btree (p
 --
 
 GRANT SELECT ON TABLE mc.t_param_type TO readaccess;
+

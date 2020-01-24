@@ -16,3 +16,4 @@ ALTER TABLE pgwatch2.schema_version OWNER TO pgwatch2;
 
 ALTER TABLE ONLY pgwatch2.schema_version
     ADD CONSTRAINT schema_version_pkey PRIMARY KEY (sv_tag);
+

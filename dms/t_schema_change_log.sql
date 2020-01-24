@@ -44,3 +44,4 @@ ALTER TABLE ONLY public.t_schema_change_log
 
 GRANT SELECT ON TABLE public.t_schema_change_log TO readaccess;
 GRANT SELECT,INSERT,UPDATE ON TABLE public.t_schema_change_log TO writeaccess;
+

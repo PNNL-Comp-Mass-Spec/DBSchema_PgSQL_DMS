@@ -133,3 +133,4 @@ COMMENT ON FUNCTION public.get_table_bloat_approx_sql(OUT full_table_name text, 
 --
 
 GRANT ALL ON FUNCTION public.get_table_bloat_approx_sql(OUT full_table_name text, OUT approx_bloat_percent double precision, OUT approx_bloat_bytes double precision, OUT fillfactor integer) TO pgwatch2;
+

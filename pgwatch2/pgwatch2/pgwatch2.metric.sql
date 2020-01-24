@@ -62,3 +62,4 @@ ALTER TABLE ONLY pgwatch2.metric
 
 ALTER TABLE ONLY pgwatch2.metric
     ADD CONSTRAINT metric_pkey PRIMARY KEY (m_id);
+

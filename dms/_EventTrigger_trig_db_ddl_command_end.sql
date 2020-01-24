@@ -8,3 +8,4 @@ CREATE EVENT TRIGGER trig_db_ddl_command_end ON ddl_command_end
 
 
 ALTER EVENT TRIGGER trig_db_ddl_command_end OWNER TO d3l243;
+

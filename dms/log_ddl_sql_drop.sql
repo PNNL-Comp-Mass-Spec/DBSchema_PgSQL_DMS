@@ -40,3 +40,4 @@ ALTER FUNCTION public.log_ddl_sql_drop() OWNER TO d3l243;
 --
 
 COMMENT ON FUNCTION public.log_ddl_sql_drop() IS 'Adds log entries to t_schema_change_log regarding the dropped object';
+

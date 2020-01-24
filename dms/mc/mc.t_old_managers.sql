@@ -26,3 +26,4 @@ ALTER TABLE ONLY mc.t_old_managers
 --
 
 GRANT SELECT ON TABLE mc.t_old_managers TO readaccess;
+

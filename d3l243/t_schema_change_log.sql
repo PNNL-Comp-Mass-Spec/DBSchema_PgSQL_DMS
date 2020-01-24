@@ -30,3 +30,4 @@ ALTER TABLE public.t_schema_change_log ALTER COLUMN schema_change_log_id ADD GEN
     NO MAXVALUE
     CACHE 1
 );
+

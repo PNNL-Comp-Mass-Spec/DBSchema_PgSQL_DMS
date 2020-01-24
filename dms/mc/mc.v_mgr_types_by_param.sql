@@ -17,3 +17,4 @@ ALTER TABLE mc.v_mgr_types_by_param OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_mgr_types_by_param TO readaccess;
+

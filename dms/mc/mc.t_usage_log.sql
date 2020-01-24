@@ -51,3 +51,4 @@ CREATE INDEX ix_t_usage_log_posted_by ON mc.t_usage_log USING btree (posted_by);
 --
 
 GRANT SELECT ON TABLE mc.t_usage_log TO readaccess;
+

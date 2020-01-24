@@ -22,3 +22,4 @@ COMMENT ON FUNCTION public.get_wal_size() IS 'created for pgwatch2';
 --
 
 GRANT ALL ON FUNCTION public.get_wal_size() TO pgwatch2;
+

@@ -24,3 +24,4 @@ COMMENT ON FUNCTION public.get_load_average(OUT load_1min double precision, OUT 
 --
 
 GRANT ALL ON FUNCTION public.get_load_average(OUT load_1min double precision, OUT load_5min double precision, OUT load_15min double precision) TO pgwatch2;
+

@@ -25,3 +25,4 @@ ALTER TABLE mc.v_param_value OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_param_value TO readaccess;
+

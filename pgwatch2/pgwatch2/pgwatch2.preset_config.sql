@@ -18,3 +18,4 @@ ALTER TABLE pgwatch2.preset_config OWNER TO pgwatch2;
 
 ALTER TABLE ONLY pgwatch2.preset_config
     ADD CONSTRAINT preset_config_pkey PRIMARY KEY (pc_name);
+

@@ -25,3 +25,4 @@ COMMENT ON FUNCTION public.get_psutil_mem(OUT total double precision, OUT used d
 --
 
 GRANT ALL ON FUNCTION public.get_psutil_mem(OUT total double precision, OUT used double precision, OUT free double precision, OUT buff_cache double precision, OUT available double precision, OUT percent double precision, OUT swap_total double precision, OUT swap_used double precision, OUT swap_free double precision, OUT swap_percent double precision) TO pgwatch2;
+

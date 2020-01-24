@@ -38,3 +38,4 @@ $$;
 
 
 ALTER FUNCTION mc.trigfn_u_t_log_entries_user() OWNER TO d3l243;
+

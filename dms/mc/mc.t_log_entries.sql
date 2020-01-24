@@ -45,3 +45,4 @@ CREATE TRIGGER trig_u_t_log_entries AFTER UPDATE OF posted_by, posting_time, typ
 --
 
 GRANT SELECT ON TABLE mc.t_log_entries TO readaccess;
+
