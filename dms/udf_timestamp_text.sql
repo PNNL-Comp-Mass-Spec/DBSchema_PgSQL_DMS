@@ -1,6 +1,7 @@
 --
 -- Name: udf_timestamp_text(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: d3l243
 --
+-- Overload 1
 
 CREATE FUNCTION public.udf_timestamp_text(_currenttime timestamp without time zone) RETURNS text
     LANGUAGE plpgsql
@@ -31,6 +32,7 @@ ALTER FUNCTION public.udf_timestamp_text(_currenttime timestamp without time zon
 --
 -- Name: udf_timestamp_text(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: d3l243
 --
+-- Overload 2
 
 CREATE FUNCTION public.udf_timestamp_text(_currenttime timestamp with time zone) RETURNS text
     LANGUAGE plpgsql
