@@ -85,3 +85,11 @@ ALTER TABLE ONLY pgwatch2.monitored_db
 --
 
 CREATE UNIQUE INDEX monitored_db_md_hostname_md_port_md_dbname_md_is_enabled_idx ON pgwatch2.monitored_db USING btree (md_hostname, md_port, md_dbname, md_is_enabled);
+
+--
+-- Name: monitored_db monitored_db_md_preset_config_name_fkey; Type: FK CONSTRAINT; Schema: pgwatch2; Owner: pgwatch2
+--
+
+ALTER TABLE ONLY pgwatch2.monitored_db
+    ADD CONSTRAINT monitored_db_md_preset_config_name_fkey FOREIGN KEY (md_preset_config_name) REFERENCES pgwatch2.preset_config(pc_name);
+
