@@ -38,7 +38,7 @@ DECLARE
     _enteredByNew text := '';
     _currentTime timestamp := CURRENT_TIMESTAMP;
     _s text;
-    _entryFilterSql text = '';
+    _entryFilterSql text := '';
     _lookupResults record;
     _result int;
     _sqlstate text;
@@ -218,4 +218,10 @@ $$;
 
 
 ALTER PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer); Type: COMMENT; Schema: mc; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer) IS 'AlterEnteredByUser';
 

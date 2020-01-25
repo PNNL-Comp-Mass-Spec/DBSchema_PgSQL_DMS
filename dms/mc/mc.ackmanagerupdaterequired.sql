@@ -86,3 +86,9 @@ $$;
 
 ALTER PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text) OWNER TO d3l243;
 
+--
+-- Name: PROCEDURE ackmanagerupdaterequired(_managername text, INOUT _message text); Type: COMMENT; Schema: mc; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text) IS 'AckManagerUpdateRequired';
+
