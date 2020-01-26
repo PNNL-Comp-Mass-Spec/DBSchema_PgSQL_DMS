@@ -1,23 +1,32 @@
 --
--- Name: alterenteredbyuser(text, text, integer, text, integer, integer, text, text, text, integer, integer); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: alterenteredbyuser(text, text, integer, text, integer, integer, text, text, text, text, integer, integer); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, _entrydatecolumnname text DEFAULT 'entered'::text, _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
+CREATE PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, _entrydatecolumnname text DEFAULT 'entered'::text, _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the Entered_By column for the specified row in the given table to be @NewUser
+**      Updates the entered_by column for the specified row in the given table to contain _newUser
 **
-**      If _ApplyTimeFilter is non-zero, only matches entries made within the last _EntryTimeWindowSeconds seconds
+**      If _applyTimeFilter is non-zero, only matches entries made within the last _entryTimeWindowSeconds seconds
 **
 **      Use @infoOnly = 1 to preview updates
 **
 **  Arguments:
-**    _applyTimeFilter          If 1, then filters by the current date and time; if 0, looks for the most recent matching entry
+**    _targetTableName          Table to update
+**    _targetIDColumnName       ID column name
+**    _targetID                 ID of the entry to update
+**    _newUser                  New username to add to the entered_by field
+**    _applyTimeFilter          If 1, filters by the current date and time; if 0, looks for the most recent matching entry
 **    _entryTimeWindowSeconds   Only used if _applyTimeFilter = 1
-**    _infoOnly                 Preview updates
+**    _entryDateColumnName      Column name to use when _applyTimeFilter is non-zero
+**    _enteredByColumnName      Column name to update the username
+**    _message                  Warning or status message
+**    _returnCode               Empty or '00000' if no error, otherwise, a SQLSTATE code. User-codes start with 'U'
+**    _infoOnly                 If 1, preview updates
+**    _previewSql               If 1, show the SQL that would be used
 **
 **  Auth:   mem
 **  Date:   03/25/2008 mem - Initial version (Ticket: #644)
@@ -27,7 +36,6 @@ CREATE PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnnam
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _myError int := 0;
     _entryDateStart timestamp;
     _entryDateEnd timestamp;
     _entryDescription text := '';
@@ -54,18 +62,19 @@ BEGIN
     _applyTimeFilter := Coalesce(_applyTimeFilter, 0);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
     _message := '';
+    _returnCode := '';
     _infoOnly := Coalesce(_infoOnly, 0);
     _previewSql := Coalesce(_previewSql, 0);
 
     If _targetTableName Is Null Or _targetIDColumnName Is Null Or _targetID Is Null Then
         _message := '_targetTableName and _targetIDColumnName and _targetID must be defined; unable to continue';
-        _myError := 50201;
+        _returnCode := 'U5201';
         Return;
     End If;
 
     If char_length(_newUser) = 0 Then
         _message := '_newUser is empty; unable to continue';
-        _myError := 50202;
+        _returnCode := 'U5202';
         Return;
     End If;
 
@@ -208,6 +217,7 @@ EXCEPTION
             _exceptionContext = pg_exception_context;
 
     _message := 'Error updating ' || _entryDescription || ': ' || _exceptionMessage;
+    _returnCode := _sqlstate;
 
     -- Future: call PostLogEntry 'Error', _message, 'AlterEventLogEntryUser'
     INSERT INTO t_log_entries (posted_by, type, message)
@@ -217,11 +227,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer) OWNER TO d3l243;
+ALTER PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, INOUT _returncode text, _infoonly integer, _previewsql integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, INOUT _returncode text, _infoonly integer, _previewsql integer); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer) IS 'AlterEnteredByUser';
+COMMENT ON PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, INOUT _returncode text, _infoonly integer, _previewsql integer) IS 'AlterEnteredByUser';
 
