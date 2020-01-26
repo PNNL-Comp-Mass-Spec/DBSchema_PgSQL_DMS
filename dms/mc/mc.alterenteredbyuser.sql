@@ -10,10 +10,6 @@ CREATE PROCEDURE mc.alterenteredbyuser(_targettablename text, _targetidcolumnnam
 **  Desc:
 **      Updates the entered_by column for the specified row in the given table to contain _newUser
 **
-**      If _applyTimeFilter is non-zero, only matches entries made within the last _entryTimeWindowSeconds seconds
-**
-**      Use @infoOnly = 1 to preview updates
-**
 **  Arguments:
 **    _targetTableName          Table to update
 **    _targetIDColumnName       ID column name
@@ -48,7 +44,6 @@ DECLARE
     _s text;
     _entryFilterSql text := '';
     _lookupResults record;
-    _result int;
     _sqlstate text;
     _exceptionMessage text;
     _exceptionContext text;
@@ -219,9 +214,9 @@ EXCEPTION
     _message := 'Error updating ' || _entryDescription || ': ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
-    -- Future: call PostLogEntry 'Error', _message, 'AlterEventLogEntryUser'
+    -- Future: call PostLogEntry 'Error', _message, 'AlterEnteredByUser'
     INSERT INTO t_log_entries (posted_by, type, message)
-    VALUES ('AlterEventLogEntryUser', 'Error', _message);
+    VALUES ('AlterEnteredByUser', 'Error', _message);
 
 END
 $$;
