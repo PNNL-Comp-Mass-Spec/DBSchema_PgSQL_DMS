@@ -1,8 +1,8 @@
 --
--- Name: ackmanagerupdaterequired(text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: ackmanagerupdaterequired(text, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text DEFAULT ''::text)
+CREATE PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -17,18 +17,26 @@ CREATE PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message t
 **  Date:   01/16/2009 mem - Initial version
 **          09/09/2009 mem - Added support for 'ManagerUpdateRequired' already being False
 **          01/24/2020 mem - Ported to PostgreSQL
+**          01/26/2020 mem - Add exception handler
 **
 *****************************************************/
 DECLARE
-    _myError int;
     _myRowCount int;
     _mgrID int;
     _paramID int;
+    _sqlstate text;
+    _exceptionMessage text;
+    _exceptionContext text;
 BEGIN
-    _myError := 0;
     _myRowCount := 0;
 
+    _managerName := Trim(Coalesce(_managerName, ''));
+    If (char_length(_managerName) = 0) Then
+        _managerName := '??Undefined_Manager??';
+    End If;
+
     _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Confirm that the manager name is valid
@@ -39,8 +47,8 @@ BEGIN
     WHERE m_name = _managerName::citext;
 
     IF NOT FOUND THEN
-        _myError := 52002;
         _message := 'Could not find entry for manager: ' || _managername;
+        _returnCode := 'U5202';
         Return;
     End If;
 
@@ -79,16 +87,29 @@ BEGIN
         End If;
     End If;
 
-    -- RAISE NOTICE '%', _message;
+EXCEPTION
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS
+            _sqlstate = returned_sqlstate,
+            _exceptionMessage = message_text,
+            _exceptionContext = pg_exception_context;
+
+    _message := 'Error updating ManagerUpdateRequired for ' || _managerName || ': ' || _exceptionMessage;
+    _returnCode := _sqlstate;
+
+    -- Future: call PostLogEntry 'Error', _message, 'AckManagerUpdateRequired'
+    INSERT INTO mc.t_log_entries (posted_by, type, message)
+    VALUES ('AckManagerUpdateRequired', 'Error', _message);
+
 END
 $$;
 
 
-ALTER PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text) OWNER TO d3l243;
+ALTER PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE ackmanagerupdaterequired(_managername text, INOUT _message text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE ackmanagerupdaterequired(_managername text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text) IS 'AckManagerUpdateRequired';
+COMMENT ON PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text, INOUT _returncode text) IS 'AckManagerUpdateRequired';
 
