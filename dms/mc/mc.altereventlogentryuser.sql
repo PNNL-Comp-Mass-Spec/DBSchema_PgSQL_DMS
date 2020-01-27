@@ -213,7 +213,7 @@ EXCEPTION
     _returnCode := _sqlstate;
 
     -- Future: call PostLogEntry 'Error', _message, 'AlterEventLogEntryUser'
-    INSERT INTO t_log_entries (posted_by, type, message)
+    INSERT INTO mc.t_log_entries (posted_by, type, message)
     VALUES ('AlterEventLogEntryUser', 'Error', _message);
 
 END
