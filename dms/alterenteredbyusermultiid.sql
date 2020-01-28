@@ -49,7 +49,6 @@ DECLARE
     _enteredByNew text := '';
     _currentTime timestamp := CURRENT_TIMESTAMP;
     _countUpdated int;
-    _continue int;
     _startTime timestamp;
     _entryTimeWindowSecondsCurrent int;
     _elapsedSeconds int;
@@ -98,58 +97,38 @@ BEGIN
     _entryTimeWindowSecondsCurrent := _entryTimeWindowSeconds;
 
     ------------------------------------------------
-    -- Determine the minimum value in TmpIDUpdateList
-    ------------------------------------------------
-
-    SELECT Min(TargetID)-1 INTO _targetID
-    FROM TmpIDUpdateList;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    _targetID := Coalesce(_targetID, -1);
-
-    ------------------------------------------------
     -- Parse the values in TmpIDUpdateList
     -- Call AlterEnteredByUser for each
     ------------------------------------------------
 
     _countUpdated := 0;
-    _continue := 1;
 
-    While _continue = 1 Loop
-        SELECT TargetID INTO _targetID
+    FOR _targetID IN 
+        SELECT TargetID
         FROM TmpIDUpdateList
-        WHERE TargetID > _targetID
         ORDER BY TargetID
-        LIMIT 1;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    LOOP 
+        Call AlterEnteredByUser(
+                            _targetTableSchema,
+                            _targetTableName,
+                            _targetIDColumnName,
+                            _targetID,
+                            _newUser,
+                            _applyTimeFilter,
+                            _entryTimeWindowSecondsCurrent,
+                            _entryDateColumnName,
+                            _enteredByColumnName,
+                            _message,
+                            _infoOnly,
+                            _previewSql
+                            );
 
-        IF NOT FOUND THEN
-            _continue := 0;
-        Else
-            Call AlterEnteredByUser(
-                                _targetTableSchema,
-                                _targetTableName,
-                                _targetIDColumnName,
-                                _targetID,
-                                _newUser,
-                                _applyTimeFilter,
-                                _entryTimeWindowSecondsCurrent,
-                                _entryDateColumnName,
-                                _enteredByColumnName,
-                                _message,
-                                _infoOnly,
-                                _previewSql
-                                );
+        _countUpdated := _countUpdated + 1;
+        If _countUpdated % 5 = 0 Then
+            _elapsedSeconds := extract(epoch FROM (current_timestamp - _startTime));
 
-            _countUpdated := _countUpdated + 1;
-            If _countUpdated % 5 = 0 Then
-                _elapsedSeconds := extract(epoch FROM (current_timestamp - _startTime));
-
-                If _elapsedSeconds * 2 > _entryTimeWindowSecondsCurrent Then
-                    _entryTimeWindowSecondsCurrent := _elapsedSeconds * 4;
-                End If;
+            If _elapsedSeconds * 2 > _entryTimeWindowSecondsCurrent Then
+                _entryTimeWindowSecondsCurrent := _elapsedSeconds * 4;
             End If;
         End If;
     End Loop;
