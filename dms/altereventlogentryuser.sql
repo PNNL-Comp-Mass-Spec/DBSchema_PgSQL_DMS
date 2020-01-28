@@ -1,16 +1,17 @@
 --
--- Name: altereventlogentryuser(integer, integer, integer, text, integer, integer, text, text, integer); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: altereventlogentryuser(text, integer, integer, integer, text, integer, integer, text, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE mc.altereventlogentryuser(_targettype integer, _targetid integer, _targetstate integer, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, _infoonly integer DEFAULT 0)
+CREATE PROCEDURE public.altereventlogentryuser(_eventlogschema text, _targettype integer, _targetid integer, _targetstate integer, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, INOUT _message text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
     LANGUAGE plpgsql
-    AS $$
+    AS $_$
 /****************************************************
 **
 **  Desc:
 **      Updates the user associated with a given event log entry to be _newUser
 **
 **  Arguments:
+**    _eventLogSchema           Schema of the t_event_log table to update; if empty or null, assumes "public"
 **    _targetType               Event type; 1=Manager Enable/Disable
 **    _targetID                 ID of the entry to update
 **    _targetState              Logged state value to match
@@ -18,14 +19,16 @@ CREATE PROCEDURE mc.altereventlogentryuser(_targettype integer, _targetid intege
 **    _applyTimeFilter          If 1, filters by the current date and time; if 0, looks for the most recent matching entry
 **    _entryTimeWindowSeconds   Only used if _applyTimeFilter = 1
 **    _message                  Warning or status message
-**    _returnCode               Empty or '00000' if no error, otherwise, a SQLSTATE code. User-codes start with 'U'
 **    _infoOnly                 If 1, preview updates
+**    _previewSql               If 1, show the SQL that would be used
 **
 **  Auth:   mem
 **  Date:   02/29/2008 mem - Initial version (Ticket: #644)
 **          05/23/2008 mem - Expanded @EntryDescription to varchar(512)
 **          03/30/2009 mem - Ported to the Manager Control DB
 **          01/26/2020 mem - Ported to PostgreSQL
+**          01/28/2020 mem - Add arguments _eventLogSchema and _previewsql
+**                         - Remove exception handler and remove argument _returnCode
 **
 *****************************************************/
 DECLARE
@@ -34,40 +37,43 @@ DECLARE
     _entryDateEnd timestamp;
     _entryDescription text := '';
     _eventID int;
+    _targetIdMatched int;
     _matchIndex int;
     _enteredBy text;
     _enteredByNew text := '';
     _currentTime timestamp := CURRENT_TIMESTAMP;
+    _s text;
+    _entryFilterSql text := '';
     _lookupResults record;
     _previewData record;
     _infoHead text;
     _infoData text;
-    _sqlstate text;
-    _exceptionMessage text;
-    _exceptionContext text;
 BEGIN
 
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
 
+    _eventLogSchema := COALESCE(_eventLogSchema, '');
+    If (char_length(_eventLogSchema) = 0) Then
+        _eventLogSchema := 'public';
+    End If;
+
     _newUser := Coalesce(_newUser, '');
     _applyTimeFilter := Coalesce(_applyTimeFilter, 0);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
     _message := '';
-    _returnCode := '';
     _infoOnly := Coalesce(_infoOnly, 0);
+    _previewsql := Coalesce(_previewSql, 0);
 
     If _targetType Is Null Or _targetID Is Null Or _targetState Is Null Then
         _message := '_targetType and _targetID and _targetState must be defined; unable to continue';
-        _returnCode := 'U5201';
-        Return;
+        RAISE EXCEPTION '%', _message;
     End If;
 
     If char_length(_newUser) = 0 Then
         _message := '_newUser is empty; unable to continue';
-        _returnCode := 'U5202';
-        Return;
+        RAISE EXCEPTION '%', _message;
     End If;
 
     _entryDescription := 'ID ' || _targetID::text || ' (type ' || _targetType::text || ') with state ' || _targetState::text;
@@ -86,47 +92,47 @@ BEGIN
                 _entryTimeWindowSeconds;
         End If;
 
-        SELECT EL.event_id, EL.entered_by INTO _lookupResults
-        FROM mc.t_event_log EL INNER JOIN
-                (SELECT MAX(event_id) AS event_id
-                 FROM mc.t_event_log
-                 WHERE target_type = _targetType AND
-                       target_id = _targetID AND
-                       target_state = _targetState AND
-                       entered Between _entryDateStart And _entryDateEnd
-                ) LookupQ ON EL.event_id = LookupQ.event_id;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        _eventID   := _lookupResults.event_id;
-        _enteredBy := _lookupResults.entered_by;
-
+        _entryFilterSql := format(' AND entered BETWEEN ''%s'' AND ''%s''',
+                                    _entryDateStart, _entryDateEnd);
+    
+            
         _entryDescription := _entryDescription ||
                                 ' and Entry Time between ' ||
                                 to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss') || ' and ' ||
                                 to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss');
-    Else
-        ------------------------------------------------
-        -- Do not filter by time
-        ------------------------------------------------
-        --
-        SELECT EL.event_id, EL.entered_by INTO _lookupResults
-        FROM mc.t_event_log EL INNER JOIN
-                (SELECT MAX(event_id) AS event_id
-                 FROM mc.t_event_log
-                 WHERE target_type = _targetType AND
-                       target_id = _targetID AND
-                       target_state = _targetState
-                ) LookupQ ON EL.event_id = LookupQ.event_id;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    ELSE
+        _entryFilterSql := '';
+    END IF;
 
+    _s := format(
+            'SELECT EL.event_id, EL.entered_by, EL.target_id '
+            'FROM %1$I.t_event_log EL INNER JOIN '
+                   ' (SELECT MAX(event_id) AS event_id '
+                   '  FROM %1$I.t_event_log '
+                   '  WHERE target_type = %s AND '
+                   '        target_id = %s AND '
+                   '        target_state = %s'
+                   '        %s'
+                   ' ) LookupQ ON EL.event_id = LookupQ.event_id',
+            _eventLogSchema,
+            _targetType, _targetID, _targetState,
+            _entryFilterSql);
+
+    If _previewSql <> 0 Then
+        RAISE INFO '%;', _s;
+        _eventID   := 0;
+        _enteredBy := session_user || '_simulated';
+        _targetIdMatched := _targetId;
+    Else
+        EXECUTE _s INTO _lookupResults;
         _eventID   := _lookupResults.event_id;
         _enteredBy := _lookupResults.entered_by;
-
+        _targetIdMatched := _lookupResults.target_id;
     End If;
+    --
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount <= 0 Then
+    If _previewSql = 0 AND (_myRowCount <= 0 Or _targetIdMatched <> _targetID) Then
         _message := 'Match not found for ' || _entryDescription;
         Return;
     End If;
@@ -150,81 +156,84 @@ BEGIN
         _enteredByNew := _newUser || ' (via ' || _enteredBy || ')';
     End If;
 
-    If char_length(Coalesce(_enteredByNew, '')) > 0 Then
-
-        If _infoOnly = 0 Then
-            UPDATE mc.t_event_log
-            SET entered_by = _enteredByNew
-            WHERE event_id = _eventID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            _message := 'Updated ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
-        Else
-            SELECT event_id, target_type, target_id, target_state,
-                   prev_target_state, entered,
-                   entered_by AS Entered_By_Old,
-                   _enteredByNew AS Entered_By_New INTO _previewData
-            FROM mc.t_event_log
-            WHERE event_id = _eventID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            _infoHead := format('%-10s %-12s %-10s %-12s %-18s %-20s %-20s %-20s',
-                                    'event_id',
-                                    'target_type',
-                                    'target_id',
-                                    'target_state',
-                                    'prev_target_state',
-                                    'entered',
-                                    'entered_by_old',
-                                    'entered_by_new'
-                                );
-
-            _infoData := format('%-10s %-12s %-10s %-12s %-18s %-20s %-20s %-20s',
-                                    _previewData.event_id,
-                                    _previewData.target_type,
-                                    _previewData.target_id,
-                                    _previewData.target_state,
-                                    _previewData.prev_target_state,
-                                    to_char(_previewData.entered, 'yyyy-mm-dd hh24:mi:ss'),
-                                    _previewData.Entered_By_Old,
-                                    _previewData.Entered_By_New
-                                );
-
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoData;
-
-            _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
-        End If;
-
-    Else
+    If char_length(Coalesce(_enteredByNew, '')) = 0 THEN
         _message := 'Match not found; unable to continue';
-    End If;
+        RETURN;
+    END IF;
 
-EXCEPTION
-    WHEN OTHERS THEN
-        GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
-            _exceptionMessage = message_text,
-            _exceptionContext = pg_exception_context;
+    If _infoOnly = 0 Then
+        _s := format(
+                        'UPDATE %I.t_event_log '
+                        'SET entered_by = ''%s'' '
+                        'WHERE event_id = %s',
+                        _eventLogSchema, 
+                        _enteredByNew,
+                        _eventID);
 
-    _message := 'Error updating ' || _entryDescription || ': ' || _exceptionMessage;
-    _returnCode := _sqlstate;
+        If _previewSql <> 0 Then
+            RAISE INFO '%;', _s;
+            _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
+        ELSE
+            EXECUTE _s;
+            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    
+            _message := 'Updated ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
+        End If;
+        
+        RETURN;
+    END IF;
 
-    -- Future: call PostLogEntry 'Error', _message, 'AlterEventLogEntryUser'
-    INSERT INTO mc.t_log_entries (posted_by, type, message)
-    VALUES ('AlterEventLogEntryUser', 'Error', _message);
+    _s := format(
+            'SELECT event_id, target_type, target_id, target_state,'
+            '       prev_target_state, entered,'
+            '       entered_by AS Entered_By_Old,'
+            '       ''%s'' AS Entered_By_New '
+            'FROM %I.t_event_log '
+            'WHERE event_id = %s',
+            _enteredByNew,
+            _eventLogSchema, 
+            _eventID);
+
+    EXECUTE _s INTO _previewData;
+    --
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    _infoHead := format('%-10s %-12s %-10s %-12s %-18s %-20s %-20s %-20s',
+                            'event_id',
+                            'target_type',
+                            'target_id',
+                            'target_state',
+                            'prev_target_state',
+                            'entered',
+                            'entered_by_old',
+                            'entered_by_new'
+                        );
+
+    _infoData := format('%-10s %-12s %-10s %-12s %-18s %-20s %-20s %-20s',
+                            _previewData.event_id,
+                            _previewData.target_type,
+                            _previewData.target_id,
+                            _previewData.target_state,
+                            _previewData.prev_target_state,
+                            to_char(_previewData.entered, 'yyyy-mm-dd hh24:mi:ss'),
+                            _previewData.Entered_By_Old,
+                            _previewData.Entered_By_New
+                        );
+
+    RAISE INFO '%', _infoHead;
+    RAISE INFO '%', _infoData;
+
+    _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
 
 END
-$$;
+$_$;
 
 
-ALTER PROCEDURE mc.altereventlogentryuser(_targettype integer, _targetid integer, _targetstate integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, INOUT _message text, INOUT _returncode text, _infoonly integer) OWNER TO d3l243;
+ALTER PROCEDURE public.altereventlogentryuser(_eventlogschema text, _targettype integer, _targetid integer, _targetstate integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, INOUT _message text, _infoonly integer, _previewsql integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE altereventlogentryuser(_targettype integer, _targetid integer, _targetstate integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, INOUT _message text, INOUT _returncode text, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE altereventlogentryuser(_eventlogschema text, _targettype integer, _targetid integer, _targetstate integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, INOUT _message text, _infoonly integer, _previewsql integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.altereventlogentryuser(_targettype integer, _targetid integer, _targetstate integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, INOUT _message text, INOUT _returncode text, _infoonly integer) IS 'AlterEventLogEntryUser';
+COMMENT ON PROCEDURE public.altereventlogentryuser(_eventlogschema text, _targettype integer, _targetid integer, _targetstate integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, INOUT _message text, _infoonly integer, _previewsql integer) IS 'AlterEventLogEntryUser';
 
