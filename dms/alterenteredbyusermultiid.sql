@@ -1,8 +1,8 @@
 --
--- Name: alterenteredbyusermultiid(text, text, text, integer, integer, text, text, text, text, integer, integer); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: alterenteredbyusermultiid(text, text, text, text, integer, integer, text, text, text, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE mc.alterenteredbyusermultiid(_targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, _entrydatecolumnname text DEFAULT 'entered'::text, _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
+CREATE PROCEDURE public.alterenteredbyusermultiid(_targettableschema text, _targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, _entrydatecolumnname text DEFAULT 'entered'::text, _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -18,6 +18,7 @@ CREATE PROCEDURE mc.alterenteredbyusermultiid(_targettablename text, _targetidco
 **        CREATE INDEX IX_TmpIDUpdateList ON TmpIDUpdateList (TargetID);
 **
 **  Arguments:
+**    _targetTableSchema        Schema of the table to update; if empty or null, assumes "public"
 **    _targetTableName          Table to update
 **    _targetIDColumnName       ID column name
 **    _newUser                  New username to add to the entered_by field
@@ -26,7 +27,6 @@ CREATE PROCEDURE mc.alterenteredbyusermultiid(_targettablename text, _targetidco
 **    _entryDateColumnName      Column name to use when _applyTimeFilter is non-zero
 **    _enteredByColumnName      Column name to update the username
 **    _message                  Warning or status message
-**    _returnCode               Empty or '00000' if no error, otherwise, a SQLSTATE code. User-codes start with 'U'
 **    _infoOnly                 If 1, preview updates
 **    _previewSql               If 1, show the SQL that would be used
 **
@@ -34,6 +34,8 @@ CREATE PROCEDURE mc.alterenteredbyusermultiid(_targettablename text, _targetidco
 **  Date:   03/28/2008 mem - Initial version (Ticket: #644)
 **          05/23/2008 mem - Expanded @EntryDescription to varchar(512)
 **          01/26/2020 mem - Ported to PostgreSQL
+**          01/28/2020 mem - Add argument _targetTableSchema
+**                         - Remove exception handler and remove argument _returnCode
 **
 *****************************************************/
 DECLARE
@@ -51,33 +53,32 @@ DECLARE
     _startTime timestamp;
     _entryTimeWindowSecondsCurrent int;
     _elapsedSeconds int;
-    _sqlstate text;
-    _exceptionMessage text;
-    _exceptionContext text;
 BEGIN
 
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
 
+     _targetTableSchema := COALESCE(_targetTableSchema, '');
+    If (char_length(_targetTableSchema) = 0) Then
+        _targetTableSchema := 'public';
+    End If;
+
     _newUser := Coalesce(_newUser, '');
     _applyTimeFilter := Coalesce(_applyTimeFilter, 0);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
     _message := '';
-    _returnCode := '';
     _infoOnly := Coalesce(_infoOnly, 0);
     _previewSql := Coalesce(_previewSql, 0);
 
     If _targetTableName Is Null Or _targetIDColumnName Is Null Then
         _message := '_targetTableName and _targetIDColumnName must be defined; unable to continue';
-        _returnCode := 'U5201';
-        Return;
+        RAISE EXCEPTION '%', _message;
     End If;
 
     If char_length(_newUser) = 0 Then
         _message := '_newUser is empty; unable to continue';
-        _returnCode := 'U5202';
-        Return;
+        RAISE EXCEPTION '%', _message;
     End If;
 
     -- Make sure TmpIDUpdateList is not empty
@@ -128,6 +129,7 @@ BEGIN
             _continue := 0;
         Else
             Call AlterEnteredByUser(
+                                _targetTableSchema,
                                 _targetTableName,
                                 _targetIDColumnName,
                                 _targetID,
@@ -137,14 +139,9 @@ BEGIN
                                 _entryDateColumnName,
                                 _enteredByColumnName,
                                 _message,
-                                _returnCode,
                                 _infoOnly,
                                 _previewSql
                                 );
-
-            If char_length(Coalesce(_returnCode, '')) > 0 And _returnCode <> '00000' Then
-                Return;
-            End If;
 
             _countUpdated := _countUpdated + 1;
             If _countUpdated % 5 = 0 Then
@@ -157,29 +154,15 @@ BEGIN
         End If;
     End Loop;
 
-EXCEPTION
-    WHEN OTHERS THEN
-        GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
-            _exceptionMessage = message_text,
-            _exceptionContext = pg_exception_context;
-
-    _message := 'Error calling AlterEnteredByUser for ' || _targetTableName || ': ' || _exceptionMessage;
-    _returnCode := _sqlstate;
-
-    -- Future: call PostLogEntry 'Error', _message, 'AlterEnteredByUserMultiID'
-    INSERT INTO mc.t_log_entries (posted_by, type, message)
-    VALUES ('AlterEnteredByUserMultiID', 'Error', _message);
-
 END
 $$;
 
 
-ALTER PROCEDURE mc.alterenteredbyusermultiid(_targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, INOUT _returncode text, _infoonly integer, _previewsql integer) OWNER TO d3l243;
+ALTER PROCEDURE public.alterenteredbyusermultiid(_targettableschema text, _targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE alterenteredbyusermultiid(_targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, INOUT _returncode text, _infoonly integer, _previewsql integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE alterenteredbyusermultiid(_targettableschema text, _targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.alterenteredbyusermultiid(_targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, INOUT _returncode text, _infoonly integer, _previewsql integer) IS 'AlterEnteredByUserMultiID';
+COMMENT ON PROCEDURE public.alterenteredbyusermultiid(_targettableschema text, _targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer) IS 'AlterEnteredByUserMultiID';
 
