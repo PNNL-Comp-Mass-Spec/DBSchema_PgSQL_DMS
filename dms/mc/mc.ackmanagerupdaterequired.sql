@@ -18,6 +18,7 @@ CREATE PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message t
 **          09/09/2009 mem - Added support for 'ManagerUpdateRequired' already being False
 **          01/24/2020 mem - Ported to PostgreSQL
 **          01/26/2020 mem - Add exception handler
+**          01/28/2020 mem - Log errors to PostLogEntry
 **
 *****************************************************/
 DECLARE
@@ -97,9 +98,7 @@ EXCEPTION
     _message := 'Error updating ManagerUpdateRequired for ' || _managerName || ': ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
-    -- Future: call PostLogEntry 'Error', _message, 'AckManagerUpdateRequired'
-    INSERT INTO mc.t_log_entries (posted_by, type, message)
-    VALUES ('AckManagerUpdateRequired', 'Error', _message);
+    Call PostLogEntry ('Error', _message, 'AckManagerUpdateRequired', 'mc');
 
 END
 $$;
