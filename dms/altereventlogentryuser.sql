@@ -43,7 +43,9 @@ DECLARE
     _enteredByNew text := '';
     _currentTime timestamp := CURRENT_TIMESTAMP;
     _s text;
-    _entryFilterSql text := '';
+    _entryDateFilterSqlWithVariables text := '';
+    _entryDateFilterSqlWithValues text := '';
+    _dateFilterSql text := '';
     _lookupResults record;
     _previewData record;
     _infoHead text;
@@ -92,39 +94,52 @@ BEGIN
                 _entryTimeWindowSeconds;
         End If;
 
-        _entryFilterSql := format(' AND entered BETWEEN ''%s'' AND ''%s''',
-                                    _entryDateStart, _entryDateEnd);
-    
-            
+        _entryDateFilterSqlWithValues := format(' AND entered BETWEEN ''%s'' AND ''%s''',
+                                        to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss'),
+                                        to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss'));
+
+        _entryDateFilterSqlWithVariables := ' AND entered BETWEEN $4 AND $5';
+
+        If _previewSql <> 0 Then
+            _dateFilterSql :=  _entryDateFilterSqlWithValues;
+        Else
+            _dateFilterSql :=  _entryDateFilterSqlWithVariables;
+        End If;
+
         _entryDescription := _entryDescription ||
                                 ' and Entry Time between ' ||
                                 to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss') || ' and ' ||
                                 to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss');
-    ELSE
-        _entryFilterSql := '';
-    END IF;
+    Else
+        _dateFilterSql := '';
+    End If;
 
     _s := format(
             'SELECT EL.event_id, EL.entered_by, EL.target_id '
             'FROM %1$I.t_event_log EL INNER JOIN '
                    ' (SELECT MAX(event_id) AS event_id '
                    '  FROM %1$I.t_event_log '
-                   '  WHERE target_type = %s AND '
-                   '        target_id = %s AND '
-                   '        target_state = %s'
+                   '  WHERE target_type = $1 AND '
+                   '        target_id = $2 AND '
+                   '        target_state = $3'
                    '        %s'
                    ' ) LookupQ ON EL.event_id = LookupQ.event_id',
             _eventLogSchema,
-            _targetType, _targetID, _targetState,
-            _entryFilterSql);
+            _dateFilterSql);
 
     If _previewSql <> 0 Then
+         -- Show the SQL both with the dollar signs, and with values
         RAISE INFO '%;', _s;
+        _s := regexp_replace(_s, '\$1', _targetType::text);
+        _s := regexp_replace(_s, '\$2', _targetID::text);
+        _s := regexp_replace(_s, '\$3', _targetState::text);
+        RAISE INFO '%;', _s;
+
         _eventID   := 0;
         _enteredBy := session_user || '_simulated';
         _targetIdMatched := _targetId;
     Else
-        EXECUTE _s INTO _lookupResults;
+        EXECUTE _s INTO _lookupResults USING _targetType, _targetID, _targetState, _entryDateStart, _entryDateEnd;
         _eventID   := _lookupResults.event_id;
         _enteredBy := _lookupResults.entered_by;
         _targetIdMatched := _lookupResults.target_id;
@@ -156,45 +171,47 @@ BEGIN
         _enteredByNew := _newUser || ' (via ' || _enteredBy || ')';
     End If;
 
-    If char_length(Coalesce(_enteredByNew, '')) = 0 THEN
+    If char_length(Coalesce(_enteredByNew, '')) = 0 Then
         _message := 'Match not found; unable to continue';
         RETURN;
-    END IF;
+    End If;
 
     If _infoOnly = 0 Then
         _s := format(
                         'UPDATE %I.t_event_log '
-                        'SET entered_by = ''%s'' '
-                        'WHERE event_id = %s',
-                        _eventLogSchema, 
-                        _enteredByNew,
-                        _eventID);
+                        'SET entered_by = $2 '
+                        'WHERE event_id = $1',
+                        _eventLogSchema,
+                        _enteredByNew);
 
         If _previewSql <> 0 Then
+             -- Show the SQL both with the dollar signs, and with values
             RAISE INFO '%;', _s;
+            _s := regexp_replace(_s, '\$1', _eventID::text);
+            _s := regexp_replace(_s, '\$2', _enteredByNew);
+            RAISE INFO '%;', _s;
+
             _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
-        ELSE
-            EXECUTE _s;
+        Else
+            EXECUTE _s USING _eventID, _enteredByNew;
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    
+
             _message := 'Updated ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
         End If;
-        
+
         RETURN;
-    END IF;
+    End If;
 
     _s := format(
             'SELECT event_id, target_type, target_id, target_state,'
             '       prev_target_state, entered,'
             '       entered_by AS Entered_By_Old,'
-            '       ''%s'' AS Entered_By_New '
+            '       $2 AS Entered_By_New '
             'FROM %I.t_event_log '
-            'WHERE event_id = %s',
-            _enteredByNew,
-            _eventLogSchema, 
-            _eventID);
+            'WHERE event_id = $1',
+            _eventLogSchema);
 
-    EXECUTE _s INTO _previewData;
+    EXECUTE _s INTO _previewData USING _eventID, _enteredByNew;
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 

@@ -4,7 +4,7 @@
 
 CREATE PROCEDURE public.alterenteredbyuser(_targettableschema text, _targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, _entrydatecolumnname text DEFAULT 'entered'::text, _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
     LANGUAGE plpgsql
-    AS $$
+    AS $_$
 /****************************************************
 **
 **  Desc:
@@ -44,7 +44,8 @@ DECLARE
     _enteredByNew text := '';
     _currentTime timestamp := CURRENT_TIMESTAMP;
     _s text;
-    _entryFilterSql text := '';
+    _entryDateFilterSqlWithVariables text := '';
+    _entryDateFilterSqlWithValues text := '';
     _lookupResults record;
 BEGIN
 
@@ -79,10 +80,10 @@ BEGIN
     _s := format(
             'SELECT %I as target_id_match, %I as entered_by '
             'FROM %I.%I '
-            'WHERE %I = %s',
+            'WHERE %I = $1',
             _targetIDColumnName, _enteredByColumnName,
             _targetTableSchema, _targetTableName,
-            _targetIDColumnName, _targetID);
+            _targetIDColumnName);
 
     If _applyTimeFilter <> 0 And _entryTimeWindowSeconds >= 1 Then
         ------------------------------------------------
@@ -99,23 +100,34 @@ BEGIN
                 _entryTimeWindowSeconds;
         End If;
 
-        _entryFilterSql := format(
+        _entryDateFilterSqlWithValues := format(
                             '%I between ''%s'' And ''%s''',
                              _entryDateColumnName,
                             to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss'),
                             to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss'));
 
-        _s := _s || ' AND ' || _entryFilterSql;
+        _entryDateFilterSqlWithVariables := format(
+                            '%I between $2 And $3',
+                             _entryDateColumnName);
 
-        _entryDescription := _entryDescription || ' with ' || _entryFilterSql;
+        If _previewSql <> 0 Then
+            _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
+        Else
+            _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
+        End If;
+
+        _entryDescription := _entryDescription || ' with ' || _entryDateFilterSqlWithValues;
     End If;
 
     If _previewSql <> 0 Then
+        -- Show the SQL both with the dollar signs, and with values
         RAISE INFO '%;', _s;
+        RAISE INFO '%;', regexp_replace(_s, '\$1', _targetID::text);
+
         _enteredBy := session_user || '_simulated';
         _targetIDMatch := _targetID;
     Else
-        EXECUTE _s INTO _lookupResults;
+        EXECUTE _s INTO _lookupResults USING _targetID, _entryDateStart, _entryDateEnd;
         _enteredBy := _lookupResults.entered_by;
         _targetIDMatch := _lookupResults.target_id_match;
     End If;
@@ -145,7 +157,7 @@ BEGIN
         _enteredByNew := _newUser || ' (via ' || _enteredBy || ')';
     End If;
 
-    If char_length(Coalesce(_enteredByNew, '')) = 0 THEN
+    If char_length(Coalesce(_enteredByNew, '')) = 0 Then
         _message := 'Match not found; unable to continue';
     End If;
 
@@ -153,20 +165,28 @@ BEGIN
 
         _s := format(
                 'UPDATE %I.%I '
-                'SET %I = ''%s'' '
-                'WHERE %I = %s',
+                'SET %I = $4 '
+                'WHERE %I = $1',
                 _targetTableSchema, _targetTableName,
-                _enteredByColumnName, _enteredByNew,
-                _targetIDColumnName, _targetID);
+                _enteredByColumnName,
+                _targetIDColumnName);
 
-        If char_length(_entryFilterSql) > 0 Then
-            _s := _s || ' AND ' || _entryFilterSql;
+        If char_length(_entryDateFilterSqlWithVariables) > 0 Then
+            If _previewSql <> 0 Then
+                _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
+            Else
+                _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
+            End If;
         End If;
 
         If _previewSql <> 0 Then
+            -- Show the SQL both with the dollar signs, and with values
+            RAISE INFO '%;', _s;
+            _s := regexp_replace(_s, '\$1', _targetID::text);
+            _s := regexp_replace(_s, '\$4', '''' || _enteredByNew || '''');
             RAISE INFO '%;', _s;
         Else
-            EXECUTE _s;
+            EXECUTE _s USING _targetID, _entryDateStart, _entryDateEnd, _enteredByNew;
         End If;
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
@@ -183,18 +203,24 @@ BEGIN
         _s := format(
                 'SELECT *, ''' || _enteredByNew || ''' AS Entered_By_New '
                 'FROM %I.%I '
-                'WHERE %I = %s',
+                'WHERE %I = $1',
                 _targetTableSchema, _targetTableName,
-                _targetIDColumnName, _targetID);
+                _targetIDColumnName);
 
-        If char_length(_entryFilterSql) > 0 Then
-            _s := _s || ' AND ' || _entryFilterSql;
+        If char_length(_entryDateFilterSqlWithVariables) > 0 Then
+            If _previewSql <> 0 Then
+                _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
+            Else
+                _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
+            End If;
         End If;
 
         If _previewSql <> 0 Then
+            -- Show the SQL both with the dollar signs, and with values
             RAISE INFO '%;', _s;
+            RAISE INFO '%;', regexp_replace(_s, '\$1', _targetID::text);
         Else
-            Execute _s;
+            Execute _s USING _targetID, _entryDateStart, _entryDateEnd;
         End If;
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
@@ -203,7 +229,7 @@ BEGIN
     End If;
 
 END
-$$;
+$_$;
 
 
 ALTER PROCEDURE public.alterenteredbyuser(_targettableschema text, _targettablename text, _targetidcolumnname text, _targetid integer, _newuser text, _applytimefilter integer, _entrytimewindowseconds integer, _entrydatecolumnname text, _enteredbycolumnname text, INOUT _message text, _infoonly integer, _previewsql integer) OWNER TO d3l243;
