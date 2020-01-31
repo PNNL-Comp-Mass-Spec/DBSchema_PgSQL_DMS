@@ -41,7 +41,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, 0);
 
     _message := '';
-    _returncode := '';
+    _returnCode := '';
 
     DROP TABLE IF EXISTS TmpManagerTypeIDs;
     
