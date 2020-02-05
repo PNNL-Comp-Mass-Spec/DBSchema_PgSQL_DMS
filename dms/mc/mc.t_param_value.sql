@@ -70,7 +70,7 @@ CREATE TRIGGER trig_u_t_param_value AFTER UPDATE OF type_id, value, mgr_id ON mc
 --
 
 ALTER TABLE ONLY mc.t_param_value
-    ADD CONSTRAINT fk_t_param_value_t_mgrs FOREIGN KEY (mgr_id) REFERENCES mc.t_mgrs(m_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT fk_t_param_value_t_mgrs FOREIGN KEY (mgr_id) REFERENCES mc.t_mgrs(mgr_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 --
 -- Name: t_param_value fk_t_param_value_t_param_type; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243

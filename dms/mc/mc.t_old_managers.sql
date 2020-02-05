@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE mc.t_old_managers (
-    m_id integer NOT NULL,
-    m_name public.citext NOT NULL,
+    mgr_id integer NOT NULL,
+    mgr_name public.citext NOT NULL,
     mgr_type_id integer NOT NULL,
     param_value_changed smallint NOT NULL,
     control_from_website smallint NOT NULL,
@@ -19,7 +19,7 @@ ALTER TABLE mc.t_old_managers OWNER TO d3l243;
 --
 
 ALTER TABLE ONLY mc.t_old_managers
-    ADD CONSTRAINT pk_t_old_managers PRIMARY KEY (m_id);
+    ADD CONSTRAINT pk_t_old_managers PRIMARY KEY (mgr_id);
 
 --
 -- Name: TABLE t_old_managers; Type: ACL; Schema: mc; Owner: d3l243

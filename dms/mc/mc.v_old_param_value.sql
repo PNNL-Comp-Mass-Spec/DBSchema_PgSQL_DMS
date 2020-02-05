@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW mc.v_old_param_value AS
- SELECT m.m_name,
+ SELECT m.mgr_name AS m_name,
     pt.param_name,
     pv.entry_id,
     pv.type_id,
@@ -15,7 +15,7 @@ CREATE VIEW mc.v_old_param_value AS
     m.mgr_type_id,
     pt.param_name AS paramtype
    FROM ((mc.t_param_value_old_managers pv
-     JOIN mc.t_old_managers m ON ((pv.mgr_id = m.m_id)))
+     JOIN mc.t_old_managers m ON ((pv.mgr_id = m.mgr_id)))
      JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)));
 
 

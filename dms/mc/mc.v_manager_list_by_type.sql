@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW mc.v_manager_list_by_type AS
- SELECT m.m_id AS id,
-    m.m_name AS "Manager Name",
+ SELECT m.mgr_id AS id,
+    m.mgr_name AS "Manager Name",
     mt.mgr_type_name AS "Manager Type",
     COALESCE(activeq.active, 'not defined'::public.citext) AS active,
     m.mgr_type_id,
@@ -19,7 +19,7 @@ CREATE VIEW mc.v_manager_list_by_type AS
             pv.entered_by
            FROM (mc.t_param_value pv
              JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)))
-          WHERE (pt.param_name OPERATOR(public.=) 'mgractive'::public.citext)) activeq ON ((m.m_id = activeq.mgr_id)))
+          WHERE (pt.param_name OPERATOR(public.=) 'mgractive'::public.citext)) activeq ON ((m.mgr_id = activeq.mgr_id)))
   WHERE (m.control_from_website > 0);
 
 
