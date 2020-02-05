@@ -22,6 +22,7 @@ CREATE FUNCTION mc.archiveoldmanagersandparams(_mgrlist text, _infoonly integer 
 **          02/25/2016 mem - Add Set XACT_ABORT On
 **          04/22/2016 mem - Now updating M_Comment in mc.t_old_managers
 **          01/29/2020 mem - Ported to PostgreSQL
+**          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,7 @@ BEGIN
 
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL,
-        m_id int NULL,
+        mgr_id int NULL,
         control_from_web smallint null
     );
 
@@ -86,26 +87,26 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE TmpManagerList
-    SET m_id = M.m_id,
+    SET mgr_id = M.mgr_id,
         control_from_web = M.control_from_website
     FROM mc.t_mgrs M
-    WHERE TmpManagerList.Manager_Name = M.m_name;
+    WHERE TmpManagerList.Manager_Name = M.mgr_name;
 
-    If Exists (Select * from TmpManagerList WHERE m_id Is Null) Then
+    If Exists (Select * from TmpManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
-        SELECT 'Unknown manager (not in mc.t_mgrs)', manager_name
-        FROM TmpManagerList
-        WHERE m_id Is Null
-        ORDER BY manager_name;
+        SELECT 'Unknown manager (not in mc.t_mgrs)', MgrList.manager_name
+        FROM TmpManagerList MgrList
+        WHERE MgrList.mgr_id Is Null
+        ORDER BY MgrList.manager_name;
     End If;
 
-    If Exists (Select * from TmpManagerList WHERE NOT m_id is Null And control_from_web > 0) Then
+    If Exists (Select * from TmpManagerList MgrList WHERE NOT MgrList.mgr_id is Null And MgrList.control_from_web > 0) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager has control_from_website=1; cannot archive',
-               manager_name
-        FROM TmpManagerList
-        WHERE NOT m_id IS NULL And control_from_web > 0
-        ORDER BY manager_name;
+               MgrList.manager_name
+        FROM TmpManagerList  MgrList
+        WHERE NOT MgrList.mgr_id IS NULL And MgrList.control_from_web > 0
+        ORDER BY MgrList.manager_name;
 
         DELETE FROM TmpManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
@@ -124,27 +125,28 @@ BEGIN
     End If;
 
     DELETE FROM TmpManagerList
-    WHERE m_id Is Null OR control_from_website > 0;
+    WHERE TmpManagerList.mgr_id Is Null OR 
+          TmpManagerList.control_from_web > 0;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_old_managers Target ON Src.m_id = Target.m_id) Then
+    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager already exists in t_old_managers; cannot archive',
                manager_name
         FROM TmpManagerList Src
              INNER JOIN mc.t_old_managers Target
-               ON Src.m_id = Target.m_id;
+               ON Src.mgr_id = Target.mgr_id;
 
         DELETE FROM TmpManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
     End If;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_param_value_old_managers Target ON Src.m_id = Target.mgr_id) Then
+    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_param_value_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Note: manager already has parameters in t_param_value_old_managers; will merge values from t_param_value',
                manager_name
         FROM TmpManagerList Src
              INNER JOIN mc.t_param_value_old_managers Target
-               ON Src.m_id = Target.mgr_id;
+               ON Src.mgr_id = Target.mgr_id;
     End If;
 
     If _infoOnly <> 0 OR NOT EXISTS (Select * From TmpManagerList) Then
@@ -163,7 +165,7 @@ BEGIN
                PV.Entered_By
         FROM TmpManagerList Src
              LEFT OUTER JOIN mc.v_param_value PV
-               ON PV.mgr_id = Src.M_ID
+               ON PV.mgr_id = Src.mgr_id
         UNION
         SELECT WarnMsgs.message,
                WarnMsgs.manager_name,
@@ -185,24 +187,24 @@ BEGIN
     RAISE Info 'Insert into t_old_managers';
 
     INSERT INTO mc.t_old_managers(
-                               m_id,
-                               m_name,
+                               mgr_id,
+                               mgr_name,
                                mgr_type_id,
                                param_value_changed,
                                control_from_website,
                                comment )
-    SELECT M.m_id,
-           M.m_name,
+    SELECT M.mgr_id,
+           M.mgr_name,
            M.mgr_type_id,
            M.param_value_changed,
            M.control_from_website,
            M.comment
     FROM mc.t_mgrs M
          INNER JOIN TmpManagerList Src
-           ON M.m_id = Src.m_id
+           ON M.mgr_id = Src.mgr_id
       LEFT OUTER JOIN mc.t_old_managers Target
-           ON Src.m_id = Target.m_id
-    WHERE Target.m_id IS NULL;
+           ON Src.mgr_id = Target.mgr_id
+    WHERE Target.mgr_id IS NULL;
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -232,7 +234,7 @@ BEGIN
            PV.entered_by
     FROM mc.t_param_value PV
          INNER JOIN TmpManagerList Src
-           ON PV.mgr_id = Src.M_ID
+           ON PV.mgr_id = Src.mgr_id
    ON CONFLICT ON CONSTRAINT pk_t_param_value_old_managers
    DO UPDATE SET
         type_id = EXCLUDED.type_id,
@@ -247,12 +249,12 @@ BEGIN
     RAISE Info 'Delete from mc.t_param_value';
 
     DELETE FROM mc.t_param_value target
-    WHERE target.mgr_id IN (SELECT m_id FROM TmpManagerList);
+    WHERE target.mgr_id IN (SELECT MgrList.mgr_id FROM TmpManagerList MgrList);
 
     RAISE Info 'Delete from mc.t_mgrs';
 
     DELETE FROM mc.t_mgrs target
-    WHERE target.m_id IN (SELECT m_id FROM TmpManagerList);
+    WHERE target.mgr_id IN (SELECT MgrList.mgr_id FROM TmpManagerList MgrList);
 
     RAISE Info 'Delete succeeded; returning results';
 
@@ -271,12 +273,12 @@ BEGIN
            PV.entered_by
     FROM TmpManagerList Src
          LEFT OUTER JOIN mc.t_old_managers OldMgrs
-           ON OldMgrs.m_id = Src.m_id
+           ON OldMgrs.mgr_id = Src.mgr_id
          LEFT OUTER JOIN mc.t_param_value_old_managers PV
-           ON PV.mgr_id = Src.m_id
+           ON PV.mgr_id = Src.mgr_id
          LEFT OUTER JOIN mc.t_param_type PT ON
          PV.type_id = PT.param_id
-    ORDER BY Src.Manager_Name, param_name;
+    ORDER BY Src.manager_name, param_name;
 
 EXCEPTION
     WHEN OTHERS THEN

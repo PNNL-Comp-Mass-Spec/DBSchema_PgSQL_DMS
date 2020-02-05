@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW mc.v_old_param_value AS
- SELECT m.mgr_name AS m_name,
+ SELECT m.mgr_name,
     pt.param_name,
     pv.entry_id,
     pv.type_id,

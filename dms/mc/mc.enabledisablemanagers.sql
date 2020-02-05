@@ -27,6 +27,7 @@ CREATE PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid intege
 **          10/12/2017 mem - Allow @ManagerTypeID to be 0 if @ManagerNameList is provided
 **          03/28/2018 mem - Use different messages when updating just one manager
 **          01/30/2020 mem - Ported to PostgreSQL
+**          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **
 *****************************************************/
 DECLARE
@@ -112,12 +113,12 @@ BEGIN
         Call ParseManagerNameList (_managerNameList, _removeUnknownManagers := 1, _message := _message);
 
         If _managerTypeID > 0 Then
-            -- Delete entries from TmpManagerList that don't match entries in M_Name of the given type
+            -- Delete entries from TmpManagerList that don't match entries in mgr_name of the given type
             DELETE FROM TmpManagerList
-            WHERE NOT manager_name IN ( SELECT M.m_name
+            WHERE NOT manager_name IN ( SELECT M.mgr_name
                                         FROM TmpManagerList U
                                              INNER JOIN mc.t_mgrs M
-                                               ON M.m_name = U.manager_name AND
+                                               ON M.mgr_name = U.manager_name AND
                                                   M.mgr_type_id = _managerTypeID );
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
@@ -131,10 +132,10 @@ BEGIN
 
         IF _includeDisabled = 0 THEN
             DELETE FROM TmpManagerList
-            WHERE NOT manager_name IN ( SELECT M.m_name
+            WHERE NOT manager_name IN ( SELECT M.mgr_name
                                         FROM TmpManagerList U
                                              INNER JOIN mc.t_mgrs M
-                                               ON M.m_name = U.manager_name AND
+                                               ON M.mgr_name = U.manager_name AND
                                                   M.mgr_type_id = _managerTypeID 
                                         WHERE control_from_website > 0);
         END IF;
@@ -142,7 +143,7 @@ BEGIN
         -- Populate TmpManagerList with all managers in mc.t_mgrs (of type _managerTypeID)
         --
         INSERT INTO TmpManagerList (manager_name)
-        SELECT m_name
+        SELECT mgr_name
         FROM mc.t_mgrs
         WHERE mgr_type_id = _managerTypeID And
               (control_from_website > 0 Or _includeDisabled > 0);
@@ -166,11 +167,11 @@ BEGIN
          INNER JOIN mc.t_param_type PT
            ON PV.type_id = PT.param_id
          INNER JOIN mc.t_mgrs M
-           ON PV.mgr_id = M.m_id
+           ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
          INNER JOIN TmpManagerList U
-           ON M.m_name = U.manager_name
+           ON M.mgr_name = U.manager_name
     WHERE PT.param_name = 'mgractive' AND
           PV.value <> _newValue AND
           MT.mgr_type_active > 0;
@@ -184,11 +185,11 @@ BEGIN
          INNER JOIN mc.t_param_type PT
            ON PV.type_id = PT.param_id
          INNER JOIN mc.t_mgrs M
-           ON PV.mgr_id = M.m_id
+           ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
          INNER JOIN TmpManagerList U
-           ON M.m_name = U.manager_name
+           ON M.mgr_name = U.manager_name
     WHERE PT.param_name = 'mgractive' AND
           PV.value = _newValue AND
           MT.mgr_type_active > 0;
@@ -240,18 +241,18 @@ BEGIN
         FOR _previewData IN
             SELECT PV.value || ' --> ' || _newValue AS State_Change_Preview,
                    PT.param_name AS Parameter_Name,
-                   M.m_name AS manager_name,
+                   M.mgr_name AS manager_name,
                    MT.mgr_type_name AS Manager_Type,
                    M.control_from_website
             FROM mc.t_param_value PV
                  INNER JOIN mc.t_param_type PT
                    ON PV.type_id = PT.param_id
                  INNER JOIN mc.t_mgrs M
-                   ON PV.mgr_id = M.m_id
+                   ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
                    ON M.mgr_type_id = MT.mgr_type_id
                  INNER JOIN TmpManagerList U
-                   ON M.m_name = U.manager_name
+                   ON M.mgr_name = U.manager_name
             WHERE PT.param_name = 'mgractive' AND
                   PV.value <> _newValue AND
                   MT.mgr_type_active > 0
@@ -280,11 +281,11 @@ BEGIN
          INNER JOIN mc.t_param_type PT
            ON PV.type_id = PT.param_id
          INNER JOIN mc.t_mgrs M
-           ON PV.mgr_id = M.m_id
+           ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
          INNER JOIN TmpManagerList U
-           ON M.m_name = U.manager_name
+           ON M.mgr_name = U.manager_name
     WHERE mc.t_param_value.entry_ID = PV.Entry_ID AND 
           PT.param_name = 'mgractive' AND
           PV.value <> _newValue AND

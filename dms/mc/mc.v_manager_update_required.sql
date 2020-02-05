@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW mc.v_manager_update_required AS
- SELECT m.mgr_name AS m_name,
+ SELECT m.mgr_name,
     pt.param_name,
     pv.value
    FROM ((mc.t_mgrs m

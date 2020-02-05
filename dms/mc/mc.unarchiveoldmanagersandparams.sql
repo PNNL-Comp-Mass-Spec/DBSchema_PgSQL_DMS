@@ -21,6 +21,7 @@ CREATE FUNCTION mc.unarchiveoldmanagersandparams(_mgrlist text, _infoonly intege
 **  Date:   02/25/2016 mem - Initial version
 **          04/22/2016 mem - Now updating M_Comment in mc.t_mgrs
 **          01/29/2020 mem - Ported to PostgreSQL
+**          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
 
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL,
-        m_id int NULL,
+        mgr_id int NULL,
         control_from_web smallint null
     );
 
@@ -92,53 +93,55 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE TmpManagerList
-    SET m_id = M.m_id,
+    SET mgr_id = M.mgr_id,
         control_from_web = _enableControlFromWebsite
     FROM mc.t_old_managers M
-    WHERE TmpManagerList.Manager_Name = M.m_name;
+    WHERE TmpManagerList.Manager_Name = M.mgr_name;
 
-    If Exists (Select * from TmpManagerList WHERE m_id Is Null) Then
+    If Exists (Select * from TmpManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
-        SELECT 'Unknown manager (not in mc.t_old_managers)', manager_name
-        FROM TmpManagerList
-        WHERE m_id Is Null
-        ORDER BY manager_name;
+        SELECT 'Unknown manager (not in mc.t_old_managers)',
+               MgrList.manager_name
+        FROM TmpManagerList MgrList
+        WHERE MgrList.mgr_id Is Null
+        ORDER BY MgrList.manager_name;
     End If;
 
-    If Exists (Select * From TmpManagerList Where manager_name ILike '%Params%') Then
+    If Exists (Select * From TmpManagerList MgrList Where MgrList.manager_name ILike '%Params%') Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Will not process managers with "Params" in the name (for safety)',
-               manager_name
-        FROM TmpManagerList
-        WHERE manager_name ILike '%Params%'
-        ORDER BY manager_name;
+               MgrList.manager_name
+        FROM TmpManagerList MgrList
+        WHERE MgrList.manager_name ILike '%Params%'
+        ORDER BY MgrList.manager_name;
 
         DELETE FROM TmpManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs);
     End If;
 
     DELETE FROM TmpManagerList
-    WHERE m_id Is Null OR control_from_website > 0;
+    WHERE TmpManagerList.mgr_id Is Null OR 
+          TmpManagerList.control_from_web > 0;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.m_id = Target.m_id) Then
+    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager already exists in t_mgrs; cannot restore',
                manager_name
         FROM TmpManagerList Src
              INNER JOIN mc.t_old_managers Target
-               ON Src.m_id = Target.m_id;
+               ON Src.mgr_id = Target.mgr_id;
 
         DELETE FROM TmpManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs);
     End If;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_param_value Target ON Src.m_id = Target.mgr_id) Then
+    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_param_value Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager already has parameters in mc.t_param_value; cannot restore',
                manager_name
         FROM TmpManagerList Src
              INNER JOIN mc.t_param_value_old_managers Target
-               ON Src.m_id = Target.mgr_id;
+               ON Src.mgr_id = Target.mgr_id;
 
         DELETE FROM TmpManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs);
@@ -160,7 +163,7 @@ BEGIN
                PV.Entered_By
         FROM TmpManagerList Src
              LEFT OUTER JOIN mc.v_old_param_value PV
-               ON PV.mgr_id = Src.M_ID
+               ON PV.mgr_id = Src.mgr_id
         UNION
         SELECT WarnMsgs.message,
                WarnMsgs.manager_name,
@@ -182,28 +185,28 @@ BEGIN
     RAISE Info 'Insert into t_mgrs';
 
     INSERT INTO mc.t_mgrs (
-                         m_id,
-                         m_name,
+                         mgr_id,
+                         mgr_name,
                          mgr_type_id,
                          param_value_changed,
                          control_from_website,
                          comment )
     OVERRIDING SYSTEM VALUE
-    SELECT M.m_id,
-           M.m_name,
+    SELECT M.mgr_id,
+           M.mgr_name,
            M.mgr_type_id,
            M.param_value_changed,
            Src.control_from_web,
            M.comment
     FROM mc.t_old_managers M
          INNER JOIN TmpManagerList Src
-           ON M.m_id = Src.m_id;
+           ON M.mgr_id = Src.mgr_id;
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -- Set the manager ID sequence's current value to the maximum manager ID
     --
-    SELECT MAX(m_id) INTO _newSeqValue
+    SELECT MAX(mc.t_mgrs.mgr_id) INTO _newSeqValue
     FROM mc.t_mgrs;
 
     PERFORM setval('mc.t_mgrs_m_id_seq', _newSeqValue);
@@ -231,7 +234,7 @@ BEGIN
     WHERE PV.entry_id IN ( SELECT Max(PV.entry_ID)
                            FROM mc.t_param_value_old_managers PV
                                 INNER JOIN TmpManagerList Src
-                                  ON PV.mgr_id = Src.M_ID
+                                  ON PV.mgr_id = Src.mgr_id
                            GROUP BY PV.mgr_id, PV.type_id 
                          );
     --
@@ -246,10 +249,10 @@ BEGIN
     RAISE INFO 'Sequence mc.t_param_value_entry_id_seq set to %', _newSeqValue;
 
     DELETE FROM mc.t_param_value_old_managers
-    WHERE mc.t_param_value_old_managers.mgr_id IN (SELECT m_id FROM TmpManagerList);
+    WHERE mc.t_param_value_old_managers.mgr_id IN (SELECT MgrList.mgr_id FROM TmpManagerList MgrList);
 
     DELETE FROM mc.t_old_managers
-    WHERE mc.t_old_managers.m_id IN (SELECT m_id FROM TmpManagerList);
+    WHERE mc.t_old_managers.mgr_id IN (SELECT MgrList.mgr_id FROM TmpManagerList MgrList);
 
     RAISE Info 'Restore succeeded; returning results';
 
@@ -268,9 +271,9 @@ BEGIN
            PV.entered_by
     FROM TmpManagerList Src
          LEFT OUTER JOIN mc.t_old_managers OldMgrs
-           ON OldMgrs.m_id = Src.m_id
+           ON OldMgrs.mgr_id = Src.mgr_id
          LEFT OUTER JOIN mc.t_param_value_old_managers PV
-           ON PV.mgr_id = Src.m_id
+           ON PV.mgr_id = Src.mgr_id
          LEFT OUTER JOIN mc.t_param_type PT ON
          PV.type_id = PT.param_id
     ORDER BY Src.Manager_Name, param_name;
@@ -282,7 +285,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error archiving manager parameters for ' || _mgrList || ': ' || _exceptionMessage || '; ';
+    _message := 'Error unarchiving manager parameters for ' || _mgrList || ': ' || _exceptionMessage || '; ';
 
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;

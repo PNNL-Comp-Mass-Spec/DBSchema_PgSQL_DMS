@@ -25,6 +25,7 @@ CREATE PROCEDURE mc.parsemanagernamelist(_managernamelist text DEFAULT ''::text,
 **  Date:   05/09/2008
 **          05/14/2015 mem - Update Insert query to explicitly list field Manager_Name
 **          01/28/2020 mem - Ported to PostgreSQL
+**          02/04/2020 mem - Rename manager name column mgr_name
 **
 *****************************************************/
 DECLARE
@@ -89,9 +90,9 @@ BEGIN
     Loop
         _s := format(
                 'INSERT INTO TmpManagerList (manager_name) ' ||
-                'SELECT m_name ' ||
+                'SELECT mgr_name ' ||
                 'FROM mc.t_mgrs ' ||
-                'WHERE m_name SIMILAR TO $1');
+                'WHERE mgr_name SIMILAR TO $1');
 
         EXECUTE _s USING _managerFilter;
     
@@ -107,7 +108,7 @@ BEGIN
     -- Delete entries from TmpManagerList that are not defined in mc.t_mgrs
     --
     DELETE FROM TmpManagerList
-    WHERE NOT manager_name IN (SELECT m_name FROM mc.t_mgrs);
+    WHERE NOT manager_name IN (SELECT mgr_name FROM mc.t_mgrs);
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 

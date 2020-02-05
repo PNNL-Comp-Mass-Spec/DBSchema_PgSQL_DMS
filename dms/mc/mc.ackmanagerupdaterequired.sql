@@ -19,6 +19,7 @@ CREATE PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message t
 **          01/24/2020 mem - Ported to PostgreSQL
 **          01/26/2020 mem - Add exception handler
 **          01/29/2020 mem - Log errors to PostLogEntry
+**          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **
 *****************************************************/
 DECLARE
@@ -43,9 +44,9 @@ BEGIN
     -- Confirm that the manager name is valid
     ---------------------------------------------------
 
-    SELECT m_id INTO _mgrID
+    SELECT mgr_id INTO _mgrID
     FROM mc.t_mgrs
-    WHERE m_name = _managerName::citext;
+    WHERE mgr_name = _managerName::citext;
 
     IF NOT FOUND THEN
         _message := 'Could not find entry for manager: ' || _managername;
