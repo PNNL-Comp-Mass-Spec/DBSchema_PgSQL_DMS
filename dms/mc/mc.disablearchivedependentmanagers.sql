@@ -22,6 +22,7 @@ DECLARE
 
 BEGIN
 
+    -- Disable Space managers (type 8)
     Call EnableDisableAllManagers (
         _managerTypeIDList := '8', 
         _managerNameList := '', 
