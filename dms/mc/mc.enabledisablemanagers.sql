@@ -28,6 +28,7 @@ CREATE PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid intege
 **          03/28/2018 mem - Use different messages when updating just one manager
 **          01/30/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
+**          02/05/2020 mem - Update _message when previewing updates
 **
 *****************************************************/
 DECLARE
@@ -136,7 +137,7 @@ BEGIN
                                         FROM TmpManagerList U
                                              INNER JOIN mc.t_mgrs M
                                                ON M.mgr_name = U.manager_name AND
-                                                  M.mgr_type_id = _managerTypeID 
+                                                  M.mgr_type_id = _managerTypeID
                                         WHERE control_from_website > 0);
         END IF;
     Else
@@ -235,9 +236,9 @@ BEGIN
                             'Manager Type',
                             'Enabled (control_from_website=1)'
                         );
-    
+
         RAISE INFO '%', _infoHead;
-    
+
         FOR _previewData IN
             SELECT PV.value || ' --> ' || _newValue AS State_Change_Preview,
                    PT.param_name AS Parameter_Name,
@@ -257,7 +258,7 @@ BEGIN
                   PV.value <> _newValue AND
                   MT.mgr_type_active > 0
         LOOP
-                
+
             _infoData := format('%-22s %-15s %-20s %-25s %-25s',
                                     _previewData.State_Change_Preview,
                                     _previewData.Parameter_Name,
@@ -265,11 +266,15 @@ BEGIN
                                     _previewData.Manager_Type,
                                     _previewData.control_from_website
                             );
-                        
+
             RAISE INFO '%', _infoData;
 
         END LOOP;
-    
+
+        _message := format('Would set %s managers to %s; see the Output window for details',
+                            _countToUpdate,
+                            _activeStateDescription);
+
         RETURN;
     End If;
 
@@ -286,10 +291,10 @@ BEGIN
            ON M.mgr_type_id = MT.mgr_type_id
          INNER JOIN TmpManagerList U
            ON M.mgr_name = U.manager_name
-    WHERE mc.t_param_value.entry_ID = PV.Entry_ID AND 
+    WHERE mc.t_param_value.entry_ID = PV.Entry_ID AND
           PT.param_name = 'mgractive' AND
           PV.value <> _newValue AND
-          MT.mgr_type_active > 0;          
+          MT.mgr_type_active > 0;
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
