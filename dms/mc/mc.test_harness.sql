@@ -1,12 +1,11 @@
 --
--- Name: test_harness(); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: test_harness(text); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE FUNCTION public.test_harness() RETURNS TABLE(manager_name text)
+CREATE FUNCTION mc.test_harness(_managernamelist text) RETURNS TABLE(manager_name text)
     LANGUAGE plpgsql
     AS $$
-DECLARE
-    _managerNameList TEXT := 'Pub-10-1, Pub-10-2, Pub-11-[1-5], Pub-12%';
+DECLARE    
     _message TEXT;
     _sqlstate text;
     _exceptionMessage text;
@@ -43,5 +42,5 @@ End
 $$;
 
 
-ALTER FUNCTION public.test_harness() OWNER TO d3l243;
+ALTER FUNCTION mc.test_harness(_managernamelist text) OWNER TO d3l243;
 
