@@ -2,7 +2,7 @@
 -- Name: alterenteredbyusermultiid(text, text, text, text, integer, integer, text, text, text, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE public.alterenteredbyusermultiid(_targettableschema text, _targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, _entrydatecolumnname text DEFAULT 'entered'::text, _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.alterenteredbyusermultiid(_targettableschema text, _targettablename text, _targetidcolumnname text, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, _entrydatecolumnname text DEFAULT 'entered'::text, _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

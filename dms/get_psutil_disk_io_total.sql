@@ -2,7 +2,7 @@
 -- Name: get_psutil_disk_io_total(); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision) RETURNS record
+CREATE OR REPLACE FUNCTION public.get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision) RETURNS record
     LANGUAGE plpythonu SECURITY DEFINER
     AS $$
 from psutil import disk_io_counters

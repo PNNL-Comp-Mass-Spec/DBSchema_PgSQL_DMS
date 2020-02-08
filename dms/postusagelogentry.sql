@@ -2,7 +2,7 @@
 -- Name: postusagelogentry(text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE public.postusagelogentry(_postedby text, _message text DEFAULT ''::text, _minimumupdateinterval integer DEFAULT 1)
+CREATE OR REPLACE PROCEDURE public.postusagelogentry(_postedby text, _message text DEFAULT ''::text, _minimumupdateinterval integer DEFAULT 1)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

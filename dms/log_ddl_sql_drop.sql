@@ -2,7 +2,7 @@
 -- Name: log_ddl_sql_drop(); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.log_ddl_sql_drop() RETURNS event_trigger
+CREATE OR REPLACE FUNCTION public.log_ddl_sql_drop() RETURNS event_trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************

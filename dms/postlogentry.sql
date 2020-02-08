@@ -2,7 +2,7 @@
 -- Name: postlogentry(text, text, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE public.postlogentry(_type text, _message text, _postedby text DEFAULT 'na'::text, _targetschema text DEFAULT 'public'::text, _duplicateentryholdoffhours integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.postlogentry(_type text, _message text, _postedby text DEFAULT 'na'::text, _targetschema text DEFAULT 'public'::text, _duplicateentryholdoffhours integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************

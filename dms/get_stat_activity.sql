@@ -2,7 +2,7 @@
 -- Name: get_stat_activity(); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.get_stat_activity() RETURNS SETOF pg_stat_activity
+CREATE OR REPLACE FUNCTION public.get_stat_activity() RETURNS SETOF pg_stat_activity
     LANGUAGE sql SECURITY DEFINER
     AS $$
   select * from pg_stat_activity where datname = current_database() and pid != pg_backend_pid()

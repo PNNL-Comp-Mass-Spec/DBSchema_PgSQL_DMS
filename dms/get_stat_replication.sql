@@ -2,7 +2,7 @@
 -- Name: get_stat_replication(); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.get_stat_replication() RETURNS SETOF pg_stat_replication
+CREATE OR REPLACE FUNCTION public.get_stat_replication() RETURNS SETOF pg_stat_replication
     LANGUAGE sql SECURITY DEFINER
     AS $$
   select * from pg_stat_replication

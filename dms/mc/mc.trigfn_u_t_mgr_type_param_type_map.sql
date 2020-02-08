@@ -2,7 +2,7 @@
 -- Name: trigfn_u_t_mgr_type_param_type_map(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE FUNCTION mc.trigfn_u_t_mgr_type_param_type_map() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_u_t_mgr_type_param_type_map() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************

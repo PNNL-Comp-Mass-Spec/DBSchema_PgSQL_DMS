@@ -2,7 +2,7 @@
 -- Name: ackmanagerupdaterequired(text, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.ackmanagerupdaterequired(_managername text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

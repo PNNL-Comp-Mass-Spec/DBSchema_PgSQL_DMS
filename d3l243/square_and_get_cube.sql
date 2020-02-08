@@ -2,7 +2,7 @@
 -- Name: square_and_get_cube(double precision); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.square_and_get_cube(INOUT value double precision, OUT cubed double precision) RETURNS record
+CREATE OR REPLACE FUNCTION public.square_and_get_cube(INOUT value double precision, OUT cubed double precision) RETURNS record
     LANGUAGE plpgsql
     AS $$
 BEGIN

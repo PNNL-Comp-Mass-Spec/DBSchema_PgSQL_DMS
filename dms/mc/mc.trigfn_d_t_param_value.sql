@@ -2,7 +2,7 @@
 -- Name: trigfn_d_t_param_value(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE FUNCTION mc.trigfn_d_t_param_value() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_d_t_param_value() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************

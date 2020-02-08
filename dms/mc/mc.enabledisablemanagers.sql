@@ -2,7 +2,7 @@
 -- Name: enabledisablemanagers(integer, integer, text, integer, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer DEFAULT 11, _managernamelist text DEFAULT ''::text, _infoonly integer DEFAULT 0, _includedisabled integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer DEFAULT 11, _managernamelist text DEFAULT ''::text, _infoonly integer DEFAULT 0, _includedisabled integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

@@ -2,7 +2,7 @@
 -- Name: minmaxproc(integer, integer, integer, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE public.minmaxproc(a integer, b integer, c integer, INOUT min integer, INOUT max integer)
+CREATE OR REPLACE PROCEDURE public.minmaxproc(a integer, b integer, c integer, INOUT min integer, INOUT max integer)
     LANGUAGE plpgsql
     AS $$
 /******************

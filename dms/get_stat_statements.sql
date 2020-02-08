@@ -2,7 +2,7 @@
 -- Name: get_stat_statements(); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.get_stat_statements() RETURNS SETOF public.pg_stat_statements
+CREATE OR REPLACE FUNCTION public.get_stat_statements() RETURNS SETOF public.pg_stat_statements
     LANGUAGE sql SECURITY DEFINER
     AS $$
   select s.* from pg_stat_statements s join pg_database d on d.oid = s.dbid and d.datname = current_database()

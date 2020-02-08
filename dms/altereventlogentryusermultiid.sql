@@ -2,7 +2,7 @@
 -- Name: altereventlogentryusermultiid(text, integer, integer, text, integer, integer, text, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE public.altereventlogentryusermultiid(_eventlogschema text, _targettype integer, _targetstate integer, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, INOUT _message text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.altereventlogentryusermultiid(_eventlogschema text, _targettype integer, _targetstate integer, _newuser text, _applytimefilter integer DEFAULT 1, _entrytimewindowseconds integer DEFAULT 15, INOUT _message text DEFAULT ''::text, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

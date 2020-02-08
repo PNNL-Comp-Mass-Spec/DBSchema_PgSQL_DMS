@@ -2,7 +2,7 @@
 -- Name: udf_get_filename(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.udf_get_filename(_filepath text) RETURNS text
+CREATE OR REPLACE FUNCTION public.udf_get_filename(_filepath text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************

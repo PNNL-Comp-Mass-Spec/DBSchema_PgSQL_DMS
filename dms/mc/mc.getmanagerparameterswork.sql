@@ -2,7 +2,7 @@
 -- Name: getmanagerparameterswork(text, integer, integer, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE PROCEDURE mc.getmanagerparameterswork(_managernamelist text DEFAULT ''::text, _sortmode integer DEFAULT 0, _maxrecursion integer DEFAULT 50, INOUT _message text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.getmanagerparameterswork(_managernamelist text DEFAULT ''::text, _sortmode integer DEFAULT 0, _maxrecursion integer DEFAULT 50, INOUT _message text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

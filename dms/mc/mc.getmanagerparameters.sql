@@ -2,7 +2,7 @@
 -- Name: getmanagerparameters(text, integer, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE FUNCTION mc.getmanagerparameters(_managernamelist text DEFAULT ''::text, _sortmode integer DEFAULT 0, _maxrecursion integer DEFAULT 10) RETURNS TABLE(mgr_name text, param_name text, entry_id integer, type_id integer, value text, mgr_id integer, comment text, last_affected timestamp without time zone, entered_by text, mgr_type_id integer, parentparampointerstate integer, source text)
+CREATE OR REPLACE FUNCTION mc.getmanagerparameters(_managernamelist text DEFAULT ''::text, _sortmode integer DEFAULT 0, _maxrecursion integer DEFAULT 10) RETURNS TABLE(mgr_name text, param_name text, entry_id integer, type_id integer, value text, mgr_id integer, comment text, last_affected timestamp without time zone, entered_by text, mgr_type_id integer, parentparampointerstate integer, source text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

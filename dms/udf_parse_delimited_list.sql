@@ -2,7 +2,7 @@
 -- Name: udf_parse_delimited_list(text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.udf_parse_delimited_list(_delimitedlist text, _delimiter text DEFAULT ','::text) RETURNS TABLE(value text)
+CREATE OR REPLACE FUNCTION public.udf_parse_delimited_list(_delimitedlist text, _delimiter text DEFAULT ','::text) RETURNS TABLE(value text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

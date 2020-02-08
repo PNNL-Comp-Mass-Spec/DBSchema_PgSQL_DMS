@@ -2,7 +2,7 @@
 -- Name: getmax3(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.getmax3(a integer, b integer, c integer, OUT max integer) RETURNS integer
+CREATE OR REPLACE FUNCTION public.getmax3(a integer, b integer, c integer, OUT max integer) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 BEGIN

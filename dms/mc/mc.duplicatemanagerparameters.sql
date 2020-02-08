@@ -2,7 +2,7 @@
 -- Name: duplicatemanagerparameters(integer, integer, integer, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE FUNCTION mc.duplicatemanagerparameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer DEFAULT 0, _infoonly integer DEFAULT 0) RETURNS TABLE(type_id integer, value public.citext, mgr_id integer, comment public.citext)
+CREATE OR REPLACE FUNCTION mc.duplicatemanagerparameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer DEFAULT 0, _infoonly integer DEFAULT 0) RETURNS TABLE(type_id integer, value public.citext, mgr_id integer, comment public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

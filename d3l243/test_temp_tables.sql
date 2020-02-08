@@ -2,7 +2,7 @@
 -- Name: test_temp_tables(integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE public.test_temp_tables(_rowstoadd integer)
+CREATE OR REPLACE PROCEDURE public.test_temp_tables(_rowstoadd integer)
     LANGUAGE plpgsql
     AS $$
 DECLARE

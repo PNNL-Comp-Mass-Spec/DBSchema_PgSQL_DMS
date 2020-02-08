@@ -2,7 +2,7 @@
 -- Name: get_psutil_disk(); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.get_psutil_disk(OUT dir_or_tablespace text, OUT path text, OUT total double precision, OUT used double precision, OUT free double precision, OUT percent double precision) RETURNS SETOF record
+CREATE OR REPLACE FUNCTION public.get_psutil_disk(OUT dir_or_tablespace text, OUT path text, OUT total double precision, OUT used double precision, OUT free double precision, OUT percent double precision) RETURNS SETOF record
     LANGUAGE plpythonu SECURITY DEFINER
     AS $$
 

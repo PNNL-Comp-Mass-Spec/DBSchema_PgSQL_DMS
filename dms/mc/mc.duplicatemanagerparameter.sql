@@ -2,7 +2,7 @@
 -- Name: duplicatemanagerparameter(integer, integer, text, text, text, text, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE FUNCTION mc.duplicatemanagerparameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly integer DEFAULT 1) RETURNS TABLE(status text, type_id integer, value public.citext, mgr_id integer, comment public.citext)
+CREATE OR REPLACE FUNCTION mc.duplicatemanagerparameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly integer DEFAULT 1) RETURNS TABLE(status text, type_id integer, value public.citext, mgr_id integer, comment public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

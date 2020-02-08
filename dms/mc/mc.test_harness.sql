@@ -2,7 +2,7 @@
 -- Name: test_harness(text); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE FUNCTION mc.test_harness(_managernamelist text) RETURNS TABLE(manager_name text)
+CREATE OR REPLACE FUNCTION mc.test_harness(_managernamelist text) RETURNS TABLE(manager_name text)
     LANGUAGE plpgsql
     AS $$
 DECLARE    

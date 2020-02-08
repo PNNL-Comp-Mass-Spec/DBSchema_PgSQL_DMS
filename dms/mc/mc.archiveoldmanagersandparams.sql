@@ -2,7 +2,7 @@
 -- Name: archiveoldmanagersandparams(text, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE FUNCTION mc.archiveoldmanagersandparams(_mgrlist text, _infoonly integer DEFAULT 1) RETURNS TABLE(message text, mgr_name public.citext, control_from_website smallint, manager_type_id integer, param_name public.citext, entry_id integer, param_type_id integer, param_value public.citext, mgr_id integer, comment public.citext, last_affected timestamp without time zone, entered_by public.citext)
+CREATE OR REPLACE FUNCTION mc.archiveoldmanagersandparams(_mgrlist text, _infoonly integer DEFAULT 1) RETURNS TABLE(message text, mgr_name public.citext, control_from_website smallint, manager_type_id integer, param_name public.citext, entry_id integer, param_type_id integer, param_value public.citext, mgr_id integer, comment public.citext, last_affected timestamp without time zone, entered_by public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

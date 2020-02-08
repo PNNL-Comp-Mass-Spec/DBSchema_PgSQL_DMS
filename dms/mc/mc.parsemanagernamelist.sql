@@ -2,7 +2,7 @@
 -- Name: parsemanagernamelist(text, integer, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE PROCEDURE mc.parsemanagernamelist(_managernamelist text DEFAULT ''::text, _removeunknownmanagers integer DEFAULT 1, INOUT _message text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.parsemanagernamelist(_managernamelist text DEFAULT ''::text, _removeunknownmanagers integer DEFAULT 1, INOUT _message text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************

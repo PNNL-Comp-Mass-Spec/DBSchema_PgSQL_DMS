@@ -2,7 +2,7 @@
 -- Name: test_sandbox(integer, integer, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE PROCEDURE public.test_sandbox(a integer, b integer, c integer, INOUT _min integer)
+CREATE OR REPLACE PROCEDURE public.test_sandbox(a integer, b integer, c integer, INOUT _min integer)
     LANGUAGE plpgsql
     AS $$
 /******************

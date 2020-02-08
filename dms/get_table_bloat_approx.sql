@@ -2,7 +2,7 @@
 -- Name: get_table_bloat_approx(); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE FUNCTION public.get_table_bloat_approx(OUT approx_free_percent double precision, OUT approx_free_space double precision, OUT dead_tuple_percent double precision, OUT dead_tuple_len double precision) RETURNS record
+CREATE OR REPLACE FUNCTION public.get_table_bloat_approx(OUT approx_free_percent double precision, OUT approx_free_space double precision, OUT dead_tuple_percent double precision, OUT dead_tuple_len double precision) RETURNS record
     LANGUAGE sql SECURITY DEFINER
     AS $$
     select
