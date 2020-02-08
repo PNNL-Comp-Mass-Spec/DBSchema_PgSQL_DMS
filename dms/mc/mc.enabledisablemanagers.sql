@@ -321,7 +321,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error enabling/disabling managers: ' || _exceptionMessage || '; ';
+    _message := 'Error enabling/disabling managers: ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
     RAISE Warning 'Error: %', _message;

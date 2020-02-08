@@ -125,7 +125,7 @@ BEGIN
     End If;
 
     DELETE FROM TmpManagerList
-    WHERE TmpManagerList.mgr_id Is Null OR 
+    WHERE TmpManagerList.mgr_id Is Null OR
           TmpManagerList.control_from_web > 0;
 
     If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
@@ -210,13 +210,13 @@ BEGIN
 
     RAISE Info 'Insert into t_param_value_old_managers';
 
-    -- The following query uses 
+    -- The following query uses
     --   ON CONFLICT ON CONSTRAINT pk_t_param_value_old_managers
     -- instead of
     --   ON CONFLICT (entry_id)
     -- to avoid an ambiguous name error with the entry_id field
     -- returned by this function
-    
+
     INSERT INTO mc.t_param_value_old_managers(
              entry_id,
              type_id,
@@ -287,7 +287,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error archiving manager parameters for ' || _mgrList || ': ' || _exceptionMessage || '; ';
+    _message := 'Error archiving manager parameters for ' || _mgrList || ': ' || _exceptionMessage;
 
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;

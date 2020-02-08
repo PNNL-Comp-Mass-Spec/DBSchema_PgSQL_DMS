@@ -137,7 +137,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error duplicating manager parameters: ' || _exceptionMessage || '; ';
+    _message := 'Error duplicating manager parameters: ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
     RAISE Warning 'Error: %', _message;

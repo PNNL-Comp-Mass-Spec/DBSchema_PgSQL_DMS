@@ -285,7 +285,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error unarchiving manager parameters for ' || _mgrList || ': ' || _exceptionMessage || '; ';
+    _message := 'Error unarchiving manager parameters for ' || _mgrList || ': ' || _exceptionMessage;
 
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;

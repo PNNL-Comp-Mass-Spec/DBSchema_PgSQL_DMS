@@ -111,7 +111,7 @@ BEGIN
             RETURN QUERY
             SELECT 'Preview' as Status,
                    _newParamTypeID AS TypeID,
-                   (Replace(PV.value::citext, _paramValueSearchText::citext, _paramValueReplaceText::citext))::citext AS value,                    
+                   (Replace(PV.value::citext, _paramValueSearchText::citext, _paramValueReplaceText::citext))::citext AS value,
                    PV.mgr_id,
                    Coalesce(_commentOverride, '')::citext AS comment
             FROM mc.t_param_value PV
@@ -165,14 +165,14 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error duplicating a manager parameter: ' || _exceptionMessage || '; ';
+    _message := 'Error duplicating a manager parameter: ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
     RETURN QUERY
-    SELECT 'Error' AS Status, 
+    SELECT 'Error' AS Status,
            0 as type_id,
            _message::citext as value,
            0 as mgr_id,
