@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE mc.parsemanagernamelist(_managernamelist text DEFAUL
 **          05/14/2015 mem - Update Insert query to explicitly list field Manager_Name
 **          01/28/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename manager name column mgr_name
+**          02/07/2020 mem - Fix typo in temp table name
 **
 *****************************************************/
 DECLARE
@@ -33,7 +34,7 @@ DECLARE
     _managerFilter text;
     _s text;
 BEGIN
-        
+
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
@@ -46,9 +47,9 @@ BEGIN
     -- Creata a temporary table
     -----------------------------------------------
 
-    DROP TABLE IF EXISTS TmpMangerSpecList;
+    DROP TABLE IF EXISTS TmpManagerSpecList;
 
-    CREATE TEMP TABLE TmpMangerSpecList (
+    CREATE TEMP TABLE TmpManagerSpecList (
         entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         manager_name text NOT NULL
     );
@@ -61,31 +62,31 @@ BEGIN
         Return;
     End If;
 
-    -- Populate TmpMangerSpecList with the data in _managerNameList
-    INSERT INTO TmpMangerSpecList (manager_name)
+    -- Populate TmpManagerSpecList with the data in _managerNameList
+    INSERT INTO TmpManagerSpecList (manager_name)
     SELECT value
     FROM public.udf_parse_delimited_list(_managerNameList, ',');
 
-    -- Populate TmpManagerList with the entries in TmpMangerSpecList that do not contain a % wildcard
+    -- Populate TmpManagerList with the entries in TmpManagerSpecList that do not contain a % wildcard
     INSERT INTO TmpManagerList (manager_name)
     SELECT manager_name
-    FROM TmpMangerSpecList
+    FROM TmpManagerSpecList
     WHERE NOT manager_name SIMILAR TO '%[%]%' AND NOT manager_name SIMILAR TO '%\[%';
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    -- Delete the non-wildcard entries from TmpMangerSpecList
+    -- Delete the non-wildcard entries from TmpManagerSpecList
     --
-    DELETE FROM TmpMangerSpecList target
+    DELETE FROM TmpManagerSpecList target
     WHERE NOT target.manager_name SIMILAR TO '%[%]%' AND NOT manager_name SIMILAR TO '%\[%';
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    -- Parse the entries in TmpMangerSpecList (all should have a wildcard)
+    -- Parse the entries in TmpManagerSpecList (all should have a wildcard)
     --
     For _managerFilter In
-        SELECT manager_name 
-        FROM TmpMangerSpecList
+        SELECT manager_name
+        FROM TmpManagerSpecList
         ORDER BY Entry_ID
     Loop
         _s := format(
@@ -95,10 +96,10 @@ BEGIN
                 'WHERE mgr_name SIMILAR TO $1');
 
         EXECUTE _s USING _managerFilter;
-    
+
         _s := regexp_replace(_s, '\$1', '''' || _managerFilter || '''');
         RAISE Info '%', _s;
-    
+
     End Loop;
 
     If _removeUnknownManagers = 0 Then
