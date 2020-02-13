@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE mc.updatesinglemgrparamwork(_paramname text, _newval
 **      defined in table TmpParamValueEntriesToUpdate (created by the calling procedure)
 **
 **  Example table creation code:
-**    CREATE TABLE TmpParamValueEntriesToUpdate (entry_id int NOT NULL)
+**    CREATE TEMP TABLE TmpParamValueEntriesToUpdate (entry_id int NOT NULL)
 **
 **  Arguments:
 **    _paramName   The parameter name
