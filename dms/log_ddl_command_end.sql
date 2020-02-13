@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION public.log_ddl_command_end() RETURNS event_trigger
 **
 **  Auth:   mem
 **  Date:   10/08/2019 mem - Initial version
+**          02/12/2020 mem - Ignore schema pg_temp
 **
 *****************************************************/
 DECLARE
@@ -30,7 +31,8 @@ BEGIN
            FunctionInfo.prosrc as function_source
     FROM pg_event_trigger_ddl_commands() e
          LEFT OUTER JOIN pg_proc as FunctionInfo
-           ON FunctionInfo.oid = e.objid;
+           ON FunctionInfo.oid = e.objid
+    WHERE NOT e.schema_name in ('pg_temp', 'pg_toast');
 
 END
 $$;

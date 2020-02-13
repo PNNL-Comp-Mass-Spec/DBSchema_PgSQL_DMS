@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION public.log_ddl_sql_drop() RETURNS event_trigger
 **
 **  Auth:   mem
 **  Date:   10/08/2019 mem - Initial version
+**          02/12/2020 mem - Ignore schema pg_temp
 **
 *****************************************************/
 DECLARE
@@ -27,7 +28,7 @@ BEGIN
            e.schema_name,
            e.object_name
     FROM pg_event_trigger_dropped_objects() e
-    WHERE e.schema_name <> 'pg_toast' and not e.object_name is null;
+    WHERE NOT e.schema_name in ('pg_temp', 'pg_toast') AND NOT e.object_name is null;
 
 END
 $$;
