@@ -42,6 +42,6 @@ ALTER TABLE ONLY public.t_schema_change_log
 -- Name: TABLE t_schema_change_log; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE public.t_schema_change_log TO readaccess;
+GRANT SELECT,INSERT ON TABLE public.t_schema_change_log TO readaccess;
 GRANT SELECT,INSERT,UPDATE ON TABLE public.t_schema_change_log TO writeaccess;
 
