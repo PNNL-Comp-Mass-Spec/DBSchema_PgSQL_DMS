@@ -75,7 +75,7 @@ BEGIN
 
     -- Populate TmpMangerList using ParseManagerNameList
     --
-    Call ParseManagerNameList (_managerNameList, _removeUnknownManagers := 1, _message := _message);
+    Call ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
     IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
         _message := 'No valid managers were found in _managerNameList';

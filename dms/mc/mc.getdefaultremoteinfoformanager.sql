@@ -67,7 +67,7 @@ BEGIN
     );
 
     -- Populate the temporary table with the manager parameters
-    Call GetManagerParametersWork (_managerName, 0, 50, _message := _message);
+    Call GetManagerParametersWork (_managerName, 0, 50, _message => _message);
 
     If Not Exists ( SELECT value
                     FROM Tmp_Mgr_Params

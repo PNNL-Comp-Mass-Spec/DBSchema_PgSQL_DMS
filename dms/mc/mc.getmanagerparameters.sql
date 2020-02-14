@@ -62,7 +62,7 @@ BEGIN
     );
 
     -- Populate the temporary table with the manager parameters
-    Call GetManagerParametersWork (_managerNameList, _sortMode, _maxRecursion, _message := _message);
+    Call GetManagerParametersWork (_managerNameList, _sortMode, _maxRecursion, _message => _message);
 
     -- Return the parameters as a result set
     --

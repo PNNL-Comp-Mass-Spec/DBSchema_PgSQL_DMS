@@ -111,7 +111,7 @@ BEGIN
     If char_length(_managerNameList) > 0 And _managerNameList::citext <> 'All' Then
         -- Populate TmpMangerList using ParseManagerNameList
 
-        Call ParseManagerNameList (_managerNameList, _removeUnknownManagers := 1, _message := _message);
+        Call ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
         If _managerTypeID > 0 Then
             -- Delete entries from TmpManagerList that don't match entries in mgr_name of the given type

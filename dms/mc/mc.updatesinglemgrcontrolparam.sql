@@ -229,7 +229,7 @@ BEGIN
     -- AlterEnteredByUserMultiID and AlterEventLogEntryUserMultiID for _callingUser
     ---------------------------------------------------
     --
-    Call UpdateSingleMgrParamWork (_paramName, _newValue, _callingUser, _message := _message, _returnCode := _returnCode);
+    Call UpdateSingleMgrParamWork (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
 EXCEPTION
     WHEN OTHERS THEN

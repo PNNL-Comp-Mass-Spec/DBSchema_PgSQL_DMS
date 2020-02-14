@@ -60,7 +60,7 @@ BEGIN
     -- Using _removeUnknownManagers so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
     --
-    Call ParseManagerNameList (_mgrList, _removeUnknownManagers := 0, _message := _message);
+    Call ParseManagerNameList (_mgrList, _removeUnknownManagers => 0, _message => _message);
 
     If Not Exists (Select * from TmpManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
@@ -312,4 +312,10 @@ $$;
 
 
 ALTER FUNCTION mc.archiveoldmanagersandparams(_mgrlist text, _infoonly integer) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION archiveoldmanagersandparams(_mgrlist text, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
+--
+
+COMMENT ON FUNCTION mc.archiveoldmanagersandparams(_mgrlist text, _infoonly integer) IS 'ArchiveOldManagersAndParams';
 

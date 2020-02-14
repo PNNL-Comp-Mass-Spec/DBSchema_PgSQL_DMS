@@ -17,7 +17,7 @@ BEGIN
         manager_name text NOT NULL
      );
 
-    CALL mc.ParseManagerNameList(_managerNameList, _removeUnknownManagers := 0, _message := _message);
+    CALL mc.ParseManagerNameList(_managerNameList, _removeUnknownManagers => 0, _message => _message);
 
     RAISE INFO '%', _message;
 

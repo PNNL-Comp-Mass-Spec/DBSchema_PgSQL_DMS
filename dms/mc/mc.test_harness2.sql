@@ -20,7 +20,7 @@ BEGIN
         mgr_id int NULL
     );
 
-    CALL mc.ParseManagerNameList(_managerNameList, _removeUnknownManagers := 1, _message := _message);
+    CALL mc.ParseManagerNameList(_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
     RAISE INFO '%', _message;
 
