@@ -1,8 +1,8 @@
 --
--- Name: enabledisablemanagers(integer, integer, text, integer, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: enabledisablemanagers(integer, integer, text, integer, integer, refcursor, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer DEFAULT 11, _managernamelist text DEFAULT ''::text, _infoonly integer DEFAULT 0, _includedisabled integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer DEFAULT 11, _managernamelist text DEFAULT ''::text, _infoonly integer DEFAULT 0, _includedisabled integer DEFAULT 0, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -19,6 +19,20 @@ CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(_enable integer, _managerty
 **   _infoOnly           When non-zero, show the managers that would be updated
 **   _includeDisabled    By default, this procedure skips managers with control_from_website = 0 in t_mgrs; set _includeDisabled to 1 to also include them
 **
+**
+**  Use this to view the data returned by the _results cursor
+**
+**      BEGIN;
+**          CALL mc.EnableDisableManagers(
+**              _enable => 1,
+**              _managerTypeID => 11,
+**              _managerNameList => 'Pub-80%',
+**              _infoOnly => 1,
+**              _includeDisabled => 0
+**          );
+**          FETCH ALL FROM "_results";
+**      END;
+**
 **  Auth:   mem
 **  Date:   07/12/2007
 **          05/09/2008 mem - Added parameter @ManagerNameList
@@ -29,6 +43,7 @@ CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(_enable integer, _managerty
 **          01/30/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **          02/05/2020 mem - Update _message when previewing updates
+**          02/15/2020 mem - Add _results cursor
 **
 *****************************************************/
 DECLARE
@@ -223,7 +238,28 @@ BEGIN
             End If;
         End If;
 
+        _message := _message || '; see also FETCH ALL FROM "_results"';
+
         RAISE INFO '%', _message;
+
+        Open _results For
+            SELECT PV.value Manager_State,
+                   PT.param_name AS Parameter_Name,
+                   M.mgr_name AS manager_name,
+                   MT.mgr_type_name AS Manager_Type,
+                   M.control_from_website
+            FROM mc.t_param_value PV
+                 INNER JOIN mc.t_param_type PT
+                   ON PV.type_id = PT.param_id
+                 INNER JOIN mc.t_mgrs M
+                   ON PV.mgr_id = M.mgr_id
+                 INNER JOIN mc.t_mgr_types MT
+                   ON M.mgr_type_id = MT.mgr_type_id
+                 INNER JOIN TmpManagerList U
+                   ON M.mgr_name = U.manager_name
+            WHERE PT.param_name = 'mgractive' AND
+                  MT.mgr_type_active > 0;
+
         Return;
     End If;
 
@@ -271,9 +307,28 @@ BEGIN
 
         END LOOP;
 
-        _message := format('Would set %s managers to %s; see the Output window for details',
+        _message := format('Would set %s managers to %s; see the Output window for details, or use FETCH ALL FROM "_results";',
                             _countToUpdate,
                             _activeStateDescription);
+
+        Open _results For
+            SELECT PV.value || ' --> ' || _newValue AS State_Change_Preview,
+                   PT.param_name AS Parameter_Name,
+                   M.mgr_name AS manager_name,
+                   MT.mgr_type_name AS Manager_Type,
+                   M.control_from_website
+            FROM mc.t_param_value PV
+                 INNER JOIN mc.t_param_type PT
+                   ON PV.type_id = PT.param_id
+                 INNER JOIN mc.t_mgrs M
+                   ON PV.mgr_id = M.mgr_id
+                 INNER JOIN mc.t_mgr_types MT
+                   ON M.mgr_type_id = MT.mgr_type_id
+                 INNER JOIN TmpManagerList U
+                   ON M.mgr_name = U.manager_name
+            WHERE PT.param_name = 'mgractive' AND
+                  PV.value <> _newValue AND
+                  MT.mgr_type_active > 0;
 
         RETURN;
     End If;
@@ -312,7 +367,27 @@ BEGIN
         End If;
     End If;
 
+    _message := _message || '; see also FETCH ALL FROM "_results"';
+
     RAISE INFO '%', _message;
+
+    Open _results For
+        SELECT PV.value Manager_State,
+               PT.param_name AS Parameter_Name,
+               M.mgr_name AS manager_name,
+               MT.mgr_type_name AS Manager_Type,
+               M.control_from_website
+        FROM mc.t_param_value PV
+             INNER JOIN mc.t_param_type PT
+               ON PV.type_id = PT.param_id
+             INNER JOIN mc.t_mgrs M
+               ON PV.mgr_id = M.mgr_id
+             INNER JOIN mc.t_mgr_types MT
+               ON M.mgr_type_id = MT.mgr_type_id
+             INNER JOIN TmpManagerList U
+               ON M.mgr_name = U.manager_name
+        WHERE PT.param_name = 'mgractive' AND
+              MT.mgr_type_active > 0;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -333,11 +408,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _message text, INOUT _returncode text) IS 'EnableDisableManagers';
+COMMENT ON PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'EnableDisableManagers';
 
