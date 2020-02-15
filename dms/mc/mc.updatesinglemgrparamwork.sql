@@ -21,9 +21,11 @@ CREATE OR REPLACE PROCEDURE mc.updatesinglemgrparamwork(_paramname text, _newval
 **  Auth:   mem
 **  Date:   04/16/2009
 **          02/10/2020 mem - Ported to PostgreSQL
+**          02/15/2020 mem - Provide a more detailed message of what was updated
 **
 *****************************************************/
 DECLARE
+    _rowCountUnchanged int := 0;
     _rowCountUpdated int := 0;
     _paramTypeID int;
     _targetState int;
@@ -55,6 +57,15 @@ BEGIN
         _returnCode := 'U5316';
         Return;
     End If;
+
+    ---------------------------------------------------
+    -- Count the number of rows that already have this value
+    ---------------------------------------------------
+    --
+    SELECT Count(*) INTO _rowCountUnchanged
+    FROM mc.t_param_value
+    WHERE entry_id IN (SELECT entry_id FROM TmpParamValueEntriesToUpdate) AND
+          Coalesce(value, '') = _newValue;
 
     ---------------------------------------------------
     -- Update the values defined in TmpParamValueEntriesToUpdate
@@ -119,8 +130,12 @@ BEGIN
 
     End If;
 
-    IF _message = '' Then
-        _message := 'Updated ' || _rowCountUpdated || ' row(s) in mc.t_param_value';
+    If _message = '' Then
+        If _rowCountUpdated = 0 Then
+            _message := 'All ' || _rowCountUnchanged || ' row(s) in mc.t_param_value already have ' || _paramname || ' = ' || _newValue;
+        Else
+            _message := 'Updated ' || _rowCountUpdated || ' row(s) in mc.t_param_value to have ' || _paramname || ' = ' || _newValue;
+        End If;
     End If;
 END
 $$;
