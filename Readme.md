@@ -21,10 +21,11 @@ for high-throughput proteomics" published in the journal Proteomics in 2006:
 The original database schema for DMS is in the Microsoft SQL Server format, and can be found 
 in the [DBSchema_DMS repo](https://github.com/PNNL-Comp-Mass-Spec/DBSchema_DMS) on GitHub.
 
-Migration of the SQL Server tables, views, stored procedures and functions is in progress.  
-The following table describes the PostgreSQL schemas for DMS, along with the Source SQL Server Database for each schema.
+Migration of the SQL Server tables, views, stored procedures and functions to PostgreSQL is a work in progress.
 
-# Schema 
+## Schema
+
+The following table describes the PostgreSQL schemas for DMS, along with the Source SQL Server Database for each schema.
 
 |Database | Schema   | Description                         | Source SQL Server DB   |
 |---------|----------|-------------------------------------|------------------------|
@@ -41,6 +42,56 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 | mts     | public   | MTS metadata DBs                    | MTS_Master             |
 | mts     | mtmain   | MTS metadata DBs                    | MT_Main                |
 | mts     | prismifc | MTS metadata DBs                    | Prism_IFC              |
+
+## Schema and Data Migration Steps
+
+1. Use SSMS to script out tables, indexes, triggers, relationships, and views from SQL Server
+
+2. Use the DB Schema Export Tool to pre-process the scripted DDL to rename columns and skip unwanted tables and views
+* In the [DB-Schema-Export-Tool repo](https://github.com/PNNL-Comp-Mass-Spec/DB-Schema-Export-Tool) on GitHub
+* Three input files:
+  * Schema DDL file from step 1
+  * Text file defining the source and target table names, along with primary key columns
+    * Also defines tables to skip
+    * Defined with the `DataTables` parameter in the ExportOptions parameter file
+  * Text file defining the source and target column names, optionally defining columns to skip
+    * Defined with the `ColumnMap` parameter in the ExportOptions parameter file
+
+3. Use the sqlserver2pgsql tool to convert the DDL to PostgreSQL syntax, including citext
+* sqlserver2pgsql is a perl script
+  * Originally from https://github.com/dalibo/sqlserver2pgsql
+  * Now in the [sqlserver2pgsql repo](https://github.com/PNNL-Comp-Mass-Spec/sqlserver2pgsql) on GitHub
+* It creates updated DDL files
+* It also creates a text file (named Database_ColumnNameMap.txt) listing the old and new table and column names
+
+4. Use the PgSql View Creator Helper program (PgSqlViewCreatorHelper) to update the DDL for views
+* See the [PgSQL-View-Creator-Helper repo](https://github.com/PNNL-Comp-Mass-Spec/PgSQL-View-Creator-Helper) on GitHub
+* This program also creates a merged ColumnNameMap file (Database_ColumnNameMap_merged.txt) that merges two map files from the previous steps
+  * The ColumnNameMap.txt file created by sqlserver2pgsql
+  * The ColumnMap file provided to the DB Schema Export Tool, listing source and target column names
+
+5. Create tables and views in the PostgreSQL database
+* Tables and views can be manually updated, if necessary
+
+6. Script out the schema for tables, views, etc. in the the PostgreSQL database
+* Again, use the DB Schema Export Tool, but this time the source database is the PostgreSQL server
+* Store the scripted objects in a git repo
+  * See the [DBSchema_DMS repo](https://github.com/PNNL-Comp-Mass-Spec/DBSchema_DMS)
+
+7. Transfer Table Data
+* Use the DB Schema Export Tool tool to export data from all of the tables in SQL Server
+* Two input files:
+  * Text file defining the source and target table names, along with primary key columns; also defines tables to skip
+  * Text file defining the source and target column names, optionally defining columns to skip
+* The program will create one file per table, with the data for that table scripted as `INSERT ... ON CONFLICT DO UPDATE` statements
+* It also creates a shell script for loading the data for each table
+  * Import data to to the PostgreSQL database by running the shell script
+
+8. Convert stored procedures
+* Use SQL Server Management Studio (SSMS) to script out stored procedures and user defined functions from a database
+* Convert the scripted DDL using the SQLServer Stored Procedure Converter
+  * See the [SQLServer-Stored-Procedure-Converter repo](https://github.com/PNNL-Comp-Mass-Spec/SQLServer-Stored-Procedure-Converter) on GitHub
+  * Uses the merged ColumnNameMap file created by the PgSqlViewCreatorHelper to rename tables and columns referenced in the stored procedures
 
 
 # License
