@@ -84,4 +84,5 @@ ALTER TABLE ONLY mc.t_param_value
 --
 
 GRANT SELECT ON TABLE mc.t_param_value TO readaccess;
+GRANT INSERT,UPDATE ON TABLE mc.t_param_value TO writeaccess;
 

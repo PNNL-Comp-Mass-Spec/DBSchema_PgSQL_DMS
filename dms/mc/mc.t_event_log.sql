@@ -53,4 +53,5 @@ ALTER TABLE ONLY mc.t_event_log
 --
 
 GRANT SELECT ON TABLE mc.t_event_log TO readaccess;
+GRANT INSERT,UPDATE ON TABLE mc.t_event_log TO writeaccess;
 
