@@ -4,12 +4,12 @@
 
 CREATE VIEW mc.v_manager_list_by_type AS
  SELECT m.mgr_id AS id,
-    m.mgr_name AS "Manager Name",
-    mt.mgr_type_name AS "Manager Type",
+    m.mgr_name AS manager_name,
+    mt.mgr_type_name AS manager_type,
     COALESCE(activeq.active, 'not defined'::public.citext) AS active,
     m.mgr_type_id,
-    activeq.last_affected AS "State Last Changed",
-    activeq.entered_by AS "Changed By",
+    activeq.last_affected AS state_last_changed,
+    activeq.entered_by AS changed_by,
     m.comment
    FROM ((mc.t_mgrs m
      JOIN mc.t_mgr_types mt ON ((m.mgr_type_id = mt.mgr_type_id)))

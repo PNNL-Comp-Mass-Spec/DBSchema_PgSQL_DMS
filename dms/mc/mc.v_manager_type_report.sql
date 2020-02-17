@@ -3,17 +3,17 @@
 --
 
 CREATE VIEW mc.v_manager_type_report AS
- SELECT mt.mgr_type_name AS "Manager Type",
+ SELECT mt.mgr_type_name AS manager_type,
     mt.mgr_type_id AS id,
-    COALESCE(activemanagersq.managercountactive, (0)::bigint) AS "Manager Count Active",
-    COALESCE(activemanagersq.managercountinactive, (0)::bigint) AS "Manager Count Inactive"
+    COALESCE(activemanagersq.managercountactive, (0)::bigint) AS manager_count_active,
+    COALESCE(activemanagersq.managercountinactive, (0)::bigint) AS manager_count_inactive
    FROM (mc.t_mgr_types mt
-     LEFT JOIN ( SELECT v_manager_list_by_type.mgr_type_id,
-            v_manager_list_by_type."Manager Type",
-            count(*) FILTER (WHERE (v_manager_list_by_type.active OPERATOR(public.=) 'True'::public.citext)) AS managercountactive,
-            count(*) FILTER (WHERE (v_manager_list_by_type.active OPERATOR(public.<>) 'True'::public.citext)) AS managercountinactive
-           FROM mc.v_manager_list_by_type
-          GROUP BY v_manager_list_by_type.mgr_type_id, v_manager_list_by_type."Manager Type") activemanagersq ON ((mt.mgr_type_id = activemanagersq.mgr_type_id)))
+     LEFT JOIN ( SELECT ml.mgr_type_id,
+            ml.manager_type,
+            count(*) FILTER (WHERE (ml.active OPERATOR(public.=) 'True'::public.citext)) AS managercountactive,
+            count(*) FILTER (WHERE (ml.active OPERATOR(public.<>) 'True'::public.citext)) AS managercountinactive
+           FROM mc.v_manager_list_by_type ml
+          GROUP BY ml.mgr_type_id, ml.manager_type) activemanagersq ON ((mt.mgr_type_id = activemanagersq.mgr_type_id)))
   WHERE (mt.mgr_type_id IN ( SELECT t_mgrs.mgr_type_id
            FROM mc.t_mgrs
           WHERE (t_mgrs.control_from_website > 0)));

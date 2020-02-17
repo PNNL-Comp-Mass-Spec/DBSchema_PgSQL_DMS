@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW mc.v_manager_type_report_all AS
- SELECT DISTINCT mt.mgr_type_name AS "Manager Type",
+ SELECT DISTINCT mt.mgr_type_name AS manager_type,
     mt.mgr_type_id AS id
    FROM ((mc.t_mgr_types mt
      JOIN mc.t_mgrs m ON ((m.mgr_type_id = mt.mgr_type_id)))
