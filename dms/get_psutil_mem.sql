@@ -3,7 +3,7 @@
 --
 
 CREATE OR REPLACE FUNCTION public.get_psutil_mem(OUT total double precision, OUT used double precision, OUT free double precision, OUT buff_cache double precision, OUT available double precision, OUT percent double precision, OUT swap_total double precision, OUT swap_used double precision, OUT swap_free double precision, OUT swap_percent double precision) RETURNS record
-    LANGUAGE plpythonu SECURITY DEFINER
+    LANGUAGE plpython3u SECURITY DEFINER
     AS $$
 from psutil import virtual_memory, swap_memory
 vm = virtual_memory()

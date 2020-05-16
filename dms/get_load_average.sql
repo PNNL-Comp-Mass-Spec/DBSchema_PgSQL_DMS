@@ -3,7 +3,7 @@
 --
 
 CREATE OR REPLACE FUNCTION public.get_load_average(OUT load_1min double precision, OUT load_5min double precision, OUT load_15min double precision) RETURNS record
-    LANGUAGE plpythonu SECURITY DEFINER
+    LANGUAGE plpython3u SECURITY DEFINER
     AS $$
 from os import getloadavg
 la = getloadavg()

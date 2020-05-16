@@ -3,7 +3,7 @@
 --
 
 CREATE OR REPLACE FUNCTION public.get_psutil_disk(OUT dir_or_tablespace text, OUT path text, OUT total double precision, OUT used double precision, OUT free double precision, OUT percent double precision) RETURNS SETOF record
-    LANGUAGE plpythonu SECURITY DEFINER
+    LANGUAGE plpython3u SECURITY DEFINER
     AS $$
 
 from os import stat
