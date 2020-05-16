@@ -22,6 +22,8 @@ SET row_security = off;
 
 COPY pgwatch2.schema_version (sv_tag, sv_created_on) FROM stdin;
 1.6.2	2019-10-04 22:09:29.423817-07
+1.7.0	2020-05-05 16:34:50.084306-07
+1.7.1	2020-05-05 16:40:35.630743-07
 \.
 
 

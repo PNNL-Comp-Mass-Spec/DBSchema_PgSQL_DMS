@@ -84,7 +84,7 @@ ALTER TABLE ONLY pgwatch2.monitored_db
 -- Name: monitored_db_md_hostname_md_port_md_dbname_md_is_enabled_idx; Type: INDEX; Schema: pgwatch2; Owner: pgwatch2
 --
 
-CREATE UNIQUE INDEX monitored_db_md_hostname_md_port_md_dbname_md_is_enabled_idx ON pgwatch2.monitored_db USING btree (md_hostname, md_port, md_dbname, md_is_enabled);
+CREATE UNIQUE INDEX monitored_db_md_hostname_md_port_md_dbname_md_is_enabled_idx ON pgwatch2.monitored_db USING btree (md_hostname, md_port, md_dbname, md_is_enabled) WHERE (NOT (md_dbtype ~ 'patroni'::text));
 
 --
 -- Name: monitored_db monitored_db_md_preset_config_name_fkey; Type: FK CONSTRAINT; Schema: pgwatch2; Owner: pgwatch2
