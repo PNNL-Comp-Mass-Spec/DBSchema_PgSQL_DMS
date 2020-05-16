@@ -95,7 +95,7 @@ FROM (
                                                     WHEN MAX(coalesce(null_frac, 0)) > 0 THEN (7 + count(*)) / 8
                                                     ELSE 0::int END
                                                +
-                                           0                        AS tpl_hdr_size,
+                                           0                                                                 AS tpl_hdr_size,
                                            sum((1 - coalesce(s.null_frac, 0)) * coalesce(s.avg_width, 1024)) AS tpl_data_size,
                                            bool_or(att.atttypid = 'pg_catalog.name'::regtype)
                                                OR count(att.attname) <> count(s.attname)                     AS is_na
