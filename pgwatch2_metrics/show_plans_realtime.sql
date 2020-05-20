@@ -19,3 +19,9 @@ ALTER TABLE public.show_plans_realtime OWNER TO pgwatch2;
 
 COMMENT ON TABLE public.show_plans_realtime IS 'pgwatch2-generated-metric-lvl';
 
+--
+-- Name: show_plans_realtime_dbname_time_idx; Type: INDEX; Schema: public; Owner: pgwatch2
+--
+
+CREATE INDEX show_plans_realtime_dbname_time_idx ON ONLY public.show_plans_realtime USING btree (dbname, "time");
+

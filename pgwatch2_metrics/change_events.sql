@@ -19,3 +19,15 @@ ALTER TABLE public.change_events OWNER TO pgwatch2;
 
 COMMENT ON TABLE public.change_events IS 'pgwatch2-generated-metric-lvl';
 
+--
+-- Name: change_events_dbname_tag_data_time_idx; Type: INDEX; Schema: public; Owner: pgwatch2
+--
+
+CREATE INDEX change_events_dbname_tag_data_time_idx ON ONLY public.change_events USING gin (dbname, tag_data, "time") WHERE (tag_data IS NOT NULL);
+
+--
+-- Name: change_events_dbname_time_idx; Type: INDEX; Schema: public; Owner: pgwatch2
+--
+
+CREATE INDEX change_events_dbname_time_idx ON ONLY public.change_events USING btree (dbname, "time");
+

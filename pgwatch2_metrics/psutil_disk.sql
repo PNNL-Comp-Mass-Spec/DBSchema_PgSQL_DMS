@@ -19,3 +19,15 @@ ALTER TABLE public.psutil_disk OWNER TO pgwatch2;
 
 COMMENT ON TABLE public.psutil_disk IS 'pgwatch2-generated-metric-lvl';
 
+--
+-- Name: psutil_disk_dbname_tag_data_time_idx; Type: INDEX; Schema: public; Owner: pgwatch2
+--
+
+CREATE INDEX psutil_disk_dbname_tag_data_time_idx ON ONLY public.psutil_disk USING gin (dbname, tag_data, "time") WHERE (tag_data IS NOT NULL);
+
+--
+-- Name: psutil_disk_dbname_time_idx; Type: INDEX; Schema: public; Owner: pgwatch2
+--
+
+CREATE INDEX psutil_disk_dbname_time_idx ON ONLY public.psutil_disk USING btree (dbname, "time");
+
