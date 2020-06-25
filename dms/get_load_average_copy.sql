@@ -7,10 +7,10 @@ CREATE OR REPLACE FUNCTION public.get_load_average_copy(OUT load_1min double pre
     AS $$
 begin
     if random() < 0.02 then    /* clear the table on ca every 50th call not to be bigger than a couple of pages */
-        truncate public.get_load_average_copy;
+        truncate get_load_average_copy;
     end if;
-    copy public.get_load_average_copy (load_1min, load_5min, load_15min, proc_count, last_procid) from '/proc/loadavg' with (format csv, delimiter ' ');
-    select t.load_1min, t.load_5min, t.load_15min into load_1min, load_5min, load_15min from public.get_load_average_copy t order by created_on desc nulls last limit 1;
+    copy get_load_average_copy (load_1min, load_5min, load_15min, proc_count, last_procid) from '/proc/loadavg' with (format csv, delimiter ' ');
+    select t.load_1min, t.load_5min, t.load_15min into load_1min, load_5min, load_15min from get_load_average_copy t order by created_on desc nulls last limit 1;
     return;
 end;
 $$;
