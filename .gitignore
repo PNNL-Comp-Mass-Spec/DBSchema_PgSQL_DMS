@@ -1,3 +1,6 @@
 _AllObjects_.sql
 t_schema_change_log_data.sql
 /pgwatch2_metrics/subpartitions/*
+/d3l243/[a-zA-Z]*
+/pgwatch2_metrics/stat_statements_calls_Data.sql
+/pgwatch2_metrics/stat_statements_Data.sql
