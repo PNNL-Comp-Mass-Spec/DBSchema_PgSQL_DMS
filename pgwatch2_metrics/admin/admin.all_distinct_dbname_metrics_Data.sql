@@ -84,22 +84,6 @@ DMS_PrismDB1	configured_dbs	2020-06-23 23:24:47.336094-07
 DMS_PrismDB1	object_changes	2020-06-23 23:24:47.367206-07
 DMS_PrismDB1	sproc_changes	2020-06-24 21:09:24.119357-07
 DMS_PrismWeb3	sproc_changes	2020-06-24 21:09:24.119357-07
-DMS_PrismWeb3	index_changes	2020-06-25 11:40:51.872335-07
-DMS_PrismDB1	index_changes	2020-06-25 11:41:03.954748-07
-DMS_PrismDB1	wal_receiver	2020-06-25 11:41:48.692716-07
-DMS_PrismDB1	logical_subscriptions	2020-06-25 11:41:48.694359-07
-DMS_PrismDB1	show_plans_realtime	2020-06-25 11:41:48.695381-07
-DMS_PrismDB1	replication_slots	2020-06-25 11:41:48.699464-07
-DMS_PrismDB1	sproc_stats	2020-06-25 11:41:48.700073-07
-DMS_PrismDB1	change_events	2020-06-25 11:41:48.702231-07
-DMS_PrismDB1	replication	2020-06-25 11:41:48.703354-07
-DMS_PrismWeb3	sproc_stats	2020-06-25 11:41:48.810028-07
-DMS_PrismWeb3	change_events	2020-06-25 11:41:48.81568-07
-DMS_PrismWeb3	show_plans_realtime	2020-06-25 11:41:48.821046-07
-DMS_PrismWeb3	wal_receiver	2020-06-25 11:41:48.82171-07
-DMS_PrismWeb3	replication	2020-06-25 11:41:48.822272-07
-DMS_PrismWeb3	logical_subscriptions	2020-06-25 11:41:48.823145-07
-DMS_PrismWeb3	replication_slots	2020-06-25 11:41:48.823364-07
 \.
 
 
