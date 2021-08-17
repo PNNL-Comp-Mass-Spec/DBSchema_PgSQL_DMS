@@ -19,7 +19,7 @@ DECLARE
     -- _msg text;
 BEGIN
 
-    INSERT INTO t_schema_change_log (entered, login_name, client_addr, command_tag, object_type, schema_name, object_name, function_name, function_source)
+    INSERT INTO public.t_schema_change_log (entered, login_name, client_addr, command_tag, object_type, schema_name, object_name, function_name, function_source)
     SELECT now(),
            current_user,
            inet_client_addr(),
