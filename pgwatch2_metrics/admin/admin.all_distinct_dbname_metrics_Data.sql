@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.3
+-- Dumped from database version 12.5
 -- Dumped by pg_dump version 12.3
 
 SET statement_timeout = 0;
@@ -47,11 +47,8 @@ DMS_PrismWeb3	db_size	2020-05-12 11:43:35.563627-07
 DMS_PrismWeb3	locks_mode	2020-05-12 11:43:35.56476-07
 DMS_PrismWeb3	psutil_disk_io_total	2020-05-12 11:43:35.566517-07
 DMS_PrismWeb3	backup_age_pgbackrest	2020-05-12 12:43:15.068505-07
-DMS_PrismWeb3	configuration_changes	2020-05-12 23:42:19.43765-07
 DMS_PrismWeb3	configured_dbs	2020-05-12 23:42:19.439743-07
-DMS_PrismWeb3	object_changes	2020-05-12 23:42:19.456712-07
 DMS_PrismWeb3	psutil_disk_io_total_per_disk	2020-05-13 19:13:52.113185-07
-DMS_PrismWeb3	table_changes	2020-06-23 16:08:09.295168-07
 DMS_PrismDB1	server_log_event_counts	2020-06-23 16:36:04.624322-07
 DMS_PrismDB1	recommendations	2020-06-23 16:36:04.625543-07
 DMS_PrismDB1	psutil_mem	2020-06-23 16:36:04.626274-07
@@ -79,11 +76,7 @@ DMS_PrismDB1	kpi	2020-06-23 16:36:04.639876-07
 DMS_PrismDB1	backup_age_pgbackrest	2020-06-23 16:36:04.640402-07
 DMS_PrismDB1	wal_size	2020-06-23 16:36:04.640957-07
 DMS_PrismDB1	bgwriter	2020-06-23 16:36:04.641452-07
-DMS_PrismDB1	configuration_changes	2020-06-23 23:24:47.331795-07
 DMS_PrismDB1	configured_dbs	2020-06-23 23:24:47.336094-07
-DMS_PrismDB1	object_changes	2020-06-23 23:24:47.367206-07
-DMS_PrismDB1	sproc_changes	2020-06-24 21:09:24.119357-07
-DMS_PrismWeb3	sproc_changes	2020-06-24 21:09:24.119357-07
 \.
 
 
