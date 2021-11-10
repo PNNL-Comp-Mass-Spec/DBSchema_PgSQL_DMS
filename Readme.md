@@ -14,7 +14,7 @@ tools for more effective proteomics research.
 
 For more information see the manuscript "PRISM: a data management system 
 for high-throughput proteomics" published in the journal Proteomics in 2006:
-[PMID: 16470653](https://www.ncbi.nlm.nih.gov/pubmed/?term=16470653)
+[PMID: 16470653](https://pubmed.ncbi.nlm.nih.gov/16470653/)
 
 # Details
 
