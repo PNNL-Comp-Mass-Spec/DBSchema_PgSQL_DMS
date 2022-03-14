@@ -4,6 +4,7 @@
 
 CREATE OR REPLACE FUNCTION public.get_table_bloat_approx(OUT approx_free_percent double precision, OUT approx_free_space double precision, OUT dead_tuple_percent double precision, OUT dead_tuple_len double precision) RETURNS record
     LANGUAGE sql SECURITY DEFINER
+    SET search_path TO 'public', 'public', 'mc'
     AS $$
     select
       avg(approx_free_percent)::double precision as approx_free_percent,

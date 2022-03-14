@@ -7,7 +7,10 @@ CREATE OR REPLACE FUNCTION public.get_psutil_disk_io_total(OUT read_count double
     AS $$
 from psutil import disk_io_counters
 dc = disk_io_counters(perdisk=False)
-return dc.read_count, dc.write_count, dc.read_bytes, dc.write_bytes
+if dc:
+    return dc.read_count, dc.write_count, dc.read_bytes, dc.write_bytes
+else:
+    return None, None, None, None
 $$;
 
 
