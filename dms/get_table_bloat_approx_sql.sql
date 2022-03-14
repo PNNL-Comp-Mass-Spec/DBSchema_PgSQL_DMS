@@ -4,9 +4,10 @@
 
 CREATE OR REPLACE FUNCTION public.get_table_bloat_approx_sql(OUT full_table_name text, OUT approx_bloat_percent double precision, OUT approx_bloat_bytes double precision, OUT fillfactor integer) RETURNS SETOF record
     LANGUAGE sql SECURITY DEFINER
+    SET search_path TO 'public', 'public', 'mc'
     AS $$
 
-SELECT
+select /* pgwatch2_generated */
   quote_ident(schemaname)||'.'||quote_ident(tblname) as full_table_name,
   bloat_ratio as approx_bloat_percent,
   bloat_size as approx_bloat_bytes,
@@ -22,7 +23,7 @@ FROM (
                 bs * tblpages                  AS real_size,
                 (tblpages - est_tblpages) * bs AS extra_size,
                 CASE
-                    WHEN tblpages - est_tblpages > 0
+                    WHEN tblpages - est_tblpages > 0 And tblpages > 0
                         THEN 100 * (tblpages - est_tblpages) / tblpages::float
                     ELSE 0
                     END                        AS extra_ratio,
@@ -33,7 +34,7 @@ FROM (
                     ELSE 0
                     END                        AS bloat_size,
                 CASE
-                    WHEN tblpages - est_tblpages_ff > 0
+                    WHEN tblpages - est_tblpages_ff > 0 And tblpages > 0
                         THEN 100 * (tblpages - est_tblpages_ff) / tblpages::float
                     ELSE 0
                     END                        AS bloat_ratio,
