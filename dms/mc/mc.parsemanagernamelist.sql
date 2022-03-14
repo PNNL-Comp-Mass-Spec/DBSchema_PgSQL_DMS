@@ -2,7 +2,7 @@
 -- Name: parsemanagernamelist(text, integer, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.parsemanagernamelist(_managernamelist text DEFAULT ''::text, _removeunknownmanagers integer DEFAULT 1, INOUT _message text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.parsemanagernamelist(IN _managernamelist text DEFAULT ''::text, IN _removeunknownmanagers integer DEFAULT 1, INOUT _message text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
@@ -124,11 +124,11 @@ END
 $_$;
 
 
-ALTER PROCEDURE mc.parsemanagernamelist(_managernamelist text, _removeunknownmanagers integer, INOUT _message text) OWNER TO d3l243;
+ALTER PROCEDURE mc.parsemanagernamelist(IN _managernamelist text, IN _removeunknownmanagers integer, INOUT _message text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE parsemanagernamelist(_managernamelist text, _removeunknownmanagers integer, INOUT _message text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE parsemanagernamelist(IN _managernamelist text, IN _removeunknownmanagers integer, INOUT _message text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.parsemanagernamelist(_managernamelist text, _removeunknownmanagers integer, INOUT _message text) IS 'ParseManagerNameList';
+COMMENT ON PROCEDURE mc.parsemanagernamelist(IN _managernamelist text, IN _removeunknownmanagers integer, INOUT _message text) IS 'ParseManagerNameList';
 

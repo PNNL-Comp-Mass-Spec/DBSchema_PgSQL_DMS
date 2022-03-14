@@ -2,7 +2,7 @@
 -- Name: getmanagerparameterswork(text, integer, integer, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.getmanagerparameterswork(_managernamelist text DEFAULT ''::text, _sortmode integer DEFAULT 0, _maxrecursion integer DEFAULT 50, INOUT _message text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.getmanagerparameterswork(IN _managernamelist text DEFAULT ''::text, IN _sortmode integer DEFAULT 0, IN _maxrecursion integer DEFAULT 50, INOUT _message text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -159,11 +159,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.getmanagerparameterswork(_managernamelist text, _sortmode integer, _maxrecursion integer, INOUT _message text) OWNER TO d3l243;
+ALTER PROCEDURE mc.getmanagerparameterswork(IN _managernamelist text, IN _sortmode integer, IN _maxrecursion integer, INOUT _message text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE getmanagerparameterswork(_managernamelist text, _sortmode integer, _maxrecursion integer, INOUT _message text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE getmanagerparameterswork(IN _managernamelist text, IN _sortmode integer, IN _maxrecursion integer, INOUT _message text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.getmanagerparameterswork(_managernamelist text, _sortmode integer, _maxrecursion integer, INOUT _message text) IS 'GetManagerParametersWork';
+COMMENT ON PROCEDURE mc.getmanagerparameterswork(IN _managernamelist text, IN _sortmode integer, IN _maxrecursion integer, INOUT _message text) IS 'GetManagerParametersWork';
 

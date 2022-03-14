@@ -2,7 +2,7 @@
 -- Name: enabledisablemanagers(integer, integer, text, integer, integer, refcursor, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer DEFAULT 11, _managernamelist text DEFAULT ''::text, _infoonly integer DEFAULT 0, _includedisabled integer DEFAULT 0, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(IN _enable integer, IN _managertypeid integer DEFAULT 11, IN _managernamelist text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, IN _includedisabled integer DEFAULT 0, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -408,11 +408,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.enabledisablemanagers(IN _enable integer, IN _managertypeid integer, IN _managernamelist text, IN _infoonly integer, IN _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE enabledisablemanagers(IN _enable integer, IN _managertypeid integer, IN _managernamelist text, IN _infoonly integer, IN _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.enabledisablemanagers(_enable integer, _managertypeid integer, _managernamelist text, _infoonly integer, _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'EnableDisableManagers';
+COMMENT ON PROCEDURE mc.enabledisablemanagers(IN _enable integer, IN _managertypeid integer, IN _managernamelist text, IN _infoonly integer, IN _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'EnableDisableManagers';
 

@@ -2,7 +2,7 @@
 -- Name: updatesinglemgrtypecontrolparam(text, text, text, text, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.updatesinglemgrtypecontrolparam(_paramname text, _newvalue text, _managertypeidlist text, _callinguser text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.updatesinglemgrtypecontrolparam(IN _paramname text, IN _newvalue text, IN _managertypeidlist text, IN _callinguser text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -93,11 +93,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.updatesinglemgrtypecontrolparam(_paramname text, _newvalue text, _managertypeidlist text, _callinguser text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.updatesinglemgrtypecontrolparam(IN _paramname text, IN _newvalue text, IN _managertypeidlist text, IN _callinguser text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE updatesinglemgrtypecontrolparam(_paramname text, _newvalue text, _managertypeidlist text, _callinguser text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE updatesinglemgrtypecontrolparam(IN _paramname text, IN _newvalue text, IN _managertypeidlist text, IN _callinguser text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.updatesinglemgrtypecontrolparam(_paramname text, _newvalue text, _managertypeidlist text, _callinguser text, INOUT _message text, INOUT _returncode text) IS 'UpdateSingleMgrTypeControlParam';
+COMMENT ON PROCEDURE mc.updatesinglemgrtypecontrolparam(IN _paramname text, IN _newvalue text, IN _managertypeidlist text, IN _callinguser text, INOUT _message text, INOUT _returncode text) IS 'UpdateSingleMgrTypeControlParam';
 

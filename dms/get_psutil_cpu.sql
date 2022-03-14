@@ -3,7 +3,7 @@
 --
 
 CREATE OR REPLACE FUNCTION public.get_psutil_cpu(OUT cpu_utilization double precision, OUT load_1m_norm double precision, OUT load_1m double precision, OUT load_5m_norm double precision, OUT load_5m double precision, OUT "user" double precision, OUT system double precision, OUT idle double precision, OUT iowait double precision, OUT irqs double precision, OUT other double precision) RETURNS record
-    LANGUAGE plpython3u SECURITY DEFINER
+    LANGUAGE plpython3u
     AS $$
 
 from os import getloadavg

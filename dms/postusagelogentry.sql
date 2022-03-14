@@ -2,7 +2,7 @@
 -- Name: postusagelogentry(text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.postusagelogentry(_postedby text, _message text DEFAULT ''::text, _minimumupdateinterval integer DEFAULT 1)
+CREATE OR REPLACE PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text DEFAULT ''::text, IN _minimumupdateinterval integer DEFAULT 1)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -96,11 +96,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.postusagelogentry(_postedby text, _message text, _minimumupdateinterval integer) OWNER TO d3l243;
+ALTER PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE postusagelogentry(_postedby text, _message text, _minimumupdateinterval integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.postusagelogentry(_postedby text, _message text, _minimumupdateinterval integer) IS 'PostUsageLogEntry';
+COMMENT ON PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) IS 'PostUsageLogEntry';
 
