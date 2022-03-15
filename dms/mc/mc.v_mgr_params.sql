@@ -21,6 +21,12 @@ CREATE VIEW mc.v_mgr_params AS
 ALTER TABLE mc.v_mgr_params OWNER TO d3l243;
 
 --
+-- Name: v_mgr_params trig_u_v_mgr_params; Type: TRIGGER; Schema: mc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_u_v_mgr_params INSTEAD OF UPDATE ON mc.v_mgr_params FOR EACH ROW EXECUTE FUNCTION mc.trigfn_u_v_mgr_params();
+
+--
 -- Name: TABLE v_mgr_params; Type: ACL; Schema: mc; Owner: d3l243
 --
 
