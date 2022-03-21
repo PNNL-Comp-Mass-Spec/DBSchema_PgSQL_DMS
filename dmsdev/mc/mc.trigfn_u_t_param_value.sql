@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION mc.trigfn_u_t_param_value() RETURNS trigger
 **
 **  Auth:   mem
 **  Date:   01/14/2020 mem - Initial version
+**          03/14/2022 mem - Only append to t_event_log if the value changes
 **
 *****************************************************/
 BEGIN
@@ -41,7 +42,8 @@ BEGIN
             END AS prev_target_state
     WHERE OLD.mgr_id = NEW.mgr_id AND
           OLD.type_id = NEW.type_id AND
-          OLD.type_id = 17;
+          NEW.type_id = 17 AND
+          NEW.value <> OLD.value;
 
     RETURN null;
 END
