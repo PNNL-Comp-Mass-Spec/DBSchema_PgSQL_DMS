@@ -4,6 +4,7 @@
 
 CREATE OR REPLACE FUNCTION public.get_stat_statements() RETURNS SETOF public.pg_stat_statements
     LANGUAGE sql SECURITY DEFINER
+    SET search_path TO 'public', 'public', 'mc'
     AS $$
   select
     s.*

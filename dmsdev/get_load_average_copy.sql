@@ -4,6 +4,7 @@
 
 CREATE OR REPLACE FUNCTION public.get_load_average_copy(OUT load_1min double precision, OUT load_5min double precision, OUT load_15min double precision) RETURNS record
     LANGUAGE plpgsql SECURITY DEFINER
+    SET search_path TO 'public', 'public', 'mc'
     AS $$
 begin
     if random() < 0.02 then    /* clear the table on ca every 50th call not to be bigger than a couple of pages */
