@@ -2,7 +2,7 @@
 -- Name: test_get_data(integer, text, refcursor, refcursor, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.test_get_data(_itemid integer, INOUT _message text DEFAULT ''::text, INOUT _result_one refcursor DEFAULT 'rs_resultone'::refcursor, INOUT _result_two refcursor DEFAULT 'rs_resulttwo'::refcursor, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.test_get_data(IN _itemid integer, INOUT _message text DEFAULT ''::text, INOUT _result_one refcursor DEFAULT 'rs_resultone'::refcursor, INOUT _result_two refcursor DEFAULT 'rs_resulttwo'::refcursor, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -21,5 +21,5 @@ END;
 $$;
 
 
-ALTER PROCEDURE public.test_get_data(_itemid integer, INOUT _message text, INOUT _result_one refcursor, INOUT _result_two refcursor, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.test_get_data(IN _itemid integer, INOUT _message text, INOUT _result_one refcursor, INOUT _result_two refcursor, INOUT _returncode text) OWNER TO d3l243;
 

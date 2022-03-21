@@ -2,7 +2,7 @@
 -- Name: getdefaultremoteinfoformanager(text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.getdefaultremoteinfoformanager(_managername text, INOUT _remoteinfoxml text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.getdefaultremoteinfoformanager(IN _managername text, INOUT _remoteinfoxml text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -132,11 +132,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.getdefaultremoteinfoformanager(_managername text, INOUT _remoteinfoxml text) OWNER TO d3l243;
+ALTER PROCEDURE mc.getdefaultremoteinfoformanager(IN _managername text, INOUT _remoteinfoxml text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE getdefaultremoteinfoformanager(_managername text, INOUT _remoteinfoxml text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE getdefaultremoteinfoformanager(IN _managername text, INOUT _remoteinfoxml text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.getdefaultremoteinfoformanager(_managername text, INOUT _remoteinfoxml text) IS 'GetDefaultRemoteInfoForManager';
+COMMENT ON PROCEDURE mc.getdefaultremoteinfoformanager(IN _managername text, INOUT _remoteinfoxml text) IS 'GetDefaultRemoteInfoForManager';
 

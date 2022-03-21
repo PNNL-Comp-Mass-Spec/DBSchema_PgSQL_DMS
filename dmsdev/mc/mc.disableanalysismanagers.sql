@@ -2,7 +2,7 @@
 -- Name: disableanalysismanagers(integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.disableanalysismanagers(_infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.disableanalysismanagers(IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -31,11 +31,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.disableanalysismanagers(_infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.disableanalysismanagers(IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE disableanalysismanagers(_infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE disableanalysismanagers(IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.disableanalysismanagers(_infoonly integer, INOUT _message text, INOUT _returncode text) IS 'DisableAnalysisManagers';
+COMMENT ON PROCEDURE mc.disableanalysismanagers(IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'DisableAnalysisManagers';
 

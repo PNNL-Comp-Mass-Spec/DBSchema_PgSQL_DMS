@@ -2,7 +2,7 @@
 -- Name: postlogentry(text, text, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.postlogentry(_type text, _message text, _postedby text DEFAULT 'na'::text, _targetschema text DEFAULT 'public'::text, _duplicateentryholdoffhours integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.postlogentry(IN _type text, IN _message text, IN _postedby text DEFAULT 'na'::text, IN _targetschema text DEFAULT 'public'::text, IN _duplicateentryholdoffhours integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
@@ -100,11 +100,11 @@ END
 $_$;
 
 
-ALTER PROCEDURE public.postlogentry(_type text, _message text, _postedby text, _targetschema text, _duplicateentryholdoffhours integer) OWNER TO d3l243;
+ALTER PROCEDURE public.postlogentry(IN _type text, IN _message text, IN _postedby text, IN _targetschema text, IN _duplicateentryholdoffhours integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE postlogentry(_type text, _message text, _postedby text, _targetschema text, _duplicateentryholdoffhours integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE postlogentry(IN _type text, IN _message text, IN _postedby text, IN _targetschema text, IN _duplicateentryholdoffhours integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.postlogentry(_type text, _message text, _postedby text, _targetschema text, _duplicateentryholdoffhours integer) IS 'PostLogEntry';
+COMMENT ON PROCEDURE public.postlogentry(IN _type text, IN _message text, IN _postedby text, IN _targetschema text, IN _duplicateentryholdoffhours integer) IS 'PostLogEntry';
 
