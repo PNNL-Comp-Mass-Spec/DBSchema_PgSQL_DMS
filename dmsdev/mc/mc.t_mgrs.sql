@@ -28,13 +28,6 @@ ALTER TABLE mc.t_mgrs ALTER COLUMN mgr_id ADD GENERATED ALWAYS AS IDENTITY (
 );
 
 --
--- Name: t_mgrs ix_t_mgrs; Type: CONSTRAINT; Schema: mc; Owner: d3l243
---
-
-ALTER TABLE ONLY mc.t_mgrs
-    ADD CONSTRAINT ix_t_mgrs UNIQUE (mgr_id);
-
---
 -- Name: t_mgrs pk_t_mgrs; Type: CONSTRAINT; Schema: mc; Owner: d3l243
 --
 
