@@ -19,12 +19,6 @@ ALTER TABLE ONLY public.t_usage_stats
     ADD CONSTRAINT pk_t_usage_stats PRIMARY KEY (posted_by);
 
 --
--- Name: ix_t_usage_stats_posted_by; Type: INDEX; Schema: public; Owner: d3l243
---
-
-CREATE INDEX ix_t_usage_stats_posted_by ON public.t_usage_stats USING btree (posted_by);
-
---
 -- Name: TABLE t_usage_stats; Type: ACL; Schema: public; Owner: d3l243
 --
 
