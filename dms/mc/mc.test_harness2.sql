@@ -31,12 +31,12 @@ BEGIN
     RAISE info '%', _paramTypeID;
 
     RETURN query 
-    SELECT MgrListA.mgr_id, 0, MgrListA.manager_name::text
+    SELECT MgrListA.mgr_id, 0 AS test, MgrListA.manager_name::text
            FROM TmpManagerList MgrListA;
     
-    RETURN;
-   
-    RETURN Query
+    -- Calling RETURN query again will append additional rows to the output table
+    --
+    RETURN query
     SELECT A.mgr_id, _paramTypeID, '0'
     FROM ( SELECT MgrListA.mgr_id
            FROM TmpManagerList MgrListA
@@ -50,7 +50,7 @@ BEGIN
          ) B
            ON A.mgr_id = B.mgr_id
     WHERE B.mgr_id IS NULL;    
-    
+
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
