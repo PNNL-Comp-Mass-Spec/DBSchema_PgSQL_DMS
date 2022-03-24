@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE mc.updatesinglemgrcontrolparam(IN _paramname text, I
 **                         - Renamed the first parameter from _paramValue to _paramName
 **          02/10/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
+**                         - Show a warning if all of the managers have control_from_website = 0 in t_mgrs
 **
 *****************************************************/
 DECLARE
@@ -47,7 +48,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, 0);
     _message := '';
     _returnCode := '';
-    
+
     ---------------------------------------------------
     -- Create a temporary table that will hold the entry_id
     -- values that need to be updated in mc.t_param_value
@@ -82,9 +83,8 @@ BEGIN
         Return;
     End If;
 
-
     RAISE Info 'Param type ID is %', _paramTypeID;
-    
+
     ---------------------------------------------------
     -- Parse the manager ID list
     ---------------------------------------------------
@@ -96,7 +96,7 @@ BEGIN
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     RAISE Info 'Inserted % manager IDs into TmpMgrIDs', _myRowCount;
-    
+
     If _infoOnly <> 0 Then
         _infoHead := format('%-10s %-10s %-25s %-25s %-15s %-15s %-15s %-15s',
                             'Entry_ID',
@@ -142,7 +142,7 @@ BEGIN
                  INNER JOIN mc.v_param_value PV
                    ON PV.mgr_id = M.mgr_id AND
                       PV.type_id = _paramTypeID
-            WHERE M.control_from_website = 0           
+            WHERE M.control_from_website = 0
             UNION
             SELECT NULL AS entry_id,
                    M.mgr_id,
@@ -176,7 +176,7 @@ BEGIN
         END LOOP;
 
         _message := public.udf_append_to_text(_message, 'See the Output window for details');
-    
+
         Return;
     End If;
 
@@ -222,8 +222,13 @@ BEGIN
     WHERE M.control_from_website > 0 AND
           PV.type_id = _paramTypeID AND
           Coalesce(PV.value, '') <> _newValue;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    If Not FOUND Then
+        _message = 'All of the managers have control_from_website = 0 in t_mgrs; parameters not updated';
+
+        RAISE Info '%', _message;
+        Return;
+    End If;
 
     ---------------------------------------------------
     -- Call UpdateSingleMgrParamWork to perform the update
