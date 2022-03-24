@@ -99,7 +99,7 @@ BEGIN
         EXECUTE _s USING _managerFilter;
 
         _s := regexp_replace(_s, '\$1', '''' || _managerFilter || '''');
-        RAISE Info '%', _s;
+        RAISE Debug '%', _s;
 
     End Loop;
 
