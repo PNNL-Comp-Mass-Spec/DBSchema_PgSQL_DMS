@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE mc.disablearchivedependentmanagers(IN _infoonly inte
 **                         - Note that we do not include 15=CaptureTaskManager because capture tasks can still occur when the archive is unavailable
 **                         - However, you should run Stored Procedure EnableDisableArchiveStepTools in the DMS_Capture database to disable the archive-dependent step tools
 **          01/30/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling EnableDisableAllManagers
 **
 *****************************************************/
 DECLARE
@@ -23,11 +24,11 @@ DECLARE
 BEGIN
 
     -- Disable Space managers (type 8)
-    Call EnableDisableAllManagers (
-        _managerTypeIDList := '8', 
-        _managerNameList := '', 
+    Call mc.EnableDisableAllManagers (
+        _managerTypeIDList := '8',
+        _managerNameList := '',
         _enable := 0,
-        _infoOnly := _infoOnly, 
+        _infoOnly := _infoOnly,
         _message := _message,
         _returnCode := _returnCode);
 

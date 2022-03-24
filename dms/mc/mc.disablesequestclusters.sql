@@ -13,17 +13,18 @@ CREATE OR REPLACE PROCEDURE mc.disablesequestclusters(IN _infoonly integer DEFAU
 **  Date:   07/24/2008
 **          10/09/2009 mem - Changed _ManagerTypeIDList to 11
 **          01/30/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling EnableDisableAllManagers
 **
 *****************************************************/
 DECLARE
 
 BEGIN
 
-    Call EnableDisableAllManagers (
-        _managerTypeIDList := '11', 
-        _managerNameList := '%SeqCluster%', 
+    Call mc.EnableDisableAllManagers (
+        _managerTypeIDList := '11',
+        _managerNameList := '%SeqCluster%',
         _enable := 0,
-        _infoOnly := _infoOnly, 
+        _infoOnly := _infoOnly,
         _message := _message,
         _returnCode := _returnCode);
 

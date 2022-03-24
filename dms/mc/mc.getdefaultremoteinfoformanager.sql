@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE mc.getdefaultremoteinfoformanager(IN _managername te
 **          03/14/2018 mem - Use GetManagerParametersWork to lookup manager parameters, allowing for getting remote info parameters from parent groups
 **          03/29/2018 mem - Return an empty string if the manager does not have parameters RunJobsRemotely and RemoteHostName defined, or if RunJobsRemotely is false
 **          02/05/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling GetManagerParametersWork
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
     );
 
     -- Populate the temporary table with the manager parameters
-    Call GetManagerParametersWork (_managerName, 0, 50, _message => _message);
+    Call mc.GetManagerParametersWork (_managerName, 0, 50, _message => _message);
 
     If Not Exists ( SELECT value
                     FROM Tmp_Mgr_Params
@@ -83,47 +84,47 @@ BEGIN
 
         Return;
     End If;
-    
+
     -- Concatenate together the parameters to build up the XML
     --
     _remoteInfoXML := '';
 
-    SELECT _remoteInfoXML || 
+    SELECT _remoteInfoXML ||
          '<host>' || value || '</host>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostName' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<user>' || value || '</user>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostUser' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<dmsPrograms>' || value || '</dmsPrograms>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostDMSProgramsPath' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<taskQueue>' || value || '</taskQueue>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteTaskQueuePath' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<workDir>' || value || '</workDir>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteWorkDirPath' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<orgDB>' || value || '</orgDB>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteOrgDBPath' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<privateKey>' || public.udf_get_filename(value) || '</privateKey>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostPrivateKeyFile' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<passphrase>' || public.udf_get_filename(value) || '</passphrase>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostPassphraseFile' And mgr_name = _managerName);

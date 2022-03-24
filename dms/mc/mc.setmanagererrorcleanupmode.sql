@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE mc.setmanagererrorcleanupmode(IN _mgrlist text DEFAU
 **      If _mgrList is blank, then sets it to _cleanupMode for all "Analysis Tool Manager" managers
 **
 **  Arguments:
-**    _mgrList   Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
+**    _mgrList       Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
 **    _cleanupMode   0 = No auto cleanup, 1 = Attempt auto cleanup once, 2 = Auto cleanup always
 **
 **  Auth:   mem
@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE mc.setmanagererrorcleanupmode(IN _mgrlist text DEFAU
 **          09/29/2014 mem - Expanded _mgrList to varchar(max) and added parameters _showTable and _infoOnly
 **                         - Fixed where clause bug in final update query
 **          02/07/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **
 *****************************************************/
 DECLARE
@@ -66,7 +67,7 @@ BEGIN
         -- Populate TmpManagerList with the managers in _mgrList
         ---------------------------------------------------
         --
-        Call ParseManagerNameList (_mgrList, _removeUnknownManagers => 1, _message => _message);
+        Call mc.ParseManagerNameList (_mgrList, _removeUnknownManagers => 1, _message => _message);
 
         IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
             _message := 'No valid managers were found in _mgrList';
@@ -77,11 +78,11 @@ BEGIN
         UPDATE TmpManagerList
         SET mgr_id = M.mgr_id
         FROM mc.t_mgrs M
-        WHERE TmpManagerList.Manager_Name = M.mgr_name;   
+        WHERE TmpManagerList.Manager_Name = M.mgr_name;
 
         DELETE FROM TmpManagerList
         WHERE mgr_id IS NULL;
-    
+
     Else
         INSERT INTO TmpManagerList (mgr_id, manager_name)
         SELECT mgr_id, mgr_name
@@ -153,7 +154,7 @@ BEGIN
         RAISE INFO '%', _infoHead;
 
        _countToUpdate := 0;
-  
+
         FOR _previewData IN
             SELECT MP.mgr_id,
                    MP.manager,
@@ -178,7 +179,7 @@ BEGIN
                             );
 
             RAISE INFO '%', _infoData;
-            
+
             _countToUpdate := _countToUpdate + 1;
         END LOOP;
 

@@ -14,16 +14,17 @@ CREATE OR REPLACE PROCEDURE mc.disableanalysismanagers(IN _infoonly integer DEFA
 **          10/09/2009 mem - Changed _ManagerTypeIDList to 11
 **          06/09/2011 mem - Now calling EnableDisableAllManagers
 **          01/30/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling EnableDisableAllManagers
 **
 *****************************************************/
 DECLARE
 
 BEGIN
-    Call EnableDisableAllManagers (
-        _managerTypeIDList := '11', 
-        _managerNameList := '', 
+    Call mc.EnableDisableAllManagers (
+        _managerTypeIDList := '11',
+        _managerNameList := '',
         _enable := 0,
-        _infoOnly := _infoOnly, 
+        _infoOnly := _infoOnly,
         _message := _message,
         _returnCode := _returnCode);
 

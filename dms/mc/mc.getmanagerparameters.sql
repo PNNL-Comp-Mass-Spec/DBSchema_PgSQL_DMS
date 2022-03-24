@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION mc.getmanagerparameters(_managernamelist text DEFAULT
 **          09/02/2016 mem - Increase the default for parameter _maxRecursion from 5 to 50
 **          03/14/2018 mem - Refactor actual parameter lookup into stored procedure GetManagerParametersWork
 **          02/05/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling GetManagerParametersWork
 **
 *****************************************************/
 DECLARE
@@ -62,7 +63,7 @@ BEGIN
     );
 
     -- Populate the temporary table with the manager parameters
-    Call GetManagerParametersWork (_managerNameList, _sortMode, _maxRecursion, _message => _message);
+    Call mc.GetManagerParametersWork (_managerNameList, _sortMode, _maxRecursion, _message => _message);
 
     -- Return the parameters as a result set
     --

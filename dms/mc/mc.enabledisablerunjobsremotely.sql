@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE mc.enabledisablerunjobsremotely(IN _enable integer, 
 **  Date:   03/28/2018 mem - Initial version
 **          03/29/2018 mem - Add parameter _addMgrParamsIfMissing
 **          02/05/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **
 *****************************************************/
 DECLARE
@@ -75,7 +76,7 @@ BEGIN
 
     -- Populate TmpMangerList using ParseManagerNameList
     --
-    Call ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
+    Call mc.ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
     IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
         _message := 'No valid managers were found in _managerNameList';
@@ -165,7 +166,7 @@ BEGIN
             End If; -- </d1>
 
         End Loop;
-    
+
         If _infoOnly > 0 Then
             RAISE INFO '%', '';
         End If;

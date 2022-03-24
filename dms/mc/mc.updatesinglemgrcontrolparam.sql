@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE mc.updatesinglemgrcontrolparam(IN _paramname text, I
 **                         - Added parameter _infoOnly
 **                         - Renamed the first parameter from _paramValue to _paramName
 **          02/10/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
 **
 *****************************************************/
 DECLARE
@@ -225,11 +226,11 @@ BEGIN
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
-    -- Call UpdateSingleMgrParamWork to perform the update, then call
-    -- AlterEnteredByUserMultiID and AlterEventLogEntryUserMultiID for _callingUser
+    -- Call UpdateSingleMgrParamWork to perform the update
+    -- Note that it calls AlterEnteredByUserMultiID and AlterEventLogEntryUserMultiID for _callingUser
     ---------------------------------------------------
     --
-    Call UpdateSingleMgrParamWork (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+    Call mc.UpdateSingleMgrParamWork (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
 EXCEPTION
     WHEN OTHERS THEN

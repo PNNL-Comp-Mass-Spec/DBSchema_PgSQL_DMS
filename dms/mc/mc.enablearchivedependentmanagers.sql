@@ -12,18 +12,19 @@ CREATE OR REPLACE PROCEDURE mc.enablearchivedependentmanagers(IN _infoonly integ
 **  Auth:   mem
 **  Date:   06/09/2011 mem - Initial Version
 **          02/05/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling EnableDisableAllManagers
 **
 *****************************************************/
 DECLARE
 
 BEGIN
-    
+
     -- Enable Space managers (type 8)
-    Call EnableDisableAllManagers (
-        _managerTypeIDList := '8', 
-        _managerNameList := 'All', 
+    Call mc.EnableDisableAllManagers (
+        _managerTypeIDList := '8',
+        _managerNameList := 'All',
         _enable := 1,
-        _infoOnly := _infoOnly, 
+        _infoOnly := _infoOnly,
         _message := _message,
         _returnCode := _returnCode);
 

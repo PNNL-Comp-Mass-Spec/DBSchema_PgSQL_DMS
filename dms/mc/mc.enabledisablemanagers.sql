@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(IN _enable integer, IN _man
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **          02/05/2020 mem - Update _message when previewing updates
 **          02/15/2020 mem - Add _results cursor
+**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **
 *****************************************************/
 DECLARE
@@ -126,7 +127,7 @@ BEGIN
     If char_length(_managerNameList) > 0 And _managerNameList::citext <> 'All' Then
         -- Populate TmpMangerList using ParseManagerNameList
 
-        Call ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
+        Call mc.ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
         If _managerTypeID > 0 Then
             -- Delete entries from TmpManagerList that don't match entries in mgr_name of the given type

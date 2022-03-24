@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION mc.unarchiveoldmanagersandparams(_mgrlist text, _info
 **          04/22/2016 mem - Now updating M_Comment in mc.t_mgrs
 **          01/29/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
+**                         - Use mc schema when calling ParseManagerNameList
 **
 *****************************************************/
 DECLARE
@@ -60,13 +61,12 @@ BEGIN
         manager_name citext
     );
 
-
     ---------------------------------------------------
     -- Populate TmpManagerList with the managers in _mgrList
-    -- Using _removeUnknownManagers so that this procedure can be called repeatedly without raising an error
+    -- Setting _removeUnknownManagers to 0 so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
     --
-    Call ParseManagerNameList (_mgrList, _removeUnknownManagers => 0, _message => _message);
+    Call mc.ParseManagerNameList (_mgrList, _removeUnknownManagers => 0, _message => _message);
 
     If Not Exists (Select * from TmpManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';

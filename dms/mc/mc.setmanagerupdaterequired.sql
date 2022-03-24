@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE mc.setmanagerupdaterequired(IN _mgrlist text DEFAULT
 **  Date:   01/24/2009 mem - Initial version
 **          04/17/2014 mem - Expanded _managerList to varchar(max) and added parameter _showTable
 **          02/08/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
         -- Populate TmpManagerList with the managers in _mgrList
         ---------------------------------------------------
         --
-        Call ParseManagerNameList (_mgrList, _removeUnknownManagers => 1, _message => _message);
+        Call mc.ParseManagerNameList (_mgrList, _removeUnknownManagers => 1, _message => _message);
 
         IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
             _message := 'No valid managers were found in _mgrList';
@@ -209,12 +210,12 @@ BEGIN
         RAISE INFO '%', _infoHead;
 
         FOR _previewData IN
-            SELECT U.mgr_id, 
-                   U.manager, 
-                   U.param_name, 
-                   U.value as update_required, 
+            SELECT U.mgr_id,
+                   U.manager,
+                   U.param_name,
+                   U.value as update_required,
                    U.last_affected
-            FROM mc.v_analysis_mgr_params_update_required U               
+            FROM mc.v_analysis_mgr_params_update_required U
                 INNER JOIN TmpManagerList MgrList
                    ON U.mgr_id = MgrList.mgr_id
             ORDER BY U.Manager

@@ -75,12 +75,13 @@ BEGIN
         SELECT mgr_type_id
         FROM TmpManagerTypeIDs
     LOOP
- 
-        Call EnableDisableManagers (
-            _enable := _enable, 
-            _managerTypeID := _mgrTypeID, 
-            _managerNameList := _managerNameList, 
-            _infoOnly := _infoOnly, 
+
+        Call mc.EnableDisableManagers (
+            _enable := _enable,
+            _managerTypeID := _mgrTypeID,
+            _managerNameList := _managerNameList,
+            _infoOnly := _infoOnly,
+            _results := _results,
             _message := _message,
             _returnCode := _returnCode);
 
