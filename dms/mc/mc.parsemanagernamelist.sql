@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE mc.parsemanagernamelist(IN _managernamelist text DEF
 **          01/28/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename manager name column mgr_name
 **          02/07/2020 mem - Fix typo in temp table name
+**          03/24/2022 mem - Fix typo in comment
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,7 @@ BEGIN
     _message := '';
 
     -----------------------------------------------
-    -- Creata a temporary table
+    -- Create a temporary table
     -----------------------------------------------
 
     DROP TABLE IF EXISTS TmpManagerSpecList;

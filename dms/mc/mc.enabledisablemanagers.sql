@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(IN _enable integer, IN _man
 **          02/05/2020 mem - Update _message when previewing updates
 **          02/15/2020 mem - Add _results cursor
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          03/24/2022 mem - Fix typo in comment
 **
 *****************************************************/
 DECLARE
@@ -115,7 +116,7 @@ BEGIN
     End If;
 
     -----------------------------------------------
-    -- Creata a temporary table
+    -- Create a temporary table
     -----------------------------------------------
 
     DROP TABLE IF EXISTS TmpManagerList;

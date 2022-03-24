@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE mc.enabledisablerunjobsremotely(IN _enable integer, 
 **          03/29/2018 mem - Add parameter _addMgrParamsIfMissing
 **          02/05/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          03/24/2022 mem - Fix typo in comment
 **
 *****************************************************/
 DECLARE
@@ -65,7 +66,7 @@ BEGIN
     End If;
 
     -----------------------------------------------
-    -- Creata a temporary table
+    -- Create a temporary table
     -----------------------------------------------
 
     DROP TABLE IF EXISTS TmpManagerList;
