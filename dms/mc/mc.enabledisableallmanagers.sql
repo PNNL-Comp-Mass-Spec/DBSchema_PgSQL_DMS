@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE mc.enabledisableallmanagers(IN _managertypeidlist te
 **
 **  Arguments:
 **    _managerTypeIDList   Optional: comma separated list of manager type IDs to disable, e.g. '1, 2, 3'
-**    _managerNameList     Optional: if defined, only managers specified here will be enabled; 
+**    _managerNameList     Optional: if defined, only managers specified here will be enabled;
 **                         Supports the % wildcard; also supports 'all'
 **    _enable              1 to enable, 0 to disable
 **    _infoOnly            When non-zero, show the managers that would be updated
@@ -22,10 +22,12 @@ CREATE OR REPLACE PROCEDURE mc.enabledisableallmanagers(IN _managertypeidlist te
 **          06/09/2011 mem - Created by extending code in DisableAllManagers
 **                         - Now filtering on MT_Active > 0 in T_MgrTypes
 **          01/30/2020 mem - Ported to PostgreSQL
+**          03/23/2022 mem - Pass _results cursor to EnableDisableManagers
 **
 *****************************************************/
 DECLARE
     _mgrTypeID int;
+    _results refcursor;
     _sqlstate text;
     _exceptionMessage text;
     _exceptionContext text;
@@ -44,12 +46,12 @@ BEGIN
     _returnCode := '';
 
     DROP TABLE IF EXISTS TmpManagerTypeIDs;
-    
+
     CREATE TEMP TABLE TmpManagerTypeIDs (
         mgr_type_id int NOT NULL
     );
 
-    If char_length(_managerTypeIDList) > 0 THEN    
+    If char_length(_managerTypeIDList) > 0 THEN
         -- Parse _managerTypeIDList
         --
         INSERT INTO TmpManagerTypeIDs (mgr_type_id)
@@ -101,6 +103,7 @@ EXCEPTION
     RAISE warning '%', _exceptionContext;
 
     Call PostLogEntry ('Error', _message, 'EnableDisableAllManagers', 'mc');
+
 END
 $$;
 
