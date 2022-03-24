@@ -15,11 +15,11 @@ CREATE TABLE mc.t_mgrs (
 ALTER TABLE mc.t_mgrs OWNER TO d3l243;
 
 --
--- Name: t_mgrs_m_id_seq; Type: SEQUENCE; Schema: mc; Owner: d3l243
+-- Name: t_mgrs_mgr_id_seq; Type: SEQUENCE; Schema: mc; Owner: d3l243
 --
 
 ALTER TABLE mc.t_mgrs ALTER COLUMN mgr_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME mc.t_mgrs_m_id_seq
+    SEQUENCE NAME mc.t_mgrs_mgr_id_seq
     START WITH 300
     INCREMENT BY 1
     NO MINVALUE

@@ -225,8 +225,8 @@ BEGIN
     SELECT MAX(mc.t_mgrs.mgr_id) INTO _newSeqValue
     FROM mc.t_mgrs;
 
-    PERFORM setval('mc.t_mgrs_m_id_seq', _newSeqValue);
-    RAISE INFO 'Sequence mc.t_mgrs_m_id_seq set to %', _newSeqValue;
+    PERFORM setval('mc.t_mgrs_mgr_id_seq', _newSeqValue);
+    RAISE INFO 'Sequence mc.t_mgrs_mgr_id_seq set to %', _newSeqValue;
 
     RAISE Info 'Insert into t_param_value';
 
