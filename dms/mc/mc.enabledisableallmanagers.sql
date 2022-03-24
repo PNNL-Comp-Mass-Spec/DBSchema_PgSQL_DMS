@@ -19,8 +19,8 @@ CREATE OR REPLACE PROCEDURE mc.enabledisableallmanagers(IN _managertypeidlist te
 **
 **  Auth:   mem
 **  Date:   05/09/2008
-**          06/09/2011 - Created by extending code in DisableAllManagers
-**                     - Now filtering on MT_Active > 0 in T_MgrTypes
+**          06/09/2011 mem - Created by extending code in DisableAllManagers
+**                         - Now filtering on MT_Active > 0 in T_MgrTypes
 **          01/30/2020 mem - Ported to PostgreSQL
 **
 *****************************************************/

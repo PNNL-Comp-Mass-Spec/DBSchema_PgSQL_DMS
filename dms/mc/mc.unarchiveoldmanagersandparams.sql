@@ -15,7 +15,9 @@ CREATE OR REPLACE FUNCTION mc.unarchiveoldmanagersandparams(_mgrlist text, _info
 **      SELECT * FROM mc.ArchiveOldManagersAndParams('Pub-10-1', _infoOnly := 1);
 **
 **  Arguments:
-**    _mgrList   One or more manager names (comma-separated list); supports wildcards because uses stored procedure ParseManagerNameList
+**    _mgrList                    One or more manager names (comma-separated list); supports wildcards because uses stored procedure ParseManagerNameList
+**    _infoonly                   0 to perform the update, 1 to preview
+**    _enablecontrolfromwebsite   If 1, set control_from_website to 1 when storing the manager info in mc.t_mgrs
 **
 **  Auth:   mem
 **  Date:   02/25/2016 mem - Initial version
