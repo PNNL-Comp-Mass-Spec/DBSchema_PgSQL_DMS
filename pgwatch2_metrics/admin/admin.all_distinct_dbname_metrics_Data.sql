@@ -89,6 +89,9 @@ DMS_PrismDB1	privilege_changes	2022-03-05 18:16:44.158301-08
 DMS_PrismWeb3	privilege_changes	2022-03-05 18:16:44.158301-08
 DMS_PrismDB1	sproc_changes	2022-03-05 18:26:44.217098-08
 DMS_PrismWeb3	sproc_changes	2022-03-05 18:26:44.217098-08
+DMS_PrismWeb3	table_changes	2022-03-21 04:01:47.444848-07
+DMS_PrismWeb3	index_changes	2022-03-24 05:25:48.047134-07
+DMS_PrismDB1	index_changes	2022-03-24 05:25:48.047134-07
 \.
 
 
