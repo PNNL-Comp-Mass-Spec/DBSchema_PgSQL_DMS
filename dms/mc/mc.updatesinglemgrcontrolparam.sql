@@ -28,10 +28,11 @@ CREATE OR REPLACE PROCEDURE mc.updatesinglemgrcontrolparam(IN _paramname text, I
 **          02/10/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
 **                         - Show a warning if all of the managers have control_from_website = 0 in t_mgrs
+**          03/24/2022 mem - Show a warning if _managerIDList did not have one or more integers
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _managerCount int;
     _paramTypeID int;
     _previewData record;
     _infoHead text;
@@ -93,9 +94,27 @@ BEGIN
     SELECT value
     FROM public.udf_parse_delimited_integer_list ( _managerIDList, ',' );
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _managerCount = ROW_COUNT;
 
-    RAISE Info 'Inserted % manager IDs into TmpMgrIDs', _myRowCount;
+    IF NOT FOUND Then 
+        _message = 'Use Manager IDs, not manager names';
+
+        RAISE Warning '%', _message;
+        Return;
+    END IF;
+
+    RAISE Info 'Inserted % manager IDs into TmpMgrIDs', _managerCount;
+
+    IF NOT EXISTS (SELECT * 
+                   FROM mc.t_mgrs M 
+                          INNER JOIN TmpMgrIDs ON M.mgr_id = TmpMgrIDs.mgr_id
+                   WHERE M.control_from_website > 0) Then
+
+        _message = 'All of the managers have control_from_website = 0 in t_mgrs; parameters not updated';
+
+        RAISE Warning '%', _message;
+        Return;
+    END IF;
 
     If _infoOnly <> 0 Then
         _infoHead := format('%-10s %-10s %-25s %-25s %-15s %-15s %-15s %-15s',
@@ -204,8 +223,6 @@ BEGIN
            ON PV.mgr_id = M.mgr_id AND
               PV.type_id = _paramTypeID
     WHERE PV.type_id IS NULL;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Find the entries for the Managers in _managerIDList
@@ -223,9 +240,31 @@ BEGIN
           PV.type_id = _paramTypeID AND
           Coalesce(PV.value, '') <> _newValue;
 
-    If Not FOUND Then
-        _message = 'All of the managers have control_from_website = 0 in t_mgrs; parameters not updated';
+    If Not FOUND THEN
+        IF NOT EXISTS (SELECT PV.entry_id
+                       FROM mc.t_param_value PV
+                            INNER JOIN mc.t_mgrs M
+                              ON PV.mgr_id = M.mgr_id
+                            INNER JOIN TmpMgrIDs
+                              ON M.mgr_id = TmpMgrIDs.mgr_id
+                       WHERE M.control_from_website > 0 AND
+                             PV.type_id = _paramTypeID) Then
 
+            IF _managerCount > 1 THEN 
+                _message = 'Managers ' || _managerIDList || ' do not have parameter ' || _paramName;
+            ELSE 
+                _message = 'Manager '|| _managerIDList || ' does not have parameter ' || _paramName;
+            END IF;
+
+            RAISE Warning '%', _message;
+        END IF;
+
+        IF _managerCount > 1 THEN 
+            _message = 'All managers already have ' || _newValue || ' for ' || _paramName;
+        ELSE 
+            _message = 'Manager '|| _managerIDList || ' already has ' || _newValue || ' for ' || _paramName;
+        END IF;
+        
         RAISE Info '%', _message;
         Return;
     End If;
