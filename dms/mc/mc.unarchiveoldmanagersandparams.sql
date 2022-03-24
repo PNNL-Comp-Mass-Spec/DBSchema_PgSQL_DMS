@@ -24,6 +24,8 @@ CREATE OR REPLACE FUNCTION mc.unarchiveoldmanagersandparams(_mgrlist text, _info
 **          04/22/2016 mem - Now updating M_Comment in mc.t_mgrs
 **          01/29/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
+**          03/23/2022 mem - Remove check for "control_from_web > 0" in delete query
+**                         - Abort restore if the manager already exists in mc.t_mgrs
 **                         - Use mc schema when calling ParseManagerNameList
 **
 *****************************************************/
@@ -62,6 +64,7 @@ BEGIN
         message text,
         manager_name citext
     );
+
 
     ---------------------------------------------------
     -- Populate TmpManagerList with the managers in _mgrList
@@ -122,12 +125,23 @@ BEGIN
     End If;
 
     DELETE FROM TmpManagerList
-    WHERE TmpManagerList.mgr_id Is Null OR 
-          TmpManagerList.control_from_web > 0;
+    WHERE TmpManagerList.mgr_id Is Null;
+
+    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.Manager_Name = Target.mgr_name) Then
+        INSERT INTO TmpWarningMessages (message, manager_name)
+        SELECT 'Manager already exists in t_mgrs with Mgr_Name ' || Target.mgr_name || '; cannot restore',
+               manager_name
+        FROM TmpManagerList Src
+             INNER JOIN mc.t_old_managers Target
+               ON Src.Manager_Name = Target.mgr_name;
+
+        DELETE FROM TmpManagerList
+        WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs);
+    End If;
 
     If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
-        SELECT 'Manager already exists in t_mgrs; cannot restore',
+        SELECT 'Manager already exists in t_mgrs with Mgr_ID ' || Target.mgr_id || '; cannot restore',
                manager_name
         FROM TmpManagerList Src
              INNER JOIN mc.t_old_managers Target
@@ -139,7 +153,7 @@ BEGIN
 
     If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_param_value Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
-        SELECT 'Manager already has parameters in mc.t_param_value; cannot restore',
+        SELECT 'Manager already has parameters in mc.t_param_value with Mgr_ID ' || Src.mgr_id || '; cannot restore',
                manager_name
         FROM TmpManagerList Src
              INNER JOIN mc.t_param_value_old_managers Target
@@ -237,7 +251,7 @@ BEGIN
                            FROM mc.t_param_value_old_managers PV
                                 INNER JOIN TmpManagerList Src
                                   ON PV.mgr_id = Src.mgr_id
-                           GROUP BY PV.mgr_id, PV.type_id 
+                           GROUP BY PV.mgr_id, PV.type_id
                          );
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
