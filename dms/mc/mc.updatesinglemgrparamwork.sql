@@ -9,7 +9,7 @@ CREATE OR REPLACE PROCEDURE mc.updatesinglemgrparamwork(IN _paramname text, IN _
 **
 **  Desc:
 **      Changes single manager param for the EntryID values
-**      defined in table TmpParamValueEntriesToUpdate (created by the calling procedure)
+**      defined in temporary table TmpParamValueEntriesToUpdate (created by the calling procedure)
 **
 **  Example table creation code:
 **    CREATE TEMP TABLE TmpParamValueEntriesToUpdate (entry_id int NOT NULL)

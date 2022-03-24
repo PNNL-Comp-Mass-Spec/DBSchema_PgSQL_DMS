@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE mc.enabledisablemanagers(IN _enable integer, IN _man
 **              _infoOnly => 1,
 **              _includeDisabled => 0
 **          );
-**          FETCH ALL FROM "_results";
+**          FETCH ALL FROM _results;
 **      END;
 **
 **  Auth:   mem
@@ -239,7 +239,7 @@ BEGIN
             End If;
         End If;
 
-        _message := _message || '; see also FETCH ALL FROM "_results"';
+        _message := _message || '; see also "FETCH ALL FROM _results"';
 
         RAISE INFO '%', _message;
 

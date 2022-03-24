@@ -19,6 +19,8 @@ CREATE OR REPLACE FUNCTION mc.duplicatemanagerparameter(_sourceparamtypeid integ
 **    Select * From DuplicateManagerParameter (179, 182, _paramValueSearchText := 'PbfGen', _paramValueReplaceText := 'ProMex', _infoOnly := 1);
 **
 **  Arguments:
+**    _sourceParamTypeId       Source param TypeID
+**    _newParamTypeId          New param TypeID
 **    _paramValueOverride      Optional: new parameter value; ignored if _paramValueSearchText is defined
 **    _paramValueSearchText    Optional: text to search for in the source parameter value
 **    _paramValueReplaceText   Optional: replacement text (ignored if _paramValueReplaceText is null)
