@@ -15,6 +15,12 @@ CREATE VIEW mc.v_mgr_work_dir AS
 ALTER TABLE mc.v_mgr_work_dir OWNER TO d3l243;
 
 --
+-- Name: VIEW v_mgr_work_dir; Type: COMMENT; Schema: mc; Owner: d3l243
+--
+
+COMMENT ON VIEW mc.v_mgr_work_dir IS 'This database does not keep track of the server name that a given manager is running on. Thus, this query includes the generic text ServerName for the WorkDir path, unless the WorkDir is itself a network share';
+
+--
 -- Name: TABLE v_mgr_work_dir; Type: ACL; Schema: mc; Owner: d3l243
 --
 
