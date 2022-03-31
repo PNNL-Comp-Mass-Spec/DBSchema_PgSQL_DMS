@@ -12,7 +12,7 @@ CREATE VIEW ont.v_newt_terms AS
     v_term_lineage.grandparent_term_name,
     v_term_lineage.grandparent_term_identifier
    FROM ont.v_term_lineage
-  WHERE ((v_term_lineage.ontology OPERATOR(public.=) 'NEWT'::public.citext) AND (v_term_lineage.is_obsolete = 0) AND (v_term_lineage.identifier OPERATOR(public.~~) '"0-9"%'::public.citext));
+  WHERE ((v_term_lineage.ontology OPERATOR(public.=) 'NEWT'::public.citext) AND (v_term_lineage.is_obsolete = 0) AND (v_term_lineage.identifier OPERATOR(public.~) similar_to_escape(('[0-9]%'::public.citext)::text)));
 
 
 ALTER TABLE ont.v_newt_terms OWNER TO d3l243;
