@@ -11,9 +11,9 @@ CREATE TABLE ont.t_cv_ms (
     parent_term_type public.citext,
     parent_term_name public.citext NOT NULL,
     parent_term_id public.citext NOT NULL,
-    grand_parent_term_type public.citext,
-    grand_parent_term_name public.citext,
-    grand_parent_term_id public.citext,
+    grandparent_term_type public.citext,
+    grandparent_term_name public.citext,
+    grandparent_term_id public.citext,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -42,10 +42,10 @@ ALTER TABLE ONLY ont.t_cv_ms
     ADD CONSTRAINT pk_t_cv_ms PRIMARY KEY (entry_id);
 
 --
--- Name: ix_t_cv_ms_grand_parent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
+-- Name: ix_t_cv_ms_grandparent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --
 
-CREATE INDEX ix_t_cv_ms_grand_parent_term_name ON ont.t_cv_ms USING btree (grand_parent_term_name);
+CREATE INDEX ix_t_cv_ms_grandparent_term_name ON ont.t_cv_ms USING btree (grandparent_term_name);
 
 --
 -- Name: ix_t_cv_ms_identifier; Type: INDEX; Schema: ont; Owner: d3l243

@@ -10,8 +10,8 @@ CREATE TABLE ont.t_cv_go (
     is_leaf smallint NOT NULL,
     parent_term_name public.citext NOT NULL,
     parent_term_id public.citext NOT NULL,
-    grand_parent_term_name public.citext,
-    grand_parent_term_id public.citext,
+    grandparent_term_name public.citext,
+    grandparent_term_id public.citext,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -39,10 +39,10 @@ ALTER TABLE ONLY ont.t_cv_go
     ADD CONSTRAINT pk_t_cv_go PRIMARY KEY (entry_id);
 
 --
--- Name: ix_t_cv_go_grand_parent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
+-- Name: ix_t_cv_go_grandparent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --
 
-CREATE INDEX ix_t_cv_go_grand_parent_term_name ON ont.t_cv_go USING btree (grand_parent_term_name);
+CREATE INDEX ix_t_cv_go_grandparent_term_name ON ont.t_cv_go USING btree (grandparent_term_name);
 
 --
 -- Name: ix_t_cv_go_parent_term_name; Type: INDEX; Schema: ont; Owner: d3l243

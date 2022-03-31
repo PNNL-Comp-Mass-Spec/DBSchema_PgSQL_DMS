@@ -9,8 +9,8 @@ CREATE VIEW ont.v_cv_bto AS
     t_cv_bto.is_leaf,
     t_cv_bto.parent_term_name,
     t_cv_bto.parent_term_id,
-    t_cv_bto.grand_parent_term_name,
-    t_cv_bto.grand_parent_term_id,
+    t_cv_bto.grandparent_term_name,
+    t_cv_bto.grandparent_term_id,
     t_cv_bto.synonyms
    FROM ont.t_cv_bto;
 

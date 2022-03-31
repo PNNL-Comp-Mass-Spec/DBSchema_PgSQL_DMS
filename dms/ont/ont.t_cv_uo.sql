@@ -10,8 +10,8 @@ CREATE TABLE ont.t_cv_uo (
     is_leaf smallint NOT NULL,
     parent_term_name public.citext NOT NULL,
     parent_term_id public.citext NOT NULL,
-    grand_parent_term_name public.citext,
-    grand_parent_term_id public.citext,
+    grandparent_term_name public.citext,
+    grandparent_term_id public.citext,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

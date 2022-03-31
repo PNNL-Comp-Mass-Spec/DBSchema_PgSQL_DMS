@@ -11,8 +11,8 @@ CREATE TABLE ont.t_cv_envo (
     synonyms public.citext NOT NULL,
     parent_term_name public.citext NOT NULL,
     parent_term_id public.citext NOT NULL,
-    grand_parent_term_name public.citext,
-    grand_parent_term_id public.citext,
+    grandparent_term_name public.citext,
+    grandparent_term_id public.citext,
     children integer,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -48,10 +48,10 @@ ALTER TABLE ONLY ont.t_cv_envo
 CREATE INDEX ix_t_cv_envo_cached_names_term_name ON ont.t_cv_envo USING btree (term_name) INCLUDE (identifier);
 
 --
--- Name: ix_t_cv_envo_grand_parent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
+-- Name: ix_t_cv_envo_grandparent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --
 
-CREATE INDEX ix_t_cv_envo_grand_parent_term_name ON ont.t_cv_envo USING btree (grand_parent_term_name);
+CREATE INDEX ix_t_cv_envo_grandparent_term_name ON ont.t_cv_envo USING btree (grandparent_term_name);
 
 --
 -- Name: ix_t_cv_envo_identifier; Type: INDEX; Schema: ont; Owner: d3l243

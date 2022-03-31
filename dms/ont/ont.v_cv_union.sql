@@ -10,8 +10,8 @@ CREATE VIEW ont.v_cv_union AS
     t_cv_bto.is_leaf,
     t_cv_bto.parent_term_name,
     t_cv_bto.parent_term_id,
-    t_cv_bto.grand_parent_term_name,
-    t_cv_bto.grand_parent_term_id
+    t_cv_bto.grandparent_term_name,
+    t_cv_bto.grandparent_term_id
    FROM ont.t_cv_bto
 UNION
  SELECT 'ENVO'::text AS source,
@@ -21,8 +21,8 @@ UNION
     t_cv_envo.is_leaf,
     t_cv_envo.parent_term_name,
     t_cv_envo.parent_term_id,
-    t_cv_envo.grand_parent_term_name,
-    t_cv_envo.grand_parent_term_id
+    t_cv_envo.grandparent_term_name,
+    t_cv_envo.grandparent_term_id
    FROM ont.t_cv_envo
 UNION
  SELECT 'CL'::text AS source,
@@ -32,8 +32,8 @@ UNION
     t_cv_cl.is_leaf,
     t_cv_cl.parent_term_name,
     t_cv_cl.parent_term_id,
-    t_cv_cl.grand_parent_term_name,
-    t_cv_cl.grand_parent_term_id
+    t_cv_cl.grandparent_term_name,
+    t_cv_cl.grandparent_term_id
    FROM ont.t_cv_cl
 UNION
  SELECT 'GO'::text AS source,
@@ -43,8 +43,8 @@ UNION
     t_cv_go.is_leaf,
     t_cv_go.parent_term_name,
     t_cv_go.parent_term_id,
-    t_cv_go.grand_parent_term_name,
-    t_cv_go.grand_parent_term_id
+    t_cv_go.grandparent_term_name,
+    t_cv_go.grandparent_term_id
    FROM ont.t_cv_go
 UNION
  SELECT 'PSI-MI'::text AS source,
@@ -54,8 +54,8 @@ UNION
     t_cv_mi.is_leaf,
     t_cv_mi.parent_term_name,
     t_cv_mi.parent_term_id,
-    t_cv_mi.grand_parent_term_name,
-    t_cv_mi.grand_parent_term_id
+    t_cv_mi.grandparent_term_name,
+    t_cv_mi.grandparent_term_id
    FROM ont.t_cv_mi
 UNION
  SELECT 'PSI-Mod'::text AS source,
@@ -65,8 +65,8 @@ UNION
     t_cv_mod.is_leaf,
     t_cv_mod.parent_term_name,
     t_cv_mod.parent_term_id,
-    t_cv_mod.grand_parent_term_name,
-    t_cv_mod.grand_parent_term_id
+    t_cv_mod.grandparent_term_name,
+    t_cv_mod.grandparent_term_id
    FROM ont.t_cv_mod
 UNION
  SELECT 'PSI-MS'::text AS source,
@@ -76,8 +76,8 @@ UNION
     t_cv_ms.is_leaf,
     t_cv_ms.parent_term_name,
     t_cv_ms.parent_term_id,
-    t_cv_ms.grand_parent_term_name,
-    t_cv_ms.grand_parent_term_id
+    t_cv_ms.grandparent_term_name,
+    t_cv_ms.grandparent_term_id
    FROM ont.t_cv_ms
 UNION
  SELECT 'NEWT'::text AS source,
@@ -87,8 +87,8 @@ UNION
     t_cv_newt.is_leaf,
     t_cv_newt.parent_term_name,
     t_cv_newt.parent_term_id,
-    t_cv_newt.grand_parent_term_name,
-    t_cv_newt.grand_parent_term_id
+    t_cv_newt.grandparent_term_name,
+    t_cv_newt.grandparent_term_id
    FROM ont.t_cv_newt
 UNION
  SELECT 'PRIDE'::text AS source,
@@ -98,8 +98,8 @@ UNION
     t_cv_pride.is_leaf,
     t_cv_pride.parent_term_name,
     t_cv_pride.parent_term_id,
-    t_cv_pride.grand_parent_term_name,
-    t_cv_pride.grand_parent_term_id
+    t_cv_pride.grandparent_term_name,
+    t_cv_pride.grandparent_term_id
    FROM ont.t_cv_pride
 UNION
  SELECT 'DOID'::text AS source,
@@ -109,8 +109,8 @@ UNION
     t_cv_doid.is_leaf,
     t_cv_doid.parent_term_name,
     t_cv_doid.parent_term_id,
-    t_cv_doid.grand_parent_term_name,
-    t_cv_doid.grand_parent_term_id
+    t_cv_doid.grandparent_term_name,
+    t_cv_doid.grandparent_term_id
    FROM ont.t_cv_doid;
 
 

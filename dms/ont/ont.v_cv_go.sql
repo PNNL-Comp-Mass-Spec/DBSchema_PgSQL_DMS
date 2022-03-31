@@ -9,8 +9,8 @@ CREATE VIEW ont.v_cv_go AS
     t_cv_go.is_leaf,
     t_cv_go.parent_term_name,
     t_cv_go.parent_term_id,
-    t_cv_go.grand_parent_term_name,
-    t_cv_go.grand_parent_term_id
+    t_cv_go.grandparent_term_name,
+    t_cv_go.grandparent_term_id
    FROM ont.t_cv_go;
 
 
