@@ -6,7 +6,7 @@ CREATE VIEW ont.v_ncbi_taxonomy_alt_name_list_report AS
  SELECT primaryname.tax_id,
     primaryname.name AS scientific_name,
     namelist.name_class AS synonym_type,
-    namelist.name AS "Synonym",
+    namelist.name AS synonym,
     "Nodes".rank,
     "Nodes".parent_tax_id,
     parentnodename.name AS parent_name,
