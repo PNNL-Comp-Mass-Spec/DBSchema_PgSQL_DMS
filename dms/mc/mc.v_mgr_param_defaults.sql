@@ -4,8 +4,8 @@
 
 CREATE VIEW mc.v_mgr_param_defaults AS
  SELECT mtpm.mgr_type_id,
-    mt.mgr_type_name AS managertype,
-    mtpm.param_type_id AS "Param ID",
+    mt.mgr_type_name AS manager_type,
+    mtpm.param_type_id AS param_id,
     pt.param_name AS param,
     mtpm.default_value AS value,
     COALESCE(pt.picklist_name, ''::public.citext) AS picklist_name

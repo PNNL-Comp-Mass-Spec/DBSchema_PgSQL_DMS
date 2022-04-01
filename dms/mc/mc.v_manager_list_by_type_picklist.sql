@@ -4,6 +4,8 @@
 
 CREATE VIEW mc.v_manager_list_by_type_picklist AS
  SELECT m.mgr_id AS id,
+    m.mgr_name AS manager_name,
+    mt.mgr_type_name AS manager_type,
     m.mgr_name AS managername,
     mt.mgr_type_name AS managertype
    FROM (mc.t_mgrs m
