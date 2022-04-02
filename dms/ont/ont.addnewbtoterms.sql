@@ -44,45 +44,44 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, 1);
     _previewDeleteExtras := Coalesce(_previewDeleteExtras, 1);
 
-    If _sourceTable Like '%.%' Then
-        -- Calling user included schema in the source table name
-        SELECT split_part(_sourceTable, '.', 1) INTO _sourceSchema;
-        SELECT split_part(_sourceTable, '.', 2) INTO _sourceTable;
-    ELSE
-        SELECT schemaname INTO _sourceSchema
-        FROM pg_tables
-        WHERE tablename::citext = _sourceTable;
+    CREATE TEMP TABLE Tmp_CandidateTables AS
+    SELECT Table_to_Find, Schema_Name, Table_Name, Table_Exists, Message
+    FROM resolve_table_name(_sourceTable);
 
-        If Not Found THEN
-            _sourceSchema := 'public';
-        End If;
-    End If;
+    If Not Exists (SELECT * FROM Tmp_CandidateTables WHERE Table_Exists) Then
+        -- Message will be:
+        -- Table not found in any schema: t_tmp_table
+        --or
+        -- Table not found in the given schema: ont.t_tmp_table
 
-    If Not Exists (SELECT * FROM pg_tables WHERE schemaname::citext = _sourceSchema And tablename::citext = _sourceTable) Then
         RETURN QUERY
         SELECT 'Warning'::citext as Item_Type,
-               0 AS entry_id,
-               ''::citext AS term_pk,
-               ('Source table not found: ' || _sourceSchema || '.' || _sourceTable)::citext  AS term_name,
-               ''::citext AS identifier,
-               '0'::citext AS is_leaf,
-               ''::citext AS synonyms,
-               ''::citext AS parent_term_id,
-               ''::citext AS parent_term_name,
-               ''::citext AS grandparent_term_id,
-               ''::citext AS grandparent_term_name,
-               current_timestamp::timestamp AS entered,
-               NULL::timestamp AS updated;
+               0 As entry_id,
+               ''::citext As term_pk,
+               t.Message As term_name,
+               ''::citext As identifier,
+               '0'::citext As is_leaf,
+               ''::citext As synonyms,
+               ''::citext As parent_term_id,
+               ''::citext As parent_term_name,
+               ''::citext As grandparent_term_id,
+               ''::citext As grandparent_term_name,
+               current_timestamp::timestamp As entered,
+               NULL::timestamp As updated
+        FROM Tmp_CandidateTables t;
 
+        DROP TABLE Tmp_CandidateTables;
         Return;
     End If;
 
     -- Make sure the schema name and table name are properly capitalized
-    SELECT schemaname, tablename
+    SELECT Schema_Name, Table_Name
     INTO _sourceSchema, _sourceTable
-    FROM pg_tables
-    WHERE schemaname::citext = _sourceSchema And
-          tablename::citext = _sourceTable;
+    FROM Tmp_CandidateTables
+    WHERE Table_Exists
+    LIMIT 1;
+
+    DROP TABLE Tmp_CandidateTables;
 
     RAISE info 'Importing from %.%', _sourceSchema, _sourceTable;
 
@@ -173,7 +172,7 @@ BEGIN
                 t.synonyms <> s.synonyms OR
                 t.parent_term_name <> s.parent_term_name OR
                 Coalesce( NULLIF(t.grandparent_term_name, s.grandparent_term_name),
-                          NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS NOT NULL
+                          NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null
               );
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
@@ -202,13 +201,13 @@ BEGIN
         ---------------------------------------------------
         --
         CREATE TEMP TABLE IF NOT EXISTS Tmp_InvalidTermNames (
-            entry_id   int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            entry_id   int PRIMARY KEY GENERATED ALWAYS As IDENTITY,
             identifier citext not null,
             term_name  citext not null
         );
 
         CREATE TEMP TABLE IF NOT EXISTS Tmp_IDsToDelete (
-            entry_id int NOT NULL
+            entry_id int not null
         );
 
         CREATE INDEX IX_Tmp_IDsToDelete ON Tmp_IDsToDelete (entry_id);
@@ -216,7 +215,7 @@ BEGIN
         INSERT INTO Tmp_InvalidTermNames( identifier,
                                           term_name )
         SELECT UniqueQTarget.identifier,
-               UniqueQTarget.term_name AS Invalid_Term_Name_to_Delete
+               UniqueQTarget.term_name As Invalid_Term_Name_to_Delete
         FROM ( SELECT DISTINCT t.identifier, t.term_name FROM ont.t_cv_bto t GROUP BY t.identifier, t.term_name ) UniqueQTarget
              LEFT OUTER JOIN
              ( SELECT DISTINCT Tmp_SourceData.identifier, Tmp_SourceData.term_name FROM Tmp_SourceData ) UniqueQSource
@@ -232,28 +231,28 @@ BEGIN
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        IF FOUND then
+        If Found Then
             RAISE INFO 'Added % rows to Tmp_InvalidTermNames', Cast(_myRowCount as varchar(9));
         Else
             RAISE INFO 'No invalid term names were found';
-        END IF;
+        End If;
 
         If Exists (Select * From Tmp_InvalidTermNames) Then
         -- <b>
             RETURN QUERY
-            SELECT 'Extra term name to delete'::citext AS Item_Type,
+            SELECT 'Extra term name to delete'::citext As Item_Type,
                    s.entry_id,
                    ''::citext as term_pk,
                    s.term_name,
                    s.identifier,
-                   '0'::citext AS is_leaf,
-                   ''::citext AS synonyms,
-                   ''::citext AS parent_term_id,
-                   ''::citext AS parent_term_name,
-                   ''::citext AS grandparent_term_id,
-                   ''::citext AS grandparent_term_name,
-                   current_timestamp::timestamp AS entered,
-                   NULL::timestamp AS updated
+                   '0'::citext As is_leaf,
+                   ''::citext As synonyms,
+                   ''::citext As parent_term_id,
+                   ''::citext As parent_term_name,
+                   ''::citext As grandparent_term_id,
+                   ''::citext As grandparent_term_name,
+                   current_timestamp::timestamp As entered,
+                   NULL::timestamp As updated
             FROM Tmp_InvalidTermNames s;
 
             INSERT INTO Tmp_IDsToDelete (entry_id)
@@ -305,25 +304,25 @@ BEGIN
                     Else
                         -- Not safe to delete
                         RETURN QUERY
-                        SELECT 'Warning'::citext AS Item_Type,
-                               0 AS Entry_ID,
+                        SELECT 'Warning'::citext As Item_Type,
+                               0 As Entry_ID,
                                'Not deleting since since no entries would remain for this ID' as term_pk,
                                _invalidTerm.term_name,
                                _invalidTerm.identifier,
-                               '0'::citext AS is_leaf,
-                               ''::citext AS synonyms,
-                               ''::citext AS parent_term_id,
-                               ''::citext AS parent_term_name,
-                               ''::citext AS grandparent_term_id,
-                               ''::citext AS grandparent_term_name,
-                               current_timestamp::timestamp AS entered,
-                               null::timestamp AS updated;
+                               '0'::citext As is_leaf,
+                               ''::citext As synonyms,
+                               ''::citext As parent_term_id,
+                               ''::citext As parent_term_name,
+                               ''::citext As grandparent_term_id,
+                               ''::citext As grandparent_term_name,
+                               current_timestamp::timestamp As entered,
+                               null::timestamp As updated;
 
                     End If;
 
                 End Loop; -- </d>
             End If; -- </c>
-        END IF; -- </b>
+        End If; -- </b>
 
         DROP TABLE Tmp_InvalidTermNames;
         DROP TABLE Tmp_IDsToDelete;
@@ -334,7 +333,7 @@ BEGIN
         --
         UPDATE ont.t_cv_bto t
         SET children = StatsQ.children
-        FROM ( SELECT s.parent_term_id, COUNT(*) AS children
+        FROM ( SELECT s.parent_term_id, COUNT(*) As children
                FROM ont.t_cv_bto s
                GROUP BY s.parent_term_ID ) StatsQ
         WHERE StatsQ.parent_term_id = t.identifier AND
@@ -348,7 +347,7 @@ BEGIN
                 SELECT s.parent_term_id
                 FROM ont.t_cv_bto s
                 GROUP BY s.parent_term_ID) AND
-              NOT t.Children IS NULL;
+              Not t.Children IS NULL;
 
     Else
     -- <a2>
@@ -360,18 +359,18 @@ BEGIN
         SELECT 'Existing item to update'::citext as Item_Type,
                t.entry_id,
                t.term_pk,
-               (CASE WHEN t.term_name = s.term_name THEN t.term_name ELSE t.term_name || ' --> ' || s.term_name END)::citext AS term_name,
+               (CASE WHEN t.term_name = s.term_name THEN t.term_name ELSE t.term_name || ' --> ' || s.term_name END)::citext As term_name,
                (CASE WHEN t.identifier = s.identifier THEN t.identifier ELSE t.identifier || ' --> ' || s.identifier END)::citext as identifier,
-               (CASE WHEN t.is_leaf = s.is_leaf THEN Cast(t.is_leaf AS text) ELSE Cast(t.is_leaf AS text) || ' --> ' || Cast(s.is_leaf AS text) END)::citext AS is_leaf,
+               (CASE WHEN t.is_leaf = s.is_leaf THEN Cast(t.is_leaf As text) ELSE Cast(t.is_leaf As text) || ' --> ' || Cast(s.is_leaf As text) END)::citext As is_leaf,
                (CASE WHEN t.synonyms = s.synonyms THEN t.synonyms ELSE t.synonyms || ' --> ' || s.synonyms END)::citext synonyms,
                t.parent_term_id::citext,
-               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name ELSE t.parent_term_name || ' --> ' || s.parent_term_name END)::citext AS parent_term_name,
+               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name ELSE t.parent_term_name || ' --> ' || s.parent_term_name END)::citext As parent_term_name,
                t.grandparent_term_id::citext,
-               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE Coalesce(t.grandparent_term_name, 'NULL') || ' --> ' || Coalesce(s.grandparent_term_name, 'NULL') END)::citext AS grandparent_term_name,
+               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE Coalesce(t.grandparent_term_name, 'NULL') || ' --> ' || Coalesce(s.grandparent_term_name, 'NULL') END)::citext As grandparent_term_name,
                t.entered::timestamp,
                t.updated::timestamp
-        FROM ont.t_cv_bto AS t
-            INNER JOIN Tmp_SourceData AS s
+        FROM ont.t_cv_bto As t
+            INNER JOIN Tmp_SourceData As s
               ON t.term_pk = s.term_pk AND
                  t.parent_term_id = s.parent_term_id AND
                  Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '')
@@ -382,11 +381,11 @@ BEGIN
                 (t.synonyms <> s.synonyms) OR
                 (t.parent_term_name <> s.parent_term_name) OR
                 (Coalesce(NULLIF(t.grandparent_term_name, s.grandparent_term_name),
-                        NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS NOT NULL)
+                        NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null)
                )
         UNION
         SELECT 'New item to add'::citext as Item_Type,
-               0 AS entry_id,
+               0 As entry_id,
                s.term_pk,
                s.term_name,
                s.identifier,
@@ -396,14 +395,14 @@ BEGIN
                s.parent_term_name,
                s.grandparent_term_id,
                s.grandparent_term_name,
-               current_timestamp::timestamp AS entered,
-               NULL::timestamp AS updated
+               current_timestamp::timestamp As entered,
+               NULL::timestamp As updated
         FROM Tmp_SourceData s
         WHERE matches_existing = 0;
 
-    END IF; -- </a2>
+    End If; -- </a2>
 
-    -- If not dropped here, the temporary tables will persist until the calling session ends
+    -- If not dropped here, the temporary table will persist until the calling session ends
     DROP TABLE Tmp_SourceData;
 END
 $$;
