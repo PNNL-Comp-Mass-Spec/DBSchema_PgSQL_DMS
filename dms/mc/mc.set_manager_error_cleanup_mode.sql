@@ -1,8 +1,8 @@
 --
--- Name: setmanagererrorcleanupmode(text, integer, integer, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: set_manager_error_cleanup_mode(text, integer, integer, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.setmanagererrorcleanupmode(IN _mgrlist text DEFAULT ''::text, IN _cleanupmode integer DEFAULT 1, IN _showtable integer DEFAULT 1, IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text DEFAULT ''::text, IN _cleanupmode integer DEFAULT 1, IN _showtable integer DEFAULT 1, IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -276,11 +276,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.setmanagererrorcleanupmode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE setmanagererrorcleanupmode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.setmanagererrorcleanupmode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'SetManagerErrorCleanupMode';
+COMMENT ON PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'SetManagerErrorCleanupMode';
 

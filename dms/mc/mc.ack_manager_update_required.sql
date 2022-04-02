@@ -1,8 +1,8 @@
 --
--- Name: ackmanagerupdaterequired(text, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: ack_manager_update_required(text, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.ackmanagerupdaterequired(IN _managername text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -108,11 +108,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.ackmanagerupdaterequired(IN _managername text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.ack_manager_update_required(IN _managername text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE ackmanagerupdaterequired(IN _managername text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE ack_manager_update_required(IN _managername text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.ackmanagerupdaterequired(IN _managername text, INOUT _message text, INOUT _returncode text) IS 'AckManagerUpdateRequired';
+COMMENT ON PROCEDURE mc.ack_manager_update_required(IN _managername text, INOUT _message text, INOUT _returncode text) IS 'AckManagerUpdateRequired';
 

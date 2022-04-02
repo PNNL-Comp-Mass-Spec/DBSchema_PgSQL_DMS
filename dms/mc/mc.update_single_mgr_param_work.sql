@@ -1,8 +1,8 @@
 --
--- Name: updatesinglemgrparamwork(text, text, text, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: update_single_mgr_param_work(text, text, text, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.updatesinglemgrparamwork(IN _paramname text, IN _newvalue text, IN _callinguser text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, IN _newvalue text, IN _callinguser text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -141,11 +141,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.updatesinglemgrparamwork(IN _paramname text, IN _newvalue text, IN _callinguser text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, IN _newvalue text, IN _callinguser text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE updatesinglemgrparamwork(IN _paramname text, IN _newvalue text, IN _callinguser text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE update_single_mgr_param_work(IN _paramname text, IN _newvalue text, IN _callinguser text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.updatesinglemgrparamwork(IN _paramname text, IN _newvalue text, IN _callinguser text, INOUT _message text, INOUT _returncode text) IS 'UpdateSingleMgrParamWork';
+COMMENT ON PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, IN _newvalue text, IN _callinguser text, INOUT _message text, INOUT _returncode text) IS 'UpdateSingleMgrParamWork';
 

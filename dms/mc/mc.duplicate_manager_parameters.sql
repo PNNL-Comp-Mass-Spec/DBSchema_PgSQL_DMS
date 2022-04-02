@@ -1,8 +1,8 @@
 --
--- Name: duplicatemanagerparameters(integer, integer, integer, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: duplicate_manager_parameters(integer, integer, integer, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.duplicatemanagerparameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer DEFAULT 0, _infoonly integer DEFAULT 0) RETURNS TABLE(type_id integer, value public.citext, mgr_id integer, comment public.citext)
+CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer DEFAULT 0, _infoonly integer DEFAULT 0) RETURNS TABLE(type_id integer, value public.citext, mgr_id integer, comment public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION mc.duplicatemanagerparameters(_sourcemgrid integer, _
 **      to create new parameters for a new manager
 **
 **  Example usage:
-**    select * from DuplicateManagerParameter(157, 172)
+**    select * from duplicate_manager_parameters(157, 172)
 **
 **  Arguments:
 **    _mergeSourceWithTarget    When 0, then the target manager cannot have any parameters; if 1, then will add missing parameters to the target manager
@@ -153,11 +153,11 @@ END
 $$;
 
 
-ALTER FUNCTION mc.duplicatemanagerparameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION duplicatemanagerparameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: FUNCTION duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON FUNCTION mc.duplicatemanagerparameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer) IS 'DuplicateManagerParameters';
+COMMENT ON FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer) IS 'DuplicateManagerParameters';
 

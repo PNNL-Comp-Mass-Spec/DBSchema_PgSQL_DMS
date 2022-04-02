@@ -1,8 +1,8 @@
 --
--- Name: updatesinglemgrcontrolparam(text, text, text, text, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: update_single_mgr_control_param(text, text, text, text, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.updatesinglemgrcontrolparam(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -295,11 +295,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.updatesinglemgrcontrolparam(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE updatesinglemgrcontrolparam(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.updatesinglemgrcontrolparam(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'UpdateSingleMgrControlParam';
+COMMENT ON PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'UpdateSingleMgrControlParam';
 

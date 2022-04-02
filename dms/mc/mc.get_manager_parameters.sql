@@ -1,8 +1,8 @@
 --
--- Name: getmanagerparameters(text, integer, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: get_manager_parameters(text, integer, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.getmanagerparameters(_managernamelist text DEFAULT ''::text, _sortmode integer DEFAULT 0, _maxrecursion integer DEFAULT 10) RETURNS TABLE(mgr_name text, param_name text, entry_id integer, type_id integer, value text, mgr_id integer, comment text, last_affected timestamp without time zone, entered_by text, mgr_type_id integer, parentparampointerstate integer, source text)
+CREATE OR REPLACE FUNCTION mc.get_manager_parameters(_managernamelist text DEFAULT ''::text, _sortmode integer DEFAULT 0, _maxrecursion integer DEFAULT 10) RETURNS TABLE(mgr_name text, param_name text, entry_id integer, type_id integer, value text, mgr_id integer, comment text, last_affected timestamp without time zone, entered_by text, mgr_type_id integer, parentparampointerstate integer, source text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -112,11 +112,11 @@ END
 $$;
 
 
-ALTER FUNCTION mc.getmanagerparameters(_managernamelist text, _sortmode integer, _maxrecursion integer) OWNER TO d3l243;
+ALTER FUNCTION mc.get_manager_parameters(_managernamelist text, _sortmode integer, _maxrecursion integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION getmanagerparameters(_managernamelist text, _sortmode integer, _maxrecursion integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: FUNCTION get_manager_parameters(_managernamelist text, _sortmode integer, _maxrecursion integer); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON FUNCTION mc.getmanagerparameters(_managernamelist text, _sortmode integer, _maxrecursion integer) IS 'GetManagerParameters';
+COMMENT ON FUNCTION mc.get_manager_parameters(_managernamelist text, _sortmode integer, _maxrecursion integer) IS 'GetManagerParameters';
 

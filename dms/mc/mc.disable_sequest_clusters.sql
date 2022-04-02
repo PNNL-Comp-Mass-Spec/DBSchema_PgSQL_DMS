@@ -1,8 +1,8 @@
 --
--- Name: disablesequestclusters(integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: disable_sequest_clusters(integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.disablesequestclusters(IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.disable_sequest_clusters(IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -32,11 +32,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.disablesequestclusters(IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.disable_sequest_clusters(IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE disablesequestclusters(IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE disable_sequest_clusters(IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.disablesequestclusters(IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'DisableSequestClusters';
+COMMENT ON PROCEDURE mc.disable_sequest_clusters(IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'DisableSequestClusters';
 

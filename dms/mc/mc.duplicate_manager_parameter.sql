@@ -1,8 +1,8 @@
 --
--- Name: duplicatemanagerparameter(integer, integer, text, text, text, text, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: duplicate_manager_parameter(integer, integer, text, text, text, text, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.duplicatemanagerparameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly integer DEFAULT 1) RETURNS TABLE(status text, type_id integer, value public.citext, mgr_id integer, comment public.citext)
+CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly integer DEFAULT 1) RETURNS TABLE(status text, type_id integer, value public.citext, mgr_id integer, comment public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,9 +14,9 @@ CREATE OR REPLACE FUNCTION mc.duplicatemanagerparameter(_sourceparamtypeid integ
 **      The new parameter type must already exist in mc.t_param_type
 **
 **  Example usage:
-**    Select * From DuplicateManagerParameter (157, 172, _paramValueSearchText := 'msfileinfoscanner', _paramValueReplaceText := 'AgilentToUimfConverter', _infoOnly := 1);
+**    Select * From duplicate_manager_parameter (157, 172, _paramValueSearchText := 'msfileinfoscanner', _paramValueReplaceText := 'AgilentToUimfConverter', _infoOnly := 1);
 **
-**    Select * From DuplicateManagerParameter (179, 182, _paramValueSearchText := 'PbfGen', _paramValueReplaceText := 'ProMex', _infoOnly := 1);
+**    Select * From duplicate_manager_parameter (179, 182, _paramValueSearchText := 'PbfGen', _paramValueReplaceText := 'ProMex', _infoOnly := 1);
 **
 **  Arguments:
 **    _sourceParamTypeId       Source param TypeID
@@ -184,11 +184,11 @@ END
 $$;
 
 
-ALTER FUNCTION mc.duplicatemanagerparameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION duplicatemanagerparameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: FUNCTION duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON FUNCTION mc.duplicatemanagerparameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer) IS 'DuplicateManagerParameter';
+COMMENT ON FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer) IS 'DuplicateManagerParameter';
 
