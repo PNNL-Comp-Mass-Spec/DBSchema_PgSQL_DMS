@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integ
 **          02/05/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **          03/24/2022 mem - Fix typo in comment
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -75,9 +76,9 @@ BEGIN
         manager_name citext NOT NULL
     );
 
-    -- Populate TmpMangerList using ParseManagerNameList
+    -- Populate TmpMangerList using parse_manager_name_list
     --
-    Call mc.ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
+    Call mc.parse_manager_name_list (_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
     IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
         _message := 'No valid managers were found in _managerNameList';

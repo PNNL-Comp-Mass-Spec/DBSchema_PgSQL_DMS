@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
 **                         - Show a warning if all of the managers have control_from_website = 0 in t_mgrs
 **          03/24/2022 mem - Show a warning if _managerIDList did not have one or more integers
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -204,7 +205,7 @@ BEGIN
     -- don't yet have an entry in mc.t_param_value for parameter _paramName
     --
     -- Adding value '##_DummyParamValue_##' so that
-    --  we'll force a call to UpdateSingleMgrParamWork
+    --  we'll force a call to update_single_mgr_param_work
     --
     -- Intentionally not filtering on M.control_from_website > 0 here,
     -- but the query that populates TmpParamValueEntriesToUpdate does filter on that parameter
@@ -270,11 +271,11 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Call UpdateSingleMgrParamWork to perform the update
+    -- Call update_single_mgr_param_work to perform the update
     -- Note that it calls AlterEnteredByUserMultiID and AlterEventLogEntryUserMultiID for _callingUser
     ---------------------------------------------------
     --
-    Call mc.UpdateSingleMgrParamWork (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+    Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
 EXCEPTION
     WHEN OTHERS THEN

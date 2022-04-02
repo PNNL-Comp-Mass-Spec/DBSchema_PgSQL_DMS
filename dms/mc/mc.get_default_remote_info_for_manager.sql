@@ -9,7 +9,7 @@ CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managerna
 **
 **  Desc:
 **      Gets the default remote info parameters for the given manager
-**      Retrieves parameters using GetManagerParametersWork, so properly retrieves parent group parameters, if any
+**      Retrieves parameters using get_manager_parameters_work, so properly retrieves parent group parameters, if any
 
 **      If the manager does not have parameters RunJobsRemotely and RemoteHostName defined, returns an empty string
 **      Also returns an empty string if RunJobsRemotely is not True
@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managerna
 **          03/29/2018 mem - Return an empty string if the manager does not have parameters RunJobsRemotely and RemoteHostName defined, or if RunJobsRemotely is false
 **          02/05/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling GetManagerParametersWork
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -68,7 +69,7 @@ BEGIN
     );
 
     -- Populate the temporary table with the manager parameters
-    Call mc.GetManagerParametersWork (_managerName, 0, 50, _message => _message);
+    Call mc.get_manager_parameters_work (_managerName, 0, 50, _message => _message);
 
     If Not Exists ( SELECT value
                     FROM Tmp_Mgr_Params

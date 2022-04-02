@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **                         - Fixed where clause bug in final update query
 **          02/07/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
         -- Populate TmpManagerList with the managers in _mgrList
         ---------------------------------------------------
         --
-        Call mc.ParseManagerNameList (_mgrList, _removeUnknownManagers => 1, _message => _message);
+        Call mc.parse_manager_name_list (_mgrList, _removeUnknownManagers => 1, _message => _message);
 
         IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
             _message := 'No valid managers were found in _mgrList';

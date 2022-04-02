@@ -14,13 +14,14 @@ CREATE OR REPLACE PROCEDURE mc.disable_sequest_clusters(IN _infoonly integer DEF
 **          10/09/2009 mem - Changed _ManagerTypeIDList to 11
 **          01/30/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling EnableDisableAllManagers
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
 
 BEGIN
 
-    Call mc.EnableDisableAllManagers (
+    Call mc.mc.enable_disable_all_managers (
         _managerTypeIDList := '11',
         _managerNameList := '%SeqCluster%',
         _enable := 0,

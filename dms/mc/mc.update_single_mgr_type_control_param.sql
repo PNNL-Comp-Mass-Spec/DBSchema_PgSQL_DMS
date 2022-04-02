@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **          04/16/2009 mem - Now calling UpdateSingleMgrParamWork to perform the updates
 **          02/15/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -70,11 +71,11 @@ BEGIN
     END IF;
 
     ---------------------------------------------------
-    -- Call UpdateSingleMgrParamWork to perform the update
+    -- Call update_single_mgr_param_work to perform the update
     -- Note that it calls AlterEnteredByUserMultiID and AlterEventLogEntryUserMultiID for _callingUser
     ---------------------------------------------------
     --
-    Call mc.UpdateSingleMgrParamWork (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+    Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
 EXCEPTION
     WHEN OTHERS THEN

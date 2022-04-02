@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **                         - Now filtering on MT_Active > 0 in T_MgrTypes
 **          01/30/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Pass _results cursor to EnableDisableManagers
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -70,7 +71,7 @@ BEGIN
 
     -----------------------------------------------
     -- Loop through the manager types in TmpManagerTypeIDs
-    -- For each, call EnableDisableManagers
+    -- For each, call enable_disable_managers
     -----------------------------------------------
 
     FOR _mgrTypeID IN
@@ -78,7 +79,7 @@ BEGIN
         FROM TmpManagerTypeIDs
     LOOP
 
-        Call mc.EnableDisableManagers (
+        Call mc.enable_disable_managers (
             _enable := _enable,
             _managerTypeID := _mgrTypeID,
             _managerNameList := _managerNameList,

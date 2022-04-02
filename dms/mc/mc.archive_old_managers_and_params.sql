@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **      Select * from mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly := 1, _enableControlFromWebsite := 0)
 **
 **  Arguments:
-**    _mgrList    One or more manager names (comma-separated list); supports wildcards because uses stored procedure ParseManagerNameList
+**    _mgrList    One or more manager names (comma-separated list); supports wildcards because uses stored procedure parse_manager_name_list
 **    _infoonly   0 to perform the update, 1 to preview
 **
 **  Auth:   mem
@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          01/29/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -62,7 +63,7 @@ BEGIN
     -- Setting _removeUnknownManagers to 0 so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
     --
-    Call mc.ParseManagerNameList (_mgrList, _removeUnknownManagers => 0, _message => _message);
+    Call mc.parse_manager_name_list (_mgrList, _removeUnknownManagers => 0, _message => _message);
 
     If Not Exists (Select * from TmpManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';

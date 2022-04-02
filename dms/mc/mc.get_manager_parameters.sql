@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION mc.get_manager_parameters(_managernamelist text DEFAU
 **          03/14/2018 mem - Refactor actual parameter lookup into stored procedure GetManagerParametersWork
 **          02/05/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling GetManagerParametersWork
+**          04/02/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -63,7 +64,7 @@ BEGIN
     );
 
     -- Populate the temporary table with the manager parameters
-    Call mc.GetManagerParametersWork (_managerNameList, _sortMode, _maxRecursion, _message => _message);
+    Call mc.get_manager_parameters_work (_managerNameList, _sortMode, _maxRecursion, _message => _message);
 
     -- Return the parameters as a result set
     --
