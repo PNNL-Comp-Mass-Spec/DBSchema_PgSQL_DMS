@@ -1,8 +1,8 @@
 --
--- Name: addnewbtoterms(public.citext, integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: add_new_bto_terms(public.citext, integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.addnewbtoterms(_sourcetable public.citext DEFAULT 'T_Tmp_BTO'::public.citext, _infoonly integer DEFAULT 1, _previewdeleteextras integer DEFAULT 1) RETURNS TABLE(item_type public.citext, entry_id integer, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, synonyms public.citext, parent_term_id public.citext, parent_term_name public.citext, grandparent_term_id public.citext, grandparent_term_name public.citext, entered timestamp without time zone, updated timestamp without time zone)
+CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFAULT 'T_Tmp_BTO'::public.citext, _infoonly integer DEFAULT 1, _previewdeleteextras integer DEFAULT 1) RETURNS TABLE(item_type public.citext, entry_id integer, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, synonyms public.citext, parent_term_id public.citext, parent_term_name public.citext, grandparent_term_id public.citext, grandparent_term_name public.citext, entered timestamp without time zone, updated timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -408,11 +408,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.addnewbtoterms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer) OWNER TO d3l243;
+ALTER FUNCTION ont.add_new_bto_terms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION addnewbtoterms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION add_new_bto_terms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.addnewbtoterms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer) IS 'AddNewBTOTerms';
+COMMENT ON FUNCTION ont.add_new_bto_terms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer) IS 'AddNewBTOTerms';
 

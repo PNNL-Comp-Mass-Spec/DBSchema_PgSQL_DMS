@@ -1,8 +1,8 @@
 --
--- Name: gettaxidchildcount(integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: get_taxid_child_count(integer); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.gettaxidchildcount(_taxonomyid integer) RETURNS integer
+CREATE OR REPLACE FUNCTION ont.get_taxid_child_count(_taxonomyid integer) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -28,11 +28,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.gettaxidchildcount(_taxonomyid integer) OWNER TO d3l243;
+ALTER FUNCTION ont.get_taxid_child_count(_taxonomyid integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION gettaxidchildcount(_taxonomyid integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION get_taxid_child_count(_taxonomyid integer); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.gettaxidchildcount(_taxonomyid integer) IS 'GetTaxIDChildCount';
+COMMENT ON FUNCTION ont.get_taxid_child_count(_taxonomyid integer) IS 'GetTaxIDChildCount';
 

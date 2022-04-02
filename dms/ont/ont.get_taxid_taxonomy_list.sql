@@ -1,8 +1,8 @@
 --
--- Name: gettaxidtaxonomylist(integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: get_taxid_taxonomy_list(integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.gettaxidtaxonomylist(_taxonomyid integer, _extendedinfo integer) RETURNS public.citext
+CREATE OR REPLACE FUNCTION ont.get_taxid_taxonomy_list(_taxonomyid integer, _extendedinfo integer) RETURNS public.citext
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -26,7 +26,7 @@ BEGIN
     INTO _list
     FROM (
         SELECT T.rank, T.Name
-        FROM ont.GetTaxIDTaxonomyTable ( _taxonomyID ) T
+        FROM ont.get_taxid_taxonomy_table ( _taxonomyID ) T
         WHERE T.Entry_ID = 1 OR
               T.Rank <> 'no rank' OR
               _extendedInfo > 0
@@ -38,11 +38,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.gettaxidtaxonomylist(_taxonomyid integer, _extendedinfo integer) OWNER TO d3l243;
+ALTER FUNCTION ont.get_taxid_taxonomy_list(_taxonomyid integer, _extendedinfo integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION gettaxidtaxonomylist(_taxonomyid integer, _extendedinfo integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION get_taxid_taxonomy_list(_taxonomyid integer, _extendedinfo integer); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.gettaxidtaxonomylist(_taxonomyid integer, _extendedinfo integer) IS 'GetTaxIDTaxonomyList';
+COMMENT ON FUNCTION ont.get_taxid_taxonomy_list(_taxonomyid integer, _extendedinfo integer) IS 'GetTaxIDTaxonomyList';
 

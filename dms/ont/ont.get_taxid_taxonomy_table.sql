@@ -1,8 +1,8 @@
 --
--- Name: gettaxidtaxonomytable(integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: get_taxid_taxonomy_table(integer); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.gettaxidtaxonomytable(_taxonomyid integer) RETURNS TABLE(rank public.citext, name public.citext, tax_id integer, entry_id integer)
+CREATE OR REPLACE FUNCTION ont.get_taxid_taxonomy_table(_taxonomyid integer) RETURNS TABLE(rank public.citext, name public.citext, tax_id integer, entry_id integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -60,11 +60,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.gettaxidtaxonomytable(_taxonomyid integer) OWNER TO d3l243;
+ALTER FUNCTION ont.get_taxid_taxonomy_table(_taxonomyid integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION gettaxidtaxonomytable(_taxonomyid integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION get_taxid_taxonomy_table(_taxonomyid integer); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.gettaxidtaxonomytable(_taxonomyid integer) IS 'GetTaxIDTaxonomyTable';
+COMMENT ON FUNCTION ont.get_taxid_taxonomy_table(_taxonomyid integer) IS 'GetTaxIDTaxonomyTable';
 

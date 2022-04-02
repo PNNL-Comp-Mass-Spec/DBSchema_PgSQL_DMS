@@ -1,8 +1,8 @@
 --
--- Name: gettaxidsynonymlist(integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: get_taxid_synonym_list(integer); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.gettaxidsynonymlist(_taxonomyid integer) RETURNS public.citext
+CREATE OR REPLACE FUNCTION ont.get_taxid_synonym_list(_taxonomyid integer) RETURNS public.citext
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -32,11 +32,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.gettaxidsynonymlist(_taxonomyid integer) OWNER TO d3l243;
+ALTER FUNCTION ont.get_taxid_synonym_list(_taxonomyid integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION gettaxidsynonymlist(_taxonomyid integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION get_taxid_synonym_list(_taxonomyid integer); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.gettaxidsynonymlist(_taxonomyid integer) IS 'GetTaxIDSynonymList';
+COMMENT ON FUNCTION ont.get_taxid_synonym_list(_taxonomyid integer) IS 'GetTaxIDSynonymList';
 

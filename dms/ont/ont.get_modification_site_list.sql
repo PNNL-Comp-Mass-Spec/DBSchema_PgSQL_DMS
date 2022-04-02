@@ -1,8 +1,8 @@
 --
--- Name: getmodificationsitelist(integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: get_modification_site_list(integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.getmodificationsitelist(_unimodid integer, _hidden integer) RETURNS TABLE(unimod_id integer, sites public.citext)
+CREATE OR REPLACE FUNCTION ont.get_modification_site_list(_unimodid integer, _hidden integer) RETURNS TABLE(unimod_id integer, sites public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -39,11 +39,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.getmodificationsitelist(_unimodid integer, _hidden integer) OWNER TO d3l243;
+ALTER FUNCTION ont.get_modification_site_list(_unimodid integer, _hidden integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION getmodificationsitelist(_unimodid integer, _hidden integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION get_modification_site_list(_unimodid integer, _hidden integer); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.getmodificationsitelist(_unimodid integer, _hidden integer) IS 'GetModificationSiteList';
+COMMENT ON FUNCTION ont.get_modification_site_list(_unimodid integer, _hidden integer) IS 'GetModificationSiteList';
 
