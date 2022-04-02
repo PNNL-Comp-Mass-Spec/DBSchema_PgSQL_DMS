@@ -7,7 +7,7 @@ CREATE VIEW ont.v_helper_ncbi_taxonomy_report AS
     nodenames.name,
     nodes.rank,
     nodes.parent_tax_id,
-    ont.gettaxidchildcount(nodes.tax_id) AS children,
+    ont.get_taxid_child_count(nodes.tax_id) AS children,
     parentnodename.name AS parent_name,
     division.division_name AS division
    FROM (((((ont.t_ncbi_taxonomy_names nodenames
