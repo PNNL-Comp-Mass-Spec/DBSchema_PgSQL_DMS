@@ -40,12 +40,12 @@ BEGIN
     --
     If Not Exists (SELECT posted_by FROM t_usage_stats WHERE posted_by = _postedBy) THEN
         _currentOperation := 'appending to';
-    
+
         INSERT INTO t_usage_stats (posted_by, last_posting_time, usage_count)
         VALUES (_postedBy, CURRENT_TIMESTAMP, 1);
     Else
         _currentOperation := 'updating';
-    
+
         UPDATE t_usage_stats
         SET last_posting_time = CURRENT_TIMESTAMP, usage_count = usage_count + 1
         WHERE posted_by = _postedBy;
@@ -60,7 +60,7 @@ BEGIN
         SELECT MAX(posting_time) INTO _lastUpdated
         FROM t_usage_log
         WHERE posted_by = _postedBy AND calling_user = _callingUser;
-       
+
         IF Found Then
             If CURRENT_TIMESTAMP <= _lastUpdated + _minimumUpdateInterval * INTERVAL '1 hour' Then
                 -- The last usage message was posted recently
@@ -84,7 +84,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Error %s %s: %s', 
+    _message := format('Error %s %s: %s',
                 _currentOperation, _currentTargetTable, _exceptionMessage);
 
     RAISE Warning '%', _message;

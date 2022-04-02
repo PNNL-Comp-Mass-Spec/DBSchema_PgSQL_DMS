@@ -25,10 +25,10 @@ BEGIN
     SELECT _unimodID AS Unimod_ID, string_agg(SourceQ.Site_Description, ', ')::citext AS Sites
     FROM (
         SELECT CASE WHEN S.position IN ('Anywhere', 'Any N-Term', 'Any C-term')
-                      THEN S.site 
-                    WHEN S.site LIKE '_-term' 
-                      THEN S.position 
-                    ELSE S.site || ' @ ' || S.position 
+                      THEN S.site
+                    WHEN S.site LIKE '_-term'
+                      THEN S.position
+                    ELSE S.site || ' @ ' || S.position
                END AS Site_Description
         FROM ont.t_unimod_specificity AS S
         WHERE S.unimod_id = _unimodID AND

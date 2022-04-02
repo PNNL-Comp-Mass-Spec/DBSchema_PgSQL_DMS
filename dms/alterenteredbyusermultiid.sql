@@ -103,11 +103,11 @@ BEGIN
 
     _countUpdated := 0;
 
-    FOR _targetID IN 
+    FOR _targetID IN
         SELECT TargetID
         FROM TmpIDUpdateList
         ORDER BY TargetID
-    LOOP 
+    LOOP
         Call AlterEnteredByUser(
                             _targetTableSchema,
                             _targetTableName,

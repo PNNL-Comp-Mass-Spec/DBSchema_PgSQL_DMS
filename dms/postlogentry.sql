@@ -7,7 +7,7 @@ CREATE OR REPLACE PROCEDURE public.postlogentry(IN _type text, IN _message text,
     AS $_$
 /****************************************************
 **
-**  Desc:   
+**  Desc:
 **      Append a log entry to T_Log_Entries, either in the public schema or the specified schema
 **
 **  Arguments:
@@ -48,22 +48,22 @@ BEGIN
     End If;
 
     _targetTableWithSchema := format('%I.%I', _targetSchema, 't_log_entries');
-     
+
     _type := Coalesce(_type, 'Normal');
     _message := Coalesce(_message, '');
     _postedBy := Coalesce(_postedBy, 'na');
-    
+
     If _postedBy ILike 'Space%' And _type::citext In ('Health', 'Normal') Then
         -- Auto-update _duplicateEntryHoldoffHours to be 24 if it is zero
         -- Otherwise we get way too many health/status log entries
-        
+
         If _duplicateEntryHoldoffHours = 0 Then
             _duplicateEntryHoldoffHours := 24;
         End If;
     End If;
 
     _minimumPostingTime = CURRENT_TIMESTAMP - (_duplicateEntryHoldoffHours || ' hours')::INTERVAL;
-    
+
     If Coalesce(_duplicateEntryHoldoffHours, 0) > 0 Then
         _s := format(
                 'SELECT COUNT(*) '
@@ -74,7 +74,7 @@ BEGIN
                 _targetTableWithSchema);
 
         EXECUTE _s INTO _duplicateRowCount USING _message, _type, _minimumPostingTime;
-        
+
     End If;
 
     If _duplicateRowCount > 0 THEN
@@ -89,7 +89,7 @@ BEGIN
 
     EXECUTE _s USING _postedBy, _type, _message;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;    
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _myRowCount = 0 Then
         _warningMessage := 'Warning: log message not added to ' || _targetTableWithSchema;

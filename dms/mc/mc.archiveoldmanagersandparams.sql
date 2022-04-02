@@ -96,7 +96,7 @@ BEGIN
 
     If Exists (Select * from TmpManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
-        SELECT 'Unknown manager (not in mc.t_mgrs)', 
+        SELECT 'Unknown manager (not in mc.t_mgrs)',
                MgrList.manager_name
         FROM TmpManagerList MgrList
         WHERE MgrList.mgr_id Is Null

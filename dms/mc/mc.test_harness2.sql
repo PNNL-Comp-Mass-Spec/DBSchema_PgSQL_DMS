@@ -12,7 +12,7 @@ DECLARE
     _sqlstate text;
     _exceptionMessage text;
     _exceptionContext text;
-BEGIN   
+BEGIN
     DROP TABLE IF EXISTS TmpManagerList;
 
     CREATE TEMP TABLE TmpManagerList (
@@ -30,10 +30,10 @@ BEGIN
 
     RAISE info '%', _paramTypeID;
 
-    RETURN query 
+    RETURN query
     SELECT MgrListA.mgr_id, 0 AS test, MgrListA.manager_name::text
            FROM TmpManagerList MgrListA;
-    
+
     -- Calling RETURN query again will append additional rows to the output table
     --
     RETURN query
@@ -49,7 +49,7 @@ BEGIN
             WHERE PV.type_id = _paramTypeID
          ) B
            ON A.mgr_id = B.mgr_id
-    WHERE B.mgr_id IS NULL;    
+    WHERE B.mgr_id IS NULL;
 
 EXCEPTION
     WHEN OTHERS THEN

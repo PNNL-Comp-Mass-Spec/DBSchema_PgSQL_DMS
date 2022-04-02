@@ -54,7 +54,7 @@ BEGIN
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
-    
+
     _eventLogSchema := COALESCE(_eventLogSchema, '');
     If (char_length(_eventLogSchema) = 0) Then
         _eventLogSchema := 'public';

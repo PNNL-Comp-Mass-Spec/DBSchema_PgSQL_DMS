@@ -96,7 +96,7 @@ BEGIN
     --
     GET DIAGNOSTICS _managerCount = ROW_COUNT;
 
-    IF NOT FOUND Then 
+    IF NOT FOUND Then
         _message = 'Use Manager IDs, not manager names';
 
         RAISE Warning '%', _message;
@@ -105,8 +105,8 @@ BEGIN
 
     RAISE Info 'Inserted % manager IDs into TmpMgrIDs', _managerCount;
 
-    IF NOT EXISTS (SELECT * 
-                   FROM mc.t_mgrs M 
+    IF NOT EXISTS (SELECT *
+                   FROM mc.t_mgrs M
                           INNER JOIN TmpMgrIDs ON M.mgr_id = TmpMgrIDs.mgr_id
                    WHERE M.control_from_website > 0) Then
 
@@ -250,21 +250,21 @@ BEGIN
                        WHERE M.control_from_website > 0 AND
                              PV.type_id = _paramTypeID) Then
 
-            IF _managerCount > 1 THEN 
+            IF _managerCount > 1 THEN
                 _message = 'Managers ' || _managerIDList || ' do not have parameter ' || _paramName;
-            ELSE 
+            ELSE
                 _message = 'Manager '|| _managerIDList || ' does not have parameter ' || _paramName;
             END IF;
 
             RAISE Warning '%', _message;
         END IF;
 
-        IF _managerCount > 1 THEN 
+        IF _managerCount > 1 THEN
             _message = 'All managers already have ' || _newValue || ' for ' || _paramName;
-        ELSE 
+        ELSE
             _message = 'Manager '|| _managerIDList || ' already has ' || _newValue || ' for ' || _paramName;
         END IF;
-        
+
         RAISE Info '%', _message;
         Return;
     End If;

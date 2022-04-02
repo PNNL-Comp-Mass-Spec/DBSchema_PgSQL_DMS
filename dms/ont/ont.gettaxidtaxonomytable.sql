@@ -34,8 +34,8 @@ BEGIN
 
     While _taxonomyID <> 1 Loop
 
-        SELECT T.parent_tax_id, T.name,T.Rank 
-        INTO _parentTaxID, _name, _rank 
+        SELECT T.parent_tax_id, T.name,T.Rank
+        INTO _parentTaxID, _name, _rank
         FROM ont.t_ncbi_taxonomy_cached T
         WHERE T.tax_id = _taxonomyID;
 

@@ -22,7 +22,7 @@ BEGIN
     SELECT COUNT(*) INTO _count
     FROM ont.t_ncbi_taxonomy_nodes
     WHERE (parent_tax_id = _taxonomyID);
-    
+
     Return _count;
 END
 $$;

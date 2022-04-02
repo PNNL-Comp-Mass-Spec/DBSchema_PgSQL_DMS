@@ -5,7 +5,7 @@
 CREATE EXTENSION IF NOT EXISTS pgstattuple WITH SCHEMA public;
 
 --
--- Name: EXTENSION pgstattuple; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION pgstattuple; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION pgstattuple IS 'show tuple-level statistics';

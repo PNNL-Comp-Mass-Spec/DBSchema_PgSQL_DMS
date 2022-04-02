@@ -32,7 +32,7 @@ BEGIN
               _extendedInfo > 0
         ORDER BY T.Entry_ID DESC)
     SourceQ;
-    
+
     Return _list;
 END
 $$;

@@ -41,7 +41,7 @@ BEGIN
     _failureMsg := Coalesce(_failureMsg, '');
     _message := '';
     _returncode := '';
-    
+
     ---------------------------------------------------
     -- Confirm that the manager name is valid
     ---------------------------------------------------

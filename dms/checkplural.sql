@@ -21,7 +21,7 @@ BEGIN
         Return _textIfOneItem;
     Else
         Return _textIfZeroOrMultiple;
-    End If;    
+    End If;
 END
 $$;
 
