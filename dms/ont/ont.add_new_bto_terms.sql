@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFA
 /****************************************************
 **
 **  Desc:
-**      Adds new BTO terms to T_CV_BTO
+**      Adds new BTO terms to t_cv_bto
 **
 **      The source table must have columns:
 **        term_pk
@@ -33,7 +33,6 @@ DECLARE
     _sourceSchema citext := '';
     _myRowCount int := 0;
     _s text := '';
-    _entryID int := 0;
     _invalidTerm record;
 BEGIN
     ---------------------------------------------------
