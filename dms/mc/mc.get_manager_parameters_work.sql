@@ -22,6 +22,8 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 **  Auth:   mem
 **  Date:   03/14/2018 mem - Initial version (code refactored from GetManagerParameters)
 **          02/05/2020 mem - Ported to PostgreSQL
+**          04/02/2022 mem - Remove initial temp table drop since unnecessary
+**                         - Use case insensitive matching of manager name
 **
 *****************************************************/
 DECLARE
@@ -34,8 +36,6 @@ BEGIN
     -----------------------------------------------
     -- Create the Temp Table to hold the manager group information
     -----------------------------------------------
-
-    DROP TABLE IF EXISTS Tmp_Manager_Group_Info;
 
     CREATE TEMP TABLE Tmp_Manager_Group_Info (
         mgr_name text NOT NULL,
@@ -75,7 +75,7 @@ BEGIN
            End As ParentParamPointerState,
            mgr_name
     FROM mc.v_param_value
-    WHERE (mgr_name IN (Select value From public.udf_parse_delimited_list(_managerNameList, ',')));
+    WHERE (mgr_name IN (Select value::citext From public.udf_parse_delimited_list(_managerNameList, ',')));
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -141,7 +141,7 @@ BEGIN
                                      INNER JOIN ( SELECT mgr_name,
                                                          Group_Name
                                                   FROM Tmp_Manager_Group_Info ) FilterQ
-                                       ON PV.mgr_name = FilterQ.Group_Name ) ValuesToAppend
+                                       ON PV.mgr_name::citext = FilterQ.Group_Name::citext ) ValuesToAppend
                ON Target.mgr_name = ValuesToAppend.mgr_name AND
                   Target.type_id = ValuesToAppend.type_id
         WHERE (Target.type_id IS NULL Or ValuesToAppend.type_id = 162);
