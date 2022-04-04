@@ -182,21 +182,23 @@ BEGIN
         ---------------------------------------------------
         --
         _s := '';
-        _s := _s || ' DELETE ont.t_cv_ms';
-        _s := _s || ' FROM %I.%I s INNER JOIN';
-        _s := _s ||      ' ont.t_cv_ms t ON s.term_pk = t.term_pk';
-        _s := _s || ' WHERE (s.parent_term_name = '''') AND ';
-        _s := _s ||       ' (s.Definition SIMILAR TO ''Obsolete%%'' OR s.Comment SIMILAR TO ''Obsolete%%'')';
+        _s := _s || ' DELETE FROM ont.t_cv_ms';
+        _s := _s || ' USING ont.t_cv_ms t';
+        _s := _s || '       INNER JOIN %I.%I s';
+        _s := _s || '         ON s.term_pk = t.term_pk';
+        _s := _s || ' WHERE Coalesce(s.parent_term_name, '''') = '''' AND  ';
+        _s := _s || '      (s.Definition::citext SIMILAR TO ''Obsolete%%'' OR s.Comment::citext SIMILAR TO ''Obsolete%%'')';
 
         _deleteObsolete1 := _s;
 
         _s := '';
-        _s := _s || ' DELETE ont.t_cv_ms';
-        _s := _s || ' FROM ont.t_cv_ms t INNER JOIN';
+        _s := _s || ' DELETE FROM ont.t_cv_ms';
+        _s := _s || ' USING ont.t_cv_ms t';
+        _s := _s || '       INNER JOIN';
         _s := _s ||    ' (SELECT term_pk, parent_term_id';
         _s := _s ||     ' FROM %I.%I';
-        _s := _s ||     ' WHERE parent_term_name <> '''' AND ';
-        _s := _s ||           ' (Definition SIMILAR TO ''obsolete%%'' OR Comment SIMILAR TO ''obsolete%%'')';
+        _s := _s ||     ' WHERE Coalesce(parent_term_name, '''') <> '''' AND ';
+        _s := _s ||           ' (Definition::citext SIMILAR TO ''obsolete%%'' OR Comment::citext SIMILAR TO ''obsolete%%'')';
         _s := _s ||     ' ) ObsoleteTerms ';
         _s := _s ||     ' ON t.term_pk = ObsoleteTerms.term_pk AND ';
         _s := _s ||        ' t.parent_term_id = ObsoleteTerms.parent_term_id';
@@ -285,34 +287,30 @@ BEGIN
 
         If _deleteObsolete1 <> '' OR _deleteObsolete2 <> '' Then
             RAISE INFO '%', '-- Delete Obsolete rows';
-            RAISE INFO '%', _deleteObsolete1;
-            RAISE INFO '%', _deleteObsolete2;
+            RAISE INFO '%', format(_deleteObsolete1, _sourceSchema, _sourceTable);
+            RAISE INFO '%', format(_deleteObsolete2, _sourceSchema, _sourceTable);
 
             _s := '';
-            _s := _s || ' SELECT ''Obsolete term to delete'' as Item_Type, s.*, t.entered, t.updated';
+            _s := _s || ' SELECT ''Obsolete term to delete''::citext as Item_Type,';
+            _s := _s ||          ' 0 As entry_id,';
+            _s := _s ||          ' s.term_pk::citext As term_pk,';
+            _s := _s ||          ' s.term_name::citext As term_name,';
+            _s := _s ||          ' s.identifier::citext As identifier,';
+            _s := _s ||          ' s.is_leaf::citext As is_leaf,';
+            _s := _s ||          ' s.parent_term_id::citext As parent_term_id,';
+            _s := _s ||          ' s.parent_term_name::citext As parent_term_name,';
+            _s := _s ||          ' s.parent_term_type::citext As parent_term_type,';
+            _s := _s ||          ' s.grandparent_term_id::citext As grandparent_term_id,';
+            _s := _s ||          ' s.grandparent_term_name::citext As grandparent_term_name,';
+            _s := _s ||          ' s.grandparent_term_type::citext As grandparent_term_type,';
+            _s := _s ||          ' current_timestamp::timestamp As entered,';
+            _s := _s ||          ' NULL::timestamp As updated';
             _s := _s || ' FROM %I.%I s INNER JOIN';
             _s := _s ||      ' ont.t_cv_ms t ON s.term_pk = t.term_pk';
-            _s := _s || ' WHERE (s.Definition SIMILAR TO ''Obsolete%%'' OR s.Comment SIMILAR TO ''Obsolete%%'')';
-
-            -- ToDo: Reformat the above query into this format:
-            SELECT 'Warning'::citext as Item_Type,
-                   0 As entry_id,
-                   ''::citext As term_pk,
-                   t.Message As term_name,
-                   ''::citext As identifier,
-                   '0'::citext As is_leaf,
-                   ''::citext As parent_term_id,
-                   ''::citext As parent_term_name,
-                   ''::citext As parent_term_type,
-                   ''::citext As grandparent_term_id,
-                   ''::citext As grandparent_term_name,
-                   ''::citext As grandparent_term_type,
-                   current_timestamp::timestamp As entered,
-                   NULL::timestamp As updated;
+            _s := _s || ' WHERE (s.Definition::citext SIMILAR TO ''Obsolete%%'' OR s.Comment::citext SIMILAR TO ''Obsolete%%'')';
 
             RETURN QUERY
             EXECUTE format(_s, _sourceSchema, _sourceTable);
-
 
         End If;
 
