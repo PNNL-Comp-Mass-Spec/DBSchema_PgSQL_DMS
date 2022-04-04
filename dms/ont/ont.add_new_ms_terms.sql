@@ -378,3 +378,9 @@ $$;
 
 ALTER FUNCTION ont.add_new_ms_terms(_sourcetable public.citext, _infoonly integer) OWNER TO d3l243;
 
+--
+-- Name: FUNCTION add_new_ms_terms(_sourcetable public.citext, _infoonly integer); Type: COMMENT; Schema: ont; Owner: d3l243
+--
+
+COMMENT ON FUNCTION ont.add_new_ms_terms(_sourcetable public.citext, _infoonly integer) IS 'AddNewMSTerms';
+
