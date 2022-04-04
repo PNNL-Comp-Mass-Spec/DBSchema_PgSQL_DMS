@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 **  Date:   06/15/2016 mem - Initial Version
 **          05/16/2018 mem - Add columns Parent_term_type and GrandParent_term_type
 **          04/03/2022 mem - Ported to PostgreSQL
+**          04/04/2022 mem - Update the merge query to support parent_term_type being null
 **
 *****************************************************/
 DECLARE
@@ -253,7 +254,8 @@ BEGIN
                 t.term_name <> s.term_name OR
                 t.identifier <> s.identifier OR
                 t.is_leaf <> s.is_leaf OR
-                t.parent_term_type <> s.parent_term_type OR
+                Coalesce( NULLIF(t.parent_term_type, s.parent_term_type),
+                          NULLIF(s.parent_term_type, t.parent_term_type)) IS Not Null OR
                 t.parent_term_name <> s.parent_term_name OR
                 Coalesce( NULLIF(t.grandparent_term_type, s.grandparent_term_type),
                           NULLIF(s.grandparent_term_type, t.grandparent_term_type)) IS Not Null OR
@@ -329,7 +331,7 @@ BEGIN
             (CASE WHEN t.term_name = s.term_name THEN t.term_name ELSE t.term_name || ' --> ' || s.term_name END)::citext As term_name,
             (CASE WHEN t.identifier = s.identifier THEN t.identifier ELSE t.identifier || ' --> ' || s.identifier END)::citext as identifier,
             (CASE WHEN t.is_leaf = s.is_leaf THEN Cast(t.is_leaf As text) ELSE Cast(t.is_leaf As text) || ' --> ' || Cast(s.is_leaf As text) END)::citext As is_leaf,
-            (CASE WHEN t.parent_term_type = s.parent_term_type THEN t.parent_term_type ELSE t.parent_term_type || ' --> ' || s.parent_term_type END)::citext As parent_term_type,
+            (CASE WHEN t.parent_term_type = s.parent_term_type THEN t.parent_term_type ELSE Coalesce(t.parent_term_type, 'NULL') || ' --> ' || Coalesce(s.parent_term_type, 'NULL') END)::citext As parent_term_type,
             (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name ELSE t.parent_term_name || ' --> ' || s.parent_term_name END)::citext As parent_term_name,
             t.parent_term_id::citext,
             (CASE WHEN t.grandparent_term_type = s.grandparent_term_type THEN t.grandparent_term_type ELSE Coalesce(t.grandparent_term_type, 'NULL') || ' --> ' || Coalesce(s.grandparent_term_type, 'NULL') END)::citext As grandparent_term_type,
