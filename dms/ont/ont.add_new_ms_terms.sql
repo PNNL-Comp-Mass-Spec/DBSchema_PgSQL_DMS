@@ -118,7 +118,9 @@ BEGIN
     _s := _s || '   parent_term_type, parent_term_name, parent_term_id,';
     _s := _s || '   grandparent_term_type, grandparent_term_name, grandparent_term_id, 0 as matches_existing';
     _s := _s || ' FROM %I.%I';
-    _s := _s || ' WHERE parent_term_name <> '''' AND Not Definition Similar To ''Obsolete%%'' And Not Comment Similar To ''Obsolete%%'' ';
+    _s := _s || ' WHERE Coalesce(parent_term_name, '''') <> '''' AND ';
+    _s := _s || '       Not Coalesce(Definition::citext, '''') Similar To ''Obsolete%%'' AND ';
+    _s := _s || '       Not Coalesce(Comment::citext, '''') Similar To ''Obsolete%%'' ';
 
     EXECUTE format(_s, _sourceSchema, _sourceTable);
 
@@ -150,26 +152,25 @@ BEGIN
     -- Look for obsolete terms that need to be deleted
     ---------------------------------------------------
     --
-    _s := ''       ;
+    _s := '';
     _s := _s || ' SELECT COUNT(*)';
     _s := _s || ' FROM (';
     _s := _s ||   ' SELECT s.term_pk, s.Comment, s.Definition';
     _s := _s ||   ' FROM %I.%I s INNER JOIN';
     _s := _s ||        ' ont.t_cv_ms t ON s.term_pk = t.term_pk';
-    _s := _s ||   ' WHERE (s.parent_term_name = '''') AND ';
-    _s := _s ||         ' (s.Definition SIMILAR TO ''Obsolete%%'' OR s.Comment SIMILAR TO ''Obsolete%%'')';
+    _s := _s ||   ' WHERE (Coalesce(s.parent_term_name, '''') = '''') AND ';
+    _s := _s ||         ' (s.Definition::citext SIMILAR TO ''Obsolete%%'' OR s.Comment::citext SIMILAR TO ''Obsolete%%'')';
     _s := _s ||   ' UNION' ;
     _s := _s ||   ' SELECT s.term_pk, s.Comment, s.Definition ';
     _s := _s ||   ' FROM ont.t_cv_ms t INNER JOIN';
-    _s := _s ||      ' (SELECT term_pk, parent_term_id, Comment, Definition';
+    _s := _s ||      ' (SELECT term_pk, parent_term_id, Comment::citext, Definition::citext';
     _s := _s ||       ' FROM %I.%I';
-    _s := _s ||       ' WHERE parent_term_name <> '''' AND ';
-    _s := _s ||             ' (Definition SIMILAR TO ''obsolete%%'' OR Comment SIMILAR TO ''obsolete%%'')';
+    _s := _s ||       ' WHERE Coalesce(parent_term_name, '''') <> '''' AND ';
+    _s := _s ||             ' (Definition::citext SIMILAR TO ''obsolete%%'' OR Comment::citext SIMILAR TO ''obsolete%%'')';
     _s := _s ||       ' ) s ';
     _s := _s ||       ' ON t.term_pk = s.term_pk AND ';
     _s := _s ||          ' t.parent_term_id = s.parent_term_id';
     _s := _s ||   ' ) LookupQ';
-
 
     EXECUTE format(_s, _sourceSchema, _sourceTable, _sourceSchema, _sourceTable)
     INTO _myRowCount;
