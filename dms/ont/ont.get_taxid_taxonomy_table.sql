@@ -20,17 +20,13 @@ DECLARE
     _rank citext;
 BEGIN
 
-    CREATE TEMP TABLE IF NOT EXISTS Tmp_Taxonomy
+    CREATE TEMP TABLE Tmp_Taxonomy
     (
         Rank citext not NULL,
         Name citext NOT NULL,
         Tax_ID int NOT NULL,
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     );
-
-    -- Since we used "CREATE TEMP TABLE IF NOT EXISTS" we could TRUNCATE here to assure that it is empty
-    -- However, since we end this function with DROP TABLE, the truncation is not required
-    -- TRUNCATE TABLE Tmp_Taxonomy;
 
     While _taxonomyID <> 1 Loop
 

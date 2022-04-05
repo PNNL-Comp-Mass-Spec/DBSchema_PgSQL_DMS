@@ -89,7 +89,7 @@ BEGIN
     -- We do this so we can keep track of which rows match existing entries
     ---------------------------------------------------
 
-    CREATE TEMP TABLE IF NOT EXISTS Tmp_SourceData (
+    CREATE TEMP TABLE Tmp_SourceData (
         term_pk citext,
         term_name citext,
         identifier citext,
@@ -102,10 +102,6 @@ BEGIN
         matches_existing int,
         entry_id int primary key generated always as identity
     );
-
-    -- Since we used "CREATE TEMP TABLE IF NOT EXISTS" we could TRUNCATE here to assure that it is empty
-    -- However, since we end this function with DROP TABLE, the truncation is not required
-    -- TRUNCATE TABLE Tmp_Taxonomy;
 
     _s := '';
     _s := _s || ' INSERT INTO Tmp_SourceData';
@@ -199,13 +195,13 @@ BEGIN
         -- Look for identifiers with invalid term names
         ---------------------------------------------------
         --
-        CREATE TEMP TABLE IF NOT EXISTS Tmp_InvalidTermNames (
+        CREATE TEMP TABLE Tmp_InvalidTermNames (
             entry_id   int PRIMARY KEY GENERATED ALWAYS As IDENTITY,
             identifier citext not null,
             term_name  citext not null
         );
 
-        CREATE TEMP TABLE IF NOT EXISTS Tmp_IDsToDelete (
+        CREATE TEMP TABLE Tmp_IDsToDelete (
             entry_id int not null
         );
 
