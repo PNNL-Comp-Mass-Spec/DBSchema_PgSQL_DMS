@@ -109,7 +109,7 @@ BEGIN
     _s := _s || '   parent_term_name, parent_term_id,';
     _s := _s || '   grandparent_term_name, grandparent_term_id, 0 as matches_existing';
     _s := _s || ' FROM %I.%I';
-    _s := _s || ' WHERE parent_term_name <> '''' And term_pk Like ''ENVO%''';
+    _s := _s || ' WHERE parent_term_name <> '''' And term_pk Similar To ''ENVO%''';
 
     EXECUTE format(_s, _sourceSchema, _sourceTable);
 
