@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly integer DEFAULT 0) RET
 **  Auth:   mem
 **  Date:   11/08/2018 mem - Initial version
 **          04/05/2022 mem - Ported to PostgreSQL
+**          04/07/2022 mem - Use the query results to report status messages
 **
 *****************************************************/
 DECLARE
@@ -58,12 +59,12 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE ont.t_cv_bto
-        SET usage_last_12_months = Source.usage_last_12_months,
-            usage_all_time = Source.usage_all_time
-        FROM Tmp_UsageStats Source
-        WHERE ont.t_cv_bto.Identifier = Source.Tissue_ID AND
-              (ont.t_cv_bto.Usage_Last_12_Months <> Source.Usage_Last_12_Months Or
-               ont.t_cv_bto.Usage_All_Time <> Source.Usage_All_Time);
+        SET usage_last_12_months = s.usage_last_12_months,
+            usage_all_time = s.usage_all_time
+        FROM Tmp_UsageStats s
+        WHERE ont.t_cv_bto.Identifier = s.Tissue_ID AND
+              (ont.t_cv_bto.Usage_Last_12_Months <> s.Usage_Last_12_Months Or
+               ont.t_cv_bto.Usage_All_Time <> s.Usage_All_Time);
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -73,7 +74,7 @@ BEGIN
             SELECT * FROM public.CheckPlural(_myRowCount, 'row', 'rows')
             INTO _rowDescription;
 
-            _message := 'updated ' || Cast(_myRowCount As text) || ' ' || _rowDescription || ' in ont.t_cv_bto';
+            _message := 'Updated ' || Cast(_myRowCount As text) || ' ' || _rowDescription || ' in ont.t_cv_bto';
         End If;
 
         UPDATE ont.t_cv_bto
@@ -100,20 +101,27 @@ BEGIN
         End If;
 
         If _rowsUpdated = 0 Then
-            _message := 'Usage stats were already up-to-date';
+            _message := 'Usage stats are already up-to-date';
         End If;
 
-        If length(_message) > 0 Then
-            Raise Info '%', _message;
-        End If;
+        RETURN QUERY
+        SELECT _message::citext, 0, 0;
     Else
         ---------------------------------------------------
-        -- Preview the usage stats
+        -- Preview new/updated usage stats
         ---------------------------------------------------
+
         RETURN QUERY
-        SELECT s.Tissue_ID, s.Usage_All_Time, s.Usage_Last_12_Months
-        FROM Tmp_UsageStats s
-        ORDER BY s.Usage_All_Time DESC;
+        SELECT identifier, s.usage_all_time, s.usage_last_12_months
+        FROM ont.t_cv_bto INNER JOIN Tmp_UsageStats s
+               ON ont.t_cv_bto.Identifier = s.Tissue_ID
+        WHERE ont.t_cv_bto.Usage_Last_12_Months <> s.Usage_Last_12_Months Or
+              ont.t_cv_bto.Usage_All_Time <> s.Usage_All_Time;
+
+        If Not FOUND Then
+            RETURN QUERY
+            SELECT 'Usage stats are already up-to-date'::citext, 0, 0;
+        End If;
     End If;
 
     -- If not dropped here, the temporary table will persist until the calling session ends
