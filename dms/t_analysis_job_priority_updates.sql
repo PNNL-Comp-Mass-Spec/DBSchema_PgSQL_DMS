@@ -1,0 +1,22 @@
+--
+-- Name: t_analysis_job_priority_updates; Type: TABLE; Schema: public; Owner: d3l243
+--
+
+CREATE TABLE public.t_analysis_job_priority_updates (
+    entry_id integer NOT NULL,
+    job integer NOT NULL,
+    old_priority smallint NOT NULL,
+    new_priority smallint NOT NULL,
+    comment public.citext,
+    entered timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.t_analysis_job_priority_updates OWNER TO d3l243;
+
+--
+-- Name: TABLE t_analysis_job_priority_updates; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE public.t_analysis_job_priority_updates TO readaccess;
+

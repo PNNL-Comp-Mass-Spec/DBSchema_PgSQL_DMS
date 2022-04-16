@@ -1,0 +1,18 @@
+--
+-- Name: t_analysis_job_request_existing_jobs; Type: TABLE; Schema: public; Owner: d3l243
+--
+
+CREATE TABLE public.t_analysis_job_request_existing_jobs (
+    request_id integer NOT NULL,
+    job integer NOT NULL
+);
+
+
+ALTER TABLE public.t_analysis_job_request_existing_jobs OWNER TO d3l243;
+
+--
+-- Name: TABLE t_analysis_job_request_existing_jobs; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE public.t_analysis_job_request_existing_jobs TO readaccess;
+

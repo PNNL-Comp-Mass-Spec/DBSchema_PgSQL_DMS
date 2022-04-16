@@ -1,0 +1,24 @@
+--
+-- Name: t_instrument_allocation; Type: TABLE; Schema: public; Owner: d3l243
+--
+
+CREATE TABLE public.t_instrument_allocation (
+    allocation_tag public.citext NOT NULL,
+    proposal_id public.citext NOT NULL,
+    fiscal_year integer NOT NULL,
+    allocated_hours double precision,
+    comment public.citext,
+    entered timestamp without time zone,
+    last_affected timestamp without time zone,
+    fy_proposal public.citext GENERATED ALWAYS AS (((((fiscal_year)::public.citext)::text || '_'::text) || (proposal_id)::text)) STORED
+);
+
+
+ALTER TABLE public.t_instrument_allocation OWNER TO d3l243;
+
+--
+-- Name: TABLE t_instrument_allocation; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE public.t_instrument_allocation TO readaccess;
+
