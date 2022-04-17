@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 **          02/05/2020 mem - Ported to PostgreSQL
 **          04/02/2022 mem - Remove initial temp table drop since unnecessary
 **                         - Use case insensitive matching of manager name
+**          04/16/2022 mem - Use new function name
 **
 *****************************************************/
 DECLARE
@@ -75,7 +76,7 @@ BEGIN
            End As ParentParamPointerState,
            mgr_name
     FROM mc.v_param_value
-    WHERE (mgr_name IN (Select value::citext From public.udf_parse_delimited_list(_managerNameList, ',')));
+    WHERE (mgr_name IN (Select value::citext From public.parse_delimited_list(_managerNameList, ',')));
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 

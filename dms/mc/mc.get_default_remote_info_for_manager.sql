@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managerna
 **          03/23/2022 mem - Use mc schema when calling GetManagerParametersWork
 **          04/02/2022 mem - Use new procedure name
 **                         - Use case insensitive matching of manager name
+**          04/16/2022 mem - Use new function name
 **
 *****************************************************/
 DECLARE
@@ -123,12 +124,12 @@ BEGIN
     WHERE (param_name = 'RemoteOrgDBPath' And mgr_name::citext = _managerName::citext);
 
     SELECT _remoteInfoXML ||
-         '<privateKey>' || public.udf_get_filename(value) || '</privateKey>' INTO _remoteInfoXML
+         '<privateKey>' || public.get_filename(value) || '</privateKey>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostPrivateKeyFile' And mgr_name::citext = _managerName::citext);
 
     SELECT _remoteInfoXML ||
-         '<passphrase>' || public.udf_get_filename(value) || '</passphrase>' INTO _remoteInfoXML
+         '<passphrase>' || public.get_filename(value) || '</passphrase>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostPassphraseFile' And mgr_name::citext = _managerName::citext);
 

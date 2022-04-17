@@ -31,7 +31,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error calling udf_parse_delimited_list: ' || _exceptionMessage;
+    _message := 'Error calling parse_delimited_list: ' || _exceptionMessage;
 
     RAISE Info '%', _message;
     RAISE Info 'Exception context; %', _exceptionContext;

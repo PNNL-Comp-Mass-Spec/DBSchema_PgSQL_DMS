@@ -96,19 +96,19 @@ BEGIN
 
         CREATE UNIQUE INDEX IX_TmpIDUpdateList ON TmpIDUpdateList (TargetID);
 
-        -- Populate TmpIDUpdateList with entry_id values for mc.t_param_value, then call AlterEnteredByUserMultiID
+        -- Populate TmpIDUpdateList with entry_id values for mc.t_param_value, then call alter_entered_by_user_multi_id
         --
         INSERT INTO TmpIDUpdateList (TargetID)
         SELECT entry_id
         FROM TmpParamValueEntriesToUpdate;
 
-        Call public.AlterEnteredByUserMultiID ('mc', 't_param_value', 'entry_id', _callingUser, _entryDateColumnName => 'last_affected', _message => _message);
+        Call public.alter_entered_by_user_multi_id ('mc', 't_param_value', 'entry_id', _callingUser, _entryDateColumnName => 'last_affected', _message => _message);
 
         If _paramName::citext = 'mgractive' or _paramTypeID = 17 Then
             -- Triggers trig_i_t_param_value and trig_u_t_param_value make an entry in
             --  mc.t_event_log whenever mgractive (param TypeID = 17) is changed
 
-            -- Call AlterEventLogEntryUserMultiID
+            -- Call alter_event_log_entry_user_multi_id
             -- to alter the entered_by field in mc.t_event_log
 
             If _newValue::citext = 'True' Then
@@ -117,7 +117,7 @@ BEGIN
                 _targetState := 0;
             End If;
 
-            -- Populate TmpIDUpdateList with Manager ID values, then call AlterEventLogEntryUserMultiID
+            -- Populate TmpIDUpdateList with Manager ID values, then call alter_event_log_entry_user_multi_id
             Truncate Table TmpIDUpdateList;
 
             INSERT INTO TmpIDUpdateList (TargetID)
@@ -125,7 +125,7 @@ BEGIN
             FROM mc.t_param_value PV
             WHERE PV.entry_id IN (SELECT entry_id FROM TmpParamValueEntriesToUpdate);
 
-            Call public.AlterEventLogEntryUserMultiID ('mc', 1, _targetState, _callingUser, _message => _message);
+            Call public.alter_event_log_entry_user_multi_id ('mc', 1, _targetState, _callingUser, _message => _message);
         End If;
 
     End If;

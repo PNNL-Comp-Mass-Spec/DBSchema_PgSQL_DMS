@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **          04/02/2022 mem - Use new procedure name
+**          04/16/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -296,7 +297,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'ArchiveOldManagersAndParams', 'mc');
+    Call post_log_entry ('Error', _message, 'ArchiveOldManagersAndParams', 'mc');
 
     RETURN QUERY
     SELECT _message as Message,

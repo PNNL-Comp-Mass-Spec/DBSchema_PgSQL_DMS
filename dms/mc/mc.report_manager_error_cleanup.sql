@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **  Auth:   mem
 **  Date:   09/10/2009 mem - Initial version
 **          02/07/2020 mem - Ported to PostgreSQL
+**          04/16/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ BEGIN
         End If;
     End If;
 
-    Call PostLogEntry (_messageType, _message, 'ReportManagerErrorCleanup', 'mc');
+    Call post_log_entry (_messageType, _message, 'ReportManagerErrorCleanup', 'mc');
 
     ---------------------------------------------------
     -- Lookup the value of ManagerErrorCleanupMode in mc.t_param_value
@@ -156,7 +157,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'ReportManagerErrorCleanup', 'mc');
+    Call post_log_entry ('Error', _message, 'ReportManagerErrorCleanup', 'mc');
 
 END
 $$;

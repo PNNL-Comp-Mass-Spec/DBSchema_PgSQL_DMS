@@ -71,7 +71,7 @@ BEGIN
         If _myRowCount > 0 Then
             _rowsUpdated := _rowsUpdated + _myRowCount;
 
-            SELECT * FROM public.CheckPlural(_myRowCount, 'row', 'rows')
+            SELECT * FROM public.check_plural(_myRowCount, 'row', 'rows')
             INTO _rowDescription;
 
             _message := 'Updated ' || Cast(_myRowCount As text) || ' ' || _rowDescription || ' in ont.t_cv_bto';
@@ -88,7 +88,7 @@ BEGIN
         If _myRowCount > 0 Then
             _rowsUpdated := _rowsUpdated + _myRowCount;
 
-            SELECT * FROM public.CheckPlural(_myRowCount, 'row', 'rows')
+            SELECT * FROM public.check_plural(_myRowCount, 'row', 'rows')
             INTO _rowDescription;
 
             _message2 := 'Set usage stats to 0 for ' || Cast(_myRowCount As text) || ' ' || _rowDescription || ' in ont.t_cv_bto';

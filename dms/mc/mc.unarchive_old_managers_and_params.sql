@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          03/23/2022 mem - Remove check for "control_from_web > 0" in delete query
 **                         - Abort restore if the manager already exists in mc.t_mgrs
 **                         - Use mc schema when calling ParseManagerNameList
+**          04/16/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -306,7 +307,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'UnarchiveOldManagersAndParams', 'mc');
+    Call post_log_entry ('Error', _message, 'UnarchiveOldManagersAndParams', 'mc');
 
     RETURN QUERY
     SELECT _message as Message,

@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          01/30/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Pass _results cursor to EnableDisableManagers
 **          04/02/2022 mem - Use new procedure name
+**          04/16/2022 mem - Use new object names
 **
 *****************************************************/
 DECLARE
@@ -57,7 +58,7 @@ BEGIN
         --
         INSERT INTO TmpManagerTypeIDs (mgr_type_id)
         SELECT DISTINCT value
-        FROM public.udf_parse_delimited_integer_list(_managerTypeIDList, ',')
+        FROM public.parse_delimited_integer_list(_managerTypeIDList, ',')
         ORDER BY Value;
     Else
         -- Populate TmpManagerTypeIDs with all manager types in mc.t_mgr_types
@@ -103,7 +104,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'EnableDisableAllManagers', 'mc');
+    Call post_log_entry ('Error', _message, 'EnableDisableAllManagers', 'mc');
 
 END
 $$;

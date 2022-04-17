@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          02/07/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **          04/02/2022 mem - Use new procedure name
+**          04/16/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -271,7 +272,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'SetManagerErrorCleanupMode', 'mc');
+    Call post_log_entry ('Error', _message, 'SetManagerErrorCleanupMode', 'mc');
 
 END
 $$;

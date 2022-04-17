@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          04/08/2011 mem - Will now add parameter _paramValue to managers that don't yet have the parameter defined
 **          04/21/2011 mem - Expanded _managerIDList to varchar(8000)
 **          05/11/2011 mem - Fixed bug reporting error resolving _paramValue to _paramTypeID
-**          04/29/2015 mem - Now parsing _managerIDList using udfParseDelimitedIntegerList
+**          04/29/2015 mem - Now parsing _managerIDList using parse_delimited_integer_list
 **                         - Added parameter _infoOnly
 **                         - Renamed the first parameter from _paramValue to _paramName
 **          02/10/2020 mem - Ported to PostgreSQL
@@ -30,6 +30,8 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **                         - Show a warning if all of the managers have control_from_website = 0 in t_mgrs
 **          03/24/2022 mem - Show a warning if _managerIDList did not have one or more integers
 **          04/02/2022 mem - Use new procedure name
+**          04/16/2022 mem - Use new function name
+**          04/16/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -93,7 +95,7 @@ BEGIN
     --
     INSERT INTO TmpMgrIDs (mgr_id)
     SELECT value
-    FROM public.udf_parse_delimited_integer_list ( _managerIDList, ',' );
+    FROM public.parse_delimited_integer_list ( _managerIDList, ',' );
     --
     GET DIAGNOSTICS _managerCount = ROW_COUNT;
 
@@ -195,7 +197,7 @@ BEGIN
 
         END LOOP;
 
-        _message := public.udf_append_to_text(_message, 'See the Output window for details');
+        _message := public.append_to_text(_message, 'See the Output window for details');
 
         Return;
     End If;
@@ -272,7 +274,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Call update_single_mgr_param_work to perform the update
-    -- Note that it calls AlterEnteredByUserMultiID and AlterEventLogEntryUserMultiID for _callingUser
+    -- Note that it calls alter_entered_by_user_multi_id and alter_event_log_entry_user_multi_id for _callingUser
     ---------------------------------------------------
     --
     Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
@@ -290,7 +292,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'UpdateSingleMgrControlParam', 'mc');
+    Call post_log_entry ('Error', _message, 'UpdateSingleMgrControlParam', 'mc');
 
 END
 $$;

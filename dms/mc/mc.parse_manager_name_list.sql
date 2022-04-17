@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE mc.parse_manager_name_list(IN _managernamelist text 
 **          02/04/2020 mem - Rename manager name column mgr_name
 **          02/07/2020 mem - Fix typo in temp table name
 **          03/24/2022 mem - Fix typo in comment
+**          04/16/2022 mem - Use new function name
 **
 *****************************************************/
 DECLARE
@@ -66,7 +67,7 @@ BEGIN
     -- Populate TmpManagerSpecList with the data in _managerNameList
     INSERT INTO TmpManagerSpecList (manager_name)
     SELECT value
-    FROM public.udf_parse_delimited_list(_managerNameList, ',');
+    FROM public.parse_delimited_list(_managerNameList, ',');
 
     -- Populate TmpManagerList with the entries in TmpManagerSpecList that do not contain a % wildcard
     INSERT INTO TmpManagerList (manager_name)

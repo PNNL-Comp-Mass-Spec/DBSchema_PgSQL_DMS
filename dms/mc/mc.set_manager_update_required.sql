@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          02/08/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **          04/02/2022 mem - Use new procedure name
+**          04/16/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -251,7 +252,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'SetManagerUpdateRequired', 'mc');
+    Call post_log_entry ('Error', _message, 'SetManagerUpdateRequired', 'mc');
 
 END
 $$;

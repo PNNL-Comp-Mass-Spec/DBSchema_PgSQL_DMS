@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integ
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **          03/24/2022 mem - Fix typo in comment
 **          04/02/2022 mem - Use new procedure name
+**          04/16/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -323,7 +324,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'EnableDisableRunJobsRemotely', 'mc');
+    Call post_log_entry ('Error', _message, 'EnableDisableRunJobsRemotely', 'mc');
 
 END
 $$;

@@ -18,11 +18,12 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **  Auth:   jds
 **  Date:   07/17/2007
 **          07/31/2007 grk - changed for 'controlfromwebsite' no longer a parameter
-**          03/30/2009 mem - Added optional parameter _callingUser; if provided, then will call AlterEnteredByUserMultiID and possibly AlterEventLogEntryUserMultiID
+**          03/30/2009 mem - Added optional parameter _callingUser; if provided, then will call alter_entered_by_user_multi_id and possibly alter_event_log_entry_user_multi_id
 **          04/16/2009 mem - Now calling UpdateSingleMgrParamWork to perform the updates
 **          02/15/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
 **          04/02/2022 mem - Use new procedure name
+**          04/16/2022 mem - Use new object names
 **
 *****************************************************/
 DECLARE
@@ -60,7 +61,7 @@ BEGIN
            ON M.mgr_id = PV.mgr_id
     WHERE PT.param_name = _paramName AND
           M.mgr_type_id IN ( SELECT value
-                             FROM public.udf_parse_delimited_integer_list(_managerTypeIDList, ',')
+                             FROM public.parse_delimited_integer_list(_managerTypeIDList, ',')
                            ) AND
           M.control_from_website > 0;
 
@@ -72,7 +73,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Call update_single_mgr_param_work to perform the update
-    -- Note that it calls AlterEnteredByUserMultiID and AlterEventLogEntryUserMultiID for _callingUser
+    -- Note that it calls alter_entered_by_user_multi_id and alter_event_log_entry_user_multi_id for _callingUser
     ---------------------------------------------------
     --
     Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
@@ -90,7 +91,7 @@ EXCEPTION
     RAISE Warning '%', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
+    Call post_log_entry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
 
 END
 $$;

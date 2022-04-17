@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION mc.trigfn_u_t_log_entries_user() RETURNS trigger
 **
 **  Auth:   mem
 **  Date:   01/09/2020 mem - Initial version
+**          04/16/2022 mem - Use new function name
 **
 *****************************************************/
 DECLARE
@@ -20,7 +21,7 @@ DECLARE
 BEGIN
     -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
 
-    _userInfo := Coalesce(udf_timestamp_text(localtimestamp) || '; ' || SESSION_USER, '');
+    _userInfo := Coalesce(timestamp_text(localtimestamp) || '; ' || SESSION_USER, '');
 
     _sepChar := ' (';
 
