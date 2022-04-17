@@ -13,14 +13,12 @@ DECLARE
     _exceptionMessage text;
     _exceptionContext text;
 BEGIN
-    DROP TABLE IF EXISTS TmpManagerList;
-
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL,
         mgr_id int NULL
     );
 
-    CALL mc.ParseManagerNameList(_managerNameList, _removeUnknownManagers => 1, _message => _message);
+    CALL mc.parse_manager_name_list(_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
     RAISE INFO '%', _message;
 
@@ -51,6 +49,8 @@ BEGIN
            ON A.mgr_id = B.mgr_id
     WHERE B.mgr_id IS NULL;
 
+    DROP TABLE IF EXISTS TmpManagerList;
+
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
@@ -58,7 +58,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error calling ParseManagerNameList or updating data: ' || _exceptionMessage;
+    _message := 'Error calling parse_manager_name_list or updating data: ' || _exceptionMessage;
 
     RAISE Info '%', _message;
     RAISE Info 'Exception context; %', _exceptionContext;

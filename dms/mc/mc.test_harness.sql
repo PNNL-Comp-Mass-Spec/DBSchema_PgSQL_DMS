@@ -11,19 +11,18 @@ DECLARE
     _exceptionMessage text;
     _exceptionContext text;
 BEGIN
-    DROP TABLE IF EXISTS TmpManagerList;
-
     CREATE TEMP TABLE TmpManagerList (
         manager_name text NOT NULL
      );
 
-    CALL mc.ParseManagerNameList(_managerNameList, _removeUnknownManagers => 0, _message => _message);
+    CALL mc.parse_manager_name_list(_managerNameList, _removeUnknownManagers => 0, _message => _message);
 
     RAISE INFO '%', _message;
 
     RETURN Query
-        SELECT * FROM TmpManagerList;
+    SELECT * FROM TmpManagerList;
 
+    DROP TABLE tmpManagerList;
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS

@@ -72,7 +72,7 @@ BEGIN
     -- Setting _removeUnknownManagers to 0 so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
     --
-    Call mc.ParseManagerNameList (_mgrList, _removeUnknownManagers => 0, _message => _message);
+    Call mc.parse_manager_name_list (_mgrList, _removeUnknownManagers => 0, _message => _message);
 
     If Not Exists (Select * from TmpManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
