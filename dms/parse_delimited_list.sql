@@ -1,8 +1,8 @@
 --
--- Name: udf_parse_delimited_list(text, text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: parse_delimited_list(text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.udf_parse_delimited_list(_delimitedlist text, _delimiter text DEFAULT ','::text) RETURNS TABLE(value text)
+CREATE OR REPLACE FUNCTION public.parse_delimited_list(_delimitedlist text, _delimiter text DEFAULT ','::text) RETURNS TABLE(value text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -47,5 +47,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.udf_parse_delimited_list(_delimitedlist text, _delimiter text) OWNER TO d3l243;
+ALTER FUNCTION public.parse_delimited_list(_delimitedlist text, _delimiter text) OWNER TO d3l243;
 

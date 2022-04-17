@@ -1,8 +1,8 @@
 --
--- Name: udf_get_filename(text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_filename(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.udf_get_filename(_filepath text) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_filename(_filepath text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -28,5 +28,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.udf_get_filename(_filepath text) OWNER TO d3l243;
+ALTER FUNCTION public.get_filename(_filepath text) OWNER TO d3l243;
 

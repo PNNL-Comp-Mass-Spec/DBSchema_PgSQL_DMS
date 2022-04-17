@@ -1,8 +1,8 @@
 --
--- Name: alterenteredbyusermultiid(text, text, text, text, integer, integer, text, text, text, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: alter_entered_by_user_multi_id(text, text, text, text, integer, integer, text, text, text, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.alterenteredbyusermultiid(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer DEFAULT 1, IN _entrytimewindowseconds integer DEFAULT 15, IN _entrydatecolumnname text DEFAULT 'entered'::text, IN _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, IN _previewsql integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.alter_entered_by_user_multi_id(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer DEFAULT 1, IN _entrytimewindowseconds integer DEFAULT 15, IN _entrydatecolumnname text DEFAULT 'entered'::text, IN _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, IN _previewsql integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -137,11 +137,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.alterenteredbyusermultiid(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer) OWNER TO d3l243;
+ALTER PROCEDURE public.alter_entered_by_user_multi_id(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE alterenteredbyusermultiid(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE alter_entered_by_user_multi_id(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.alterenteredbyusermultiid(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer) IS 'AlterEnteredByUserMultiID';
+COMMENT ON PROCEDURE public.alter_entered_by_user_multi_id(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer) IS 'AlterEnteredByUserMultiID';
 

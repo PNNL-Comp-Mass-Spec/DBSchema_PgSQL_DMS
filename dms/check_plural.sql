@@ -1,8 +1,8 @@
 --
--- Name: checkplural(integer, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: check_plural(integer, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.checkplural(_count integer DEFAULT 0, _textifoneitem text DEFAULT 'item'::text, _textifzeroormultiple text DEFAULT 'items'::text) RETURNS text
+CREATE OR REPLACE FUNCTION public.check_plural(_count integer DEFAULT 0, _textifoneitem text DEFAULT 'item'::text, _textifzeroormultiple text DEFAULT 'items'::text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -26,11 +26,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.checkplural(_count integer, _textifoneitem text, _textifzeroormultiple text) OWNER TO d3l243;
+ALTER FUNCTION public.check_plural(_count integer, _textifoneitem text, _textifzeroormultiple text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION checkplural(_count integer, _textifoneitem text, _textifzeroormultiple text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION check_plural(_count integer, _textifoneitem text, _textifzeroormultiple text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.checkplural(_count integer, _textifoneitem text, _textifzeroormultiple text) IS 'CheckPlural';
+COMMENT ON FUNCTION public.check_plural(_count integer, _textifoneitem text, _textifzeroormultiple text) IS 'CheckPlural';
 

@@ -1,8 +1,8 @@
 --
--- Name: udf_whitespace_chars(text, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: has_whitespace_chars(text, integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.udf_whitespace_chars(_entityname text, _allowspace integer DEFAULT 0) RETURNS boolean
+CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allowspace integer DEFAULT 0) RETURNS boolean
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -39,11 +39,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.udf_whitespace_chars(_entityname text, _allowspace integer) OWNER TO d3l243;
+ALTER FUNCTION public.has_whitespace_chars(_entityname text, _allowspace integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION udf_whitespace_chars(_entityname text, _allowspace integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION has_whitespace_chars(_entityname text, _allowspace integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.udf_whitespace_chars(_entityname text, _allowspace integer) IS 'udfWhitespaceChars';
+COMMENT ON FUNCTION public.has_whitespace_chars(_entityname text, _allowspace integer) IS 'HasWhitespaceChars';
 

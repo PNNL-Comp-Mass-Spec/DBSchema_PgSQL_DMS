@@ -30,7 +30,7 @@ CREATE TABLE public.t_experiments (
     disease_id public.citext,
     last_used date DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT ck_t_experiment_exp_name_not_empty CHECK ((COALESCE(experiment, ''::public.citext) OPERATOR(public.<>) ''::public.citext)),
-    CONSTRAINT ck_t_experiments_experiment_name_white_space CHECK ((public.udf_whitespace_chars((experiment)::text, 0) = false))
+    CONSTRAINT ck_t_experiments_experiment_name_white_space CHECK ((public.has_whitespace_chars((experiment)::text, 0) = false))
 );
 
 

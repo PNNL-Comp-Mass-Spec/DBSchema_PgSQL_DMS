@@ -1,8 +1,8 @@
 --
--- Name: postusagelogentry(text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: post_usage_log_entry(text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text DEFAULT ''::text, IN _minimumupdateinterval integer DEFAULT 1)
+CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _message text DEFAULT ''::text, IN _minimumupdateinterval integer DEFAULT 1)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -90,17 +90,17 @@ EXCEPTION
     RAISE Warning '%', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'PostUsageLogEntry', 'public');
+    Call post_log_entry ('Error', _message, 'post_usage_log_entry', 'public');
 
 END
 $$;
 
 
-ALTER PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) OWNER TO d3l243;
+ALTER PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE post_usage_log_entry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) IS 'PostUsageLogEntry';
+COMMENT ON PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) IS 'PostUsageLogEntry';
 

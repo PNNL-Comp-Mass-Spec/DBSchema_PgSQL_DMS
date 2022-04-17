@@ -1,8 +1,8 @@
 --
--- Name: udf_append_to_text(text, text, integer, text, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: append_to_text(text, text, integer, text, integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.udf_append_to_text(_basetext text, _addnltext text, _addduplicatetext integer DEFAULT 0, _delimiter text DEFAULT '; '::text, _maxlength integer DEFAULT 1024) RETURNS text
+CREATE OR REPLACE FUNCTION public.append_to_text(_basetext text, _addnltext text, _addduplicatetext integer DEFAULT 0, _delimiter text DEFAULT '; '::text, _maxlength integer DEFAULT 1024) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -56,5 +56,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.udf_append_to_text(_basetext text, _addnltext text, _addduplicatetext integer, _delimiter text, _maxlength integer) OWNER TO d3l243;
+ALTER FUNCTION public.append_to_text(_basetext text, _addnltext text, _addduplicatetext integer, _delimiter text, _maxlength integer) OWNER TO d3l243;
 
