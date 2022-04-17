@@ -3,7 +3,7 @@
 --
 
 CREATE OR REPLACE FUNCTION public.try_cast(_in text, INOUT _out anyelement) RETURNS anyelement
-    LANGUAGE plpgsql IMMUTABLE STRICT
+    LANGUAGE plpgsql IMMUTABLE
     AS $$
 /****************************************************
 **
