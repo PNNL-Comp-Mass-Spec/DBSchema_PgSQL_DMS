@@ -37,6 +37,13 @@ ALTER TABLE public.t_users ALTER COLUMN user_id ADD GENERATED ALWAYS AS IDENTITY
 );
 
 --
+-- Name: t_users ix_t_users_unique_prn; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_users
+    ADD CONSTRAINT ix_t_users_unique_prn UNIQUE (prn);
+
+--
 -- Name: t_users pk_t_users; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

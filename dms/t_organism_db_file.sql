@@ -32,6 +32,13 @@ ALTER TABLE public.t_organism_db_file ALTER COLUMN org_db_file_id ADD GENERATED 
 );
 
 --
+-- Name: t_organism_db_file ix_t_organism_db_file_unique_file_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_organism_db_file
+    ADD CONSTRAINT ix_t_organism_db_file_unique_file_name UNIQUE (file_name);
+
+--
 -- Name: t_organism_db_file pk_t_organism_db_file; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

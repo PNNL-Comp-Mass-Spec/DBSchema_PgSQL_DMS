@@ -19,6 +19,13 @@ CREATE TABLE public.t_mass_correction_factors (
 ALTER TABLE public.t_mass_correction_factors OWNER TO d3l243;
 
 --
+-- Name: t_mass_correction_factors ix_t_mass_correction_factors_unique_mass_and_affected_atom; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_mass_correction_factors
+    ADD CONSTRAINT ix_t_mass_correction_factors_unique_mass_and_affected_atom UNIQUE (monoisotopic_mass, affected_atom);
+
+--
 -- Name: t_mass_correction_factors pk_t_mass_correction_factors; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

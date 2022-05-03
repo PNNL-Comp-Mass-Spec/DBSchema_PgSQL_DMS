@@ -16,6 +16,13 @@ CREATE TABLE public.t_analysis_job_processor_group (
 ALTER TABLE public.t_analysis_job_processor_group OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_processor_group ix_t_analysis_job_processor_group_unique_group_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_processor_group
+    ADD CONSTRAINT ix_t_analysis_job_processor_group_unique_group_name UNIQUE (group_name);
+
+--
 -- Name: t_analysis_job_processor_group pk_t_analysis_job_processor_group; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

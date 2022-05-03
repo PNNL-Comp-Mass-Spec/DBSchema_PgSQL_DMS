@@ -26,6 +26,13 @@ ALTER TABLE public.t_wellplates ALTER COLUMN wellplate_id ADD GENERATED ALWAYS A
 );
 
 --
+-- Name: t_wellplates ix_t_wellplates_unique_wellplate; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_wellplates
+    ADD CONSTRAINT ix_t_wellplates_unique_wellplate UNIQUE (wellplate);
+
+--
 -- Name: t_wellplates pk_t_wellplates; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

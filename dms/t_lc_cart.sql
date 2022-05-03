@@ -27,6 +27,13 @@ ALTER TABLE public.t_lc_cart ALTER COLUMN cart_id ADD GENERATED ALWAYS AS IDENTI
 );
 
 --
+-- Name: t_lc_cart ix_t_lc_cart_unique_cart_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_cart
+    ADD CONSTRAINT ix_t_lc_cart_unique_cart_name UNIQUE (cart_name);
+
+--
 -- Name: t_lc_cart pk_t_lc_cart; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

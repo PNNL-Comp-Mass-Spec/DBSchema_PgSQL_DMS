@@ -29,6 +29,13 @@ ALTER TABLE public.t_analysis_job_processors ALTER COLUMN processor_id ADD GENER
 );
 
 --
+-- Name: t_analysis_job_processors ix_t_analysis_job_processors_unique_processor_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_processors
+    ADD CONSTRAINT ix_t_analysis_job_processors_unique_processor_name UNIQUE (processor_name);
+
+--
 -- Name: t_analysis_job_processors pk_t_analysis_job_processors; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 
