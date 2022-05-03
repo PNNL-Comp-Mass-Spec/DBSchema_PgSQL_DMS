@@ -46,6 +46,26 @@ CREATE TABLE public.t_predefined_analysis (
 ALTER TABLE public.t_predefined_analysis OWNER TO d3l243;
 
 --
+-- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_predefined_analysis ALTER COLUMN predefine_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_predefined_analysis_predefine_id_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_predefined_analysis pk_t_predefined_analysis; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_predefined_analysis
+    ADD CONSTRAINT pk_t_predefined_analysis PRIMARY KEY (predefine_id);
+
+--
 -- Name: TABLE t_predefined_analysis; Type: ACL; Schema: public; Owner: d3l243
 --
 

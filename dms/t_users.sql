@@ -24,6 +24,26 @@ CREATE TABLE public.t_users (
 ALTER TABLE public.t_users OWNER TO d3l243;
 
 --
+-- Name: t_users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_users ALTER COLUMN user_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_users_user_id_seq
+    START WITH 2000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_users pk_t_users; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_users
+    ADD CONSTRAINT pk_t_users PRIMARY KEY (user_id);
+
+--
 -- Name: TABLE t_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

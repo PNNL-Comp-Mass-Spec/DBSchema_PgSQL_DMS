@@ -68,6 +68,13 @@ END) STORED
 ALTER TABLE public.t_sample_prep_request OWNER TO d3l243;
 
 --
+-- Name: t_sample_prep_request pk_t_sample_prep_request; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request
+    ADD CONSTRAINT pk_t_sample_prep_request PRIMARY KEY (prep_request_id);
+
+--
 -- Name: TABLE t_sample_prep_request; Type: ACL; Schema: public; Owner: d3l243
 --
 

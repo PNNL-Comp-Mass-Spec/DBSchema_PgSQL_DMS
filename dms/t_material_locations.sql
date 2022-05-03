@@ -24,6 +24,26 @@ END) STORED
 ALTER TABLE public.t_material_locations OWNER TO d3l243;
 
 --
+-- Name: t_material_locations_location_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_material_locations ALTER COLUMN location_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_material_locations_location_id_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_material_locations pk_t_material_locations; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_material_locations
+    ADD CONSTRAINT pk_t_material_locations PRIMARY KEY (location_id);
+
+--
 -- Name: TABLE t_material_locations; Type: ACL; Schema: public; Owner: d3l243
 --
 

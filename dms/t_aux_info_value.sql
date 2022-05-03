@@ -12,6 +12,13 @@ CREATE TABLE public.t_aux_info_value (
 ALTER TABLE public.t_aux_info_value OWNER TO d3l243;
 
 --
+-- Name: t_aux_info_value pk_t_aux_info_value; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_aux_info_value
+    ADD CONSTRAINT pk_t_aux_info_value PRIMARY KEY (aux_info_id, target_id);
+
+--
 -- Name: TABLE t_aux_info_value; Type: ACL; Schema: public; Owner: d3l243
 --
 

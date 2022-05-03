@@ -25,6 +25,13 @@ COPY public.t_biomaterial_type_name (biomaterial_type_id, biomaterial_type) FROM
 
 
 --
+-- Name: t_biomaterial_type_name_biomaterial_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
+--
+
+SELECT pg_catalog.setval('public.t_biomaterial_type_name_biomaterial_type_id_seq', 100, false);
+
+
+--
 -- PostgreSQL database dump complete
 --
 

@@ -12,6 +12,13 @@ CREATE TABLE public.t_default_psm_job_types (
 ALTER TABLE public.t_default_psm_job_types OWNER TO d3l243;
 
 --
+-- Name: t_default_psm_job_types pk_t_default_psm_job_types; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_default_psm_job_types
+    ADD CONSTRAINT pk_t_default_psm_job_types PRIMARY KEY (job_type_id);
+
+--
 -- Name: TABLE t_default_psm_job_types; Type: ACL; Schema: public; Owner: d3l243
 --
 

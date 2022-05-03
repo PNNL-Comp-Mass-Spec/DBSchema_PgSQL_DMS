@@ -20,6 +20,13 @@ CREATE TABLE public.t_cached_protein_collections (
 ALTER TABLE public.t_cached_protein_collections OWNER TO d3l243;
 
 --
+-- Name: t_cached_protein_collections pk_t_cached_protein_collections; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_cached_protein_collections
+    ADD CONSTRAINT pk_t_cached_protein_collections PRIMARY KEY (protein_collection_id, organism_id);
+
+--
 -- Name: TABLE t_cached_protein_collections; Type: ACL; Schema: public; Owner: d3l243
 --
 

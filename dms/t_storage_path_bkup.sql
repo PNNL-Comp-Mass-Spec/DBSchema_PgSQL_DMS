@@ -17,6 +17,13 @@ CREATE TABLE public.t_storage_path_bkup (
 ALTER TABLE public.t_storage_path_bkup OWNER TO d3l243;
 
 --
+-- Name: t_storage_path_bkup pk_t_storage_path_bkup; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_storage_path_bkup
+    ADD CONSTRAINT pk_t_storage_path_bkup PRIMARY KEY (storage_path_id);
+
+--
 -- Name: TABLE t_storage_path_bkup; Type: ACL; Schema: public; Owner: d3l243
 --
 

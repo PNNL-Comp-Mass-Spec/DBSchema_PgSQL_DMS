@@ -11,6 +11,13 @@ CREATE TABLE public.t_tissue_source (
 ALTER TABLE public.t_tissue_source OWNER TO d3l243;
 
 --
+-- Name: t_tissue_source pk_t_tissue_source; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_tissue_source
+    ADD CONSTRAINT pk_t_tissue_source PRIMARY KEY (tissue_source_id);
+
+--
 -- Name: TABLE t_tissue_source; Type: ACL; Schema: public; Owner: d3l243
 --
 

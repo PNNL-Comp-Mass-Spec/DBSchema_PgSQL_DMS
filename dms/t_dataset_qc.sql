@@ -122,6 +122,13 @@ CREATE TABLE public.t_dataset_qc (
 ALTER TABLE public.t_dataset_qc OWNER TO d3l243;
 
 --
+-- Name: t_dataset_qc pk_t_dataset_qc_dataset_id; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_qc
+    ADD CONSTRAINT pk_t_dataset_qc_dataset_id PRIMARY KEY (dataset_id);
+
+--
 -- Name: TABLE t_dataset_qc; Type: ACL; Schema: public; Owner: d3l243
 --
 

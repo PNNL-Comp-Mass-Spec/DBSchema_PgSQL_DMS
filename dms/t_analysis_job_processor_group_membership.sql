@@ -14,6 +14,13 @@ CREATE TABLE public.t_analysis_job_processor_group_membership (
 ALTER TABLE public.t_analysis_job_processor_group_membership OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_processor_group_membership pk_t_analysis_job_processor_group_membership; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_processor_group_membership
+    ADD CONSTRAINT pk_t_analysis_job_processor_group_membership PRIMARY KEY (processor_id, group_id);
+
+--
 -- Name: TABLE t_analysis_job_processor_group_membership; Type: ACL; Schema: public; Owner: d3l243
 --
 

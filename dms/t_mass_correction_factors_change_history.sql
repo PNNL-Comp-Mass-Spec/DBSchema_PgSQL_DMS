@@ -24,6 +24,39 @@ CREATE TABLE public.t_mass_correction_factors_change_history (
 ALTER TABLE public.t_mass_correction_factors_change_history OWNER TO d3l243;
 
 --
+-- Name: t_mass_correction_factors_change_history_event_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_mass_correction_factors_change_history ALTER COLUMN event_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_mass_correction_factors_change_history_event_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_mass_correction_factors ALTER COLUMN mass_correction_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_mass_correction_factors_mass_correction_id_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_mass_correction_factors_change_history pk_t_mass_correction_factors_change_history; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_mass_correction_factors_change_history
+    ADD CONSTRAINT pk_t_mass_correction_factors_change_history PRIMARY KEY (event_id);
+
+--
 -- Name: TABLE t_mass_correction_factors_change_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

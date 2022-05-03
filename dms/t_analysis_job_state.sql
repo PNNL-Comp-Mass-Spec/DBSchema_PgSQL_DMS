@@ -12,6 +12,13 @@ CREATE TABLE public.t_analysis_job_state (
 ALTER TABLE public.t_analysis_job_state OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_state pk_t_analysis_job_state; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_state
+    ADD CONSTRAINT pk_t_analysis_job_state PRIMARY KEY (job_state_id);
+
+--
 -- Name: TABLE t_analysis_job_state; Type: ACL; Schema: public; Owner: d3l243
 --
 

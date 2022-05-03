@@ -34,6 +34,13 @@ CREATE TABLE public.t_data_analysis_request (
 ALTER TABLE public.t_data_analysis_request OWNER TO d3l243;
 
 --
+-- Name: t_data_analysis_request pk_t_data_analysis_request; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request
+    ADD CONSTRAINT pk_t_data_analysis_request PRIMARY KEY (id);
+
+--
 -- Name: TABLE t_data_analysis_request; Type: ACL; Schema: public; Owner: d3l243
 --
 

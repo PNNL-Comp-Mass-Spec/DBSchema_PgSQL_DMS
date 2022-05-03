@@ -19,6 +19,13 @@ CREATE TABLE public.t_mts_pt_dbs_cached (
 ALTER TABLE public.t_mts_pt_dbs_cached OWNER TO d3l243;
 
 --
+-- Name: t_mts_pt_dbs_cached pk_t_mts_pt_dbs_cached_dbid; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_mts_pt_dbs_cached
+    ADD CONSTRAINT pk_t_mts_pt_dbs_cached_dbid PRIMARY KEY (peptide_db_id);
+
+--
 -- Name: TABLE t_mts_pt_dbs_cached; Type: ACL; Schema: public; Owner: d3l243
 --
 

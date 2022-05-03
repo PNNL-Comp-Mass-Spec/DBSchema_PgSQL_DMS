@@ -15,6 +15,26 @@ CREATE TABLE public.t_internal_standards (
 ALTER TABLE public.t_internal_standards OWNER TO d3l243;
 
 --
+-- Name: t_internal_standards_internal_standard_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_internal_standards ALTER COLUMN internal_standard_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_internal_standards_internal_standard_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_internal_standards pk_t_internal_standards; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_internal_standards
+    ADD CONSTRAINT pk_t_internal_standards PRIMARY KEY (internal_standard_id);
+
+--
 -- Name: TABLE t_internal_standards; Type: ACL; Schema: public; Owner: d3l243
 --
 

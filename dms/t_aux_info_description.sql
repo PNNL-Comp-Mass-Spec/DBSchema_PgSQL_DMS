@@ -16,6 +16,26 @@ CREATE TABLE public.t_aux_info_description (
 ALTER TABLE public.t_aux_info_description OWNER TO d3l243;
 
 --
+-- Name: t_aux_info_description_aux_description_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_aux_info_description ALTER COLUMN aux_description_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_aux_info_description_aux_description_id_seq
+    START WITH 10
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_aux_info_description pk_t_aux_info_description; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_aux_info_description
+    ADD CONSTRAINT pk_t_aux_info_description PRIMARY KEY (aux_description_id);
+
+--
 -- Name: TABLE t_aux_info_description; Type: ACL; Schema: public; Owner: d3l243
 --
 

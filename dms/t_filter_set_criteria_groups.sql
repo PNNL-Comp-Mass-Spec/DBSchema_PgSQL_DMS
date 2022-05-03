@@ -11,6 +11,13 @@ CREATE TABLE public.t_filter_set_criteria_groups (
 ALTER TABLE public.t_filter_set_criteria_groups OWNER TO d3l243;
 
 --
+-- Name: t_filter_set_criteria_groups pk_t_filter_set_criteria_groups; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_filter_set_criteria_groups
+    ADD CONSTRAINT pk_t_filter_set_criteria_groups PRIMARY KEY (filter_criteria_group_id);
+
+--
 -- Name: TABLE t_filter_set_criteria_groups; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -12,6 +12,13 @@ CREATE TABLE public.t_dataset_qc_instruments (
 ALTER TABLE public.t_dataset_qc_instruments OWNER TO d3l243;
 
 --
+-- Name: t_dataset_qc_instruments pk_t_dataset_qc_instruments; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_qc_instruments
+    ADD CONSTRAINT pk_t_dataset_qc_instruments PRIMARY KEY (in_name);
+
+--
 -- Name: TABLE t_dataset_qc_instruments; Type: ACL; Schema: public; Owner: d3l243
 --
 

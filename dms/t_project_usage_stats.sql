@@ -29,6 +29,26 @@ CREATE TABLE public.t_project_usage_stats (
 ALTER TABLE public.t_project_usage_stats OWNER TO d3l243;
 
 --
+-- Name: t_project_usage_stats_entry_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_project_usage_stats ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_project_usage_stats_entry_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_project_usage_stats pk_t_project_usage_stats; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_project_usage_stats
+    ADD CONSTRAINT pk_t_project_usage_stats PRIMARY KEY (entry_id);
+
+--
 -- Name: TABLE t_project_usage_stats; Type: ACL; Schema: public; Owner: d3l243
 --
 

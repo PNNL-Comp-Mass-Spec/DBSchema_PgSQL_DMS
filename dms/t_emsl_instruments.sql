@@ -18,6 +18,13 @@ CREATE TABLE public.t_emsl_instruments (
 ALTER TABLE public.t_emsl_instruments OWNER TO d3l243;
 
 --
+-- Name: t_emsl_instruments pk_t_emsl_instruments; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_emsl_instruments
+    ADD CONSTRAINT pk_t_emsl_instruments PRIMARY KEY (eus_instrument_id);
+
+--
 -- Name: TABLE t_emsl_instruments; Type: ACL; Schema: public; Owner: d3l243
 --
 

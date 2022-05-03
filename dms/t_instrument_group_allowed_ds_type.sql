@@ -12,6 +12,13 @@ CREATE TABLE public.t_instrument_group_allowed_ds_type (
 ALTER TABLE public.t_instrument_group_allowed_ds_type OWNER TO d3l243;
 
 --
+-- Name: t_instrument_group_allowed_ds_type pk_t_instrument_group_allowed_ds_type; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_group_allowed_ds_type
+    ADD CONSTRAINT pk_t_instrument_group_allowed_ds_type PRIMARY KEY (instrument_group, dataset_type);
+
+--
 -- Name: TABLE t_instrument_group_allowed_ds_type; Type: ACL; Schema: public; Owner: d3l243
 --
 

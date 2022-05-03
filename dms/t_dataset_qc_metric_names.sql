@@ -21,6 +21,13 @@ CREATE TABLE public.t_dataset_qc_metric_names (
 ALTER TABLE public.t_dataset_qc_metric_names OWNER TO d3l243;
 
 --
+-- Name: t_dataset_qc_metric_names pk_t_dataset_qc_metrics; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_qc_metric_names
+    ADD CONSTRAINT pk_t_dataset_qc_metrics PRIMARY KEY (metric);
+
+--
 -- Name: TABLE t_dataset_qc_metric_names; Type: ACL; Schema: public; Owner: d3l243
 --
 

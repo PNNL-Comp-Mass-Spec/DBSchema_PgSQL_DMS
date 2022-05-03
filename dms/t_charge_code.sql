@@ -36,6 +36,13 @@ END)::text || (((activation_state)::public.citext)::text || (charge_code)::text)
 ALTER TABLE public.t_charge_code OWNER TO d3l243;
 
 --
+-- Name: t_charge_code pk_t_charge_code; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_charge_code
+    ADD CONSTRAINT pk_t_charge_code PRIMARY KEY (charge_code);
+
+--
 -- Name: TABLE t_charge_code; Type: ACL; Schema: public; Owner: d3l243
 --
 

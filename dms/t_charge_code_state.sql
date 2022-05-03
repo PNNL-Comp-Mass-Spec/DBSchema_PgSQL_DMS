@@ -11,6 +11,13 @@ CREATE TABLE public.t_charge_code_state (
 ALTER TABLE public.t_charge_code_state OWNER TO d3l243;
 
 --
+-- Name: t_charge_code_state pk_t_charge_code_state; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_charge_code_state
+    ADD CONSTRAINT pk_t_charge_code_state PRIMARY KEY (charge_code_state);
+
+--
 -- Name: TABLE t_charge_code_state; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -68,6 +68,13 @@ CREATE TABLE public.t_reporter_ion_observation_rates (
 ALTER TABLE public.t_reporter_ion_observation_rates OWNER TO d3l243;
 
 --
+-- Name: t_reporter_ion_observation_rates pk_t_reporter_ion_observation_rates; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reporter_ion_observation_rates
+    ADD CONSTRAINT pk_t_reporter_ion_observation_rates PRIMARY KEY (job);
+
+--
 -- Name: TABLE t_reporter_ion_observation_rates; Type: ACL; Schema: public; Owner: d3l243
 --
 

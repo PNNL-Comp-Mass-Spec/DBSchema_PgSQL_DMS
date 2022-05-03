@@ -12,6 +12,26 @@ CREATE TABLE public.t_analysis_job_id (
 ALTER TABLE public.t_analysis_job_id OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_id_job_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_analysis_job_id ALTER COLUMN job ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_analysis_job_id_job_seq
+    START WITH 522434
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_analysis_job_id pk_t_analysis_job_id; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_id
+    ADD CONSTRAINT pk_t_analysis_job_id PRIMARY KEY (job);
+
+--
 -- Name: TABLE t_analysis_job_id; Type: ACL; Schema: public; Owner: d3l243
 --
 

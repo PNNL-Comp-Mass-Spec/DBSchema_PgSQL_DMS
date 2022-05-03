@@ -12,6 +12,13 @@ CREATE TABLE public.t_param_file_types (
 ALTER TABLE public.t_param_file_types OWNER TO d3l243;
 
 --
+-- Name: t_param_file_types pk_t_param_file_types; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_param_file_types
+    ADD CONSTRAINT pk_t_param_file_types PRIMARY KEY (param_file_type_id);
+
+--
 -- Name: TABLE t_param_file_types; Type: ACL; Schema: public; Owner: d3l243
 --
 

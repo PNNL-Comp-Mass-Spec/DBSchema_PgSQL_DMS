@@ -11,6 +11,13 @@ CREATE TABLE public.t_active_requested_run_cached_eus_users (
 ALTER TABLE public.t_active_requested_run_cached_eus_users OWNER TO d3l243;
 
 --
+-- Name: t_active_requested_run_cached_eus_users pk_t_active_requested_run_cached_eus_users; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_active_requested_run_cached_eus_users
+    ADD CONSTRAINT pk_t_active_requested_run_cached_eus_users PRIMARY KEY (request_id);
+
+--
 -- Name: TABLE t_active_requested_run_cached_eus_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

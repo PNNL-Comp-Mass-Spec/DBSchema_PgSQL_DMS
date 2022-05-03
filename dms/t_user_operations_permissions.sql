@@ -11,6 +11,13 @@ CREATE TABLE public.t_user_operations_permissions (
 ALTER TABLE public.t_user_operations_permissions OWNER TO d3l243;
 
 --
+-- Name: t_user_operations_permissions pk_t_user_operations_permissions; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_user_operations_permissions
+    ADD CONSTRAINT pk_t_user_operations_permissions PRIMARY KEY (user_id, operation_id);
+
+--
 -- Name: TABLE t_user_operations_permissions; Type: ACL; Schema: public; Owner: d3l243
 --
 

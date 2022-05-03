@@ -16,6 +16,13 @@ CREATE TABLE public.t_database_backups (
 ALTER TABLE public.t_database_backups OWNER TO d3l243;
 
 --
+-- Name: t_database_backups pk_t_database_backups; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_database_backups
+    ADD CONSTRAINT pk_t_database_backups PRIMARY KEY (name, backup_folder);
+
+--
 -- Name: TABLE t_database_backups; Type: ACL; Schema: public; Owner: d3l243
 --
 

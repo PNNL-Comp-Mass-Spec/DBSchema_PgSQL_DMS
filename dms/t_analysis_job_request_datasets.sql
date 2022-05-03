@@ -11,6 +11,13 @@ CREATE TABLE public.t_analysis_job_request_datasets (
 ALTER TABLE public.t_analysis_job_request_datasets OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_request_datasets pk_t_analysis_job_request_datasets; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_request_datasets
+    ADD CONSTRAINT pk_t_analysis_job_request_datasets PRIMARY KEY (request_id, dataset_id);
+
+--
 -- Name: TABLE t_analysis_job_request_datasets; Type: ACL; Schema: public; Owner: d3l243
 --
 

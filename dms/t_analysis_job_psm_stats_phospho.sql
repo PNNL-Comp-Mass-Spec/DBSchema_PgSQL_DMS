@@ -15,6 +15,13 @@ CREATE TABLE public.t_analysis_job_psm_stats_phospho (
 ALTER TABLE public.t_analysis_job_psm_stats_phospho OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_psm_stats_phospho pk_t_analysis_job_psm_stats_phospho; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_psm_stats_phospho
+    ADD CONSTRAINT pk_t_analysis_job_psm_stats_phospho PRIMARY KEY (job);
+
+--
 -- Name: TABLE t_analysis_job_psm_stats_phospho; Type: ACL; Schema: public; Owner: d3l243
 --
 

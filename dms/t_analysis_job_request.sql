@@ -29,6 +29,13 @@ CREATE TABLE public.t_analysis_job_request (
 ALTER TABLE public.t_analysis_job_request OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_request pk_t_analysis_job_request; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_request
+    ADD CONSTRAINT pk_t_analysis_job_request PRIMARY KEY (request_id);
+
+--
 -- Name: TABLE t_analysis_job_request; Type: ACL; Schema: public; Owner: d3l243
 --
 

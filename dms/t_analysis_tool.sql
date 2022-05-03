@@ -26,6 +26,13 @@ CREATE TABLE public.t_analysis_tool (
 ALTER TABLE public.t_analysis_tool OWNER TO d3l243;
 
 --
+-- Name: t_analysis_tool pk_t_analysis_tool; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_tool
+    ADD CONSTRAINT pk_t_analysis_tool PRIMARY KEY (analysis_tool_id);
+
+--
 -- Name: TABLE t_analysis_tool; Type: ACL; Schema: public; Owner: d3l243
 --
 

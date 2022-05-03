@@ -37,6 +37,13 @@ END) STORED,
 ALTER TABLE public.t_organisms OWNER TO d3l243;
 
 --
+-- Name: t_organisms pk_t_organisms; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_organisms
+    ADD CONSTRAINT pk_t_organisms PRIMARY KEY (organism_id);
+
+--
 -- Name: TABLE t_organisms; Type: ACL; Schema: public; Owner: d3l243
 --
 

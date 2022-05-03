@@ -27,6 +27,13 @@ CREATE TABLE public.t_emsl_instrument_usage_report (
 ALTER TABLE public.t_emsl_instrument_usage_report OWNER TO d3l243;
 
 --
+-- Name: t_emsl_instrument_usage_report pk_t_emsl_instrument_usage_report; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_emsl_instrument_usage_report
+    ADD CONSTRAINT pk_t_emsl_instrument_usage_report PRIMARY KEY (seq);
+
+--
 -- Name: TABLE t_emsl_instrument_usage_report; Type: ACL; Schema: public; Owner: d3l243
 --
 

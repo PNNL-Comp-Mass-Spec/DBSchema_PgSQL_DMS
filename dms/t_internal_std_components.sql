@@ -17,6 +17,13 @@ CREATE TABLE public.t_internal_std_components (
 ALTER TABLE public.t_internal_std_components OWNER TO d3l243;
 
 --
+-- Name: t_internal_std_components pk_t_internal_std_components; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_internal_std_components
+    ADD CONSTRAINT pk_t_internal_std_components PRIMARY KEY (internal_std_component_id);
+
+--
 -- Name: TABLE t_internal_std_components; Type: ACL; Schema: public; Owner: d3l243
 --
 

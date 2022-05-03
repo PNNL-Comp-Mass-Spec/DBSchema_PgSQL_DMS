@@ -15,6 +15,26 @@ CREATE TABLE public.t_eus_usage_type (
 ALTER TABLE public.t_eus_usage_type OWNER TO d3l243;
 
 --
+-- Name: t_eus_usage_type_eus_usage_type_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_eus_usage_type ALTER COLUMN eus_usage_type_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_eus_usage_type_eus_usage_type_id_seq
+    START WITH 10
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_eus_usage_type pk_t_eus_usage_type; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_eus_usage_type
+    ADD CONSTRAINT pk_t_eus_usage_type PRIMARY KEY (eus_usage_type_id);
+
+--
 -- Name: TABLE t_eus_usage_type; Type: ACL; Schema: public; Owner: d3l243
 --
 

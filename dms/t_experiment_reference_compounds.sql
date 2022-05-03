@@ -11,6 +11,13 @@ CREATE TABLE public.t_experiment_reference_compounds (
 ALTER TABLE public.t_experiment_reference_compounds OWNER TO d3l243;
 
 --
+-- Name: t_experiment_reference_compounds pk_t_experiment_reference_compounds; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_reference_compounds
+    ADD CONSTRAINT pk_t_experiment_reference_compounds PRIMARY KEY (exp_id, compound_id);
+
+--
 -- Name: TABLE t_experiment_reference_compounds; Type: ACL; Schema: public; Owner: d3l243
 --
 

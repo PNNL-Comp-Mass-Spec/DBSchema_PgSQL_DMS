@@ -12,6 +12,13 @@ CREATE TABLE public.t_eus_site_status (
 ALTER TABLE public.t_eus_site_status OWNER TO d3l243;
 
 --
+-- Name: t_eus_site_status pk_t_eus_site_status; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_eus_site_status
+    ADD CONSTRAINT pk_t_eus_site_status PRIMARY KEY (eus_site_status_id);
+
+--
 -- Name: TABLE t_eus_site_status; Type: ACL; Schema: public; Owner: d3l243
 --
 

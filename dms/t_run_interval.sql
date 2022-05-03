@@ -18,6 +18,13 @@ CREATE TABLE public.t_run_interval (
 ALTER TABLE public.t_run_interval OWNER TO d3l243;
 
 --
+-- Name: t_run_interval pk_t_run_interval; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_run_interval
+    ADD CONSTRAINT pk_t_run_interval PRIMARY KEY (interval_id);
+
+--
 -- Name: TABLE t_run_interval; Type: ACL; Schema: public; Owner: d3l243
 --
 

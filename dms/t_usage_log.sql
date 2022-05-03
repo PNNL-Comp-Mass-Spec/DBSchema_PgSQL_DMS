@@ -35,18 +35,6 @@ ALTER TABLE ONLY public.t_usage_log
     ADD CONSTRAINT pk_t_usage_log PRIMARY KEY (entry_id);
 
 --
--- Name: ix_t_usage_log_calling_user; Type: INDEX; Schema: public; Owner: d3l243
---
-
-CREATE INDEX ix_t_usage_log_calling_user ON public.t_usage_log USING btree (calling_user);
-
---
--- Name: ix_t_usage_log_posted_by; Type: INDEX; Schema: public; Owner: d3l243
---
-
-CREATE INDEX ix_t_usage_log_posted_by ON public.t_usage_log USING btree (posted_by);
-
---
 -- Name: TABLE t_usage_log; Type: ACL; Schema: public; Owner: d3l243
 --
 

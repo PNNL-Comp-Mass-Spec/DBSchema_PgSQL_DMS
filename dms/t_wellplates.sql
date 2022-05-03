@@ -13,6 +13,26 @@ CREATE TABLE public.t_wellplates (
 ALTER TABLE public.t_wellplates OWNER TO d3l243;
 
 --
+-- Name: t_wellplates_wellplate_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_wellplates ALTER COLUMN wellplate_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_wellplates_wellplate_id_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_wellplates pk_t_wellplates; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_wellplates
+    ADD CONSTRAINT pk_t_wellplates PRIMARY KEY (wellplate_id);
+
+--
 -- Name: TABLE t_wellplates; Type: ACL; Schema: public; Owner: d3l243
 --
 

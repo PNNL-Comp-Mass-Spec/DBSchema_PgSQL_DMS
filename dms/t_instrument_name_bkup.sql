@@ -18,6 +18,13 @@ CREATE TABLE public.t_instrument_name_bkup (
 ALTER TABLE public.t_instrument_name_bkup OWNER TO d3l243;
 
 --
+-- Name: t_instrument_name_bkup pk_t_instrument_name_bkup; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name_bkup
+    ADD CONSTRAINT pk_t_instrument_name_bkup PRIMARY KEY (instrument_id);
+
+--
 -- Name: TABLE t_instrument_name_bkup; Type: ACL; Schema: public; Owner: d3l243
 --
 

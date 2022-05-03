@@ -14,6 +14,13 @@ CREATE TABLE public.t_cached_experiment_components (
 ALTER TABLE public.t_cached_experiment_components OWNER TO d3l243;
 
 --
+-- Name: t_cached_experiment_components pk_t_cached_experiment_components; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_cached_experiment_components
+    ADD CONSTRAINT pk_t_cached_experiment_components PRIMARY KEY (exp_id);
+
+--
 -- Name: TABLE t_cached_experiment_components; Type: ACL; Schema: public; Owner: d3l243
 --
 

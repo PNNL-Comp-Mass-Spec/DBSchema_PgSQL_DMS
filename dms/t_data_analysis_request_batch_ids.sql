@@ -11,6 +11,26 @@ CREATE TABLE public.t_data_analysis_request_batch_ids (
 ALTER TABLE public.t_data_analysis_request_batch_ids OWNER TO d3l243;
 
 --
+-- Name: t_data_analysis_request_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_data_analysis_request ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_data_analysis_request_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_data_analysis_request_batch_ids pk_t_data_analysis_request_request_batch_id; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request_batch_ids
+    ADD CONSTRAINT pk_t_data_analysis_request_request_batch_id PRIMARY KEY (request_id, batch_id);
+
+--
 -- Name: TABLE t_data_analysis_request_batch_ids; Type: ACL; Schema: public; Owner: d3l243
 --
 

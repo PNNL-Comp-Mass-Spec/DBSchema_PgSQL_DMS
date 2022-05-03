@@ -13,6 +13,13 @@ CREATE TABLE public.t_internal_std_parent_mixes (
 ALTER TABLE public.t_internal_std_parent_mixes OWNER TO d3l243;
 
 --
+-- Name: t_internal_std_parent_mixes pk_t_internal_std_mixes; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_internal_std_parent_mixes
+    ADD CONSTRAINT pk_t_internal_std_mixes PRIMARY KEY (parent_mix_id);
+
+--
 -- Name: TABLE t_internal_std_parent_mixes; Type: ACL; Schema: public; Owner: d3l243
 --
 

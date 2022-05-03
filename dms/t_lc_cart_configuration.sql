@@ -43,6 +43,26 @@ CREATE TABLE public.t_lc_cart_configuration (
 ALTER TABLE public.t_lc_cart_configuration OWNER TO d3l243;
 
 --
+-- Name: t_lc_cart_configuration_cart_config_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_lc_cart_configuration ALTER COLUMN cart_config_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_lc_cart_configuration_cart_config_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_lc_cart_configuration pk_t_lc_cart_configuration; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_cart_configuration
+    ADD CONSTRAINT pk_t_lc_cart_configuration PRIMARY KEY (cart_config_id);
+
+--
 -- Name: TABLE t_lc_cart_configuration; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -19,6 +19,26 @@ CREATE TABLE public.t_param_files (
 ALTER TABLE public.t_param_files OWNER TO d3l243;
 
 --
+-- Name: t_param_files_param_file_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_param_files ALTER COLUMN param_file_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_param_files_param_file_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_param_files pk_t_param_files; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_param_files
+    ADD CONSTRAINT pk_t_param_files PRIMARY KEY (param_file_id);
+
+--
 -- Name: TABLE t_param_files; Type: ACL; Schema: public; Owner: d3l243
 --
 

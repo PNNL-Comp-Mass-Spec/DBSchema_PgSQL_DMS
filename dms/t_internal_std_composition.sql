@@ -12,6 +12,13 @@ CREATE TABLE public.t_internal_std_composition (
 ALTER TABLE public.t_internal_std_composition OWNER TO d3l243;
 
 --
+-- Name: t_internal_std_composition pk_t_internal_std_composition; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_internal_std_composition
+    ADD CONSTRAINT pk_t_internal_std_composition PRIMARY KEY (mix_id, component_id);
+
+--
 -- Name: TABLE t_internal_std_composition; Type: ACL; Schema: public; Owner: d3l243
 --
 

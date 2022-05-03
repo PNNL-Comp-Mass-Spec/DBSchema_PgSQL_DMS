@@ -11,6 +11,13 @@ CREATE TABLE public.t_archive_update_state_name (
 ALTER TABLE public.t_archive_update_state_name OWNER TO d3l243;
 
 --
+-- Name: t_archive_update_state_name pk_t_archive_update_state_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_archive_update_state_name
+    ADD CONSTRAINT pk_t_archive_update_state_name PRIMARY KEY (archive_update_state_id);
+
+--
 -- Name: TABLE t_archive_update_state_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

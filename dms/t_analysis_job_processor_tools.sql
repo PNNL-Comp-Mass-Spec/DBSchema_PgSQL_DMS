@@ -13,6 +13,13 @@ CREATE TABLE public.t_analysis_job_processor_tools (
 ALTER TABLE public.t_analysis_job_processor_tools OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_processor_tools pk_t_analysis_job_processor_tools; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_processor_tools
+    ADD CONSTRAINT pk_t_analysis_job_processor_tools PRIMARY KEY (tool_id, processor_id);
+
+--
 -- Name: TABLE t_analysis_job_processor_tools; Type: ACL; Schema: public; Owner: d3l243
 --
 

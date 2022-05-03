@@ -13,6 +13,26 @@ CREATE TABLE public.t_notification_event (
 ALTER TABLE public.t_notification_event OWNER TO d3l243;
 
 --
+-- Name: t_notification_event_entry_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_notification_event ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_notification_event_entry_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_notification_event pk_t_notification_event; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_notification_event
+    ADD CONSTRAINT pk_t_notification_event PRIMARY KEY (entry_id);
+
+--
 -- Name: TABLE t_notification_event; Type: ACL; Schema: public; Owner: d3l243
 --
 

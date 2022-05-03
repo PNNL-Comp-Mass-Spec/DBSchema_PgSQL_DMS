@@ -34,6 +34,13 @@ END) STORED,
 ALTER TABLE public.t_storage_path OWNER TO d3l243;
 
 --
+-- Name: t_storage_path pk_t_storage_path; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_storage_path
+    ADD CONSTRAINT pk_t_storage_path PRIMARY KEY (storage_path_id);
+
+--
 -- Name: TABLE t_storage_path; Type: ACL; Schema: public; Owner: d3l243
 --
 

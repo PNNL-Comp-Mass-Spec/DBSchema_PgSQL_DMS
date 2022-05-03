@@ -21,6 +21,26 @@ CREATE TABLE public.t_enzymes (
 ALTER TABLE public.t_enzymes OWNER TO d3l243;
 
 --
+-- Name: t_enzymes_enzyme_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_enzymes ALTER COLUMN enzyme_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_enzymes_enzyme_id_seq
+    START WITH 10
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_enzymes pk_t_enzymes; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_enzymes
+    ADD CONSTRAINT pk_t_enzymes PRIMARY KEY (enzyme_id);
+
+--
 -- Name: TABLE t_enzymes; Type: ACL; Schema: public; Owner: d3l243
 --
 

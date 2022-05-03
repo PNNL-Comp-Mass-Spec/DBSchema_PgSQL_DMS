@@ -11,6 +11,13 @@ CREATE TABLE public.t_notification_entity_type (
 ALTER TABLE public.t_notification_entity_type OWNER TO d3l243;
 
 --
+-- Name: t_notification_entity_type pk_t_notification_entity_type; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_notification_entity_type
+    ADD CONSTRAINT pk_t_notification_entity_type PRIMARY KEY (entity_type_id);
+
+--
 -- Name: TABLE t_notification_entity_type; Type: ACL; Schema: public; Owner: d3l243
 --
 

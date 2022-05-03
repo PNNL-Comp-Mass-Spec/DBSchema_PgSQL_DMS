@@ -17,6 +17,26 @@ CREATE TABLE public.t_prep_file_storage (
 ALTER TABLE public.t_prep_file_storage OWNER TO d3l243;
 
 --
+-- Name: t_prep_file_storage_storage_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_prep_file_storage ALTER COLUMN storage_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_prep_file_storage_storage_id_seq
+    START WITH 10
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_prep_file_storage pk_t_prep_file_storage; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_prep_file_storage
+    ADD CONSTRAINT pk_t_prep_file_storage PRIMARY KEY (storage_id);
+
+--
 -- Name: TABLE t_prep_file_storage; Type: ACL; Schema: public; Owner: d3l243
 --
 

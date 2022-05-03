@@ -25,6 +25,13 @@ COPY public.t_requested_run_state_name (state_name, state_id) FROM stdin;
 
 
 --
+-- Name: t_requested_run_state_name_state_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
+--
+
+SELECT pg_catalog.setval('public.t_requested_run_state_name_state_id_seq', 1, false);
+
+
+--
 -- PostgreSQL database dump complete
 --
 

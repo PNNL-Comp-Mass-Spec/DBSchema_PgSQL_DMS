@@ -29,6 +29,26 @@ CREATE TABLE public.t_campaign (
 ALTER TABLE public.t_campaign OWNER TO d3l243;
 
 --
+-- Name: t_campaign_campaign_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_campaign ALTER COLUMN campaign_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_campaign_campaign_id_seq
+    START WITH 2100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_campaign pk_t_campaign; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_campaign
+    ADD CONSTRAINT pk_t_campaign PRIMARY KEY (campaign_id);
+
+--
 -- Name: TABLE t_campaign; Type: ACL; Schema: public; Owner: d3l243
 --
 

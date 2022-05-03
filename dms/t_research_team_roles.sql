@@ -12,6 +12,39 @@ CREATE TABLE public.t_research_team_roles (
 ALTER TABLE public.t_research_team_roles OWNER TO d3l243;
 
 --
+-- Name: t_research_team_roles_role_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_research_team_roles ALTER COLUMN role_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_research_team_roles_role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_research_team_team_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_research_team ALTER COLUMN team_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_research_team_team_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_research_team_roles pk_t_research_team_roles; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_research_team_roles
+    ADD CONSTRAINT pk_t_research_team_roles PRIMARY KEY (role_id);
+
+--
 -- Name: TABLE t_research_team_roles; Type: ACL; Schema: public; Owner: d3l243
 --
 

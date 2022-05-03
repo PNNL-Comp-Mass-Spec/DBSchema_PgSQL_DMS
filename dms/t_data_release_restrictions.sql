@@ -11,6 +11,13 @@ CREATE TABLE public.t_data_release_restrictions (
 ALTER TABLE public.t_data_release_restrictions OWNER TO d3l243;
 
 --
+-- Name: t_data_release_restrictions pk_t_data_release_restrictions; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_release_restrictions
+    ADD CONSTRAINT pk_t_data_release_restrictions PRIMARY KEY (release_restriction_id);
+
+--
 -- Name: TABLE t_data_release_restrictions; Type: ACL; Schema: public; Owner: d3l243
 --
 

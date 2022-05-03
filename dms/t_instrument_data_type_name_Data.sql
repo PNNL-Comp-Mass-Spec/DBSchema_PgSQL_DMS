@@ -25,6 +25,13 @@ COPY public.t_instrument_data_type_name (raw_data_type_id, raw_data_type_name, i
 
 
 --
+-- Name: t_instrument_data_type_name_raw_data_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
+--
+
+SELECT pg_catalog.setval('public.t_instrument_data_type_name_raw_data_type_id_seq', 1, false);
+
+
+--
 -- PostgreSQL database dump complete
 --
 

@@ -27,6 +27,13 @@ CREATE TABLE public.t_prep_lc_run (
 ALTER TABLE public.t_prep_lc_run OWNER TO d3l243;
 
 --
+-- Name: t_prep_lc_run pk_t_prep_lc_run; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_prep_lc_run
+    ADD CONSTRAINT pk_t_prep_lc_run PRIMARY KEY (prep_run_id);
+
+--
 -- Name: TABLE t_prep_lc_run; Type: ACL; Schema: public; Owner: d3l243
 --
 

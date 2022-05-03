@@ -11,6 +11,13 @@ CREATE TABLE public.t_project_usage_types (
 ALTER TABLE public.t_project_usage_types OWNER TO d3l243;
 
 --
+-- Name: t_project_usage_types pk_t_project_usage_types; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_project_usage_types
+    ADD CONSTRAINT pk_t_project_usage_types PRIMARY KEY (project_type_id);
+
+--
 -- Name: TABLE t_project_usage_types; Type: ACL; Schema: public; Owner: d3l243
 --
 

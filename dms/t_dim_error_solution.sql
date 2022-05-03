@@ -11,6 +11,13 @@ CREATE TABLE public.t_dim_error_solution (
 ALTER TABLE public.t_dim_error_solution OWNER TO d3l243;
 
 --
+-- Name: t_dim_error_solution pk_error_text; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dim_error_solution
+    ADD CONSTRAINT pk_error_text PRIMARY KEY (error_text);
+
+--
 -- Name: TABLE t_dim_error_solution; Type: ACL; Schema: public; Owner: d3l243
 --
 

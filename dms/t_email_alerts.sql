@@ -17,6 +17,26 @@ CREATE TABLE public.t_email_alerts (
 ALTER TABLE public.t_email_alerts OWNER TO d3l243;
 
 --
+-- Name: t_email_alerts_email_alert_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_email_alerts ALTER COLUMN email_alert_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_email_alerts_email_alert_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_email_alerts pk_t_email_alerts; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_email_alerts
+    ADD CONSTRAINT pk_t_email_alerts PRIMARY KEY (email_alert_id);
+
+--
 -- Name: TABLE t_email_alerts; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -14,6 +14,13 @@ CREATE TABLE public.t_eus_proposal_users (
 ALTER TABLE public.t_eus_proposal_users OWNER TO d3l243;
 
 --
+-- Name: t_eus_proposal_users pk_t_eus_proposal_users; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_eus_proposal_users
+    ADD CONSTRAINT pk_t_eus_proposal_users PRIMARY KEY (proposal_id, person_id);
+
+--
 -- Name: TABLE t_eus_proposal_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

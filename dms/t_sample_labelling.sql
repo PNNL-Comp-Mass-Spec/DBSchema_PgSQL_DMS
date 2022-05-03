@@ -13,6 +13,13 @@ CREATE TABLE public.t_sample_labelling (
 ALTER TABLE public.t_sample_labelling OWNER TO d3l243;
 
 --
+-- Name: t_sample_labelling pk_t_sample_labelling; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_labelling
+    ADD CONSTRAINT pk_t_sample_labelling PRIMARY KEY (label_id);
+
+--
 -- Name: TABLE t_sample_labelling; Type: ACL; Schema: public; Owner: d3l243
 --
 

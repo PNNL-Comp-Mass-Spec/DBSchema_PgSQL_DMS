@@ -26,6 +26,13 @@ CREATE TABLE public.t_campaign_tracking (
 ALTER TABLE public.t_campaign_tracking OWNER TO d3l243;
 
 --
+-- Name: t_campaign_tracking pk_t_campaign_tracking; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_campaign_tracking
+    ADD CONSTRAINT pk_t_campaign_tracking PRIMARY KEY (campaign_id);
+
+--
 -- Name: TABLE t_campaign_tracking; Type: ACL; Schema: public; Owner: d3l243
 --
 

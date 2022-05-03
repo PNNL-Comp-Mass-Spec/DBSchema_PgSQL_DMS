@@ -18,6 +18,26 @@ CREATE TABLE public.t_instrument_allocation_updates (
 ALTER TABLE public.t_instrument_allocation_updates OWNER TO d3l243;
 
 --
+-- Name: t_instrument_allocation_updates_entry_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_instrument_allocation_updates ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_instrument_allocation_updates_entry_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_instrument_allocation_updates pk_t_instrument_allocation_updates; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_allocation_updates
+    ADD CONSTRAINT pk_t_instrument_allocation_updates PRIMARY KEY (entry_id);
+
+--
 -- Name: TABLE t_instrument_allocation_updates; Type: ACL; Schema: public; Owner: d3l243
 --
 

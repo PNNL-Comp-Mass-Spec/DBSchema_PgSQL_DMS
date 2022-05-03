@@ -21,6 +21,13 @@ CREATE TABLE public.t_predefined_analysis_scheduling_queue (
 ALTER TABLE public.t_predefined_analysis_scheduling_queue OWNER TO d3l243;
 
 --
+-- Name: t_predefined_analysis_scheduling_queue pk_t_predefined_analysis_scheduling_queue; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_predefined_analysis_scheduling_queue
+    ADD CONSTRAINT pk_t_predefined_analysis_scheduling_queue PRIMARY KEY (item);
+
+--
 -- Name: TABLE t_predefined_analysis_scheduling_queue; Type: ACL; Schema: public; Owner: d3l243
 --
 

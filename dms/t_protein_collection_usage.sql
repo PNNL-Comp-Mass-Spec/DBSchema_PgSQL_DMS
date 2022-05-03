@@ -14,6 +14,13 @@ CREATE TABLE public.t_protein_collection_usage (
 ALTER TABLE public.t_protein_collection_usage OWNER TO d3l243;
 
 --
+-- Name: t_protein_collection_usage pk_t_protein_collection_usage; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_protein_collection_usage
+    ADD CONSTRAINT pk_t_protein_collection_usage PRIMARY KEY (protein_collection_id);
+
+--
 -- Name: TABLE t_protein_collection_usage; Type: ACL; Schema: public; Owner: d3l243
 --
 

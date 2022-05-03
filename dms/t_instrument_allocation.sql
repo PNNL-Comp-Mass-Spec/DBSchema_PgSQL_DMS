@@ -17,6 +17,13 @@ CREATE TABLE public.t_instrument_allocation (
 ALTER TABLE public.t_instrument_allocation OWNER TO d3l243;
 
 --
+-- Name: t_instrument_allocation pk_t_instrument_allocation; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_allocation
+    ADD CONSTRAINT pk_t_instrument_allocation PRIMARY KEY (allocation_tag, proposal_id, fiscal_year);
+
+--
 -- Name: TABLE t_instrument_allocation; Type: ACL; Schema: public; Owner: d3l243
 --
 

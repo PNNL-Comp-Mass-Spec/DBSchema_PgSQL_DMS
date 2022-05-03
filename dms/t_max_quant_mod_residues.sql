@@ -11,6 +11,13 @@ CREATE TABLE public.t_max_quant_mod_residues (
 ALTER TABLE public.t_max_quant_mod_residues OWNER TO d3l243;
 
 --
+-- Name: t_max_quant_mod_residues pk_t_max_quant_mod_residues; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_max_quant_mod_residues
+    ADD CONSTRAINT pk_t_max_quant_mod_residues PRIMARY KEY (mod_id, residue_id);
+
+--
 -- Name: TABLE t_max_quant_mod_residues; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -41,6 +41,13 @@ CREATE TABLE public.t_dataset (
 ALTER TABLE public.t_dataset OWNER TO d3l243;
 
 --
+-- Name: t_dataset pk_t_dataset; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT pk_t_dataset PRIMARY KEY (dataset_id);
+
+--
 -- Name: TABLE t_dataset; Type: ACL; Schema: public; Owner: d3l243
 --
 

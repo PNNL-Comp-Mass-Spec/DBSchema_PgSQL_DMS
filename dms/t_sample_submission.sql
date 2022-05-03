@@ -16,6 +16,26 @@ CREATE TABLE public.t_sample_submission (
 ALTER TABLE public.t_sample_submission OWNER TO d3l243;
 
 --
+-- Name: t_sample_submission_submission_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_sample_submission ALTER COLUMN submission_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_sample_submission_submission_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_sample_submission pk_t_sample_submission; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_submission
+    ADD CONSTRAINT pk_t_sample_submission PRIMARY KEY (submission_id);
+
+--
 -- Name: TABLE t_sample_submission; Type: ACL; Schema: public; Owner: d3l243
 --
 

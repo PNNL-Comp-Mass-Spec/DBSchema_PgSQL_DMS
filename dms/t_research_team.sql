@@ -13,6 +13,13 @@ CREATE TABLE public.t_research_team (
 ALTER TABLE public.t_research_team OWNER TO d3l243;
 
 --
+-- Name: t_research_team pk_t_research_team; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_research_team
+    ADD CONSTRAINT pk_t_research_team PRIMARY KEY (team_id);
+
+--
 -- Name: TABLE t_research_team; Type: ACL; Schema: public; Owner: d3l243
 --
 

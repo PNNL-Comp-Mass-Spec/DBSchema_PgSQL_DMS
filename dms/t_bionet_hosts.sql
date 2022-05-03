@@ -18,6 +18,13 @@ CREATE TABLE public.t_bionet_hosts (
 ALTER TABLE public.t_bionet_hosts OWNER TO d3l243;
 
 --
+-- Name: t_bionet_hosts pk_t_bionet_hosts; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_bionet_hosts
+    ADD CONSTRAINT pk_t_bionet_hosts PRIMARY KEY (host);
+
+--
 -- Name: TABLE t_bionet_hosts; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -50,6 +50,13 @@ CREATE TABLE public.t_requested_run (
 ALTER TABLE public.t_requested_run OWNER TO d3l243;
 
 --
+-- Name: t_requested_run pk_t_requested_run; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT pk_t_requested_run PRIMARY KEY (request_id);
+
+--
 -- Name: TABLE t_requested_run; Type: ACL; Schema: public; Owner: d3l243
 --
 

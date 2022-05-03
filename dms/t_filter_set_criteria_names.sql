@@ -12,6 +12,26 @@ CREATE TABLE public.t_filter_set_criteria_names (
 ALTER TABLE public.t_filter_set_criteria_names OWNER TO d3l243;
 
 --
+-- Name: t_filter_set_criteria_names_criterion_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_filter_set_criteria_names ALTER COLUMN criterion_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_filter_set_criteria_names_criterion_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_filter_set_criteria_names pk_t_filter_set_criteria_names; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_filter_set_criteria_names
+    ADD CONSTRAINT pk_t_filter_set_criteria_names PRIMARY KEY (criterion_id);
+
+--
 -- Name: TABLE t_filter_set_criteria_names; Type: ACL; Schema: public; Owner: d3l243
 --
 

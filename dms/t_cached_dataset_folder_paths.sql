@@ -24,6 +24,13 @@ ALTER TABLE public.t_cached_dataset_folder_paths OWNER TO d3l243;
 COMMENT ON TABLE public.t_cached_dataset_folder_paths IS 'dataset_row_version comes from t_dataset.xmin and storage_path_row_version comes from t_storage_path.xmin';
 
 --
+-- Name: t_cached_dataset_folder_paths pk_t_cached_dataset_folder_paths; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_cached_dataset_folder_paths
+    ADD CONSTRAINT pk_t_cached_dataset_folder_paths PRIMARY KEY (dataset_id);
+
+--
 -- Name: TABLE t_cached_dataset_folder_paths; Type: ACL; Schema: public; Owner: d3l243
 --
 

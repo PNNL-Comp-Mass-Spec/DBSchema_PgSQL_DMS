@@ -16,6 +16,13 @@ CREATE TABLE public.t_secondary_sep (
 ALTER TABLE public.t_secondary_sep OWNER TO d3l243;
 
 --
+-- Name: t_secondary_sep pk_t_secondary_sep; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_secondary_sep
+    ADD CONSTRAINT pk_t_secondary_sep PRIMARY KEY (separation_type_id);
+
+--
 -- Name: TABLE t_secondary_sep; Type: ACL; Schema: public; Owner: d3l243
 --
 

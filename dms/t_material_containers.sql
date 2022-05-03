@@ -28,6 +28,26 @@ END) STORED
 ALTER TABLE public.t_material_containers OWNER TO d3l243;
 
 --
+-- Name: t_material_containers_container_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_material_containers ALTER COLUMN container_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_material_containers_container_id_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_material_containers pk_t_material_containers; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_material_containers
+    ADD CONSTRAINT pk_t_material_containers PRIMARY KEY (container_id);
+
+--
 -- Name: TABLE t_material_containers; Type: ACL; Schema: public; Owner: d3l243
 --
 

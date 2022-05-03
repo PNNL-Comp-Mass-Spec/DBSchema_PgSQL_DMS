@@ -15,6 +15,26 @@ CREATE TABLE public.t_factor (
 ALTER TABLE public.t_factor OWNER TO d3l243;
 
 --
+-- Name: t_factor_factor_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_factor ALTER COLUMN factor_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_factor_factor_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_factor pk_t_factor; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_factor
+    ADD CONSTRAINT pk_t_factor PRIMARY KEY (factor_id);
+
+--
 -- Name: TABLE t_factor; Type: ACL; Schema: public; Owner: d3l243
 --
 

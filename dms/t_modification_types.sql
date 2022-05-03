@@ -12,6 +12,13 @@ CREATE TABLE public.t_modification_types (
 ALTER TABLE public.t_modification_types OWNER TO d3l243;
 
 --
+-- Name: t_modification_types pk_t_modification_types; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_modification_types
+    ADD CONSTRAINT pk_t_modification_types PRIMARY KEY (mod_type_symbol);
+
+--
 -- Name: TABLE t_modification_types; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -15,6 +15,13 @@ CREATE TABLE public.t_experiment_plex_members (
 ALTER TABLE public.t_experiment_plex_members OWNER TO d3l243;
 
 --
+-- Name: t_experiment_plex_members pk_t_experiment_plex_members; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_plex_members
+    ADD CONSTRAINT pk_t_experiment_plex_members PRIMARY KEY (plex_exp_id, channel);
+
+--
 -- Name: TABLE t_experiment_plex_members; Type: ACL; Schema: public; Owner: d3l243
 --
 

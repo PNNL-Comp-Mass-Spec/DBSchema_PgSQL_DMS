@@ -31,6 +31,26 @@ CREATE TABLE public.t_reference_compound (
 ALTER TABLE public.t_reference_compound OWNER TO d3l243;
 
 --
+-- Name: t_reference_compound_compound_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_reference_compound ALTER COLUMN compound_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_reference_compound_compound_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_reference_compound pk_t_reference_compound; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reference_compound
+    ADD CONSTRAINT pk_t_reference_compound PRIMARY KEY (compound_id);
+
+--
 -- Name: TABLE t_reference_compound; Type: ACL; Schema: public; Owner: d3l243
 --
 

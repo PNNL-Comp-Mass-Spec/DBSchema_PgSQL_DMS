@@ -31,6 +31,13 @@ CREATE TABLE public.t_analysis_job_psm_stats (
 ALTER TABLE public.t_analysis_job_psm_stats OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_psm_stats pk_t_analysis_job_psm_stats; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_psm_stats
+    ADD CONSTRAINT pk_t_analysis_job_psm_stats PRIMARY KEY (job);
+
+--
 -- Name: TABLE t_analysis_job_psm_stats; Type: ACL; Schema: public; Owner: d3l243
 --
 

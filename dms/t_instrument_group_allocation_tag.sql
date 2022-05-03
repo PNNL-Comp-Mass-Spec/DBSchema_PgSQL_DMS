@@ -11,6 +11,13 @@ CREATE TABLE public.t_instrument_group_allocation_tag (
 ALTER TABLE public.t_instrument_group_allocation_tag OWNER TO d3l243;
 
 --
+-- Name: t_instrument_group_allocation_tag pk_t_instrument_group_allocation_tag; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_group_allocation_tag
+    ADD CONSTRAINT pk_t_instrument_group_allocation_tag PRIMARY KEY (allocation_tag);
+
+--
 -- Name: TABLE t_instrument_group_allocation_tag; Type: ACL; Schema: public; Owner: d3l243
 --
 

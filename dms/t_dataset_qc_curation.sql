@@ -19,6 +19,13 @@ CREATE TABLE public.t_dataset_qc_curation (
 ALTER TABLE public.t_dataset_qc_curation OWNER TO d3l243;
 
 --
+-- Name: t_dataset_qc_curation pk_t_dataset_qc_curation; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_qc_curation
+    ADD CONSTRAINT pk_t_dataset_qc_curation PRIMARY KEY (dataset_id);
+
+--
 -- Name: TABLE t_dataset_qc_curation; Type: ACL; Schema: public; Owner: d3l243
 --
 

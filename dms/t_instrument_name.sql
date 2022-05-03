@@ -44,6 +44,13 @@ END) STORED,
 ALTER TABLE public.t_instrument_name OWNER TO d3l243;
 
 --
+-- Name: t_instrument_name pk_t_instrument_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name
+    ADD CONSTRAINT pk_t_instrument_name PRIMARY KEY (instrument_id);
+
+--
 -- Name: TABLE t_instrument_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

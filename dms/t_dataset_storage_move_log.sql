@@ -17,6 +17,26 @@ CREATE TABLE public.t_dataset_storage_move_log (
 ALTER TABLE public.t_dataset_storage_move_log OWNER TO d3l243;
 
 --
+-- Name: t_dataset_storage_move_log_entry_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_dataset_storage_move_log ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_dataset_storage_move_log_entry_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_dataset_storage_move_log pk_t_dataset_storage_move_log; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_storage_move_log
+    ADD CONSTRAINT pk_t_dataset_storage_move_log PRIMARY KEY (entry_id);
+
+--
 -- Name: TABLE t_dataset_storage_move_log; Type: ACL; Schema: public; Owner: d3l243
 --
 

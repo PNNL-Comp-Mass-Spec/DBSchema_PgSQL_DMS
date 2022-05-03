@@ -15,6 +15,26 @@ CREATE TABLE public.t_filter_sets (
 ALTER TABLE public.t_filter_sets OWNER TO d3l243;
 
 --
+-- Name: t_filter_sets_filter_set_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_filter_sets ALTER COLUMN filter_set_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_filter_sets_filter_set_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_filter_sets pk_t_filter_sets; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_filter_sets
+    ADD CONSTRAINT pk_t_filter_sets PRIMARY KEY (filter_set_id);
+
+--
 -- Name: TABLE t_filter_sets; Type: ACL; Schema: public; Owner: d3l243
 --
 

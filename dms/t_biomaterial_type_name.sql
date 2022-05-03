@@ -11,6 +11,26 @@ CREATE TABLE public.t_biomaterial_type_name (
 ALTER TABLE public.t_biomaterial_type_name OWNER TO d3l243;
 
 --
+-- Name: t_biomaterial_type_name_biomaterial_type_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_biomaterial_type_name ALTER COLUMN biomaterial_type_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_biomaterial_type_name_biomaterial_type_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_biomaterial_type_name pk_t_biomaterial_type_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_biomaterial_type_name
+    ADD CONSTRAINT pk_t_biomaterial_type_name PRIMARY KEY (biomaterial_type_id);
+
+--
 -- Name: TABLE t_biomaterial_type_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

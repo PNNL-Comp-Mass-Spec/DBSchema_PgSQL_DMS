@@ -17,6 +17,26 @@ CREATE TABLE public.t_dataset_device (
 ALTER TABLE public.t_dataset_device OWNER TO d3l243;
 
 --
+-- Name: t_dataset_device_device_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_dataset_device ALTER COLUMN device_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_dataset_device_device_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_dataset_device pk_t_dataset_device; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_device
+    ADD CONSTRAINT pk_t_dataset_device PRIMARY KEY (device_id);
+
+--
 -- Name: TABLE t_dataset_device; Type: ACL; Schema: public; Owner: d3l243
 --
 

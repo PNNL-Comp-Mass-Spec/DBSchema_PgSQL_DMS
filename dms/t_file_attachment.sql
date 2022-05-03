@@ -22,6 +22,26 @@ CREATE TABLE public.t_file_attachment (
 ALTER TABLE public.t_file_attachment OWNER TO d3l243;
 
 --
+-- Name: t_file_attachment_attachment_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_file_attachment ALTER COLUMN attachment_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_file_attachment_attachment_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_file_attachment pk_t_file_attachment; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_file_attachment
+    ADD CONSTRAINT pk_t_file_attachment PRIMARY KEY (attachment_id);
+
+--
 -- Name: TABLE t_file_attachment; Type: ACL; Schema: public; Owner: d3l243
 --
 

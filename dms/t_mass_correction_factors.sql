@@ -19,6 +19,13 @@ CREATE TABLE public.t_mass_correction_factors (
 ALTER TABLE public.t_mass_correction_factors OWNER TO d3l243;
 
 --
+-- Name: t_mass_correction_factors pk_t_mass_correction_factors; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_mass_correction_factors
+    ADD CONSTRAINT pk_t_mass_correction_factors PRIMARY KEY (mass_correction_id);
+
+--
 -- Name: TABLE t_mass_correction_factors; Type: ACL; Schema: public; Owner: d3l243
 --
 

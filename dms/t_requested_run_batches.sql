@@ -23,6 +23,26 @@ CREATE TABLE public.t_requested_run_batches (
 ALTER TABLE public.t_requested_run_batches OWNER TO d3l243;
 
 --
+-- Name: t_requested_run_batches_batch_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_requested_run_batches ALTER COLUMN batch_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_requested_run_batches_batch_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_requested_run_batches pk_t_requested_run_batches; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run_batches
+    ADD CONSTRAINT pk_t_requested_run_batches PRIMARY KEY (batch_id);
+
+--
 -- Name: TABLE t_requested_run_batches; Type: ACL; Schema: public; Owner: d3l243
 --
 

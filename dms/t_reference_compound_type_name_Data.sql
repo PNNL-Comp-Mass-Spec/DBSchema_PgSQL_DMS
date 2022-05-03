@@ -25,6 +25,13 @@ COPY public.t_reference_compound_type_name (compound_type_id, compound_type_name
 
 
 --
+-- Name: t_reference_compound_type_name_compound_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
+--
+
+SELECT pg_catalog.setval('public.t_reference_compound_type_name_compound_type_id_seq', 100, false);
+
+
+--
 -- PostgreSQL database dump complete
 --
 

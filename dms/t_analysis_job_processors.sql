@@ -16,6 +16,26 @@ CREATE TABLE public.t_analysis_job_processors (
 ALTER TABLE public.t_analysis_job_processors OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_processors_processor_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_analysis_job_processors ALTER COLUMN processor_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_analysis_job_processors_processor_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_analysis_job_processors pk_t_analysis_job_processors; Type: CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_processors
+    ADD CONSTRAINT pk_t_analysis_job_processors PRIMARY KEY (processor_id);
+
+--
 -- Name: TABLE t_analysis_job_processors; Type: ACL; Schema: public; Owner: d3l243
 --
 
