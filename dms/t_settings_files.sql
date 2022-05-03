@@ -42,6 +42,18 @@ ALTER TABLE ONLY public.t_settings_files
     ADD CONSTRAINT pk_t_settings_files PRIMARY KEY (settings_file_id);
 
 --
+-- Name: ix_t_settings_files_analysis_tool_file_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_settings_files_analysis_tool_file_name ON public.t_settings_files USING btree (analysis_tool, file_name);
+
+--
+-- Name: ix_t_settings_files_file_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_settings_files_file_name ON public.t_settings_files USING btree (file_name);
+
+--
 -- Name: TABLE t_settings_files; Type: ACL; Schema: public; Owner: d3l243
 --
 

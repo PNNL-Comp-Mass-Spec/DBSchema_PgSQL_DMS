@@ -38,6 +38,18 @@ ALTER TABLE ONLY public.t_instrument_allocation_updates
     ADD CONSTRAINT pk_t_instrument_allocation_updates PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_instrument_allocation_updates_entered; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_instrument_allocation_updates_entered ON public.t_instrument_allocation_updates USING btree (entered);
+
+--
+-- Name: ix_t_instrument_allocation_updates_proposal_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_instrument_allocation_updates_proposal_id ON public.t_instrument_allocation_updates USING btree (proposal_id);
+
+--
 -- Name: TABLE t_instrument_allocation_updates; Type: ACL; Schema: public; Owner: d3l243
 --
 

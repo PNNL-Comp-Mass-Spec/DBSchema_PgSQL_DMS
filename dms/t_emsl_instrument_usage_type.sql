@@ -33,6 +33,12 @@ ALTER TABLE ONLY public.t_emsl_instrument_usage_type
     ADD CONSTRAINT pk_t_emsl_instrument_usage_type PRIMARY KEY (usage_type_id);
 
 --
+-- Name: ix_t_emsl_instrument_usage_type_usage_type; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_emsl_instrument_usage_type_usage_type ON public.t_emsl_instrument_usage_type USING btree (usage_type);
+
+--
 -- Name: TABLE t_emsl_instrument_usage_type; Type: ACL; Schema: public; Owner: d3l243
 --
 

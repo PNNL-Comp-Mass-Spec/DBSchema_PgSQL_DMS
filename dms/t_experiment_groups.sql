@@ -38,6 +38,12 @@ ALTER TABLE ONLY public.t_experiment_groups
     ADD CONSTRAINT pk_t_experiment_groups PRIMARY KEY (group_id);
 
 --
+-- Name: ix_t_experiment_groups_parent_exp_id_group_id_include_type; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_experiment_groups_parent_exp_id_group_id_include_type ON public.t_experiment_groups USING btree (parent_exp_id, group_id) INCLUDE (group_type, created, description);
+
+--
 -- Name: TABLE t_experiment_groups; Type: ACL; Schema: public; Owner: d3l243
 --
 

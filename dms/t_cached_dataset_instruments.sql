@@ -19,6 +19,18 @@ ALTER TABLE ONLY public.t_cached_dataset_instruments
     ADD CONSTRAINT pk_t_cached_dataset_instruments PRIMARY KEY (dataset_id);
 
 --
+-- Name: ix_t_cached_dataset_instruments_instrument_id_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cached_dataset_instruments_instrument_id_dataset_id ON public.t_cached_dataset_instruments USING btree (instrument_id, dataset_id);
+
+--
+-- Name: ix_t_cached_dataset_instruments_instrument_name_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cached_dataset_instruments_instrument_name_dataset_id ON public.t_cached_dataset_instruments USING btree (instrument, dataset_id);
+
+--
 -- Name: TABLE t_cached_dataset_instruments; Type: ACL; Schema: public; Owner: d3l243
 --
 

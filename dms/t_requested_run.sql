@@ -57,6 +57,102 @@ ALTER TABLE ONLY public.t_requested_run
     ADD CONSTRAINT pk_t_requested_run PRIMARY KEY (request_id);
 
 --
+-- Name: ix_t_requested_run_batch_id_include_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_batch_id_include_dataset_id ON public.t_requested_run USING btree (batch_id) INCLUDE (dataset_id);
+
+--
+-- Name: ix_t_requested_run_batch_id_include_exp_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_batch_id_include_exp_id ON public.t_requested_run USING btree (batch_id) INCLUDE (exp_id);
+
+--
+-- Name: ix_t_requested_run_block_include_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_block_include_id ON public.t_requested_run USING btree (block) INCLUDE (request_id);
+
+--
+-- Name: ix_t_requested_run_created; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_created ON public.t_requested_run USING btree (created);
+
+--
+-- Name: ix_t_requested_run_dataset_id_include_created_id_batch; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_dataset_id_include_created_id_batch ON public.t_requested_run USING btree (dataset_id) INCLUDE (created, request_id, batch_id);
+
+--
+-- Name: ix_t_requested_run_dataset_id_status; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_dataset_id_status ON public.t_requested_run USING btree (dataset_id, state_name);
+
+--
+-- Name: ix_t_requested_run_eus_proposal_id_include_id_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_eus_proposal_id_include_id_dataset_id ON public.t_requested_run USING btree (eus_proposal_id) INCLUDE (request_id, dataset_id);
+
+--
+-- Name: ix_t_requested_run_eus_usage_type_include_eus_proposal_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_eus_usage_type_include_eus_proposal_id ON public.t_requested_run USING btree (eus_usage_type_id) INCLUDE (eus_proposal_id, dataset_id);
+
+--
+-- Name: ix_t_requested_run_exp_id_include_name_idstatus; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_exp_id_include_name_idstatus ON public.t_requested_run USING btree (exp_id) INCLUDE (request_name, request_id, state_name);
+
+--
+-- Name: ix_t_requested_run_name_status_include_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_name_status_include_id ON public.t_requested_run USING btree (request_name, state_name) INCLUDE (request_id);
+
+--
+-- Name: ix_t_requested_run_proposal_id_work_package_entered; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_proposal_id_work_package_entered ON public.t_requested_run USING btree (eus_proposal_id, work_package, entered);
+
+--
+-- Name: ix_t_requested_run_queue_state_include_request_type_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_queue_state_include_request_type_id ON public.t_requested_run USING btree (queue_state) INCLUDE (request_type_id);
+
+--
+-- Name: ix_t_requested_run_request_name_code; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_request_name_code ON public.t_requested_run USING btree (request_name_code);
+
+--
+-- Name: ix_t_requested_run_run_order_include_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_run_order_include_id ON public.t_requested_run USING btree (run_order) INCLUDE (request_id);
+
+--
+-- Name: ix_t_requested_run_state_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_state_name ON public.t_requested_run USING btree (state_name) INCLUDE (request_id);
+
+--
+-- Name: ix_t_requested_run_updated; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_updated ON public.t_requested_run USING btree (updated);
+
+--
 -- Name: TABLE t_requested_run; Type: ACL; Schema: public; Owner: d3l243
 --
 

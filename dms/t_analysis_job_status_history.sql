@@ -34,6 +34,18 @@ ALTER TABLE ONLY public.t_analysis_job_status_history
     ADD CONSTRAINT pk_t_analysis_job_status_history PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_analysis_job_status_history_state_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_status_history_state_id ON public.t_analysis_job_status_history USING btree (state_id);
+
+--
+-- Name: ix_t_analysis_job_status_history_tool_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_status_history_tool_id ON public.t_analysis_job_status_history USING btree (tool_id);
+
+--
 -- Name: TABLE t_analysis_job_status_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

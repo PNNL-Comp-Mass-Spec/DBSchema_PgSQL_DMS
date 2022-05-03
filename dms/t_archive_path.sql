@@ -38,6 +38,12 @@ ALTER TABLE ONLY public.t_archive_path
     ADD CONSTRAINT pk_t_archive_path PRIMARY KEY (archive_path_id);
 
 --
+-- Name: ix_t_archive_path_archive_path_function; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_archive_path_archive_path_function ON public.t_archive_path USING btree (archive_path_function) INCLUDE (instrument_id, archive_path, network_share_path);
+
+--
 -- Name: TABLE t_archive_path; Type: ACL; Schema: public; Owner: d3l243
 --
 

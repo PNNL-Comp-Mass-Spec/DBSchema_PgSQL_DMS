@@ -34,6 +34,18 @@ ALTER TABLE ONLY public.t_filter_set_criteria
     ADD CONSTRAINT pk_t_filter_set_criteria PRIMARY KEY (filter_set_criteria_id);
 
 --
+-- Name: ix_t_filter_set_criteria_criterion_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_filter_set_criteria_criterion_id ON public.t_filter_set_criteria USING btree (criterion_id);
+
+--
+-- Name: ix_t_filter_set_criteria_group_id_criterion_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_filter_set_criteria_group_id_criterion_id ON public.t_filter_set_criteria USING btree (filter_criteria_group_id, criterion_id);
+
+--
 -- Name: TABLE t_filter_set_criteria; Type: ACL; Schema: public; Owner: d3l243
 --
 

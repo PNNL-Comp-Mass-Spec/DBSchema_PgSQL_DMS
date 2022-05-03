@@ -47,6 +47,18 @@ ALTER TABLE ONLY public.t_predefined_analysis_scheduling_queue_history
     ADD CONSTRAINT pk_t_predefined_analysis_scheduling_queue_history PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_predefined_analysis_scheduling_queue_history_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_predefined_analysis_scheduling_queue_history_dataset_id ON public.t_predefined_analysis_scheduling_queue_history USING btree (dataset_id);
+
+--
+-- Name: ix_t_predefined_analysis_scheduling_queue_history_rating; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_predefined_analysis_scheduling_queue_history_rating ON public.t_predefined_analysis_scheduling_queue_history USING btree (ds_rating);
+
+--
 -- Name: TABLE t_predefined_analysis_scheduling_queue_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -37,6 +37,30 @@ ALTER TABLE ONLY public.t_mts_mt_db_jobs_cached
     ADD CONSTRAINT pk_t_mts_mt_db_jobs_cached PRIMARY KEY (cached_info_id);
 
 --
+-- Name: ix_t_mts_mt_db_jobs_cached_dbname_job; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_mt_db_jobs_cached_dbname_job ON public.t_mts_mt_db_jobs_cached USING btree (mt_db_name, job);
+
+--
+-- Name: ix_t_mts_mt_db_jobs_cached_job; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_mt_db_jobs_cached_job ON public.t_mts_mt_db_jobs_cached USING btree (job);
+
+--
+-- Name: ix_t_mts_mt_db_jobs_cached_server_db_include_result_type; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_mt_db_jobs_cached_server_db_include_result_type ON public.t_mts_mt_db_jobs_cached USING btree (server_name, mt_db_name) INCLUDE (result_type);
+
+--
+-- Name: ix_t_mts_mt_db_jobs_cached_sort_key; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_mt_db_jobs_cached_sort_key ON public.t_mts_mt_db_jobs_cached USING btree (sort_key);
+
+--
 -- Name: TABLE t_mts_mt_db_jobs_cached; Type: ACL; Schema: public; Owner: d3l243
 --
 

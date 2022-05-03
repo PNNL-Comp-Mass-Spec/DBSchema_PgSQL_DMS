@@ -29,6 +29,12 @@ ALTER TABLE ONLY public.t_residues
     ADD CONSTRAINT pk_t_residues PRIMARY KEY (residue_id);
 
 --
+-- Name: ix_t_residues_symbol; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_residues_symbol ON public.t_residues USING btree (residue_symbol);
+
+--
 -- Name: TABLE t_residues; Type: ACL; Schema: public; Owner: d3l243
 --
 

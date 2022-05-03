@@ -49,6 +49,12 @@ ALTER TABLE ONLY public.t_project_usage_stats
     ADD CONSTRAINT pk_t_project_usage_stats PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_project_usage_stats_year_and_week; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_project_usage_stats_year_and_week ON public.t_project_usage_stats USING btree (the_year, week_of_year);
+
+--
 -- Name: TABLE t_project_usage_stats; Type: ACL; Schema: public; Owner: d3l243
 --
 

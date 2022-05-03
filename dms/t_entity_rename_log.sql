@@ -36,6 +36,18 @@ ALTER TABLE ONLY public.t_entity_rename_log
     ADD CONSTRAINT pk_t_entity_rename_log PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_entity_rename_log_target_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_entity_rename_log_target_id ON public.t_entity_rename_log USING btree (target_id);
+
+--
+-- Name: ix_t_entity_rename_log_target_type; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_entity_rename_log_target_type ON public.t_entity_rename_log USING btree (target_type);
+
+--
 -- Name: TABLE t_entity_rename_log; Type: ACL; Schema: public; Owner: d3l243
 --
 

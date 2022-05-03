@@ -38,6 +38,12 @@ ALTER TABLE ONLY public.t_attachments
     ADD CONSTRAINT pk_t_attachments PRIMARY KEY (attachment_id);
 
 --
+-- Name: ix_t_attachments; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_attachments ON public.t_attachments USING btree (attachment_name);
+
+--
 -- Name: TABLE t_attachments; Type: ACL; Schema: public; Owner: d3l243
 --
 

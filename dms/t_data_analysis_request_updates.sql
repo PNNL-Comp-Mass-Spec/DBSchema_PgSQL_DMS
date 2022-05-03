@@ -35,6 +35,18 @@ ALTER TABLE ONLY public.t_data_analysis_request_updates
     ADD CONSTRAINT pk_t_data_analysis_request_updates PRIMARY KEY (id);
 
 --
+-- Name: ix_t_data_analysis_request_updates_new_state_old_state_include; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_data_analysis_request_updates_new_state_old_state_include ON public.t_data_analysis_request_updates USING btree (new_state_id, old_state_id) INCLUDE (request_id, entered);
+
+--
+-- Name: ix_t_data_analysis_request_updates_request_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_data_analysis_request_updates_request_id ON public.t_data_analysis_request_updates USING btree (request_id);
+
+--
 -- Name: TABLE t_data_analysis_request_updates; Type: ACL; Schema: public; Owner: d3l243
 --
 

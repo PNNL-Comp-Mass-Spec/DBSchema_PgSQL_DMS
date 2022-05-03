@@ -34,6 +34,18 @@ ALTER TABLE ONLY public.t_dataset_scan_types
     ADD CONSTRAINT pk_t_dataset_scan_types PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_dataset_scan_types_dataset_id_scan_type; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_dataset_scan_types_dataset_id_scan_type ON public.t_dataset_scan_types USING btree (dataset_id, scan_type);
+
+--
+-- Name: ix_t_dataset_scan_types_scan_type_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_dataset_scan_types_scan_type_dataset_id ON public.t_dataset_scan_types USING btree (scan_type, dataset_id);
+
+--
 -- Name: TABLE t_dataset_scan_types; Type: ACL; Schema: public; Owner: d3l243
 --
 

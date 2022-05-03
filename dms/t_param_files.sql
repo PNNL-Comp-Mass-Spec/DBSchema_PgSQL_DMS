@@ -39,6 +39,12 @@ ALTER TABLE ONLY public.t_param_files
     ADD CONSTRAINT pk_t_param_files PRIMARY KEY (param_file_id);
 
 --
+-- Name: ix_t_param_files_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_param_files_name ON public.t_param_files USING btree (param_file_name);
+
+--
 -- Name: TABLE t_param_files; Type: ACL; Schema: public; Owner: d3l243
 --
 

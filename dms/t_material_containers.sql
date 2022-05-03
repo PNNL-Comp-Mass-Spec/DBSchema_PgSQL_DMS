@@ -48,6 +48,30 @@ ALTER TABLE ONLY public.t_material_containers
     ADD CONSTRAINT pk_t_material_containers PRIMARY KEY (container_id);
 
 --
+-- Name: ix_t_material_containers; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_material_containers ON public.t_material_containers USING btree (container);
+
+--
+-- Name: ix_t_material_containers_location_id_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_material_containers_location_id_id ON public.t_material_containers USING btree (location_id, container_id);
+
+--
+-- Name: ix_t_material_containers_sort_key; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_material_containers_sort_key ON public.t_material_containers USING btree (sort_key);
+
+--
+-- Name: ix_t_material_containers_status; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_material_containers_status ON public.t_material_containers USING btree (status);
+
+--
 -- Name: TABLE t_material_containers; Type: ACL; Schema: public; Owner: d3l243
 --
 

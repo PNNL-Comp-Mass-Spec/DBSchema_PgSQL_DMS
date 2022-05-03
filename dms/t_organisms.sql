@@ -44,6 +44,12 @@ ALTER TABLE ONLY public.t_organisms
     ADD CONSTRAINT pk_t_organisms PRIMARY KEY (organism_id);
 
 --
+-- Name: ix_t_organisms_created; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_organisms_created ON public.t_organisms USING btree (created);
+
+--
 -- Name: TABLE t_organisms; Type: ACL; Schema: public; Owner: d3l243
 --
 

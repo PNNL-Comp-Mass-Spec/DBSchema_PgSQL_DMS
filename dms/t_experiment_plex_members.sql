@@ -22,6 +22,12 @@ ALTER TABLE ONLY public.t_experiment_plex_members
     ADD CONSTRAINT pk_t_experiment_plex_members PRIMARY KEY (plex_exp_id, channel);
 
 --
+-- Name: ix_t_experiment_plex_members_exp_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_experiment_plex_members_exp_id ON public.t_experiment_plex_members USING btree (exp_id);
+
+--
 -- Name: TABLE t_experiment_plex_members; Type: ACL; Schema: public; Owner: d3l243
 --
 

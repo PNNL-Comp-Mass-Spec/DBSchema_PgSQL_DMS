@@ -34,6 +34,12 @@ ALTER TABLE ONLY public.t_general_statistics
     ADD CONSTRAINT pk_t_general_statistics PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_general_statistics_category_label; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_general_statistics_category_label ON public.t_general_statistics USING btree (category, label);
+
+--
 -- Name: TABLE t_general_statistics; Type: ACL; Schema: public; Owner: d3l243
 --
 

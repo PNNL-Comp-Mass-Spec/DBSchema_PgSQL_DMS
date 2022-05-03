@@ -35,6 +35,18 @@ ALTER TABLE ONLY public.t_sample_prep_request_updates
     ADD CONSTRAINT pk_t_sample_prep_request_updates PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_sample_prep_request_updates_end_state_id_begin_state_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_sample_prep_request_updates_end_state_id_begin_state_id ON public.t_sample_prep_request_updates USING btree (end_state_id, beginning_state_id) INCLUDE (request_id, date_of_change);
+
+--
+-- Name: ix_t_sample_prep_request_updates_request_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_sample_prep_request_updates_request_id ON public.t_sample_prep_request_updates USING btree (request_id);
+
+--
 -- Name: TABLE t_sample_prep_request_updates; Type: ACL; Schema: public; Owner: d3l243
 --
 

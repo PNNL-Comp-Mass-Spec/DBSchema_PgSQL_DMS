@@ -31,6 +31,12 @@ ALTER TABLE ONLY public.t_requested_run_state_name
     ADD CONSTRAINT pk_t_requested_run_state_name PRIMARY KEY (state_name);
 
 --
+-- Name: ix_t_requested_run_state_name_state_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_requested_run_state_name_state_id ON public.t_requested_run_state_name USING btree (state_id);
+
+--
 -- Name: TABLE t_requested_run_state_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

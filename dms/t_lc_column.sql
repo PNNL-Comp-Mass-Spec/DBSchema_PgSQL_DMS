@@ -42,6 +42,18 @@ ALTER TABLE ONLY public.t_lc_column
     ADD CONSTRAINT pk_t_lc_column PRIMARY KEY (lc_column_id);
 
 --
+-- Name: ix_t_lc_column; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_lc_column ON public.t_lc_column USING btree (lc_column);
+
+--
+-- Name: ix_t_lc_column_id_include_sccolumn_number; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_lc_column_id_include_sccolumn_number ON public.t_lc_column USING btree (lc_column_id) INCLUDE (lc_column, column_state_id);
+
+--
 -- Name: TABLE t_lc_column; Type: ACL; Schema: public; Owner: d3l243
 --
 

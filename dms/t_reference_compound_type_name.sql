@@ -31,6 +31,12 @@ ALTER TABLE ONLY public.t_reference_compound_type_name
     ADD CONSTRAINT pk_t_reference_compound_type_name PRIMARY KEY (compound_type_id);
 
 --
+-- Name: ix_t_reference_compound_type_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_reference_compound_type_name ON public.t_reference_compound_type_name USING btree (compound_type_name);
+
+--
 -- Name: TABLE t_reference_compound_type_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

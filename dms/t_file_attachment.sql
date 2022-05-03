@@ -42,6 +42,18 @@ ALTER TABLE ONLY public.t_file_attachment
     ADD CONSTRAINT pk_t_file_attachment PRIMARY KEY (attachment_id);
 
 --
+-- Name: ix_t_file_attachment_entity_type_active_entity_id_value; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_file_attachment_entity_type_active_entity_id_value ON public.t_file_attachment USING btree (entity_type, active) INCLUDE (entity_id_value);
+
+--
+-- Name: ix_t_file_attachment_entity_type_active_include_entity_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_file_attachment_entity_type_active_include_entity_id ON public.t_file_attachment USING btree (entity_type, active) INCLUDE (entity_id);
+
+--
 -- Name: TABLE t_file_attachment; Type: ACL; Schema: public; Owner: d3l243
 --
 

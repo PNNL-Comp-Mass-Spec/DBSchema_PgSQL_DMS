@@ -56,6 +56,36 @@ ALTER TABLE ONLY public.t_mts_peak_matching_tasks_cached
     ADD CONSTRAINT pk_t_mts_peak_matching_tasks_cached PRIMARY KEY (cached_info_id);
 
 --
+-- Name: ix_t_mts_peak_matching_tasks_cached_dmsjob; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_peak_matching_tasks_cached_dmsjob ON public.t_mts_peak_matching_tasks_cached USING btree (dms_job);
+
+--
+-- Name: ix_t_mts_peak_matching_tasks_cached_job_start; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_peak_matching_tasks_cached_job_start ON public.t_mts_peak_matching_tasks_cached USING btree (job_start);
+
+--
+-- Name: ix_t_mts_peak_matching_tasks_cached_mtsjob_dmsjob; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_peak_matching_tasks_cached_mtsjob_dmsjob ON public.t_mts_peak_matching_tasks_cached USING btree (mts_job_id, dms_job);
+
+--
+-- Name: ix_t_mts_peak_matching_tasks_cached_task_db; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_peak_matching_tasks_cached_task_db ON public.t_mts_peak_matching_tasks_cached USING btree (task_database) INCLUDE (dms_job);
+
+--
+-- Name: ix_t_mts_peak_matching_tasks_cached_tool_dmsjob; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_peak_matching_tasks_cached_tool_dmsjob ON public.t_mts_peak_matching_tasks_cached USING btree (tool_name, dms_job);
+
+--
 -- Name: TABLE t_mts_peak_matching_tasks_cached; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -18,6 +18,12 @@ ALTER TABLE ONLY public.t_analysis_job_request_datasets
     ADD CONSTRAINT pk_t_analysis_job_request_datasets PRIMARY KEY (request_id, dataset_id);
 
 --
+-- Name: ix_t_analysis_job_request_datasets_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_request_datasets_dataset_id ON public.t_analysis_job_request_datasets USING btree (dataset_id);
+
+--
 -- Name: TABLE t_analysis_job_request_datasets; Type: ACL; Schema: public; Owner: d3l243
 --
 

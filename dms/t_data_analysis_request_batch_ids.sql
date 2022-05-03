@@ -31,6 +31,12 @@ ALTER TABLE ONLY public.t_data_analysis_request_batch_ids
     ADD CONSTRAINT pk_t_data_analysis_request_request_batch_id PRIMARY KEY (request_id, batch_id);
 
 --
+-- Name: ix_t_data_analysis_request_batch_ids; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_data_analysis_request_batch_ids ON public.t_data_analysis_request_batch_ids USING btree (batch_id, request_id);
+
+--
 -- Name: TABLE t_data_analysis_request_batch_ids; Type: ACL; Schema: public; Owner: d3l243
 --
 

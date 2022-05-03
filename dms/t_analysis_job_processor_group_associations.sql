@@ -33,6 +33,12 @@ ALTER TABLE ONLY public.t_analysis_job_processor_group_associations
     ADD CONSTRAINT pk_t_analysis_job_processor_group_associations PRIMARY KEY (job, group_id);
 
 --
+-- Name: ix_t_analysis_job_processor_group_associations_group_id_job; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_processor_group_associations_group_id_job ON public.t_analysis_job_processor_group_associations USING btree (group_id) INCLUDE (job);
+
+--
 -- Name: TABLE t_analysis_job_processor_group_associations; Type: ACL; Schema: public; Owner: d3l243
 --
 

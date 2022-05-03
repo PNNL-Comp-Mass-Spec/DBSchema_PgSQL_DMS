@@ -41,6 +41,12 @@ ALTER TABLE ONLY public.t_storage_path
     ADD CONSTRAINT pk_t_storage_path PRIMARY KEY (storage_path_id);
 
 --
+-- Name: ix_t_storage_path_machine_name_path_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_storage_path_machine_name_path_id ON public.t_storage_path USING btree (machine_name, storage_path_id);
+
+--
 -- Name: TABLE t_storage_path; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -43,6 +43,18 @@ ALTER TABLE ONLY public.t_charge_code
     ADD CONSTRAINT pk_t_charge_code PRIMARY KEY (charge_code);
 
 --
+-- Name: ix_t_charge_code_resp_prn; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_charge_code_resp_prn ON public.t_charge_code USING btree (resp_prn);
+
+--
+-- Name: ix_t_charge_code_sort_key; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_charge_code_sort_key ON public.t_charge_code USING btree (sort_key);
+
+--
 -- Name: TABLE t_charge_code; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -27,6 +27,12 @@ ALTER TABLE ONLY public.t_cached_protein_collections
     ADD CONSTRAINT pk_t_cached_protein_collections PRIMARY KEY (protein_collection_id, organism_id);
 
 --
+-- Name: ix_t_cached_protein_collections_organism; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cached_protein_collections_organism ON public.t_cached_protein_collections USING btree (organism_id);
+
+--
 -- Name: TABLE t_cached_protein_collections; Type: ACL; Schema: public; Owner: d3l243
 --
 

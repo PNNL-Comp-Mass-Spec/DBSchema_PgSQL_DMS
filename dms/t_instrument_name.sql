@@ -51,6 +51,18 @@ ALTER TABLE ONLY public.t_instrument_name
     ADD CONSTRAINT pk_t_instrument_name PRIMARY KEY (instrument_id);
 
 --
+-- Name: ix_t_instrument_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_instrument_name ON public.t_instrument_name USING btree (instrument);
+
+--
+-- Name: ix_t_instrument_name_class_name_instrument_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_instrument_name_class_name_instrument_id ON public.t_instrument_name USING btree (instrument_class, instrument, instrument_id);
+
+--
 -- Name: TABLE t_instrument_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

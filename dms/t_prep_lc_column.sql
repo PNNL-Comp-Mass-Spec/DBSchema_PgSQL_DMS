@@ -45,6 +45,12 @@ ALTER TABLE ONLY public.t_prep_lc_column
     ADD CONSTRAINT pk_t_prep_lc_column PRIMARY KEY (prep_column_id);
 
 --
+-- Name: ix_t_prep_lc_column; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_prep_lc_column ON public.t_prep_lc_column USING btree (prep_column);
+
+--
 -- Name: TABLE t_prep_lc_column; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -28,6 +28,18 @@ ALTER TABLE ONLY public.t_predefined_analysis_scheduling_queue
     ADD CONSTRAINT pk_t_predefined_analysis_scheduling_queue PRIMARY KEY (item);
 
 --
+-- Name: ix_t_predefined_analysis_scheduling_queue_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_predefined_analysis_scheduling_queue_dataset_id ON public.t_predefined_analysis_scheduling_queue USING btree (dataset_id);
+
+--
+-- Name: ix_t_predefined_analysis_scheduling_queue_state; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_predefined_analysis_scheduling_queue_state ON public.t_predefined_analysis_scheduling_queue USING btree (state);
+
+--
 -- Name: TABLE t_predefined_analysis_scheduling_queue; Type: ACL; Schema: public; Owner: d3l243
 --
 

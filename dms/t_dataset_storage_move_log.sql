@@ -37,6 +37,12 @@ ALTER TABLE ONLY public.t_dataset_storage_move_log
     ADD CONSTRAINT pk_t_dataset_storage_move_log PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_dataset_storage_move_log_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_dataset_storage_move_log_dataset_id ON public.t_dataset_storage_move_log USING btree (dataset_id);
+
+--
 -- Name: TABLE t_dataset_storage_move_log; Type: ACL; Schema: public; Owner: d3l243
 --
 

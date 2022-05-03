@@ -26,6 +26,24 @@ ALTER TABLE ONLY public.t_mts_pt_dbs_cached
     ADD CONSTRAINT pk_t_mts_pt_dbs_cached_dbid PRIMARY KEY (peptide_db_id);
 
 --
+-- Name: ix_t_mts_pt_dbs_cached_dbname; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_pt_dbs_cached_dbname ON public.t_mts_pt_dbs_cached USING btree (peptide_db_name);
+
+--
+-- Name: ix_t_mts_pt_dbs_cached_server_dbname; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_pt_dbs_cached_server_dbname ON public.t_mts_pt_dbs_cached USING btree (server_name, peptide_db_name);
+
+--
+-- Name: ix_t_mts_pt_dbs_cached_state_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_mts_pt_dbs_cached_state_name ON public.t_mts_pt_dbs_cached USING btree (state);
+
+--
 -- Name: TABLE t_mts_pt_dbs_cached; Type: ACL; Schema: public; Owner: d3l243
 --
 

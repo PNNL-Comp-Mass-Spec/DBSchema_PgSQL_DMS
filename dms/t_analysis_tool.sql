@@ -33,6 +33,12 @@ ALTER TABLE ONLY public.t_analysis_tool
     ADD CONSTRAINT pk_t_analysis_tool PRIMARY KEY (analysis_tool_id);
 
 --
+-- Name: ix_t_analysis_tool_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_analysis_tool_name ON public.t_analysis_tool USING btree (analysis_tool);
+
+--
 -- Name: TABLE t_analysis_tool; Type: ACL; Schema: public; Owner: d3l243
 --
 

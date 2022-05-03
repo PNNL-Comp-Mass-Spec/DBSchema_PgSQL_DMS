@@ -31,6 +31,12 @@ ALTER TABLE ONLY public.t_cached_dataset_folder_paths
     ADD CONSTRAINT pk_t_cached_dataset_folder_paths PRIMARY KEY (dataset_id);
 
 --
+-- Name: ix_t_cached_dataset_folder_paths_update_required; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cached_dataset_folder_paths_update_required ON public.t_cached_dataset_folder_paths USING btree (update_required);
+
+--
 -- Name: TABLE t_cached_dataset_folder_paths; Type: ACL; Schema: public; Owner: d3l243
 --
 

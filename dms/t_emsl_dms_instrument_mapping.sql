@@ -18,6 +18,12 @@ ALTER TABLE ONLY public.t_emsl_dms_instrument_mapping
     ADD CONSTRAINT pk_t_emsl_dms_instrument_mapping PRIMARY KEY (eus_instrument_id, dms_instrument_id);
 
 --
+-- Name: ix_t_emsl_dms_instrument_mapping_dms_inst_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_emsl_dms_instrument_mapping_dms_inst_id ON public.t_emsl_dms_instrument_mapping USING btree (dms_instrument_id);
+
+--
 -- Name: TABLE t_emsl_dms_instrument_mapping; Type: ACL; Schema: public; Owner: d3l243
 --
 

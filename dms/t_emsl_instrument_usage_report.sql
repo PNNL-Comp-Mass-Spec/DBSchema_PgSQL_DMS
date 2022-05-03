@@ -34,6 +34,24 @@ ALTER TABLE ONLY public.t_emsl_instrument_usage_report
     ADD CONSTRAINT pk_t_emsl_instrument_usage_report PRIMARY KEY (seq);
 
 --
+-- Name: ix_t_emsl_instrument_usage_report; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_emsl_instrument_usage_report ON public.t_emsl_instrument_usage_report USING btree (year, month, dms_inst_id, start);
+
+--
+-- Name: ix_t_emsl_instrument_usage_report_dms_inst_id_start; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_emsl_instrument_usage_report_dms_inst_id_start ON public.t_emsl_instrument_usage_report USING btree (dms_inst_id, start);
+
+--
+-- Name: ix_t_emsl_instrument_usage_report_type_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_emsl_instrument_usage_report_type_dataset_id ON public.t_emsl_instrument_usage_report USING btree (type, dataset_id);
+
+--
 -- Name: TABLE t_emsl_instrument_usage_report; Type: ACL; Schema: public; Owner: d3l243
 --
 

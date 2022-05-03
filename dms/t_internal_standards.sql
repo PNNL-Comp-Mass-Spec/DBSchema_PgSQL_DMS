@@ -35,6 +35,12 @@ ALTER TABLE ONLY public.t_internal_standards
     ADD CONSTRAINT pk_t_internal_standards PRIMARY KEY (internal_standard_id);
 
 --
+-- Name: ix_t_internal_standards; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_internal_standards ON public.t_internal_standards USING btree (name);
+
+--
 -- Name: TABLE t_internal_standards; Type: ACL; Schema: public; Owner: d3l243
 --
 

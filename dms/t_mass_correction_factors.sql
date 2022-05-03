@@ -26,6 +26,12 @@ ALTER TABLE ONLY public.t_mass_correction_factors
     ADD CONSTRAINT pk_t_mass_correction_factors PRIMARY KEY (mass_correction_id);
 
 --
+-- Name: ix_t_mass_correction_factors_mass_correction_tag; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_mass_correction_factors_mass_correction_tag ON public.t_mass_correction_factors USING btree (mass_correction_tag);
+
+--
 -- Name: TABLE t_mass_correction_factors; Type: ACL; Schema: public; Owner: d3l243
 --
 

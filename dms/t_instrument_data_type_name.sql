@@ -34,6 +34,12 @@ ALTER TABLE ONLY public.t_instrument_data_type_name
     ADD CONSTRAINT pk_t_instrument_data_type_name PRIMARY KEY (raw_data_type_id);
 
 --
+-- Name: ix_t_instrument_data_type_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_instrument_data_type_name ON public.t_instrument_data_type_name USING btree (raw_data_type_name);
+
+--
 -- Name: TABLE t_instrument_data_type_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

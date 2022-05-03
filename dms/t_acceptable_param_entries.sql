@@ -42,6 +42,12 @@ ALTER TABLE ONLY public.t_acceptable_param_entries
     ADD CONSTRAINT pk_t_acceptable_param_entries PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_acceptable_param_entries_entry_type_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_acceptable_param_entries_entry_type_id ON public.t_acceptable_param_entries USING btree (param_entry_type_id);
+
+--
 -- Name: TABLE t_acceptable_param_entries; Type: ACL; Schema: public; Owner: d3l243
 --
 

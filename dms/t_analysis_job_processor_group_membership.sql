@@ -21,6 +21,12 @@ ALTER TABLE ONLY public.t_analysis_job_processor_group_membership
     ADD CONSTRAINT pk_t_analysis_job_processor_group_membership PRIMARY KEY (processor_id, group_id);
 
 --
+-- Name: ix_t_analysis_job_processor_group_membership_group_id_enabled; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_processor_group_membership_group_id_enabled ON public.t_analysis_job_processor_group_membership USING btree (group_id, membership_enabled);
+
+--
 -- Name: TABLE t_analysis_job_processor_group_membership; Type: ACL; Schema: public; Owner: d3l243
 --
 

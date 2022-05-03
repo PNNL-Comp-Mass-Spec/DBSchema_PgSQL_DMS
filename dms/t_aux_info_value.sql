@@ -19,6 +19,12 @@ ALTER TABLE ONLY public.t_aux_info_value
     ADD CONSTRAINT pk_t_aux_info_value PRIMARY KEY (aux_info_id, target_id);
 
 --
+-- Name: ix_t_aux_info_value_target_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_aux_info_value_target_id ON public.t_aux_info_value USING btree (target_id, aux_info_id);
+
+--
 -- Name: TABLE t_aux_info_value; Type: ACL; Schema: public; Owner: d3l243
 --
 

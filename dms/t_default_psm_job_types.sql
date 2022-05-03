@@ -19,6 +19,12 @@ ALTER TABLE ONLY public.t_default_psm_job_types
     ADD CONSTRAINT pk_t_default_psm_job_types PRIMARY KEY (job_type_id);
 
 --
+-- Name: ix_t_default_psm_job_types; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_default_psm_job_types ON public.t_default_psm_job_types USING btree (job_type_name);
+
+--
 -- Name: TABLE t_default_psm_job_types; Type: ACL; Schema: public; Owner: d3l243
 --
 

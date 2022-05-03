@@ -33,6 +33,18 @@ ALTER TABLE ONLY public.t_material_freezers
     ADD CONSTRAINT pk_t_material_freezers PRIMARY KEY (freezer_id);
 
 --
+-- Name: ix_t_material_freezers_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_material_freezers_name ON public.t_material_freezers USING btree (freezer);
+
+--
+-- Name: ix_t_material_freezers_tag; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_material_freezers_tag ON public.t_material_freezers USING btree (freezer_tag);
+
+--
 -- Name: TABLE t_material_freezers; Type: ACL; Schema: public; Owner: d3l243
 --
 

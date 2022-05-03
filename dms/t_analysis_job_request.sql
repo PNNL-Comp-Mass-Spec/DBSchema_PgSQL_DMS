@@ -36,6 +36,24 @@ ALTER TABLE ONLY public.t_analysis_job_request
     ADD CONSTRAINT pk_t_analysis_job_request PRIMARY KEY (request_id);
 
 --
+-- Name: ix_t_analysis_job_request_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_analysis_job_request_name ON public.t_analysis_job_request USING btree (request_name);
+
+--
+-- Name: ix_t_analysis_job_request_request_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_request_request_id ON public.t_analysis_job_request USING btree (request_id) INCLUDE (work_package);
+
+--
+-- Name: ix_t_analysis_job_request_state_created; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_request_state_created ON public.t_analysis_job_request USING btree (request_state_id, created);
+
+--
 -- Name: TABLE t_analysis_job_request; Type: ACL; Schema: public; Owner: d3l243
 --
 

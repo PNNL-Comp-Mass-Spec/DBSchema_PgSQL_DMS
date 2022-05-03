@@ -37,6 +37,12 @@ ALTER TABLE ONLY public.t_dataset_files
     ADD CONSTRAINT pk_t_dataset_files PRIMARY KEY (dataset_file_id);
 
 --
+-- Name: ix_t_dataset_files_dataset_id_file_path; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_dataset_files_dataset_id_file_path ON public.t_dataset_files USING btree (dataset_id, file_path);
+
+--
 -- Name: TABLE t_dataset_files; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -63,6 +63,18 @@ ALTER TABLE ONLY public.t_lc_cart_configuration
     ADD CONSTRAINT pk_t_lc_cart_configuration PRIMARY KEY (cart_config_id);
 
 --
+-- Name: ix_t_lc_cart_configuration; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_lc_cart_configuration ON public.t_lc_cart_configuration USING btree (cart_config_name);
+
+--
+-- Name: ix_t_lc_cart_configuration_cart_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_lc_cart_configuration_cart_id ON public.t_lc_cart_configuration USING btree (cart_id);
+
+--
 -- Name: TABLE t_lc_cart_configuration; Type: ACL; Schema: public; Owner: d3l243
 --
 

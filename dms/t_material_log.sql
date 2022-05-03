@@ -59,6 +59,18 @@ ALTER TABLE ONLY public.t_material_log
     ADD CONSTRAINT pk_t_material_log PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_material_log_item_type_date; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_material_log_item_type_date ON public.t_material_log USING btree (item_type, date);
+
+--
+-- Name: ix_t_material_log_type_name_cached_date; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_material_log_type_name_cached_date ON public.t_material_log USING btree (type_name_cached, date);
+
+--
 -- Name: TABLE t_material_log; Type: ACL; Schema: public; Owner: d3l243
 --
 

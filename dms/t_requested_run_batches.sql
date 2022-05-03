@@ -43,6 +43,12 @@ ALTER TABLE ONLY public.t_requested_run_batches
     ADD CONSTRAINT pk_t_requested_run_batches PRIMARY KEY (batch_id);
 
 --
+-- Name: ix_t_requested_run_batches; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_requested_run_batches ON public.t_requested_run_batches USING btree (batch);
+
+--
 -- Name: TABLE t_requested_run_batches; Type: ACL; Schema: public; Owner: d3l243
 --
 

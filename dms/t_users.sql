@@ -44,6 +44,12 @@ ALTER TABLE ONLY public.t_users
     ADD CONSTRAINT pk_t_users PRIMARY KEY (user_id);
 
 --
+-- Name: ix_t_users_username; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_users_username ON public.t_users USING btree (username);
+
+--
 -- Name: TABLE t_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

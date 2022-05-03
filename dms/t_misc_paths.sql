@@ -34,6 +34,12 @@ ALTER TABLE ONLY public.t_misc_paths
     ADD CONSTRAINT pk_t_misc_paths PRIMARY KEY (path_function);
 
 --
+-- Name: ix_t_misc_paths_path_function; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_misc_paths_path_function ON public.t_misc_paths USING btree (path_function);
+
+--
 -- Name: TABLE t_misc_paths; Type: ACL; Schema: public; Owner: d3l243
 --
 

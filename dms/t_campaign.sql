@@ -49,6 +49,18 @@ ALTER TABLE ONLY public.t_campaign
     ADD CONSTRAINT pk_t_campaign PRIMARY KEY (campaign_id);
 
 --
+-- Name: ix_t_campaign_campaign; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_campaign_campaign ON public.t_campaign USING btree (campaign);
+
+--
+-- Name: ix_t_campaign_created; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_campaign_created ON public.t_campaign USING btree (created);
+
+--
 -- Name: TABLE t_campaign; Type: ACL; Schema: public; Owner: d3l243
 --
 

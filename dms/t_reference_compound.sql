@@ -51,6 +51,48 @@ ALTER TABLE ONLY public.t_reference_compound
     ADD CONSTRAINT pk_t_reference_compound PRIMARY KEY (compound_id);
 
 --
+-- Name: ix_t_reference_compound_campaign_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_reference_compound_campaign_id ON public.t_reference_compound USING btree (campaign_id);
+
+--
+-- Name: ix_t_reference_compound_container_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_reference_compound_container_id ON public.t_reference_compound USING btree (container_id);
+
+--
+-- Name: ix_t_reference_compound_created; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_reference_compound_created ON public.t_reference_compound USING btree (created);
+
+--
+-- Name: ix_t_reference_compound_id_name_computed_column; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_reference_compound_id_name_computed_column ON public.t_reference_compound USING btree (id_name);
+
+--
+-- Name: ix_t_reference_compound_id_name_container; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_reference_compound_id_name_container ON public.t_reference_compound USING btree (compound_id, compound_name, container_id);
+
+--
+-- Name: ix_t_reference_compound_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_reference_compound_name ON public.t_reference_compound USING btree (compound_name);
+
+--
+-- Name: ix_t_reference_compound_name_container_id_compound_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_reference_compound_name_container_id_compound_id ON public.t_reference_compound USING btree (compound_name, container_id, compound_id);
+
+--
 -- Name: TABLE t_reference_compound; Type: ACL; Schema: public; Owner: d3l243
 --
 

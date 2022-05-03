@@ -52,6 +52,108 @@ ALTER TABLE ONLY public.t_analysis_job
     ADD CONSTRAINT pk_t_analysis_job PRIMARY KEY (job);
 
 --
+-- Name: ix_t_analysis_job_analysis_tool_cached; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_analysis_tool_cached ON public.t_analysis_job USING btree (analysis_tool_cached);
+
+--
+-- Name: ix_t_analysis_job_batch_id_include_job_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_batch_id_include_job_id ON public.t_analysis_job USING btree (batch_id) INCLUDE (job);
+
+--
+-- Name: ix_t_analysis_job_created_include_job_state_id_progress; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_created_include_job_state_id_progress ON public.t_analysis_job USING btree (created) INCLUDE (job, job_state_id, progress);
+
+--
+-- Name: ix_t_analysis_job_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_dataset_id ON public.t_analysis_job USING btree (dataset_id);
+
+--
+-- Name: ix_t_analysis_job_dataset_id_job_id_state_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_dataset_id_job_id_state_id ON public.t_analysis_job USING btree (dataset_id, job, job_state_id);
+
+--
+-- Name: ix_t_analysis_job_finish; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_finish ON public.t_analysis_job USING btree (finish);
+
+--
+-- Name: ix_t_analysis_job_job_state_id_job; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_job_state_id_job ON public.t_analysis_job USING btree (job_state_id, job);
+
+--
+-- Name: ix_t_analysis_job_last_affected; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_last_affected ON public.t_analysis_job USING btree (last_affected);
+
+--
+-- Name: ix_t_analysis_job_organism_dbname; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_organism_dbname ON public.t_analysis_job USING btree (organism_db_name);
+
+--
+-- Name: ix_t_analysis_job_request_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_request_id ON public.t_analysis_job USING btree (request_id);
+
+--
+-- Name: ix_t_analysis_job_started_include_job_state_id_progress; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_started_include_job_state_id_progress ON public.t_analysis_job USING btree (start) INCLUDE (job, job_state_id, progress);
+
+--
+-- Name: ix_t_analysis_job_state_id_include_job_priority_tool_dataset; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_state_id_include_job_priority_tool_dataset ON public.t_analysis_job USING btree (job_state_id) INCLUDE (priority, job, dataset_id, analysis_tool_id);
+
+--
+-- Name: ix_t_analysis_job_state_name_cached; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_state_name_cached ON public.t_analysis_job USING btree (state_name_cached);
+
+--
+-- Name: ix_t_analysis_job_tool_id_include_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_tool_id_include_dataset_id ON public.t_analysis_job USING btree (analysis_tool_id) INCLUDE (dataset_id);
+
+--
+-- Name: ix_t_analysis_job_tool_id_include_parm_file_created; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_tool_id_include_parm_file_created ON public.t_analysis_job USING btree (analysis_tool_id) INCLUDE (param_file_name, created);
+
+--
+-- Name: ix_t_analysis_job_tool_id_job_id_dataset_id_include_ajstart; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_tool_id_job_id_dataset_id_include_ajstart ON public.t_analysis_job USING btree (analysis_tool_id, job, dataset_id) INCLUDE (start);
+
+--
+-- Name: ix_t_analysis_job_tool_id_state_id_include_job_priority; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_tool_id_state_id_include_job_priority ON public.t_analysis_job USING btree (analysis_tool_id, job_state_id) INCLUDE (job, priority, dataset_id, comment, owner, special_processing);
+
+--
 -- Name: TABLE t_analysis_job; Type: ACL; Schema: public; Owner: d3l243
 --
 

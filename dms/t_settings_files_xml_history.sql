@@ -38,6 +38,18 @@ ALTER TABLE ONLY public.t_settings_files_xml_history
     ADD CONSTRAINT pk_t_settings_files_xml_history PRIMARY KEY (event_id);
 
 --
+-- Name: ix_t_settings_files_xml_history_file_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_settings_files_xml_history_file_name ON public.t_settings_files_xml_history USING btree (file_name);
+
+--
+-- Name: ix_t_settings_files_xml_history_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_settings_files_xml_history_id ON public.t_settings_files_xml_history USING btree (id);
+
+--
 -- Name: TABLE t_settings_files_xml_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

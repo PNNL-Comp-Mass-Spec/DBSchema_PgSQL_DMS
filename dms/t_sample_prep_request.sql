@@ -75,6 +75,24 @@ ALTER TABLE ONLY public.t_sample_prep_request
     ADD CONSTRAINT pk_t_sample_prep_request PRIMARY KEY (prep_request_id);
 
 --
+-- Name: ix_t_sample_prep_request; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_sample_prep_request ON public.t_sample_prep_request USING btree (request_name);
+
+--
+-- Name: ix_t_sample_prep_request_campaign_include_created; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_sample_prep_request_campaign_include_created ON public.t_sample_prep_request USING btree (campaign) INCLUDE (created);
+
+--
+-- Name: ix_t_sample_prep_request_eus_user_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_sample_prep_request_eus_user_id ON public.t_sample_prep_request USING btree (eus_user_id);
+
+--
 -- Name: TABLE t_sample_prep_request; Type: ACL; Schema: public; Owner: d3l243
 --
 

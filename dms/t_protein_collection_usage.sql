@@ -21,6 +21,12 @@ ALTER TABLE ONLY public.t_protein_collection_usage
     ADD CONSTRAINT pk_t_protein_collection_usage PRIMARY KEY (protein_collection_id);
 
 --
+-- Name: ix_t_protein_collection_usage_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_protein_collection_usage_name ON public.t_protein_collection_usage USING btree (name);
+
+--
 -- Name: TABLE t_protein_collection_usage; Type: ACL; Schema: public; Owner: d3l243
 --
 

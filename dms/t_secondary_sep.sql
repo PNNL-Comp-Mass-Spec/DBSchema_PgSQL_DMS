@@ -23,6 +23,12 @@ ALTER TABLE ONLY public.t_secondary_sep
     ADD CONSTRAINT pk_t_secondary_sep PRIMARY KEY (separation_type_id);
 
 --
+-- Name: ix_t_secondary_sep; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_secondary_sep ON public.t_secondary_sep USING btree (separation_type);
+
+--
 -- Name: TABLE t_secondary_sep; Type: ACL; Schema: public; Owner: d3l243
 --
 

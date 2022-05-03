@@ -62,6 +62,12 @@ ALTER TABLE ONLY public.t_organisms_change_history
     ADD CONSTRAINT pk_t_organisms_change_history PRIMARY KEY (event_id);
 
 --
+-- Name: ix_t_organisms_change_history; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_organisms_change_history ON public.t_organisms_change_history USING btree (organism_id);
+
+--
 -- Name: TABLE t_organisms_change_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

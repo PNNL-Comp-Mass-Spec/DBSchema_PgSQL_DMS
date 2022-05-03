@@ -28,6 +28,18 @@ ALTER TABLE ONLY public.t_dataset_qc_metric_names
     ADD CONSTRAINT pk_t_dataset_qc_metrics PRIMARY KEY (metric);
 
 --
+-- Name: ix_t_dataset_qc_metric_names_sort_key; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_dataset_qc_metric_names_sort_key ON public.t_dataset_qc_metric_names USING btree (sort_key);
+
+--
+-- Name: ix_t_dataset_qc_metric_names_source_metric; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_dataset_qc_metric_names_source_metric ON public.t_dataset_qc_metric_names USING btree (source, metric);
+
+--
 -- Name: TABLE t_dataset_qc_metric_names; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -24,6 +24,12 @@ ALTER TABLE ONLY public.t_eus_users
     ADD CONSTRAINT pk_t_eus_users PRIMARY KEY (person_id);
 
 --
+-- Name: ix_t_eus_users_site_status_include_person_id_name_fm_hid; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_eus_users_site_status_include_person_id_name_fm_hid ON public.t_eus_users USING btree (site_status) INCLUDE (person_id, name_fm, hid);
+
+--
 -- Name: TABLE t_eus_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

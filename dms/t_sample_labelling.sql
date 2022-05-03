@@ -20,6 +20,12 @@ ALTER TABLE ONLY public.t_sample_labelling
     ADD CONSTRAINT pk_t_sample_labelling PRIMARY KEY (label_id);
 
 --
+-- Name: ix_t_sample_labelling; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_sample_labelling ON public.t_sample_labelling USING btree (label);
+
+--
 -- Name: TABLE t_sample_labelling; Type: ACL; Schema: public; Owner: d3l243
 --
 

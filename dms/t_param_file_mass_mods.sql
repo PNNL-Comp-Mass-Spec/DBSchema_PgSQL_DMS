@@ -36,6 +36,12 @@ ALTER TABLE ONLY public.t_param_file_mass_mods
     ADD CONSTRAINT pk_t_peptide_mod_param_file_list_ex PRIMARY KEY (mod_entry_id);
 
 --
+-- Name: ix_t_param_file_mass_mods; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_param_file_mass_mods ON public.t_param_file_mass_mods USING btree (param_file_id, local_symbol_id, residue_id, mass_correction_id);
+
+--
 -- Name: TABLE t_param_file_mass_mods; Type: ACL; Schema: public; Owner: d3l243
 --
 

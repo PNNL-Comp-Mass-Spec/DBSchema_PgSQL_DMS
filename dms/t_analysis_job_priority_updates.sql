@@ -35,6 +35,12 @@ ALTER TABLE ONLY public.t_analysis_job_priority_updates
     ADD CONSTRAINT pk_t_analysis_job_priority_updates PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_analysis_job_priority_updates_job; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_priority_updates_job ON public.t_analysis_job_priority_updates USING btree (job);
+
+--
 -- Name: TABLE t_analysis_job_priority_updates; Type: ACL; Schema: public; Owner: d3l243
 --
 

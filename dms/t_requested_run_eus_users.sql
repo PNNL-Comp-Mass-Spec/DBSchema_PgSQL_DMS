@@ -18,6 +18,12 @@ ALTER TABLE ONLY public.t_requested_run_eus_users
     ADD CONSTRAINT pk_t_requested_run_eus_users PRIMARY KEY (eus_person_id, request_id);
 
 --
+-- Name: ix_t_requested_run_eus_users_request_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_eus_users_request_id ON public.t_requested_run_eus_users USING btree (request_id);
+
+--
 -- Name: TABLE t_requested_run_eus_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

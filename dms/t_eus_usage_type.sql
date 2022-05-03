@@ -35,6 +35,12 @@ ALTER TABLE ONLY public.t_eus_usage_type
     ADD CONSTRAINT pk_t_eus_usage_type PRIMARY KEY (eus_usage_type_id);
 
 --
+-- Name: ix_t_eus_usage_type_eus_usage_type; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_eus_usage_type_eus_usage_type ON public.t_eus_usage_type USING btree (eus_usage_type);
+
+--
 -- Name: TABLE t_eus_usage_type; Type: ACL; Schema: public; Owner: d3l243
 --
 

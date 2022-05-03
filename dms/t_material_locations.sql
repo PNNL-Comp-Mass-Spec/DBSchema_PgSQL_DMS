@@ -44,6 +44,18 @@ ALTER TABLE ONLY public.t_material_locations
     ADD CONSTRAINT pk_t_material_locations PRIMARY KEY (location_id);
 
 --
+-- Name: ix_t_material_locations; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_material_locations ON public.t_material_locations USING btree (tag);
+
+--
+-- Name: ix_t_material_locations_id_include_tag; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_material_locations_id_include_tag ON public.t_material_locations USING btree (location_id);
+
+--
 -- Name: TABLE t_material_locations; Type: ACL; Schema: public; Owner: d3l243
 --
 

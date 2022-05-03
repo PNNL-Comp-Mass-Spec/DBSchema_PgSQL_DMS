@@ -26,6 +26,18 @@ ALTER TABLE ONLY public.t_eus_proposals
     ADD CONSTRAINT pk_t_eus_proposals PRIMARY KEY (proposal_id);
 
 --
+-- Name: ix_t_eus_proposals; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_eus_proposals ON public.t_eus_proposals USING btree (state_id);
+
+--
+-- Name: ix_t_eus_proposals_type; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_eus_proposals_type ON public.t_eus_proposals USING btree (proposal_type);
+
+--
 -- Name: TABLE t_eus_proposals; Type: ACL; Schema: public; Owner: d3l243
 --
 

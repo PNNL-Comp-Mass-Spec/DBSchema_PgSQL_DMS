@@ -37,6 +37,12 @@ ALTER TABLE ONLY public.t_dataset_device
     ADD CONSTRAINT pk_t_dataset_device PRIMARY KEY (device_id);
 
 --
+-- Name: ix_t_dataset_device_type_name_model_serial_software; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_dataset_device_type_name_model_serial_software ON public.t_dataset_device USING btree (device_type, device_name, device_model, serial_number, software_version);
+
+--
 -- Name: TABLE t_dataset_device; Type: ACL; Schema: public; Owner: d3l243
 --
 

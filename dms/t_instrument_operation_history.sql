@@ -34,6 +34,12 @@ ALTER TABLE ONLY public.t_instrument_operation_history
     ADD CONSTRAINT pk_t_instrument_operation_history PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_instrument_operation_history_instrument_entered; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_instrument_operation_history_instrument_entered ON public.t_instrument_operation_history USING btree (instrument, entered);
+
+--
 -- Name: TABLE t_instrument_operation_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

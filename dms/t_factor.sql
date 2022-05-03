@@ -35,6 +35,12 @@ ALTER TABLE ONLY public.t_factor
     ADD CONSTRAINT pk_t_factor PRIMARY KEY (factor_id);
 
 --
+-- Name: ix_t_factor_type_target_id_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_factor_type_target_id_name ON public.t_factor USING btree (type, target_id, name);
+
+--
 -- Name: TABLE t_factor; Type: ACL; Schema: public; Owner: d3l243
 --
 
