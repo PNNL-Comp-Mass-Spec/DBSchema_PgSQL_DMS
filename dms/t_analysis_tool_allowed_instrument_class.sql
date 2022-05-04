@@ -19,6 +19,20 @@ ALTER TABLE ONLY public.t_analysis_tool_allowed_instrument_class
     ADD CONSTRAINT pk_t_analysis_tool_allowed_instrument_class PRIMARY KEY (analysis_tool_id, instrument_class);
 
 --
+-- Name: t_analysis_tool_allowed_instrument_class fk_t_analysis_tool_allowed_instrument_class_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_tool_allowed_instrument_class
+    ADD CONSTRAINT fk_t_analysis_tool_allowed_instrument_class_t_analysis_tool FOREIGN KEY (analysis_tool_id) REFERENCES public.t_analysis_tool(analysis_tool_id) ON UPDATE CASCADE;
+
+--
+-- Name: t_analysis_tool_allowed_instrument_class fk_t_analysis_tool_allowed_instrument_class_t_instrument_class; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_tool_allowed_instrument_class
+    ADD CONSTRAINT fk_t_analysis_tool_allowed_instrument_class_t_instrument_class FOREIGN KEY (instrument_class) REFERENCES public.t_instrument_class(instrument_class) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_analysis_tool_allowed_instrument_class; Type: ACL; Schema: public; Owner: d3l243
 --
 

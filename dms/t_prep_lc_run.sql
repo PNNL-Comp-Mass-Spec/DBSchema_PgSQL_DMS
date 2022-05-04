@@ -34,6 +34,13 @@ ALTER TABLE ONLY public.t_prep_lc_run
     ADD CONSTRAINT pk_t_prep_lc_run PRIMARY KEY (prep_run_id);
 
 --
+-- Name: t_prep_lc_run fk_t_prep_lc_run_t_instrument_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_prep_lc_run
+    ADD CONSTRAINT fk_t_prep_lc_run_t_instrument_name FOREIGN KEY (instrument) REFERENCES public.t_instrument_name(instrument);
+
+--
 -- Name: TABLE t_prep_lc_run; Type: ACL; Schema: public; Owner: d3l243
 --
 

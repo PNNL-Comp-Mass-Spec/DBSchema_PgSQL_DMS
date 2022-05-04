@@ -19,6 +19,20 @@ ALTER TABLE ONLY public.t_analysis_tool_allowed_dataset_type
     ADD CONSTRAINT pk_t_analysis_tool_allowed_dataset_type PRIMARY KEY (analysis_tool_id, dataset_type);
 
 --
+-- Name: t_analysis_tool_allowed_dataset_type fk_t_analysis_tool_allowed_dataset_type_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_tool_allowed_dataset_type
+    ADD CONSTRAINT fk_t_analysis_tool_allowed_dataset_type_t_analysis_tool FOREIGN KEY (analysis_tool_id) REFERENCES public.t_analysis_tool(analysis_tool_id) ON UPDATE CASCADE;
+
+--
+-- Name: t_analysis_tool_allowed_dataset_type fk_t_analysis_tool_allowed_dataset_type_t_dataset_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_tool_allowed_dataset_type
+    ADD CONSTRAINT fk_t_analysis_tool_allowed_dataset_type_t_dataset_type_name FOREIGN KEY (dataset_type) REFERENCES public.t_dataset_type_name(dataset_type) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_analysis_tool_allowed_dataset_type; Type: ACL; Schema: public; Owner: d3l243
 --
 

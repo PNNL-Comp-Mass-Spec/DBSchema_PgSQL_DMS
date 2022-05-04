@@ -54,6 +54,13 @@ CREATE UNIQUE INDEX ix_t_settings_files_analysis_tool_file_name ON public.t_sett
 CREATE INDEX ix_t_settings_files_file_name ON public.t_settings_files USING btree (file_name);
 
 --
+-- Name: t_settings_files fk_t_settings_files_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_settings_files
+    ADD CONSTRAINT fk_t_settings_files_t_analysis_tool FOREIGN KEY (analysis_tool) REFERENCES public.t_analysis_tool(analysis_tool);
+
+--
 -- Name: TABLE t_settings_files; Type: ACL; Schema: public; Owner: d3l243
 --
 

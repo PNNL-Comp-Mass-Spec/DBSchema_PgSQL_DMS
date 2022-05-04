@@ -41,6 +41,27 @@ ALTER TABLE ONLY public.t_data_analysis_request
     ADD CONSTRAINT pk_t_data_analysis_request PRIMARY KEY (id);
 
 --
+-- Name: t_data_analysis_request fk_t_data_analysis_request_t_data_analysis_request_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request
+    ADD CONSTRAINT fk_t_data_analysis_request_t_data_analysis_request_type_name FOREIGN KEY (analysis_type) REFERENCES public.t_data_analysis_request_type_name(analysis_type);
+
+--
+-- Name: t_data_analysis_request fk_t_data_analysis_request_t_experiment_groups; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request
+    ADD CONSTRAINT fk_t_data_analysis_request_t_experiment_groups FOREIGN KEY (exp_group_id) REFERENCES public.t_experiment_groups(group_id);
+
+--
+-- Name: t_data_analysis_request fk_t_data_analysis_request_t_requested_run_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request
+    ADD CONSTRAINT fk_t_data_analysis_request_t_requested_run_batches FOREIGN KEY (representative_batch_id) REFERENCES public.t_requested_run_batches(batch_id);
+
+--
 -- Name: TABLE t_data_analysis_request; Type: ACL; Schema: public; Owner: d3l243
 --
 

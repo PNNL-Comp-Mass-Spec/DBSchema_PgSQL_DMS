@@ -37,6 +37,13 @@ ALTER TABLE ONLY public.t_param_entries
     ADD CONSTRAINT pk_t_param_entries PRIMARY KEY (param_entry_id);
 
 --
+-- Name: t_param_entries fk_t_param_entries_t_param_files; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_param_entries
+    ADD CONSTRAINT fk_t_param_entries_t_param_files FOREIGN KEY (param_file_id) REFERENCES public.t_param_files(param_file_id) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_param_entries; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -38,6 +38,13 @@ CREATE INDEX ix_t_eus_proposals ON public.t_eus_proposals USING btree (state_id)
 CREATE INDEX ix_t_eus_proposals_type ON public.t_eus_proposals USING btree (proposal_type);
 
 --
+-- Name: t_eus_proposals fk_t_eus_proposals_t_eus_proposal_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_eus_proposals
+    ADD CONSTRAINT fk_t_eus_proposals_t_eus_proposal_state_name FOREIGN KEY (state_id) REFERENCES public.t_eus_proposal_state_name(eus_project_id);
+
+--
 -- Name: TABLE t_eus_proposals; Type: ACL; Schema: public; Owner: d3l243
 --
 

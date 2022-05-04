@@ -46,6 +46,13 @@ ALTER TABLE ONLY public.t_organism_db_file
     ADD CONSTRAINT pk_t_organism_db_file PRIMARY KEY (org_db_file_id);
 
 --
+-- Name: t_organism_db_file fk_t_organism_db_file_t_organisms; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_organism_db_file
+    ADD CONSTRAINT fk_t_organism_db_file_t_organisms FOREIGN KEY (organism_id) REFERENCES public.t_organisms(organism_id);
+
+--
 -- Name: TABLE t_organism_db_file; Type: ACL; Schema: public; Owner: d3l243
 --
 

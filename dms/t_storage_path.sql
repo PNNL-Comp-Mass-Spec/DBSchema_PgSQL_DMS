@@ -47,6 +47,20 @@ ALTER TABLE ONLY public.t_storage_path
 CREATE INDEX ix_t_storage_path_machine_name_path_id ON public.t_storage_path USING btree (machine_name, storage_path_id);
 
 --
+-- Name: t_storage_path fk_t_storage_path_t_instrument_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_storage_path
+    ADD CONSTRAINT fk_t_storage_path_t_instrument_name FOREIGN KEY (instrument) REFERENCES public.t_instrument_name(instrument) ON UPDATE CASCADE;
+
+--
+-- Name: t_storage_path fk_t_storage_path_t_storage_path_hosts; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_storage_path
+    ADD CONSTRAINT fk_t_storage_path_t_storage_path_hosts FOREIGN KEY (machine_name) REFERENCES public.t_storage_path_hosts(sp_machine_name);
+
+--
 -- Name: TABLE t_storage_path; Type: ACL; Schema: public; Owner: d3l243
 --
 

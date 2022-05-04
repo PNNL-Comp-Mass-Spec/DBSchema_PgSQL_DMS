@@ -37,6 +37,13 @@ ALTER TABLE ONLY public.t_email_alerts
     ADD CONSTRAINT pk_t_email_alerts PRIMARY KEY (email_alert_id);
 
 --
+-- Name: t_email_alerts fk_t_email_alerts_t_email_alert_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_email_alerts
+    ADD CONSTRAINT fk_t_email_alerts_t_email_alert_state FOREIGN KEY (alert_state) REFERENCES public.t_email_alert_state(alert_state);
+
+--
 -- Name: TABLE t_email_alerts; Type: ACL; Schema: public; Owner: d3l243
 --
 

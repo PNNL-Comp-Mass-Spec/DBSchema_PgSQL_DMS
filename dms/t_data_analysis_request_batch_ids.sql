@@ -37,6 +37,20 @@ ALTER TABLE ONLY public.t_data_analysis_request_batch_ids
 CREATE INDEX ix_t_data_analysis_request_batch_ids ON public.t_data_analysis_request_batch_ids USING btree (batch_id, request_id);
 
 --
+-- Name: t_data_analysis_request_batch_ids fk_t_data_analysis_request_batch_ids_t_data_analysis_request; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request_batch_ids
+    ADD CONSTRAINT fk_t_data_analysis_request_batch_ids_t_data_analysis_request FOREIGN KEY (request_id) REFERENCES public.t_data_analysis_request(id);
+
+--
+-- Name: t_data_analysis_request_batch_ids fk_t_data_analysis_request_batch_ids_t_requested_run_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request_batch_ids
+    ADD CONSTRAINT fk_t_data_analysis_request_batch_ids_t_requested_run_batches FOREIGN KEY (batch_id) REFERENCES public.t_requested_run_batches(batch_id);
+
+--
 -- Name: TABLE t_data_analysis_request_batch_ids; Type: ACL; Schema: public; Owner: d3l243
 --
 

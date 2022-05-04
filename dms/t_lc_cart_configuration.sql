@@ -75,6 +75,27 @@ CREATE UNIQUE INDEX ix_t_lc_cart_configuration ON public.t_lc_cart_configuration
 CREATE INDEX ix_t_lc_cart_configuration_cart_id ON public.t_lc_cart_configuration USING btree (cart_id);
 
 --
+-- Name: t_lc_cart_configuration fk_t_lc_cart_configuration_t_lc_cart; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_cart_configuration
+    ADD CONSTRAINT fk_t_lc_cart_configuration_t_lc_cart FOREIGN KEY (cart_id) REFERENCES public.t_lc_cart(cart_id);
+
+--
+-- Name: t_lc_cart_configuration fk_t_lc_cart_configuration_t_users_entered_by; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_cart_configuration
+    ADD CONSTRAINT fk_t_lc_cart_configuration_t_users_entered_by FOREIGN KEY (entered_by) REFERENCES public.t_users(prn);
+
+--
+-- Name: t_lc_cart_configuration fk_t_lc_cart_configuration_t_users_updated_by; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_cart_configuration
+    ADD CONSTRAINT fk_t_lc_cart_configuration_t_users_updated_by FOREIGN KEY (updated_by) REFERENCES public.t_users(prn);
+
+--
 -- Name: TABLE t_lc_cart_configuration; Type: ACL; Schema: public; Owner: d3l243
 --
 

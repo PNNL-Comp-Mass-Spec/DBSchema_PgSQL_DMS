@@ -45,6 +45,13 @@ ALTER TABLE ONLY public.t_param_files
 CREATE UNIQUE INDEX ix_t_param_files_name ON public.t_param_files USING btree (param_file_name);
 
 --
+-- Name: t_param_files fk_t_param_files_t_param_file_types; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_param_files
+    ADD CONSTRAINT fk_t_param_files_t_param_file_types FOREIGN KEY (param_file_type_id) REFERENCES public.t_param_file_types(param_file_type_id);
+
+--
 -- Name: TABLE t_param_files; Type: ACL; Schema: public; Owner: d3l243
 --
 

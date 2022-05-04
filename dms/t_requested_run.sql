@@ -153,6 +153,104 @@ CREATE INDEX ix_t_requested_run_state_name ON public.t_requested_run USING btree
 CREATE INDEX ix_t_requested_run_updated ON public.t_requested_run USING btree (updated);
 
 --
+-- Name: t_requested_run fk_t_requested_run_t_attachments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_attachments FOREIGN KEY (mrm_attachment) REFERENCES public.t_attachments(attachment_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_dataset FOREIGN KEY (dataset_id) REFERENCES public.t_dataset(dataset_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_dataset_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_dataset_type_name FOREIGN KEY (request_type_id) REFERENCES public.t_dataset_type_name(dataset_type_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_eus_proposals; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_eus_proposals FOREIGN KEY (eus_proposal_id) REFERENCES public.t_eus_proposals(proposal_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_eus_usage_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_eus_usage_type FOREIGN KEY (eus_usage_type_id) REFERENCES public.t_eus_usage_type(eus_usage_type_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_experiments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_experiments FOREIGN KEY (exp_id) REFERENCES public.t_experiments(exp_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_lc_cart; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_lc_cart FOREIGN KEY (cart_id) REFERENCES public.t_lc_cart(cart_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_lc_cart_configuration; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_lc_cart_configuration FOREIGN KEY (cart_config_id) REFERENCES public.t_lc_cart_configuration(cart_config_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_material_locations; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_material_locations FOREIGN KEY (location_id) REFERENCES public.t_material_locations(location_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_requested_run_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_requested_run_batches FOREIGN KEY (batch_id) REFERENCES public.t_requested_run_batches(batch_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_requested_run_queue_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_requested_run_queue_state FOREIGN KEY (queue_state) REFERENCES public.t_requested_run_queue_state(queue_state);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_requested_run_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_requested_run_state_name FOREIGN KEY (state_name) REFERENCES public.t_requested_run_state_name(state_name);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_separation_group; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_separation_group FOREIGN KEY (separation_group) REFERENCES public.t_separation_group(separation_group) ON UPDATE CASCADE;
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_users FOREIGN KEY (requester_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_requested_run; Type: ACL; Schema: public; Owner: d3l243
 --
 

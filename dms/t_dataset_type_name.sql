@@ -26,6 +26,13 @@ ALTER TABLE ONLY public.t_dataset_type_name
 CREATE UNIQUE INDEX ix_t_dataset_type_name_name ON public.t_dataset_type_name USING btree (dataset_type);
 
 --
+-- Name: t_dataset_type_name fk_t_dataset_type_name_t_yes_no; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_type_name
+    ADD CONSTRAINT fk_t_dataset_type_name_t_yes_no FOREIGN KEY (active) REFERENCES public.t_yes_no(flag);
+
+--
 -- Name: TABLE t_dataset_type_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

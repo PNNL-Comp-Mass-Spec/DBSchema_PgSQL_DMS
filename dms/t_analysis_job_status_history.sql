@@ -46,6 +46,20 @@ CREATE INDEX ix_t_analysis_job_status_history_state_id ON public.t_analysis_job_
 CREATE INDEX ix_t_analysis_job_status_history_tool_id ON public.t_analysis_job_status_history USING btree (tool_id);
 
 --
+-- Name: t_analysis_job_status_history fk_t_analysis_job_status_history_t_analysis_job_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_status_history
+    ADD CONSTRAINT fk_t_analysis_job_status_history_t_analysis_job_state FOREIGN KEY (state_id) REFERENCES public.t_analysis_job_state(job_state_id);
+
+--
+-- Name: t_analysis_job_status_history fk_t_analysis_job_status_history_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_status_history
+    ADD CONSTRAINT fk_t_analysis_job_status_history_t_analysis_tool FOREIGN KEY (tool_id) REFERENCES public.t_analysis_tool(analysis_tool_id);
+
+--
 -- Name: TABLE t_analysis_job_status_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

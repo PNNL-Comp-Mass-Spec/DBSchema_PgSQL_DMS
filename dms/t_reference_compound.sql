@@ -93,6 +93,41 @@ CREATE INDEX ix_t_reference_compound_name ON public.t_reference_compound USING b
 CREATE INDEX ix_t_reference_compound_name_container_id_compound_id ON public.t_reference_compound USING btree (compound_name, container_id, compound_id);
 
 --
+-- Name: t_reference_compound fk_t_reference_compound_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reference_compound
+    ADD CONSTRAINT fk_t_reference_compound_t_campaign FOREIGN KEY (campaign_id) REFERENCES public.t_campaign(campaign_id);
+
+--
+-- Name: t_reference_compound fk_t_reference_compound_t_material_containers; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reference_compound
+    ADD CONSTRAINT fk_t_reference_compound_t_material_containers FOREIGN KEY (container_id) REFERENCES public.t_material_containers(container_id);
+
+--
+-- Name: t_reference_compound fk_t_reference_compound_t_organisms; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reference_compound
+    ADD CONSTRAINT fk_t_reference_compound_t_organisms FOREIGN KEY (organism_id) REFERENCES public.t_organisms(organism_id);
+
+--
+-- Name: t_reference_compound fk_t_reference_compound_t_reference_compound_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reference_compound
+    ADD CONSTRAINT fk_t_reference_compound_t_reference_compound_type_name FOREIGN KEY (compound_type_id) REFERENCES public.t_reference_compound_type_name(compound_type_id);
+
+--
+-- Name: t_reference_compound fk_t_reference_compound_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reference_compound
+    ADD CONSTRAINT fk_t_reference_compound_t_users FOREIGN KEY (contact_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_reference_compound; Type: ACL; Schema: public; Owner: d3l243
 --
 

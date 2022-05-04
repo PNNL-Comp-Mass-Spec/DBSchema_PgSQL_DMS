@@ -66,6 +66,27 @@ ALTER TABLE ONLY public.t_predefined_analysis
     ADD CONSTRAINT pk_t_predefined_analysis PRIMARY KEY (predefine_id);
 
 --
+-- Name: t_predefined_analysis fk_t_predefined_analysis_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_predefined_analysis
+    ADD CONSTRAINT fk_t_predefined_analysis_t_analysis_tool FOREIGN KEY (analysis_tool_name) REFERENCES public.t_analysis_tool(analysis_tool);
+
+--
+-- Name: t_predefined_analysis fk_t_predefined_analysis_t_instrument_class; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_predefined_analysis
+    ADD CONSTRAINT fk_t_predefined_analysis_t_instrument_class FOREIGN KEY (instrument_class_criteria) REFERENCES public.t_instrument_class(instrument_class);
+
+--
+-- Name: t_predefined_analysis fk_t_predefined_analysis_t_organisms; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_predefined_analysis
+    ADD CONSTRAINT fk_t_predefined_analysis_t_organisms FOREIGN KEY (organism_id) REFERENCES public.t_organisms(organism_id);
+
+--
 -- Name: TABLE t_predefined_analysis; Type: ACL; Schema: public; Owner: d3l243
 --
 

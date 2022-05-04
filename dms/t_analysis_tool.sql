@@ -39,6 +39,13 @@ ALTER TABLE ONLY public.t_analysis_tool
 CREATE UNIQUE INDEX ix_t_analysis_tool_name ON public.t_analysis_tool USING btree (analysis_tool);
 
 --
+-- Name: t_analysis_tool fk_t_analysis_tool_t_param_file_types; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_tool
+    ADD CONSTRAINT fk_t_analysis_tool_t_param_file_types FOREIGN KEY (param_file_type_id) REFERENCES public.t_param_file_types(param_file_type_id);
+
+--
 -- Name: TABLE t_analysis_tool; Type: ACL; Schema: public; Owner: d3l243
 --
 

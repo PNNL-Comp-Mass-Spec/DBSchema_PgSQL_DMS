@@ -36,6 +36,27 @@ ALTER TABLE ONLY public.t_sample_submission
     ADD CONSTRAINT pk_t_sample_submission PRIMARY KEY (submission_id);
 
 --
+-- Name: t_sample_submission fk_t_sample_submission_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_submission
+    ADD CONSTRAINT fk_t_sample_submission_t_campaign FOREIGN KEY (campaign_id) REFERENCES public.t_campaign(campaign_id);
+
+--
+-- Name: t_sample_submission fk_t_sample_submission_t_prep_file_storage; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_submission
+    ADD CONSTRAINT fk_t_sample_submission_t_prep_file_storage FOREIGN KEY (storage_path) REFERENCES public.t_prep_file_storage(storage_id);
+
+--
+-- Name: t_sample_submission fk_t_sample_submission_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_submission
+    ADD CONSTRAINT fk_t_sample_submission_t_users FOREIGN KEY (received_by_user_id) REFERENCES public.t_users(user_id);
+
+--
 -- Name: TABLE t_sample_submission; Type: ACL; Schema: public; Owner: d3l243
 --
 

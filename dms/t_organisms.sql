@@ -57,6 +57,13 @@ ALTER TABLE ONLY public.t_organisms
 CREATE INDEX ix_t_organisms_created ON public.t_organisms USING btree (created);
 
 --
+-- Name: t_organisms fk_t_organisms_t_yes_no; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_organisms
+    ADD CONSTRAINT fk_t_organisms_t_yes_no FOREIGN KEY (auto_define_taxonomy) REFERENCES public.t_yes_no(flag);
+
+--
 -- Name: TABLE t_organisms; Type: ACL; Schema: public; Owner: d3l243
 --
 

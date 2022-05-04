@@ -129,6 +129,76 @@ CREATE INDEX ix_t_experiments_tissue_id_include_experiment_name_organism_id ON p
 CREATE INDEX ix_t_experiments_wellplate_well_experiment ON public.t_experiments USING btree (wellplate, well, experiment);
 
 --
+-- Name: t_experiments fk_t_experiments_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_campaign FOREIGN KEY (campaign_id) REFERENCES public.t_campaign(campaign_id);
+
+--
+-- Name: t_experiments fk_t_experiments_t_enzymes; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_enzymes FOREIGN KEY (enzyme_id) REFERENCES public.t_enzymes(enzyme_id);
+
+--
+-- Name: t_experiments fk_t_experiments_t_internal_standards; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_internal_standards FOREIGN KEY (internal_standard_id) REFERENCES public.t_internal_standards(internal_standard_id);
+
+--
+-- Name: t_experiments fk_t_experiments_t_internal_standards1; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_internal_standards1 FOREIGN KEY (post_digest_internal_std_id) REFERENCES public.t_internal_standards(internal_standard_id);
+
+--
+-- Name: t_experiments fk_t_experiments_t_material_containers; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_material_containers FOREIGN KEY (container_id) REFERENCES public.t_material_containers(container_id);
+
+--
+-- Name: t_experiments fk_t_experiments_t_organisms; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_organisms FOREIGN KEY (organism_id) REFERENCES public.t_organisms(organism_id);
+
+--
+-- Name: t_experiments fk_t_experiments_t_sample_labelling; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_sample_labelling FOREIGN KEY (labelling) REFERENCES public.t_sample_labelling(label);
+
+--
+-- Name: t_experiments fk_t_experiments_t_sample_prep_request; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_sample_prep_request FOREIGN KEY (sample_prep_request_id) REFERENCES public.t_sample_prep_request(prep_request_id);
+
+--
+-- Name: t_experiments fk_t_experiments_t_tissue_source; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_tissue_source FOREIGN KEY (tissue_source_id) REFERENCES public.t_tissue_source(tissue_source_id);
+
+--
+-- Name: t_experiments fk_t_experiments_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiments
+    ADD CONSTRAINT fk_t_experiments_t_users FOREIGN KEY (researcher_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_experiments; Type: ACL; Schema: public; Owner: d3l243
 --
 

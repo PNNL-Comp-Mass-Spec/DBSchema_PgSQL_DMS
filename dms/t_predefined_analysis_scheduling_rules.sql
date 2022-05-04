@@ -39,6 +39,13 @@ ALTER TABLE ONLY public.t_predefined_analysis_scheduling_rules
     ADD CONSTRAINT pk_t_predefined_analysis_scheduling_rules PRIMARY KEY (rule_id);
 
 --
+-- Name: t_predefined_analysis_scheduling_rules fk_t_predefined_analysis_scheduling_rules_t_analysis_job; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_predefined_analysis_scheduling_rules
+    ADD CONSTRAINT fk_t_predefined_analysis_scheduling_rules_t_analysis_job FOREIGN KEY (processor_group_id) REFERENCES public.t_analysis_job_processor_group(group_id);
+
+--
 -- Name: TABLE t_predefined_analysis_scheduling_rules; Type: ACL; Schema: public; Owner: d3l243
 --
 

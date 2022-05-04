@@ -61,6 +61,27 @@ CREATE UNIQUE INDEX ix_t_campaign_campaign ON public.t_campaign USING btree (cam
 CREATE INDEX ix_t_campaign_created ON public.t_campaign USING btree (created);
 
 --
+-- Name: t_campaign fk_t_campaign_t_data_release_restrictions; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_campaign
+    ADD CONSTRAINT fk_t_campaign_t_data_release_restrictions FOREIGN KEY (data_release_restrictions) REFERENCES public.t_data_release_restrictions(release_restriction_id);
+
+--
+-- Name: t_campaign fk_t_campaign_t_eus_usage_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_campaign
+    ADD CONSTRAINT fk_t_campaign_t_eus_usage_type FOREIGN KEY (eus_usage_type_id) REFERENCES public.t_eus_usage_type(eus_usage_type_id);
+
+--
+-- Name: t_campaign fk_t_campaign_t_research_team; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_campaign
+    ADD CONSTRAINT fk_t_campaign_t_research_team FOREIGN KEY (research_team) REFERENCES public.t_research_team(team_id);
+
+--
 -- Name: TABLE t_campaign; Type: ACL; Schema: public; Owner: d3l243
 --
 

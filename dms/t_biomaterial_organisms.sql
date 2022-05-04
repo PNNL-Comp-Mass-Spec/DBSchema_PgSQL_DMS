@@ -18,6 +18,20 @@ ALTER TABLE ONLY public.t_biomaterial_organisms
     ADD CONSTRAINT pk_t_biomaterial_organisms PRIMARY KEY (organism_id, biomaterial_id);
 
 --
+-- Name: t_biomaterial_organisms fk_t_biomaterial_organisms_t_biomaterial; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_biomaterial_organisms
+    ADD CONSTRAINT fk_t_biomaterial_organisms_t_biomaterial FOREIGN KEY (biomaterial_id) REFERENCES public.t_biomaterial(biomaterial_id);
+
+--
+-- Name: t_biomaterial_organisms fk_t_biomaterial_organisms_t_organisms; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_biomaterial_organisms
+    ADD CONSTRAINT fk_t_biomaterial_organisms_t_organisms FOREIGN KEY (organism_id) REFERENCES public.t_organisms(organism_id);
+
+--
 -- Name: TABLE t_biomaterial_organisms; Type: ACL; Schema: public; Owner: d3l243
 --
 

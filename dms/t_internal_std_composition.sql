@@ -19,6 +19,20 @@ ALTER TABLE ONLY public.t_internal_std_composition
     ADD CONSTRAINT pk_t_internal_std_composition PRIMARY KEY (mix_id, component_id);
 
 --
+-- Name: t_internal_std_composition fk_t_internal_standards_composition_t_internal_std_components; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_internal_std_composition
+    ADD CONSTRAINT fk_t_internal_standards_composition_t_internal_std_components FOREIGN KEY (component_id) REFERENCES public.t_internal_std_components(internal_std_component_id);
+
+--
+-- Name: t_internal_std_composition fk_t_internal_std_composition_t_internal_std_parent_mixes; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_internal_std_composition
+    ADD CONSTRAINT fk_t_internal_std_composition_t_internal_std_parent_mixes FOREIGN KEY (mix_id) REFERENCES public.t_internal_std_parent_mixes(parent_mix_id);
+
+--
 -- Name: TABLE t_internal_std_composition; Type: ACL; Schema: public; Owner: d3l243
 --
 

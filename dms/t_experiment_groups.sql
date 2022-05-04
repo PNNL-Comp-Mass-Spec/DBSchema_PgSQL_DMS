@@ -44,6 +44,27 @@ ALTER TABLE ONLY public.t_experiment_groups
 CREATE INDEX ix_t_experiment_groups_parent_exp_id_group_id_include_type ON public.t_experiment_groups USING btree (parent_exp_id, group_id) INCLUDE (group_type, created, description);
 
 --
+-- Name: t_experiment_groups fk_t_experiment_groups_t_experiments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_groups
+    ADD CONSTRAINT fk_t_experiment_groups_t_experiments FOREIGN KEY (parent_exp_id) REFERENCES public.t_experiments(exp_id);
+
+--
+-- Name: t_experiment_groups fk_t_experiment_groups_t_prep_lc_run; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_groups
+    ADD CONSTRAINT fk_t_experiment_groups_t_prep_lc_run FOREIGN KEY (prep_lc_run_id) REFERENCES public.t_prep_lc_run(prep_run_id);
+
+--
+-- Name: t_experiment_groups fk_t_experiment_groups_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_groups
+    ADD CONSTRAINT fk_t_experiment_groups_t_users FOREIGN KEY (researcher) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_experiment_groups; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -35,6 +35,13 @@ ALTER TABLE ONLY public.t_max_quant_mods
     ADD CONSTRAINT pk_t_max_quant_mods PRIMARY KEY (mod_id);
 
 --
+-- Name: t_max_quant_mods fk_t_max_quant_mods_t_mass_correction_factors; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_max_quant_mods
+    ADD CONSTRAINT fk_t_max_quant_mods_t_mass_correction_factors FOREIGN KEY (mass_correction_id) REFERENCES public.t_mass_correction_factors(mass_correction_id);
+
+--
 -- Name: TABLE t_max_quant_mods; Type: ACL; Schema: public; Owner: d3l243
 --
 

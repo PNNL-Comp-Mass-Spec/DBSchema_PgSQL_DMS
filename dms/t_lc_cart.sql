@@ -41,6 +41,13 @@ ALTER TABLE ONLY public.t_lc_cart
     ADD CONSTRAINT pk_t_lc_cart PRIMARY KEY (cart_id);
 
 --
+-- Name: t_lc_cart fk_t_lc_cart_t_lc_cart_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_cart
+    ADD CONSTRAINT fk_t_lc_cart_t_lc_cart_state FOREIGN KEY (cart_state_id) REFERENCES public.t_lc_cart_state_name(cart_state_id);
+
+--
 -- Name: TABLE t_lc_cart; Type: ACL; Schema: public; Owner: d3l243
 --
 

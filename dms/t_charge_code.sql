@@ -55,6 +55,20 @@ CREATE INDEX ix_t_charge_code_resp_prn ON public.t_charge_code USING btree (resp
 CREATE INDEX ix_t_charge_code_sort_key ON public.t_charge_code USING btree (sort_key);
 
 --
+-- Name: t_charge_code fk_t_charge_code_t_charge_code_activation_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_charge_code
+    ADD CONSTRAINT fk_t_charge_code_t_charge_code_activation_state FOREIGN KEY (activation_state) REFERENCES public.t_charge_code_activation_state(activation_state);
+
+--
+-- Name: t_charge_code fk_t_charge_code_t_charge_code_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_charge_code
+    ADD CONSTRAINT fk_t_charge_code_t_charge_code_state FOREIGN KEY (charge_code_state) REFERENCES public.t_charge_code_state(charge_code_state);
+
+--
 -- Name: TABLE t_charge_code; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -55,6 +55,27 @@ ALTER TABLE ONLY public.t_project_usage_stats
 CREATE INDEX ix_t_project_usage_stats_year_and_week ON public.t_project_usage_stats USING btree (the_year, week_of_year);
 
 --
+-- Name: t_project_usage_stats fk_t_project_usage_stats_t_eus_proposals; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_project_usage_stats
+    ADD CONSTRAINT fk_t_project_usage_stats_t_eus_proposals FOREIGN KEY (proposal_id) REFERENCES public.t_eus_proposals(proposal_id);
+
+--
+-- Name: t_project_usage_stats fk_t_project_usage_stats_t_eus_usage_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_project_usage_stats
+    ADD CONSTRAINT fk_t_project_usage_stats_t_eus_usage_type FOREIGN KEY (eus_usage_type_id) REFERENCES public.t_eus_usage_type(eus_usage_type_id);
+
+--
+-- Name: t_project_usage_stats fk_t_project_usage_stats_t_project_usage_stats; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_project_usage_stats
+    ADD CONSTRAINT fk_t_project_usage_stats_t_project_usage_stats FOREIGN KEY (project_type_id) REFERENCES public.t_project_usage_types(project_type_id);
+
+--
 -- Name: TABLE t_project_usage_stats; Type: ACL; Schema: public; Owner: d3l243
 --
 

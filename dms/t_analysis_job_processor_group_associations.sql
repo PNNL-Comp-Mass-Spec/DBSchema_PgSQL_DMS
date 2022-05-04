@@ -39,6 +39,20 @@ ALTER TABLE ONLY public.t_analysis_job_processor_group_associations
 CREATE INDEX ix_t_analysis_job_processor_group_associations_group_id_job ON public.t_analysis_job_processor_group_associations USING btree (group_id) INCLUDE (job);
 
 --
+-- Name: t_analysis_job_processor_group_associations fk_t_analysis_job_processor_group_associations_t_analysis_job1; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_processor_group_associations
+    ADD CONSTRAINT fk_t_analysis_job_processor_group_associations_t_analysis_job1 FOREIGN KEY (job) REFERENCES public.t_analysis_job(job) ON DELETE CASCADE;
+
+--
+-- Name: t_analysis_job_processor_group_associations fk_t_analysis_job_processor_group_associations_t_analysis_job2; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_processor_group_associations
+    ADD CONSTRAINT fk_t_analysis_job_processor_group_associations_t_analysis_job2 FOREIGN KEY (group_id) REFERENCES public.t_analysis_job_processor_group(group_id);
+
+--
 -- Name: TABLE t_analysis_job_processor_group_associations; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -24,6 +24,20 @@ ALTER TABLE ONLY public.t_emsl_dms_instrument_mapping
 CREATE UNIQUE INDEX ix_t_emsl_dms_instrument_mapping_dms_inst_id ON public.t_emsl_dms_instrument_mapping USING btree (dms_instrument_id);
 
 --
+-- Name: t_emsl_dms_instrument_mapping fk_t_emsl_dms_instrument_mapping_t_emsl_instruments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_emsl_dms_instrument_mapping
+    ADD CONSTRAINT fk_t_emsl_dms_instrument_mapping_t_emsl_instruments FOREIGN KEY (eus_instrument_id) REFERENCES public.t_emsl_instruments(eus_instrument_id);
+
+--
+-- Name: t_emsl_dms_instrument_mapping fk_t_emsl_dms_instrument_mapping_t_instrument_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_emsl_dms_instrument_mapping
+    ADD CONSTRAINT fk_t_emsl_dms_instrument_mapping_t_instrument_name FOREIGN KEY (dms_instrument_id) REFERENCES public.t_instrument_name(instrument_id);
+
+--
 -- Name: TABLE t_emsl_dms_instrument_mapping; Type: ACL; Schema: public; Owner: d3l243
 --
 

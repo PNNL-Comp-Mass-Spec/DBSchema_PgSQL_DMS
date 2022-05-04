@@ -35,6 +35,13 @@ ALTER TABLE ONLY public.t_filter_sets
     ADD CONSTRAINT pk_t_filter_sets PRIMARY KEY (filter_set_id);
 
 --
+-- Name: t_filter_sets fk_t_filter_sets_t_filter_set_types; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_filter_sets
+    ADD CONSTRAINT fk_t_filter_sets_t_filter_set_types FOREIGN KEY (filter_type_id) REFERENCES public.t_filter_set_types(filter_type_id);
+
+--
 -- Name: TABLE t_filter_sets; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -18,6 +18,20 @@ ALTER TABLE ONLY public.t_experiment_biomaterial
     ADD CONSTRAINT pk_t_experiment_biomaterial PRIMARY KEY (exp_id, biomaterial_id);
 
 --
+-- Name: t_experiment_biomaterial fk_t_experiment_biomaterial_t_biomaterial; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_biomaterial
+    ADD CONSTRAINT fk_t_experiment_biomaterial_t_biomaterial FOREIGN KEY (biomaterial_id) REFERENCES public.t_biomaterial(biomaterial_id);
+
+--
+-- Name: t_experiment_biomaterial fk_t_experiment_biomaterial_t_experiments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_biomaterial
+    ADD CONSTRAINT fk_t_experiment_biomaterial_t_experiments FOREIGN KEY (exp_id) REFERENCES public.t_experiments(exp_id);
+
+--
 -- Name: TABLE t_experiment_biomaterial; Type: ACL; Schema: public; Owner: d3l243
 --
 

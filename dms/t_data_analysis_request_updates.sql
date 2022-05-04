@@ -47,6 +47,20 @@ CREATE INDEX ix_t_data_analysis_request_updates_new_state_old_state_include ON p
 CREATE INDEX ix_t_data_analysis_request_updates_request_id ON public.t_data_analysis_request_updates USING btree (request_id);
 
 --
+-- Name: t_data_analysis_request_updates fk_t_data_analysis_request_updates_t_data_analysis_request1; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request_updates
+    ADD CONSTRAINT fk_t_data_analysis_request_updates_t_data_analysis_request1 FOREIGN KEY (new_state_id) REFERENCES public.t_data_analysis_request_state_name(state_id);
+
+--
+-- Name: t_data_analysis_request_updates fk_t_data_analysis_request_updates_t_data_analysis_request2; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_data_analysis_request_updates
+    ADD CONSTRAINT fk_t_data_analysis_request_updates_t_data_analysis_request2 FOREIGN KEY (old_state_id) REFERENCES public.t_data_analysis_request_state_name(state_id);
+
+--
 -- Name: TABLE t_data_analysis_request_updates; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -40,6 +40,13 @@ ALTER TABLE ONLY public.t_cached_dataset_links
 CREATE INDEX ix_t_cached_dataset_links_update_required ON public.t_cached_dataset_links USING btree (update_required);
 
 --
+-- Name: t_cached_dataset_links fk_t_cached_dataset_links_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_cached_dataset_links
+    ADD CONSTRAINT fk_t_cached_dataset_links_t_dataset FOREIGN KEY (dataset_id) REFERENCES public.t_dataset(dataset_id) ON DELETE CASCADE;
+
+--
 -- Name: TABLE t_cached_dataset_links; Type: ACL; Schema: public; Owner: d3l243
 --
 

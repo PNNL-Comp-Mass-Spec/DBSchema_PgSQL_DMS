@@ -93,6 +93,55 @@ CREATE INDEX ix_t_sample_prep_request_campaign_include_created ON public.t_sampl
 CREATE INDEX ix_t_sample_prep_request_eus_user_id ON public.t_sample_prep_request USING btree (eus_user_id);
 
 --
+-- Name: t_sample_prep_request fk_t_sample_prep_request_t_eus_proposals; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request
+    ADD CONSTRAINT fk_t_sample_prep_request_t_eus_proposals FOREIGN KEY (eus_proposal_id) REFERENCES public.t_eus_proposals(proposal_id);
+
+--
+-- Name: t_sample_prep_request fk_t_sample_prep_request_t_eus_usage_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request
+    ADD CONSTRAINT fk_t_sample_prep_request_t_eus_usage_type FOREIGN KEY (eus_usage_type) REFERENCES public.t_eus_usage_type(eus_usage_type) ON UPDATE CASCADE;
+
+--
+-- Name: t_sample_prep_request fk_t_sample_prep_request_t_eus_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request
+    ADD CONSTRAINT fk_t_sample_prep_request_t_eus_users FOREIGN KEY (eus_user_id) REFERENCES public.t_eus_users(person_id);
+
+--
+-- Name: t_sample_prep_request fk_t_sample_prep_request_t_internal_standards; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request
+    ADD CONSTRAINT fk_t_sample_prep_request_t_internal_standards FOREIGN KEY (internal_standard_id) REFERENCES public.t_internal_standards(internal_standard_id);
+
+--
+-- Name: t_sample_prep_request fk_t_sample_prep_request_t_internal_standards1; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request
+    ADD CONSTRAINT fk_t_sample_prep_request_t_internal_standards1 FOREIGN KEY (post_digest_internal_std_id) REFERENCES public.t_internal_standards(internal_standard_id);
+
+--
+-- Name: t_sample_prep_request fk_t_sample_prep_request_t_sample_prep_request_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request
+    ADD CONSTRAINT fk_t_sample_prep_request_t_sample_prep_request_state_name FOREIGN KEY (state) REFERENCES public.t_sample_prep_request_state_name(state_id);
+
+--
+-- Name: t_sample_prep_request fk_t_sample_prep_request_t_sample_prep_request_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request
+    ADD CONSTRAINT fk_t_sample_prep_request_t_sample_prep_request_type_name FOREIGN KEY (request_type) REFERENCES public.t_sample_prep_request_type_name(request_type);
+
+--
 -- Name: TABLE t_sample_prep_request; Type: ACL; Schema: public; Owner: d3l243
 --
 

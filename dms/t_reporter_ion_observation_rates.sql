@@ -75,6 +75,20 @@ ALTER TABLE ONLY public.t_reporter_ion_observation_rates
     ADD CONSTRAINT pk_t_reporter_ion_observation_rates PRIMARY KEY (job);
 
 --
+-- Name: t_reporter_ion_observation_rates fk_t_reporter_ion_observation_rates_t_analysis_job; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reporter_ion_observation_rates
+    ADD CONSTRAINT fk_t_reporter_ion_observation_rates_t_analysis_job FOREIGN KEY (job) REFERENCES public.t_analysis_job(job);
+
+--
+-- Name: t_reporter_ion_observation_rates fk_t_reporter_ion_observation_rates_t_sample_labelling; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_reporter_ion_observation_rates
+    ADD CONSTRAINT fk_t_reporter_ion_observation_rates_t_sample_labelling FOREIGN KEY (reporter_ion) REFERENCES public.t_sample_labelling(label) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_reporter_ion_observation_rates; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -174,6 +174,83 @@ CREATE INDEX ix_t_dataset_state_id ON public.t_dataset USING btree (ds_state_id)
 CREATE INDEX ix_t_dataset_storage_path_id_created_instrument_name_id_rating ON public.t_dataset USING btree (storage_path_id, created, instrument_id, dataset_rating_id, dataset_id);
 
 --
+-- Name: t_dataset fk_t_dataset_t_dataset_rating_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_dataset_rating_name FOREIGN KEY (dataset_rating_id) REFERENCES public.t_dataset_rating_name(dataset_rating_id);
+
+--
+-- Name: t_dataset fk_t_dataset_t_dataset_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_dataset_state_name FOREIGN KEY (ds_state_id) REFERENCES public.t_dataset_state_name(ds_state_id);
+
+--
+-- Name: t_dataset fk_t_dataset_t_dataset_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_dataset_type_name FOREIGN KEY (dataset_type_id) REFERENCES public.t_dataset_type_name(dataset_type_id) ON UPDATE CASCADE;
+
+--
+-- Name: t_dataset fk_t_dataset_t_experiments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_experiments FOREIGN KEY (exp_id) REFERENCES public.t_experiments(exp_id);
+
+--
+-- Name: t_dataset fk_t_dataset_t_instrument_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_instrument_name FOREIGN KEY (instrument_id) REFERENCES public.t_instrument_name(instrument_id);
+
+--
+-- Name: t_dataset fk_t_dataset_t_internal_standards; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_internal_standards FOREIGN KEY (internal_standard_id) REFERENCES public.t_internal_standards(internal_standard_id);
+
+--
+-- Name: t_dataset fk_t_dataset_t_lc_cart_configuration; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_lc_cart_configuration FOREIGN KEY (cart_config_id) REFERENCES public.t_lc_cart_configuration(cart_config_id);
+
+--
+-- Name: t_dataset fk_t_dataset_t_lc_column; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_lc_column FOREIGN KEY (lc_column_id) REFERENCES public.t_lc_column(lc_column_id);
+
+--
+-- Name: t_dataset fk_t_dataset_t_secondary_sep; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_secondary_sep FOREIGN KEY (separation_type) REFERENCES public.t_secondary_sep(separation_type) ON UPDATE CASCADE;
+
+--
+-- Name: t_dataset fk_t_dataset_t_storage_path; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_storage_path FOREIGN KEY (storage_path_id) REFERENCES public.t_storage_path(storage_path_id) ON UPDATE CASCADE;
+
+--
+-- Name: t_dataset fk_t_dataset_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_users FOREIGN KEY (operator_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_dataset; Type: ACL; Schema: public; Owner: d3l243
 --
 

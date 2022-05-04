@@ -30,6 +30,13 @@ ALTER TABLE ONLY public.t_eus_users
 CREATE INDEX ix_t_eus_users_site_status_include_person_id_name_fm_hid ON public.t_eus_users USING btree (site_status) INCLUDE (person_id, name_fm, hid);
 
 --
+-- Name: t_eus_users fk_t_eus_users_t_eus_site_status; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_eus_users
+    ADD CONSTRAINT fk_t_eus_users_t_eus_site_status FOREIGN KEY (site_status) REFERENCES public.t_eus_site_status(eus_site_status_id);
+
+--
 -- Name: TABLE t_eus_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

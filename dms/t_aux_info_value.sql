@@ -25,6 +25,13 @@ ALTER TABLE ONLY public.t_aux_info_value
 CREATE INDEX ix_t_aux_info_value_target_id ON public.t_aux_info_value USING btree (target_id, aux_info_id);
 
 --
+-- Name: t_aux_info_value fk_t_aux_info_value_t_aux_info_description; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_aux_info_value
+    ADD CONSTRAINT fk_t_aux_info_value_t_aux_info_description FOREIGN KEY (aux_info_id) REFERENCES public.t_aux_info_description(aux_description_id);
+
+--
 -- Name: TABLE t_aux_info_value; Type: ACL; Schema: public; Owner: d3l243
 --
 

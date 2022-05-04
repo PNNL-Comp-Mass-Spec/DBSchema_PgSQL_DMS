@@ -36,6 +36,13 @@ ALTER TABLE ONLY public.t_aux_info_description
     ADD CONSTRAINT pk_t_aux_info_description PRIMARY KEY (aux_description_id);
 
 --
+-- Name: t_aux_info_description fk_t_aux_info_description_t_aux_info_subcategory; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_aux_info_description
+    ADD CONSTRAINT fk_t_aux_info_description_t_aux_info_subcategory FOREIGN KEY (parent_id) REFERENCES public.t_aux_info_subcategory(aux_subcategory_id);
+
+--
 -- Name: TABLE t_aux_info_description; Type: ACL; Schema: public; Owner: d3l243
 --
 

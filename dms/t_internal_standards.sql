@@ -41,6 +41,13 @@ ALTER TABLE ONLY public.t_internal_standards
 CREATE UNIQUE INDEX ix_t_internal_standards ON public.t_internal_standards USING btree (name);
 
 --
+-- Name: t_internal_standards fk_t_internal_standards_t_internal_std_mixes; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_internal_standards
+    ADD CONSTRAINT fk_t_internal_standards_t_internal_std_mixes FOREIGN KEY (parent_mix_id) REFERENCES public.t_internal_std_parent_mixes(parent_mix_id) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_internal_standards; Type: ACL; Schema: public; Owner: d3l243
 --
 

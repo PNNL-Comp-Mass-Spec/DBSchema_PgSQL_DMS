@@ -31,6 +31,20 @@ ALTER TABLE ONLY public.t_prep_lc_run_dataset
     ADD CONSTRAINT pk_t_prep_lc_run_dataset PRIMARY KEY (prep_lc_run_id, dataset_id);
 
 --
+-- Name: t_prep_lc_run_dataset fk_t_prep_lc_run_dataset_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_prep_lc_run_dataset
+    ADD CONSTRAINT fk_t_prep_lc_run_dataset_t_dataset FOREIGN KEY (dataset_id) REFERENCES public.t_dataset(dataset_id);
+
+--
+-- Name: t_prep_lc_run_dataset fk_t_prep_lc_run_dataset_t_prep_lc_run; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_prep_lc_run_dataset
+    ADD CONSTRAINT fk_t_prep_lc_run_dataset_t_prep_lc_run FOREIGN KEY (prep_lc_run_id) REFERENCES public.t_prep_lc_run(prep_run_id);
+
+--
 -- Name: TABLE t_prep_lc_run_dataset; Type: ACL; Schema: public; Owner: d3l243
 --
 

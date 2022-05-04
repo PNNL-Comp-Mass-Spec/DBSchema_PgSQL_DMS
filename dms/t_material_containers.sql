@@ -72,6 +72,13 @@ CREATE INDEX ix_t_material_containers_sort_key ON public.t_material_containers U
 CREATE INDEX ix_t_material_containers_status ON public.t_material_containers USING btree (status);
 
 --
+-- Name: t_material_containers fk_t_material_containers_t_material_locations; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_material_containers
+    ADD CONSTRAINT fk_t_material_containers_t_material_locations FOREIGN KEY (location_id) REFERENCES public.t_material_locations(location_id);
+
+--
 -- Name: TABLE t_material_containers; Type: ACL; Schema: public; Owner: d3l243
 --
 

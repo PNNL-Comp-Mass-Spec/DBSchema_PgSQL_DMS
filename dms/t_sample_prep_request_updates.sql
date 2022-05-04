@@ -47,6 +47,20 @@ CREATE INDEX ix_t_sample_prep_request_updates_end_state_id_begin_state_id ON pub
 CREATE INDEX ix_t_sample_prep_request_updates_request_id ON public.t_sample_prep_request_updates USING btree (request_id);
 
 --
+-- Name: t_sample_prep_request_updates fk_t_sample_prep_request_updates_t_sample_prep_request_state1; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request_updates
+    ADD CONSTRAINT fk_t_sample_prep_request_updates_t_sample_prep_request_state1 FOREIGN KEY (beginning_state_id) REFERENCES public.t_sample_prep_request_state_name(state_id);
+
+--
+-- Name: t_sample_prep_request_updates fk_t_sample_prep_request_updates_t_sample_prep_request_state2; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_sample_prep_request_updates
+    ADD CONSTRAINT fk_t_sample_prep_request_updates_t_sample_prep_request_state2 FOREIGN KEY (end_state_id) REFERENCES public.t_sample_prep_request_state_name(state_id);
+
+--
 -- Name: TABLE t_sample_prep_request_updates; Type: ACL; Schema: public; Owner: d3l243
 --
 

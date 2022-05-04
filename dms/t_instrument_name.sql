@@ -63,6 +63,48 @@ CREATE UNIQUE INDEX ix_t_instrument_name ON public.t_instrument_name USING btree
 CREATE INDEX ix_t_instrument_name_class_name_instrument_id ON public.t_instrument_name USING btree (instrument_class, instrument, instrument_id);
 
 --
+-- Name: t_instrument_name fk_t_instrument_name_t_instrument_class; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name
+    ADD CONSTRAINT fk_t_instrument_name_t_instrument_class FOREIGN KEY (instrument_class) REFERENCES public.t_instrument_class(instrument_class) ON UPDATE CASCADE;
+
+--
+-- Name: t_instrument_name fk_t_instrument_name_t_instrument_name_instrument_group; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name
+    ADD CONSTRAINT fk_t_instrument_name_t_instrument_name_instrument_group FOREIGN KEY (instrument_group) REFERENCES public.t_instrument_group(instrument_group) ON UPDATE CASCADE;
+
+--
+-- Name: t_instrument_name fk_t_instrument_name_t_instrument_ops_role; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name
+    ADD CONSTRAINT fk_t_instrument_name_t_instrument_ops_role FOREIGN KEY (operations_role) REFERENCES public.t_instrument_ops_role(role);
+
+--
+-- Name: t_instrument_name fk_t_instrument_name_t_storage_path_source_path_id; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name
+    ADD CONSTRAINT fk_t_instrument_name_t_storage_path_source_path_id FOREIGN KEY (source_path_id) REFERENCES public.t_storage_path(storage_path_id);
+
+--
+-- Name: t_instrument_name fk_t_instrument_name_t_storage_path_storage_path_id; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name
+    ADD CONSTRAINT fk_t_instrument_name_t_storage_path_storage_path_id FOREIGN KEY (storage_path_id) REFERENCES public.t_storage_path(storage_path_id);
+
+--
+-- Name: t_instrument_name fk_t_instrument_name_t_yes_no; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name
+    ADD CONSTRAINT fk_t_instrument_name_t_yes_no FOREIGN KEY (auto_define_storage_path) REFERENCES public.t_yes_no(flag);
+
+--
 -- Name: TABLE t_instrument_name; Type: ACL; Schema: public; Owner: d3l243
 --
 

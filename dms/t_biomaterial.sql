@@ -89,6 +89,34 @@ CREATE INDEX ix_t_biomaterial_created ON public.t_biomaterial USING btree (creat
 CREATE INDEX ix_t_biomaterial_id_name_container ON public.t_biomaterial USING btree (biomaterial_id, biomaterial_name, container_id);
 
 --
+-- Name: t_biomaterial fk_t_biomaterial_t_biomaterial_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_biomaterial
+    ADD CONSTRAINT fk_t_biomaterial_t_biomaterial_type_name FOREIGN KEY (biomaterial_type) REFERENCES public.t_biomaterial_type_name(biomaterial_type_id);
+
+--
+-- Name: t_biomaterial fk_t_biomaterial_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_biomaterial
+    ADD CONSTRAINT fk_t_biomaterial_t_campaign FOREIGN KEY (campaign_id) REFERENCES public.t_campaign(campaign_id);
+
+--
+-- Name: t_biomaterial fk_t_biomaterial_t_material_containers; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_biomaterial
+    ADD CONSTRAINT fk_t_biomaterial_t_material_containers FOREIGN KEY (container_id) REFERENCES public.t_material_containers(container_id);
+
+--
+-- Name: t_biomaterial fk_t_biomaterial_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_biomaterial
+    ADD CONSTRAINT fk_t_biomaterial_t_users FOREIGN KEY (pi_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_biomaterial; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -52,6 +52,27 @@ CREATE INDEX ix_t_emsl_instrument_usage_report_dms_inst_id_start ON public.t_ems
 CREATE INDEX ix_t_emsl_instrument_usage_report_type_dataset_id ON public.t_emsl_instrument_usage_report USING btree (type, dataset_id);
 
 --
+-- Name: t_emsl_instrument_usage_report fk_t_emsl_instrument_usage_report_t_emsl_instrument_usage_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_emsl_instrument_usage_report
+    ADD CONSTRAINT fk_t_emsl_instrument_usage_report_t_emsl_instrument_usage_type FOREIGN KEY (usage_type_id) REFERENCES public.t_emsl_instrument_usage_type(usage_type_id);
+
+--
+-- Name: t_emsl_instrument_usage_report fk_t_emsl_instrument_usage_report_t_emsl_instruments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_emsl_instrument_usage_report
+    ADD CONSTRAINT fk_t_emsl_instrument_usage_report_t_emsl_instruments FOREIGN KEY (emsl_inst_id) REFERENCES public.t_emsl_instruments(eus_instrument_id);
+
+--
+-- Name: t_emsl_instrument_usage_report fk_t_emsl_instrument_usage_report_t_instrument_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_emsl_instrument_usage_report
+    ADD CONSTRAINT fk_t_emsl_instrument_usage_report_t_instrument_name FOREIGN KEY (dms_inst_id) REFERENCES public.t_instrument_name(instrument_id);
+
+--
 -- Name: TABLE t_emsl_instrument_usage_report; Type: ACL; Schema: public; Owner: d3l243
 --
 

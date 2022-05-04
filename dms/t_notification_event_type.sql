@@ -21,6 +21,13 @@ ALTER TABLE ONLY public.t_notification_event_type
     ADD CONSTRAINT pk_t_notification_event_type PRIMARY KEY (event_type_id);
 
 --
+-- Name: t_notification_event_type fk_t_notification_event_type_t_notification_entity_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_notification_event_type
+    ADD CONSTRAINT fk_t_notification_event_type_t_notification_entity_type FOREIGN KEY (target_entity_type) REFERENCES public.t_notification_entity_type(entity_type_id);
+
+--
 -- Name: TABLE t_notification_event_type; Type: ACL; Schema: public; Owner: d3l243
 --
 

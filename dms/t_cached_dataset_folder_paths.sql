@@ -37,6 +37,13 @@ ALTER TABLE ONLY public.t_cached_dataset_folder_paths
 CREATE INDEX ix_t_cached_dataset_folder_paths_update_required ON public.t_cached_dataset_folder_paths USING btree (update_required);
 
 --
+-- Name: t_cached_dataset_folder_paths fk_t_cached_dataset_folder_paths_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_cached_dataset_folder_paths
+    ADD CONSTRAINT fk_t_cached_dataset_folder_paths_t_dataset FOREIGN KEY (dataset_id) REFERENCES public.t_dataset(dataset_id) ON DELETE CASCADE;
+
+--
 -- Name: TABLE t_cached_dataset_folder_paths; Type: ACL; Schema: public; Owner: d3l243
 --
 

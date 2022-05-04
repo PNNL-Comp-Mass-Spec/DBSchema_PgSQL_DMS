@@ -154,6 +154,69 @@ CREATE INDEX ix_t_analysis_job_tool_id_job_id_dataset_id_include_ajstart ON publ
 CREATE INDEX ix_t_analysis_job_tool_id_state_id_include_job_priority ON public.t_analysis_job USING btree (analysis_tool_id, job_state_id) INCLUDE (job, priority, dataset_id, comment, owner, special_processing);
 
 --
+-- Name: t_analysis_job fk_t_analysis_job_t_analysis_job_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_analysis_job_batches FOREIGN KEY (batch_id) REFERENCES public.t_analysis_job_batches(batch_id);
+
+--
+-- Name: t_analysis_job fk_t_analysis_job_t_analysis_job_request; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_analysis_job_request FOREIGN KEY (request_id) REFERENCES public.t_analysis_job_request(request_id);
+
+--
+-- Name: t_analysis_job fk_t_analysis_job_t_analysis_job_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_analysis_job_state FOREIGN KEY (job_state_id) REFERENCES public.t_analysis_job_state(job_state_id);
+
+--
+-- Name: t_analysis_job fk_t_analysis_job_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_analysis_tool FOREIGN KEY (analysis_tool_id) REFERENCES public.t_analysis_tool(analysis_tool_id);
+
+--
+-- Name: t_analysis_job fk_t_analysis_job_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_dataset FOREIGN KEY (dataset_id) REFERENCES public.t_dataset(dataset_id);
+
+--
+-- Name: t_analysis_job fk_t_analysis_job_t_myemsl_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_myemsl_state FOREIGN KEY (myemsl_state) REFERENCES public.t_myemsl_state(myemsl_state);
+
+--
+-- Name: t_analysis_job fk_t_analysis_job_t_organisms; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_organisms FOREIGN KEY (organism_id) REFERENCES public.t_organisms(organism_id);
+
+--
+-- Name: t_analysis_job fk_t_analysis_job_t_param_files; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_param_files FOREIGN KEY (param_file_name) REFERENCES public.t_param_files(param_file_name) ON UPDATE CASCADE;
+
+--
+-- Name: t_analysis_job fk_t_analysis_job_t_yes_no; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job
+    ADD CONSTRAINT fk_t_analysis_job_t_yes_no FOREIGN KEY (dataset_unreviewed) REFERENCES public.t_yes_no(flag);
+
+--
 -- Name: TABLE t_analysis_job; Type: ACL; Schema: public; Owner: d3l243
 --
 

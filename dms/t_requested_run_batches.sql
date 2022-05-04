@@ -49,6 +49,13 @@ ALTER TABLE ONLY public.t_requested_run_batches
 CREATE UNIQUE INDEX ix_t_requested_run_batches ON public.t_requested_run_batches USING btree (batch);
 
 --
+-- Name: t_requested_run_batches fk_t_requested_run_batches_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run_batches
+    ADD CONSTRAINT fk_t_requested_run_batches_t_users FOREIGN KEY (owner) REFERENCES public.t_users(user_id);
+
+--
 -- Name: TABLE t_requested_run_batches; Type: ACL; Schema: public; Owner: d3l243
 --
 

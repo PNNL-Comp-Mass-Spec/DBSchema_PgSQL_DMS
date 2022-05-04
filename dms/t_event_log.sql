@@ -66,6 +66,13 @@ CREATE INDEX ix_t_event_log_target_id_prev_target_state_target_state ON public.t
 CREATE INDEX ix_t_event_log_target_type_target_state_entered ON public.t_event_log USING btree (target_type, target_state, entered) INCLUDE (index);
 
 --
+-- Name: t_event_log fk_t_event_log_t_event_target1; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_event_log
+    ADD CONSTRAINT fk_t_event_log_t_event_target1 FOREIGN KEY (target_type) REFERENCES public.t_event_target(target_type_id);
+
+--
 -- Name: TABLE t_event_log; Type: ACL; Schema: public; Owner: d3l243
 --
 

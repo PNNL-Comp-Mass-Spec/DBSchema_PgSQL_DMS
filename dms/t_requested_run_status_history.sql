@@ -46,6 +46,13 @@ ALTER TABLE ONLY public.t_requested_run_status_history
 CREATE INDEX ix_t_requested_run_status_history_state_id ON public.t_requested_run_status_history USING btree (state_id);
 
 --
+-- Name: t_requested_run_status_history fk_t_requested_run_status_history_t_requested_run_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run_status_history
+    ADD CONSTRAINT fk_t_requested_run_status_history_t_requested_run_state_name FOREIGN KEY (state_id) REFERENCES public.t_requested_run_state_name(state_id);
+
+--
 -- Name: TABLE t_requested_run_status_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

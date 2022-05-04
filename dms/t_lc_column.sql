@@ -54,6 +54,20 @@ CREATE UNIQUE INDEX ix_t_lc_column ON public.t_lc_column USING btree (lc_column)
 CREATE INDEX ix_t_lc_column_id_include_sccolumn_number ON public.t_lc_column USING btree (lc_column_id) INCLUDE (lc_column, column_state_id);
 
 --
+-- Name: t_lc_column fk_t_lc_column_t_lc_column_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_column
+    ADD CONSTRAINT fk_t_lc_column_t_lc_column_state_name FOREIGN KEY (column_state_id) REFERENCES public.t_lc_column_state_name(column_state_id);
+
+--
+-- Name: t_lc_column fk_t_lc_column_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_column
+    ADD CONSTRAINT fk_t_lc_column_t_users FOREIGN KEY (operator_prn) REFERENCES public.t_users(prn);
+
+--
 -- Name: TABLE t_lc_column; Type: ACL; Schema: public; Owner: d3l243
 --
 

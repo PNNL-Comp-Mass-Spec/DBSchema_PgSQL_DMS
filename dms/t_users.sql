@@ -57,6 +57,13 @@ ALTER TABLE ONLY public.t_users
 CREATE UNIQUE INDEX ix_t_users_username ON public.t_users USING btree (username);
 
 --
+-- Name: t_users fk_t_users_t_user_status; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_users
+    ADD CONSTRAINT fk_t_users_t_user_status FOREIGN KEY (status) REFERENCES public.t_user_status(user_status);
+
+--
 -- Name: TABLE t_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

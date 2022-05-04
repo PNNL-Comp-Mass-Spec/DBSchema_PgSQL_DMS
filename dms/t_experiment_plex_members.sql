@@ -28,6 +28,27 @@ ALTER TABLE ONLY public.t_experiment_plex_members
 CREATE INDEX ix_t_experiment_plex_members_exp_id ON public.t_experiment_plex_members USING btree (exp_id);
 
 --
+-- Name: t_experiment_plex_members fk_t_experiment_plex_members_t_experiment_plex_channel_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_plex_members
+    ADD CONSTRAINT fk_t_experiment_plex_members_t_experiment_plex_channel_type FOREIGN KEY (channel_type_id) REFERENCES public.t_experiment_plex_channel_type_name(channel_type_id);
+
+--
+-- Name: t_experiment_plex_members fk_t_experiment_plex_members_t_experiments_channel_exp; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_plex_members
+    ADD CONSTRAINT fk_t_experiment_plex_members_t_experiments_channel_exp FOREIGN KEY (exp_id) REFERENCES public.t_experiments(exp_id);
+
+--
+-- Name: t_experiment_plex_members fk_t_experiment_plex_members_t_experiments_plex_exp; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_plex_members
+    ADD CONSTRAINT fk_t_experiment_plex_members_t_experiments_plex_exp FOREIGN KEY (plex_exp_id) REFERENCES public.t_experiments(exp_id);
+
+--
 -- Name: TABLE t_experiment_plex_members; Type: ACL; Schema: public; Owner: d3l243
 --
 

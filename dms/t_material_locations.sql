@@ -56,6 +56,13 @@ CREATE UNIQUE INDEX ix_t_material_locations ON public.t_material_locations USING
 CREATE INDEX ix_t_material_locations_id_include_tag ON public.t_material_locations USING btree (location_id);
 
 --
+-- Name: t_material_locations fk_t_material_locations_t_material_freezers; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_material_locations
+    ADD CONSTRAINT fk_t_material_locations_t_material_freezers FOREIGN KEY (freezer_tag) REFERENCES public.t_material_freezers(freezer_tag) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_material_locations; Type: ACL; Schema: public; Owner: d3l243
 --
 

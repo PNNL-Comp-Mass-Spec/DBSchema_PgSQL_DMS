@@ -50,6 +50,13 @@ ALTER TABLE ONLY public.t_lc_cart_settings_history
     ADD CONSTRAINT pk_t_lc_cart_settings PRIMARY KEY (entry_id);
 
 --
+-- Name: t_lc_cart_settings_history fk_t_lc_cart_settings_history_t_lc_cart; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_lc_cart_settings_history
+    ADD CONSTRAINT fk_t_lc_cart_settings_history_t_lc_cart FOREIGN KEY (cart_id) REFERENCES public.t_lc_cart(cart_id);
+
+--
 -- Name: TABLE t_lc_cart_settings_history; Type: ACL; Schema: public; Owner: d3l243
 --
 

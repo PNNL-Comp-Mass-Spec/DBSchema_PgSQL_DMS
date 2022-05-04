@@ -54,6 +54,27 @@ CREATE INDEX ix_t_analysis_job_request_request_id ON public.t_analysis_job_reque
 CREATE INDEX ix_t_analysis_job_request_state_created ON public.t_analysis_job_request USING btree (request_state_id, created);
 
 --
+-- Name: t_analysis_job_request fk_t_analysis_job_request_t_analysis_job_request_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_request
+    ADD CONSTRAINT fk_t_analysis_job_request_t_analysis_job_request_state FOREIGN KEY (request_state_id) REFERENCES public.t_analysis_job_request_state(request_state_id);
+
+--
+-- Name: t_analysis_job_request fk_t_analysis_job_request_t_organisms; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_request
+    ADD CONSTRAINT fk_t_analysis_job_request_t_organisms FOREIGN KEY (organism_id) REFERENCES public.t_organisms(organism_id);
+
+--
+-- Name: t_analysis_job_request fk_t_analysis_job_request_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_analysis_job_request
+    ADD CONSTRAINT fk_t_analysis_job_request_t_users FOREIGN KEY (user_id) REFERENCES public.t_users(user_id);
+
+--
 -- Name: TABLE t_analysis_job_request; Type: ACL; Schema: public; Owner: d3l243
 --
 

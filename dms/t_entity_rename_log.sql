@@ -48,6 +48,13 @@ CREATE INDEX ix_t_entity_rename_log_target_id ON public.t_entity_rename_log USIN
 CREATE INDEX ix_t_entity_rename_log_target_type ON public.t_entity_rename_log USING btree (target_type);
 
 --
+-- Name: t_entity_rename_log fk_t_entity_rename_log_t_event_target; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_entity_rename_log
+    ADD CONSTRAINT fk_t_entity_rename_log_t_event_target FOREIGN KEY (target_type) REFERENCES public.t_event_target(target_type_id);
+
+--
 -- Name: TABLE t_entity_rename_log; Type: ACL; Schema: public; Owner: d3l243
 --
 

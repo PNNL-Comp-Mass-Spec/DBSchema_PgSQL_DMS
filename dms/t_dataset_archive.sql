@@ -78,6 +78,48 @@ CREATE INDEX ix_t_dataset_archive_storage_path_id ON public.t_dataset_archive US
 CREATE INDEX ix_t_dataset_archive_update_state_id_dataset_id_state_id ON public.t_dataset_archive USING btree (archive_update_state_id, dataset_id, archive_state_id) INCLUDE (purge_holdoff_date);
 
 --
+-- Name: t_dataset_archive fk_t_dataset_archive_t_archive_path; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_archive
+    ADD CONSTRAINT fk_t_dataset_archive_t_archive_path FOREIGN KEY (storage_path_id) REFERENCES public.t_archive_path(archive_path_id);
+
+--
+-- Name: t_dataset_archive fk_t_dataset_archive_t_archive_update_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_archive
+    ADD CONSTRAINT fk_t_dataset_archive_t_archive_update_state_name FOREIGN KEY (archive_update_state_id) REFERENCES public.t_archive_update_state_name(archive_update_state_id);
+
+--
+-- Name: t_dataset_archive fk_t_dataset_archive_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_archive
+    ADD CONSTRAINT fk_t_dataset_archive_t_dataset FOREIGN KEY (dataset_id) REFERENCES public.t_dataset(dataset_id);
+
+--
+-- Name: t_dataset_archive fk_t_dataset_archive_t_dataset_archive_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_archive
+    ADD CONSTRAINT fk_t_dataset_archive_t_dataset_archive_state_name FOREIGN KEY (archive_state_id) REFERENCES public.t_dataset_archive_state_name(archive_state_id);
+
+--
+-- Name: t_dataset_archive fk_t_dataset_archive_t_myemsl_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_archive
+    ADD CONSTRAINT fk_t_dataset_archive_t_myemsl_state FOREIGN KEY (myemsl_state) REFERENCES public.t_myemsl_state(myemsl_state);
+
+--
+-- Name: t_dataset_archive fk_t_dataset_archive_t_yes_no; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_archive
+    ADD CONSTRAINT fk_t_dataset_archive_t_yes_no FOREIGN KEY (instrument_data_purged) REFERENCES public.t_yes_no(flag);
+
+--
 -- Name: TABLE t_dataset_archive; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -36,6 +36,20 @@ ALTER TABLE ONLY public.t_default_psm_job_settings
     ADD CONSTRAINT pk_t_default_psm_job_settings PRIMARY KEY (tool_name, job_type_name, stat_cys_alk, dyn_sty_phos);
 
 --
+-- Name: t_default_psm_job_settings fk_t_default_psm_job_settings_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_default_psm_job_settings
+    ADD CONSTRAINT fk_t_default_psm_job_settings_t_analysis_tool FOREIGN KEY (tool_name) REFERENCES public.t_analysis_tool(analysis_tool);
+
+--
+-- Name: t_default_psm_job_settings fk_t_default_psm_job_settings_t_default_psm_job_types; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_default_psm_job_settings
+    ADD CONSTRAINT fk_t_default_psm_job_settings_t_default_psm_job_types FOREIGN KEY (job_type_name) REFERENCES public.t_default_psm_job_types(job_type_name);
+
+--
 -- Name: TABLE t_default_psm_job_settings; Type: ACL; Schema: public; Owner: d3l243
 --
 

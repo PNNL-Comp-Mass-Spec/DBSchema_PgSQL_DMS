@@ -24,6 +24,20 @@ ALTER TABLE ONLY public.t_requested_run_eus_users
 CREATE INDEX ix_t_requested_run_eus_users_request_id ON public.t_requested_run_eus_users USING btree (request_id);
 
 --
+-- Name: t_requested_run_eus_users fk_t_requested_run_eus_users_t_eus_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run_eus_users
+    ADD CONSTRAINT fk_t_requested_run_eus_users_t_eus_users FOREIGN KEY (eus_person_id) REFERENCES public.t_eus_users(person_id);
+
+--
+-- Name: t_requested_run_eus_users fk_t_requested_run_eus_users_t_requested_run; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run_eus_users
+    ADD CONSTRAINT fk_t_requested_run_eus_users_t_requested_run FOREIGN KEY (request_id) REFERENCES public.t_requested_run(request_id) ON DELETE CASCADE;
+
+--
 -- Name: TABLE t_requested_run_eus_users; Type: ACL; Schema: public; Owner: d3l243
 --
 

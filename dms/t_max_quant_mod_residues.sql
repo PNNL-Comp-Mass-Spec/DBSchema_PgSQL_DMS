@@ -18,6 +18,13 @@ ALTER TABLE ONLY public.t_max_quant_mod_residues
     ADD CONSTRAINT pk_t_max_quant_mod_residues PRIMARY KEY (mod_id, residue_id);
 
 --
+-- Name: t_max_quant_mod_residues fk_t_max_quant_mod_residues_t_max_quant_mods; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_max_quant_mod_residues
+    ADD CONSTRAINT fk_t_max_quant_mod_residues_t_max_quant_mods FOREIGN KEY (mod_id) REFERENCES public.t_max_quant_mods(mod_id);
+
+--
 -- Name: TABLE t_max_quant_mod_residues; Type: ACL; Schema: public; Owner: d3l243
 --
 

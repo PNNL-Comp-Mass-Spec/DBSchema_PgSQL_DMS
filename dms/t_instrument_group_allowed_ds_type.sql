@@ -19,6 +19,20 @@ ALTER TABLE ONLY public.t_instrument_group_allowed_ds_type
     ADD CONSTRAINT pk_t_instrument_group_allowed_ds_type PRIMARY KEY (instrument_group, dataset_type);
 
 --
+-- Name: t_instrument_group_allowed_ds_type fk_t_instrument_group_allowed_ds_type_t_dataset_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_group_allowed_ds_type
+    ADD CONSTRAINT fk_t_instrument_group_allowed_ds_type_t_dataset_type_name FOREIGN KEY (dataset_type) REFERENCES public.t_dataset_type_name(dataset_type) ON UPDATE CASCADE;
+
+--
+-- Name: t_instrument_group_allowed_ds_type fk_t_instrument_group_allowed_ds_type_t_instrument_group_in; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_group_allowed_ds_type
+    ADD CONSTRAINT fk_t_instrument_group_allowed_ds_type_t_instrument_group_in FOREIGN KEY (instrument_group) REFERENCES public.t_instrument_group(instrument_group) ON UPDATE CASCADE;
+
+--
 -- Name: TABLE t_instrument_group_allowed_ds_type; Type: ACL; Schema: public; Owner: d3l243
 --
 

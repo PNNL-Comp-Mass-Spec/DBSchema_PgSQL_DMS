@@ -44,6 +44,13 @@ ALTER TABLE ONLY public.t_archive_path
 CREATE INDEX ix_t_archive_path_archive_path_function ON public.t_archive_path USING btree (archive_path_function) INCLUDE (instrument_id, archive_path, network_share_path);
 
 --
+-- Name: t_archive_path fk_t_archive_path_t_archive_path_function; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_archive_path
+    ADD CONSTRAINT fk_t_archive_path_t_archive_path_function FOREIGN KEY (archive_path_function) REFERENCES public.t_archive_path_function(apf_function);
+
+--
 -- Name: TABLE t_archive_path; Type: ACL; Schema: public; Owner: d3l243
 --
 

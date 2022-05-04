@@ -30,6 +30,20 @@ CREATE INDEX ix_t_experiment_group_members_exp_id ON public.t_experiment_group_m
 CREATE INDEX ix_t_experiment_group_members_members_group_id ON public.t_experiment_group_members USING btree (group_id);
 
 --
+-- Name: t_experiment_group_members fk_t_experiment_group_members_t_experiment_groups; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_group_members
+    ADD CONSTRAINT fk_t_experiment_group_members_t_experiment_groups FOREIGN KEY (group_id) REFERENCES public.t_experiment_groups(group_id);
+
+--
+-- Name: t_experiment_group_members fk_t_experiment_group_members_t_experiments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_experiment_group_members
+    ADD CONSTRAINT fk_t_experiment_group_members_t_experiments FOREIGN KEY (exp_id) REFERENCES public.t_experiments(exp_id);
+
+--
 -- Name: TABLE t_experiment_group_members; Type: ACL; Schema: public; Owner: d3l243
 --
 

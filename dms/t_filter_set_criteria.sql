@@ -46,6 +46,20 @@ CREATE INDEX ix_t_filter_set_criteria_criterion_id ON public.t_filter_set_criter
 CREATE UNIQUE INDEX ix_t_filter_set_criteria_group_id_criterion_id ON public.t_filter_set_criteria USING btree (filter_criteria_group_id, criterion_id);
 
 --
+-- Name: t_filter_set_criteria fk_t_filter_set_criteria_t_filter_set_criteria_groups; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_filter_set_criteria
+    ADD CONSTRAINT fk_t_filter_set_criteria_t_filter_set_criteria_groups FOREIGN KEY (filter_criteria_group_id) REFERENCES public.t_filter_set_criteria_groups(filter_criteria_group_id);
+
+--
+-- Name: t_filter_set_criteria fk_t_filter_set_criteria_t_filter_set_criteria_names; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_filter_set_criteria
+    ADD CONSTRAINT fk_t_filter_set_criteria_t_filter_set_criteria_names FOREIGN KEY (criterion_id) REFERENCES public.t_filter_set_criteria_names(criterion_id);
+
+--
 -- Name: TABLE t_filter_set_criteria; Type: ACL; Schema: public; Owner: d3l243
 --
 
