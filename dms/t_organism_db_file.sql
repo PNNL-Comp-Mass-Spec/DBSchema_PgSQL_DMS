@@ -6,12 +6,12 @@ CREATE TABLE public.t_organism_db_file (
     org_db_file_id integer NOT NULL,
     file_name public.citext NOT NULL,
     organism_id integer NOT NULL,
-    description public.citext,
-    active smallint NOT NULL,
+    description public.citext DEFAULT ''::public.citext,
+    active smallint DEFAULT 1 NOT NULL,
     num_proteins integer,
     num_residues bigint,
-    valid smallint,
-    file_size_kb real,
+    valid smallint DEFAULT 1,
+    file_size_kb real DEFAULT 0,
     created timestamp without time zone
 );
 

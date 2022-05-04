@@ -26,7 +26,7 @@ CASE
         ELSE ('.'::text || (url_domain)::text)
     END) || '/'::text) || public.replace(storage_path, '\'::public.citext, '/'::public.citext))
 END) STORED,
-    url_domain public.citext NOT NULL,
+    url_domain public.citext DEFAULT ''::public.citext NOT NULL,
     created timestamp without time zone
 );
 

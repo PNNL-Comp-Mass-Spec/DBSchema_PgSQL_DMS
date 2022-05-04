@@ -5,12 +5,12 @@
 CREATE TABLE public.t_dataset_device (
     device_id integer NOT NULL,
     device_type public.citext NOT NULL,
-    device_number integer NOT NULL,
+    device_number integer DEFAULT 1 NOT NULL,
     device_name public.citext NOT NULL,
-    device_model public.citext NOT NULL,
-    serial_number public.citext NOT NULL,
-    software_version public.citext NOT NULL,
-    device_description public.citext NOT NULL
+    device_model public.citext DEFAULT ''::public.citext NOT NULL,
+    serial_number public.citext DEFAULT ''::public.citext NOT NULL,
+    software_version public.citext DEFAULT ''::public.citext NOT NULL,
+    device_description public.citext DEFAULT ''::public.citext NOT NULL
 );
 
 

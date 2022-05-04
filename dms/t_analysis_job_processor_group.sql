@@ -6,7 +6,7 @@ CREATE TABLE public.t_analysis_job_processor_group (
     group_id integer NOT NULL,
     group_name public.citext NOT NULL,
     group_description public.citext,
-    group_enabled character(1) NOT NULL,
+    group_enabled character(1) DEFAULT 'Y'::bpchar NOT NULL,
     group_created timestamp without time zone NOT NULL,
     last_affected timestamp without time zone,
     entered_by public.citext

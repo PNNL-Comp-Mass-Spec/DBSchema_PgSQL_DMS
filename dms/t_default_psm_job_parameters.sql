@@ -10,7 +10,7 @@ CREATE TABLE public.t_default_psm_job_parameters (
     stat_cys_alk smallint NOT NULL,
     dyn_sty_phos smallint NOT NULL,
     parameter_file_name public.citext,
-    enabled smallint NOT NULL
+    enabled smallint DEFAULT 1 NOT NULL
 );
 
 

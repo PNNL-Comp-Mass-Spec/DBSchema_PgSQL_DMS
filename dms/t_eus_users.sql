@@ -3,14 +3,14 @@
 --
 
 CREATE TABLE public.t_eus_users (
-    person_id integer NOT NULL,
+    person_id integer DEFAULT 0 NOT NULL,
     name_fm public.citext,
     hid public.citext,
-    site_status smallint NOT NULL,
+    site_status smallint DEFAULT 2 NOT NULL,
     last_affected timestamp without time zone,
     last_name public.citext,
     first_name public.citext,
-    valid smallint NOT NULL
+    valid smallint DEFAULT 1 NOT NULL
 );
 
 

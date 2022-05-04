@@ -5,7 +5,7 @@
 CREATE TABLE public.t_analysis_job_processor_group_membership (
     processor_id integer NOT NULL,
     group_id integer NOT NULL,
-    membership_enabled character(1) NOT NULL,
+    membership_enabled character(1) DEFAULT 'Y'::bpchar NOT NULL,
     last_affected timestamp without time zone,
     entered_by public.citext
 );

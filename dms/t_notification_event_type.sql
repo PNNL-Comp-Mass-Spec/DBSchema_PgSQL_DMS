@@ -7,7 +7,7 @@ CREATE TABLE public.t_notification_event_type (
     event_type public.citext NOT NULL,
     target_entity_type integer NOT NULL,
     link_template public.citext,
-    visible character(1) NOT NULL
+    visible character(1) DEFAULT 'Y'::bpchar NOT NULL
 );
 
 

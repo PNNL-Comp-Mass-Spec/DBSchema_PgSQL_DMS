@@ -6,7 +6,7 @@ CREATE TABLE public.t_dataset_type_name (
     dataset_type_id integer NOT NULL,
     dataset_type public.citext NOT NULL,
     description public.citext,
-    active smallint NOT NULL
+    active smallint DEFAULT 1 NOT NULL
 );
 
 

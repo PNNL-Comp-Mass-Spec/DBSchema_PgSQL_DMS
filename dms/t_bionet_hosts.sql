@@ -9,7 +9,7 @@ CREATE TABLE public.t_bionet_hosts (
     entered timestamp without time zone,
     last_online timestamp without time zone,
     instruments public.citext,
-    active smallint NOT NULL,
+    active smallint DEFAULT 1 NOT NULL,
     tag public.citext,
     comment public.citext
 );

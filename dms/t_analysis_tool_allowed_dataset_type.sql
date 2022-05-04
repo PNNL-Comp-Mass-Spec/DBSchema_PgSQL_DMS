@@ -5,7 +5,7 @@
 CREATE TABLE public.t_analysis_tool_allowed_dataset_type (
     analysis_tool_id integer NOT NULL,
     dataset_type public.citext NOT NULL,
-    comment public.citext
+    comment public.citext DEFAULT ''::public.citext
 );
 
 

@@ -5,7 +5,7 @@
 CREATE TABLE public.t_param_file_types (
     param_file_type_id integer NOT NULL,
     param_file_type public.citext NOT NULL,
-    primary_tool_id integer NOT NULL
+    primary_tool_id integer DEFAULT 0 NOT NULL
 );
 
 

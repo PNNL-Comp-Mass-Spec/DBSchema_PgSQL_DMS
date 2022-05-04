@@ -4,9 +4,9 @@
 
 CREATE TABLE public.t_biomaterial_tracking (
     biomaterial_id integer NOT NULL,
-    experiment_count integer NOT NULL,
-    dataset_count integer NOT NULL,
-    job_count integer NOT NULL
+    experiment_count integer DEFAULT 0 NOT NULL,
+    dataset_count integer DEFAULT 0 NOT NULL,
+    job_count integer DEFAULT 0 NOT NULL
 );
 
 

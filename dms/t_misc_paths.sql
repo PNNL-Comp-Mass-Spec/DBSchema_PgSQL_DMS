@@ -7,7 +7,7 @@ CREATE TABLE public.t_misc_paths (
     path_id integer NOT NULL,
     server public.citext,
     client public.citext NOT NULL,
-    comment public.citext NOT NULL
+    comment public.citext DEFAULT ''::public.citext NOT NULL
 );
 
 

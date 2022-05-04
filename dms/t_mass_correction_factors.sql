@@ -8,9 +8,9 @@ CREATE TABLE public.t_mass_correction_factors (
     description public.citext,
     monoisotopic_mass double precision NOT NULL,
     average_mass double precision,
-    affected_atom character(1) NOT NULL,
-    original_source public.citext NOT NULL,
-    original_source_name public.citext NOT NULL,
+    affected_atom character(1) DEFAULT '-'::bpchar NOT NULL,
+    original_source public.citext DEFAULT ''::public.citext NOT NULL,
+    original_source_name public.citext DEFAULT ''::public.citext NOT NULL,
     alternative_name public.citext,
     empirical_formula public.citext
 );

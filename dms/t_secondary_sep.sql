@@ -5,10 +5,10 @@
 CREATE TABLE public.t_secondary_sep (
     separation_type_id integer NOT NULL,
     separation_type public.citext NOT NULL,
-    comment public.citext NOT NULL,
-    active smallint NOT NULL,
+    comment public.citext DEFAULT ''::public.citext NOT NULL,
+    active smallint DEFAULT 1 NOT NULL,
     separation_group public.citext NOT NULL,
-    sample_type_id integer NOT NULL,
+    sample_type_id integer DEFAULT 0 NOT NULL,
     created timestamp without time zone NOT NULL
 );
 

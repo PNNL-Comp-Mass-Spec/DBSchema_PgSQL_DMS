@@ -4,10 +4,10 @@
 
 CREATE TABLE public.t_analysis_job_processors (
     processor_id integer NOT NULL,
-    state character(1) NOT NULL,
+    state character(1) DEFAULT 'E'::bpchar NOT NULL,
     processor_name public.citext NOT NULL,
     machine public.citext NOT NULL,
-    notes public.citext,
+    notes public.citext DEFAULT ''::public.citext,
     last_affected timestamp without time zone,
     entered_by public.citext
 );

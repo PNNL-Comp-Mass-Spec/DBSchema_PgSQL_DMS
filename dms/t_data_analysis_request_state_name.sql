@@ -5,7 +5,7 @@
 CREATE TABLE public.t_data_analysis_request_state_name (
     state_id smallint NOT NULL,
     state_name public.citext NOT NULL,
-    active smallint NOT NULL
+    active smallint DEFAULT 1 NOT NULL
 );
 
 

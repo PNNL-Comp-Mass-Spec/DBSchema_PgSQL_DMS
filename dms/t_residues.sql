@@ -6,7 +6,7 @@ CREATE TABLE public.t_residues (
     residue_id integer NOT NULL,
     residue_symbol character(1) NOT NULL,
     description public.citext NOT NULL,
-    abbreviation public.citext NOT NULL,
+    abbreviation public.citext DEFAULT ''::public.citext NOT NULL,
     average_mass double precision NOT NULL,
     monoisotopic_mass double precision NOT NULL,
     num_c smallint NOT NULL,

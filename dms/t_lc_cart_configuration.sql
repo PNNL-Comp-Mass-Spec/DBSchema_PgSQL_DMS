@@ -30,7 +30,7 @@ CREATE TABLE public.t_lc_cart_configuration (
     upstream_analytical_flow_rate public.citext,
     upstream_fractionation_profile public.citext,
     upstream_fractionation_details public.citext,
-    cart_config_state public.citext NOT NULL,
+    cart_config_state public.citext DEFAULT 'Active'::public.citext NOT NULL,
     entered timestamp without time zone NOT NULL,
     entered_by public.citext NOT NULL,
     updated timestamp without time zone,

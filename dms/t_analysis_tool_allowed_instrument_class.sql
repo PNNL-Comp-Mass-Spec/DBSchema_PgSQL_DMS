@@ -5,7 +5,7 @@
 CREATE TABLE public.t_analysis_tool_allowed_instrument_class (
     analysis_tool_id integer NOT NULL,
     instrument_class public.citext NOT NULL,
-    comment public.citext
+    comment public.citext DEFAULT ''::public.citext
 );
 
 

@@ -5,10 +5,10 @@
 CREATE TABLE public.t_max_quant_mods (
     mod_id integer NOT NULL,
     mod_title public.citext NOT NULL,
-    mod_position public.citext NOT NULL,
+    mod_position public.citext DEFAULT 'anywhere'::public.citext NOT NULL,
     mass_correction_id integer,
     composition public.citext,
-    isobaric_mod_ion_number smallint NOT NULL
+    isobaric_mod_ion_number smallint DEFAULT 0 NOT NULL
 );
 
 

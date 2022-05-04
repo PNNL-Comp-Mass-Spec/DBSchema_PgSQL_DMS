@@ -12,7 +12,7 @@ CREATE TABLE public.t_reference_compound (
     organism_id integer NOT NULL,
     pub_chem_cid integer,
     campaign_id integer NOT NULL,
-    container_id integer NOT NULL,
+    container_id integer DEFAULT 1 NOT NULL,
     wellplate_name public.citext,
     well_number public.citext,
     contact_prn public.citext,
@@ -23,7 +23,7 @@ CREATE TABLE public.t_reference_compound (
     purchase_quantity public.citext,
     mass double precision,
     created timestamp without time zone NOT NULL,
-    active smallint NOT NULL,
+    active smallint DEFAULT 1 NOT NULL,
     id_name public.citext GENERATED ALWAYS AS (((((compound_id)::public.citext)::text || ':'::text) || (compound_name)::text)) STORED
 );
 

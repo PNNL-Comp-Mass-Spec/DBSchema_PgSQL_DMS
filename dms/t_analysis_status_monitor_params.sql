@@ -5,8 +5,8 @@
 CREATE TABLE public.t_analysis_status_monitor_params (
     processor_id integer NOT NULL,
     status_file_name_path public.citext,
-    check_box_state smallint NOT NULL,
-    use_for_status_check smallint NOT NULL
+    check_box_state smallint DEFAULT 0 NOT NULL,
+    use_for_status_check smallint DEFAULT 1 NOT NULL
 );
 
 

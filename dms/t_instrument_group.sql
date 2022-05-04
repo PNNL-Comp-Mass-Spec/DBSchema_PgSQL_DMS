@@ -4,13 +4,13 @@
 
 CREATE TABLE public.t_instrument_group (
     instrument_group public.citext NOT NULL,
-    usage public.citext,
-    comment public.citext,
-    active smallint NOT NULL,
+    usage public.citext DEFAULT ''::public.citext,
+    comment public.citext DEFAULT ''::public.citext,
+    active smallint DEFAULT 1 NOT NULL,
     default_dataset_type integer,
     allocation_tag public.citext,
-    sample_prep_visible smallint NOT NULL,
-    requested_run_visible smallint NOT NULL,
+    sample_prep_visible smallint DEFAULT 1 NOT NULL,
+    requested_run_visible smallint DEFAULT 1 NOT NULL,
     target_instrument_group public.citext
 );
 

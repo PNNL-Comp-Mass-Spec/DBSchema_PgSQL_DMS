@@ -10,8 +10,8 @@ CREATE TABLE public.t_enzymes (
     p1_exception public.citext NOT NULL,
     p2 public.citext NOT NULL,
     p2_exception public.citext NOT NULL,
-    cleavage_method public.citext NOT NULL,
-    cleavage_offset smallint NOT NULL,
+    cleavage_method public.citext DEFAULT 'Standard'::public.citext NOT NULL,
+    cleavage_offset smallint DEFAULT 1 NOT NULL,
     sequest_enzyme_index integer,
     protein_collection_name public.citext,
     comment public.citext

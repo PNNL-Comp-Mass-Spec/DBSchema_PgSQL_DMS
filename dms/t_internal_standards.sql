@@ -8,7 +8,7 @@ CREATE TABLE public.t_internal_standards (
     name public.citext NOT NULL,
     description public.citext,
     type public.citext,
-    active character(1) NOT NULL
+    active character(1) DEFAULT 'A'::bpchar NOT NULL
 );
 
 

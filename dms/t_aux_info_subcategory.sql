@@ -6,7 +6,7 @@ CREATE TABLE public.t_aux_info_subcategory (
     aux_subcategory_id integer NOT NULL,
     aux_subcategory public.citext,
     parent_id integer,
-    sequence smallint NOT NULL
+    sequence smallint DEFAULT 0 NOT NULL
 );
 
 

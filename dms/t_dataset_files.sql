@@ -9,8 +9,8 @@ CREATE TABLE public.t_dataset_files (
     file_size_bytes bigint,
     file_hash public.citext,
     file_size_rank smallint,
-    allow_duplicates boolean,
-    deleted boolean
+    allow_duplicates boolean DEFAULT false,
+    deleted boolean DEFAULT false
 );
 
 

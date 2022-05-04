@@ -15,7 +15,7 @@ CREATE TABLE public.t_file_attachment (
     last_affected timestamp without time zone NOT NULL,
     archive_folder_path public.citext NOT NULL,
     file_mime_type public.citext,
-    active smallint NOT NULL
+    active smallint DEFAULT 1 NOT NULL
 );
 
 

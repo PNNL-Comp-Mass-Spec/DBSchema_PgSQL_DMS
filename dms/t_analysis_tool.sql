@@ -12,14 +12,14 @@ CREATE TABLE public.t_analysis_tool (
     default_settings_file_name public.citext,
     result_type public.citext,
     auto_scan_folder_flag character(3),
-    active smallint NOT NULL,
+    active smallint DEFAULT 1 NOT NULL,
     search_engine_input_file_formats public.citext,
-    org_db_required smallint NOT NULL,
-    extraction_required character(1) NOT NULL,
+    org_db_required smallint DEFAULT 0 NOT NULL,
+    extraction_required character(1) DEFAULT 'N'::bpchar NOT NULL,
     description public.citext,
-    use_special_proc_waiting smallint NOT NULL,
-    settings_file_required smallint NOT NULL,
-    param_file_required smallint NOT NULL
+    use_special_proc_waiting smallint DEFAULT 0 NOT NULL,
+    settings_file_required smallint DEFAULT 1 NOT NULL,
+    param_file_required smallint DEFAULT 1 NOT NULL
 );
 
 

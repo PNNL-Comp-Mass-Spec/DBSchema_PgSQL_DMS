@@ -4,8 +4,8 @@
 
 CREATE TABLE public.t_dataset_scan_type_glossary (
     scan_type public.citext NOT NULL,
-    sort_key integer NOT NULL,
-    comment public.citext NOT NULL
+    sort_key integer DEFAULT 0 NOT NULL,
+    comment public.citext DEFAULT ''::public.citext NOT NULL
 );
 
 

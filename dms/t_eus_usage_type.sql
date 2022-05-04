@@ -6,9 +6,9 @@ CREATE TABLE public.t_eus_usage_type (
     eus_usage_type_id smallint NOT NULL,
     eus_usage_type public.citext NOT NULL,
     description public.citext,
-    enabled smallint NOT NULL,
-    enabled_campaign smallint NOT NULL,
-    enabled_prep_request smallint NOT NULL
+    enabled smallint DEFAULT 1 NOT NULL,
+    enabled_campaign smallint DEFAULT 1 NOT NULL,
+    enabled_prep_request smallint DEFAULT 1 NOT NULL
 );
 
 

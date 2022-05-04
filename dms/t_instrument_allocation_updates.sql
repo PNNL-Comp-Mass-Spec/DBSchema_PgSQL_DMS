@@ -9,7 +9,7 @@ CREATE TABLE public.t_instrument_allocation_updates (
     fiscal_year integer,
     allocated_hours_old double precision,
     allocated_hours_new double precision,
-    comment public.citext,
+    comment public.citext DEFAULT ''::public.citext,
     entered timestamp without time zone,
     entered_by public.citext
 );

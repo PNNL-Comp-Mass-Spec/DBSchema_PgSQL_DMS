@@ -5,7 +5,7 @@
 CREATE TABLE public.t_lc_cart (
     cart_id integer NOT NULL,
     cart_name public.citext NOT NULL,
-    cart_state_id integer NOT NULL,
+    cart_state_id integer DEFAULT 2 NOT NULL,
     cart_description public.citext,
     created timestamp without time zone
 );

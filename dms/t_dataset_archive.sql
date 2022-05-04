@@ -16,13 +16,13 @@ CREATE TABLE public.t_dataset_archive (
     archive_processor public.citext,
     update_processor public.citext,
     verification_processor public.citext,
-    instrument_data_purged smallint NOT NULL,
+    instrument_data_purged smallint DEFAULT 0 NOT NULL,
     last_successful_archive timestamp without time zone,
-    stagemd5_required smallint NOT NULL,
-    qc_data_purged smallint NOT NULL,
-    purge_policy smallint NOT NULL,
-    purge_priority smallint NOT NULL,
-    myemsl_state smallint NOT NULL
+    stagemd5_required smallint DEFAULT 0 NOT NULL,
+    qc_data_purged smallint DEFAULT 0 NOT NULL,
+    purge_policy smallint DEFAULT 0 NOT NULL,
+    purge_priority smallint DEFAULT 3 NOT NULL,
+    myemsl_state smallint DEFAULT 0 NOT NULL
 );
 
 

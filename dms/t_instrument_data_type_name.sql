@@ -5,8 +5,8 @@
 CREATE TABLE public.t_instrument_data_type_name (
     raw_data_type_id integer NOT NULL,
     raw_data_type_name public.citext NOT NULL,
-    is_folder smallint NOT NULL,
-    required_file_extension public.citext NOT NULL,
+    is_folder smallint DEFAULT 0 NOT NULL,
+    required_file_extension public.citext DEFAULT ''::public.citext NOT NULL,
     comment public.citext
 );
 

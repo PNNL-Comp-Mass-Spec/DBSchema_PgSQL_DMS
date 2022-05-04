@@ -13,7 +13,7 @@ CREATE TABLE public.t_dataset_qc_metric_names (
     optimal public.citext,
     purpose public.citext,
     description public.citext NOT NULL,
-    ignored smallint,
+    ignored smallint DEFAULT 0,
     sort_key integer NOT NULL
 );
 

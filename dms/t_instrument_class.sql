@@ -4,9 +4,9 @@
 
 CREATE TABLE public.t_instrument_class (
     instrument_class public.citext NOT NULL,
-    is_purgeable smallint NOT NULL,
-    raw_data_type public.citext NOT NULL,
-    requires_preparation smallint NOT NULL,
+    is_purgeable smallint DEFAULT 0 NOT NULL,
+    raw_data_type public.citext DEFAULT 'na'::public.citext NOT NULL,
+    requires_preparation smallint DEFAULT 0 NOT NULL,
     params xml,
     comment public.citext
 );

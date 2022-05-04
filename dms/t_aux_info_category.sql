@@ -6,7 +6,7 @@ CREATE TABLE public.t_aux_info_category (
     aux_category_id integer NOT NULL,
     aux_category public.citext,
     target_type_id integer,
-    sequence smallint NOT NULL
+    sequence smallint DEFAULT 0 NOT NULL
 );
 
 

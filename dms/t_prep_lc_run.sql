@@ -10,7 +10,7 @@ CREATE TABLE public.t_prep_lc_run (
     lc_column public.citext,
     lc_column_2 public.citext,
     comment public.citext,
-    guard_column public.citext NOT NULL,
+    guard_column public.citext DEFAULT 'No'::public.citext NOT NULL,
     created timestamp without time zone NOT NULL,
     operator_prn public.citext,
     digestion_method public.citext,

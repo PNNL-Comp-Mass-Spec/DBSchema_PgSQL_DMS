@@ -25,12 +25,12 @@ END) STORED,
     genus public.citext,
     species public.citext,
     strain public.citext,
-    dna_translation_table_id integer,
-    mito_dna_translation_table_id integer,
-    active smallint,
+    dna_translation_table_id integer DEFAULT 0,
+    mito_dna_translation_table_id integer DEFAULT 0,
+    active smallint DEFAULT 1,
     newt_id_list public.citext,
     ncbi_taxonomy_id integer,
-    auto_define_taxonomy smallint NOT NULL
+    auto_define_taxonomy smallint DEFAULT 1 NOT NULL
 );
 
 

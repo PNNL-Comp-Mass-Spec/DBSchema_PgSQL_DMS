@@ -5,14 +5,14 @@
 CREATE TABLE public.t_lc_column (
     lc_column_id integer NOT NULL,
     lc_column public.citext NOT NULL,
-    packing_mfg public.citext NOT NULL,
+    packing_mfg public.citext DEFAULT 'na'::public.citext NOT NULL,
     packing_type public.citext NOT NULL,
     particle_size public.citext NOT NULL,
     particle_type public.citext NOT NULL,
     column_inner_dia public.citext NOT NULL,
     column_outer_dia public.citext NOT NULL,
     column_length public.citext NOT NULL,
-    column_state_id integer NOT NULL,
+    column_state_id integer DEFAULT 0 NOT NULL,
     operator_prn public.citext NOT NULL,
     comment public.citext,
     created timestamp without time zone

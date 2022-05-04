@@ -8,7 +8,7 @@ CREATE TABLE public.t_archive_space_usage (
     data_mb bigint NOT NULL,
     files integer,
     folders integer,
-    comment public.citext,
+    comment public.citext DEFAULT ''::public.citext,
     entered_by public.citext
 );
 

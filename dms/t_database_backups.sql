@@ -5,7 +5,7 @@
 CREATE TABLE public.t_database_backups (
     name public.citext NOT NULL,
     backup_folder public.citext NOT NULL,
-    full_backup_interval_days double precision NOT NULL,
+    full_backup_interval_days double precision DEFAULT 14 NOT NULL,
     last_full_backup timestamp without time zone,
     last_trans_backup timestamp without time zone,
     last_failed_backup timestamp without time zone,

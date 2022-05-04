@@ -8,7 +8,7 @@ CREATE TABLE public.t_attachments (
     attachment_name public.citext NOT NULL,
     attachment_description public.citext,
     owner_prn public.citext,
-    active public.citext NOT NULL,
+    active public.citext DEFAULT 'Y'::public.citext NOT NULL,
     contents public.citext,
     file_name public.citext NOT NULL,
     created timestamp without time zone NOT NULL

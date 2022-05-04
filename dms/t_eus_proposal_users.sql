@@ -5,8 +5,8 @@
 CREATE TABLE public.t_eus_proposal_users (
     proposal_id public.citext NOT NULL,
     person_id integer NOT NULL,
-    of_dms_interest character(1) NOT NULL,
-    state_id smallint NOT NULL,
+    of_dms_interest character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    state_id smallint DEFAULT 1 NOT NULL,
     last_affected timestamp without time zone
 );
 

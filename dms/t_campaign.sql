@@ -11,7 +11,7 @@ CREATE TABLE public.t_campaign (
     comment public.citext,
     created timestamp without time zone NOT NULL,
     technical_lead public.citext,
-    state public.citext NOT NULL,
+    state public.citext DEFAULT 'Active'::public.citext NOT NULL,
     description public.citext,
     external_links public.citext,
     team_members public.citext,
@@ -20,9 +20,9 @@ CREATE TABLE public.t_campaign (
     organisms public.citext,
     experiment_prefixes public.citext,
     research_team integer,
-    data_release_restrictions integer NOT NULL,
-    fraction_emsl_funded numeric(3,2) NOT NULL,
-    eus_usage_type_id smallint NOT NULL
+    data_release_restrictions integer DEFAULT 0 NOT NULL,
+    fraction_emsl_funded numeric(3,2) DEFAULT 0 NOT NULL,
+    eus_usage_type_id smallint DEFAULT 1 NOT NULL
 );
 
 

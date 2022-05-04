@@ -8,14 +8,14 @@ CREATE TABLE public.t_requested_run_batches (
     description public.citext,
     owner integer,
     created timestamp without time zone NOT NULL,
-    locked public.citext NOT NULL,
+    locked public.citext DEFAULT 'Yes'::public.citext NOT NULL,
     last_ordered timestamp without time zone,
-    requested_batch_priority public.citext NOT NULL,
-    actual_batch_priority public.citext NOT NULL,
+    requested_batch_priority public.citext DEFAULT 'Normal'::public.citext NOT NULL,
+    actual_batch_priority public.citext DEFAULT 'Normal'::public.citext NOT NULL,
     requested_completion_date timestamp without time zone,
     justification_for_high_priority public.citext,
     comment public.citext,
-    requested_instrument public.citext NOT NULL,
+    requested_instrument public.citext DEFAULT 'na'::public.citext NOT NULL,
     hex_id public.citext GENERATED ALWAYS AS ("left"((encode(((batch_id)::text)::bytea, 'hex'::text) || '000000000000000000000000'::text), 24)) STORED
 );
 

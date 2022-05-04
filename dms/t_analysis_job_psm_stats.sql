@@ -5,8 +5,8 @@
 CREATE TABLE public.t_analysis_job_psm_stats (
     job integer NOT NULL,
     msgf_threshold double precision NOT NULL,
-    fdr_threshold double precision NOT NULL,
-    msgf_threshold_is_evalue smallint NOT NULL,
+    fdr_threshold double precision DEFAULT 1 NOT NULL,
+    msgf_threshold_is_evalue smallint DEFAULT 0 NOT NULL,
     spectra_searched integer,
     total_psms integer,
     unique_peptides integer,
@@ -21,7 +21,7 @@ CREATE TABLE public.t_analysis_job_psm_stats (
     acetyl_peptides_fdr integer,
     percent_msn_scans_no_psm real,
     maximum_scan_gap_adjacent_msn integer,
-    dynamic_reporter_ion smallint NOT NULL,
+    dynamic_reporter_ion smallint DEFAULT 0 NOT NULL,
     percent_psms_missing_nterm_reporter_ion real,
     percent_psms_missing_reporter_ion real,
     last_affected timestamp without time zone NOT NULL

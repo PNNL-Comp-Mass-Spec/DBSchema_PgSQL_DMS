@@ -15,16 +15,16 @@ CREATE TABLE public.t_charge_code (
     inactive_date timestamp without time zone,
     sub_account_inactive_date timestamp without time zone,
     inactive_date_most_recent timestamp without time zone,
-    deactivated public.citext NOT NULL,
+    deactivated public.citext DEFAULT 'N'::public.citext NOT NULL,
     auth_amt bigint NOT NULL,
     auth_prn public.citext,
     auth_hid public.citext,
-    auto_defined smallint NOT NULL,
-    charge_code_state smallint NOT NULL,
+    auto_defined smallint DEFAULT 0 NOT NULL,
+    charge_code_state smallint DEFAULT 1 NOT NULL,
     last_affected timestamp without time zone NOT NULL,
     usage_sample_prep integer,
     usage_requested_run integer,
-    activation_state smallint NOT NULL,
+    activation_state smallint DEFAULT 0 NOT NULL,
     sort_key public.citext GENERATED ALWAYS AS (((
 CASE
     WHEN ((activation_state = 3) OR (activation_state = 0)) THEN '0'::public.citext

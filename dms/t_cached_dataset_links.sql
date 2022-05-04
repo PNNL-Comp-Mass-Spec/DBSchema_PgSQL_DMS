@@ -13,7 +13,7 @@ CREATE TABLE public.t_cached_dataset_links (
     qc_2d public.citext,
     qc_metric_stats public.citext,
     masic_directory_name public.citext,
-    update_required smallint NOT NULL,
+    update_required smallint DEFAULT 0 NOT NULL,
     last_affected timestamp without time zone NOT NULL
 );
 

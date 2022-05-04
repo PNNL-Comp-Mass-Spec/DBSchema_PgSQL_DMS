@@ -6,10 +6,10 @@ CREATE TABLE public.t_aux_info_description (
     aux_description_id integer NOT NULL,
     aux_description public.citext NOT NULL,
     parent_id integer,
-    sequence smallint NOT NULL,
-    data_size integer NOT NULL,
-    helper_append character(1) NOT NULL,
-    active character(1) NOT NULL
+    sequence smallint DEFAULT 0 NOT NULL,
+    data_size integer DEFAULT 64 NOT NULL,
+    helper_append character(1) DEFAULT 'N'::bpchar NOT NULL,
+    active character(1) DEFAULT 'Y'::bpchar NOT NULL
 );
 
 

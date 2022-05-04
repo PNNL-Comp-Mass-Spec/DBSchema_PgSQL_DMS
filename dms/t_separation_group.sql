@@ -4,10 +4,10 @@
 
 CREATE TABLE public.t_separation_group (
     separation_group public.citext NOT NULL,
-    comment public.citext,
-    active smallint NOT NULL,
-    sample_prep_visible smallint NOT NULL,
-    fraction_count smallint NOT NULL
+    comment public.citext DEFAULT ''::public.citext,
+    active smallint DEFAULT 1 NOT NULL,
+    sample_prep_visible smallint DEFAULT 1 NOT NULL,
+    fraction_count smallint DEFAULT 0 NOT NULL
 );
 
 

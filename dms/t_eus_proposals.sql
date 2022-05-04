@@ -3,9 +3,9 @@
 --
 
 CREATE TABLE public.t_eus_proposals (
-    proposal_id public.citext NOT NULL,
+    proposal_id public.citext DEFAULT ''::public.citext NOT NULL,
     title public.citext,
-    state_id integer NOT NULL,
+    state_id integer DEFAULT 1 NOT NULL,
     import_date timestamp without time zone NOT NULL,
     proposal_type public.citext,
     proposal_start_date timestamp without time zone,

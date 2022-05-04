@@ -10,7 +10,7 @@ CREATE TABLE public.t_operations_tasks (
     assigned_personnel public.citext,
     description public.citext NOT NULL,
     comments public.citext,
-    status public.citext NOT NULL,
+    status public.citext DEFAULT 'Normal'::public.citext NOT NULL,
     priority public.citext,
     created timestamp without time zone,
     work_package public.citext,

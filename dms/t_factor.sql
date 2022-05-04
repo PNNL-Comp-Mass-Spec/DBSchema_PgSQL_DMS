@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_factor (
     factor_id integer NOT NULL,
-    type public.citext NOT NULL,
+    type public.citext DEFAULT 'Run_Request'::public.citext NOT NULL,
     target_id integer NOT NULL,
     name public.citext NOT NULL,
     value public.citext NOT NULL,

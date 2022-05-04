@@ -7,11 +7,11 @@ CREATE TABLE public.t_experiment_groups (
     group_type public.citext NOT NULL,
     created timestamp without time zone NOT NULL,
     description public.citext,
-    parent_exp_id integer NOT NULL,
+    parent_exp_id integer DEFAULT 0 NOT NULL,
     prep_lc_run_id integer,
     researcher public.citext,
     tab public.citext,
-    member_count integer NOT NULL
+    member_count integer DEFAULT 0 NOT NULL
 );
 
 

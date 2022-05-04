@@ -6,13 +6,13 @@ CREATE TABLE public.t_predefined_analysis_scheduling_queue (
     item integer NOT NULL,
     dataset_id integer NOT NULL,
     calling_user public.citext,
-    analysis_tool_name_filter public.citext,
-    exclude_datasets_not_released smallint,
-    prevent_duplicate_jobs smallint,
-    state public.citext NOT NULL,
+    analysis_tool_name_filter public.citext DEFAULT ''::public.citext,
+    exclude_datasets_not_released smallint DEFAULT 1,
+    prevent_duplicate_jobs smallint DEFAULT 1,
+    state public.citext DEFAULT 'New'::public.citext NOT NULL,
     result_code integer,
     message public.citext,
-    jobs_created integer NOT NULL,
+    jobs_created integer DEFAULT 0 NOT NULL,
     entered timestamp without time zone NOT NULL,
     last_affected timestamp without time zone NOT NULL
 );

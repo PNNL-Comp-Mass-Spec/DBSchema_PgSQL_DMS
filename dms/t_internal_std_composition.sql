@@ -5,7 +5,7 @@
 CREATE TABLE public.t_internal_std_composition (
     mix_id integer NOT NULL,
     component_id integer NOT NULL,
-    concentration public.citext
+    concentration public.citext DEFAULT ''::public.citext
 );
 
 

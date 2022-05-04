@@ -5,13 +5,13 @@
 CREATE TABLE public.t_predefined_analysis_scheduling_rules (
     rule_id integer NOT NULL,
     evaluation_order smallint NOT NULL,
-    instrument_class public.citext NOT NULL,
-    instrument_name public.citext NOT NULL,
-    dataset_name public.citext NOT NULL,
-    analysis_tool_name public.citext NOT NULL,
-    priority integer NOT NULL,
+    instrument_class public.citext DEFAULT ''::public.citext NOT NULL,
+    instrument_name public.citext DEFAULT ''::public.citext NOT NULL,
+    dataset_name public.citext DEFAULT ''::public.citext NOT NULL,
+    analysis_tool_name public.citext DEFAULT ''::public.citext NOT NULL,
+    priority integer DEFAULT 3 NOT NULL,
     processor_group_id integer,
-    enabled smallint NOT NULL,
+    enabled smallint DEFAULT 1 NOT NULL,
     created timestamp without time zone NOT NULL
 );
 
