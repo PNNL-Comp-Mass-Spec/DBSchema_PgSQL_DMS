@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_cached_dataset_folder_paths (
     dataset_id integer NOT NULL,
-    dataset_row_version xid NOT NULL,
+    dataset_row_version xid,
     storage_path_row_version xid,
     dataset_folder_path public.citext,
     archive_folder_path public.citext,
