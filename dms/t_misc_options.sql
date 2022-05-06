@@ -33,6 +33,12 @@ ALTER TABLE ONLY public.t_misc_options
     ADD CONSTRAINT pk_t_misc_options PRIMARY KEY (name);
 
 --
+-- Name: ix_t_misc_options_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_misc_options_id ON public.t_misc_options USING btree (id);
+
+--
 -- Name: TABLE t_misc_options; Type: ACL; Schema: public; Owner: d3l243
 --
 
