@@ -21,6 +21,23 @@ SET row_security = off;
 --
 
 COPY public.t_biomaterial_type_name (biomaterial_type_id, biomaterial_type) FROM stdin;
+109	Air
+105	Biofluid
+104	Community
+2	Eukaryote
+107	Genetically modified eukaryote
+106	Genetically modified prokaryote
+108	Genetically modified virus
+103	Metabolite standards
+114	Miscellaneous or artificial
+113	Plant-associated
+1	Prokaryote
+102	Protein/peptide standards
+112	Sediment
+110	Soil
+101	Viral
+115	Wastewater/sludge
+111	Water
 \.
 
 
@@ -28,7 +45,7 @@ COPY public.t_biomaterial_type_name (biomaterial_type_id, biomaterial_type) FROM
 -- Name: t_biomaterial_type_name_biomaterial_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_biomaterial_type_name_biomaterial_type_id_seq', 100, false);
+SELECT pg_catalog.setval('public.t_biomaterial_type_name_biomaterial_type_id_seq', 115, true);
 
 
 --

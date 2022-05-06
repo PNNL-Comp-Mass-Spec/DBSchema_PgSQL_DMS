@@ -21,6 +21,12 @@ SET row_security = off;
 --
 
 COPY public.t_analysis_job_request_state (request_state_id, request_state) FROM stdin;
+0	na
+1	New
+2	Used
+3	Inactive
+4	Incomplete
+5	New (Review Required)
 \.
 
 

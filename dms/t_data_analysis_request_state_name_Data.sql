@@ -21,6 +21,11 @@ SET row_security = off;
 --
 
 COPY public.t_data_analysis_request_state_name (state_id, state_name, active) FROM stdin;
+0	(state used for change tracking)	0
+1	New	1
+2	On Hold	1
+3	Analysis in Progress	1
+4	Closed	1
 \.
 
 

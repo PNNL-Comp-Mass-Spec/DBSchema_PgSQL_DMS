@@ -21,6 +21,11 @@ SET row_security = off;
 --
 
 COPY public.t_eus_proposal_users_state_name (eus_user_state_id, eus_user_state) FROM stdin;
+1	Associated with active proposal
+2	Associated with inactive proposal
+3	Unknown association; may need to delete
+4	Permanently associated with proposal
+5	No longer associated with proposal
 \.
 
 

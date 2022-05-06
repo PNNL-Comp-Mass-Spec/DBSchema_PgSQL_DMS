@@ -21,6 +21,11 @@ SET row_security = off;
 --
 
 COPY public.t_requested_run_state_name (state_name, state_id) FROM stdin;
+Active	1
+Completed	2
+Inactive	3
+Holding	4
+Fractionated	5
 \.
 
 
@@ -28,7 +33,7 @@ COPY public.t_requested_run_state_name (state_name, state_id) FROM stdin;
 -- Name: t_requested_run_state_name_state_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_requested_run_state_name_state_id_seq', 1, false);
+SELECT pg_catalog.setval('public.t_requested_run_state_name_state_id_seq', 5, true);
 
 
 --

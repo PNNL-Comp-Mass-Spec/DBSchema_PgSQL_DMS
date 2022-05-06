@@ -21,6 +21,10 @@ SET row_security = off;
 --
 
 COPY public.t_experiment_plex_channel_type_name (channel_type_id, channel_type_name) FROM stdin;
+0	Empty
+1	Sample
+2	Reference
+3	Boost
 \.
 
 

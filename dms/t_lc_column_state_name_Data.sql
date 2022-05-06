@@ -21,6 +21,10 @@ SET row_security = off;
 --
 
 COPY public.t_lc_column_state_name (column_state_id, column_state) FROM stdin;
+0	na
+1	New
+2	Active
+3	Retired
 \.
 
 

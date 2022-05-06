@@ -21,6 +21,11 @@ SET row_security = off;
 --
 
 COPY public.t_eus_proposal_state_name (eus_project_id, eus_project) FROM stdin;
+1	New
+2	Active
+3	Inactive
+4	No Interest
+5	Permanently Active
 \.
 
 

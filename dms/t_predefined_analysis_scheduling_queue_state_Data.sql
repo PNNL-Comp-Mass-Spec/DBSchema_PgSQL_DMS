@@ -21,6 +21,12 @@ SET row_security = off;
 --
 
 COPY public.t_predefined_analysis_scheduling_queue_state (state) FROM stdin;
+Complete
+Error
+ErrorIgnore
+Holding
+New
+Skipped
 \.
 
 

@@ -21,6 +21,13 @@ SET row_security = off;
 --
 
 COPY public.t_sample_prep_request_state_name (state_id, state_name, active) FROM stdin;
+0	(state used for change tracking)	0
+1	New	1
+2	On Hold	1
+3	Prep in Progress	1
+4	Prep Complete	0
+5	Closed	1
+6	Pending Approval	0
 \.
 
 

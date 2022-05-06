@@ -21,6 +21,9 @@ SET row_security = off;
 --
 
 COPY public.t_requested_run_queue_state (queue_state, queue_state_name) FROM stdin;
+1	Unassigned
+2	Assigned
+3	Analyzed
 \.
 
 

@@ -21,6 +21,10 @@ SET row_security = off;
 --
 
 COPY public.t_lc_cart_state_name (cart_state_id, cart_state) FROM stdin;
+1	(unknown)
+2	In Service
+3	Out of Service
+10	Retired
 \.
 
 

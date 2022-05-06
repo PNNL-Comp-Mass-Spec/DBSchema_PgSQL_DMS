@@ -21,6 +21,11 @@ SET row_security = off;
 --
 
 COPY public.t_email_alert_state (alert_state, alert_state_name) FROM stdin;
+1	New
+2	Notified
+3	Failed
+4	Inactive
+5	Holding
 \.
 
 

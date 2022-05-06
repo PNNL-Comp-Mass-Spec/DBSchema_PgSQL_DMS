@@ -21,6 +21,13 @@ SET row_security = off;
 --
 
 COPY public.t_archive_update_state_name (archive_update_state_id, archive_update_state) FROM stdin;
+0	(none)
+1	New
+2	Update Required
+3	Update In Progress
+4	Update Complete
+5	Update Failed
+6	Holding
 \.
 
 

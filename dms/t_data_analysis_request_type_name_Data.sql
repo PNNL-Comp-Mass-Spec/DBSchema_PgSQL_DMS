@@ -21,6 +21,9 @@ SET row_security = off;
 --
 
 COPY public.t_data_analysis_request_type_name (analysis_type) FROM stdin;
+Lipidomics
+Metabolomics
+Proteomics
 \.
 
 

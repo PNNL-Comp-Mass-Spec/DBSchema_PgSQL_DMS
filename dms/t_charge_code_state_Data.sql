@@ -21,6 +21,10 @@ SET row_security = off;
 --
 
 COPY public.t_charge_code_state (charge_code_state, charge_code_state_name) FROM stdin;
+0	Inactive
+1	Interest Unknown
+2	Active in DMS
+3	Permanently Active
 \.
 
 

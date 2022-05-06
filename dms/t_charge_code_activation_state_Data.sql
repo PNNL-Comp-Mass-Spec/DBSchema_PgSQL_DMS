@@ -21,6 +21,12 @@ SET row_security = off;
 --
 
 COPY public.t_charge_code_activation_state (activation_state, activation_state_name) FROM stdin;
+0	Active
+1	Active, unused
+2	Active, old
+3	Inactive, used
+4	Inactive, unused
+5	Inactive, old
 \.
 
 

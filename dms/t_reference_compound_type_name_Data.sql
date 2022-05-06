@@ -21,6 +21,9 @@ SET row_security = off;
 --
 
 COPY public.t_reference_compound_type_name (compound_type_id, compound_type_name) FROM stdin;
+100	Compound
+102	Metabolite standards
+101	Protein/peptide standards
 \.
 
 
@@ -28,7 +31,7 @@ COPY public.t_reference_compound_type_name (compound_type_id, compound_type_name
 -- Name: t_reference_compound_type_name_compound_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_reference_compound_type_name_compound_type_id_seq', 100, false);
+SELECT pg_catalog.setval('public.t_reference_compound_type_name_compound_type_id_seq', 102, true);
 
 
 --

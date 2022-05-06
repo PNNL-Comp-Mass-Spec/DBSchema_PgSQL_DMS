@@ -21,6 +21,20 @@ SET row_security = off;
 --
 
 COPY public.t_dataset_state_name (ds_state_id, dataset_state) FROM stdin;
+1	New
+2	Capture In Progress
+3	Complete
+4	Inactive
+5	Capture Failed
+6	Received
+7	Prep. In Progress
+8	Preparation Failed
+9	Not Ready
+10	Restore Required
+11	Restore In Progress
+12	Restore Failed
+13	Holding
+14	Capture Failed, Duplicate Dataset Files
 \.
 
 

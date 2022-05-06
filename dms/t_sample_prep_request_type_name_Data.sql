@@ -21,6 +21,8 @@ SET row_security = off;
 --
 
 COPY public.t_sample_prep_request_type_name (request_type) FROM stdin;
+Default
+RNA
 \.
 
 

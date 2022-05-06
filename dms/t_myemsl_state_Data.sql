@@ -21,6 +21,9 @@ SET row_security = off;
 --
 
 COPY public.t_myemsl_state (myemsl_state, myemsl_state_name) FROM stdin;
+0	Not in MyEMSL
+1	Submitted to MyEMSL
+2	Verified in MyEMSL
 \.
 
 
