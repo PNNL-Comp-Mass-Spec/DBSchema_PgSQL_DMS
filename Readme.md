@@ -51,11 +51,12 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 * In the [DB-Schema-Export-Tool repo](https://github.com/PNNL-Comp-Mass-Spec/DB-Schema-Export-Tool) on GitHub
 * Three input files:
   * Schema DDL file from step 1
+    * Defined with the `ExistingDDL=Database.sql` parameter
   * Text file defining the source and target table names, along with primary key columns
     * Also defines tables to skip
-    * Defined with the `DataTables` parameter in the ExportOptions parameter file
+    * Defined with the `DataTables=Database_Tables.tsv` parameter in the ExportOptions parameter file
   * Text file defining the source and target column names, optionally defining columns to skip
-    * Defined with the `ColumnMap` parameter in the ExportOptions parameter file
+    * Defined with the `ColumnMap=Database_Table_Columns.tsv` parameter in the ExportOptions parameter file
 
 3. Use the sqlserver2pgsql tool to convert the DDL to PostgreSQL syntax, including citext
 * sqlserver2pgsql is a perl script
@@ -73,21 +74,31 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 5. Create tables and views in the PostgreSQL database
 * Tables and views can be manually updated, if necessary
 
-6. Script out the schema for tables, views, etc. in the the PostgreSQL database
+6. Script out the schema for tables, views, etc. in the PostgreSQL database
 * Again, use the DB Schema Export Tool, but this time the source database is the PostgreSQL server
 * Store the scripted objects in a git repo
   * See the [DBSchema_DMS repo](https://github.com/PNNL-Comp-Mass-Spec/DBSchema_DMS)
 
 7. Transfer Table Data
 * Use the DB Schema Export Tool tool to export data from all of the tables in SQL Server
-* Two input files:
+* Three input files:
   * Text file defining the source and target table names, along with primary key columns; also defines tables to skip
   * Text file defining the source and target column names, optionally defining columns to skip
+  * Text file with table names defining the order that data should be exported from tables
+    * The export order also dictates the order that tables will be listed in the shell script created for importing data into the target database
 * The program will create one file per table, with the data for that table scripted as `INSERT ... ON CONFLICT DO UPDATE` statements
 * It also creates a shell script for loading the data for each table
   * Import data to to the PostgreSQL database by running the shell script
 
-8. Convert stored procedures
+8. Append new table data
+* New data added to tables in SQL Server can be added to the PostgreSQL database
+* Use the DB Schema Export Tool tool, with a parameter file that has TableDataDateFilter defined
+  * This points to a tab-delimited text file with columns SourceTableName, DateColumnName, and MinimumDate
+* The program will create one file per table
+* It also creates a shell script for loading the data for each table
+  * Import data to to the PostgreSQL database by running the shell script
+
+9. Convert stored procedures
 * Use SQL Server Management Studio (SSMS) to script out stored procedures and user defined functions from a database
 * Convert the scripted DDL using the SQLServer Stored Procedure Converter
   * See the [SQLServer-Stored-Procedure-Converter repo](https://github.com/PNNL-Comp-Mass-Spec/SQLServer-Stored-Procedure-Converter) on GitHub
