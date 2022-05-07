@@ -31,12 +31,13 @@ CREATE TABLE public.t_lc_cart_configuration (
     upstream_fractionation_profile public.citext,
     upstream_fractionation_details public.citext,
     cart_config_state public.citext DEFAULT 'Active'::public.citext NOT NULL,
-    entered timestamp without time zone NOT NULL,
-    entered_by public.citext NOT NULL,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    entered_by public.citext DEFAULT SESSION_USER NOT NULL,
     updated timestamp without time zone,
     updated_by public.citext,
     dataset_usage_count integer,
-    dataset_usage_last_year integer
+    dataset_usage_last_year integer,
+    CONSTRAINT ck_t_lc_cart_configuration_state CHECK (((cart_config_state OPERATOR(public.=) 'Invalid'::public.citext) OR ((cart_config_state OPERATOR(public.=) 'Inactive'::public.citext) OR (cart_config_state OPERATOR(public.=) 'active'::public.citext))))
 );
 
 

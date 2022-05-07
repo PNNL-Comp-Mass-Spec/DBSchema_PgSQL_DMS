@@ -9,8 +9,8 @@ CREATE TABLE public.t_param_entries (
     entry_specifier public.citext,
     entry_value public.citext,
     param_file_id integer NOT NULL,
-    entered timestamp without time zone,
-    entered_by public.citext
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

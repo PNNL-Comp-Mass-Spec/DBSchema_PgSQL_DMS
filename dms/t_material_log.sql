@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_material_log (
     entry_id integer NOT NULL,
-    date timestamp without time zone NOT NULL,
+    date timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     type public.citext NOT NULL,
     item public.citext NOT NULL,
     initial_state public.citext,

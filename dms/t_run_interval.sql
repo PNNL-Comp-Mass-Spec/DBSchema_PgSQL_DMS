@@ -9,9 +9,9 @@ CREATE TABLE public.t_run_interval (
     "interval" integer,
     comment public.citext,
     usage xml,
-    entered timestamp without time zone,
-    last_affected timestamp without time zone,
-    entered_by public.citext
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

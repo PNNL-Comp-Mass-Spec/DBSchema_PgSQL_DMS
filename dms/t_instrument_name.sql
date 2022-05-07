@@ -19,7 +19,7 @@ CREATE TABLE public.t_instrument_name (
     percent_emsl_owned integer DEFAULT 0 NOT NULL,
     max_simultaneous_captures smallint DEFAULT 1 NOT NULL,
     capture_exclusion_window real DEFAULT 11 NOT NULL,
-    created timestamp without time zone,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     auto_define_storage_path smallint DEFAULT 0 NOT NULL,
     auto_sp_vol_name_client public.citext,
     auto_sp_vol_name_server public.citext,
@@ -37,7 +37,8 @@ CASE
     ELSE (room_number)::text
 END) STORED,
     default_purge_priority smallint DEFAULT 3 NOT NULL,
-    storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL
+    storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL,
+    CONSTRAINT ck_t_instrument_name_status CHECK (((status = 'offline'::bpchar) OR ((status = 'inactive'::bpchar) OR (status = 'active'::bpchar))))
 );
 
 

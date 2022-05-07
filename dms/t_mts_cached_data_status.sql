@@ -8,9 +8,9 @@ CREATE TABLE public.t_mts_cached_data_status (
     insert_count integer DEFAULT 0 NOT NULL,
     update_count integer DEFAULT 0 NOT NULL,
     delete_count integer DEFAULT 0 NOT NULL,
-    last_refreshed timestamp without time zone NOT NULL,
+    last_refreshed timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_refresh_minimum_id integer,
-    last_full_refresh timestamp without time zone NOT NULL
+    last_full_refresh timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

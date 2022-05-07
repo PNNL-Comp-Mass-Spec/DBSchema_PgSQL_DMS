@@ -6,7 +6,7 @@ CREATE TABLE public.t_bionet_hosts (
     host public.citext NOT NULL,
     ip public.citext,
     alias public.citext,
-    entered timestamp without time zone,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     last_online timestamp without time zone,
     instruments public.citext,
     active smallint DEFAULT 1 NOT NULL,

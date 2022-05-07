@@ -7,7 +7,7 @@ CREATE TABLE public.t_general_statistics (
     category public.citext NOT NULL,
     label public.citext NOT NULL,
     value public.citext,
-    last_affected timestamp without time zone
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 

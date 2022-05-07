@@ -8,7 +8,7 @@ CREATE TABLE public.t_lc_cart_config_history (
     date_of_change timestamp without time zone,
     description public.citext,
     note public.citext,
-    entered timestamp without time zone,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     entered_by public.citext NOT NULL
 );
 

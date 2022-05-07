@@ -8,7 +8,7 @@ CREATE TABLE public.t_experiment_plex_members (
     exp_id integer NOT NULL,
     channel_type_id smallint NOT NULL,
     comment public.citext,
-    entered timestamp without time zone NOT NULL
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

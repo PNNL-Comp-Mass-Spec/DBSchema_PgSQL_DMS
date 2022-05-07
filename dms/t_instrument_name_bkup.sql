@@ -11,7 +11,7 @@ CREATE TABLE public.t_instrument_name_bkup (
     capture_method public.citext,
     room_number public.citext,
     description public.citext,
-    created timestamp without time zone
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 

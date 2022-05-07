@@ -6,7 +6,7 @@ CREATE TABLE public.t_sample_prep_request_updates (
     entry_id integer NOT NULL,
     request_id integer NOT NULL,
     system_account public.citext NOT NULL,
-    date_of_change timestamp without time zone NOT NULL,
+    date_of_change timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     beginning_state_id smallint NOT NULL,
     end_state_id smallint NOT NULL
 );

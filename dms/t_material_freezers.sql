@@ -6,7 +6,8 @@ CREATE TABLE public.t_material_freezers (
     freezer_id integer NOT NULL,
     freezer public.citext NOT NULL,
     freezer_tag public.citext NOT NULL,
-    comment public.citext
+    comment public.citext,
+    CONSTRAINT ck_t_material_freezers_tag_white_space CHECK ((public.has_whitespace_chars((freezer_tag)::text, 0) = false))
 );
 
 

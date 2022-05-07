@@ -28,11 +28,11 @@ CREATE TABLE public.t_sample_prep_request (
     instrument_analysis_specifications public.citext,
     comment public.citext,
     priority public.citext DEFAULT 'Normal'::public.citext,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     state smallint DEFAULT 1 NOT NULL,
     state_comment public.citext,
     requested_personnel public.citext,
-    state_changed timestamp without time zone NOT NULL,
+    state_changed timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     internal_standard_id integer DEFAULT 0 NOT NULL,
     post_digest_internal_std_id integer DEFAULT 0 NOT NULL,
     estimated_completion timestamp without time zone,
@@ -61,7 +61,8 @@ CREATE TABLE public.t_sample_prep_request (
 CASE
     WHEN (assigned_personnel OPERATOR(public.=) 'na'::public.citext) THEN 'zz_na'::text
     ELSE "left"((assigned_personnel)::text, 64)
-END) STORED
+END) STORED,
+    CONSTRAINT ck_t_sample_prep_request_sample_prep_request_name_white_space CHECK ((public.has_whitespace_chars((request_name)::text, 1) = false))
 );
 
 

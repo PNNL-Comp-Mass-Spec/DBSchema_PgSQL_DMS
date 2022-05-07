@@ -21,8 +21,8 @@ CREATE TABLE public.t_organisms_change_history (
     newt_identifier integer,
     newt_id_list public.citext,
     ncbi_taxonomy_id integer,
-    entered timestamp without time zone NOT NULL,
-    entered_by public.citext
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

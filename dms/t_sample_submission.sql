@@ -9,7 +9,7 @@ CREATE TABLE public.t_sample_submission (
     container_list public.citext,
     description public.citext,
     storage_path integer,
-    created timestamp without time zone NOT NULL
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

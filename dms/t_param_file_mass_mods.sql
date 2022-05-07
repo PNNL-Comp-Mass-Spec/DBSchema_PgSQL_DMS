@@ -9,7 +9,17 @@ CREATE TABLE public.t_param_file_mass_mods (
     mass_correction_id integer NOT NULL,
     param_file_id integer,
     mod_type_symbol character(1),
-    max_quant_mod_id integer
+    max_quant_mod_id integer,
+    CONSTRAINT ck_t_param_file_mass_mods_dyn_mod_local_symbol_id CHECK ((
+CASE
+    WHEN (mod_type_symbol = 'D'::bpchar) THEN (local_symbol_id)::integer
+    ELSE 1
+END > 0)),
+    CONSTRAINT ck_t_param_file_mass_mods_stat_mod_local_symbol_id CHECK ((
+CASE
+    WHEN ((mod_type_symbol = 'T'::bpchar) OR (mod_type_symbol = 'S'::bpchar)) THEN (local_symbol_id)::integer
+    ELSE 0
+END = 0))
 );
 
 

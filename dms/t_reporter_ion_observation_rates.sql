@@ -61,7 +61,7 @@ CREATE TABLE public.t_reporter_ion_observation_rates (
     channel16_median_intensity integer,
     channel17_median_intensity integer,
     channel18_median_intensity integer,
-    entered timestamp without time zone NOT NULL
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

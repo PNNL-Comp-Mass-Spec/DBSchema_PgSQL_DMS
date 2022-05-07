@@ -15,7 +15,7 @@ CREATE TABLE public.t_dataset (
     well public.citext,
     separation_type public.citext,
     ds_state_id integer DEFAULT 1 NOT NULL,
-    last_affected timestamp without time zone NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     folder_name public.citext,
     storage_path_id integer,
     exp_id integer NOT NULL,
@@ -31,10 +31,13 @@ CREATE TABLE public.t_dataset (
     file_info_last_modified timestamp without time zone,
     interval_to_next_ds integer,
     acq_length_minutes integer GENERATED ALWAYS AS (COALESCE((EXTRACT(epoch FROM (acq_time_end - acq_time_start)) / (60)::numeric), (0)::numeric)) STORED,
-    date_sort_key timestamp without time zone NOT NULL,
+    date_sort_key timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     decon_tools_job_for_qc integer,
     capture_subfolder public.citext,
-    cart_config_id integer
+    cart_config_id integer,
+    CONSTRAINT ck_t_dataset_dataset_name_not_empty CHECK ((COALESCE(dataset, ''::public.citext) OPERATOR(public.<>) ''::public.citext)),
+    CONSTRAINT ck_t_dataset_dataset_name_white_space CHECK ((public.has_whitespace_chars((dataset)::text, 0) = false)),
+    CONSTRAINT ck_t_dataset_ds_folder_name_not_empty CHECK ((COALESCE(folder_name, ''::public.citext) OPERATOR(public.<>) ''::public.citext))
 );
 
 

@@ -14,7 +14,7 @@ CREATE TABLE public.t_cached_dataset_links (
     qc_metric_stats public.citext,
     masic_directory_name public.citext,
     update_required smallint DEFAULT 0 NOT NULL,
-    last_affected timestamp without time zone NOT NULL
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

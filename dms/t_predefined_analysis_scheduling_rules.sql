@@ -12,7 +12,7 @@ CREATE TABLE public.t_predefined_analysis_scheduling_rules (
     priority integer DEFAULT 3 NOT NULL,
     processor_group_id integer,
     enabled smallint DEFAULT 1 NOT NULL,
-    created timestamp without time zone NOT NULL
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

@@ -5,8 +5,8 @@
 CREATE TABLE public.t_analysis_job_processor_tools (
     tool_id integer NOT NULL,
     processor_id integer NOT NULL,
-    entered timestamp without time zone,
-    entered_by public.citext
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

@@ -22,7 +22,7 @@ CREATE TABLE public.t_lc_cart_settings_history (
     solvent_b public.citext,
     comment public.citext,
     date_of_change timestamp without time zone,
-    entered timestamp without time zone NOT NULL,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     entered_by public.citext
 );
 

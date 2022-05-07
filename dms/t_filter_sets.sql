@@ -7,8 +7,8 @@ CREATE TABLE public.t_filter_sets (
     filter_type_id integer NOT NULL,
     filter_set_name public.citext NOT NULL,
     filter_set_description public.citext DEFAULT ''::public.citext NOT NULL,
-    date_created timestamp without time zone NOT NULL,
-    date_modified timestamp without time zone NOT NULL
+    date_created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    date_modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

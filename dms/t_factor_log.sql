@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_factor_log (
     event_id integer NOT NULL,
-    changed_on timestamp without time zone NOT NULL,
+    changed_on timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     changed_by public.citext NOT NULL,
     changes public.citext NOT NULL
 );

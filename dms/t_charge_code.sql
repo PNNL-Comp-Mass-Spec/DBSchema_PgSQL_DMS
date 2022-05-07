@@ -21,7 +21,7 @@ CREATE TABLE public.t_charge_code (
     auth_hid public.citext,
     auto_defined smallint DEFAULT 0 NOT NULL,
     charge_code_state smallint DEFAULT 1 NOT NULL,
-    last_affected timestamp without time zone NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     usage_sample_prep integer,
     usage_requested_run integer,
     activation_state smallint DEFAULT 0 NOT NULL,

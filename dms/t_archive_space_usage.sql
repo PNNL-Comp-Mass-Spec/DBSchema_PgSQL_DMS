@@ -9,7 +9,7 @@ CREATE TABLE public.t_archive_space_usage (
     files integer,
     folders integer,
     comment public.citext DEFAULT ''::public.citext,
-    entered_by public.citext
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

@@ -11,7 +11,7 @@ CREATE TABLE public.t_cached_dataset_folder_paths (
     myemsl_path_flag public.citext,
     dataset_url public.citext,
     update_required smallint DEFAULT 0 NOT NULL,
-    last_affected timestamp without time zone NOT NULL
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

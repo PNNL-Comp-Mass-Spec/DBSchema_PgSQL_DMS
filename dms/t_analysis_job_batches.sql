@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_analysis_job_batches (
     batch_id integer NOT NULL,
-    batch_created timestamp without time zone NOT NULL,
+    batch_created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     batch_description public.citext
 );
 

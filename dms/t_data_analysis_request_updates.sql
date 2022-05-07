@@ -7,7 +7,7 @@ CREATE TABLE public.t_data_analysis_request_updates (
     request_id integer NOT NULL,
     old_state_id smallint NOT NULL,
     new_state_id smallint NOT NULL,
-    entered timestamp without time zone NOT NULL,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     entered_by public.citext NOT NULL
 );
 

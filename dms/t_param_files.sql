@@ -7,12 +7,14 @@ CREATE TABLE public.t_param_files (
     param_file_name public.citext NOT NULL,
     param_file_description public.citext DEFAULT ''::public.citext,
     param_file_type_id integer NOT NULL,
-    date_created timestamp without time zone,
-    date_modified timestamp without time zone,
+    date_created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     valid smallint DEFAULT 1 NOT NULL,
     job_usage_count integer DEFAULT 0,
     job_usage_last_year integer,
-    mod_list public.citext DEFAULT ''::public.citext NOT NULL
+    mod_list public.citext DEFAULT ''::public.citext NOT NULL,
+    CONSTRAINT ck_t_param_files CHECK ((POSITION((' '::text) IN (param_file_name)) = 0)),
+    CONSTRAINT ck_t_param_files_param_file_name_white_space CHECK ((public.has_whitespace_chars((param_file_name)::text, 0) = false))
 );
 
 

@@ -12,8 +12,8 @@ CREATE TABLE public.t_cached_protein_collections (
     residues integer,
     type public.citext,
     file_size_bytes bigint,
-    created timestamp without time zone NOT NULL,
-    last_affected timestamp without time zone NOT NULL
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

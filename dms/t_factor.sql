@@ -8,7 +8,7 @@ CREATE TABLE public.t_factor (
     target_id integer NOT NULL,
     name public.citext NOT NULL,
     value public.citext NOT NULL,
-    last_updated timestamp without time zone NOT NULL
+    last_updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

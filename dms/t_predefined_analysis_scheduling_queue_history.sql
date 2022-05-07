@@ -7,7 +7,7 @@ CREATE TABLE public.t_predefined_analysis_scheduling_queue_history (
     dataset_id integer NOT NULL,
     ds_rating smallint NOT NULL,
     jobs_created integer DEFAULT 0 NOT NULL,
-    entered timestamp without time zone NOT NULL
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

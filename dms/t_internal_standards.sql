@@ -8,7 +8,9 @@ CREATE TABLE public.t_internal_standards (
     name public.citext NOT NULL,
     description public.citext,
     type public.citext,
-    active character(1) DEFAULT 'A'::bpchar NOT NULL
+    active character(1) DEFAULT 'A'::bpchar NOT NULL,
+    CONSTRAINT ck_t_internal_standards CHECK (((type OPERATOR(public.=) 'All'::public.citext) OR ((type OPERATOR(public.=) 'Postdigest'::public.citext) OR (type OPERATOR(public.=) 'Predigest'::public.citext)))),
+    CONSTRAINT ck_t_internal_standards_1 CHECK (((active = 'A'::bpchar) OR (active = 'I'::bpchar)))
 );
 
 

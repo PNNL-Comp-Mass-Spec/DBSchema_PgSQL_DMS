@@ -10,8 +10,8 @@ CREATE TABLE public.t_settings_files_xml_history (
     file_name public.citext NOT NULL,
     description public.citext,
     contents xml,
-    entered timestamp without time zone NOT NULL,
-    entered_by public.citext
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

@@ -18,7 +18,7 @@ CREATE TABLE public.t_analysis_job (
     comment public.citext DEFAULT ''::public.citext,
     owner public.citext,
     job_state_id integer DEFAULT 1 NOT NULL,
-    last_affected timestamp without time zone NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     assigned_processor_name public.citext,
     results_folder_name public.citext,
     protein_collection_list public.citext DEFAULT 'na'::public.citext,
@@ -38,7 +38,8 @@ CREATE TABLE public.t_analysis_job (
     myemsl_state smallint DEFAULT 0 NOT NULL,
     analysis_tool_cached public.citext DEFAULT ''::public.citext,
     progress real,
-    eta_minutes real
+    eta_minutes real,
+    CONSTRAINT ck_t_analysis_job_propagation_mode CHECK (((propagation_mode = 1) OR (propagation_mode = 0)))
 );
 
 

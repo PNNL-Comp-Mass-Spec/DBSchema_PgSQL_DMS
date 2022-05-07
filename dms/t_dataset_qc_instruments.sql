@@ -5,7 +5,7 @@
 CREATE TABLE public.t_dataset_qc_instruments (
     in_name public.citext NOT NULL,
     instrument_id integer NOT NULL,
-    last_updated timestamp without time zone NOT NULL
+    last_updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

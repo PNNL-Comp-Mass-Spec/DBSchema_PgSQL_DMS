@@ -5,7 +5,7 @@
 CREATE TABLE public.t_dataset_archive (
     dataset_id integer NOT NULL,
     archive_state_id integer NOT NULL,
-    archive_state_last_affected timestamp without time zone,
+    archive_state_last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     storage_path_id integer NOT NULL,
     archive_date timestamp without time zone,
     last_update timestamp without time zone,

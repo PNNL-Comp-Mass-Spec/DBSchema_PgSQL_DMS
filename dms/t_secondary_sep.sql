@@ -9,7 +9,7 @@ CREATE TABLE public.t_secondary_sep (
     active smallint DEFAULT 1 NOT NULL,
     separation_group public.citext NOT NULL,
     sample_type_id integer DEFAULT 0 NOT NULL,
-    created timestamp without time zone NOT NULL
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

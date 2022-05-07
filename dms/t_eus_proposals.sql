@@ -6,11 +6,11 @@ CREATE TABLE public.t_eus_proposals (
     proposal_id public.citext DEFAULT ''::public.citext NOT NULL,
     title public.citext,
     state_id integer DEFAULT 1 NOT NULL,
-    import_date timestamp without time zone NOT NULL,
+    import_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     proposal_type public.citext,
     proposal_start_date timestamp without time zone,
     proposal_end_date timestamp without time zone,
-    last_affected timestamp without time zone,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     numeric_id public.citext GENERATED ALWAYS AS (public.extract_integer((proposal_id)::text)) STORED,
     proposal_id_auto_supersede public.citext
 );

@@ -26,7 +26,8 @@ CREATE TABLE public.t_biomaterial (
     cached_organism_list public.citext,
     mutation public.citext,
     plasmid public.citext,
-    cell_line public.citext
+    cell_line public.citext,
+    CONSTRAINT ck_t_biomaterial_cell_culture_name_white_space CHECK ((public.has_whitespace_chars((biomaterial_name)::text, 1) = false))
 );
 
 

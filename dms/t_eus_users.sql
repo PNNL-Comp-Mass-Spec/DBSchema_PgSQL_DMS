@@ -7,7 +7,7 @@ CREATE TABLE public.t_eus_users (
     name_fm public.citext,
     hid public.citext,
     site_status smallint DEFAULT 2 NOT NULL,
-    last_affected timestamp without time zone,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     last_name public.citext,
     first_name public.citext,
     valid smallint DEFAULT 1 NOT NULL

@@ -11,7 +11,7 @@ CREATE TABLE public.t_attachments (
     active public.citext DEFAULT 'Y'::public.citext NOT NULL,
     contents public.citext,
     file_name public.citext NOT NULL,
-    created timestamp without time zone NOT NULL
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

@@ -8,8 +8,8 @@ CREATE TABLE public.t_instrument_allocation (
     fiscal_year integer NOT NULL,
     allocated_hours double precision,
     comment public.citext DEFAULT ''::public.citext,
-    entered timestamp without time zone,
-    last_affected timestamp without time zone,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     fy_proposal public.citext GENERATED ALWAYS AS (((((fiscal_year)::public.citext)::text || '_'::text) || (proposal_id)::text)) STORED
 );
 

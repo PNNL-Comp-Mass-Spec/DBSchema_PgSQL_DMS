@@ -11,7 +11,7 @@ CASE
     ELSE public.combine_paths((storage_location)::text, 'FASTA\'::text)
 END) STORED,
     organism_db_name public.citext,
-    created timestamp without time zone,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     description public.citext,
     short_name public.citext,
     storage_location public.citext,
@@ -30,7 +30,10 @@ END) STORED,
     active smallint DEFAULT 1,
     newt_id_list public.citext,
     ncbi_taxonomy_id integer,
-    auto_define_taxonomy smallint DEFAULT 1 NOT NULL
+    auto_define_taxonomy smallint DEFAULT 1 NOT NULL,
+    CONSTRAINT ck_t_organisms_name_no_space_or_comma CHECK (((NOT (organism OPERATOR(public.~~) '% %'::public.citext)) AND (NOT (organism OPERATOR(public.~~) '%,%'::public.citext)))),
+    CONSTRAINT ck_t_organisms_organism_name_white_space CHECK ((public.has_whitespace_chars((organism)::text, 0) = false)),
+    CONSTRAINT ck_t_organisms_short_name_no_space_or_comma CHECK (((NOT (short_name OPERATOR(public.~~) '% %'::public.citext)) AND (NOT (short_name OPERATOR(public.~~) '%,%'::public.citext))))
 );
 
 

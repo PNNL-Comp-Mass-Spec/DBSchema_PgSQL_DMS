@@ -42,8 +42,9 @@ CREATE TABLE public.t_requested_run (
     queue_state smallint DEFAULT 1 NOT NULL,
     queue_instrument_id integer,
     queue_date timestamp without time zone,
-    entered timestamp without time zone,
-    updated timestamp without time zone
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT ck_t_requested_run_requested_run_name_white_space CHECK ((public.has_whitespace_chars((request_name)::text, 0) = false))
 );
 
 

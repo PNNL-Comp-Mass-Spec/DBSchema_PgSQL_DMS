@@ -13,11 +13,15 @@ CREATE TABLE public.t_users (
     payroll public.citext,
     active public.citext DEFAULT 'Y'::public.citext NOT NULL,
     update public.citext DEFAULT 'Y'::public.citext NOT NULL,
-    created timestamp without time zone,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     comment public.citext DEFAULT ''::public.citext,
-    last_affected timestamp without time zone,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     name_with_prn public.citext GENERATED ALWAYS AS (((((username)::text || ' ('::text) || (prn)::text) || ')'::text)) STORED,
-    hid_number public.citext GENERATED ALWAYS AS ("substring"((hid)::text, 2, 20)) STORED
+    hid_number public.citext GENERATED ALWAYS AS ("substring"((hid)::text, 2, 20)) STORED,
+    CONSTRAINT ck_t_users_active CHECK (((active OPERATOR(public.=) 'N'::public.citext) OR (active OPERATOR(public.=) 'Y'::public.citext))),
+    CONSTRAINT ck_t_users_update CHECK (((update OPERATOR(public.=) 'N'::public.citext) OR (update OPERATOR(public.=) 'Y'::public.citext))),
+    CONSTRAINT ck_t_users_user_name_not_empty CHECK ((username OPERATOR(public.<>) ''::public.citext)),
+    CONSTRAINT ck_t_users_user_name_white_space CHECK ((public.has_whitespace_chars((username)::text, 1) = false))
 );
 
 

@@ -5,7 +5,7 @@
 CREATE TABLE public.t_analysis_job_id (
     job integer NOT NULL,
     note public.citext,
-    created timestamp without time zone NOT NULL
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

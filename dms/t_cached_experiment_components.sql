@@ -6,8 +6,8 @@ CREATE TABLE public.t_cached_experiment_components (
     exp_id integer NOT NULL,
     biomaterial_list public.citext,
     reference_compound_list public.citext,
-    entered timestamp without time zone NOT NULL,
-    last_affected timestamp without time zone NOT NULL
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

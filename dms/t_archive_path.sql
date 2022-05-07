@@ -11,7 +11,7 @@ CREATE TABLE public.t_archive_path (
     archive_server_name public.citext,
     network_share_path public.citext,
     archive_url public.citext,
-    created timestamp without time zone
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 

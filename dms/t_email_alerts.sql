@@ -5,12 +5,12 @@
 CREATE TABLE public.t_email_alerts (
     email_alert_id integer NOT NULL,
     posted_by public.citext NOT NULL,
-    posting_time timestamp without time zone NOT NULL,
+    posting_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     alert_type public.citext DEFAULT 'Error'::public.citext NOT NULL,
     message public.citext NOT NULL,
     recipients public.citext NOT NULL,
     alert_state smallint DEFAULT 1 NOT NULL,
-    last_affected timestamp without time zone NOT NULL
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

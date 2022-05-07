@@ -16,8 +16,8 @@ CREATE TABLE public.t_residues_change_history (
     num_s smallint NOT NULL,
     monoisotopic_mass_change double precision,
     average_mass_change double precision,
-    entered timestamp without time zone NOT NULL,
-    entered_by public.citext
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

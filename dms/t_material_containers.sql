@@ -9,7 +9,7 @@ CREATE TABLE public.t_material_containers (
     comment public.citext,
     barcode public.citext,
     location_id integer NOT NULL,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     status public.citext DEFAULT 'Active'::public.citext NOT NULL,
     researcher public.citext,
     sort_key integer GENERATED ALWAYS AS (

@@ -7,7 +7,8 @@ CREATE TABLE public.t_filter_set_criteria (
     filter_criteria_group_id integer NOT NULL,
     criterion_id integer NOT NULL,
     criterion_comparison character(2) NOT NULL,
-    criterion_value double precision NOT NULL
+    criterion_value double precision NOT NULL,
+    CONSTRAINT ck_t_filter_set_criteria_comparison CHECK (((criterion_comparison = '>='::bpchar) OR ((criterion_comparison = '<='::bpchar) OR ((criterion_comparison = '>'::bpchar) OR ((criterion_comparison = '='::bpchar) OR (criterion_comparison = '<'::bpchar))))))
 );
 
 

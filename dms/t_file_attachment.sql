@@ -11,8 +11,8 @@ CREATE TABLE public.t_file_attachment (
     entity_id_value integer,
     owner_prn public.citext NOT NULL,
     file_size_bytes public.citext,
-    created timestamp without time zone NOT NULL,
-    last_affected timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     archive_folder_path public.citext NOT NULL,
     file_mime_type public.citext,
     active smallint DEFAULT 1 NOT NULL

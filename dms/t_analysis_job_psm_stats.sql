@@ -24,7 +24,7 @@ CREATE TABLE public.t_analysis_job_psm_stats (
     dynamic_reporter_ion smallint DEFAULT 0 NOT NULL,
     percent_psms_missing_nterm_reporter_ion real,
     percent_psms_missing_reporter_ion real,
-    last_affected timestamp without time zone NOT NULL
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

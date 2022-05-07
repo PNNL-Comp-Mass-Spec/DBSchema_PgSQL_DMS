@@ -12,7 +12,7 @@ CREATE TABLE public.t_operations_tasks (
     comments public.citext,
     status public.citext DEFAULT 'Normal'::public.citext NOT NULL,
     priority public.citext,
-    created timestamp without time zone,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     work_package public.citext,
     closed timestamp without time zone,
     hours_spent public.citext

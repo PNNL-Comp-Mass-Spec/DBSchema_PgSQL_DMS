@@ -9,7 +9,7 @@ CREATE TABLE public.t_sample_prep_request_items (
     item_type public.citext NOT NULL,
     status public.citext,
     created timestamp without time zone,
-    item_added timestamp without time zone NOT NULL
+    item_added timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

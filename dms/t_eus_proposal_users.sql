@@ -7,7 +7,7 @@ CREATE TABLE public.t_eus_proposal_users (
     person_id integer NOT NULL,
     of_dms_interest character(1) DEFAULT 'Y'::bpchar NOT NULL,
     state_id smallint DEFAULT 1 NOT NULL,
-    last_affected timestamp without time zone
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 

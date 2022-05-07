@@ -6,7 +6,7 @@ CREATE TABLE public.t_notification_event (
     entry_id integer NOT NULL,
     event_type_id integer NOT NULL,
     target_id integer NOT NULL,
-    entered timestamp without time zone NOT NULL
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

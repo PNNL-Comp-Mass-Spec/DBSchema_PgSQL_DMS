@@ -10,8 +10,8 @@ CREATE TABLE public.t_instrument_allocation_updates (
     allocated_hours_old double precision,
     allocated_hours_new double precision,
     comment public.citext DEFAULT ''::public.citext,
-    entered timestamp without time zone,
-    entered_by public.citext
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

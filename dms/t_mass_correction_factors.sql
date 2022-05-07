@@ -12,7 +12,9 @@ CREATE TABLE public.t_mass_correction_factors (
     original_source public.citext DEFAULT ''::public.citext NOT NULL,
     original_source_name public.citext DEFAULT ''::public.citext NOT NULL,
     alternative_name public.citext,
-    empirical_formula public.citext
+    empirical_formula public.citext,
+    CONSTRAINT ck_t_mass_correction_factors_original_source CHECK (((original_source OPERATOR(public.=) 'UniMod'::public.citext) OR ((original_source OPERATOR(public.=) 'PNNL'::public.citext) OR (original_source OPERATOR(public.=) ''::public.citext)))),
+    CONSTRAINT ck_t_mass_correction_factors_tag CHECK (((NOT (mass_correction_tag OPERATOR(public.~~) '%:%'::public.citext)) AND (NOT (mass_correction_tag OPERATOR(public.~~) '%,%'::public.citext))))
 );
 
 

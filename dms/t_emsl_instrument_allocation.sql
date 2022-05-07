@@ -9,7 +9,7 @@ CREATE TABLE public.t_emsl_instrument_allocation (
     allocated_hours integer,
     ext_display_name public.citext,
     ext_requested_hours integer,
-    last_affected timestamp without time zone
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 

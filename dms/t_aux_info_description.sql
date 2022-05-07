@@ -9,7 +9,8 @@ CREATE TABLE public.t_aux_info_description (
     sequence smallint DEFAULT 0 NOT NULL,
     data_size integer DEFAULT 64 NOT NULL,
     helper_append character(1) DEFAULT 'N'::bpchar NOT NULL,
-    active character(1) DEFAULT 'Y'::bpchar NOT NULL
+    active character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    CONSTRAINT ck_t_aux_info_description_active CHECK (((active = 'N'::bpchar) OR (active = 'Y'::bpchar)))
 );
 
 

@@ -34,12 +34,12 @@ CREATE TABLE public.t_predefined_analysis (
     special_processing public.citext,
     enabled smallint DEFAULT 0 NOT NULL,
     description public.citext,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     creator public.citext,
     next_level integer,
     trigger_before_disposition smallint DEFAULT 0 NOT NULL,
     propagation_mode smallint DEFAULT 0 NOT NULL,
-    last_affected timestamp without time zone NOT NULL
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

@@ -18,7 +18,8 @@ CREATE TABLE public.t_prep_lc_column (
     state public.citext DEFAULT 'New'::public.citext NOT NULL,
     operator_prn public.citext NOT NULL,
     comment public.citext,
-    created timestamp without time zone NOT NULL
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT ck_t_prep_lc_column_column_name_white_space CHECK ((public.has_whitespace_chars((prep_column)::text, 0) = false))
 );
 
 

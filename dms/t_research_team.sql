@@ -6,7 +6,8 @@ CREATE TABLE public.t_research_team (
     team_id integer NOT NULL,
     team public.citext NOT NULL,
     description public.citext,
-    collaborators public.citext
+    collaborators public.citext,
+    CONSTRAINT ck_t_research_team_team_name_white_space CHECK ((public.has_whitespace_chars((team)::text, 1) = false))
 );
 
 

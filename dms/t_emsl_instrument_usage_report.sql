@@ -19,7 +19,7 @@ CREATE TABLE public.t_emsl_instrument_usage_report (
     month integer,
     dataset_id integer NOT NULL,
     dataset_id_acq_overlap integer,
-    updated timestamp without time zone NOT NULL,
+    updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_by public.citext
 );
 

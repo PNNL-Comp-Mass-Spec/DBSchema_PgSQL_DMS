@@ -10,7 +10,7 @@ CREATE TABLE public.t_dataset_storage_move_log (
     archive_path_old integer,
     archive_path_new integer,
     move_cmd public.citext,
-    entered timestamp without time zone
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 

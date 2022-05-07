@@ -7,7 +7,7 @@ CREATE TABLE public.t_requested_run_batches (
     batch public.citext NOT NULL,
     description public.citext,
     owner integer,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     locked public.citext DEFAULT 'Yes'::public.citext NOT NULL,
     last_ordered timestamp without time zone,
     requested_batch_priority public.citext DEFAULT 'Normal'::public.citext NOT NULL,

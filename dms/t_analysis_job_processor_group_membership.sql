@@ -6,8 +6,9 @@ CREATE TABLE public.t_analysis_job_processor_group_membership (
     processor_id integer NOT NULL,
     group_id integer NOT NULL,
     membership_enabled character(1) DEFAULT 'Y'::bpchar NOT NULL,
-    last_affected timestamp without time zone,
-    entered_by public.citext
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    entered_by public.citext DEFAULT SESSION_USER,
+    CONSTRAINT ck_t_analysis_job_processor_group_membership_enabled CHECK (((membership_enabled = 'N'::bpchar) OR (membership_enabled = 'Y'::bpchar)))
 );
 
 

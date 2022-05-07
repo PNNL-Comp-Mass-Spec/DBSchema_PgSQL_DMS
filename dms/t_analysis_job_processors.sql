@@ -8,8 +8,9 @@ CREATE TABLE public.t_analysis_job_processors (
     processor_name public.citext NOT NULL,
     machine public.citext NOT NULL,
     notes public.citext DEFAULT ''::public.citext,
-    last_affected timestamp without time zone,
-    entered_by public.citext
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    entered_by public.citext DEFAULT SESSION_USER,
+    CONSTRAINT ck_t_analysis_job_processors_state CHECK (((state = 'D'::bpchar) OR (state = 'E'::bpchar)))
 );
 
 

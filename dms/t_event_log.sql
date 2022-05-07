@@ -8,8 +8,8 @@ CREATE TABLE public.t_event_log (
     target_id integer,
     target_state smallint,
     prev_target_state smallint,
-    entered timestamp without time zone,
-    entered_by public.citext
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    entered_by public.citext DEFAULT SESSION_USER
 );
 
 

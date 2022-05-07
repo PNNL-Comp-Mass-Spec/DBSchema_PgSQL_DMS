@@ -9,7 +9,7 @@ CREATE TABLE public.t_campaign (
     project_mgr_prn public.citext,
     pi_prn public.citext,
     comment public.citext,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     technical_lead public.citext,
     state public.citext DEFAULT 'Active'::public.citext NOT NULL,
     description public.citext,
@@ -22,7 +22,8 @@ CREATE TABLE public.t_campaign (
     research_team integer,
     data_release_restrictions integer DEFAULT 0 NOT NULL,
     fraction_emsl_funded numeric(3,2) DEFAULT 0 NOT NULL,
-    eus_usage_type_id smallint DEFAULT 1 NOT NULL
+    eus_usage_type_id smallint DEFAULT 1 NOT NULL,
+    CONSTRAINT ck_t_campaign_campaign_name_white_space CHECK ((public.has_whitespace_chars((campaign)::text, 1) = false))
 );
 
 
