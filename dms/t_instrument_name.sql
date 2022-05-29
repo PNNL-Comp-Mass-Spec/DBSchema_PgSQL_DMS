@@ -38,7 +38,7 @@ CASE
 END) STORED,
     default_purge_priority smallint DEFAULT 3 NOT NULL,
     storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL,
-    CONSTRAINT ck_t_instrument_name_status CHECK (((status = 'offline'::bpchar) OR ((status = 'inactive'::bpchar) OR (status = 'active'::bpchar))))
+    CONSTRAINT ck_t_instrument_name_status CHECK (((status = 'offline'::bpchar) OR (status = 'inactive'::bpchar) OR (status = 'active'::bpchar) OR (status = 'broken'::bpchar)))
 );
 
 
