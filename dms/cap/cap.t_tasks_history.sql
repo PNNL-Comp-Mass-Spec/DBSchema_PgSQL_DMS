@@ -13,7 +13,7 @@ CREATE TABLE cap.t_tasks_history (
     imported timestamp without time zone,
     start timestamp without time zone,
     finish timestamp without time zone,
-    saved timestamp without time zone,
+    saved timestamp without time zone NOT NULL,
     most_recent_entry smallint DEFAULT 0 NOT NULL
 );
 
@@ -32,6 +32,13 @@ ALTER TABLE cap.t_tasks ALTER COLUMN job ADD GENERATED ALWAYS AS IDENTITY (
     NO MAXVALUE
     CACHE 1
 );
+
+--
+-- Name: t_tasks_history pk_t_tasks_history; Type: CONSTRAINT; Schema: cap; Owner: d3l243
+--
+
+ALTER TABLE ONLY cap.t_tasks_history
+    ADD CONSTRAINT pk_t_tasks_history PRIMARY KEY (job, saved);
 
 --
 -- Name: ix_t_tasks_history_dataset; Type: INDEX; Schema: cap; Owner: d3l243
