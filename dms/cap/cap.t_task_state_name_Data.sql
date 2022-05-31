@@ -21,6 +21,23 @@ SET row_security = off;
 --
 
 COPY cap.t_task_state_name (job_state_id, job_state) FROM stdin;
+0	(none)
+1	New
+2	In Progress
+3	Complete
+4	Inactive
+5	Failed
+6	Received
+7	Prep. In Progress
+8	Preparation Failed
+9	Not Ready
+10	Restore Required
+11	Restore In Progress
+12	Restore Failed
+14	Failed, Ignore Job Step States
+20	Resuming
+100	Hold
+101	Ignore
 \.
 
 
