@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE sw.t_step_tools (
-    step_tool public.citext NOT NULL,
     step_tool_id integer NOT NULL,
+    step_tool public.citext NOT NULL,
     type public.citext,
     description public.citext,
     shared_result_version smallint DEFAULT 0 NOT NULL,
@@ -44,11 +44,17 @@ ALTER TABLE sw.t_step_tools ALTER COLUMN step_tool_id ADD GENERATED ALWAYS AS ID
 --
 
 ALTER TABLE ONLY sw.t_step_tools
-    ADD CONSTRAINT pk_t_step_tools_1 PRIMARY KEY (step_tool);
+    ADD CONSTRAINT pk_t_step_tools_1 PRIMARY KEY (step_tool_id);
 
 --
 -- Name: ix_t_step_tools_shared_result_version; Type: INDEX; Schema: sw; Owner: d3l243
 --
 
 CREATE INDEX ix_t_step_tools_shared_result_version ON sw.t_step_tools USING btree (shared_result_version) INCLUDE (step_tool, disable_output_folder_name_override_on_skip);
+
+--
+-- Name: ix_t_step_tools_step_tool; Type: INDEX; Schema: sw; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_step_tools_step_tool ON sw.t_step_tools USING btree (step_tool);
 
