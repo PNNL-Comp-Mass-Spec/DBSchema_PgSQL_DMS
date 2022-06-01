@@ -3,10 +3,10 @@
 --
 
 CREATE TABLE sw.t_job_step_processing_stats (
+    entry_id integer NOT NULL,
     entered timestamp without time zone NOT NULL,
     job integer NOT NULL,
     step integer NOT NULL,
-    entry_id integer NOT NULL,
     processor public.citext,
     run_time_minutes numeric(9,1),
     job_progress real,
@@ -37,11 +37,5 @@ ALTER TABLE sw.t_job_step_processing_stats ALTER COLUMN entry_id ADD GENERATED A
 --
 
 ALTER TABLE ONLY sw.t_job_step_processing_stats
-    ADD CONSTRAINT pk_t_job_step_processing_stats PRIMARY KEY (entered, job, step);
-
---
--- Name: ix_t_job_step_processing_stats_entry_id; Type: INDEX; Schema: sw; Owner: d3l243
---
-
-CREATE INDEX ix_t_job_step_processing_stats_entry_id ON sw.t_job_step_processing_stats USING btree (entry_id);
+    ADD CONSTRAINT pk_t_job_step_processing_stats PRIMARY KEY (entry_id);
 
