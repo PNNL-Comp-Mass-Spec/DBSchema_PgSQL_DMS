@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE public.t_misc_paths (
-    path_function character(32) NOT NULL,
     path_id integer NOT NULL,
+    path_function character(32) NOT NULL,
     server public.citext,
     client public.citext NOT NULL,
     comment public.citext DEFAULT ''::public.citext NOT NULL
@@ -31,13 +31,13 @@ ALTER TABLE public.t_misc_paths ALTER COLUMN path_id ADD GENERATED ALWAYS AS IDE
 --
 
 ALTER TABLE ONLY public.t_misc_paths
-    ADD CONSTRAINT pk_t_misc_paths PRIMARY KEY (path_function);
+    ADD CONSTRAINT pk_t_misc_paths PRIMARY KEY (path_id);
 
 --
 -- Name: ix_t_misc_paths_path_function; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_misc_paths_path_function ON public.t_misc_paths USING btree (path_function);
+CREATE UNIQUE INDEX ix_t_misc_paths_path_function ON public.t_misc_paths USING btree (path_function);
 
 --
 -- Name: TABLE t_misc_paths; Type: ACL; Schema: public; Owner: d3l243
