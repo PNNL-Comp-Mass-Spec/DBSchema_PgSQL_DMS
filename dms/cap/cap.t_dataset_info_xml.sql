@@ -19,9 +19,3 @@ ALTER TABLE cap.t_dataset_info_xml OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_dataset_info_xml
     ADD CONSTRAINT pk_t_dataset_info_xml PRIMARY KEY (dataset_id);
 
---
--- Name: ix_t_dataset_info_xml; Type: INDEX; Schema: cap; Owner: d3l243
---
-
-CREATE UNIQUE INDEX ix_t_dataset_info_xml ON cap.t_dataset_info_xml USING btree (dataset_id);
-
