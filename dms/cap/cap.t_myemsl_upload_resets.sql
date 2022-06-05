@@ -38,7 +38,7 @@ ALTER TABLE ONLY cap.t_myemsl_upload_resets
 -- Name: ix_t_myemsl_upload_resets_dataset_id; Type: INDEX; Schema: cap; Owner: d3l243
 --
 
-CREATE INDEX ix_t_myemsl_upload_resets_dataset_id ON cap.t_myemsl_upload_resets USING btree (job);
+CREATE INDEX ix_t_myemsl_upload_resets_dataset_id ON cap.t_myemsl_upload_resets USING btree (dataset_id);
 
 --
 -- Name: ix_t_myemsl_upload_resets_entered; Type: INDEX; Schema: cap; Owner: d3l243
