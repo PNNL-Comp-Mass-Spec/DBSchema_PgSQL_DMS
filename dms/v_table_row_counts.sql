@@ -18,6 +18,7 @@ CREATE VIEW public.v_table_row_counts AS
             WHEN 'I'::public.citext THEN 'Partitioned Index'::public.citext
             ELSE t.relkind
         END AS object_type,
+    t.table_row_count,
     pg_size_pretty(t.size_bytes) AS size,
     t.size_bytes
    FROM ( SELECT pg_namespace.nspname AS schema_name,
