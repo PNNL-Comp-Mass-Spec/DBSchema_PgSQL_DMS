@@ -1,0 +1,45 @@
+--
+-- Name: t_data_package_biomaterial; Type: TABLE; Schema: dpkg; Owner: d3l243
+--
+
+CREATE TABLE dpkg.t_data_package_biomaterial (
+    data_pkg_id integer NOT NULL,
+    biomaterial_id integer NOT NULL,
+    biomaterial public.citext,
+    created timestamp without time zone,
+    campaign public.citext,
+    type public.citext,
+    item_added timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    package_comment public.citext DEFAULT ''::public.citext
+);
+
+
+ALTER TABLE dpkg.t_data_package_biomaterial OWNER TO d3l243;
+
+--
+-- Name: t_data_package_data_pkg_id_seq; Type: SEQUENCE; Schema: dpkg; Owner: d3l243
+--
+
+ALTER TABLE dpkg.t_data_package ALTER COLUMN data_pkg_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME dpkg.t_data_package_data_pkg_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- Name: t_data_package_biomaterial pk_t_data_package_biomaterial; Type: CONSTRAINT; Schema: dpkg; Owner: d3l243
+--
+
+ALTER TABLE ONLY dpkg.t_data_package_biomaterial
+    ADD CONSTRAINT pk_t_data_package_biomaterial PRIMARY KEY (data_pkg_id, biomaterial_id);
+
+--
+-- Name: t_data_package_biomaterial fk_t_data_package_biomaterial_t_data_package; Type: FK CONSTRAINT; Schema: dpkg; Owner: d3l243
+--
+
+ALTER TABLE ONLY dpkg.t_data_package_biomaterial
+    ADD CONSTRAINT fk_t_data_package_biomaterial_t_data_package FOREIGN KEY (data_pkg_id) REFERENCES dpkg.t_data_package(data_pkg_id) ON DELETE CASCADE;
+
