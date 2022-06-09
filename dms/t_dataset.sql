@@ -14,7 +14,7 @@ CREATE TABLE public.t_dataset (
     wellplate public.citext DEFAULT 'na'::public.citext,
     well public.citext,
     separation_type public.citext,
-    ds_state_id integer DEFAULT 1 NOT NULL,
+    dataset_state_id integer DEFAULT 1 NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     folder_name public.citext,
     storage_path_id integer,
@@ -132,7 +132,7 @@ CREATE INDEX ix_t_dataset_inst_name_id_dataset_dataset_id ON public.t_dataset US
 -- Name: ix_t_dataset_instrument_id_state_id_include_dataset_name_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_dataset_instrument_id_state_id_include_dataset_name_id ON public.t_dataset USING btree (instrument_id, ds_state_id) INCLUDE (dataset, dataset_id);
+CREATE INDEX ix_t_dataset_instrument_id_state_id_include_dataset_name_id ON public.t_dataset USING btree (instrument_id, dataset_state_id) INCLUDE (dataset, dataset_id);
 
 --
 -- Name: ix_t_dataset_instrument_name_id_acq_time_start_include_dataset; Type: INDEX; Schema: public; Owner: d3l243
@@ -168,7 +168,7 @@ CREATE INDEX ix_t_dataset_sec_sep ON public.t_dataset USING btree (separation_ty
 -- Name: ix_t_dataset_state_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_dataset_state_id ON public.t_dataset USING btree (ds_state_id);
+CREATE INDEX ix_t_dataset_state_id ON public.t_dataset USING btree (dataset_state_id);
 
 --
 -- Name: ix_t_dataset_storage_path_id_created_instrument_name_id_rating; Type: INDEX; Schema: public; Owner: d3l243
@@ -188,7 +188,7 @@ ALTER TABLE ONLY public.t_dataset
 --
 
 ALTER TABLE ONLY public.t_dataset
-    ADD CONSTRAINT fk_t_dataset_t_dataset_state_name FOREIGN KEY (ds_state_id) REFERENCES public.t_dataset_state_name(ds_state_id);
+    ADD CONSTRAINT fk_t_dataset_t_dataset_state_name FOREIGN KEY (dataset_state_id) REFERENCES public.t_dataset_state_name(dataset_state_id);
 
 --
 -- Name: t_dataset fk_t_dataset_t_dataset_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

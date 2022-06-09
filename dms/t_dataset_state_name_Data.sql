@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.2
+-- Dumped from database version 14.3
 -- Dumped by pg_dump version 14.2
 
 SET statement_timeout = 0;
@@ -20,7 +20,7 @@ SET row_security = off;
 -- Data for Name: t_dataset_state_name; Type: TABLE DATA; Schema: public; Owner: d3l243
 --
 
-COPY public.t_dataset_state_name (ds_state_id, dataset_state) FROM stdin;
+COPY public.t_dataset_state_name (dataset_state_id, dataset_state) FROM stdin;
 1	New
 2	Capture In Progress
 3	Complete
