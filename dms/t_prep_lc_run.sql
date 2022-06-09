@@ -27,6 +27,19 @@ CREATE TABLE public.t_prep_lc_run (
 ALTER TABLE public.t_prep_lc_run OWNER TO d3l243;
 
 --
+-- Name: t_prep_lc_run_prep_run_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_prep_lc_run ALTER COLUMN prep_run_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_prep_lc_run_prep_run_id_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_prep_lc_run pk_t_prep_lc_run; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

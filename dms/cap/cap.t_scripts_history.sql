@@ -29,19 +29,6 @@ ALTER TABLE cap.t_scripts_history ALTER COLUMN entry_id ADD GENERATED ALWAYS AS 
 );
 
 --
--- Name: t_scripts_script_id_seq; Type: SEQUENCE; Schema: cap; Owner: d3l243
---
-
-ALTER TABLE cap.t_scripts ALTER COLUMN script_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME cap.t_scripts_script_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_scripts_history pk_t_scripts_history; Type: CONSTRAINT; Schema: cap; Owner: d3l243
 --
 

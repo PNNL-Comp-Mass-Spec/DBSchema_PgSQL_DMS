@@ -15,6 +15,19 @@ CREATE TABLE cap.t_scripts (
 ALTER TABLE cap.t_scripts OWNER TO d3l243;
 
 --
+-- Name: t_scripts_script_id_seq; Type: SEQUENCE; Schema: cap; Owner: d3l243
+--
+
+ALTER TABLE cap.t_scripts ALTER COLUMN script_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME cap.t_scripts_script_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_scripts pk_t_scripts; Type: CONSTRAINT; Schema: cap; Owner: d3l243
 --
 

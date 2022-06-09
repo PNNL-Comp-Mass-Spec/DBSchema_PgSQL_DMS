@@ -14,6 +14,19 @@ CREATE TABLE public.t_research_team (
 ALTER TABLE public.t_research_team OWNER TO d3l243;
 
 --
+-- Name: t_research_team_team_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_research_team ALTER COLUMN team_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_research_team_team_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_research_team pk_t_research_team; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

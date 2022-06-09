@@ -40,6 +40,19 @@ END) STORED,
 ALTER TABLE public.t_organisms OWNER TO d3l243;
 
 --
+-- Name: t_organisms_organism_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_organisms ALTER COLUMN organism_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_organisms_organism_id_seq
+    START WITH 40
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_organisms ix_t_organisms_unique_organism; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

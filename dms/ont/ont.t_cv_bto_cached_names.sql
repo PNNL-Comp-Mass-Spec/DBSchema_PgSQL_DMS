@@ -25,19 +25,6 @@ ALTER TABLE ont.t_cv_bto_cached_names ALTER COLUMN entry_id ADD GENERATED ALWAYS
 );
 
 --
--- Name: t_cv_bto_entry_id_seq; Type: SEQUENCE; Schema: ont; Owner: d3l243
---
-
-ALTER TABLE ont.t_cv_bto ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME ont.t_cv_bto_entry_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_cv_bto_cached_names pk_t_cv_bto_cached_names; Type: CONSTRAINT; Schema: ont; Owner: d3l243
 --
 

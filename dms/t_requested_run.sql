@@ -51,6 +51,19 @@ CREATE TABLE public.t_requested_run (
 ALTER TABLE public.t_requested_run OWNER TO d3l243;
 
 --
+-- Name: t_requested_run_request_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_requested_run ALTER COLUMN request_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_requested_run_request_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_requested_run pk_t_requested_run; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

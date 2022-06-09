@@ -13,19 +13,6 @@ CREATE TABLE public.t_storage_path_hosts (
 ALTER TABLE public.t_storage_path_hosts OWNER TO d3l243;
 
 --
--- Name: t_storage_path_storage_path_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
---
-
-ALTER TABLE public.t_storage_path ALTER COLUMN storage_path_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.t_storage_path_storage_path_id_seq
-    START WITH 10
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_storage_path_hosts pk_t_storage_path_hosts; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

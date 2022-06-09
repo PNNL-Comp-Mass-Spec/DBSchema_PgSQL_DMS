@@ -16,6 +16,19 @@ CREATE TABLE public.t_analysis_job_processor_group (
 ALTER TABLE public.t_analysis_job_processor_group OWNER TO d3l243;
 
 --
+-- Name: t_analysis_job_processor_group_group_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_analysis_job_processor_group ALTER COLUMN group_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_analysis_job_processor_group_group_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_analysis_job_processor_group ix_t_analysis_job_processor_group_unique_group_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

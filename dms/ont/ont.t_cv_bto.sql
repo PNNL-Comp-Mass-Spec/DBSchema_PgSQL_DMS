@@ -24,6 +24,19 @@ CREATE TABLE ont.t_cv_bto (
 ALTER TABLE ont.t_cv_bto OWNER TO d3l243;
 
 --
+-- Name: t_cv_bto_entry_id_seq; Type: SEQUENCE; Schema: ont; Owner: d3l243
+--
+
+ALTER TABLE ont.t_cv_bto ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME ont.t_cv_bto_entry_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_cv_bto pk_t_cv_bto; Type: CONSTRAINT; Schema: ont; Owner: d3l243
 --
 

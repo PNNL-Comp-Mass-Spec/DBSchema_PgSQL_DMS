@@ -27,19 +27,6 @@ ALTER TABLE public.t_predefined_analysis_scheduling_queue_history ALTER COLUMN e
 );
 
 --
--- Name: t_predefined_analysis_scheduling_queue_item_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
---
-
-ALTER TABLE public.t_predefined_analysis_scheduling_queue ALTER COLUMN item ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.t_predefined_analysis_scheduling_queue_item_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_predefined_analysis_scheduling_queue_history pk_t_predefined_analysis_scheduling_queue_history; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

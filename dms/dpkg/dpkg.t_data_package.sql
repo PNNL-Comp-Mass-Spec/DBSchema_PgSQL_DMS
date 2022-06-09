@@ -37,6 +37,19 @@ CREATE TABLE dpkg.t_data_package (
 ALTER TABLE dpkg.t_data_package OWNER TO d3l243;
 
 --
+-- Name: t_data_package_data_pkg_id_seq; Type: SEQUENCE; Schema: dpkg; Owner: d3l243
+--
+
+ALTER TABLE dpkg.t_data_package ALTER COLUMN data_pkg_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME dpkg.t_data_package_data_pkg_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_data_package pk_t_data_package; Type: CONSTRAINT; Schema: dpkg; Owner: d3l243
 --
 

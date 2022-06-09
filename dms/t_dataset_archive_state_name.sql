@@ -12,19 +12,6 @@ CREATE TABLE public.t_dataset_archive_state_name (
 ALTER TABLE public.t_dataset_archive_state_name OWNER TO d3l243;
 
 --
--- Name: t_dataset_dataset_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
---
-
-ALTER TABLE public.t_dataset ALTER COLUMN dataset_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.t_dataset_dataset_id_seq
-    START WITH 9000
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_dataset_archive_state_name pk_t_dataset_archive_state_name; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

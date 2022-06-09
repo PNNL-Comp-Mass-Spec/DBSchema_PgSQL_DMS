@@ -22,6 +22,19 @@ CREATE TABLE public.t_residues (
 ALTER TABLE public.t_residues OWNER TO d3l243;
 
 --
+-- Name: t_residues_residue_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_residues ALTER COLUMN residue_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_residues_residue_id_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_residues pk_t_residues; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

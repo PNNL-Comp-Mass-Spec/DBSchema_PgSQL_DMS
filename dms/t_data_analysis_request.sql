@@ -34,6 +34,19 @@ CREATE TABLE public.t_data_analysis_request (
 ALTER TABLE public.t_data_analysis_request OWNER TO d3l243;
 
 --
+-- Name: t_data_analysis_request_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE public.t_data_analysis_request ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_data_analysis_request_id_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_data_analysis_request pk_t_data_analysis_request; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

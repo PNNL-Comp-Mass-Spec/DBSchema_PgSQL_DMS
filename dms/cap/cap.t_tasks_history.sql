@@ -21,19 +21,6 @@ CREATE TABLE cap.t_tasks_history (
 ALTER TABLE cap.t_tasks_history OWNER TO d3l243;
 
 --
--- Name: t_tasks_job_seq; Type: SEQUENCE; Schema: cap; Owner: d3l243
---
-
-ALTER TABLE cap.t_tasks ALTER COLUMN job ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME cap.t_tasks_job_seq
-    START WITH 1000
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_tasks_history pk_t_tasks_history; Type: CONSTRAINT; Schema: cap; Owner: d3l243
 --
 
