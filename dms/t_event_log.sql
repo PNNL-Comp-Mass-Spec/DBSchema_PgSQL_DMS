@@ -3,7 +3,7 @@
 --
 
 CREATE TABLE public.t_event_log (
-    index integer NOT NULL,
+    event_id integer NOT NULL,
     target_type integer,
     target_id integer,
     target_state smallint,
@@ -19,7 +19,7 @@ ALTER TABLE public.t_event_log OWNER TO d3l243;
 -- Name: t_event_log_index_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
 --
 
-ALTER TABLE public.t_event_log ALTER COLUMN index ADD GENERATED ALWAYS AS IDENTITY (
+ALTER TABLE public.t_event_log ALTER COLUMN event_id ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME public.t_event_log_index_seq
     START WITH 100
     INCREMENT BY 1
@@ -33,7 +33,7 @@ ALTER TABLE public.t_event_log ALTER COLUMN index ADD GENERATED ALWAYS AS IDENTI
 --
 
 ALTER TABLE ONLY public.t_event_log
-    ADD CONSTRAINT pk_t_event_log PRIMARY KEY (index);
+    ADD CONSTRAINT pk_t_event_log PRIMARY KEY (event_id);
 
 --
 -- Name: ix_t_event_log_entered; Type: INDEX; Schema: public; Owner: d3l243
@@ -63,7 +63,7 @@ CREATE INDEX ix_t_event_log_target_id_prev_target_state_target_state ON public.t
 -- Name: ix_t_event_log_target_type_target_state_entered; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_event_log_target_type_target_state_entered ON public.t_event_log USING btree (target_type, target_state, entered) INCLUDE (index);
+CREATE INDEX ix_t_event_log_target_type_target_state_entered ON public.t_event_log USING btree (target_type, target_state, entered) INCLUDE (event_id);
 
 --
 -- Name: t_event_log fk_t_event_log_t_event_target1; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
