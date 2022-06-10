@@ -11,8 +11,10 @@ CREATE OR REPLACE FUNCTION public.get_filename(_filepath text) RETURNS text
 **
 **  Works with both \ and / as path separators
 **
-**  Auth: mem
-**  Date: 01/14/2020
+**  Auth:   mem
+**  Date:   05/18/2017
+**          01/14/2020 mem - Ported to PostgreSQL
+
 *****************************************************/
 DECLARE
     _filename TEXT;
@@ -29,4 +31,10 @@ $$;
 
 
 ALTER FUNCTION public.get_filename(_filepath text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_filename(_filepath text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_filename(_filepath text) IS 'GetFilename';
 

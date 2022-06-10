@@ -9,17 +9,25 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 **
 **  Desc:
 **      Parses the text in _delimitedList and returns a table
-**       containing the values.  The table includes column entry_id
-**       to allow the calling procedure to sort the data based on the
-**       data order in _delimitedList.  The first row will have entry_id = 1
+**      containing the values.  The table includes column entry_id
+**      to allow the calling procedure to sort the data based on the
+**      data order in _delimitedList.  The first row will have entry_id = 1
 **
 **      Note that if two commas in a row are encountered,
-**       the resultant table will contain an empty cell for that row
+**      the resultant table will contain an empty cell for that row
 **
-**      _delimitedList should be of the form 'Value1,Value2'
+**      If _delimiter is Chr(13) or Chr(10), will split _delimitedList on CR or LF
+**      In this case, blank lines will not be included in output table
+**
+**  Arguments:
+**      _delimitedList     List of values, e.g. 'Value1,Value2'
+**      _delimiter         Delimiter (comma by default)
+**      _maxRows           Maximum number of rows to return (0 to return all); useful if parsing a comma-separated list of items and the final item is a comment field, which itself might contain commas
 **
 **  Auth:   mem
-**  Date:   01/14/2020 mem - Initial version
+**  Date:   10/16/2007
+**          03/27/2013 mem - Now replacing Tab characters, carriage returns and line feeds with _delimiter
+**          01/14/2020 mem - Ported to PostgreSQL
 **
 ****************************************************/
 BEGIN

@@ -11,12 +11,17 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_integer_list(_delimitedlist te
 **      Parses the text in _delimitedList and returns a table containing the values (as integers)
 **
 **      _delimitedList should be of the form 'Value1,Value2'
+**
 **      Ignores empty strings and any items that are not integers, e.g.
-**       if the list is '1,,2,test,3,4.2,5'
-**       the table will contain four numbers: 1, 2, 3, 5
+**      if the list is '1,,2,test,3,4.2,5'
+**      the table will contain four numbers: 1, 2, 3, 5
 **
 **  Auth:   mem
-**  Date:   01/14/2020 mem - Initial version
+**  Date:   11/30/2006
+**          03/14/2007 mem - Changed _delimitedList parameter from varchar(8000) to varchar(max)
+**          04/02/2012 mem - Now removing Tab characters
+**          03/27/2013 mem - Now replacing carriage return and line feed characters with _delimiter
+**          01/14/2020 mem - Ported to PostgreSQL
 **
 ****************************************************/
 BEGIN
@@ -50,4 +55,10 @@ $_$;
 
 
 ALTER FUNCTION public.parse_delimited_integer_list(_delimitedlist text, _delimiter text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION parse_delimited_integer_list(_delimitedlist text, _delimiter text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.parse_delimited_integer_list(_delimitedlist text, _delimiter text) IS 'ParseDelimitedIntegerList';
 

@@ -58,3 +58,9 @@ $$;
 
 ALTER FUNCTION public.append_to_text(_basetext text, _addnltext text, _addduplicatetext integer, _delimiter text, _maxlength integer) OWNER TO d3l243;
 
+--
+-- Name: FUNCTION append_to_text(_basetext text, _addnltext text, _addduplicatetext integer, _delimiter text, _maxlength integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.append_to_text(_basetext text, _addnltext text, _addduplicatetext integer, _delimiter text, _maxlength integer) IS 'AppendToText';
+

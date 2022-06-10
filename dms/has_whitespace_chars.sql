@@ -25,9 +25,9 @@ DECLARE
     _invalidChars int := 0;
 BEGIN
 
-    If position(Chr(10) in _entityName) > 0 OR                 -- CR
-       position(Chr(13) in _entityName) > 0 OR                 -- LF
-       position(Chr(9) in _entityName) > 0 OR                  -- Tab
+    If position(Chr(10) in _entityName) > 0 OR              -- CR
+       position(Chr(13) in _entityName) > 0 OR              -- LF
+       position(Chr(9) in _entityName) > 0 OR               -- Tab
        _allowSpace = 0 AND position(' ' in _entityName) > 0 -- Space
     Then
         Return True;
