@@ -3,7 +3,7 @@
 --
 
 CREATE OR REPLACE FUNCTION public.get_filename(_filepath text) RETURNS text
-    LANGUAGE plpgsql
+    LANGUAGE plpgsql IMMUTABLE
     AS $$
 /****************************************************
 **  Examines _filePath to look for a filename
