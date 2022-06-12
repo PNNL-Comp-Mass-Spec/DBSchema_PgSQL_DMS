@@ -29,7 +29,7 @@ CREATE TABLE public.t_sample_prep_request (
     comment public.citext,
     priority public.citext DEFAULT 'Normal'::public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    state smallint DEFAULT 1 NOT NULL,
+    state_id smallint DEFAULT 1 NOT NULL,
     state_comment public.citext,
     requested_personnel public.citext,
     state_changed timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -146,7 +146,7 @@ ALTER TABLE ONLY public.t_sample_prep_request
 --
 
 ALTER TABLE ONLY public.t_sample_prep_request
-    ADD CONSTRAINT fk_t_sample_prep_request_t_sample_prep_request_state_name FOREIGN KEY (state) REFERENCES public.t_sample_prep_request_state_name(state_id);
+    ADD CONSTRAINT fk_t_sample_prep_request_t_sample_prep_request_state_name FOREIGN KEY (state_id) REFERENCES public.t_sample_prep_request_state_name(state_id);
 
 --
 -- Name: t_sample_prep_request fk_t_sample_prep_request_t_sample_prep_request_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
