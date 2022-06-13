@@ -115,7 +115,7 @@ ALTER TABLE ONLY public.t_biomaterial
 --
 
 ALTER TABLE ONLY public.t_biomaterial
-    ADD CONSTRAINT fk_t_biomaterial_t_users FOREIGN KEY (pi_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_biomaterial_t_users FOREIGN KEY (pi_prn) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_biomaterial; Type: ACL; Schema: public; Owner: d3l243

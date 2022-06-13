@@ -4,8 +4,8 @@
 
 CREATE TABLE public.t_users (
     user_id integer NOT NULL,
-    prn public.citext NOT NULL,
     username public.citext NOT NULL,
+    name public.citext NOT NULL,
     hid public.citext NOT NULL,
     status public.citext DEFAULT 'Active'::public.citext NOT NULL,
     email public.citext,
@@ -16,12 +16,12 @@ CREATE TABLE public.t_users (
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     comment public.citext DEFAULT ''::public.citext,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    name_with_prn public.citext GENERATED ALWAYS AS (((((username)::text || ' ('::text) || (prn)::text) || ')'::text)) STORED,
+    name_with_username public.citext GENERATED ALWAYS AS (((((name)::text || ' ('::text) || (username)::text) || ')'::text)) STORED,
     hid_number public.citext GENERATED ALWAYS AS ("substring"((hid)::text, 2, 20)) STORED,
     CONSTRAINT ck_t_users_active CHECK (((active OPERATOR(public.=) 'N'::public.citext) OR (active OPERATOR(public.=) 'Y'::public.citext))),
-    CONSTRAINT ck_t_users_update CHECK (((update OPERATOR(public.=) 'N'::public.citext) OR (update OPERATOR(public.=) 'Y'::public.citext))),
-    CONSTRAINT ck_t_users_user_name_not_empty CHECK ((username OPERATOR(public.<>) ''::public.citext)),
-    CONSTRAINT ck_t_users_user_name_white_space CHECK ((public.has_whitespace_chars((username)::text, 1) = false))
+    CONSTRAINT ck_t_users_name_not_empty CHECK ((name OPERATOR(public.<>) ''::public.citext)),
+    CONSTRAINT ck_t_users_name_white_space CHECK ((public.has_whitespace_chars((name)::text, 1) = false)),
+    CONSTRAINT ck_t_users_update CHECK (((update OPERATOR(public.=) 'N'::public.citext) OR (update OPERATOR(public.=) 'Y'::public.citext)))
 );
 
 
@@ -41,11 +41,11 @@ ALTER TABLE public.t_users ALTER COLUMN user_id ADD GENERATED ALWAYS AS IDENTITY
 );
 
 --
--- Name: t_users ix_t_users_unique_prn; Type: CONSTRAINT; Schema: public; Owner: d3l243
+-- Name: t_users ix_t_users_unique_username; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 
 ALTER TABLE ONLY public.t_users
-    ADD CONSTRAINT ix_t_users_unique_prn UNIQUE (prn);
+    ADD CONSTRAINT ix_t_users_unique_username UNIQUE (username);
 
 --
 -- Name: t_users pk_t_users; Type: CONSTRAINT; Schema: public; Owner: d3l243
@@ -55,10 +55,10 @@ ALTER TABLE ONLY public.t_users
     ADD CONSTRAINT pk_t_users PRIMARY KEY (user_id);
 
 --
--- Name: ix_t_users_username; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_users_name; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_users_username ON public.t_users USING btree (username);
+CREATE UNIQUE INDEX ix_t_users_name ON public.t_users USING btree (name);
 
 --
 -- Name: t_users fk_t_users_t_user_status; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

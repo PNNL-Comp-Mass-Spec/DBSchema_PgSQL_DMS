@@ -15,12 +15,14 @@ CREATE OR REPLACE FUNCTION public.get_research_team_membership_list(_researchtea
 **  Date:   02/03/2010
 **          12/08/2014 mem - Now using Name_with_PRN to obtain each user's name and PRN
 **          06/10/2022 mem - Ported to PostgreSQL
+**          06/12/2022 mem - Rename Name_with_PRN to name_with_username
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    SELECT string_agg(T_Research_Team_Roles.role || ':' || T_Users.Name_with_PRN, '|' ORDER BY T_Research_Team_Roles.role, T_Users.Name_with_PRN)
+    SELECT string_agg(T_Research_Team_Roles.role || ':' || T_Users.name_with_username,
+                      '|' ORDER BY T_Research_Team_Roles.role, T_Users.name_with_username)
     INTO _result
     FROM T_Research_Team_Roles
              INNER JOIN T_Research_Team_Membership
@@ -35,4 +37,10 @@ $$;
 
 
 ALTER FUNCTION public.get_research_team_membership_list(_researchteamid integer) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_research_team_membership_list(_researchteamid integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_research_team_membership_list(_researchteamid integer) IS 'GetResearchTeamMembershipList';
 

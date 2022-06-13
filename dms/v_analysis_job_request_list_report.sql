@@ -6,7 +6,7 @@ CREATE VIEW public.v_analysis_job_request_list_report AS
  SELECT ajr.request_id AS request,
     ajr.request_name AS name,
     ajrs.request_state AS state,
-    u.username AS requester,
+    u.name AS requester,
     ajr.created,
     ajr.analysis_tool AS tool,
     ajr.job_count AS jobs,

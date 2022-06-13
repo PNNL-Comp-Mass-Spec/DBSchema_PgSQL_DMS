@@ -62,7 +62,7 @@ ALTER TABLE ONLY public.t_experiment_groups
 --
 
 ALTER TABLE ONLY public.t_experiment_groups
-    ADD CONSTRAINT fk_t_experiment_groups_t_users FOREIGN KEY (researcher) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_experiment_groups_t_users FOREIGN KEY (researcher) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_experiment_groups; Type: ACL; Schema: public; Owner: d3l243

@@ -262,7 +262,7 @@ ALTER TABLE ONLY public.t_requested_run
 --
 
 ALTER TABLE ONLY public.t_requested_run
-    ADD CONSTRAINT fk_t_requested_run_t_users FOREIGN KEY (requester_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_requested_run_t_users FOREIGN KEY (requester_prn) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_requested_run; Type: ACL; Schema: public; Owner: d3l243

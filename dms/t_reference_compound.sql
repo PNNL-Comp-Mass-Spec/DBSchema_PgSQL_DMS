@@ -126,7 +126,7 @@ ALTER TABLE ONLY public.t_reference_compound
 --
 
 ALTER TABLE ONLY public.t_reference_compound
-    ADD CONSTRAINT fk_t_reference_compound_t_users FOREIGN KEY (contact_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_reference_compound_t_users FOREIGN KEY (contact_prn) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_reference_compound; Type: ACL; Schema: public; Owner: d3l243

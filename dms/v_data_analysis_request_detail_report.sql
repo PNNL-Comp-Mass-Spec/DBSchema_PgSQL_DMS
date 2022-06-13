@@ -6,7 +6,7 @@ CREATE VIEW public.v_data_analysis_request_detail_report AS
  SELECT r.id,
     r.request_name,
     r.analysis_type,
-    u.name_with_prn AS requester,
+    u.name_with_username AS requester,
     r.description,
     r.analysis_specifications,
     r.comment,
@@ -43,7 +43,7 @@ CREATE VIEW public.v_data_analysis_request_detail_report AS
         END AS "#WPActivationState"
    FROM ((((((((public.t_data_analysis_request r
      JOIN public.t_data_analysis_request_state_name sn ON ((r.state = sn.state_id)))
-     LEFT JOIN public.t_users u ON ((r.requester_prn OPERATOR(public.=) u.prn)))
+     LEFT JOIN public.t_users u ON ((r.requester_prn OPERATOR(public.=) u.username)))
      LEFT JOIN ( SELECT t_data_analysis_request_updates.request_id,
             count(*) AS updates
            FROM public.t_data_analysis_request_updates

@@ -12,7 +12,7 @@ CREATE VIEW public.v_data_analysis_request_list_report AS
     ta.attachments AS files,
     sn.state_name AS state,
     r.state_comment,
-    u.name_with_prn AS requester,
+    u.name_with_username AS requester,
     r.description,
     qt.days_in_queue,
     r.requested_personnel,
@@ -40,7 +40,7 @@ CREATE VIEW public.v_data_analysis_request_list_report AS
         END AS "#WPActivationState"
    FROM (((((((public.t_data_analysis_request r
      JOIN public.t_data_analysis_request_state_name sn ON ((r.state = sn.state_id)))
-     LEFT JOIN public.t_users u ON ((r.requester_prn OPERATOR(public.=) u.prn)))
+     LEFT JOIN public.t_users u ON ((r.requester_prn OPERATOR(public.=) u.username)))
      LEFT JOIN public.v_data_analysis_request_queue_times qt ON ((r.id = qt.request_id)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id_value,
             count(*) AS attachments

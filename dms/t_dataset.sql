@@ -264,7 +264,7 @@ ALTER TABLE ONLY public.t_dataset
 --
 
 ALTER TABLE ONLY public.t_dataset
-    ADD CONSTRAINT fk_t_dataset_t_users FOREIGN KEY (operator_prn) REFERENCES public.t_users(prn) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_dataset_t_users FOREIGN KEY (operator_prn) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_dataset; Type: ACL; Schema: public; Owner: d3l243
