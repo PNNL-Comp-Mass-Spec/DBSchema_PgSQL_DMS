@@ -33,6 +33,18 @@ ALTER TABLE ONLY public.t_notification_event
     ADD CONSTRAINT pk_t_notification_event PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_notification_event_event_type_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_notification_event_event_type_id ON public.t_notification_event USING btree (event_type_id);
+
+--
+-- Name: ix_t_notification_event_target_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_notification_event_target_id ON public.t_notification_event USING btree (target_id);
+
+--
 -- Name: t_notification_event fk_t_notification_event_t_notification_event_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
