@@ -65,7 +65,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     eut.eus_usage_type,
     rr.eus_proposal_id AS eus_proposal,
     ept.proposal_type_name AS eus_proposal_type,
-    public.get_requested_run_eususers_list(rr.request_id, 'V'::text) AS eus_user,
+    public.get_requested_run_eus_users_list(rr.request_id, 'V'::text) AS eus_user,
     tispre.name AS predigest_int_std,
     tispost.name AS postdigest_int_std,
     t_myemsl_state.myemsl_state_name AS myemsl_state

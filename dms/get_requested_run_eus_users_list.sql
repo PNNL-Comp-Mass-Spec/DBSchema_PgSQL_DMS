@@ -1,8 +1,8 @@
 --
--- Name: get_requested_run_eususers_list(integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_requested_run_eus_users_list(integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_requested_run_eususers_list(_requestid integer, _mode text DEFAULT 'I'::text) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid integer, _mode text DEFAULT 'I'::text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -54,11 +54,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_requested_run_eususers_list(_requestid integer, _mode text) OWNER TO d3l243;
+ALTER FUNCTION public.get_requested_run_eus_users_list(_requestid integer, _mode text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_requested_run_eususers_list(_requestid integer, _mode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_requested_run_eus_users_list(_requestid integer, _mode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_requested_run_eususers_list(_requestid integer, _mode text) IS 'GetRequestedRunEUSUsersList';
+COMMENT ON FUNCTION public.get_requested_run_eus_users_list(_requestid integer, _mode text) IS 'GetRequestedRunEUSUsersList';
 
