@@ -6,7 +6,7 @@ CREATE TABLE ont.t_cv_newt (
     entry_id integer NOT NULL,
     term_pk public.citext NOT NULL,
     term_name public.citext NOT NULL,
-    identifier public.citext NOT NULL,
+    identifier integer NOT NULL,
     is_leaf smallint NOT NULL,
     parent_term_name public.citext NOT NULL,
     parent_term_id public.citext NOT NULL,

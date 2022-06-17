@@ -83,7 +83,7 @@ UNION
  SELECT 'NEWT'::text AS source,
     t_cv_newt.term_pk,
     t_cv_newt.term_name,
-    t_cv_newt.identifier,
+    (t_cv_newt.identifier)::public.citext AS identifier,
     t_cv_newt.is_leaf,
     t_cv_newt.parent_term_name,
     t_cv_newt.parent_term_id,
