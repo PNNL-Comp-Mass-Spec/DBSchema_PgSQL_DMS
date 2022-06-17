@@ -17,21 +17,18 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_taxonomy_list(_taxonomyid integer, _ext
 **  Date:   03/02/2016 mem - Initial version
 **          03/03/2016 mem - Added _extendedInfo
 **          03/30/2022 mem - Ported to PostgreSQL
+**          06/16/2022 mem - Move Order by clause into the string_agg function
 **
 *****************************************************/
 DECLARE
     _list citext := '';
 BEGIN
-    SELECT string_agg(SourceQ.Rank || ':' || SourceQ.Name, '|')
+    SELECT string_agg(T.Rank || ':' || T.Name, '|' ORDER BY Entry_ID DESC)
     INTO _list
-    FROM (
-        SELECT T.rank, T.Name
-        FROM ont.get_taxid_taxonomy_table ( _taxonomyID ) T
-        WHERE T.Entry_ID = 1 OR
-              T.Rank <> 'no rank' OR
-              _extendedInfo > 0
-        ORDER BY T.Entry_ID DESC)
-    SourceQ;
+    FROM ont.get_taxid_taxonomy_table ( _taxonomyID ) T
+    WHERE T.Entry_ID = 1 OR
+          T.Rank <> 'no rank' OR
+          _extendedInfo > 0;
 
     Return _list;
 END
