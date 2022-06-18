@@ -50,5 +50,5 @@ ALTER FUNCTION public.extract_integer(_in text) OWNER TO d3l243;
 -- Name: FUNCTION extract_integer(_in text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.extract_integer(_in text) IS 'ExtractInteger';
+COMMENT ON FUNCTION public.extract_integer(_in text) IS 'ExtractInteger or ExtractNumberFromText';
 
