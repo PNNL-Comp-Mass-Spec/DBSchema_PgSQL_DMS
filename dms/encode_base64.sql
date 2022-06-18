@@ -1,8 +1,8 @@
 --
--- Name: encode_base64(text); Type: FUNCTION; Schema: dpkg; Owner: d3l243
+-- Name: encode_base64(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION dpkg.encode_base64(_texttoencode text) RETURNS text
+CREATE OR REPLACE FUNCTION public.encode_base64(_texttoencode text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -28,11 +28,11 @@ END
 $$;
 
 
-ALTER FUNCTION dpkg.encode_base64(_texttoencode text) OWNER TO d3l243;
+ALTER FUNCTION public.encode_base64(_texttoencode text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION encode_base64(_texttoencode text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+-- Name: FUNCTION encode_base64(_texttoencode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION dpkg.encode_base64(_texttoencode text) IS 'EncodeBase64';
+COMMENT ON FUNCTION public.encode_base64(_texttoencode text) IS 'EncodeBase64';
 

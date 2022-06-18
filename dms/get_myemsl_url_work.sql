@@ -1,8 +1,8 @@
 --
--- Name: get_myemsl_url_work(text, text); Type: FUNCTION; Schema: dpkg; Owner: d3l243
+-- Name: get_myemsl_url_work(text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION dpkg.get_myemsl_url_work(_keyname text, _value text) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_myemsl_url_work(_keyname text, _value text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -33,7 +33,7 @@ BEGIN
 
     _json := '{ "pacifica-search-simple": { "v": 1, "facets_set": [{"key": "' || _keyName || '", "value":"' || _value || '"}] } }';
 
-    _encodedText = dpkg.encode_base64(_json);
+    _encodedText = public.encode_base64(_json);
 
     _url := 'https://my.emsl.pnl.gov/myemsl/search/simple/' || _encodedText;
 
@@ -42,11 +42,11 @@ END
 $$;
 
 
-ALTER FUNCTION dpkg.get_myemsl_url_work(_keyname text, _value text) OWNER TO d3l243;
+ALTER FUNCTION public.get_myemsl_url_work(_keyname text, _value text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_myemsl_url_work(_keyname text, _value text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+-- Name: FUNCTION get_myemsl_url_work(_keyname text, _value text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION dpkg.get_myemsl_url_work(_keyname text, _value text) IS 'GetMyEMSLUrlWork';
+COMMENT ON FUNCTION public.get_myemsl_url_work(_keyname text, _value text) IS 'GetMyEMSLUrlWork';
 
