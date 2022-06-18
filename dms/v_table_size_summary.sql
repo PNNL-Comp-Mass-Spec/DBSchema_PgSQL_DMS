@@ -10,8 +10,8 @@ CREATE VIEW public.v_table_size_summary AS
     statsq.size_bytes,
     statsq.index_count,
     statsq.has_unique_idx,
-    statsq.single_column,
-    statsq.multi_column,
+    statsq.single_column_idx,
+    statsq.multi_column_idx,
     statsq.has_triggers
    FROM ( SELECT pg_namespace.nspname AS table_schema,
             pg_class.relname AS table_name,
@@ -26,13 +26,13 @@ CREATE VIEW public.v_table_size_summary AS
                 CASE
                     WHEN (lookpuq.number_of_columns = 1) THEN 1
                     ELSE 0
-                END) AS single_column,
+                END) AS single_column_idx,
             sum(
                 CASE
                     WHEN (lookpuq.number_of_columns IS NULL) THEN 0
                     WHEN (lookpuq.number_of_columns = 1) THEN 0
                     ELSE 1
-                END) AS multi_column,
+                END) AS multi_column_idx,
             pg_class.relhastriggers AS has_triggers
            FROM (((pg_namespace
              LEFT JOIN pg_class ON ((pg_namespace.oid = pg_class.relnamespace)))
