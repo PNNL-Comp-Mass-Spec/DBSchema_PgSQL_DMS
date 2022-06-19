@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_batch_requested_run_list(_batchid integer)
 **      Builds delimited list of requested runs
 **      associated with the given batch
 **
-**  Return value: delimited list
+**  Return value: Comma separated list
 **
 **  Auth:   grk
 **  Date:   01/11/2006 grk - Initial version
@@ -28,7 +28,7 @@ BEGIN
     FROM t_requested_run
     WHERE batch_id = _batchID AND batch_id <> 0;
 
-    RETURN _result;
+    RETURN Coalesce(_result, '');
 END
 $$;
 

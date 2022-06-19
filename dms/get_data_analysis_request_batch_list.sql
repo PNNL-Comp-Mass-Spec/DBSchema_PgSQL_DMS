@@ -11,9 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_data_analysis_request_batch_list(_dataanal
 **      Builds delimited list of batch IDs
 **      associated with the given data analysis request
 **
-**  Return value: delimited list
-**
-**  Parameters:
+**  Return value: comma separated list
 **
 **  Auth:   mem
 **  Date:   03/25/2022 mem - Initial version
@@ -21,17 +19,23 @@ CREATE OR REPLACE FUNCTION public.get_data_analysis_request_batch_list(_dataanal
 **
 *****************************************************/
 DECLARE
-    _result text;
+    _result text := '';
 BEGIN
-    SELECT string_agg(cast(Batch_ID as text), ', ' ORDER BY Batch_ID)
+    SELECT string_agg(batch_id::text, ', ' ORDER BY batch_id)
     INTO _result
-    FROM T_Data_Analysis_Request_Batch_IDs
-    WHERE Request_ID = _dataAnalysisRequestID;
+    FROM t_data_analysis_request_batch_ids
+    WHERE request_id = _dataAnalysisRequestID;
 
-    RETURN _result;
+    RETURN Coalesce(_result, '');
 END
 $$;
 
 
 ALTER FUNCTION public.get_data_analysis_request_batch_list(_dataanalysisrequestid integer) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_data_analysis_request_batch_list(_dataanalysisrequestid integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_data_analysis_request_batch_list(_dataanalysisrequestid integer) IS 'GetDataAnalysisRequestBatchList';
 

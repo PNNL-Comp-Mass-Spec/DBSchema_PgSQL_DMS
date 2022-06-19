@@ -17,7 +17,6 @@ CREATE OR REPLACE FUNCTION public.get_dataset_factor_count(_datasetid integer) R
 DECLARE
     _result int;
 BEGIN
-
     SELECT Factor_Count
     INTO _result
     FROM V_Factor_Count_By_Dataset

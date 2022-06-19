@@ -24,7 +24,7 @@ DECLARE
     _result text;
 BEGIN
     IF _mode = 'I' Then
-        SELECT string_agg(CAST(EUS_Person_ID AS text), ', ' ORDER BY EUS_Person_ID)
+        SELECT string_agg(EUS_Person_ID::text, ', ' ORDER BY EUS_Person_ID)
         INTO _result
         FROM t_requested_run_eus_users INNER JOIN
              t_eus_users ON t_requested_run_eus_users.eus_person_id = t_eus_users.person_id
@@ -49,7 +49,7 @@ BEGIN
         _result := '';
     End If;
 
-    RETURN _result;
+    RETURN Coalesce(_result, '');
 END
 $$;
 
