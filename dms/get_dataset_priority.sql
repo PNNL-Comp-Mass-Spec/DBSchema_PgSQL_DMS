@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_priority(_datasetname public.citex
 **          05/07/2015 mem - Added QC_Shew_TEDDY
 **          08/08/2018 mem - Added QC_Mam and QC_PP_MCF-7
 **          06/27/2019 mem - Renamed from DatasetPreference to GetDatasetPriority
-**          06/13/2022 mem - Ported to PostgreSQL
+**          06/19/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -35,7 +35,7 @@ DECLARE
 BEGIN
 
     If (_datasetName SIMILAR TO 'QC[_][0-9][0-9]%' OR
-        _datasetName LIKE 'QC[_-]Shew[_-][0-9][0-9]%' OR
+        _datasetName SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' OR
         _datasetName SIMILAR TO 'QC[_-]ShewIntact%' OR
         _datasetName SIMILAR TO 'QC[_]Shew[_]TEDDY%' OR
         _datasetName SIMILAR TO 'QC[_]Mam%' OR
