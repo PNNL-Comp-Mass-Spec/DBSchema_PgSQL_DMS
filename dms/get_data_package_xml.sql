@@ -70,7 +70,7 @@ BEGIN
     -- Data Package Parameters
     ---------------------------------------------------
 
-    If _includeAll Or position('Parameters' in _options) > 0 Then
+    If _includeAll Or position(lower('Parameters') in lower(_options)) > 0 Then
         _result := _result || '<general>' || _newline;
 
         -- Note: if LookupQ returns multiple rows, use XMLFOREST to wrap the <package></package> items in <packages></packages>
@@ -110,7 +110,7 @@ BEGIN
     -- Experiment Details
     ---------------------------------------------------
 
-    If _includeAll Or position('Experiments' in _options) > 0 Then
+    If _includeAll Or position(lower('Experiments') in lower(_options)) > 0 Then
         _result := _result || _newline || '<experiments>' || _newline;
 
         SELECT xml_item
@@ -143,7 +143,7 @@ BEGIN
     -- Dataset Details
     ---------------------------------------------------
 
-    If _includeAll Or position('Datasets' in _options) > 0 Then
+    If _includeAll Or position(lower('Datasets') in lower(_options)) > 0 Then
         _result := _result || _newline || '<datasets>' || _newline;
 
         SELECT xml_item
@@ -174,7 +174,7 @@ BEGIN
     -- Job Details
     ---------------------------------------------------
 
-    If _includeAll Or position('Jobs' in _options) > 0 Then
+    If _includeAll Or position(lower('Jobs') in lower(_options)) > 0 Then
         _result := _result || _newline || '<jobs>' || _newline;
 
         SELECT xml_item
@@ -208,7 +208,7 @@ BEGIN
     -- Storage Paths
     ---------------------------------------------------
 
-    If _includeAll Or position('Paths' in _options) > 0 Then
+    If _includeAll Or position(lower('Paths') in lower(_options)) > 0 Then
         _result := _result || _newline || '<paths>';
 
         ---------------------------------------------------
