@@ -17,7 +17,6 @@ CREATE OR REPLACE FUNCTION public.get_dataset_predefine_job_count(_datasetid int
 DECLARE
     _result int;
 BEGIN
-
     SELECT SUM(jobs_created)
     INTO _result
     FROM t_predefined_analysis_scheduling_queue

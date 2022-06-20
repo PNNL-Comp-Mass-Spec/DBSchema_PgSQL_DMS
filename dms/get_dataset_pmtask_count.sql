@@ -17,7 +17,6 @@ CREATE OR REPLACE FUNCTION public.get_dataset_pmtask_count(_datasetid integer) R
 DECLARE
     _result int;
 BEGIN
-
     SELECT COUNT(*)
     INTO _result
     FROM t_analysis_job AS AJ
