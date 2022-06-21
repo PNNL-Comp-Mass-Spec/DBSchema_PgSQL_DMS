@@ -14,8 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_priority(_datasetname public.citex
 **       If either the dataset name or the experiment name matches one of the
 **       filters below, the Interest_Rating is set to 5 (Released)
 **
-**  Return values: 1 if highest priority; 3 if medium priority, 5 if low priority
-**                 0 to use the default priority
+**  Return values: 0 for default priority, 1 for higher priority
 **
 **  Auth:   grk
 **  Date:   02/10/2006
