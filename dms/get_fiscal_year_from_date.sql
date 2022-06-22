@@ -1,0 +1,40 @@
+--
+-- Name: get_fiscal_year_from_date(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time zone) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+/****************************************************
+**
+**  Desc:
+**      Returns Fiscal year for given date
+**
+**  Return value: Fiscal year description, e.g. FY_22
+**
+**  Auth:   grk
+**  Date:   07/18/2011
+**          06/21/2022 mem - Ported to PostgreSQL
+**
+*****************************************************/
+DECLARE
+    _fiscalYear timestamp;
+BEGIN
+    _fiscalYear := CASE WHEN date_part('month', _rawDate) > 9
+                        THEN _rawDate + Interval '1 year'
+                        ELSE _rawDate
+                   END;
+
+    RETURN 'FY_' || Right(date_part('year', _fiscalYear)::text, 2);
+END
+$$;
+
+
+ALTER FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time zone) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_fiscal_year_from_date(_rawdate timestamp without time zone); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time zone) IS 'GetFiscalYearFromDate';
+
