@@ -15,22 +15,22 @@ CREATE OR REPLACE FUNCTION public.get_experiment_group_list(_experimentid intege
 **
 **  Auth:   mem
 **  Date:   12/16/2011 mem
-**          06/16/2022 mem - Ported to PostgreSQL
+**          06/21/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    SELECT string_agg(Group_ID::text, ', ' ORDER BY Group_ID)
+    SELECT string_agg(group_id::text, ', ' ORDER BY group_id)
     INTO _result
     FROM t_experiment_group_members
-    WHERE (exp_id = _experimentID);
+    WHERE exp_id = _experimentID;
 
-    If Coalesce(_result, '') = '' Then
+    If Coalesce(_result, '') = ''  Then
         _result := '(none)';
     End If;
 
-    RETURN _result;
+    Return _result;
 END
 $$;
 
