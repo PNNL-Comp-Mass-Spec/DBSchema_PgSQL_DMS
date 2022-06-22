@@ -9,13 +9,16 @@ CREATE OR REPLACE FUNCTION public.get_experiment_plex_members_for_entry(_plexexp
 **
 **  Desc:   Builds delimited list of experiment plex members for a given experiment plex
 **
+**  Return value: list delimited with line feeds and vertical bars
+**
 **  Auth:   mem
 **  Date:   11/09/2018 mem
 **          11/19/2018 mem - Update column name
-**          06/16/2022 mem - Ported to PostgreSQL
+**          06/21/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
+    _headerRow text;
     _list text;
     _result text;
     _missingTagCount int := 0;
@@ -53,13 +56,15 @@ BEGIN
            WHERE PlexMembers.plex_exp_id = _plexExperimentID ) LookupQ;
 
     If _missingTagCount > 0 And _missingTagCount = _channelCount Then
-        _result := 'Channel, Exp_ID, Channel Type, Comment';
+        _headerRow := 'Channel, Exp_ID, Channel Type, Comment';
     Else
-        _result := 'Tag, Exp_ID, Channel Type, Comment';
+        _headerRow := 'Tag, Exp_ID, Channel Type, Comment';
     End If;
 
-    If char_length(Coalesce(_list, '')) > 0 Then
-        _result := _result || chr(10) || _list;
+    If Coalesce(_list, '') = ''  Then
+        _result := _headerRow;
+    Else
+        _result := _headerRow || chr(10) || _list;
     End If;
 
     RETURN _result;

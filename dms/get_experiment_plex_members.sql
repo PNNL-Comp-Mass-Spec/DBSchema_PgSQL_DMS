@@ -9,14 +9,17 @@ CREATE OR REPLACE FUNCTION public.get_experiment_plex_members(_plexexperimentid 
 **
 **  Desc:   Builds delimited list of experiment plex members for a given experiment plex
 **
+**  Return value: list delimited with vertical bars and colons
+**
 **  Auth:   mem
 **  Date:   11/09/2018 mem
-**          06/16/2022 mem - Ported to PostgreSQL
+**          06/21/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _result text;
+    _headerRow text := '!Headers!Tag:Exp_ID:Experiment:Channel Type:Comment';
     _list text;
+    _result text;
 BEGIN
     SELECT string_agg(LookupQ.PlexMemberInfo, '|' ORDER BY LookupQ.channel)
     INTO _list
@@ -39,10 +42,10 @@ BEGIN
            WHERE PlexMembers.plex_exp_id = _plexExperimentID
            ) LookupQ;
 
-    _result := '!Headers!Tag:Exp_ID:Experiment:Channel Type:Comment';
-
-    If char_length(Coalesce(_list, '')) > 0 Then
-        _result := _result || '|' || _list;
+    If Coalesce(_list, '') = ''  Then
+        _result := _headerRow;
+    Else
+        _result = _headerRow || '|' || _list;
     End If;
 
     RETURN _result;
