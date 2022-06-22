@@ -94,12 +94,12 @@ BEGIN
                                      person_id
                               FROM t_eus_proposal_users
                               WHERE proposal_id = _instrumentUsage.proposal ) ProposalUsers
-                   ON ProposalUsers.person_id = Try_Cast(Value, 0);
+                   ON ProposalUsers.person_id = try_cast(Value, 0);
         Else
             SELECT COUNT(*)
             INTO _hits
             FROM t_eus_proposal_users
-            WHERE proposal_id = _instrumentUsage.proposal And person_id = Try_Cast(_instrumentUsage.users, 0);
+            WHERE proposal_id = _instrumentUsage.proposal And person_id = try_cast(_instrumentUsage.users, 0);
         End If;
 
         IF _hits = 0 Then
