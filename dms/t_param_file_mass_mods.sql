@@ -9,7 +9,7 @@ CREATE TABLE public.t_param_file_mass_mods (
     mass_correction_id integer NOT NULL,
     param_file_id integer,
     mod_type_symbol character(1),
-    max_quant_mod_id integer,
+    maxquant_mod_id integer,
     CONSTRAINT ck_t_param_file_mass_mods_dyn_mod_local_symbol_id CHECK ((
 CASE
     WHEN (mod_type_symbol = 'D'::bpchar) THEN (local_symbol_id)::integer
@@ -59,11 +59,11 @@ ALTER TABLE ONLY public.t_param_file_mass_mods
     ADD CONSTRAINT fk_t_param_file_mass_mods_t_mass_correction_factors FOREIGN KEY (mass_correction_id) REFERENCES public.t_mass_correction_factors(mass_correction_id);
 
 --
--- Name: t_param_file_mass_mods fk_t_param_file_mass_mods_t_max_quant_mods; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+-- Name: t_param_file_mass_mods fk_t_param_file_mass_mods_t_maxquant_mods; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
 ALTER TABLE ONLY public.t_param_file_mass_mods
-    ADD CONSTRAINT fk_t_param_file_mass_mods_t_max_quant_mods FOREIGN KEY (max_quant_mod_id) REFERENCES public.t_max_quant_mods(mod_id);
+    ADD CONSTRAINT fk_t_param_file_mass_mods_t_maxquant_mods FOREIGN KEY (maxquant_mod_id) REFERENCES public.t_maxquant_mods(mod_id);
 
 --
 -- Name: t_param_file_mass_mods fk_t_param_file_mass_mods_t_modification_types; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

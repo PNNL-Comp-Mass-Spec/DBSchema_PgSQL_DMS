@@ -1,8 +1,8 @@
 --
--- Name: get_max_quant_mass_mods_list(integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_maxquant_mass_mods_list(integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_max_quant_mass_mods_list(_paramfileid integer) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_maxquant_mass_mods_list(_paramfileid integer) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_max_quant_mass_mods_list(_paramfileid inte
 **
 **  Auth:   mem
 **  Date:   03/05/2021 mem - Initial version
-**          06/21/2022 mem - Ported to PostgreSQL
+**          06/22/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -45,8 +45,8 @@ BEGIN
                   ON PFMM.local_symbol_id = SLS.local_symbol_id
                 INNER JOIN t_param_files PF
                   ON PFMM.param_file_id = PF.param_file_id
-                INNER JOIN t_max_quant_mods MQM
-                  ON MQM.mod_id = PFMM.max_quant_mod_id
+                INNER JOIN t_maxquant_mods MQM
+                  ON MQM.mod_id = PFMM.maxquant_mod_id
            WHERE PF.param_file_id = _paramFileId
          ) LookupQ;
 
@@ -61,11 +61,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_max_quant_mass_mods_list(_paramfileid integer) OWNER TO d3l243;
+ALTER FUNCTION public.get_maxquant_mass_mods_list(_paramfileid integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_max_quant_mass_mods_list(_paramfileid integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_maxquant_mass_mods_list(_paramfileid integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_max_quant_mass_mods_list(_paramfileid integer) IS 'GetMaxQuantMassModsList';
+COMMENT ON FUNCTION public.get_maxquant_mass_mods_list(_paramfileid integer) IS 'GetMaxQuantMassModsList';
 
