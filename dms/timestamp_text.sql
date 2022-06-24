@@ -7,22 +7,26 @@ CREATE OR REPLACE FUNCTION public.timestamp_text(_currenttime timestamp without 
     LANGUAGE plpgsql
     AS $$
 /****************************************************
-**  Returns a time stamp for the value specified by the _currentTime argument
-**  The time stamp will be in the form: 2020-01-09 15:12:18
 **
-**  There are two timestamp_text functions; this one accepts a timestamp that does not have a timezone
+**  Desc:
+**      Returns a text representation for the value specified by the _currentTime argument
+**      The time stamp will be in the form: 2020-01-09 15:12:18
 **
-**  To get the current time, use either
-**      SELECT timestamp_text(localtimestamp);
-**  or
-**      SELECT timestamp_text(current_timestamp::timestamp);
+**      There are two timestamp_text functions; this one accepts a timestamp that does not have a timezone
+**
+**  Example usage:
+**      To get the current time, use either
+**        SELECT timestamp_text(localtimestamp);
+**      or
+**        SELECT timestamp_text(current_timestamp::timestamp);
 **
 **  Auth: mem
 **  Date: 01/09/2020
+**
 *****************************************************/
 
 BEGIN
-    RETURN to_char(_currentTime, 'YYYY-MM-DD HH24:MI:SS');
+    Return to_char(_currentTime, 'YYYY-MM-DD HH24:MI:SS');
 END
 $$;
 
@@ -38,22 +42,26 @@ CREATE OR REPLACE FUNCTION public.timestamp_text(_currenttime timestamp with tim
     LANGUAGE plpgsql
     AS $$
 /****************************************************
-**  Returns a time stamp for the value specified by the _currentTime argument
-**  The time stamp will be in the form: 2020-01-09 15:12:18
-*
-**  There are two timestamp_text functions; this one accepts a timestamp with a timezone
 **
-**  To get the current time, use either
-**      SELECT timestamp_text(localtimestamp);
-**  or
-**      SELECT timestamp_text(current_timestamp);
+**  Desc:
+**      Returns a text representation for the value specified by the _currentTime argument
+**      The time stamp will be in the form: 2020-01-09 15:12:18
+**
+**      There are two timestamp_text functions; this one accepts a timestamp with a timezone
+**
+**  Example usage:
+**      To get the current time, use either
+**        SELECT timestamp_text(localtimestamp);
+**      or
+**        SELECT timestamp_text(current_timestamp);
 **
 **  Auth: mem
 **  Date: 01/14/2020
+**
 *****************************************************/
 
 BEGIN
-    RETURN to_char(_currentTime::timestamp, 'YYYY-MM-DD HH24:MI:SS');
+    Return to_char(_currentTime::timestamp, 'YYYY-MM-DD HH24:MI:SS');
 END
 $$;
 

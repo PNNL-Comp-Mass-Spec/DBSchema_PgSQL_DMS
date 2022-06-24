@@ -7,25 +7,29 @@ CREATE OR REPLACE FUNCTION public.timestamp_text_immutable(_currenttime timestam
     LANGUAGE plpgsql IMMUTABLE
     AS $$
 /****************************************************
-**  Converts the value specified by the _currentTime argument to text
-**  The function is marked as immutable because if _currentTime is null, it returns an empty string
 **
-**  The text will include milliseconds and will not have any spaces
-**  For example: 2022-05-31_14:38:32.410
+**  Desc:
+**      Returns a text representation for the value specified by the _currentTime argument
+**      The function is marked as immutable because if _currentTime is null, it returns an empty string
 **
-**  There are two timestamp_text_immutable functions; this one accepts a timestamp that does not have a timezone
+**      The text will include milliseconds and will not have any spaces
+**      For example: 2022-05-31_14:38:32.410
 **
-**  To convert the timestamp to text, use either
-**      SELECT timestamp_text_immutable(localtimestamp);
-**  or
-**      SELECT timestamp_text_immutable(current_timestamp);
+**      There are two timestamp_text_immutable functions; this one accepts a timestamp that does not have a timezone
+**
+**  Example usage:
+**      To convert the timestamp to text, use either
+**        SELECT timestamp_text_immutable(localtimestamp);
+**      or
+**        SELECT timestamp_text_immutable(current_timestamp);
 **
 **  Auth:   mem
 **  Date:   05/31/2022
+**
 *****************************************************/
 
 BEGIN
-    return CASE
+    Return CASE
                WHEN _currentTime IS NULL THEN ''
                ELSE to_char(_currentTime, 'YYYY-MM-DD_HH24:MI:SS.MS')
            END;
@@ -44,25 +48,29 @@ CREATE OR REPLACE FUNCTION public.timestamp_text_immutable(_currenttime timestam
     LANGUAGE plpgsql IMMUTABLE
     AS $$
 /****************************************************
-**  Converts the value specified by the _currentTime argument to text
-**  The function is marked as immutable because if _currentTime is null, it returns an empty string
 **
-**  The text will include milliseconds and will not have any spaces
-**  For example: 2022-05-31_14:38:32.410
+**  Desc:
+**      Returns a text representation for the value specified by the _currentTime argument
+**      The function is marked as immutable because if _currentTime is null, it returns an empty string
 **
-**  There are two timestamp_text_immutable functions; this one accepts a timestamp with a timezone
+**      The text will include milliseconds and will not have any spaces
+**      For example: 2022-05-31_14:38:32.410
 **
-**  To convert the timestamp to text, use either
-**      SELECT timestamp_text_immutable(localtimestamp);
-**  or
-**      SELECT timestamp_text_immutable(current_timestamp);
+**      There are two timestamp_text_immutable functions; this one accepts a timestamp with a timezone
+**
+**  Example usage:
+**      To convert the timestamp to text, use either
+**        SELECT timestamp_text_immutable(localtimestamp);
+**      or
+**        SELECT timestamp_text_immutable(current_timestamp);
 **
 **  Auth:   mem
 **  Date:   05/31/2022
+**
 *****************************************************/
 
 BEGIN
-    return CASE
+    Return CASE
                WHEN _currentTime IS NULL THEN ''
                ELSE to_char(_currentTime::timestamp, 'YYYY-MM-DD_HH24:MI:SS.MS')
            END;
