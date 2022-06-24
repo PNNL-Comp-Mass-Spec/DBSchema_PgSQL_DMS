@@ -23,19 +23,21 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid in
 DECLARE
     _result text;
 BEGIN
-    IF _mode = 'I' Then
+    If _mode = 'I' Then
         SELECT string_agg(EUS_Person_ID::text, ', ' ORDER BY EUS_Person_ID)
         INTO _result
         FROM t_requested_run_eus_users INNER JOIN
              t_eus_users ON t_requested_run_eus_users.eus_person_id = t_eus_users.person_id
         WHERE t_requested_run_eus_users.request_id = _requestID;
-    ElseIF _mode = 'N' Then
+
+    ElseIf _mode = 'N' Then
         SELECT string_agg(NAME_FM, '; ' ORDER BY NAME_FM)
         INTO _result
         FROM t_requested_run_eus_users INNER JOIN
              t_eus_users ON t_requested_run_eus_users.eus_person_id = t_eus_users.person_id
         WHERE t_requested_run_eus_users.request_id = _requestID;
-    ElseIF _mode = 'V' Then
+
+    ElseIf _mode = 'V' Then
         SELECT string_agg(NAME_FM || ' (' || CAST(EUS_Person_ID AS text) || ')', '; ' ORDER BY NAME_FM)
         INTO _result
         FROM t_requested_run_eus_users INNER JOIN
@@ -45,6 +47,7 @@ BEGIN
         If Length(Coalesce(_result, '')) = 0 Then
             _result := '(none)';
         End If;
+
     Else
         _result := '';
     End If;
