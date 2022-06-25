@@ -27,7 +27,7 @@ BEGIN
     ORDER BY acq_time_start
     LIMIT 1;
 
-    If FOUND Then
+    If Found Then
         Return _nextStartTime;
     Else
         Return _start;

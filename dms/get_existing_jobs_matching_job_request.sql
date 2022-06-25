@@ -55,7 +55,7 @@ BEGIN
         job int primary key not null
     );
 
-    If FOUND Then
+    If Found Then
         -- Lookup the ResultType for the analysis tool
         --
         SELECT result_type
@@ -102,7 +102,6 @@ BEGIN
               )
         GROUP BY AJ.job
         ORDER BY AJ.job;
-
     End If;
 
     RETURN QUERY

@@ -31,7 +31,7 @@ BEGIN
     WHERE Param_File_ID = _paramFileId
     GROUP BY Table_Code_Header;
 
-    If FOUND Then
+    If Found Then
         _result := _header || '<br>' || _list;
     End If;
 

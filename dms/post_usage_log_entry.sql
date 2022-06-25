@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 **          03/17/2006 mem - Now populating Usage_Count in T_Usage_Log and changed _minimumUpdateInterval from 6 hours to 1 hour
 **          05/03/2009 mem - Removed parameter _dBName
 **          02/06/2020 mem - Ported to PostgreSQL
+**          06/24/2022 mem - Capitalize _sqlState
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ DECLARE
     _currentOperation text := 'initializing';
     _callingUser text := session_user;
     _lastUpdated timestamp;
-    _sqlstate text;
+    _sqlState text;
     _exceptionMessage text;
     _exceptionContext text;
 BEGIN
@@ -57,11 +58,12 @@ BEGIN
     If _minimumUpdateInterval > 0 Then
         -- See if the last update was less than _minimumUpdateInterval hours ago
 
-        SELECT MAX(posting_time) INTO _lastUpdated
+        SELECT MAX(posting_time)
+        INTO _lastUpdated
         FROM t_usage_log
         WHERE posted_by = _postedBy AND calling_user = _callingUser;
 
-        IF Found Then
+        If Found Then
             If CURRENT_TIMESTAMP <= _lastUpdated + _minimumUpdateInterval * INTERVAL '1 hour' Then
                 -- The last usage message was posted recently
                 Return;
@@ -80,7 +82,7 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState = returned_sqlstate,
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
