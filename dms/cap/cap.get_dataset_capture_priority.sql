@@ -1,0 +1,54 @@
+--
+-- Name: get_dataset_capture_priority(public.citext, public.citext); Type: FUNCTION; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.citext, _instrumentgroup public.citext) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $$
+/****************************************************
+**
+**  Desc:
+**      Determines if the dataset warrants preferential processing priority for dataset capture
+**      This procedure is used by MakeNewJobsFromDMS to define the capture job priority
+**
+**      If the dataset name matches one of the filters below, the capture priority will be 2 instead of 4
+**      Otherwise, if the instrument group matches one of the filters, the capture priority will be 6 instead of 4
+**
+**  Return values: 2 if high priority; 4 if medium priority, 6 if low priority
+**
+**  Auth:   mem
+**  Date:   06/27/2019 mem - Initial version
+**          06/24/2022 mem - Ported to PostgreSQL
+**
+*****************************************************/
+DECLARE
+    _priority int;
+BEGIN
+    -- These dataset names are modeled after those in function public.get_dataset_priority
+    If (_datasetName SIMILAR TO 'QC[_][0-9][0-9]%' OR
+        _datasetName SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' OR
+        _datasetName SIMILAR TO 'QC[_-]ShewIntact%' OR
+        _datasetName SIMILAR TO 'QC[_]Shew[_]TEDDY%' OR
+        _datasetName SIMILAR TO 'QC[_]Mam%' OR
+        _datasetName SIMILAR TO 'QC[_]PP[_]MCF-7%'
+       ) AND NOT _datasetName LIKE '%-bad' Then
+         _priority := 2;
+    ElseIf _instrumentGroup In ('TSQ', 'Bruker_FTMS', 'MALDI-Imaging') Then
+        _priority := 6;
+    Else
+        _priority := 4;
+    End If;
+
+    Return _priority;
+END
+$$;
+
+
+ALTER FUNCTION cap.get_dataset_capture_priority(_datasetname public.citext, _instrumentgroup public.citext) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_dataset_capture_priority(_datasetname public.citext, _instrumentgroup public.citext); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON FUNCTION cap.get_dataset_capture_priority(_datasetname public.citext, _instrumentgroup public.citext) IS 'GetDatasetCapturePriority';
+
