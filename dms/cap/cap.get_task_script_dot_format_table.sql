@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_script_dot_format_table(_script text) RE
 **      Returns Dot graphic command list (as table) for given script
 **
 **  Auth:   mem
-**  Date:   06/24/2022 mem - Ported to PostgreSQL by converting V_Script_Dot_Format to a function
+**  Date:   06/25/2022 mem - Ported to PostgreSQL by converting V_Script_Dot_Format to a function
 **
 ****************************************************/
 DECLARE
@@ -68,7 +68,7 @@ BEGIN
         FROM cap.t_scripts Src,
             LATERAL unnest((
                 SELECT
-                    xpath('//JobScript[@Name = "' || _script || '"]', contents)
+                    xpath('//JobScript', Src.contents)
             )) t1,
             XMLTABLE('//JobScript/Step'
                               PASSING t1
