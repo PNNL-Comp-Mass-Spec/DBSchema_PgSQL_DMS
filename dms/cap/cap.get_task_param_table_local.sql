@@ -1,18 +1,19 @@
 --
--- Name: get_job_param_table_local(integer); Type: FUNCTION; Schema: cap; Owner: d3l243
+-- Name: get_task_param_table_local(integer); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_job_param_table_local(_jobnumber integer) RETURNS TABLE(job integer, name public.citext, value public.citext)
+CREATE OR REPLACE FUNCTION cap.get_task_param_table_local(_job integer) RETURNS TABLE(job integer, name public.citext, value public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
-**  Desc:   Returns a table of the job parameters stored locally in T_Job_Parameters
+**  Desc:   Returns a table of the capture task job parameters stored locally in t_task_parameters
 **
 **  Auth:   grk
 **  Date:   06/07/2010
 **          04/04/2011 mem - Updated to only query T_Job_Parameters
 **          06/24/2022 mem - Ported to PostgreSQL
+**          06/26/2022 mem - Renamed from get_job_param_table_local to get_task_param_table_local
 **
 *****************************************************/
 DECLARE
@@ -36,41 +37,44 @@ BEGIN
     --   '<Param Section="JobParameters" Name="Dataset_ID" Value="1016870"/>'
     --   '<Param Section="JobParameters" Name="Storage_Server_Name" Value="proto-4"/>'
     --
-    SELECT unnest(xpath('//params/Param[@Name="Storage_Server_Name"]', rooted_xml))::text
+    SELECT unnest(xpath('//params/Param', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM cap.T_task_Parameters
-           WHERE job = _jobNumber
+           FROM cap.t_task_parameters
+           WHERE job = _job
          ) Src;
 
     -- Obtain a single parameter:
     --   '<Param Section="JobParameters" Name="Storage_Server_Name" Value="proto-4"/>'
+    --
     SELECT unnest(xpath('//params/Param[@Name="Storage_Server_Name"]', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM cap.T_task_Parameters
-           WHERE job = _jobNumber
+           FROM cap.t_task_parameters
+           WHERE job = _job
          ) Src;
 
     -- Obtain the parameter value:
-    -- 'proto-4'
+    --   'proto-4'
+    --
     SELECT unnest(xpath('//params/Param[@Name="Storage_Server_Name"]/@Value', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM cap.T_task_Parameters
-           WHERE job = _jobNumber
+           FROM cap.t_task_parameters
+           WHERE job = _job
          ) Src;
 
     */
 
     ---------------------------------------------------
     -- Convert the XML job parameters into a table
+    -- We must surround the job parameter XML with <params></params> so that the XML will be rooted, as required by XMLTABLE()
     ---------------------------------------------------
     --
     RETURN QUERY
-    SELECT _jobNumber AS Job, XmlQ.name, XmlQ.value
+    SELECT _job AS Job, XmlQ.name, XmlQ.value
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || TaskParams.parameters::text || '</params>')::xml as rooted_xml
                FROM cap.t_task_parameters TaskParams
-               WHERE TaskParams.job = _jobNumber
+               WHERE TaskParams.job = _job
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
@@ -86,26 +90,26 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Error converting XML job parameters to text using XMLTABLE() for job %s: %s',
-                _jobNumber, _exceptionMessage);
+    _message := format('Error converting XML job parameters to text using XMLTABLE() for capture task job %s: %s',
+                _job, _exceptionMessage);
 
     RAISE Warning '%', _message;
     RAISE Warning '%', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'get_job_param_table_local', 'cap');
+    Call post_log_entry ('Error', _message, 'get_task_param_table_local', 'cap');
 
     -- In theory the error message could be returned using the following, but this doesn't work
     --   RETURN QUERY
-    --   SELECT _jobNumber AS Job, 'Error_Message'::citext, _message::citext;
+    --   SELECT _job AS Job, 'Error_Message'::citext, _message::citext;
 END
 $$;
 
 
-ALTER FUNCTION cap.get_job_param_table_local(_jobnumber integer) OWNER TO d3l243;
+ALTER FUNCTION cap.get_task_param_table_local(_job integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_job_param_table_local(_jobnumber integer); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: FUNCTION get_task_param_table_local(_job integer); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.get_job_param_table_local(_jobnumber integer) IS 'GetJobParamTableLocal';
+COMMENT ON FUNCTION cap.get_task_param_table_local(_job integer) IS 'GetJobParamTableLocal';
 

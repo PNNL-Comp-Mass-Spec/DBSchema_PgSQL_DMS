@@ -1,14 +1,14 @@
 --
--- Name: get_job_param_list(integer); Type: FUNCTION; Schema: cap; Owner: d3l243
+-- Name: get_task_param_list(integer); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_job_param_list(_job integer) RETURNS public.citext
+CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.citext
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Converts XML parameters for given job into text surrounded by HTML tags <pre> and </pre>
+**      Converts XML parameters for given capture task job into text surrounded by HTML tags <pre> and </pre>
 **
 **      Additionally, each parameter will end with <br>,
 **      producing a table-style layout on the Capture Jobs Detail Report
@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION cap.get_job_param_list(_job integer) RETURNS public.c
 **  Auth:   grk
 **  Date:   01/27/2010
 **          06/24/2022 mem - Ported to PostgreSQL
+**          06/26/2022 mem - Renamed from get_job_param_list to get_task_param_list
 **
 *****************************************************/
 DECLARE
@@ -72,7 +73,7 @@ EXCEPTION
     RAISE Warning '%', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'get_job_param_list', 'cap');
+    Call post_log_entry ('Error', _message, 'get_task_param_list', 'cap');
 
     -- Use text parsing to convert the XML job parameters
     --
@@ -92,11 +93,11 @@ END
 $$;
 
 
-ALTER FUNCTION cap.get_job_param_list(_job integer) OWNER TO d3l243;
+ALTER FUNCTION cap.get_task_param_list(_job integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_job_param_list(_job integer); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: FUNCTION get_task_param_list(_job integer); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.get_job_param_list(_job integer) IS 'GetJobParamList';
+COMMENT ON FUNCTION cap.get_task_param_list(_job integer) IS 'GetJobParamList';
 
