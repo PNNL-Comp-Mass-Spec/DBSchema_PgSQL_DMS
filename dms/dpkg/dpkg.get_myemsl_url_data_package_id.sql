@@ -1,8 +1,8 @@
 --
--- Name: get_myemsl_url_data_package_id(text); Type: FUNCTION; Schema: dpkg; Owner: d3l243
+-- Name: get_myemsl_url_data_package_id(integer); Type: FUNCTION; Schema: dpkg; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid text) RETURNS text
+CREATE OR REPLACE FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid integer) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,24 +14,25 @@ CREATE OR REPLACE FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid te
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/12/2022 mem - Ported to PostgreSQL
+**          06/26/2022 mem - Changed _dataPackageID argument from text to int
 **
 *****************************************************/
 DECLARE
     _keyName text := 'extended_metadata.gov_pnnl_emsl_dms_datapackage.id';
     _url text;
 BEGIN
-    _url := public.get_myemsl_url_work(_keyName, _dataPackageID);
+    _url := public.get_myemsl_url_work(_keyName, _dataPackageID::text);
 
     Return _url;
 END
 $$;
 
 
-ALTER FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid text) OWNER TO d3l243;
+ALTER FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_myemsl_url_data_package_id(_datapackageid text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+-- Name: FUNCTION get_myemsl_url_data_package_id(_datapackageid integer); Type: COMMENT; Schema: dpkg; Owner: d3l243
 --
 
-COMMENT ON FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid text) IS 'GetMyEMSLUrlDataPackageID';
+COMMENT ON FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid integer) IS 'GetMyEMSLUrlDataPackageID';
 

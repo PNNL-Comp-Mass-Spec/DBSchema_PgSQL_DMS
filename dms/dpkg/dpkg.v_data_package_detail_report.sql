@@ -17,7 +17,7 @@ CREATE VIEW dpkg.v_data_package_detail_report AS
     dp.package_directory AS package_file_folder,
     dpp.share_path,
     dpp.web_path,
-    dpkg.get_myemsl_url_data_package_id((dp.data_pkg_id)::text) AS myemsl_url,
+    dpkg.get_myemsl_url_data_package_id(dp.data_pkg_id) AS myemsl_url,
     dp.mass_tag_database AS amt_tag_database,
     dp.biomaterial_item_count,
     dp.experiment_item_count,
