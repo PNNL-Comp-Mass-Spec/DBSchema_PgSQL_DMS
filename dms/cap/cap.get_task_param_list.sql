@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **  Date:   01/27/2010
 **          06/24/2022 mem - Ported to PostgreSQL
 **          06/26/2022 mem - Renamed from get_job_param_list to get_task_param_list
+**          06/28/2022 mem - Add <br> before </pre>
 **
 *****************************************************/
 DECLARE
@@ -42,8 +43,8 @@ BEGIN
     --
     SELECT string_agg(
         'Section="' || XmlQ.section ||
-        '" Name="' || XmlQ.name ||
-        '" Value="' || XmlQ.value || '"', '<br>' ORDER BY XmlQ.section, XmlQ.name)
+        '" Name="'  || XmlQ.name    ||
+        '" Value="' || XmlQ.value   || '"', '<br>' ORDER BY XmlQ.section, XmlQ.name)
     INTO _result
     FROM (
         SELECT xmltable.*
@@ -58,7 +59,7 @@ BEGIN
                               value text PATH '@Value')
          ) XmlQ;
 
-    Return  '<pre>' || _result || '</pre>';
+    Return  '<pre>' || _result || '<br></pre>';
 
 EXCEPTION
     WHEN OTHERS THEN
