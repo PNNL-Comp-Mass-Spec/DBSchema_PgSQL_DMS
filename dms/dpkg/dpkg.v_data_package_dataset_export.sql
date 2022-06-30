@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW dpkg.v_data_package_dataset_export AS
- SELECT t_data_package_datasets.data_pkg_id,
+ SELECT t_data_package_datasets.data_pkg_id AS data_package_id,
     t_data_package_datasets.dataset_id,
     t_data_package_datasets.dataset,
     t_data_package_datasets.experiment,
