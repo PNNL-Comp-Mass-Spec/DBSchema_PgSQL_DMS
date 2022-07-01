@@ -30,7 +30,7 @@ BEGIN
     --   <Param Section="JobParameters" Name="DatasetNum" Value="QC_Mam_19_01-run02_31May22_Remus_WBEH-22-04-09" />
     --   <Param Section="JobParameters" Name="DatasetStoragePath" Value="\\proto-8\QEHFX03\2022_2\" />
     --   <Param Section="JobParameters" Name="ToolName" Value="MASIC_Finnigan" />
-    --   <Param Section="PeptideSearch" Name="ParmFileName" Value="LTQ-FT_10ppm_2014-08-06.xml" />
+    --   <Param Section="PeptideSearch" Name="ParamFileName" Value="LTQ-FT_10ppm_2014-08-06.xml" />
     ---------------------------------------------------
 
     /*
