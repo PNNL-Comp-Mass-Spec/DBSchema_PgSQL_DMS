@@ -8,7 +8,7 @@ CREATE VIEW public.v_analysis_request_jobs_list_report AS
     asn.job_state AS state,
     tool.analysis_tool AS tool_name,
     ds.dataset,
-    aj.param_file_name AS parm_file,
+    aj.param_file_name AS param_file,
     aj.settings_file_name AS settings_file,
     org.organism,
     aj.organism_db_name AS organism_db,

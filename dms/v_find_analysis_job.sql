@@ -11,7 +11,7 @@ CREATE VIEW public.v_find_analysis_job AS
     c.campaign,
     e.experiment,
     instname.instrument,
-    aj.param_file_name AS parm_file,
+    aj.param_file_name AS param_file,
     aj.settings_file_name AS settings_file,
     org.organism,
     aj.organism_db_name AS organism_db,

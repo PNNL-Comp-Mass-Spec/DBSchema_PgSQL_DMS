@@ -24,7 +24,7 @@ CREATE VIEW public.v_dataset_pm_and_psm_list_report AS
     psm.tool AS psm_tool,
     psm.campaign,
     psm.experiment,
-    psm.parm_file AS psm_job_param_file,
+    psm.param_file AS psm_job_param_file,
     psm.settings_file AS psm_job_settings_file,
     psm.organism,
     psm.organism_db AS psm_job_org_db,

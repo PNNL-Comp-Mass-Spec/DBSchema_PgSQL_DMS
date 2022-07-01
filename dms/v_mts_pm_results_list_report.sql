@@ -25,7 +25,7 @@ CREATE VIEW public.v_mts_pm_results_list_report AS
     pm.refine_mass_cal_ppm_shift AS ppm_shift,
     pm.qid,
     pm.md_id,
-    aj.param_file_name AS parm_file,
+    aj.param_file_name AS param_file,
     aj.settings_file_name AS settings_file,
     pm.ini_file_name,
     pm.comparison_mass_tag_count,

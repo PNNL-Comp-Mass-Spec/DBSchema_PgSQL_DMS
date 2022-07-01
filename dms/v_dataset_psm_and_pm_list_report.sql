@@ -31,7 +31,7 @@ CREATE VIEW public.v_dataset_psm_and_pm_list_report AS
     psm.job_eta_minutes,
     psm.campaign,
     psm.experiment,
-    psm.parm_file AS psm_job_param_file,
+    psm.param_file AS psm_job_param_file,
     psm.settings_file AS psm_job_settings_file,
     psm.organism,
     psm.organism_db AS psm_job_org_db,

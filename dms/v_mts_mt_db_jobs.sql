@@ -13,7 +13,7 @@ CREATE VIEW public.v_mts_mt_db_jobs AS
     inst.instrument,
     c.campaign,
     antool.analysis_tool AS tool,
-    aj.param_file_name AS parm_file,
+    aj.param_file_name AS param_file,
     aj.settings_file_name AS settings_file,
     aj.protein_collection_list,
     ds.separation_type,

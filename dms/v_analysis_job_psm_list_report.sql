@@ -32,7 +32,7 @@ CREATE VIEW public.v_analysis_job_psm_list_report AS
     ((phosphopsm.missed_cleavage_ratio * (100)::double precision))::numeric(9,1) AS phospho_pct_missed_clvg,
     c.campaign,
     e.experiment,
-    aj.param_file_name AS parm_file,
+    aj.param_file_name AS param_file,
     aj.settings_file_name AS settings_file,
     org.organism,
     aj.organism_db_name AS organism_db,
