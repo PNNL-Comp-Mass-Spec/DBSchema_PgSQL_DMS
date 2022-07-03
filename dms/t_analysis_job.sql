@@ -137,10 +137,10 @@ CREATE INDEX ix_t_analysis_job_state_name_cached ON public.t_analysis_job USING 
 CREATE INDEX ix_t_analysis_job_tool_id_include_dataset_id ON public.t_analysis_job USING btree (analysis_tool_id) INCLUDE (dataset_id);
 
 --
--- Name: ix_t_analysis_job_tool_id_include_parm_file_created; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_analysis_job_tool_id_include_param_file_created; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_analysis_job_tool_id_include_parm_file_created ON public.t_analysis_job USING btree (analysis_tool_id) INCLUDE (param_file_name, created);
+CREATE INDEX ix_t_analysis_job_tool_id_include_param_file_created ON public.t_analysis_job USING btree (analysis_tool_id) INCLUDE (param_file_name, created);
 
 --
 -- Name: ix_t_analysis_job_tool_id_job_id_dataset_id_include_ajstart; Type: INDEX; Schema: public; Owner: d3l243
