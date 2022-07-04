@@ -14,7 +14,7 @@ CREATE VIEW dpkg.v_data_package_experiments_list_report AS
     e.sample_concentration AS concentration,
     e.created,
     cec.biomaterial_list,
-    bto.tissue,
+    bto.term_name AS tissue,
     enz.enzyme_name AS enzyme,
     e.labelling,
     intstd1.name AS predigest,
@@ -29,7 +29,7 @@ CREATE VIEW dpkg.v_data_package_experiments_list_report AS
      JOIN public.t_internal_standards intstd1 ON ((e.internal_standard_id = intstd1.internal_standard_id)))
      JOIN public.t_internal_standards intstd2 ON ((e.post_digest_internal_std_id = intstd2.internal_standard_id)))
      JOIN public.t_organisms ON ((e.organism_id = t_organisms.organism_id)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)))
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)))
      LEFT JOIN public.t_cached_experiment_components cec ON ((e.exp_id = cec.exp_id)));
 
 

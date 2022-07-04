@@ -33,8 +33,8 @@ CREATE VIEW dpkg.v_data_package_detail_report AS
     dp.eus_proposal_id
    FROM ((((dpkg.t_data_package dp
      JOIN dpkg.v_data_package_paths dpp ON ((dp.data_pkg_id = dpp.id)))
-     LEFT JOIN public.v_users u1 ON ((dp.owner OPERATOR(public.=) u1.username)))
-     LEFT JOIN public.v_users u2 ON ((dp.requester OPERATOR(public.=) u2.username)))
+     LEFT JOIN public.t_users u1 ON ((dp.owner OPERATOR(public.=) u1.username)))
+     LEFT JOIN public.t_users u2 ON ((dp.requester OPERATOR(public.=) u2.username)))
      LEFT JOIN ( SELECT v_data_package_campaigns_list_report.id,
             count(*) AS campaigns
            FROM dpkg.v_data_package_campaigns_list_report

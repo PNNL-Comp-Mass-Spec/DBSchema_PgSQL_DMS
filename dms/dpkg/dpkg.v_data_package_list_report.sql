@@ -22,8 +22,8 @@ CREATE VIEW dpkg.v_data_package_list_report AS
     dp.data_doi,
     dp.manuscript_doi
    FROM ((dpkg.t_data_package dp
-     LEFT JOIN public.v_users ownerinfo ON ((dp.owner OPERATOR(public.=) ownerinfo.username)))
-     LEFT JOIN public.v_users requesterinfo ON ((dp.requester OPERATOR(public.=) requesterinfo.username)));
+     LEFT JOIN public.t_users ownerinfo ON ((dp.owner OPERATOR(public.=) ownerinfo.username)))
+     LEFT JOIN public.t_users requesterinfo ON ((dp.requester OPERATOR(public.=) requesterinfo.username)));
 
 
 ALTER TABLE dpkg.v_data_package_list_report OWNER TO d3l243;
