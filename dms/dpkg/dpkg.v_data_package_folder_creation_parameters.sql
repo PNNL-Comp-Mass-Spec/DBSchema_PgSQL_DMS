@@ -1,0 +1,17 @@
+--
+-- Name: v_data_package_folder_creation_parameters; Type: VIEW; Schema: dpkg; Owner: d3l243
+--
+
+CREATE VIEW dpkg.v_data_package_folder_creation_parameters AS
+ SELECT dp.data_pkg_id AS id,
+    dps.path_local_root AS local,
+    dps.path_shared_root AS share,
+    dp.path_year AS year,
+    dp.path_team AS team,
+    dp.package_directory AS folder
+   FROM (dpkg.t_data_package dp
+     JOIN dpkg.t_data_package_storage dps ON ((dp.storage_path_id = dps.path_id)));
+
+
+ALTER TABLE dpkg.v_data_package_folder_creation_parameters OWNER TO d3l243;
+
