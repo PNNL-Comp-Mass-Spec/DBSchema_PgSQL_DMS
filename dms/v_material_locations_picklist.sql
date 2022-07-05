@@ -3,18 +3,22 @@
 --
 
 CREATE VIEW public.v_material_locations_picklist AS
- SELECT ml.location,
+ SELECT ml.tag AS location,
     ml.comment,
-    ml.freezer,
+    f.freezer,
     ml.shelf,
     ml.rack,
     ml."row",
     ml.col,
     ml.container_limit,
-    ml.containers,
-    ml.available
-   FROM public.v_material_location_list_report ml
-  WHERE ((ml.status OPERATOR(public.=) 'Active'::public.citext) AND (ml.available > 0));
+    count(mc.location_id) AS containers,
+    (ml.container_limit - count(mc.location_id)) AS available
+   FROM ((public.t_material_locations ml
+     JOIN public.t_material_freezers f ON ((ml.freezer_tag OPERATOR(public.=) f.freezer_tag)))
+     LEFT JOIN public.t_material_containers mc ON ((ml.location_id = mc.location_id)))
+  WHERE (ml.status OPERATOR(public.=) 'Active'::public.citext)
+  GROUP BY ml.location_id, f.freezer, ml.shelf, ml.rack, ml."row", ml.comment, ml.tag, ml.col, ml.status, ml.container_limit
+ HAVING ((ml.container_limit - count(mc.location_id)) > 0);
 
 
 ALTER TABLE public.v_material_locations_picklist OWNER TO d3l243;
