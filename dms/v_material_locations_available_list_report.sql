@@ -22,6 +22,12 @@ CREATE VIEW public.v_material_locations_available_list_report AS
 ALTER TABLE public.v_material_locations_available_list_report OWNER TO d3l243;
 
 --
+-- Name: VIEW v_material_locations_available_list_report; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON VIEW public.v_material_locations_available_list_report IS 'Modeled after view v_material_location_list_report, but filters on available > 0';
+
+--
 -- Name: TABLE v_material_locations_available_list_report; Type: ACL; Schema: public; Owner: d3l243
 --
 
