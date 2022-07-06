@@ -15,7 +15,8 @@ CREATE VIEW public.v_active_connections AS
     pg_stat_activity.state,
     pg_stat_activity.wait_event,
     pg_stat_activity.query
-   FROM pg_stat_activity;
+   FROM pg_stat_activity
+  WHERE (pg_stat_activity.backend_type = 'client backend'::text);
 
 
 ALTER TABLE public.v_active_connections OWNER TO d3l243;
