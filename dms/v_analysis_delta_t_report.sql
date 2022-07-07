@@ -6,7 +6,7 @@ CREATE VIEW public.v_analysis_delta_t_report AS
  SELECT j.job,
     (EXTRACT(epoch FROM (j.finish - j.start)) / 60.0) AS delta_t,
     j.priority AS pri,
-    jobstate.job_state AS state,
+    js.job_state AS state,
     tool.analysis_tool AS tool_name,
     ds.dataset,
     j.param_file_name AS param_file,
@@ -25,7 +25,7 @@ CREATE VIEW public.v_analysis_delta_t_report AS
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
      JOIN public.t_organisms org ON ((j.organism_id = org.organism_id)))
      JOIN public.t_analysis_tool tool ON ((j.analysis_tool_id = tool.analysis_tool_id)))
-     JOIN public.t_analysis_job_state jobstate ON ((j.job_state_id = jobstate.job_state_id)));
+     JOIN public.t_analysis_job_state js ON ((j.job_state_id = js.job_state_id)));
 
 
 ALTER TABLE public.v_analysis_delta_t_report OWNER TO d3l243;

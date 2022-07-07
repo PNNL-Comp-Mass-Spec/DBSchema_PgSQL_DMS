@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW public.v_analysis_job_psm_detail_report AS
- SELECT aj.job,
+ SELECT j.job,
     ds.dataset,
     e.experiment,
     instname.instrument,
         CASE
-            WHEN (aj.purged = 0) THEN (((dfp.dataset_folder_path)::text || '\'::text) || (aj.results_folder_name)::text)
-            ELSE ((('Purged: '::text || (dfp.dataset_folder_path)::text) || '\'::text) || (aj.results_folder_name)::text)
+            WHEN (j.purged = 0) THEN (((dfp.dataset_folder_path)::text || '\'::text) || (j.results_folder_name)::text)
+            ELSE ((('Purged: '::text || (dfp.dataset_folder_path)::text) || '\'::text) || (j.results_folder_name)::text)
         END AS results_folder_path,
         CASE
-            WHEN (aj.purged = 0) THEN (((dfp.dataset_url)::text || (aj.results_folder_name)::text) || '/'::text)
+            WHEN (j.purged = 0) THEN (((dfp.dataset_url)::text || (j.results_folder_name)::text) || '/'::text)
             ELSE (dfp.dataset_url)::text
         END AS data_folder_link,
     psm.spectra_searched,
@@ -40,55 +40,55 @@ CREATE VIEW public.v_analysis_job_psm_detail_report AS
     COALESCE(mtsmt.mt_db_count, (0)::bigint) AS mts_mt_db_count,
     COALESCE(pmtaskcountq.pmtasks, (0)::bigint) AS peak_matching_results,
     analysistool.analysis_tool AS tool_name,
-    aj.param_file_name AS param_file,
+    j.param_file_name AS param_file,
     analysistool.param_file_storage_path,
-    aj.settings_file_name AS settings_file,
+    j.settings_file_name AS settings_file,
     org.organism,
-    aj.organism_db_name AS organism_db,
-    public.get_fasta_file_path(aj.organism_db_name, org.organism) AS organism_db_storage_path,
-    aj.protein_collection_list,
-    aj.protein_options_list,
-    asn.job_state AS state,
-    (aj.processing_time_minutes)::numeric(9,2) AS runtime_minutes,
-    aj.owner,
-    aj.comment,
-    aj.special_processing,
-    aj.created,
-    aj.start AS started,
-    aj.finish AS finished,
-    aj.request_id AS request,
-    aj.priority,
-    aj.assigned_processor_name AS assigned_processor,
-    aj.analysis_manager_error AS am_code,
-    public.get_dem_code_string((aj.data_extraction_error)::integer) AS dem_code,
-        CASE aj.propagation_mode
+    j.organism_db_name AS organism_db,
+    public.get_fasta_file_path(j.organism_db_name, org.organism) AS organism_db_storage_path,
+    j.protein_collection_list,
+    j.protein_options_list,
+    js.job_state AS state,
+    (j.processing_time_minutes)::numeric(9,2) AS runtime_minutes,
+    j.owner,
+    j.comment,
+    j.special_processing,
+    j.created,
+    j.start AS started,
+    j.finish AS finished,
+    j.request_id AS request,
+    j.priority,
+    j.assigned_processor_name AS assigned_processor,
+    j.analysis_manager_error AS am_code,
+    public.get_dem_code_string((j.data_extraction_error)::integer) AS dem_code,
+        CASE j.propagation_mode
             WHEN 0 THEN 'Export'::text
             ELSE 'No Export'::text
         END AS export_mode,
     t_yes_no.description AS dataset_unreviewed
-   FROM ((((((((((((((public.t_analysis_job aj
-     JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
+   FROM ((((((((((((((public.t_analysis_job j
+     JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.v_dataset_folder_paths dfp ON ((dfp.dataset_id = ds.dataset_id)))
      JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
-     JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
-     JOIN public.t_analysis_job_state asn ON ((aj.job_state_id = asn.job_state_id)))
+     JOIN public.t_analysis_tool analysistool ON ((j.analysis_tool_id = analysistool.analysis_tool_id)))
+     JOIN public.t_analysis_job_state js ON ((j.job_state_id = js.job_state_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
-     JOIN public.t_organisms org ON ((org.organism_id = aj.organism_id)))
-     JOIN public.t_yes_no ON ((aj.dataset_unreviewed = t_yes_no.flag)))
+     JOIN public.t_organisms org ON ((org.organism_id = j.organism_id)))
+     JOIN public.t_yes_no ON ((j.dataset_unreviewed = t_yes_no.flag)))
      LEFT JOIN ( SELECT t_mts_mt_db_jobs_cached.job,
             count(*) AS mt_db_count
            FROM public.t_mts_mt_db_jobs_cached
-          GROUP BY t_mts_mt_db_jobs_cached.job) mtsmt ON ((aj.job = mtsmt.job)))
+          GROUP BY t_mts_mt_db_jobs_cached.job) mtsmt ON ((j.job = mtsmt.job)))
      LEFT JOIN ( SELECT t_mts_pt_db_jobs_cached.job,
             count(*) AS pt_db_count
            FROM public.t_mts_pt_db_jobs_cached
-          GROUP BY t_mts_pt_db_jobs_cached.job) mtspt ON ((aj.job = mtspt.job)))
+          GROUP BY t_mts_pt_db_jobs_cached.job) mtspt ON ((j.job = mtspt.job)))
      LEFT JOIN ( SELECT pm.dms_job,
             count(*) AS pmtasks
            FROM public.t_mts_peak_matching_tasks_cached pm
-          GROUP BY pm.dms_job) pmtaskcountq ON ((pmtaskcountq.dms_job = aj.job)))
-     LEFT JOIN public.t_analysis_job_psm_stats psm ON ((aj.job = psm.job)))
+          GROUP BY pm.dms_job) pmtaskcountq ON ((pmtaskcountq.dms_job = j.job)))
+     LEFT JOIN public.t_analysis_job_psm_stats psm ON ((j.job = psm.job)))
      LEFT JOIN public.t_analysis_job_psm_stats_phospho phosphopsm ON ((psm.job = phosphopsm.job)));
 
 

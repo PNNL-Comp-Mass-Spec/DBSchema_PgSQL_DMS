@@ -18,7 +18,7 @@ CREATE VIEW public.v_analysis_job_entry AS
     j.assigned_processor_name,
     j.protein_collection_list AS prot_coll_name_list,
     j.protein_options_list AS prot_coll_options_list,
-    asn.job_state AS state_name,
+    js.job_state AS state_name,
         CASE j.propagation_mode
             WHEN 0 THEN 'Export'::text
             ELSE 'No Export'::text
@@ -30,7 +30,7 @@ CREATE VIEW public.v_analysis_job_entry AS
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
      JOIN public.t_organisms org ON ((j.organism_id = org.organism_id)))
      JOIN public.t_analysis_tool tool ON ((j.analysis_tool_id = tool.analysis_tool_id)))
-     JOIN public.t_analysis_job_state asn ON ((j.job_state_id = asn.job_state_id))) ON ((ajpga.job = j.job)));
+     JOIN public.t_analysis_job_state js ON ((j.job_state_id = js.job_state_id))) ON ((ajpga.job = j.job)));
 
 
 ALTER TABLE public.v_analysis_job_entry OWNER TO d3l243;

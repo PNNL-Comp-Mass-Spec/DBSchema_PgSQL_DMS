@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_analysis_job_check_report AS
  SELECT j.job,
-    asn.job_state AS state,
+    js.job_state AS state,
     j.start AS started,
     j.finish AS finished,
     COALESCE(j.assigned_processor_name, '(none)'::public.citext) AS cpu,
@@ -32,7 +32,7 @@ CREATE VIEW public.v_analysis_job_check_report AS
      JOIN public.t_organisms org ON ((j.organism_id = org.organism_id)))
      JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      JOIN public.t_analysis_tool tool ON ((j.analysis_tool_id = tool.analysis_tool_id)))
-     JOIN public.t_analysis_job_state asn ON ((j.job_state_id = asn.job_state_id)))
+     JOIN public.t_analysis_job_state js ON ((j.job_state_id = js.job_state_id)))
   WHERE (j.job_state_id = ANY (ARRAY[2, 3, 5, 19]));
 
 

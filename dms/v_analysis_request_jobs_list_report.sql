@@ -3,34 +3,34 @@
 --
 
 CREATE VIEW public.v_analysis_request_jobs_list_report AS
- SELECT aj.job,
-    aj.priority AS pri,
-    asn.job_state AS state,
+ SELECT j.job,
+    j.priority AS pri,
+    js.job_state AS state,
     tool.analysis_tool AS tool_name,
     ds.dataset,
-    aj.param_file_name AS param_file,
-    aj.settings_file_name AS settings_file,
+    j.param_file_name AS param_file,
+    j.settings_file_name AS settings_file,
     org.organism,
-    aj.organism_db_name AS organism_db,
-    aj.protein_collection_list,
-    aj.protein_options_list AS protein_options,
-    aj.comment,
-    aj.created,
-    aj.start AS started,
-    aj.finish AS finished,
-    (aj.progress)::numeric(9,2) AS job_progress,
-    (aj.eta_minutes)::numeric(18,1) AS job_eta_minutes,
-    aj.batch_id AS batch,
-    aj.request_id,
-    (((dfp.dataset_folder_path)::text || '\'::text) || (aj.results_folder_name)::text) AS results_folder,
-    (aj.processing_time_minutes)::numeric(9,2) AS runtime,
+    j.organism_db_name AS organism_db,
+    j.protein_collection_list,
+    j.protein_options_list AS protein_options,
+    j.comment,
+    j.created,
+    j.start AS started,
+    j.finish AS finished,
+    (j.progress)::numeric(9,2) AS job_progress,
+    (j.eta_minutes)::numeric(18,1) AS job_eta_minutes,
+    j.batch_id AS batch,
+    j.request_id,
+    (((dfp.dataset_folder_path)::text || '\'::text) || (j.results_folder_name)::text) AS results_folder,
+    (j.processing_time_minutes)::numeric(9,2) AS runtime,
     ds.dataset_id
-   FROM (((((public.t_analysis_job aj
-     JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
-     JOIN public.t_organisms org ON ((aj.organism_id = org.organism_id)))
-     JOIN public.t_analysis_tool tool ON ((aj.analysis_tool_id = tool.analysis_tool_id)))
-     JOIN public.t_analysis_job_state asn ON ((aj.job_state_id = asn.job_state_id)))
-     LEFT JOIN public.v_dataset_folder_paths dfp ON ((aj.dataset_id = dfp.dataset_id)));
+   FROM (((((public.t_analysis_job j
+     JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
+     JOIN public.t_organisms org ON ((j.organism_id = org.organism_id)))
+     JOIN public.t_analysis_tool tool ON ((j.analysis_tool_id = tool.analysis_tool_id)))
+     JOIN public.t_analysis_job_state js ON ((j.job_state_id = js.job_state_id)))
+     LEFT JOIN public.v_dataset_folder_paths dfp ON ((j.dataset_id = dfp.dataset_id)));
 
 
 ALTER TABLE public.v_analysis_request_jobs_list_report OWNER TO d3l243;
