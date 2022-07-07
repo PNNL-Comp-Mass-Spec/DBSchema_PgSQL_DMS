@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_membership_in_groups_list(_pr
 **          02/22/2007 mem - Now grouping processors by Membership_Enabled values
 **          02/23/2007 mem - Added parameter _enableDisableFilter
 **          06/17/2022 mem - Ported to PostgreSQL
+**          07/06/2022 mem - Fix concatenation typo
 **
 *****************************************************/
 DECLARE
@@ -34,7 +35,7 @@ BEGIN
     _disabledGroups := '';
 
     If _enableDisableFilter <> 0 Then
-        SELECT string_agg(group_id::text + ': ' + AJPG.Group_Name, ', ' ORDER BY AJPG.group_name)
+        SELECT string_agg(AJPG.group_id::text || ': ' || AJPG.Group_Name, ', ' ORDER BY AJPG.group_name)
         INTO _enabledGroups
         FROM t_analysis_job_processor_group_membership AJPGM INNER JOIN
              t_analysis_job_processor_group AJPG ON AJPGM.group_id = AJPG.group_id
@@ -43,7 +44,7 @@ BEGIN
     End If;
 
     If _enableDisableFilter <> 1 Then
-        SELECT string_agg(group_id::text + ': ' + AJPG.Group_Name, ', ' ORDER BY AJPG.group_name)
+        SELECT string_agg(AJPG.group_id::text || ': ' || AJPG.Group_Name, ', ' ORDER BY AJPG.group_name)
         INTO _disabledGroups
         FROM t_analysis_job_processor_group_membership AJPGM INNER JOIN
              t_analysis_job_processor_group AJPG ON AJPGM.group_id = AJPG.group_id

@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_group_membership_list(_groupi
 **          02/22/2007 mem - Now grouping processors by Membership_Enabled values
 **          02/23/2007 mem - Added parameter _enableDisableFilter
 **          06/17/2022 mem - Ported to PostgreSQL
+**          07/06/2022 mem - Fix concatenation typo
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
             _combinedList := 'Disabled: ';
         End If;
 
-        _combinedList := _combinedList + _disabledProcs;
+        _combinedList := _combinedList || _disabledProcs;
     End If;
 
     RETURN Coalesce(_combinedList, '');
