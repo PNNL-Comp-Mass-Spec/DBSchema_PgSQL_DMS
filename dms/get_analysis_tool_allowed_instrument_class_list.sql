@@ -16,12 +16,13 @@ CREATE OR REPLACE FUNCTION public.get_analysis_tool_allowed_instrument_class_lis
 **  Auth:   mem
 **  Date:   11/12/2010
 **          06/18/2022 mem - Ported to PostgreSQL
+**          07/06/2022 mem - Fix column name typo
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    SELECT string_agg(Instrument_Class, ', ' ORDER BY Dataset_Type)
+    SELECT string_agg(Instrument_Class, ', ' ORDER BY Instrument_Class)
     INTO _result
     FROM t_analysis_tool_allowed_instrument_class
     WHERE analysis_tool_id = _analysisToolID;
