@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person(_campaignid integer, 
 **  Auth:   grk
 **  Date:   02/03/2010
 **          12/08/2014 mem - Now using Name_with_PRN to obtain the user's name and PRN
-**          06/18/2022 mem - Ported to PostgreSQL
+**          07/07/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -26,7 +26,7 @@ BEGIN
         INTO _person
         FROM t_research_team_roles
              INNER JOIN t_research_team_membership
-               ON t_research_team_roles.user_id = t_research_team_membership.role_id
+               ON t_research_team_roles.role_id = t_research_team_membership.role_id
              INNER JOIN t_users
                ON t_research_team_membership.user_id = t_users.user_id
              INNER JOIN t_campaign

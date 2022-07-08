@@ -17,18 +17,18 @@ CREATE OR REPLACE FUNCTION public.get_biomaterial_organism_list(_biomaterialid i
 **
 **  Auth:   mem
 **  Date:   12/02/2016 mem - Initial version
-**          06/18/2022 mem - Ported to PostgreSQL
+**          07/07/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _result text := '';
 BEGIN
-    SELECT string_agg(Org.OG_name, ', ' ORDER BY Org.OG_name)
+    SELECT string_agg(Org.organism, ', ' ORDER BY Org.organism)
     INTO _result
-    FROM t_biomaterial_organisms BiomaterialOrganisms
-             INNER JOIN t_organisms Org
-               ON BiomaterialOrganisms.organism_id = Org.organism_id
-    WHERE BiomaterialOrganisms.biomaterial_id = _biomaterialID;
+    FROM t_biomaterial_organisms BO
+         INNER JOIN t_organisms Org
+           ON BO.organism_id = Org.organism_id
+    WHERE BO.biomaterial_id = _biomaterialID;
 
     RETURN Coalesce(_result, '');
 END

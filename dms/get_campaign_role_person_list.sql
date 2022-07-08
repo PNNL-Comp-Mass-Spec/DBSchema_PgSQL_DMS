@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid inte
 **  Auth:   grk
 **  Date:   02/04/2010
 **          12/08/2014 mem - Now using Name_with_PRN to obtain each user's name and PRN
-**          06/18/2022 mem - Ported to PostgreSQL
+**          07/07/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -38,7 +38,7 @@ BEGIN
                      INNER JOIN t_research_team_membership
                        ON t_research_team_roles.role_id = t_research_team_membership.role_id
                      INNER JOIN t_users
-                       ON t_research_team_membership.user_id = t_users.role_id
+                       ON t_research_team_membership.user_id = t_users.user_id
                      INNER JOIN t_campaign
                        ON t_research_team_membership.team_id = t_campaign.research_team
                 WHERE t_campaign.campaign_id = _campaignID AND
