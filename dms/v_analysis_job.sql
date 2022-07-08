@@ -33,7 +33,7 @@ CREATE VIEW public.v_analysis_job AS
     j.created,
     j.start AS started,
     j.finish AS finished,
-    (j.processing_time_minutes)::numeric(9,2) AS runtime,
+    round((j.processing_time_minutes)::numeric, 2) AS runtime,
     j.special_processing,
     j.batch_id
    FROM (((((((public.t_analysis_job j
