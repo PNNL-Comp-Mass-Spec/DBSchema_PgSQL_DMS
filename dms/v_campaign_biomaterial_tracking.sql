@@ -6,7 +6,7 @@ CREATE VIEW public.v_campaign_biomaterial_tracking AS
  SELECT t_biomaterial.biomaterial_name AS cell_culture,
     t_biomaterial.reason,
     t_biomaterial.created,
-    t_campaign.campaign AS "#campaign_num"
+    t_campaign.campaign AS "#Campaign"
    FROM (public.t_campaign
      JOIN public.t_biomaterial ON ((t_campaign.campaign_id = t_biomaterial.campaign_id)));
 
