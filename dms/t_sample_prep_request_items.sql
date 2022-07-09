@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_sample_prep_request_items (
     prep_request_item_id integer NOT NULL,
-    item_id public.citext NOT NULL,
+    item_id integer NOT NULL,
     item_name public.citext,
     item_type public.citext NOT NULL,
     status public.citext,
