@@ -3,7 +3,7 @@
 --
 
 CREATE TABLE public.t_data_analysis_request (
-    id integer NOT NULL,
+    request_id integer NOT NULL,
     request_name public.citext NOT NULL,
     analysis_type public.citext DEFAULT 'Metabolomics'::public.citext NOT NULL,
     requester_prn public.citext,
@@ -34,11 +34,11 @@ CREATE TABLE public.t_data_analysis_request (
 ALTER TABLE public.t_data_analysis_request OWNER TO d3l243;
 
 --
--- Name: t_data_analysis_request_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+-- Name: t_data_analysis_request_request_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
 --
 
-ALTER TABLE public.t_data_analysis_request ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.t_data_analysis_request_id_seq
+ALTER TABLE public.t_data_analysis_request ALTER COLUMN request_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.t_data_analysis_request_request_id_seq
     START WITH 100
     INCREMENT BY 1
     NO MINVALUE
@@ -51,7 +51,7 @@ ALTER TABLE public.t_data_analysis_request ALTER COLUMN id ADD GENERATED ALWAYS 
 --
 
 ALTER TABLE ONLY public.t_data_analysis_request
-    ADD CONSTRAINT pk_t_data_analysis_request PRIMARY KEY (id);
+    ADD CONSTRAINT pk_t_data_analysis_request PRIMARY KEY (request_id);
 
 --
 -- Name: t_data_analysis_request fk_t_data_analysis_request_t_data_analysis_request_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_data_analysis_request_active_list_report AS
- SELECT r.id,
+ SELECT r.request_id AS id,
     r.request_name,
     r.analysis_type,
     r.created,
@@ -41,12 +41,12 @@ CREATE VIEW public.v_data_analysis_request_active_list_report AS
    FROM (((((((public.t_data_analysis_request r
      JOIN public.t_data_analysis_request_state_name sn ON ((r.state = sn.state_id)))
      LEFT JOIN public.t_users u ON ((r.requester_prn OPERATOR(public.=) u.username)))
-     LEFT JOIN public.v_data_analysis_request_queue_times qt ON ((r.id = qt.request_id)))
+     LEFT JOIN public.v_data_analysis_request_queue_times qt ON ((r.request_id = qt.request_id)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id_value,
             count(*) AS attachments
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'data_analysis_request'::public.citext) AND (t_file_attachment.active > 0))
-          GROUP BY t_file_attachment.entity_id_value) ta ON ((r.id = ta.entity_id_value)))
+          GROUP BY t_file_attachment.entity_id_value) ta ON ((r.request_id = ta.entity_id_value)))
      LEFT JOIN public.v_charge_code_status cc ON ((r.work_package OPERATOR(public.=) cc.charge_code)))
      LEFT JOIN public.t_eus_proposals eup ON ((r.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))

@@ -28,7 +28,7 @@ CREATE INDEX ix_t_data_analysis_request_batch_ids ON public.t_data_analysis_requ
 --
 
 ALTER TABLE ONLY public.t_data_analysis_request_batch_ids
-    ADD CONSTRAINT fk_t_data_analysis_request_batch_ids_t_data_analysis_request FOREIGN KEY (request_id) REFERENCES public.t_data_analysis_request(id);
+    ADD CONSTRAINT fk_t_data_analysis_request_batch_ids_t_data_analysis_request FOREIGN KEY (request_id) REFERENCES public.t_data_analysis_request(request_id);
 
 --
 -- Name: t_data_analysis_request_batch_ids fk_t_data_analysis_request_batch_ids_t_requested_run_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
