@@ -3,16 +3,20 @@
 --
 
 CREATE VIEW public.v_dataset_archive_new AS
- SELECT v_dataset_archive.dataset,
-    v_dataset_archive.folder_name,
-    v_dataset_archive.server_vol,
-    v_dataset_archive.client_vol,
-    v_dataset_archive.storage_path,
-    v_dataset_archive.archive_path,
-    v_dataset_archive.instrument_class,
-    v_dataset_archive.last_update
-   FROM public.v_dataset_archive
-  WHERE (v_dataset_archive.archive_state = 1);
+ SELECT ds.dataset,
+    ds.folder_name,
+    spath.vol_name_server AS server_vol,
+    spath.vol_name_client AS client_vol,
+    spath.storage_path,
+    archpath.archive_path,
+    instname.instrument_class,
+    da.last_update
+   FROM ((((public.t_dataset ds
+     JOIN public.t_dataset_archive da ON ((ds.dataset_id = da.dataset_id)))
+     JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
+     JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
+     JOIN public.t_archive_path archpath ON ((da.storage_path_id = archpath.archive_path_id)))
+  WHERE (da.archive_state_id = 1);
 
 
 ALTER TABLE public.v_dataset_archive_new OWNER TO d3l243;
