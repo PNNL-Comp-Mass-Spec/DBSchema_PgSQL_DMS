@@ -21,8 +21,6 @@ CREATE TABLE public.t_dataset (
     exp_id integer NOT NULL,
     internal_standard_id integer DEFAULT 0,
     dataset_rating_id smallint DEFAULT 2 NOT NULL,
-    ds_comp_state smallint,
-    ds_compress_date timestamp without time zone,
     ds_prep_server_name public.citext DEFAULT 'na'::public.citext NOT NULL,
     acq_time_start timestamp without time zone,
     acq_time_end timestamp without time zone,

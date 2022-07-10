@@ -18,7 +18,6 @@ CREATE VIEW public.v_analysis_job_ex AS
     j.job_state_id AS state_id,
     j.priority,
     j.comment,
-    ds.ds_comp_state AS comp_state,
     instname.instrument_class AS inst_class,
     j.owner
    FROM (((((public.t_analysis_job j
