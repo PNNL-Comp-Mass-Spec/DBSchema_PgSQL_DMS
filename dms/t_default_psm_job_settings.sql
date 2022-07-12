@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE public.t_default_psm_job_settings (
-    tool_name public.citext NOT NULL,
     entry_id integer NOT NULL,
+    tool_name public.citext NOT NULL,
     job_type_name public.citext NOT NULL,
     stat_cys_alk smallint NOT NULL,
     dyn_sty_phos smallint NOT NULL,
@@ -33,7 +33,13 @@ ALTER TABLE public.t_default_psm_job_settings ALTER COLUMN entry_id ADD GENERATE
 --
 
 ALTER TABLE ONLY public.t_default_psm_job_settings
-    ADD CONSTRAINT pk_t_default_psm_job_settings PRIMARY KEY (tool_name, job_type_name, stat_cys_alk, dyn_sty_phos);
+    ADD CONSTRAINT pk_t_default_psm_job_settings PRIMARY KEY (entry_id);
+
+--
+-- Name: ix_t_default_psm_job_settings_uniq_tool_jobtype_cysalk_styphos; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_default_psm_job_settings_uniq_tool_jobtype_cysalk_styphos ON public.t_default_psm_job_settings USING btree (tool_name, job_type_name, stat_cys_alk, dyn_sty_phos);
 
 --
 -- Name: t_default_psm_job_settings fk_t_default_psm_job_settings_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
