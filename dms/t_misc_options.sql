@@ -5,7 +5,7 @@
 CREATE TABLE public.t_misc_options (
     name public.citext NOT NULL,
     id integer NOT NULL,
-    value public.citext NOT NULL,
+    value integer NOT NULL,
     comment public.citext
 );
 
