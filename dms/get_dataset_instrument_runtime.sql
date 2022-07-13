@@ -10,6 +10,12 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **  Desc:
 **      Returns list of datasets and acquisition time information for given instrument
 **
+**  Arguments:
+**     _startInterval   Start date (will be converted to the first day of the month)
+**     _endInterval     End date (will be converted to the first day of the next month)
+**     _instrument      Instrument name
+**     _options         'Show All', 'No Intervals', 'Intervals Only', or 'Long Intervals'
+**
 **  Auth:   grk
 **  Date:   05/26/2011 grk - initial release
 **          12/02/2011 mem - Added several Campaign-related columns: Campaign_ID, Fraction_EMSL_Funded, and Campaign_Proposals
