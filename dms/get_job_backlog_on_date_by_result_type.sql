@@ -1,8 +1,8 @@
 --
--- Name: job_backlog_on_date_by_result_type(timestamp without time zone, public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_job_backlog_on_date_by_result_type(timestamp without time zone, public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.job_backlog_on_date_by_result_type(_targetdate timestamp without time zone, _resulttype public.citext DEFAULT 'MSG_Peptide_Hit'::public.citext) RETURNS integer
+CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_result_type(_targetdate timestamp without time zone, _resulttype public.citext DEFAULT 'MSG_Peptide_Hit'::public.citext) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -52,11 +52,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.job_backlog_on_date_by_result_type(_targetdate timestamp without time zone, _resulttype public.citext) OWNER TO d3l243;
+ALTER FUNCTION public.get_job_backlog_on_date_by_result_type(_targetdate timestamp without time zone, _resulttype public.citext) OWNER TO d3l243;
 
 --
--- Name: FUNCTION job_backlog_on_date_by_result_type(_targetdate timestamp without time zone, _resulttype public.citext); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_job_backlog_on_date_by_result_type(_targetdate timestamp without time zone, _resulttype public.citext); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.job_backlog_on_date_by_result_type(_targetdate timestamp without time zone, _resulttype public.citext) IS 'JobBacklogOnDateByResultType';
+COMMENT ON FUNCTION public.get_job_backlog_on_date_by_result_type(_targetdate timestamp without time zone, _resulttype public.citext) IS 'JobBacklogOnDateByResultType';
 

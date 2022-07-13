@@ -1,8 +1,8 @@
 --
--- Name: job_backlog_on_date_by_tool(timestamp without time zone, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_job_backlog_on_date_by_tool(timestamp without time zone, integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.job_backlog_on_date_by_tool(_targetdate timestamp without time zone, _analysistoolid integer DEFAULT 1) RETURNS integer
+CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_tool(_targetdate timestamp without time zone, _analysistoolid integer DEFAULT 1) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -49,11 +49,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.job_backlog_on_date_by_tool(_targetdate timestamp without time zone, _analysistoolid integer) OWNER TO d3l243;
+ALTER FUNCTION public.get_job_backlog_on_date_by_tool(_targetdate timestamp without time zone, _analysistoolid integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION job_backlog_on_date_by_tool(_targetdate timestamp without time zone, _analysistoolid integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_job_backlog_on_date_by_tool(_targetdate timestamp without time zone, _analysistoolid integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.job_backlog_on_date_by_tool(_targetdate timestamp without time zone, _analysistoolid integer) IS 'JobBacklogOnDateByTool';
+COMMENT ON FUNCTION public.get_job_backlog_on_date_by_tool(_targetdate timestamp without time zone, _analysistoolid integer) IS 'JobBacklogOnDateByTool';
 
