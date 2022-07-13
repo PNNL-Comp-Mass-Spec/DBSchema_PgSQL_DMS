@@ -16,21 +16,24 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_tool(_targetdate ti
 **    _analysisToolID   Tool ID, e.g. 13 = MASIC_Finnigan, 68 = MSGFPlus_MzML, 69 = MSGFPlus_MzML_NoRefine, 83 = TopPIC, 88 = MSFragger, 91 = MaxQuant
 **
 **  Usage examples:
-**    SELECT job_backlog_on_date_by_tool('2022-04-11 12:00 pm', 68);
+**    SELECT get_job_backlog_on_date_by_tool('2022-04-11 12:00 pm', 68);
 **
-**    SELECT job_backlog_on_date_by_tool('2022-04-11 12:00 pm', 69);
+**    SELECT get_job_backlog_on_date_by_tool('2022-04-11 12:00 pm', 69);
 **
-**    SELECT SampleTime, job_backlog_on_date_by_tool(SampleTime, 68)
-**    FROM generate_series ( '2022-04-01'::timestamp,
-**                           '2022-04-04'::timestamp,
-**                           '6 hours'::interval) SampleTime
+**    SELECT SampleTime, get_job_backlog_on_date_by_tool(SampleTime, 68)
+**    FROM generate_series('2022-04-01'::timestamp, '2022-04-04'::timestamp, '6 hours'::interval) SampleTime
 **    ORDER BY SampleTime;
+**
+**    SELECT Day, get_job_backlog_on_date_by_tool(Day::timestamp, 69)
+**    FROM generate_series('2022-01-01'::date, '2022-01-30'::date, Interval '1 day') as Day
+**    ORDER BY Day;
 **
 **  Auth:   grk
 **  Date:   01/21/2005
 **          01/22/2005 mem - Added two additional parameters
 **          06/23/2022 mem - Ported to PostgreSQL
 **                         - Removed argument _processorNameFilter since all jobs are processed by the Job Broker
+**          07/12/2022 mem - Renamed function and added another usage example
 **
 *****************************************************/
 DECLARE

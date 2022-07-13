@@ -16,15 +16,17 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_result_type(_target
 **    _resultType   Analysis tool result type,   'MSG_Peptide_Hit', 'SIC', 'SQC', 'HMMA_Peak', 'MXQ_Peptide_Hit', 'MSF_Peptide_Hit', etc.
 **
 **  Usage examples:
-**    SELECT job_backlog_on_date_by_result_type('2022-04-11 12:00 pm', 'msg_peptide_hit');
+**    SELECT get_job_backlog_on_date_by_result_type('2022-04-11 12:00 pm', 'msg_peptide_hit');
 **
-**    SELECT job_backlog_on_date_by_result_type('2022-04-11 12:00 pm', '%_Peptide_Hit');
+**    SELECT get_job_backlog_on_date_by_result_type('2022-04-11 12:00 pm', '%_Peptide_Hit');
 **
-**    SELECT SampleTime, job_backlog_on_date_by_result_type(SampleTime, '%_Peptide_Hit')
-**    FROM generate_series ( '2022-04-01'::timestamp,
-**                           '2022-04-04'::timestamp,
-**                           '6 hours'::interval) SampleTime
+**    SELECT SampleTime, get_job_backlog_on_date_by_result_type(SampleTime, '%_Peptide_Hit')
+**    FROM generate_series('2022-04-01'::timestamp, '2022-04-04'::timestamp, '6 hours'::interval) SampleTime
 **    ORDER BY SampleTime;
+**
+**    SELECT Day::date, get_job_backlog_on_date_by_result_type(Day::timestamp, '%_Peptide_Hit')
+**    FROM generate_series('2022-01-01'::date, '2022-01-30'::date, Interval '1 day') as Day
+**    ORDER BY Day;
 **
 **  Auth:   grk
 **  Date:   01/21/2005
@@ -32,6 +34,7 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_result_type(_target
 **          01/25/2005 grk - modified to use result type
 **          06/23/2022 mem - Ported to PostgreSQL
 **                         - Removed argument _processorNameFilter since all jobs are processed by the Job Broker
+**          07/12/2022 mem - Renamed function and added another usage example
 **
 *****************************************************/
 DECLARE
