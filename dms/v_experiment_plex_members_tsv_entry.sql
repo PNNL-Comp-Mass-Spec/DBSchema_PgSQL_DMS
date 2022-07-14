@@ -84,8 +84,7 @@ CREATE VIEW public.v_experiment_plex_members_tsv_entry AS
               FROM public.t_experiment_plex_members PM
                    INNER JOIN public.t_experiments E
                      On PM.Exp_ID = E.Exp_ID
-              ORDER BY PM.Plex_Exp_ID, PM.Channel'::text, 'SELECT unnest(''{1,2,3,4,5,6,7,8,9,10,
-                             11,12,13,14,15,16,17,18}''::int[])'::text) pivotdata(plex_exp_id integer, "1" public.citext, "2" public.citext, "3" public.citext, "4" public.citext, "5" public.citext, "6" public.citext, "7" public.citext, "8" public.citext, "9" public.citext, "10" public.citext, "11" public.citext, "12" public.citext, "13" public.citext, "14" public.citext, "15" public.citext, "16" public.citext, "17" public.citext, "18" public.citext)) expidpivotq
+              ORDER BY PM.Plex_Exp_ID, PM.Channel'::text, 'SELECT generate_series(1,18)'::text) pivotdata(plex_exp_id integer, "1" public.citext, "2" public.citext, "3" public.citext, "4" public.citext, "5" public.citext, "6" public.citext, "7" public.citext, "8" public.citext, "9" public.citext, "10" public.citext, "11" public.citext, "12" public.citext, "13" public.citext, "14" public.citext, "15" public.citext, "16" public.citext, "17" public.citext, "18" public.citext)) expidpivotq
      JOIN public.t_experiments e ON ((expidpivotq.plex_exp_id = e.exp_id)))
      JOIN ( SELECT pivotdata.plex_exp_id,
             pivotdata."1" AS channel1_type,
@@ -112,8 +111,7 @@ CREATE VIEW public.v_experiment_plex_members_tsv_entry AS
               FROM public.t_experiment_plex_members PM
                    INNER JOIN public.t_experiment_plex_channel_type_name ChannelTypeName
                      On PM.Channel_Type_ID = ChannelTypeName.Channel_Type_ID
-              ORDER BY PM.Plex_Exp_ID, PM.Channel'::text, 'SELECT unnest(''{1,2,3,4,5,6,7,8,9,10,
-                             11,12,13,14,15,16,17,18}''::int[])'::text) pivotdata(plex_exp_id integer, "1" public.citext, "2" public.citext, "3" public.citext, "4" public.citext, "5" public.citext, "6" public.citext, "7" public.citext, "8" public.citext, "9" public.citext, "10" public.citext, "11" public.citext, "12" public.citext, "13" public.citext, "14" public.citext, "15" public.citext, "16" public.citext, "17" public.citext, "18" public.citext)) channeltypepivotq ON ((expidpivotq.plex_exp_id = channeltypepivotq.plex_exp_id)))
+              ORDER BY PM.Plex_Exp_ID, PM.Channel'::text, 'SELECT generate_series(1,18)'::text) pivotdata(plex_exp_id integer, "1" public.citext, "2" public.citext, "3" public.citext, "4" public.citext, "5" public.citext, "6" public.citext, "7" public.citext, "8" public.citext, "9" public.citext, "10" public.citext, "11" public.citext, "12" public.citext, "13" public.citext, "14" public.citext, "15" public.citext, "16" public.citext, "17" public.citext, "18" public.citext)) channeltypepivotq ON ((expidpivotq.plex_exp_id = channeltypepivotq.plex_exp_id)))
      JOIN ( SELECT pivotdata.plex_exp_id,
             pivotdata."1" AS channel1_comment,
             pivotdata."2" AS channel2_comment,
@@ -137,8 +135,7 @@ CREATE VIEW public.v_experiment_plex_members_tsv_entry AS
                      PM.Channel,
                      PM.Comment
               FROM public.t_experiment_plex_members PM
-              ORDER BY PM.Plex_Exp_ID, PM.Channel'::text, 'SELECT unnest(''{1,2,3,4,5,6,7,8,9,10,
-                             11,12,13,14,15,16,17,18}''::int[])'::text) pivotdata(plex_exp_id integer, "1" public.citext, "2" public.citext, "3" public.citext, "4" public.citext, "5" public.citext, "6" public.citext, "7" public.citext, "8" public.citext, "9" public.citext, "10" public.citext, "11" public.citext, "12" public.citext, "13" public.citext, "14" public.citext, "15" public.citext, "16" public.citext, "17" public.citext, "18" public.citext)) commentpivotq ON ((expidpivotq.plex_exp_id = commentpivotq.plex_exp_id)));
+              ORDER BY PM.Plex_Exp_ID, PM.Channel'::text, 'SELECT generate_series(1,18)'::text) pivotdata(plex_exp_id integer, "1" public.citext, "2" public.citext, "3" public.citext, "4" public.citext, "5" public.citext, "6" public.citext, "7" public.citext, "8" public.citext, "9" public.citext, "10" public.citext, "11" public.citext, "12" public.citext, "13" public.citext, "14" public.citext, "15" public.citext, "16" public.citext, "17" public.citext, "18" public.citext)) commentpivotq ON ((expidpivotq.plex_exp_id = commentpivotq.plex_exp_id)));
 
 
 ALTER TABLE public.v_experiment_plex_members_tsv_entry OWNER TO d3l243;
