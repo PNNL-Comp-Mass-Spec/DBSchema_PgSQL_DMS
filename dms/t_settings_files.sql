@@ -15,7 +15,7 @@ CREATE TABLE public.t_settings_files (
     comment public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     last_updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    job_usage_last_year integer,
+    job_usage_last_year integer DEFAULT 0,
     CONSTRAINT ck_t_settings_files_settings_file_name_white_space CHECK ((public.has_whitespace_chars((file_name)::text, 0) = false))
 );
 

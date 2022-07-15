@@ -11,7 +11,7 @@ CREATE TABLE public.t_param_files (
     date_modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     valid smallint DEFAULT 1 NOT NULL,
     job_usage_count integer DEFAULT 0,
-    job_usage_last_year integer,
+    job_usage_last_year integer DEFAULT 0,
     mod_list public.citext DEFAULT ''::public.citext NOT NULL,
     CONSTRAINT ck_t_param_files CHECK ((POSITION((' '::text) IN (param_file_name)) = 0)),
     CONSTRAINT ck_t_param_files_param_file_name_white_space CHECK ((public.has_whitespace_chars((param_file_name)::text, 0) = false))

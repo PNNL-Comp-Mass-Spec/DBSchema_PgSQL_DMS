@@ -35,8 +35,8 @@ CREATE TABLE public.t_lc_cart_configuration (
     entered_by public.citext DEFAULT SESSION_USER NOT NULL,
     updated timestamp without time zone,
     updated_by public.citext,
-    dataset_usage_count integer,
-    dataset_usage_last_year integer,
+    dataset_usage_count integer DEFAULT 0,
+    dataset_usage_last_year integer DEFAULT 0,
     CONSTRAINT ck_t_lc_cart_configuration_state CHECK (((cart_config_state OPERATOR(public.=) 'Invalid'::public.citext) OR ((cart_config_state OPERATOR(public.=) 'Inactive'::public.citext) OR (cart_config_state OPERATOR(public.=) 'active'::public.citext))))
 );
 

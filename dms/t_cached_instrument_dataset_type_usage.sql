@@ -6,8 +6,8 @@ CREATE TABLE public.t_cached_instrument_dataset_type_usage (
     entry_id integer NOT NULL,
     instrument_id integer NOT NULL,
     dataset_type public.citext NOT NULL,
-    dataset_usage_count integer,
-    dataset_usage_last_year integer
+    dataset_usage_count integer DEFAULT 0,
+    dataset_usage_last_year integer DEFAULT 0
 );
 
 
