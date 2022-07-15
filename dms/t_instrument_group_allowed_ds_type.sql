@@ -5,7 +5,9 @@
 CREATE TABLE public.t_instrument_group_allowed_ds_type (
     instrument_group public.citext NOT NULL,
     dataset_type public.citext NOT NULL,
-    comment public.citext DEFAULT ''::public.citext
+    comment public.citext DEFAULT ''::public.citext,
+    dataset_usage_count integer,
+    dataset_usage_last_year integer
 );
 
 
