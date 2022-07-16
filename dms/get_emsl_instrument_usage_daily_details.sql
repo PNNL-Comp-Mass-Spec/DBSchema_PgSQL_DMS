@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_daily_details(_year 
 **          04/27/2020 mem - Populate the Seq column using Seq values in T_EMSL_Instrument_Usage_Report
 **          03/17/2022 mem - Add ID_Acq_Overlap (from Dataset_ID_Acq_Overlap) to the output
 **          06/20/2022 mem - Ported to PostgreSQL
+**          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,7 @@ BEGIN
         Remaining_Duration_Seconds int null,
         Dataset_ID_Acq_Overlap int null,
         Comment text null,
-        Operator citext null,
+        Operator int null,
         Seq int null
     );
 
@@ -76,7 +77,7 @@ BEGIN
         Year int null,
         Type citext,
         Users citext null,
-        Operator citext null,
+        Operator citext null,        -- Could be a comma separated list of Operator IDs
         Dataset_ID_Acq_Overlap int null,
         Comment citext null,
         Seq int null
@@ -191,7 +192,7 @@ BEGIN
                 W.Type,
                 W.Dataset_ID_Acq_Overlap,
                 W.Comment,
-                W.Operator,
+                W.Operator::text,
                 W.Seq
         FROM Tmp_T_Working W
         WHERE W.Day = W.Day_at_Run_End AND
@@ -246,7 +247,7 @@ BEGIN
                 W.Type,
                 W.Dataset_ID_Acq_Overlap,
                 W.Comment,
-                W.Operator,
+                W.Operator::text,
                 W.Seq
         FROM Tmp_T_Working W;
 

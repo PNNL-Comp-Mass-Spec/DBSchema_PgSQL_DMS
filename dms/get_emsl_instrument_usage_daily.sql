@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_daily(_year integer,
 **          04/17/2020 mem - Use Dataset_ID instead of ID
 **          03/17/2022 mem - Only return rows where Dataset_ID_Acq_Overlap is Null
 **          06/20/2022 mem - Ported to PostgreSQL
+**          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
         Duration_Seconds_In_Current_Day int null,
         Remaining_Duration_Seconds int null,
         Comment text null,
-        Operator citext null
+        Operator int null
     );
 
     -- Intermediate storage for report entries
@@ -72,7 +73,7 @@ BEGIN
         Year int null,
         Type citext,
         Users citext null,
-        Operator citext null,
+        Operator citext null,        -- Could be a comma separated list of Operator IDs
         Comment citext null
     );
 
@@ -169,7 +170,7 @@ BEGIN
                 W.Day,
                 W.Type,
                 W.Comment,
-                W.Operator
+                W.Operator::text
         FROM Tmp_T_Working W
         WHERE W.Day = W.Day_at_Run_End AND
               W.Month = W.Month_at_Run_End;
@@ -211,7 +212,7 @@ BEGIN
                 W.Day,
                 W.Type,
                 W.Comment,
-                W.Operator
+                W.Operator::text
         FROM Tmp_T_Working W;
 
         -- Update start time and duration of entries in working table

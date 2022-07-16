@@ -13,7 +13,7 @@ CREATE TABLE public.t_emsl_instrument_usage_report (
     proposal public.citext,
     usage_type_id smallint DEFAULT 1,
     users public.citext,
-    operator public.citext,
+    operator integer,
     comment public.citext,
     year integer,
     month integer,

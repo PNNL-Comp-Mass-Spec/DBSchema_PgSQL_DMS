@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **          04/17/2020 mem - Updated field name in T_EMSL_Instrument_Usage_Report
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/17/2022 mem - Ported to PostgreSQL
+**          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **
 *****************************************************/
 DECLARE
@@ -53,7 +54,7 @@ BEGIN
            ON InstUsage.usage_type_id = InstUsageType.usage_type_id
     WHERE InstUsage.seq = _seq;
 
-    IF _instrumentUsage.usage = 'CAP_DEV' AND Coalesce(_instrumentUsage.operator, '') = '' Then
+    IF _instrumentUsage.usage = 'CAP_DEV' AND _instrumentUsage.operator is null  Then
         _message := _message || 'Capability Development requires an operator' || ', ';
     End If;
 
