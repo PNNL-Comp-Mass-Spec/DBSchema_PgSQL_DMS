@@ -7,7 +7,7 @@ CREATE VIEW public.v_freezer_list_report AS
     f.freezer,
     f.freezer_tag,
     f.comment,
-    count(mc.*) AS containers
+    count(mc.container_id) AS containers
    FROM ((public.t_material_containers mc
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
      RIGHT JOIN public.t_material_freezers f ON (((ml.freezer_tag OPERATOR(public.=) f.freezer_tag) AND (ml.status OPERATOR(public.<>) 'Inactive'::public.citext) AND (mc.status OPERATOR(public.<>) 'Inactive'::public.citext))))
