@@ -18,7 +18,7 @@ CREATE VIEW public.v_rna_prep_request_detail_report AS
     spr.dataset_type,
     spr.instrument_analysis_specifications,
     spr.sample_naming_convention AS sample_group_naming_prefix,
-    spr.work_package_number AS "Work Package Number",
+    spr.work_package_number,
     COALESCE(cc.activation_state_name, 'Invalid'::public.citext) AS work_package_state,
     spr.eus_usage_type,
     spr.eus_proposal_id AS eus_proposal,

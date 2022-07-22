@@ -27,7 +27,7 @@ CREATE VIEW public.v_analysis_job_export_ex AS
     aj.comment,
     ds.separation_type AS separationsystype,
     analysistool.result_type AS resulttype,
-    dataset_int_std.name AS "Dataset Int Std",
+    dataset_int_std.name AS dataset_int_std,
     ds.created AS ds_created,
         CASE
             WHEN ((ds.acq_time_end - ds.acq_time_start) < '90 days'::interval) THEN (EXTRACT(epoch FROM (ds.acq_time_end - ds.acq_time_start)) / 60.0)
@@ -35,8 +35,8 @@ CREATE VIEW public.v_analysis_job_export_ex AS
         END AS ds_acq_length,
     e.enzyme_id AS enzymeid,
     e.labelling,
-    predigest_int_std.name AS "PreDigest Int Std",
-    postdigest_int_std.name AS "PostDigest Int Std",
+    predigest_int_std.name AS predigest_int_std,
+    postdigest_int_std.name AS postdigest_int_std,
     aj.assigned_processor_name AS processor,
     aj.request_id AS requestid,
     aj.myemsl_state AS myemslstate

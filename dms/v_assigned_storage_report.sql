@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_assigned_storage_report AS
  SELECT t_instrument_name.instrument,
-    ((storage.vol_name_client)::text || (storage.storage_path)::text) AS "?column?",
+    ((storage.vol_name_client)::text || (storage.storage_path)::text) AS storage_path,
     ((src.vol_name_server)::text || (src.storage_path)::text) AS source_path,
     t_instrument_name.capture_method
    FROM ((public.t_instrument_name
