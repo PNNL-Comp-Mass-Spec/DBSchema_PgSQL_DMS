@@ -10,8 +10,9 @@ CREATE VIEW public.v_helper_prep_lc_run_dataset_list_report AS
     ds.comment
    FROM (public.t_dataset ds
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
-  WHERE ((NOT (ds.dataset_id IN ( SELECT t_prep_lc_run_dataset.dataset_id
-           FROM public.t_prep_lc_run_dataset))) AND (ds.dataset_type_id = 31));
+  WHERE ((NOT (EXISTS ( SELECT t_prep_lc_run_dataset.dataset_id
+           FROM public.t_prep_lc_run_dataset
+          WHERE (t_prep_lc_run_dataset.dataset_id = ds.dataset_id)))) AND (ds.dataset_type_id = 31));
 
 
 ALTER TABLE public.v_helper_prep_lc_run_dataset_list_report OWNER TO d3l243;
