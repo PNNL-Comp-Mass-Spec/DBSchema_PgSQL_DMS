@@ -25,7 +25,7 @@ CREATE VIEW public.v_project_usage_stats2 AS
     v_project_usage_stats.proposal_start_date,
     v_project_usage_stats.proposal_end_date,
     v_project_usage_stats.proposal_type,
-    v_project_usage_stats.sort_key
+    v_project_usage_stats.sortkey
    FROM public.v_project_usage_stats
   WHERE (((v_project_usage_stats.year)::numeric = EXTRACT(year FROM CURRENT_TIMESTAMP)) AND ((v_project_usage_stats.week)::numeric >= (EXTRACT(week FROM CURRENT_TIMESTAMP) - (1)::numeric)) AND (NOT ((v_project_usage_stats.usage_type OPERATOR(public.=) ANY (ARRAY['CAP_DEV'::public.citext, 'Maintenance'::public.citext])) AND (v_project_usage_stats.project_type OPERATOR(public.=) 'Unknown'::public.citext))));
 

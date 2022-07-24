@@ -12,7 +12,7 @@ CREATE VIEW public.v_lc_cart_configuration_picklist AS
         CASE
             WHEN (COALESCE(config.dataset_usage_count, 0) > 0) THEN (config.dataset_usage_count + 1000000)
             ELSE COALESCE(config.dataset_usage_last_year, 0)
-        END AS sort_key
+        END AS sortkey
    FROM (public.t_lc_cart_configuration config
      JOIN public.t_lc_cart cart ON ((config.cart_id = cart.cart_id)))
   WHERE (config.cart_config_state OPERATOR(public.=) 'Active'::public.citext);

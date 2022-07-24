@@ -25,7 +25,7 @@ CREATE VIEW public.v_project_usage_stats AS
     (proposals.proposal_start_date)::date AS proposal_start_date,
     (proposals.proposal_end_date)::date AS proposal_end_date,
     stats.proposal_type,
-    stats.sort_key
+    stats.sort_key AS sortkey
    FROM (((public.t_project_usage_stats stats
      JOIN public.t_project_usage_types projecttypes ON ((stats.project_type_id = projecttypes.project_type_id)))
      JOIN public.t_eus_usage_type eususage ON ((stats.eus_usage_type_id = eususage.eus_usage_type_id)))
