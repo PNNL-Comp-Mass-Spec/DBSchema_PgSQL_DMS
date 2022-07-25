@@ -1,8 +1,8 @@
 --
--- Name: v_instrument_group_pick_list; Type: VIEW; Schema: public; Owner: d3l243
+-- Name: v_instrument_group_picklist; Type: VIEW; Schema: public; Owner: d3l243
 --
 
-CREATE VIEW public.v_instrument_group_pick_list AS
+CREATE VIEW public.v_instrument_group_picklist AS
  SELECT lookupq.instrument_group,
     lookupq.usage,
     lookupq.instruments,
@@ -26,11 +26,11 @@ CREATE VIEW public.v_instrument_group_pick_list AS
           WHERE (g.active > 0)) lookupq;
 
 
-ALTER TABLE public.v_instrument_group_pick_list OWNER TO d3l243;
+ALTER TABLE public.v_instrument_group_picklist OWNER TO d3l243;
 
 --
--- Name: TABLE v_instrument_group_pick_list; Type: ACL; Schema: public; Owner: d3l243
+-- Name: TABLE v_instrument_group_picklist; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE public.v_instrument_group_pick_list TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_group_picklist TO readaccess;
 

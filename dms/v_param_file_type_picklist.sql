@@ -1,8 +1,8 @@
 --
--- Name: v_param_file_type_pick_list; Type: VIEW; Schema: public; Owner: d3l243
+-- Name: v_param_file_type_picklist; Type: VIEW; Schema: public; Owner: d3l243
 --
 
-CREATE VIEW public.v_param_file_type_pick_list AS
+CREATE VIEW public.v_param_file_type_picklist AS
  SELECT pft.param_file_type_id,
     pft.param_file_type,
         CASE
@@ -14,11 +14,11 @@ CREATE VIEW public.v_param_file_type_pick_list AS
   WHERE (pft.param_file_type_id > 1);
 
 
-ALTER TABLE public.v_param_file_type_pick_list OWNER TO d3l243;
+ALTER TABLE public.v_param_file_type_picklist OWNER TO d3l243;
 
 --
--- Name: TABLE v_param_file_type_pick_list; Type: ACL; Schema: public; Owner: d3l243
+-- Name: TABLE v_param_file_type_picklist; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE public.v_param_file_type_pick_list TO readaccess;
+GRANT SELECT ON TABLE public.v_param_file_type_picklist TO readaccess;
 

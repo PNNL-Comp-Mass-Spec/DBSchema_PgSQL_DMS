@@ -1,8 +1,8 @@
 --
--- Name: v_instrument_name_rna_pick_list; Type: VIEW; Schema: public; Owner: d3l243
+-- Name: v_instrument_name_rna_picklist; Type: VIEW; Schema: public; Owner: d3l243
 --
 
-CREATE VIEW public.v_instrument_name_rna_pick_list AS
+CREATE VIEW public.v_instrument_name_rna_picklist AS
  SELECT instname.instrument,
     i.usage,
     public.get_instrument_group_dataset_type_list((i.instrument_group)::text, ', '::text) AS allowed_dataset_types
@@ -12,11 +12,11 @@ CREATE VIEW public.v_instrument_name_rna_pick_list AS
   WHERE ((instname.operations_role OPERATOR(public.=) 'Transcriptomics'::public.citext) AND (instname.status <> 'Inactive'::bpchar));
 
 
-ALTER TABLE public.v_instrument_name_rna_pick_list OWNER TO d3l243;
+ALTER TABLE public.v_instrument_name_rna_picklist OWNER TO d3l243;
 
 --
--- Name: TABLE v_instrument_name_rna_pick_list; Type: ACL; Schema: public; Owner: d3l243
+-- Name: TABLE v_instrument_name_rna_picklist; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE public.v_instrument_name_rna_pick_list TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_name_rna_picklist TO readaccess;
 
