@@ -8,7 +8,7 @@ CREATE TABLE public.t_sample_submission (
     received_by_user_id integer NOT NULL,
     container_list public.citext,
     description public.citext,
-    storage_path integer,
+    storage_id integer,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -47,7 +47,7 @@ ALTER TABLE ONLY public.t_sample_submission
 --
 
 ALTER TABLE ONLY public.t_sample_submission
-    ADD CONSTRAINT fk_t_sample_submission_t_prep_file_storage FOREIGN KEY (storage_path) REFERENCES public.t_prep_file_storage(storage_id);
+    ADD CONSTRAINT fk_t_sample_submission_t_prep_file_storage FOREIGN KEY (storage_id) REFERENCES public.t_prep_file_storage(storage_id);
 
 --
 -- Name: t_sample_submission fk_t_sample_submission_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
