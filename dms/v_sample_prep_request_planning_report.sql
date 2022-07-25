@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_sample_prep_request_planning_report AS
- SELECT spr.prep_request_id,
+ SELECT spr.prep_request_id AS id,
     u.name AS requester,
     spr.request_name,
     spr.created,

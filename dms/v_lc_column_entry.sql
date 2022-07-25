@@ -13,7 +13,7 @@ CREATE VIEW public.v_lc_column_entry AS
     lc.column_length,
     lc.operator_prn,
     lc.comment,
-    lc.lc_column_id,
+    lc.lc_column_id AS column_id,
     statename.column_state
    FROM (public.t_lc_column lc
      JOIN public.t_lc_column_state_name statename ON ((lc.column_state_id = statename.column_state_id)));

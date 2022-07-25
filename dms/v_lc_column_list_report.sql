@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_lc_column_list_report AS
- SELECT lc.lc_column AS column_number,
+ SELECT lc.lc_column AS column_name,
     statename.column_state AS state,
     lc.created,
     lc.packing_mfg,
@@ -15,7 +15,7 @@ CREATE VIEW public.v_lc_column_list_report AS
     lc.column_length AS length,
     lc.operator_prn AS operator,
     lc.comment,
-    lc.lc_column_id AS id
+    lc.lc_column_id AS column_id
    FROM (public.t_lc_column lc
      JOIN public.t_lc_column_state_name statename ON ((lc.column_state_id = statename.column_state_id)));
 

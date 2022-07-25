@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_lc_cart_active_export AS
- SELECT cart.cart_id,
+ SELECT cart.cart_id AS id,
     cart.cart_name,
     cart.cart_description,
     cartstate.cart_state AS state,

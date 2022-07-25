@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_lc_cart_settings_history_detail_report AS
- SELECT csh.entry_id,
+ SELECT csh.entry_id AS id,
     lccart.cart_name AS cart,
     csh.date_of_change,
     csh.entered,

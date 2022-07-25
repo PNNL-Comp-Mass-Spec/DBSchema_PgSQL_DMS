@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_lc_column_dataset_count AS
- SELECT lc.lc_column AS column_number,
+ SELECT lc.lc_column AS column_name,
     statename.column_state AS state,
     count(ds.dataset_id) AS number_of_datasets
    FROM ((public.t_dataset ds

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_rna_prep_request_detail_report AS
- SELECT spr.prep_request_id,
+ SELECT spr.prep_request_id AS id,
     spr.request_name,
     qp.name_with_username AS requester,
     spr.campaign,

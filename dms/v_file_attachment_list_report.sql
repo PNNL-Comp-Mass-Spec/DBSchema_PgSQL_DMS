@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_file_attachment_list_report AS
- SELECT fa.attachment_id,
+ SELECT fa.attachment_id AS id,
     fa.file_name,
     fa.description,
     fa.entity_type,

@@ -34,7 +34,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
     rr.run_order,
     lc.cart_name AS cart,
     cartconfig.cart_config_name AS cart_config,
-    rr.cart_column AS column_number,
+    rr.cart_column AS column_name,
     rr.work_package,
         CASE
             WHEN (rr.work_package OPERATOR(public.=) ANY (ARRAY['none'::public.citext, ''::public.citext])) THEN ''::public.citext

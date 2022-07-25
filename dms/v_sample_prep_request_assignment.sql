@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_sample_prep_request_assignment AS
  SELECT ''::text AS sel,
-    spr.prep_request_id,
+    spr.prep_request_id AS id,
     spr.created,
     spr.estimated_prep_time_days AS est_prep_time,
     sn.state_name AS state,

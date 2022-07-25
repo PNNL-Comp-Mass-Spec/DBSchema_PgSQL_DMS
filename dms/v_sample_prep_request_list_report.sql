@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_sample_prep_request_list_report AS
- SELECT spr.prep_request_id,
+ SELECT spr.prep_request_id AS id,
     spr.request_name,
     spr.created,
     spr.estimated_prep_time_days AS est_prep_time,

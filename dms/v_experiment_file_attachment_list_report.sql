@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_experiment_file_attachment_list_report AS
  SELECT e.exp_id,
-    fa.attachment_id,
+    fa.id,
     fa.file_name,
     COALESCE(fa.description, ''::public.citext) AS description,
     fa.entity_type,
@@ -19,7 +19,7 @@ CREATE VIEW public.v_experiment_file_attachment_list_report AS
   WHERE (fa.entity_type OPERATOR(public.=) 'experiment'::public.citext)
 UNION
  SELECT egm.exp_id,
-    lookupq.attachment_id,
+    lookupq.attachment_id AS id,
     lookupq.file_name,
     lookupq.description,
     lookupq.entity_type,
@@ -29,7 +29,7 @@ UNION
     lookupq.created,
     lookupq.last_affected,
     e.experiment
-   FROM ((( SELECT v_file_attachment_list_report.attachment_id,
+   FROM ((( SELECT v_file_attachment_list_report.id AS attachment_id,
             v_file_attachment_list_report.file_name,
             v_file_attachment_list_report.description,
             v_file_attachment_list_report.entity_type,
