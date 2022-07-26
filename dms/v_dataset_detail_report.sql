@@ -11,7 +11,7 @@ CREATE VIEW public.v_dataset_detail_report AS
     dtn.dataset_type AS type,
     ds.comment,
     ds.operator_prn AS operator,
-    ds.well AS well_number,
+    ds.well,
     ds.separation_type,
     ds.folder_name,
     ((spath.vol_name_client)::text || (spath.storage_path)::text) AS storage,

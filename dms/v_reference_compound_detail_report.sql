@@ -20,7 +20,7 @@ CREATE VIEW public.v_reference_compound_detail_report AS
     mc.container,
     ml.tag AS location,
     rc.wellplate_name AS wellplate,
-    rc.well_number,
+    rc.well_number AS well,
     rc.supplier,
     rc.product_id,
     rc.purchase_date,

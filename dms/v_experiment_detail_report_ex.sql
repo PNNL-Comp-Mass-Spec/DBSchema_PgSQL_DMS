@@ -34,7 +34,7 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
     e.material_active AS material_status,
     e.last_used,
     e.wellplate,
-    e.well AS well_number,
+    e.well,
     e.barcode
    FROM ((((((((((((((public.t_experiments e
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
