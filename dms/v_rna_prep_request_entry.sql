@@ -15,7 +15,7 @@ CREATE VIEW public.v_rna_prep_request_entry AS
     spr.prep_method,
     spr.sample_naming_convention,
     spr.estimated_completion,
-    spr.work_package_number,
+    spr.work_package,
     spr.instrument_name,
     spr.dataset_type,
     spr.instrument_analysis_specifications,

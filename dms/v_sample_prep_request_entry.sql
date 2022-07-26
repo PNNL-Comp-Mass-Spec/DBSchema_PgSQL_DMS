@@ -20,7 +20,7 @@ CREATE VIEW public.v_sample_prep_request_entry AS
     spr.assigned_personnel,
     spr.estimated_prep_time_days,
     ((spr.estimated_ms_runs)::text || '__NoCopy__'::text) AS estimated_ms_runs,
-    spr.work_package_number AS work_package,
+    spr.work_package,
     spr.instrument_group,
     spr.dataset_type,
     spr.instrument_analysis_specifications,

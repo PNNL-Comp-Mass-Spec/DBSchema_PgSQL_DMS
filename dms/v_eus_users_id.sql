@@ -9,7 +9,7 @@ CREATE VIEW public.v_eus_users_id AS
     s.eus_site_status AS site_status,
     u.valid AS valid_eus_id
    FROM (public.t_eus_users u
-     JOIN public.t_eus_site_status s ON ((u.site_status = s.eus_site_status_id)));
+     JOIN public.t_eus_site_status s ON ((u.site_status_id = s.eus_site_status_id)));
 
 
 ALTER TABLE public.v_eus_users_id OWNER TO d3l243;

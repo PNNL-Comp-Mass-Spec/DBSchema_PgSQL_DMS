@@ -18,7 +18,7 @@ CREATE VIEW public.v_rna_prep_request_detail_report AS
     spr.dataset_type,
     spr.instrument_analysis_specifications,
     spr.sample_naming_convention AS sample_group_naming_prefix,
-    spr.work_package_number,
+    spr.work_package,
     COALESCE(cc.activation_state_name, 'Invalid'::public.citext) AS work_package_state,
     spr.eus_usage_type,
     spr.eus_proposal_id AS eus_proposal,
@@ -39,7 +39,7 @@ CREATE VIEW public.v_rna_prep_request_detail_report AS
             count(*) AS updates
            FROM public.t_sample_prep_request_updates
           GROUP BY t_sample_prep_request_updates.request_id) nu ON ((spr.prep_request_id = nu.request_id)))
-     LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package_number OPERATOR(public.=) cc.charge_code)))
+     LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package OPERATOR(public.=) cc.charge_code)))
   WHERE (spr.request_type OPERATOR(public.=) 'RNA'::public.citext);
 
 

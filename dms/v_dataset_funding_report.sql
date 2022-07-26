@@ -18,7 +18,7 @@ CREATE VIEW public.v_dataset_funding_report AS
     rr.requester_prn AS requester,
     rr.eus_proposal_id AS emsl_proposal,
     rr.work_package,
-    spr.work_package_number AS sample_prep_work_package,
+    spr.work_package AS sample_prep_work_package,
     public.get_proposal_eus_users_list(rr.eus_proposal_id, 'N'::text, 5) AS emsl_users,
     public.get_proposal_eus_users_list(rr.eus_proposal_id, 'I'::text, 20) AS emsl_user_ids,
     dtn.dataset_type,
@@ -28,7 +28,7 @@ CREATE VIEW public.v_dataset_funding_report AS
     ds.comment,
         CASE
             WHEN (c.fraction_emsl_funded > (0)::numeric) THEN c.fraction_emsl_funded
-            WHEN ((spr.work_package_number OPERATOR(public.~~) 'K798%'::public.citext) OR (rr.work_package OPERATOR(public.~~) 'K798%'::public.citext)) THEN (1)::numeric
+            WHEN ((spr.work_package OPERATOR(public.~~) 'K798%'::public.citext) OR (rr.work_package OPERATOR(public.~~) 'K798%'::public.citext)) THEN (1)::numeric
             ELSE (0)::numeric
         END AS fraction_emsl_funded,
     EXTRACT(year FROM (COALESCE(ds.acq_time_start, ds.created) + '92 days'::interval)) AS fy,

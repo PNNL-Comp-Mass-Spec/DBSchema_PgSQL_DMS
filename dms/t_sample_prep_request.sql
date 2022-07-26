@@ -20,7 +20,7 @@ CREATE TABLE public.t_sample_prep_request (
     special_instructions public.citext,
     sample_naming_convention public.citext,
     assigned_personnel public.citext DEFAULT ''::public.citext NOT NULL,
-    work_package_number public.citext,
+    work_package public.citext,
     user_proposal public.citext,
     instrument_group public.citext,
     instrument_name public.citext,

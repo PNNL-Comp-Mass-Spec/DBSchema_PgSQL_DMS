@@ -12,7 +12,7 @@ CREATE VIEW public.v_eus_proposal_users_list_report AS
     u.last_name
    FROM ((public.t_eus_proposal_users pu
      JOIN public.t_eus_users u ON ((pu.person_id = u.person_id)))
-     JOIN public.t_eus_site_status ss ON ((u.site_status = ss.eus_site_status_id)))
+     JOIN public.t_eus_site_status ss ON ((u.site_status_id = ss.eus_site_status_id)))
   WHERE (pu.state_id <> 5);
 
 

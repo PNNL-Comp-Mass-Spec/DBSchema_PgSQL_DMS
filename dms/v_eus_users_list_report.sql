@@ -11,7 +11,7 @@ CREATE VIEW public.v_eus_users_list_report AS
     u.valid AS valid_eus_id,
     u.last_affected
    FROM (public.t_eus_users u
-     JOIN public.t_eus_site_status ss ON ((u.site_status = ss.eus_site_status_id)));
+     JOIN public.t_eus_site_status ss ON ((u.site_status_id = ss.eus_site_status_id)));
 
 
 ALTER TABLE public.v_eus_users_list_report OWNER TO d3l243;

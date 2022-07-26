@@ -24,7 +24,7 @@ CREATE VIEW public.v_sample_prep_request_active_list_report AS
     spr.biohazard_level,
     spr.campaign,
     spr.comment,
-    spr.work_package_number AS work_package,
+    spr.work_package,
     COALESCE(cc.activation_state_name, ''::public.citext) AS wp_state,
     spr.eus_proposal_id AS eus_proposal,
     ept.proposal_type_name AS eus_proposal_type,
@@ -50,7 +50,7 @@ CREATE VIEW public.v_sample_prep_request_active_list_report AS
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'sample_prep_request'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id_value) ta ON ((spr.prep_request_id = ta.entity_id_value)))
-     LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package_number OPERATOR(public.=) cc.charge_code)))
+     LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package OPERATOR(public.=) cc.charge_code)))
      LEFT JOIN public.t_eus_proposals eup ON ((spr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
      LEFT JOIN ont.v_bto_id_to_name bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))

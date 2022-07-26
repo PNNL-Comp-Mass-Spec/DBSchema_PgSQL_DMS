@@ -19,7 +19,7 @@ CREATE VIEW public.v_eus_user_id_lookup AS
             eu.hid AS eus_hanford_id,
             row_number() OVER (PARTITION BY eu.hid ORDER BY eu.person_id DESC) AS rowrank
            FROM (public.t_eus_site_status ess
-             JOIN public.t_eus_users eu ON ((ess.eus_site_status_id = eu.site_status)))
+             JOIN public.t_eus_users eu ON ((ess.eus_site_status_id = eu.site_status_id)))
           WHERE ((NOT (eu.hid IS NULL)) AND (eu.valid = 1))) lookupq ON (((lookupq.eus_hanford_id OPERATOR(public.=) u.hid) AND (lookupq.rowrank = 1))));
 
 

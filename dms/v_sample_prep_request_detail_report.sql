@@ -26,7 +26,7 @@ CREATE VIEW public.v_sample_prep_request_detail_report AS
     spr.instrument_analysis_specifications,
     spr.block_and_randomize_runs,
     spr.sample_naming_convention AS sample_group_naming_prefix,
-    spr.work_package_number AS work_package,
+    spr.work_package,
     COALESCE(cc.activation_state_name, 'Invalid'::public.citext) AS work_package_state,
     spr.eus_usage_type,
     spr.eus_proposal_id AS eus_proposal,
@@ -70,7 +70,7 @@ CREATE VIEW public.v_sample_prep_request_detail_report AS
            FROM public.t_sample_prep_request_updates
           GROUP BY t_sample_prep_request_updates.request_id) nu ON ((spr.prep_request_id = nu.request_id)))
      LEFT JOIN public.v_sample_prep_request_queue_times qt ON ((spr.prep_request_id = qt.request_id)))
-     LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package_number OPERATOR(public.=) cc.charge_code)))
+     LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package OPERATOR(public.=) cc.charge_code)))
      LEFT JOIN public.t_eus_proposals eup ON ((spr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
      LEFT JOIN public.t_eus_proposal_state_name psn ON ((eup.state_id = psn.state_id)))

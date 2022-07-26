@@ -28,7 +28,7 @@ CREATE VIEW public.v_sample_prep_request_list_report AS
     spr.biohazard_level,
     spr.campaign,
     spr.comment,
-    spr.work_package_number AS work_package,
+    spr.work_package,
     COALESCE(cc.activation_state_name, ''::public.citext) AS wp_state,
     spr.eus_proposal_id AS eus_proposal,
     ept.proposal_type_name AS eus_proposal_type,
@@ -78,12 +78,12 @@ CREATE VIEW public.v_sample_prep_request_list_report AS
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'sample_prep_request'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id_value) ta ON ((spr.prep_request_id = ta.entity_id_value)))
      LEFT JOIN public.t_experiments e ON ((spr.prep_request_id = e.sample_prep_request_id)))
-     LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package_number OPERATOR(public.=) cc.charge_code)))
+     LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package OPERATOR(public.=) cc.charge_code)))
      LEFT JOIN public.t_eus_proposals eup ON ((spr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
      LEFT JOIN ont.v_bto_id_to_name bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))
   WHERE ((spr.state_id > 0) AND (spr.request_type OPERATOR(public.=) 'Default'::public.citext))
-  GROUP BY spr.prep_request_id, spr.request_name, spr.created, spr.estimated_prep_time_days, spr.priority, ta.attachments, spr.state_id, sn.state_name, spr.state_comment, spr.reason, spr.number_of_samples, spr.estimated_ms_runs, qt.days_in_queue, qt.days_in_state, spr.prep_method, spr.requested_personnel, spr.assigned_personnel, qp.name_with_username, spr.organism, spr.biohazard_level, spr.campaign, spr.comment, spr.work_package_number, spr.instrument_group, spr.instrument_analysis_specifications, spr.separation_type, cc.activation_state, cc.activation_state_name, spr.eus_proposal_id, spr.eus_usage_type, ept.proposal_type_name, bto.tissue, spr.material_container_list;
+  GROUP BY spr.prep_request_id, spr.request_name, spr.created, spr.estimated_prep_time_days, spr.priority, ta.attachments, spr.state_id, sn.state_name, spr.state_comment, spr.reason, spr.number_of_samples, spr.estimated_ms_runs, qt.days_in_queue, qt.days_in_state, spr.prep_method, spr.requested_personnel, spr.assigned_personnel, qp.name_with_username, spr.organism, spr.biohazard_level, spr.campaign, spr.comment, spr.work_package, spr.instrument_group, spr.instrument_analysis_specifications, spr.separation_type, cc.activation_state, cc.activation_state_name, spr.eus_proposal_id, spr.eus_usage_type, ept.proposal_type_name, bto.tissue, spr.material_container_list;
 
 
 ALTER TABLE public.v_sample_prep_request_list_report OWNER TO d3l243;

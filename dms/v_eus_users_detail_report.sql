@@ -11,7 +11,7 @@ CREATE VIEW public.v_eus_users_detail_report AS
     u.username AS prn,
     u.user_id AS dms_user_id
    FROM ((public.t_eus_users eu
-     JOIN public.t_eus_site_status ss ON ((eu.site_status = ss.eus_site_status_id)))
+     JOIN public.t_eus_site_status ss ON ((eu.site_status_id = ss.eus_site_status_id)))
      LEFT JOIN public.t_users u ON ((eu.hid OPERATOR(public.=) u.hid)));
 
 
