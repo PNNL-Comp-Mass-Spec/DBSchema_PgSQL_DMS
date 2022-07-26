@@ -4,3 +4,5 @@ t_schema_change_log_data.sql
 /d3l243/[a-zA-Z]*
 /pgwatch2_metrics/stat_statements_calls_Data.sql
 /pgwatch2_metrics/stat_statements_Data.sql
+/dms/_User_Mapping_postgres_Server_op_warehouse_fdw.sql
+/dms/_User_Mapping_d3l243_Server_op_warehouse_fdw.sql
