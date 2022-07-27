@@ -17,7 +17,8 @@ CREATE TABLE pc.t_protein_collections (
     date_modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     authentication_hash public.citext,
     contents_encrypted smallint DEFAULT 0 NOT NULL,
-    uploaded_by public.citext DEFAULT SESSION_USER
+    uploaded_by public.citext DEFAULT SESSION_USER,
+    migrate_to_filtered_tables smallint DEFAULT 0 NOT NULL
 );
 
 
