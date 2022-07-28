@@ -9,7 +9,7 @@ CREATE VIEW public.v_organism_list_report AS
     o.species,
     o.strain,
     o.description,
-    count(pc.name) AS protein_collections,
+    count(pc.collection_name) AS protein_collections,
     o.organism_db_name AS default_protein_collection,
     o.short_name,
     ncbi.name AS ncbi_taxonomy,
@@ -26,7 +26,12 @@ CREATE VIEW public.v_organism_list_report AS
     o.created,
     o.active
    FROM (((public.t_organisms o
-     LEFT JOIN public.t_cached_protein_collections pc ON (((o.organism_id = pc.organism_id) AND (pc.state_name OPERATOR(public.<>) 'Retired'::public.citext))))
+     LEFT JOIN ( SELECT t_protein_collections.collection_name,
+            orgxref.organism_id,
+            pcs.state AS state_name
+           FROM ((pc.t_protein_collections
+             JOIN pc.t_collection_organism_xref orgxref ON ((t_protein_collections.protein_collection_id = orgxref.protein_collection_id)))
+             JOIN pc.t_protein_collection_states pcs ON ((t_protein_collections.collection_state_id = pcs.collection_state_id)))) pc ON (((o.organism_id = pc.organism_id) AND (pc.state_name OPERATOR(public.<>) 'Retired'::public.citext))))
      LEFT JOIN ont.v_ncbi_taxonomy_cached ncbi ON ((o.ncbi_taxonomy_id = ncbi.tax_id)))
      LEFT JOIN ( SELECT odf.organism_id,
             count(*) AS legacy_fasta_files

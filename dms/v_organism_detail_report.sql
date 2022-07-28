@@ -24,7 +24,7 @@ CREATE VIEW public.v_organism_detail_report AS
     o.strain,
     o.newt_id_list,
     o.created,
-    count(pc.name) AS protein_collections,
+    count(pc.collection_name) AS protein_collections,
     o.storage_location AS organism_storage_path,
     o.storage_url AS organism_storage_link,
     o.organism_db_name AS default_protein_collection,
@@ -34,7 +34,12 @@ CREATE VIEW public.v_organism_detail_report AS
    FROM (((((public.t_organisms o
      JOIN public.t_yes_no ON ((o.auto_define_taxonomy = t_yes_no.flag)))
      LEFT JOIN ont.t_cv_newt newt ON ((o.ncbi_taxonomy_id = newt.identifier)))
-     LEFT JOIN public.t_cached_protein_collections pc ON (((o.organism_id = pc.organism_id) AND (pc.state_name OPERATOR(public.<>) 'Retired'::public.citext))))
+     LEFT JOIN ( SELECT t_protein_collections.collection_name,
+            orgxref.organism_id,
+            pcs.state AS state_name
+           FROM ((pc.t_protein_collections
+             JOIN pc.t_collection_organism_xref orgxref ON ((t_protein_collections.protein_collection_id = orgxref.protein_collection_id)))
+             JOIN pc.t_protein_collection_states pcs ON ((t_protein_collections.collection_state_id = pcs.collection_state_id)))) pc ON (((o.organism_id = pc.organism_id) AND (pc.state_name OPERATOR(public.<>) 'Retired'::public.citext))))
      LEFT JOIN ont.t_ncbi_taxonomy_cached ncbi ON ((o.ncbi_taxonomy_id = ncbi.tax_id)))
      LEFT JOIN ( SELECT odf.organism_id,
             count(*) AS legacy_fasta_files
