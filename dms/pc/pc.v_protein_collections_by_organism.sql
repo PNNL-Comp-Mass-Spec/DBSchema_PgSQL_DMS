@@ -20,7 +20,7 @@ CREATE VIEW pc.v_protein_collections_by_organism AS
     org.organism AS organism_name,
     pc.contents_encrypted,
     pc.includes_contaminants,
-    aof.filesize
+    aof.file_size_bytes
    FROM (((((pc.t_protein_collections pc
      JOIN pc.t_collection_organism_xref orgxref ON ((pc.protein_collection_id = orgxref.protein_collection_id)))
      JOIN public.t_organisms org ON ((orgxref.organism_id = org.organism_id)))

@@ -10,7 +10,7 @@ CREATE TABLE pc.t_archived_output_files (
     svn_repository_path public.citext,
     svn_revision_number integer,
     authentication_hash public.citext NOT NULL,
-    filesize bigint NOT NULL,
+    file_size_bytes bigint NOT NULL,
     protein_count integer,
     creation_options public.citext,
     archived_file_creation_date timestamp without time zone NOT NULL,

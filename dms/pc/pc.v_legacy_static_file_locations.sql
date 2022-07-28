@@ -12,7 +12,7 @@ CREATE VIEW pc.v_legacy_static_file_locations AS
     COALESCE(lfur.authentication_hash, ''::public.citext) AS authentication_hash
    FROM ((public.t_organism_db_file orgdbinfo
      JOIN public.t_organisms org ON ((orgdbinfo.organism_id = org.organism_id)))
-     LEFT JOIN ( SELECT t_legacy_file_upload_requests.legacy_filename AS file_name,
+     LEFT JOIN ( SELECT t_legacy_file_upload_requests.legacy_file_name AS file_name,
             t_legacy_file_upload_requests.authentication_hash
            FROM pc.t_legacy_file_upload_requests) lfur ON ((orgdbinfo.file_name OPERATOR(public.=) lfur.file_name)));
 

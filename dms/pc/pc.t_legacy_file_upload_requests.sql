@@ -5,7 +5,7 @@
 CREATE TABLE pc.t_legacy_file_upload_requests (
     upload_request_id integer NOT NULL,
     legacy_file_id integer NOT NULL,
-    legacy_filename public.citext,
+    legacy_file_name public.citext,
     date_requested timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     date_uploaded timestamp without time zone,
     upload_completed smallint DEFAULT 0 NOT NULL,

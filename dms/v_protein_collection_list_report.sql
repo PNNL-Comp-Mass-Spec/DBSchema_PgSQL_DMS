@@ -62,7 +62,7 @@ CREATE VIEW public.v_protein_collection_list_report AS
                     pc.protein_collection_id,
                     pcs.state,
                     pc.includes_contaminants,
-                    round((((aof.filesize)::numeric / 1024.0) / (1024)::numeric), 2) AS file_size_mb
+                    round((((aof.file_size_bytes)::numeric / 1024.0) / (1024)::numeric), 2) AS file_size_mb
                    FROM (((((pc.t_protein_collections pc
                      JOIN pc.t_collection_organism_xref orgxref ON ((pc.protein_collection_id = orgxref.protein_collection_id)))
                      JOIN public.t_organisms orglist ON ((orgxref.organism_id = orglist.organism_id)))
