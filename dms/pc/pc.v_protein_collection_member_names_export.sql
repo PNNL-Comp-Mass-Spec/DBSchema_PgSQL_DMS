@@ -4,7 +4,7 @@
 
 CREATE VIEW pc.v_protein_collection_member_names_export AS
  SELECT pcm.protein_collection_id,
-    pc.file_name AS protein_collection,
+    pc.collection_name AS protein_collection,
     pcm.protein_name,
     pcm.description,
     pcm.residue_count,

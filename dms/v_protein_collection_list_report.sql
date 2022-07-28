@@ -48,7 +48,7 @@ CREATE VIEW public.v_protein_collection_list_report AS
             cp.state,
             cp.includes_contaminants,
             cp.file_size_mb
-           FROM ( SELECT pc.file_name AS name,
+           FROM ( SELECT pc.collection_name AS name,
                     pctypes.type,
                     pc.description,
                     pc.source,

@@ -4,7 +4,7 @@
 
 CREATE VIEW pc.v_protein_collections_by_organism AS
  SELECT DISTINCT pc.protein_collection_id,
-    ((((pc.file_name)::text || ' ('::text) || (pc.num_proteins)::text) || ' Entries)'::text) AS display,
+    ((((pc.collection_name)::text || ' ('::text) || (pc.num_proteins)::text) || ' Entries)'::text) AS display,
     pc.description,
     pc.source,
     pc.collection_state_id,
@@ -14,7 +14,7 @@ CREATE VIEW pc.v_protein_collections_by_organism AS
     pc.num_proteins,
     pc.num_residues,
     pc.authentication_hash,
-    pc.file_name AS filename,
+    pc.collection_name,
     orgxref.organism_id,
     pc.primary_annotation_type_id AS authority_id,
     org.organism AS organism_name,

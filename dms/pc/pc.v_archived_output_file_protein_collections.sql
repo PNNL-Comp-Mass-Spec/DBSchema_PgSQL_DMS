@@ -9,7 +9,7 @@ CREATE VIEW pc.v_archived_output_file_protein_collections AS
     t_archived_file_states.archived_file_state,
     lookupq.protein_collection_count,
     aofc.protein_collection_id,
-    pc.file_name
+    pc.collection_name
    FROM (((((pc.t_archived_output_files aof
      JOIN ( SELECT aof_1.archived_file_id,
             count(*) AS protein_collection_count

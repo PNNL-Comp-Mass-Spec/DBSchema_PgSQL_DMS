@@ -4,7 +4,7 @@
 
 CREATE TABLE pc.t_protein_collections (
     protein_collection_id integer NOT NULL,
-    file_name public.citext NOT NULL,
+    collection_name public.citext NOT NULL,
     description public.citext,
     source public.citext,
     collection_type_id smallint DEFAULT 1 NOT NULL,
@@ -45,10 +45,10 @@ ALTER TABLE ONLY pc.t_protein_collections
     ADD CONSTRAINT pk_t_protein_collections PRIMARY KEY (protein_collection_id);
 
 --
--- Name: ix_t_protein_collections_file_name; Type: INDEX; Schema: pc; Owner: d3l243
+-- Name: ix_t_protein_collections_protein_collection; Type: INDEX; Schema: pc; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_protein_collections_file_name ON pc.t_protein_collections USING btree (file_name);
+CREATE UNIQUE INDEX ix_t_protein_collections_protein_collection ON pc.t_protein_collections USING btree (collection_name);
 
 --
 -- Name: t_protein_collections fk_t_protein_collections_t_annotation_types; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243

@@ -7,7 +7,7 @@ CREATE VIEW pc.v_encrypted_collection_authorizations AS
     eca.protein_collection_id,
         CASE
             WHEN (eca.protein_collection_id = 0) THEN 'Administrator'::public.citext
-            ELSE pc.file_name
+            ELSE pc.collection_name
         END AS protein_collection_name
    FROM (pc.t_encrypted_collection_authorizations eca
      LEFT JOIN pc.t_protein_collections pc ON ((eca.protein_collection_id = pc.protein_collection_id)));
