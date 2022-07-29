@@ -38,7 +38,7 @@ ALTER TABLE ONLY mc.t_log_entries
 -- Name: t_log_entries trig_t_log_entries_after_update; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_log_entries_after_update AFTER UPDATE OF posted_by, posting_time, type, message ON mc.t_log_entries FOR EACH ROW EXECUTE FUNCTION mc.trigfn_t_log_entries_user_update();
+CREATE TRIGGER trig_t_log_entries_after_update AFTER UPDATE OF posted_by, posting_time, type, message ON mc.t_log_entries FOR EACH ROW EXECUTE FUNCTION mc.trigfn_t_log_entries_user_after_update();
 
 --
 -- Name: TABLE t_log_entries; Type: ACL; Schema: mc; Owner: d3l243

@@ -1,8 +1,8 @@
 --
--- Name: trigfn_t_mgr_type_param_type_map_update(); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: trigfn_t_mgr_type_param_type_map_after_update(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.trigfn_t_mgr_type_param_type_map_update() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_t_mgr_type_param_type_map_after_update() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -29,5 +29,5 @@ END
 $$;
 
 
-ALTER FUNCTION mc.trigfn_t_mgr_type_param_type_map_update() OWNER TO d3l243;
+ALTER FUNCTION mc.trigfn_t_mgr_type_param_type_map_after_update() OWNER TO d3l243;
 

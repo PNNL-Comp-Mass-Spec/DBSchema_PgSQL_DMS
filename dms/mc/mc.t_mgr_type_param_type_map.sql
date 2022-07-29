@@ -24,7 +24,7 @@ ALTER TABLE ONLY mc.t_mgr_type_param_type_map
 -- Name: t_mgr_type_param_type_map trig_t_mgr_type_param_type_map_after_update; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_mgr_type_param_type_map_after_update AFTER UPDATE OF mgr_type_id, param_type_id, default_value ON mc.t_mgr_type_param_type_map FOR EACH ROW EXECUTE FUNCTION mc.trigfn_t_mgr_type_param_type_map_update();
+CREATE TRIGGER trig_t_mgr_type_param_type_map_after_update AFTER UPDATE OF mgr_type_id, param_type_id, default_value ON mc.t_mgr_type_param_type_map FOR EACH ROW EXECUTE FUNCTION mc.trigfn_t_mgr_type_param_type_map_after_update();
 
 --
 -- Name: t_mgr_type_param_type_map fk_t_mgr_type_param_type_map_t_mgr_types; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243

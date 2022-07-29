@@ -1,8 +1,8 @@
 --
--- Name: trigfn_t_param_value_delete(); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: trigfn_t_param_value_after_delete(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_delete() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_after_delete() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -38,5 +38,5 @@ END
 $$;
 
 
-ALTER FUNCTION mc.trigfn_t_param_value_delete() OWNER TO d3l243;
+ALTER FUNCTION mc.trigfn_t_param_value_after_delete() OWNER TO d3l243;
 

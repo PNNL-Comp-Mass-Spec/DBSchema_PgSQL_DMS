@@ -1,8 +1,8 @@
 --
--- Name: trigfn_v_mgr_params_update(); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: trigfn_v_mgr_params_after_update(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.trigfn_v_mgr_params_update() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_v_mgr_params_after_update() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -31,5 +31,5 @@ END;
 $$;
 
 
-ALTER FUNCTION mc.trigfn_v_mgr_params_update() OWNER TO d3l243;
+ALTER FUNCTION mc.trigfn_v_mgr_params_after_update() OWNER TO d3l243;
 
