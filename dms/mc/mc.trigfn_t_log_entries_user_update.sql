@@ -1,8 +1,8 @@
 --
--- Name: trigfn_u_t_log_entries_user(); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: trigfn_t_log_entries_user_update(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.trigfn_u_t_log_entries_user() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_t_log_entries_user_update() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -38,5 +38,5 @@ END
 $$;
 
 
-ALTER FUNCTION mc.trigfn_u_t_log_entries_user() OWNER TO d3l243;
+ALTER FUNCTION mc.trigfn_t_log_entries_user_update() OWNER TO d3l243;
 

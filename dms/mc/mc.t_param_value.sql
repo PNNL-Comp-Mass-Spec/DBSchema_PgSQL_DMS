@@ -48,22 +48,22 @@ CREATE UNIQUE INDEX ix_t_param_value ON mc.t_param_value USING btree (mgr_id, ty
 CREATE INDEX ix_t_param_value_type_id_include_entry_id_mgr_id ON mc.t_param_value USING btree (type_id) INCLUDE (entry_id, mgr_id);
 
 --
--- Name: t_param_value trig_d_t_param_value; Type: TRIGGER; Schema: mc; Owner: d3l243
+-- Name: t_param_value trig_t_param_value_after_delete; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_d_t_param_value AFTER DELETE ON mc.t_param_value REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION mc.trigfn_d_t_param_value();
+CREATE TRIGGER trig_t_param_value_after_delete AFTER DELETE ON mc.t_param_value REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION mc.trigfn_t_param_value_delete();
 
 --
--- Name: t_param_value trig_i_t_param_value; Type: TRIGGER; Schema: mc; Owner: d3l243
+-- Name: t_param_value trig_t_param_value_after_insert; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_i_t_param_value AFTER INSERT ON mc.t_param_value REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION mc.trigfn_i_t_param_value();
+CREATE TRIGGER trig_t_param_value_after_insert AFTER INSERT ON mc.t_param_value REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION mc.trigfn_t_param_value_insert();
 
 --
--- Name: t_param_value trig_u_t_param_value; Type: TRIGGER; Schema: mc; Owner: d3l243
+-- Name: t_param_value trig_t_param_value_after_update; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_u_t_param_value AFTER UPDATE OF type_id, value, mgr_id ON mc.t_param_value FOR EACH ROW EXECUTE FUNCTION mc.trigfn_u_t_param_value();
+CREATE TRIGGER trig_t_param_value_after_update AFTER UPDATE OF type_id, value, mgr_id ON mc.t_param_value FOR EACH ROW EXECUTE FUNCTION mc.trigfn_t_param_value_update();
 
 --
 -- Name: t_param_value fk_t_param_value_t_mgrs; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243

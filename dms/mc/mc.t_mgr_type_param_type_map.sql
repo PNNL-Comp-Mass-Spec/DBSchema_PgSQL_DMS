@@ -21,10 +21,10 @@ ALTER TABLE ONLY mc.t_mgr_type_param_type_map
     ADD CONSTRAINT pk_t_mgr_type_param_type_map PRIMARY KEY (mgr_type_id, param_type_id);
 
 --
--- Name: t_mgr_type_param_type_map trig_u_t_mgr_type_param_type_map; Type: TRIGGER; Schema: mc; Owner: d3l243
+-- Name: t_mgr_type_param_type_map trig_t_mgr_type_param_type_map_after_update; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_u_t_mgr_type_param_type_map AFTER UPDATE OF mgr_type_id, param_type_id, default_value ON mc.t_mgr_type_param_type_map FOR EACH ROW EXECUTE FUNCTION mc.trigfn_u_t_mgr_type_param_type_map();
+CREATE TRIGGER trig_t_mgr_type_param_type_map_after_update AFTER UPDATE OF mgr_type_id, param_type_id, default_value ON mc.t_mgr_type_param_type_map FOR EACH ROW EXECUTE FUNCTION mc.trigfn_t_mgr_type_param_type_map_update();
 
 --
 -- Name: t_mgr_type_param_type_map fk_t_mgr_type_param_type_map_t_mgr_types; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243

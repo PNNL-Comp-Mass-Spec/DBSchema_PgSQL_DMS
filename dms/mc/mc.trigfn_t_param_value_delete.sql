@@ -1,14 +1,14 @@
 --
--- Name: trigfn_i_t_param_value(); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: trigfn_t_param_value_delete(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.trigfn_i_t_param_value() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_delete() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**        Adds an entry to t_event_log for new entries with type_id = 17 (mgractive)
+**        Adds an entry to t_event_log if type_id 17 (mgractive) is deleted
 **
 **  Auth:   mem
 **  Date:   01/14/2020 mem - Initial version
@@ -23,20 +23,20 @@ BEGIN
                              target_state,
                              prev_target_state )
     SELECT 1 AS target_type,
-           inserted.mgr_id,
-           CASE inserted.value
+           deleted.mgr_id,
+           -1 AS target_state,
+           CASE deleted.value
                WHEN 'True' THEN 1
                ELSE 0
-           END AS target_state,
-           -1 AS prev_target_state
-    FROM inserted
-    WHERE inserted.type_id = 17
-    ORDER BY inserted.mgr_id;
+           END AS prev_target_state
+    FROM deleted
+    WHERE deleted.type_id = 17
+    ORDER BY deleted.mgr_id;
 
     RETURN null;
 END
 $$;
 
 
-ALTER FUNCTION mc.trigfn_i_t_param_value() OWNER TO d3l243;
+ALTER FUNCTION mc.trigfn_t_param_value_delete() OWNER TO d3l243;
 

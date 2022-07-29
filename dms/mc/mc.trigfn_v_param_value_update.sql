@@ -1,17 +1,17 @@
 --
--- Name: trigfn_u_v_mgr_params(); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: trigfn_v_param_value_update(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.trigfn_u_v_mgr_params() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_v_param_value_update() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Allows for updating the value or comment fields in view mc.v_mgr_params
+**      Allows for updating the value or comment fields in view mc.v_param_value
 **
 **  Auth:   mem
-**  Date:   03/15/202022 mem - Initial version
+**  Date:   01/24/2020 mem - Initial version
 **
 *****************************************************/
 BEGIN
@@ -19,7 +19,7 @@ BEGIN
 
     IF TG_OP = 'UPDATE' THEN
         UPDATE mc.t_param_value
-        SET value   = NEW.parametervalue,
+        SET value   = NEW.value,
             comment = NEW.comment
         WHERE entry_id = OLD.entry_id;
 
@@ -31,5 +31,5 @@ END;
 $$;
 
 
-ALTER FUNCTION mc.trigfn_u_v_mgr_params() OWNER TO d3l243;
+ALTER FUNCTION mc.trigfn_v_param_value_update() OWNER TO d3l243;
 

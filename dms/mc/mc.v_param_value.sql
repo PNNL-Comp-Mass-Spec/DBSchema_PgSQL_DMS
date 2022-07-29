@@ -21,10 +21,10 @@ CREATE VIEW mc.v_param_value AS
 ALTER TABLE mc.v_param_value OWNER TO d3l243;
 
 --
--- Name: v_param_value trig_u_v_param_value; Type: TRIGGER; Schema: mc; Owner: d3l243
+-- Name: v_param_value trig_v_param_value_instead_of_update; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_u_v_param_value INSTEAD OF UPDATE ON mc.v_param_value FOR EACH ROW EXECUTE FUNCTION mc.trigfn_u_v_param_value();
+CREATE TRIGGER trig_v_param_value_instead_of_update INSTEAD OF UPDATE ON mc.v_param_value FOR EACH ROW EXECUTE FUNCTION mc.trigfn_v_param_value_update();
 
 --
 -- Name: TABLE v_param_value; Type: ACL; Schema: mc; Owner: d3l243

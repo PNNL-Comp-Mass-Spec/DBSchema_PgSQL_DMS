@@ -1,8 +1,8 @@
 --
--- Name: trigfn_u_t_param_value(); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: trigfn_t_param_value_update(); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.trigfn_u_t_param_value() RETURNS trigger
+CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_update() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -50,5 +50,5 @@ END
 $$;
 
 
-ALTER FUNCTION mc.trigfn_u_t_param_value() OWNER TO d3l243;
+ALTER FUNCTION mc.trigfn_t_param_value_update() OWNER TO d3l243;
 
