@@ -39,6 +39,12 @@ ALTER TABLE ONLY public.t_schema_change_log
     ADD CONSTRAINT pk_t_schema_change_log PRIMARY KEY (schema_change_log_id);
 
 --
+-- Name: ix_t_schema_change_log_object_name_object_type; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_schema_change_log_object_name_object_type ON public.t_schema_change_log USING btree (object_name, object_type);
+
+--
 -- Name: TABLE t_schema_change_log; Type: ACL; Schema: public; Owner: d3l243
 --
 
