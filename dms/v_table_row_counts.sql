@@ -35,6 +35,12 @@ CREATE VIEW public.v_table_row_counts AS
 ALTER TABLE public.v_table_row_counts OWNER TO d3l243;
 
 --
+-- Name: VIEW v_table_row_counts; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON VIEW public.v_table_row_counts IS 'Reports the number of rows and size (in bytes) of tables and views; row counts are an estimate, especially for large tables. Also includes sequences, views, and foreign tables, but row counts and sizes are meaningless for those objects';
+
+--
 -- Name: TABLE v_table_row_counts; Type: ACL; Schema: public; Owner: d3l243
 --
 

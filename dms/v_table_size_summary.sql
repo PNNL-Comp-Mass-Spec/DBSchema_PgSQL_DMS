@@ -54,6 +54,12 @@ CREATE VIEW public.v_table_size_summary AS
 ALTER TABLE public.v_table_size_summary OWNER TO d3l243;
 
 --
+-- Name: VIEW v_table_size_summary; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON VIEW public.v_table_size_summary IS 'Reports the rows and size (in bytes) of tables; row counts are an estimate, especially for large tables. Also includes information on indexes defined for each table. Includes foreign tables, but row counts and sizes are meaningless for those objects';
+
+--
 -- Name: TABLE v_table_size_summary; Type: ACL; Schema: public; Owner: d3l243
 --
 
