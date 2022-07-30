@@ -22,6 +22,12 @@ CREATE VIEW public.v_functions AS
 ALTER TABLE public.v_functions OWNER TO d3l243;
 
 --
+-- Name: VIEW v_functions; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON VIEW public.v_functions IS 'User defined functions and procedures in the database';
+
+--
 -- Name: TABLE v_functions; Type: ACL; Schema: public; Owner: d3l243
 --
 
