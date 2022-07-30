@@ -11,7 +11,7 @@ CREATE TABLE public.t_analysis_job (
     finish timestamp without time zone,
     analysis_tool_id integer DEFAULT 0 NOT NULL,
     param_file_name public.citext NOT NULL,
-    settings_file_name public.citext,
+    settings_file_name public.citext NOT NULL,
     organism_db_name public.citext,
     organism_id integer NOT NULL,
     dataset_id integer NOT NULL,

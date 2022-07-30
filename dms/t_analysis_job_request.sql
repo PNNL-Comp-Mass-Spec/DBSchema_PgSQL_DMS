@@ -8,7 +8,7 @@ CREATE TABLE public.t_analysis_job_request (
     created timestamp without time zone NOT NULL,
     analysis_tool public.citext NOT NULL,
     param_file_name public.citext NOT NULL,
-    settings_file_name public.citext,
+    settings_file_name public.citext NOT NULL,
     organism_db_name public.citext,
     organism_id integer NOT NULL,
     datasets public.citext,
