@@ -89,6 +89,24 @@ CREATE INDEX ix_t_tasks_state ON cap.t_tasks USING btree (state);
 CREATE INDEX ix_t_tasks_state_include_job_priority_archive_busy ON cap.t_tasks USING btree (state) INCLUDE (archive_busy, job, priority);
 
 --
+-- Name: t_tasks trig_t_tasks_after_delete; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_tasks_after_delete AFTER DELETE ON cap.t_tasks REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_tasks_after_delete();
+
+--
+-- Name: t_tasks trig_t_tasks_after_insert; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_tasks_after_insert AFTER INSERT ON cap.t_tasks REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_tasks_after_insert();
+
+--
+-- Name: t_tasks trig_t_tasks_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_tasks_after_update AFTER UPDATE ON cap.t_tasks REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_tasks_after_update();
+
+--
 -- Name: t_tasks fk_t_tasks_t_scripts; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243
 --
 

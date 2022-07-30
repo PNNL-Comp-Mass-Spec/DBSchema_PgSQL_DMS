@@ -58,3 +58,21 @@ CREATE INDEX ix_t_task_steps_history_state ON cap.t_task_steps_history USING btr
 
 CREATE INDEX ix_t_task_steps_history_state_output_folder_name ON cap.t_task_steps_history USING btree (state, output_folder_name);
 
+--
+-- Name: t_task_steps_history trig_t_task_steps_history_after_delete; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_task_steps_history_after_delete AFTER DELETE ON cap.t_task_steps_history REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_task_steps_history_after_delete();
+
+--
+-- Name: t_task_steps_history trig_t_task_steps_history_after_insert; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_task_steps_history_after_insert AFTER INSERT ON cap.t_task_steps_history REFERENCING NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_task_steps_history_after_insert();
+
+--
+-- Name: t_task_steps_history trig_t_task_steps_history_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_task_steps_history_after_update AFTER UPDATE ON cap.t_task_steps_history REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_task_steps_history_after_update();
+

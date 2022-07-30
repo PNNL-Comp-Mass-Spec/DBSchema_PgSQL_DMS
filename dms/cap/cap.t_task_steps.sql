@@ -78,6 +78,24 @@ CREATE INDEX ix_t_task_steps_state_include_job_step_completion_code ON cap.t_tas
 CREATE INDEX ix_t_task_steps_step_tool_state_next_try_include_job_step ON cap.t_task_steps USING btree (step_tool, state, next_try) INCLUDE (job, step);
 
 --
+-- Name: t_task_steps trig_t_task_steps_after_delete; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_task_steps_after_delete AFTER DELETE ON cap.t_task_steps REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_task_steps_after_delete();
+
+--
+-- Name: t_task_steps trig_t_task_steps_after_insert; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_task_steps_after_insert AFTER INSERT ON cap.t_task_steps REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_task_steps_after_insert();
+
+--
+-- Name: t_task_steps trig_t_task_steps_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_task_steps_after_update AFTER UPDATE ON cap.t_task_steps REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_task_steps_after_update();
+
+--
 -- Name: t_task_steps fk_t_task_steps_t_local_processors; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243
 --
 

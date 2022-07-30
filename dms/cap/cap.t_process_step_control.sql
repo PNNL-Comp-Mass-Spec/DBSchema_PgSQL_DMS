@@ -19,3 +19,9 @@ ALTER TABLE cap.t_process_step_control OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_process_step_control
     ADD CONSTRAINT pk_t_process_step_control PRIMARY KEY (processing_step_name);
 
+--
+-- Name: t_process_step_control trig_t_process_step_control_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_process_step_control_after_update AFTER UPDATE ON cap.t_process_step_control REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_process_step_control_after_update();
+

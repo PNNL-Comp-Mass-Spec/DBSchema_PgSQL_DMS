@@ -57,3 +57,21 @@ CREATE INDEX ix_t_tasks_history_script_job ON cap.t_tasks_history USING btree (s
 
 CREATE INDEX ix_t_tasks_history_state_include_job ON cap.t_tasks_history USING btree (state) INCLUDE (job);
 
+--
+-- Name: t_tasks_history trig_t_tasks_history_after_delete; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_tasks_history_after_delete AFTER DELETE ON cap.t_tasks_history REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_tasks_history_after_delete();
+
+--
+-- Name: t_tasks_history trig_t_tasks_history_after_insert; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_tasks_history_after_insert AFTER INSERT ON cap.t_tasks_history REFERENCING NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_tasks_history_after_insert();
+
+--
+-- Name: t_tasks_history trig_t_tasks_history_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_tasks_history_after_update AFTER UPDATE ON cap.t_tasks_history REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_tasks_history_after_update();
+

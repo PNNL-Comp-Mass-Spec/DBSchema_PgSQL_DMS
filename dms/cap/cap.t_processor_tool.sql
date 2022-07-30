@@ -22,6 +22,12 @@ ALTER TABLE ONLY cap.t_processor_tool
     ADD CONSTRAINT pk_t_processor_tool PRIMARY KEY (processor_name, tool_name);
 
 --
+-- Name: t_processor_tool trig_t_processor_tool_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_processor_tool_after_update AFTER UPDATE ON cap.t_processor_tool REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_processor_tool_after_update();
+
+--
 -- Name: t_processor_tool fk_t_processor_tool_t_step_tools; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243
 --
 
