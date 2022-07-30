@@ -8,28 +8,29 @@ CREATE OR REPLACE FUNCTION mc.trigfn_t_log_entries_user_after_update() RETURNS t
 /****************************************************
 **
 **  Desc:
-**        Updates the entered_by field in t_log_entries
+**      Updates the entered_by field in t_log_entries
 **
 **  Auth:   mem
 **  Date:   01/09/2020 mem - Initial version
 **          04/16/2022 mem - Use new function name
+**          07/30/2022 mem - Use schema name when referencing tables
 **
 *****************************************************/
 DECLARE
     _userInfo text;
     _sepChar text;
 BEGIN
-    -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
+    -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
     _userInfo := Coalesce(timestamp_text(localtimestamp) || '; ' || SESSION_USER, '');
 
     _sepChar := ' (';
 
-    UPDATE t_log_entries
+    UPDATE mc.t_log_entries
     SET entered_by = CASE WHEN strpos(Coalesce(entered_by, ''), ' (') > 0 THEN
-                               Left(t_log_entries.entered_by, strpos(Coalesce(entered_by, ''), ' (') - 1) || _sepChar || _userInfo || ')'
-                          WHEN t_log_entries.entered_by IS NULL THEN SESSION_USER
-                          ELSE Coalesce(t_log_entries.entered_by, '??') || _sepChar || _userInfo || ')'
+                               Left(mc.t_log_entries.entered_by, strpos(Coalesce(entered_by, ''), ' (') - 1) || _sepChar || _userInfo || ')'
+                          WHEN mc.t_log_entries.entered_by IS NULL THEN SESSION_USER
+                          ELSE Coalesce(mc.t_log_entries.entered_by, '??') || _sepChar || _userInfo || ')'
                      END
     WHERE entry_id = NEW.entry_id;
 

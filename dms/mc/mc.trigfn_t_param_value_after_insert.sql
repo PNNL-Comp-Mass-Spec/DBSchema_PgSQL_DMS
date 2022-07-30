@@ -8,20 +8,21 @@ CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_after_insert() RETURNS trigge
 /****************************************************
 **
 **  Desc:
-**        Adds an entry to t_event_log for new entries with type_id = 17 (mgractive)
+**      Adds an entry to mc.t_event_log for new entries with type_id = 17 (mgractive)
 **
 **  Auth:   mem
 **  Date:   01/14/2020 mem - Initial version
+*           07/30/2022 mem - Use schema name when referencing tables
 **
 *****************************************************/
 BEGIN
-    -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
+    -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
     -- Add a new row to t_event_log
-    INSERT INTO t_event_log( target_type,
-                             target_id,
-                             target_state,
-                             prev_target_state )
+    INSERT INTO mc.t_event_log( target_type,
+                                target_id,
+                                target_state,
+                                prev_target_state )
     SELECT 1 AS target_type,
            inserted.mgr_id,
            CASE inserted.value
