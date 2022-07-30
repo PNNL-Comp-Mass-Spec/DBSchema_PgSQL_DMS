@@ -11,11 +11,11 @@ CREATE OR REPLACE FUNCTION mc.trigfn_v_param_value_instead_of_update() RETURNS t
 **      Allows for updating the value or comment fields in view mc.v_param_value
 **
 **  Auth:   mem
-**  Date:   01/24/2020 mem - Initial version
+**  Date:   03/15/2022 mem - Initial version
 **
 *****************************************************/
 BEGIN
-    -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
+    -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
     IF TG_OP = 'UPDATE' THEN
         UPDATE mc.t_param_value

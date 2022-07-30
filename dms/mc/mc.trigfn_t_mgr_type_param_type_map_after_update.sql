@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION mc.trigfn_t_mgr_type_param_type_map_after_update() RE
 **
 *****************************************************/
 BEGIN
-    -- RAISE NOTICE '% trigger, % %, %', TG_TABLE_NAME, TG_WHEN, TG_LEVEL, TG_OP;
+    -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
     -- Update the last_affected and entered_by columns in t_mgr_type_param_type_map
     UPDATE mc.t_mgr_type_param_type_map
