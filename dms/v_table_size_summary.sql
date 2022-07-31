@@ -6,7 +6,7 @@ CREATE VIEW public.v_table_size_summary AS
  SELECT statsq.table_schema,
     statsq.table_name,
     statsq.table_row_count,
-    pg_size_pretty((statsq.size_bytes)::bigint) AS size,
+    pg_size_pretty(statsq.size_bytes) AS size,
     statsq.size_bytes,
     statsq.index_count,
     statsq.has_unique_idx,
@@ -16,7 +16,7 @@ CREATE VIEW public.v_table_size_summary AS
    FROM ( SELECT pg_namespace.nspname AS table_schema,
             pg_class.relname AS table_name,
             pg_class.reltuples AS table_row_count,
-            ((pg_class.relpages * 8) * 1024) AS size_bytes,
+            ((pg_class.relpages * (8)::bigint) * 1024) AS size_bytes,
             count(lookpuq.indexname) AS index_count,
                 CASE
                     WHEN (x.is_unique = 1) THEN 'Y'::text
