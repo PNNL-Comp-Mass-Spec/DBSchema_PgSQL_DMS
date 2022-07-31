@@ -13,11 +13,16 @@ CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infoonly i
 **      older than the first three entries (for each object),
 **      shortening the data to the first 100 characters.
 **
+**      In addition, condenses duplicate log entries, i.e. instances of
+**      the same object and same command being logged multiple times with the same timestamp.
+**      This was observed when foreign data tables were imported using "IMPORT FOREIGN SCHEMA".
+**
 **  Arguments:
 **    _infoOnly                 If 1, show objects with rows that would be trimmed
 **                              If 2, show all rows
 **  Auth:   mem
 **  Date:   07/30/2022 mem - Initial version
+*           07/31/2022 mem - Remove duplicate entries (same object, command, and entry time)
 **
 *****************************************************/
 DECLARE
@@ -85,6 +90,29 @@ BEGIN
                T_Tmp_SchemaChangeLogRank RankQ
                  ON SCL.schema_change_log_id = RankQ.schema_change_log_id
         ORDER BY SCL.schema_name, SCL.object_name, SCL.schema_change_log_id;
+
+        -- Look for duplicate entries (see below for more info)
+        SELECT COUNT(*)
+        INTO _myRowCount
+        FROM ( SELECT RankQ.schema_change_log_id,
+                      row_number() OVER ( PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
+                                          ORDER BY RankQ.schema_change_log_id ) AS DupeRank
+               FROM t_schema_change_log RankQ) FilterQ
+        WHERE FilterQ.DupeRank > 1;
+
+        If _myRowCount > 0 Then
+            -- This will append a row to the result set
+            RETURN QUERY
+            SELECT 0 As schema_change_log_id,
+                   LocalTimestamp As entered,
+                   'Note'::citext As schema_name,
+                   ('Condensed ' || _myRowCount::text || ' duplicate row(s), having the same object name, object type, and entry time')::citext As object_name,
+                   1 As version_rank,
+                   ''::citext As function_name,
+                   ''::citext As function_source,
+                   0 As source_length_old,
+                   0 As source_length_new;
+        End If;
     Else
         UPDATE t_schema_change_log target
         SET function_source = left(target.function_source, 100)
@@ -127,7 +155,38 @@ BEGIN
                    LocalTimestamp As entered,
                    'Note'::citext As schema_name,
                    'Did not find any objects that have more than three entries and function source longer than 100 characters'::citext As object_name,
-                    1 As version_rank,
+                   1 As version_rank,
+                   ''::citext As function_name,
+                   ''::citext As function_source,
+                   0 As source_length_old,
+                   0 As source_length_new;
+        End If;
+
+        -- When foreign tables are created using "IMPORT FOREIGN SCHEMA", duplicate entries get logged to t_schema_change_log
+        -- Condense the duplicates by grouping on schema, object, command_tag, and entry time,
+        -- then removing all but the first entry
+
+        DELETE FROM t_schema_change_log target
+        WHERE target.schema_change_log_id IN
+              ( SELECT FilterQ.schema_change_log_id
+                FROM ( SELECT RankQ.schema_change_log_id,
+                              row_number() OVER ( PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
+                                                  ORDER BY RankQ.schema_change_log_id ) AS DupeRank
+                       FROM t_schema_change_log RankQ) FilterQ
+                WHERE FilterQ.DupeRank > 1 );
+
+        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+        If _myRowCount > 0 Then
+            _message = _message || 'Condensed ' || _myRowCount::text || ' duplicate row(s), having the same object name, object type, and entry time';
+
+            -- This will append a row to the result set
+            RETURN QUERY
+            SELECT 0 As schema_change_log_id,
+                   LocalTimestamp As entered,
+                   'Note'::citext As schema_name,
+                   ('Condensed ' || _myRowCount::text || ' duplicate row(s), having the same object name, object type, and entry time')::citext As object_name,
+                   1 As version_rank,
                    ''::citext As function_name,
                    ''::citext As function_source,
                    0 As source_length_old,
