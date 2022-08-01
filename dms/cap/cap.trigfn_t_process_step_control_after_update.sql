@@ -26,7 +26,7 @@ BEGIN
     SET Last_Affected = CURRENT_TIMESTAMP,
         Entered_By = SYSTEM_USER
     FROM NEW
-    WHERE cap.T_Process_Step_Control.Processing_Step_Name = NEW.Processing_Step_Name;
+    WHERE cap.T_Process_Step_Control.Processing_Step_Name = N.Processing_Step_Name;
 
     RETURN null;
 END

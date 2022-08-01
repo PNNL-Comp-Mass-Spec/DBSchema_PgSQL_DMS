@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_tasks_after_update() RETURNS trigger
 **      Add entries to t_task_events for each updated capture task
 **
 **  Auth:   mem
-**  Date:   07/30/2022 mem - Ported to PostgreSQL
+**  Date:   07/31/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 BEGIN
@@ -23,9 +23,13 @@ BEGIN
 
     INSERT INTO cap.t_task_events
         (job, target_state, prev_target_state)
-    SELECT NEW.job, NEW.State as New_State, OLD.State as Old_State
-    FROM OLD INNER JOIN inserted ON OLD.job = NEW.job
-    ORDER BY NEW.job;
+    SELECT N.job,
+           N.State AS New_State,
+           O.State AS Old_State
+    FROM OLD O
+         INNER JOIN NEW N
+           ON O.job = N.job
+    ORDER BY N.job;
 
     RETURN null;
 END

@@ -23,11 +23,11 @@ BEGIN
         RETURN null;
     End If;
 
-    INSERT INTO cap.T_Scripts_History
-        (id, script, results_tag, contents)
-    SELECT id, script, results_tag, contents
-    FROM NEW
-    ORDER BY NEW.id;
+    INSERT INTO cap.t_scripts_history
+        (script_id, script, results_tag, contents)
+    SELECT script_id, script, results_tag, contents
+    FROM NEW N
+    ORDER BY script_id;
 
     RETURN null;
 END

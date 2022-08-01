@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_task_steps_after_update() RETURNS trigge
 **      Add entries to t_task_step_events for each updated capture task step
 **
 **  Auth:   mem
-**  Date:   07/30/2022 mem - Ported to PostgreSQL
+**  Date:   07/31/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 BEGIN
@@ -23,11 +23,15 @@ BEGIN
 
     INSERT INTO cap.t_task_step_events
         (job, step, target_state, prev_target_state)
-    SELECT NEW.job, NEW.step as Step, NEW.State as New_State, OLD.State as Old_State
-    FROM OLD INNER JOIN NEW
-           ON OLD.job = NEW.job AND
-              OLD.step = NEW.step
-    ORDER BY NEW.job, NEW.step;
+    SELECT N.job,
+           N.step AS Step,
+           N.State AS New_State,
+           O.State AS Old_State
+    FROM OLD O
+         INNER JOIN NEW N
+           ON O.job = N.job AND
+              O.step = N.step
+    ORDER BY N.job, N.step;
 
     RETURN null;
 END

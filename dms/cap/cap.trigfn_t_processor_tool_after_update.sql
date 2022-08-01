@@ -8,11 +8,11 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_processor_tool_after_update() RETURNS tr
 /****************************************************
 **
 **  Desc:
-**      Updates column Last_Affected
+**      Updates column last_affected in t_processor_tool when enabled or priority changes
 **
 **  Auth:   mem
 **  Date:   03/24/2012 mem - Initial version
-**          07/30/2022 mem - Ported to PostgreSQL
+**          07/31/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 BEGIN
@@ -22,11 +22,11 @@ BEGIN
         RETURN null;
     End If;
 
-    UPDATE cap.T_Processor_Tool
+    UPDATE cap.t_processor_tool
     SET Last_Affected = CURRENT_TIMESTAMP
-    FROM NEW
-    WHERE cap.T_Processor_Tool.Processor_Name = NEW.Processor_Name AND
-          cap.T_Processor_Tool.Tool_Name = NEW.Tool_Name;
+    FROM NEW N
+    WHERE cap.T_Processor_Tool.Processor_Name = N.Processor_Name AND
+          cap.T_Processor_Tool.Tool_Name = N.Tool_Name;
 
     RETURN null;
 END
