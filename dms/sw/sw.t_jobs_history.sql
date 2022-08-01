@@ -70,3 +70,21 @@ CREATE INDEX ix_t_jobs_history_script_job ON sw.t_jobs_history USING btree (scri
 
 CREATE INDEX ix_t_jobs_history_state_include_job ON sw.t_jobs_history USING btree (state) INCLUDE (job);
 
+--
+-- Name: t_jobs_history trig_t_jobs_history_after_delete; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_jobs_history_after_delete AFTER DELETE ON sw.t_jobs_history REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_history_after_delete();
+
+--
+-- Name: t_jobs_history trig_t_jobs_history_after_insert; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_jobs_history_after_insert AFTER INSERT ON sw.t_jobs_history REFERENCING NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_history_after_insert();
+
+--
+-- Name: t_jobs_history trig_t_jobs_history_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_jobs_history_after_update AFTER UPDATE ON sw.t_jobs_history REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_jobs_history_after_update();
+

@@ -81,3 +81,21 @@ CREATE INDEX ix_t_job_steps_history_step_tool_start ON sw.t_job_steps_history US
 
 CREATE INDEX t_job_steps_history_tool_version_id ON sw.t_job_steps_history USING btree (tool_version_id);
 
+--
+-- Name: t_job_steps_history trig_t_job_steps_history_after_delete; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_job_steps_history_after_delete AFTER DELETE ON sw.t_job_steps_history REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_steps_history_after_delete();
+
+--
+-- Name: t_job_steps_history trig_t_job_steps_history_after_insert; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_job_steps_history_after_insert AFTER INSERT ON sw.t_job_steps_history REFERENCING NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_steps_history_after_insert();
+
+--
+-- Name: t_job_steps_history trig_t_job_steps_history_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_job_steps_history_after_update AFTER UPDATE ON sw.t_job_steps_history REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_job_steps_history_after_update();
+

@@ -53,6 +53,30 @@ CREATE INDEX ix_t_jobs_state ON sw.t_jobs USING btree (state);
 CREATE INDEX ix_t_jobs_state_include_job_priority_arch_busy_storage_server ON sw.t_jobs USING btree (state) INCLUDE (job, priority, archive_busy, storage_server);
 
 --
+-- Name: t_jobs trig_t_jobs_after_delete; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_jobs_after_delete AFTER DELETE ON sw.t_jobs REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_after_delete();
+
+--
+-- Name: t_jobs trig_t_jobs_after_insert; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_jobs_after_insert AFTER INSERT ON sw.t_jobs REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_after_insert();
+
+--
+-- Name: t_jobs trig_t_jobs_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_jobs_after_update AFTER UPDATE ON sw.t_jobs REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_jobs_after_update();
+
+--
+-- Name: t_jobs trig_t_jobs_after_update_all; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_jobs_after_update_all AFTER UPDATE ON sw.t_jobs REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_after_update_all();
+
+--
 -- Name: t_jobs fk_t_jobs_t_job_state_name; Type: FK CONSTRAINT; Schema: sw; Owner: d3l243
 --
 

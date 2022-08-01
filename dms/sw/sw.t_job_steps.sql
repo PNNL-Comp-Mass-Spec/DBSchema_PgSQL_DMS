@@ -98,6 +98,30 @@ CREATE INDEX ix_t_job_steps_step_tool_state ON sw.t_job_steps USING btree (step_
 CREATE INDEX ix_t_job_steps_tool_state_next_try_include_job_step_memory ON sw.t_job_steps USING btree (step_tool, state, next_try) INCLUDE (job, step, memory_usage_mb, remote_info_id);
 
 --
+-- Name: t_job_steps trig_t_job_steps_after_delete; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_job_steps_after_delete AFTER DELETE ON sw.t_job_steps REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_steps_after_delete();
+
+--
+-- Name: t_job_steps trig_t_job_steps_after_insert; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_job_steps_after_insert AFTER INSERT ON sw.t_job_steps REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_steps_after_insert();
+
+--
+-- Name: t_job_steps trig_t_job_steps_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_job_steps_after_update AFTER UPDATE ON sw.t_job_steps REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_job_steps_after_update();
+
+--
+-- Name: t_job_steps trig_t_job_steps_after_update_all; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_job_steps_after_update_all AFTER UPDATE ON sw.t_job_steps REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_steps_after_update_all();
+
+--
 -- Name: t_job_steps fk_t_job_steps_t_jobs; Type: FK CONSTRAINT; Schema: sw; Owner: d3l243
 --
 
