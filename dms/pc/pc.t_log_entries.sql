@@ -34,3 +34,9 @@ ALTER TABLE pc.t_log_entries ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENT
 ALTER TABLE ONLY pc.t_log_entries
     ADD CONSTRAINT pk_t_log_entries PRIMARY KEY (entry_id);
 
+--
+-- Name: t_log_entries trig_t_log_entries_after_update; Type: TRIGGER; Schema: pc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_log_entries_after_update AFTER UPDATE OF posted_by, posting_time, type, message ON pc.t_log_entries FOR EACH ROW EXECUTE FUNCTION pc.trigfn_t_log_entries_user_after_update();
+

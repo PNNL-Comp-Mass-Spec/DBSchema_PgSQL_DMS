@@ -51,6 +51,24 @@ ALTER TABLE ONLY pc.t_protein_collections
 CREATE UNIQUE INDEX ix_t_protein_collections_protein_collection ON pc.t_protein_collections USING btree (collection_name);
 
 --
+-- Name: t_protein_collections trig_t_protein_collections_after_delete; Type: TRIGGER; Schema: pc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_protein_collections_after_delete AFTER DELETE ON pc.t_protein_collections REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION pc.trigfn_t_protein_collections_after_delete();
+
+--
+-- Name: t_protein_collections trig_t_protein_collections_after_insert; Type: TRIGGER; Schema: pc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_protein_collections_after_insert AFTER INSERT ON pc.t_protein_collections REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION pc.trigfn_t_protein_collections_after_insert();
+
+--
+-- Name: t_protein_collections trig_t_protein_collections_after_update; Type: TRIGGER; Schema: pc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_protein_collections_after_update AFTER UPDATE ON pc.t_protein_collections REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION pc.trigfn_t_protein_collections_after_update();
+
+--
 -- Name: t_protein_collections fk_t_protein_collections_t_annotation_types; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --
 
