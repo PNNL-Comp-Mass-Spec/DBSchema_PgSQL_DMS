@@ -8,10 +8,11 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_scripts_after_update() RETURNS trigger
 /****************************************************
 **
 **  Desc:
-**      Stores the contents of the updated scripts in T_Scripts_History
+**      Stores the contents of the updated scripts in t_scripts_history,
+**      though only if the script name, results_tag, or contents changes
 **
 **  Auth:   mem
-**  Date:   07/30/2022 mem - Ported to PostgreSQL
+**  Date:   07/31/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 BEGIN
@@ -19,7 +20,8 @@ BEGIN
 
     If NEW.script = OLD.script AND
        Coalesce(NEW.results_tag, '') = Coalesce(OLD.results_tag, '') AND
-       Coalesce(NEW.contents, '') = Coalesce(OLD.contents, '') THEN
+       Coalesce(NEW.contents, '')::text = Coalesce(OLD.contents, '')::text THEN
+        -- RAISE NOTICE '  did not update script name, results_tag, or contents; exiting';
         RETURN null;
     End If;
 

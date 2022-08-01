@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_process_step_control_after_update() RETU
 **
 **  Auth:   mem
 **  Date:   08/30/2006
-**          07/30/2022 mem - Ported to PostgreSQL
+**          07/31/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 BEGIN
@@ -24,8 +24,8 @@ BEGIN
 
     UPDATE cap.T_Process_Step_Control
     SET Last_Affected = CURRENT_TIMESTAMP,
-        Entered_By = SYSTEM_USER
-    FROM NEW
+        Entered_By = SESSION_USER
+    FROM NEW N
     WHERE cap.T_Process_Step_Control.Processing_Step_Name = N.Processing_Step_Name;
 
     RETURN null;
