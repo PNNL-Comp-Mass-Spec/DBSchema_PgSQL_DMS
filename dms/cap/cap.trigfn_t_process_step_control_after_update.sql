@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_process_step_control_after_update() RETU
 /****************************************************
 **
 **  Desc:
-**      Updates the Last_Affected and Entered_By fields
+**      Updates the last_affected and entered_by fields
+**      if the value for enabled changes
 **
 **  Auth:   mem
 **  Date:   08/30/2006
