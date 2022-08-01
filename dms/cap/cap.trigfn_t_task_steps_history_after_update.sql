@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_task_steps_history_after_update() RETURN
 **
 **  Auth:   mem
 **  Date:   01/25/2011
-**          07/30/2022 mem - Ported to PostgreSQL
+**          07/31/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
 BEGIN
@@ -41,7 +41,7 @@ BEGIN
                        H.saved,
                        Row_Number() OVER ( PARTITION BY H.job, H.step ORDER BY H.saved DESC ) AS SaveRank
                 FROM cap.t_task_steps_history H
-                     INNER JOIN NEW as updatedRows on H.job = inserted.job and H.step = inserted.step
+                     INNER JOIN NEW as updatedRows on H.job = updatedRows.job and H.step = updatedRows.step
              ) CountQ
     )
     UPDATE cap.t_task_steps_history
