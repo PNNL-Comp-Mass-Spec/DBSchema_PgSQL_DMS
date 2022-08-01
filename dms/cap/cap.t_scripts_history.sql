@@ -35,10 +35,3 @@ ALTER TABLE cap.t_scripts_history ALTER COLUMN entry_id ADD GENERATED ALWAYS AS 
 ALTER TABLE ONLY cap.t_scripts_history
     ADD CONSTRAINT pk_t_scripts_history PRIMARY KEY (entry_id);
 
---
--- Name: t_scripts_history fk_t_scripts_history_t_scripts; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243
---
-
-ALTER TABLE ONLY cap.t_scripts_history
-    ADD CONSTRAINT fk_t_scripts_history_t_scripts FOREIGN KEY (script) REFERENCES cap.t_scripts(script);
-
