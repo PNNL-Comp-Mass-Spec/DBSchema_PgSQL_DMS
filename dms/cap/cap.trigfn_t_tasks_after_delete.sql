@@ -8,7 +8,9 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_tasks_after_delete() RETURNS trigger
 /****************************************************
 **
 **  Desc:
-**      Add entries to t_task_events for each deleted capture task
+**      Raises an exception if all rows in t_tasks are deleted
+**
+**      Otherwise, adds entries to t_task_events for each deleted capture task
 **
 **  Auth:   mem
 **  Date:   07/30/2022 mem - Ported to PostgreSQL

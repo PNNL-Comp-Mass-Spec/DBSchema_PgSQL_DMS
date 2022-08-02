@@ -8,7 +8,9 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_job_steps_after_delete() RETURNS trigger
 /****************************************************
 **
 **  Desc:
-**      Add entries to t_job_step_events for each deleted job step
+**      Raises an exception if all rows in t_job_steps are deleted
+**
+**      Otherwise, adds entries to t_job_step_events for each deleted job step
 **
 **  Auth:   mem
 **  Date:   07/31/2022 mem - Ported to PostgreSQL

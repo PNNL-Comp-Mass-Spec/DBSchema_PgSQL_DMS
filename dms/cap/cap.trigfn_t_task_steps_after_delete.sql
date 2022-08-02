@@ -8,7 +8,9 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_task_steps_after_delete() RETURNS trigge
 /****************************************************
 **
 **  Desc:
-**      Add entries to t_task_step_events for each deleted capture task step
+**      Raises an exception if all rows in t_task_steps are deleted
+**
+**      Otherwise, adds entries to t_task_step_events for each deleted capture task step
 **
 **  Auth:   mem
 **  Date:   07/30/2022 mem - Ported to PostgreSQL
