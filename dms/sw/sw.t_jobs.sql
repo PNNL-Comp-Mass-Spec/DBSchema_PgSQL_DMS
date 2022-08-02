@@ -74,7 +74,7 @@ CREATE TRIGGER trig_t_jobs_after_update AFTER UPDATE ON sw.t_jobs REFERENCING OL
 -- Name: t_jobs trig_t_jobs_after_update_all; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_jobs_after_update_all AFTER UPDATE ON sw.t_jobs REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_after_update_all();
+CREATE TRIGGER trig_t_jobs_after_update_all AFTER UPDATE ON sw.t_jobs REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_after_update_all();
 
 --
 -- Name: t_jobs fk_t_jobs_t_job_state_name; Type: FK CONSTRAINT; Schema: sw; Owner: d3l243

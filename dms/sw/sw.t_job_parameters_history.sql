@@ -35,7 +35,7 @@ CREATE TRIGGER trig_t_job_parameters_history_after_delete AFTER DELETE ON sw.t_j
 -- Name: t_job_parameters_history trig_t_job_parameters_history_after_insert; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_job_parameters_history_after_insert AFTER INSERT ON sw.t_job_parameters_history REFERENCING NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_parameters_history_after_insert();
+CREATE TRIGGER trig_t_job_parameters_history_after_insert AFTER INSERT ON sw.t_job_parameters_history REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_parameters_history_after_insert();
 
 --
 -- Name: t_job_parameters_history trig_t_job_parameters_history_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243

@@ -68,7 +68,7 @@ CREATE TRIGGER trig_t_task_steps_history_after_delete AFTER DELETE ON cap.t_task
 -- Name: t_task_steps_history trig_t_task_steps_history_after_insert; Type: TRIGGER; Schema: cap; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_task_steps_history_after_insert AFTER INSERT ON cap.t_task_steps_history REFERENCING NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_task_steps_history_after_insert();
+CREATE TRIGGER trig_t_task_steps_history_after_insert AFTER INSERT ON cap.t_task_steps_history REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_task_steps_history_after_insert();
 
 --
 -- Name: t_task_steps_history trig_t_task_steps_history_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243

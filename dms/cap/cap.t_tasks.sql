@@ -110,7 +110,7 @@ CREATE TRIGGER trig_t_tasks_after_update AFTER UPDATE ON cap.t_tasks REFERENCING
 -- Name: t_tasks trig_t_tasks_after_update_all; Type: TRIGGER; Schema: cap; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_tasks_after_update_all AFTER UPDATE ON cap.t_tasks REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_tasks_after_update_all();
+CREATE TRIGGER trig_t_tasks_after_update_all AFTER UPDATE ON cap.t_tasks REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION cap.trigfn_t_tasks_after_update_all();
 
 --
 -- Name: t_tasks fk_t_tasks_t_scripts; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243

@@ -119,7 +119,7 @@ CREATE TRIGGER trig_t_job_steps_after_update AFTER UPDATE ON sw.t_job_steps REFE
 -- Name: t_job_steps trig_t_job_steps_after_update_all; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_job_steps_after_update_all AFTER UPDATE ON sw.t_job_steps REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_steps_after_update_all();
+CREATE TRIGGER trig_t_job_steps_after_update_all AFTER UPDATE ON sw.t_job_steps REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_job_steps_after_update_all();
 
 --
 -- Name: t_job_steps fk_t_job_steps_t_jobs; Type: FK CONSTRAINT; Schema: sw; Owner: d3l243

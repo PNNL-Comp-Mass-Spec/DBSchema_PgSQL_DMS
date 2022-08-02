@@ -80,7 +80,7 @@ CREATE TRIGGER trig_t_jobs_history_after_delete AFTER DELETE ON sw.t_jobs_histor
 -- Name: t_jobs_history trig_t_jobs_history_after_insert; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_jobs_history_after_insert AFTER INSERT ON sw.t_jobs_history REFERENCING NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_history_after_insert();
+CREATE TRIGGER trig_t_jobs_history_after_insert AFTER INSERT ON sw.t_jobs_history REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION sw.trigfn_t_jobs_history_after_insert();
 
 --
 -- Name: t_jobs_history trig_t_jobs_history_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243

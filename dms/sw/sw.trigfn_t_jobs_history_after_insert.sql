@@ -24,7 +24,7 @@ BEGIN
                   H.saved,
                   Row_Number() OVER ( PARTITION BY H.job ORDER BY H.saved DESC ) AS SaveRank
            FROM sw.t_jobs_history H
-                INNER JOIN NEW as inserted on H.Job = inserted.job
+                INNER JOIN inserted on H.Job = inserted.job
          ) LookupQ
     WHERE LookupQ.job = sw.t_jobs_history.job AND
           LookupQ.saved = sw.t_jobs_history.saved;

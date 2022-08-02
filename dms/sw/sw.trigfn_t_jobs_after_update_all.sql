@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_jobs_after_update_all() RETURNS trigger
 /****************************************************
 **
 **  Desc:
-**      Prevents updating all rows in the table
+**      Prevents updating all rows in t_jobs,
+**      raising an exception if the calling process tries to do so
 **
 **  Auth:   mem
 **  Date:   02/08/2011 mem - Initial version
@@ -26,7 +27,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO _updatedRowCount
-    FROM OLD;
+    FROM deleted;
 
     SELECT COUNT(*)
     INTO _existingRowCount
@@ -39,10 +40,9 @@ BEGIN
                            _updatedRowCount, 't_jobs', 'trigfn_t_jobs_after_update_all');
 
         RAISE EXCEPTION '%', _message;
-        RETURN null;
     End If;
 
-    RETURN NEW;
+    RETURN null;
 END
 $$;
 

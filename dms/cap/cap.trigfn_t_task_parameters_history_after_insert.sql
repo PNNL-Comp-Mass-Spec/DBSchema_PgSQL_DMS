@@ -25,7 +25,7 @@ BEGIN
                   H.saved,
                   Row_Number() OVER ( PARTITION BY H.job ORDER BY H.saved DESC ) AS SaveRank
            FROM cap.t_task_parameters_history H
-                INNER JOIN NEW as inserted on H.job = inserted.job
+                INNER JOIN inserted on H.job = inserted.job
          ) LookupQ
     WHERE LookupQ.job = cap.t_task_parameters_history.job AND
           LookupQ.saved = cap.t_task_parameters_history.saved;
