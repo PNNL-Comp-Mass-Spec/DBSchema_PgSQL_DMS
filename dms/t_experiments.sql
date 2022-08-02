@@ -129,6 +129,18 @@ CREATE INDEX ix_t_experiments_tissue_id_include_experiment_name_organism_id ON p
 CREATE INDEX ix_t_experiments_wellplate_well_experiment ON public.t_experiments USING btree (wellplate, well, experiment);
 
 --
+-- Name: t_experiments trig_t_experiments_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_experiments_after_delete AFTER DELETE ON public.t_experiments REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_experiments_after_delete();
+
+--
+-- Name: t_experiments trig_t_experiments_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_experiments_after_update_all AFTER UPDATE ON public.t_experiments REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_experiments_after_update_all();
+
+--
 -- Name: t_experiments fk_t_experiments_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

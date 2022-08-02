@@ -8,14 +8,38 @@ CREATE OR REPLACE FUNCTION pc.trigfn_t_protein_collections_after_delete() RETURN
 /****************************************************
 **
 **  Desc:
-**      Add entries to t_event_log for each deleted protein collection
+**      Raises an exception if all rows in t_protein_collections are deleted
+**
+**      Otherwise, adds entries to t_event_log for each deleted protein collection
 **
 **  Auth:   mem
 **  Date:   08/01/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/
+DECLARE
+    _newRowCount int;
+    _deletedRowCount int;
+    _message text;
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
+
+    SELECT COUNT(*)
+    INTO _newRowCount
+    FROM pc.t_protein_collections;
+
+    SELECT COUNT(*)
+    INTO _deletedRowCount
+    FROM deleted;
+
+    -- RAISE NOTICE 'New row count: %, deleted rows: %', _newRowCount, _deletedRowCount;
+
+    If _deletedRowCount > 0 And _newRowCount = 0 Then
+        _message := format('Cannot delete all %s rows in %s; use a WHERE clause to limit the affected rows (see trigger function %s)',
+                           _deletedRowCount, 't_protein_collections', 'trigfn_t_protein_collections_after_delete');
+
+        RAISE EXCEPTION '%', _message;
+        RETURN null;
+    End If;
 
     -- Add a new row to t_event_log
     INSERT INTO pc.t_event_log( target_type,

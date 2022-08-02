@@ -188,6 +188,18 @@ CREATE INDEX ix_t_dataset_state_id ON public.t_dataset USING btree (dataset_stat
 CREATE INDEX ix_t_dataset_storage_path_id_created_instrument_name_id_rating ON public.t_dataset USING btree (storage_path_id, created, instrument_id, dataset_rating_id, dataset_id);
 
 --
+-- Name: t_dataset trig_t_dataset_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_dataset_after_delete AFTER DELETE ON public.t_dataset REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_after_delete();
+
+--
+-- Name: t_dataset trig_t_dataset_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_dataset_after_update_all AFTER UPDATE ON public.t_dataset REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_after_update_all();
+
+--
 -- Name: t_dataset fk_t_dataset_t_dataset_rating_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

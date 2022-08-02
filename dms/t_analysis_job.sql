@@ -155,6 +155,18 @@ CREATE INDEX ix_t_analysis_job_tool_id_job_id_dataset_id_include_ajstart ON publ
 CREATE INDEX ix_t_analysis_job_tool_id_state_id_include_job_priority ON public.t_analysis_job USING btree (analysis_tool_id, job_state_id) INCLUDE (job, priority, dataset_id, comment, owner, special_processing);
 
 --
+-- Name: t_analysis_job trig_t_analysis_job_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_after_delete AFTER DELETE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_delete();
+
+--
+-- Name: t_analysis_job trig_t_analysis_job_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_after_update_all AFTER UPDATE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_update_all();
+
+--
 -- Name: t_analysis_job fk_t_analysis_job_t_analysis_job_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
