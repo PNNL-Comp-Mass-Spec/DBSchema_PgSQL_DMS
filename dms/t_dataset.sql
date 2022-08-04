@@ -197,7 +197,7 @@ CREATE TRIGGER trig_t_dataset_after_delete AFTER DELETE ON public.t_dataset REFE
 -- Name: t_dataset trig_t_dataset_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_dataset_after_update_all AFTER UPDATE ON public.t_dataset REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_after_update_all();
+CREATE TRIGGER trig_t_dataset_after_update_all AFTER UPDATE ON public.t_dataset REFERENCING OLD TABLE AS old FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_after_update_all();
 
 --
 -- Name: t_dataset fk_t_dataset_t_dataset_rating_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

@@ -26,15 +26,15 @@ BEGIN
 
     SELECT COUNT(*)
     INTO _updatedRowCount
-    FROM deleted;
+    FROM OLD;
 
     SELECT COUNT(*)
     INTO _existingRowCount
-    FROM public.t_dataset;
+    FROM t_dataset;
 
     -- RAISE NOTICE 'Existing row count: %, Updated row count: %', _existingRowCount, _updatedRowCount;
 
-    If _updatedRowCount > 1 And _updatedRowCount >= _existingRowCount Then
+    If _updatedRowCount > 1 AND _updatedRowCount >= _existingRowCount Then
         _message := format('Cannot update all %s rows in %s; use a WHERE clause to limit the affected rows (see trigger function %s)',
                            _updatedRowCount, 't_dataset', 'trigfn_t_dataset_after_update_all');
 

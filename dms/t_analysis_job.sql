@@ -164,7 +164,7 @@ CREATE TRIGGER trig_t_analysis_job_after_delete AFTER DELETE ON public.t_analysi
 -- Name: t_analysis_job trig_t_analysis_job_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_after_update_all AFTER UPDATE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_update_all();
+CREATE TRIGGER trig_t_analysis_job_after_update_all AFTER UPDATE ON public.t_analysis_job REFERENCING OLD TABLE AS old FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_update_all();
 
 --
 -- Name: t_analysis_job fk_t_analysis_job_t_analysis_job_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
