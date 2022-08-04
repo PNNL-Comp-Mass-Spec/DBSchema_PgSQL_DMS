@@ -30,7 +30,7 @@ CREATE TABLE public.t_dataset (
     interval_to_next_ds integer,
     acq_length_minutes integer GENERATED ALWAYS AS (COALESCE((EXTRACT(epoch FROM (acq_time_end - acq_time_start)) / (60)::numeric), (0)::numeric)) STORED,
     date_sort_key timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    decon_tools_job_for_qc integer,
+    decontools_job_for_qc integer,
     capture_subfolder public.citext,
     cart_config_id integer,
     CONSTRAINT ck_t_dataset_dataset_name_not_empty CHECK ((COALESCE(dataset, ''::public.citext) OPERATOR(public.<>) ''::public.citext)),

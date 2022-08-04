@@ -7,7 +7,7 @@ CREATE VIEW public.v_dataset_qc_list_report AS
     ds.dataset,
     (((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/QC/'::text) || (ds.dataset)::text) || '_BPI_MS.png'::text) AS qc_link,
     (((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/QC/'::text) || (ds.dataset)::text) || '_HighAbu_LCMS.png'::text) AS qc_2d,
-    (((((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/'::text) || (j.results_folder_name)::text) || '/'::text) || (ds.dataset)::text) || '_HighAbu_LCMS_zoom.png'::text) AS qc_decon_tools,
+    (((((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/'::text) || (j.results_folder_name)::text) || '/'::text) || (ds.dataset)::text) || '_HighAbu_LCMS_zoom.png'::text) AS qc_decontools,
     e.experiment,
     c.campaign,
     instname.instrument,
@@ -33,7 +33,7 @@ CREATE VIEW public.v_dataset_qc_list_report AS
      JOIN public.t_storage_path spath ON ((spath.storage_path_id = ds.storage_path_id)))
      JOIN public.t_lc_column lc ON ((ds.lc_column_id = lc.lc_column_id)))
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
-     LEFT JOIN public.t_analysis_job j ON ((ds.decon_tools_job_for_qc = j.job)));
+     LEFT JOIN public.t_analysis_job j ON ((ds.decontools_job_for_qc = j.job)));
 
 
 ALTER TABLE public.v_dataset_qc_list_report OWNER TO d3l243;

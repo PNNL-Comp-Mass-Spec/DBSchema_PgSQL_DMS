@@ -5,7 +5,7 @@
 CREATE TABLE public.t_settings_files_xml_history (
     event_id integer NOT NULL,
     event_action public.citext NOT NULL,
-    id integer NOT NULL,
+    settings_file_id integer NOT NULL,
     analysis_tool public.citext NOT NULL,
     file_name public.citext NOT NULL,
     description public.citext,
@@ -44,10 +44,10 @@ ALTER TABLE ONLY public.t_settings_files_xml_history
 CREATE INDEX ix_t_settings_files_xml_history_file_name ON public.t_settings_files_xml_history USING btree (file_name);
 
 --
--- Name: ix_t_settings_files_xml_history_id; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_settings_files_xml_history_settings_file_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_settings_files_xml_history_id ON public.t_settings_files_xml_history USING btree (id);
+CREATE INDEX ix_t_settings_files_xml_history_settings_file_id ON public.t_settings_files_xml_history USING btree (settings_file_id);
 
 --
 -- Name: TABLE t_settings_files_xml_history; Type: ACL; Schema: public; Owner: d3l243
