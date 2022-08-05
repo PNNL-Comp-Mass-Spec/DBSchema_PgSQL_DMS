@@ -7,7 +7,7 @@ CREATE VIEW public.v_event_log AS
     el.target_type,
         CASE el.target_type
             WHEN 1 THEN 'Campaign'::text
-            WHEN 2 THEN 'Cell Culture'::text
+            WHEN 2 THEN 'Biomaterial'::text
             WHEN 3 THEN 'Experiment'::text
             WHEN 4 THEN 'Dataset'::text
             WHEN 5 THEN 'Job'::text
