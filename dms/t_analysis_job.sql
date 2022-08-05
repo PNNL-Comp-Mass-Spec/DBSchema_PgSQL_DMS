@@ -6,7 +6,7 @@ CREATE TABLE public.t_analysis_job (
     job integer NOT NULL,
     batch_id integer,
     priority integer DEFAULT 2 NOT NULL,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     start timestamp without time zone,
     finish timestamp without time zone,
     analysis_tool_id integer DEFAULT 0 NOT NULL,

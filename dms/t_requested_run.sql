@@ -7,7 +7,7 @@ CREATE TABLE public.t_requested_run (
     request_name public.citext NOT NULL,
     requester_prn public.citext NOT NULL,
     comment public.citext,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     instrument_group public.citext,
     request_type_id integer,
     instrument_setting public.citext,

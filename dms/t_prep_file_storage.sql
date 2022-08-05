@@ -10,7 +10,7 @@ CREATE TABLE public.t_prep_file_storage (
     path_web_root public.citext,
     path_archive_root public.citext,
     state public.citext NOT NULL,
-    created timestamp without time zone NOT NULL
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

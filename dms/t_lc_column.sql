@@ -15,7 +15,7 @@ CREATE TABLE public.t_lc_column (
     column_state_id integer DEFAULT 0 NOT NULL,
     operator_prn public.citext NOT NULL,
     comment public.citext,
-    created timestamp without time zone
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 

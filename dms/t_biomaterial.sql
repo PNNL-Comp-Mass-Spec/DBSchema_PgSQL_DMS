@@ -14,7 +14,7 @@ CREATE TABLE public.t_biomaterial (
     campaign_id integer,
     container_id integer DEFAULT 1 NOT NULL,
     material_active public.citext DEFAULT 'Active'::public.citext NOT NULL,
-    created timestamp without time zone,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     gene_name public.citext,
     gene_location public.citext,
     mod_count smallint,

@@ -5,7 +5,7 @@
 CREATE TABLE public.t_analysis_job_request (
     request_id integer NOT NULL,
     request_name public.citext NOT NULL,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     analysis_tool public.citext NOT NULL,
     param_file_name public.citext NOT NULL,
     settings_file_name public.citext NOT NULL,

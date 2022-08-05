@@ -5,7 +5,7 @@
 CREATE TABLE public.t_experiment_groups (
     group_id integer NOT NULL,
     group_type public.citext NOT NULL,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     description public.citext,
     parent_exp_id integer DEFAULT 0 NOT NULL,
     prep_lc_run_id integer,

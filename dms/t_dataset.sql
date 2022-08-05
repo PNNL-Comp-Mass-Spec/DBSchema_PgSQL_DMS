@@ -7,7 +7,7 @@ CREATE TABLE public.t_dataset (
     dataset public.citext NOT NULL,
     operator_prn public.citext NOT NULL,
     comment public.citext,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     instrument_id integer,
     lc_column_id integer DEFAULT 0,
     dataset_type_id integer,

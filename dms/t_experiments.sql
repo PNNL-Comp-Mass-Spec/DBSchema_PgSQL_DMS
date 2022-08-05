@@ -9,7 +9,7 @@ CREATE TABLE public.t_experiments (
     organism_id integer NOT NULL,
     reason public.citext,
     comment public.citext,
-    created timestamp without time zone NOT NULL,
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     sample_concentration public.citext,
     lab_notebook_ref public.citext,
     campaign_id integer NOT NULL,
