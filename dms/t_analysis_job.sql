@@ -158,7 +158,12 @@ CREATE INDEX ix_t_analysis_job_tool_id_state_id_include_job_priority ON public.t
 -- Name: t_analysis_job trig_t_analysis_job_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_after_delete AFTER DELETE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_delete();
+--
+-- Name: t_analysis_job trig_t_analysis_job_after_delete_all; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_after_delete_all AFTER DELETE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_delete_all();
+
 
 --
 -- Name: t_analysis_job trig_t_analysis_job_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243

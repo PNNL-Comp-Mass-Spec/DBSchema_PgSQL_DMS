@@ -1,14 +1,14 @@
 --
--- Name: trigfn_t_experiments_after_delete(); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: trigfn_t_experiment_plex_members_after_delete_all(); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.trigfn_t_experiments_after_delete() RETURNS trigger
+CREATE OR REPLACE FUNCTION public.trigfn_t_experiment_plex_members_after_delete_all() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Prevents deleting all rows in t_experiments,
+**      Prevents deleting all rows in t_experiment_plex_members,
 **      raising an exception if the calling process tries to do so
 **
 **  Auth:   mem
@@ -20,11 +20,11 @@ DECLARE
     _deletedRowCount int;
     _message text;
 BEGIN
-    -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
+    -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
     SELECT COUNT(*)
     INTO _newRowCount
-    FROM public.t_experiments;
+    FROM t_experiment_plex_members;
 
     SELECT COUNT(*)
     INTO _deletedRowCount
@@ -32,9 +32,9 @@ BEGIN
 
     -- RAISE NOTICE 'New row count: %, deleted rows: %', _newRowCount, _deletedRowCount;
 
-    If _deletedRowCount > 0 And _newRowCount = 0 Then
+    If _deletedRowCount > 0 AND _newRowCount = 0 Then
         _message := format('Cannot delete all %s rows in %s; use a WHERE clause to limit the affected rows (see trigger function %s)',
-                           _deletedRowCount, 't_experiments', 'trigfn_t_experiments_after_delete');
+                           _deletedRowCount, 't_experiment_plex_members', 'trigfn_t_experiment_plex_members_after_delete');
 
         RAISE EXCEPTION '%', _message;
     End If;
@@ -44,5 +44,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.trigfn_t_experiments_after_delete() OWNER TO d3l243;
+ALTER FUNCTION public.trigfn_t_experiment_plex_members_after_delete_all() OWNER TO d3l243;
 
