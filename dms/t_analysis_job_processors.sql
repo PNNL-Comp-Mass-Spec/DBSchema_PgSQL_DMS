@@ -50,6 +50,12 @@ ALTER TABLE ONLY public.t_analysis_job_processors
 CREATE INDEX ix_t_analysis_job_processors_id_name_state_machine ON public.t_analysis_job_processors USING btree (processor_id, processor_name) INCLUDE (state, machine);
 
 --
+-- Name: t_analysis_job_processors trig_t_analysis_job_processors_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_processors_after_update AFTER UPDATE ON public.t_analysis_job_processors REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_processors_after_update();
+
+--
 -- Name: TABLE t_analysis_job_processors; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -37,6 +37,12 @@ ALTER TABLE ONLY public.t_cached_dataset_folder_paths
 CREATE INDEX ix_t_cached_dataset_folder_paths_update_required ON public.t_cached_dataset_folder_paths USING btree (update_required);
 
 --
+-- Name: t_cached_dataset_folder_paths trig_t_cached_dataset_folder_paths_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_cached_dataset_folder_paths_after_update AFTER UPDATE ON public.t_cached_dataset_folder_paths REFERENCING NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_cached_dataset_folder_paths_after_update();
+
+--
 -- Name: t_cached_dataset_folder_paths fk_t_cached_dataset_folder_paths_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

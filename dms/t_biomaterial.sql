@@ -90,6 +90,24 @@ CREATE INDEX ix_t_biomaterial_created ON public.t_biomaterial USING btree (creat
 CREATE INDEX ix_t_biomaterial_id_name_container ON public.t_biomaterial USING btree (biomaterial_id, biomaterial_name, container_id);
 
 --
+-- Name: t_biomaterial trig_t_biomaterial_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_biomaterial_after_delete AFTER DELETE ON public.t_biomaterial REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_biomaterial_after_delete();
+
+--
+-- Name: t_biomaterial trig_t_biomaterial_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_biomaterial_after_insert AFTER INSERT ON public.t_biomaterial REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_biomaterial_after_insert();
+
+--
+-- Name: t_biomaterial trig_t_biomaterial_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_biomaterial_after_update AFTER UPDATE ON public.t_biomaterial REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_biomaterial_after_update();
+
+--
 -- Name: t_biomaterial fk_t_biomaterial_t_biomaterial_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

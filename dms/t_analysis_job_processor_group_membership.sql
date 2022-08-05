@@ -28,6 +28,12 @@ ALTER TABLE ONLY public.t_analysis_job_processor_group_membership
 CREATE INDEX ix_t_analysis_job_processor_group_membership_group_id_enabled ON public.t_analysis_job_processor_group_membership USING btree (group_id, membership_enabled);
 
 --
+-- Name: t_analysis_job_processor_group_membership trig_t_analysis_job_processor_group_membership_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_processor_group_membership_after_update AFTER UPDATE ON public.t_analysis_job_processor_group_membership REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_membership_after_update();
+
+--
 -- Name: t_analysis_job_processor_group_membership fk_t_analysis_job_processor_group_t_analysis_job_processor; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

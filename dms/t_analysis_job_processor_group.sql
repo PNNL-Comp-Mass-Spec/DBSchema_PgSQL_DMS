@@ -43,6 +43,12 @@ ALTER TABLE ONLY public.t_analysis_job_processor_group
     ADD CONSTRAINT pk_t_analysis_job_processor_group PRIMARY KEY (group_id);
 
 --
+-- Name: t_analysis_job_processor_group trig_t_analysis_job_processor_group_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_processor_group_after_update AFTER UPDATE ON public.t_analysis_job_processor_group REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_after_update();
+
+--
 -- Name: TABLE t_analysis_job_processor_group; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -62,6 +62,24 @@ CREATE UNIQUE INDEX ix_t_campaign_campaign ON public.t_campaign USING btree (cam
 CREATE INDEX ix_t_campaign_created ON public.t_campaign USING btree (created);
 
 --
+-- Name: t_campaign trig_t_campaign_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_campaign_after_delete AFTER DELETE ON public.t_campaign REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_campaign_after_delete();
+
+--
+-- Name: t_campaign trig_t_campaign_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_campaign_after_insert AFTER INSERT ON public.t_campaign REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_campaign_after_insert();
+
+--
+-- Name: t_campaign trig_t_campaign_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_campaign_after_update AFTER UPDATE ON public.t_campaign REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_campaign_after_update();
+
+--
 -- Name: t_campaign fk_t_campaign_t_data_release_restrictions; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

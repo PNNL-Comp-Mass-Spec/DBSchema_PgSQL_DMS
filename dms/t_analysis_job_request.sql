@@ -67,6 +67,24 @@ CREATE INDEX ix_t_analysis_job_request_request_id ON public.t_analysis_job_reque
 CREATE INDEX ix_t_analysis_job_request_state_created ON public.t_analysis_job_request USING btree (request_state_id, created);
 
 --
+-- Name: t_analysis_job_request trig_t_analysis_job_request_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_request_after_delete AFTER DELETE ON public.t_analysis_job_request REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_request_after_delete();
+
+--
+-- Name: t_analysis_job_request trig_t_analysis_job_request_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_request_after_insert AFTER INSERT ON public.t_analysis_job_request REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_request_after_insert();
+
+--
+-- Name: t_analysis_job_request trig_t_analysis_job_request_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_request_after_update AFTER UPDATE ON public.t_analysis_job_request REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_request_after_update();
+
+--
 -- Name: t_analysis_job_request fk_t_analysis_job_request_t_analysis_job_request_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
