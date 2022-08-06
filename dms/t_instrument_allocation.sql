@@ -24,6 +24,24 @@ ALTER TABLE ONLY public.t_instrument_allocation
     ADD CONSTRAINT pk_t_instrument_allocation PRIMARY KEY (allocation_tag, proposal_id, fiscal_year);
 
 --
+-- Name: t_instrument_allocation trig_t_instrument_allocation_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_instrument_allocation_after_delete AFTER DELETE ON public.t_instrument_allocation REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_instrument_allocation_after_delete();
+
+--
+-- Name: t_instrument_allocation trig_t_instrument_allocation_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_instrument_allocation_after_insert AFTER INSERT ON public.t_instrument_allocation REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_instrument_allocation_after_insert();
+
+--
+-- Name: t_instrument_allocation trig_t_instrument_allocation_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_instrument_allocation_after_update AFTER UPDATE ON public.t_instrument_allocation REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_instrument_allocation_after_update();
+
+--
 -- Name: TABLE t_instrument_allocation; Type: ACL; Schema: public; Owner: d3l243
 --
 

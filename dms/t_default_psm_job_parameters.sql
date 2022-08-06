@@ -43,6 +43,18 @@ ALTER TABLE ONLY public.t_default_psm_job_parameters
 CREATE UNIQUE INDEX ix_t_default_psm_job_parameters_uniq_type_tool_met_ox_cys_alk ON public.t_default_psm_job_parameters USING btree (job_type_name, tool_name, dyn_met_ox, stat_cys_alk, dyn_sty_phos);
 
 --
+-- Name: t_default_psm_job_parameters trig_t_default_psm_job_parameters_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_default_psm_job_parameters_after_insert AFTER INSERT ON public.t_default_psm_job_parameters REFERENCING NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_default_psm_job_parameters_after_insert_or_update();
+
+--
+-- Name: t_default_psm_job_parameters trig_t_default_psm_job_parameters_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_default_psm_job_parameters_after_update AFTER UPDATE ON public.t_default_psm_job_parameters REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_default_psm_job_parameters_after_insert_or_update();
+
+--
 -- Name: t_default_psm_job_parameters fk_t_default_psm_job_parameters_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

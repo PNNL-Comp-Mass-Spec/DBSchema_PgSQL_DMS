@@ -55,6 +55,12 @@ CREATE INDEX ix_t_charge_code_resp_prn ON public.t_charge_code USING btree (resp
 CREATE INDEX ix_t_charge_code_sort_key ON public.t_charge_code USING btree (sort_key);
 
 --
+-- Name: t_charge_code trig_t_charge_code_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_charge_code_after_update AFTER UPDATE ON public.t_charge_code REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_charge_code_after_update();
+
+--
 -- Name: t_charge_code fk_t_charge_code_t_charge_code_activation_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

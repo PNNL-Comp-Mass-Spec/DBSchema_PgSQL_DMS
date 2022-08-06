@@ -73,6 +73,18 @@ ALTER TABLE ONLY public.t_organisms
 CREATE INDEX ix_t_organisms_created ON public.t_organisms USING btree (created);
 
 --
+-- Name: t_organisms trig_t_organisms_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_organisms_after_insert AFTER INSERT ON public.t_organisms REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_organisms_after_insert();
+
+--
+-- Name: t_organisms trig_t_organisms_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_organisms_after_update AFTER UPDATE ON public.t_organisms REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_organisms_after_update();
+
+--
 -- Name: t_organisms fk_t_organisms_t_yes_no; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

@@ -34,10 +34,28 @@ CREATE INDEX ix_t_experiment_plex_members_exp_id ON public.t_experiment_plex_mem
 CREATE TRIGGER trig_t_experiment_plex_members_after_delete_all AFTER DELETE ON public.t_experiment_plex_members REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_delete_all();
 
 --
+-- Name: t_experiment_plex_members trig_t_experiment_plex_members_after_delete_row; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_experiment_plex_members_after_delete_row AFTER DELETE ON public.t_experiment_plex_members REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_delete();
+
+--
+-- Name: t_experiment_plex_members trig_t_experiment_plex_members_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_experiment_plex_members_after_insert AFTER INSERT ON public.t_experiment_plex_members REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_insert();
+
+--
 -- Name: t_experiment_plex_members trig_t_experiment_plex_members_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
 CREATE TRIGGER trig_t_experiment_plex_members_after_update_all AFTER UPDATE ON public.t_experiment_plex_members REFERENCING OLD TABLE AS old FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_update_all();
+
+--
+-- Name: t_experiment_plex_members trig_t_experiment_plex_members_after_update_row; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_experiment_plex_members_after_update_row AFTER UPDATE ON public.t_experiment_plex_members REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_update();
 
 --
 -- Name: t_experiment_plex_members fk_t_experiment_plex_members_t_experiment_plex_channel_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

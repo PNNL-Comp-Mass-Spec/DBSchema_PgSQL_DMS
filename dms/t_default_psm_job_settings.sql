@@ -42,6 +42,18 @@ ALTER TABLE ONLY public.t_default_psm_job_settings
 CREATE UNIQUE INDEX ix_t_default_psm_job_settings_uniq_tool_jobtype_cysalk_styphos ON public.t_default_psm_job_settings USING btree (tool_name, job_type_name, stat_cys_alk, dyn_sty_phos);
 
 --
+-- Name: t_default_psm_job_settings trig_t_default_psm_job_settings_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_default_psm_job_settings_after_insert AFTER INSERT ON public.t_default_psm_job_settings REFERENCING NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_default_psm_job_settings_after_insert_or_update();
+
+--
+-- Name: t_default_psm_job_settings trig_t_default_psm_job_settings_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_default_psm_job_settings_after_update AFTER UPDATE ON public.t_default_psm_job_settings REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_default_psm_job_settings_after_insert_or_update();
+
+--
 -- Name: t_default_psm_job_settings fk_t_default_psm_job_settings_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

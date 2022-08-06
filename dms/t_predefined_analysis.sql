@@ -66,6 +66,12 @@ ALTER TABLE ONLY public.t_predefined_analysis
     ADD CONSTRAINT pk_t_predefined_analysis PRIMARY KEY (predefine_id);
 
 --
+-- Name: t_predefined_analysis trig_t_predefined_analysis_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_predefined_analysis_after_update AFTER UPDATE ON public.t_predefined_analysis REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_predefined_analysis_after_update();
+
+--
 -- Name: t_predefined_analysis fk_t_predefined_analysis_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

@@ -54,6 +54,18 @@ ALTER TABLE ONLY public.t_mass_correction_factors
 CREATE UNIQUE INDEX ix_t_mass_correction_factors_mass_correction_tag ON public.t_mass_correction_factors USING btree (mass_correction_tag);
 
 --
+-- Name: t_mass_correction_factors trig_t_mass_correction_factors_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_mass_correction_factors_after_insert AFTER INSERT ON public.t_mass_correction_factors REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_mass_correction_factors_after_insert();
+
+--
+-- Name: t_mass_correction_factors trig_t_mass_correction_factors_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_mass_correction_factors_after_update AFTER UPDATE ON public.t_mass_correction_factors REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_mass_correction_factors_after_update();
+
+--
 -- Name: TABLE t_mass_correction_factors; Type: ACL; Schema: public; Owner: d3l243
 --
 

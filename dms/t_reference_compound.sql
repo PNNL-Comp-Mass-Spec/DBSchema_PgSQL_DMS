@@ -94,6 +94,24 @@ CREATE INDEX ix_t_reference_compound_name ON public.t_reference_compound USING b
 CREATE INDEX ix_t_reference_compound_name_container_id_compound_id ON public.t_reference_compound USING btree (compound_name, container_id, compound_id);
 
 --
+-- Name: t_reference_compound trig_t_reference_compound_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_reference_compound_after_delete AFTER DELETE ON public.t_reference_compound REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_reference_compound_after_delete();
+
+--
+-- Name: t_reference_compound trig_t_reference_compound_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_reference_compound_after_insert AFTER INSERT ON public.t_reference_compound REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_reference_compound_after_insert();
+
+--
+-- Name: t_reference_compound trig_t_reference_compound_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_reference_compound_after_update AFTER UPDATE ON public.t_reference_compound REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_reference_compound_after_update();
+
+--
 -- Name: t_reference_compound fk_t_reference_compound_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

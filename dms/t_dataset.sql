@@ -194,10 +194,28 @@ CREATE INDEX ix_t_dataset_storage_path_id_created_instrument_name_id_rating ON p
 CREATE TRIGGER trig_t_dataset_after_delete_all AFTER DELETE ON public.t_dataset REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_after_delete_all();
 
 --
+-- Name: t_dataset trig_t_dataset_after_delete_row; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_dataset_after_delete_row AFTER DELETE ON public.t_dataset REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_after_delete();
+
+--
+-- Name: t_dataset trig_t_dataset_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_dataset_after_insert AFTER INSERT ON public.t_dataset REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_after_insert();
+
+--
 -- Name: t_dataset trig_t_dataset_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
 CREATE TRIGGER trig_t_dataset_after_update_all AFTER UPDATE ON public.t_dataset REFERENCING OLD TABLE AS old FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_after_update_all();
+
+--
+-- Name: t_dataset trig_t_dataset_after_update_row; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_dataset_after_update_row AFTER UPDATE ON public.t_dataset REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_dataset_after_update();
 
 --
 -- Name: t_dataset fk_t_dataset_t_dataset_rating_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

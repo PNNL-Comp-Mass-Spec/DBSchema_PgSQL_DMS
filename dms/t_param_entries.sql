@@ -37,6 +37,18 @@ ALTER TABLE ONLY public.t_param_entries
     ADD CONSTRAINT pk_t_param_entries PRIMARY KEY (param_entry_id);
 
 --
+-- Name: t_param_entries trig_t_param_entries_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_param_entries_after_insert AFTER INSERT ON public.t_param_entries REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_param_entries_after_insert();
+
+--
+-- Name: t_param_entries trig_t_param_entries_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_param_entries_after_update AFTER UPDATE ON public.t_param_entries REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_param_entries_after_update();
+
+--
 -- Name: t_param_entries fk_t_param_entries_t_param_files; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

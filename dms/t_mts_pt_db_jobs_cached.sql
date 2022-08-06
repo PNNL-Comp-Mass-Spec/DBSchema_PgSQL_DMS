@@ -55,6 +55,18 @@ CREATE INDEX ix_t_mts_pt_db_jobs_cached_job ON public.t_mts_pt_db_jobs_cached US
 CREATE INDEX ix_t_mts_pt_db_jobs_cached_sort_key ON public.t_mts_pt_db_jobs_cached USING btree (sort_key);
 
 --
+-- Name: t_mts_pt_db_jobs_cached trig_t_mts_pt_db_jobs_cached_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_mts_pt_db_jobs_cached_after_insert AFTER INSERT ON public.t_mts_pt_db_jobs_cached REFERENCING NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_mts_pt_db_jobs_cached_after_insert_or_update();
+
+--
+-- Name: t_mts_pt_db_jobs_cached trig_t_mts_pt_db_jobs_cached_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_mts_pt_db_jobs_cached_after_update AFTER UPDATE ON public.t_mts_pt_db_jobs_cached REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_mts_pt_db_jobs_cached_after_insert_or_update();
+
+--
 -- Name: TABLE t_mts_pt_db_jobs_cached; Type: ACL; Schema: public; Owner: d3l243
 --
 

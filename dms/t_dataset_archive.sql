@@ -78,6 +78,24 @@ CREATE INDEX ix_t_dataset_archive_storage_path_id ON public.t_dataset_archive US
 CREATE INDEX ix_t_dataset_archive_update_state_id_dataset_id_state_id ON public.t_dataset_archive USING btree (archive_update_state_id, dataset_id, archive_state_id) INCLUDE (purge_holdoff_date);
 
 --
+-- Name: t_dataset_archive trig_t_dataset_archive_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_dataset_archive_after_delete AFTER DELETE ON public.t_dataset_archive REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_archive_after_delete();
+
+--
+-- Name: t_dataset_archive trig_t_dataset_archive_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_dataset_archive_after_insert AFTER INSERT ON public.t_dataset_archive REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_dataset_archive_after_insert();
+
+--
+-- Name: t_dataset_archive trig_t_dataset_archive_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_dataset_archive_after_update AFTER UPDATE ON public.t_dataset_archive REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_dataset_archive_after_update();
+
+--
 -- Name: t_dataset_archive fk_t_dataset_archive_t_archive_path; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
