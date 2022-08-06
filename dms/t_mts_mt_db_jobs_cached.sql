@@ -8,7 +8,7 @@ CREATE TABLE public.t_mts_mt_db_jobs_cached (
     mt_db_name public.citext NOT NULL,
     job integer NOT NULL,
     result_type public.citext NOT NULL,
-    last_affected timestamp without time zone NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     process_state public.citext,
     sort_key integer
 );
