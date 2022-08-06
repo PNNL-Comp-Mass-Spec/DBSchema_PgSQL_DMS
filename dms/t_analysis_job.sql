@@ -155,16 +155,16 @@ CREATE INDEX ix_t_analysis_job_tool_id_job_id_dataset_id_include_ajstart ON publ
 CREATE INDEX ix_t_analysis_job_tool_id_state_id_include_job_priority ON public.t_analysis_job USING btree (analysis_tool_id, job_state_id) INCLUDE (job, priority, dataset_id, comment, owner, special_processing);
 
 --
--- Name: t_analysis_job trig_t_analysis_job_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
---
-
-CREATE TRIGGER trig_t_analysis_job_after_delete AFTER DELETE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_delete();
-
---
 -- Name: t_analysis_job trig_t_analysis_job_after_delete_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
 CREATE TRIGGER trig_t_analysis_job_after_delete_all AFTER DELETE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_delete_all();
+
+--
+-- Name: t_analysis_job trig_t_analysis_job_after_delete_row; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_after_delete_row AFTER DELETE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_delete();
 
 --
 -- Name: t_analysis_job trig_t_analysis_job_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
@@ -179,16 +179,16 @@ CREATE TRIGGER trig_t_analysis_job_after_insert AFTER INSERT ON public.t_analysi
 CREATE TRIGGER trig_t_analysis_job_after_insert_validate AFTER INSERT ON public.t_analysis_job REFERENCING NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_insert_or_update_validate();
 
 --
--- Name: t_analysis_job trig_t_analysis_job_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
---
-
-CREATE TRIGGER trig_t_analysis_job_after_update AFTER UPDATE ON public.t_analysis_job REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_update();
-
---
 -- Name: t_analysis_job trig_t_analysis_job_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
 CREATE TRIGGER trig_t_analysis_job_after_update_all AFTER UPDATE ON public.t_analysis_job REFERENCING OLD TABLE AS old FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_update_all();
+
+--
+-- Name: t_analysis_job trig_t_analysis_job_after_update_row; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_analysis_job_after_update_row AFTER UPDATE ON public.t_analysis_job REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_update();
 
 --
 -- Name: t_analysis_job trig_t_analysis_job_after_update_validate; Type: TRIGGER; Schema: public; Owner: d3l243
