@@ -34,7 +34,7 @@ BEGIN
 
     If _deletedRowCount > 0 AND _newRowCount = 0 Then
         _message := format('Cannot delete all %s rows in %s; use a WHERE clause to limit the affected rows (see trigger function %s)',
-                           _deletedRowCount, 't_analysis_job', 'trigfn_t_analysis_job_after_delete');
+                           _deletedRowCount, 't_analysis_job', 'trigfn_t_analysis_job_after_delete_all');
 
         RAISE EXCEPTION '%', _message;
     End If;
