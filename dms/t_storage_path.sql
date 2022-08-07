@@ -60,6 +60,12 @@ ALTER TABLE ONLY public.t_storage_path
 CREATE INDEX ix_t_storage_path_machine_name_path_id ON public.t_storage_path USING btree (machine_name, storage_path_id);
 
 --
+-- Name: t_storage_path trig_t_storage_path_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_storage_path_after_update AFTER UPDATE ON public.t_storage_path REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_storage_path_after_update();
+
+--
 -- Name: t_storage_path fk_t_storage_path_t_instrument_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

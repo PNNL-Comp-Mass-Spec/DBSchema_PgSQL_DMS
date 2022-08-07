@@ -48,6 +48,18 @@ ALTER TABLE ONLY public.t_residues
 CREATE INDEX ix_t_residues_symbol ON public.t_residues USING btree (residue_symbol);
 
 --
+-- Name: t_residues trig_t_residues_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_residues_after_insert AFTER INSERT ON public.t_residues REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_residues_after_insert();
+
+--
+-- Name: t_residues trig_t_residues_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_residues_after_update AFTER UPDATE ON public.t_residues REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_residues_after_update();
+
+--
 -- Name: TABLE t_residues; Type: ACL; Schema: public; Owner: d3l243
 --
 

@@ -107,6 +107,24 @@ CREATE INDEX ix_t_sample_prep_request_campaign_include_created ON public.t_sampl
 CREATE INDEX ix_t_sample_prep_request_eus_user_id ON public.t_sample_prep_request USING btree (eus_user_id);
 
 --
+-- Name: t_sample_prep_request trig_t_sample_prep_request_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_sample_prep_request_after_delete AFTER DELETE ON public.t_sample_prep_request REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_sample_prep_request_after_delete();
+
+--
+-- Name: t_sample_prep_request trig_t_sample_prep_request_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_sample_prep_request_after_insert AFTER INSERT ON public.t_sample_prep_request REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_sample_prep_request_after_insert();
+
+--
+-- Name: t_sample_prep_request trig_t_sample_prep_request_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_sample_prep_request_after_update AFTER UPDATE ON public.t_sample_prep_request REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_sample_prep_request_after_update();
+
+--
 -- Name: t_sample_prep_request fk_t_sample_prep_request_t_eus_proposals; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

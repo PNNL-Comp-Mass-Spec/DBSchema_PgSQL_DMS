@@ -55,6 +55,24 @@ CREATE UNIQUE INDEX ix_t_settings_files_analysis_tool_file_name ON public.t_sett
 CREATE INDEX ix_t_settings_files_file_name ON public.t_settings_files USING btree (file_name);
 
 --
+-- Name: t_settings_files trig_t_settings_files_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_settings_files_after_delete AFTER DELETE ON public.t_settings_files REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_settings_files_after_delete();
+
+--
+-- Name: t_settings_files trig_t_settings_files_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_settings_files_after_insert AFTER INSERT ON public.t_settings_files REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_settings_files_after_insert();
+
+--
+-- Name: t_settings_files trig_t_settings_files_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_settings_files_after_update AFTER UPDATE ON public.t_settings_files REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_settings_files_after_update();
+
+--
 -- Name: t_settings_files fk_t_settings_files_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

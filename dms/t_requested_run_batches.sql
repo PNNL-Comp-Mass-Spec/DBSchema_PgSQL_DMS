@@ -49,6 +49,12 @@ ALTER TABLE ONLY public.t_requested_run_batches
 CREATE UNIQUE INDEX ix_t_requested_run_batches ON public.t_requested_run_batches USING btree (batch);
 
 --
+-- Name: t_requested_run_batches trig_t_requested_run_batches_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_requested_run_batches_after_update AFTER UPDATE ON public.t_requested_run_batches REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_requested_run_batches_after_update();
+
+--
 -- Name: t_requested_run_batches fk_t_requested_run_batches_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 

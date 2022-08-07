@@ -168,6 +168,24 @@ CREATE INDEX ix_t_requested_run_state_name ON public.t_requested_run USING btree
 CREATE INDEX ix_t_requested_run_updated ON public.t_requested_run USING btree (updated);
 
 --
+-- Name: t_requested_run trig_t_requested_run_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_requested_run_after_delete AFTER DELETE ON public.t_requested_run REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_requested_run_after_delete();
+
+--
+-- Name: t_requested_run trig_t_requested_run_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_requested_run_after_insert AFTER INSERT ON public.t_requested_run REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_requested_run_after_insert();
+
+--
+-- Name: t_requested_run trig_t_requested_run_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_requested_run_after_update AFTER UPDATE ON public.t_requested_run REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_requested_run_after_insert_or_update();
+
+--
 -- Name: t_requested_run fk_t_requested_run_t_attachments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
