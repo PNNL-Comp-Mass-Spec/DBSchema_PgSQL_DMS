@@ -82,7 +82,7 @@ CREATE TRIGGER trig_t_analysis_job_request_after_insert AFTER INSERT ON public.t
 -- Name: t_analysis_job_request trig_t_analysis_job_request_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_request_after_update AFTER UPDATE ON public.t_analysis_job_request REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_request_after_update();
+CREATE TRIGGER trig_t_analysis_job_request_after_update AFTER UPDATE ON public.t_analysis_job_request REFERENCING OLD TABLE AS deleted NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_request_after_update();
 
 --
 -- Name: t_analysis_job_request fk_t_analysis_job_request_t_analysis_job_request_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

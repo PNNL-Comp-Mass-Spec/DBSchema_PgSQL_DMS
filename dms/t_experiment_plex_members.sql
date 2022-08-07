@@ -49,7 +49,7 @@ CREATE TRIGGER trig_t_experiment_plex_members_after_insert AFTER INSERT ON publi
 -- Name: t_experiment_plex_members trig_t_experiment_plex_members_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_experiment_plex_members_after_update_all AFTER UPDATE ON public.t_experiment_plex_members REFERENCING OLD TABLE AS old FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_update_all();
+CREATE TRIGGER trig_t_experiment_plex_members_after_update_all AFTER UPDATE ON public.t_experiment_plex_members REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_update_all();
 
 --
 -- Name: t_experiment_plex_members trig_t_experiment_plex_members_after_update_row; Type: TRIGGER; Schema: public; Owner: d3l243

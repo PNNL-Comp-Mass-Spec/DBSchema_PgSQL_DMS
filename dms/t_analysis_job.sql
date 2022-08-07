@@ -182,7 +182,7 @@ CREATE TRIGGER trig_t_analysis_job_after_insert_validate AFTER INSERT ON public.
 -- Name: t_analysis_job trig_t_analysis_job_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_after_update_all AFTER UPDATE ON public.t_analysis_job REFERENCING OLD TABLE AS old FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_update_all();
+CREATE TRIGGER trig_t_analysis_job_after_update_all AFTER UPDATE ON public.t_analysis_job REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_analysis_job_after_update_all();
 
 --
 -- Name: t_analysis_job trig_t_analysis_job_after_update_row; Type: TRIGGER; Schema: public; Owner: d3l243
