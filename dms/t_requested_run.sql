@@ -33,7 +33,7 @@ CREATE TABLE public.t_requested_run (
     separation_group public.citext DEFAULT 'none'::public.citext,
     mrm_attachment integer,
     dataset_id integer,
-    origin public.citext NOT NULL,
+    origin public.citext DEFAULT 'user'::public.citext NOT NULL,
     state_name public.citext DEFAULT 'Active'::public.citext NOT NULL,
     request_name_code public.citext,
     vialing_conc public.citext,
