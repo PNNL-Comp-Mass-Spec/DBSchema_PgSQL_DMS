@@ -23,5 +23,5 @@ ALTER TABLE ONLY pc.t_process_step_control
 -- Name: t_process_step_control trig_t_process_step_control_after_update; Type: TRIGGER; Schema: pc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_process_step_control_after_update AFTER UPDATE ON pc.t_process_step_control REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION pc.trigfn_t_process_step_control_after_update();
+CREATE TRIGGER trig_t_process_step_control_after_update AFTER UPDATE ON pc.t_process_step_control FOR EACH ROW WHEN ((new.enabled <> old.enabled)) EXECUTE FUNCTION pc.trigfn_t_process_step_control_after_update();
 

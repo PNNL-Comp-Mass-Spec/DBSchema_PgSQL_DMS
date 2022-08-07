@@ -66,7 +66,7 @@ CREATE TRIGGER trig_t_protein_collections_after_insert AFTER INSERT ON pc.t_prot
 -- Name: t_protein_collections trig_t_protein_collections_after_update; Type: TRIGGER; Schema: pc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_protein_collections_after_update AFTER UPDATE ON pc.t_protein_collections REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION pc.trigfn_t_protein_collections_after_update();
+CREATE TRIGGER trig_t_protein_collections_after_update AFTER UPDATE ON pc.t_protein_collections FOR EACH ROW WHEN ((old.collection_state_id <> new.collection_state_id)) EXECUTE FUNCTION pc.trigfn_t_protein_collections_after_update();
 
 --
 -- Name: t_protein_collections trig_t_protein_collections_after_update_all; Type: TRIGGER; Schema: pc; Owner: d3l243

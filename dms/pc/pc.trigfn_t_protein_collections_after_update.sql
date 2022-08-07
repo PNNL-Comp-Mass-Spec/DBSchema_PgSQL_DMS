@@ -12,14 +12,12 @@ CREATE OR REPLACE FUNCTION pc.trigfn_t_protein_collections_after_update() RETURN
 **
 **  Auth:   mem
 **  Date:   08/01/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
-
-    If NEW.Collection_State_ID = OLD.Collection_State_ID Then
-        RETURN null;
-    End If;
 
     -- Add a new row to t_event_log
     INSERT INTO pc.t_event_log( target_type,
@@ -27,13 +25,9 @@ BEGIN
                                 target_state,
                                 prev_target_state )
     SELECT 1 AS target_type,
-           N.protein_collection_id,
-           N.collection_state_id AS target_state,
-           O.collection_state_id AS prev_target_state
-    FROM OLD O
-         INNER JOIN NEW N
-           ON O.protein_collection_id = N.protein_collection_id
-    ORDER BY N.protein_collection_id;
+           NEW.protein_collection_id,
+           NEW.collection_state_id AS target_state,
+           OLD.collection_state_id AS prev_target_state;
 
     RETURN null;
 END

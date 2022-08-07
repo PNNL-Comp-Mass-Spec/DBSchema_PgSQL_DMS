@@ -86,5 +86,5 @@ CREATE TRIGGER trig_t_jobs_history_after_insert AFTER INSERT ON sw.t_jobs_histor
 -- Name: t_jobs_history trig_t_jobs_history_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_jobs_history_after_update AFTER UPDATE ON sw.t_jobs_history REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_jobs_history_after_update();
+CREATE TRIGGER trig_t_jobs_history_after_update AFTER UPDATE ON sw.t_jobs_history FOR EACH ROW WHEN ((old.saved <> new.saved)) EXECUTE FUNCTION sw.trigfn_t_jobs_history_after_update();
 

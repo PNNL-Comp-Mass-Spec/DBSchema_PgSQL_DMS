@@ -56,5 +56,5 @@ CREATE TRIGGER trig_t_scripts_after_insert AFTER INSERT ON cap.t_scripts REFEREN
 -- Name: t_scripts trig_t_scripts_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_scripts_after_update AFTER UPDATE ON cap.t_scripts REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_scripts_after_update();
+CREATE TRIGGER trig_t_scripts_after_update AFTER UPDATE ON cap.t_scripts FOR EACH ROW WHEN (((new.script OPERATOR(public.<>) old.script) OR (COALESCE(new.results_tag, ''::public.citext) OPERATOR(public.<>) COALESCE(old.results_tag, ''::public.citext)) OR ((COALESCE(new.contents, ''::xml))::text <> (COALESCE(old.contents, ''::xml))::text))) EXECUTE FUNCTION cap.trigfn_t_scripts_after_update();
 

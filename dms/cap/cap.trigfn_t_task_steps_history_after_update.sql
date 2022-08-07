@@ -13,22 +13,12 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_task_steps_history_after_update() RETURN
 **  Auth:   mem
 **  Date:   01/25/2011
 **          07/31/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
-
-    If Not Exists (Select * From NEW) Then
-        -- RAISE NOTICE '  no affected rows; exiting';
-        Return Null;
-    End If;
-
-    If Old.Saved = New.Saved Then
-        -- RAISE NOTICE '  Saved date unchanged; exiting';
-        Return null;
-    End If;
-
-    -- RAISE NOTICE '  Old saved=%, New saved=%', Old.saved, New.saved;
 
     WITH RankQ AS (
         SELECT CountQ.job,
@@ -41,7 +31,8 @@ BEGIN
                        H.saved,
                        Row_Number() OVER ( PARTITION BY H.job, H.step ORDER BY H.saved DESC ) AS SaveRank
                 FROM cap.t_task_steps_history H
-                     INNER JOIN NEW as updatedRows on H.job = updatedRows.job and H.step = updatedRows.step
+                WHERE H.job = NEW.job AND
+                      H.step = NEW.step
              ) CountQ
     )
     UPDATE cap.t_task_steps_history

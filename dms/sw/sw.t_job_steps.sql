@@ -113,7 +113,7 @@ CREATE TRIGGER trig_t_job_steps_after_insert AFTER INSERT ON sw.t_job_steps REFE
 -- Name: t_job_steps trig_t_job_steps_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_job_steps_after_update AFTER UPDATE ON sw.t_job_steps REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_job_steps_after_update();
+CREATE TRIGGER trig_t_job_steps_after_update AFTER UPDATE ON sw.t_job_steps FOR EACH ROW WHEN ((old.state <> new.state)) EXECUTE FUNCTION sw.trigfn_t_job_steps_after_update();
 
 --
 -- Name: t_job_steps trig_t_job_steps_after_update_all; Type: TRIGGER; Schema: sw; Owner: d3l243

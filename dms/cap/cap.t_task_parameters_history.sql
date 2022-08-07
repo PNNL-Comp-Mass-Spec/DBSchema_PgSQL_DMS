@@ -41,5 +41,5 @@ CREATE TRIGGER trig_t_task_parameters_history_after_insert AFTER INSERT ON cap.t
 -- Name: t_task_parameters_history trig_t_task_parameters_history_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_task_parameters_history_after_update AFTER UPDATE ON cap.t_task_parameters_history REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_task_parameters_history_after_update();
+CREATE TRIGGER trig_t_task_parameters_history_after_update AFTER UPDATE ON cap.t_task_parameters_history FOR EACH ROW WHEN ((old.saved <> new.saved)) EXECUTE FUNCTION cap.trigfn_t_task_parameters_history_after_update();
 

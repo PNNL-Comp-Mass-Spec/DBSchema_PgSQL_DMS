@@ -68,7 +68,7 @@ CREATE TRIGGER trig_t_jobs_after_insert AFTER INSERT ON sw.t_jobs REFERENCING NE
 -- Name: t_jobs trig_t_jobs_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_jobs_after_update AFTER UPDATE ON sw.t_jobs REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_jobs_after_update();
+CREATE TRIGGER trig_t_jobs_after_update AFTER UPDATE ON sw.t_jobs FOR EACH ROW WHEN ((old.state <> new.state)) EXECUTE FUNCTION sw.trigfn_t_jobs_after_update();
 
 --
 -- Name: t_jobs trig_t_jobs_after_update_all; Type: TRIGGER; Schema: sw; Owner: d3l243

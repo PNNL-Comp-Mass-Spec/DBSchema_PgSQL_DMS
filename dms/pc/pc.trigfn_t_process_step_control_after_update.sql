@@ -13,21 +13,18 @@ CREATE OR REPLACE FUNCTION pc.trigfn_t_process_step_control_after_update() RETUR
 **
 **  Auth:   mem
 **  Date:   08/30/2006
-**          08/01/2022 mem - Ported to PostgreSQL
+**          07/31/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    If NEW.enabled = OLD.enabled Then
-        RETURN null;
-    End If;
-
     UPDATE pc.t_process_step_control
     SET last_affected = CURRENT_TIMESTAMP,
         entered_by = SESSION_USER
-    FROM NEW N
-    WHERE pc.t_process_step_control.processing_step_name = N.Processing_Step_Name;
+    WHERE pc.t_process_step_control.processing_step_name = NEW.processing_step_name;
 
     RETURN null;
 END

@@ -48,5 +48,5 @@ CREATE TRIGGER trig_t_scripts_after_insert AFTER INSERT ON sw.t_scripts REFERENC
 -- Name: t_scripts trig_t_scripts_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_scripts_after_update AFTER UPDATE ON sw.t_scripts REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_scripts_after_update();
+CREATE TRIGGER trig_t_scripts_after_update AFTER UPDATE ON sw.t_scripts FOR EACH ROW WHEN (((old.script OPERATOR(public.<>) new.script) OR (COALESCE(old.results_tag, ''::public.citext) OPERATOR(public.<>) COALESCE(new.results_tag, ''::public.citext)) OR ((COALESCE(old.contents, ''::xml))::text <> (COALESCE(new.contents, ''::xml))::text))) EXECUTE FUNCTION sw.trigfn_t_scripts_after_update();
 

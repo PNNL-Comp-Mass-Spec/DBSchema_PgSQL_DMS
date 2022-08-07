@@ -13,22 +13,12 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_jobs_history_after_update() RETURNS trigg
 **  Auth:   mem
 **  Date:   01/25/2011
 **          07/31/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
-
-    If Not Exists (Select * From NEW) Then
-        -- RAISE NOTICE '  no affected rows; exiting';
-        Return Null;
-    End If;
-
-    If Old.Saved = New.Saved Then
-        -- RAISE NOTICE '  Saved date unchanged; exiting';
-        Return null;
-    End If;
-
-    -- RAISE NOTICE '  Old saved=%, New saved=%', Old.saved, New.saved;
 
     WITH RankQ AS (
         SELECT CountQ.job,
@@ -39,7 +29,7 @@ BEGIN
                        H.saved,
                        Row_Number() OVER ( PARTITION BY H.job ORDER BY H.saved DESC ) AS SaveRank
                 FROM sw.t_jobs_history H
-                     INNER JOIN NEW as updatedRows on H.Job = updatedRows.job
+                WHERE H.Job = NEW.job
              ) CountQ
     )
     UPDATE sw.t_jobs_history

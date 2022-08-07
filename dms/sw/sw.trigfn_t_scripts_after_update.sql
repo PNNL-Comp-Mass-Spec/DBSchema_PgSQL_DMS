@@ -13,23 +13,16 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_scripts_after_update() RETURNS trigger
 **
 **  Auth:   mem
 **  Date:   07/31/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    If NEW.script = OLD.script AND
-       Coalesce(NEW.results_tag, '') = Coalesce(OLD.results_tag, '') AND
-       Coalesce(NEW.contents, '')::text = Coalesce(OLD.contents, '')::text THEN
-        -- RAISE NOTICE '  did not update script name, results_tag, or contents; exiting';
-        RETURN null;
-    End If;
-
     INSERT INTO sw.t_scripts_history
         (script_id, script, results_tag, contents, parameters, backfill_to_dms)
-    SELECT script_id, script, results_tag, contents, parameters, backfill_to_dms
-    FROM NEW N
-    ORDER BY script_id;
+    SELECT NEW.script_id, NEW.script, NEW.results_tag, NEW.contents, NEW.parameters, NEW.backfill_to_dms;
 
     RETURN null;
 END

@@ -28,7 +28,7 @@ ALTER TABLE ONLY sw.t_processor_tool_group_details
 -- Name: t_processor_tool_group_details trig_t_processor_tool_group_details_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_processor_tool_group_details_after_update AFTER UPDATE ON sw.t_processor_tool_group_details REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION sw.trigfn_t_processor_tool_group_details_after_update();
+CREATE TRIGGER trig_t_processor_tool_group_details_after_update AFTER UPDATE ON sw.t_processor_tool_group_details FOR EACH ROW WHEN (((old.enabled <> new.enabled) OR (old.priority <> new.priority))) EXECUTE FUNCTION sw.trigfn_t_processor_tool_group_details_after_update();
 
 --
 -- Name: t_processor_tool_group_details fk_t_processor_tool_group_details_t_processor_tool_groups; Type: FK CONSTRAINT; Schema: sw; Owner: d3l243

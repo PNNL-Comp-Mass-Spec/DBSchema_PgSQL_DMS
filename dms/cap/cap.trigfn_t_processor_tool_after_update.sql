@@ -13,20 +13,17 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_processor_tool_after_update() RETURNS tr
 **  Auth:   mem
 **  Date:   03/24/2012 mem - Initial version
 **          07/31/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    If NEW.enabled = OLD.enabled AND NEW.priority = OLD.priority THEN
-        RETURN null;
-    End If;
-
     UPDATE cap.t_processor_tool
-    SET Last_Affected = CURRENT_TIMESTAMP
-    FROM NEW N
-    WHERE cap.T_Processor_Tool.Processor_Name = N.Processor_Name AND
-          cap.T_Processor_Tool.Tool_Name = N.Tool_Name;
+    SET last_affected = CURRENT_TIMESTAMP
+    WHERE cap.t_processor_tool.processor_name = NEW.processor_name AND
+          cap.t_processor_tool.tool_name = NEW.tool_name;
 
     RETURN null;
 END

@@ -104,7 +104,7 @@ CREATE TRIGGER trig_t_tasks_after_insert AFTER INSERT ON cap.t_tasks REFERENCING
 -- Name: t_tasks trig_t_tasks_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_tasks_after_update AFTER UPDATE ON cap.t_tasks REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_tasks_after_update();
+CREATE TRIGGER trig_t_tasks_after_update AFTER UPDATE ON cap.t_tasks FOR EACH ROW WHEN ((old.state <> new.state)) EXECUTE FUNCTION cap.trigfn_t_tasks_after_update();
 
 --
 -- Name: t_tasks trig_t_tasks_after_update_all; Type: TRIGGER; Schema: cap; Owner: d3l243

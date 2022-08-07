@@ -93,7 +93,7 @@ CREATE TRIGGER trig_t_task_steps_after_insert AFTER INSERT ON cap.t_task_steps R
 -- Name: t_task_steps trig_t_task_steps_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_task_steps_after_update AFTER UPDATE ON cap.t_task_steps REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION cap.trigfn_t_task_steps_after_update();
+CREATE TRIGGER trig_t_task_steps_after_update AFTER UPDATE ON cap.t_task_steps FOR EACH ROW WHEN ((old.state <> new.state)) EXECUTE FUNCTION cap.trigfn_t_task_steps_after_update();
 
 --
 -- Name: t_task_steps trig_t_task_steps_after_update_all; Type: TRIGGER; Schema: cap; Owner: d3l243

@@ -12,24 +12,18 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_tasks_after_update() RETURNS trigger
 **
 **  Auth:   mem
 **  Date:   07/31/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    If NEW.State = OLD.State Then
-        RETURN null;
-    End If;
-
     INSERT INTO cap.t_task_events
         (job, target_state, prev_target_state)
-    SELECT N.job,
-           N.State AS New_State,
-           O.State AS Old_State
-    FROM OLD O
-         INNER JOIN NEW N
-           ON O.job = N.job
-    ORDER BY N.job;
+    SELECT NEW.job,
+           NEW.State AS New_State,
+           OLD.State AS Old_State;
 
     RETURN null;
 END
