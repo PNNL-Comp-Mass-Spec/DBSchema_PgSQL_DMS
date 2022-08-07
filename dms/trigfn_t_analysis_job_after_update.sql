@@ -23,55 +23,56 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_after_update() RETURNS t
 **                         - Fix StateID bug, switching from 17 to 14
 **          09/13/2018 mem - When Started and Finished are non-null, use the larger of Started and Finished for last_affected
 **          08/04/2022 mem - Ported to PostgreSQL
+**          08/06/2022 mem - Convert to statement-level trigger
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    If Not Exists (Select * From NEW) Then
+    If Not Exists (Select * From inserted) Then
         Return Null;
     End If;
 
-    -- Use <> since job_state_id is never null
-    If OLD.job_state_id <> NEW.job_state_id Then
+    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    SELECT 5, inserted.job, inserted.job_state_id, deleted.job_state_id, CURRENT_TIMESTAMP
+    FROM deleted INNER JOIN
+         inserted ON deleted.job = inserted.job
+    WHERE deleted.job_state_id <> inserted.job_state_id;    -- Use <> since job_state_id is never null
 
-        INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
-        SELECT 5, N.job, n.job_state_id, o.job_state_id, CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.job = N.job;
+    UPDATE t_analysis_job
+    SET last_affected = CASE WHEN NOT inserted.finish Is Null AND inserted.finish >= inserted.start THEN inserted.finish
+                             WHEN NOT inserted.start Is Null  AND inserted.start >= inserted.finish THEN inserted.start
+                             ELSE CURRENT_TIMESTAMP
+                        END,
+        state_name_cached = COALESCE(AJDAS.job_State, ''),
+        progress = CASE
+                       WHEN inserted.job_state_id = 5 THEN -1
+                       WHEN inserted.job_state_id IN (1, 8, 13, 19) THEN 0
+                       WHEN inserted.job_state_id IN (4, 7, 14) THEN 100
+                       ELSE inserted.progress
+                   END,
+        eta_minutes = CASE
+                          WHEN inserted.job_state_id IN (1, 5, 8, 13, 19) THEN NULL
+                          WHEN inserted.job_state_id IN (4, 7, 14) THEN 0
+                          ELSE inserted.eta_minutes
+                      END
+    FROM inserted
+         INNER JOIN deleted
+           ON inserted.job = deleted.job
+         INNER JOIN V_Analysis_Job_and_Dataset_Archive_State AJDAS
+           ON inserted.job = AJDAS.job
+    WHERE deleted.job_state_id <> inserted.job_state_id AND
+          t_analysis_job.job = inserted.job;
 
-        UPDATE t_analysis_job
-        SET last_affected = CASE WHEN NOT N.finish Is Null AND N.finish >= N.start THEN N.finish
-                                 WHEN NOT N.start Is Null  AND N.start >= N.finish THEN N.start
-                                 ELSE CURRENT_TIMESTAMP
-                            END,
-            state_name_cached = COALESCE(AJDAS.job_State, ''),
-            progress = CASE
-                           WHEN N.job_state_id = 5 THEN -1
-                           WHEN N.job_state_id IN (1, 8, 13, 19) THEN 0
-                           WHEN N.job_state_id IN (4, 7, 14) THEN 100
-                           ELSE N.progress
-                       END,
-            eta_minutes = CASE
-                              WHEN N.job_state_id IN (1, 5, 8, 13, 19) THEN NULL
-                              WHEN N.job_state_id IN (4, 7, 14) THEN 0
-                              ELSE N.eta_minutes
-                          END
-        FROM NEW as N
-             INNER JOIN V_Analysis_Job_and_Dataset_Archive_State AJDAS
-               ON N.job = AJDAS.job
-        WHERE t_analysis_job.job = N.job;
-    End If;
-
-    -- Use <> since analysis_tool_id is never null
-    If OLD.analysis_tool_id <> NEW.analysis_tool_id Then
-        UPDATE t_analysis_job
-        SET analysis_tool_cached = COALESCE(Tool.analysis_tool, '')
-        FROM NEW as N
-             INNER JOIN t_analysis_tool Tool
-               ON N.analysis_tool_id = Tool.analysis_tool_id
-        WHERE t_analysis_job.job = N.job;
-    End If;
+    UPDATE t_analysis_job
+    SET analysis_tool_cached = COALESCE(Tool.analysis_tool, '')
+    FROM inserted
+         INNER JOIN deleted
+           ON inserted.job = deleted.job
+         INNER JOIN t_analysis_tool Tool
+           ON inserted.analysis_tool_id = Tool.analysis_tool_id
+    WHERE deleted.analysis_tool_id <> inserted.analysis_tool_id AND     -- Use <> since analysis_tool_id is never null
+          t_analysis_job.job = inserted.job;
 
     RETURN null;
 END

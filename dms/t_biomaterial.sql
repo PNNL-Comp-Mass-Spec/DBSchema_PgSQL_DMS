@@ -105,7 +105,7 @@ CREATE TRIGGER trig_t_biomaterial_after_insert AFTER INSERT ON public.t_biomater
 -- Name: t_biomaterial trig_t_biomaterial_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_biomaterial_after_update AFTER UPDATE ON public.t_biomaterial REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_biomaterial_after_update();
+CREATE TRIGGER trig_t_biomaterial_after_update AFTER UPDATE ON public.t_biomaterial REFERENCING OLD TABLE AS deleted NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_biomaterial_after_update();
 
 --
 -- Name: t_biomaterial fk_t_biomaterial_t_biomaterial_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
