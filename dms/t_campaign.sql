@@ -77,7 +77,7 @@ CREATE TRIGGER trig_t_campaign_after_insert AFTER INSERT ON public.t_campaign RE
 -- Name: t_campaign trig_t_campaign_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_campaign_after_update AFTER UPDATE ON public.t_campaign REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_campaign_after_update();
+CREATE TRIGGER trig_t_campaign_after_update AFTER UPDATE ON public.t_campaign REFERENCING OLD TABLE AS deleted NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_campaign_after_update();
 
 --
 -- Name: t_campaign fk_t_campaign_t_data_release_restrictions; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
