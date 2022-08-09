@@ -39,7 +39,7 @@ CREATE TRIGGER trig_t_instrument_allocation_after_insert AFTER INSERT ON public.
 -- Name: t_instrument_allocation trig_t_instrument_allocation_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_instrument_allocation_after_update AFTER UPDATE ON public.t_instrument_allocation REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_instrument_allocation_after_update();
+CREATE TRIGGER trig_t_instrument_allocation_after_update AFTER UPDATE ON public.t_instrument_allocation FOR EACH ROW WHEN (((old.allocated_hours IS DISTINCT FROM new.allocated_hours) OR (old.comment IS DISTINCT FROM new.comment))) EXECUTE FUNCTION public.trigfn_t_instrument_allocation_after_update();
 
 --
 -- Name: TABLE t_instrument_allocation; Type: ACL; Schema: public; Owner: d3l243

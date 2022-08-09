@@ -45,13 +45,13 @@ CREATE UNIQUE INDEX ix_t_default_psm_job_settings_uniq_tool_jobtype_cysalk_styph
 -- Name: t_default_psm_job_settings trig_t_default_psm_job_settings_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_default_psm_job_settings_after_insert AFTER INSERT ON public.t_default_psm_job_settings REFERENCING NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_default_psm_job_settings_after_insert_or_update();
+CREATE TRIGGER trig_t_default_psm_job_settings_after_insert AFTER INSERT ON public.t_default_psm_job_settings FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_default_psm_job_settings_after_insert_or_update();
 
 --
 -- Name: t_default_psm_job_settings trig_t_default_psm_job_settings_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_default_psm_job_settings_after_update AFTER UPDATE ON public.t_default_psm_job_settings REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_default_psm_job_settings_after_insert_or_update();
+CREATE TRIGGER trig_t_default_psm_job_settings_after_update AFTER UPDATE ON public.t_default_psm_job_settings FOR EACH ROW WHEN (((old.tool_name OPERATOR(public.<>) new.tool_name) OR (old.enabled <> new.enabled) OR (old.settings_file_name IS DISTINCT FROM new.settings_file_name))) EXECUTE FUNCTION public.trigfn_t_default_psm_job_settings_after_insert_or_update();
 
 --
 -- Name: t_default_psm_job_settings fk_t_default_psm_job_settings_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

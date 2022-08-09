@@ -13,6 +13,8 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_experiment_plex_members_after_update(
 **  Auth:   mem
 **  Date:   11/28/2018 mem - Initial version
 **          08/05/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
@@ -31,18 +33,13 @@ BEGIN
                 entered,
                 entered_by
             )
-        SELECT O.plex_exp_id,
-               O.channel,
-               O.exp_id,
+        SELECT OLD.plex_exp_id,
+               OLD.channel,
+               OLD.exp_id,
                0 AS state,
                CURRENT_TIMESTAMP,
                SESSION_USER
-        FROM OLD as O INNER JOIN
-             NEW as N
-               ON O.plex_exp_id = N.plex_exp_id AND
-                  O.channel = N.channel AND
-                  O.exp_id <> N.exp_id
-        ORDER BY O.plex_exp_id, O.channel;
+        WHERE OLD.exp_id <> NEW.exp_id;
 
         INSERT INTO t_experiment_plex_members_history
             (
@@ -53,18 +50,13 @@ BEGIN
                 entered,
                 entered_by
             )
-        SELECT N.plex_exp_id,
-               N.channel,
-               N.exp_id,
+        SELECT NEW.plex_exp_id,
+               NEW.channel,
+               NEW.exp_id,
                1 AS state,
                CURRENT_TIMESTAMP,
                SESSION_USER
-        FROM OLD as O INNER JOIN
-             NEW as N
-               ON O.plex_exp_id = N.plex_exp_id AND
-                  O.channel = N.channel AND
-                  O.exp_id <> N.exp_id
-        ORDER BY N.plex_exp_id, N.channel;
+        WHERE OLD.exp_id <> NEW.exp_id;
 
     End If;
 
@@ -80,14 +72,12 @@ BEGIN
                 entered,
                 entered_by
             )
-        SELECT O.plex_exp_id,
-               O.channel,
-               O.exp_id,
+        SELECT OLD.plex_exp_id,
+               OLD.channel,
+               OLD.exp_id,
                0 AS state,
                CURRENT_TIMESTAMP,
-               SESSION_USER
-        FROM OLD as O
-        ORDER BY O.plex_exp_id, O.channel;
+               SESSION_USER;
 
         INSERT INTO t_experiment_plex_members_history
             (
@@ -98,14 +88,12 @@ BEGIN
                 entered,
                 entered_by
             )
-        SELECT N.plex_exp_id,
-               N.channel,
-               N.exp_id,
+        SELECT NEW.plex_exp_id,
+               NEW.channel,
+               NEW.exp_id,
                1 AS state,
                CURRENT_TIMESTAMP,
-               SESSION_USER
-        FROM NEW as N
-        ORDER BY N.plex_exp_id, N.channel;
+               SESSION_USER;
 
     End If;
 

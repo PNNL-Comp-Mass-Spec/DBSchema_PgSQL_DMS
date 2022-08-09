@@ -177,13 +177,13 @@ CREATE TRIGGER trig_t_requested_run_after_delete AFTER DELETE ON public.t_reques
 -- Name: t_requested_run trig_t_requested_run_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_requested_run_after_insert AFTER INSERT ON public.t_requested_run REFERENCING NEW TABLE AS inserted FOR EACH STATEMENT EXECUTE FUNCTION public.trigfn_t_requested_run_after_insert();
+CREATE TRIGGER trig_t_requested_run_after_insert AFTER INSERT ON public.t_requested_run FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_requested_run_after_insert_or_update();
 
 --
 -- Name: t_requested_run trig_t_requested_run_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_requested_run_after_update AFTER UPDATE ON public.t_requested_run REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_requested_run_after_insert_or_update();
+CREATE TRIGGER trig_t_requested_run_after_update AFTER UPDATE ON public.t_requested_run FOR EACH ROW WHEN (((old.batch_id <> new.batch_id) OR (old.cart_id <> new.cart_id) OR (old.eus_usage_type_id <> new.eus_usage_type_id) OR (old.exp_id <> new.exp_id) OR (old.origin OPERATOR(public.<>) new.origin) OR (old.queue_state <> new.queue_state) OR (old.request_name OPERATOR(public.<>) new.request_name) OR (old.requester_prn OPERATOR(public.<>) new.requester_prn) OR (old.state_name OPERATOR(public.<>) new.state_name) OR (old.block IS DISTINCT FROM new.block) OR (old.blocking_factor IS DISTINCT FROM new.blocking_factor) OR (old.cart_column IS DISTINCT FROM new.cart_column) OR (old.cart_config_id IS DISTINCT FROM new.cart_config_id) OR (old.comment IS DISTINCT FROM new.comment) OR (old.dataset_id IS DISTINCT FROM new.dataset_id) OR (old.eus_proposal_id IS DISTINCT FROM new.eus_proposal_id) OR (old.instrument_group IS DISTINCT FROM new.instrument_group) OR (old.instrument_setting IS DISTINCT FROM new.instrument_setting) OR (old.location_id IS DISTINCT FROM new.location_id) OR (old.mrm_attachment IS DISTINCT FROM new.mrm_attachment) OR (old.note IS DISTINCT FROM new.note) OR (old.priority IS DISTINCT FROM new.priority) OR (old.queue_date IS DISTINCT FROM new.queue_date) OR (old.queue_instrument_id IS DISTINCT FROM new.queue_instrument_id) OR (old.request_internal_standard IS DISTINCT FROM new.request_internal_standard) OR (old.request_run_finish IS DISTINCT FROM new.request_run_finish) OR (old.request_run_start IS DISTINCT FROM new.request_run_start) OR (old.request_type_id IS DISTINCT FROM new.request_type_id) OR (old.run_order IS DISTINCT FROM new.run_order) OR (old.separation_group IS DISTINCT FROM new.separation_group) OR (old.special_instructions IS DISTINCT FROM new.special_instructions) OR (old.vialing_conc IS DISTINCT FROM new.vialing_conc) OR (old.vialing_vol IS DISTINCT FROM new.vialing_vol) OR (old.well IS DISTINCT FROM new.well) OR (old.wellplate IS DISTINCT FROM new.wellplate) OR (old.work_package IS DISTINCT FROM new.work_package))) EXECUTE FUNCTION public.trigfn_t_requested_run_after_insert_or_update();
 
 --
 -- Name: t_requested_run fk_t_requested_run_t_attachments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

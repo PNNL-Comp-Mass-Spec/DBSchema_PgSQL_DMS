@@ -9,6 +9,9 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_archive_after_update() RETURN
 **
 **  Desc:
 **      Makes an entry in t_event_log for the updated dataset archive task
+**      Updates several columns in t_dataset_archive if the archive state changes
+**      Updates state_name_cached in t_analysis_job if archive state or archive update state change
+**      Updates t_cached_dataset_folder_paths and t_cached_dataset_links if required
 **
 **  Auth:   grk
 **  Date:   01/01/2003
@@ -24,59 +27,47 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_archive_after_update() RETURN
 **          11/14/2013 mem - Now updating t_cached_dataset_folder_paths
 **          07/25/2017 mem - Now updating t_cached_dataset_links
 **          08/05/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    If Not Exists (Select * From NEW) Then
-        Return Null;
-    End If;
-
     -- Use <> since archive_state_id is never null
     If OLD.archive_state_id <> NEW.archive_state_id Then
 
         INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
-        SELECT 6, N.dataset_id, N.archive_state_id, O.archive_state_id, CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id;
+        SELECT 6, NEW.dataset_id, NEW.archive_state_id, OLD.archive_state_id, CURRENT_TIMESTAMP;
 
         UPDATE t_dataset_archive
         SET archive_state_last_affected = CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id
-        WHERE t_dataset_archive.dataset_id = N.dataset_id;
+        WHERE t_dataset_archive.dataset_id = NEW.dataset_id;
 
         UPDATE t_dataset_archive
         SET instrument_data_purged = 1
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id
-        WHERE t_dataset_archive.dataset_id = N.dataset_id AND
+        WHERE t_dataset_archive.dataset_id = NEW.dataset_id AND
               t_dataset_archive.archive_state_id in (4, 14) AND
               t_dataset_archive.instrument_data_purged <> 1;        -- instrument_data_purged is never null
 
         UPDATE t_dataset_archive
         SET qc_data_purged = 1
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id
-        WHERE t_dataset_archive.dataset_id = N.dataset_id AND
+        WHERE t_dataset_archive.dataset_id = NEW.dataset_id AND
               t_dataset_archive.archive_state_id = 4 AND
               t_dataset_archive.qc_data_purged <> 1;                -- qc_data_purged is never null
+
     End If;
 
     -- Use IS DISTINCT FROM since archive_update_state_id can be null
     If OLD.archive_update_state_id IS DISTINCT FROM NEW.archive_update_state_id Then
 
         INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
-        SELECT 7, N.dataset_id, N.archive_update_state_id, O.archive_update_state_id, CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id;
+        SELECT 7, NEW.dataset_id, NEW.archive_update_state_id, OLD.archive_update_state_id, CURRENT_TIMESTAMP;
 
         UPDATE t_dataset_archive
         SET archive_update_state_last_affected = CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id
-        WHERE t_dataset_archive.dataset_id = N.dataset_id;
+        WHERE t_dataset_archive.dataset_id = NEW.dataset_id;
+
     End If;
 
     -- Use <> with archive_state_id since never null
@@ -86,10 +77,9 @@ BEGIN
 
         UPDATE t_analysis_job
         SET state_name_cached = COALESCE(AJDAS.job_state, '')
-        FROM NEW as N INNER JOIN
-             V_Analysis_Job_and_Dataset_Archive_State AJDAS
-               ON AJDAS.dataset_id = N.dataset_ID
-        WHERE t_analysis_job.dataset_id = N.dataset_id AND
+        FROM V_Analysis_Job_and_Dataset_Archive_State AJDAS
+        WHERE t_analysis_job.dataset_id = NEW.dataset_id AND
+              AJDAS.dataset_id = NEW.dataset_ID AND
               t_analysis_job.state_name_cached <> COALESCE(AJDAS.job_state, '');
 
     End If;
@@ -99,8 +89,7 @@ BEGIN
 
         UPDATE t_cached_dataset_folder_paths
         SET update_required = 1
-        FROM NEW as N
-        WHERE t_cached_dataset_folder_paths.dataset_id = N.dataset_id;
+        WHERE t_cached_dataset_folder_paths.dataset_id = NEW.dataset_id;
 
     End If;
 
@@ -113,8 +102,7 @@ BEGIN
 
         UPDATE t_cached_dataset_links
         SET update_required = 1
-        FROM NEW as N
-        WHERE t_cached_dataset_links.dataset_id = N.dataset_id;
+        WHERE t_cached_dataset_links.dataset_id = NEW.dataset_id;
 
     End If;
 

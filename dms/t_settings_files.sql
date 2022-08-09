@@ -70,7 +70,7 @@ CREATE TRIGGER trig_t_settings_files_after_insert AFTER INSERT ON public.t_setti
 -- Name: t_settings_files trig_t_settings_files_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_settings_files_after_update AFTER UPDATE ON public.t_settings_files REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_settings_files_after_update();
+CREATE TRIGGER trig_t_settings_files_after_update AFTER UPDATE ON public.t_settings_files FOR EACH ROW WHEN (((old.hms_auto_supersede IS DISTINCT FROM new.hms_auto_supersede) OR (old.msgfplus_auto_centroid IS DISTINCT FROM new.msgfplus_auto_centroid) OR (old.analysis_tool OPERATOR(public.<>) new.analysis_tool) OR (old.file_name OPERATOR(public.<>) new.file_name) OR ((old.contents)::text IS DISTINCT FROM (new.contents)::text))) EXECUTE FUNCTION public.trigfn_t_settings_files_after_update();
 
 --
 -- Name: t_settings_files fk_t_settings_files_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

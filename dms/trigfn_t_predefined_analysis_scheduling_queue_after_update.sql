@@ -13,20 +13,16 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_predefined_analysis_scheduling_queue_
 **  Auth:   mem
 **  Date:   08/26/2010
 **          08/05/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    -- Using <> since state can never be null
-    If OLD.state <> NEW.state Then
-
-        UPDATE t_predefined_analysis_scheduling_queue
-        SET last_affected = CURRENT_TIMESTAMP
-        FROM NEW as N
-        WHERE t_predefined_analysis_scheduling_queue.item = N.item;
-
-    End If;
+    UPDATE t_predefined_analysis_scheduling_queue
+    SET last_affected = CURRENT_TIMESTAMP
+    WHERE t_predefined_analysis_scheduling_queue.item = NEW.item;
 
     RETURN null;
 END

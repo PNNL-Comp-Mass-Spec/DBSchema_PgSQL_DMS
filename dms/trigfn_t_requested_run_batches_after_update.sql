@@ -17,26 +17,19 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_batches_after_update() 
 **          06/27/2022 mem - No longer pass the username of the batch owner to GetRequestedRunNameCode
 **          08/01/2022 mem - Update column Updated_By
 **          08/06/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    -- Use <> for batch and created since they are never null
-    -- In contrast, owner could be null
-    If OLD.batch <> NEW.batch OR
-       OLD.created <> NEW.created Then
-
-        UPDATE t_requested_run
-        SET request_name_code = public.get_requested_run_name_code(RR.request_name, RR.created, RR.requester_prn,
-                                                                   RR.batch_id, N.batch, N.created,
-                                                                   RR.request_type_id, RR.separation_group)
-        FROM NEW as N
-             INNER JOIN t_requested_run RR
-               ON RR.batch_id = N.batch_id
-        WHERE t_requested_run.batch_id = N.batch_id;
-
-    End If;
+    UPDATE t_requested_run
+    SET request_name_code = public.get_requested_run_name_code(
+                                        request_name, created, requester_prn,
+                                        batch_id, NEW.batch, NEW.created,
+                                        request_type_id, separation_group)
+    WHERE t_requested_run.batch_id = NEW.batch_id;
 
     RETURN null;
 END

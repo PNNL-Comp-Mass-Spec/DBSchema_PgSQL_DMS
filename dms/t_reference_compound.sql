@@ -109,7 +109,7 @@ CREATE TRIGGER trig_t_reference_compound_after_insert AFTER INSERT ON public.t_r
 -- Name: t_reference_compound trig_t_reference_compound_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_reference_compound_after_update AFTER UPDATE ON public.t_reference_compound REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_reference_compound_after_update();
+CREATE TRIGGER trig_t_reference_compound_after_update AFTER UPDATE ON public.t_reference_compound FOR EACH ROW WHEN (((old.compound_name OPERATOR(public.<>) new.compound_name) OR (old.modifications IS DISTINCT FROM new.modifications) OR (old.gene_name IS DISTINCT FROM new.gene_name))) EXECUTE FUNCTION public.trigfn_t_reference_compound_after_update();
 
 --
 -- Name: t_reference_compound fk_t_reference_compound_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

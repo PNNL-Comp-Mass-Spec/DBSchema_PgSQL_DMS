@@ -93,7 +93,7 @@ CREATE TRIGGER trig_t_dataset_archive_after_insert AFTER INSERT ON public.t_data
 -- Name: t_dataset_archive trig_t_dataset_archive_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_dataset_archive_after_update AFTER UPDATE ON public.t_dataset_archive REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_dataset_archive_after_update();
+CREATE TRIGGER trig_t_dataset_archive_after_update AFTER UPDATE ON public.t_dataset_archive FOR EACH ROW WHEN (((old.archive_state_id <> new.archive_state_id) OR (old.archive_update_state_id IS DISTINCT FROM new.archive_update_state_id) OR (old.storage_path_id <> new.storage_path_id) OR (old.instrument_data_purged <> new.instrument_data_purged) OR (old.qc_data_purged <> new.qc_data_purged) OR (old.myemsl_state <> new.myemsl_state))) EXECUTE FUNCTION public.trigfn_t_dataset_archive_after_update();
 
 --
 -- Name: t_dataset_archive fk_t_dataset_archive_t_archive_path; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

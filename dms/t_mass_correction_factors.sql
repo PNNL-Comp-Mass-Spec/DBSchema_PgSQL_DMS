@@ -63,7 +63,7 @@ CREATE TRIGGER trig_t_mass_correction_factors_after_insert AFTER INSERT ON publi
 -- Name: t_mass_correction_factors trig_t_mass_correction_factors_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_mass_correction_factors_after_update AFTER UPDATE ON public.t_mass_correction_factors REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_mass_correction_factors_after_update();
+CREATE TRIGGER trig_t_mass_correction_factors_after_update AFTER UPDATE ON public.t_mass_correction_factors FOR EACH ROW WHEN (((old.mass_correction_tag OPERATOR(public.<>) new.mass_correction_tag) OR (old.monoisotopic_mass <> new.monoisotopic_mass) OR (old.affected_atom <> new.affected_atom) OR (old.average_mass IS DISTINCT FROM new.average_mass))) EXECUTE FUNCTION public.trigfn_t_mass_correction_factors_after_update();
 
 --
 -- Name: TABLE t_mass_correction_factors; Type: ACL; Schema: public; Owner: d3l243

@@ -13,25 +13,24 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_mts_pt_db_jobs_cached_after_insert_or
 **  Auth:   mem
 **  Date:   11/21/2012 mem - Initial version
 **          08/05/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
+DECLARE
+    _sortKey int;
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    -- Use <> since job is never null
-    If TG_OP = 'INSERT' Or OLD.job <> NEW.job Then
-
-        UPDATE t_mts_pt_db_jobs_cached
-        SET sort_key = CASE WHEN AJ.job IS NULL
-                            THEN -t_mts_pt_db_jobs_cached.job
-                            ELSE t_mts_pt_db_jobs_cached.job
-                       END
-        FROM NEW as N
-             LEFT OUTER JOIN t_analysis_job AJ
-               ON AJ.job = N.job
-        WHERE t_mts_pt_db_jobs_cached.job = N.job;
-
+    If Exists (SELECT * FROM t_analysis_job WHERE job = NEW.job) Then
+        _sortKey := NEW.job;
+    Else
+        _sortKey := -NEW.job;
     End If;
+
+    UPDATE t_mts_pt_db_jobs_cached
+    SET sort_key = _sortKey
+    WHERE t_mts_pt_db_jobs_cached.job = NEW.job;
 
     RETURN null;
 END

@@ -82,7 +82,7 @@ CREATE TRIGGER trig_t_organisms_after_insert AFTER INSERT ON public.t_organisms 
 -- Name: t_organisms trig_t_organisms_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_organisms_after_update AFTER UPDATE ON public.t_organisms REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_organisms_after_update();
+CREATE TRIGGER trig_t_organisms_after_update AFTER UPDATE ON public.t_organisms FOR EACH ROW WHEN (((old.organism OPERATOR(public.<>) new.organism) OR (old.short_name IS DISTINCT FROM new.short_name) OR (old.domain IS DISTINCT FROM new.domain) OR (old.kingdom IS DISTINCT FROM new.kingdom) OR (old.phylum IS DISTINCT FROM new.phylum) OR (old.class IS DISTINCT FROM new.class) OR (old."order" IS DISTINCT FROM new."order") OR (old.family IS DISTINCT FROM new.family) OR (old.genus IS DISTINCT FROM new.genus) OR (old.species IS DISTINCT FROM new.species) OR (old.strain IS DISTINCT FROM new.strain) OR (old.newt_id_list IS DISTINCT FROM new.newt_id_list) OR (old.ncbi_taxonomy_id IS DISTINCT FROM new.ncbi_taxonomy_id) OR (old.active IS DISTINCT FROM new.active))) EXECUTE FUNCTION public.trigfn_t_organisms_after_update();
 
 --
 -- Name: t_organisms fk_t_organisms_t_yes_no; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

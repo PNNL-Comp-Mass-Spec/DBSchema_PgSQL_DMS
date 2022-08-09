@@ -156,7 +156,7 @@ CREATE TRIGGER trig_t_experiments_after_update_all AFTER UPDATE ON public.t_expe
 -- Name: t_experiments trig_t_experiments_after_update_row; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_experiments_after_update_row AFTER UPDATE ON public.t_experiments REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_experiments_after_update();
+CREATE TRIGGER trig_t_experiments_after_update_row AFTER UPDATE ON public.t_experiments FOR EACH ROW WHEN ((old.experiment OPERATOR(public.<>) new.experiment)) EXECUTE FUNCTION public.trigfn_t_experiments_after_update();
 
 --
 -- Name: t_experiments fk_t_experiments_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

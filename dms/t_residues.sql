@@ -57,7 +57,7 @@ CREATE TRIGGER trig_t_residues_after_insert AFTER INSERT ON public.t_residues RE
 -- Name: t_residues trig_t_residues_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_residues_after_update AFTER UPDATE ON public.t_residues REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_residues_after_update();
+CREATE TRIGGER trig_t_residues_after_update AFTER UPDATE ON public.t_residues FOR EACH ROW WHEN (((old.residue_symbol <> new.residue_symbol) OR (old.average_mass <> new.average_mass) OR (old.monoisotopic_mass <> new.monoisotopic_mass) OR (old.num_c <> new.num_c) OR (old.num_h <> new.num_h) OR (old.num_n <> new.num_n) OR (old.num_o <> new.num_o) OR (old.num_s <> new.num_s))) EXECUTE FUNCTION public.trigfn_t_residues_after_update();
 
 --
 -- Name: TABLE t_residues; Type: ACL; Schema: public; Owner: d3l243

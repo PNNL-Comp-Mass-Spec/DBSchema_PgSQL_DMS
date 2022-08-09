@@ -31,7 +31,7 @@ CREATE INDEX ix_t_analysis_job_processor_group_membership_group_id_enabled ON pu
 -- Name: t_analysis_job_processor_group_membership trig_t_analysis_job_processor_group_membership_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_processor_group_membership_after_update AFTER UPDATE ON public.t_analysis_job_processor_group_membership REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_membership_after_update();
+CREATE TRIGGER trig_t_analysis_job_processor_group_membership_after_update AFTER UPDATE ON public.t_analysis_job_processor_group_membership FOR EACH ROW WHEN (((old.processor_id <> new.processor_id) OR (old.group_id <> new.group_id) OR (old.membership_enabled <> new.membership_enabled))) EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_membership_after_update();
 
 --
 -- Name: t_analysis_job_processor_group_membership fk_t_analysis_job_processor_group_t_analysis_job_processor; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

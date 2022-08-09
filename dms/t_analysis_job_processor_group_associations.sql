@@ -29,7 +29,7 @@ CREATE INDEX ix_t_analysis_job_processor_group_associations_group_id_job ON publ
 -- Name: t_analysis_job_processor_group_associations trig_t_analysis_job_processor_group_assoc_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_processor_group_assoc_after_update AFTER UPDATE ON public.t_analysis_job_processor_group_associations REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_assoc_after_update();
+CREATE TRIGGER trig_t_analysis_job_processor_group_assoc_after_update AFTER UPDATE ON public.t_analysis_job_processor_group_associations FOR EACH ROW WHEN ((old.group_id <> new.group_id)) EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_assoc_after_update();
 
 --
 -- Name: t_analysis_job_processor_group_associations fk_t_analysis_job_processor_group_associations_t_analysis_job1; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

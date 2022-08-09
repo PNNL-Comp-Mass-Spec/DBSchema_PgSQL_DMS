@@ -58,7 +58,7 @@ CREATE INDEX ix_t_charge_code_sort_key ON public.t_charge_code USING btree (sort
 -- Name: t_charge_code trig_t_charge_code_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_charge_code_after_update AFTER UPDATE ON public.t_charge_code REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_charge_code_after_update();
+CREATE TRIGGER trig_t_charge_code_after_update AFTER UPDATE ON public.t_charge_code FOR EACH ROW WHEN (((old.activation_state <> new.activation_state) OR (old.deactivated OPERATOR(public.<>) new.deactivated) OR (old.charge_code_state <> new.charge_code_state) OR (old.usage_sample_prep IS DISTINCT FROM new.usage_sample_prep) OR (old.usage_requested_run IS DISTINCT FROM new.usage_requested_run))) EXECUTE FUNCTION public.trigfn_t_charge_code_after_update();
 
 --
 -- Name: t_charge_code fk_t_charge_code_t_charge_code_activation_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

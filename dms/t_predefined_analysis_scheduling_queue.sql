@@ -56,7 +56,7 @@ CREATE INDEX ix_t_predefined_analysis_scheduling_queue_state ON public.t_predefi
 -- Name: t_predefined_analysis_scheduling_queue trig_t_predefined_analysis_scheduling_queue_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_predefined_analysis_scheduling_queue_after_update AFTER UPDATE ON public.t_predefined_analysis_scheduling_queue REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_predefined_analysis_scheduling_queue_after_update();
+CREATE TRIGGER trig_t_predefined_analysis_scheduling_queue_after_update AFTER UPDATE ON public.t_predefined_analysis_scheduling_queue FOR EACH ROW WHEN ((old.state OPERATOR(public.<>) new.state)) EXECUTE FUNCTION public.trigfn_t_predefined_analysis_scheduling_queue_after_update();
 
 --
 -- Name: t_predefined_analysis_scheduling_queue fk_t_predefined_analysis_scheduling_queue_t_predefined; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

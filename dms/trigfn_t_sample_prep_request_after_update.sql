@@ -18,27 +18,32 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_sample_prep_request_after_update() RE
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
 **          06/15/2021 mem - Do not insert a row if the state is unchanged and current user is msdadmin
 **          08/06/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
+DECLARE
+    _username text;
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    INSERT INTO t_sample_prep_request_updates
-        (
-            request_id,
-            system_account,
-            beginning_state_ID,
-            end_state_id
-        )
-    SELECT N.prep_request_id,
-           public.get_user_login_without_domain(''),
-           O.state_id,
-           N.state_id
-    FROM OLD as O INNER JOIN
-         NEW as N ON O.prep_request_id = N.prep_request_id
-    WHERE O.state_id <> N.state_id OR               -- Use <> since state_id is never null
-          O.state_id = N.state_id AND
-          Not public.get_user_login_without_domain('') IN ('postgres', 'msdadmin');
+    _username := public.get_user_login_without_domain('');
+
+    If OLD.state_id <> NEW.state_id OR          -- Use <> since state_id is never null
+       OLD.state_id = NEW.state_id AND
+       Not _username IN ('postgres', 'msdadmin') Then
+
+        INSERT INTO t_sample_prep_request_updates
+            (
+                request_id,
+                system_account,
+                beginning_state_ID,
+                end_state_id
+            )
+        SELECT NEW.prep_request_id,
+               public.get_user_login_without_domain(''),
+               OLD.state_id,
+               NEW.state_id;
+    End If;
 
     RETURN null;
 END

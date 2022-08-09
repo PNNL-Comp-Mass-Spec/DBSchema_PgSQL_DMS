@@ -13,21 +13,17 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_processor_group_assoc_af
 **  Auth:   mem
 **  Date:   04/27/2008
 **          08/04/2022 mem - Ported to PostgreSQL
+**          08/07/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 Begin
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    -- Use <> since group_id is never null
-    If OLD.group_id <> NEW.group_id Then
-
-        UPDATE t_analysis_job_processor_group_associations
-        SET entered = CURRENT_TIMESTAMP,
-            entered_by = SESSION_USER
-        FROM NEW as N
-        WHERE N.job = t_analysis_job_processor_group_associations.job;
-
-    End If;
+    UPDATE t_analysis_job_processor_group_associations
+    SET entered = CURRENT_TIMESTAMP,
+        entered_by = SESSION_USER
+    WHERE t_analysis_job_processor_group_associations.job = NEW.job;
 
     RETURN null;
 END

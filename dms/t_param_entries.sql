@@ -46,7 +46,7 @@ CREATE TRIGGER trig_t_param_entries_after_insert AFTER INSERT ON public.t_param_
 -- Name: t_param_entries trig_t_param_entries_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_param_entries_after_update AFTER UPDATE ON public.t_param_entries REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_param_entries_after_update();
+CREATE TRIGGER trig_t_param_entries_after_update AFTER UPDATE ON public.t_param_entries FOR EACH ROW WHEN (((old.param_file_id <> new.param_file_id) OR (old.entry_sequence_order IS DISTINCT FROM new.entry_sequence_order) OR (old.entry_type IS DISTINCT FROM new.entry_type) OR (old.entry_specifier IS DISTINCT FROM new.entry_specifier) OR (old.entry_value IS DISTINCT FROM new.entry_value))) EXECUTE FUNCTION public.trigfn_t_param_entries_after_update();
 
 --
 -- Name: t_param_entries fk_t_param_entries_t_param_files; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

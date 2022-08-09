@@ -55,7 +55,7 @@ CREATE TRIGGER trig_t_experiment_plex_members_after_update_all AFTER UPDATE ON p
 -- Name: t_experiment_plex_members trig_t_experiment_plex_members_after_update_row; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_experiment_plex_members_after_update_row AFTER UPDATE ON public.t_experiment_plex_members REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_update();
+CREATE TRIGGER trig_t_experiment_plex_members_after_update_row AFTER UPDATE ON public.t_experiment_plex_members FOR EACH ROW WHEN (((old.exp_id <> new.exp_id) OR (old.plex_exp_id <> new.plex_exp_id))) EXECUTE FUNCTION public.trigfn_t_experiment_plex_members_after_update();
 
 --
 -- Name: t_experiment_plex_members fk_t_experiment_plex_members_t_experiment_plex_channel_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

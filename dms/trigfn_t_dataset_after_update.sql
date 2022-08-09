@@ -10,6 +10,8 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_update() RETURNS trigge
 **  Desc:
 **      Makes an entry in t_event_log for the updated dataset
 **
+**      Also looks for renamed datasets and updates t_cached_dataset_folder_paths and t_cached_dataset_links if necessary
+**
 **  Auth:   grk
 **  Date:   01/01/2003
 **          05/16/2007 mem - Now updating last_affected when dataset_state_id changes (Ticket #478)
@@ -20,27 +22,22 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_update() RETURNS trigge
 **          11/22/2013 mem - Now updating date_sort_key
 **          07/25/2017 mem - Now updating t_cached_dataset_links
 **          08/05/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    If Not Exists (Select * From NEW) Then
-        Return Null;
-    End If;
-
     -- Use <> since dataset_state_id is never null
     If OLD.dataset_state_id <> NEW.dataset_state_id Then
 
         INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
-        SELECT 4, N.dataset_id, N.dataset_state_id, O.dataset_state_id, CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id;
+        SELECT 4, NEW.dataset_id, NEW.dataset_state_id, OLD.dataset_state_id, CURRENT_TIMESTAMP;
 
         UPDATE t_dataset
         Set last_affected = CURRENT_TIMESTAMP
-        FROM NEW as N
-        WHERE t_dataset.dataset_id = N.dataset_id;
+        WHERE t_dataset.dataset_id = NEW.dataset_id;
 
     End If;
 
@@ -48,9 +45,7 @@ BEGIN
     If OLD.dataset_rating_id <> NEW.dataset_rating_id Then
 
         INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
-        SELECT 8, N.dataset_id, N.dataset_rating_id, O.dataset_rating_id, CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id;
+        SELECT 8, NEW.dataset_id, NEW.dataset_rating_id, OLD.dataset_rating_id, CURRENT_TIMESTAMP;
 
     End If;
 
@@ -58,9 +53,7 @@ BEGIN
     If OLD.dataset <> NEW.dataset Then
 
         INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)
-        SELECT 4, N.dataset_id, O.dataset, N.dataset, CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.dataset_id = N.dataset_id;
+        SELECT 4, NEW.dataset_id, OLD.dataset, NEW.dataset, CURRENT_TIMESTAMP;
 
     End If;
 
@@ -71,13 +64,11 @@ BEGIN
 
         UPDATE t_cached_dataset_folder_paths
         SET update_required = 1
-        FROM NEW as N
-        WHERE t_cached_dataset_folder_paths.dataset_id = N.dataset_id;
+        WHERE t_cached_dataset_folder_paths.dataset_id = NEW.dataset_id;
 
         UPDATE t_cached_dataset_links
         SET update_required = 1
-        FROM NEW as N
-        WHERE t_cached_dataset_links.dataset_id = N.dataset_id;
+        WHERE t_cached_dataset_links.dataset_id = NEW.dataset_id;
 
     End If;
 
@@ -92,10 +83,9 @@ BEGIN
         SET date_sort_key = CASE WHEN E.experiment = 'Tracking' THEN t_dataset.created
                                  ELSE COALESCE(t_dataset.acq_time_start, t_dataset.created)
                             END
-        FROM NEW as N
-             INNER JOIN t_experiments E
-               ON N.exp_id = E.exp_id
-        WHERE t_dataset.dataset_id = N.dataset_id;
+        FROM t_experiments E
+        WHERE t_dataset.dataset_id = NEW.dataset_id AND
+              E.exp_id = NEW.exp_id;
 
     End If;
 

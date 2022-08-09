@@ -15,29 +15,20 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_reference_compound_after_update() RET
 **          01/03/2018 mem - Store compound name, gene name, and modifications in the old_name and new_name fields
 **
 **          08/05/2022 mem - Ported to PostgreSQL
+**          08/08/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    -- Use <> with compound_name since never null
-    -- The other columns could be null
-    If OLD.compound_name <> NEW.compound_name OR
-       OLD.modifications IS DISTINCT FROM NEW.modifications OR
-       OLD.gene_name IS DISTINCT FROM NEW.gene_name Then
-
-        INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)
-        SELECT 13, N.compound_id,
-               O.compound_name || ' (modifications ' || COALESCE(O.modifications, '') || ', Gene ' || COALESCE(O.gene_name, '') || ')',
-               N.compound_name || ' (modifications ' || COALESCE(N.modifications, '') || ', Gene ' || COALESCE(N.gene_name, '') || ')',
-               CURRENT_TIMESTAMP
-        FROM OLD as O INNER JOIN
-             NEW as N ON O.compound_id = N.compound_id
-        WHERE O.compound_name || '_' || COALESCE(O.modifications, '') || '_' ||  COALESCE(O.gene_name, '') <>
-              N.compound_name || '_' || COALESCE(N.modifications, '') || '_' ||  COALESCE(N.gene_name, '')
-        ORDER BY N.compound_id;
-
-    End If;
+    INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)
+    SELECT 13, NEW.compound_id,
+           OLD.compound_name || ' (modifications ' || COALESCE(OLD.modifications, '') || ', Gene ' || COALESCE(OLD.gene_name, '') || ')',
+           NEW.compound_name || ' (modifications ' || COALESCE(NEW.modifications, '') || ', Gene ' || COALESCE(NEW.gene_name, '') || ')',
+           CURRENT_TIMESTAMP
+    WHERE OLD.compound_name || '_' || COALESCE(OLD.modifications, '') || '_' ||  COALESCE(OLD.gene_name, '') <>
+          NEW.compound_name || '_' || COALESCE(NEW.modifications, '') || '_' ||  COALESCE(NEW.gene_name, '');
 
     RETURN null;
 END

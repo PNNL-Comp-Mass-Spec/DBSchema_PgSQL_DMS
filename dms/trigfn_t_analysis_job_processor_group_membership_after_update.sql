@@ -14,24 +14,18 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_processor_group_membersh
 **  Auth:   mem
 **  Date:   02/24/2007
 **          08/04/2022 mem - Ported to PostgreSQL
+**          08/07/2022 mem - Move value comparison to WHEN condition of trigger
+**                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    -- Use <> since processor_id, group_id, and membership_enabled are never null
-    If OLD.processor_id <> NEW.processor_id OR
-       OLD.group_id <> NEW.group_id OR
-       OLD.membership_enabled <> NEW.membership_enabled Then
-
-        UPDATE t_analysis_job_processor_group_membership
-        SET last_affected = CURRENT_TIMESTAMP,
-            entered_by = SESSION_USER
-        FROM NEW as N
-        WHERE t_analysis_job_processor_group_membership.processor_id = N.processor_id AND
-              t_analysis_job_processor_group_membership.Group_ID = N.Group_ID;
-
-    End If;
+    UPDATE t_analysis_job_processor_group_membership
+    SET last_affected = CURRENT_TIMESTAMP,
+        entered_by = SESSION_USER
+    WHERE t_analysis_job_processor_group_membership.processor_id = NEW.processor_id AND
+          t_analysis_job_processor_group_membership.Group_ID = NEW.group_id;
 
     RETURN null;
 END

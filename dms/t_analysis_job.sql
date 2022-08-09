@@ -164,7 +164,7 @@ CREATE TRIGGER trig_t_analysis_job_after_delete_all AFTER DELETE ON public.t_ana
 -- Name: t_analysis_job trig_t_analysis_job_after_delete_row; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_after_delete_row AFTER DELETE ON public.t_analysis_job REFERENCING OLD TABLE AS deleted FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_delete();
+CREATE TRIGGER trig_t_analysis_job_after_delete_row AFTER DELETE ON public.t_analysis_job FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_delete();
 
 --
 -- Name: t_analysis_job trig_t_analysis_job_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
@@ -176,7 +176,7 @@ CREATE TRIGGER trig_t_analysis_job_after_insert AFTER INSERT ON public.t_analysi
 -- Name: t_analysis_job trig_t_analysis_job_after_insert_validate; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_after_insert_validate AFTER INSERT ON public.t_analysis_job REFERENCING NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_insert_or_update_validate();
+CREATE TRIGGER trig_t_analysis_job_after_insert_validate AFTER INSERT ON public.t_analysis_job FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_insert_or_update_validate();
 
 --
 -- Name: t_analysis_job trig_t_analysis_job_after_update_all; Type: TRIGGER; Schema: public; Owner: d3l243
@@ -194,7 +194,7 @@ CREATE TRIGGER trig_t_analysis_job_after_update_rows AFTER UPDATE ON public.t_an
 -- Name: t_analysis_job trig_t_analysis_job_after_update_validate; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_after_update_validate AFTER UPDATE ON public.t_analysis_job REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_analysis_job_after_insert_or_update_validate();
+CREATE TRIGGER trig_t_analysis_job_after_update_validate AFTER UPDATE ON public.t_analysis_job FOR EACH ROW WHEN (((old.settings_file_name OPERATOR(public.<>) new.settings_file_name) OR (old.job_state_id <> new.job_state_id))) EXECUTE FUNCTION public.trigfn_t_analysis_job_after_insert_or_update_validate();
 
 --
 -- Name: t_analysis_job fk_t_analysis_job_t_analysis_job_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

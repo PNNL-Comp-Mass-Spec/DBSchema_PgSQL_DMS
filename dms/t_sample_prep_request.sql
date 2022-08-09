@@ -122,7 +122,7 @@ CREATE TRIGGER trig_t_sample_prep_request_after_insert AFTER INSERT ON public.t_
 -- Name: t_sample_prep_request trig_t_sample_prep_request_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_sample_prep_request_after_update AFTER UPDATE ON public.t_sample_prep_request REFERENCING OLD TABLE AS old NEW TABLE AS new FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_sample_prep_request_after_update();
+CREATE TRIGGER trig_t_sample_prep_request_after_update AFTER UPDATE ON public.t_sample_prep_request FOR EACH ROW EXECUTE FUNCTION public.trigfn_t_sample_prep_request_after_update();
 
 --
 -- Name: t_sample_prep_request fk_t_sample_prep_request_t_eus_proposals; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
