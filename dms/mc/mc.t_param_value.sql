@@ -63,7 +63,7 @@ CREATE TRIGGER trig_t_param_value_after_insert AFTER INSERT ON mc.t_param_value 
 -- Name: t_param_value trig_t_param_value_after_update; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_param_value_after_update AFTER UPDATE OF type_id, value, mgr_id ON mc.t_param_value FOR EACH ROW EXECUTE FUNCTION mc.trigfn_t_param_value_after_update();
+CREATE TRIGGER trig_t_param_value_after_update AFTER UPDATE ON mc.t_param_value FOR EACH ROW WHEN (((old.type_id <> new.type_id) OR (old.value OPERATOR(public.<>) new.value) OR (old.mgr_id <> new.mgr_id))) EXECUTE FUNCTION mc.trigfn_t_param_value_after_update();
 
 --
 -- Name: t_param_value fk_t_param_value_t_mgrs; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243

@@ -38,5 +38,5 @@ ALTER TABLE ONLY pc.t_log_entries
 -- Name: t_log_entries trig_t_log_entries_after_update; Type: TRIGGER; Schema: pc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_log_entries_after_update AFTER UPDATE OF posted_by, posting_time, type, message ON pc.t_log_entries FOR EACH ROW EXECUTE FUNCTION pc.trigfn_t_log_entries_user_after_update();
+CREATE TRIGGER trig_t_log_entries_after_update AFTER UPDATE ON pc.t_log_entries FOR EACH ROW WHEN (((old.posting_time <> new.posting_time) OR (old.posted_by IS DISTINCT FROM new.posted_by) OR (old.type IS DISTINCT FROM new.type) OR (old.message IS DISTINCT FROM new.message))) EXECUTE FUNCTION pc.trigfn_t_log_entries_user_after_update();
 
