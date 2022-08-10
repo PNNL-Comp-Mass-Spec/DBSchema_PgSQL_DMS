@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_after_insert_or_update(
 **          08/06/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
+**          08/10/2022 mem - Update t_event_log when inserting a new row
 **
 *****************************************************/
 DECLARE
@@ -60,9 +61,21 @@ BEGIN
 
     End If;
 
-    -- Use <> since state_name is never null
-    If TG_OP = 'UPDATE' AND
-       OLD.state_name <> NEW.state_name Then
+    If TG_OP = 'INSERT' Then
+
+        SELECT state_id
+        INTO _stateIdNew
+        FROM t_requested_run_state_name
+        WHERE state_name = NEW.state_name;
+
+        INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+        SELECT 11 AS target_type,
+               NEW.request_id,
+               _stateIdNew,
+               0,
+               CURRENT_TIMESTAMP;
+
+    ElsIf OLD.state_name <> NEW.state_name Then     -- Use <> since state_name is never null
 
         SELECT state_id
         INTO _stateIdOld
