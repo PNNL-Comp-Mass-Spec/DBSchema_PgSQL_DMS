@@ -18,38 +18,47 @@ CREATE VIEW public.v_event_log AS
             WHEN 10 THEN 'Campaign Data Release State'::text
             WHEN 11 THEN 'Requested Run'::text
             WHEN 12 THEN 'Analysis Job Request'::text
+            WHEN 13 THEN 'Reference Compound'::text
             ELSE NULL::text
         END AS target,
     el.target_id,
     el.target_state,
-        CASE el.target_type
-            WHEN 1 THEN
+        CASE
+            WHEN (el.target_type = ANY (ARRAY[1, 2, 3, 13])) THEN
             CASE el.target_state
                 WHEN 1 THEN 'Created'::text
                 WHEN 0 THEN 'Deleted'::text
                 ELSE NULL::text
             END
-            WHEN 2 THEN
-            CASE el.target_state
-                WHEN 1 THEN 'Created'::text
-                WHEN 0 THEN 'Deleted'::text
-                ELSE NULL::text
+            WHEN (el.target_type = 4) THEN
+            CASE
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
+                ELSE (dssn.dataset_state)::text
             END
-            WHEN 3 THEN
-            CASE el.target_state
-                WHEN 1 THEN 'Created'::text
-                WHEN 0 THEN 'Deleted'::text
-                ELSE NULL::text
+            WHEN (el.target_type = 5) THEN
+            CASE
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
+                ELSE (ajsn.job_state)::text
             END
-            WHEN 4 THEN (dssn.dataset_state)::text
-            WHEN 5 THEN (ajsn.job_state)::text
-            WHEN 6 THEN (dasn.archive_state)::text
-            WHEN 7 THEN (ausn.archive_update_state)::text
-            WHEN 8 THEN (dsrn.dataset_rating)::text
-            WHEN 9 THEN '% EMSL Funded'::text
-            WHEN 10 THEN (drr.release_restriction)::text
-            WHEN 11 THEN (rrsn.state_name)::text
-            WHEN 12 THEN (ajrs.request_state)::text
+            WHEN (el.target_type = 6) THEN
+            CASE
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
+                ELSE (dasn.archive_state)::text
+            END
+            WHEN (el.target_type = 7) THEN (ausn.archive_update_state)::text
+            WHEN (el.target_type = 8) THEN (dsrn.dataset_rating)::text
+            WHEN (el.target_type = 9) THEN '% EMSL Funded'::text
+            WHEN (el.target_type = 10) THEN (drr.release_restriction)::text
+            WHEN (el.target_type = 11) THEN
+            CASE
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
+                ELSE (rrsn.state_name)::text
+            END
+            WHEN (el.target_type = 12) THEN
+            CASE
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
+                ELSE (ajrs.request_state)::text
+            END
             ELSE NULL::text
         END AS state_name,
     el.prev_target_state,
