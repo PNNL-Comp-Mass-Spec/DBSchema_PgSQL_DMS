@@ -21,12 +21,13 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_after_delete() RETURNS t
 **          08/01/2022 mem - Initial version
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/07/2022 mem - Reference the NEW and OLD variables directly instead of using transition tables (which contain every deleted row, not just the current row)
+**          08/11/2022 mem - Convert _bestJobByDataset from an int to a record
 **
 *****************************************************/
 DECLARE
     _analysisTool text;
     _datasetName text;
-    _bestJobByDataset int;
+    _bestJobByDataset record;
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
