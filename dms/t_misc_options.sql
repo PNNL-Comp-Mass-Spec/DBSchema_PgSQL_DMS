@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE public.t_misc_options (
-    name public.citext NOT NULL,
     id integer NOT NULL,
+    name public.citext NOT NULL,
     value integer NOT NULL,
     comment public.citext
 );
@@ -30,13 +30,13 @@ ALTER TABLE public.t_misc_options ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTI
 --
 
 ALTER TABLE ONLY public.t_misc_options
-    ADD CONSTRAINT pk_t_misc_options PRIMARY KEY (name);
+    ADD CONSTRAINT pk_t_misc_options PRIMARY KEY (id);
 
 --
--- Name: ix_t_misc_options_id; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_misc_options_name; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_misc_options_id ON public.t_misc_options USING btree (id);
+CREATE UNIQUE INDEX ix_t_misc_options_name ON public.t_misc_options USING btree (name);
 
 --
 -- Name: TABLE t_misc_options; Type: ACL; Schema: public; Owner: d3l243
