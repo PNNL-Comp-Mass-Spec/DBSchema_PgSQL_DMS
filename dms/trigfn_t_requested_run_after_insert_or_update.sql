@@ -22,6 +22,10 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_after_insert_or_update(
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
 **          08/10/2022 mem - Update t_event_log when inserting a new row
+**          08/16/2022 mem - Log renamed requested runs
+**                         - Log dataset_id changes (ignoring change from null to a value)
+**                         - Log exp_id changes
+**                         - Log requested runs that have the same dataset_id
 **
 *****************************************************/
 DECLARE
@@ -29,6 +33,10 @@ DECLARE
     _requestNameCode text;
     _stateIdOld int;
     _stateIdNew int;
+    _datasetNameOld text;
+    _datasetNameNew text;
+    _experimentNameOld text;
+    _experimentNameNew text;
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
@@ -102,6 +110,82 @@ BEGIN
         Queue_State = CASE WHEN NEW.state_name = 'Completed' THEN 3 ELSE NEW.Queue_State END,
         Updated_By = SESSION_USER
     WHERE t_requested_run.request_id = NEW.request_id;
+
+    If TG_OP = 'UPDATE' Then
+
+        -- Check for renamed requested run
+        -- Use <> since request_name is never null
+        If OLD.request_name <> NEW.request_name Then
+
+            INSERT INTO T_Entity_Rename_Log ( target_type, target_id, old_name, new_name )
+            VALUES (11,
+                    NEW.request_id,
+                    OLD.request_name,
+                    NEW.request_name);
+
+        End If;
+
+        -- Check for updated Dataset ID (including changing to null)
+        If NOT OLD.dataset_id IS Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
+
+            SELECT dataset
+            INTO _datasetNameOld
+            FROM t_dataset
+            WHERE dataset_id = OLD.dataset_id;
+
+            SELECT dataset
+            INTO _datasetNameNew
+            FROM t_dataset
+            WHERE dataset_id = NEW.dataset_id;
+
+            INSERT INTO T_Entity_Rename_Log ( target_type, Target_ID, Old_Name, New_Name )
+            VALUES (14,
+                    NEW.request_id,
+                    OLD.dataset_id::text || ': ' || Coalesce(_datasetNameOld, '??'),
+                    CASE
+                        WHEN NEW.dataset_id IS NULL THEN 'null'
+                        ELSE NEW.dataset_id::text || ': ' || Coalesce(_datasetNameNew, '??')
+                    END);
+        End If;
+
+        -- Check for updated Experiment ID
+        If OLD.exp_id <> NEW.exp_id then
+
+            SELECT experiment
+            INTO _experimentNameOld
+            FROM t_experiments
+            WHERE exp_id = OLD.exp_id;
+
+            SELECT experiment
+            INTO _experimentNameNew
+            FROM t_experiments
+            WHERE exp_id = NEW.exp_id;
+
+            INSERT INTO t_entity_rename_log ( target_type, target_id, old_name, new_name )
+            VALUES (15,
+                    NEW.request_id,
+                    OLD.exp_id::text || ': ' || _experimentNameOld,
+                    NEW.exp_id::text || ': ' || _experimentNameNew);
+
+        End If;
+
+    End If;
+
+    If TG_OP = 'INSERT' Or NOT NEW.dataset_id IS Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
+
+        -- Check whether another requested run already has the new Dataset ID
+        INSERT INTO T_Entity_Rename_Log ( target_type, Target_ID, Old_Name, New_Name )
+        SELECT 14 AS target_type,
+               NEW.request_id,
+               'Dataset ID ' || NEW.dataset_id::text || ' is already referenced by Request ID ' || RR.request_id::text,
+               NEW.dataset_id::text || ': ' || Coalesce(NewDataset.dataset, '??')
+        FROM T_Requested_Run RR
+             LEFT OUTER JOIN T_Dataset AS NewDataset
+               ON RR.dataset_id = NewDataset.dataset_id
+        WHERE NEW.dataset_id = RR.dataset_id And
+              NEW.request_id <> RR.request_id;
+
+    End If;
 
     RETURN null;
 END
