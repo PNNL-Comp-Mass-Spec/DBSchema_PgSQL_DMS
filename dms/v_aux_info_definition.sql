@@ -14,8 +14,8 @@ CREATE VIEW public.v_aux_info_definition AS
     item.data_size,
     item.helper_append
    FROM (((public.t_aux_info_category category
-     JOIN public.t_aux_info_subcategory subcategory ON ((category.aux_category_id = subcategory.parent_id)))
-     JOIN public.t_aux_info_description item ON ((subcategory.aux_subcategory_id = item.parent_id)))
+     JOIN public.t_aux_info_subcategory subcategory ON ((category.aux_category_id = subcategory.aux_category_id)))
+     JOIN public.t_aux_info_description item ON ((subcategory.aux_subcategory_id = item.aux_subcategory_id)))
      JOIN public.t_aux_info_target category_target ON ((category.target_type_id = category_target.aux_target_id)))
   WHERE (item.active = 'Y'::bpchar);
 

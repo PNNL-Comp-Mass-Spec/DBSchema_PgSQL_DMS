@@ -5,7 +5,7 @@
 CREATE TABLE public.t_aux_info_subcategory (
     aux_subcategory_id integer NOT NULL,
     aux_subcategory public.citext,
-    parent_id integer,
+    aux_category_id integer,
     sequence smallint DEFAULT 0 NOT NULL
 );
 
@@ -37,7 +37,7 @@ ALTER TABLE ONLY public.t_aux_info_subcategory
 --
 
 ALTER TABLE ONLY public.t_aux_info_subcategory
-    ADD CONSTRAINT fk_t_aux_info_subcategory_t_aux_info_category FOREIGN KEY (parent_id) REFERENCES public.t_aux_info_category(aux_category_id);
+    ADD CONSTRAINT fk_t_aux_info_subcategory_t_aux_info_category FOREIGN KEY (aux_category_id) REFERENCES public.t_aux_info_category(aux_category_id);
 
 --
 -- Name: TABLE t_aux_info_subcategory; Type: ACL; Schema: public; Owner: d3l243

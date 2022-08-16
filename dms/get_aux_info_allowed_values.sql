@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_allowed_values(_id integer) RETUR
 **  Auth:   grk
 **  Date:   08/24/2010
 **          06/18/2022 mem - Ported to PostgreSQL
+**          08/15/2022 mem - Use new column name
 **
 *****************************************************/
 DECLARE
@@ -23,7 +24,7 @@ BEGIN
     SELECT string_agg(Value, ' | ' ORDER BY Value)
     INTO _result
     FROM t_aux_info_allowed_values
-    WHERE aux_info_id = _id;
+    WHERE aux_description_id = _id;
 
     RETURN Coalesce(_result, '');
 END

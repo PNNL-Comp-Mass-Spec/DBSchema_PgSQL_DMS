@@ -10,9 +10,9 @@ CREATE VIEW public.v_aux_info_sample_prep_request_values AS
     item.aux_description AS item,
     val.value
    FROM ((((public.t_aux_info_category category
-     JOIN public.t_aux_info_subcategory subcategory ON ((category.aux_category_id = subcategory.parent_id)))
-     JOIN public.t_aux_info_description item ON ((subcategory.aux_subcategory_id = item.parent_id)))
-     JOIN public.t_aux_info_value val ON ((item.aux_description_id = val.aux_info_id)))
+     JOIN public.t_aux_info_subcategory subcategory ON ((category.aux_category_id = subcategory.aux_category_id)))
+     JOIN public.t_aux_info_description item ON ((subcategory.aux_subcategory_id = item.aux_subcategory_id)))
+     JOIN public.t_aux_info_value val ON ((item.aux_description_id = val.aux_description_id)))
      JOIN public.t_sample_prep_request spr ON ((val.target_id = spr.prep_request_id)))
   WHERE (category.target_type_id = 503);
 

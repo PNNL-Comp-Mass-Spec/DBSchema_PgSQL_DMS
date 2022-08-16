@@ -5,7 +5,7 @@
 CREATE TABLE public.t_aux_info_description (
     aux_description_id integer NOT NULL,
     aux_description public.citext NOT NULL,
-    parent_id integer,
+    aux_subcategory_id integer,
     sequence smallint DEFAULT 0 NOT NULL,
     data_size integer DEFAULT 64 NOT NULL,
     helper_append character(1) DEFAULT 'N'::bpchar NOT NULL,
@@ -41,7 +41,7 @@ ALTER TABLE ONLY public.t_aux_info_description
 --
 
 ALTER TABLE ONLY public.t_aux_info_description
-    ADD CONSTRAINT fk_t_aux_info_description_t_aux_info_subcategory FOREIGN KEY (parent_id) REFERENCES public.t_aux_info_subcategory(aux_subcategory_id);
+    ADD CONSTRAINT fk_t_aux_info_description_t_aux_info_subcategory FOREIGN KEY (aux_subcategory_id) REFERENCES public.t_aux_info_subcategory(aux_subcategory_id);
 
 --
 -- Name: TABLE t_aux_info_description; Type: ACL; Schema: public; Owner: d3l243
