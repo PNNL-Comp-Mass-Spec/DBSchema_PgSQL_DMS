@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.2
+-- Dumped from database version 14.5
 -- Dumped by pg_dump version 14.2
 
 SET statement_timeout = 0;
@@ -20,12 +20,12 @@ SET row_security = off;
 -- Data for Name: t_requested_run_state_name; Type: TABLE DATA; Schema: public; Owner: d3l243
 --
 
-COPY public.t_requested_run_state_name (state_name, state_id) FROM stdin;
-Active	1
-Completed	2
-Inactive	3
-Holding	4
-Fractionated	5
+COPY public.t_requested_run_state_name (state_id, state_name) FROM stdin;
+1	Active
+2	Completed
+3	Inactive
+4	Holding
+5	Fractionated
 \.
 
 
