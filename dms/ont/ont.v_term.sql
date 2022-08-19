@@ -20,3 +20,9 @@ CREATE VIEW ont.v_term AS
 
 ALTER TABLE ont.v_term OWNER TO d3l243;
 
+--
+-- Name: TABLE v_term; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_term TO readaccess;
+

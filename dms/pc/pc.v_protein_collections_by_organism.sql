@@ -31,3 +31,9 @@ CREATE VIEW pc.v_protein_collections_by_organism AS
 
 ALTER TABLE pc.v_protein_collections_by_organism OWNER TO d3l243;
 
+--
+-- Name: TABLE v_protein_collections_by_organism; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_protein_collections_by_organism TO readaccess;
+

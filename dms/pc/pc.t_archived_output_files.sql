@@ -57,3 +57,9 @@ ALTER TABLE ONLY pc.t_archived_output_files
 ALTER TABLE ONLY pc.t_archived_output_files
     ADD CONSTRAINT fk_t_archived_output_files_t_archived_file_types FOREIGN KEY (archived_file_type_id) REFERENCES pc.t_archived_file_types(archived_file_type_id);
 
+--
+-- Name: TABLE t_archived_output_files; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_archived_output_files TO readaccess;
+

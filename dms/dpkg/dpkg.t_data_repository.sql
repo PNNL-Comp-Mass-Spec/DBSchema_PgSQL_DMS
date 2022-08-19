@@ -36,3 +36,9 @@ ALTER TABLE ONLY dpkg.t_data_repository
 
 CREATE UNIQUE INDEX ix_t_data_repository_repository_name ON dpkg.t_data_repository USING btree (repository_name);
 
+--
+-- Name: TABLE t_data_repository; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_repository TO readaccess;
+

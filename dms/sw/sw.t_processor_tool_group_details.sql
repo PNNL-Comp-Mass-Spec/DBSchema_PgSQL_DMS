@@ -44,3 +44,9 @@ ALTER TABLE ONLY sw.t_processor_tool_group_details
 ALTER TABLE ONLY sw.t_processor_tool_group_details
     ADD CONSTRAINT fk_t_processor_tool_group_details_t_step_tools FOREIGN KEY (tool_name) REFERENCES sw.t_step_tools(step_tool) ON UPDATE CASCADE;
 
+--
+-- Name: TABLE t_processor_tool_group_details; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_processor_tool_group_details TO readaccess;
+

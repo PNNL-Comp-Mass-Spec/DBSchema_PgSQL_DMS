@@ -23,3 +23,9 @@ ALTER TABLE ONLY ont.t_ncbi_taxonomy_name_class
 
 CREATE INDEX ix_t_ncbi_taxonomy_name_class_sort_weight ON ont.t_ncbi_taxonomy_name_class USING btree (sort_weight) INCLUDE (name_class);
 
+--
+-- Name: TABLE t_ncbi_taxonomy_name_class; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_name_class TO readaccess;
+

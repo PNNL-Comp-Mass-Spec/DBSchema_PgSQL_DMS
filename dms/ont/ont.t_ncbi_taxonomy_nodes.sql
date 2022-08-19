@@ -48,3 +48,9 @@ ALTER TABLE ONLY ont.t_ncbi_taxonomy_nodes
 ALTER TABLE ONLY ont.t_ncbi_taxonomy_nodes
     ADD CONSTRAINT fk_t_ncbi_taxonomy_nodes_t_ncbi_taxonomy_gen_code FOREIGN KEY (genetic_code_id) REFERENCES ont.t_ncbi_taxonomy_gen_code(genetic_code_id);
 
+--
+-- Name: TABLE t_ncbi_taxonomy_nodes; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_nodes TO readaccess;
+

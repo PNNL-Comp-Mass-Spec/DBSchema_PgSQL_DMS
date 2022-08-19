@@ -39,3 +39,9 @@ ALTER TABLE ONLY pc.t_genome_assembly
 ALTER TABLE ONLY pc.t_genome_assembly
     ADD CONSTRAINT fk_t_genome_assembly_t_naming_authorities FOREIGN KEY (authority_id) REFERENCES pc.t_naming_authorities(authority_id);
 
+--
+-- Name: TABLE t_genome_assembly; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_genome_assembly TO readaccess;
+

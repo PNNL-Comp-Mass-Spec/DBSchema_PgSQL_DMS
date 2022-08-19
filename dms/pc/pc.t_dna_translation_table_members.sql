@@ -42,3 +42,9 @@ ALTER TABLE ONLY pc.t_dna_translation_table_members
 ALTER TABLE ONLY pc.t_dna_translation_table_members
     ADD CONSTRAINT fk_t_dna_translation_table_members_t_dna_translation_table_map FOREIGN KEY (dna_translation_table_id) REFERENCES pc.t_dna_translation_table_map(dna_translation_table_id);
 
+--
+-- Name: TABLE t_dna_translation_table_members; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_dna_translation_table_members TO readaccess;
+

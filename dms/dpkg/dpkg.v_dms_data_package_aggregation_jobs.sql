@@ -51,3 +51,9 @@ ALTER TABLE dpkg.v_dms_data_package_aggregation_jobs OWNER TO d3l243;
 
 COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_jobs IS 'Note that this view is used by V_DMS_Data_Package_Aggregation_Jobs in DMS_Pipeline, and the PRIDE converter plugin uses that view to retrieve metadata for data package jobs';
 
+--
+-- Name: TABLE v_dms_data_package_aggregation_jobs; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_dms_data_package_aggregation_jobs TO readaccess;
+

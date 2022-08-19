@@ -23,3 +23,9 @@ ALTER TABLE ONLY pc.t_protein_headers
 
 CREATE INDEX ix_t_protein_headers ON pc.t_protein_headers USING btree (sequence_head);
 
+--
+-- Name: TABLE t_protein_headers; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_protein_headers TO readaccess;
+

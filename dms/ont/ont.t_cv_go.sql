@@ -56,3 +56,9 @@ CREATE INDEX ix_t_cv_go_parent_term_name ON ont.t_cv_go USING btree (parent_term
 
 CREATE INDEX ix_t_cv_go_term_name ON ont.t_cv_go USING btree (term_name);
 
+--
+-- Name: TABLE t_cv_go; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_cv_go TO readaccess;
+

@@ -32,3 +32,9 @@ ALTER TABLE ONLY cap.t_automatic_jobs
 ALTER TABLE ONLY cap.t_automatic_jobs
     ADD CONSTRAINT fk_t_automatic_jobs_t_scripts1 FOREIGN KEY (script_for_new_job) REFERENCES cap.t_scripts(script);
 
+--
+-- Name: TABLE t_automatic_jobs; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_automatic_jobs TO readaccess;
+

@@ -37,3 +37,9 @@ CREATE INDEX ix_t_job_step_dep_history_job_step_evaluated_triggered ON cap.t_tas
 
 CREATE INDEX ix_t_task_step_dependencies_history ON cap.t_task_step_dependencies_history USING btree (job);
 
+--
+-- Name: TABLE t_task_step_dependencies_history; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_task_step_dependencies_history TO readaccess;
+

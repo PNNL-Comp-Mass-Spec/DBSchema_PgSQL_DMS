@@ -37,3 +37,9 @@ ALTER TABLE ONLY pc.t_collection_organism_xref
 
 CREATE UNIQUE INDEX ix_t_collection_organism_xref_prot_collection_id_organism_id ON pc.t_collection_organism_xref USING btree (protein_collection_id, organism_id);
 
+--
+-- Name: TABLE t_collection_organism_xref; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_collection_organism_xref TO readaccess;
+

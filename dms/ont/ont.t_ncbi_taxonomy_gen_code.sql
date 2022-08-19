@@ -20,3 +20,9 @@ ALTER TABLE ont.t_ncbi_taxonomy_gen_code OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_ncbi_taxonomy_gen_code
     ADD CONSTRAINT pk_t_ncbi_taxonomy_gen_code PRIMARY KEY (genetic_code_id);
 
+--
+-- Name: TABLE t_ncbi_taxonomy_gen_code; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_gen_code TO readaccess;
+

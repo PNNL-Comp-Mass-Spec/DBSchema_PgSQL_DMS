@@ -77,3 +77,9 @@ CREATE INDEX ix_t_cv_envo_synonyms ON ont.t_cv_envo USING btree (synonyms);
 
 CREATE INDEX ix_t_cv_envo_term_name ON ont.t_cv_envo USING btree (term_name);
 
+--
+-- Name: TABLE t_cv_envo; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_cv_envo TO readaccess;
+

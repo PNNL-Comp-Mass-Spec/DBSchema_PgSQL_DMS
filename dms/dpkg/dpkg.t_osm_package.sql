@@ -63,3 +63,9 @@ ALTER TABLE ONLY dpkg.t_osm_package
 ALTER TABLE ONLY dpkg.t_osm_package
     ADD CONSTRAINT fk_t_osm_package_t_osm_package_type FOREIGN KEY (package_type) REFERENCES dpkg.t_osm_package_type(package_type);
 
+--
+-- Name: TABLE t_osm_package; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_osm_package TO readaccess;
+

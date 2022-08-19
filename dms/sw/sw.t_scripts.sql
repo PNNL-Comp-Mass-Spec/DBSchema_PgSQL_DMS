@@ -50,3 +50,9 @@ CREATE TRIGGER trig_t_scripts_after_insert AFTER INSERT ON sw.t_scripts REFERENC
 
 CREATE TRIGGER trig_t_scripts_after_update AFTER UPDATE ON sw.t_scripts FOR EACH ROW WHEN (((old.script OPERATOR(public.<>) new.script) OR (COALESCE(old.results_tag, ''::public.citext) OPERATOR(public.<>) COALESCE(new.results_tag, ''::public.citext)) OR ((COALESCE(old.contents, ''::xml))::text <> (COALESCE(new.contents, ''::xml))::text))) EXECUTE FUNCTION sw.trigfn_t_scripts_after_update();
 
+--
+-- Name: TABLE t_scripts; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_scripts TO readaccess;
+

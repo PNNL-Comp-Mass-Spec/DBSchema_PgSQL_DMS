@@ -28,3 +28,9 @@ CREATE VIEW cap.v_tasks AS
 
 ALTER TABLE cap.v_tasks OWNER TO d3l243;
 
+--
+-- Name: TABLE v_tasks; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_tasks TO readaccess;
+

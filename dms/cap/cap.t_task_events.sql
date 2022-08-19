@@ -52,3 +52,9 @@ CREATE INDEX ix_t_task_events_entered ON cap.t_task_events USING btree (entered)
 
 CREATE INDEX ix_t_task_events_job ON cap.t_task_events USING btree (job);
 
+--
+-- Name: TABLE t_task_events; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_task_events TO readaccess;
+

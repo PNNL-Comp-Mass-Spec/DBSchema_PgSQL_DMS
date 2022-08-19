@@ -25,3 +25,9 @@ ALTER TABLE ONLY sw.t_process_step_control
 
 CREATE TRIGGER trig_t_process_step_control_after_update AFTER UPDATE ON sw.t_process_step_control FOR EACH ROW WHEN ((new.enabled <> old.enabled)) EXECUTE FUNCTION sw.trigfn_t_process_step_control_after_update();
 
+--
+-- Name: TABLE t_process_step_control; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_process_step_control TO readaccess;
+

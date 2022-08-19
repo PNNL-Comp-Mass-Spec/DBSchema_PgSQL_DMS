@@ -32,3 +32,9 @@ ALTER TABLE pc.t_output_sequence_types ALTER COLUMN output_sequence_type_id ADD 
 ALTER TABLE ONLY pc.t_output_sequence_types
     ADD CONSTRAINT pk_t_output_sequence_types PRIMARY KEY (output_sequence_type_id);
 
+--
+-- Name: TABLE t_output_sequence_types; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_output_sequence_types TO readaccess;
+

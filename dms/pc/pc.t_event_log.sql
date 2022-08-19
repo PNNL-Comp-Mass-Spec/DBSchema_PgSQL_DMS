@@ -48,3 +48,9 @@ CREATE INDEX ix_t_event_log ON pc.t_event_log USING btree (target_id);
 ALTER TABLE ONLY pc.t_event_log
     ADD CONSTRAINT fk_t_event_log_t_event_target FOREIGN KEY (target_type) REFERENCES pc.t_event_target(id);
 
+--
+-- Name: TABLE t_event_log; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_event_log TO readaccess;
+

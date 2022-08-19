@@ -35,3 +35,9 @@ ALTER TABLE cap.t_scripts_history ALTER COLUMN entry_id ADD GENERATED ALWAYS AS 
 ALTER TABLE ONLY cap.t_scripts_history
     ADD CONSTRAINT pk_t_scripts_history PRIMARY KEY (entry_id);
 
+--
+-- Name: TABLE t_scripts_history; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_scripts_history TO readaccess;
+

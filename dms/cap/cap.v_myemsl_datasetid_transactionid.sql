@@ -20,3 +20,9 @@ ALTER TABLE cap.v_myemsl_datasetid_transactionid OWNER TO d3l243;
 
 COMMENT ON VIEW cap.v_myemsl_datasetid_transactionid IS 'TransactionID was deprecated 2019-05-21; use StatusNum (aka MyEMSL Upload ID) if transaction_id is null';
 
+--
+-- Name: TABLE v_myemsl_datasetid_transactionid; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_myemsl_datasetid_transactionid TO readaccess;
+

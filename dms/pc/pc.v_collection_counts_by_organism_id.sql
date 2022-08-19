@@ -11,3 +11,9 @@ CREATE VIEW pc.v_collection_counts_by_organism_id AS
 
 ALTER TABLE pc.v_collection_counts_by_organism_id OWNER TO d3l243;
 
+--
+-- Name: TABLE v_collection_counts_by_organism_id; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_collection_counts_by_organism_id TO readaccess;
+

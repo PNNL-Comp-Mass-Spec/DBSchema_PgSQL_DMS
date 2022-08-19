@@ -17,3 +17,9 @@ CREATE VIEW cap.v_dms_pipeline_get_completed_results_transfer AS
 
 ALTER TABLE cap.v_dms_pipeline_get_completed_results_transfer OWNER TO d3l243;
 
+--
+-- Name: TABLE v_dms_pipeline_get_completed_results_transfer; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_dms_pipeline_get_completed_results_transfer TO readaccess;
+

@@ -17,3 +17,9 @@ ALTER TABLE sw.t_job_state_name OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_job_state_name
     ADD CONSTRAINT pk_t_job_state_name PRIMARY KEY (job_state_id);
 
+--
+-- Name: TABLE t_job_state_name; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_job_state_name TO readaccess;
+

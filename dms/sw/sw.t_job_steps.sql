@@ -163,3 +163,9 @@ ALTER TABLE ONLY sw.t_job_steps
 ALTER TABLE ONLY sw.t_job_steps
     ADD CONSTRAINT fk_t_job_steps_t_step_tools FOREIGN KEY (step_tool) REFERENCES sw.t_step_tools(step_tool) ON UPDATE CASCADE;
 
+--
+-- Name: TABLE t_job_steps; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_job_steps TO readaccess;
+

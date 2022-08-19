@@ -13,3 +13,9 @@ CREATE VIEW pc.v_annotation_type_picker AS
 
 ALTER TABLE pc.v_annotation_type_picker OWNER TO d3l243;
 
+--
+-- Name: TABLE v_annotation_type_picker; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_annotation_type_picker TO readaccess;
+

@@ -43,3 +43,9 @@ CREATE TRIGGER trig_t_job_parameters_history_after_insert AFTER INSERT ON sw.t_j
 
 CREATE TRIGGER trig_t_job_parameters_history_after_update AFTER UPDATE ON sw.t_job_parameters_history FOR EACH ROW WHEN ((old.saved <> new.saved)) EXECUTE FUNCTION sw.trigfn_t_job_parameters_history_after_update();
 
+--
+-- Name: TABLE t_job_parameters_history; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_job_parameters_history TO readaccess;
+

@@ -24,3 +24,9 @@ ALTER TABLE ONLY sw.t_local_job_processors
 
 CREATE INDEX ix_t_local_job_processors_job ON sw.t_local_job_processors USING btree (job);
 
+--
+-- Name: TABLE t_local_job_processors; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_local_job_processors TO readaccess;
+

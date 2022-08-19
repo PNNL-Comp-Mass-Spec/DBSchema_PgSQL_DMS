@@ -26,3 +26,9 @@ ALTER TABLE ONLY dpkg.t_data_package_eus_proposals
 ALTER TABLE ONLY dpkg.t_data_package_eus_proposals
     ADD CONSTRAINT fk_t_data_package_eus_proposals_t_data_package FOREIGN KEY (data_pkg_id) REFERENCES dpkg.t_data_package(data_pkg_id) ON DELETE CASCADE;
 
+--
+-- Name: TABLE t_data_package_eus_proposals; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_package_eus_proposals TO readaccess;
+

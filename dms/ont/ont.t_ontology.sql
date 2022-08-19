@@ -31,3 +31,9 @@ ALTER TABLE ONLY ont.t_ontology
 
 CREATE INDEX ix_t_ontology_short_name ON ont.t_ontology USING btree (short_name);
 
+--
+-- Name: TABLE t_ontology; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ontology TO readaccess;
+

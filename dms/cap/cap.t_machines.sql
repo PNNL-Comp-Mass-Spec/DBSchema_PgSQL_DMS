@@ -20,3 +20,9 @@ ALTER TABLE cap.t_machines OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_machines
     ADD CONSTRAINT pk_t_machines PRIMARY KEY (machine);
 
+--
+-- Name: TABLE t_machines; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_machines TO readaccess;
+

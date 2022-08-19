@@ -45,3 +45,9 @@ CREATE VIEW cap.v_capture_check_report AS
 
 ALTER TABLE cap.v_capture_check_report OWNER TO d3l243;
 
+--
+-- Name: TABLE v_capture_check_report; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_capture_check_report TO readaccess;
+

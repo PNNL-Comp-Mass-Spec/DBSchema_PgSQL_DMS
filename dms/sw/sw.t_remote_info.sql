@@ -40,3 +40,9 @@ ALTER TABLE ONLY sw.t_remote_info
 
 CREATE UNIQUE INDEX ix_t_remote_info ON sw.t_remote_info USING btree (remote_info);
 
+--
+-- Name: TABLE t_remote_info; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_remote_info TO readaccess;
+

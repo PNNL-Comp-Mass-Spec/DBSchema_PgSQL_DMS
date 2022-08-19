@@ -45,3 +45,9 @@ CREATE INDEX ix_t_task_step_status_history_state ON cap.t_task_step_status_histo
 
 CREATE INDEX ix_t_task_step_status_history_step_tool ON cap.t_task_step_status_history USING btree (step_tool);
 
+--
+-- Name: TABLE t_task_step_status_history; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_task_step_status_history TO readaccess;
+

@@ -11,3 +11,9 @@ CREATE VIEW cap.v_processor_tool_for_manager AS
 
 ALTER TABLE cap.v_processor_tool_for_manager OWNER TO d3l243;
 
+--
+-- Name: TABLE v_processor_tool_for_manager; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_processor_tool_for_manager TO readaccess;
+

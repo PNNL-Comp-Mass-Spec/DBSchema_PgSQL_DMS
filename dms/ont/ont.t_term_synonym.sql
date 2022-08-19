@@ -26,3 +26,9 @@ ALTER TABLE ONLY ont.t_term_synonym
 ALTER TABLE ONLY ont.t_term_synonym
     ADD CONSTRAINT fk_term_synonym_term FOREIGN KEY (term_pk) REFERENCES ont.t_term(term_pk);
 
+--
+-- Name: TABLE t_term_synonym; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_term_synonym TO readaccess;
+

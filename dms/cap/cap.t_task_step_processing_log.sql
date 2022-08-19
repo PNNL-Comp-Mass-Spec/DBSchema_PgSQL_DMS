@@ -46,3 +46,9 @@ CREATE INDEX ix_t_task_step_processing_log_job_step ON cap.t_task_step_processin
 
 CREATE INDEX ix_t_task_step_processing_log_processor ON cap.t_task_step_processing_log USING btree (processor);
 
+--
+-- Name: TABLE t_task_step_processing_log; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_task_step_processing_log TO readaccess;
+

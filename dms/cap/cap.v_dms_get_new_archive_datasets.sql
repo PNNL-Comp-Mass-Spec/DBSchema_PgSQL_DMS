@@ -12,3 +12,9 @@ CREATE VIEW cap.v_dms_get_new_archive_datasets AS
 
 ALTER TABLE cap.v_dms_get_new_archive_datasets OWNER TO d3l243;
 
+--
+-- Name: TABLE v_dms_get_new_archive_datasets; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_dms_get_new_archive_datasets TO readaccess;
+

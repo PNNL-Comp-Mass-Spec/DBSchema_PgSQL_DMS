@@ -44,3 +44,9 @@ CREATE VIEW cap.v_capture_jobs_list_report AS
 
 ALTER TABLE cap.v_capture_jobs_list_report OWNER TO d3l243;
 
+--
+-- Name: TABLE v_capture_jobs_list_report; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_capture_jobs_list_report TO readaccess;
+

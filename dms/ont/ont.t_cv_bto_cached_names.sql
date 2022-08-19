@@ -37,3 +37,9 @@ ALTER TABLE ONLY ont.t_cv_bto_cached_names
 
 CREATE INDEX ix_t_cv_bto_cached_names_term_name ON ont.t_cv_bto_cached_names USING btree (term_name) INCLUDE (identifier);
 
+--
+-- Name: TABLE t_cv_bto_cached_names; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_cv_bto_cached_names TO readaccess;
+

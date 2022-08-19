@@ -17,3 +17,9 @@ ALTER TABLE sw.t_local_processor_job_step_exclusion OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_local_processor_job_step_exclusion
     ADD CONSTRAINT pk_t_local_processor_job_step_exclusion PRIMARY KEY (id, step);
 
+--
+-- Name: TABLE t_local_processor_job_step_exclusion; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_local_processor_job_step_exclusion TO readaccess;
+

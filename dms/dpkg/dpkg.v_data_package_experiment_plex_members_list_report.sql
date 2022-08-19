@@ -32,3 +32,9 @@ CREATE VIEW dpkg.v_data_package_experiment_plex_members_list_report AS
 
 ALTER TABLE dpkg.v_data_package_experiment_plex_members_list_report OWNER TO d3l243;
 
+--
+-- Name: TABLE v_data_package_experiment_plex_members_list_report; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_data_package_experiment_plex_members_list_report TO readaccess;
+

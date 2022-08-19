@@ -43,3 +43,9 @@ ALTER TABLE ONLY cap.t_step_tools
 
 CREATE UNIQUE INDEX ix_t_step_tools_step_tool ON cap.t_step_tools USING btree (step_tool);
 
+--
+-- Name: TABLE t_step_tools; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_step_tools TO readaccess;
+

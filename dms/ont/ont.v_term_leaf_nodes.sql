@@ -20,3 +20,9 @@ CREATE VIEW ont.v_term_leaf_nodes AS
 
 ALTER TABLE ont.v_term_leaf_nodes OWNER TO d3l243;
 
+--
+-- Name: TABLE v_term_leaf_nodes; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_term_leaf_nodes TO readaccess;
+

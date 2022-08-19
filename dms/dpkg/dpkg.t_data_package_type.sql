@@ -17,3 +17,9 @@ ALTER TABLE dpkg.t_data_package_type OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_data_package_type
     ADD CONSTRAINT pk_t_data_package_type PRIMARY KEY (package_type);
 
+--
+-- Name: TABLE t_data_package_type; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_package_type TO readaccess;
+

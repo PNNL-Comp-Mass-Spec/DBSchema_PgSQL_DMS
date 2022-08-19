@@ -24,3 +24,9 @@ CREATE VIEW pc.v_archived_output_file_protein_collections AS
 
 ALTER TABLE pc.v_archived_output_file_protein_collections OWNER TO d3l243;
 
+--
+-- Name: TABLE v_archived_output_file_protein_collections; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_archived_output_file_protein_collections TO readaccess;
+

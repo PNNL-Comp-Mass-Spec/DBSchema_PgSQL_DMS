@@ -30,3 +30,9 @@ ALTER TABLE ONLY dpkg.t_data_package_biomaterial
 ALTER TABLE ONLY dpkg.t_data_package_biomaterial
     ADD CONSTRAINT fk_t_data_package_biomaterial_t_data_package FOREIGN KEY (data_pkg_id) REFERENCES dpkg.t_data_package(data_pkg_id) ON DELETE CASCADE;
 
+--
+-- Name: TABLE t_data_package_biomaterial; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_package_biomaterial TO readaccess;
+

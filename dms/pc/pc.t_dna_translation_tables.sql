@@ -38,3 +38,9 @@ ALTER TABLE ONLY pc.t_dna_translation_tables
 ALTER TABLE ONLY pc.t_dna_translation_tables
     ADD CONSTRAINT fk_t_dna_translation_tables_t_dna_translation_table_map FOREIGN KEY (dna_translation_table_id) REFERENCES pc.t_dna_translation_table_map(dna_translation_table_id);
 
+--
+-- Name: TABLE t_dna_translation_tables; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_dna_translation_tables TO readaccess;
+

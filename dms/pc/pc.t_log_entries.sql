@@ -40,3 +40,9 @@ ALTER TABLE ONLY pc.t_log_entries
 
 CREATE TRIGGER trig_t_log_entries_after_update AFTER UPDATE ON pc.t_log_entries FOR EACH ROW WHEN (((old.posting_time <> new.posting_time) OR (old.posted_by IS DISTINCT FROM new.posted_by) OR (old.type IS DISTINCT FROM new.type) OR (old.message IS DISTINCT FROM new.message))) EXECUTE FUNCTION pc.trigfn_t_log_entries_user_after_update();
 
+--
+-- Name: TABLE t_log_entries; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_log_entries TO readaccess;
+

@@ -12,3 +12,9 @@ CREATE TABLE ont.t_ncbi_import (
 
 ALTER TABLE ont.t_ncbi_import OWNER TO d3l243;
 
+--
+-- Name: TABLE t_ncbi_import; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ncbi_import TO readaccess;
+

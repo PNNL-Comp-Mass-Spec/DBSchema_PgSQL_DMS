@@ -34,3 +34,9 @@ ALTER TABLE dpkg.t_data_package_storage ALTER COLUMN path_id ADD GENERATED ALWAY
 ALTER TABLE ONLY dpkg.t_data_package_storage
     ADD CONSTRAINT pk_t_data_package_storage PRIMARY KEY (path_id);
 
+--
+-- Name: TABLE t_data_package_storage; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_package_storage TO readaccess;
+

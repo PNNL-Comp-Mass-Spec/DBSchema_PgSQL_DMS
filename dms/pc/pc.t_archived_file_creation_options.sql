@@ -32,3 +32,9 @@ ALTER TABLE pc.t_archived_file_creation_options ALTER COLUMN creation_option_id 
 ALTER TABLE ONLY pc.t_archived_file_creation_options
     ADD CONSTRAINT pk_t_archived_file_creation_options PRIMARY KEY (creation_option_id);
 
+--
+-- Name: TABLE t_archived_file_creation_options; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_archived_file_creation_options TO readaccess;
+

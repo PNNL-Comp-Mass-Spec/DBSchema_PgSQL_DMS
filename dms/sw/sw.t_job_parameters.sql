@@ -24,3 +24,9 @@ ALTER TABLE ONLY sw.t_job_parameters
 ALTER TABLE ONLY sw.t_job_parameters
     ADD CONSTRAINT fk_t_job_parameters_t_jobs FOREIGN KEY (job) REFERENCES sw.t_jobs(job) ON DELETE CASCADE;
 
+--
+-- Name: TABLE t_job_parameters; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_job_parameters TO readaccess;
+

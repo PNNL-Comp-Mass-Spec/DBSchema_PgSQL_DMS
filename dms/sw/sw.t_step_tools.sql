@@ -58,3 +58,9 @@ CREATE INDEX ix_t_step_tools_shared_result_version ON sw.t_step_tools USING btre
 
 CREATE UNIQUE INDEX ix_t_step_tools_step_tool ON sw.t_step_tools USING btree (step_tool);
 
+--
+-- Name: TABLE t_step_tools; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_step_tools TO readaccess;
+

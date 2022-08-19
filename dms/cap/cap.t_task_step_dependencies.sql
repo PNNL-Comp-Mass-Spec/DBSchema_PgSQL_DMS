@@ -42,3 +42,9 @@ CREATE INDEX ix_t_task_step_dependencies_job_id_step_evaluated_triggered ON cap.
 ALTER TABLE ONLY cap.t_task_step_dependencies
     ADD CONSTRAINT fk_t_task_step_dependencies_t_task_steps FOREIGN KEY (job, step) REFERENCES cap.t_task_steps(job, step) ON UPDATE CASCADE ON DELETE CASCADE;
 
+--
+-- Name: TABLE t_task_step_dependencies; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_task_step_dependencies TO readaccess;
+

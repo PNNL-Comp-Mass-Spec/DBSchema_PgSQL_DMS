@@ -90,3 +90,9 @@ ALTER TABLE ONLY sw.t_jobs
 ALTER TABLE ONLY sw.t_jobs
     ADD CONSTRAINT fk_t_jobs_t_scripts FOREIGN KEY (script) REFERENCES sw.t_scripts(script) ON UPDATE CASCADE;
 
+--
+-- Name: TABLE t_jobs; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_jobs TO readaccess;
+

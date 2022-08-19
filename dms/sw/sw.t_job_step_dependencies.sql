@@ -42,3 +42,9 @@ CREATE INDEX ix_t_job_step_dependencies_job_id_step_evaluated_triggered ON sw.t_
 ALTER TABLE ONLY sw.t_job_step_dependencies
     ADD CONSTRAINT fk_t_job_step_dependencies_t_job_steps FOREIGN KEY (job, step) REFERENCES sw.t_job_steps(job, step) ON UPDATE CASCADE ON DELETE CASCADE;
 
+--
+-- Name: TABLE t_job_step_dependencies; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_job_step_dependencies TO readaccess;
+

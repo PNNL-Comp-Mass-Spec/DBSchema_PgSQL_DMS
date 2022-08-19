@@ -20,3 +20,9 @@ ALTER TABLE pc.t_event_target OWNER TO d3l243;
 ALTER TABLE ONLY pc.t_event_target
     ADD CONSTRAINT pk_t_event_target PRIMARY KEY (id);
 
+--
+-- Name: TABLE t_event_target; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_event_target TO readaccess;
+

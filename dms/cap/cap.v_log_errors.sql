@@ -15,3 +15,9 @@ CREATE VIEW cap.v_log_errors AS
 
 ALTER TABLE cap.v_log_errors OWNER TO d3l243;
 
+--
+-- Name: TABLE v_log_errors; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_log_errors TO readaccess;
+

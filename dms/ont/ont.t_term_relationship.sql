@@ -44,3 +44,9 @@ CREATE INDEX ix_t_term_relationship_predicate_term_pk ON ont.t_term_relationship
 
 CREATE INDEX ix_t_term_relationship_subject_term_pk ON ont.t_term_relationship USING btree (subject_term_pk);
 
+--
+-- Name: TABLE t_term_relationship; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_term_relationship TO readaccess;
+

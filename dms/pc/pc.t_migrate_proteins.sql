@@ -38,3 +38,9 @@ CREATE INDEX ix_t_migrate_proteins_date_created ON pc.t_migrate_proteins USING b
 
 CREATE UNIQUE INDEX ix_t_migrate_proteins_sha1_hash ON pc.t_migrate_proteins USING btree (sha1_hash);
 
+--
+-- Name: TABLE t_migrate_proteins; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_migrate_proteins TO readaccess;
+

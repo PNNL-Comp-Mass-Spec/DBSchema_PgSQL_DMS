@@ -58,3 +58,9 @@ CREATE TRIGGER trig_t_scripts_after_insert AFTER INSERT ON cap.t_scripts REFEREN
 
 CREATE TRIGGER trig_t_scripts_after_update AFTER UPDATE ON cap.t_scripts FOR EACH ROW WHEN (((new.script OPERATOR(public.<>) old.script) OR (COALESCE(new.results_tag, ''::public.citext) OPERATOR(public.<>) COALESCE(old.results_tag, ''::public.citext)) OR ((COALESCE(new.contents, ''::xml))::text <> (COALESCE(old.contents, ''::xml))::text))) EXECUTE FUNCTION cap.trigfn_t_scripts_after_update();
 
+--
+-- Name: TABLE t_scripts; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_scripts TO readaccess;
+

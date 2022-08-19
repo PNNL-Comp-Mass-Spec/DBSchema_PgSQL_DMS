@@ -58,3 +58,9 @@ CREATE INDEX ix_t_ncbi_taxonomy_names_tax_id ON ont.t_ncbi_taxonomy_names USING 
 ALTER TABLE ONLY ont.t_ncbi_taxonomy_names
     ADD CONSTRAINT fk_t_ncbi_taxonomy_names_t_ncbi_taxonomy_nodes FOREIGN KEY (tax_id) REFERENCES ont.t_ncbi_taxonomy_nodes(tax_id);
 
+--
+-- Name: TABLE t_ncbi_taxonomy_names; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_names TO readaccess;
+

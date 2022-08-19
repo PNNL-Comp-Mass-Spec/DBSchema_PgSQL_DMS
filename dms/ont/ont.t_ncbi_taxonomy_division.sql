@@ -19,3 +19,9 @@ ALTER TABLE ont.t_ncbi_taxonomy_division OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_ncbi_taxonomy_division
     ADD CONSTRAINT pk_t_ncbi_taxonomy_division PRIMARY KEY (division_id);
 
+--
+-- Name: TABLE t_ncbi_taxonomy_division; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_division TO readaccess;
+

@@ -40,3 +40,9 @@ ALTER TABLE ONLY pc.t_annotation_types
 ALTER TABLE ONLY pc.t_annotation_types
     ADD CONSTRAINT fk_t_annotation_types_t_naming_authorities FOREIGN KEY (authority_id) REFERENCES pc.t_naming_authorities(authority_id);
 
+--
+-- Name: TABLE t_annotation_types; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_annotation_types TO readaccess;
+

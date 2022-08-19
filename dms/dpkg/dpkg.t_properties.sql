@@ -17,3 +17,9 @@ ALTER TABLE dpkg.t_properties OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_properties
     ADD CONSTRAINT pk_t_properties PRIMARY KEY (property);
 
+--
+-- Name: TABLE t_properties; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_properties TO readaccess;
+

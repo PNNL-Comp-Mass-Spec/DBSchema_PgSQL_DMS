@@ -62,3 +62,9 @@ CREATE INDEX ix_t_cv_mod_parent_term_name ON ont.t_cv_mod USING btree (parent_te
 
 CREATE INDEX ix_t_cv_mod_term_name ON ont.t_cv_mod USING btree (term_name);
 
+--
+-- Name: TABLE t_cv_mod; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_cv_mod TO readaccess;
+

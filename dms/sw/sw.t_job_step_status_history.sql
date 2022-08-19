@@ -45,3 +45,9 @@ CREATE INDEX ix_t_job_step_status_history_state ON sw.t_job_step_status_history 
 
 CREATE INDEX ix_t_job_step_status_history_step_tool ON sw.t_job_step_status_history USING btree (step_tool);
 
+--
+-- Name: TABLE t_job_step_status_history; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_job_step_status_history TO readaccess;
+

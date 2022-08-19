@@ -13,3 +13,9 @@ CREATE VIEW dpkg.v_dms_datasets_with_experiment AS
 
 ALTER TABLE dpkg.v_dms_datasets_with_experiment OWNER TO d3l243;
 
+--
+-- Name: TABLE v_dms_datasets_with_experiment; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_dms_datasets_with_experiment TO readaccess;
+

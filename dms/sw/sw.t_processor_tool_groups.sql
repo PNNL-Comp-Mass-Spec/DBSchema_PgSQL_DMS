@@ -19,3 +19,9 @@ ALTER TABLE sw.t_processor_tool_groups OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_processor_tool_groups
     ADD CONSTRAINT pk_t_processor_tool_groups PRIMARY KEY (group_id);
 
+--
+-- Name: TABLE t_processor_tool_groups; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_processor_tool_groups TO readaccess;
+

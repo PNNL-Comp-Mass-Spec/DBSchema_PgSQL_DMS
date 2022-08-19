@@ -43,3 +43,9 @@ ALTER TABLE ONLY cap.t_processor_status
 
 CREATE INDEX ix_t_processor_status_monitor_processor ON cap.t_processor_status USING btree (monitor_processor) INCLUDE (processor_name);
 
+--
+-- Name: TABLE t_processor_status; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_processor_status TO readaccess;
+

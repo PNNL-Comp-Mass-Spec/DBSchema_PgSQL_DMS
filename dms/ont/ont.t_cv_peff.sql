@@ -39,3 +39,9 @@ ALTER TABLE ont.t_cv_peff ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY
 ALTER TABLE ONLY ont.t_cv_peff
     ADD CONSTRAINT pk_t_cv_peff PRIMARY KEY (entry_id);
 
+--
+-- Name: TABLE t_cv_peff; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_cv_peff TO readaccess;
+

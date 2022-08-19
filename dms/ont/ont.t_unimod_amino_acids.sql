@@ -21,3 +21,9 @@ ALTER TABLE ont.t_unimod_amino_acids OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_unimod_amino_acids
     ADD CONSTRAINT pk_t_unimod_amino_acids PRIMARY KEY (name);
 
+--
+-- Name: TABLE t_unimod_amino_acids; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_unimod_amino_acids TO readaccess;
+

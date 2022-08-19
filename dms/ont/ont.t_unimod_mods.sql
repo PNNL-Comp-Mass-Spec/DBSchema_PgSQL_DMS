@@ -29,3 +29,9 @@ ALTER TABLE ont.t_unimod_mods OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_unimod_mods
     ADD CONSTRAINT pk_t_unimod_mods PRIMARY KEY (unimod_id);
 
+--
+-- Name: TABLE t_unimod_mods; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_unimod_mods TO readaccess;
+

@@ -35,3 +35,9 @@ ALTER TABLE ont.t_ontology_version_history ALTER COLUMN entry_id ADD GENERATED A
 ALTER TABLE ONLY ont.t_ontology_version_history
     ADD CONSTRAINT pk_t_ontology_version_history PRIMARY KEY (entry_id);
 
+--
+-- Name: TABLE t_ontology_version_history; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ontology_version_history TO readaccess;
+

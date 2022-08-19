@@ -35,3 +35,9 @@ CREATE INDEX ix_t_protein_collection_members_cached_protein_id ON pc.t_protein_c
 ALTER TABLE ONLY pc.t_protein_collection_members_cached
     ADD CONSTRAINT fk_t_protein_collection_members_cached_t_protein_collections FOREIGN KEY (protein_collection_id) REFERENCES pc.t_protein_collections(protein_collection_id);
 
+--
+-- Name: TABLE t_protein_collection_members_cached; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_protein_collection_members_cached TO readaccess;
+

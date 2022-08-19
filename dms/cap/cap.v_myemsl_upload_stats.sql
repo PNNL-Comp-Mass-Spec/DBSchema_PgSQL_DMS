@@ -14,3 +14,9 @@ CREATE VIEW cap.v_myemsl_upload_stats AS
 
 ALTER TABLE cap.v_myemsl_upload_stats OWNER TO d3l243;
 
+--
+-- Name: TABLE v_myemsl_upload_stats; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_myemsl_upload_stats TO readaccess;
+

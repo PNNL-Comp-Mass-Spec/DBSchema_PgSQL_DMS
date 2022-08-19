@@ -27,3 +27,9 @@ ALTER TABLE ONLY ont.t_ncbi_taxonomy_cached
 
 CREATE INDEX ix_t_ncbi_taxonomy_cached_tax_id_include_name_and_synomyms ON ont.t_ncbi_taxonomy_cached USING btree (tax_id) INCLUDE (name, synonyms);
 
+--
+-- Name: TABLE t_ncbi_taxonomy_cached; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_cached TO readaccess;
+

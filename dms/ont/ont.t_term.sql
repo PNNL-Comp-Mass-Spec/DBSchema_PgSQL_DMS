@@ -49,3 +49,9 @@ CREATE INDEX ix_t_term_namespace ON ont.t_term USING btree (namespace);
 
 CREATE INDEX ix_term_ontology_id ON ont.t_term USING btree (ontology_id);
 
+--
+-- Name: TABLE t_term; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_term TO readaccess;
+

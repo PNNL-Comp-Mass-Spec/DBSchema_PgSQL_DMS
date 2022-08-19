@@ -15,3 +15,9 @@ CREATE VIEW dpkg.v_data_package_folder_creation_parameters AS
 
 ALTER TABLE dpkg.v_data_package_folder_creation_parameters OWNER TO d3l243;
 
+--
+-- Name: TABLE v_data_package_folder_creation_parameters; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_data_package_folder_creation_parameters TO readaccess;
+

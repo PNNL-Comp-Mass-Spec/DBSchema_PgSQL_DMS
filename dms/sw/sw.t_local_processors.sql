@@ -37,3 +37,9 @@ CREATE INDEX ix_t_local_processors_machine ON sw.t_local_processors USING btree 
 
 CREATE INDEX ix_t_local_processors_tool_mgr_id_machine_include_proc_name ON sw.t_local_processors USING btree (proc_tool_mgr_id, machine) INCLUDE (processor_name);
 
+--
+-- Name: TABLE t_local_processors; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_local_processors TO readaccess;
+

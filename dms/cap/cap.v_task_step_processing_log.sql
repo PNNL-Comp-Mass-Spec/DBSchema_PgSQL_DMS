@@ -31,3 +31,9 @@ CREATE VIEW cap.v_task_step_processing_log AS
 
 ALTER TABLE cap.v_task_step_processing_log OWNER TO d3l243;
 
+--
+-- Name: TABLE v_task_step_processing_log; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_task_step_processing_log TO readaccess;
+

@@ -38,3 +38,9 @@ CREATE VIEW pc.v_organism_picker AS
 
 ALTER TABLE pc.v_organism_picker OWNER TO d3l243;
 
+--
+-- Name: TABLE v_organism_picker; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_organism_picker TO readaccess;
+

@@ -33,3 +33,9 @@ ALTER TABLE pc.t_creation_option_values ALTER COLUMN value_id ADD GENERATED ALWA
 ALTER TABLE ONLY pc.t_creation_option_values
     ADD CONSTRAINT pk_t_creation_option_values PRIMARY KEY (value_id);
 
+--
+-- Name: TABLE t_creation_option_values; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_creation_option_values TO readaccess;
+

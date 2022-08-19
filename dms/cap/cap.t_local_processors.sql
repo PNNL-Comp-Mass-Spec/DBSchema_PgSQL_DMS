@@ -27,3 +27,9 @@ ALTER TABLE ONLY cap.t_local_processors
 ALTER TABLE ONLY cap.t_local_processors
     ADD CONSTRAINT fk_t_local_processors_t_machines FOREIGN KEY (machine) REFERENCES cap.t_machines(machine);
 
+--
+-- Name: TABLE t_local_processors; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_local_processors TO readaccess;
+

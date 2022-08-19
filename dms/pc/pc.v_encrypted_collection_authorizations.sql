@@ -15,3 +15,9 @@ CREATE VIEW pc.v_encrypted_collection_authorizations AS
 
 ALTER TABLE pc.v_encrypted_collection_authorizations OWNER TO d3l243;
 
+--
+-- Name: TABLE v_encrypted_collection_authorizations; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_encrypted_collection_authorizations TO readaccess;
+

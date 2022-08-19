@@ -17,3 +17,9 @@ CREATE VIEW pc.v_creation_string_lookup AS
 
 ALTER TABLE pc.v_creation_string_lookup OWNER TO d3l243;
 
+--
+-- Name: TABLE v_creation_string_lookup; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_creation_string_lookup TO readaccess;
+

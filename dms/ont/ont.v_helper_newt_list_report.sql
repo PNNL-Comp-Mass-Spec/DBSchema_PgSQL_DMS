@@ -13,3 +13,9 @@ CREATE VIEW ont.v_helper_newt_list_report AS
 
 ALTER TABLE ont.v_helper_newt_list_report OWNER TO d3l243;
 
+--
+-- Name: TABLE v_helper_newt_list_report; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_helper_newt_list_report TO readaccess;
+

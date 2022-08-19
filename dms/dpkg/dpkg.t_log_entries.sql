@@ -46,3 +46,9 @@ CREATE INDEX ix_t_log_entries_posted_by ON dpkg.t_log_entries USING btree (poste
 
 CREATE INDEX ix_t_log_entries_posting_time ON dpkg.t_log_entries USING btree (posting_time);
 
+--
+-- Name: TABLE t_log_entries; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_log_entries TO readaccess;
+

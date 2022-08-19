@@ -19,3 +19,9 @@ CREATE VIEW ont.v_helper_bto_tissue_report AS
 
 ALTER TABLE ont.v_helper_bto_tissue_report OWNER TO d3l243;
 
+--
+-- Name: TABLE v_helper_bto_tissue_report; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_helper_bto_tissue_report TO readaccess;
+

@@ -28,3 +28,9 @@ CREATE VIEW ont.v_term_lineage AS
 
 ALTER TABLE ont.v_term_lineage OWNER TO d3l243;
 
+--
+-- Name: TABLE v_term_lineage; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_term_lineage TO readaccess;
+

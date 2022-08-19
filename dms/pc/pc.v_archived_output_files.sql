@@ -21,3 +21,9 @@ CREATE VIEW pc.v_archived_output_files AS
 
 ALTER TABLE pc.v_archived_output_files OWNER TO d3l243;
 
+--
+-- Name: TABLE v_archived_output_files; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_archived_output_files TO readaccess;
+

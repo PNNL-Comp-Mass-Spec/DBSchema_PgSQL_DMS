@@ -24,3 +24,9 @@ ALTER TABLE ONLY cap.t_task_parameters
 ALTER TABLE ONLY cap.t_task_parameters
     ADD CONSTRAINT fk_t_task_parameters_t_tasks FOREIGN KEY (job) REFERENCES cap.t_tasks(job) ON DELETE CASCADE;
 
+--
+-- Name: TABLE t_task_parameters; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_task_parameters TO readaccess;
+

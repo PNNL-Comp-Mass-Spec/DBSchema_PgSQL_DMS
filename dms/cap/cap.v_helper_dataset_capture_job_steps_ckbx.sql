@@ -18,3 +18,9 @@ CREATE VIEW cap.v_helper_dataset_capture_job_steps_ckbx AS
 
 ALTER TABLE cap.v_helper_dataset_capture_job_steps_ckbx OWNER TO d3l243;
 
+--
+-- Name: TABLE v_helper_dataset_capture_job_steps_ckbx; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_helper_dataset_capture_job_steps_ckbx TO readaccess;
+

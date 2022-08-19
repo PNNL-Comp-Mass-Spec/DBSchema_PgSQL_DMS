@@ -91,3 +91,9 @@ ALTER TABLE ONLY cap.t_myemsl_uploads
 ALTER TABLE ONLY cap.t_myemsl_uploads
     ADD CONSTRAINT fk_t_myemsl_uploads_t_uri_paths_status_uri FOREIGN KEY (status_uri_path_id) REFERENCES cap.t_uri_paths(uri_path_id);
 
+--
+-- Name: TABLE t_myemsl_uploads; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_myemsl_uploads TO readaccess;
+

@@ -31,3 +31,9 @@ ALTER TABLE pc.t_encrypted_collection_passphrases ALTER COLUMN passphrase_id ADD
 ALTER TABLE ONLY pc.t_encrypted_collection_passphrases
     ADD CONSTRAINT pk_t_encrypted_collection_passphrases PRIMARY KEY (passphrase_id);
 
+--
+-- Name: TABLE t_encrypted_collection_passphrases; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_encrypted_collection_passphrases TO readaccess;
+

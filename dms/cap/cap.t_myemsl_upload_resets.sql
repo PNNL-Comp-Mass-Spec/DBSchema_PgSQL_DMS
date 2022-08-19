@@ -52,3 +52,9 @@ CREATE INDEX ix_t_myemsl_upload_resets_entered ON cap.t_myemsl_upload_resets USI
 
 CREATE INDEX ix_t_myemsl_upload_resets_job ON cap.t_myemsl_upload_resets USING btree (job);
 
+--
+-- Name: TABLE t_myemsl_upload_resets; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_myemsl_upload_resets TO readaccess;
+

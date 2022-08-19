@@ -62,3 +62,9 @@ CREATE INDEX ix_t_cv_pride_parent_term_name ON ont.t_cv_pride USING btree (paren
 
 CREATE INDEX ix_t_cv_pride_term_name ON ont.t_cv_pride USING btree (term_name);
 
+--
+-- Name: TABLE t_cv_pride; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_cv_pride TO readaccess;
+

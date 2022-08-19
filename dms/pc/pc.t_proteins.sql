@@ -51,3 +51,9 @@ CREATE INDEX ix_t_proteins_date_created ON pc.t_proteins USING btree (date_creat
 
 CREATE UNIQUE INDEX ix_t_proteins_sha1_hash ON pc.t_proteins USING btree (sha1_hash);
 
+--
+-- Name: TABLE t_proteins; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_proteins TO readaccess;
+

@@ -17,3 +17,9 @@ CREATE VIEW ont.v_ontology_list_report AS
 
 ALTER TABLE ont.v_ontology_list_report OWNER TO d3l243;
 
+--
+-- Name: TABLE v_ontology_list_report; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_ontology_list_report TO readaccess;
+

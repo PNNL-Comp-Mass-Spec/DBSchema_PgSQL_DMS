@@ -14,3 +14,9 @@ CREATE VIEW cap.v_capture_script_entry AS
 
 ALTER TABLE cap.v_capture_script_entry OWNER TO d3l243;
 
+--
+-- Name: TABLE v_capture_script_entry; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_capture_script_entry TO readaccess;
+

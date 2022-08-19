@@ -22,3 +22,9 @@ ALTER TABLE ont.t_ncbi_taxonomy_citations OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_ncbi_taxonomy_citations
     ADD CONSTRAINT pk_t_ncbi_taxonomy_citations PRIMARY KEY (citation_id);
 
+--
+-- Name: TABLE t_ncbi_taxonomy_citations; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_citations TO readaccess;
+

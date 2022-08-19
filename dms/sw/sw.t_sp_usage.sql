@@ -33,3 +33,9 @@ ALTER TABLE sw.t_sp_usage ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY
 ALTER TABLE ONLY sw.t_sp_usage
     ADD CONSTRAINT pk_t_sp_usage PRIMARY KEY (entry_id);
 
+--
+-- Name: TABLE t_sp_usage; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_sp_usage TO readaccess;
+

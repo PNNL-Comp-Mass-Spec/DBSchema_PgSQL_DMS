@@ -55,3 +55,9 @@ ALTER TABLE ONLY pc.t_position_info
 ALTER TABLE ONLY pc.t_position_info
     ADD CONSTRAINT fk_t_position_info_t_reading_frame_types FOREIGN KEY (reading_frame_type_id) REFERENCES pc.t_reading_frame_types(reading_frame_type_id);
 
+--
+-- Name: TABLE t_position_info; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_position_info TO readaccess;
+

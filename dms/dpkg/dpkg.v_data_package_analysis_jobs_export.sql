@@ -14,3 +14,9 @@ CREATE VIEW dpkg.v_data_package_analysis_jobs_export AS
 
 ALTER TABLE dpkg.v_data_package_analysis_jobs_export OWNER TO d3l243;
 
+--
+-- Name: TABLE v_data_package_analysis_jobs_export; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_data_package_analysis_jobs_export TO readaccess;
+

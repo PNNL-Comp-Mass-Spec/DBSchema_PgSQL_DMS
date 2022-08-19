@@ -31,3 +31,9 @@ ALTER TABLE ONLY dpkg.t_data_repository_data_packages
 ALTER TABLE ONLY dpkg.t_data_repository_data_packages
     ADD CONSTRAINT fk_t_data_repository_data_packages_t_data_repository_uploads FOREIGN KEY (upload_id) REFERENCES dpkg.t_data_repository_uploads(upload_id);
 
+--
+-- Name: TABLE t_data_repository_data_packages; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_repository_data_packages TO readaccess;
+

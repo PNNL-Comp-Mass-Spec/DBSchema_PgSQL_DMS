@@ -53,3 +53,9 @@ ALTER TABLE ont.v_term_hierarchy_psi_ms OWNER TO d3l243;
 
 COMMENT ON VIEW ont.v_term_hierarchy_psi_ms IS 'This view uses a recursive query. It is elegant, but not efficient since the "T_Term" and "T_Term_Relationship" tables are so large. Use view V_CV_PSI_MS instead. Note that namespace "MS" supersedes namespace "PSI-MS". Note that namespace "MS" supersedes namespace "PSI-MS"';
 
+--
+-- Name: TABLE v_term_hierarchy_psi_ms; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_term_hierarchy_psi_ms TO readaccess;
+

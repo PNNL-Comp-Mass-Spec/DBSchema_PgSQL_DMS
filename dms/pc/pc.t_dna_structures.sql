@@ -55,3 +55,9 @@ ALTER TABLE ONLY pc.t_dna_structures
 ALTER TABLE ONLY pc.t_dna_structures
     ADD CONSTRAINT fk_t_dna_structures_t_genome_assembly FOREIGN KEY (assembly_id) REFERENCES pc.t_genome_assembly(assembly_id);
 
+--
+-- Name: TABLE t_dna_structures; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_dna_structures TO readaccess;
+

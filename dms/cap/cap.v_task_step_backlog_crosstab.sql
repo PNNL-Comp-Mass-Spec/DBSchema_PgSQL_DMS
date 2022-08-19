@@ -26,3 +26,9 @@ CREATE VIEW cap.v_task_step_backlog_crosstab AS
 
 ALTER TABLE cap.v_task_step_backlog_crosstab OWNER TO d3l243;
 
+--
+-- Name: TABLE v_task_step_backlog_crosstab; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_task_step_backlog_crosstab TO readaccess;
+

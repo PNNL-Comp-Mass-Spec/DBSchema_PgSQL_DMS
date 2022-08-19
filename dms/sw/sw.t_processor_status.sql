@@ -46,3 +46,9 @@ ALTER TABLE ONLY sw.t_processor_status
 
 CREATE INDEX ix_t_processor_status_monitor_processor ON sw.t_processor_status USING btree (monitor_processor) INCLUDE (processor_name);
 
+--
+-- Name: TABLE t_processor_status; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_processor_status TO readaccess;
+

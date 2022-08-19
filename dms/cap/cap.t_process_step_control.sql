@@ -25,3 +25,9 @@ ALTER TABLE ONLY cap.t_process_step_control
 
 CREATE TRIGGER trig_t_process_step_control_after_update AFTER UPDATE ON cap.t_process_step_control FOR EACH ROW WHEN ((new.enabled <> old.enabled)) EXECUTE FUNCTION cap.trigfn_t_process_step_control_after_update();
 
+--
+-- Name: TABLE t_process_step_control; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_process_step_control TO readaccess;
+

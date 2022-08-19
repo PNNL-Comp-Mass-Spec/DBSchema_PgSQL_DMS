@@ -22,3 +22,9 @@ CREATE VIEW cap.v_processor_status_warnings AS
 
 ALTER TABLE cap.v_processor_status_warnings OWNER TO d3l243;
 
+--
+-- Name: TABLE v_processor_status_warnings; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_processor_status_warnings TO readaccess;
+

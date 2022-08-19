@@ -17,3 +17,9 @@ CREATE VIEW pc.v_archived_output_file_stats_export AS
 
 ALTER TABLE pc.v_archived_output_file_stats_export OWNER TO d3l243;
 
+--
+-- Name: TABLE v_archived_output_file_stats_export; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_archived_output_file_stats_export TO readaccess;
+

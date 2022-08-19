@@ -39,3 +39,9 @@ ALTER TABLE ONLY sw.t_step_tool_versions
 
 CREATE UNIQUE INDEX ix_t_step_tool_versions ON sw.t_step_tool_versions USING btree (tool_version);
 
+--
+-- Name: TABLE t_step_tool_versions; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_step_tool_versions TO readaccess;
+

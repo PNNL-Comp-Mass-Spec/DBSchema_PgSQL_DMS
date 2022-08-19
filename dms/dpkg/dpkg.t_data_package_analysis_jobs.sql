@@ -42,3 +42,9 @@ CREATE INDEX ix_t_data_package_analysis_jobs_job_include_data_pkg_id ON dpkg.t_d
 ALTER TABLE ONLY dpkg.t_data_package_analysis_jobs
     ADD CONSTRAINT fk_t_data_package_analysis_jobs_t_data_package FOREIGN KEY (data_pkg_id) REFERENCES dpkg.t_data_package(data_pkg_id) ON DELETE CASCADE;
 
+--
+-- Name: TABLE t_data_package_analysis_jobs; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_package_analysis_jobs TO readaccess;
+

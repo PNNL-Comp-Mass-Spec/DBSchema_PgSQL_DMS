@@ -19,3 +19,9 @@ ALTER TABLE sw.t_pipeline_job_stats OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_pipeline_job_stats
     ADD CONSTRAINT pk_t_pipeline_job_stats PRIMARY KEY (script, instrument_group, year);
 
+--
+-- Name: TABLE t_pipeline_job_stats; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_pipeline_job_stats TO readaccess;
+

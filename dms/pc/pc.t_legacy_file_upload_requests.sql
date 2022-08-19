@@ -35,3 +35,9 @@ ALTER TABLE pc.t_legacy_file_upload_requests ALTER COLUMN upload_request_id ADD 
 ALTER TABLE ONLY pc.t_legacy_file_upload_requests
     ADD CONSTRAINT pk_t_legacy_file_upload_requests PRIMARY KEY (upload_request_id);
 
+--
+-- Name: TABLE t_legacy_file_upload_requests; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_legacy_file_upload_requests TO readaccess;
+

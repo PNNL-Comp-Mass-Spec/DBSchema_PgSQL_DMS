@@ -27,3 +27,9 @@ CREATE VIEW dpkg.v_myemsl_uploads AS
 
 ALTER TABLE dpkg.v_myemsl_uploads OWNER TO d3l243;
 
+--
+-- Name: TABLE v_myemsl_uploads; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_myemsl_uploads TO readaccess;
+

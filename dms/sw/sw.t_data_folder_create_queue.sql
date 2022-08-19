@@ -43,3 +43,9 @@ ALTER TABLE sw.t_data_folder_create_queue ALTER COLUMN entry_id ADD GENERATED AL
 ALTER TABLE ONLY sw.t_data_folder_create_queue
     ADD CONSTRAINT pk_data_folder_create_queue PRIMARY KEY (entry_id);
 
+--
+-- Name: TABLE t_data_folder_create_queue; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_data_folder_create_queue TO readaccess;
+

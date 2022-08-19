@@ -34,3 +34,9 @@ CREATE TRIGGER trig_t_processor_tool_after_update AFTER UPDATE ON cap.t_processo
 ALTER TABLE ONLY cap.t_processor_tool
     ADD CONSTRAINT fk_t_processor_tool_t_step_tools FOREIGN KEY (tool_name) REFERENCES cap.t_step_tools(step_tool);
 
+--
+-- Name: TABLE t_processor_tool; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_processor_tool TO readaccess;
+

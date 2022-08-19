@@ -126,3 +126,9 @@ ALTER TABLE ONLY cap.t_tasks
 ALTER TABLE ONLY cap.t_tasks
     ADD CONSTRAINT fk_t_tasks_t_task_state_name FOREIGN KEY (state) REFERENCES cap.t_task_state_name(job_state_id);
 
+--
+-- Name: TABLE t_tasks; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_tasks TO readaccess;
+

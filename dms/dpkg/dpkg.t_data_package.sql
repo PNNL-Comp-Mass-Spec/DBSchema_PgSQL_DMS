@@ -102,3 +102,9 @@ ALTER TABLE ONLY dpkg.t_data_package
 ALTER TABLE ONLY dpkg.t_data_package
     ADD CONSTRAINT fk_t_data_package_t_data_package_type FOREIGN KEY (package_type) REFERENCES dpkg.t_data_package_type(package_type) ON UPDATE CASCADE;
 
+--
+-- Name: TABLE t_data_package; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_package TO readaccess;
+

@@ -10,3 +10,9 @@ CREATE VIEW ont.v_bto_id_to_name AS
 
 ALTER TABLE ont.v_bto_id_to_name OWNER TO d3l243;
 
+--
+-- Name: TABLE v_bto_id_to_name; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_bto_id_to_name TO readaccess;
+

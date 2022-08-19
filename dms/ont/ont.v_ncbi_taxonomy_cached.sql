@@ -14,3 +14,9 @@ CREATE VIEW ont.v_ncbi_taxonomy_cached AS
 
 ALTER TABLE ont.v_ncbi_taxonomy_cached OWNER TO d3l243;
 
+--
+-- Name: TABLE v_ncbi_taxonomy_cached; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.v_ncbi_taxonomy_cached TO readaccess;
+

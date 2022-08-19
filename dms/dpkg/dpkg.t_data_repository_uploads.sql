@@ -47,3 +47,9 @@ CREATE INDEX ix_t_data_repository_uploads_accession ON dpkg.t_data_repository_up
 ALTER TABLE ONLY dpkg.t_data_repository_uploads
     ADD CONSTRAINT fk_t_data_repository_uploads_t_data_repository FOREIGN KEY (repository_id) REFERENCES dpkg.t_data_repository(repository_id);
 
+--
+-- Name: TABLE t_data_repository_uploads; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_repository_uploads TO readaccess;
+

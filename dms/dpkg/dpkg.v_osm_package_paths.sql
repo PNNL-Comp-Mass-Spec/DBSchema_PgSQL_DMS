@@ -14,3 +14,9 @@ CREATE VIEW dpkg.v_osm_package_paths AS
 
 ALTER TABLE dpkg.v_osm_package_paths OWNER TO d3l243;
 
+--
+-- Name: TABLE v_osm_package_paths; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_osm_package_paths TO readaccess;
+

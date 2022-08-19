@@ -39,3 +39,9 @@ ALTER TABLE ONLY sw.t_signatures
 
 CREATE UNIQUE INDEX ix_t_signatures ON sw.t_signatures USING btree (pattern);
 
+--
+-- Name: TABLE t_signatures; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_signatures TO readaccess;
+

@@ -39,3 +39,9 @@ ALTER TABLE ONLY sw.t_machine_status_history
 
 CREATE INDEX ix_t_machine_status_history ON sw.t_machine_status_history USING btree (machine);
 
+--
+-- Name: TABLE t_machine_status_history; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_machine_status_history TO readaccess;
+

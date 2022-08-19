@@ -19,3 +19,9 @@ CREATE VIEW pc.v_legacy_static_file_locations AS
 
 ALTER TABLE pc.v_legacy_static_file_locations OWNER TO d3l243;
 
+--
+-- Name: TABLE v_legacy_static_file_locations; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_legacy_static_file_locations TO readaccess;
+

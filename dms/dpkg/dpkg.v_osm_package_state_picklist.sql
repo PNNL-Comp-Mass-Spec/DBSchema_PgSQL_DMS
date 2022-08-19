@@ -10,3 +10,9 @@ CREATE VIEW dpkg.v_osm_package_state_picklist AS
 
 ALTER TABLE dpkg.v_osm_package_state_picklist OWNER TO d3l243;
 
+--
+-- Name: TABLE v_osm_package_state_picklist; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_osm_package_state_picklist TO readaccess;
+

@@ -14,3 +14,9 @@ CREATE VIEW cap.v_script_dot_format AS
 
 ALTER TABLE cap.v_script_dot_format OWNER TO d3l243;
 
+--
+-- Name: TABLE v_script_dot_format; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_script_dot_format TO readaccess;
+

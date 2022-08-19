@@ -22,3 +22,9 @@ ALTER TABLE ont.t_unimod_specificity_nl OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_unimod_specificity_nl
     ADD CONSTRAINT pk_t_unimod_specificity_nl PRIMARY KEY (unimod_id, specificity_entry_id, neutral_loss_entry_id);
 
+--
+-- Name: TABLE t_unimod_specificity_nl; Type: ACL; Schema: ont; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE ont.t_unimod_specificity_nl TO readaccess;
+

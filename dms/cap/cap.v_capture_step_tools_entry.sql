@@ -14,3 +14,9 @@ CREATE VIEW cap.v_capture_step_tools_entry AS
 
 ALTER TABLE cap.v_capture_step_tools_entry OWNER TO d3l243;
 
+--
+-- Name: TABLE v_capture_step_tools_entry; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.v_capture_step_tools_entry TO readaccess;
+

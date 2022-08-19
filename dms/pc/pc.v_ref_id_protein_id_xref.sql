@@ -16,3 +16,9 @@ CREATE VIEW pc.v_ref_id_protein_id_xref AS
 
 ALTER TABLE pc.v_ref_id_protein_id_xref OWNER TO d3l243;
 
+--
+-- Name: TABLE v_ref_id_protein_id_xref; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_ref_id_protein_id_xref TO readaccess;
+

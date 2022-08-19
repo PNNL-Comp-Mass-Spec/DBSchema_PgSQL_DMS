@@ -66,3 +66,9 @@ ALTER TABLE ONLY pc.t_migrate_protein_collection_members
 ALTER TABLE ONLY pc.t_migrate_protein_collection_members
     ADD CONSTRAINT fk_t_migrate_protein_collection_members_t_protein_collections FOREIGN KEY (protein_collection_id) REFERENCES pc.t_protein_collections(protein_collection_id);
 
+--
+-- Name: TABLE t_migrate_protein_collection_members; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_migrate_protein_collection_members TO readaccess;
+

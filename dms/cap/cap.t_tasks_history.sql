@@ -75,3 +75,9 @@ CREATE TRIGGER trig_t_tasks_history_after_insert AFTER INSERT ON cap.t_tasks_his
 
 CREATE TRIGGER trig_t_tasks_history_after_update AFTER UPDATE ON cap.t_tasks_history FOR EACH ROW WHEN ((old.saved <> new.saved)) EXECUTE FUNCTION cap.trigfn_t_tasks_history_after_update();
 
+--
+-- Name: TABLE t_tasks_history; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_tasks_history TO readaccess;
+

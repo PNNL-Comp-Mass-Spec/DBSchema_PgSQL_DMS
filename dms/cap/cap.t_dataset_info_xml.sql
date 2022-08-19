@@ -19,3 +19,9 @@ ALTER TABLE cap.t_dataset_info_xml OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_dataset_info_xml
     ADD CONSTRAINT pk_t_dataset_info_xml PRIMARY KEY (dataset_id);
 
+--
+-- Name: TABLE t_dataset_info_xml; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cap.t_dataset_info_xml TO readaccess;
+

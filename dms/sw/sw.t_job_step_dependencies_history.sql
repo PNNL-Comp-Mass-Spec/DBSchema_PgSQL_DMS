@@ -37,3 +37,9 @@ CREATE INDEX ix_t_job_step_dependencies_history ON sw.t_job_step_dependencies_hi
 
 CREATE INDEX ix_t_job_step_dependencies_history_job_step_eval_triggered ON sw.t_job_step_dependencies_history USING btree (job, step) INCLUDE (evaluated, triggered);
 
+--
+-- Name: TABLE t_job_step_dependencies_history; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_job_step_dependencies_history TO readaccess;
+

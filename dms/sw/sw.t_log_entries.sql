@@ -46,3 +46,9 @@ CREATE INDEX ix_t_log_entries_posted_by ON sw.t_log_entries USING btree (posted_
 
 CREATE INDEX ix_t_log_entries_posting_time ON sw.t_log_entries USING btree (posting_time);
 
+--
+-- Name: TABLE t_log_entries; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_log_entries TO readaccess;
+

@@ -50,3 +50,9 @@ UNION
 
 ALTER TABLE dpkg.v_data_package_all_items_list_report OWNER TO d3l243;
 
+--
+-- Name: TABLE v_data_package_all_items_list_report; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.v_data_package_all_items_list_report TO readaccess;
+

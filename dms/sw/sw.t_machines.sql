@@ -30,3 +30,9 @@ ALTER TABLE ONLY sw.t_machines
 ALTER TABLE ONLY sw.t_machines
     ADD CONSTRAINT fk_t_machines_t_processor_tool_groups FOREIGN KEY (proc_tool_group_id) REFERENCES sw.t_processor_tool_groups(group_id) ON UPDATE CASCADE;
 
+--
+-- Name: TABLE t_machines; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_machines TO readaccess;
+

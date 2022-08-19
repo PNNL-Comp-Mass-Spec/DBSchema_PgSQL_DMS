@@ -53,3 +53,9 @@ CREATE INDEX ix_t_job_step_events_entered_include_job ON sw.t_job_step_events US
 
 CREATE INDEX ix_t_job_step_events_job ON sw.t_job_step_events USING btree (job);
 
+--
+-- Name: TABLE t_job_step_events; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_job_step_events TO readaccess;
+

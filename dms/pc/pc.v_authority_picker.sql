@@ -11,3 +11,9 @@ CREATE VIEW pc.v_authority_picker AS
 
 ALTER TABLE pc.v_authority_picker OWNER TO d3l243;
 
+--
+-- Name: TABLE v_authority_picker; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.v_authority_picker TO readaccess;
+

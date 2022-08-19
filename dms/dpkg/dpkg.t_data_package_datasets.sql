@@ -30,3 +30,9 @@ ALTER TABLE ONLY dpkg.t_data_package_datasets
 ALTER TABLE ONLY dpkg.t_data_package_datasets
     ADD CONSTRAINT fk_t_data_package_datasets_t_data_package FOREIGN KEY (data_pkg_id) REFERENCES dpkg.t_data_package(data_pkg_id) ON DELETE CASCADE;
 
+--
+-- Name: TABLE t_data_package_datasets; Type: ACL; Schema: dpkg; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE dpkg.t_data_package_datasets TO readaccess;
+

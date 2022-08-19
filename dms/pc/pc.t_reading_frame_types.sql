@@ -31,3 +31,9 @@ ALTER TABLE pc.t_reading_frame_types ALTER COLUMN reading_frame_type_id ADD GENE
 ALTER TABLE ONLY pc.t_reading_frame_types
     ADD CONSTRAINT pk_t_reading_frame_types PRIMARY KEY (reading_frame_type_id);
 
+--
+-- Name: TABLE t_reading_frame_types; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_reading_frame_types TO readaccess;
+

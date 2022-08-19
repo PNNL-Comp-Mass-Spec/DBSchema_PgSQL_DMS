@@ -57,3 +57,9 @@ CREATE UNIQUE INDEX ix_t_sp_authorization_unique_procedure_login_host_ip ON sw.t
 
 CREATE UNIQUE INDEX ix_t_sp_authorization_unique_procedure_login_host_name ON sw.t_sp_authorization USING btree (procedure_name, login_name, host_name);
 
+--
+-- Name: TABLE t_sp_authorization; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.t_sp_authorization TO readaccess;
+

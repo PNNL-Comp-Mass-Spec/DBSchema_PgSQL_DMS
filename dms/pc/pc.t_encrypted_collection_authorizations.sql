@@ -31,3 +31,9 @@ ALTER TABLE pc.t_encrypted_collection_authorizations ALTER COLUMN authorization_
 ALTER TABLE ONLY pc.t_encrypted_collection_authorizations
     ADD CONSTRAINT pk_t_encrypted_collection_authorizations PRIMARY KEY (authorization_id);
 
+--
+-- Name: TABLE t_encrypted_collection_authorizations; Type: ACL; Schema: pc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pc.t_encrypted_collection_authorizations TO readaccess;
+
