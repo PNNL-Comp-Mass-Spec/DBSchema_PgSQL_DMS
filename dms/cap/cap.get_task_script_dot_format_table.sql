@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_script_dot_format_table(_script text) RE
 **
 **  Auth:   mem
 **  Date:   06/25/2022 mem - Ported to PostgreSQL by converting V_Script_Dot_Format to a function
+**          08/17/2022 mem - Use case-insensitive comparison for script name
 **
 ****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
                           COLUMNS step_number int PATH '@Number',
                                   step_tool text PATH '@Tool',
                                   parent_steps XML PATH 'Depends_On') As XmlTableA
-    WHERE Src.script = _script
+    WHERE Src.script = _script::citext
     ORDER BY XmlTableA.step_number;
 
     -- Return the script lines that define the script steps
@@ -75,7 +76,7 @@ BEGIN
                               COLUMNS step_number int PATH '@Number',
                                       step_tool text PATH '@Tool',
                                       parent_steps XML PATH 'Depends_On') As XmlTableA
-        WHERE Src.script = _script
+        WHERE Src.script = _script::citext
     LOOP
         If Not _scriptStep.parent_steps Is Null Then
             -- _scriptStep.parent_steps will have one or more parent steps, e.g.
