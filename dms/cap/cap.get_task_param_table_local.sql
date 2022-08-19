@@ -86,7 +86,7 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState = returned_sqlstate,
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
