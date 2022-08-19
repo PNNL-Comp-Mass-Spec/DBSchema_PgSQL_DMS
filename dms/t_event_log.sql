@@ -77,4 +77,5 @@ ALTER TABLE ONLY public.t_event_log
 --
 
 GRANT SELECT ON TABLE public.t_event_log TO readaccess;
+GRANT SELECT ON TABLE public.t_event_log TO writeaccess;
 

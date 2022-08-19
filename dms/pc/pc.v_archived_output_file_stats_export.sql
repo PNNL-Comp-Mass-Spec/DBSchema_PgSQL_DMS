@@ -22,4 +22,5 @@ ALTER TABLE pc.v_archived_output_file_stats_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_archived_output_file_stats_export TO readaccess;
+GRANT SELECT ON TABLE pc.v_archived_output_file_stats_export TO writeaccess;
 

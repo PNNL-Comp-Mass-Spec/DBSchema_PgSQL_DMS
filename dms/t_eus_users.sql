@@ -41,4 +41,5 @@ ALTER TABLE ONLY public.t_eus_users
 --
 
 GRANT SELECT ON TABLE public.t_eus_users TO readaccess;
+GRANT SELECT ON TABLE public.t_eus_users TO writeaccess;
 

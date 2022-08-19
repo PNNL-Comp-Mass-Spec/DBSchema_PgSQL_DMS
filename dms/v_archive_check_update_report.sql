@@ -32,4 +32,5 @@ ALTER TABLE public.v_archive_check_update_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_archive_check_update_report TO readaccess;
+GRANT SELECT ON TABLE public.v_archive_check_update_report TO writeaccess;
 

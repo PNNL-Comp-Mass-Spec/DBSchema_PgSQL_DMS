@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_notification_entity_type
 --
 
 GRANT SELECT ON TABLE public.t_notification_entity_type TO readaccess;
+GRANT SELECT ON TABLE public.t_notification_entity_type TO writeaccess;
 

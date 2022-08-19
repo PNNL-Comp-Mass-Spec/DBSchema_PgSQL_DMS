@@ -40,4 +40,5 @@ COMMENT ON VIEW public.v_user_detail_report IS 'A few users have multiple EUS Pe
 --
 
 GRANT SELECT ON TABLE public.v_user_detail_report TO readaccess;
+GRANT SELECT ON TABLE public.v_user_detail_report TO writeaccess;
 

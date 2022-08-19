@@ -44,4 +44,5 @@ ALTER TABLE ONLY pc.t_genome_assembly
 --
 
 GRANT SELECT ON TABLE pc.t_genome_assembly TO readaccess;
+GRANT SELECT ON TABLE pc.t_genome_assembly TO writeaccess;
 

@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_experiment_reference_compounds
 --
 
 GRANT SELECT ON TABLE public.t_experiment_reference_compounds TO readaccess;
+GRANT SELECT ON TABLE public.t_experiment_reference_compounds TO writeaccess;
 

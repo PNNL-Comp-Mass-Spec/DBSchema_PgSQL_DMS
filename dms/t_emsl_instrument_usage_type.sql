@@ -43,4 +43,5 @@ CREATE UNIQUE INDEX ix_t_emsl_instrument_usage_type_usage_type ON public.t_emsl_
 --
 
 GRANT SELECT ON TABLE public.t_emsl_instrument_usage_type TO readaccess;
+GRANT SELECT ON TABLE public.t_emsl_instrument_usage_type TO writeaccess;
 

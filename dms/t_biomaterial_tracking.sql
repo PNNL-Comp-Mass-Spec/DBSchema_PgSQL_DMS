@@ -24,4 +24,5 @@ ALTER TABLE ONLY public.t_biomaterial_tracking
 --
 
 GRANT SELECT ON TABLE public.t_biomaterial_tracking TO readaccess;
+GRANT SELECT ON TABLE public.t_biomaterial_tracking TO writeaccess;
 

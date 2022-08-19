@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_dataset_rating_name
 --
 
 GRANT SELECT ON TABLE public.t_dataset_rating_name TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_rating_name TO writeaccess;
 

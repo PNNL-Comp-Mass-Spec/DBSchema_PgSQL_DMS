@@ -23,4 +23,5 @@ ALTER TABLE ONLY pc.t_protein_collection_states
 --
 
 GRANT SELECT ON TABLE pc.t_protein_collection_states TO readaccess;
+GRANT SELECT ON TABLE pc.t_protein_collection_states TO writeaccess;
 

@@ -15,4 +15,5 @@ ALTER TABLE public.v_instrument_source_scan_dir OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_source_scan_dir TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_source_scan_dir TO writeaccess;
 

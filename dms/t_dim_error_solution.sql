@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_dim_error_solution
 --
 
 GRANT SELECT ON TABLE public.t_dim_error_solution TO readaccess;
+GRANT SELECT ON TABLE public.t_dim_error_solution TO writeaccess;
 

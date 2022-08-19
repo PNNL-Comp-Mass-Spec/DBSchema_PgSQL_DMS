@@ -23,4 +23,5 @@ ALTER TABLE public.v_separation_type_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_separation_type_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_separation_type_entry TO writeaccess;
 

@@ -30,4 +30,5 @@ ALTER TABLE public.v_factor_count_by_experiment OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_factor_count_by_experiment TO readaccess;
+GRANT SELECT ON TABLE public.v_factor_count_by_experiment TO writeaccess;
 

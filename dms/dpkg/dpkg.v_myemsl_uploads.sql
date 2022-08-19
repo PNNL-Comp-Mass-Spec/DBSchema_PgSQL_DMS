@@ -32,4 +32,5 @@ ALTER TABLE dpkg.v_myemsl_uploads OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE dpkg.v_myemsl_uploads TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_myemsl_uploads TO writeaccess;
 

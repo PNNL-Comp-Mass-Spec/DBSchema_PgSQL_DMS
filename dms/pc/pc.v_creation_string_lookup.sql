@@ -22,4 +22,5 @@ ALTER TABLE pc.v_creation_string_lookup OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_creation_string_lookup TO readaccess;
+GRANT SELECT ON TABLE pc.v_creation_string_lookup TO writeaccess;
 

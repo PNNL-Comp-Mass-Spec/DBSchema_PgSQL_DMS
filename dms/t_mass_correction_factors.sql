@@ -70,4 +70,5 @@ CREATE TRIGGER trig_t_mass_correction_factors_after_update AFTER UPDATE ON publi
 --
 
 GRANT SELECT ON TABLE public.t_mass_correction_factors TO readaccess;
+GRANT SELECT ON TABLE public.t_mass_correction_factors TO writeaccess;
 

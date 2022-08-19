@@ -21,4 +21,5 @@ ALTER TABLE ONLY pc.t_dna_translation_table_map
 --
 
 GRANT SELECT ON TABLE pc.t_dna_translation_table_map TO readaccess;
+GRANT SELECT ON TABLE pc.t_dna_translation_table_map TO writeaccess;
 

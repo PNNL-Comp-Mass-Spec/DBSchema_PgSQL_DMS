@@ -50,4 +50,5 @@ CREATE UNIQUE INDEX ix_t_lab_locations_lab_name ON public.t_lab_locations USING 
 --
 
 GRANT SELECT ON TABLE public.t_lab_locations TO readaccess;
+GRANT SELECT ON TABLE public.t_lab_locations TO writeaccess;
 

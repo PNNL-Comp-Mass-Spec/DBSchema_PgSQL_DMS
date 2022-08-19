@@ -21,4 +21,5 @@ ALTER TABLE public.v_analysis_tool_allowed_instrument_class OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_tool_allowed_instrument_class TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_tool_allowed_instrument_class TO writeaccess;
 

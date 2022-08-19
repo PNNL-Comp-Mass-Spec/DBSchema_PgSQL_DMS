@@ -82,4 +82,5 @@ COMMENT ON VIEW public.v_rna_prep_request_list_report IS 'If the request is not 
 --
 
 GRANT SELECT ON TABLE public.v_rna_prep_request_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_rna_prep_request_list_report TO writeaccess;
 

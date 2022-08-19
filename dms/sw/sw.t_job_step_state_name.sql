@@ -23,4 +23,5 @@ ALTER TABLE ONLY sw.t_job_step_state_name
 --
 
 GRANT SELECT ON TABLE sw.t_job_step_state_name TO readaccess;
+GRANT SELECT ON TABLE sw.t_job_step_state_name TO writeaccess;
 

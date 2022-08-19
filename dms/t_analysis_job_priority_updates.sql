@@ -45,4 +45,5 @@ CREATE INDEX ix_t_analysis_job_priority_updates_job ON public.t_analysis_job_pri
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_priority_updates TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_job_priority_updates TO writeaccess;
 

@@ -24,4 +24,5 @@ ALTER TABLE cap.v_dms_dataset_archive_status OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_dms_dataset_archive_status TO readaccess;
+GRANT SELECT ON TABLE cap.v_dms_dataset_archive_status TO writeaccess;
 

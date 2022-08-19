@@ -19,4 +19,5 @@ ALTER TABLE public.v_analysis_dataset_organism OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_dataset_organism TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_dataset_organism TO writeaccess;
 

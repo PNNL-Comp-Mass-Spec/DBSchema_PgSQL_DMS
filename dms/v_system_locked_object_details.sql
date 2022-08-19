@@ -32,4 +32,5 @@ ALTER TABLE public.v_system_locked_object_details OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_system_locked_object_details TO readaccess;
+GRANT SELECT ON TABLE public.v_system_locked_object_details TO writeaccess;
 

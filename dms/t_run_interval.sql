@@ -29,4 +29,5 @@ ALTER TABLE ONLY public.t_run_interval
 --
 
 GRANT SELECT ON TABLE public.t_run_interval TO readaccess;
+GRANT SELECT ON TABLE public.t_run_interval TO writeaccess;
 

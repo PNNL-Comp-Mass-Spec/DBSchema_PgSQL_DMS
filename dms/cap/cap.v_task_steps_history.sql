@@ -44,4 +44,5 @@ ALTER TABLE cap.v_task_steps_history OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_task_steps_history TO readaccess;
+GRANT SELECT ON TABLE cap.v_task_steps_history TO writeaccess;
 

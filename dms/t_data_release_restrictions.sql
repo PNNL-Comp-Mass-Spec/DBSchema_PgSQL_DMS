@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_data_release_restrictions
 --
 
 GRANT SELECT ON TABLE public.t_data_release_restrictions TO readaccess;
+GRANT SELECT ON TABLE public.t_data_release_restrictions TO writeaccess;
 

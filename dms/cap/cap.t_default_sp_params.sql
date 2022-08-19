@@ -24,4 +24,5 @@ ALTER TABLE ONLY cap.t_default_sp_params
 --
 
 GRANT SELECT ON TABLE cap.t_default_sp_params TO readaccess;
+GRANT SELECT ON TABLE cap.t_default_sp_params TO writeaccess;
 

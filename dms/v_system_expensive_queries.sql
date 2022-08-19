@@ -27,4 +27,5 @@ COMMENT ON VIEW public.v_system_expensive_queries IS 'Lists the top 500 most exp
 --
 
 GRANT SELECT ON TABLE public.v_system_expensive_queries TO readaccess;
+GRANT SELECT ON TABLE public.v_system_expensive_queries TO writeaccess;
 

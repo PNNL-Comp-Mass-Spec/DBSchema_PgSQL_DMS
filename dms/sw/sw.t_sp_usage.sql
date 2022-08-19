@@ -38,4 +38,5 @@ ALTER TABLE ONLY sw.t_sp_usage
 --
 
 GRANT SELECT ON TABLE sw.t_sp_usage TO readaccess;
+GRANT SELECT ON TABLE sw.t_sp_usage TO writeaccess;
 

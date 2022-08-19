@@ -37,4 +37,5 @@ ALTER TABLE ONLY public.t_factor_log
 --
 
 GRANT SELECT ON TABLE public.t_factor_log TO readaccess;
+GRANT SELECT ON TABLE public.t_factor_log TO writeaccess;
 

@@ -19,4 +19,5 @@ ALTER TABLE public.v_instrument_name_rna_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_name_rna_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_name_rna_picklist TO writeaccess;
 

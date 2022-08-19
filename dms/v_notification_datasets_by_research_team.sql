@@ -43,4 +43,5 @@ ALTER TABLE public.v_notification_datasets_by_research_team OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_notification_datasets_by_research_team TO readaccess;
+GRANT SELECT ON TABLE public.v_notification_datasets_by_research_team TO writeaccess;
 

@@ -52,4 +52,5 @@ ALTER TABLE public.v_active_requested_runs OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_active_requested_runs TO readaccess;
+GRANT SELECT ON TABLE public.v_active_requested_runs TO writeaccess;
 

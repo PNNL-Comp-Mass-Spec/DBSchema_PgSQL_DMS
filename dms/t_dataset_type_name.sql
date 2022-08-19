@@ -37,4 +37,5 @@ ALTER TABLE ONLY public.t_dataset_type_name
 --
 
 GRANT SELECT ON TABLE public.t_dataset_type_name TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_type_name TO writeaccess;
 

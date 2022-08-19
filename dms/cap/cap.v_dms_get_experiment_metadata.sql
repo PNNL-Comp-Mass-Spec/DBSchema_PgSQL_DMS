@@ -21,4 +21,5 @@ ALTER TABLE cap.v_dms_get_experiment_metadata OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_dms_get_experiment_metadata TO readaccess;
+GRANT SELECT ON TABLE cap.v_dms_get_experiment_metadata TO writeaccess;
 

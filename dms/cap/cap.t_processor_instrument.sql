@@ -24,4 +24,5 @@ ALTER TABLE ONLY cap.t_processor_instrument
 --
 
 GRANT SELECT ON TABLE cap.t_processor_instrument TO readaccess;
+GRANT SELECT ON TABLE cap.t_processor_instrument TO writeaccess;
 

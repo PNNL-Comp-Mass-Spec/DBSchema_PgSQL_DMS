@@ -52,4 +52,5 @@ CREATE INDEX ix_t_job_step_processing_log_processor ON sw.t_job_step_processing_
 --
 
 GRANT SELECT ON TABLE sw.t_job_step_processing_log TO readaccess;
+GRANT SELECT ON TABLE sw.t_job_step_processing_log TO writeaccess;
 

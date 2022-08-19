@@ -43,4 +43,5 @@ COMMENT ON VIEW public.v_dataset_report IS 'This view uses date_sort_key for acq
 --
 
 GRANT SELECT ON TABLE public.v_dataset_report TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_report TO writeaccess;
 

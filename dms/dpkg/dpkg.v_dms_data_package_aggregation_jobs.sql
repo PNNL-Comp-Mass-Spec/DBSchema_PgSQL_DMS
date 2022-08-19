@@ -56,4 +56,5 @@ COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_jobs IS 'Note that this view
 --
 
 GRANT SELECT ON TABLE dpkg.v_dms_data_package_aggregation_jobs TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_dms_data_package_aggregation_jobs TO writeaccess;
 

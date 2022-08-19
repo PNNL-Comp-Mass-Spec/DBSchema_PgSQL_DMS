@@ -30,4 +30,5 @@ ALTER TABLE public.v_datasets_rss OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_datasets_rss TO readaccess;
+GRANT SELECT ON TABLE public.v_datasets_rss TO writeaccess;
 

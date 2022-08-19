@@ -40,4 +40,5 @@ ALTER TABLE ONLY cap.t_scripts_history
 --
 
 GRANT SELECT ON TABLE cap.t_scripts_history TO readaccess;
+GRANT SELECT ON TABLE cap.t_scripts_history TO writeaccess;
 

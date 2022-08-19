@@ -22,4 +22,5 @@ COMMENT ON VIEW public.v_active_instrument_operators IS 'Column payroll_num is a
 --
 
 GRANT SELECT ON TABLE public.v_active_instrument_operators TO readaccess;
+GRANT SELECT ON TABLE public.v_active_instrument_operators TO writeaccess;
 

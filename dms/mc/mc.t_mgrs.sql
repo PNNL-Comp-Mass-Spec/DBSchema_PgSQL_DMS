@@ -52,4 +52,5 @@ ALTER TABLE ONLY mc.t_mgrs
 --
 
 GRANT SELECT ON TABLE mc.t_mgrs TO readaccess;
+GRANT SELECT ON TABLE mc.t_mgrs TO writeaccess;
 

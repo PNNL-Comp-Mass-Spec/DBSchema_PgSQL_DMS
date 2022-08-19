@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION mc.get_manager_parameters(_managernamelist text DEFAU
 **          02/05/2020 mem - Ported to PostgreSQL
 **          03/23/2022 mem - Use mc schema when calling GetManagerParametersWork
 **          04/02/2022 mem - Use new procedure name
+**          08/19/2022 mem - Drop the temp table when exiting the function
 **
 *****************************************************/
 DECLARE
@@ -45,8 +46,6 @@ BEGIN
     -----------------------------------------------
     -- Create the Temp Table to hold the manager parameters
     -----------------------------------------------
-
-    DROP TABLE IF EXISTS Tmp_Mgr_Params;
 
     CREATE TEMP TABLE Tmp_Mgr_Params (
         mgr_name text NOT NULL,
@@ -76,10 +75,8 @@ BEGIN
                P.mgr_type_id, P.ParentParamPointerState, P.source
         FROM Tmp_Mgr_Params P
         ORDER BY P.type_id, P.mgr_name;
-        Return;
-    End If;
 
-    If _sortMode = 1 Then
+    ElsIf _sortMode = 1 Then
         RETURN QUERY
         SELECT P.mgr_name, P.param_name, P.entry_id,
                P.type_id, P.value, P.mgr_id,
@@ -87,10 +84,8 @@ BEGIN
                P.mgr_type_id, P.ParentParamPointerState, P.source
         FROM Tmp_Mgr_Params P
         ORDER BY P.param_name, P.mgr_name;
-        Return;
-    End If;
 
-    If _sortMode = 2 Then
+    ElsIf _sortMode = 2 Then
         RETURN QUERY
         SELECT P.mgr_name, P.param_name, P.entry_id,
                P.type_id, P.value, P.mgr_id,
@@ -98,16 +93,19 @@ BEGIN
                P.mgr_type_id, P.ParentParamPointerState, P.source
         FROM Tmp_Mgr_Params P
         ORDER BY P.mgr_name, P.param_name;
-        Return;
+
+    Else
+        RETURN QUERY
+        SELECT P.mgr_name, P.param_name, P.entry_id,
+               P.type_id, P.value, P.mgr_id,
+               P.comment, P.last_affected, P.entered_by,
+               P.mgr_type_id, P.ParentParamPointerState, P.source
+        FROM Tmp_Mgr_Params P
+        ORDER BY P.value, P.param_name;
+
     End If;
 
-    RETURN QUERY
-    SELECT P.mgr_name, P.param_name, P.entry_id,
-           P.type_id, P.value, P.mgr_id,
-           P.comment, P.last_affected, P.entered_by,
-           P.mgr_type_id, P.ParentParamPointerState, P.source
-    FROM Tmp_Mgr_Params P
-    ORDER BY P.value, P.param_name;
+    DROP TABLE Tmp_Mgr_Params;
 
 END
 $$;

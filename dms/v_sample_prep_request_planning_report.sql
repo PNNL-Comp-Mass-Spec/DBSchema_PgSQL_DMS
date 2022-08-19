@@ -59,4 +59,5 @@ COMMENT ON VIEW public.v_sample_prep_request_planning_report IS 'If the request 
 --
 
 GRANT SELECT ON TABLE public.v_sample_prep_request_planning_report TO readaccess;
+GRANT SELECT ON TABLE public.v_sample_prep_request_planning_report TO writeaccess;
 

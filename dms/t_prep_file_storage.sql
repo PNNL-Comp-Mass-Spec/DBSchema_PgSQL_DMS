@@ -41,4 +41,5 @@ ALTER TABLE ONLY public.t_prep_file_storage
 --
 
 GRANT SELECT ON TABLE public.t_prep_file_storage TO readaccess;
+GRANT SELECT ON TABLE public.t_prep_file_storage TO writeaccess;
 

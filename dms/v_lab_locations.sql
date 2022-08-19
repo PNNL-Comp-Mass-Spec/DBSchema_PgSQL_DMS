@@ -17,4 +17,5 @@ ALTER TABLE public.v_lab_locations OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_lab_locations TO readaccess;
+GRANT SELECT ON TABLE public.v_lab_locations TO writeaccess;
 

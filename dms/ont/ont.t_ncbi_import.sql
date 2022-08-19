@@ -17,4 +17,5 @@ ALTER TABLE ont.t_ncbi_import OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.t_ncbi_import TO readaccess;
+GRANT SELECT ON TABLE ont.t_ncbi_import TO writeaccess;
 

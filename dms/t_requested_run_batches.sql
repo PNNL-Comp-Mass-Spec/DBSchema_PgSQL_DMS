@@ -66,4 +66,5 @@ ALTER TABLE ONLY public.t_requested_run_batches
 --
 
 GRANT SELECT ON TABLE public.t_requested_run_batches TO readaccess;
+GRANT SELECT ON TABLE public.t_requested_run_batches TO writeaccess;
 

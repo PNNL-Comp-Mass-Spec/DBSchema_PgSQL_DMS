@@ -28,4 +28,5 @@ CREATE INDEX ix_t_ncbi_taxonomy_name_class_sort_weight ON ont.t_ncbi_taxonomy_na
 --
 
 GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_name_class TO readaccess;
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_name_class TO writeaccess;
 

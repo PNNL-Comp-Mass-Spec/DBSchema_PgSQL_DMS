@@ -17,4 +17,5 @@ ALTER TABLE public.v_export_campaign_biomaterial OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_export_campaign_biomaterial TO readaccess;
+GRANT SELECT ON TABLE public.v_export_campaign_biomaterial TO writeaccess;
 

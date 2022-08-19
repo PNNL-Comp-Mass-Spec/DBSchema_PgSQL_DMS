@@ -42,4 +42,5 @@ CREATE UNIQUE INDEX ix_t_collection_organism_xref_prot_collection_id_organism_id
 --
 
 GRANT SELECT ON TABLE pc.t_collection_organism_xref TO readaccess;
+GRANT SELECT ON TABLE pc.t_collection_organism_xref TO writeaccess;
 

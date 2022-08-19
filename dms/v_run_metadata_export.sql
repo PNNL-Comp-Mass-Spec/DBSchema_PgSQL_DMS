@@ -50,4 +50,5 @@ ALTER TABLE public.v_run_metadata_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_run_metadata_export TO readaccess;
+GRANT SELECT ON TABLE public.v_run_metadata_export TO writeaccess;
 

@@ -35,4 +35,5 @@ ALTER TABLE ONLY dpkg.t_data_package_datasets
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_package_datasets TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_data_package_datasets TO writeaccess;
 

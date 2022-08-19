@@ -27,4 +27,5 @@ ALTER TABLE ONLY ont.t_unimod_specificity_nl
 --
 
 GRANT SELECT ON TABLE ont.t_unimod_specificity_nl TO readaccess;
+GRANT SELECT ON TABLE ont.t_unimod_specificity_nl TO writeaccess;
 

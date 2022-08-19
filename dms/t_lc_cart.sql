@@ -53,4 +53,5 @@ ALTER TABLE ONLY public.t_lc_cart
 --
 
 GRANT SELECT ON TABLE public.t_lc_cart TO readaccess;
+GRANT SELECT ON TABLE public.t_lc_cart TO writeaccess;
 

@@ -49,4 +49,5 @@ ALTER TABLE public.v_sample_prep_request_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_sample_prep_request_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_sample_prep_request_entry TO writeaccess;
 

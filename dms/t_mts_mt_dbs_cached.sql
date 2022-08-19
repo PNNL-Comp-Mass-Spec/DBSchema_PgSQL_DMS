@@ -51,4 +51,5 @@ CREATE INDEX ix_t_mts_mt_dbs_cached_state_name ON public.t_mts_mt_dbs_cached USI
 --
 
 GRANT SELECT ON TABLE public.t_mts_mt_dbs_cached TO readaccess;
+GRANT SELECT ON TABLE public.t_mts_mt_dbs_cached TO writeaccess;
 

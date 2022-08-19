@@ -51,4 +51,5 @@ ALTER TABLE cap.v_myemsl_uploads2 OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_myemsl_uploads2 TO readaccess;
+GRANT SELECT ON TABLE cap.v_myemsl_uploads2 TO writeaccess;
 

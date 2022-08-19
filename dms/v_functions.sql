@@ -32,4 +32,5 @@ COMMENT ON VIEW public.v_functions IS 'User defined functions and procedures in 
 --
 
 GRANT SELECT ON TABLE public.v_functions TO readaccess;
+GRANT SELECT ON TABLE public.v_functions TO writeaccess;
 

@@ -21,4 +21,5 @@ ALTER TABLE public.v_enzyme_details OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_enzyme_details TO readaccess;
+GRANT SELECT ON TABLE public.v_enzyme_details TO writeaccess;
 

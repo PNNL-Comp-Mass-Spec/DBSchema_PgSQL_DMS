@@ -36,4 +36,5 @@ ALTER TABLE pc.v_protein_collections_by_organism OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_protein_collections_by_organism TO readaccess;
+GRANT SELECT ON TABLE pc.v_protein_collections_by_organism TO writeaccess;
 

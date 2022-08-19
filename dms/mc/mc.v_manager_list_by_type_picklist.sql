@@ -19,4 +19,5 @@ ALTER TABLE mc.v_manager_list_by_type_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_manager_list_by_type_picklist TO readaccess;
+GRANT SELECT ON TABLE mc.v_manager_list_by_type_picklist TO writeaccess;
 

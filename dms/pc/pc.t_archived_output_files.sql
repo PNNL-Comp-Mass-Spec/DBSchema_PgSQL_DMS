@@ -62,4 +62,5 @@ ALTER TABLE ONLY pc.t_archived_output_files
 --
 
 GRANT SELECT ON TABLE pc.t_archived_output_files TO readaccess;
+GRANT SELECT ON TABLE pc.t_archived_output_files TO writeaccess;
 

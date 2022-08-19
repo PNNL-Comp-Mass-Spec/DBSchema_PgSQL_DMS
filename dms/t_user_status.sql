@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_user_status
 --
 
 GRANT SELECT ON TABLE public.t_user_status TO readaccess;
+GRANT SELECT ON TABLE public.t_user_status TO writeaccess;
 

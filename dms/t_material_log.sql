@@ -75,4 +75,5 @@ CREATE INDEX ix_t_material_log_type_name_cached_date ON public.t_material_log US
 --
 
 GRANT SELECT ON TABLE public.t_material_log TO readaccess;
+GRANT SELECT ON TABLE public.t_material_log TO writeaccess;
 

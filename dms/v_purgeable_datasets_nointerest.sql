@@ -35,4 +35,5 @@ COMMENT ON VIEW public.v_purgeable_datasets_nointerest IS 'Select a dataset if t
 --
 
 GRANT SELECT ON TABLE public.v_purgeable_datasets_nointerest TO readaccess;
+GRANT SELECT ON TABLE public.v_purgeable_datasets_nointerest TO writeaccess;
 

@@ -26,4 +26,5 @@ COMMENT ON VIEW public.v_myemsl_proposal_id_update IS 'This view is used by MyEM
 --
 
 GRANT SELECT ON TABLE public.v_myemsl_proposal_id_update TO readaccess;
+GRANT SELECT ON TABLE public.v_myemsl_proposal_id_update TO writeaccess;
 

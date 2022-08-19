@@ -48,4 +48,5 @@ CREATE UNIQUE INDEX ix_t_step_tools_step_tool ON cap.t_step_tools USING btree (s
 --
 
 GRANT SELECT ON TABLE cap.t_step_tools TO readaccess;
+GRANT SELECT ON TABLE cap.t_step_tools TO writeaccess;
 

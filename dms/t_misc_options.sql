@@ -43,4 +43,5 @@ CREATE UNIQUE INDEX ix_t_misc_options_name ON public.t_misc_options USING btree 
 --
 
 GRANT SELECT ON TABLE public.t_misc_options TO readaccess;
+GRANT SELECT ON TABLE public.t_misc_options TO writeaccess;
 

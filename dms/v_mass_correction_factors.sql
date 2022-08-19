@@ -23,4 +23,5 @@ ALTER TABLE public.v_mass_correction_factors OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mass_correction_factors TO readaccess;
+GRANT SELECT ON TABLE public.v_mass_correction_factors TO writeaccess;
 

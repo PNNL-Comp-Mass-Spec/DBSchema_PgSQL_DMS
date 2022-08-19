@@ -55,4 +55,5 @@ COMMENT ON VIEW public.v_requested_run_dataset_export IS 'MyEMSL uses this view'
 --
 
 GRANT SELECT ON TABLE public.v_requested_run_dataset_export TO readaccess;
+GRANT SELECT ON TABLE public.v_requested_run_dataset_export TO writeaccess;
 

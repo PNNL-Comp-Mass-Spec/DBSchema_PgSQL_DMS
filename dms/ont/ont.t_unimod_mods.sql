@@ -34,4 +34,5 @@ ALTER TABLE ONLY ont.t_unimod_mods
 --
 
 GRANT SELECT ON TABLE ont.t_unimod_mods TO readaccess;
+GRANT SELECT ON TABLE ont.t_unimod_mods TO writeaccess;
 

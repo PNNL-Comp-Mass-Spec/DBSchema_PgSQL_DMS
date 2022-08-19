@@ -31,4 +31,5 @@ ALTER TABLE pc.v_protein_storage_entry_import OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_protein_storage_entry_import TO readaccess;
+GRANT SELECT ON TABLE pc.v_protein_storage_entry_import TO writeaccess;
 

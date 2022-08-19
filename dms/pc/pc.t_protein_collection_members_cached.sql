@@ -40,4 +40,5 @@ ALTER TABLE ONLY pc.t_protein_collection_members_cached
 --
 
 GRANT SELECT ON TABLE pc.t_protein_collection_members_cached TO readaccess;
+GRANT SELECT ON TABLE pc.t_protein_collection_members_cached TO writeaccess;
 

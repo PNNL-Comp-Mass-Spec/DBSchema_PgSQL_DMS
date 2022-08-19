@@ -45,4 +45,5 @@ ALTER TABLE public.v_notification_requested_run_batches_by_research_team OWNER T
 --
 
 GRANT SELECT ON TABLE public.v_notification_requested_run_batches_by_research_team TO readaccess;
+GRANT SELECT ON TABLE public.v_notification_requested_run_batches_by_research_team TO writeaccess;
 

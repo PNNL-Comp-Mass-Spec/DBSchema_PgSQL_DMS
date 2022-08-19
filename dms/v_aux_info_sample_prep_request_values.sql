@@ -24,4 +24,5 @@ ALTER TABLE public.v_aux_info_sample_prep_request_values OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_aux_info_sample_prep_request_values TO readaccess;
+GRANT SELECT ON TABLE public.v_aux_info_sample_prep_request_values TO writeaccess;
 

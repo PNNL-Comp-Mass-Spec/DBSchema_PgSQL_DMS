@@ -12,4 +12,5 @@ ALTER SCHEMA mc OWNER TO d3l243;
 --
 
 GRANT USAGE ON SCHEMA mc TO readaccess;
+GRANT ALL ON SCHEMA mc TO writeaccess;
 

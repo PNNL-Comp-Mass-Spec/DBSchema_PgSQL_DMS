@@ -43,4 +43,5 @@ ALTER TABLE public.v_storage_crosstab_dataset_count OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_storage_crosstab_dataset_count TO readaccess;
+GRANT SELECT ON TABLE public.v_storage_crosstab_dataset_count TO writeaccess;
 

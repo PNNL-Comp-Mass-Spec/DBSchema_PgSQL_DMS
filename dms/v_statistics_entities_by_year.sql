@@ -91,4 +91,5 @@ COMMENT ON VIEW public.v_statistics_entities_by_year IS 'Dataset stats exclude t
 --
 
 GRANT SELECT ON TABLE public.v_statistics_entities_by_year TO readaccess;
+GRANT SELECT ON TABLE public.v_statistics_entities_by_year TO writeaccess;
 

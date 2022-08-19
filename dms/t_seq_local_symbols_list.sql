@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_seq_local_symbols_list
 --
 
 GRANT SELECT ON TABLE public.t_seq_local_symbols_list TO readaccess;
+GRANT SELECT ON TABLE public.t_seq_local_symbols_list TO writeaccess;
 

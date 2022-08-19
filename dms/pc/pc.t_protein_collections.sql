@@ -100,4 +100,5 @@ ALTER TABLE ONLY pc.t_protein_collections
 --
 
 GRANT SELECT ON TABLE pc.t_protein_collections TO readaccess;
+GRANT SELECT ON TABLE pc.t_protein_collections TO writeaccess;
 

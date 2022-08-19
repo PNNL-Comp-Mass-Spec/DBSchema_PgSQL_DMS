@@ -65,4 +65,5 @@ ALTER TABLE ONLY public.t_data_analysis_request_updates
 --
 
 GRANT SELECT ON TABLE public.t_data_analysis_request_updates TO readaccess;
+GRANT SELECT ON TABLE public.t_data_analysis_request_updates TO writeaccess;
 

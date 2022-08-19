@@ -24,4 +24,5 @@ ALTER TABLE public.v_dataset_separation_type_usage_2 OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_separation_type_usage_2 TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_separation_type_usage_2 TO writeaccess;
 

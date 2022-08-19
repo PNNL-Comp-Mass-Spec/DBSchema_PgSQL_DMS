@@ -57,4 +57,5 @@ COMMENT ON VIEW public.v_system_locked_objects IS 'Locked tables and views, by q
 --
 
 GRANT SELECT ON TABLE public.v_system_locked_objects TO readaccess;
+GRANT SELECT ON TABLE public.v_system_locked_objects TO writeaccess;
 

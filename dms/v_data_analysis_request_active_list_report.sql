@@ -66,4 +66,5 @@ COMMENT ON VIEW public.v_data_analysis_request_active_list_report IS 'If the ana
 --
 
 GRANT SELECT ON TABLE public.v_data_analysis_request_active_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_data_analysis_request_active_list_report TO writeaccess;
 

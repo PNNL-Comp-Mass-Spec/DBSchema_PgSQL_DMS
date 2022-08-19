@@ -37,3 +37,9 @@ ALTER FOREIGN TABLE eus.vw_requested_allocated_hours ALTER COLUMN fy OPTIONS (
 
 ALTER FOREIGN TABLE eus.vw_requested_allocated_hours OWNER TO d3l243;
 
+--
+-- Name: TABLE vw_requested_allocated_hours; Type: ACL; Schema: eus; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE eus.vw_requested_allocated_hours TO writeaccess;
+

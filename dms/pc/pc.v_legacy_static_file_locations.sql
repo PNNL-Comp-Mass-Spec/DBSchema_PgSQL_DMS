@@ -24,4 +24,5 @@ ALTER TABLE pc.v_legacy_static_file_locations OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_legacy_static_file_locations TO readaccess;
+GRANT SELECT ON TABLE pc.v_legacy_static_file_locations TO writeaccess;
 

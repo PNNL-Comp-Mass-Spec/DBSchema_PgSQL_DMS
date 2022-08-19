@@ -64,4 +64,5 @@ COMMENT ON VIEW public.v_material_containers_detail_report IS 'Exclude the stagi
 --
 
 GRANT SELECT ON TABLE public.v_material_containers_detail_report TO readaccess;
+GRANT SELECT ON TABLE public.v_material_containers_detail_report TO writeaccess;
 

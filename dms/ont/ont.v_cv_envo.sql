@@ -22,4 +22,5 @@ ALTER TABLE ont.v_cv_envo OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_cv_envo TO readaccess;
+GRANT SELECT ON TABLE ont.v_cv_envo TO writeaccess;
 

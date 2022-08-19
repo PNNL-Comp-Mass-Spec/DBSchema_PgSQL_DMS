@@ -44,4 +44,5 @@ CREATE UNIQUE INDEX ix_t_general_statistics_category_label ON public.t_general_s
 --
 
 GRANT SELECT ON TABLE public.t_general_statistics TO readaccess;
+GRANT SELECT ON TABLE public.t_general_statistics TO writeaccess;
 

@@ -25,4 +25,5 @@ ALTER TABLE ONLY ont.t_ncbi_taxonomy_gen_code
 --
 
 GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_gen_code TO readaccess;
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_gen_code TO writeaccess;
 

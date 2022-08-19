@@ -73,4 +73,5 @@ ALTER TABLE ONLY public.t_default_psm_job_parameters
 --
 
 GRANT SELECT ON TABLE public.t_default_psm_job_parameters TO readaccess;
+GRANT SELECT ON TABLE public.t_default_psm_job_parameters TO writeaccess;
 

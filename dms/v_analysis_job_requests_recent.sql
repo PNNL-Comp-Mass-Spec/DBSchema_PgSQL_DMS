@@ -30,4 +30,5 @@ ALTER TABLE public.v_analysis_job_requests_recent OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_requests_recent TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_requests_recent TO writeaccess;
 

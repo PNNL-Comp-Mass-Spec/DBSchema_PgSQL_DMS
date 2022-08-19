@@ -21,4 +21,5 @@ ALTER TABLE public.v_statistics_analysis_jobs_by_day OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_statistics_analysis_jobs_by_day TO readaccess;
+GRANT SELECT ON TABLE public.v_statistics_analysis_jobs_by_day TO writeaccess;
 

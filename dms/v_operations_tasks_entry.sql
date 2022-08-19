@@ -27,4 +27,5 @@ ALTER TABLE public.v_operations_tasks_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_operations_tasks_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_operations_tasks_entry TO writeaccess;
 

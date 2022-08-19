@@ -22,4 +22,5 @@ ALTER TABLE ONLY sw.t_local_processor_job_step_exclusion
 --
 
 GRANT SELECT ON TABLE sw.t_local_processor_job_step_exclusion TO readaccess;
+GRANT SELECT ON TABLE sw.t_local_processor_job_step_exclusion TO writeaccess;
 

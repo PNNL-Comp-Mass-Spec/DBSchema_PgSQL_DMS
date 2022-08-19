@@ -42,4 +42,5 @@ CREATE INDEX ix_t_task_step_dependencies_history ON cap.t_task_step_dependencies
 --
 
 GRANT SELECT ON TABLE cap.t_task_step_dependencies_history TO readaccess;
+GRANT SELECT ON TABLE cap.t_task_step_dependencies_history TO writeaccess;
 

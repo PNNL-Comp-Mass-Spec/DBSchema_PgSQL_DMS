@@ -82,4 +82,5 @@ ALTER TABLE public.v_filter_set_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_filter_set_report TO readaccess;
+GRANT SELECT ON TABLE public.v_filter_set_report TO writeaccess;
 

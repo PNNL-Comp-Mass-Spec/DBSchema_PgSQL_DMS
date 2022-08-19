@@ -18,4 +18,5 @@ ALTER TABLE pc.v_annotation_type_picker OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_annotation_type_picker TO readaccess;
+GRANT SELECT ON TABLE pc.v_annotation_type_picker TO writeaccess;
 

@@ -23,4 +23,5 @@ ALTER TABLE ONLY public.t_eus_site_status
 --
 
 GRANT SELECT ON TABLE public.t_eus_site_status TO readaccess;
+GRANT SELECT ON TABLE public.t_eus_site_status TO writeaccess;
 

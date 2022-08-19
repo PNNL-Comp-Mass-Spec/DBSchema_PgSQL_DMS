@@ -12,4 +12,5 @@ ALTER SCHEMA pc OWNER TO d3l243;
 --
 
 GRANT USAGE ON SCHEMA pc TO readaccess;
+GRANT ALL ON SCHEMA pc TO writeaccess;
 

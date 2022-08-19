@@ -56,4 +56,5 @@ ALTER TABLE public.v_organism_detail_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_organism_detail_report TO readaccess;
+GRANT SELECT ON TABLE public.v_organism_detail_report TO writeaccess;
 

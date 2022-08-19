@@ -33,4 +33,5 @@ COMMENT ON VIEW public.v_requested_run_unified_list IS 'This view is used by fun
 --
 
 GRANT SELECT ON TABLE public.v_requested_run_unified_list TO readaccess;
+GRANT SELECT ON TABLE public.v_requested_run_unified_list TO writeaccess;
 

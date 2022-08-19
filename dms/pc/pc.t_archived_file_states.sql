@@ -36,4 +36,5 @@ ALTER TABLE ONLY pc.t_archived_file_states
 --
 
 GRANT SELECT ON TABLE pc.t_archived_file_states TO readaccess;
+GRANT SELECT ON TABLE pc.t_archived_file_states TO writeaccess;
 

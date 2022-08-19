@@ -19,4 +19,5 @@ ALTER TABLE cap.v_script_dot_format OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_script_dot_format TO readaccess;
+GRANT SELECT ON TABLE cap.v_script_dot_format TO writeaccess;
 

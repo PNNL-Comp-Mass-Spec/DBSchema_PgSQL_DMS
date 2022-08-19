@@ -24,4 +24,5 @@ ALTER TABLE public.v_dataset_folder_paths_ex OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_folder_paths_ex TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_folder_paths_ex TO writeaccess;
 

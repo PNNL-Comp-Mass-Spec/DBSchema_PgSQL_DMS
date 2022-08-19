@@ -26,4 +26,5 @@ ALTER TABLE public.v_dataset_disposition_lite OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_disposition_lite TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_disposition_lite TO writeaccess;
 

@@ -93,4 +93,5 @@ CREATE TRIGGER trig_t_jobs_history_after_update AFTER UPDATE ON sw.t_jobs_histor
 --
 
 GRANT SELECT ON TABLE sw.t_jobs_history TO readaccess;
+GRANT SELECT ON TABLE sw.t_jobs_history TO writeaccess;
 

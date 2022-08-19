@@ -23,4 +23,5 @@ ALTER TABLE ONLY pc.t_nucleotide_coordinate_types
 --
 
 GRANT SELECT ON TABLE pc.t_nucleotide_coordinate_types TO readaccess;
+GRANT SELECT ON TABLE pc.t_nucleotide_coordinate_types TO writeaccess;
 

@@ -27,4 +27,5 @@ ALTER TABLE public.v_instrument_info_lcmsnet OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_info_lcmsnet TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_info_lcmsnet TO writeaccess;
 

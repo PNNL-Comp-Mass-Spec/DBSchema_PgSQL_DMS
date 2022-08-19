@@ -23,4 +23,5 @@ ALTER TABLE public.v_purgeable_datasets_nointerest_norecentjob OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_purgeable_datasets_nointerest_norecentjob TO readaccess;
+GRANT SELECT ON TABLE public.v_purgeable_datasets_nointerest_norecentjob TO writeaccess;
 

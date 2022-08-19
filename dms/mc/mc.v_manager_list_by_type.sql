@@ -30,4 +30,5 @@ ALTER TABLE mc.v_manager_list_by_type OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_manager_list_by_type TO readaccess;
+GRANT SELECT ON TABLE mc.v_manager_list_by_type TO writeaccess;
 

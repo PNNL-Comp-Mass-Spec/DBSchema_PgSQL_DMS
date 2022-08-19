@@ -131,4 +131,5 @@ ALTER TABLE ONLY cap.t_tasks
 --
 
 GRANT SELECT ON TABLE cap.t_tasks TO readaccess;
+GRANT SELECT ON TABLE cap.t_tasks TO writeaccess;
 

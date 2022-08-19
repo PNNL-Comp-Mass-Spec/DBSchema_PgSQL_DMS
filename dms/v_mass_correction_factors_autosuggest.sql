@@ -22,4 +22,5 @@ ALTER TABLE public.v_mass_correction_factors_autosuggest OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mass_correction_factors_autosuggest TO readaccess;
+GRANT SELECT ON TABLE public.v_mass_correction_factors_autosuggest TO writeaccess;
 

@@ -19,4 +19,5 @@ ALTER TABLE public.v_instrument_source_paths OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_source_paths TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_source_paths TO writeaccess;
 

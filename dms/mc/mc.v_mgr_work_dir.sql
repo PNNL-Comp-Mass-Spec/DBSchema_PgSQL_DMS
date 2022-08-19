@@ -25,4 +25,5 @@ COMMENT ON VIEW mc.v_mgr_work_dir IS 'This database does not keep track of the s
 --
 
 GRANT SELECT ON TABLE mc.v_mgr_work_dir TO readaccess;
+GRANT SELECT ON TABLE mc.v_mgr_work_dir TO writeaccess;
 

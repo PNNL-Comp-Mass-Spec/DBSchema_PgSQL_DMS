@@ -25,4 +25,5 @@ COMMENT ON VIEW public.v_active_instrument_users IS 'Column payroll_num is a dep
 --
 
 GRANT SELECT ON TABLE public.v_active_instrument_users TO readaccess;
+GRANT SELECT ON TABLE public.v_active_instrument_users TO writeaccess;
 

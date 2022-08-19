@@ -80,4 +80,5 @@ ALTER TABLE ONLY public.t_project_usage_stats
 --
 
 GRANT SELECT ON TABLE public.t_project_usage_stats TO readaccess;
+GRANT SELECT ON TABLE public.t_project_usage_stats TO writeaccess;
 

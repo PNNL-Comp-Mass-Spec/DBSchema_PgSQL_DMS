@@ -82,4 +82,5 @@ ALTER TABLE public.v_event_log OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_event_log TO readaccess;
+GRANT SELECT ON TABLE public.v_event_log TO writeaccess;
 

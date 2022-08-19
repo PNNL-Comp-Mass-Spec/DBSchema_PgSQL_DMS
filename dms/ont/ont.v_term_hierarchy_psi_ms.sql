@@ -58,4 +58,5 @@ COMMENT ON VIEW ont.v_term_hierarchy_psi_ms IS 'This view uses a recursive query
 --
 
 GRANT SELECT ON TABLE ont.v_term_hierarchy_psi_ms TO readaccess;
+GRANT SELECT ON TABLE ont.v_term_hierarchy_psi_ms TO writeaccess;
 

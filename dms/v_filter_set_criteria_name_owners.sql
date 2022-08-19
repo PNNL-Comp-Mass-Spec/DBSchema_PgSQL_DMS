@@ -20,4 +20,5 @@ ALTER TABLE public.v_filter_set_criteria_name_owners OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_filter_set_criteria_name_owners TO readaccess;
+GRANT SELECT ON TABLE public.v_filter_set_criteria_name_owners TO writeaccess;
 

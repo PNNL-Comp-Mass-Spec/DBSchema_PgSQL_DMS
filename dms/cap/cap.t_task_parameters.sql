@@ -29,4 +29,5 @@ ALTER TABLE ONLY cap.t_task_parameters
 --
 
 GRANT SELECT ON TABLE cap.t_task_parameters TO readaccess;
+GRANT SELECT ON TABLE cap.t_task_parameters TO writeaccess;
 

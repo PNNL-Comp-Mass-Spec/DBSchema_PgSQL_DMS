@@ -27,4 +27,5 @@ ALTER TABLE cap.v_processor_step_tools_list_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_processor_step_tools_list_report TO readaccess;
+GRANT SELECT ON TABLE cap.v_processor_step_tools_list_report TO writeaccess;
 

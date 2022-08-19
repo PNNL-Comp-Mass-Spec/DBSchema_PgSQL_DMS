@@ -28,4 +28,5 @@ COMMENT ON VIEW public.v_analysis_job_use_mono_mass IS 'This view is used by the
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_use_mono_mass TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_use_mono_mass TO writeaccess;
 

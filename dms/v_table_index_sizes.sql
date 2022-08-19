@@ -54,4 +54,5 @@ ALTER TABLE public.v_table_index_sizes OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_table_index_sizes TO readaccess;
+GRANT SELECT ON TABLE public.v_table_index_sizes TO writeaccess;
 

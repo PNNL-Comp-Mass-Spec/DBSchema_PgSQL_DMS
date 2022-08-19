@@ -39,4 +39,5 @@ ALTER TABLE public.v_project_usage_stats OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_project_usage_stats TO readaccess;
+GRANT SELECT ON TABLE public.v_project_usage_stats TO writeaccess;
 

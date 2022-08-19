@@ -31,4 +31,5 @@ ALTER TABLE ONLY ont.t_term_synonym
 --
 
 GRANT SELECT ON TABLE ont.t_term_synonym TO readaccess;
+GRANT SELECT ON TABLE ont.t_term_synonym TO writeaccess;
 

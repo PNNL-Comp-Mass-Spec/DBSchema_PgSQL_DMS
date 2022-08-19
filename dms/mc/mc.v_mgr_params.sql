@@ -31,4 +31,5 @@ CREATE TRIGGER trig_v_mgr_params_instead_of_update INSTEAD OF UPDATE ON mc.v_mgr
 --
 
 GRANT SELECT ON TABLE mc.v_mgr_params TO readaccess;
+GRANT SELECT ON TABLE mc.v_mgr_params TO writeaccess;
 

@@ -54,4 +54,5 @@ CREATE INDEX ix_t_instrument_allocation_updates_proposal_id ON public.t_instrume
 --
 
 GRANT SELECT ON TABLE public.t_instrument_allocation_updates TO readaccess;
+GRANT SELECT ON TABLE public.t_instrument_allocation_updates TO writeaccess;
 

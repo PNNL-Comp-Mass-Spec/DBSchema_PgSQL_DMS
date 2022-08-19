@@ -61,4 +61,5 @@ CREATE INDEX ix_t_cv_go_term_name ON ont.t_cv_go USING btree (term_name);
 --
 
 GRANT SELECT ON TABLE ont.t_cv_go TO readaccess;
+GRANT SELECT ON TABLE ont.t_cv_go TO writeaccess;
 

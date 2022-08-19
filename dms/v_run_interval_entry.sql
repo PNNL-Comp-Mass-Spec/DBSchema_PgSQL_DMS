@@ -19,4 +19,5 @@ ALTER TABLE public.v_run_interval_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_run_interval_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_run_interval_entry TO writeaccess;
 

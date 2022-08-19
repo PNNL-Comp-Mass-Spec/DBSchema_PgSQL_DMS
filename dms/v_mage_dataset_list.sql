@@ -39,4 +39,5 @@ ALTER TABLE public.v_mage_dataset_list OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mage_dataset_list TO readaccess;
+GRANT SELECT ON TABLE public.v_mage_dataset_list TO writeaccess;
 

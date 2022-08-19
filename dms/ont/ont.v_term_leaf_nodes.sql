@@ -25,4 +25,5 @@ ALTER TABLE ont.v_term_leaf_nodes OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_term_leaf_nodes TO readaccess;
+GRANT SELECT ON TABLE ont.v_term_leaf_nodes TO writeaccess;
 

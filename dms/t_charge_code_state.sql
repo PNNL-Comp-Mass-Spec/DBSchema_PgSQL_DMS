@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_charge_code_state
 --
 
 GRANT SELECT ON TABLE public.t_charge_code_state TO readaccess;
+GRANT SELECT ON TABLE public.t_charge_code_state TO writeaccess;
 

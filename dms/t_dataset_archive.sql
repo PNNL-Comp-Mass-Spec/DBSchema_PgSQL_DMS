@@ -142,4 +142,5 @@ ALTER TABLE ONLY public.t_dataset_archive
 --
 
 GRANT SELECT ON TABLE public.t_dataset_archive TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_archive TO writeaccess;
 

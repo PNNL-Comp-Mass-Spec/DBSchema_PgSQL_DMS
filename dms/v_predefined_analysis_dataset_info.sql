@@ -36,4 +36,5 @@ ALTER TABLE public.v_predefined_analysis_dataset_info OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_predefined_analysis_dataset_info TO readaccess;
+GRANT SELECT ON TABLE public.v_predefined_analysis_dataset_info TO writeaccess;
 

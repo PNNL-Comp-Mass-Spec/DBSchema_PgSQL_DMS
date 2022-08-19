@@ -23,4 +23,5 @@ ALTER TABLE cap.v_helper_dataset_capture_job_steps_ckbx OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_helper_dataset_capture_job_steps_ckbx TO readaccess;
+GRANT SELECT ON TABLE cap.v_helper_dataset_capture_job_steps_ckbx TO writeaccess;
 

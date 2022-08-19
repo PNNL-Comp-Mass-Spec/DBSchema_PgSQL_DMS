@@ -36,4 +36,5 @@ COMMENT ON VIEW public.v_get_pipeline_jobs IS 'Ideally we only allow a job to st
 --
 
 GRANT SELECT ON TABLE public.v_get_pipeline_jobs TO readaccess;
+GRANT SELECT ON TABLE public.v_get_pipeline_jobs TO writeaccess;
 

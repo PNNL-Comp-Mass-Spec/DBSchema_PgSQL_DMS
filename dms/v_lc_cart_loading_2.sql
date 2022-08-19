@@ -31,4 +31,5 @@ ALTER TABLE public.v_lc_cart_loading_2 OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_lc_cart_loading_2 TO readaccess;
+GRANT SELECT ON TABLE public.v_lc_cart_loading_2 TO writeaccess;
 

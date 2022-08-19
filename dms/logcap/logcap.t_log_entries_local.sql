@@ -46,3 +46,9 @@ CREATE INDEX ix_t_log_entries_local_posted_by ON logcap.t_log_entries_local USIN
 
 CREATE INDEX ix_t_log_entries_local_posting_time ON logcap.t_log_entries_local USING btree (posting_time);
 
+--
+-- Name: TABLE t_log_entries_local; Type: ACL; Schema: logcap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logcap.t_log_entries_local TO writeaccess;
+

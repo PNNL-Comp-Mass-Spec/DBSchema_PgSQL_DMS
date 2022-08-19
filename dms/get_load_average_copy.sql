@@ -53,4 +53,5 @@ GRANT ALL ON FUNCTION public.get_load_average_copy(OUT load_1min double precisio
 --
 
 GRANT SELECT ON TABLE public.get_load_average_copy TO readaccess;
+GRANT SELECT ON TABLE public.get_load_average_copy TO writeaccess;
 

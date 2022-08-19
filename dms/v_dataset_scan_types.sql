@@ -25,4 +25,5 @@ ALTER TABLE public.v_dataset_scan_types OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_scan_types TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_scan_types TO writeaccess;
 

@@ -49,4 +49,5 @@ ALTER TABLE ONLY public.t_eus_proposals
 --
 
 GRANT SELECT ON TABLE public.t_eus_proposals TO readaccess;
+GRANT SELECT ON TABLE public.t_eus_proposals TO writeaccess;
 

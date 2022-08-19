@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_email_alert_state
 --
 
 GRANT SELECT ON TABLE public.t_email_alert_state TO readaccess;
+GRANT SELECT ON TABLE public.t_email_alert_state TO writeaccess;
 

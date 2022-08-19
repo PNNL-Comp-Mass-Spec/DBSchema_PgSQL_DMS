@@ -43,4 +43,5 @@ ALTER TABLE ONLY pc.t_dna_translation_tables
 --
 
 GRANT SELECT ON TABLE pc.t_dna_translation_tables TO readaccess;
+GRANT SELECT ON TABLE pc.t_dna_translation_tables TO writeaccess;
 

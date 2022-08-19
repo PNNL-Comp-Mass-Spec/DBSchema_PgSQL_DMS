@@ -37,4 +37,5 @@ ALTER TABLE ONLY pc.t_passphrase_hashes
 --
 
 GRANT SELECT ON TABLE pc.t_passphrase_hashes TO readaccess;
+GRANT SELECT ON TABLE pc.t_passphrase_hashes TO writeaccess;
 

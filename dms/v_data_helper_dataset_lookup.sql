@@ -21,4 +21,5 @@ ALTER TABLE public.v_data_helper_dataset_lookup OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_data_helper_dataset_lookup TO readaccess;
+GRANT SELECT ON TABLE public.v_data_helper_dataset_lookup TO writeaccess;
 

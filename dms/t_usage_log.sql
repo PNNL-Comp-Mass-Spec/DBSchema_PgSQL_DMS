@@ -57,4 +57,5 @@ CREATE INDEX ix_t_usage_log_posted_by_calling_user_include_posting_time ON publi
 --
 
 GRANT SELECT ON TABLE public.t_usage_log TO readaccess;
+GRANT SELECT,INSERT ON TABLE public.t_usage_log TO writeaccess;
 

@@ -84,4 +84,5 @@ CREATE INDEX ix_t_cv_bto_term_name_include_identifier ON ont.t_cv_bto USING btre
 --
 
 GRANT SELECT ON TABLE ont.t_cv_bto TO readaccess;
+GRANT SELECT ON TABLE ont.t_cv_bto TO writeaccess;
 

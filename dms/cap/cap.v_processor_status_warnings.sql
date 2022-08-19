@@ -27,4 +27,5 @@ ALTER TABLE cap.v_processor_status_warnings OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_processor_status_warnings TO readaccess;
+GRANT SELECT ON TABLE cap.v_processor_status_warnings TO writeaccess;
 

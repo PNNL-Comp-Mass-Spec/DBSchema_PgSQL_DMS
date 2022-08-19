@@ -15,4 +15,5 @@ ALTER TABLE public.v_dataset_qc_metric_instruments OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_qc_metric_instruments TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_qc_metric_instruments TO writeaccess;
 

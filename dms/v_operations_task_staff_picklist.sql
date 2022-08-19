@@ -23,4 +23,5 @@ COMMENT ON VIEW public.v_operations_task_staff_picklist IS 'Operation_ID 16 is o
 --
 
 GRANT SELECT ON TABLE public.v_operations_task_staff_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_operations_task_staff_picklist TO writeaccess;
 

@@ -27,4 +27,5 @@ ALTER TABLE public.v_predefined_analysis_scheduling_queue_list_report OWNER TO d
 --
 
 GRANT SELECT ON TABLE public.v_predefined_analysis_scheduling_queue_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_predefined_analysis_scheduling_queue_list_report TO writeaccess;
 

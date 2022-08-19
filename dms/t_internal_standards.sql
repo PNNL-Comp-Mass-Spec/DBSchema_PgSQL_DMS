@@ -54,4 +54,5 @@ ALTER TABLE ONLY public.t_internal_standards
 --
 
 GRANT SELECT ON TABLE public.t_internal_standards TO readaccess;
+GRANT SELECT ON TABLE public.t_internal_standards TO writeaccess;
 

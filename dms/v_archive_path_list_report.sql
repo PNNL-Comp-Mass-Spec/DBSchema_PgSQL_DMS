@@ -26,4 +26,5 @@ ALTER TABLE public.v_archive_path_list_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_archive_path_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_archive_path_list_report TO writeaccess;
 

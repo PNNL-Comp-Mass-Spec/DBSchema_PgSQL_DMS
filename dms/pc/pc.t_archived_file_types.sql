@@ -36,4 +36,5 @@ ALTER TABLE ONLY pc.t_archived_file_types
 --
 
 GRANT SELECT ON TABLE pc.t_archived_file_types TO readaccess;
+GRANT SELECT ON TABLE pc.t_archived_file_types TO writeaccess;
 

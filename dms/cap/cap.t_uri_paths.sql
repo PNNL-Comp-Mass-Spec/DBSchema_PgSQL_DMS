@@ -36,4 +36,5 @@ ALTER TABLE ONLY cap.t_uri_paths
 --
 
 GRANT SELECT ON TABLE cap.t_uri_paths TO readaccess;
+GRANT SELECT ON TABLE cap.t_uri_paths TO writeaccess;
 

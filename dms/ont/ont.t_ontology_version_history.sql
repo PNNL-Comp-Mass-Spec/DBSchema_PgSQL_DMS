@@ -40,4 +40,5 @@ ALTER TABLE ONLY ont.t_ontology_version_history
 --
 
 GRANT SELECT ON TABLE ont.t_ontology_version_history TO readaccess;
+GRANT SELECT ON TABLE ont.t_ontology_version_history TO writeaccess;
 

@@ -17,4 +17,5 @@ ALTER TABLE public.v_experiment_user_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_experiment_user_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_experiment_user_picklist TO writeaccess;
 

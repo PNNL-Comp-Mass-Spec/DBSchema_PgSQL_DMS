@@ -47,4 +47,5 @@ ALTER TABLE ONLY cap.t_task_step_dependencies
 --
 
 GRANT SELECT ON TABLE cap.t_task_step_dependencies TO readaccess;
+GRANT SELECT ON TABLE cap.t_task_step_dependencies TO writeaccess;
 

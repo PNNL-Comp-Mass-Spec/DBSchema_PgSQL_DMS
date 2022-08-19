@@ -17,4 +17,5 @@ ALTER TABLE public.v_event_log_24_hour_summary OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_event_log_24_hour_summary TO readaccess;
+GRANT SELECT ON TABLE public.v_event_log_24_hour_summary TO writeaccess;
 

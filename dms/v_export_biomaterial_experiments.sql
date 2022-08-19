@@ -17,4 +17,5 @@ ALTER TABLE public.v_export_biomaterial_experiments OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_export_biomaterial_experiments TO readaccess;
+GRANT SELECT ON TABLE public.v_export_biomaterial_experiments TO writeaccess;
 

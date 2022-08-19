@@ -47,4 +47,5 @@ CREATE UNIQUE INDEX ix_t_dataset_device_type_name_model_serial_software ON publi
 --
 
 GRANT SELECT ON TABLE public.t_dataset_device TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_device TO writeaccess;
 

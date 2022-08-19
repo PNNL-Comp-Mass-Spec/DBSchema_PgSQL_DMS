@@ -36,4 +36,5 @@ CREATE INDEX ix_t_ontology_short_name ON ont.t_ontology USING btree (short_name)
 --
 
 GRANT SELECT ON TABLE ont.t_ontology TO readaccess;
+GRANT SELECT ON TABLE ont.t_ontology TO writeaccess;
 

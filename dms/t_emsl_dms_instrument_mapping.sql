@@ -42,4 +42,5 @@ ALTER TABLE ONLY public.t_emsl_dms_instrument_mapping
 --
 
 GRANT SELECT ON TABLE public.t_emsl_dms_instrument_mapping TO readaccess;
+GRANT SELECT ON TABLE public.t_emsl_dms_instrument_mapping TO writeaccess;
 

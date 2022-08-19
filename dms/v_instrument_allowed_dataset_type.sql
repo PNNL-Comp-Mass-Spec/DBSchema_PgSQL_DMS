@@ -22,4 +22,5 @@ ALTER TABLE public.v_instrument_allowed_dataset_type OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_allowed_dataset_type TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_allowed_dataset_type TO writeaccess;
 

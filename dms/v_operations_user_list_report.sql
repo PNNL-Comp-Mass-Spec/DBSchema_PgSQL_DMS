@@ -22,4 +22,5 @@ COMMENT ON VIEW public.v_operations_user_list_report IS 'Note that get_operation
 --
 
 GRANT SELECT ON TABLE public.v_operations_user_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_operations_user_list_report TO writeaccess;
 

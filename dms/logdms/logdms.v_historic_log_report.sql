@@ -13,3 +13,9 @@ CREATE VIEW logdms.v_historic_log_report AS
 
 ALTER TABLE logdms.v_historic_log_report OWNER TO d3l243;
 
+--
+-- Name: TABLE v_historic_log_report; Type: ACL; Schema: logdms; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logdms.v_historic_log_report TO writeaccess;
+

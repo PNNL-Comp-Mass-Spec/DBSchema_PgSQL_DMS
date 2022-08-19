@@ -18,4 +18,5 @@ ALTER TABLE public.v_eus_import_proposals OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_eus_import_proposals TO readaccess;
+GRANT SELECT ON TABLE public.v_eus_import_proposals TO writeaccess;
 

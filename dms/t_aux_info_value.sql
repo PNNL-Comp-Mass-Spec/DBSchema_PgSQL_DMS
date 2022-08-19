@@ -56,4 +56,5 @@ ALTER TABLE ONLY public.t_aux_info_value
 --
 
 GRANT SELECT ON TABLE public.t_aux_info_value TO readaccess;
+GRANT SELECT ON TABLE public.t_aux_info_value TO writeaccess;
 

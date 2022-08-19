@@ -17,4 +17,5 @@ ALTER TABLE public.v_eus_users_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_eus_users_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_eus_users_entry TO writeaccess;
 

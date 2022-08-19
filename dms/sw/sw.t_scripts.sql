@@ -55,4 +55,5 @@ CREATE TRIGGER trig_t_scripts_after_update AFTER UPDATE ON sw.t_scripts FOR EACH
 --
 
 GRANT SELECT ON TABLE sw.t_scripts TO readaccess;
+GRANT SELECT ON TABLE sw.t_scripts TO writeaccess;
 

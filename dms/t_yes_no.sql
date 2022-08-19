@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_yes_no
 --
 
 GRANT SELECT ON TABLE public.t_yes_no TO readaccess;
+GRANT SELECT ON TABLE public.t_yes_no TO writeaccess;
 

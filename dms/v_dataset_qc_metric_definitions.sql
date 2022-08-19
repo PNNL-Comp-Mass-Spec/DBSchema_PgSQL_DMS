@@ -25,4 +25,5 @@ ALTER TABLE public.v_dataset_qc_metric_definitions OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_qc_metric_definitions TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_qc_metric_definitions TO writeaccess;
 

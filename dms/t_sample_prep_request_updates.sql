@@ -65,4 +65,5 @@ ALTER TABLE ONLY public.t_sample_prep_request_updates
 --
 
 GRANT SELECT ON TABLE public.t_sample_prep_request_updates TO readaccess;
+GRANT SELECT ON TABLE public.t_sample_prep_request_updates TO writeaccess;
 

@@ -38,4 +38,5 @@ ALTER TABLE public.v_requested_run_fraction_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_requested_run_fraction_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_requested_run_fraction_entry TO writeaccess;
 

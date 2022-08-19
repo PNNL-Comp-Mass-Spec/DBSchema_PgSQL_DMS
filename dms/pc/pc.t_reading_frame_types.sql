@@ -36,4 +36,5 @@ ALTER TABLE ONLY pc.t_reading_frame_types
 --
 
 GRANT SELECT ON TABLE pc.t_reading_frame_types TO readaccess;
+GRANT SELECT ON TABLE pc.t_reading_frame_types TO writeaccess;
 

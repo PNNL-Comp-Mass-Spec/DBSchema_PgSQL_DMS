@@ -21,4 +21,5 @@ ALTER TABLE pc.v_protein_headers OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_protein_headers TO readaccess;
+GRANT SELECT ON TABLE pc.v_protein_headers TO writeaccess;
 

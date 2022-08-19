@@ -26,4 +26,5 @@ ALTER TABLE public.v_analysis_job_additional_parameters OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_additional_parameters TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_additional_parameters TO writeaccess;
 

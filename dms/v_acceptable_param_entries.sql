@@ -29,4 +29,5 @@ ALTER TABLE public.v_acceptable_param_entries OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_acceptable_param_entries TO readaccess;
+GRANT SELECT ON TABLE public.v_acceptable_param_entries TO writeaccess;
 

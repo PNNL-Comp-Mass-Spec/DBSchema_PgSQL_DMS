@@ -168,4 +168,5 @@ ALTER TABLE ONLY sw.t_job_steps
 --
 
 GRANT SELECT ON TABLE sw.t_job_steps TO readaccess;
+GRANT SELECT ON TABLE sw.t_job_steps TO writeaccess;
 

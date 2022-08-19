@@ -25,4 +25,5 @@ ALTER TABLE ONLY cap.t_machines
 --
 
 GRANT SELECT ON TABLE cap.t_machines TO readaccess;
+GRANT SELECT ON TABLE cap.t_machines TO writeaccess;
 

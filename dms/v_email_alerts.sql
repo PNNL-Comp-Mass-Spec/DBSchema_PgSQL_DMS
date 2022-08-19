@@ -23,4 +23,5 @@ ALTER TABLE public.v_email_alerts OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_email_alerts TO readaccess;
+GRANT SELECT ON TABLE public.v_email_alerts TO writeaccess;
 

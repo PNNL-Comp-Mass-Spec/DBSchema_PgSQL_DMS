@@ -47,4 +47,5 @@ ALTER TABLE ONLY pc.t_dna_translation_table_members
 --
 
 GRANT SELECT ON TABLE pc.t_dna_translation_table_members TO readaccess;
+GRANT SELECT ON TABLE pc.t_dna_translation_table_members TO writeaccess;
 

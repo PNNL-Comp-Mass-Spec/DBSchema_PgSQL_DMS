@@ -25,4 +25,5 @@ ALTER TABLE ONLY ont.t_unimod_bricks
 --
 
 GRANT SELECT ON TABLE ont.t_unimod_bricks TO readaccess;
+GRANT SELECT ON TABLE ont.t_unimod_bricks TO writeaccess;
 

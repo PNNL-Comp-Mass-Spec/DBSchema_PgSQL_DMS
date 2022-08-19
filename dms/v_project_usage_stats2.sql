@@ -43,4 +43,5 @@ COMMENT ON VIEW public.v_project_usage_stats2 IS 'Show project stats for this we
 --
 
 GRANT SELECT ON TABLE public.v_project_usage_stats2 TO readaccess;
+GRANT SELECT ON TABLE public.v_project_usage_stats2 TO writeaccess;
 

@@ -43,4 +43,5 @@ CREATE UNIQUE INDEX ix_t_migrate_proteins_sha1_hash ON pc.t_migrate_proteins USI
 --
 
 GRANT SELECT ON TABLE pc.t_migrate_proteins TO readaccess;
+GRANT SELECT ON TABLE pc.t_migrate_proteins TO writeaccess;
 

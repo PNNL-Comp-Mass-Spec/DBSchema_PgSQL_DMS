@@ -50,4 +50,5 @@ ALTER TABLE ONLY public.t_instrument_group
 --
 
 GRANT SELECT ON TABLE public.t_instrument_group TO readaccess;
+GRANT SELECT ON TABLE public.t_instrument_group TO writeaccess;
 

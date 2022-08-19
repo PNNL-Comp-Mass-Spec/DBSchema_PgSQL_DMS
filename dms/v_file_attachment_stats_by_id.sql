@@ -18,4 +18,5 @@ ALTER TABLE public.v_file_attachment_stats_by_id OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_file_attachment_stats_by_id TO readaccess;
+GRANT SELECT ON TABLE public.v_file_attachment_stats_by_id TO writeaccess;
 

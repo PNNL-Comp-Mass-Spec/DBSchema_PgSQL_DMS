@@ -35,4 +35,5 @@ ALTER TABLE cap.v_capture_jobs_active_or_complete OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_capture_jobs_active_or_complete TO readaccess;
+GRANT SELECT ON TABLE cap.v_capture_jobs_active_or_complete TO writeaccess;
 

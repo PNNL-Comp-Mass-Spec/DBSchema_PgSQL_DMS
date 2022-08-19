@@ -21,4 +21,5 @@ ALTER TABLE mc.v_mgr_param_defaults OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_mgr_param_defaults TO readaccess;
+GRANT SELECT ON TABLE mc.v_mgr_param_defaults TO writeaccess;
 

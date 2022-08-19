@@ -29,4 +29,5 @@ ALTER TABLE ONLY public.t_maxquant_mod_residues
 --
 
 GRANT SELECT ON TABLE public.t_maxquant_mod_residues TO readaccess;
+GRANT SELECT ON TABLE public.t_maxquant_mod_residues TO writeaccess;
 

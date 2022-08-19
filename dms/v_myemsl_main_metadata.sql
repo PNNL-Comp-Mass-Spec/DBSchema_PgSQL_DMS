@@ -22,4 +22,5 @@ ALTER TABLE public.v_myemsl_main_metadata OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_myemsl_main_metadata TO readaccess;
+GRANT SELECT ON TABLE public.v_myemsl_main_metadata TO writeaccess;
 

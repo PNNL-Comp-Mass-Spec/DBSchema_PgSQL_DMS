@@ -30,4 +30,5 @@ CREATE UNIQUE INDEX ix_t_sample_labelling ON public.t_sample_labelling USING btr
 --
 
 GRANT SELECT ON TABLE public.t_sample_labelling TO readaccess;
+GRANT SELECT ON TABLE public.t_sample_labelling TO writeaccess;
 

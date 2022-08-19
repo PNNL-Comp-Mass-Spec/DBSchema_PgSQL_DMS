@@ -83,4 +83,5 @@ ALTER TABLE public.v_ops_logs_list_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_ops_logs_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_ops_logs_list_report TO writeaccess;
 

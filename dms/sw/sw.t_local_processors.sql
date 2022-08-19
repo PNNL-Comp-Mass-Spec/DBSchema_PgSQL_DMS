@@ -42,4 +42,5 @@ CREATE INDEX ix_t_local_processors_tool_mgr_id_machine_include_proc_name ON sw.t
 --
 
 GRANT SELECT ON TABLE sw.t_local_processors TO readaccess;
+GRANT SELECT ON TABLE sw.t_local_processors TO writeaccess;
 

@@ -25,4 +25,5 @@ ALTER TABLE ont.v_term_categories OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_term_categories TO readaccess;
+GRANT SELECT ON TABLE ont.v_term_categories TO writeaccess;
 

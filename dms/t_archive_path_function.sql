@@ -21,4 +21,5 @@ ALTER TABLE ONLY public.t_archive_path_function
 --
 
 GRANT SELECT ON TABLE public.t_archive_path_function TO readaccess;
+GRANT SELECT ON TABLE public.t_archive_path_function TO writeaccess;
 

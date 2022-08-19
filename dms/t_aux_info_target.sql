@@ -38,4 +38,5 @@ ALTER TABLE ONLY public.t_aux_info_target
 --
 
 GRANT SELECT ON TABLE public.t_aux_info_target TO readaccess;
+GRANT SELECT ON TABLE public.t_aux_info_target TO writeaccess;
 

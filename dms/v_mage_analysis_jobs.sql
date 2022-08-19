@@ -54,4 +54,5 @@ ALTER TABLE public.v_mage_analysis_jobs OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mage_analysis_jobs TO readaccess;
+GRANT SELECT ON TABLE public.v_mage_analysis_jobs TO writeaccess;
 

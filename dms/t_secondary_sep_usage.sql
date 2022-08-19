@@ -24,4 +24,5 @@ ALTER TABLE ONLY public.t_secondary_sep_usage
 --
 
 GRANT SELECT ON TABLE public.t_secondary_sep_usage TO readaccess;
+GRANT SELECT ON TABLE public.t_secondary_sep_usage TO writeaccess;
 

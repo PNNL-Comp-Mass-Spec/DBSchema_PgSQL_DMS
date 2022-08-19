@@ -37,4 +37,5 @@ ALTER TABLE ONLY public.t_internal_std_composition
 --
 
 GRANT SELECT ON TABLE public.t_internal_std_composition TO readaccess;
+GRANT SELECT ON TABLE public.t_internal_std_composition TO writeaccess;
 

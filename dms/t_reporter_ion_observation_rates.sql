@@ -93,4 +93,5 @@ ALTER TABLE ONLY public.t_reporter_ion_observation_rates
 --
 
 GRANT SELECT ON TABLE public.t_reporter_ion_observation_rates TO readaccess;
+GRANT SELECT ON TABLE public.t_reporter_ion_observation_rates TO writeaccess;
 

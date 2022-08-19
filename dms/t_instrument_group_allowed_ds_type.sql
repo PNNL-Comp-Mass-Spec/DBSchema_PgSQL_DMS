@@ -39,4 +39,5 @@ ALTER TABLE ONLY public.t_instrument_group_allowed_ds_type
 --
 
 GRANT SELECT ON TABLE public.t_instrument_group_allowed_ds_type TO readaccess;
+GRANT SELECT ON TABLE public.t_instrument_group_allowed_ds_type TO writeaccess;
 

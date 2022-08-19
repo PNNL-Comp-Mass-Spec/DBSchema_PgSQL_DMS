@@ -17,4 +17,5 @@ ALTER TABLE public.v_active_users OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_active_users TO readaccess;
+GRANT SELECT ON TABLE public.v_active_users TO writeaccess;
 

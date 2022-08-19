@@ -45,4 +45,5 @@ ALTER TABLE ONLY public.t_enzymes
 --
 
 GRANT SELECT ON TABLE public.t_enzymes TO readaccess;
+GRANT SELECT ON TABLE public.t_enzymes TO writeaccess;
 

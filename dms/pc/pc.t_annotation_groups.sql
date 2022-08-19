@@ -51,4 +51,5 @@ ALTER TABLE ONLY pc.t_annotation_groups
 --
 
 GRANT SELECT ON TABLE pc.t_annotation_groups TO readaccess;
+GRANT SELECT ON TABLE pc.t_annotation_groups TO writeaccess;
 

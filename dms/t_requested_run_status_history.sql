@@ -57,4 +57,5 @@ ALTER TABLE ONLY public.t_requested_run_status_history
 --
 
 GRANT SELECT ON TABLE public.t_requested_run_status_history TO readaccess;
+GRANT SELECT ON TABLE public.t_requested_run_status_history TO writeaccess;
 

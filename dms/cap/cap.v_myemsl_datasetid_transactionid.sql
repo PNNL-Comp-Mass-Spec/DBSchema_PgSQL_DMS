@@ -25,4 +25,5 @@ COMMENT ON VIEW cap.v_myemsl_datasetid_transactionid IS 'TransactionID was depre
 --
 
 GRANT SELECT ON TABLE cap.v_myemsl_datasetid_transactionid TO readaccess;
+GRANT SELECT ON TABLE cap.v_myemsl_datasetid_transactionid TO writeaccess;
 

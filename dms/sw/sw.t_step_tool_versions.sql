@@ -44,4 +44,5 @@ CREATE UNIQUE INDEX ix_t_step_tool_versions ON sw.t_step_tool_versions USING btr
 --
 
 GRANT SELECT ON TABLE sw.t_step_tool_versions TO readaccess;
+GRANT SELECT ON TABLE sw.t_step_tool_versions TO writeaccess;
 

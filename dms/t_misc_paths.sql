@@ -44,4 +44,5 @@ CREATE UNIQUE INDEX ix_t_misc_paths_path_function ON public.t_misc_paths USING b
 --
 
 GRANT SELECT ON TABLE public.t_misc_paths TO readaccess;
+GRANT SELECT ON TABLE public.t_misc_paths TO writeaccess;
 

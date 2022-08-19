@@ -31,4 +31,5 @@ COMMENT ON VIEW public.v_biomaterial_report IS 'V_Cell_Culture_Report';
 --
 
 GRANT SELECT ON TABLE public.v_biomaterial_report TO readaccess;
+GRANT SELECT ON TABLE public.v_biomaterial_report TO writeaccess;
 

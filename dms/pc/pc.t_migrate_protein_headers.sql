@@ -28,4 +28,5 @@ CREATE INDEX ix_t_migrate_protein_headers ON pc.t_migrate_protein_headers USING 
 --
 
 GRANT SELECT ON TABLE pc.t_migrate_protein_headers TO readaccess;
+GRANT SELECT ON TABLE pc.t_migrate_protein_headers TO writeaccess;
 

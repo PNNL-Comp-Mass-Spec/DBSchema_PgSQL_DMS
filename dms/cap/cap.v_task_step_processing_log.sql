@@ -36,4 +36,5 @@ ALTER TABLE cap.v_task_step_processing_log OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_task_step_processing_log TO readaccess;
+GRANT SELECT ON TABLE cap.v_task_step_processing_log TO writeaccess;
 

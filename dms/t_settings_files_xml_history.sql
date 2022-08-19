@@ -54,4 +54,5 @@ CREATE INDEX ix_t_settings_files_xml_history_settings_file_id ON public.t_settin
 --
 
 GRANT SELECT ON TABLE public.t_settings_files_xml_history TO readaccess;
+GRANT SELECT ON TABLE public.t_settings_files_xml_history TO writeaccess;
 

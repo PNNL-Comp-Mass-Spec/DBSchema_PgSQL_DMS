@@ -84,4 +84,5 @@ ALTER TABLE ONLY public.t_settings_files
 --
 
 GRANT SELECT ON TABLE public.t_settings_files TO readaccess;
+GRANT SELECT ON TABLE public.t_settings_files TO writeaccess;
 

@@ -22,4 +22,5 @@ ALTER TABLE ONLY dpkg.t_properties
 --
 
 GRANT SELECT ON TABLE dpkg.t_properties TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_properties TO writeaccess;
 

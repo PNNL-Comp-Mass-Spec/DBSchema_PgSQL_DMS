@@ -16,4 +16,5 @@ ALTER TABLE public.v_lc_column_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_lc_column_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_lc_column_picklist TO writeaccess;
 

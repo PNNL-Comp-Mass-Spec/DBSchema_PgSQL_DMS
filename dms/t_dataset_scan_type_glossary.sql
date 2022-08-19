@@ -23,4 +23,5 @@ ALTER TABLE ONLY public.t_dataset_scan_type_glossary
 --
 
 GRANT SELECT ON TABLE public.t_dataset_scan_type_glossary TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_scan_type_glossary TO writeaccess;
 

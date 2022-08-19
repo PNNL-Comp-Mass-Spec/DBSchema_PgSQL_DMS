@@ -121,4 +121,5 @@ ALTER TABLE ont.v_cv_union OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_cv_union TO readaccess;
+GRANT SELECT ON TABLE ont.v_cv_union TO writeaccess;
 

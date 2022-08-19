@@ -28,4 +28,5 @@ ALTER TABLE mc.v_all_mgr_params_by_mgr_type OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_all_mgr_params_by_mgr_type TO readaccess;
+GRANT SELECT ON TABLE mc.v_all_mgr_params_by_mgr_type TO writeaccess;
 

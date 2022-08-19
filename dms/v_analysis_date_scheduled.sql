@@ -18,4 +18,5 @@ ALTER TABLE public.v_analysis_date_scheduled OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_date_scheduled TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_date_scheduled TO writeaccess;
 

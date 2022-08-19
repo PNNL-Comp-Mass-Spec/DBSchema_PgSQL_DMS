@@ -22,4 +22,5 @@ ALTER TABLE ONLY dpkg.t_osm_package_type
 --
 
 GRANT SELECT ON TABLE dpkg.t_osm_package_type TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_osm_package_type TO writeaccess;
 

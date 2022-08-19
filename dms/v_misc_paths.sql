@@ -17,4 +17,5 @@ ALTER TABLE public.v_misc_paths OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_misc_paths TO readaccess;
+GRANT SELECT ON TABLE public.v_misc_paths TO writeaccess;
 

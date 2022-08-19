@@ -22,4 +22,5 @@ ALTER TABLE cap.v_dms_pipeline_get_completed_results_transfer OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_dms_pipeline_get_completed_results_transfer TO readaccess;
+GRANT SELECT ON TABLE cap.v_dms_pipeline_get_completed_results_transfer TO writeaccess;
 

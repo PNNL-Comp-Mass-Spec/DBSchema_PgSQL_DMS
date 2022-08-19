@@ -107,4 +107,5 @@ ALTER TABLE ONLY dpkg.t_data_package
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_package TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_data_package TO writeaccess;
 

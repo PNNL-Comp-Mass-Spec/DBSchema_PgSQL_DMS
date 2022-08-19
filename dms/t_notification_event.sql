@@ -56,4 +56,5 @@ ALTER TABLE ONLY public.t_notification_event
 --
 
 GRANT SELECT ON TABLE public.t_notification_event TO readaccess;
+GRANT SELECT ON TABLE public.t_notification_event TO writeaccess;
 

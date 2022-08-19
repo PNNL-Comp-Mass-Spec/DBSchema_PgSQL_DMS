@@ -33,4 +33,5 @@ COMMENT ON VIEW public.v_user_list_report_2 IS 'Note that a few DMS Users have m
 --
 
 GRANT SELECT ON TABLE public.v_user_list_report_2 TO readaccess;
+GRANT SELECT ON TABLE public.v_user_list_report_2 TO writeaccess;
 

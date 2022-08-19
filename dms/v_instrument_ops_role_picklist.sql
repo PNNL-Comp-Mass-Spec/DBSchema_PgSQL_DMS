@@ -14,4 +14,5 @@ ALTER TABLE public.v_instrument_ops_role_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_ops_role_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_ops_role_picklist TO writeaccess;
 

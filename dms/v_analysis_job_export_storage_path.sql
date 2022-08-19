@@ -23,4 +23,5 @@ ALTER TABLE public.v_analysis_job_export_storage_path OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_export_storage_path TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_export_storage_path TO writeaccess;
 

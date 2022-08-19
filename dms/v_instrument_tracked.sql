@@ -57,4 +57,5 @@ ALTER TABLE public.v_instrument_tracked OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_tracked TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_tracked TO writeaccess;
 

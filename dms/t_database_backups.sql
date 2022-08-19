@@ -27,4 +27,5 @@ ALTER TABLE ONLY public.t_database_backups
 --
 
 GRANT SELECT ON TABLE public.t_database_backups TO readaccess;
+GRANT SELECT ON TABLE public.t_database_backups TO writeaccess;
 

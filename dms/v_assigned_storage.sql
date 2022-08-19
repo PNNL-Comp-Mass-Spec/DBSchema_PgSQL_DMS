@@ -36,4 +36,5 @@ ALTER TABLE public.v_assigned_storage OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_assigned_storage TO readaccess;
+GRANT SELECT ON TABLE public.v_assigned_storage TO writeaccess;
 

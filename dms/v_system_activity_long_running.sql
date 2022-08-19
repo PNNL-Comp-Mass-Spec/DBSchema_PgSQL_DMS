@@ -31,4 +31,5 @@ COMMENT ON VIEW public.v_system_activity_long_running IS 'Long running queries (
 --
 
 GRANT SELECT ON TABLE public.v_system_activity_long_running TO readaccess;
+GRANT SELECT ON TABLE public.v_system_activity_long_running TO writeaccess;
 

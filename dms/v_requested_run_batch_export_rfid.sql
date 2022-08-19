@@ -39,4 +39,5 @@ COMMENT ON VIEW public.v_requested_run_batch_export_rfid IS 'Requests is total r
 --
 
 GRANT SELECT ON TABLE public.v_requested_run_batch_export_rfid TO readaccess;
+GRANT SELECT ON TABLE public.v_requested_run_batch_export_rfid TO writeaccess;
 

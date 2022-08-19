@@ -16,4 +16,5 @@ ALTER TABLE pc.v_collection_counts_by_organism_id OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_collection_counts_by_organism_id TO readaccess;
+GRANT SELECT ON TABLE pc.v_collection_counts_by_organism_id TO writeaccess;
 

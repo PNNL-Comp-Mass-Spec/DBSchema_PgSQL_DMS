@@ -20,4 +20,5 @@ ALTER TABLE public.v_charge_code_status OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_charge_code_status TO readaccess;
+GRANT SELECT ON TABLE public.v_charge_code_status TO writeaccess;
 

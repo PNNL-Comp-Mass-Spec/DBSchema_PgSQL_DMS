@@ -44,6 +44,6 @@ CREATE TRIGGER trig_t_log_entries_after_update AFTER UPDATE ON mc.t_log_entries 
 -- Name: TABLE t_log_entries; Type: ACL; Schema: mc; Owner: d3l243
 --
 
+GRANT SELECT,INSERT ON TABLE mc.t_log_entries TO writeaccess;
 GRANT SELECT ON TABLE mc.t_log_entries TO readaccess;
-GRANT INSERT ON TABLE mc.t_log_entries TO writeaccess;
 

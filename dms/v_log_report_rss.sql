@@ -20,4 +20,5 @@ ALTER TABLE public.v_log_report_rss OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_log_report_rss TO readaccess;
+GRANT SELECT ON TABLE public.v_log_report_rss TO writeaccess;
 

@@ -46,4 +46,5 @@ ALTER TABLE public.v_dataset_archive OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_archive TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_archive TO writeaccess;
 

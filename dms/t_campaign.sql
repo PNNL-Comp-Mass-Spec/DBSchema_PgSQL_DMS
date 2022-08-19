@@ -105,4 +105,5 @@ ALTER TABLE ONLY public.t_campaign
 --
 
 GRANT SELECT ON TABLE public.t_campaign TO readaccess;
+GRANT SELECT ON TABLE public.t_campaign TO writeaccess;
 

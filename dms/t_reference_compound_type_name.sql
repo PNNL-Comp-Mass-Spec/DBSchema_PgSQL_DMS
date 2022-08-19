@@ -41,4 +41,5 @@ CREATE UNIQUE INDEX ix_t_reference_compound_type_name ON public.t_reference_comp
 --
 
 GRANT SELECT ON TABLE public.t_reference_compound_type_name TO readaccess;
+GRANT SELECT ON TABLE public.t_reference_compound_type_name TO writeaccess;
 

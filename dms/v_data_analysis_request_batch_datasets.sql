@@ -31,4 +31,5 @@ ALTER TABLE public.v_data_analysis_request_batch_datasets OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_data_analysis_request_batch_datasets TO readaccess;
+GRANT SELECT ON TABLE public.v_data_analysis_request_batch_datasets TO writeaccess;
 

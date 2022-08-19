@@ -21,4 +21,5 @@ ALTER TABLE ont.v_cv_psi_mi OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_cv_psi_mi TO readaccess;
+GRANT SELECT ON TABLE ont.v_cv_psi_mi TO writeaccess;
 

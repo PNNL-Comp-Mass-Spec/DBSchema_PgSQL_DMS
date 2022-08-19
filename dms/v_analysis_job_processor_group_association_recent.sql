@@ -28,4 +28,5 @@ ALTER TABLE public.v_analysis_job_processor_group_association_recent OWNER TO d3
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_processor_group_association_recent TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_processor_group_association_recent TO writeaccess;
 

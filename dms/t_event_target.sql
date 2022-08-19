@@ -25,4 +25,5 @@ ALTER TABLE ONLY public.t_event_target
 --
 
 GRANT SELECT ON TABLE public.t_event_target TO readaccess;
+GRANT SELECT ON TABLE public.t_event_target TO writeaccess;
 

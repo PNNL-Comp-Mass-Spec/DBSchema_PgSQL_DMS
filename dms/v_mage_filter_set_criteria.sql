@@ -22,4 +22,5 @@ ALTER TABLE public.v_mage_filter_set_criteria OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mage_filter_set_criteria TO readaccess;
+GRANT SELECT ON TABLE public.v_mage_filter_set_criteria TO writeaccess;
 

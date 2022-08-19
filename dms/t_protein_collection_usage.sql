@@ -31,4 +31,5 @@ CREATE INDEX ix_t_protein_collection_usage_name ON public.t_protein_collection_u
 --
 
 GRANT SELECT ON TABLE public.t_protein_collection_usage TO readaccess;
+GRANT SELECT ON TABLE public.t_protein_collection_usage TO writeaccess;
 

@@ -48,4 +48,5 @@ CREATE UNIQUE INDEX ix_t_operations_task_type_name ON public.t_operations_task_t
 --
 
 GRANT SELECT ON TABLE public.t_operations_task_type TO readaccess;
+GRANT SELECT ON TABLE public.t_operations_task_type TO writeaccess;
 

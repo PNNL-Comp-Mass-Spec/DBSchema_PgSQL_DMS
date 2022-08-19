@@ -48,4 +48,5 @@ ALTER TABLE public.v_analysis_job_activity OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_activity TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_activity TO writeaccess;
 

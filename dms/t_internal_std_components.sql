@@ -28,4 +28,5 @@ ALTER TABLE ONLY public.t_internal_std_components
 --
 
 GRANT SELECT ON TABLE public.t_internal_std_components TO readaccess;
+GRANT SELECT ON TABLE public.t_internal_std_components TO writeaccess;
 

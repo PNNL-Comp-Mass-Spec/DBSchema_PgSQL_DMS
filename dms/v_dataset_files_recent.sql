@@ -19,4 +19,5 @@ ALTER TABLE public.v_dataset_files_recent OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_files_recent TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_files_recent TO writeaccess;
 

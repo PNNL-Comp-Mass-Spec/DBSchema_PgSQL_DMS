@@ -91,4 +91,5 @@ COMMENT ON VIEW public.v_sample_prep_request_detail_report IS 'If the request is
 --
 
 GRANT SELECT ON TABLE public.v_sample_prep_request_detail_report TO readaccess;
+GRANT SELECT ON TABLE public.v_sample_prep_request_detail_report TO writeaccess;
 

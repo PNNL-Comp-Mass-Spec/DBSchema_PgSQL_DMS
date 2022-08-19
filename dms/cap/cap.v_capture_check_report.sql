@@ -50,4 +50,5 @@ ALTER TABLE cap.v_capture_check_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_capture_check_report TO readaccess;
+GRANT SELECT ON TABLE cap.v_capture_check_report TO writeaccess;
 

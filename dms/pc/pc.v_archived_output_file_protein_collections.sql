@@ -29,4 +29,5 @@ ALTER TABLE pc.v_archived_output_file_protein_collections OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_archived_output_file_protein_collections TO readaccess;
+GRANT SELECT ON TABLE pc.v_archived_output_file_protein_collections TO writeaccess;
 

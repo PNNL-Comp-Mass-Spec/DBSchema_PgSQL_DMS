@@ -22,4 +22,5 @@ ALTER TABLE cap.v_dms_get_dataset_definition OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_dms_get_dataset_definition TO readaccess;
+GRANT SELECT ON TABLE cap.v_dms_get_dataset_definition TO writeaccess;
 

@@ -51,4 +51,5 @@ ALTER TABLE ONLY public.t_cached_dataset_links
 --
 
 GRANT SELECT ON TABLE public.t_cached_dataset_links TO readaccess;
+GRANT SELECT ON TABLE public.t_cached_dataset_links TO writeaccess;
 

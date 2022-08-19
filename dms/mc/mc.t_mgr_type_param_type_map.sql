@@ -45,4 +45,5 @@ ALTER TABLE ONLY mc.t_mgr_type_param_type_map
 --
 
 GRANT SELECT ON TABLE mc.t_mgr_type_param_type_map TO readaccess;
+GRANT SELECT ON TABLE mc.t_mgr_type_param_type_map TO writeaccess;
 

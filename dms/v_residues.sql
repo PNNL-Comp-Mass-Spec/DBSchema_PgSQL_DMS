@@ -25,4 +25,5 @@ ALTER TABLE public.v_residues OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_residues TO readaccess;
+GRANT SELECT ON TABLE public.v_residues TO writeaccess;
 

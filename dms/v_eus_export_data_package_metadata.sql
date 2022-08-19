@@ -31,4 +31,5 @@ ALTER TABLE public.v_eus_export_data_package_metadata OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_eus_export_data_package_metadata TO readaccess;
+GRANT SELECT ON TABLE public.v_eus_export_data_package_metadata TO writeaccess;
 

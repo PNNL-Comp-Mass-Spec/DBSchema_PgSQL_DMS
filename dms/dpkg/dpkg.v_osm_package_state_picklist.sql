@@ -15,4 +15,5 @@ ALTER TABLE dpkg.v_osm_package_state_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE dpkg.v_osm_package_state_picklist TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_osm_package_state_picklist TO writeaccess;
 

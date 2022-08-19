@@ -45,4 +45,5 @@ ALTER TABLE public.v_mage_dataset_factor_metadata OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mage_dataset_factor_metadata TO readaccess;
+GRANT SELECT ON TABLE public.v_mage_dataset_factor_metadata TO writeaccess;
 

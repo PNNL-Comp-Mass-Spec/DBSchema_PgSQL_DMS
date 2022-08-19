@@ -23,4 +23,5 @@ ALTER TABLE ONLY public.t_analysis_job_state
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_state TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_job_state TO writeaccess;
 

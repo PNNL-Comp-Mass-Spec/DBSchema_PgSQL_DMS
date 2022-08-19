@@ -50,4 +50,5 @@ ALTER TABLE ONLY public.t_analysis_job_processor_group_associations
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_processor_group_associations TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_job_processor_group_associations TO writeaccess;
 

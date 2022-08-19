@@ -24,4 +24,5 @@ ALTER TABLE public.v_lcmsnet_experiment_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_lcmsnet_experiment_export TO readaccess;
+GRANT SELECT ON TABLE public.v_lcmsnet_experiment_export TO writeaccess;
 

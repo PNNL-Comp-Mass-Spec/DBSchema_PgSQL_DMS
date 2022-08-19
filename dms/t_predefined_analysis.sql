@@ -97,4 +97,5 @@ ALTER TABLE ONLY public.t_predefined_analysis
 --
 
 GRANT SELECT ON TABLE public.t_predefined_analysis TO readaccess;
+GRANT SELECT ON TABLE public.t_predefined_analysis TO writeaccess;
 

@@ -32,4 +32,5 @@ COMMENT ON VIEW public.v_active_connections IS 'Shows details on active connecti
 --
 
 GRANT SELECT ON TABLE public.v_active_connections TO readaccess;
+GRANT SELECT ON TABLE public.v_active_connections TO writeaccess;
 

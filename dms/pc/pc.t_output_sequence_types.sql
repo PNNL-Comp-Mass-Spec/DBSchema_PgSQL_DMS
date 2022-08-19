@@ -37,4 +37,5 @@ ALTER TABLE ONLY pc.t_output_sequence_types
 --
 
 GRANT SELECT ON TABLE pc.t_output_sequence_types TO readaccess;
+GRANT SELECT ON TABLE pc.t_output_sequence_types TO writeaccess;
 

@@ -26,4 +26,5 @@ ALTER TABLE public.v_analysis_job_and_dataset_archive_state OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_and_dataset_archive_state TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_and_dataset_archive_state TO writeaccess;
 

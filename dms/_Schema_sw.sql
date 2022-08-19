@@ -12,4 +12,5 @@ ALTER SCHEMA sw OWNER TO d3l243;
 --
 
 GRANT USAGE ON SCHEMA sw TO readaccess;
+GRANT ALL ON SCHEMA sw TO writeaccess;
 

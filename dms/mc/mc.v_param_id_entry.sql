@@ -17,4 +17,5 @@ ALTER TABLE mc.v_param_id_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_param_id_entry TO readaccess;
+GRANT SELECT ON TABLE mc.v_param_id_entry TO writeaccess;
 

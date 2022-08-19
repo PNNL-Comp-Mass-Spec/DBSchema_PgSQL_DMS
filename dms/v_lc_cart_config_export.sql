@@ -25,4 +25,5 @@ ALTER TABLE public.v_lc_cart_config_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_lc_cart_config_export TO readaccess;
+GRANT SELECT ON TABLE public.v_lc_cart_config_export TO writeaccess;
 

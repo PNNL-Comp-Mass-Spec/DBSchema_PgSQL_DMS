@@ -62,4 +62,5 @@ ALTER TABLE ONLY public.t_operations_tasks
 --
 
 GRANT SELECT ON TABLE public.t_operations_tasks TO readaccess;
+GRANT SELECT ON TABLE public.t_operations_tasks TO writeaccess;
 

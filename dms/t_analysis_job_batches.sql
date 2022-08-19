@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_analysis_job_batches
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_batches TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_job_batches TO writeaccess;
 

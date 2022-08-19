@@ -24,4 +24,5 @@ ALTER TABLE ont.v_helper_bto_tissue_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_helper_bto_tissue_report TO readaccess;
+GRANT SELECT ON TABLE ont.v_helper_bto_tissue_report TO writeaccess;
 

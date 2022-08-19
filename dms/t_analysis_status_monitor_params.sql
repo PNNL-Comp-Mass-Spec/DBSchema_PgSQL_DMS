@@ -31,4 +31,5 @@ ALTER TABLE ONLY public.t_analysis_status_monitor_params
 --
 
 GRANT SELECT ON TABLE public.t_analysis_status_monitor_params TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_status_monitor_params TO writeaccess;
 

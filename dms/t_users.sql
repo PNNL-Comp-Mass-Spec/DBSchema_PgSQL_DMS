@@ -72,4 +72,5 @@ ALTER TABLE ONLY public.t_users
 --
 
 GRANT SELECT ON TABLE public.t_users TO readaccess;
+GRANT SELECT ON TABLE public.t_users TO writeaccess;
 

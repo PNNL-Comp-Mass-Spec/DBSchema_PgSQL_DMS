@@ -32,4 +32,5 @@ COMMENT ON VIEW public.v_material_locations_available_list_report IS 'Modeled af
 --
 
 GRANT SELECT ON TABLE public.v_material_locations_available_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_material_locations_available_list_report TO writeaccess;
 

@@ -68,3 +68,9 @@ CREATE VIEW logdms.v_event_log AS
 
 ALTER TABLE logdms.v_event_log OWNER TO d3l243;
 
+--
+-- Name: TABLE v_event_log; Type: ACL; Schema: logdms; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logdms.v_event_log TO writeaccess;
+

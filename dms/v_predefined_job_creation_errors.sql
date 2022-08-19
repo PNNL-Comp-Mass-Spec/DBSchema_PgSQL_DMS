@@ -29,4 +29,5 @@ COMMENT ON VIEW public.v_predefined_job_creation_errors IS 'Report errors within
 --
 
 GRANT SELECT ON TABLE public.v_predefined_job_creation_errors TO readaccess;
+GRANT SELECT ON TABLE public.v_predefined_job_creation_errors TO writeaccess;
 

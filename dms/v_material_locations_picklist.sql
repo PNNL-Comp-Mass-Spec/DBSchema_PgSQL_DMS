@@ -34,4 +34,5 @@ COMMENT ON VIEW public.v_material_locations_picklist IS 'Modeled after view v_ma
 --
 
 GRANT SELECT ON TABLE public.v_material_locations_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_material_locations_picklist TO writeaccess;
 

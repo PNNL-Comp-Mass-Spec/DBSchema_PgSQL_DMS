@@ -30,4 +30,5 @@ ALTER TABLE ONLY public.t_dataset_qc_curation
 --
 
 GRANT SELECT ON TABLE public.t_dataset_qc_curation TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_qc_curation TO writeaccess;
 

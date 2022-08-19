@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_biomaterial_organisms
 --
 
 GRANT SELECT ON TABLE public.t_biomaterial_organisms TO readaccess;
+GRANT SELECT ON TABLE public.t_biomaterial_organisms TO writeaccess;
 

@@ -41,4 +41,5 @@ ALTER TABLE public.v_notification_sample_prep_request_by_research_team OWNER TO 
 --
 
 GRANT SELECT ON TABLE public.v_notification_sample_prep_request_by_research_team TO readaccess;
+GRANT SELECT ON TABLE public.v_notification_sample_prep_request_by_research_team TO writeaccess;
 

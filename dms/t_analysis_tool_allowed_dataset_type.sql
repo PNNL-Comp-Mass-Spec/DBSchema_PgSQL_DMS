@@ -37,4 +37,5 @@ ALTER TABLE ONLY public.t_analysis_tool_allowed_dataset_type
 --
 
 GRANT SELECT ON TABLE public.t_analysis_tool_allowed_dataset_type TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_tool_allowed_dataset_type TO writeaccess;
 

@@ -41,4 +41,5 @@ CREATE UNIQUE INDEX ix_t_data_repository_repository_name ON dpkg.t_data_reposito
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_repository TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_data_repository TO writeaccess;
 

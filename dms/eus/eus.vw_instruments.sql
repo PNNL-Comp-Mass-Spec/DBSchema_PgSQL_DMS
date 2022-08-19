@@ -37,3 +37,9 @@ ALTER FOREIGN TABLE eus.vw_instruments ALTER COLUMN available_hours OPTIONS (
 
 ALTER FOREIGN TABLE eus.vw_instruments OWNER TO d3l243;
 
+--
+-- Name: TABLE vw_instruments; Type: ACL; Schema: eus; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE eus.vw_instruments TO writeaccess;
+

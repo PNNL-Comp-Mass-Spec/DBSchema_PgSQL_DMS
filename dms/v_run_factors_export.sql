@@ -28,4 +28,5 @@ ALTER TABLE public.v_run_factors_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_run_factors_export TO readaccess;
+GRANT SELECT ON TABLE public.v_run_factors_export TO writeaccess;
 

@@ -17,4 +17,5 @@ ALTER TABLE public.v_biomaterial_date OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_biomaterial_date TO readaccess;
+GRANT SELECT ON TABLE public.v_biomaterial_date TO writeaccess;
 

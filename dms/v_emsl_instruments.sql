@@ -21,4 +21,5 @@ ALTER TABLE public.v_emsl_instruments OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_emsl_instruments TO readaccess;
+GRANT SELECT ON TABLE public.v_emsl_instruments TO writeaccess;
 

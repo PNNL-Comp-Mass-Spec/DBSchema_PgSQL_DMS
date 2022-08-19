@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_cached_protein_collection_list_map
 --
 
 GRANT SELECT ON TABLE public.t_cached_protein_collection_list_map TO readaccess;
+GRANT SELECT ON TABLE public.t_cached_protein_collection_list_map TO writeaccess;
 

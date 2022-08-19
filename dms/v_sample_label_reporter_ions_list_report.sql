@@ -18,4 +18,5 @@ ALTER TABLE public.v_sample_label_reporter_ions_list_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_sample_label_reporter_ions_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_sample_label_reporter_ions_list_report TO writeaccess;
 

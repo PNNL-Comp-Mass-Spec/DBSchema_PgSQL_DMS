@@ -38,4 +38,5 @@ ALTER TABLE ONLY dpkg.t_osm_package_storage
 --
 
 GRANT SELECT ON TABLE dpkg.t_osm_package_storage TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_osm_package_storage TO writeaccess;
 

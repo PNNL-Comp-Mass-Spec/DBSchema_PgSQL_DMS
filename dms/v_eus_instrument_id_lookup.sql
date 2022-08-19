@@ -21,4 +21,5 @@ ALTER TABLE public.v_eus_instrument_id_lookup OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_eus_instrument_id_lookup TO readaccess;
+GRANT SELECT ON TABLE public.v_eus_instrument_id_lookup TO writeaccess;
 

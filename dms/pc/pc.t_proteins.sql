@@ -56,4 +56,5 @@ CREATE UNIQUE INDEX ix_t_proteins_sha1_hash ON pc.t_proteins USING btree (sha1_h
 --
 
 GRANT SELECT ON TABLE pc.t_proteins TO readaccess;
+GRANT SELECT ON TABLE pc.t_proteins TO writeaccess;
 

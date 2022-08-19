@@ -36,4 +36,5 @@ COMMENT ON VIEW public.v_purgeable_datasets IS 'When coalescing dates to find th
 --
 
 GRANT SELECT ON TABLE public.v_purgeable_datasets TO readaccess;
+GRANT SELECT ON TABLE public.v_purgeable_datasets TO writeaccess;
 

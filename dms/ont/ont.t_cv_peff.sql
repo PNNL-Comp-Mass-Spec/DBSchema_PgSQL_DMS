@@ -44,4 +44,5 @@ ALTER TABLE ONLY ont.t_cv_peff
 --
 
 GRANT SELECT ON TABLE ont.t_cv_peff TO readaccess;
+GRANT SELECT ON TABLE ont.t_cv_peff TO writeaccess;
 

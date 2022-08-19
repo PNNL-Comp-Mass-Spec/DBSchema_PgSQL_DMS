@@ -16,4 +16,5 @@ ALTER TABLE public.v_protein_options_seq_direction OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_protein_options_seq_direction TO readaccess;
+GRANT SELECT ON TABLE public.v_protein_options_seq_direction TO writeaccess;
 

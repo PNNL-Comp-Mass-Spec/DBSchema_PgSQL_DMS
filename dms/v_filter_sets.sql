@@ -28,4 +28,5 @@ ALTER TABLE public.v_filter_sets OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_filter_sets TO readaccess;
+GRANT SELECT ON TABLE public.v_filter_sets TO writeaccess;
 

@@ -60,4 +60,5 @@ ALTER TABLE public.v_protein_collection_name OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_protein_collection_name TO readaccess;
+GRANT SELECT ON TABLE public.v_protein_collection_name TO writeaccess;
 

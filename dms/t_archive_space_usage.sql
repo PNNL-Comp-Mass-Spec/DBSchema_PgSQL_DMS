@@ -40,4 +40,5 @@ ALTER TABLE ONLY public.t_archive_space_usage
 --
 
 GRANT SELECT ON TABLE public.t_archive_space_usage TO readaccess;
+GRANT SELECT ON TABLE public.t_archive_space_usage TO writeaccess;
 

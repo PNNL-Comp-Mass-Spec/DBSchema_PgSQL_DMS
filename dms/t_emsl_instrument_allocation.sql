@@ -27,4 +27,5 @@ ALTER TABLE ONLY public.t_emsl_instrument_allocation
 --
 
 GRANT SELECT ON TABLE public.t_emsl_instrument_allocation TO readaccess;
+GRANT SELECT ON TABLE public.t_emsl_instrument_allocation TO writeaccess;
 

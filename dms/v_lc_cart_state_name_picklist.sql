@@ -16,4 +16,5 @@ ALTER TABLE public.v_lc_cart_state_name_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_lc_cart_state_name_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_lc_cart_state_name_picklist TO writeaccess;
 

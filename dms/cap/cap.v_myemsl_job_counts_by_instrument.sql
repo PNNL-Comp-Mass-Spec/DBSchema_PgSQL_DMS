@@ -19,4 +19,5 @@ ALTER TABLE cap.v_myemsl_job_counts_by_instrument OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_myemsl_job_counts_by_instrument TO readaccess;
+GRANT SELECT ON TABLE cap.v_myemsl_job_counts_by_instrument TO writeaccess;
 

@@ -24,4 +24,5 @@ ALTER TABLE public.v_dataset_list_campaign OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_list_campaign TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_list_campaign TO writeaccess;
 

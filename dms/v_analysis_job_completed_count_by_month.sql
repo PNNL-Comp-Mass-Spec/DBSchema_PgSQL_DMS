@@ -17,4 +17,5 @@ ALTER TABLE public.v_analysis_job_completed_count_by_month OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_completed_count_by_month TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_completed_count_by_month TO writeaccess;
 

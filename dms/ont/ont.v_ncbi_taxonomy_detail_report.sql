@@ -39,4 +39,5 @@ ALTER TABLE ont.v_ncbi_taxonomy_detail_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_ncbi_taxonomy_detail_report TO readaccess;
+GRANT SELECT ON TABLE ont.v_ncbi_taxonomy_detail_report TO writeaccess;
 

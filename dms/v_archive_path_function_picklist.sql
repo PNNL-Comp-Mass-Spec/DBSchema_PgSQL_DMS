@@ -14,4 +14,5 @@ ALTER TABLE public.v_archive_path_function_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_archive_path_function_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_archive_path_function_picklist TO writeaccess;
 

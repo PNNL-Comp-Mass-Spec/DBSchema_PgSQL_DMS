@@ -25,4 +25,5 @@ ALTER TABLE public.v_campaign_list_stale OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_campaign_list_stale TO readaccess;
+GRANT SELECT ON TABLE public.v_campaign_list_stale TO writeaccess;
 

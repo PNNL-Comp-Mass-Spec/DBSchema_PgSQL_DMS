@@ -31,4 +31,5 @@ ALTER TABLE cap.v_task_step_backlog_crosstab OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_task_step_backlog_crosstab TO readaccess;
+GRANT SELECT ON TABLE cap.v_task_step_backlog_crosstab TO writeaccess;
 

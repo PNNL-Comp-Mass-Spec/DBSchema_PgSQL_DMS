@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_instrument_ops_role
 --
 
 GRANT SELECT ON TABLE public.t_instrument_ops_role TO readaccess;
+GRANT SELECT ON TABLE public.t_instrument_ops_role TO writeaccess;
 

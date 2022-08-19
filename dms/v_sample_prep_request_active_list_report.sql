@@ -70,4 +70,5 @@ COMMENT ON VIEW public.v_sample_prep_request_active_list_report IS 'If the reque
 --
 
 GRANT SELECT ON TABLE public.v_sample_prep_request_active_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_sample_prep_request_active_list_report TO writeaccess;
 

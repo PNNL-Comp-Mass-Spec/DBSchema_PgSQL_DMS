@@ -37,4 +37,5 @@ ALTER TABLE public.v_experiment_metadata OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_experiment_metadata TO readaccess;
+GRANT SELECT ON TABLE public.v_experiment_metadata TO writeaccess;
 

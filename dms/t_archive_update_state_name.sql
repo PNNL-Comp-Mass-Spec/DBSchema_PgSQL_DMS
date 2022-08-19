@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_archive_update_state_name
 --
 
 GRANT SELECT ON TABLE public.t_archive_update_state_name TO readaccess;
+GRANT SELECT ON TABLE public.t_archive_update_state_name TO writeaccess;
 

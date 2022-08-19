@@ -52,4 +52,5 @@ ALTER TABLE ONLY dpkg.t_data_repository_uploads
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_repository_uploads TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_data_repository_uploads TO writeaccess;
 

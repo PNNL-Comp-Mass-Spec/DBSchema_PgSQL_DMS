@@ -26,4 +26,5 @@ ALTER TABLE pc.v_archived_output_files OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_archived_output_files TO readaccess;
+GRANT SELECT ON TABLE pc.v_archived_output_files TO writeaccess;
 

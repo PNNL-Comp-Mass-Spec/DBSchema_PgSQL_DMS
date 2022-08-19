@@ -21,4 +21,5 @@ ALTER TABLE public.v_bionet_hosts_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_bionet_hosts_export TO readaccess;
+GRANT SELECT ON TABLE public.v_bionet_hosts_export TO writeaccess;
 

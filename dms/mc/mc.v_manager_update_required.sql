@@ -19,4 +19,5 @@ ALTER TABLE mc.v_manager_update_required OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_manager_update_required TO readaccess;
+GRANT SELECT ON TABLE mc.v_manager_update_required TO writeaccess;
 

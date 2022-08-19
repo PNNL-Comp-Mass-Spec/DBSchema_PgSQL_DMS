@@ -24,4 +24,5 @@ ALTER TABLE ONLY public.t_internal_std_parent_mixes
 --
 
 GRANT SELECT ON TABLE public.t_internal_std_parent_mixes TO readaccess;
+GRANT SELECT ON TABLE public.t_internal_std_parent_mixes TO writeaccess;
 

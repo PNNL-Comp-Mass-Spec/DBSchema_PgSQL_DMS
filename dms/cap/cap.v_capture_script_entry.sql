@@ -19,4 +19,5 @@ ALTER TABLE cap.v_capture_script_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_capture_script_entry TO readaccess;
+GRANT SELECT ON TABLE cap.v_capture_script_entry TO writeaccess;
 

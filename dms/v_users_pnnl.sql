@@ -37,4 +37,5 @@ COMMENT ON VIEW public.v_users_pnnl IS 'This view retrieves data from the operat
 --
 
 GRANT SELECT ON TABLE public.v_users_pnnl TO readaccess;
+GRANT SELECT ON TABLE public.v_users_pnnl TO writeaccess;
 

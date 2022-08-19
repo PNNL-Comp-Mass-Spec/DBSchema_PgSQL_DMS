@@ -51,4 +51,5 @@ CREATE INDEX ix_t_task_step_processing_log_processor ON cap.t_task_step_processi
 --
 
 GRANT SELECT ON TABLE cap.t_task_step_processing_log TO readaccess;
+GRANT SELECT ON TABLE cap.t_task_step_processing_log TO writeaccess;
 

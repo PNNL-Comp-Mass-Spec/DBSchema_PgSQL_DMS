@@ -68,4 +68,5 @@ COMMENT ON VIEW public.v_data_analysis_request_detail_report IS 'If the analysis
 --
 
 GRANT SELECT ON TABLE public.v_data_analysis_request_detail_report TO readaccess;
+GRANT SELECT ON TABLE public.v_data_analysis_request_detail_report TO writeaccess;
 

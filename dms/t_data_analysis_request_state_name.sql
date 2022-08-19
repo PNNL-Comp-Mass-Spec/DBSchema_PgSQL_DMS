@@ -23,4 +23,5 @@ ALTER TABLE ONLY public.t_data_analysis_request_state_name
 --
 
 GRANT SELECT ON TABLE public.t_data_analysis_request_state_name TO readaccess;
+GRANT SELECT ON TABLE public.t_data_analysis_request_state_name TO writeaccess;
 

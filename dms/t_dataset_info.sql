@@ -45,4 +45,5 @@ ALTER TABLE ONLY public.t_dataset_info
 --
 
 GRANT SELECT ON TABLE public.t_dataset_info TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_info TO writeaccess;
 

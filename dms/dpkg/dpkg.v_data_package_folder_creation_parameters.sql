@@ -20,4 +20,5 @@ ALTER TABLE dpkg.v_data_package_folder_creation_parameters OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE dpkg.v_data_package_folder_creation_parameters TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_data_package_folder_creation_parameters TO writeaccess;
 

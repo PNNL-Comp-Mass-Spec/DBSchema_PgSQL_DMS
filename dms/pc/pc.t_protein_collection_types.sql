@@ -37,4 +37,5 @@ ALTER TABLE ONLY pc.t_protein_collection_types
 --
 
 GRANT SELECT ON TABLE pc.t_protein_collection_types TO readaccess;
+GRANT SELECT ON TABLE pc.t_protein_collection_types TO writeaccess;
 

@@ -20,4 +20,5 @@ ALTER TABLE public.v_campaign_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_campaign_report TO readaccess;
+GRANT SELECT ON TABLE public.v_campaign_report TO writeaccess;
 

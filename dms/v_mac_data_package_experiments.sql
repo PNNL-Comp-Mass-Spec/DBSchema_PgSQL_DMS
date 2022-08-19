@@ -19,4 +19,5 @@ ALTER TABLE public.v_mac_data_package_experiments OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mac_data_package_experiments TO readaccess;
+GRANT SELECT ON TABLE public.v_mac_data_package_experiments TO writeaccess;
 

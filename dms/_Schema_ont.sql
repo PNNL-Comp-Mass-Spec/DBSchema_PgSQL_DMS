@@ -12,4 +12,5 @@ ALTER SCHEMA ont OWNER TO d3l243;
 --
 
 GRANT USAGE ON SCHEMA ont TO readaccess;
+GRANT ALL ON SCHEMA ont TO writeaccess;
 

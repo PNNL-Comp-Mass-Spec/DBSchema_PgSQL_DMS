@@ -29,4 +29,5 @@ ALTER TABLE public.v_instrument_usage_report_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_usage_report_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_usage_report_entry TO writeaccess;
 

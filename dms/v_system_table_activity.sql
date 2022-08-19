@@ -41,4 +41,5 @@ COMMENT ON VIEW public.v_system_table_activity IS 'Table access stats; vacuum ti
 --
 
 GRANT SELECT ON TABLE public.v_system_table_activity TO readaccess;
+GRANT SELECT ON TABLE public.v_system_table_activity TO writeaccess;
 

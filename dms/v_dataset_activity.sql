@@ -45,4 +45,5 @@ ALTER TABLE public.v_dataset_activity OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_activity TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_activity TO writeaccess;
 

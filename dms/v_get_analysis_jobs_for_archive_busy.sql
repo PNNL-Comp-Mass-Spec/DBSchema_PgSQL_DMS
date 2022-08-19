@@ -21,4 +21,5 @@ ALTER TABLE public.v_get_analysis_jobs_for_archive_busy OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_get_analysis_jobs_for_archive_busy TO readaccess;
+GRANT SELECT ON TABLE public.v_get_analysis_jobs_for_archive_busy TO writeaccess;
 

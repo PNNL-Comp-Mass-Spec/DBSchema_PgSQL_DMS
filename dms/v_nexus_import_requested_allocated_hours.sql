@@ -19,4 +19,5 @@ ALTER TABLE public.v_nexus_import_requested_allocated_hours OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_nexus_import_requested_allocated_hours TO readaccess;
+GRANT SELECT ON TABLE public.v_nexus_import_requested_allocated_hours TO writeaccess;
 

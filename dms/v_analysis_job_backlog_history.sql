@@ -19,4 +19,5 @@ ALTER TABLE public.v_analysis_job_backlog_history OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_backlog_history TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_backlog_history TO writeaccess;
 

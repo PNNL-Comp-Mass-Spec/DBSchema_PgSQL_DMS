@@ -16,4 +16,5 @@ ALTER TABLE public.v_get_pipeline_job_priority OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_get_pipeline_job_priority TO readaccess;
+GRANT SELECT ON TABLE public.v_get_pipeline_job_priority TO writeaccess;
 

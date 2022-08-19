@@ -50,4 +50,5 @@ ALTER TABLE ONLY public.t_analysis_tool
 --
 
 GRANT SELECT ON TABLE public.t_analysis_tool TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_tool TO writeaccess;
 

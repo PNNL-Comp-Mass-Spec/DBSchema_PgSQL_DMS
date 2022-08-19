@@ -19,4 +19,5 @@ ALTER TABLE ont.v_ncbi_taxonomy_cached OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_ncbi_taxonomy_cached TO readaccess;
+GRANT SELECT ON TABLE ont.v_ncbi_taxonomy_cached TO writeaccess;
 

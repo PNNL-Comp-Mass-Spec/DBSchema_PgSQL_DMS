@@ -37,4 +37,5 @@ ALTER TABLE ONLY public.t_acceptable_param_entry_types
 --
 
 GRANT SELECT ON TABLE public.t_acceptable_param_entry_types TO readaccess;
+GRANT SELECT ON TABLE public.t_acceptable_param_entry_types TO writeaccess;
 

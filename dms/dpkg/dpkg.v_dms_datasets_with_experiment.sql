@@ -18,4 +18,5 @@ ALTER TABLE dpkg.v_dms_datasets_with_experiment OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE dpkg.v_dms_datasets_with_experiment TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_dms_datasets_with_experiment TO writeaccess;
 

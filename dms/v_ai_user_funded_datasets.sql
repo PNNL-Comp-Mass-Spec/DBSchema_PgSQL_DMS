@@ -22,4 +22,5 @@ ALTER TABLE public.v_ai_user_funded_datasets OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_ai_user_funded_datasets TO readaccess;
+GRANT SELECT ON TABLE public.v_ai_user_funded_datasets TO writeaccess;
 

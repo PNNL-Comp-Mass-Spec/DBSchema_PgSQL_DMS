@@ -20,4 +20,5 @@ ALTER TABLE sw.v_log_errors OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE sw.v_log_errors TO readaccess;
+GRANT SELECT ON TABLE sw.v_log_errors TO writeaccess;
 

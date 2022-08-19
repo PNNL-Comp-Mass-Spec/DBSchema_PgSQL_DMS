@@ -45,4 +45,5 @@ ALTER TABLE public.v_dataset_metadata OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_metadata TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_metadata TO writeaccess;
 

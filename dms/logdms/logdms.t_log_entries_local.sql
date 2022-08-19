@@ -46,3 +46,9 @@ CREATE INDEX ix_t_log_entries_local_posted_by ON logdms.t_log_entries_local USIN
 
 CREATE INDEX ix_t_log_entries_local_posting_time ON logdms.t_log_entries_local USING btree (posting_time);
 
+--
+-- Name: TABLE t_log_entries_local; Type: ACL; Schema: logdms; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logdms.t_log_entries_local TO writeaccess;
+

@@ -121,4 +121,5 @@ COMMENT ON VIEW public.v_dataset_detail_report_ex IS 'Note: this view is intende
 --
 
 GRANT SELECT ON TABLE public.v_dataset_detail_report_ex TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_detail_report_ex TO writeaccess;
 

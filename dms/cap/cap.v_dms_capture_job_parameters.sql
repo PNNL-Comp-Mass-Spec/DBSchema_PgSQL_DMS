@@ -49,4 +49,5 @@ ALTER TABLE cap.v_dms_capture_job_parameters OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_dms_capture_job_parameters TO readaccess;
+GRANT SELECT ON TABLE cap.v_dms_capture_job_parameters TO writeaccess;
 

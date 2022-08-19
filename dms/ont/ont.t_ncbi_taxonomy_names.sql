@@ -63,4 +63,5 @@ ALTER TABLE ONLY ont.t_ncbi_taxonomy_names
 --
 
 GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_names TO readaccess;
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_names TO writeaccess;
 

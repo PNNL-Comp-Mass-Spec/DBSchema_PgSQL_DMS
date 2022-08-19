@@ -98,4 +98,5 @@ ALTER TABLE ONLY public.t_param_file_mass_mods
 --
 
 GRANT SELECT ON TABLE public.t_param_file_mass_mods TO readaccess;
+GRANT SELECT ON TABLE public.t_param_file_mass_mods TO writeaccess;
 

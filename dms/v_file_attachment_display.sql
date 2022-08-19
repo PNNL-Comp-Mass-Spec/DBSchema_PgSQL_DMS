@@ -25,4 +25,5 @@ ALTER TABLE public.v_file_attachment_display OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_file_attachment_display TO readaccess;
+GRANT SELECT ON TABLE public.v_file_attachment_display TO writeaccess;
 

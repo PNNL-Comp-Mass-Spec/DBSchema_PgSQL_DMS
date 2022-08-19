@@ -44,4 +44,5 @@ CREATE UNIQUE INDEX ix_t_dataset_qc_metric_names_source_metric ON public.t_datas
 --
 
 GRANT SELECT ON TABLE public.t_dataset_qc_metric_names TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_qc_metric_names TO writeaccess;
 

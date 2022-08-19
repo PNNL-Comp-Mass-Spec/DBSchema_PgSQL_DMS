@@ -33,4 +33,5 @@ ALTER TABLE public.v_mts_pt_db_jobs OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mts_pt_db_jobs TO readaccess;
+GRANT SELECT ON TABLE public.v_mts_pt_db_jobs TO writeaccess;
 

@@ -23,4 +23,5 @@ ALTER TABLE public.v_event_log_archive_update_list OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_event_log_archive_update_list TO readaccess;
+GRANT SELECT ON TABLE public.v_event_log_archive_update_list TO writeaccess;
 

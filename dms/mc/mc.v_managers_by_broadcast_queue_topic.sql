@@ -26,4 +26,5 @@ ALTER TABLE mc.v_managers_by_broadcast_queue_topic OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_managers_by_broadcast_queue_topic TO readaccess;
+GRANT SELECT ON TABLE mc.v_managers_by_broadcast_queue_topic TO writeaccess;
 

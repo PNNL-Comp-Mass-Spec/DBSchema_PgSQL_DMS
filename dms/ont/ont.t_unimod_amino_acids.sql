@@ -26,4 +26,5 @@ ALTER TABLE ONLY ont.t_unimod_amino_acids
 --
 
 GRANT SELECT ON TABLE ont.t_unimod_amino_acids TO readaccess;
+GRANT SELECT ON TABLE ont.t_unimod_amino_acids TO writeaccess;
 

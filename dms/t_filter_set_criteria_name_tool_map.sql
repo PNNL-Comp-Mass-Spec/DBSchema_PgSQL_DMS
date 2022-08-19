@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_filter_set_criteria_name_tool_map
 --
 
 GRANT SELECT ON TABLE public.t_filter_set_criteria_name_tool_map TO readaccess;
+GRANT SELECT ON TABLE public.t_filter_set_criteria_name_tool_map TO writeaccess;
 

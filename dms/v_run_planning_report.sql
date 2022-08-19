@@ -151,4 +151,5 @@ ALTER TABLE public.v_run_planning_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_run_planning_report TO readaccess;
+GRANT SELECT ON TABLE public.v_run_planning_report TO writeaccess;
 

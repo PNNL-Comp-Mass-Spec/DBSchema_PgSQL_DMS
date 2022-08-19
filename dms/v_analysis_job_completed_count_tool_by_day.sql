@@ -19,4 +19,5 @@ ALTER TABLE public.v_analysis_job_completed_count_tool_by_day OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_completed_count_tool_by_day TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_completed_count_tool_by_day TO writeaccess;
 

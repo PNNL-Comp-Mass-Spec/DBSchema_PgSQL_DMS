@@ -58,4 +58,5 @@ ALTER TABLE ONLY public.t_param_files
 --
 
 GRANT SELECT ON TABLE public.t_param_files TO readaccess;
+GRANT SELECT ON TABLE public.t_param_files TO writeaccess;
 

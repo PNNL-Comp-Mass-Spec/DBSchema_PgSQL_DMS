@@ -37,4 +37,5 @@ ALTER TABLE ONLY cap.t_automatic_jobs
 --
 
 GRANT SELECT ON TABLE cap.t_automatic_jobs TO readaccess;
+GRANT SELECT ON TABLE cap.t_automatic_jobs TO writeaccess;
 

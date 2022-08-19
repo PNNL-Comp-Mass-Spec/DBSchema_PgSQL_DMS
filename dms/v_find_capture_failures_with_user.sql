@@ -23,4 +23,5 @@ ALTER TABLE public.v_find_capture_failures_with_user OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_find_capture_failures_with_user TO readaccess;
+GRANT SELECT ON TABLE public.v_find_capture_failures_with_user TO writeaccess;
 

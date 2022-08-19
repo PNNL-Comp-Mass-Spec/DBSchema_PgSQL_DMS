@@ -33,4 +33,5 @@ COMMENT ON VIEW public.v_purgeable_datasets_nojob IS 'This view is used by Reque
 --
 
 GRANT SELECT ON TABLE public.v_purgeable_datasets_nojob TO readaccess;
+GRANT SELECT ON TABLE public.v_purgeable_datasets_nojob TO writeaccess;
 

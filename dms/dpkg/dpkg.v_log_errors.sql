@@ -20,4 +20,5 @@ ALTER TABLE dpkg.v_log_errors OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE dpkg.v_log_errors TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_log_errors TO writeaccess;
 

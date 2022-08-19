@@ -39,4 +39,5 @@ ALTER TABLE public.v_table_index_duplicates OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_table_index_duplicates TO readaccess;
+GRANT SELECT ON TABLE public.v_table_index_duplicates TO writeaccess;
 

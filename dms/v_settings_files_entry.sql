@@ -21,4 +21,5 @@ ALTER TABLE public.v_settings_files_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_settings_files_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_settings_files_entry TO writeaccess;
 

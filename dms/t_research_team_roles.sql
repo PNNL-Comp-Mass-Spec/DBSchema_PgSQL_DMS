@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_research_team_roles
 --
 
 GRANT SELECT ON TABLE public.t_research_team_roles TO readaccess;
+GRANT SELECT ON TABLE public.t_research_team_roles TO writeaccess;
 

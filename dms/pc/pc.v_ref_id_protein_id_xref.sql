@@ -21,4 +21,5 @@ ALTER TABLE pc.v_ref_id_protein_id_xref OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_ref_id_protein_id_xref TO readaccess;
+GRANT SELECT ON TABLE pc.v_ref_id_protein_id_xref TO writeaccess;
 

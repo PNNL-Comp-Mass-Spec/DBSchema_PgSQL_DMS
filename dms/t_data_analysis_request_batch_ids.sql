@@ -42,4 +42,5 @@ ALTER TABLE ONLY public.t_data_analysis_request_batch_ids
 --
 
 GRANT SELECT ON TABLE public.t_data_analysis_request_batch_ids TO readaccess;
+GRANT SELECT ON TABLE public.t_data_analysis_request_batch_ids TO writeaccess;
 

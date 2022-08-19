@@ -37,4 +37,5 @@ ALTER TABLE ONLY pc.t_naming_authorities
 --
 
 GRANT SELECT ON TABLE pc.t_naming_authorities TO readaccess;
+GRANT SELECT ON TABLE pc.t_naming_authorities TO writeaccess;
 

@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_secondary_sep_sample_type
 --
 
 GRANT SELECT ON TABLE public.t_secondary_sep_sample_type TO readaccess;
+GRANT SELECT ON TABLE public.t_secondary_sep_sample_type TO writeaccess;
 

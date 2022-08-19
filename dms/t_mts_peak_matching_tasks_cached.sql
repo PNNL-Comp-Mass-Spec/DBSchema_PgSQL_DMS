@@ -90,4 +90,5 @@ CREATE INDEX ix_t_mts_peak_matching_tasks_cached_tool_dmsjob ON public.t_mts_pea
 --
 
 GRANT SELECT ON TABLE public.t_mts_peak_matching_tasks_cached TO readaccess;
+GRANT SELECT ON TABLE public.t_mts_peak_matching_tasks_cached TO writeaccess;
 

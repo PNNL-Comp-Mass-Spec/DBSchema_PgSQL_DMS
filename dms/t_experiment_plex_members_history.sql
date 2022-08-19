@@ -40,4 +40,5 @@ ALTER TABLE ONLY public.t_experiment_plex_members_history
 --
 
 GRANT SELECT ON TABLE public.t_experiment_plex_members_history TO readaccess;
+GRANT SELECT ON TABLE public.t_experiment_plex_members_history TO writeaccess;
 

@@ -140,4 +140,5 @@ ALTER TABLE ONLY public.t_biomaterial
 --
 
 GRANT SELECT ON TABLE public.t_biomaterial TO readaccess;
+GRANT SELECT ON TABLE public.t_biomaterial TO writeaccess;
 

@@ -60,4 +60,5 @@ ALTER TABLE ONLY pc.t_position_info
 --
 
 GRANT SELECT ON TABLE pc.t_position_info TO readaccess;
+GRANT SELECT ON TABLE pc.t_position_info TO writeaccess;
 

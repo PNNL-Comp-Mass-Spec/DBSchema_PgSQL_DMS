@@ -58,4 +58,5 @@ ALTER TABLE ONLY public.t_prep_lc_run
 --
 
 GRANT SELECT ON TABLE public.t_prep_lc_run TO readaccess;
+GRANT SELECT ON TABLE public.t_prep_lc_run TO writeaccess;
 

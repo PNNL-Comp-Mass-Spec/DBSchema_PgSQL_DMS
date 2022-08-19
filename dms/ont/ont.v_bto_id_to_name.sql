@@ -15,4 +15,5 @@ ALTER TABLE ont.v_bto_id_to_name OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_bto_id_to_name TO readaccess;
+GRANT SELECT ON TABLE ont.v_bto_id_to_name TO writeaccess;
 

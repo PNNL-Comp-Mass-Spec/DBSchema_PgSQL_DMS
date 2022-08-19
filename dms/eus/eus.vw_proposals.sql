@@ -41,3 +41,9 @@ ALTER FOREIGN TABLE eus.vw_proposals ALTER COLUMN project_uuid OPTIONS (
 
 ALTER FOREIGN TABLE eus.vw_proposals OWNER TO d3l243;
 
+--
+-- Name: TABLE vw_proposals; Type: ACL; Schema: eus; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE eus.vw_proposals TO writeaccess;
+

@@ -23,4 +23,5 @@ ALTER TABLE ONLY public.t_modification_types
 --
 
 GRANT SELECT ON TABLE public.t_modification_types TO readaccess;
+GRANT SELECT ON TABLE public.t_modification_types TO writeaccess;
 

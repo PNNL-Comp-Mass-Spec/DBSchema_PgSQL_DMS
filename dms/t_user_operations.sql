@@ -42,4 +42,5 @@ CREATE UNIQUE INDEX ix_t_user_operations_unique_operation ON public.t_user_opera
 --
 
 GRANT SELECT ON TABLE public.t_user_operations TO readaccess;
+GRANT SELECT ON TABLE public.t_user_operations TO writeaccess;
 

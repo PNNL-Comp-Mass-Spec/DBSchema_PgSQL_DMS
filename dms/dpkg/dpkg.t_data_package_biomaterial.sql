@@ -35,4 +35,5 @@ ALTER TABLE ONLY dpkg.t_data_package_biomaterial
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_package_biomaterial TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_data_package_biomaterial TO writeaccess;
 

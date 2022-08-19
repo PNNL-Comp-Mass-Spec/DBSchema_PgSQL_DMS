@@ -37,4 +37,5 @@ ALTER TABLE public.v_eus_export_job_metadata OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_eus_export_job_metadata TO readaccess;
+GRANT SELECT ON TABLE public.v_eus_export_job_metadata TO writeaccess;
 

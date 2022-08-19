@@ -83,6 +83,6 @@ ALTER TABLE ONLY mc.t_param_value
 -- Name: TABLE t_param_value; Type: ACL; Schema: mc; Owner: d3l243
 --
 
+GRANT SELECT,INSERT,UPDATE ON TABLE mc.t_param_value TO writeaccess;
 GRANT SELECT ON TABLE mc.t_param_value TO readaccess;
-GRANT INSERT,UPDATE ON TABLE mc.t_param_value TO writeaccess;
 

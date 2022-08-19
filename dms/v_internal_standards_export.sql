@@ -29,4 +29,5 @@ ALTER TABLE public.v_internal_standards_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_internal_standards_export TO readaccess;
+GRANT SELECT ON TABLE public.v_internal_standards_export TO writeaccess;
 

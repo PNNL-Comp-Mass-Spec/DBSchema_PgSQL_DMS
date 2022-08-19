@@ -23,4 +23,5 @@ ALTER TABLE mc.v_manager_type_report_ex OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE mc.v_manager_type_report_ex TO readaccess;
+GRANT SELECT ON TABLE mc.v_manager_type_report_ex TO writeaccess;
 

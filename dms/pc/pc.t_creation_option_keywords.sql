@@ -39,4 +39,5 @@ ALTER TABLE ONLY pc.t_creation_option_keywords
 --
 
 GRANT SELECT ON TABLE pc.t_creation_option_keywords TO readaccess;
+GRANT SELECT ON TABLE pc.t_creation_option_keywords TO writeaccess;
 

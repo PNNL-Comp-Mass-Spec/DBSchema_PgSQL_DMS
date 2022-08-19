@@ -35,4 +35,5 @@ COMMENT ON VIEW public.v_requested_run_unified_list_ex IS 'This view is used by 
 --
 
 GRANT SELECT ON TABLE public.v_requested_run_unified_list_ex TO readaccess;
+GRANT SELECT ON TABLE public.v_requested_run_unified_list_ex TO writeaccess;
 

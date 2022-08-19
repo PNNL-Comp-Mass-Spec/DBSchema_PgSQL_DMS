@@ -42,4 +42,5 @@ CREATE INDEX ix_t_job_step_dependencies_history_job_step_eval_triggered ON sw.t_
 --
 
 GRANT SELECT ON TABLE sw.t_job_step_dependencies_history TO readaccess;
+GRANT SELECT ON TABLE sw.t_job_step_dependencies_history TO writeaccess;
 

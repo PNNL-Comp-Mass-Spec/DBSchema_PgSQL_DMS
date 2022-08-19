@@ -59,4 +59,5 @@ CREATE INDEX ix_t_organisms_change_history ON public.t_organisms_change_history 
 --
 
 GRANT SELECT ON TABLE public.t_organisms_change_history TO readaccess;
+GRANT SELECT ON TABLE public.t_organisms_change_history TO writeaccess;
 

@@ -36,4 +36,5 @@ ALTER TABLE public.v_biomaterial_list_report_2 OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_biomaterial_list_report_2 TO readaccess;
+GRANT SELECT ON TABLE public.v_biomaterial_list_report_2 TO writeaccess;
 

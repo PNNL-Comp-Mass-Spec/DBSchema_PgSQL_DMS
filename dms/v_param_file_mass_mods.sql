@@ -45,4 +45,5 @@ ALTER TABLE public.v_param_file_mass_mods OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_param_file_mass_mods TO readaccess;
+GRANT SELECT ON TABLE public.v_param_file_mass_mods TO writeaccess;
 

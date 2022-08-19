@@ -26,4 +26,5 @@ ALTER TABLE public.v_storage_summary OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_storage_summary TO readaccess;
+GRANT SELECT ON TABLE public.v_storage_summary TO writeaccess;
 

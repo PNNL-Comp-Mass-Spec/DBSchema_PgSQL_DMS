@@ -64,4 +64,5 @@ COMMENT ON VIEW public.v_table_size_summary IS 'Reports the rows and size (in by
 --
 
 GRANT SELECT ON TABLE public.v_table_size_summary TO readaccess;
+GRANT SELECT ON TABLE public.v_table_size_summary TO writeaccess;
 

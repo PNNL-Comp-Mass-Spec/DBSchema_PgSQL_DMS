@@ -56,4 +56,5 @@ CREATE UNIQUE INDEX ix_t_prep_lc_column ON public.t_prep_lc_column USING btree (
 --
 
 GRANT SELECT ON TABLE public.t_prep_lc_column TO readaccess;
+GRANT SELECT ON TABLE public.t_prep_lc_column TO writeaccess;
 

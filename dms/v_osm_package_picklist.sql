@@ -16,4 +16,5 @@ ALTER TABLE public.v_osm_package_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_osm_package_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_osm_package_picklist TO writeaccess;
 

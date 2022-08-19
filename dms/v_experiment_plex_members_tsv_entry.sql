@@ -145,4 +145,5 @@ ALTER TABLE public.v_experiment_plex_members_tsv_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_experiment_plex_members_tsv_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_experiment_plex_members_tsv_entry TO writeaccess;
 

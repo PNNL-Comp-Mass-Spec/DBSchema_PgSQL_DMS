@@ -19,4 +19,5 @@ ALTER TABLE public.v_eus_import_instruments OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_eus_import_instruments TO readaccess;
+GRANT SELECT ON TABLE public.v_eus_import_instruments TO writeaccess;
 

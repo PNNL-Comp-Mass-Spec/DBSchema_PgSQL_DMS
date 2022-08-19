@@ -28,4 +28,5 @@ COMMENT ON VIEW public.v_get_pipeline_job_processors IS 'Returns jobs new, in pr
 --
 
 GRANT SELECT ON TABLE public.v_get_pipeline_job_processors TO readaccess;
+GRANT SELECT ON TABLE public.v_get_pipeline_job_processors TO writeaccess;
 

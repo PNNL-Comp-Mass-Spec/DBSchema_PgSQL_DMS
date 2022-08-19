@@ -31,4 +31,5 @@ ALTER TABLE ONLY dpkg.t_data_package_eus_proposals
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_package_eus_proposals TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_data_package_eus_proposals TO writeaccess;
 

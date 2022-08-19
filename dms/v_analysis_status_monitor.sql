@@ -22,4 +22,5 @@ ALTER TABLE public.v_analysis_status_monitor OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_status_monitor TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_status_monitor TO writeaccess;
 

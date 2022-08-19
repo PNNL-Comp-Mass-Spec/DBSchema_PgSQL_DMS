@@ -44,4 +44,5 @@ CREATE UNIQUE INDEX ix_t_instrument_data_type_name ON public.t_instrument_data_t
 --
 
 GRANT SELECT ON TABLE public.t_instrument_data_type_name TO readaccess;
+GRANT SELECT ON TABLE public.t_instrument_data_type_name TO writeaccess;
 

@@ -29,4 +29,5 @@ CREATE UNIQUE INDEX ix_t_default_psm_job_types ON public.t_default_psm_job_types
 --
 
 GRANT SELECT ON TABLE public.t_default_psm_job_types TO readaccess;
+GRANT SELECT ON TABLE public.t_default_psm_job_types TO writeaccess;
 

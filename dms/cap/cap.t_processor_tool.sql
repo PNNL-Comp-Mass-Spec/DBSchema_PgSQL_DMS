@@ -39,4 +39,5 @@ ALTER TABLE ONLY cap.t_processor_tool
 --
 
 GRANT SELECT ON TABLE cap.t_processor_tool TO readaccess;
+GRANT SELECT ON TABLE cap.t_processor_tool TO writeaccess;
 

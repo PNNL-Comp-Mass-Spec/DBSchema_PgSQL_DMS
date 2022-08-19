@@ -40,3 +40,9 @@ CREATE INDEX ix_t_job_step_events_entered_include_job ON logcap.t_job_step_event
 
 CREATE INDEX ix_t_job_step_events_job ON logcap.t_job_step_events USING btree (job);
 
+--
+-- Name: TABLE t_job_step_events; Type: ACL; Schema: logcap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logcap.t_job_step_events TO writeaccess;
+

@@ -45,4 +45,5 @@ CREATE UNIQUE INDEX ix_t_eus_usage_type_eus_usage_type ON public.t_eus_usage_typ
 --
 
 GRANT SELECT ON TABLE public.t_eus_usage_type TO readaccess;
+GRANT SELECT ON TABLE public.t_eus_usage_type TO writeaccess;
 

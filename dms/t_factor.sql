@@ -45,4 +45,5 @@ CREATE UNIQUE INDEX ix_t_factor_type_target_id_name ON public.t_factor USING btr
 --
 
 GRANT SELECT ON TABLE public.t_factor TO readaccess;
+GRANT SELECT ON TABLE public.t_factor TO writeaccess;
 

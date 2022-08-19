@@ -36,4 +36,5 @@ ALTER TABLE ONLY pc.t_dna_structure_types
 --
 
 GRANT SELECT ON TABLE pc.t_dna_structure_types TO readaccess;
+GRANT SELECT ON TABLE pc.t_dna_structure_types TO writeaccess;
 

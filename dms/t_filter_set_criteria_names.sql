@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_filter_set_criteria_names
 --
 
 GRANT SELECT ON TABLE public.t_filter_set_criteria_names TO readaccess;
+GRANT SELECT ON TABLE public.t_filter_set_criteria_names TO writeaccess;
 

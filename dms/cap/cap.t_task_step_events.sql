@@ -58,4 +58,5 @@ CREATE INDEX ix_t_task_step_events_job ON cap.t_task_step_events USING btree (jo
 --
 
 GRANT SELECT ON TABLE cap.t_task_step_events TO readaccess;
+GRANT SELECT ON TABLE cap.t_task_step_events TO writeaccess;
 

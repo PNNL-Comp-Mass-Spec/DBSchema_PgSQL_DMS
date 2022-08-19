@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_dataset_device_map
 --
 
 GRANT SELECT ON TABLE public.t_dataset_device_map TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_device_map TO writeaccess;
 

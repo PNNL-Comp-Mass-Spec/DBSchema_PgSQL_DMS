@@ -25,4 +25,5 @@ ALTER TABLE public.v_analysis_tool_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_tool_report TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_tool_report TO writeaccess;
 

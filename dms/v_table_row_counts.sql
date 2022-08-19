@@ -45,4 +45,5 @@ COMMENT ON VIEW public.v_table_row_counts IS 'Reports the number of rows and siz
 --
 
 GRANT SELECT ON TABLE public.v_table_row_counts TO readaccess;
+GRANT SELECT ON TABLE public.v_table_row_counts TO writeaccess;
 

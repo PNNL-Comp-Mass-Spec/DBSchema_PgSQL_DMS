@@ -42,4 +42,5 @@ ALTER TABLE ONLY public.t_analysis_job_psm_stats
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_psm_stats TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_job_psm_stats TO writeaccess;
 

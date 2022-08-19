@@ -34,4 +34,5 @@ ALTER TABLE public.v_notification_analysis_job_request_by_request_owner OWNER TO
 --
 
 GRANT SELECT ON TABLE public.v_notification_analysis_job_request_by_request_owner TO readaccess;
+GRANT SELECT ON TABLE public.v_notification_analysis_job_request_by_request_owner TO writeaccess;
 

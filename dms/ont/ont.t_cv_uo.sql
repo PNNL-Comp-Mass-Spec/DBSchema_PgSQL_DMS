@@ -44,4 +44,5 @@ ALTER TABLE ONLY ont.t_cv_uo
 --
 
 GRANT SELECT ON TABLE ont.t_cv_uo TO readaccess;
+GRANT SELECT ON TABLE ont.t_cv_uo TO writeaccess;
 

@@ -48,4 +48,5 @@ ALTER TABLE ONLY public.t_mass_correction_factors_change_history
 --
 
 GRANT SELECT ON TABLE public.t_mass_correction_factors_change_history TO readaccess;
+GRANT SELECT ON TABLE public.t_mass_correction_factors_change_history TO writeaccess;
 

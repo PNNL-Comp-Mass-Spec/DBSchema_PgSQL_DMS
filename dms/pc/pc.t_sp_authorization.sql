@@ -62,4 +62,5 @@ CREATE UNIQUE INDEX ix_t_sp_authorization_unique_procedure_login_host_name ON pc
 --
 
 GRANT SELECT ON TABLE pc.t_sp_authorization TO readaccess;
+GRANT SELECT ON TABLE pc.t_sp_authorization TO writeaccess;
 

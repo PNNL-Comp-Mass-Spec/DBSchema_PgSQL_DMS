@@ -19,4 +19,5 @@ ALTER TABLE public.v_export_biomaterial_datasets OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_export_biomaterial_datasets TO readaccess;
+GRANT SELECT ON TABLE public.v_export_biomaterial_datasets TO writeaccess;
 

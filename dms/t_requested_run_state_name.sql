@@ -41,4 +41,5 @@ CREATE UNIQUE INDEX ix_t_requested_run_state_name_state_name ON public.t_request
 --
 
 GRANT SELECT ON TABLE public.t_requested_run_state_name TO readaccess;
+GRANT SELECT ON TABLE public.t_requested_run_state_name TO writeaccess;
 

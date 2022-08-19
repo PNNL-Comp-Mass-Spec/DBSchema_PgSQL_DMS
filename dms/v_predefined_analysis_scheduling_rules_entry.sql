@@ -24,4 +24,5 @@ ALTER TABLE public.v_predefined_analysis_scheduling_rules_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_predefined_analysis_scheduling_rules_entry TO readaccess;
+GRANT SELECT ON TABLE public.v_predefined_analysis_scheduling_rules_entry TO writeaccess;
 

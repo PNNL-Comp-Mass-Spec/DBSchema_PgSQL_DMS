@@ -19,4 +19,5 @@ ALTER TABLE cap.v_capture_step_tools_entry OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_capture_step_tools_entry TO readaccess;
+GRANT SELECT ON TABLE cap.v_capture_step_tools_entry TO writeaccess;
 

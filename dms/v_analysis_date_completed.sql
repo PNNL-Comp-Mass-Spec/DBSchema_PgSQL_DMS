@@ -20,4 +20,5 @@ ALTER TABLE public.v_analysis_date_completed OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_date_completed TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_date_completed TO writeaccess;
 

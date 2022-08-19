@@ -33,4 +33,5 @@ ALTER TABLE ont.v_term_lineage OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_term_lineage TO readaccess;
+GRANT SELECT ON TABLE ont.v_term_lineage TO writeaccess;
 

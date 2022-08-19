@@ -64,4 +64,5 @@ CREATE TRIGGER trig_t_residues_after_update AFTER UPDATE ON public.t_residues FO
 --
 
 GRANT SELECT ON TABLE public.t_residues TO readaccess;
+GRANT SELECT ON TABLE public.t_residues TO writeaccess;
 

@@ -17,4 +17,5 @@ ALTER TABLE public.v_old_storage_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_old_storage_report TO readaccess;
+GRANT SELECT ON TABLE public.v_old_storage_report TO writeaccess;
 

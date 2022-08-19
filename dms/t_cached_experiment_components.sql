@@ -25,4 +25,5 @@ ALTER TABLE ONLY public.t_cached_experiment_components
 --
 
 GRANT SELECT ON TABLE public.t_cached_experiment_components TO readaccess;
+GRANT SELECT ON TABLE public.t_cached_experiment_components TO writeaccess;
 

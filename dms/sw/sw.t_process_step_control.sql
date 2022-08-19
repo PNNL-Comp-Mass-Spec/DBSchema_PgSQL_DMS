@@ -30,4 +30,5 @@ CREATE TRIGGER trig_t_process_step_control_after_update AFTER UPDATE ON sw.t_pro
 --
 
 GRANT SELECT ON TABLE sw.t_process_step_control TO readaccess;
+GRANT SELECT ON TABLE sw.t_process_step_control TO writeaccess;
 

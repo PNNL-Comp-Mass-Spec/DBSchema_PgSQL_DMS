@@ -16,4 +16,5 @@ ALTER TABLE public.v_eus_project_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_eus_project_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_eus_project_picklist TO writeaccess;
 

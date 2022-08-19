@@ -43,4 +43,5 @@ ALTER TABLE pc.v_organism_picker OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_organism_picker TO readaccess;
+GRANT SELECT ON TABLE pc.v_organism_picker TO writeaccess;
 

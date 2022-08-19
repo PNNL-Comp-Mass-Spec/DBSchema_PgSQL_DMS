@@ -21,4 +21,5 @@ ALTER TABLE public.v_mage_dataset_factor_summary OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mage_dataset_factor_summary TO readaccess;
+GRANT SELECT ON TABLE public.v_mage_dataset_factor_summary TO writeaccess;
 

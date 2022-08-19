@@ -36,4 +36,5 @@ ALTER TABLE ONLY public.t_analysis_job_id
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_id TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_job_id TO writeaccess;
 

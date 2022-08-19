@@ -72,4 +72,5 @@ ALTER TABLE cap.v_task_steps_stale_and_failed OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_task_steps_stale_and_failed TO readaccess;
+GRANT SELECT ON TABLE cap.v_task_steps_stale_and_failed TO writeaccess;
 

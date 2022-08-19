@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_project_usage_types
 --
 
 GRANT SELECT ON TABLE public.t_project_usage_types TO readaccess;
+GRANT SELECT ON TABLE public.t_project_usage_types TO writeaccess;
 

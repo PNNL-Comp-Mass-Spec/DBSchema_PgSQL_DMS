@@ -17,4 +17,5 @@ ALTER TABLE public.v_instrument_class_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_instrument_class_export TO readaccess;
+GRANT SELECT ON TABLE public.v_instrument_class_export TO writeaccess;
 

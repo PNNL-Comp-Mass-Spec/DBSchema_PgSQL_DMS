@@ -44,4 +44,5 @@ ALTER TABLE public.v_dataset_stats_recent_crosstab OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_stats_recent_crosstab TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_stats_recent_crosstab TO writeaccess;
 

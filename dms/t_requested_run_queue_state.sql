@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_requested_run_queue_state
 --
 
 GRANT SELECT ON TABLE public.t_requested_run_queue_state TO readaccess;
+GRANT SELECT ON TABLE public.t_requested_run_queue_state TO writeaccess;
 

@@ -30,4 +30,5 @@ CREATE TRIGGER trig_t_process_step_control_after_update AFTER UPDATE ON cap.t_pr
 --
 
 GRANT SELECT ON TABLE cap.t_process_step_control TO readaccess;
+GRANT SELECT ON TABLE cap.t_process_step_control TO writeaccess;
 

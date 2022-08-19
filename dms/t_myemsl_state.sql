@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_myemsl_state
 --
 
 GRANT SELECT ON TABLE public.t_myemsl_state TO readaccess;
+GRANT SELECT ON TABLE public.t_myemsl_state TO writeaccess;
 

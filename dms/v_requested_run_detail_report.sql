@@ -89,4 +89,5 @@ COMMENT ON VIEW public.v_requested_run_detail_report IS 'If the requested run is
 --
 
 GRANT SELECT ON TABLE public.v_requested_run_detail_report TO readaccess;
+GRANT SELECT ON TABLE public.v_requested_run_detail_report TO writeaccess;
 

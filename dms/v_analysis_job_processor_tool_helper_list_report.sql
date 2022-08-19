@@ -20,4 +20,5 @@ ALTER TABLE public.v_analysis_job_processor_tool_helper_list_report OWNER TO d3l
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_processor_tool_helper_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_processor_tool_helper_list_report TO writeaccess;
 

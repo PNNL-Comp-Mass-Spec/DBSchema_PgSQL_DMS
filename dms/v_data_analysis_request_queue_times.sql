@@ -39,4 +39,5 @@ ALTER TABLE public.v_data_analysis_request_queue_times OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_data_analysis_request_queue_times TO readaccess;
+GRANT SELECT ON TABLE public.v_data_analysis_request_queue_times TO writeaccess;
 

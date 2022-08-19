@@ -23,4 +23,5 @@ ALTER TABLE public.v_system_blocking_queries OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_system_blocking_queries TO readaccess;
+GRANT SELECT ON TABLE public.v_system_blocking_queries TO writeaccess;
 

@@ -33,3 +33,9 @@ CREATE INDEX ix_t_job_step_processing_log_job_step ON logsw.t_job_step_processin
 
 CREATE INDEX ix_t_job_step_processing_log_processor ON logsw.t_job_step_processing_log USING btree (processor);
 
+--
+-- Name: TABLE t_job_step_processing_log; Type: ACL; Schema: logsw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logsw.t_job_step_processing_log TO writeaccess;
+

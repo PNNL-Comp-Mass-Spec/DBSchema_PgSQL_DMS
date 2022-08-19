@@ -32,4 +32,5 @@ COMMENT ON VIEW public.v_charge_code_export IS 'Charge_Code is also known as "Wo
 --
 
 GRANT SELECT ON TABLE public.v_charge_code_export TO readaccess;
+GRANT SELECT ON TABLE public.v_charge_code_export TO writeaccess;
 

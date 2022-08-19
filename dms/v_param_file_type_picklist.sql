@@ -21,4 +21,5 @@ ALTER TABLE public.v_param_file_type_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_param_file_type_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_param_file_type_picklist TO writeaccess;
 

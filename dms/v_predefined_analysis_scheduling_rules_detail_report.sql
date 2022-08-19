@@ -24,4 +24,5 @@ ALTER TABLE public.v_predefined_analysis_scheduling_rules_detail_report OWNER TO
 --
 
 GRANT SELECT ON TABLE public.v_predefined_analysis_scheduling_rules_detail_report TO readaccess;
+GRANT SELECT ON TABLE public.v_predefined_analysis_scheduling_rules_detail_report TO writeaccess;
 

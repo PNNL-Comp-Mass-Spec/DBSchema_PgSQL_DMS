@@ -21,4 +21,5 @@ ALTER TABLE public.v_get_pipeline_settings_files OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_get_pipeline_settings_files TO readaccess;
+GRANT SELECT ON TABLE public.v_get_pipeline_settings_files TO writeaccess;
 

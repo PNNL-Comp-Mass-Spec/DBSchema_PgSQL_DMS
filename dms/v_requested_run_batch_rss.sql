@@ -31,4 +31,5 @@ ALTER TABLE public.v_requested_run_batch_rss OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_requested_run_batch_rss TO readaccess;
+GRANT SELECT ON TABLE public.v_requested_run_batch_rss TO writeaccess;
 

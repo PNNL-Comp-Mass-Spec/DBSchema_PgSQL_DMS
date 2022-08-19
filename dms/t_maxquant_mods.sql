@@ -46,4 +46,5 @@ ALTER TABLE ONLY public.t_maxquant_mods
 --
 
 GRANT SELECT ON TABLE public.t_maxquant_mods TO readaccess;
+GRANT SELECT ON TABLE public.t_maxquant_mods TO writeaccess;
 

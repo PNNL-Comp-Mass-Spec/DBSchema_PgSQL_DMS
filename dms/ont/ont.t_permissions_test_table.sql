@@ -23,4 +23,5 @@ ALTER TABLE ONLY ont.t_permissions_test_table
 --
 
 GRANT SELECT ON TABLE ont.t_permissions_test_table TO readaccess;
+GRANT SELECT ON TABLE ont.t_permissions_test_table TO writeaccess;
 

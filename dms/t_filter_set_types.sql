@@ -35,4 +35,5 @@ ALTER TABLE ONLY public.t_filter_set_types
 --
 
 GRANT SELECT ON TABLE public.t_filter_set_types TO readaccess;
+GRANT SELECT ON TABLE public.t_filter_set_types TO writeaccess;
 

@@ -48,4 +48,5 @@ ALTER TABLE ONLY sw.t_data_folder_create_queue
 --
 
 GRANT SELECT ON TABLE sw.t_data_folder_create_queue TO readaccess;
+GRANT SELECT ON TABLE sw.t_data_folder_create_queue TO writeaccess;
 

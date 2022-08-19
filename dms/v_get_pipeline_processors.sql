@@ -23,4 +23,5 @@ ALTER TABLE public.v_get_pipeline_processors OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_get_pipeline_processors TO readaccess;
+GRANT SELECT ON TABLE public.v_get_pipeline_processors TO writeaccess;
 

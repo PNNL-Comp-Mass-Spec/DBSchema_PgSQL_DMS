@@ -32,3 +32,9 @@ CREATE INDEX ix_t_log_entries_posted_by ON logdms.t_log_entries USING btree (pos
 
 CREATE INDEX ix_t_log_entries_posting_time ON logdms.t_log_entries USING btree (posting_time);
 
+--
+-- Name: TABLE t_log_entries; Type: ACL; Schema: logdms; Owner: d3l243
+--
+
+GRANT SELECT,INSERT ON TABLE logdms.t_log_entries TO writeaccess;
+

@@ -20,4 +20,5 @@ ALTER TABLE pc.v_encrypted_collection_authorizations OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_encrypted_collection_authorizations TO readaccess;
+GRANT SELECT ON TABLE pc.v_encrypted_collection_authorizations TO writeaccess;
 

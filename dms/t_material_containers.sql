@@ -83,4 +83,5 @@ ALTER TABLE ONLY public.t_material_containers
 --
 
 GRANT SELECT ON TABLE public.t_material_containers TO readaccess;
+GRANT SELECT ON TABLE public.t_material_containers TO writeaccess;
 

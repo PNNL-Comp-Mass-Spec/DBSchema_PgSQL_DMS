@@ -16,4 +16,5 @@ ALTER TABLE cap.v_processor_tool_for_manager OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE cap.v_processor_tool_for_manager TO readaccess;
+GRANT SELECT ON TABLE cap.v_processor_tool_for_manager TO writeaccess;
 

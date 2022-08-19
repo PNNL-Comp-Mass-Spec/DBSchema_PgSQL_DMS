@@ -54,4 +54,5 @@ ALTER TABLE ONLY public.t_dataset_storage_move_log
 --
 
 GRANT SELECT ON TABLE public.t_dataset_storage_move_log TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_storage_move_log TO writeaccess;
 

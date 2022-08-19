@@ -18,4 +18,5 @@ ALTER TABLE public.v_dataset_archive_path OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_dataset_archive_path TO readaccess;
+GRANT SELECT ON TABLE public.v_dataset_archive_path TO writeaccess;
 

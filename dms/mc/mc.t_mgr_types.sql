@@ -36,4 +36,5 @@ ALTER TABLE ONLY mc.t_mgr_types
 --
 
 GRANT SELECT ON TABLE mc.t_mgr_types TO readaccess;
+GRANT SELECT ON TABLE mc.t_mgr_types TO writeaccess;
 

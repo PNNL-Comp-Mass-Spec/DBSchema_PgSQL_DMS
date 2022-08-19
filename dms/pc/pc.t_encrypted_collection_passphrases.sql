@@ -36,4 +36,5 @@ ALTER TABLE ONLY pc.t_encrypted_collection_passphrases
 --
 
 GRANT SELECT ON TABLE pc.t_encrypted_collection_passphrases TO readaccess;
+GRANT SELECT ON TABLE pc.t_encrypted_collection_passphrases TO writeaccess;
 

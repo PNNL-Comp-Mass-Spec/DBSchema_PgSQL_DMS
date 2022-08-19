@@ -25,4 +25,5 @@ ALTER TABLE public.v_factor_count_by_req_run_batch OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_factor_count_by_req_run_batch TO readaccess;
+GRANT SELECT ON TABLE public.v_factor_count_by_req_run_batch TO writeaccess;
 

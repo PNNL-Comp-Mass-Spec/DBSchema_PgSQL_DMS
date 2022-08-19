@@ -18,4 +18,5 @@ ALTER TABLE public.v_sample_prep_request_user_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_sample_prep_request_user_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_sample_prep_request_user_picklist TO writeaccess;
 

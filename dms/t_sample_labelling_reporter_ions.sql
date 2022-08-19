@@ -32,4 +32,5 @@ ALTER TABLE ONLY public.t_sample_labelling_reporter_ions
 --
 
 GRANT SELECT ON TABLE public.t_sample_labelling_reporter_ions TO readaccess;
+GRANT SELECT ON TABLE public.t_sample_labelling_reporter_ions TO writeaccess;
 

@@ -79,4 +79,5 @@ ALTER TABLE ONLY public.t_charge_code
 --
 
 GRANT SELECT ON TABLE public.t_charge_code TO readaccess;
+GRANT SELECT ON TABLE public.t_charge_code TO writeaccess;
 

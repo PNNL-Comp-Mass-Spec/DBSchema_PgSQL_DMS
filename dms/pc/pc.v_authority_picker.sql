@@ -16,4 +16,5 @@ ALTER TABLE pc.v_authority_picker OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE pc.v_authority_picker TO readaccess;
+GRANT SELECT ON TABLE pc.v_authority_picker TO writeaccess;
 

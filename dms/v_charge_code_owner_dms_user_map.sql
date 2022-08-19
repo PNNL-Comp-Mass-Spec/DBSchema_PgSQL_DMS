@@ -19,4 +19,5 @@ ALTER TABLE public.v_charge_code_owner_dms_user_map OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_charge_code_owner_dms_user_map TO readaccess;
+GRANT SELECT ON TABLE public.v_charge_code_owner_dms_user_map TO writeaccess;
 

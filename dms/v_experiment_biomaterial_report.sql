@@ -21,4 +21,5 @@ ALTER TABLE public.v_experiment_biomaterial_report OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_experiment_biomaterial_report TO readaccess;
+GRANT SELECT ON TABLE public.v_experiment_biomaterial_report TO writeaccess;
 

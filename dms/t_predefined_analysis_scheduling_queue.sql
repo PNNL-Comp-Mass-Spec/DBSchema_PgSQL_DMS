@@ -70,4 +70,5 @@ ALTER TABLE ONLY public.t_predefined_analysis_scheduling_queue
 --
 
 GRANT SELECT ON TABLE public.t_predefined_analysis_scheduling_queue TO readaccess;
+GRANT SELECT ON TABLE public.t_predefined_analysis_scheduling_queue TO writeaccess;
 

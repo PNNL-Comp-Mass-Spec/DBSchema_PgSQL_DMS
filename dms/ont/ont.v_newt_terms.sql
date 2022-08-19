@@ -22,4 +22,5 @@ ALTER TABLE ont.v_newt_terms OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE ont.v_newt_terms TO readaccess;
+GRANT SELECT ON TABLE ont.v_newt_terms TO writeaccess;
 

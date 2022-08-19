@@ -23,4 +23,5 @@ ALTER TABLE public.v_filter_sets_by_analysis_tool OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_filter_sets_by_analysis_tool TO readaccess;
+GRANT SELECT ON TABLE public.v_filter_sets_by_analysis_tool TO writeaccess;
 

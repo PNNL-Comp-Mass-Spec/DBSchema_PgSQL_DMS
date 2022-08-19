@@ -39,4 +39,5 @@ ALTER TABLE ONLY dpkg.t_data_package_storage
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_package_storage TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_data_package_storage TO writeaccess;
 

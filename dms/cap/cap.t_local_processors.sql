@@ -32,4 +32,5 @@ ALTER TABLE ONLY cap.t_local_processors
 --
 
 GRANT SELECT ON TABLE cap.t_local_processors TO readaccess;
+GRANT SELECT ON TABLE cap.t_local_processors TO writeaccess;
 

@@ -29,4 +29,5 @@ CREATE INDEX ix_t_local_job_processors_job ON sw.t_local_job_processors USING bt
 --
 
 GRANT SELECT ON TABLE sw.t_local_job_processors TO readaccess;
+GRANT SELECT ON TABLE sw.t_local_job_processors TO writeaccess;
 

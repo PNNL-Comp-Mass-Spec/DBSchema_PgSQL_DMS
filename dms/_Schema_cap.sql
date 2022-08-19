@@ -12,4 +12,5 @@ ALTER SCHEMA cap OWNER TO d3l243;
 --
 
 GRANT USAGE ON SCHEMA cap TO readaccess;
+GRANT ALL ON SCHEMA cap TO writeaccess;
 

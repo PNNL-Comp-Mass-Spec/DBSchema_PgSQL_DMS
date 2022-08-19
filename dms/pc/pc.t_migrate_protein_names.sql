@@ -65,4 +65,5 @@ ALTER TABLE ONLY pc.t_migrate_protein_names
 --
 
 GRANT SELECT ON TABLE pc.t_migrate_protein_names TO readaccess;
+GRANT SELECT ON TABLE pc.t_migrate_protein_names TO writeaccess;
 

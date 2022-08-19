@@ -44,4 +44,5 @@ ALTER TABLE public.v_custom_factors_with_block_and_run_order OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_custom_factors_with_block_and_run_order TO readaccess;
+GRANT SELECT ON TABLE public.v_custom_factors_with_block_and_run_order TO writeaccess;
 

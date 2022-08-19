@@ -30,4 +30,5 @@ ALTER TABLE ONLY public.t_param_file_types
 --
 
 GRANT SELECT ON TABLE public.t_param_file_types TO readaccess;
+GRANT SELECT ON TABLE public.t_param_file_types TO writeaccess;
 

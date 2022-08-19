@@ -52,4 +52,5 @@ COMMENT ON VIEW public.v_material_move_items_list_report IS 'This view shows act
 --
 
 GRANT SELECT ON TABLE public.v_material_move_items_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_material_move_items_list_report TO writeaccess;
 

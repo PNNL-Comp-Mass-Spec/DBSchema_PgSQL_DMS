@@ -50,4 +50,5 @@ CREATE INDEX ix_t_dataset_scan_types_scan_type_dataset_id ON public.t_dataset_sc
 --
 
 GRANT SELECT ON TABLE public.t_dataset_scan_types TO readaccess;
+GRANT SELECT ON TABLE public.t_dataset_scan_types TO writeaccess;
 

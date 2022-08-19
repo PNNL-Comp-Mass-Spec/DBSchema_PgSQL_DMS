@@ -44,4 +44,5 @@ ALTER TABLE public.v_analysis_job_request_rss OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_request_rss TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_request_rss TO writeaccess;
 

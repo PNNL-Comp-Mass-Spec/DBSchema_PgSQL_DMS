@@ -41,4 +41,5 @@ COMMENT ON VIEW public.v_analysis_delta_t_report IS 'V_Analysis_DeltaT_Report';
 --
 
 GRANT SELECT ON TABLE public.v_analysis_delta_t_report TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_delta_t_report TO writeaccess;
 

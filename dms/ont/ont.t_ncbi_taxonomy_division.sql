@@ -24,4 +24,5 @@ ALTER TABLE ONLY ont.t_ncbi_taxonomy_division
 --
 
 GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_division TO readaccess;
+GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_division TO writeaccess;
 

@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_tissue_source
 --
 
 GRANT SELECT ON TABLE public.t_tissue_source TO readaccess;
+GRANT SELECT ON TABLE public.t_tissue_source TO writeaccess;
 

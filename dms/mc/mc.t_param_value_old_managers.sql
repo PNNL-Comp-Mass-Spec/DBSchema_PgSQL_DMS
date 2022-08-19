@@ -27,4 +27,5 @@ ALTER TABLE ONLY mc.t_param_value_old_managers
 --
 
 GRANT SELECT ON TABLE mc.t_param_value_old_managers TO readaccess;
+GRANT SELECT ON TABLE mc.t_param_value_old_managers TO writeaccess;
 

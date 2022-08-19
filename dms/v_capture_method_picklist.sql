@@ -15,4 +15,5 @@ ALTER TABLE public.v_capture_method_picklist OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_capture_method_picklist TO readaccess;
+GRANT SELECT ON TABLE public.v_capture_method_picklist TO writeaccess;
 

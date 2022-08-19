@@ -34,4 +34,5 @@ ALTER TABLE public.v_mage_analysis_jobs_multi_folder OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mage_analysis_jobs_multi_folder TO readaccess;
+GRANT SELECT ON TABLE public.v_mage_analysis_jobs_multi_folder TO writeaccess;
 

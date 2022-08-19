@@ -50,4 +50,5 @@ ALTER TABLE public.v_sample_prep_request_assignment OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_sample_prep_request_assignment TO readaccess;
+GRANT SELECT ON TABLE public.v_sample_prep_request_assignment TO writeaccess;
 

@@ -21,4 +21,5 @@ ALTER TABLE dpkg.v_data_package_dataset_export OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE dpkg.v_data_package_dataset_export TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_data_package_dataset_export TO writeaccess;
 

@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_instrument_group_allocation_tag
 --
 
 GRANT SELECT ON TABLE public.t_instrument_group_allocation_tag TO readaccess;
+GRANT SELECT ON TABLE public.t_instrument_group_allocation_tag TO writeaccess;
 

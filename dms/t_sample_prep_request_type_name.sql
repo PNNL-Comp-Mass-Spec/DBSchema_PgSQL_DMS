@@ -21,4 +21,5 @@ ALTER TABLE ONLY public.t_sample_prep_request_type_name
 --
 
 GRANT SELECT ON TABLE public.t_sample_prep_request_type_name TO readaccess;
+GRANT SELECT ON TABLE public.t_sample_prep_request_type_name TO writeaccess;
 

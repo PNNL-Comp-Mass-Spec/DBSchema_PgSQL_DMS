@@ -17,4 +17,5 @@ ALTER TABLE public.v_default_psm_job_tools OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_default_psm_job_tools TO readaccess;
+GRANT SELECT ON TABLE public.v_default_psm_job_tools TO writeaccess;
 

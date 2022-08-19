@@ -19,4 +19,5 @@ ALTER TABLE dpkg.v_osm_package_paths OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE dpkg.v_osm_package_paths TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_osm_package_paths TO writeaccess;
 

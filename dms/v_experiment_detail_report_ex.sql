@@ -77,4 +77,5 @@ ALTER TABLE public.v_experiment_detail_report_ex OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_experiment_detail_report_ex TO readaccess;
+GRANT SELECT ON TABLE public.v_experiment_detail_report_ex TO writeaccess;
 

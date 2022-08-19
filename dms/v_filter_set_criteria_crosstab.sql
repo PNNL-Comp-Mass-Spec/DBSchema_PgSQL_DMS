@@ -52,4 +52,5 @@ ALTER TABLE public.v_filter_set_criteria_crosstab OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_filter_set_criteria_crosstab TO readaccess;
+GRANT SELECT ON TABLE public.v_filter_set_criteria_crosstab TO writeaccess;
 

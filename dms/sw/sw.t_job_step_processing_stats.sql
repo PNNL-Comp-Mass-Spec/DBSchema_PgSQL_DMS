@@ -44,4 +44,5 @@ ALTER TABLE ONLY sw.t_job_step_processing_stats
 --
 
 GRANT SELECT ON TABLE sw.t_job_step_processing_stats TO readaccess;
+GRANT SELECT ON TABLE sw.t_job_step_processing_stats TO writeaccess;
 

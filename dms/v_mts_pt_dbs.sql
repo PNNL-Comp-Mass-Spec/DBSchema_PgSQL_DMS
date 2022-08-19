@@ -22,4 +22,5 @@ ALTER TABLE public.v_mts_pt_dbs OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_mts_pt_dbs TO readaccess;
+GRANT SELECT ON TABLE public.v_mts_pt_dbs TO writeaccess;
 

@@ -38,4 +38,5 @@ ALTER TABLE ONLY public.t_analysis_job_processor_tools
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_processor_tools TO readaccess;
+GRANT SELECT ON TABLE public.t_analysis_job_processor_tools TO writeaccess;
 

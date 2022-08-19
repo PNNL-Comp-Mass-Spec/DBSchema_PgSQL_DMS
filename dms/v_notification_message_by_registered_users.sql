@@ -28,4 +28,5 @@ ALTER TABLE public.v_notification_message_by_registered_users OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_notification_message_by_registered_users TO readaccess;
+GRANT SELECT ON TABLE public.v_notification_message_by_registered_users TO writeaccess;
 

@@ -29,4 +29,5 @@ ALTER TABLE ONLY public.t_bionet_hosts
 --
 
 GRANT SELECT ON TABLE public.t_bionet_hosts TO readaccess;
+GRANT SELECT ON TABLE public.t_bionet_hosts TO writeaccess;
 

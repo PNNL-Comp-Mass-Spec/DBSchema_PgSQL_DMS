@@ -23,4 +23,5 @@ ALTER TABLE public.v_data_package_analysis_jobs OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_data_package_analysis_jobs TO readaccess;
+GRANT SELECT ON TABLE public.v_data_package_analysis_jobs TO writeaccess;
 

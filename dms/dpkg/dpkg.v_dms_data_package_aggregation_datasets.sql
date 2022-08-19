@@ -49,4 +49,5 @@ COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_datasets IS 'Note that this 
 --
 
 GRANT SELECT ON TABLE dpkg.v_dms_data_package_aggregation_datasets TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_dms_data_package_aggregation_datasets TO writeaccess;
 

@@ -22,4 +22,5 @@ ALTER TABLE ONLY public.t_experiment_plex_channel_type_name
 --
 
 GRANT SELECT ON TABLE public.t_experiment_plex_channel_type_name TO readaccess;
+GRANT SELECT ON TABLE public.t_experiment_plex_channel_type_name TO writeaccess;
 

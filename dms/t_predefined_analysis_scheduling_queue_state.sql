@@ -21,4 +21,5 @@ ALTER TABLE ONLY public.t_predefined_analysis_scheduling_queue_state
 --
 
 GRANT SELECT ON TABLE public.t_predefined_analysis_scheduling_queue_state TO readaccess;
+GRANT SELECT ON TABLE public.t_predefined_analysis_scheduling_queue_state TO writeaccess;
 

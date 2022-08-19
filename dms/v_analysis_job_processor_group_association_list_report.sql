@@ -25,4 +25,5 @@ ALTER TABLE public.v_analysis_job_processor_group_association_list_report OWNER 
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_processor_group_association_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_processor_group_association_list_report TO writeaccess;
 

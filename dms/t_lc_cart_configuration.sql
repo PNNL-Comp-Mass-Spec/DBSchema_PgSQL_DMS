@@ -101,4 +101,5 @@ ALTER TABLE ONLY public.t_lc_cart_configuration
 --
 
 GRANT SELECT ON TABLE public.t_lc_cart_configuration TO readaccess;
+GRANT SELECT ON TABLE public.t_lc_cart_configuration TO writeaccess;
 

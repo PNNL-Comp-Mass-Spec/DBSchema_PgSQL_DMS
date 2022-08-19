@@ -50,4 +50,5 @@ CREATE UNIQUE INDEX ix_t_material_freezers_tag ON public.t_material_freezers USI
 --
 
 GRANT SELECT ON TABLE public.t_material_freezers TO readaccess;
+GRANT SELECT ON TABLE public.t_material_freezers TO writeaccess;
 

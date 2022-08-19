@@ -22,4 +22,5 @@ ALTER TABLE ONLY dpkg.t_data_package_teams
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_package_teams TO readaccess;
+GRANT SELECT ON TABLE dpkg.t_data_package_teams TO writeaccess;
 

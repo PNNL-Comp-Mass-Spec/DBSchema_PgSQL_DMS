@@ -36,4 +36,5 @@ COMMENT ON VIEW public.v_eus_user_id_lookup IS 'A few users have multiple EUS Pe
 --
 
 GRANT SELECT ON TABLE public.v_eus_user_id_lookup TO readaccess;
+GRANT SELECT ON TABLE public.v_eus_user_id_lookup TO writeaccess;
 

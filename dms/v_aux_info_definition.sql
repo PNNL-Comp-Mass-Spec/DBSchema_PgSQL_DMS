@@ -27,4 +27,5 @@ ALTER TABLE public.v_aux_info_definition OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_aux_info_definition TO readaccess;
+GRANT SELECT ON TABLE public.v_aux_info_definition TO writeaccess;
 

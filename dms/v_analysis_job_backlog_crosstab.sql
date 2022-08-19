@@ -71,4 +71,5 @@ ALTER TABLE public.v_analysis_job_backlog_crosstab OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_analysis_job_backlog_crosstab TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_backlog_crosstab TO writeaccess;
 

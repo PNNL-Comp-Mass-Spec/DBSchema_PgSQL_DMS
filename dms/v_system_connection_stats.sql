@@ -33,4 +33,5 @@ COMMENT ON VIEW public.v_system_connection_stats IS 'Connection stats, by databa
 --
 
 GRANT SELECT ON TABLE public.v_system_connection_stats TO readaccess;
+GRANT SELECT ON TABLE public.v_system_connection_stats TO writeaccess;
 

@@ -54,4 +54,5 @@ ALTER TABLE ONLY public.t_cached_dataset_folder_paths
 --
 
 GRANT SELECT ON TABLE public.t_cached_dataset_folder_paths TO readaccess;
+GRANT SELECT ON TABLE public.t_cached_dataset_folder_paths TO writeaccess;
 

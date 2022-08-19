@@ -24,4 +24,5 @@ ALTER TABLE public.v_emsl_allocated_usage_by_category OWNER TO d3l243;
 --
 
 GRANT SELECT ON TABLE public.v_emsl_allocated_usage_by_category TO readaccess;
+GRANT SELECT ON TABLE public.v_emsl_allocated_usage_by_category TO writeaccess;
 

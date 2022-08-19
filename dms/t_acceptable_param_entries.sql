@@ -52,4 +52,5 @@ CREATE INDEX ix_t_acceptable_param_entries_entry_type_id ON public.t_acceptable_
 --
 
 GRANT SELECT ON TABLE public.t_acceptable_param_entries TO readaccess;
+GRANT SELECT ON TABLE public.t_acceptable_param_entries TO writeaccess;
 
