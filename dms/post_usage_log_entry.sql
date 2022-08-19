@@ -93,7 +93,7 @@ EXCEPTION
     RAISE Warning '%', _message;
     RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'post_usage_log_entry', 'public', _ignoreErrors := true);
+    Call post_log_entry ('Error', _message, 'post_usage_log_entry', 'public', _ignoreErrors => true);
 
 END
 $$;

@@ -144,7 +144,7 @@ BEGIN
 
     If _logError > 0 Then
         -- Passing true to _ignoreErrors when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
-        Call post_log_entry ('Error', _message, 'verify_sp_authorized', _targetSchema, _ignoreErrors := true);
+        Call post_log_entry ('Error', _message, 'verify_sp_authorized', _targetSchema, _ignoreErrors => true);
     End If;
 
     RETURN QUERY
