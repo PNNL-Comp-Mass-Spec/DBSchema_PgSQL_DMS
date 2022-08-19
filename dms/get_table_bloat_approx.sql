@@ -35,5 +35,6 @@ COMMENT ON FUNCTION public.get_table_bloat_approx(OUT approx_free_percent double
 -- Name: FUNCTION get_table_bloat_approx(OUT approx_free_percent double precision, OUT approx_free_space double precision, OUT dead_tuple_percent double precision, OUT dead_tuple_len double precision); Type: ACL; Schema: public; Owner: d3l243
 --
 
+REVOKE ALL ON FUNCTION public.get_table_bloat_approx(OUT approx_free_percent double precision, OUT approx_free_space double precision, OUT dead_tuple_percent double precision, OUT dead_tuple_len double precision) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.get_table_bloat_approx(OUT approx_free_percent double precision, OUT approx_free_space double precision, OUT dead_tuple_percent double precision, OUT dead_tuple_len double precision) TO pgwatch2;
 

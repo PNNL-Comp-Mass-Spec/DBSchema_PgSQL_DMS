@@ -69,3 +69,4 @@ COMMENT ON FUNCTION public.get_psutil_disk(OUT dir_or_tablespace text, OUT path 
 
 GRANT ALL ON FUNCTION public.get_psutil_disk(OUT dir_or_tablespace text, OUT path text, OUT total double precision, OUT used double precision, OUT free double precision, OUT percent double precision) TO pgwatch2;
 
+REVOKE EXECUTE ON FUNCTION public.get_psutil_disk FROM public;

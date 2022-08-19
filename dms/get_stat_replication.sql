@@ -21,5 +21,6 @@ COMMENT ON FUNCTION public.get_stat_replication() IS 'created for pgwatch2';
 -- Name: FUNCTION get_stat_replication(); Type: ACL; Schema: public; Owner: d3l243
 --
 
+REVOKE ALL ON FUNCTION public.get_stat_replication() FROM PUBLIC;
 GRANT ALL ON FUNCTION public.get_stat_replication() TO pgwatch2;
 

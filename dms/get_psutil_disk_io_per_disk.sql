@@ -48,5 +48,6 @@ COMMENT ON FUNCTION public.get_psutil_disk_io_per_disk(OUT read_bytes_sda double
 -- Name: FUNCTION get_psutil_disk_io_per_disk(OUT read_bytes_sda double precision, OUT read_bytes_sdb double precision, OUT read_bytes_sdc double precision, OUT write_bytes_sda double precision, OUT write_bytes_sdb double precision, OUT write_bytes_sdc double precision); Type: ACL; Schema: public; Owner: d3l243
 --
 
+REVOKE ALL ON FUNCTION public.get_psutil_disk_io_per_disk(OUT read_bytes_sda double precision, OUT read_bytes_sdb double precision, OUT read_bytes_sdc double precision, OUT write_bytes_sda double precision, OUT write_bytes_sdb double precision, OUT write_bytes_sdc double precision) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.get_psutil_disk_io_per_disk(OUT read_bytes_sda double precision, OUT read_bytes_sdb double precision, OUT read_bytes_sdc double precision, OUT write_bytes_sda double precision, OUT write_bytes_sdb double precision, OUT write_bytes_sdc double precision) TO pgwatch2;
 
