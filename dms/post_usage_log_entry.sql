@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 **          05/03/2009 mem - Removed parameter _dBName
 **          02/06/2020 mem - Ported to PostgreSQL
 **          06/24/2022 mem - Capitalize _sqlState
+**          08/18/2022 mem - Set _ignoreErrors to true when calling post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -90,9 +91,9 @@ EXCEPTION
                 _currentOperation, _currentTargetTable, _exceptionMessage);
 
     RAISE Warning '%', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'post_usage_log_entry', 'public');
+    Call post_log_entry ('Error', _message, 'post_usage_log_entry', 'public', _ignoreErrors := true);
 
 END
 $$;
