@@ -40,7 +40,7 @@ CREATE VIEW public.v_system_locked_objects AS
              JOIN pg_namespace ns ON ((c.relnamespace = ns.oid)))
           WHERE ((c.relkind = ANY (ARRAY['v'::"char", 'm'::"char"])) AND (ns.nspname <> 'pg_catalog'::name))
           GROUP BY a.pid) lv ON ((psa.pid = lv.pid)))
-  WHERE (psa.backend_type = 'client backend'::text)
+  WHERE ((psa.backend_type = 'client backend'::text) OR ((psa.backend_type IS NULL) AND (COALESCE(psa.usename, 'postgres'::name) <> 'postgres'::name)))
   GROUP BY psa.pid, psa.datname, psa.usename, psa.application_name, psa.state, psa.query, psa.query_start, psa.xact_start, lt.tables_with_locks, lv.views_with_locks, lst.system_tables_with_locks;
 
 

@@ -15,7 +15,7 @@ CREATE VIEW public.v_system_activity AS
     a.wait_event_type,
     a.wait_event
    FROM pg_stat_activity a
-  WHERE (a.backend_type = 'client backend'::text);
+  WHERE ((a.backend_type = 'client backend'::text) OR ((a.backend_type IS NULL) AND (COALESCE(a.usename, 'postgres'::name) <> 'postgres'::name)));
 
 
 ALTER TABLE public.v_system_activity OWNER TO d3l243;
