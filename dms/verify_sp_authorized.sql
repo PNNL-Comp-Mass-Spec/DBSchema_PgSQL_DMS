@@ -57,32 +57,43 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Determine host IP and user name
+    -- Determine client host IP and user name
     ---------------------------------------------------
 
-    SELECT a.host_ip,
-           a.user_name
-    INTO _clientHostIP, _userName
-    FROM public.get_active_connections() a
-    WHERE a.pid = pg_backend_pid();
+    -- Option 1:
+    SELECT inet_client_addr(),      -- This will be null if the current connection is via a Unix-domain socket.
+           CURRENT_USER
+           -- , inet_server_addr() as host
+           -- , inet_server_port() as port
+           -- , current_database() as db_name
+    INTO _clientHostIP, _userName;
 
-    If Not FOUND Then
-        _message := 'PID ' || pg_backend_pid()::text || ' not found in the table returned by function get_active_connections; ' ||
-                    'will assume access denied for the current user (' || SESSION_USER || ')';
+    -- Option 2:
+    /*
+        SELECT a.host_ip,               -- This will be null if the current connection is via a Unix-domain socket.
+               a.user_name
+        INTO _clientHostIP, _userName
+        FROM public.get_active_connections() a
+        WHERE a.pid = pg_backend_pid();
 
-        RETURN QUERY
-        SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
+        If Not FOUND Then
+            _message := 'PID ' || pg_backend_pid()::text || ' not found in the table returned by function get_active_connections; ' ||
+                        'will assume access denied for the current user (' || SESSION_USER || ')';
 
-        return;
-    Elsif Coalesce(_userName, '') = '' Then
-        _message := 'Function get_active_connections returned a blank username for PID ' || pg_backend_pid()::text || '; ' ||
-                    'will assume access denied for the current user (' || SESSION_USER || ')';
+            RETURN QUERY
+            SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
 
-        RETURN QUERY
-        SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
+            return;
+        Elsif Coalesce(_userName, '') = '' Then
+            _message := 'Function get_active_connections returned a blank username for PID ' || pg_backend_pid()::text || '; ' ||
+                        'will assume access denied for the current user (' || SESSION_USER || ')';
 
-        return;
-    End If;
+            RETURN QUERY
+            SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
+
+            return;
+        End If;
+    */
 
     ---------------------------------------------------
     -- Query t_sp_authorization in the specified schema
