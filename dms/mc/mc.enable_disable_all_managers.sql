@@ -17,6 +17,18 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **    _enable              1 to enable, 0 to disable
 **    _infoOnly            When non-zero, show the managers that would be updated
 **
+**  Example Usage:
+**
+**      BEGIN;
+**          -- Disable the Capture Task Managers and the Analysis Tool Managers on Pub-80 through Pub-89
+**          CALL mc.enable_disable_all_managers(
+**                _managerTypeIDList => '15, 11',
+**                _managerNameList => 'Pub-8[0-9]%',
+**                _enable => 0,
+**                _infoOnly => 1
+**              );
+**      END;
+**
 **  Auth:   mem
 **  Date:   05/09/2008
 **          06/09/2011 mem - Created by extending code in DisableAllManagers
