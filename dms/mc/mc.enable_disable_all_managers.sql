@@ -47,8 +47,6 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    DROP TABLE IF EXISTS TmpManagerTypeIDs;
-
     CREATE TEMP TABLE TmpManagerTypeIDs (
         mgr_type_id int NOT NULL
     );
@@ -91,6 +89,8 @@ BEGIN
 
     End Loop;
 
+    DROP TABLE TmpManagerTypeIDs;
+
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
@@ -105,6 +105,8 @@ EXCEPTION
     RAISE Warning 'Context: %', _exceptionContext;
 
     Call public.post_log_entry ('Error', _message, 'EnableDisableAllManagers', 'mc');
+
+    DROP TABLE IF EXISTS TmpManagerTypeIDs;
 
 END
 $$;

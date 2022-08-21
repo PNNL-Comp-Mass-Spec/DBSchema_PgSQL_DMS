@@ -24,6 +24,8 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integ
 **          03/24/2022 mem - Fix typo in comment
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name
+**          08/20/2022 mem - Update warnings shown when an exception occurs
+**                         - Drop temp table before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -71,19 +73,19 @@ BEGIN
     -- Create a temporary table
     -----------------------------------------------
 
-    DROP TABLE IF EXISTS TmpManagerList;
-
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL
     );
 
-    -- Populate TmpMangerList using parse_manager_name_list
+    -- Populate TmpManagerList using parse_manager_name_list
     --
     Call mc.parse_manager_name_list (_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
     IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
         _message := 'No valid managers were found in _managerNameList';
         RAISE INFO '%', _message;
+
+        DROP TABLE TmpManagerList;
         Return;
     END IF;
 
@@ -106,7 +108,9 @@ BEGIN
             RAISE INFO '%', _message;
         Else
             -- TmpManagerList is now empty; abort
-            RAISE INFO '%', _message
+            RAISE INFO '%', _message;
+
+            DROP TABLE TmpManagerList;
             Return;
         End If;
     End If;
@@ -231,6 +235,8 @@ BEGIN
         End If;
 
         RAISE INFO '%', _message;
+
+        DROP TABLE TmpManagerList;
         Return;
     End If;
 
@@ -276,6 +282,7 @@ BEGIN
                             _countToUpdate,
                             _newValue);
 
+        DROP TABLE TmpManagerList;
         Return;
     End If;
 
@@ -311,6 +318,8 @@ BEGIN
 
     RAISE INFO '%', _message;
 
+    DROP TABLE TmpManagerList;
+
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
@@ -326,6 +335,7 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'EnableDisableRunJobsRemotely', 'mc');
 
+    DROP TABLE IF EXISTS TmpManagerList;
 END
 $$;
 

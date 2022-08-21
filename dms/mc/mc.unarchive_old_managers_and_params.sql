@@ -28,6 +28,8 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **                         - Abort restore if the manager already exists in mc.t_mgrs
 **                         - Use mc schema when calling ParseManagerNameList
 **          04/16/2022 mem - Use new procedure name
+**          08/20/2022 mem - Update warnings shown when an exception occurs
+**                         - Drop temp tables before exiting the function
 **
 *****************************************************/
 DECLARE
@@ -51,9 +53,6 @@ BEGIN
         _enableControlFromWebsite := 1;
     End If;
 
-    DROP TABLE IF EXISTS TmpManagerList;
-    DROP TABLE IF EXISTS TmpWarningMessages;
-
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL,
         mgr_id int NULL,
@@ -65,7 +64,6 @@ BEGIN
         message text,
         manager_name citext
     );
-
 
     ---------------------------------------------------
     -- Populate TmpManagerList with the managers in _mgrList
@@ -91,6 +89,10 @@ BEGIN
                ''::citext as comment,
                current_timestamp::timestamp as last_affected,
                ''::citext as entered_by;
+
+        DROP TABLE TmpManagerList;
+        DROP TABLE TmpWarningMessages;
+
         RETURN;
     End If;
 
@@ -196,6 +198,10 @@ BEGIN
                ''::citext as entered_by
         FROM TmpWarningMessages WarnMsgs
         ORDER BY message ASC, manager_name, param_name;
+
+        DROP TABLE TmpManagerList;
+        DROP TABLE TmpWarningMessages;
+
         RETURN;
     End If;
 
@@ -295,6 +301,9 @@ BEGIN
          PV.type_id = PT.param_id
     ORDER BY Src.Manager_Name, param_name;
 
+    DROP TABLE TmpManagerList;
+    DROP TABLE TmpWarningMessages;
+
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
@@ -322,6 +331,9 @@ EXCEPTION
            ''::citext as comment,
            current_timestamp::timestamp as last_affected,
            ''::citext as entered_by;
+
+    DROP TABLE IF EXISTS TmpManagerList;
+    DROP TABLE IF EXISTS TmpWarningMessages;
 END
 $$;
 

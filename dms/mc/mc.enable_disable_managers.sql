@@ -121,8 +121,6 @@ BEGIN
     -- Create a temporary table
     -----------------------------------------------
 
-    DROP TABLE IF EXISTS TmpManagerList;
-
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL
     );
@@ -408,6 +406,7 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'EnableDisableManagers', 'mc');
 
+    DROP TABLE IF EXISTS TmpManagerList;
 END
 $$;
 

@@ -32,6 +32,8 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new function name
 **          04/16/2022 mem - Use new procedure name
+**          08/20/2022 mem - Update warnings shown when an exception occurs
+**                         - Drop temp tables before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -54,25 +56,6 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Create a temporary table that will hold the entry_id
-    -- values that need to be updated in mc.t_param_value
-    ---------------------------------------------------
-
-    DROP TABLE IF EXISTS TmpParamValueEntriesToUpdate;
-
-    CREATE TEMP TABLE TmpParamValueEntriesToUpdate (
-        entry_id int NOT NULL
-    );
-
-    CREATE UNIQUE INDEX IX_TmpParamValueEntriesToUpdate ON TmpParamValueEntriesToUpdate (entry_id);
-
-    DROP TABLE IF EXISTS TmpMgrIDs;
-
-    CREATE TEMP TABLE TmpMgrIDs (
-        mgr_id int NOT NULL
-    );
-
-    ---------------------------------------------------
     -- Resolve _paramName to _paramTypeID
     ---------------------------------------------------
 
@@ -90,6 +73,23 @@ BEGIN
     RAISE Info 'Param type ID is %', _paramTypeID;
 
     ---------------------------------------------------
+    -- Create a temporary table that will hold the entry_id
+    -- values that need to be updated in mc.t_param_value
+    --
+    -- Also create a temporary table for tracking manager IDs
+    ---------------------------------------------------
+
+    CREATE TEMP TABLE TmpParamValueEntriesToUpdate (
+        entry_id int NOT NULL
+    );
+
+    CREATE UNIQUE INDEX IX_TmpParamValueEntriesToUpdate ON TmpParamValueEntriesToUpdate (entry_id);
+
+    CREATE TEMP TABLE TmpMgrIDs (
+        mgr_id int NOT NULL
+    );
+
+    ---------------------------------------------------
     -- Parse the manager ID list
     ---------------------------------------------------
     --
@@ -103,6 +103,10 @@ BEGIN
         _message = 'Use Manager IDs, not manager names';
 
         RAISE Warning '%', _message;
+
+        DROP TABLE TmpParamValueEntriesToUpdate;
+        DROP TABLE TmpMgrIDs;
+
         Return;
     END IF;
 
@@ -116,6 +120,10 @@ BEGIN
         _message = 'All of the managers have control_from_website = 0 in t_mgrs; parameters not updated';
 
         RAISE Warning '%', _message;
+
+        DROP TABLE TmpParamValueEntriesToUpdate;
+        DROP TABLE TmpMgrIDs;
+
         Return;
     END IF;
 
@@ -199,6 +207,9 @@ BEGIN
 
         _message := public.append_to_text(_message, 'See the Output window for details');
 
+        DROP TABLE TmpParamValueEntriesToUpdate;
+        DROP TABLE TmpMgrIDs;
+
         Return;
     End If;
 
@@ -269,6 +280,10 @@ BEGIN
         END IF;
 
         RAISE Info '%', _message;
+
+        DROP TABLE TmpParamValueEntriesToUpdate;
+        DROP TABLE TmpMgrIDs;
+
         Return;
     End If;
 
@@ -278,6 +293,9 @@ BEGIN
     ---------------------------------------------------
     --
     Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+
+    DROP TABLE TmpParamValueEntriesToUpdate;
+    DROP TABLE TmpMgrIDs;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -294,6 +312,8 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'UpdateSingleMgrControlParam', 'mc');
 
+    DROP TABLE IF EXISTS TmpParamValueEntriesToUpdate;
+    DROP TABLE IF EXISTS TmpMgrIDs;
 END
 $$;
 

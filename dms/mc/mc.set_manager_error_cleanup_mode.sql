@@ -23,6 +23,8 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name
+**          08/20/2022 mem - Update warnings shown when an exception occurs
+**                         - Drop temp table before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -57,8 +59,6 @@ BEGIN
         _cleanupMode := 2;
     End If;
 
-    DROP TABLE IF EXISTS TmpManagerList;
-
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL,
         mgr_id int NULL
@@ -74,6 +74,8 @@ BEGIN
         IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
             _message := 'No valid managers were found in _mgrList';
             RAISE INFO '%', _message;
+
+            DROP TABLE TmpManagerList;
             Return;
         END IF;
 
@@ -103,6 +105,8 @@ BEGIN
     IF NOT FOUND THEN
         _message := 'Could not find parameter ManagerErrorCleanupMode in mc.t_param_type';
         _returnCode := 'U5201';
+
+        DROP TABLE TmpManagerList;
         Return;
     End If;
 
@@ -189,6 +193,7 @@ BEGIN
                             _cleanupMode,
                             _countToUpdate);
 
+        DROP TABLE TmpManagerList;
         Return;
     End If;
 
@@ -259,6 +264,8 @@ BEGIN
 
     End If;
 
+    DROP TABLE TmpManagerList;
+
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
@@ -274,6 +281,7 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'SetManagerErrorCleanupMode', 'mc');
 
+    DROP TABLE IF EXISTS TmpManagerList;
 END
 $$;
 

@@ -21,6 +21,8 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name
+**          08/20/2022 mem - Update warnings shown when an exception occurs
+**                         - Drop temp table before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -45,8 +47,6 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    DROP TABLE IF EXISTS TmpManagerList;
-
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL,
         mgr_id int NULL
@@ -62,6 +62,8 @@ BEGIN
         IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
             _message := 'No valid managers were found in _mgrList';
             RAISE INFO '%', _message;
+
+            DROP TABLE TmpManagerList;
             Return;
         END IF;
 
@@ -91,6 +93,8 @@ BEGIN
     IF NOT FOUND THEN
         _message := 'Could not find parameter ManagerUpdateRequired in mc.t_param_type';
         _returnCode := 'U5201';
+
+        DROP TABLE TmpManagerList;
         Return;
     End If;
 
@@ -174,6 +178,7 @@ BEGIN
         _message := format('Would set ManagerUpdateRequired to True for %s managers; see the Output window for details',
                             _countToUpdate);
 
+        DROP TABLE TmpManagerList;
         Return;
     End If;
 
@@ -200,7 +205,7 @@ BEGIN
         _message := 'All managers already have ManagerUpdateRequired set to True';
     End If;
 
- If _showTable <> 0 Then
+    If _showTable <> 0 Then
         _infoHead := format('%-10s %-25s %-25s %-15s %-25s',
                             'Mgr_ID',
                             'Manager',
@@ -239,6 +244,8 @@ BEGIN
 
     End If;
 
+    DROP TABLE TmpManagerList;
+
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
@@ -254,6 +261,7 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'SetManagerUpdateRequired', 'mc');
 
+    DROP TABLE IF EXISTS TmpManagerList;
 END
 $$;
 

@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.parse_manager_name_list(IN _managernamelist text 
 **          02/07/2020 mem - Fix typo in temp table name
 **          03/24/2022 mem - Fix typo in comment
 **          04/16/2022 mem - Use new function name
+**                         - Drop temp table before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -45,11 +46,13 @@ BEGIN
     _removeUnknownManagers := Coalesce(_removeUnknownManagers, 1);
     _message := '';
 
+    If char_length(_managerNameList) = 0 Then
+        Return;
+    End If;
+
     -----------------------------------------------
     -- Create a temporary table
     -----------------------------------------------
-
-    DROP TABLE IF EXISTS TmpManagerSpecList;
 
     CREATE TEMP TABLE TmpManagerSpecList (
         entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -59,10 +62,6 @@ BEGIN
     -----------------------------------------------
     -- Parse _managerNameList
     -----------------------------------------------
-
-    If char_length(_managerNameList) = 0 Then
-        Return;
-    End If;
 
     -- Populate TmpManagerSpecList with the data in _managerNameList
     INSERT INTO TmpManagerSpecList (manager_name)
@@ -103,6 +102,8 @@ BEGIN
         RAISE Debug '%', _s;
 
     End Loop;
+
+    DROP TABLE TmpManagerSpecList;
 
     If _removeUnknownManagers = 0 Then
         Return;

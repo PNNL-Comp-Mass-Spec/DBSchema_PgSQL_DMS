@@ -24,6 +24,8 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new object names
+**          08/20/2022 mem - Update warnings shown when an exception occurs
+**                         - Drop temp table before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -40,7 +42,6 @@ BEGIN
     -- Create a temporary table that will hold the entry_id
     -- values that need to be updated in mc.t_param_value
     ---------------------------------------------------
-    DROP TABLE IF EXISTS TmpParamValueEntriesToUpdate;
 
     CREATE TEMP TABLE TmpParamValueEntriesToUpdate (
         entry_id int NOT NULL
@@ -68,6 +69,8 @@ BEGIN
     IF NOT FOUND THEN
         _message := 'Did not find any managers of type ' || _managerTypeIDList || ' with parameter ' || _paramName || ' and control_from_website > 0';
         _returnCode := 'U5100';
+
+        DROP TABLE TmpParamValueEntriesToUpdate;
         Return;
     END IF;
 
@@ -77,6 +80,8 @@ BEGIN
     ---------------------------------------------------
     --
     Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+
+    DROP TABLE TmpParamValueEntriesToUpdate;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -93,6 +98,7 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
 
+    DROP TABLE IF EXISTS TmpParamValueEntriesToUpdate;
 END
 $$;
 
