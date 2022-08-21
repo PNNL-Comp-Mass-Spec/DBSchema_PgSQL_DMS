@@ -1,10 +1,4 @@
 --
--- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: cap; Owner: d3l243
---
-
-GRANT UPDATE(entered_by) ON TABLE cap.t_log_entries TO writeaccess;
-
---
 -- Name: SEQUENCE t_log_entries_entry_id_seq; Type: ACL; Schema: cap; Owner: d3l243
 --
 
@@ -138,12 +132,6 @@ GRANT SELECT ON SEQUENCE dpkg.t_data_repository_uploads_upload_id_seq TO readacc
 GRANT SELECT ON SEQUENCE dpkg.t_data_repository_uploads_upload_id_seq TO writeaccess;
 
 --
--- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: dpkg; Owner: d3l243
---
-
-GRANT UPDATE(entered_by) ON TABLE dpkg.t_log_entries TO writeaccess;
-
---
 -- Name: SEQUENCE t_log_entries_entry_id_seq; Type: ACL; Schema: dpkg; Owner: d3l243
 --
 
@@ -209,12 +197,6 @@ GRANT SELECT ON SEQUENCE logsw.t_log_entries_local_entry_id_seq TO writeaccess;
 
 GRANT SELECT ON SEQUENCE mc.t_event_log_event_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE mc.t_event_log_event_id_seq TO writeaccess;
-
---
--- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT UPDATE(entered_by) ON TABLE mc.t_log_entries TO writeaccess;
 
 --
 -- Name: SEQUENCE t_log_entries_entry_id_seq; Type: ACL; Schema: mc; Owner: d3l243
@@ -502,12 +484,6 @@ GRANT SELECT ON SEQUENCE pc.t_genome_assembly_assembly_id_seq TO writeaccess;
 
 GRANT SELECT ON SEQUENCE pc.t_legacy_file_upload_requests_upload_request_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE pc.t_legacy_file_upload_requests_upload_request_id_seq TO writeaccess;
-
---
--- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: pc; Owner: d3l243
---
-
-GRANT UPDATE(entered_by) ON TABLE pc.t_log_entries TO writeaccess;
 
 --
 -- Name: SEQUENCE t_log_entries_entry_id_seq; Type: ACL; Schema: pc; Owner: d3l243
@@ -1007,12 +983,6 @@ GRANT SELECT ON SEQUENCE public.t_lc_column_lc_column_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE public.t_lc_column_lc_column_id_seq TO writeaccess;
 
 --
--- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT UPDATE(entered_by) ON TABLE public.t_log_entries TO writeaccess;
-
---
 -- Name: SEQUENCE t_log_entries_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
 --
 
@@ -1356,30 +1326,6 @@ GRANT SELECT ON SEQUENCE public.t_storage_path_storage_path_id_seq TO readaccess
 GRANT SELECT ON SEQUENCE public.t_storage_path_storage_path_id_seq TO writeaccess;
 
 --
--- Name: COLUMN t_usage_log.posting_time; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT UPDATE(posting_time) ON TABLE public.t_usage_log TO writeaccess;
-
---
--- Name: COLUMN t_usage_log.message; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT UPDATE(message) ON TABLE public.t_usage_log TO writeaccess;
-
---
--- Name: COLUMN t_usage_log.calling_user; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT UPDATE(calling_user) ON TABLE public.t_usage_log TO writeaccess;
-
---
--- Name: COLUMN t_usage_log.usage_count; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT UPDATE(usage_count) ON TABLE public.t_usage_log TO writeaccess;
-
---
 -- Name: SEQUENCE t_usage_log_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
 --
 
@@ -1408,23 +1354,11 @@ GRANT SELECT ON SEQUENCE public.t_wellplates_wellplate_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE public.t_wellplates_wellplate_id_seq TO writeaccess;
 
 --
--- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: sw; Owner: d3l243
---
-
-GRANT UPDATE(entered_by) ON TABLE sw.t_log_entries TO writeaccess;
-
---
 -- Name: SEQUENCE t_data_folder_create_queue_entry_id_seq; Type: ACL; Schema: sw; Owner: d3l243
 --
 
 GRANT SELECT ON SEQUENCE sw.t_data_folder_create_queue_entry_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE sw.t_data_folder_create_queue_entry_id_seq TO writeaccess;
-
---
--- Name: COLUMN t_job_events.entered_by; Type: ACL; Schema: sw; Owner: d3l243
---
-
-GRANT UPDATE(entered_by) ON TABLE sw.t_job_events TO writeaccess;
 
 --
 -- Name: SEQUENCE t_job_events_event_id_seq; Type: ACL; Schema: sw; Owner: d3l243

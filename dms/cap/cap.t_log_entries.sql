@@ -53,3 +53,9 @@ CREATE INDEX ix_t_log_entries_posting_time ON cap.t_log_entries USING btree (pos
 GRANT SELECT ON TABLE cap.t_log_entries TO readaccess;
 GRANT SELECT,INSERT ON TABLE cap.t_log_entries TO writeaccess;
 
+--
+-- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: cap; Owner: d3l243
+--
+
+GRANT UPDATE(entered_by) ON TABLE cap.t_log_entries TO writeaccess;
+

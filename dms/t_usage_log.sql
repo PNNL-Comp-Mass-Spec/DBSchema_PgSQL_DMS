@@ -59,3 +59,27 @@ CREATE INDEX ix_t_usage_log_posted_by_calling_user_include_posting_time ON publi
 GRANT SELECT ON TABLE public.t_usage_log TO readaccess;
 GRANT SELECT,INSERT ON TABLE public.t_usage_log TO writeaccess;
 
+--
+-- Name: COLUMN t_usage_log.posting_time; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT UPDATE(posting_time) ON TABLE public.t_usage_log TO writeaccess;
+
+--
+-- Name: COLUMN t_usage_log.message; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT UPDATE(message) ON TABLE public.t_usage_log TO writeaccess;
+
+--
+-- Name: COLUMN t_usage_log.calling_user; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT UPDATE(calling_user) ON TABLE public.t_usage_log TO writeaccess;
+
+--
+-- Name: COLUMN t_usage_log.usage_count; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT UPDATE(usage_count) ON TABLE public.t_usage_log TO writeaccess;
+

@@ -53,3 +53,9 @@ CREATE INDEX ix_t_log_entries_posting_time ON public.t_log_entries USING btree (
 GRANT SELECT,INSERT ON TABLE public.t_log_entries TO writeaccess;
 GRANT SELECT ON TABLE public.t_log_entries TO readaccess;
 
+--
+-- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT UPDATE(entered_by) ON TABLE public.t_log_entries TO writeaccess;
+
