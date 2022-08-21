@@ -41,9 +41,11 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **                         - Close the cursor after each call to enable_disable_managers
 **                         - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
+**          08/21/2022 mem - Replace temp table with array
 **
 *****************************************************/
 DECLARE
+    _mgrTypeIDs int[];
     _mgrTypeID int;
     _msg text;
     _results refcursor;
@@ -64,35 +66,29 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    CREATE TEMP TABLE TmpManagerTypeIDs (
-        mgr_type_id int NOT NULL
-    );
-
     If char_length(_managerTypeIDList) > 0 THEN
         -- Parse _managerTypeIDList
         --
-        INSERT INTO TmpManagerTypeIDs (mgr_type_id)
-        SELECT DISTINCT value
-        FROM public.parse_delimited_integer_list(_managerTypeIDList, ',')
-        ORDER BY Value;
+        _mgrTypeIDs := ARRAY (
+                        SELECT DISTINCT value
+                        FROM public.parse_delimited_integer_list(_managerTypeIDList, ',')
+                        ORDER BY Value );
     Else
-        -- Populate TmpManagerTypeIDs with all manager types in mc.t_mgr_types
+        -- Populate _mgrTypeIDs with all manager types in mc.t_mgr_types
         --
-        INSERT INTO TmpManagerTypeIDs (mgr_type_id)
-        SELECT DISTINCT mgr_type_id
-        FROM mc.t_mgr_types
-        WHERE mgr_type_active > 0
-        ORDER BY mgr_type_id;
+        _mgrTypeIDs := ARRAY (
+                        SELECT DISTINCT mgr_type_id
+                        FROM mc.t_mgr_types
+                        WHERE mgr_type_active > 0
+                        ORDER BY mgr_type_id );
     End If;
 
     -----------------------------------------------
-    -- Loop through the manager types in TmpManagerTypeIDs
+    -- Loop through the manager types in _mgrTypeIDs
     -- For each, call enable_disable_managers
     -----------------------------------------------
 
-    FOR _mgrTypeID IN
-        SELECT mgr_type_id
-        FROM TmpManagerTypeIDs
+    FOREACH _mgrTypeID IN ARRAY _mgrTypeIDs
     LOOP
 
         Call mc.enable_disable_managers (
@@ -110,12 +106,13 @@ BEGIN
         End If;
 
         If Char_Length(_msg) > 0 Then
+            -- Remove the "see also" message that does not apply when calling enable_disable_managers from this procedure
+            _msg := Replace(_msg, '; see also "FETCH ALL FROM _results"', '');
+
             _message := public.append_to_text(_message, _msg, _delimiter := '; ');
         End If;
 
-    End Loop;
-
-    DROP TABLE TmpManagerTypeIDs;
+    END LOOP;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -131,8 +128,6 @@ EXCEPTION
     RAISE Warning 'Context: %', _exceptionContext;
 
     Call public.post_log_entry ('Error', _message, 'EnableDisableAllManagers', 'mc');
-
-    DROP TABLE IF EXISTS TmpManagerTypeIDs;
 
 END
 $$;
