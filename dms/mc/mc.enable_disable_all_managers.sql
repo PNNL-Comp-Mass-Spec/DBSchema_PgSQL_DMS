@@ -26,6 +26,9 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new object names
 **          08/20/2022 mem - Concatenate messages returned by enable_disable_managers
+**                         - Close the cursor after each call to enable_disable_managers
+**                         - Update warnings shown when an exception occurs
+**                         - Drop temp table before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -89,6 +92,10 @@ BEGIN
             _message := _msg,
             _returnCode := _returnCode);
 
+        -- Close the cursor
+        If Not _results Is Null Then
+            Close _results;
+        End If;
 
         If Char_Length(_msg) > 0 Then
             _message := public.append_to_text(_message, _msg, _delimiter := '; ');
