@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          02/27/2017 mem - Although _message is varchar(4096), the Message column in T_Log_Entries may be shorter (512 characters in DMS); disable ANSI Warnings before inserting into the table
 **          01/28/2020 mem - Ported to PostgreSQL
 **          08/18/2022 mem - Add argment _ignoreErrors
+**          08/19/2022 mem - Remove local variable _message that was masking the _message argument
 **
 *****************************************************/
 DECLARE
@@ -37,7 +38,6 @@ DECLARE
     _duplicateRowCount int := 0;
     _s text;
     _myRowCount int;
-    _message text;
     _sqlState text;
     _exceptionMessage text;
     _exceptionContext text;
@@ -110,8 +110,8 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Warning: log message not added to %s; %s',
-                _targetTableWithSchema, _exceptionMessage);
+    _message := format('Warning: log message not added to %s (%s); %s',
+                _targetTableWithSchema, _message, _exceptionMessage);
 
     RAISE Warning '%', _message;
 
