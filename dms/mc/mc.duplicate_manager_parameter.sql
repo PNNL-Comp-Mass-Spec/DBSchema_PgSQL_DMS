@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **  Auth:   mem
 **  Date:   08/26/2013 mem - Initial release
 **          01/30/2020 mem - Ported to PostgreSQL
+**          08/20/2022 mem - Update warnings shown when an exception occurs
 **
 *****************************************************/
 DECLARE
@@ -170,8 +171,8 @@ EXCEPTION
     _message := 'Error duplicating a manager parameter: ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
-    RAISE Warning 'Error: %', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning '%', _message;
+    RAISE Warning 'Context: %', _exceptionContext;
 
     RETURN QUERY
     SELECT 'Error' AS Status,

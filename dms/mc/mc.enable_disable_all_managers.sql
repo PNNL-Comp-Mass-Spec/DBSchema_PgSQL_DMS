@@ -98,13 +98,13 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error updating enabling/disabling all managers: ' || _exceptionMessage;
+    _message := 'Error enabling/disabling all managers: ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
-    RAISE Warning 'Error: %', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning '%', _message;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'EnableDisableAllManagers', 'mc');
+    Call public.post_log_entry ('Error', _message, 'EnableDisableAllManagers', 'mc');
 
 END
 $$;

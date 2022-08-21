@@ -249,10 +249,10 @@ EXCEPTION
     _message := 'Error updating ManagerUpdateRequired for multiple managers in mc.t_param_value: ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
-    RAISE Warning 'Error: %', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning '%', _message;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'SetManagerUpdateRequired', 'mc');
+    Call public.post_log_entry ('Error', _message, 'SetManagerUpdateRequired', 'mc');
 
 END
 $$;

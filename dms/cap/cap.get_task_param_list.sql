@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **          06/24/2022 mem - Ported to PostgreSQL
 **          06/26/2022 mem - Renamed from get_job_param_list to get_task_param_list
 **          06/28/2022 mem - Add <br> before </pre>
+**          08/20/2022 mem - Update warnings shown when an exception occurs
 **
 *****************************************************/
 DECLARE
@@ -72,9 +73,9 @@ EXCEPTION
                 _job, _exceptionMessage);
 
     RAISE Warning '%', _message;
-    RAISE Warning '%', _exceptionContext;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'get_task_param_list', 'cap');
+    Call public.post_log_entry ('Error', _message, 'get_task_param_list', 'cap');
 
     -- Use text parsing to convert the XML job parameters
     --

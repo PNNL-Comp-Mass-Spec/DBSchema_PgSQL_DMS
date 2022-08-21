@@ -304,10 +304,10 @@ EXCEPTION
 
     _message := 'Error unarchiving manager parameters for ' || _mgrList || ': ' || _exceptionMessage;
 
-    RAISE Warning 'Error: %', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning '%', _message;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'UnarchiveOldManagersAndParams', 'mc');
+    Call public.post_log_entry ('Error', _message, 'UnarchiveOldManagersAndParams', 'mc');
 
     RETURN QUERY
     SELECT _message as Message,

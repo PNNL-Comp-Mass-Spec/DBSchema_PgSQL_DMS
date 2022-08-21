@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 **  Auth:   mem
 **  Date:   10/10/2014 mem - Initial release
 **          02/01/2020 mem - Ported to PostgreSQL
+**          08/20/2022 mem - Update warnings shown when an exception occurs
 **
 *****************************************************/
 DECLARE
@@ -140,8 +141,8 @@ EXCEPTION
     _message := 'Error duplicating manager parameters: ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
-    RAISE Warning 'Error: %', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning '%', _message;
+    RAISE Warning 'Context: %', _exceptionContext;
 
     RETURN QUERY
     SELECT 0 as type_id,

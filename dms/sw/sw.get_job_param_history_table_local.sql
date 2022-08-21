@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_history_table_local(_job integer) RE
 **  Date:   01/12/2012
 **          04/11/2022 mem - Use varchar(4000) when populating the table
 **          06/26/2022 mem - Ported to PostgreSQL
+**          08/20/2022 mem - Update warnings shown when an exception occurs
 **
 *****************************************************/
 DECLARE
@@ -70,9 +71,9 @@ EXCEPTION
                 _job, _exceptionMessage);
 
     RAISE Warning '%', _message;
-    RAISE Warning '%', _exceptionContext;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'get_job_param_history_table_local', 'cap');
+    Call public.post_log_entry ('Error', _message, 'get_job_param_history_table_local', 'sw');
 
     -- In theory the error message could be returned using the following, but this doesn't work
     --   RETURN QUERY

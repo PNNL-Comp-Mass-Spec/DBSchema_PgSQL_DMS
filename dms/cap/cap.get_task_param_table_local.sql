@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table_local(_job integer) RETURNS 
 **          04/04/2011 mem - Updated to only query T_Job_Parameters
 **          06/24/2022 mem - Ported to PostgreSQL
 **          06/26/2022 mem - Renamed from get_job_param_table_local to get_task_param_table_local
+**          08/20/2022 mem - Update warnings shown when an exception occurs
 **
 *****************************************************/
 DECLARE
@@ -94,9 +95,9 @@ EXCEPTION
                 _job, _exceptionMessage);
 
     RAISE Warning '%', _message;
-    RAISE Warning '%', _exceptionContext;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'get_task_param_table_local', 'cap');
+    Call public.post_log_entry ('Error', _message, 'get_task_param_table_local', 'cap');
 
     -- In theory the error message could be returned using the following, but this doesn't work
     --   RETURN QUERY

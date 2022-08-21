@@ -89,9 +89,9 @@ EXCEPTION
                 _currentOperation, _currentTargetTable, _exceptionMessage);
 
     RAISE Warning '%', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
+    Call public.post_log_entry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
 
 END
 $$;

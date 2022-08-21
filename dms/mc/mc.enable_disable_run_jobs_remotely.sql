@@ -321,10 +321,10 @@ EXCEPTION
     _message := 'Error enabling/disabling managers to run jobs remotely: ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
-    RAISE Warning 'Error: %', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning '%', _message;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'EnableDisableRunJobsRemotely', 'mc');
+    Call public.post_log_entry ('Error', _message, 'EnableDisableRunJobsRemotely', 'mc');
 
 END
 $$;

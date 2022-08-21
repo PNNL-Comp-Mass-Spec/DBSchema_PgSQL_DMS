@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **          01/29/2020 mem - Log errors to post_log_entry
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **          04/16/2022 mem - Use new procedure name
+**          08/20/2022 mem - Update warnings shown when an exception occurs
 **
 *****************************************************/
 DECLARE
@@ -100,10 +101,10 @@ EXCEPTION
     _message := 'Error updating ManagerUpdateRequired for ' || _managerName || ': ' || _exceptionMessage;
     _returnCode := _sqlstate;
 
-    RAISE Warning 'Error: %', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE Warning '%', _message;
+    RAISE Warning 'Context: %', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'AckManagerUpdateRequired', 'mc');
+    Call public.post_log_entry ('Error', _message, 'AckManagerUpdateRequired', 'mc');
 
 END
 $$;
