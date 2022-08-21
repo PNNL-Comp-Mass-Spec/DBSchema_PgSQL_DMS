@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          01/05/2018 mem - Include username and host_name in RAISERROR message
 **          08/18/2022 mem - Ported to PostgreSQL
 **          08/19/2022 mem - Check for null when updating _message
+**          08/20/2022 mem - If an exception occurs, include the procedure name in the message
 **
 *****************************************************/
 DECLARE
@@ -169,7 +170,9 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Exception checking for permission to call procedure; %s', _exceptionMessage);
+    _message := format('Exception checking for permission to call procedure %s; %s',
+                    Coalesce(_procedureNameWithSchema, _procedureName),
+                    _exceptionMessage);
 
     RAISE Warning '%', _message;
     RAISE Warning 'Context: %', _exceptionContext;
