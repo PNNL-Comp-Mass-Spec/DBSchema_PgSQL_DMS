@@ -48,6 +48,9 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _m
 **          03/24/2022 mem - Fix typo in comment
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name
+**          08/20/2022 mem - Store the manager names in an array, which allows the refcursor to filter by manager name without using the temporary table
+**                         - Update warnings shown when an exception occurs
+**                         - Drop temp table before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -60,6 +63,7 @@ DECLARE
     _infoHead text;
     _infoData text;
     _previewData record;
+    _mgrNames text[];
     _sqlstate text;
     _exceptionMessage text;
     _exceptionContext text;
@@ -126,7 +130,7 @@ BEGIN
     );
 
     If char_length(_managerNameList) > 0 And _managerNameList::citext <> 'All' Then
-        -- Populate TmpMangerList using parse_manager_name_list
+        -- Populate TmpManagerList using parse_manager_name_list
 
         Call mc.parse_manager_name_list (_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
@@ -217,6 +221,17 @@ BEGIN
     _countToUpdate  := COALESCE(_countToUpdate, 0);
     _countUnchanged := COALESCE(_countUnchanged, 0);
 
+    -- Store the manager names in an array,
+    -- which allows the refcursor to filter by manager name
+    -- without using the temporary table
+    --
+    _mgrNames := ARRAY( SELECT manager_name
+                        FROM TmpManagerList
+                      );
+
+    -- We no longer need the temporary table
+    DROP TABLE TmpManagerList;
+
     If _countToUpdate = 0 Then
         If _countUnchanged = 0 Then
             If char_length(_managerNameList) > 0 Then
@@ -257,9 +272,8 @@ BEGIN
                    ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
                    ON M.mgr_type_id = MT.mgr_type_id
-                 INNER JOIN TmpManagerList U
-                   ON M.mgr_name = U.manager_name
-            WHERE PT.param_name = 'mgractive' AND
+            WHERE M.mgr_name = ANY (_mgrNames) AND
+                  PT.param_name = 'mgractive' AND
                   MT.mgr_type_active > 0;
 
         Return;
@@ -290,9 +304,8 @@ BEGIN
                    ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
                    ON M.mgr_type_id = MT.mgr_type_id
-                 INNER JOIN TmpManagerList U
-                   ON M.mgr_name = U.manager_name
-            WHERE PT.param_name = 'mgractive' AND
+            WHERE M.mgr_name = ANY (_mgrNames) AND
+                  PT.param_name = 'mgractive' AND
                   PV.value <> _newValue AND
                   MT.mgr_type_active > 0
         LOOP
@@ -309,7 +322,7 @@ BEGIN
 
         END LOOP;
 
-        _message := format('Would set %s managers to %s; see the Output window for details, or use FETCH ALL FROM "_results";',
+        _message := format('Would set %s managers to %s; see the Output window for details, or use FETCH ALL FROM "_results"',
                             _countToUpdate,
                             _activeStateDescription);
 
@@ -326,16 +339,15 @@ BEGIN
                    ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
                    ON M.mgr_type_id = MT.mgr_type_id
-                 INNER JOIN TmpManagerList U
-                   ON M.mgr_name = U.manager_name
-            WHERE PT.param_name = 'mgractive' AND
+            WHERE M.mgr_name = ANY (_mgrNames) AND
+                  PT.param_name = 'mgractive' AND
                   PV.value <> _newValue AND
                   MT.mgr_type_active > 0;
 
-        RETURN;
+        Return;
     End If;
 
-    -- Update mgractive for the managers in TmpManagerList
+    -- Update mgractive for the managers in the _mgrNames array
     --
     UPDATE mc.t_param_value
     SET value = _newValue
@@ -346,9 +358,8 @@ BEGIN
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
-         INNER JOIN TmpManagerList U
-           ON M.mgr_name = U.manager_name
-    WHERE mc.t_param_value.entry_ID = PV.Entry_ID AND
+    WHERE M.mgr_name = ANY (_mgrNames) AND
+          mc.t_param_value.entry_ID = PV.Entry_ID AND
           PT.param_name = 'mgractive' AND
           PV.value <> _newValue AND
           MT.mgr_type_active > 0;
@@ -386,9 +397,8 @@ BEGIN
                ON PV.mgr_id = M.mgr_id
              INNER JOIN mc.t_mgr_types MT
                ON M.mgr_type_id = MT.mgr_type_id
-             INNER JOIN TmpManagerList U
-               ON M.mgr_name = U.manager_name
-        WHERE PT.param_name = 'mgractive' AND
+        WHERE M.mgr_name = ANY (_mgrNames) AND
+              PT.param_name = 'mgractive' AND
               MT.mgr_type_active > 0;
 
 EXCEPTION
