@@ -46,7 +46,8 @@ BEGIN
     -- Confirm that the manager name is valid
     ---------------------------------------------------
 
-    SELECT mgr_id INTO _mgrID
+    SELECT mgr_id
+    INTO _mgrID
     FROM mc.t_mgrs
     WHERE mgr_name = _managerName::citext;
 
@@ -75,7 +76,8 @@ BEGIN
     Else
         -- No rows were updated; may need to make a new entry for 'ManagerUpdateRequired' in the t_param_value table
 
-        SELECT param_id INTO _paramID
+        SELECT param_id
+        INTO _paramID
         FROM mc.t_param_type
         WHERE param_name = 'ManagerUpdateRequired';
 

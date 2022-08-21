@@ -189,7 +189,8 @@ BEGIN
 
     -- Count the number of managers that need to be updated
     --
-    SELECT COUNT(*) INTO _countToUpdate
+    SELECT COUNT(*)
+    INTO _countToUpdate
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
            ON PV.type_id = PT.param_id
@@ -207,7 +208,8 @@ BEGIN
 
     -- Count the number of managers already in the target state
     --
-    SELECT COUNT(*) INTO _countUnchanged
+    SELECT COUNT(*)
+    INTO _countUnchanged
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
            ON PV.type_id = PT.param_id

@@ -60,7 +60,8 @@ BEGIN
     -- Resolve _paramName to _paramTypeID
     ---------------------------------------------------
 
-    SELECT param_id INTO _paramTypeID
+    SELECT param_id
+    INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = _paramName;
 

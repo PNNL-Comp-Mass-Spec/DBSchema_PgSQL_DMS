@@ -114,7 +114,7 @@ BEGIN
     FROM mc.t_old_managers M
     WHERE TmpManagerList.Manager_Name = M.mgr_name;
 
-    If Exists (Select * from TmpManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
+    If Exists (SELECT * FROM TmpManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Unknown manager (not in mc.t_old_managers)',
                MgrList.manager_name
@@ -123,7 +123,7 @@ BEGIN
         ORDER BY MgrList.manager_name;
     End If;
 
-    If Exists (Select * From TmpManagerList MgrList Where MgrList.manager_name ILike '%Params%') Then
+    If Exists (SELECT * FROM TmpManagerList MgrList WHERE MgrList.manager_name ILike '%Params%') Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Will not process managers with "Params" in the name (for safety)',
                MgrList.manager_name
@@ -138,7 +138,7 @@ BEGIN
     DELETE FROM TmpManagerList
     WHERE TmpManagerList.mgr_id Is Null;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.Manager_Name = Target.mgr_name) Then
+    If Exists (SELECT * FROM TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.Manager_Name = Target.mgr_name) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager already exists in t_mgrs with Mgr_Name ' || Target.mgr_name || '; cannot restore',
                manager_name
@@ -150,7 +150,7 @@ BEGIN
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs);
     End If;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.mgr_id = Target.mgr_id) Then
+    If Exists (SELECT * FROM TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager already exists in t_mgrs with Mgr_ID ' || Target.mgr_id || '; cannot restore',
                manager_name
@@ -162,7 +162,7 @@ BEGIN
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs);
     End If;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_param_value Target ON Src.mgr_id = Target.mgr_id) Then
+    If Exists (SELECT * FROM TmpManagerList Src INNER JOIN mc.t_param_value Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager already has parameters in mc.t_param_value with Mgr_ID ' || Src.mgr_id || '; cannot restore',
                manager_name
@@ -174,7 +174,7 @@ BEGIN
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs);
     End If;
 
-    If _infoOnly <> 0 OR NOT EXISTS (Select * From TmpManagerList) Then
+    If _infoOnly <> 0 OR NOT EXISTS (SELECT * FROM TmpManagerList) Then
         RETURN QUERY
         SELECT ' To be restored' as message,
                Src.manager_name,
@@ -237,7 +237,8 @@ BEGIN
 
     -- Set the manager ID sequence's current value to the maximum manager ID
     --
-    SELECT MAX(mc.t_mgrs.mgr_id) INTO _newSeqValue
+    SELECT MAX(mc.t_mgrs.mgr_id)
+    INTO _newSeqValue
     FROM mc.t_mgrs;
 
     PERFORM setval('mc.t_mgrs_mgr_id_seq', _newSeqValue);
@@ -273,7 +274,8 @@ BEGIN
 
     -- Set the entry_id sequence's current value to the maximum entry_id
     --
-    SELECT MAX(PV.entry_id) INTO _newSeqValue
+    SELECT MAX(PV.entry_id)
+    INTO _newSeqValue
     FROM mc.t_param_value PV;
 
     PERFORM setval('mc.t_param_value_entry_id_seq', _newSeqValue);

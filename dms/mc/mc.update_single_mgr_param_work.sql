@@ -48,7 +48,8 @@ BEGIN
 
     -- Lookup the param_type_id for param _paramName
     --
-    SELECT param_id INTO _paramTypeID
+    SELECT param_id
+    INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = _paramName::citext;
 
@@ -63,7 +64,8 @@ BEGIN
     -- Count the number of rows that already have this value
     ---------------------------------------------------
     --
-    SELECT Count(*) INTO _rowCountUnchanged
+    SELECT Count(*)
+    INTO _rowCountUnchanged
     FROM mc.t_param_value
     WHERE entry_id IN (SELECT entry_id FROM TmpParamValueEntriesToUpdate) AND
           Coalesce(value, '') = _newValue;

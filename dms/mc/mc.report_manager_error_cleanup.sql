@@ -48,7 +48,8 @@ BEGIN
     -- Confirm that the manager name is valid
     ---------------------------------------------------
 
-    SELECT mgr_id, mgr_name INTO _mgrInfo
+    SELECT mgr_id, mgr_name
+    INTO _mgrInfo
     FROM mc.t_mgrs
     WHERE mgr_name = _managerName;
 
@@ -102,7 +103,8 @@ BEGIN
     -- Lookup the value of ManagerErrorCleanupMode in mc.t_param_value
     ---------------------------------------------------
 
-    SELECT PV.value INTO _cleanupMode
+    SELECT PV.value
+    INTO _cleanupMode
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
            ON PV.type_id = PT.param_id
@@ -112,7 +114,8 @@ BEGIN
     If Not Found Then
         -- Entry not found; make a new entry for 'ManagerErrorCleanupMode' in the mc.t_param_value table
 
-        SELECT param_id INTO _paramID
+        SELECT param_id
+        INTO _paramID
         FROM mc.t_param_type
         WHERE param_name = 'ManagerErrorCleanupMode';
 
