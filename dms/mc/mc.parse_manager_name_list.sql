@@ -1,25 +1,19 @@
 --
--- Name: parse_manager_name_list(text, integer, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: parse_manager_name_list(text, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.parse_manager_name_list(IN _managernamelist text DEFAULT ''::text, IN _removeunknownmanagers integer DEFAULT 1, INOUT _message text DEFAULT ''::text)
+CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DEFAULT ''::text, _remove_unknown_managers integer DEFAULT 1) RETURNS TABLE(manager_name text)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
 **
 **  Desc:
-**      Parses the list of managers in _managerNameList
-**       and populates a temporary table with the manager names
-**
-**      The calling procedure must create a temporary table (the table can contain additional columns)
-**        CREATE TEMP TABLE TmpManagerList (
-**          manager_name text NOT NULL
-**        )
+**      Parses the list of managers in _manager_name_list
+**      and returns a list of manager names
 **
 **  Arguments:
-**    _managerNameList          One or more manager names (comma-separated list); supports wildcards
-**    _removeUnknownManagers    When 1, delete manager names that are not defined in mc.t_mgrs
-**    _message                  Output message
+**    _manager_name_list        One or more manager names (comma-separated list); supports wildcards
+**    _remove_unknown_managers  When 1, delete manager names that are not defined in mc.t_mgrs
 **
 **  Auth:   mem
 **  Date:   05/09/2008
@@ -30,108 +24,110 @@ CREATE OR REPLACE PROCEDURE mc.parse_manager_name_list(IN _managernamelist text 
 **          03/24/2022 mem - Fix typo in comment
 **          04/16/2022 mem - Use new function name
 **                         - Drop temp table before exiting the procedure
+**          08/21/2022 mem - Convert from procedure to function
+**                         - Replace temp tables with arrays
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _managerSpecList text[];
+    _managerList text[];
+    _additionalManagers text[];
     _managerFilter text;
     _s text;
+    _initialCount int;
+    _finalCount int;
 BEGIN
 
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
     --
-    _managerNameList := Coalesce(_managerNameList, '');
-    _removeUnknownManagers := Coalesce(_removeUnknownManagers, 1);
-    _message := '';
+    _manager_name_list := Coalesce(_manager_name_list, '');
+    _remove_unknown_managers := Coalesce(_remove_unknown_managers, 1);
 
-    If char_length(_managerNameList) = 0 Then
+    If char_length(_manager_name_list) = 0 Then
         Return;
     End If;
 
     -----------------------------------------------
-    -- Create a temporary table
+    -- Parse _manager_name_list
     -----------------------------------------------
 
-    CREATE TEMP TABLE TmpManagerSpecList (
-        entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        manager_name text NOT NULL
-    );
+    _managerSpecList := ARRAY (
+                            SELECT value
+                            FROM public.parse_delimited_list(_manager_name_list, ',')
+                        );
 
-    -----------------------------------------------
-    -- Parse _managerNameList
-    -----------------------------------------------
+    -- Populate _managerList with the entries in _managerSpecList that do not contain a % wildcard
 
-    -- Populate TmpManagerSpecList with the data in _managerNameList
-    INSERT INTO TmpManagerSpecList (manager_name)
-    SELECT value
-    FROM public.parse_delimited_list(_managerNameList, ',');
+    _managerList := ARRAY (
+                        SELECT NameQ.manager_name
+                        FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) As NameQ
+                        WHERE NOT NameQ.manager_name SIMILAR TO '%[%]%' AND NOT NameQ.manager_name SIMILAR TO '%\[%'
+                    );
 
-    -- Populate TmpManagerList with the entries in TmpManagerSpecList that do not contain a % wildcard
-    INSERT INTO TmpManagerList (manager_name)
-    SELECT manager_name
-    FROM TmpManagerSpecList
-    WHERE NOT manager_name SIMILAR TO '%[%]%' AND NOT manager_name SIMILAR TO '%\[%';
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    -- Delete the non-wildcard entries from TmpManagerSpecList
-    --
-    DELETE FROM TmpManagerSpecList target
-    WHERE NOT target.manager_name SIMILAR TO '%[%]%' AND NOT manager_name SIMILAR TO '%\[%';
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    -- Parse the entries in TmpManagerSpecList (all should have a wildcard)
+    -- Parse the entries in _managerSpecList that have a wildcard
     --
     For _managerFilter In
-        SELECT manager_name
-        FROM TmpManagerSpecList
-        ORDER BY Entry_ID
+        SELECT NameQ.manager_name
+        FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) As NameQ
+        WHERE NameQ.manager_name SIMILAR TO '%[%]%' OR NameQ.manager_name SIMILAR TO '%\[%'
     Loop
         _s := format(
-                'INSERT INTO TmpManagerList (manager_name) ' ||
-                'SELECT mgr_name ' ||
-                'FROM mc.t_mgrs ' ||
-                'WHERE mgr_name SIMILAR TO $1');
+                'SELECT ARRAY (' ||
+                        'SELECT mgr_name ' ||
+                        'FROM mc.t_mgrs ' ||
+                        'WHERE mgr_name SIMILAR TO $1 )');
 
-        EXECUTE _s USING _managerFilter;
+        EXECUTE _s
+        INTO _additionalManagers
+        USING _managerFilter;
 
-        _s := regexp_replace(_s, '\$1', '''' || _managerFilter || '''');
-        RAISE Debug '%', _s;
+        If array_length(_additionalManagers, 1) > 0 Then
+            _managerList := array_cat(_managerList, _additionalManagers);
+        End If;
+
+        -- Uncomment to debug:
+        -- _s := regexp_replace(_s, '\$1', '''' || _managerFilter || '''');
+        -- RAISE NOTICE '%', _s;
 
     End Loop;
 
-    DROP TABLE TmpManagerSpecList;
+    If _remove_unknown_managers = 0 Then
+        RETURN QUERY
+        SELECT DISTINCT unnest( _managerList );
 
-    If _removeUnknownManagers = 0 Then
-        Return;
+        RETURN;
     End If;
 
-    -- Delete entries from TmpManagerList that are not defined in mc.t_mgrs
+    -- Remove managers from _managerList that are not defined in mc.t_mgrs
     --
-    DELETE FROM TmpManagerList
-    WHERE NOT manager_name IN (SELECT mgr_name FROM mc.t_mgrs);
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    _initialCount := array_length(_managerList, 1);
 
-    If _myRowCount > 0 Then
-        _message := 'Found ' || _myRowCount || ' entries in _managerNameList that are not defined in mc.t_mgrs';
-        RAISE INFO '%', _message;
+    _managerList := ARRAY (
+                        SELECT mc.t_mgrs.mgr_name
+                        FROM ( SELECT unnest( _managerList ) AS manager_name ) As NameQ
+                             INNER JOIN mc.t_mgrs
+                               ON NameQ.manager_name::citext = mc.t_mgrs.mgr_name
+                    );
 
-        _message := '';
+    _finalCount := array_length(_managerList, 1);
+
+    If _initialCount > _finalCount Then
+        RAISE INFO 'Found % entries in _manager_name_list that are not defined in mc.t_mgrs', _initialCount - _finalCount;
     End If;
 
+    RETURN QUERY
+    SELECT DISTINCT unnest( _managerList );
 END
 $_$;
 
 
-ALTER PROCEDURE mc.parse_manager_name_list(IN _managernamelist text, IN _removeunknownmanagers integer, INOUT _message text) OWNER TO d3l243;
+ALTER FUNCTION mc.parse_manager_name_list(_manager_name_list text, _remove_unknown_managers integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE parse_manager_name_list(IN _managernamelist text, IN _removeunknownmanagers integer, INOUT _message text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: FUNCTION parse_manager_name_list(_manager_name_list text, _remove_unknown_managers integer); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.parse_manager_name_list(IN _managernamelist text, IN _removeunknownmanagers integer, INOUT _message text) IS 'ParseManagerNameList';
+COMMENT ON FUNCTION mc.parse_manager_name_list(_manager_name_list text, _remove_unknown_managers integer) IS 'ParseManagerNameList';
 
