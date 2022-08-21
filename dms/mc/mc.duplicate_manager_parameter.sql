@@ -13,17 +13,18 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **
 **      The new parameter type must already exist in mc.t_param_type
 **
-**  Example usage:
-**    Select * From duplicate_manager_parameter (157, 172, _paramValueSearchText := 'msfileinfoscanner', _paramValueReplaceText := 'AgilentToUimfConverter', _infoOnly := 1);
-**
-**    Select * From duplicate_manager_parameter (179, 182, _paramValueSearchText := 'PbfGen', _paramValueReplaceText := 'ProMex', _infoOnly := 1);
-**
 **  Arguments:
 **    _sourceParamTypeId       Source param TypeID
 **    _newParamTypeId          New param TypeID
 **    _paramValueOverride      Optional: new parameter value; ignored if _paramValueSearchText is defined
 **    _paramValueSearchText    Optional: text to search for in the source parameter value
 **    _paramValueReplaceText   Optional: replacement text (ignored if _paramValueReplaceText is null)
+**    _infoOnly                0 to perform the update, 1 to preview
+**
+**  Example usage:
+**    Select * From duplicate_manager_parameter (157, 172, _paramValueSearchText := 'msfileinfoscanner', _paramValueReplaceText := 'AgilentToUimfConverter', _infoOnly := 1);
+**
+**    Select * From duplicate_manager_parameter (179, 182, _paramValueSearchText := 'PbfGen', _paramValueReplaceText := 'ProMex', _infoOnly := 1);
 **
 **  Auth:   mem
 **  Date:   08/26/2013 mem - Initial release

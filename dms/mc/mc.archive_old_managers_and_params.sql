@@ -11,7 +11,11 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **      Moves managers from mc.t_mgrs to mc.t_old_managers and
 **      moves manager parameters from mc.t_param_value to mc.t_param_value_old_managers
 **
-**  Example Usage:
+**  Arguments:
+**    _mgrList    One or more manager names (comma-separated list); supports wildcards
+**    _infoOnly   0 to perform the update, 1 to preview
+**
+**  Example usage:
 **
 **      UPDATE mc.t_mgrs
 **      SET control_from_website = 0
@@ -25,10 +29,6 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => 1, _enableControlFromWebsite => 1);
 **      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => 0, _enableControlFromWebsite => 1);
 **      SELECT * FROM mc.t_mgrs WHERE mgr_name = 'pub-10-1';
-**
-**  Arguments:
-**    _mgrList    One or more manager names (comma-separated list); supports wildcards because uses stored procedure parse_manager_name_list
-**    _infoonly   0 to perform the update, 1 to preview
 **
 **  Auth:   mem
 **  Date:   05/14/2015 mem - Initial version
@@ -80,7 +80,7 @@ BEGIN
     SELECT manager_name
     FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 0);
 
-    If Not Exists (Select * from TmpManagerList) Then
+    If Not Exists (SELECT * FROM TmpManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
         Raise Info 'Warning: %', _message;
 
@@ -113,7 +113,7 @@ BEGIN
     FROM mc.t_mgrs M
     WHERE TmpManagerList.Manager_Name = M.mgr_name;
 
-    If Exists (Select * from TmpManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
+    If Exists (SELECT * FROM TmpManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Unknown manager (not in mc.t_mgrs)',
                MgrList.manager_name
@@ -122,7 +122,7 @@ BEGIN
         ORDER BY MgrList.manager_name;
     End If;
 
-    If Exists (Select * from TmpManagerList MgrList WHERE NOT MgrList.mgr_id is Null And MgrList.control_from_web > 0) Then
+    If Exists (SELECT * FROM TmpManagerList MgrList WHERE NOT MgrList.mgr_id Is Null And MgrList.control_from_web > 0) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager has control_from_website=1; cannot archive',
                MgrList.manager_name
@@ -134,7 +134,7 @@ BEGIN
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
     End If;
 
-    If Exists (Select * From TmpManagerList Where manager_name ILike '%Params%') Then
+    If Exists (SELECT * FROM TmpManagerList Where manager_name ILike '%Params%') Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Will not process managers with "Params" in the name (for safety)',
                manager_name
@@ -150,7 +150,7 @@ BEGIN
     WHERE TmpManagerList.mgr_id Is Null OR
           TmpManagerList.control_from_web > 0;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
+    If Exists (SELECT * FROM TmpManagerList Src INNER JOIN mc.t_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager already exists in t_old_managers; cannot archive',
                manager_name
@@ -162,7 +162,7 @@ BEGIN
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
     End If;
 
-    If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_param_value_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
+    If Exists (SELECT * FROM TmpManagerList Src INNER JOIN mc.t_param_value_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Note: manager already has parameters in t_param_value_old_managers; will merge values from t_param_value',
                manager_name
@@ -171,7 +171,7 @@ BEGIN
                ON Src.mgr_id = Target.mgr_id;
     End If;
 
-    If _infoOnly <> 0 OR NOT EXISTS (Select * From TmpManagerList) Then
+    If _infoOnly <> 0 OR NOT EXISTS (SELECT * FROM TmpManagerList) Then
         RETURN QUERY
         SELECT ' To be archived' as message,
                Src.manager_name,

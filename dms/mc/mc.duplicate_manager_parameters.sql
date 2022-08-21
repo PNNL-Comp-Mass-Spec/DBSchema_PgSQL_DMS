@@ -11,11 +11,14 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 **      Duplicates the parameters for a given manager
 **      to create new parameters for a new manager
 **
-**  Example usage:
-**    select * from duplicate_manager_parameters(157, 172)
-**
 **  Arguments:
+**    _sourceMgrID              Source manager ID
+**    _targetMgrID              Target manager ID
 **    _mergeSourceWithTarget    When 0, then the target manager cannot have any parameters; if 1, then will add missing parameters to the target manager
+**    _infoOnly                 0 to perform the update, 1 to preview
+**
+**  Example usage:
+**    SELECT * FROM duplicate_manager_parameters(157, 172, _infoOnly => 1)
 **
 **  Auth:   mem
 **  Date:   10/10/2014 mem - Initial release
