@@ -16,6 +16,11 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integ
 **    _infoOnly                When non-zero, show the managers that would be updated
 **    _addMgrParamsIfMissing   When 1, if manger(s) are missing parameters RunJobsRemotely or RemoteHostName, will auto-add those parameters
 **
+**  Example usage:
+**
+**      Call mc.enable_disable_run_jobs_remotely(1, 'Pub-14-2,Pub-15-2', _infoOnly => 1, _addMgrParamsIfMissing => 0);
+**      Call mc.enable_disable_run_jobs_remotely(1, 'Pub-14-2,Pub-15-2', _infoOnly => 0, _addMgrParamsIfMissing => 0);
+**
 **  Auth:   mem
 **  Date:   03/28/2018 mem - Initial version
 **          03/29/2018 mem - Add parameter _addMgrParamsIfMissing
@@ -26,6 +31,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integ
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
+**          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **
 *****************************************************/
 DECLARE
@@ -79,7 +85,9 @@ BEGIN
 
     -- Populate TmpManagerList using parse_manager_name_list
     --
-    Call mc.parse_manager_name_list (_managerNameList, _removeUnknownManagers => 1, _message => _message);
+    INSERT INTO TmpManagerList (manager_name)
+    SELECT manager_name
+    FROM mc.parse_manager_name_list (_managerNameList, _remove_unknown_managers => 1);
 
     IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
         _message := 'No valid managers were found in _managerNameList';
@@ -132,9 +140,10 @@ BEGIN
             If Not Exists (SELECT * FROM mc.v_mgr_params Where ParameterName = 'RunJobsRemotely' And ManagerName = _mgrName) Then
                 -- <d1>
 
-                SELECT param_id INTO _paramTypeId
+                SELECT param_id
+                INTO _paramTypeId
                 FROM mc.t_param_type
-                Where param_name = 'RunJobsRemotely';
+                WHERE param_name = 'RunJobsRemotely';
 
                 If Coalesce(_paramTypeId, 0) = 0 Then
                     RAISE WARNING '%', 'Error: could not find parameter "RunJobsRemotely" in mc.t_param_type';
@@ -144,11 +153,11 @@ BEGIN
 
                         -- Actually do go ahead and create the parameter, but use a value of False even if _newValue is True
                         -- We need to do this so the managers are included in the query below with PT.ParamName = 'RunJobsRemotely'
-                        Insert Into mc.t_param_value (mgr_id, type_id, value)
-                        Values (_mgrId, _paramTypeId, 'False');
+                        INSERT INTO mc.t_param_value (mgr_id, type_id, value)
+                        VALUES (_mgrId, _paramTypeId, 'False');
                     Else
-                        Insert Into mc.t_param_value (mgr_id, type_id, value)
-                        Values (_mgrId, _paramTypeId, _newValue);
+                        INSERT INTO mc.t_param_value (mgr_id, type_id, value)
+                        VALUES (_mgrId, _paramTypeId, _newValue);
                     End If;
                 End If;
             End If; -- </d1>
@@ -156,9 +165,10 @@ BEGIN
             If Not Exists (SELECT * FROM mc.v_mgr_params Where ParameterName = 'RemoteHostName' And ManagerName = _mgrName) Then
                 -- <d2>
 
-                SELECT param_id INTO _paramTypeId
+                SELECT param_id
+                INTO _paramTypeId
                 FROM mc.t_param_type
-                Where param_name = 'RemoteHostName';
+                WHERE param_name = 'RemoteHostName';
 
                 If Coalesce(_paramTypeId, 0) = 0 Then
                     RAISE WARNING '%', 'Error: could not find parameter "RemoteHostName" in mc.t_param_type';
@@ -166,8 +176,8 @@ BEGIN
                     If _infoOnly > 0 Then
                         RAISE INFO '%', 'Would create parameter RemoteHostName  for Manager ' || _mgrName || ', value PrismWeb2';
                     Else
-                        Insert Into mc.t_param_value (mgr_id, type_id, value)
-                        Values (_mgrId, _paramTypeId, 'PrismWeb2');
+                        INSERT INTO mc.t_param_value (mgr_id, type_id, value)
+                        VALUES (_mgrId, _paramTypeId, 'PrismWeb2');
                     End If;
                 End If;
             End If; -- </d1>
@@ -182,7 +192,8 @@ BEGIN
 
     -- Count the number of managers that need to be updated
     --
-    SELECT COUNT(*) INTO _countToUpdate
+    SELECT COUNT(*)
+    INTO _countToUpdate
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
            ON PV.type_id = PT.param_id
@@ -200,7 +211,8 @@ BEGIN
 
     -- Count the number of managers already in the target state
     --
-    SELECT COUNT(*) INTO _countUnchanged
+    SELECT COUNT(*)
+    INTO _countUnchanged
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
            ON PV.type_id = PT.param_id
@@ -278,8 +290,9 @@ BEGIN
 
         END LOOP;
 
-        _message := format('Would set %s managers to have RunJobsRemotely set to %s; see the Output window for details',
+        _message := format('Would set %s %s to have RunJobsRemotely set to %s; see the Output window for details',
                             _countToUpdate,
+                            public.check_plural(_countToUpdate, 'manager', 'managers'),
                             _newValue);
 
         DROP TABLE TmpManagerList;
@@ -309,10 +322,17 @@ BEGIN
     If _myRowCount = 1 And _countUnchanged = 0 Then
         _message := 'Configured the manager to ' || _activeStateDescription;
     Else
-        _message := 'Configured ' || _myRowCount::text || ' managers to ' || _activeStateDescription;
+        _message := format('Configured %s %s to %s',
+                        _myRowCount,
+                        public.check_plural(_myRowCount, 'manager', 'managers'),
+                        _activeStateDescription);
 
         If _countUnchanged <> 0 Then
-            _message := _message || ' (' || _countUnchanged::text || ' managers were already set to ' || _activeStateDescription || ')';
+            _message := _message ||
+                            format (' (%s %s already set to %s )',
+                            _countUnchanged,
+                            public.check_plural(_countUnchanged, 'manager was', 'managers were'),
+                            _activeStateDescription);
         End If;
     End If;
 

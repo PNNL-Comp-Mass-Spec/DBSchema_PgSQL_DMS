@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _m
 **          08/20/2022 mem - Store the manager names in an array, which allows the refcursor to filter by manager name without using the temporary table
 **                         - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
+**          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **
 *****************************************************/
 DECLARE
@@ -98,7 +99,8 @@ BEGIN
         -- Make sure _managerTypeID is valid
         _managerTypeName := '';
 
-        SELECT mgr_type_name INTO _managerTypeName
+        SELECT mgr_type_name
+        INTO _managerTypeName
         FROM mc.t_mgr_types
         WHERE mgr_type_id = _managerTypeID AND
               mgr_type_active > 0;
@@ -132,7 +134,9 @@ BEGIN
     If char_length(_managerNameList) > 0 And _managerNameList::citext <> 'All' Then
         -- Populate TmpManagerList using parse_manager_name_list
 
-        Call mc.parse_manager_name_list (_managerNameList, _removeUnknownManagers => 1, _message => _message);
+        INSERT INTO TmpManagerList (manager_name)
+        SELECT manager_name
+        FROM mc.parse_manager_name_list (_managerNameList, _remove_unknown_managers => 1);
 
         If _managerTypeID > 0 Then
             -- Delete entries from TmpManagerList that don't match entries in mgr_name of the given type
@@ -322,7 +326,7 @@ BEGIN
 
         END LOOP;
 
-        _message := format('Would set %s managers to %s; see the Output window for details, or use FETCH ALL FROM "_results"',
+        _message := format('Would set %s managers to %s; see the Output window for details, or use "FETCH ALL FROM _results"',
                             _countToUpdate,
                             _activeStateDescription);
 
@@ -380,7 +384,7 @@ BEGIN
         End If;
     End If;
 
-    _message := _message || '; see also FETCH ALL FROM "_results"';
+    _message := _message || '; see also "FETCH ALL FROM _results"';
 
     RAISE INFO '%', _message;
 

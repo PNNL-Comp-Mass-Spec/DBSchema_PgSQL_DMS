@@ -12,7 +12,13 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **      If _managerList is blank, then sets it to true for all "Analysis Tool Manager" managers
 **
 **  Arguments:
-**    _mgrList   Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
+**    _mgrList      Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
+**    _showtable    Set to 1 to show the old and new values using RAISE INFO messages when _infoOnly is 0; ignored when _infoOnly is 1 (since the table output is always shown)
+**    _infoOnly     1 to preview changes, 0 to make changes
+**
+**  Example usage:
+**
+**      Call mc.set_manager_update_required 'Pub-10-1, Pub-12-%', _showTable => 1, _infoOnly => 1);
 **
 **  Auth:   mem
 **  Date:   01/24/2009 mem - Initial version
@@ -23,6 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
+**          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **
 *****************************************************/
 DECLARE
@@ -57,7 +64,9 @@ BEGIN
         -- Populate TmpManagerList with the managers in _mgrList
         ---------------------------------------------------
         --
-        Call mc.parse_manager_name_list (_mgrList, _removeUnknownManagers => 1, _message => _message);
+        INSERT INTO TmpManagerList (manager_name)
+        SELECT manager_name
+        FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 1);
 
         IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
             _message := 'No valid managers were found in _mgrList';
@@ -86,7 +95,8 @@ BEGIN
     -- Lookup the ParamID value for 'ManagerUpdateRequired'
     ---------------------------------------------------
 
-    SELECT param_id INTO _paramTypeID
+    SELECT param_id
+    INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = 'ManagerUpdateRequired';
 
@@ -121,10 +131,9 @@ BEGIN
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _myRowCount <> 0 Then
-        _message := 'Added entry for "ManagerUpdateRequired" to mc.t_param_value for ' || _myRowCount::text || ' manager';
-        If _myRowCount > 1 Then
-            _message := _message || 's';
-        End If;
+        _message := format('Added entry for ManagerUpdateRequired to mc.t_param_value for %s %s',
+                        _myRowCount,
+                        public.check_plural(_myRowCount, 'manager', 'managers'));
 
         RAISE INFO '%', _message;
     End If;
@@ -175,8 +184,9 @@ BEGIN
             _countToUpdate := _countToUpdate + 1;
         END LOOP;
 
-        _message := format('Would set ManagerUpdateRequired to True for %s managers; see the Output window for details',
-                            _countToUpdate);
+        _message := format('Would set ManagerUpdateRequired to True for %s %s; see the Output window for details',
+                            _countToUpdate,
+                            public.check_plural(_countToUpdate, 'manager', 'managers'));
 
         DROP TABLE TmpManagerList;
         Return;
@@ -195,10 +205,9 @@ BEGIN
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _myRowCount > 0 Then
-        _message := 'Set "ManagerUpdateRequired" to True for ' || _myRowCount::text || ' manager';
-        If _myRowCount > 1 Then
-            _message := _message || 's';
-        End If;
+        _message := format('Set ManagerUpdateRequired to True for %s %s',
+                        _myRowCount,
+                        public.check_plural(_myRowCount, 'manager', 'managers'));
 
         RAISE INFO '%', _message;
     ELSE

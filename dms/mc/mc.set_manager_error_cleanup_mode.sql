@@ -15,6 +15,10 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **    _mgrList       Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
 **    _cleanupMode   0 = No auto cleanup, 1 = Attempt auto cleanup once, 2 = Auto cleanup always
 **
+**  Example usage:
+**
+**      Call mc.set_manager_error_cleanup_mode('Pub-10-1,Pub-11%', 1, _infoonly => 1);
+**
 **  Auth:   mem
 **  Date:   09/10/2009 mem - Initial version
 **          09/29/2014 mem - Expanded _mgrList to varchar(max) and added parameters _showTable and _infoOnly
@@ -25,6 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
+**          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **
 *****************************************************/
 DECLARE
@@ -69,7 +74,9 @@ BEGIN
         -- Populate TmpManagerList with the managers in _mgrList
         ---------------------------------------------------
         --
-        Call mc.parse_manager_name_list (_mgrList, _removeUnknownManagers => 1, _message => _message);
+        INSERT INTO TmpManagerList (manager_name)
+        SELECT manager_name
+        FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 1);
 
         IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
             _message := 'No valid managers were found in _mgrList';
@@ -98,7 +105,8 @@ BEGIN
     -- Lookup the ParamID value for 'ManagerErrorCleanupMode'
     ---------------------------------------------------
 
-    SELECT param_id INTO _paramTypeID
+    SELECT param_id
+    INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = 'ManagerErrorCleanupMode';
 

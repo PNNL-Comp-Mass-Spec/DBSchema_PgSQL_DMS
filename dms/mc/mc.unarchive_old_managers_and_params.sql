@@ -11,8 +11,13 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **      Moves managers from mc.t_old_managers to mc.t_mgrs and
 **      moves manager parameters from mc.t_param_value_old_managers to mc.t_param_value
 **
-**      To reverse this process, use function mc.ArchiveOldManagersAndParams
-**      SELECT * FROM mc.ArchiveOldManagersAndParams('Pub-10-1', _infoOnly := 1);
+**      See also procedure mc.archive_old_managers_and_params
+**
+**  Example Usage:
+**
+**      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => 1, _enableControlFromWebsite => 1);
+**      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => 0, _enableControlFromWebsite => 1);
+**      SELECT * FROM mc.t_mgrs WHERE mgr_name = 'pub-10-1';
 **
 **  Arguments:
 **    _mgrList                    One or more manager names (comma-separated list); supports wildcards because uses stored procedure ParseManagerNameList
@@ -30,6 +35,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp tables before exiting the function
+**          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **
 *****************************************************/
 DECLARE
@@ -67,12 +73,14 @@ BEGIN
 
     ---------------------------------------------------
     -- Populate TmpManagerList with the managers in _mgrList
-    -- Setting _removeUnknownManagers to 0 so that this procedure can be called repeatedly without raising an error
+    -- Setting _remove_unknown_managers to 0 so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
     --
-    Call mc.parse_manager_name_list (_mgrList, _removeUnknownManagers => 0, _message => _message);
+    INSERT INTO TmpManagerList (manager_name)
+    SELECT manager_name
+    FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 0);
 
-    If Not Exists (Select * from TmpManagerList) Then
+    If Not FOUND Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
         Raise Info 'Warning: %', _message;
 

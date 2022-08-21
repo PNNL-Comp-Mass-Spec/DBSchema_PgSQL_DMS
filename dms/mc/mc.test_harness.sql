@@ -6,23 +6,23 @@ CREATE OR REPLACE FUNCTION mc.test_harness(_managernamelist text) RETURNS TABLE(
     LANGUAGE plpgsql
     AS $$
 DECLARE
-    _message TEXT;
+    _managerNames text[];
+    _message text;
     _sqlstate text;
     _exceptionMessage text;
     _exceptionContext text;
 BEGIN
-    CREATE TEMP TABLE TmpManagerList (
-        manager_name text NOT NULL
-     );
 
-    CALL mc.parse_manager_name_list(_managerNameList, _removeUnknownManagers => 0, _message => _message);
+    _managerNames := ARRAY (
+                        SELECT NameQ.manager_name
+                        FROM mc.parse_manager_name_list(_managerNameList, _remove_unknown_managers => 0) NameQ
+                     );
 
-    RAISE INFO '%', _message;
+    RAISE INFO 'Manager count returned: %', array_length(_managerNames, 1);
 
     RETURN Query
-    SELECT * FROM TmpManagerList;
+    SELECT unnest( _managerNames );
 
-    DROP TABLE tmpManagerList;
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
@@ -30,7 +30,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error calling parse_delimited_list: ' || _exceptionMessage;
+    _message := 'Error calling parse_manager_name_list: ' || _exceptionMessage;
 
     RAISE Info '%', _message;
     RAISE Info 'Exception context; %', _exceptionContext;

@@ -18,19 +18,25 @@ BEGIN
         mgr_id int NULL
     );
 
-    CALL mc.parse_manager_name_list(_managerNameList, _removeUnknownManagers => 1, _message => _message);
+    INSERT INTO TmpManagerList (manager_name)
+    SELECT manager_name
+    FROM mc.parse_manager_name_list(_managerNameList, _remove_unknown_managers => 1);
 
-    RAISE INFO '%', _message;
+    UPDATE TmpManagerList
+    SET mgr_id = M.mgr_id
+    FROM mc.t_mgrs M
+    WHERE M.mgr_name = TmpManagerList.manager_name;
 
-    SELECT param_id INTO _paramTypeID
+    SELECT param_id
+    INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = 'ManagerErrorCleanupMode';
 
-    RAISE info '%', _paramTypeID;
+    RAISE info 'ManagerErrorCleanupMode param type ID: %', _paramTypeID;
 
     RETURN query
-    SELECT MgrListA.mgr_id, 0 AS test, MgrListA.manager_name::text
-           FROM TmpManagerList MgrListA;
+    SELECT M.mgr_id, 0 AS test, M.manager_name::text
+    FROM TmpManagerList M;
 
     -- Calling RETURN query again will append additional rows to the output table
     --
@@ -49,7 +55,7 @@ BEGIN
            ON A.mgr_id = B.mgr_id
     WHERE B.mgr_id IS NULL;
 
-    DROP TABLE IF EXISTS TmpManagerList;
+    DROP TABLE TmpManagerList;
 
 EXCEPTION
     WHEN OTHERS THEN

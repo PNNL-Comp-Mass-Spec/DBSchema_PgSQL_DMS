@@ -11,8 +11,20 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **      Moves managers from mc.t_mgrs to mc.t_old_managers and
 **      moves manager parameters from mc.t_param_value to mc.t_param_value_old_managers
 **
-**      To reverse this process, use Function mc.unarchive_old_managers_and_params
-**      Select * from mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly := 1, _enableControlFromWebsite := 0)
+**  Example Usage:
+**
+**      UPDATE mc.t_mgrs
+**      SET control_from_website = 0
+**      WHERE mgr_name = 'pub-10-1' AND control_from_website > 0;
+**
+**      SELECT * FROM mc.archive_old_managers_and_params('Pub-10-1', _infoOnly => 1);
+**
+**      SELECT * FROM mc.archive_old_managers_and_params('Pub-10-1', _infoOnly => 0);
+**
+**      -- To re-add the manager to t_mgrs, use function mc.unarchive_old_managers_and_params
+**      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => 1, _enableControlFromWebsite => 1);
+**      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => 0, _enableControlFromWebsite => 1);
+**      SELECT * FROM mc.t_mgrs WHERE mgr_name = 'pub-10-1';
 **
 **  Arguments:
 **    _mgrList    One or more manager names (comma-separated list); supports wildcards because uses stored procedure parse_manager_name_list
@@ -29,6 +41,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp tables before exiting the function
+**          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **
 *****************************************************/
 DECLARE
@@ -60,10 +73,12 @@ BEGIN
 
     ---------------------------------------------------
     -- Populate TmpManagerList with the managers in _mgrList
-    -- Setting _removeUnknownManagers to 0 so that this procedure can be called repeatedly without raising an error
+    -- Setting _remove_unknown_managers to 0 so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
     --
-    Call mc.parse_manager_name_list (_mgrList, _removeUnknownManagers => 0, _message => _message);
+    INSERT INTO TmpManagerList (manager_name)
+    SELECT manager_name
+    FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 0);
 
     If Not Exists (Select * from TmpManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
