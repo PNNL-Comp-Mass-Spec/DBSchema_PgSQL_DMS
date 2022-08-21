@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **  Date:   06/16/2017 mem - Initial version
 **          01/05/2018 mem - Include username and host_name in RAISERROR message
 **          08/18/2022 mem - Ported to PostgreSQL
+**          08/19/2022 mem - Check for null when updating _message
 **
 *****************************************************/
 DECLARE
@@ -143,7 +144,7 @@ BEGIN
     End if;
 
     If _infoOnly > 0 Then
-        _message := 'Access denied to ' || _procedureNameWithSchema || ' for current user (' || SESSION_USER || ' on host IP ' || _clientHostIP || ')';
+        _message := 'Access denied to ' || _procedureNameWithSchema || ' for current user (' || SESSION_USER || ' on host IP ' || Coalesce(_clientHostIP::text, 'null') || ')';
 
         RETURN QUERY
         SELECT false, _procedureName, _userName, host(_clientHostIP), _message as message;
@@ -151,7 +152,7 @@ BEGIN
         return;
     End If;
 
-    _message := 'User ' || _userName || ' cannot call procedure ' || _procedureNameWithSchema || ' from host IP ' || _clientHostIP;
+    _message := 'User ' || _userName || ' cannot call procedure ' || _procedureNameWithSchema || ' from host IP ' || Coalesce(_clientHostIP::text, 'null');
 
     If _logError > 0 Then
         -- Passing true to _ignoreErrors when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
