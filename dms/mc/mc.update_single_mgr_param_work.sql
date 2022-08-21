@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 **  Date:   04/16/2009
 **          02/10/2020 mem - Ported to PostgreSQL
 **          02/15/2020 mem - Provide a more detailed message of what was updated
+**          08/21/2022 mem - Update return codes
 **
 *****************************************************/
 DECLARE
@@ -38,7 +39,7 @@ BEGIN
     If Coalesce(_paramName, '') = '' Then
         _message := 'Parameter Name is empty or null';
         RAISE WARNING '%', _message;
-        _returnCode := 'U5315';
+        _returnCode := 'U5201';
         Return;
     End If;
 
@@ -54,7 +55,7 @@ BEGIN
     If Not Found Then
         _message := 'Unknown Parameter Name: ' || _paramName;
         RAISE WARNING '%', _message;
-        _returnCode := 'U5316';
+        _returnCode := 'U5202';
         Return;
     End If;
 

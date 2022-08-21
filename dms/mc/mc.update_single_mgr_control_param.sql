@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp tables before exiting the procedure
+**          08/21/2022 mem - Update return code
 **
 *****************************************************/
 DECLARE
@@ -66,7 +67,7 @@ BEGIN
     If Not Found Then
         _message := 'Error: Parameter ''' || _paramName || ''' not found in mc.t_param_type';
         Raise Warning '%', _message;
-        _returnCode := 'U5309'
+        _returnCode := 'U5201'
         Return;
     End If;
 

@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _m
 **                         - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
+**                         - Update return codes
 **
 *****************************************************/
 DECLARE
@@ -83,13 +84,13 @@ BEGIN
 
     If _enable Is Null Then
         _message := '_enable cannot be null';
-        _returnCode := 'U4000';
+        _returnCode := 'U5201';
         Return;
     End If;
 
     If _managerTypeID Is Null Then
         _message := '_managerTypeID cannot be null';
-        _returnCode := 'U4001';
+        _returnCode := 'U5202';
         Return;
     End If;
 
@@ -112,14 +113,14 @@ BEGIN
                 _message := '_managerTypeID ' || _managerTypeID::text || ' not found in mc.t_mgr_types';
             End If;
 
-            _returnCode := 'U4002';
+            _returnCode := 'U5203';
             Return;
         End If;
     End If;
 
     If _enable <> 0 AND char_length(_managerNameList) = 0 Then
         _message := '_managerNameList cannot be blank when _enable is non-zero; to update all managers, set _managerNameList to ''All''';
-        _returnCode := 'U4003';
+        _returnCode := 'U5204';
         Return;
     End If;
 

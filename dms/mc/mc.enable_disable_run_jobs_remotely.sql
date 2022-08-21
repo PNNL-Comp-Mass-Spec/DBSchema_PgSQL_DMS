@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integ
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
+**                         - Update return codes
 **
 *****************************************************/
 DECLARE
@@ -65,13 +66,13 @@ BEGIN
 
     If _enable Is Null Then
         _message := '_enable cannot be null';
-        _returnCode := 'U4000';
+        _returnCode := 'U5201';
         Return;
     End If;
 
     If char_length(_managerNameList) = 0 Then
         _message := '_managerNameList cannot be blank';
-        _returnCode := 'U4003';
+        _returnCode := 'U5202';
         Return;
     End If;
 

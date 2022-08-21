@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **          04/16/2022 mem - Use new object names
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
+**          08/21/2022 mem - Update return code
 **
 *****************************************************/
 DECLARE
@@ -68,7 +69,7 @@ BEGIN
 
     IF NOT FOUND THEN
         _message := 'Did not find any managers of type ' || _managerTypeIDList || ' with parameter ' || _paramName || ' and control_from_website > 0';
-        _returnCode := 'U5100';
+        _returnCode := 'U5201';
 
         DROP TABLE TmpParamValueEntriesToUpdate;
         Return;
