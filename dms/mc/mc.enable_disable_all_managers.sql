@@ -25,10 +25,12 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          03/23/2022 mem - Pass _results cursor to EnableDisableManagers
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new object names
+**          08/20/2022 mem - Concatenate messages returned by enable_disable_managers
 **
 *****************************************************/
 DECLARE
     _mgrTypeID int;
+    _msg text;
     _results refcursor;
     _sqlstate text;
     _exceptionMessage text;
@@ -84,8 +86,13 @@ BEGIN
             _managerNameList := _managerNameList,
             _infoOnly := _infoOnly,
             _results := _results,
-            _message := _message,
+            _message := _msg,
             _returnCode := _returnCode);
+
+
+        If Char_Length(_msg) > 0 Then
+            _message := public.append_to_text(_message, _msg, _delimiter := '; ');
+        End If;
 
     End Loop;
 
