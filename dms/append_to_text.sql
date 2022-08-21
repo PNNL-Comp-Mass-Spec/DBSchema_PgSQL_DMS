@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.append_to_text(_basetext text, _addnltext text
 **  Date:   05/12/2010 mem - Initial version
 **          06/12/2018 mem - Add parameter _maxLength
 **          02/10/2020 mem - Ported to PostgreSQL
+***         08/20/2022 mem - Do not append the delimiter if already present at the end of the base text
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,16 @@ BEGIN
             If _updatedText = '' Then
                 _updatedText := _addnlText;
             Else
-                _updatedText := _updatedText || _delimiter || _addnlText;
+                If char_length(Trim(_delimiter)) > 0 And RTrim(_updatedText) Like '%' || RTrim(_delimiter) Then
+                    -- The text already ends with the delimiter, though we may need to add a space
+                    If _delimiter Like '% ' And Not _updatedText Like '% ' Then
+                        _updatedText := _updatedText || ' ';
+                    End If;
+                Else
+                    _updatedText := _updatedText || _delimiter;
+                End If;
+
+                _updatedText := _updatedText || _addnlText;
             End If;
         End If;
 
