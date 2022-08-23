@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          01/05/2018 mem - Include username and host_name in RAISERROR message
 **          08/18/2022 mem - Ported to PostgreSQL
 **          08/19/2022 mem - Check for null when updating _message
-**          08/20/2022 mem - If an exception occurs, include the procedure name in the message
+**          08/23/2022 mem - Log messages to t_log_entries in the public schema
 **
 *****************************************************/
 DECLARE
@@ -153,11 +153,13 @@ BEGIN
         return;
     End If;
 
-    _message := 'User ' || _userName || ' cannot call procedure ' || _procedureNameWithSchema || ' from host IP ' || Coalesce(_clientHostIP::text, 'null');
+    _message := 'User ' || Coalesce(_userName, '??') ||
+                ' cannot call procedure ' || Coalesce(_procedureNameWithSchema, _procedureName) ||
+                ' from host IP ' || Coalesce(_clientHostIP::text, 'null');
 
     If _logError > 0 Then
         -- Passing true to _ignoreErrors when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
-        Call post_log_entry ('Error', _message, 'verify_sp_authorized', _targetSchema, _ignoreErrors => true);
+        Call public.post_log_entry ('Error', _message, 'verify_sp_authorized', 'public', _ignoreErrors => true);
     End If;
 
     RETURN QUERY
