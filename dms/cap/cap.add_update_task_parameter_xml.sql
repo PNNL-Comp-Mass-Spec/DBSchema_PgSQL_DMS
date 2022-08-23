@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **      Note that case is ignored when matching section and parameter names in the XML to _section and _paramName
 **
 **  Arguments:
-**    _xmlParameters    XML parameters
+**    _xmlParameters    XML parameters (if empty XML or null, this function will create a new XML instance with the specified parameter and value)
 **    _section          Section name, e.g.   JobParameters
 **    _paramName        Parameter name, e.g. SourceJob
 **    _value            Value for parameter _paramName in section _section
@@ -83,10 +83,10 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **  Date:   09/24/2012 mem - Ported from DMS_Pipeline DB
 **          08/21/2022 mem - Ported to PostgreSQL
 **          08/22/2022 mem - Use case insensitive matching for section and parameter names
+**                         - If the _xmlParameters argument is empty or null, return a new XML instance with the specified parameter and value
 **
 *****************************************************/
 DECLARE
-    _message text;
     _formatSpecifier text := '%-15s %-20s %-35s %-25s';
     _infoHead text;
     _infoHeadSeparator text;
@@ -101,15 +101,10 @@ BEGIN
     _deleteParam := Coalesce(_deleteParam, 0);
     _showDebug := Coalesce(_showDebug, 0);
 
-    _message := '';
-
     If _xmlParameters Is Null Then
-        _message := 'Null value sent to _xmlParameters';
+        RAISE INFO 'Null value sent to _xmlParameters; initializing a new XML instance';
 
-        RETURN QUERY
-        SELECT null::xml, false, _message;
-
-        Return;
+        _xmlParameters = ''::xml;
     End If;
 
     ---------------------------------------------------
