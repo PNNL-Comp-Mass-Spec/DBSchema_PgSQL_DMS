@@ -92,6 +92,7 @@ DECLARE
     _infoHeadSeparator text;
     _infoData text;
     _previewData record;
+    _deletedFlag text := 'Deleted Value';
 BEGIN
     ---------------------------------------------------
     -- Validate input fields
@@ -200,7 +201,7 @@ BEGIN
         ---------------------------------------------------
         --
         UPDATE Tmp_TaskParameters
-        SET State = 'Deleted Value'
+        SET State = _deletedFlag
         WHERE Section = _section::citext AND
               Name    = _paramName::citext;
 
@@ -245,7 +246,7 @@ BEGIN
                     ORDER BY section, name
                    ) AS xml_item
            FROM Tmp_TaskParameters
-           WHERE State <> 'Deleted'
+           WHERE State <> _deletedFlag
         ) AS LookupQ;
 
     DROP TABLE Tmp_TaskParameters;
