@@ -10,6 +10,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **  Desc:
 **      Adds or updates an entry in the XML parameters, returning the updated XML
 **      Alternatively, use _deleteParam=1 to delete the given parameter
+**      Note that case is ignored when matching section and parameter names in the XML to _section and _paramName
 **
 **  Arguments:
 **    _xmlParameters    XML parameters
@@ -81,6 +82,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **  Auth:   mem
 **  Date:   09/24/2012 mem - Ported from DMS_Pipeline DB
 **          08/21/2022 mem - Ported to PostgreSQL
+**          08/22/2022 mem - Use case insensitive matching for section and parameter names
 **
 *****************************************************/
 DECLARE
@@ -183,8 +185,8 @@ BEGIN
         --
         UPDATE Tmp_TaskParameters
         SET Value = _value, State = 'Updated Value'
-        WHERE Section = _section AND
-              Name = _paramName;
+        WHERE Section = _section::citext AND
+              Name = _paramName::citext;
 
         If Not FOUND Then
             -- Match not found; Insert a new parameter
@@ -199,8 +201,8 @@ BEGIN
         --
         UPDATE Tmp_TaskParameters
         SET State = 'Deleted Value'
-        WHERE Section = _section AND
-              Name = _paramName;
+        WHERE Section = _section::citext AND
+              Name    = _paramName::citext;
 
     End If;
 
