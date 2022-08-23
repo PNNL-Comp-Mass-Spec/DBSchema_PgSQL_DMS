@@ -84,6 +84,9 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **          08/21/2022 mem - Ported to PostgreSQL
 **          08/22/2022 mem - Use case insensitive matching for section and parameter names
 **                         - If the _xmlParameters argument is empty or null, return a new XML instance with the specified parameter and value
+**          08/23/2022 mem - Raise an exception if the section name or parameter name is null or empty
+**                         - Assure that _value is not null
+**                         - Report the state as 'Unchanged Value' if the old and new values for the parameter are equivalent
 **
 *****************************************************/
 DECLARE
@@ -98,6 +101,9 @@ BEGIN
     -- Validate input fields
     ---------------------------------------------------
 
+    _section := Coalesce(_section, '');
+    _paramName := Coalesce(_paramName, '');
+    _value := Coalesce(_value, '');
     _deleteParam := Coalesce(_deleteParam, 0);
     _showDebug := Coalesce(_showDebug, 0);
 
@@ -105,6 +111,14 @@ BEGIN
         RAISE INFO 'Null value sent to _xmlParameters; initializing a new XML instance';
 
         _xmlParameters = ''::xml;
+    End If;
+
+    If character_length(Trim(_section)) = 0 Then
+        RAISE EXCEPTION 'Section name cannot be null or empty';
+    End If;
+
+    If character_length(Trim(_paramName)) = 0 Then
+        RAISE EXCEPTION 'Parameter name cannot be null or empty';
     End If;
 
     ---------------------------------------------------
@@ -179,8 +193,9 @@ BEGIN
         -- First try an update
         ---------------------------------------------------
         --
+
         UPDATE Tmp_TaskParameters
-        SET Value = _value, State = 'Updated Value'
+        SET Value = _value, State = Case When Value Is Distinct From _value Then 'Updated Value' Else 'Unchanged Value' End
         WHERE Section = _section::citext AND
               Name = _paramName::citext;
 
