@@ -2,7 +2,7 @@
 -- Name: parse_manager_name_list(text, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DEFAULT ''::text, _remove_unknown_managers integer DEFAULT 1) RETURNS TABLE(manager_name text)
+CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DEFAULT ''::text, _remove_unknown_managers integer DEFAULT 1) RETURNS TABLE(manager_name public.citext)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
@@ -26,13 +26,14 @@ CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DE
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Convert from procedure to function
 **                         - Replace temp tables with arrays
+**          08/22/2022 mem - Change column manager_name to citext in the returned table
 **
 *****************************************************/
 DECLARE
-    _managerSpecList text[];
-    _managerList text[];
-    _additionalManagers text[];
-    _managerFilter text;
+    _managerSpecList citext[];
+    _managerList citext[];
+    _additionalManagers citext[];
+    _managerFilter citext;
     _s text;
     _initialCount int;
     _finalCount int;
