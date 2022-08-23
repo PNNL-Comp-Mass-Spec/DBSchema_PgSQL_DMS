@@ -1,8 +1,8 @@
 --
--- Name: test_triggers(integer, integer, integer, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: test_triggers(integer, integer, integer, integer); Type: FUNCTION; Schema: test; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.test_triggers(_createitems integer DEFAULT 0, _updatestates integer DEFAULT 0, _deleteitems integer DEFAULT 0, _renameitems integer DEFAULT 0) RETURNS TABLE(entry_id integer, item_type text, item_name text, item_id integer, action text, comment text)
+CREATE OR REPLACE FUNCTION test.test_triggers(_createitems integer DEFAULT 0, _updatestates integer DEFAULT 0, _deleteitems integer DEFAULT 0, _renameitems integer DEFAULT 0) RETURNS TABLE(entry_id integer, item_type text, item_name text, item_id integer, action text, comment text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -1036,5 +1036,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.test_triggers(_createitems integer, _updatestates integer, _deleteitems integer, _renameitems integer) OWNER TO d3l243;
+ALTER FUNCTION test.test_triggers(_createitems integer, _updatestates integer, _deleteitems integer, _renameitems integer) OWNER TO d3l243;
 

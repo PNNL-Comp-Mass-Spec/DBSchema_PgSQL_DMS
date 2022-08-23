@@ -1,8 +1,8 @@
 --
--- Name: test_harness(text); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: test_harness(text); Type: FUNCTION; Schema: test; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.test_harness(_managernamelist text) RETURNS TABLE(manager_name text)
+CREATE OR REPLACE FUNCTION test.test_harness(_managernamelist text) RETURNS TABLE(manager_name text)
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -41,5 +41,5 @@ End
 $$;
 
 
-ALTER FUNCTION mc.test_harness(_managernamelist text) OWNER TO d3l243;
+ALTER FUNCTION test.test_harness(_managernamelist text) OWNER TO d3l243;
 
