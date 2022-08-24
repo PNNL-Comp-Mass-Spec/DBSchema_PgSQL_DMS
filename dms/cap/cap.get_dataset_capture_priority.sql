@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.
 **
 **  Desc:
 **      Determines if the dataset warrants preferential processing priority for dataset capture
-**      This procedure is used by MakeNewJobsFromDMS to define the capture job priority
+**      This procedure is used by make_new_jobs_from_dms to define the capture job priority
 **
 **      If the dataset name matches one of the filters below, the capture priority will be 2 instead of 4
 **      Otherwise, if the instrument group matches one of the filters, the capture priority will be 6 instead of 4
@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.
 **  Auth:   mem
 **  Date:   06/27/2019 mem - Initial version
 **          06/24/2022 mem - Ported to PostgreSQL
+**          08/24/2022 mem - Fix ElsIf typo
 **
 *****************************************************/
 DECLARE
@@ -33,7 +34,7 @@ BEGIN
         _datasetName SIMILAR TO 'QC[_]PP[_]MCF-7%'
        ) AND NOT _datasetName LIKE '%-bad' Then
          _priority := 2;
-    ElseIf _instrumentGroup In ('TSQ', 'Bruker_FTMS', 'MALDI-Imaging') Then
+    ElsIf _instrumentGroup In ('TSQ', 'Bruker_FTMS', 'MALDI-Imaging') Then
         _priority := 6;
     Else
         _priority := 4;
