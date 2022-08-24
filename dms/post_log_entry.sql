@@ -8,13 +8,13 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 /****************************************************
 **
 **  Desc:
-**      Append a log entry to T_Log_Entries, either in the public schema or the specified schema
+**      Append a log entry to t_log_entries, either in the public schema or the specified schema
 **
 **  Arguments:
 **    _type                         Message type, typically Normal, Warning, Error, or Progress, but can be any text value
 **    _message                      Log message
 **    _postedBy                     Name of the calling procedure
-**    _targetSchema                 If blank or 'public', log to public.T_Log_Entries; otherwise, log to T_Log_Entries for the given schema (assumes the table exists)
+**    _targetSchema                 If blank or 'public', log to public.t_log_entries; otherwise, log to t_log_entries for the given schema (if the table does not exist, uses public.t_log_entries)
 **    _duplicateEntryHoldoffHours   Set this to a value greater than 0 to prevent duplicate entries being posted within the given number of hours
 **    _ignoreErrors                 Set this to true to show a warning if an exception occus (typically due to the calling user not having write access to t_log_entries)
 **
@@ -30,10 +30,12 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          01/28/2020 mem - Ported to PostgreSQL
 **          08/18/2022 mem - Add argment _ignoreErrors
 **          08/19/2022 mem - Remove local variable _message that was masking the _message argument
+**          08/24/2022 mem - Log to public.t_log_entries if the specified schema does not have a t_log_entries table
 **
 *****************************************************/
 DECLARE
     _targetTableWithSchema text;
+    _logTableFound bool;
     _minimumPostingTime timestamp;
     _duplicateRowCount int := 0;
     _s text;
@@ -53,6 +55,14 @@ BEGIN
     End If;
 
     _targetTableWithSchema := format('%I.%I', _targetSchema, 't_log_entries');
+
+    SELECT table_exists
+    INTO _logTableFound
+    FROM public.resolve_table_name(_targetTableWithSchema);
+
+    If Not _logTableFound Then
+        _targetTableWithSchema := 'public.t_log_entries';
+    End If;
 
     _type := Coalesce(_type, 'Normal');
     _message := Coalesce(_message, '');
@@ -80,7 +90,9 @@ BEGIN
                      ' posting_time >= $3',
                 _targetTableWithSchema);
 
-        EXECUTE _s INTO _duplicateRowCount USING _message, _type, _minimumPostingTime;
+        EXECUTE _s
+        INTO _duplicateRowCount
+        USING _message, _type, _minimumPostingTime;
 
     End If;
 
@@ -116,7 +128,7 @@ EXCEPTION
     RAISE Warning '%', _message;
 
     If _ignoreErrors Then
-        return;
+        Return;
     End If;
 
     RAISE Warning 'Context: %', _exceptionContext;
