@@ -80,21 +80,21 @@ BEGIN
     -- Create a temporary table
     -----------------------------------------------
 
-    CREATE TEMP TABLE TmpManagerList (
+    CREATE TEMP TABLE Tmp_ManagerList (
         manager_name citext NOT NULL
     );
 
-    -- Populate TmpManagerList using parse_manager_name_list
+    -- Populate Tmp_ManagerList using parse_manager_name_list
     --
-    INSERT INTO TmpManagerList (manager_name)
+    INSERT INTO Tmp_ManagerList (manager_name)
     SELECT manager_name
     FROM mc.parse_manager_name_list (_managerNameList, _remove_unknown_managers => 1);
 
-    IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
+    IF NOT EXISTS (SELECT * FROM Tmp_ManagerList) THEN
         _message := 'No valid managers were found in _managerNameList';
         RAISE INFO '%', _message;
 
-        DROP TABLE TmpManagerList;
+        DROP TABLE Tmp_ManagerList;
         Return;
     END IF;
 
@@ -107,19 +107,19 @@ BEGIN
         _activeStateDescription := 'run jobs remotely';
     End If;
 
-    If Exists (Select * From TmpManagerList Where manager_name = 'Default_AnalysisMgr_Params') Then
-        Delete From TmpManagerList Where manager_name = 'Default_AnalysisMgr_Params';
+    If Exists (Select * From Tmp_ManagerList Where manager_name = 'Default_AnalysisMgr_Params') Then
+        Delete From Tmp_ManagerList Where manager_name = 'Default_AnalysisMgr_Params';
 
         _message := 'For safety, not updating RunJobsRemotely for manager Default_AnalysisMgr_Params';
 
-        If Exists (Select * From TmpManagerList) Then
-            -- TmpManagerList contains other managers; update them
+        If Exists (Select * From Tmp_ManagerList) Then
+            -- Tmp_ManagerList contains other managers; update them
             RAISE INFO '%', _message;
         Else
-            -- TmpManagerList is now empty; abort
+            -- Tmp_ManagerList is now empty; abort
             RAISE INFO '%', _message;
 
-            DROP TABLE TmpManagerList;
+            DROP TABLE Tmp_ManagerList;
             Return;
         End If;
     End If;
@@ -129,7 +129,7 @@ BEGIN
         FOR _mgrRecord IN
             SELECT U.manager_name,
                    M.mgr_id
-            FROM TmpManagerList U
+            FROM Tmp_ManagerList U
                  INNER JOIN mc.t_mgrs M
                    ON U.manager_name = M.mgr_name
             ORDER BY U.manager_name
@@ -202,7 +202,7 @@ BEGIN
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
-         INNER JOIN TmpManagerList U
+         INNER JOIN Tmp_ManagerList U
            ON M.mgr_name = U.manager_name
     WHERE PT.param_name = 'RunJobsRemotely' AND
           PV.value <> _newValue AND
@@ -221,7 +221,7 @@ BEGIN
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
-         INNER JOIN TmpManagerList U
+         INNER JOIN Tmp_ManagerList U
            ON M.mgr_name = U.manager_name
     WHERE PT.param_name = 'RunJobsRemotely' AND
           PV.value = _newValue AND
@@ -249,7 +249,7 @@ BEGIN
 
         RAISE INFO '%', _message;
 
-        DROP TABLE TmpManagerList;
+        DROP TABLE Tmp_ManagerList;
         Return;
     End If;
 
@@ -274,7 +274,7 @@ BEGIN
                    ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
                    ON M.mgr_type_id = MT.mgr_type_id
-                 INNER JOIN TmpManagerList U
+                 INNER JOIN Tmp_ManagerList U
                    ON M.mgr_name = U.manager_name
             WHERE PT.param_name = 'RunJobsRemotely' AND
                   PV.value <> _newValue AND
@@ -296,11 +296,11 @@ BEGIN
                             public.check_plural(_countToUpdate, 'manager', 'managers'),
                             _newValue);
 
-        DROP TABLE TmpManagerList;
+        DROP TABLE Tmp_ManagerList;
         Return;
     End If;
 
-    -- Update RunJobsRemotely for the managers in TmpManagerList
+    -- Update RunJobsRemotely for the managers in Tmp_ManagerList
     --
     UPDATE mc.t_param_value
     SET value = _newValue
@@ -311,7 +311,7 @@ BEGIN
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
-         INNER JOIN TmpManagerList U
+         INNER JOIN Tmp_ManagerList U
            ON M.mgr_name = U.manager_name
     WHERE mc.t_param_value.entry_ID = PV.Entry_ID AND
           PT.param_name = 'RunJobsRemotely' AND
@@ -339,7 +339,7 @@ BEGIN
 
     RAISE INFO '%', _message;
 
-    DROP TABLE TmpManagerList;
+    DROP TABLE Tmp_ManagerList;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -356,7 +356,7 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'EnableDisableRunJobsRemotely', 'mc');
 
-    DROP TABLE IF EXISTS TmpManagerList;
+    DROP TABLE IF EXISTS Tmp_ManagerList;
 END
 $$;
 

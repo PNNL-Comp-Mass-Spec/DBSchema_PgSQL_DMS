@@ -82,13 +82,13 @@ BEGIN
     -- Also create a temporary table for tracking manager IDs
     ---------------------------------------------------
 
-    CREATE TEMP TABLE TmpParamValueEntriesToUpdate (
+    CREATE TEMP TABLE Tmp_ParamValueEntriesToUpdate (
         entry_id int NOT NULL
     );
 
-    CREATE UNIQUE INDEX IX_TmpParamValueEntriesToUpdate ON TmpParamValueEntriesToUpdate (entry_id);
+    CREATE UNIQUE INDEX IX_Tmp_ParamValueEntriesToUpdate ON Tmp_ParamValueEntriesToUpdate (entry_id);
 
-    CREATE TEMP TABLE TmpMgrIDs (
+    CREATE TEMP TABLE Tmp_MgrIDs (
         mgr_id int NOT NULL
     );
 
@@ -96,7 +96,7 @@ BEGIN
     -- Parse the manager ID list
     ---------------------------------------------------
     --
-    INSERT INTO TmpMgrIDs (mgr_id)
+    INSERT INTO Tmp_MgrIDs (mgr_id)
     SELECT value
     FROM public.parse_delimited_integer_list ( _managerIDList, ',' );
     --
@@ -107,25 +107,25 @@ BEGIN
 
         RAISE Warning '%', _message;
 
-        DROP TABLE TmpParamValueEntriesToUpdate;
-        DROP TABLE TmpMgrIDs;
+        DROP TABLE Tmp_ParamValueEntriesToUpdate;
+        DROP TABLE Tmp_MgrIDs;
 
         Return;
     END IF;
 
-    RAISE Info 'Inserted % manager IDs into TmpMgrIDs', _managerCount;
+    RAISE Info 'Inserted % manager IDs into Tmp_MgrIDs', _managerCount;
 
     IF NOT EXISTS (SELECT *
                    FROM mc.t_mgrs M
-                          INNER JOIN TmpMgrIDs ON M.mgr_id = TmpMgrIDs.mgr_id
+                          INNER JOIN Tmp_MgrIDs ON M.mgr_id = Tmp_MgrIDs.mgr_id
                    WHERE M.control_from_website > 0) Then
 
         _message = 'All of the managers have control_from_website = 0 in t_mgrs; parameters not updated';
 
         RAISE Warning '%', _message;
 
-        DROP TABLE TmpParamValueEntriesToUpdate;
-        DROP TABLE TmpMgrIDs;
+        DROP TABLE Tmp_ParamValueEntriesToUpdate;
+        DROP TABLE Tmp_MgrIDs;
 
         Return;
     END IF;
@@ -154,8 +154,8 @@ BEGIN
                    _newValue AS NewValue,
                    Case When Coalesce(PV.value, '') <> _newValue Then 'Changed' Else 'Unchanged' End As Status
             FROM mc.t_mgrs M
-                 INNER JOIN TmpMgrIDs
-                   ON M.mgr_id = TmpMgrIDs.mgr_id
+                 INNER JOIN Tmp_MgrIDs
+                   ON M.mgr_id = Tmp_MgrIDs.mgr_id
                  INNER JOIN mc.v_param_value PV
                    ON PV.mgr_id = M.mgr_id AND
                       PV.type_id = _paramTypeID
@@ -170,8 +170,8 @@ BEGIN
                    '' AS NewValue,
                    'Skipping: control_from_website is 0 in mc.t_mgrs' AS  Status
             FROM mc.t_mgrs M
-                 INNER JOIN TmpMgrIDs
-                   ON M.mgr_id = TmpMgrIDs.mgr_id
+                 INNER JOIN Tmp_MgrIDs
+                   ON M.mgr_id = Tmp_MgrIDs.mgr_id
                  INNER JOIN mc.v_param_value PV
                    ON PV.mgr_id = M.mgr_id AND
                       PV.type_id = _paramTypeID
@@ -186,8 +186,8 @@ BEGIN
                    _newValue AS NewValue,
                    'New'
             FROM mc.t_mgrs M
-                 INNER JOIN TmpMgrIDs
-                   ON M.mgr_id = TmpMgrIDs.mgr_id
+                 INNER JOIN Tmp_MgrIDs
+                   ON M.mgr_id = Tmp_MgrIDs.mgr_id
                  LEFT OUTER JOIN mc.t_param_value PV
                    ON PV.mgr_id = M.mgr_id AND
                       PV.type_id = _paramTypeID
@@ -210,8 +210,8 @@ BEGIN
 
         _message := public.append_to_text(_message, 'See the Output window for details');
 
-        DROP TABLE TmpParamValueEntriesToUpdate;
-        DROP TABLE TmpMgrIDs;
+        DROP TABLE Tmp_ParamValueEntriesToUpdate;
+        DROP TABLE Tmp_MgrIDs;
 
         Return;
     End If;
@@ -224,7 +224,7 @@ BEGIN
     --  we'll force a call to update_single_mgr_param_work
     --
     -- Intentionally not filtering on M.control_from_website > 0 here,
-    -- but the query that populates TmpParamValueEntriesToUpdate does filter on that parameter
+    -- but the query that populates Tmp_ParamValueEntriesToUpdate does filter on that parameter
     ---------------------------------------------------
 
     INSERT INTO mc.t_param_value( type_id,
@@ -232,10 +232,10 @@ BEGIN
                                   mgr_id )
     SELECT _paramTypeID,
            '##_DummyParamValue_##',
-           TmpMgrIDs.mgr_id
+           Tmp_MgrIDs.mgr_id
     FROM mc.t_mgrs M
-         INNER JOIN TmpMgrIDs
-           ON M.mgr_id = TmpMgrIDs.mgr_id
+         INNER JOIN Tmp_MgrIDs
+           ON M.mgr_id = Tmp_MgrIDs.mgr_id
          LEFT OUTER JOIN mc.t_param_value PV
            ON PV.mgr_id = M.mgr_id AND
               PV.type_id = _paramTypeID
@@ -243,16 +243,16 @@ BEGIN
 
     ---------------------------------------------------
     -- Find the entries for the Managers in _managerIDList
-    -- Populate TmpParamValueEntriesToUpdate with the entries that need to be updated
+    -- Populate Tmp_ParamValueEntriesToUpdate with the entries that need to be updated
     ---------------------------------------------------
     --
-    INSERT INTO TmpParamValueEntriesToUpdate( entry_id )
+    INSERT INTO Tmp_ParamValueEntriesToUpdate( entry_id )
     SELECT PV.entry_id
     FROM mc.t_param_value PV
          INNER JOIN mc.t_mgrs M
            ON PV.mgr_id = M.mgr_id
-         INNER JOIN TmpMgrIDs
-           ON M.mgr_id = TmpMgrIDs.mgr_id
+         INNER JOIN Tmp_MgrIDs
+           ON M.mgr_id = Tmp_MgrIDs.mgr_id
     WHERE M.control_from_website > 0 AND
           PV.type_id = _paramTypeID AND
           Coalesce(PV.value, '') <> _newValue;
@@ -262,8 +262,8 @@ BEGIN
                        FROM mc.t_param_value PV
                             INNER JOIN mc.t_mgrs M
                               ON PV.mgr_id = M.mgr_id
-                            INNER JOIN TmpMgrIDs
-                              ON M.mgr_id = TmpMgrIDs.mgr_id
+                            INNER JOIN Tmp_MgrIDs
+                              ON M.mgr_id = Tmp_MgrIDs.mgr_id
                        WHERE M.control_from_website > 0 AND
                              PV.type_id = _paramTypeID) Then
 
@@ -284,8 +284,8 @@ BEGIN
 
         RAISE Info '%', _message;
 
-        DROP TABLE TmpParamValueEntriesToUpdate;
-        DROP TABLE TmpMgrIDs;
+        DROP TABLE Tmp_ParamValueEntriesToUpdate;
+        DROP TABLE Tmp_MgrIDs;
 
         Return;
     End If;
@@ -297,8 +297,8 @@ BEGIN
     --
     Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
-    DROP TABLE TmpParamValueEntriesToUpdate;
-    DROP TABLE TmpMgrIDs;
+    DROP TABLE Tmp_ParamValueEntriesToUpdate;
+    DROP TABLE Tmp_MgrIDs;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -315,8 +315,8 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'UpdateSingleMgrControlParam', 'mc');
 
-    DROP TABLE IF EXISTS TmpParamValueEntriesToUpdate;
-    DROP TABLE IF EXISTS TmpMgrIDs;
+    DROP TABLE IF EXISTS Tmp_ParamValueEntriesToUpdate;
+    DROP TABLE IF EXISTS Tmp_MgrIDs;
 END
 $$;
 

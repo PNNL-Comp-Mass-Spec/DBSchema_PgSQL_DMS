@@ -128,22 +128,22 @@ BEGIN
     -- Create a temporary table
     -----------------------------------------------
 
-    CREATE TEMP TABLE TmpManagerList (
+    CREATE TEMP TABLE Tmp_ManagerList (
         manager_name citext NOT NULL
     );
 
     If char_length(_managerNameList) > 0 And _managerNameList::citext <> 'All' Then
-        -- Populate TmpManagerList using parse_manager_name_list
+        -- Populate Tmp_ManagerList using parse_manager_name_list
 
-        INSERT INTO TmpManagerList (manager_name)
+        INSERT INTO Tmp_ManagerList (manager_name)
         SELECT manager_name
         FROM mc.parse_manager_name_list (_managerNameList, _remove_unknown_managers => 1);
 
         If _managerTypeID > 0 Then
-            -- Delete entries from TmpManagerList that don't match entries in mgr_name of the given type
-            DELETE FROM TmpManagerList
+            -- Delete entries from Tmp_ManagerList that don't match entries in mgr_name of the given type
+            DELETE FROM Tmp_ManagerList
             WHERE NOT manager_name IN ( SELECT M.mgr_name
-                                        FROM TmpManagerList U
+                                        FROM Tmp_ManagerList U
                                              INNER JOIN mc.t_mgrs M
                                                ON M.mgr_name = U.manager_name AND
                                                   M.mgr_type_id = _managerTypeID );
@@ -158,18 +158,18 @@ BEGIN
         End If;
 
         IF _includeDisabled = 0 THEN
-            DELETE FROM TmpManagerList
+            DELETE FROM Tmp_ManagerList
             WHERE NOT manager_name IN ( SELECT M.mgr_name
-                                        FROM TmpManagerList U
+                                        FROM Tmp_ManagerList U
                                              INNER JOIN mc.t_mgrs M
                                                ON M.mgr_name = U.manager_name AND
                                                   M.mgr_type_id = _managerTypeID
                                         WHERE control_from_website > 0);
         END IF;
     Else
-        -- Populate TmpManagerList with all managers in mc.t_mgrs (of type _managerTypeID)
+        -- Populate Tmp_ManagerList with all managers in mc.t_mgrs (of type _managerTypeID)
         --
-        INSERT INTO TmpManagerList (manager_name)
+        INSERT INTO Tmp_ManagerList (manager_name)
         SELECT mgr_name
         FROM mc.t_mgrs
         WHERE mgr_type_id = _managerTypeID And
@@ -198,7 +198,7 @@ BEGIN
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
-         INNER JOIN TmpManagerList U
+         INNER JOIN Tmp_ManagerList U
            ON M.mgr_name = U.manager_name
     WHERE PT.param_name = 'mgractive' AND
           PV.value <> _newValue AND
@@ -217,7 +217,7 @@ BEGIN
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
            ON M.mgr_type_id = MT.mgr_type_id
-         INNER JOIN TmpManagerList U
+         INNER JOIN Tmp_ManagerList U
            ON M.mgr_name = U.manager_name
     WHERE PT.param_name = 'mgractive' AND
           PV.value = _newValue AND
@@ -233,11 +233,11 @@ BEGIN
     -- without using the temporary table
     --
     _mgrNames := ARRAY( SELECT manager_name
-                        FROM TmpManagerList
+                        FROM Tmp_ManagerList
                       );
 
     -- We no longer need the temporary table
-    DROP TABLE TmpManagerList;
+    DROP TABLE Tmp_ManagerList;
 
     If _countToUpdate = 0 Then
         If _countUnchanged = 0 Then
@@ -423,7 +423,7 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'EnableDisableManagers', 'mc');
 
-    DROP TABLE IF EXISTS TmpManagerList;
+    DROP TABLE IF EXISTS Tmp_ManagerList;
 END
 $$;
 

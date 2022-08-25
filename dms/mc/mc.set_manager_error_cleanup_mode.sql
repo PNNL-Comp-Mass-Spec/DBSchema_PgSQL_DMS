@@ -64,38 +64,38 @@ BEGIN
         _cleanupMode := 2;
     End If;
 
-    CREATE TEMP TABLE TmpManagerList (
+    CREATE TEMP TABLE Tmp_ManagerList (
         manager_name citext NOT NULL,
         mgr_id int NULL
     );
 
     If char_length(_mgrList) > 0 AND _mgrList <> '%' Then
         ---------------------------------------------------
-        -- Populate TmpManagerList with the managers in _mgrList
+        -- Populate Tmp_ManagerList with the managers in _mgrList
         ---------------------------------------------------
         --
-        INSERT INTO TmpManagerList (manager_name)
+        INSERT INTO Tmp_ManagerList (manager_name)
         SELECT manager_name
         FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 1);
 
-        IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
+        IF NOT EXISTS (SELECT * FROM Tmp_ManagerList) THEN
             _message := 'No valid managers were found in _mgrList';
             RAISE INFO '%', _message;
 
-            DROP TABLE TmpManagerList;
+            DROP TABLE Tmp_ManagerList;
             Return;
         END IF;
 
-        UPDATE TmpManagerList
+        UPDATE Tmp_ManagerList
         SET mgr_id = M.mgr_id
         FROM mc.t_mgrs M
-        WHERE TmpManagerList.Manager_Name = M.mgr_name;
+        WHERE Tmp_ManagerList.Manager_Name = M.mgr_name;
 
-        DELETE FROM TmpManagerList
+        DELETE FROM Tmp_ManagerList
         WHERE mgr_id IS NULL;
 
     Else
-        INSERT INTO TmpManagerList (mgr_id, manager_name)
+        INSERT INTO Tmp_ManagerList (mgr_id, manager_name)
         SELECT mgr_id, mgr_name
         FROM mc.t_mgrs
         WHERE mgr_type_id = 11;
@@ -114,23 +114,23 @@ BEGIN
         _message := 'Could not find parameter ManagerErrorCleanupMode in mc.t_param_type';
         _returnCode := 'U5201';
 
-        DROP TABLE TmpManagerList;
+        DROP TABLE Tmp_ManagerList;
         Return;
     End If;
 
     ---------------------------------------------------
-    -- Make sure each manager in TmpManagerList has an entry
+    -- Make sure each manager in Tmp_ManagerList has an entry
     --  in mc.t_param_value for 'ManagerErrorCleanupMode'
     ---------------------------------------------------
 
     INSERT INTO mc.t_param_value (mgr_id, type_id, value)
     SELECT A.mgr_id, _paramTypeID, '0'
     FROM ( SELECT MgrListA.mgr_id
-           FROM TmpManagerList MgrListA
+           FROM Tmp_ManagerList MgrListA
          ) A
          LEFT OUTER JOIN
           ( SELECT MgrListB.mgr_id
-            FROM TmpManagerList MgrListB
+            FROM Tmp_ManagerList MgrListB
                  INNER JOIN mc.t_param_value PV
                    ON MgrListB.mgr_id = PV.mgr_id
             WHERE PV.type_id = _paramTypeID
@@ -150,7 +150,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Update the 'ManagerErrorCleanupMode' entry for each manager in TmpManagerList
+    -- Update the 'ManagerErrorCleanupMode' entry for each manager in Tmp_ManagerList
     ---------------------------------------------------
 
     _cleanupModeString := _cleanupMode::text;
@@ -177,7 +177,7 @@ BEGIN
                    _cleanupMode AS new_cleanup_mode,
                    MP.last_affected
             FROM mc.v_analysis_mgr_params_active_and_debug_level MP
-                 INNER JOIN TmpManagerList MgrList
+                 INNER JOIN Tmp_ManagerList MgrList
                    ON MP.mgr_id = MgrList.mgr_id
             WHERE MP.ParamTypeID = _paramTypeID
             ORDER BY MP.manager
@@ -201,7 +201,7 @@ BEGIN
                             _cleanupMode,
                             _countToUpdate);
 
-        DROP TABLE TmpManagerList;
+        DROP TABLE Tmp_ManagerList;
         Return;
     End If;
 
@@ -210,7 +210,7 @@ BEGIN
     WHERE entry_id in (
         SELECT PV.entry_id
         FROM mc.t_param_value PV
-            INNER JOIN TmpManagerList MgrList
+            INNER JOIN Tmp_ManagerList MgrList
             ON PV.mgr_id = MgrList.mgr_id
         WHERE PV.type_id = _paramTypeID AND
             PV.value <> _cleanupModeString);
@@ -250,7 +250,7 @@ BEGIN
                    MP.value AS cleanup_mode,
                    MP.last_affected
             FROM mc.v_analysis_mgr_params_active_and_debug_level MP
-                 INNER JOIN TmpManagerList MgrList
+                 INNER JOIN Tmp_ManagerList MgrList
                    ON MP.mgr_id = MgrList.mgr_id
             WHERE MP.ParamTypeID = _paramTypeID
             ORDER BY MP.manager
@@ -272,7 +272,7 @@ BEGIN
 
     End If;
 
-    DROP TABLE TmpManagerList;
+    DROP TABLE Tmp_ManagerList;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -289,7 +289,7 @@ EXCEPTION
 
     Call public.post_log_entry ('Error', _message, 'SetManagerErrorCleanupMode', 'mc');
 
-    DROP TABLE IF EXISTS TmpManagerList;
+    DROP TABLE IF EXISTS Tmp_ManagerList;
 END
 $$;
 

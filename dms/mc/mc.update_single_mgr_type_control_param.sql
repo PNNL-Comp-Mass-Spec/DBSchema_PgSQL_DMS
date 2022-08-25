@@ -44,17 +44,17 @@ BEGIN
     -- values that need to be updated in mc.t_param_value
     ---------------------------------------------------
 
-    CREATE TEMP TABLE TmpParamValueEntriesToUpdate (
+    CREATE TEMP TABLE Tmp_ParamValueEntriesToUpdate (
         entry_id int NOT NULL
     );
 
-    CREATE UNIQUE INDEX IX_TmpParamValueEntriesToUpdate ON TmpParamValueEntriesToUpdate (entry_id);
+    CREATE UNIQUE INDEX IX_Tmp_ParamValueEntriesToUpdate ON Tmp_ParamValueEntriesToUpdate (entry_id);
 
     ---------------------------------------------------
     -- Find the _paramName entries for the Manager Types in _managerTypeIDList
     ---------------------------------------------------
     --
-    INSERT INTO TmpParamValueEntriesToUpdate (entry_id)
+    INSERT INTO Tmp_ParamValueEntriesToUpdate (entry_id)
     SELECT PV.entry_id
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
@@ -71,7 +71,7 @@ BEGIN
         _message := 'Did not find any managers of type ' || _managerTypeIDList || ' with parameter ' || _paramName || ' and control_from_website > 0';
         _returnCode := 'U5201';
 
-        DROP TABLE TmpParamValueEntriesToUpdate;
+        DROP TABLE Tmp_ParamValueEntriesToUpdate;
         Return;
     END IF;
 
@@ -82,7 +82,7 @@ BEGIN
     --
     Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
-    DROP TABLE TmpParamValueEntriesToUpdate;
+    DROP TABLE Tmp_ParamValueEntriesToUpdate;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -98,8 +98,7 @@ EXCEPTION
     RAISE Warning 'Context: %', _exceptionContext;
 
     Call public.post_log_entry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
-
-    DROP TABLE IF EXISTS TmpParamValueEntriesToUpdate;
+    DROP TABLE IF EXISTS Tmp_ParamValueEntriesToUpdate;
 END
 $$;
 
