@@ -103,7 +103,15 @@ BEGIN
     -- Rollback any open transactions
     -- Note that PostgreSQL doesn't assign a transaction ID until a write operation occurs
     If Not pg_current_xact_id_if_assigned() Is Null Then
-        ROLLBACK;
+        Begin
+            ROLLBACK;
+        EXCEPTION
+            WHEN OTHERS THEN
+                GET STACKED DIAGNOSTICS
+                    _innerExceptionMessage = message_text;
+
+                RAISE Warning 'Rollback failed in local_error_handler: %', Coalesce(_innerExceptionMessage, '??');
+        End;
     End If;
 
     If _logError Then
