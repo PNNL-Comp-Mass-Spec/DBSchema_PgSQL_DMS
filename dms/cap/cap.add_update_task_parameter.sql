@@ -30,10 +30,13 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/23/2022 mem - Ported to PostgreSQL
+**          08/24/2022 mem - Switch from get_current_function_name() to get_current_function_info()
 **
 *****************************************************/
 DECLARE
-    _functionName text;
+    _showDebug bool;
+    _schemaName text;
+    _nameWithSchema text;
     _authorized bool;
     _existingParamsFound int := 0;
     _xmlParameters xml;
@@ -44,17 +47,21 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    _functionName := public.get_current_function_name(_includeArguments => false);
+    _showDebug := CASE WHEN Coalesce(_infoOnly, 0) = 0 THEN False ELSE True END;
+
+    SELECT schema_name, name_with_schema
+    INTO _schemaName, _nameWithSchema
+    FROM get_current_function_info('cap', _showDebug);
 
     SELECT authorized
     INTO _authorized
-    FROM public.verify_sp_authorized(_functionName, 'cap', _logError => 1);
+    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => 1);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries
         COMMIT;
 
-        _message := format('User %s cannot use procedure cap.%s', CURRENT_USER, _functionName);
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
         RAISE EXCEPTION '%', _message;
     End If;
 
@@ -110,7 +117,7 @@ BEGIN
     _message := _results.message;
 
     If Not _results.success Then
-        Raise Warning 'Function add_update_task_parameter_xml was unable to update the XML for capture task job %: %',
+        RAISE WARNING 'Function add_update_task_parameter_xml was unable to update the XML for capture task job %: %',
             _job,
             Case When Coalesce(_message, '') = '' Then 'Unknown reason' Else _message End;
 
