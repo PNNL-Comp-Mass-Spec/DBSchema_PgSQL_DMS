@@ -12,16 +12,18 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table_local(_job integer) RETURNS TA
 **
 **  Auth:   grk
 **  Date:   06/07/2010
-**          04/04/2011 mem - Updated to only query T_Job_Parameters
+**          04/04/2011 mem - Updated to only query t_job_parameters
 **          06/26/2022 mem - Ported to PostgreSQL
 **          08/20/2022 mem - Update warnings shown when an exception occurs
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
     _message citext;
     _sqlState text;
-    _exceptionMessage citext;
-    _exceptionContext citext;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     ---------------------------------------------------
     -- The following demonstrates how we could use XPath to query the XML for one or more parameters
@@ -64,6 +66,7 @@ BEGIN
            WHERE job = _job
          ) Src;
     */
+
     ---------------------------------------------------
     -- Convert the XML job parameters into a table
     -- We must surround the job parameter XML with <params></params> so that the XML will be rooted, as required by XMLTABLE()
@@ -87,21 +90,18 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Error converting XML job parameters to text using XMLTABLE() for job %s: %s',
-                _job, _exceptionMessage);
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    format('get job parameters for job %s', _job),
+                    _logError => true);
 
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
-
-    Call public.post_log_entry ('Error', _message, 'get_job_param_table_local', 'sw');
-
-    -- In theory the error message could be returned using the following, but this doesn't work
-    --   RETURN QUERY
-    --   SELECT _job AS Job, 'Error_Message'::citext, _message::citext;
+    RETURN QUERY
+    SELECT _job AS Job, 'Error_Message'::citext, _message::citext;
 END
 $$;
 

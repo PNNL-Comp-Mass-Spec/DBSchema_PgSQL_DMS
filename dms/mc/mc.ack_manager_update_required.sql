@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
@@ -30,6 +31,7 @@ DECLARE
     _paramID int;
     _sqlstate text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
     _myRowCount := 0;
@@ -96,17 +98,17 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error updating ManagerUpdateRequired for ' || _managerName || ': ' || _exceptionMessage;
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    format('update of ManagerUpdateRequired for %s', _managerName),
+                    _logError => true);
+
     _returnCode := _sqlstate;
-
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
-
-    Call public.post_log_entry ('Error', _message, 'AckManagerUpdateRequired', 'mc');
 
 END
 $$;

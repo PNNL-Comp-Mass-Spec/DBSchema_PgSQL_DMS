@@ -24,12 +24,33 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **      If authorized, the message column is empty; otherwise it will be of the form:
 **      'User Username cannot call procedure ProcedureName from host IP 130.20.228.1
 **
+**  Example usage:
+**
+**        _showDebug := CASE WHEN Coalesce(_infoOnly, 0) = 0 THEN False ELSE True END;
+**
+**        SELECT schema_name, name_with_schema
+**        INTO _schemaName, _nameWithSchema
+**        FROM public.get_current_function_info('cap', _showDebug);
+**
+**        SELECT authorized
+**        INTO _authorized
+**        FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => 1);
+**
+**        If Not _authorized Then
+**            -- Commit changes to persist the message logged to public.t_log_entries
+**            COMMIT;
+**
+**            _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+**            RAISE EXCEPTION '%', _message;
+**        End If;
+**
 **  Auth:   mem
 **  Date:   06/16/2017 mem - Initial version
 **          01/05/2018 mem - Include username and host_name in RAISERROR message
 **          08/18/2022 mem - Ported to PostgreSQL
 **          08/19/2022 mem - Check for null when updating _message
 **          08/23/2022 mem - Log messages to t_log_entries in the public schema
+**          08/24/2022 mem - Use function local_error_handler() to display the formatted error message
 **
 *****************************************************/
 DECLARE
@@ -43,6 +64,7 @@ DECLARE
     _message text;
     _sqlState text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
     ---------------------------------------------------
@@ -168,16 +190,15 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlState = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Exception checking for permission to call procedure %s; %s',
-                    Coalesce(_procedureNameWithSchema, _procedureName),
-                    _exceptionMessage);
-
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        format('Checking for permission to call procedure %s', Coalesce(_procedureNameWithSchema, _procedureName)),
+                        _logError => false, _displayError => true);
 
     RETURN QUERY
     SELECT false, _procedureName, _userName, host(_clientHostIP), _message as message;

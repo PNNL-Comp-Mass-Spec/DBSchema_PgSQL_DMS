@@ -27,12 +27,14 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Update return code
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
     _sqlstate text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
 
@@ -87,17 +89,15 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Error %s %s: %s',
-                _currentOperation, _currentTargetTable, _exceptionMessage);
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    _logError => true);
 
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
-
-    Call public.post_log_entry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
     DROP TABLE IF EXISTS Tmp_ParamValueEntriesToUpdate;
 END
 $$;

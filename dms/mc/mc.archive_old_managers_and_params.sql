@@ -42,6 +42,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp tables before exiting the function
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
@@ -49,6 +50,7 @@ DECLARE
     _message text;
     _sqlstate text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
 
@@ -311,16 +313,15 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error archiving manager parameters for ' || _mgrList || ': ' || _exceptionMessage;
-
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
-
-    Call public.post_log_entry ('Error', _message, 'ArchiveOldManagersAndParams', 'mc');
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    format('archive manager parameters for %s', _mgrList),
+                    _logError => true);
 
     RETURN QUERY
     SELECT _message as Message,

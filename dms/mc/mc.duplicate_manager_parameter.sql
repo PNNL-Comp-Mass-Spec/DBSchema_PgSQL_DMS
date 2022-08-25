@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **  Date:   08/26/2013 mem - Initial release
 **          01/30/2020 mem - Ported to PostgreSQL
 **          08/20/2022 mem - Update warnings shown when an exception occurs
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
@@ -38,6 +39,7 @@ DECLARE
     _returnCode text = '';
     _sqlstate text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
 
@@ -165,15 +167,16 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error duplicating a manager parameter: ' || _exceptionMessage;
-    _returnCode := _sqlstate;
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    _logError => true);
 
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
+    _returnCode := _sqlstate;
 
     RETURN QUERY
     SELECT 'Error' AS Status,

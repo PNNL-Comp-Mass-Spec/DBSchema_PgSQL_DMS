@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _m
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **                         - Update return codes
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
@@ -68,6 +69,7 @@ DECLARE
     _mgrNames text[];
     _sqlstate text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
 
@@ -411,17 +413,16 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error enabling/disabling managers: ' || _exceptionMessage;
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    _logError => true);
+
     _returnCode := _sqlstate;
-
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
-
-    Call public.post_log_entry ('Error', _message, 'EnableDisableManagers', 'mc');
 
     DROP TABLE IF EXISTS Tmp_ManagerList;
 END

@@ -15,6 +15,11 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 **    _message                 Usage message
 **    _minimumUpdateInterval   Set to a value greater than 0 to limit the entries to occur at most every _minimumUpdateInterval hours
 **
+**  Example usage:
+**
+**      Call post_usage_log_entry('store_dataset_file_info', 'Dataset: QC_Mam_19_01_1a_Samwise_19Aug22_WBEH-22-05-03');
+**      SELECT * FROM t_usage_stats WHERE posted_by LIKE 'store%dataset%file%info';
+**
 **  Auth:   mem
 **  Date:   10/22/2004
 **          07/29/2005 mem - Added parameter _minimumUpdateInterval
@@ -24,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 **          02/06/2020 mem - Ported to PostgreSQL
 **          06/24/2022 mem - Capitalize _sqlState
 **          08/18/2022 mem - Set _ignoreErrors to true when calling post_log_entry
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
@@ -33,6 +39,7 @@ DECLARE
     _lastUpdated timestamp;
     _sqlState text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
 
@@ -54,7 +61,7 @@ BEGIN
     End If;
 
     _currentTargetTable := 't_usage_log';
-    _currentOperation := 'selecting';
+    _currentOperation := 'selecting from';
 
     If _minimumUpdateInterval > 0 Then
         -- See if the last update was less than _minimumUpdateInterval hours ago
@@ -83,18 +90,15 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlState = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Error %s %s: %s',
-                _currentOperation, _currentTargetTable, _exceptionMessage);
-
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
-
-    Call post_log_entry ('Error', _message, 'post_usage_log_entry', 'public', _ignoreErrors => true);
-
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    format('%s %s', _currentOperation, _currentTargetTable),
+                    _logError => true, _displayError => true);
 END
 $$;
 

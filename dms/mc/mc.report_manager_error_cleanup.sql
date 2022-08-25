@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **          02/07/2020 mem - Ported to PostgreSQL
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
@@ -32,6 +33,7 @@ DECLARE
     _cleanupMode text;
     _sqlstate text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
     ---------------------------------------------------
@@ -151,17 +153,16 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error updating ManagerErrorCleanupMode in mc.t_param_value: ' || _exceptionMessage;
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    _logError => true);
+
     _returnCode := _sqlstate;
-
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
-
-    Call public.post_log_entry ('Error', _message, 'ReportManagerErrorCleanup', 'mc');
 
 END
 $$;

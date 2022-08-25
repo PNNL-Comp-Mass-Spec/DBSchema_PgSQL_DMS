@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **          06/26/2022 mem - Renamed from get_job_param_list to get_task_param_list
 **          06/28/2022 mem - Add <br> before </pre>
 **          08/20/2022 mem - Update warnings shown when an exception occurs
+**          08/24/2022 mem - Use function local_error_handler() to log errors
 **
 *****************************************************/
 DECLARE
@@ -28,6 +29,7 @@ DECLARE
     _sqlState text;
     _message text;
     _exceptionMessage text;
+    _exceptionDetail text;
     _exceptionContext text;
 BEGIN
     If _job Is Null Then
@@ -65,17 +67,15 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlState = returned_sqlstate,
+            _sqlState         = returned_sqlstate,
             _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Error converting XML job parameters to text using XMLTABLE() for job %s: %s',
-                _job, _exceptionMessage);
-
-    RAISE Warning '%', _message;
-    RAISE Warning 'Context: %', _exceptionContext;
-
-    Call public.post_log_entry ('Error', _message, 'get_task_param_list', 'cap');
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    format('XML parameter formatting for capture task job %s', _job),
+                    _logError => true);
 
     -- Use text parsing to convert the XML job parameters
     --
