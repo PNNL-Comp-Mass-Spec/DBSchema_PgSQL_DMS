@@ -1,8 +1,8 @@
 --
--- Name: get_current_function_info(boolean); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_current_function_info(text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_current_function_info(_showdebug boolean DEFAULT false) RETURNS TABLE(schema_name text, object_name text, argument_data_types text, name_with_schema text, object_signature text)
+CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEFAULT ''::text, _showdebug boolean DEFAULT false) RETURNS TABLE(schema_name text, object_name text, argument_data_types text, name_with_schema text, object_signature text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -11,7 +11,17 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_showdebug boolean D
 **      Returns information about the calling function or procedure,
 **      including schema name, object name, and argument data types
 **
+**      This function uses "GET DIAGNOSTICS _context = PG_CONTEXT;" to determine the calling object's name
+**      If the calling function or procedure is in a schema that is in the search path, the schema name will not be included in the context
+**
+**      Use argument _schemaName to explicitly define the schema of the calling function or procedure
+**      If the context does not include a schema name, but _schemaName does have a name, column name_with_schema in the output table will include _schemaName
+**      In contrast, column object_signature in the output table has a actual object signature extracted from the context and thus may not include the schema name
+**
+**      To view the search path use: SHOW search_path;
+**
 **  Arguments
+**    _schemaName   Schema name to use if the context info does not include a schema name before the object name
 **    _showDebug    When true, show the current context and RegEx match info
 **
 **  Example usage:
@@ -31,12 +41,11 @@ DECLARE
     _objectSignature text;
     _objectNameAndSchema text;
     _dotPosition int;
-    _schemaName text;
     _objectName text;
     _objectArguments text;
     _charPos int;
 BEGIN
-
+    _schemaName := Trim(Coalesce(_schemaName, ''));
     _showDebug := Coalesce(_showDebug, false);
 
     GET DIAGNOSTICS _context = PG_CONTEXT;
@@ -87,15 +96,18 @@ BEGIN
         _schemaName := Left(_objectNameAndSchema, _dotPosition - 1);
         _objectName := Substring(_objectNameAndSchema, _dotPosition + 1);
     Else
-        _schemaName := '';
         _objectName := _objectNameAndSchema;
+
+        If char_length(_schemaName) > 0 Then
+            _objectNameAndSchema := format('%I.%s', _schemaName, _objectName);
+        End If;
     End If;
 
     RETURN QUERY
-    SELECT _schemaName, _objectName, _objectArguments, _objectNameAndSchema, _objectSignature;
+    SELECT Coalesce(_schemaName, ''), _objectName, _objectArguments, _objectNameAndSchema, _objectSignature;
 END;
 $$;
 
 
-ALTER FUNCTION public.get_current_function_info(_showdebug boolean) OWNER TO d3l243;
+ALTER FUNCTION public.get_current_function_info(_schemaname text, _showdebug boolean) OWNER TO d3l243;
 
