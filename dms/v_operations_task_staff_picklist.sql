@@ -16,7 +16,7 @@ ALTER TABLE public.v_operations_task_staff_picklist OWNER TO d3l243;
 -- Name: VIEW v_operations_task_staff_picklist; Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON VIEW public.v_operations_task_staff_picklist IS 'Operation_ID 16 is operation "DMS_Sample_Preparation"';
+COMMENT ON VIEW public.v_operations_task_staff_picklist IS 'Operation_ID 16 is operation name "DMS_Sample_Preparation"';
 
 --
 -- Name: TABLE v_operations_task_staff_picklist; Type: ACL; Schema: public; Owner: d3l243
