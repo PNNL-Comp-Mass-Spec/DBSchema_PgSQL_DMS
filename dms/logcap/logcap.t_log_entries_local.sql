@@ -5,7 +5,7 @@
 CREATE TABLE logcap.t_log_entries_local (
     entry_id integer NOT NULL,
     posted_by public.citext,
-    posting_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     type public.citext,
     message public.citext,
     entered_by public.citext DEFAULT SESSION_USER
@@ -35,16 +35,16 @@ ALTER TABLE ONLY logcap.t_log_entries_local
     ADD CONSTRAINT pk_t_log_entries_local PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_log_entries_local_entered; Type: INDEX; Schema: logcap; Owner: d3l243
+--
+
+CREATE INDEX ix_t_log_entries_local_entered ON logcap.t_log_entries_local USING btree (entered);
+
+--
 -- Name: ix_t_log_entries_local_posted_by; Type: INDEX; Schema: logcap; Owner: d3l243
 --
 
 CREATE INDEX ix_t_log_entries_local_posted_by ON logcap.t_log_entries_local USING btree (posted_by);
-
---
--- Name: ix_t_log_entries_local_posting_time; Type: INDEX; Schema: logcap; Owner: d3l243
---
-
-CREATE INDEX ix_t_log_entries_local_posting_time ON logcap.t_log_entries_local USING btree (posting_time);
 
 --
 -- Name: TABLE t_log_entries_local; Type: ACL; Schema: logcap; Owner: d3l243

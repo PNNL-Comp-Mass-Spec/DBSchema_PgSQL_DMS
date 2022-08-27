@@ -6,7 +6,7 @@ CREATE VIEW public.v_log_errors_production_dbs AS
  SELECT 'DMS_Capture'::text AS db,
     v_log_errors.entry_id,
     v_log_errors.posted_by,
-    v_log_errors.posting_time,
+    v_log_errors.entered,
     v_log_errors.type,
     v_log_errors.message,
     v_log_errors.entered_by
@@ -15,7 +15,7 @@ UNION
  SELECT 'DMS5'::text AS db,
     v_log_errors.entry_id,
     v_log_errors.posted_by,
-    v_log_errors.posting_time,
+    v_log_errors.entered,
     v_log_errors.type,
     v_log_errors.message,
     v_log_errors.entered_by
@@ -24,7 +24,7 @@ UNION
  SELECT 'DMS_Pipeline'::text AS db,
     v_log_errors.entry_id,
     v_log_errors.posted_by,
-    v_log_errors.posting_time,
+    v_log_errors.entered,
     v_log_errors.type,
     v_log_errors.message,
     v_log_errors.entered_by
@@ -33,7 +33,7 @@ UNION
  SELECT 'DMS_Data_Package'::text AS db,
     v_log_errors.entry_id,
     v_log_errors.posted_by,
-    v_log_errors.posting_time,
+    v_log_errors.entered,
     v_log_errors.type,
     v_log_errors.message,
     v_log_errors.entered_by

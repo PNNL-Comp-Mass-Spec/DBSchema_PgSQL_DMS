@@ -5,7 +5,7 @@
 CREATE VIEW sw.v_log_errors AS
  SELECT t_log_entries.entry_id,
     t_log_entries.posted_by,
-    t_log_entries.posting_time,
+    t_log_entries.entered,
     t_log_entries.type,
     t_log_entries.message,
     t_log_entries.entered_by

@@ -5,7 +5,7 @@
 CREATE TABLE public.t_log_entries (
     entry_id integer NOT NULL,
     posted_by public.citext,
-    posting_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     type public.citext,
     message public.citext,
     entered_by public.citext DEFAULT SESSION_USER
@@ -35,16 +35,16 @@ ALTER TABLE ONLY public.t_log_entries
     ADD CONSTRAINT pk_t_log_entries PRIMARY KEY (entry_id);
 
 --
+-- Name: ix_t_log_entries_entered; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_log_entries_entered ON public.t_log_entries USING btree (entered);
+
+--
 -- Name: ix_t_log_entries_posted_by; Type: INDEX; Schema: public; Owner: d3l243
 --
 
 CREATE INDEX ix_t_log_entries_posted_by ON public.t_log_entries USING btree (posted_by);
-
---
--- Name: ix_t_log_entries_posting_time; Type: INDEX; Schema: public; Owner: d3l243
---
-
-CREATE INDEX ix_t_log_entries_posting_time ON public.t_log_entries USING btree (posting_time);
 
 --
 -- Name: TABLE t_log_entries; Type: ACL; Schema: public; Owner: d3l243

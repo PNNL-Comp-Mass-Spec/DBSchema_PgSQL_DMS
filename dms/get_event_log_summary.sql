@@ -11,6 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_event_log_summary(_startdate timestamp wit
 **
 **  Auth:   mem
 **  Date:   07/12/2022 mem - Initial release (based on view V_Event_Log_24_Hour_Summary)
+**          08/26/2022 mem - Use new column name in t_log_entries
 **
 *****************************************************/
 DECLARE
@@ -183,16 +184,16 @@ BEGIN
     FROM (  SELECT Sum(Case When type = 'Error' Then 1 Else 0 End) as Errors,
                    Sum(Case When type = 'Warning' Then 1 Else 0 End) as Warnings
             FROM public.t_log_entries
-            WHERE Posting_Time Between _startDate And _endDate AND type IN ('Error', 'Warning')
+            WHERE entered Between _startDate And _endDate AND type IN ('Error', 'Warning')
          ) StatsQ
     UNION
     SELECT 6.1 As SortKey, '  Warnings' AS Label, COUNT(*)::citext AS Value
     FROM public.t_log_entries
-    WHERE Posting_Time Between _startDate And _endDate AND type = 'Warning'
+    WHERE entered Between _startDate And _endDate AND type = 'Warning'
     UNION
     SELECT 6.2 As SortKey, '  Errors' AS Label, COUNT(*)::citext AS Value
     FROM public.t_log_entries
-    WHERE Posting_Time Between _startDate And _endDate AND type = 'Error'
+    WHERE entered Between _startDate And _endDate AND type = 'Error'
     ;
 END
 $$;

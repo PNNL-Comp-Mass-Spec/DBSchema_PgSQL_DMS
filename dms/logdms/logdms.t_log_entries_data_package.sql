@@ -5,7 +5,7 @@
 CREATE TABLE logdms.t_log_entries_data_package (
     entry_id integer NOT NULL,
     posted_by public.citext,
-    posting_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     type public.citext,
     message public.citext
 );
@@ -27,10 +27,10 @@ ALTER TABLE ONLY logdms.t_log_entries_data_package
 CREATE INDEX ix_t_log_entries_data_package_posted_by ON logdms.t_log_entries_data_package USING btree (posted_by);
 
 --
--- Name: ix_t_log_entries_data_package_posting_time; Type: INDEX; Schema: logdms; Owner: d3l243
+-- Name: ix_t_log_entries_data_package_entered; Type: INDEX; Schema: logdms; Owner: d3l243
 --
 
-CREATE INDEX ix_t_log_entries_data_package_posting_time ON logdms.t_log_entries_data_package USING btree (posting_time);
+CREATE INDEX ix_t_log_entries_data_package_entered ON logdms.t_log_entries_data_package USING btree (entered);
 
 --
 -- Name: TABLE t_log_entries_data_package; Type: ACL; Schema: logdms; Owner: d3l243
