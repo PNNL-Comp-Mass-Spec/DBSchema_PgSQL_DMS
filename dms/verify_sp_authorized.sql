@@ -2,7 +2,7 @@
 -- Name: verify_sp_authorized(text, text, integer, integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text DEFAULT 'public'::text, _logerror integer DEFAULT 0, _infoonly integer DEFAULT 0) RETURNS TABLE(authorized boolean, procedure_name text, user_name text, host_ip text, message text)
+CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text DEFAULT 'public'::text, _logerror bool DEFAULT false, _infoonly bool DEFAULT false) RETURNS TABLE(authorized boolean, procedure_name text, user_name text, host_ip text, message text)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
@@ -14,9 +14,9 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **  Arguments:
 **    _procedureName    Procedure name to verify permissions to call (do not include schema)
 **    _targetSchema     Schema name for the procedure
-**    _logError         When 1, try to log an error message to t_log_entries (in the given schema) if the user does not have permission to call the procedure
+**    _logError         When true, try to log an error message to t_log_entries (in the given schema) if the user does not have permission to call the procedure
 **                      If the user does not have write access to t_log_entries, a warning will be raised instead
-**    _infoOnly         Check for access, but do not log errors, even if _logError is non-zero
+**    _infoOnly         When true, check for access, but do not log errors, even if _logError is true
 **
 **  Returns:
 **      Table where the authorized column is 1 if authorized, 0 if not authorized
@@ -34,7 +34,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **
 **        SELECT authorized
 **        INTO _authorized
-**        FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => 1);
+**        FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
 **
 **        If Not _authorized Then
 **            -- Commit changes to persist the message logged to public.t_log_entries
@@ -51,6 +51,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          08/19/2022 mem - Check for null when updating _message
 **          08/23/2022 mem - Log messages to t_log_entries in the public schema
 **          08/24/2022 mem - Use function local_error_handler() to display the formatted error message
+**          08/26/2022 mem - Change _logError and _infoOnly to booleans
 **
 *****************************************************/
 DECLARE
@@ -72,8 +73,8 @@ BEGIN
     ---------------------------------------------------
 
     _procedureName := Coalesce(_procedureName, '');
-    _logError := Coalesce(_logError, 0);
-    _infoOnly := Coalesce(_infoOnly, 0);
+    _logError := Coalesce(_logError, false);
+    _infoOnly := Coalesce(_infoOnly, false);
 
     _targetSchema := COALESCE(_targetSchema, '');
     If (char_length(_targetSchema) = 0) Then
@@ -166,7 +167,7 @@ BEGIN
         return;
     End if;
 
-    If _infoOnly > 0 Then
+    If _infoOnly Then
         _message := 'Access denied to ' || _procedureNameWithSchema || ' for current user (' || SESSION_USER || ' on host IP ' || Coalesce(_clientHostIP::text, 'null') || ')';
 
         RETURN QUERY
@@ -179,7 +180,7 @@ BEGIN
                 ' cannot call procedure ' || Coalesce(_procedureNameWithSchema, _procedureName) ||
                 ' from host IP ' || Coalesce(_clientHostIP::text, 'null');
 
-    If _logError > 0 Then
+    If _logError Then
         -- Passing true to _ignoreErrors when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
         Call public.post_log_entry ('Error', _message, 'verify_sp_authorized', 'public', _ignoreErrors => true);
     End If;
