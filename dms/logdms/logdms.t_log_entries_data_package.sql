@@ -21,16 +21,16 @@ ALTER TABLE ONLY logdms.t_log_entries_data_package
     ADD CONSTRAINT pk_t_log_entries_data_package PRIMARY KEY (entry_id);
 
 --
--- Name: ix_t_log_entries_data_package_posted_by; Type: INDEX; Schema: logdms; Owner: d3l243
---
-
-CREATE INDEX ix_t_log_entries_data_package_posted_by ON logdms.t_log_entries_data_package USING btree (posted_by);
-
---
 -- Name: ix_t_log_entries_data_package_entered; Type: INDEX; Schema: logdms; Owner: d3l243
 --
 
 CREATE INDEX ix_t_log_entries_data_package_entered ON logdms.t_log_entries_data_package USING btree (entered);
+
+--
+-- Name: ix_t_log_entries_data_package_posted_by; Type: INDEX; Schema: logdms; Owner: d3l243
+--
+
+CREATE INDEX ix_t_log_entries_data_package_posted_by ON logdms.t_log_entries_data_package USING btree (posted_by);
 
 --
 -- Name: TABLE t_log_entries_data_package; Type: ACL; Schema: logdms; Owner: d3l243
