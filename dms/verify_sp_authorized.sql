@@ -1,8 +1,8 @@
 --
--- Name: verify_sp_authorized(text, text, integer, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: verify_sp_authorized(text, text, boolean, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text DEFAULT 'public'::text, _logerror bool DEFAULT false, _infoonly bool DEFAULT false) RETURNS TABLE(authorized boolean, procedure_name text, user_name text, host_ip text, message text)
+CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text DEFAULT 'public'::text, _logerror boolean DEFAULT false, _infoonly boolean DEFAULT false) RETURNS TABLE(authorized boolean, procedure_name text, user_name text, host_ip text, message text)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
@@ -207,11 +207,11 @@ END
 $_$;
 
 
-ALTER FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text, _logerror integer, _infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION verify_sp_authorized(_procedurename text, _targetschema text, _logerror integer, _infoonly integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text, _logerror integer, _infoonly integer) IS 'VerifySPAuthorized';
+COMMENT ON FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean) IS 'VerifySPAuthorized';
 

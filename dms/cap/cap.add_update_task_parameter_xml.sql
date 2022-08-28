@@ -1,15 +1,15 @@
 --
--- Name: add_update_task_parameter_xml(xml, text, text, text, integer, integer); Type: FUNCTION; Schema: cap; Owner: d3l243
+-- Name: add_update_task_parameter_xml(xml, text, text, text, boolean, boolean); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam integer DEFAULT 0, _showdebug integer DEFAULT 0) RETURNS TABLE(updated_xml xml, success boolean, message text)
+CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam boolean DEFAULT false, _showdebug boolean DEFAULT false) RETURNS TABLE(updated_xml xml, success boolean, message text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds or updates an entry in the XML parameters, returning the updated XML
-**      Alternatively, use _deleteParam=1 to delete the given parameter
+**      Alternatively, use _deleteParam=true to delete the given parameter
 **      Note that case is ignored when matching section and parameter names in the XML to _section and _paramName
 **
 **  Arguments:
@@ -17,7 +17,8 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **    _section          Section name, e.g.   JobParameters
 **    _paramName        Parameter name, e.g. SourceJob
 **    _value            Value for parameter _paramName in section _section
-**    _deleteParam      When 0, adds/updates the given parameter; when 1, deletes the parameter
+**    _deleteParam      When false, adds/updates the given parameter; when true, deletes the parameter
+**    _showDebug        When true, show the existing parameter names and values, followed by any updated or deleted parameters
 **
 **  Example input XML:
 **
@@ -45,8 +46,8 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **              'DatasetQC',
 **              'ComputeOverallQualityScores',
 **              'false',
-**              _deleteParam => 0,
-**              _showDebug => 1);
+**              _deleteParam => false,
+**              _showDebug => true);
 **
 **
 **      -- This function can also be called as part of a query, using a LATERAL join
@@ -62,7 +63,8 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **                  'DatasetQC',
 **                  'CreateDatasetInfoFile',
 **                  'false',
-**                   0)
+**                   _deleteParam => false,       -- Optional, defaults to false
+**                   _showDebug => false)         -- Optional, defaults to false
 **               ) UpdateQ ON TaskParams.job = 5493941;
 **
 **      -- Option 2: Use WHERE clause
@@ -74,8 +76,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **                  TaskParams.parameters,
 **                  'DatasetQC',
 **                  'CreateDatasetInfoFile',
-**                  'false',
-**                   0)
+**                  'false')
 **               ) UpdateQ
 **      WHERE TaskParams.job = 5493941;
 **
@@ -87,6 +88,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **          08/23/2022 mem - Raise an exception if the section name or parameter name is null or empty
 **                         - Assure that _value is not null
 **                         - Report the state as 'Unchanged Value' if the old and new values for the parameter are equivalent
+**          08/27/2022 mem - Change arguments _deleteParam _showDebug from int to boolean
 **
 *****************************************************/
 DECLARE
@@ -104,8 +106,8 @@ BEGIN
     _section := Coalesce(_section, '');
     _paramName := Coalesce(_paramName, '');
     _value := Coalesce(_value, '');
-    _deleteParam := Coalesce(_deleteParam, 0);
-    _showDebug := Coalesce(_showDebug, 0);
+    _deleteParam := Coalesce(_deleteParam, false);
+    _showDebug := Coalesce(_showDebug, false);
 
     If _xmlParameters Is Null Then
         RAISE INFO 'Null value sent to _xmlParameters; initializing a new XML instance';
@@ -149,7 +151,7 @@ BEGIN
                               value citext PATH '@Value')
          ) XmlQ;
 
-    If _showDebug <> 0 Then
+    If _showDebug Then
         RAISE INFO ' ';
 
         _infoHead := format(_formatSpecifier,
@@ -187,7 +189,7 @@ BEGIN
 
     End If;
 
-    If _deleteParam = 0 Then
+    If Not _deleteParam Then
         ---------------------------------------------------
         -- Add/update the specified parameter
         -- First try an update
@@ -217,7 +219,7 @@ BEGIN
 
     End If;
 
-    If _showDebug <> 0 Then
+    If _showDebug Then
 
         RAISE INFO ' ';
 
@@ -264,11 +266,11 @@ END
 $$;
 
 
-ALTER FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam integer, _showdebug integer) OWNER TO d3l243;
+ALTER FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam boolean, _showdebug boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam integer, _showdebug integer); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: FUNCTION add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam boolean, _showdebug boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam integer, _showdebug integer) IS 'AddUpdateJobParameterXML';
+COMMENT ON FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam boolean, _showdebug boolean) IS 'AddUpdateJobParameterXML';
 
