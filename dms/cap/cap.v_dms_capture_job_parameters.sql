@@ -45,6 +45,12 @@ CREATE VIEW cap.v_dms_capture_job_parameters AS
 ALTER TABLE cap.v_dms_capture_job_parameters OWNER TO d3l243;
 
 --
+-- Name: VIEW v_dms_capture_job_parameters; Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON VIEW cap.v_dms_capture_job_parameters IS 'This view shows metadata about datasets and is used when creating capture task jobs';
+
+--
 -- Name: TABLE v_dms_capture_job_parameters; Type: ACL; Schema: cap; Owner: d3l243
 --
 
