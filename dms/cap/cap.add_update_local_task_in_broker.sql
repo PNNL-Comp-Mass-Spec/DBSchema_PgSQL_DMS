@@ -202,3 +202,9 @@ $$;
 
 ALTER PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integer, IN _scriptname text, IN _priority integer, IN _jobparam text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 
+--
+-- Name: PROCEDURE add_update_local_task_in_broker(INOUT _job integer, IN _scriptname text, IN _priority integer, IN _jobparam text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integer, IN _scriptname text, IN _priority integer, IN _jobparam text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateLocalJobInBroker';
+
