@@ -1,8 +1,8 @@
 --
--- Name: v_dms_capture_job_parameters; Type: VIEW; Schema: cap; Owner: d3l243
+-- Name: v_dms_dataset_metadata; Type: VIEW; Schema: cap; Owner: d3l243
 --
 
-CREATE VIEW cap.v_dms_capture_job_parameters AS
+CREATE VIEW cap.v_dms_dataset_metadata AS
  SELECT ds.dataset,
     ds.dataset_id,
     dstypename.dataset_type AS type,
@@ -42,18 +42,18 @@ CREATE VIEW cap.v_dms_capture_job_parameters AS
      LEFT JOIN public.v_eus_proposal_user_lookup eusproposaluserrr ON (((rr.eus_proposal_id OPERATOR(public.=) eusproposaluserrr.proposal_id) AND (ds.operator_prn OPERATOR(public.=) eusproposaluserrr.user_prn) AND (eusproposaluserrr.valid_eus_id > 0))));
 
 
-ALTER TABLE cap.v_dms_capture_job_parameters OWNER TO d3l243;
+ALTER TABLE cap.v_dms_dataset_metadata OWNER TO d3l243;
 
 --
--- Name: VIEW v_dms_capture_job_parameters; Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: VIEW v_dms_dataset_metadata; Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON VIEW cap.v_dms_capture_job_parameters IS 'This view shows metadata about datasets and is used when creating capture task jobs';
+COMMENT ON VIEW cap.v_dms_dataset_metadata IS 'This view shows metadata about datasets and is used when creating capture task jobs';
 
 --
--- Name: TABLE v_dms_capture_job_parameters; Type: ACL; Schema: cap; Owner: d3l243
+-- Name: TABLE v_dms_dataset_metadata; Type: ACL; Schema: cap; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE cap.v_dms_capture_job_parameters TO readaccess;
-GRANT SELECT ON TABLE cap.v_dms_capture_job_parameters TO writeaccess;
+GRANT SELECT ON TABLE cap.v_dms_dataset_metadata TO readaccess;
+GRANT SELECT ON TABLE cap.v_dms_dataset_metadata TO writeaccess;
 
