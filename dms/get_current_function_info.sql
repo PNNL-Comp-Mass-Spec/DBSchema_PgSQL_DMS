@@ -2,7 +2,7 @@
 -- Name: get_current_function_info(text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEFAULT ''::text, _showdebug boolean DEFAULT false) RETURNS TABLE(schema_name text, object_name text, argument_data_types text, name_with_schema text, object_signature text)
+CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEFAULT '<auto>'::text, _showdebug boolean DEFAULT false) RETURNS TABLE(schema_name text, object_name text, argument_data_types text, name_with_schema text, object_signature text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,16 +12,23 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 **      including schema name, object name, and argument data types
 **
 **      This function uses "GET DIAGNOSTICS _context = PG_CONTEXT;" to determine the calling object's name
-**      If the calling function or procedure is in a schema that is in the search path, the schema name will not be included in the context
 **
-**      Use argument _schemaName to explicitly define the schema of the calling function or procedure
-**      If the context does not include a schema name, but _schemaName does have a name, column name_with_schema in the output table will include _schemaName
-**      In contrast, column object_signature in the output table has a actual object signature extracted from the context and thus may not include the schema name
+**      If the calling function or procedure is in a schema that is in the search path,
+**      the schema name will not be included in the context. The _schemaName argument
+**      therefore defaults to '<auto>', which instructs this function to auto-determine the schema name
+**      using system catalog views if the schema name is not included in the context. Alternatively, the
+**      calling method can use the _schemaName argument to explicitly define the schema name to use.
+**
+**      If the context does not include a schema name, but the schema name could be auto determined
+**      (or _schemaName was explicitly defined), columns schema_name and name_with_schema in the
+**      returned table will include the schema name. In contrast, column object_signature has the
+**      object signature extracted from the context and thus may not include the schema name.
 **
 **      To view the search path use: SHOW search_path;
 **
 **  Arguments
 **    _schemaName   Schema name to use if the context info does not include a schema name before the object name
+*                   Use '<auto>' or '<lookup>' to auto-determine the schema name for the object, if empty in the context
 **    _showDebug    When true, show the current context and RegEx match info
 **
 **  Example usage:
@@ -30,8 +37,17 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 **      INTO _schemaName, _objectName
 **      FROM get_current_function_info();
 **
+**      SELECT *
+**      INTO _schemaName, _objectName
+**      FROM get_current_function_info('<auto>', true);
+**
+**      SELECT *
+**      INTO _schemaName, _objectName
+**      FROM get_current_function_info('cap', true);
+**
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
+**          09/01/2022 mem - Auto-determine the schema name if the context does not include a schema name and _schemaName is '<auto>' or '<lookup>'
 **
 *****************************************************/
 DECLARE
@@ -44,18 +60,22 @@ DECLARE
     _objectName text;
     _objectArguments text;
     _charPos int;
+    _schemaFromQuery text;
 BEGIN
     _schemaName := Trim(Coalesce(_schemaName, ''));
     _showDebug := Coalesce(_showDebug, false);
 
     GET DIAGNOSTICS _context = PG_CONTEXT;
 
+    -- Example context:
+    -- PL/pgSQL function test.test_get_call_stack(integer) line 32 at GET DIAGNOSTICS
+
     _matches = ARRAY (SELECT (regexp_matches(_context, 'function (.*?) line', 'g'))[1]);
 
     _matchCount = array_length(_matches, 1);
 
     If _showDebug Then
-        RAISE INFO 'Context: %', _context;
+        RAISE INFO E'Context: \n%', _context;
         RAISE INFO 'regexp_matches array length: %', _matchCount;
     End If;
 
@@ -97,6 +117,47 @@ BEGIN
         _objectName := Substring(_objectNameAndSchema, _dotPosition + 1);
     Else
         _objectName := _objectNameAndSchema;
+
+        If Lower(_schemaName) IN ('<auto>', '<lookup>') Then
+
+            -- Lookup the schema name, choosing the first schema found if multiple functions match _objectName
+            SELECT n.nspname AS schema
+            INTO _schemaFromQuery
+            FROM pg_proc p
+                INNER JOIN pg_namespace n ON p.pronamespace = n.oid
+            WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND
+                  p.proname = _objectName
+            ORDER BY n.nspname
+            LIMIT 1;
+
+            If Not Found Then
+                If _showDebug Then
+                    RAISE INFO 'Unable to auto-determine the schema for %; not found in system catalog pg_proc', _objectName;
+                End If;
+
+                _schemaName := '';
+            Else
+                If _showDebug Then
+                    RAISE INFO 'Schema for % is %', _objectName, _schemaFromQuery;
+                End If;
+
+                _schemaName := _schemaFromQuery;
+            End If;
+
+            -- The following query shows functions with identical names in separate schema
+            -- In DMS, the only matching functions are get_processor_step_tool_list() and several table trigger functions
+
+            /*
+                SELECT p.proname as Function, min(n.nspname) as First_Schema, max(n.nspname) as Last_Schema
+                FROM pg_proc p
+                    INNER JOIN pg_namespace n ON p.pronamespace = n.oid
+                WHERE n.nspname NOT IN ('pg_catalog', 'information_schema')
+                GROUP BY p.proname
+                HAVING count(*) > 1 and min(n.nspname) <> max(n.nspname)
+                ORDER BY p.proname
+            */
+
+        End If;
 
         If char_length(_schemaName) > 0 Then
             _objectNameAndSchema := format('%I.%s', _schemaName, _objectName);
