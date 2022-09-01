@@ -9,8 +9,13 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler(_divisor text, _useerrorh
 **
 **  Desc:
 **      Divides 100 by _divisor and returns the result
-**      Raises a exception if _divisor is not numeric
-**      Call this method with _divisor => '0' to force a divide-by-zero error
+**      Raises an exception if _divisor is not numeric
+**      Query this function with '0' for _divisor to force a divide-by-zero error
+**
+**  Arguments:
+**    _divisor              Divisor (as text)
+**    _useErrorHandler      When true, call local_error_handler (which will log an entry to public.t_log_entries)
+**                          When false, uses format_error_message to construct the error message
 **
 **  Example usage:
 **

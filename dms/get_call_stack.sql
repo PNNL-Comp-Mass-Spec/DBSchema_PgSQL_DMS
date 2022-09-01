@@ -9,27 +9,30 @@ CREATE OR REPLACE FUNCTION public.get_call_stack(_pgcontext text) RETURNS TABLE(
 **
 **  Desc:
 **      Examines the context information from GET DIAGNOSTICS or GET STACKED DIAGNOSTICS to determine the call stack
-**
-**      Note that GET DIAGNOSTICS returns functions in order of most recently entered function to starting function
-**      In contrast, GET STACKED DIAGNOSTICS returns functions in order of starting function to most recently entered function (where the error occurred)
+**      Functions are shown in the order of most recently entered to the initial entry function
 **
 **  Example values for _pgContext:
 **
-**      From GET STACKED DIAGNOSTICS:
-**          PL/pgSQL function test.test_exception_handler(text,boolean) line 40 at RAISE
-**          PL/pgSQL function test.test_exception_handler_nested(text,boolean) line 5 at assignment
+**      From GET STACKED DIAGNOSTICS
+**         PL/pgSQL function test.test_exception_handler(text,boolean) line 40 at RAISE
+**         PL/pgSQL function test.test_exception_handler_nested(text,boolean) line 25 at assignment
 **
 **      From GET DIAGNOSTICS:
-**          PL/pgSQL function test.test_get_call_stack(integer) line 13 at GET DIAGNOSTICS
+**          PL/pgSQL function test.test_get_call_stack(integer) line 32 at GET DIAGNOSTICS
 **          SQL statement "SELECT S.depth, S.schema_name, S.object_name, S.line_number
-**                  FROM test.test_get_call_stack(_recursionDepth - 1) S"
-**          PL/pgSQL function test.test_get_call_stack(integer) line 6 at RETURN QUERY
+**              FROM test.test_get_call_stack(_recursionDepth - 1) S"
+**          PL/pgSQL function test.test_get_call_stack(integer) line 25 at RETURN QUERY
 **          SQL statement "SELECT S.depth, S.schema_name, S.object_name, S.line_number
-**                  FROM test.test_get_call_stack(_recursionDepth - 1) S"
-**          PL/pgSQL function test.test_get_call_stack(integer) line 6 at RETURN QUERY
+**              FROM test.test_get_call_stack(_recursionDepth) AS S"
+**          PL/pgSQL function test.test_get_call_stack_nested(integer) line 3 at RETURN QUERY
+**
+**      Queries used to obtain the above example context:
+**          SELECT test.test_exception_handler_nested('apple', false);
+**          SELECT * FROM test.test_get_call_stack_nested(1);
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial release
+**          08/31/2022 mem - Update comments
 **
 ****************************************************/
 DECLARE
