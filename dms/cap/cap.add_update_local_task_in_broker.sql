@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW instead of RAISERROR
 **          08/28/2022 mem - Ported to PostgreSQL
+**          08/31/2022 mem - Remove unused variables and fix call to local_error_handler
 **
 *****************************************************/
 DECLARE
@@ -51,12 +52,6 @@ DECLARE
     _logErrors bool := true;
     _state int;
     _reset bool := false;
-
---    _myRowCount int := 0;
---    _debugMode int := 0;
---    _errorMsg text;
---    _authorized int := 0;
---    _jobParamXML XML := CONVERT(XML, @jobParam);
 BEGIN
 
     ---------------------------------------------------
@@ -125,9 +120,7 @@ BEGIN
 
         If _mode = 'update' Then
 
-            -- ToDo: determine if this is redundant (look for a warning message about nested transactions)
-
-            BEGIN
+            Begin
 
                 -- Update capture task job and params
                 --
@@ -158,7 +151,7 @@ BEGIN
 
         If _mode = 'add' Then
             _logErrors := true;
-            RAISE EXCEPTION 'Add mode is not implemented; cannot add capture task job % with state %', _job, _state;
+            RAISE EXCEPTION 'Add mode is not implemented in this procedure for capture task jobs';
 
             /*
             Call cap.make_local_task_in_broker (
@@ -185,7 +178,7 @@ BEGIN
         If _logErrors Then
             _message := local_error_handler (
                             _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                            _currentLocation, _logError => true);
+                            _callingproclocation => '', _logError => true);
         Else
             _message := _exceptionMessage;
         End If;
