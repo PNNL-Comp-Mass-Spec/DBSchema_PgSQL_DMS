@@ -1,8 +1,8 @@
 --
--- Name: test_get_function_info(text, boolean); Type: FUNCTION; Schema: test; Owner: d3l243
+-- Name: test_get_function_info(text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION test.test_get_function_info(_schemaname text DEFAULT '<auto>'::text, _showdebug boolean DEFAULT false) RETURNS TABLE(schema_name text, object_name text, argument_data_types text, name_with_schema text, object_signature text)
+CREATE OR REPLACE FUNCTION public.test_get_function_info(_schemaname text DEFAULT '<auto>'::text, _showdebug boolean DEFAULT false) RETURNS TABLE(schema_name text, object_name text, argument_data_types text, name_with_schema text, object_signature text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -18,13 +18,13 @@ CREATE OR REPLACE FUNCTION test.test_get_function_info(_schemaname text DEFAULT 
 **  Example usage:
 **
 **      SELECT *
-**      FROM test.test_get_function_info();
+**      FROM test_get_function_info();
 **
 **      SELECT *
-**      FROM test.test_get_function_info('', true);
+**      FROM test_get_function_info('<auto>', true);
 **
 **      SELECT *
-**      FROM test.test_get_function_info('<auto>', true);
+**      FROM test_get_function_info('public', true);
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
@@ -39,5 +39,5 @@ END;
 $$;
 
 
-ALTER FUNCTION test.test_get_function_info(_schemaname text, _showdebug boolean) OWNER TO d3l243;
+ALTER FUNCTION public.test_get_function_info(_schemaname text, _showdebug boolean) OWNER TO d3l243;
 
