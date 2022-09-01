@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler(_divisor text, _useerrorh
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
+**          08/31/2022 mem - Add a linefeed before showing the context
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ EXCEPTION
         RAISE INFO '_sqlState: %',         _sqlState;
         RAISE INFO '_exceptionMessage: %', _exceptionMessage;
         RAISE INFO '_exceptionDetail: %',  Coalesce(_exceptionDetail, '');
-        RAISE INFO '_exceptionContext: %', Coalesce(_exceptionContext, '');
+        RAISE INFO E'_exceptionContext: \n%', Coalesce(_exceptionContext, '');
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
@@ -78,7 +79,7 @@ EXCEPTION
         _message := format_error_message(_sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext);
 
         RAISE Warning '%', _message;
-        RAISE INFO 'Context: %', _exceptionContext;
+        RAISE INFO E'Context: \n%', Coalesce(_exceptionContext, '');
 
         -- Rollback any open transactions
         -- Note that PostgreSQL doesn't assign a transaction ID until a write operation occurs

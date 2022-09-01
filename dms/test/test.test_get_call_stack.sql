@@ -21,6 +21,8 @@ CREATE OR REPLACE FUNCTION test.test_get_call_stack(_recursiondepth integer DEFA
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
+**          08/31/2022 mem - Add a linefeed before showing the context
+**
 *****************************************************/
 DECLARE
     _pgContext text;
@@ -34,7 +36,7 @@ BEGIN
     End If;
 
     GET DIAGNOSTICS _pgContext = PG_CONTEXT;
-    RAISE NOTICE 'Context: %', _pgContext;
+    RAISE NOTICE E'Context: \n%', _pgContext;
 
     RETURN QUERY
     SELECT S.depth, S.schema_name, S.object_name, S.line_number
