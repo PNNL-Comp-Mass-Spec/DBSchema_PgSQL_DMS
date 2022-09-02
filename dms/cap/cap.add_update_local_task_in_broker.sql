@@ -2,7 +2,7 @@
 -- Name: add_update_local_task_in_broker(integer, text, integer, text, text, text, text, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integer, IN _scriptname text, IN _priority integer, IN _jobparam text, IN _comment text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integer, IN _scriptname text, IN _priority integer, IN _jobparam text, IN _comment text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -37,10 +37,10 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          08/01/2017 mem - Use THROW instead of RAISERROR
 **          08/28/2022 mem - Ported to PostgreSQL
 **          08/31/2022 mem - Remove unused variables and fix call to local_error_handler
+**          09/01/2022 mem - Change default value for _mode and send '<auto>' to get_current_function_info()
 **
 *****************************************************/
 DECLARE
-    _showDebug bool;
     _schemaName text;
     _nameWithSchema text;
     _authorized bool;
@@ -60,7 +60,7 @@ BEGIN
 
     SELECT schema_name, name_with_schema
     INTO _schemaName, _nameWithSchema
-    FROM get_current_function_info('cap', _showDebug => false);
+    FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized
     INTO _authorized
@@ -119,30 +119,24 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
+            -- Update capture task job and params
+            --
+            UPDATE  cap.t_tasks
+            SET     priority = _priority ,
+                    comment = _comment ,
+                    state = CASE WHEN _reset THEN 20 ELSE state END -- 20=resuming (update_job_state will handle final task state update)
+            WHERE   job = _job;
 
-            Begin
-
-                -- Update capture task job and params
-                --
-                UPDATE  cap.t_tasks
-                SET     priority = _priority ,
-                        comment = _comment ,
-                        state = CASE WHEN _reset THEN 20 ELSE state END -- 20=resuming (update_job_state will handle final task state update)
+            -- Only update parameters if not an empty string
+            If char_length(_jobParam) = 0 Then
+                _message := format('Updated priority, comment, and state for capture task job %s; did not update parameters since _jobParam is empty', _job);
+            Else
+                UPDATE  cap.t_task_parameters
+                SET     parameters = _jobParam::XML
                 WHERE   job = _job;
 
-                -- Only update parameters if not an empty string
-                If char_length(_jobParam) = 0 Then
-                    _message := format('Updated priority, comment, and state for capture task job %s; did not update parameters since _jobParam is empty', _job);
-                Else
-                    UPDATE  cap.t_task_parameters
-                    SET     parameters = _jobParam::XML
-                    WHERE   job = _job;
-
-                    _message := format('Updated priority, comment, state, and parameters for capture task job %s', _job);
-                End If;
-
-            End;
-
+                _message := format('Updated priority, comment, state, and parameters for capture task job %s', _job);
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -178,7 +172,7 @@ BEGIN
         If _logErrors Then
             _message := local_error_handler (
                             _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                            _callingproclocation => '', _logError => true);
+                            _callingProcLocation => '', _logError => true);
         Else
             _message := _exceptionMessage;
         End If;

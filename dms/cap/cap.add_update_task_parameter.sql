@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          08/24/2022 mem - Switch from get_current_function_name() to get_current_function_info()
 **          08/26/2022 mem - verify_sp_authorized now has boolean parameters
 **          08/27/2022 mem - Change arguments _infoOnly and _deleteParam from int to boolean
+**          09/01/2022 mem - Send '<auto>' to get_current_function_info()
 **
 *****************************************************/
 DECLARE
@@ -53,7 +54,7 @@ BEGIN
 
     SELECT schema_name, name_with_schema
     INTO _schemaName, _nameWithSchema
-    FROM get_current_function_info('cap', _showDebug);
+    FROM get_current_function_info('<auto>', _showDebug);
 
     SELECT authorized
     INTO _authorized
