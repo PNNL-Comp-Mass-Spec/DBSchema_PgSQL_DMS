@@ -2,7 +2,7 @@
 -- Name: local_error_handler(text, text, text, text, text, text, text, boolean, boolean, integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exceptionmessage text, _exceptiondetail text, _exceptioncontext text, _callingproclocation text DEFAULT ''::text, _callingprocname text DEFAULT '<AutoDetermine>'::text, _callingprocschema text DEFAULT '<AutoDetermine>'::text, _logerror boolean DEFAULT false, _displayerror boolean DEFAULT false, _duplicateentryholdoffhours integer DEFAULT 0) RETURNS text
+CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exceptionmessage text, _exceptiondetail text, _exceptioncontext text, _callingproclocation text DEFAULT ''::text, _callingprocname text DEFAULT '<auto>'::text, _callingprocschema text DEFAULT '<auto>'::text, _logerror boolean DEFAULT false, _displayerror boolean DEFAULT false, _duplicateentryholdoffhours integer DEFAULT 0) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -17,8 +17,8 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **    _exceptionDetail              Exception detail
 **    _exceptionContext             Exception context, e.g. PL/pgSQL function test.test_exception_handler(text,boolean) line 35 at RAISE
 **    _callingProcLocation          Most recent location in the calling procedure (optional)
-**    _callingProcName              Calling procedure name; will auto-determine using _exceptionContext if '<AutoDetermine>' or ''
-**    _callingProcSchema            Calling procedure schema; will auto-determine using resolve_table_name if '<AutoDetermine>' or ''
+**    _callingProcName              Calling procedure name; will auto-determine using _exceptionContext and get_call_stack() if '<Auto>', '<AutoDetermine>', or ''
+**    _callingProcSchema            Calling procedure schema; if the exception context does not include a schema name, this argument's value can be used to explicitly define the schema to use. Otherwise, will look for the calling procedure in the system catalog views
 **    _logError                     If true, log the error in the t_log_entries table that corresponds to the calling procedure's schema (or public.t_log_entries if the given schema does not have table t_log_entries)
 **    _displayError                 If true, show the formatted error message using RAISE Warning
 **    _duplicateEntryHoldoffHours   Set this to a value greater than 0 to prevent duplicate entries being posted within the given number of hours
@@ -43,9 +43,11 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          03/15/2021 mem - Treat @errorNum as an input/output parameter
 **          08/24/2022 mem - Ported to PostgreSQL
+**          09/01/2022 mem - Use _callingProcSchema for the schema name if _callingProcName is <Auto> or <AutoDetermine> and get_call_stack() returns an empty schema name
 **
 ****************************************************/
 DECLARE
+    _schemaName text;
     _message text;
     _innerExceptionMessage text;
 BEGIN
@@ -65,21 +67,52 @@ BEGIN
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
 
     If (_callingProcName = '' Or
+        _callingProcName::citext = '<Auto>'::citext Or
         _callingProcName::citext = '<AutoDetermine>'::citext Or
+        _callingProcSchema::citext = '<Auto>'::citext Or
         _callingProcSchema::citext = '<AutoDetermine>'::citext
        ) AND
        char_length(_exceptionContext) > 0 Then
 
+        If char_length(_callingProcSchema) > 0 And
+           ( _callingProcSchema::citext = '<Auto>'::citext Or
+             _callingProcSchema::citext = '<AutoDetermine>'::citext
+           ) Then
+            _callingProcSchema := '';
+        End If;
+
         -- Use _exceptionContext to resolve the function or procedure name
 
         SELECT schema_name, object_name
-        INTO _callingProcSchema, _callingProcName
+        INTO _schemaName, _callingProcName
         FROM public.get_call_stack(_exceptionContext)
         ORDER BY depth DESC
         LIMIT 1;
 
-        If Not FOUND Then
-            _callingProcSchema := '';
+        If FOUND Then
+            If char_length(_schemaName) = 0 Then
+                If char_length(_callingProcSchema) > 0 Then
+                    _schemaName := _callingProcSchema;
+                Else
+                    -- Lookup the schema name, choosing the first schema found if multiple functions match _objectName
+                    SELECT n.nspname AS schema
+                    INTO _schemaName
+                    FROM pg_proc p
+                        INNER JOIN pg_namespace n ON p.pronamespace = n.oid
+                    WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND
+                          p.proname = _callingProcName
+                    ORDER BY n.nspname
+                    LIMIT 1;
+
+                    If Not Found Then
+                        _schemaName := '';
+                    End If;
+                End If;
+            End If;
+
+            _callingProcSchema := _schemaName;
+        Else
+            -- Update the calling procedure name but leave _callingProcSchema as-is (either an empty string or a user-defined schema name)
             _callingProcName := 'Undefined_Function';
         End If;
     End If;
