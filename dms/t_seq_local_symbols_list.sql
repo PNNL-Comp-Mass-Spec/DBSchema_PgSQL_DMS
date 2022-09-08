@@ -12,19 +12,6 @@ CREATE TABLE public.t_seq_local_symbols_list (
 ALTER TABLE public.t_seq_local_symbols_list OWNER TO d3l243;
 
 --
--- Name: t_seq_local_symbols_list_local_symbol_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
---
-
-ALTER TABLE public.t_seq_local_symbols_list ALTER COLUMN local_symbol_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.t_seq_local_symbols_list_local_symbol_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_seq_local_symbols_list pk_t_seq_local_symbols_list; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

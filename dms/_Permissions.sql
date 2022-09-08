@@ -1291,13 +1291,6 @@ GRANT SELECT ON SEQUENCE public.t_schema_change_log_schema_change_log_id_seq TO 
 GRANT SELECT ON SEQUENCE public.t_schema_change_log_schema_change_log_id_seq TO writeaccess;
 
 --
--- Name: SEQUENCE t_seq_local_symbols_list_local_symbol_id_seq; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON SEQUENCE public.t_seq_local_symbols_list_local_symbol_id_seq TO readaccess;
-GRANT SELECT ON SEQUENCE public.t_seq_local_symbols_list_local_symbol_id_seq TO writeaccess;
-
---
 -- Name: SEQUENCE t_settings_files_settings_file_id_seq; Type: ACL; Schema: public; Owner: d3l243
 --
 
