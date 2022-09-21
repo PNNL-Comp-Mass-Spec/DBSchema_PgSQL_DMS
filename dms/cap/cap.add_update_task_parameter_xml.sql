@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **      <Param Section="JobParameters" Name="Instrument_Class" Value="LTQ_FT" />
 **      <Param Section="JobParameters" Name="Instrument_Name" Value="QEHFX03" />
 **
+**
 **  Example usage:
 **
 **      -- This function can be called from a procedure, sending in the XML via a variable and storing the results in variables (or in a single record variable)
@@ -68,6 +69,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **               ) UpdateQ ON TaskParams.job = 5493941;
 **
 **      -- Option 2: Use WHERE clause
+**      --
 **      SELECT TaskParams.parameters, UpdateQ.*
 **      FROM cap.t_task_parameters TaskParams,      -- Note the comma here
 **           LATERAL (
@@ -80,6 +82,38 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **               ) UpdateQ
 **      WHERE TaskParams.job = 5493941;
 **
+**
+**      -- Alternatively, query t_task_parameters to obtain XML parameters for a given capture task job
+**
+**      SELECT parameters::text 
+**      FROM cap.t_task_parameters 
+**      WHERE job = 5493935;
+**
+**      -- Next query this function with _showDebug => true and examine the text output
+**      SELECT *
+**      FROM cap.add_update_task_parameter_xml(
+**          '<Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" /><Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" /><Param Section="DatasetQC" Name="LCMS2DOverviewPlotDivisor" Value="10" /><Param Section="JobParameters" Name="Dataset" Value="AgilentQQQ_Blank_Pos_MRM_04_20220725" /><Param Section="JobParameters" Name="Dataset_ID" Value="1062716" /><Param Section="JobParameters" Name="Dataset_Type" Value="MRM" /><Param Section="JobParameters" Name="RawDataType" Value="dot_d_folders" /><Param Section="JobParameters" Name="Source_Path" Value="ProteomicsData\" /><Param Section="JobParameters" Name="Source_Vol" Value="\\Agilent_QQQ_04.bionet\" />',
+**          'DatasetQC',
+**          'CreateDatasetInfoFile',
+**          'False',
+**          _showDebug => true);
+**
+**      SELECT *
+**      FROM cap.add_update_task_parameter_xml(
+**          '<Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" /><Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" /><Param Section="DatasetQC" Name="LCMS2DOverviewPlotDivisor" Value="10" /><Param Section="JobParameters" Name="Dataset" Value="AgilentQQQ_Blank_Pos_MRM_04_20220725" /><Param Section="JobParameters" Name="Dataset_ID" Value="1062716" /><Param Section="JobParameters" Name="Dataset_Type" Value="MRM" /><Param Section="JobParameters" Name="RawDataType" Value="dot_d_folders" /><Param Section="JobParameters" Name="Source_Path" Value="ProteomicsData\" /><Param Section="JobParameters" Name="Source_Vol" Value="\\Agilent_QQQ_04.bionet\" />',
+**          'DatasetQC',
+**          'NewProcessingOption',
+**          '5',
+**          _showDebug => true);
+**
+**      SELECT *
+**      FROM cap.add_update_task_parameter_xml(
+**          Null,
+**          'JobParameters',
+**          'Source_Path',
+**          'ProteomicsData',
+**          _showDebug => true);
+**
 **  Auth:   mem
 **  Date:   09/24/2012 mem - Ported from DMS_Pipeline DB
 **          08/21/2022 mem - Ported to PostgreSQL
@@ -88,7 +122,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **          08/23/2022 mem - Raise an exception if the section name or parameter name is null or empty
 **                         - Assure that _value is not null
 **                         - Report the state as 'Unchanged Value' if the old and new values for the parameter are equivalent
-**          08/27/2022 mem - Change arguments _deleteParam _showDebug from int to boolean
+**          08/27/2022 mem - Change arguments _deleteParam and _showDebug from int to boolean
 **
 *****************************************************/
 DECLARE
