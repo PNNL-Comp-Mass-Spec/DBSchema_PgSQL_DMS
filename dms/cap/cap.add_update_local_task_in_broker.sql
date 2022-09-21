@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW instead of RAISERROR
+**          08/28/2022 mem - When validating _mode = 'update', use state 3 for complete
 **          08/28/2022 mem - Ported to PostgreSQL
 **          08/31/2022 mem - Remove unused variables and fix call to local_error_handler
 **          09/01/2022 mem - Change default value for _mode and send '<auto>' to get_current_function_info()
