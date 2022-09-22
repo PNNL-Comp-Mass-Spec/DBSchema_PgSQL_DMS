@@ -85,8 +85,8 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **
 **      -- Alternatively, query t_task_parameters to obtain XML parameters for a given capture task job
 **
-**      SELECT parameters::text 
-**      FROM cap.t_task_parameters 
+**      SELECT parameters::text
+**      FROM cap.t_task_parameters
 **      WHERE job = 5493935;
 **
 **      -- Next query this function with _showDebug => true and examine the text output
