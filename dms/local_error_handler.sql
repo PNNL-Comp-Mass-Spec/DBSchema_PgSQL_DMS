@@ -104,7 +104,7 @@ BEGIN
                     ORDER BY n.nspname
                     LIMIT 1;
 
-                    If Not Found Then
+                    If Not FOUND Then
                         _schemaName := '';
                     End If;
                 End If;
