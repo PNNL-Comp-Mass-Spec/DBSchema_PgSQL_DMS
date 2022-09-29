@@ -123,6 +123,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **                         - Assure that _value is not null
 **                         - Report the state as 'Unchanged Value' if the old and new values for the parameter are equivalent
 **          08/27/2022 mem - Change arguments _deleteParam and _showDebug from int to boolean
+**          09/28/2022 mem - Rename temporary table
 **
 *****************************************************/
 DECLARE
@@ -161,7 +162,7 @@ BEGIN
     -- Parse the XML and store in a table
     ---------------------------------------------------
     --
-    CREATE TEMP TABLE Tmp_TaskParameters (
+    CREATE TEMP TABLE Tmp_Task_Parameters (
         Section citext,
         Name citext,
         Value text,
@@ -172,7 +173,7 @@ BEGIN
     -- We must surround the task parameter XML with <params></params> so that the XML will be rooted, as required by XMLTABLE()
     ---------------------------------------------------
 
-    INSERT INTO Tmp_TaskParameters (Section, Name, Value, State)
+    INSERT INTO Tmp_Task_Parameters (Section, Name, Value, State)
     SELECT XmlQ.section, XmlQ.name, XmlQ.value, 'Unchanged'
     FROM (
         SELECT xmltable.*
@@ -207,7 +208,7 @@ BEGIN
 
         FOR _previewData IN
             SELECT 'Initial Value' As State, Section, Name, Value
-            FROM Tmp_TaskParameters
+            FROM Tmp_Task_Parameters
             ORDER BY Section, Name
         LOOP
             _infoData := format(_formatSpecifier,
@@ -230,14 +231,14 @@ BEGIN
         ---------------------------------------------------
         --
 
-        UPDATE Tmp_TaskParameters
+        UPDATE Tmp_Task_Parameters
         SET Value = _value, State = Case When Value Is Distinct From _value Then 'Updated Value' Else 'Unchanged Value' End
         WHERE Section = _section::citext AND
               Name = _paramName::citext;
 
         If Not FOUND Then
             -- Match not found; Insert a new parameter
-            INSERT INTO Tmp_TaskParameters(Section, Name, Value, State)
+            INSERT INTO Tmp_Task_Parameters(Section, Name, Value, State)
             VALUES (_section, _paramName, _value, 'Added');
 
         End If;
@@ -246,7 +247,7 @@ BEGIN
         -- Delete the specified parameter
         ---------------------------------------------------
         --
-        UPDATE Tmp_TaskParameters
+        UPDATE Tmp_Task_Parameters
         SET State = _deletedFlag
         WHERE Section = _section::citext AND
               Name    = _paramName::citext;
@@ -262,7 +263,7 @@ BEGIN
 
         FOR _previewData IN
             SELECT State, Section, Name, Value
-            FROM Tmp_TaskParameters
+            FROM Tmp_Task_Parameters
             WHERE State <> 'Unchanged'
             ORDER BY Section, Name
         LOOP
@@ -280,6 +281,10 @@ BEGIN
 
     End If;
 
+    ---------------------------------------------------
+    -- Convert the parameters in table Tmp_Task_Parameters into XML
+    ---------------------------------------------------
+
     RETURN QUERY
     SELECT xml_item, true as Success, '' As message
     FROM ( SELECT
@@ -291,11 +296,11 @@ BEGIN
                         value As "Value"))
                     ORDER BY section, name
                    ) AS xml_item
-           FROM Tmp_TaskParameters
+           FROM Tmp_Task_Parameters
            WHERE State <> _deletedFlag
         ) AS LookupQ;
 
-    DROP TABLE Tmp_TaskParameters;
+    DROP TABLE Tmp_Task_Parameters;
 END
 $$;
 
