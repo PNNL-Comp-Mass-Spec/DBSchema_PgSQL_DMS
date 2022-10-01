@@ -39,7 +39,7 @@ BEGIN
     ---------------------------------------------------
     -- Table variable to hold capture task job parameters
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_ParamTab(
       Section text,
       Name text,
@@ -47,9 +47,8 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- locally cached params
+    -- Locally cached params
     ---------------------------------------------------
-    --
 
     INSERT INTO Tmp_ParamTab ( Section, Name, Value)
     VALUES ('JobParameters', 'Dataset_ID', _datasetID),
@@ -65,7 +64,7 @@ BEGIN
     --
     -- Convert columns of data from V_DMS_Dataset_Metadata into rows added to Tmp_ParamTab
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ParamTab ( Section, Name, Value)
     SELECT 'JobParameters' AS Section,
            UnpivotQ.Name,
@@ -127,7 +126,7 @@ BEGIN
     --   LCMS2DOverviewPlotDivisor, default 10
     --
     ---------------------------------------------------
-    --
+
     SELECT raw_data_type,
            params
     INTO _rawDataType, _paramXML
@@ -136,8 +135,18 @@ BEGIN
 
     ---------------------------------------------------
     -- Extract Section, Name, and Value from _paramXML
-    ---------------------------------------------------
     --
+    -- XML excerpt:
+    --   <sections>
+    --     <section name="DatasetQC">
+    --       <item key="SaveTICAndBPIPlots" value="True" />
+    --       <item key="SaveLCMS2DPlots" value="True" />
+    --       <item key="ComputeOverallQualityScores" value="True" />
+    --       <item key="CreateDatasetInfoFile" value="True" />
+    --     </section>
+    --   </sections>
+    ---------------------------------------------------
+
     INSERT INTO Tmp_ParamTab (Section, Name, Value)
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
@@ -176,7 +185,6 @@ BEGIN
     -- This directory is used to store metadata.txt files for dataset archive and archive tasks
     -- Those files are used by the ArchiveVerify tool to confirm that files were successfully imported into MyEMSL
     ---------------------------------------------------
-    --
 
     SELECT P.Value
     INTO _storageVolExternal
@@ -205,6 +213,7 @@ BEGIN
     ---------------------------------------------------
     -- Add the SHA-1 hash for the first instrument file, if defined
     ---------------------------------------------------
+
     SELECT file_hash
     INTO _fileHash
     FROM public.T_Dataset_Files
