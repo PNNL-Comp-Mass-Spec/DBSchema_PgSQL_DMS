@@ -91,13 +91,13 @@ BEGIN
     If _enable Is Null Then
         _message := '_enable cannot be null';
         _returnCode := 'U5201';
-        Return;
+        RETURN;
     End If;
 
     If _managerTypeID Is Null Then
         _message := '_managerTypeID cannot be null';
         _returnCode := 'U5202';
-        Return;
+        RETURN;
     End If;
 
     If _managerTypeID = 0 And char_length(_managerNameList) > 0 And _managerNameList::citext <> 'All' Then
@@ -120,14 +120,14 @@ BEGIN
             End If;
 
             _returnCode := 'U5203';
-            Return;
+            RETURN;
         End If;
     End If;
 
     If _enable AND char_length(_managerNameList) = 0 Then
         _message := '_managerNameList cannot be blank when _enable is true; to update all managers, set _managerNameList to ''All''';
         _returnCode := 'U5204';
-        Return;
+        RETURN;
     End If;
 
     -----------------------------------------------
@@ -251,19 +251,19 @@ BEGIN
                 If _managerTypeID = 0 Then
                     _message := 'None of the managers in _managerNameList was recognized';
                 Else
-                    _message := 'No ' || _managerTypeName || ' managers were found matching _managerNameList';
+                    _message := format('No %s managers were found matching _managerNameList (%s)', _managerTypeName, _managerNameList);
                 End If;
             Else
-                _message := 'No ' || _managerTypeName || ' managers were found in mc.t_mgrs';
+                _message := format('No %s managers were found in mc.t_mgrs', _managerTypeName);
             End If;
         Else
             If _countUnchanged = 1 Then
                 _message := 'The manager is already ' || _activeStateDescription;
             Else
                 If _managerTypeID = 0 Then
-                    _message := 'All ' || _countUnchanged::text || ' managers are already ' || _activeStateDescription;
+                    _message := format('All %s managers are already %s', _countUnchanged, _activeStateDescription);
                 Else
-                    _message := 'All ' || _countUnchanged::text || ' ' || _managerTypeName || ' managers are already ' || _activeStateDescription;
+                    _message := format('All %s %s managers are already %s', _countUnchanged, _managerTypeName, _activeStateDescription);
                 End If;
             End If;
         End If;
@@ -289,7 +289,7 @@ BEGIN
                   PT.param_name = 'mgractive' AND
                   MT.mgr_type_active > 0;
 
-        Return;
+        RETURN;
     End If;
 
     If _infoOnly Then
@@ -357,7 +357,7 @@ BEGIN
                   PV.value <> _newValue AND
                   MT.mgr_type_active > 0;
 
-        Return;
+        RETURN;
     End If;
 
     -- Update mgractive for the managers in the _mgrNames array
