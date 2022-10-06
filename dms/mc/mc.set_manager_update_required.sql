@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **
 **  Example usage:
 **
-**      Call mc.set_manager_update_required 'Pub-10-1, Pub-12-%', _showTable => true, _infoOnly => true);
+**      Call mc.set_manager_update_required ('Pub-10-1, Pub-12-%', _showTable => true, _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   01/24/2009 mem - Initial version

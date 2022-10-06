@@ -15,6 +15,10 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **    _newValue        The new value to assign for this parameter
 **    _managerIDList   manager ID values (numbers, not manager names)
 **
+**  Example usage:
+**
+**      Call mc.update_single_mgr_control_param('orgdbdir', 'G:\DMS_Temp_Org', '1277, 1317, 1318', _infoOnly => true);
+**
 **  Auth:   jds
 **  Date:   06/20/2007
 **          07/31/2007 grk - changed for 'controlfromwebsite' no longer a parameter
