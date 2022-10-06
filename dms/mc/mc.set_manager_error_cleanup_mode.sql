@@ -1,8 +1,8 @@
 --
--- Name: set_manager_error_cleanup_mode(text, integer, integer, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: set_manager_error_cleanup_mode(text, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text DEFAULT ''::text, IN _cleanupmode integer DEFAULT 1, IN _showtable integer DEFAULT 1, IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text DEFAULT ''::text, IN _cleanupmode integer DEFAULT 1, IN _showtable boolean DEFAULT true, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,10 +14,11 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **  Arguments:
 **    _mgrList       Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
 **    _cleanupMode   0 = No auto cleanup, 1 = Attempt auto cleanup once, 2 = Auto cleanup always
+**    _showTable     Set to true to show the cleanup mode for the specified managers
 **
 **  Example usage:
 **
-**      Call mc.set_manager_error_cleanup_mode('Pub-10-1,Pub-11%', 1, _infoonly => 1);
+**      Call mc.set_manager_error_cleanup_mode('Pub-10-1,Pub-11%', 1, _infoonly => true);
 **
 **  Auth:   mem
 **  Date:   09/10/2009 mem - Initial version
@@ -31,6 +32,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _showTable and _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -38,10 +40,13 @@ DECLARE
     _mgrID int;
     _paramTypeID int;
     _cleanupModeString text;
-    _previewData record;
     _countToUpdate int;
+
+    _formatSpecifier text;
     _infoHead text;
     _infoData text;
+    _previewData record;
+
     _sqlstate text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -53,8 +58,9 @@ BEGIN
 
     _mgrList := Coalesce(_mgrList, '');
     _cleanupMode := Coalesce(_cleanupMode, 1);
-    _showTable := Coalesce(_showTable, 1);
-    _infoOnly := Coalesce(_infoOnly, 0);
+    _showTable := Coalesce(_showTable, true);
+    _infoOnly := Coalesce(_infoOnly, false);
+
     _message := '';
     _returnCode := '';
 
@@ -157,8 +163,11 @@ BEGIN
 
     _cleanupModeString := _cleanupMode::text;
 
-    If _infoOnly <> 0 THEN
-        _infoHead := format('%-10s %-25s %-25s %-15s %-18s %-25s',
+    If _infoOnly THEN
+
+        _formatSpecifier := '%-10s %-25s %-25s %-15s %-18s %-25s';
+
+        _infoHead := format(_formatSpecifier,
                             'Mgr_ID',
                             'Manager',
                             'Param Name',
@@ -185,7 +194,7 @@ BEGIN
             ORDER BY MP.manager
         LOOP
 
-            _infoData := format('%-10s %-25s %-25s %-15s %-18s %-25s',
+            _infoData := format(_formatSpecifier,
                                     _previewData.mgr_id,
                                     _previewData.manager,
                                     _previewData.param_name,
@@ -234,8 +243,11 @@ BEGIN
     -- Optionally show the new values
     ---------------------------------------------------
 
-    If _showTable <> 0 Then
-        _infoHead := format('%-10s %-25s %-25s %-15s %-25s',
+    If _showTable Then
+
+        _formatSpecifier := '%-10s %-25s %-25s %-15s %-25s';
+
+        _infoHead := format(_formatSpecifier,
                             'Mgr_ID',
                             'Manager',
                             'Param Name',
@@ -258,7 +270,7 @@ BEGIN
             ORDER BY MP.manager
         LOOP
 
-            _infoData := format('%-10s %-25s %-25s %-15s %-25s',
+            _infoData := format(_formatSpecifier,
                                     _previewData.mgr_id,
                                     _previewData.manager,
                                     _previewData.param_name,
@@ -295,11 +307,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'SetManagerErrorCleanupMode';
+COMMENT ON PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text, IN _cleanupmode integer, IN _showtable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'SetManagerErrorCleanupMode';
 

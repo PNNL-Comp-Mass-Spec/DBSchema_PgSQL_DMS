@@ -1,8 +1,8 @@
 --
--- Name: duplicate_manager_parameters(integer, integer, integer, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: duplicate_manager_parameters(integer, integer, boolean, boolean); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer DEFAULT 0, _infoonly integer DEFAULT 0) RETURNS TABLE(type_id integer, value public.citext, mgr_id integer, comment public.citext)
+CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget boolean DEFAULT false, _infoonly boolean DEFAULT false) RETURNS TABLE(type_id integer, value public.citext, mgr_id integer, comment public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,17 +14,18 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 **  Arguments:
 **    _sourceMgrID              Source manager ID
 **    _targetMgrID              Target manager ID
-**    _mergeSourceWithTarget    When 0, then the target manager cannot have any parameters; if 1, then will add missing parameters to the target manager
-**    _infoOnly                 0 to perform the update, 1 to preview
+**    _mergeSourceWithTarget    When false, the target manager cannot have any parameters; if true, will add missing parameters to the target manager
+**    _infoOnly                 False to perform the update, true to preview
 **
 **  Example usage:
-**    SELECT * FROM duplicate_manager_parameters(157, 172, _infoOnly => 1)
+**    SELECT * FROM duplicate_manager_parameters(157, 172, _infoOnly => true)
 **
 **  Auth:   mem
 **  Date:   10/10/2014 mem - Initial release
 **          02/01/2020 mem - Ported to PostgreSQL
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _infoOnly and _mergeSourceWithTarget from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -41,8 +42,8 @@ BEGIN
     -- Validate input fields
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, 1);
-    _mergeSourceWithTarget := Coalesce(_mergeSourceWithTarget, 0);
+    _infoOnly := Coalesce(_infoOnly, true);
+    _mergeSourceWithTarget := Coalesce(_mergeSourceWithTarget, false);
 
     If _returnCode = '' And _sourceMgrID Is Null Then
         _message := '_sourceMgrID cannot be null; unable to continue';
@@ -81,11 +82,11 @@ BEGIN
         _returnCode := 'U5204';
     End If;
 
-    If _returnCode = '' And _mergeSourceWithTarget = 0 Then
+    If _returnCode = '' And Not _mergeSourceWithTarget Then
         -- Make sure the target manager does not have any parameters
         --
         If Exists (SELECT * FROM mc.t_param_value WHERE mgr_id = _targetMgrID) Then
-            _message := '_targetMgrID ' + _targetMgrID + ' has existing parameters in mc.t_param_value; aborting since _mergeSourceWithTarget = 0';
+            _message := format('_targetMgrID %s has existing parameters in mc.t_param_value; aborting since _mergeSourceWithTarget is false', _targetMgrID);
             _returnCode := 'U5205';
         End If;
     End If;
@@ -99,7 +100,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _infoOnly <> 0 Then
+    If _infoOnly Then
             RETURN QUERY
             SELECT Source.type_id,
                    Source.value,
@@ -135,7 +136,6 @@ BEGIN
         FROM mc.t_param_value PV
         WHERE PV.mgr_id = _targetMgrID;
 
-
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
@@ -158,11 +158,11 @@ END
 $$;
 
 
-ALTER FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget boolean, _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: FUNCTION duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget boolean, _infoonly boolean); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget integer, _infoonly integer) IS 'DuplicateManagerParameters';
+COMMENT ON FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer, _targetmgrid integer, _mergesourcewithtarget boolean, _infoonly boolean) IS 'DuplicateManagerParameters';
 

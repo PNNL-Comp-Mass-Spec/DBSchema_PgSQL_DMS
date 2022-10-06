@@ -1,8 +1,8 @@
 --
--- Name: set_manager_update_required(text, integer, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: set_manager_update_required(text, boolean, boolean, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFAULT ''::text, IN _showtable integer DEFAULT 0, IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFAULT ''::text, IN _showtable boolean DEFAULT false, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -13,12 +13,12 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **
 **  Arguments:
 **    _mgrList      Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
-**    _showtable    Set to 1 to show the old and new values using RAISE INFO messages when _infoOnly is 0; ignored when _infoOnly is 1 (since the table output is always shown)
-**    _infoOnly     1 to preview changes, 0 to make changes
+**    _showTable    Set to true to show the old and new values using RAISE INFO messages when _infoOnly is false; ignored when _infoOnly is true (since the table output is always shown)
+**    _infoOnly     True to preview changes, false to make changes
 **
 **  Example usage:
 **
-**      Call mc.set_manager_update_required 'Pub-10-1, Pub-12-%', _showTable => 1, _infoOnly => 1);
+**      Call mc.set_manager_update_required 'Pub-10-1, Pub-12-%', _showTable => true, _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   01/24/2009 mem - Initial version
@@ -31,16 +31,20 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _infoOnly and _showTable from integer to boolean
 **
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
     _mgrID int;
     _paramTypeID int;
-    _previewData record;
     _countToUpdate int;
+
+    _formatSpecifier text;
     _infoHead text;
     _infoData text;
+    _previewData record;
+
     _sqlstate text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -51,8 +55,8 @@ BEGIN
     ---------------------------------------------------
 
     _mgrList := Coalesce(_mgrList, '');
-    _showTable := Coalesce(_showTable, 0);
-    _infoOnly := Coalesce(_infoOnly, 0);
+    _showTable := Coalesce(_showTable, false);
+    _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
     _returnCode := '';
 
@@ -144,8 +148,10 @@ BEGIN
     -- Update the 'ManagerUpdateRequired' entry for each manager in Tmp_ManagerList
     ---------------------------------------------------
 
-    If _infoOnly <> 0 THEN
-        _infoHead := format('%-10s %-25s %-25s %-15s %-18s %-25s',
+    If _infoOnly THEN
+        _formatSpecifier := '%-10s %-25s %-25s %-15s %-18s %-25s';
+
+        _infoHead := format(_formatSpecifier,
                             'Mgr_ID',
                             'Manager',
                             'Param Name',
@@ -172,7 +178,7 @@ BEGIN
             ORDER BY MP.manager
         LOOP
 
-            _infoData := format('%-10s %-25s %-25s %-15s %-18s %-25s',
+            _infoData := format(_formatSpecifier,
                                     _previewData.mgr_id,
                                     _previewData.manager,
                                     _previewData.param_name,
@@ -216,8 +222,10 @@ BEGIN
         _message := 'All managers already have ManagerUpdateRequired set to True';
     End If;
 
-    If _showTable <> 0 Then
-        _infoHead := format('%-10s %-25s %-25s %-15s %-25s',
+    If _showTable Then
+        _formatSpecifier := '%-10s %-25s %-25s %-15s %-25s';
+
+        _infoHead := format(_formatSpecifier,
                             'Mgr_ID',
                             'Manager',
                             'Param Name',
@@ -239,7 +247,7 @@ BEGIN
             ORDER BY U.Manager
         LOOP
 
-            _infoData := format('%-10s %-25s %-25s %-15s %-25s',
+            _infoData := format(_formatSpecifier,
                                     _previewData.mgr_id,
                                     _previewData.manager,
                                     _previewData.param_name,
@@ -276,11 +284,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.set_manager_update_required(IN _mgrlist text, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.set_manager_update_required(IN _mgrlist text, IN _showtable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE set_manager_update_required(IN _mgrlist text, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE set_manager_update_required(IN _mgrlist text, IN _showtable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.set_manager_update_required(IN _mgrlist text, IN _showtable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'SetManagerUpdateRequired';
+COMMENT ON PROCEDURE mc.set_manager_update_required(IN _mgrlist text, IN _showtable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'SetManagerUpdateRequired';
 

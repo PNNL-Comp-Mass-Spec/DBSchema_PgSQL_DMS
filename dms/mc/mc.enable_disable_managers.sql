@@ -1,8 +1,8 @@
 --
--- Name: enable_disable_managers(integer, integer, text, integer, integer, refcursor, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: enable_disable_managers(boolean, integer, text, boolean, boolean, refcursor, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _managertypeid integer DEFAULT 11, IN _managernamelist text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, IN _includedisabled integer DEFAULT 0, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _managertypeid integer DEFAULT 11, IN _managernamelist text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _includedisabled boolean DEFAULT false, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -11,24 +11,24 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _m
 **      Enables or disables all managers of the given type
 **
 **  Arguments:
-**    _enable            0 to disable, 1 to enable
+**    _enable            False to disable, true to enable
 **    _managerTypeID     Defined in table T_MgrTypes.  8=Space, 9=DataImport, 11=Analysis Tool Manager, 15=CaptureTaskManager
-**    _managerNameList   Required when _enable = 1.  Only managers specified here will be enabled, though you can use 'All' to enable All managers.
-**                       When _enable = 0, if this parameter is blank (or All) then all managers of the given type will be disabled
+**    _managerNameList   Required when _enable is true.  Only managers specified here will be enabled, though you can use 'All' to enable All managers.
+**                       When _enable is false, if this parameter is blank (or All) then all managers of the given type will be disabled
 **                       supports the % wildcard
 **   _infoOnly           When non-zero, show the managers that would be updated
-**   _includeDisabled    By default, this procedure skips managers with control_from_website = 0 in t_mgrs; set _includeDisabled to 1 to also include them
+**   _includeDisabled    By default, this procedure skips managers with control_from_website = 0 in t_mgrs; set _includeDisabled to true to also include them
 **
 **
 **  Use this to view the data returned by the _results cursor
 **
 **      BEGIN;
 **          CALL mc.enable_disable_managers(
-**              _enable => 1,
+**              _enable => true,
 **              _managerTypeID => 11,
 **              _managerNameList => 'Pub-80%',
-**              _infoOnly => 1,
-**              _includeDisabled => 0
+**              _infoOnly => true,
+**              _includeDisabled => false
 **          );
 **          FETCH ALL FROM _results;
 **      END;
@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _m
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **                         - Update return codes
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _infoOnly and _includeDisabled from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -63,9 +64,12 @@ DECLARE
     _activeStateDescription text;
     _countToUpdate int;
     _countUnchanged int;
+
+    _formatSpecifier text := '%-22s %-15s %-20s %-25s %-25s';
     _infoHead text;
     _infoData text;
     _previewData record;
+
     _mgrNames text[];
     _sqlstate text;
     _exceptionMessage text;
@@ -78,8 +82,8 @@ BEGIN
     -----------------------------------------------
     --
     _managerNameList := Coalesce(_managerNameList, '');
-    _infoOnly        := Coalesce(_infoOnly, 0);
-    _includeDisabled := Coalesce(_includeDisabled, 0);
+    _infoOnly        := Coalesce(_infoOnly, false);
+    _includeDisabled := Coalesce(_includeDisabled, false);
 
     _message := '';
     _returnCode := '';
@@ -120,8 +124,8 @@ BEGIN
         End If;
     End If;
 
-    If _enable <> 0 AND char_length(_managerNameList) = 0 Then
-        _message := '_managerNameList cannot be blank when _enable is non-zero; to update all managers, set _managerNameList to ''All''';
+    If _enable AND char_length(_managerNameList) = 0 Then
+        _message := '_managerNameList cannot be blank when _enable is true; to update all managers, set _managerNameList to ''All''';
         _returnCode := 'U5204';
         Return;
     End If;
@@ -159,7 +163,7 @@ BEGIN
             End If;
         End If;
 
-        IF _includeDisabled = 0 THEN
+        IF Not _includeDisabled THEN
             DELETE FROM Tmp_ManagerList
             WHERE NOT manager_name IN ( SELECT M.mgr_name
                                         FROM Tmp_ManagerList U
@@ -175,18 +179,18 @@ BEGIN
         SELECT mgr_name
         FROM mc.t_mgrs
         WHERE mgr_type_id = _managerTypeID And
-              (control_from_website > 0 Or _includeDisabled > 0);
+              (control_from_website > 0 Or _includeDisabled);
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     End If;
 
     -- Set _newValue based on _enable
-    If _enable = 0 Then
-        _newValue := 'False';
-        _activeStateDescription := 'Inactive';
-    Else
+    If _enable Then
         _newValue := 'True';
         _activeStateDescription := 'Active';
+    Else
+        _newValue := 'False';
+        _activeStateDescription := 'Inactive';
     End If;
 
     -- Count the number of managers that need to be updated
@@ -288,9 +292,9 @@ BEGIN
         Return;
     End If;
 
-    If _infoOnly <> 0 Then
+    If _infoOnly Then
 
-        _infoHead := format('%-22s %-15s %-20s %-25s %-25s',
+        _infoHead := format(_formatSpecifier,
                             'State Change Preview',
                             'Parameter Name',
                             'Manager Name',
@@ -319,7 +323,7 @@ BEGIN
                   MT.mgr_type_active > 0
         LOOP
 
-            _infoData := format('%-22s %-15s %-20s %-25s %-25s',
+            _infoData := format(_formatSpecifier,
                                     _previewData.State_Change_Preview,
                                     _previewData.Parameter_Name,
                                     _previewData.manager_name,
@@ -429,11 +433,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _managertypeid integer, IN _managernamelist text, IN _infoonly integer, IN _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _managertypeid integer, IN _managernamelist text, IN _infoonly boolean, IN _includedisabled boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE enable_disable_managers(IN _enable integer, IN _managertypeid integer, IN _managernamelist text, IN _infoonly integer, IN _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE enable_disable_managers(IN _enable boolean, IN _managertypeid integer, IN _managernamelist text, IN _infoonly boolean, IN _includedisabled boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.enable_disable_managers(IN _enable integer, IN _managertypeid integer, IN _managernamelist text, IN _infoonly integer, IN _includedisabled integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'EnableDisableManagers';
+COMMENT ON PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _managertypeid integer, IN _managernamelist text, IN _infoonly boolean, IN _includedisabled boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'EnableDisableManagers';
 

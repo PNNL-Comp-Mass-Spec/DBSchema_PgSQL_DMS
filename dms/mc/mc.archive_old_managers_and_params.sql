@@ -1,8 +1,8 @@
 --
--- Name: archive_old_managers_and_params(text, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: archive_old_managers_and_params(text, boolean); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _infoonly integer DEFAULT 1) RETURNS TABLE(message text, mgr_name public.citext, control_from_website smallint, manager_type_id integer, param_name public.citext, entry_id integer, param_type_id integer, param_value public.citext, mgr_id integer, comment public.citext, last_affected timestamp without time zone, entered_by public.citext)
+CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _infoonly boolean DEFAULT true) RETURNS TABLE(message text, mgr_name public.citext, control_from_website smallint, manager_type_id integer, param_name public.citext, entry_id integer, param_type_id integer, param_value public.citext, mgr_id integer, comment public.citext, last_affected timestamp without time zone, entered_by public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **
 **  Arguments:
 **    _mgrList    One or more manager names (comma-separated list); supports wildcards
-**    _infoOnly   0 to perform the update, 1 to preview
+**    _infoOnly   False to perform the update, true to preview
 **
 **  Example usage:
 **
@@ -21,13 +21,13 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **      SET control_from_website = 0
 **      WHERE mgr_name = 'pub-10-1' AND control_from_website > 0;
 **
-**      SELECT * FROM mc.archive_old_managers_and_params('Pub-10-1', _infoOnly => 1);
+**      SELECT * FROM mc.archive_old_managers_and_params('Pub-10-1', _infoOnly => true);
 **
-**      SELECT * FROM mc.archive_old_managers_and_params('Pub-10-1', _infoOnly => 0);
+**      SELECT * FROM mc.archive_old_managers_and_params('Pub-10-1', _infoOnly => false);
 **
 **      -- To re-add the manager to t_mgrs, use function mc.unarchive_old_managers_and_params
-**      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => 1, _enableControlFromWebsite => 1);
-**      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => 0, _enableControlFromWebsite => 1);
+**      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => true,  _enableControlFromWebsite => true);
+**      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => false, _enableControlFromWebsite => true);
 **      SELECT * FROM mc.t_mgrs WHERE mgr_name = 'pub-10-1';
 **
 **  Auth:   mem
@@ -43,6 +43,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **                         - Drop temp tables before exiting the function
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,7 @@ BEGIN
     ---------------------------------------------------
     --
     _mgrList := Coalesce(_mgrList, '');
-    _infoOnly := Coalesce(_infoOnly, 1);
+    _infoOnly := Coalesce(_infoOnly, true);
 
     CREATE TEMP TABLE TmpManagerList (
         manager_name citext NOT NULL,
@@ -173,7 +174,7 @@ BEGIN
                ON Src.mgr_id = Target.mgr_id;
     End If;
 
-    If _infoOnly <> 0 OR NOT EXISTS (SELECT * FROM TmpManagerList) Then
+    If _infoOnly OR NOT EXISTS (SELECT * FROM TmpManagerList) Then
         RETURN QUERY
         SELECT ' To be archived' as message,
                Src.manager_name,
@@ -343,11 +344,11 @@ END
 $$;
 
 
-ALTER FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION archive_old_managers_and_params(_mgrlist text, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: FUNCTION archive_old_managers_and_params(_mgrlist text, _infoonly boolean); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _infoonly integer) IS 'ArchiveOldManagersAndParams';
+COMMENT ON FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _infoonly boolean) IS 'ArchiveOldManagersAndParams';
 

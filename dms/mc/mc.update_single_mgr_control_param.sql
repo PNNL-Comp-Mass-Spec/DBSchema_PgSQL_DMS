@@ -1,8 +1,8 @@
 --
--- Name: update_single_mgr_control_param(text, text, text, text, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: update_single_mgr_control_param(text, text, text, text, boolean, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -37,14 +37,18 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          08/21/2022 mem - Update return code
 **          08/23/2022 mem - Add missing semicolon (which resulted in the RETURN statement being ignored)
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
     _managerCount int;
     _paramTypeID int;
-    _previewData record;
+
+    _formatSpecifier text := '%-10s %-10s %-25s %-25s %-15s %-15s %-15s %-15s';
     _infoHead text;
     _infoData text;
+    _previewData record;
+
     _sqlstate text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -55,7 +59,7 @@ BEGIN
     ---------------------------------------------------
 
     _newValue := Coalesce(_newValue, '');
-    _infoOnly := Coalesce(_infoOnly, 0);
+    _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
     _returnCode := '';
 
@@ -132,8 +136,8 @@ BEGIN
         Return;
     END IF;
 
-    If _infoOnly <> 0 Then
-        _infoHead := format('%-10s %-10s %-25s %-25s %-15s %-15s %-15s %-15s',
+    If _infoOnly Then
+        _infoHead := format(_formatSpecifier,
                             'Entry_ID',
                             'Mgr_ID',
                             'Manager',
@@ -195,7 +199,7 @@ BEGIN
                       PV.type_id = _paramTypeID
             WHERE PV.type_id IS NULL
         LOOP
-            _infoData := format('%-10s %-10s %-25s %-25s %-15s %-15s %-15s %-15s',
+            _infoData := format(_formatSpecifier,
                                     _previewData.entry_id,
                                     _previewData.mgr_id,
                                     _previewData.mgr_name,
@@ -322,11 +326,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'UpdateSingleMgrControlParam';
+COMMENT ON PROCEDURE mc.update_single_mgr_control_param(IN _paramname text, IN _newvalue text, IN _manageridlist text, IN _callinguser text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateSingleMgrControlParam';
 

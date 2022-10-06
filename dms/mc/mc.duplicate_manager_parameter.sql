@@ -1,8 +1,8 @@
 --
--- Name: duplicate_manager_parameter(integer, integer, text, text, text, text, integer); Type: FUNCTION; Schema: mc; Owner: d3l243
+-- Name: duplicate_manager_parameter(integer, integer, text, text, text, text, boolean); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly integer DEFAULT 1) RETURNS TABLE(status text, type_id integer, value public.citext, mgr_id integer, comment public.citext)
+CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly boolean DEFAULT true) RETURNS TABLE(status text, type_id integer, value public.citext, mgr_id integer, comment public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -19,18 +19,19 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **    _paramValueOverride      Optional: new parameter value; ignored if _paramValueSearchText is defined
 **    _paramValueSearchText    Optional: text to search for in the source parameter value
 **    _paramValueReplaceText   Optional: replacement text (ignored if _paramValueReplaceText is null)
-**    _infoOnly                0 to perform the update, 1 to preview
+**    _infoOnly                False to perform the update, true to preview
 **
 **  Example usage:
-**    Select * From duplicate_manager_parameter (157, 172, _paramValueSearchText := 'msfileinfoscanner', _paramValueReplaceText := 'AgilentToUimfConverter', _infoOnly := 1);
+**    Select * From duplicate_manager_parameter (157, 172, _paramValueSearchText => 'msfileinfoscanner', _paramValueReplaceText => 'AgilentToUimfConverter', _infoOnly => true);
 **
-**    Select * From duplicate_manager_parameter (179, 182, _paramValueSearchText := 'PbfGen', _paramValueReplaceText := 'ProMex', _infoOnly := 1);
+**    Select * From duplicate_manager_parameter (179, 182, _paramValueSearchText => 'PbfGen', _paramValueReplaceText => 'ProMex', _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   08/26/2013 mem - Initial release
 **          01/30/2020 mem - Ported to PostgreSQL
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -47,7 +48,7 @@ BEGIN
     -- Validate input fields
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, 1);
+    _infoOnly := Coalesce(_infoOnly, true);
 
     _message := '';
     _returnCode := '';
@@ -113,7 +114,7 @@ BEGIN
     End If;
 
     If Not _paramValueSearchText Is Null Then
-        If _infoOnly <> 0 Then
+        If _infoOnly Then
             RETURN QUERY
             SELECT 'Preview' as Status,
                    _newParamTypeID AS TypeID,
@@ -136,7 +137,7 @@ BEGIN
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     Else
 
-        If _infoOnly <> 0 Then
+        If _infoOnly Then
             RETURN QUERY
             SELECT 'Preview' as Status,
                    _newParamTypeID AS TypeID,
@@ -189,11 +190,11 @@ END
 $$;
 
 
-ALTER FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: FUNCTION duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly boolean); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly integer) IS 'DuplicateManagerParameter';
+COMMENT ON FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text, _commentoverride text, _paramvaluesearchtext text, _paramvaluereplacetext text, _infoonly boolean) IS 'DuplicateManagerParameter';
 

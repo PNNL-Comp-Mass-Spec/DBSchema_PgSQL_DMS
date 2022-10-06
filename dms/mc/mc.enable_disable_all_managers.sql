@@ -1,8 +1,8 @@
 --
--- Name: enable_disable_all_managers(text, text, integer, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: enable_disable_all_managers(text, text, boolean, boolean, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist text DEFAULT ''::text, IN _managernamelist text DEFAULT ''::text, IN _enable integer DEFAULT 1, IN _infoonly integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist text DEFAULT ''::text, IN _managernamelist text DEFAULT ''::text, IN _enable boolean DEFAULT true, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,8 +14,8 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **    _managerTypeIDList   Optional: comma separated list of manager type IDs to disable, e.g. '1, 2, 3'
 **    _managerNameList     Optional: if defined, only managers specified here will be enabled;
 **                         Supports the % wildcard; also supports 'all'
-**    _enable              1 to enable, 0 to disable
-**    _infoOnly            When non-zero, show the managers that would be updated
+**    _enable              True to enable, false to disable
+**    _infoOnly            When true, show the managers that would be updated
 **
 **  Example Usage:
 **
@@ -24,8 +24,8 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          CALL mc.enable_disable_all_managers(
 **                _managerTypeIDList => '15, 11',
 **                _managerNameList => 'Pub-8[0-9]%',
-**                _enable => 0,
-**                _infoOnly => 1
+**                _enable => false,
+**                _infoOnly => true
 **              );
 **      END;
 **
@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Replace temp table with array
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _enable and _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -60,10 +61,10 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
     --
-    _enable := Coalesce(_enable, 0);
+    _enable := Coalesce(_enable, false);
     _managerTypeIDList := Coalesce(_managerTypeIDList, '');
     _managerNameList := Coalesce(_managerNameList, '');
-    _infoOnly := Coalesce(_infoOnly, 0);
+    _infoOnly := Coalesce(_infoOnly, false);
 
     _message := '';
     _returnCode := '';
@@ -134,11 +135,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist text, IN _managernamelist text, IN _enable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist text, IN _managernamelist text, IN _enable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE enable_disable_all_managers(IN _managertypeidlist text, IN _managernamelist text, IN _enable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE enable_disable_all_managers(IN _managertypeidlist text, IN _managernamelist text, IN _enable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist text, IN _managernamelist text, IN _enable integer, IN _infoonly integer, INOUT _message text, INOUT _returncode text) IS 'EnableDisableAllManagers';
+COMMENT ON PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist text, IN _managernamelist text, IN _enable boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'EnableDisableAllManagers';
 

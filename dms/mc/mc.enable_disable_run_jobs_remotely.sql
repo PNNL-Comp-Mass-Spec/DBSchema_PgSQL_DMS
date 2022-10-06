@@ -1,8 +1,8 @@
 --
--- Name: enable_disable_run_jobs_remotely(integer, text, integer, integer, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: enable_disable_run_jobs_remotely(boolean, text, boolean, boolean, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integer, IN _managernamelist text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, IN _addmgrparamsifmissing integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boolean, IN _managernamelist text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _addmgrparamsifmissing boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -11,15 +11,15 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integ
 **      Enables or disables a manager to run jobs remotely
 **
 **  Arguments:
-**    _enable                  0 to disable running jobs remotely, 1 to enable
+**    _enable                  False to disable running jobs remotely, true to enable
 **    _managerNameList         Manager(s) to update; supports % for wildcards
-**    _infoOnly                When non-zero, show the managers that would be updated
-**    _addMgrParamsIfMissing   When 1, if manger(s) are missing parameters RunJobsRemotely or RemoteHostName, will auto-add those parameters
+**    _infoOnly                When true, show the managers that would be updated
+**    _addMgrParamsIfMissing   When true, if manger(s) are missing parameters RunJobsRemotely or RemoteHostName, will auto-add those parameters
 **
 **  Example usage:
 **
-**      Call mc.enable_disable_run_jobs_remotely(1, 'Pub-14-2,Pub-15-2', _infoOnly => 1, _addMgrParamsIfMissing => 0);
-**      Call mc.enable_disable_run_jobs_remotely(1, 'Pub-14-2,Pub-15-2', _infoOnly => 0, _addMgrParamsIfMissing => 0);
+**      Call mc.enable_disable_run_jobs_remotely(1, 'Pub-14-2,Pub-15-2', _infoOnly => true,  _addMgrParamsIfMissing => false);
+**      Call mc.enable_disable_run_jobs_remotely(1, 'Pub-14-2,Pub-15-2', _infoOnly => false, _addMgrParamsIfMissing => false);
 **
 **  Auth:   mem
 **  Date:   03/28/2018 mem - Initial version
@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integ
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **                         - Update return codes
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          10/04/2022 mem - Change _enable and _infoOnly and false from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -46,9 +47,12 @@ DECLARE
     _mgrName text := '';
     _mgrId int := 0;
     _paramTypeId int := 0;
+
+    _formatSpecifier text := '%-22s %-17s %-20s';
     _infoHead text;
     _infoData text;
     _previewData record;
+
     _sqlstate text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -60,8 +64,8 @@ BEGIN
     -----------------------------------------------
     --
     _managerNameList := Coalesce(_managerNameList, '');
-    _infoOnly := Coalesce(_infoOnly, 0);
-    _addMgrParamsIfMissing := Coalesce(_addMgrParamsIfMissing, 0);
+    _infoOnly := Coalesce(_infoOnly, false);
+    _addMgrParamsIfMissing := Coalesce(_addMgrParamsIfMissing, false);
 
     _message := '';
     _returnCode := '';
@@ -101,12 +105,12 @@ BEGIN
     END IF;
 
     -- Set _newValue based on _enable
-    If _enable = 0 Then
-        _newValue := 'False';
-        _activeStateDescription := 'run jobs locally';
-    Else
+    If _enable Then
         _newValue := 'True';
         _activeStateDescription := 'run jobs remotely';
+    Else
+        _newValue := 'False';
+        _activeStateDescription := 'run jobs locally';
     End If;
 
     If Exists (Select * From Tmp_ManagerList Where manager_name = 'Default_AnalysisMgr_Params') Then
@@ -126,7 +130,7 @@ BEGIN
         End If;
     End If;
 
-    If _addMgrParamsIfMissing > 0 Then
+    If _addMgrParamsIfMissing Then
         -- <a>
         FOR _mgrRecord IN
             SELECT U.manager_name,
@@ -151,7 +155,7 @@ BEGIN
                 If Coalesce(_paramTypeId, 0) = 0 Then
                     RAISE WARNING '%', 'Error: could not find parameter "RunJobsRemotely" in mc.t_param_type';
                 Else
-                    If _infoOnly > 0 Then
+                    If _infoOnly Then
                         RAISE INFO '%', 'Would create parameter RunJobsRemotely for Manager ' || _mgrName || ', value ' || _newValue;
 
                         -- Actually do go ahead and create the parameter, but use a value of False even if _newValue is True
@@ -176,7 +180,7 @@ BEGIN
                 If Coalesce(_paramTypeId, 0) = 0 Then
                     RAISE WARNING '%', 'Error: could not find parameter "RemoteHostName" in mc.t_param_type';
                 Else
-                    If _infoOnly > 0 Then
+                    If _infoOnly Then
                         RAISE INFO '%', 'Would create parameter RemoteHostName  for Manager ' || _mgrName || ', value PrismWeb2';
                     Else
                         INSERT INTO mc.t_param_value (mgr_id, type_id, value)
@@ -187,7 +191,7 @@ BEGIN
 
         End Loop;
 
-        If _infoOnly > 0 Then
+        If _infoOnly Then
             RAISE INFO '%', '';
         End If;
 
@@ -236,8 +240,8 @@ BEGIN
 
     If _countToUpdate = 0 Then
         If _countUnchanged = 0 Then
-            If _addMgrParamsIfMissing = 0 THEN
-                _message := 'None of the managers in _managerNameList has parameter "RunJobsRemotely" defined; use _addMgrParamsIfMissing := 1 to auto-add it';
+            If Not _addMgrParamsIfMissing THEN
+                _message := 'None of the managers in _managerNameList has parameter "RunJobsRemotely" defined; use _addMgrParamsIfMissing => true to auto-add it';
             Else
                 _message := 'No managers were found matching _managerNameList';
             End If;
@@ -255,9 +259,9 @@ BEGIN
         Return;
     End If;
 
-    If _infoOnly <> 0 Then
+    If _infoOnly Then
 
-        _infoHead := format('%-22s %-17s %-20s',
+        _infoHead := format(_formatSpecifier,
                             'State Change Preview',
                             'Parameter Name',
                             'Manager Name'
@@ -283,7 +287,7 @@ BEGIN
                   MT.mgr_type_active > 0
         LOOP
 
-            _infoData := format('%-22s %-17s %-20s',
+            _infoData := format(_formatSpecifier,
                                     _previewData.State_Change_Preview,
                                     _previewData.Parameter_Name,
                                     _previewData.manager_name
@@ -362,11 +366,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integer, IN _managernamelist text, IN _infoonly integer, IN _addmgrparamsifmissing integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boolean, IN _managernamelist text, IN _infoonly boolean, IN _addmgrparamsifmissing boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE enable_disable_run_jobs_remotely(IN _enable integer, IN _managernamelist text, IN _infoonly integer, IN _addmgrparamsifmissing integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE enable_disable_run_jobs_remotely(IN _enable boolean, IN _managernamelist text, IN _infoonly boolean, IN _addmgrparamsifmissing boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable integer, IN _managernamelist text, IN _infoonly integer, IN _addmgrparamsifmissing integer, INOUT _message text, INOUT _returncode text) IS 'EnableDisableRunJobsRemotely';
+COMMENT ON PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boolean, IN _managernamelist text, IN _infoonly boolean, IN _addmgrparamsifmissing boolean, INOUT _message text, INOUT _returncode text) IS 'EnableDisableRunJobsRemotely';
 
