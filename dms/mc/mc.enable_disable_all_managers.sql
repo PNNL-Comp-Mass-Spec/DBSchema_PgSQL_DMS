@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **    _enable              True to enable, false to disable
 **    _infoOnly            When true, show the managers that would be updated
 **
-**  Example Usage:
+**  Example usage:
 **
 **      BEGIN;
 **          -- Disable the Capture Task Managers and the Analysis Tool Managers on Pub-80 through Pub-89

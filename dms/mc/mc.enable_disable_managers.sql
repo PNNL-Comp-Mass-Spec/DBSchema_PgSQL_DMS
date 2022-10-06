@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **    _managerNameList   Required when _enable is true.  Only managers specified here will be enabled, though you can use 'All' to enable All managers.
 **                       When _enable is false, if this parameter is blank (or All) then all managers of the given type will be disabled
 **                       supports the % wildcard
-**   _infoOnly           When non-zero, show the managers that would be updated
+**   _infoOnly           When true, show the managers that would be updated
 **   _includeDisabled    By default, this procedure skips managers with control_from_website = 0 in t_mgrs; set _includeDisabled to true to also include them
 **
 **
@@ -54,7 +54,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **                         - Update return codes
 **          08/24/2022 mem - Use function local_error_handler() to log errors
-**          10/04/2022 mem - Change _infoOnly and _includeDisabled from integer to boolean
+**          10/04/2022 mem - Change _enable, _infoOnly and _includeDisabled from integer to boolean
 **
 *****************************************************/
 DECLARE
