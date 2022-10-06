@@ -1,8 +1,8 @@
 --
--- Name: add_new_terms(public.citext, integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: add_new_terms(public.citext, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT 'PSI'::public.citext, _infoonly integer DEFAULT 0, _previewsql integer DEFAULT 0) RETURNS TABLE(term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, parent_term_name public.citext, parent_term_id public.citext, grandparent_term_name public.citext, grandparent_term_id public.citext)
+CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT 'PSI'::public.citext, _infoonly boolean DEFAULT false, _previewsql boolean DEFAULT false) RETURNS TABLE(term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, parent_term_name public.citext, parent_term_id public.citext, grandparent_term_name public.citext, grandparent_term_id public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **  Auth:   mem
 **  Date:   05/13/2013 mem - Initial Version
 **          04/04/2022 mem - Ported to PostgreSQL
+**          10/04/2022 mem - Change _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -36,8 +37,8 @@ BEGIN
     ---------------------------------------------------
 
     _ontologyName := Coalesce(_ontologyName, '');
-    _infoOnly := Coalesce(_infoOnly, 0);
-    _previewSql := Coalesce(_previewSql, 0);
+    _infoOnly := Coalesce(_infoOnly, false);
+    _previewsql := Coalesce(_previewSql, false);
 
     ---------------------------------------------------
     -- Validate the ontology name
@@ -67,7 +68,7 @@ BEGIN
                ''::citext As grandparent_term_name,
                ''::citext As grandparent_term_id;
 
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -110,7 +111,7 @@ BEGIN
         _s := _s ||     ' CONSTRAINT pk_' || _targetTable || ' PRIMARY KEY (entry_id)';
         _s := _s || ' )';
 
-        If _previewSql = 1                 Then
+        If _previewSql Then
             RAISE INFO '%', format(_s, _targetSchema, _targetTable);
         Else
             EXECUTE format(_s, _targetSchema, _targetTable);
@@ -122,7 +123,7 @@ BEGIN
         _s := _s || ' CREATE INDEX ix_' || _targetTable || '_parent_term_name ON ' || _targetTableWithSchema || ' USING btree (parent_term_name); ';
         _s := _s || ' CREATE INDEX ix_' || _targetTable || '_grandparent_term_name ON ' || _targetTableWithSchema || ' USING btree (grandparent_term_name);';
 
-        If _previewSql = 1 Then
+        If _previewSql Then
             RAISE INFO '%', _s;
         Else
             EXECUTE _s;
@@ -172,8 +173,8 @@ BEGIN
     -- Add or preview new terms
     ---------------------------------------------------
     --
-    If _infoOnly = 0 Then
-        If _previewSql = 1 Then
+    If Not _infoOnly Then
+        If _previewSql Then
             RAISE INFO '%', _insertSql || _s;
         Else
             -- Add new terms
@@ -188,7 +189,7 @@ BEGIN
             End If;
         End If;
     Else
-        If _previewSql = 1 Then
+        If _previewSql Then
             RAISE INFO '%', _s;
         Else
             -- Preview new terms
@@ -203,11 +204,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.add_new_terms(_ontologyname public.citext, _infoonly integer, _previewsql integer) OWNER TO d3l243;
+ALTER FUNCTION ont.add_new_terms(_ontologyname public.citext, _infoonly boolean, _previewsql boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION add_new_terms(_ontologyname public.citext, _infoonly integer, _previewsql integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION add_new_terms(_ontologyname public.citext, _infoonly boolean, _previewsql boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.add_new_terms(_ontologyname public.citext, _infoonly integer, _previewsql integer) IS 'AddNewTerms';
+COMMENT ON FUNCTION ont.add_new_terms(_ontologyname public.citext, _infoonly boolean, _previewsql boolean) IS 'AddNewTerms';
 

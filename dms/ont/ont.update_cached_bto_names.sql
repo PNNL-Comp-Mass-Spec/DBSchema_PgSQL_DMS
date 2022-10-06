@@ -1,8 +1,8 @@
 --
--- Name: update_cached_bto_names(integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: update_cached_bto_names(boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly integer DEFAULT 1) RETURNS TABLE(task public.citext, identifier public.citext, term_name public.citext)
+CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly boolean DEFAULT true) RETURNS TABLE(task public.citext, identifier public.citext, term_name public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly integer DEFAULT
 **  Auth:   mem
 **  Date:   09/01/2017 mem - Initial version
 **          04/07/2022 mem - Ported to PostgreSQL
+**          10/04/2022 mem - Change _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -20,9 +21,9 @@ DECLARE
     _message2 text := '';
     _rowsUpdated int := 0;
 BEGIN
-    _infoOnly := Coalesce(_infoOnly, 1);
+    _infoOnly := Coalesce(_infoOnly, true);
 
-    If _infoOnly = 0 Then
+    If Not _infoOnly Then
         ---------------------------------------------------
         -- Update cached names
         ---------------------------------------------------
@@ -130,11 +131,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.update_cached_bto_names(_infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION ont.update_cached_bto_names(_infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION update_cached_bto_names(_infoonly integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION update_cached_bto_names(_infoonly boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.update_cached_bto_names(_infoonly integer) IS 'UpdateCachedBTONames';
+COMMENT ON FUNCTION ont.update_cached_bto_names(_infoonly boolean) IS 'UpdateCachedBTONames';
 

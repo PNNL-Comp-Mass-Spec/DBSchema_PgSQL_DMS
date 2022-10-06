@@ -1,8 +1,8 @@
 --
--- Name: add_new_bto_terms(public.citext, integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: add_new_bto_terms(public.citext, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFAULT 'T_Tmp_BTO'::public.citext, _infoonly integer DEFAULT 1, _previewdeleteextras integer DEFAULT 1) RETURNS TABLE(item_type public.citext, entry_id integer, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, synonyms public.citext, parent_term_id public.citext, parent_term_name public.citext, grandparent_term_id public.citext, grandparent_term_name public.citext, entered timestamp without time zone, updated timestamp without time zone)
+CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFAULT 'T_Tmp_BTO'::public.citext, _infoonly boolean DEFAULT true, _previewdeleteextras boolean DEFAULT true) RETURNS TABLE(item_type public.citext, entry_id integer, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, synonyms public.citext, parent_term_id public.citext, parent_term_name public.citext, grandparent_term_id public.citext, grandparent_term_name public.citext, entered timestamp without time zone, updated timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -22,11 +22,12 @@ CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFA
 **        grandparent_term_id
 **
 **  Arguments:
-**    _previewDeleteExtras   Set to 1 to preview deleting extra terms; 0 to actually delete them
+**    _previewDeleteExtras   Set to true to preview deleting extra terms; false to actually delete them
 **
 **  Auth:   mem
 **  Date:   08/24/2017 mem - Initial Version
 **          04/01/2022 mem - Ported to PostgreSQL
+**          10/04/2022 mem - Change _infoOnly and _previewDeleteExtras from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -40,8 +41,8 @@ BEGIN
     ---------------------------------------------------
 
     _sourceTable := Coalesce(_sourceTable, '');
-    _infoOnly := Coalesce(_infoOnly, 1);
-    _previewDeleteExtras := Coalesce(_previewDeleteExtras, 1);
+    _infoOnly := Coalesce(_infoOnly, true);
+    _previewDeleteExtras := Coalesce(_previewDeleteExtras, true);
 
     CREATE TEMP TABLE Tmp_CandidateTables AS
     SELECT Table_to_Find, Schema_Name, Table_Name, Table_Exists, Message
@@ -136,8 +137,7 @@ BEGIN
           Coalesce(s.grandparent_term_id, '') = Coalesce(t.grandparent_term_id, '');
 
 
-    If _infoOnly = 0 Then
-    -- <a1>
+    If Not _infoOnly Then
 
         ---------------------------------------------------
         -- Update existing rows
@@ -257,7 +257,7 @@ BEGIN
                    ON target.identifier = source.identifier AND
                       target.term_name = source.term_name;
 
-            If _previewDeleteExtras > 0 Then
+            If _previewDeleteExtras Then
                 RETURN QUERY
                 SELECT 'To be deleted'::citext as Item_Type,
                        t.entry_id,
@@ -345,7 +345,7 @@ BEGIN
               Not t.Children IS NULL;
 
     Else
-    -- <a2>
+
         ---------------------------------------------------
         -- Preview existing rows that would be updated
         ---------------------------------------------------
@@ -395,19 +395,18 @@ BEGIN
         FROM Tmp_SourceData s
         WHERE matches_existing = 0;
 
-    End If; -- </a2>
+    End If;
 
-    -- If not dropped here, the temporary table will persist until the calling session ends
     DROP TABLE Tmp_SourceData;
 END
 $$;
 
 
-ALTER FUNCTION ont.add_new_bto_terms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer) OWNER TO d3l243;
+ALTER FUNCTION ont.add_new_bto_terms(_sourcetable public.citext, _infoonly boolean, _previewdeleteextras boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION add_new_bto_terms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION add_new_bto_terms(_sourcetable public.citext, _infoonly boolean, _previewdeleteextras boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.add_new_bto_terms(_sourcetable public.citext, _infoonly integer, _previewdeleteextras integer) IS 'AddNewBTOTerms';
+COMMENT ON FUNCTION ont.add_new_bto_terms(_sourcetable public.citext, _infoonly boolean, _previewdeleteextras boolean) IS 'AddNewBTOTerms';
 

@@ -1,8 +1,8 @@
 --
--- Name: update_cached_ncbi_taxonomy(integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: update_cached_ncbi_taxonomy(boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras integer DEFAULT 1, _infoonly integer DEFAULT 1) RETURNS TABLE(task public.citext, updated_tax_ids integer, new_tax_ids integer)
+CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean DEFAULT true, _infoonly boolean DEFAULT true) RETURNS TABLE(task public.citext, updated_tax_ids integer, new_tax_ids integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras integer
 **  Date:   03/01/2016 mem - Initial version
 **          01/06/2022 mem - Implement support for _infoOnly
 **          04/07/2022 mem - Ported to PostgreSQL
+**          10/04/2022 mem - Change _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -21,10 +22,10 @@ DECLARE
     _countAdded int := 0;
     _message text := '';
 BEGIN
-    _deleteExtras := Coalesce(_deleteExtras, 1);
-    _infoOnly := Coalesce(_infoOnly, 1);
+    _deleteExtras := Coalesce(_deleteExtras, true);
+    _infoOnly := Coalesce(_infoOnly, true);
 
-    If _infoOnly > 0 Then
+    If _infoOnly Then
         RETURN QUERY
         SELECT 'Preview updates'::citext as Task,
                Sum(CASE
@@ -150,7 +151,7 @@ BEGIN
         RAISE INFO 'Did not need to add any new taxonomy IDs';
     End If;
 
-    If _deleteExtras <> 0 THEN
+    If _deleteExtras THEN
         DELETE FROM ont.t_ncbi_taxonomy_cached
         WHERE tax_id IN ( SELECT t.tax_id
                           FROM ont.t_ncbi_taxonomy_cached t
@@ -216,11 +217,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras integer, _infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean, _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION update_cached_ncbi_taxonomy(_deleteextras integer, _infoonly integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION update_cached_ncbi_taxonomy(_deleteextras boolean, _infoonly boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras integer, _infoonly integer) IS 'UpdateCachedNCBITaxonomy';
+COMMENT ON FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean, _infoonly boolean) IS 'UpdateCachedNCBITaxonomy';
 

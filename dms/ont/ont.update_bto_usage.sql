@@ -1,8 +1,8 @@
 --
--- Name: update_bto_usage(integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: update_bto_usage(boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly integer DEFAULT 0) RETURNS TABLE(tissue_id public.citext, usage_all_time integer, usage_last_12_months integer)
+CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly boolean DEFAULT false) RETURNS TABLE(tissue_id public.citext, usage_all_time integer, usage_last_12_months integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly integer DEFAULT 0) RET
 **  Date:   11/08/2018 mem - Initial version
 **          04/05/2022 mem - Ported to PostgreSQL
 **          04/07/2022 mem - Use the query results to report status messages
+**          10/04/2022 mem - Change _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -22,7 +23,7 @@ DECLARE
     _message2 text := '';
     _rowsUpdated int := 0;
 BEGIN
-    _infoOnly := Coalesce(_infoOnly, 1);
+    _infoOnly := Coalesce(_infoOnly, true);
 
     ---------------------------------------------------
     -- Populate a temporary table with tissue usage stats for DMS experiments
@@ -53,7 +54,7 @@ BEGIN
             GROUP BY E.Tissue_ID ) SourceQ
     WHERE Tmp_UsageStats.Tissue_ID = SourceQ.Tissue_ID;
 
-    If _infoOnly = 0 Then
+    If Not _infoOnly Then
         ---------------------------------------------------
         -- Update ont.t_cv_bto
         ---------------------------------------------------
@@ -124,18 +125,17 @@ BEGIN
         End If;
     End If;
 
-    -- If not dropped here, the temporary table will persist until the calling session ends
     DROP TABLE Tmp_UsageStats;
 
 END
 $$;
 
 
-ALTER FUNCTION ont.update_bto_usage(_infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION ont.update_bto_usage(_infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION update_bto_usage(_infoonly integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION update_bto_usage(_infoonly boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.update_bto_usage(_infoonly integer) IS 'UpdateBTOUsage';
+COMMENT ON FUNCTION ont.update_bto_usage(_infoonly boolean) IS 'UpdateBTOUsage';
 

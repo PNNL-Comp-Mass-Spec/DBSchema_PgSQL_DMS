@@ -1,8 +1,8 @@
 --
--- Name: backfill_terms(public.citext, public.citext, integer, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: backfill_terms(public.citext, public.citext, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT 't_cv_bto'::public.citext, _namespace public.citext DEFAULT 'BrendaTissueOBO'::public.citext, _infoonly integer DEFAULT 1, _previewrelationshipupdates integer DEFAULT 1) RETURNS TABLE(item_type public.citext, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, updated timestamp without time zone)
+CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT 't_cv_bto'::public.citext, _namespace public.citext DEFAULT 'BrendaTissueOBO'::public.citext, _infoonly boolean DEFAULT true, _previewrelationshipupdates boolean DEFAULT true) RETURNS TABLE(item_type public.citext, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, updated timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -20,19 +20,20 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **      View ont.v_term_lineage uses tables ont.t_ontology, ont.t_term, and ont.t_term_relationship
 **
 **  Arguments:
-**    _previewRelationshipUpdates   Set to 1 to preview adding/removing relationships; 0 to actually update relationships
+**    _previewRelationshipUpdates   Set to true to preview adding/removing relationships; 0 to actually update relationships
 **
 ** Usage:
 **      SELECT * FROM ont.backfill_terms  (
 **          _sourceTable => 'ont.t_cv_bto',
 **          _namespace   => 'BrendaTissueOBO',
-**          _infoOnly    => 0,
-**          _previewRelationshipUpdates => 1);
+**          _infoOnly    => false,
+**          _previewRelationshipUpdates => true);
 **
 **  Auth:   mem
 **  Date:   08/24/2017 mem - Initial Version
 **          03/28/2022 mem - Use new table names
 **          04/05/2022 mem - Ported to PostgreSQL
+**          10/04/2022 mem - Change _infoOnly and _previewRelationshipUpdates from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -48,8 +49,8 @@ BEGIN
     ---------------------------------------------------
     --
     _sourceTable := Coalesce(_sourceTable, '');
-    _infoOnly := Coalesce(_infoOnly, 1);
-    _previewRelationshipUpdates := Coalesce(_previewRelationshipUpdates, 1);
+    _infoOnly := Coalesce(_infoOnly, true);
+    _previewRelationshipUpdates := Coalesce(_previewRelationshipUpdates, true);
 
     ---------------------------------------------------
     -- Validate that the source table exists
@@ -154,7 +155,7 @@ BEGIN
     ORDER BY Count(*) DESC
     LIMIT 1;
 
-    If _infoOnly = 0 Then
+    If Not _infoOnly Then
 
         ---------------------------------------------------
         -- Update existing rows
@@ -234,7 +235,7 @@ BEGIN
             _autoNumberStartID := -1;
         End If;
 
-        If _previewRelationshipUpdates > 0 Then
+        If _previewRelationshipUpdates Then
             RETURN QUERY
             SELECT 'New relationship'::citext as Item_Type,
                    R.Child_PK As term_pk,
@@ -284,7 +285,7 @@ BEGIN
         WHERE (ValidRelationships.parent_term_id IS NULL) AND
               (ont.t_term_relationship.ontology_id = _ontologyID);
 
-        If _previewRelationshipUpdates > 0 Then
+        If _previewRelationshipUpdates Then
             RETURN QUERY
             SELECT 'Delete relationship'::citext as Item_Type,
                    R.subject_term_pk As term_pk,
@@ -363,18 +364,17 @@ BEGIN
         */
     End If;
 
-    -- If not dropped here, the temporary table wills persist until the calling session ends
     DROP TABLE Tmp_SourceData;
 
 END
 $$;
 
 
-ALTER FUNCTION ont.backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly integer, _previewrelationshipupdates integer) OWNER TO d3l243;
+ALTER FUNCTION ont.backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly boolean, _previewrelationshipupdates boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly integer, _previewrelationshipupdates integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly boolean, _previewrelationshipupdates boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly integer, _previewrelationshipupdates integer) IS 'BackfillTerms';
+COMMENT ON FUNCTION ont.backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly boolean, _previewrelationshipupdates boolean) IS 'BackfillTerms';
 

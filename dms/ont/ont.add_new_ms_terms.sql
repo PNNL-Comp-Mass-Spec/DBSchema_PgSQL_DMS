@@ -1,8 +1,8 @@
 --
--- Name: add_new_ms_terms(public.citext, integer); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: add_new_ms_terms(public.citext, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAULT 'T_Tmp_PsiMS_2016June'::public.citext, _infoonly integer DEFAULT 1) RETURNS TABLE(item_type public.citext, entry_id integer, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, parent_term_id public.citext, parent_term_name public.citext, parent_term_type public.citext, grandparent_term_id public.citext, grandparent_term_name public.citext, grandparent_term_type public.citext, entered timestamp without time zone, updated timestamp without time zone)
+CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAULT 'T_Tmp_PsiMS_2016June'::public.citext, _infoonly boolean DEFAULT true) RETURNS TABLE(item_type public.citext, entry_id integer, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, parent_term_id public.citext, parent_term_name public.citext, parent_term_type public.citext, grandparent_term_id public.citext, grandparent_term_name public.citext, grandparent_term_type public.citext, entered timestamp without time zone, updated timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 **          05/16/2018 mem - Add columns Parent_term_type and GrandParent_term_type
 **          04/03/2022 mem - Ported to PostgreSQL
 **          04/04/2022 mem - Update the merge query to support parent_term_type being null
+**          10/04/2022 mem - Change _infoOnly from integer to boolean
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,7 @@ BEGIN
     ---------------------------------------------------
 
     _sourceTable := Coalesce(_sourceTable, '');
-    _infoOnly := Coalesce(_infoOnly, 1);
+    _infoOnly := Coalesce(_infoOnly, true);
 
     CREATE TEMP TABLE Tmp_CandidateTables AS
     SELECT Table_to_Find, Schema_Name, Table_Name, Table_Exists, Message
@@ -202,8 +203,7 @@ BEGIN
         _deleteObsolete2 := _s;
     End If;
 
-    If _infoOnly = 0 Then
-    -- <a1>
+    If Not _infoOnly Then
 
         If _deleteObsolete1 <> '' OR _deleteObsolete2 <> '' Then
             ---------------------------------------------------
@@ -280,7 +280,7 @@ BEGIN
         RAISE INFO 'Added % new rows to ont.t_cv_ms using %', Cast(_myRowCount as varchar(9)), _sourceTable;
 
     Else
-    -- <a2>
+        -- _infoOnly is true
 
         If _deleteObsolete1 <> '' OR _deleteObsolete2 <> '' Then
             RAISE INFO '%', '-- Delete Obsolete rows';
@@ -309,10 +309,6 @@ BEGIN
             RETURN QUERY
             EXECUTE format(_s, _sourceSchema, _sourceTable);
 
-        End If;
-
-        If _infoOnly > 1 Then
-            RAISE INFO '%', 'Preview data';
         End If;
 
         ---------------------------------------------------
@@ -365,19 +361,18 @@ BEGIN
         FROM Tmp_SourceData s
         WHERE matches_existing = 0;
 
-    End If; -- </a2>
+    End If;
 
-    -- If not dropped here, the temporary table will persist until the calling session ends
     DROP TABLE Tmp_SourceData;
 END
 $$;
 
 
-ALTER FUNCTION ont.add_new_ms_terms(_sourcetable public.citext, _infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION ont.add_new_ms_terms(_sourcetable public.citext, _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION add_new_ms_terms(_sourcetable public.citext, _infoonly integer); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION add_new_ms_terms(_sourcetable public.citext, _infoonly boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.add_new_ms_terms(_sourcetable public.citext, _infoonly integer) IS 'AddNewMSTerms';
+COMMENT ON FUNCTION ont.add_new_ms_terms(_sourcetable public.citext, _infoonly boolean) IS 'AddNewMSTerms';
 
