@@ -95,8 +95,6 @@ BEGIN
         End If;
     END;
 
-    COMMIT;
-
     ----------------------------------------------------------
     -- Copy Job_Step_Events entries into historic log tables
     ----------------------------------------------------------
@@ -155,8 +153,6 @@ BEGIN
         End If;
     END;
 
-    COMMIT;
-
     ----------------------------------------------------------
     -- Copy Job_Step_Processing_Log entries into historic log tables
     ----------------------------------------------------------
@@ -211,8 +207,6 @@ BEGIN
             End If;
         End If;
     END;
-
-    COMMIT;
 
     ----------------------------------------------------------
     -- Copy Log entries into historic log tables
@@ -269,8 +263,6 @@ BEGIN
             End If;
         End If;
     END;
-
-    COMMIT;
 
     ----------------------------------------------------------
     -- Delete old entries in T_task_Parameters_History
