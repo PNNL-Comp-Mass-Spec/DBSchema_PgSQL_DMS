@@ -56,6 +56,9 @@ BEGIN
 
     ----------------------------------------------------
     -- Delete Info and Warn entries posted more than _infoHoldoffWeeks weeks ago
+    --
+    -- Typically only public.t_log_entries will have Info or Warn log messages,
+    -- so the following queries will likely not match any rows
     ----------------------------------------------------
     --
     BEGIN
@@ -97,6 +100,10 @@ BEGIN
     _currentLocation := 'Call cap.move_entries_to_history';
 
     Call cap.move_entries_to_history (_logRetentionIntervalDays, _infoOnly);
+
+    If _infoOnly Then
+        _message := 'See the output window for status messages';
+    End If;
 
 EXCEPTION
     WHEN OTHERS THEN
