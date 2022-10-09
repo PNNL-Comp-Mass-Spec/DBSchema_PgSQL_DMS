@@ -58,36 +58,37 @@ BEGIN
     -- Delete Info and Warn entries posted more than _infoHoldoffWeeks weeks ago
     ----------------------------------------------------
     --
-
+    BEGIN
         _currentLocation := 'Delete Info and Warn entries';
 
-    If _infoOnly Then
-        SELECT COUNT(*)
-        INTO _myRowCount
-        FROM cap.t_log_entries
-        WHERE (entered < _infoCutoffDateTime) AND
-              (type = 'info' OR
-              (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
+        If _infoOnly Then
+            SELECT COUNT(*)
+            INTO _myRowCount
+            FROM cap.t_log_entries
+            WHERE (entered < _infoCutoffDateTime) AND
+                  (type = 'info' OR
+                  (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
 
-        If _myRowCount > 0 Then
-            RAISE INFO 'Would delete % rows from cap.t_log_entries since Info or Warn messages older than %', _myRowCount, _dateThreshold;
+            If _myRowCount > 0 Then
+                RAISE INFO 'Would delete % rows from cap.t_log_entries since Info or Warn messages older than %', _myRowCount, _dateThreshold;
+            Else
+                RAISE INFO 'All Info entries in cap.% are newer than %', RPAD('t_log_entries', 26, ' '), _dateThreshold;
+            End If;
+
         Else
-            RAISE INFO 'All Info entries in cap.% are newer than %', RPAD('t_log_entries', 26, ' '), _dateThreshold;
+
+            DELETE FROM cap.t_log_entries
+            WHERE (entered < _infoCutoffDateTime) AND
+                  (type = 'info' OR
+                  (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
+            --
+            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+            If _myRowCount > 0 Then
+                RAISE INFO 'Deleted % rows from cap.t_log_entries since Info or Warn messages older than %', _myRowCount, _dateThreshold;
+            End If;
         End If;
-
-    Else
-
-        DELETE FROM cap.t_log_entries
-        WHERE (entered < _infoCutoffDateTime) AND
-              (type = 'info' OR
-              (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        If _myRowCount > 0 Then
-            RAISE INFO 'Deleted % rows from cap.t_log_entries since Info or Warn messages older than %', _myRowCount, _dateThreshold;
-        End If;
-    End If;
+    END;
 
     ----------------------------------------------------
     -- Move old log entries and event entries to historic log tables
