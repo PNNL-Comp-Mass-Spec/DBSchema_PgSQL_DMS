@@ -44,6 +44,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          03/15/2021 mem - Treat @errorNum as an input/output parameter
 **          08/24/2022 mem - Ported to PostgreSQL
 **          09/01/2022 mem - Use _callingProcSchema for the schema name if _callingProcName is <Auto> or <AutoDetermine> and get_call_stack() returns an empty schema name
+**          10/11/2022 mem - Remove transaction rollback
 **
 ****************************************************/
 DECLARE
@@ -132,20 +133,6 @@ BEGIN
     End If;
 
     -- RAISE Warning 'Context: %', _exceptionContext;
-
-    -- Rollback any open transactions
-    -- Note that PostgreSQL doesn't assign a transaction ID until a write operation occurs
-    If Not pg_current_xact_id_if_assigned() Is Null Then
-        Begin
-            ROLLBACK;
-        EXCEPTION
-            WHEN OTHERS THEN
-                GET STACKED DIAGNOSTICS
-                    _innerExceptionMessage = message_text;
-
-                RAISE Warning 'Rollback failed in local_error_handler: %', Coalesce(_innerExceptionMessage, '??');
-        End;
-    End If;
 
     If _logError Then
         Call public.post_log_entry ('Error', _message, _callingProcName, _callingProcSchema, _duplicateEntryHoldoffHours, _ignoreErrors => true);
