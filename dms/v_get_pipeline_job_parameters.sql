@@ -29,9 +29,9 @@ CREATE VIEW public.v_get_pipeline_job_parameters AS
           WHERE (t_misc_paths.path_function = 'AnalysisXfer'::bpchar)))::text) AS transfer_folder_path,
     j.results_folder_name,
     j.special_processing,
-    dtn.dataset_type AS datasettype,
+    dtn.dataset_type,
     e.experiment,
-    COALESCE(dsarch.instrument_data_purged, (0)::smallint) AS instrumentdatapurged
+    COALESCE(dsarch.instrument_data_purged, (0)::smallint) AS instrument_data_purged
    FROM ((((((((((public.t_analysis_job j
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
      JOIN public.t_organisms org ON ((j.organism_id = org.organism_id)))
