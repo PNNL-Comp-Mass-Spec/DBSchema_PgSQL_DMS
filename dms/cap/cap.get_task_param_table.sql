@@ -27,7 +27,6 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **
 *****************************************************/
 DECLARE
-    _message text := '';
     _paramXML XML;
     _rawDataType text;
     _performCalibration int;
@@ -37,7 +36,7 @@ DECLARE
     _fileHash text := '';
 BEGIN
     ---------------------------------------------------
-    -- Table variable to hold capture task job parameters
+    -- Temp table to hold capture task job parameters
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_ParamTab(

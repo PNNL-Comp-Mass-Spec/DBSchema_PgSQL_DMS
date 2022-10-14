@@ -31,7 +31,6 @@ BEGIN
 
     ---------------------------------------------------
     -- Get capture task job parameters from main database
-    -- Note that the calling procedure must have already created temporary table Tmp_Jobs
     ---------------------------------------------------
     --
     INSERT INTO Tmp_Task_Parameters (Job, Section, Name, Value)
