@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **    _value            Value for parameter _paramName in section _section
 **    _deleteParam      When false, adds/updates the given parameter; when true, deletes the parameter
 **
-**  Example Usage:
+**  Example usage:
 **
 **      Call cap.add_update_task_parameter (5280268, 'DatasetQC', 'CreateDatasetInfoFile', 'False', _infoOnly => true);
 **      Call cap.add_update_task_parameter (5280268, 'DatasetQC', 'CreateDatasetInfoFile', 'False', _infoOnly => false);

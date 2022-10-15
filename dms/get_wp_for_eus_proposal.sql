@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_wp_for_eus_proposal(_eusproposalid text) R
 **    work_package      Work package associated with the EUS user proposal, or 'none' if no match
 **    months_searched   Number of months back that this function searched to find a work package for _eusProposalID; 0 if no match
 **
-**  Example Usage:
+**  Example usage:
 **
 **      SELECT * FROM get_wp_for_eus_proposal('12345');
 **

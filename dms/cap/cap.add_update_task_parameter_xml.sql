@@ -33,7 +33,6 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **      <Param Section="JobParameters" Name="Instrument_Class" Value="LTQ_FT" />
 **      <Param Section="JobParameters" Name="Instrument_Name" Value="QEHFX03" />
 **
-**
 **  Example usage:
 **
 **      -- This function can be called from a procedure, sending in the XML via a variable and storing the results in variables (or in a single record variable)

@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **    _settingsFileOverride     When defined, use this settings file name instead of the one obtained with public.v_get_pipeline_job_parameters
 **    _debugMode                When true, show additional debug messages
 **
-**  Example Usage:
+**  Example usage:
 **
 **      SELECT * FROM sw.get_job_param_table(2023504);
 **      SELECT * FROM sw.get_job_param_table(2023504, '', true);
