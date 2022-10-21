@@ -19,18 +19,16 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **    _infoOnly         When true, check for access, but do not log errors, even if _logError is true
 **
 **  Returns:
-**      Table where the authorized column is 1 if authorized, 0 if not authorized
+**      Table where the authorized column is true if authorized, false if not authorized
 **
 **      If authorized, the message column is empty; otherwise it will be of the form:
 **      'User Username cannot call procedure ProcedureName from host IP 130.20.228.1
 **
 **  Example usage:
 **
-**        _showDebug := CASE WHEN Coalesce(_infoOnly, 0) = 0 THEN False ELSE True END;
-**
 **        SELECT schema_name, name_with_schema
 **        INTO _schemaName, _nameWithSchema
-**        FROM public.get_current_function_info('cap', _showDebug);
+**        FROM get_current_function_info('<auto>', _showDebug => false);
 **
 **        SELECT authorized
 **        INTO _authorized
