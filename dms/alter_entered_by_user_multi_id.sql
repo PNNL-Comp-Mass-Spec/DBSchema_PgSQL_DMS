@@ -8,14 +8,14 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user_multi_id(IN _targettabl
 /****************************************************
 **
 **  Desc:
-**      Calls AlterEnteredByUser for each entry in temporary table TmpIDUpdateList
+**      Calls AlterEnteredByUser for each entry in temporary table Tmp_ID_Update_List
 **
 **      The calling procedure must create and populate the temporary table:
-**        CREATE TEMP TABLE TmpIDUpdateList (TargetID int NOT NULL);
+**        CREATE TEMP TABLE Tmp_ID_Update_List (TargetID int NOT NULL);
 **
 **      Increased performance can be obtained by adding an index to the table;
 **      thus it is advisable that the calling procedure also create this index:
-**        CREATE INDEX IX_TmpIDUpdateList ON TmpIDUpdateList (TargetID);
+**        CREATE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 **
 **  Arguments:
 **    _targetTableSchema        Schema of the table to update; if empty or null, assumes "public"
@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user_multi_id(IN _targettabl
 **          01/26/2020 mem - Ported to PostgreSQL
 **          01/28/2020 mem - Add argument _targetTableSchema
 **                         - Remove exception handler and remove argument _returnCode
+**          10/20/2022 mem - Rename temporary table
 **
 *****************************************************/
 DECLARE
@@ -80,10 +81,10 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    -- Make sure TmpIDUpdateList is not empty
+    -- Make sure Tmp_ID_Update_List is not empty
 
-    If Not Exists (Select * From TmpIDUpdateList) Then
-        _message := 'TmpIDUpdateList is empty; nothing to do';
+    If Not Exists (Select * From Tmp_ID_Update_List) Then
+        _message := 'Tmp_ID_Update_List is empty; nothing to do';
         Return;
     End If;
 
@@ -97,7 +98,7 @@ BEGIN
     _entryTimeWindowSecondsCurrent := _entryTimeWindowSeconds;
 
     ------------------------------------------------
-    -- Parse the values in TmpIDUpdateList
+    -- Parse the values in Tmp_ID_Update_List
     -- Call AlterEnteredByUser for each
     ------------------------------------------------
 
@@ -105,7 +106,7 @@ BEGIN
 
     FOR _targetID IN
         SELECT TargetID
-        FROM TmpIDUpdateList
+        FROM Tmp_ID_Update_List
         ORDER BY TargetID
     LOOP
         Call AlterEnteredByUser(
@@ -138,10 +139,4 @@ $$;
 
 
 ALTER PROCEDURE public.alter_entered_by_user_multi_id(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer) OWNER TO d3l243;
-
---
--- Name: PROCEDURE alter_entered_by_user_multi_id(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer); Type: COMMENT; Schema: public; Owner: d3l243
---
-
-COMMENT ON PROCEDURE public.alter_entered_by_user_multi_id(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer) IS 'AlterEnteredByUserMultiID';
 
