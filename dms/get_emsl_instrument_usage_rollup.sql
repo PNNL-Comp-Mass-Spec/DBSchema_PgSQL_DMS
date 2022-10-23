@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_rollup(_year integer
 **          04/17/2020 mem - Use Dataset_ID instead of ID
 **          03/17/2022 mem - Only return rows where Dataset_ID_Acq_Overlap is Null
 **          06/20/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -110,9 +111,9 @@ BEGIN
         --
         UPDATE  Tmp_T_Working AS W
         SET     Day = Extract(day from W.Run_or_Interval_Start),
-                Run_or_Interval_End = W.Run_or_Interval_Start + make_interval(0,0,0,0,0,0, W.Duration_Seconds),
-                Day_at_Run_End =   Extract(day   from W.Run_or_Interval_Start + make_interval(0,0,0,0,0,0, W.Duration_Seconds)),
-                Month_at_Run_End = Extract(month from W.Run_or_Interval_Start + make_interval(0,0,0,0,0,0, W.Duration_Seconds)),
+                Run_or_Interval_End =                 W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
+                Day_at_Run_End =   Extract(day   from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
+                Month_at_Run_End = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
                 End_Of_Day =            date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
                 Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
         --

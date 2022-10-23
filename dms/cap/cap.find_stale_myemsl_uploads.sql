@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **          07/08/2019 mem - Fix bug updating RetrySucceeded
 **                         - Pass _logMessage to PostLogEntry
 **          10/11/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
     FROM cap.t_myemsl_uploads
     WHERE error_code = 0 AND
           verified = 0 AND
-          entered < CURRENT_TIMESTAMP - make_interval(0,0,0, _staleUploadDays);
+          entered < CURRENT_TIMESTAMP - make_interval(days => _staleUploadDays);
 
     If Not FOUND Then
         _message := 'Nothing to do';

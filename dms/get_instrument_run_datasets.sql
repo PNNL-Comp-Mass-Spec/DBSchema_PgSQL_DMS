@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **  Date:   09/04/2010 grk - initial release
 **          02/15/2012 mem - Now using T_Dataset.Acq_Length_Minutes
 **          06/21/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ BEGIN
     FROM
         t_dataset DS
         INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id
-    WHERE DS.acq_time_start > CURRENT_TIMESTAMP - make_interval(0, 0, _mostRecentWeeks) AND
+    WHERE DS.acq_time_start > CURRENT_TIMESTAMP - make_interval(weeks => _mostRecentWeeks) AND
           InstName.instrument = _instrument;
 
     ---------------------------------------------------
@@ -201,4 +202,10 @@ $$;
 
 
 ALTER FUNCTION public.get_instrument_run_datasets(_mostrecentweeks integer, _instrument text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_instrument_run_datasets(_mostrecentweeks integer, _instrument text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_instrument_run_datasets(_mostrecentweeks integer, _instrument text) IS 'GetInstrumentRunDatasets';
 

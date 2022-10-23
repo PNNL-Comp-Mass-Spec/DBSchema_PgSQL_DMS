@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 **          04/27/2020 mem - Update data validation checks
 **                         - Make several columns in the output table nullable
 **          06/23/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -231,7 +232,7 @@ BEGIN
         SET "interval" = 0,
             duration = extract(epoch FROM (_firstDayOfTrailingMonth - _lastRunStart)) / 60.0
         WHERE Tmp_TX.Seq = _lastRunSeq;
-    ElseIf _lastRunEnd + make_interval(0,0,0,0,0, _lastRunInterval) > _firstDayOfTrailingMonth Then
+    ElseIf _lastRunEnd + make_interval(mins => _lastRunInterval) > _firstDayOfTrailingMonth Then
         UPDATE Tmp_TX
         SET "interval" = extract(epoch FROM (_firstDayOfTrailingMonth - _lastRunEnd)) / 60.0
         WHERE Tmp_TX.Seq = _lastRunSeq;

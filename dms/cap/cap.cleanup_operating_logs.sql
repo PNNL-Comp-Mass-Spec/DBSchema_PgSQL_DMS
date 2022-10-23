@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          08/25/2022 mem - Use new column name in T_Log_Entries
 **          10/07/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
         _logRetentionIntervalDays := 14;
     End If;
 
-    _infoCutoffDateTime := CURRENT_TIMESTAMP - make_interval(0, 0, _infoHoldoffWeeks);
+    _infoCutoffDateTime := CURRENT_TIMESTAMP - make_interval(weeks => _infoHoldoffWeeks);
 
     _dateThreshold := public.timestamp_text(_infoCutoffDateTime);
 

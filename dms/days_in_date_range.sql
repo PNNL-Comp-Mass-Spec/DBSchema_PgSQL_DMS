@@ -13,11 +13,12 @@ CREATE OR REPLACE FUNCTION public.days_in_date_range(_startdate timestamp withou
 **  Auth:   grk
 **  Date:   01/22/2005
 **          06/17/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 BEGIN
     RETURN QUERY
-    SELECT generate_series (_startDate, _endDate, make_interval(0, 0, 0, 1));
+    SELECT generate_series (_startDate, _endDate, make_interval(days => 1));
 END
 $$;
 
@@ -45,11 +46,12 @@ CREATE OR REPLACE FUNCTION public.days_in_date_range(_startdate timestamp with t
 **  Auth:   grk
 **  Date:   01/22/2005
 **          06/17/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 BEGIN
     RETURN QUERY
-    SELECT generate_series (_startDate, _endDate, make_interval(0, 0, 0, 1));
+    SELECT generate_series (_startDate, _endDate, make_interval(days => 1));
 END
 $$;
 

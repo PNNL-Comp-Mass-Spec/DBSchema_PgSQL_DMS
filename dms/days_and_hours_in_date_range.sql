@@ -14,11 +14,12 @@ CREATE OR REPLACE FUNCTION public.days_and_hours_in_date_range(_startdate timest
 **  Date:   11/07/2007
 **          11/29/2007 mem - Fixed bug that started at _startDate + _hourInterval instead of at _startDate
 **          06/17/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 BEGIN
     RETURN QUERY
-    SELECT generate_series (_startDate, _endDate, make_interval(0, 0, 0, 0, _hourInterval));
+    SELECT generate_series (_startDate, _endDate, make_interval(hours => _hourInterval));
 END
 $$;
 
@@ -47,11 +48,12 @@ CREATE OR REPLACE FUNCTION public.days_and_hours_in_date_range(_startdate timest
 **  Date:   11/07/2007
 **          11/29/2007 mem - Fixed bug that started at _startDate + _hourInterval instead of at _startDate
 **          06/17/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 BEGIN
     RETURN QUERY
-    SELECT generate_series (_startDate, _endDate, make_interval(0, 0, 0, 0, _hourInterval));
+    SELECT generate_series (_startDate, _endDate, make_interval(hours => _hourInterval));
 END
 $$;
 

@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE cap.move_entries_to_history(IN _intervaldays integer
 **          10/04/2011 mem - Removed _dBName parameter
 **          08/25/2022 mem - Use new column name in T_Log_Entries
 **          10/07/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -36,7 +37,7 @@ BEGIN
         _intervalDays := 32;
     End If;
 
-    _cutoffDateTime := CURRENT_TIMESTAMP - make_interval(0,0,0, _intervalDays);
+    _cutoffDateTime := CURRENT_TIMESTAMP - make_interval(days => _intervalDays);
 
     _dateThreshold = public.timestamp_text(_cutoffDateTime);
 

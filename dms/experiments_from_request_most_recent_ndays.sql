@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.experiments_from_request_most_recent_ndays(_re
 **  Date:   03/26/2013 mem - Initial version
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          06/17/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
     INTO _count
     FROM t_experiments
     WHERE sample_prep_request_id = _requestID AND
-          created > CURRENT_TIMESTAMP - make_interval (0, 0, 0, Coalesce(_days, 1));
+          created > CURRENT_TIMESTAMP - make_interval (days => Coalesce(_days, 1));
 
     RETURN Coalesce(_count, 0);
 END

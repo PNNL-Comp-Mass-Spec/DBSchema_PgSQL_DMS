@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
 **  Date:   12/10/2013 mem - Initial version
 **          08/13/2017 mem - Increase the error rate threshold from 1% to 3% since we're now auto-retrying uploads
 **          10/07/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -42,7 +43,7 @@ BEGIN
 
     If _mostRecentDays > 0 Then
         _endDate := CURRENT_TIMESTAMP;
-        _startDate := _endDate - make_interval(0,0,0, _mostRecentDays);
+        _startDate := _endDate - make_interval(days => _mostRecentDays);
     End If;
 
     -----------------------------------------------
