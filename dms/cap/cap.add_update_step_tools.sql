@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_step_tools(IN _name text, IN _descrip
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/06/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Raise a warning if an invalid operation
 **
 *****************************************************/
 DECLARE
@@ -31,6 +32,7 @@ DECLARE
 
     _stepToolId int;
     _logErrors bool := true;
+    _myRowCount int;
 BEGIN
 
     _message := '';
@@ -62,24 +64,27 @@ BEGIN
         -- Is entry already in database?
         ---------------------------------------------------
 
-        --
         SELECT step_tool_id
         INTO _stepToolId
         FROM  cap.t_step_tools
         WHERE step_tool = _name;
+        --
+        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- Cannot update a non-existent entry
         --
-        If _mode = 'update' And Not FOUND Then
+        If _mode = 'update' And _myRowCount = 0 Then
             _message := 'Could not find "' || _name || '" in database';
+            RAISE WARNING '%', _message;
             _returnCode := 'U5201';
             RETURN;
         End If;
 
         -- Cannot add an existing entry
         --
-        If _mode = 'add' And Coalesce(_stepToolId, 0) <> 0 Then
+        If _mode = 'add' And _myRowCount > 0 Then
             _message := '"' || _name || '" already exists in database';
+            RAISE WARNING '%', _message;
             _returnCode := 'U5202';
             RETURN;
         End If;

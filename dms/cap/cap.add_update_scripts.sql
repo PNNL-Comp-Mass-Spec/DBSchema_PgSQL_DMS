@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_scripts(IN _script text, IN _descript
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/04/2022 mem - Ported to PostgreSQL
+**          10/22/2022 mem - Raise a warning if an invalid operation
 **
 *****************************************************/
 DECLARE
@@ -41,6 +42,7 @@ DECLARE
     _scriptId int;
     _logErrors bool := true;
     _scriptXML xml;
+    _myRowCount int;
     _alterEnteredByMessage text;
 BEGIN
 
@@ -110,19 +112,23 @@ BEGIN
         INTO _scriptId
         FROM cap.t_scripts
         WHERE script = _script;
+        --
+        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- Cannot update a non-existent entry
         --
-        If _mode = 'update' And Not FOUND Then
+        If _mode = 'update' And _myRowCount = 0 Then
             _message := 'Could not find script "' || _script || '" in database; cannot update';
+            RAISE WARNING '%', _message;
             _returnCode := 'U5204';
             RETURN;
         End If;
 
         -- Cannot add an existing entry
         --
-        If _mode = 'add' And _scriptId <> 0 Then
+        If _mode = 'add' And _myRowCount > 0 Then
             _message := 'Script "' || _script || '" already exists in database; cannot add';
+            RAISE WARNING '%', _message;
             _returnCode := 'U5205';
             RETURN;
         End If;
