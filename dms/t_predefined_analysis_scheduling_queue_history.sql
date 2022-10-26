@@ -5,7 +5,7 @@
 CREATE TABLE public.t_predefined_analysis_scheduling_queue_history (
     entry_id integer NOT NULL,
     dataset_id integer NOT NULL,
-    ds_rating smallint NOT NULL,
+    dataset_rating_id smallint NOT NULL,
     jobs_created integer DEFAULT 0 NOT NULL,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -43,7 +43,7 @@ CREATE INDEX ix_t_predefined_analysis_scheduling_queue_history_dataset_id ON pub
 -- Name: ix_t_predefined_analysis_scheduling_queue_history_rating; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_predefined_analysis_scheduling_queue_history_rating ON public.t_predefined_analysis_scheduling_queue_history USING btree (ds_rating);
+CREATE INDEX ix_t_predefined_analysis_scheduling_queue_history_rating ON public.t_predefined_analysis_scheduling_queue_history USING btree (dataset_rating_id);
 
 --
 -- Name: TABLE t_predefined_analysis_scheduling_queue_history; Type: ACL; Schema: public; Owner: d3l243
