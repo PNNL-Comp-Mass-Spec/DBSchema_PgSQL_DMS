@@ -35,10 +35,10 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 | dms     | mc       | Manager parameters                  | Manager_Control        |
 | dms     | ont      | Ontology tables                     | Ontology_Lookup        |
 | dms     | dpkg     | Data packages                       | DMS_Data_Package       |
-| pc      | public   | Protein Collections (FASTA files)   | Protein_Sequences      |
-| hlog    | public   | Historic logs                       | DMSHistoricLog         |
-| hlog    | cap      | Historic logs                       | DMSHistoricLogCapture  |
-| hlog    | sw       | Historic logs                       | DMSHistoricLogPipeline |
+| dms     | pc       | Protein Collections (FASTA files)   | Protein_Sequences      |
+| dms     | logdms   | Historic logs                       | DMSHistoricLog         |
+| dms     | logcap   | Dataset capture historic logs       | DMSHistoricLogCapture  |
+| dms     | logsw    | Software analysis historic logs     | DMSHistoricLogPipeline |
 | mts     | public   | MTS metadata DBs                    | MTS_Master             |
 | mts     | mtmain   | MTS metadata DBs                    | MT_Main                |
 | mts     | prismifc | MTS metadata DBs                    | Prism_IFC              |
