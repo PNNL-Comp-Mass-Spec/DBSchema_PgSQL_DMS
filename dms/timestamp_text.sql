@@ -34,6 +34,12 @@ $$;
 ALTER FUNCTION public.timestamp_text(_currenttime timestamp without time zone) OWNER TO d3l243;
 
 --
+-- Name: FUNCTION timestamp_text(_currenttime timestamp without time zone); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.timestamp_text(_currenttime timestamp without time zone) IS 'TimeStampText';
+
+--
 -- Name: timestamp_text(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 -- Overload 2
