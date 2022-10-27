@@ -23,7 +23,7 @@ CREATE VIEW public.v_requested_run_batch_pending_list_report AS
     v_requested_run_batch_list_report.justification_for_high_priority,
     v_requested_run_batch_list_report.comment,
     v_requested_run_batch_list_report.separation_type,
-    v_requested_run_batch_list_report."#DaysInQueue"
+    v_requested_run_batch_list_report."#days_in_queue"
    FROM public.v_requested_run_batch_list_report
   WHERE (v_requested_run_batch_list_report.requests > 0);
 

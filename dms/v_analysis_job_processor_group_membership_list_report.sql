@@ -8,7 +8,7 @@ CREATE VIEW public.v_analysis_job_processor_group_membership_list_report AS
     ajpgm.membership_enabled,
     ajp.machine,
     ajp.notes,
-    ajpgm.group_id AS "#GroupID",
+    ajpgm.group_id AS "#group_id",
     public.get_aj_processor_membership_in_groups_list(ajp.processor_id, 2) AS group_membership
    FROM (public.t_analysis_job_processor_group_membership ajpgm
      JOIN public.t_analysis_job_processors ajp ON ((ajpgm.processor_id = ajp.processor_id)));

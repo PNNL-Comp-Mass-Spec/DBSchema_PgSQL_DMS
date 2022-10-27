@@ -45,11 +45,11 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
             WHEN (qt.days_in_queue <= (60)::numeric) THEN 60
             WHEN (qt.days_in_queue <= (90)::numeric) THEN 90
             ELSE 120
-        END AS "#DaysInQueue",
+        END AS "#days_in_queue",
         CASE
             WHEN ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (cc.activation_state >= 3)) THEN 10
             ELSE (cc.activation_state)::integer
-        END AS "#WPActivationState"
+        END AS "#wp_activation_state"
    FROM (((((((((((((((((public.t_requested_run rr
      JOIN public.t_dataset_type_name dtn ON ((dtn.dataset_type_id = rr.request_type_id)))
      JOIN public.t_users u ON ((rr.requester_prn OPERATOR(public.=) u.username)))
@@ -76,7 +76,7 @@ ALTER TABLE public.v_requested_run_list_report_2 OWNER TO d3l243;
 -- Name: VIEW v_requested_run_list_report_2; Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON VIEW public.v_requested_run_list_report_2 IS 'If the requested run is active, but the charge code is inactive, return 10 for #WPActivationState';
+COMMENT ON VIEW public.v_requested_run_list_report_2 IS 'If the requested run is active, but the charge code is inactive, return 10 for #wp_activation_state';
 
 --
 -- Name: TABLE v_requested_run_list_report_2; Type: ACL; Schema: public; Owner: d3l243

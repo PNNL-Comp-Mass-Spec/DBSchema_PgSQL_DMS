@@ -24,7 +24,7 @@ CREATE VIEW public.v_charge_code_detail_report AS
     cc.auto_defined,
     cc.charge_code_state,
     cc.last_affected,
-    cca.activation_state AS "#WPActivationState"
+    cca.activation_state AS "#wp_activation_state"
    FROM ((public.t_charge_code cc
      JOIN public.t_charge_code_activation_state cca ON ((cc.activation_state = cca.activation_state)))
      LEFT JOIN public.v_charge_code_owner_dms_user_map dmsuser ON ((cc.charge_code OPERATOR(public.=) dmsuser.charge_code)));

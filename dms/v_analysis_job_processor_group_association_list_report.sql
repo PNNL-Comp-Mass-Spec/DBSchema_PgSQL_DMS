@@ -9,7 +9,7 @@ CREATE VIEW public.v_analysis_job_processor_group_association_list_report AS
     tool.analysis_tool AS tool,
     j.param_file_name AS param_file,
     j.settings_file_name AS settings_file,
-    ajpga.group_id AS "#GroupID"
+    ajpga.group_id AS "#group_id"
    FROM ((((public.t_analysis_job_processor_group_associations ajpga
      JOIN public.t_analysis_job j ON ((ajpga.job = j.job)))
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))

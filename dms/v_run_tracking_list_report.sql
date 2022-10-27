@@ -26,7 +26,7 @@ CREATE VIEW public.v_run_tracking_list_report AS
         CASE
             WHEN (ds.dataset_type_id = 100) THEN 'Tracking'::text
             ELSE 'Regular'::text
-        END AS "#DSType"
+        END AS "#dataset_type"
    FROM ((((((((public.t_dataset ds
      JOIN public.t_instrument_name ON ((ds.instrument_id = t_instrument_name.instrument_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))

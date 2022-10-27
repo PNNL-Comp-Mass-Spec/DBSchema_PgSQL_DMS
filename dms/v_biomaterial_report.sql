@@ -12,7 +12,7 @@ CREATE VIEW public.v_biomaterial_report AS
     u.pi_prn AS pi,
     u.comment,
     c.campaign,
-    u.biomaterial_id AS "#ID"
+    u.biomaterial_id AS "#id"
    FROM ((public.t_biomaterial u
      JOIN public.t_biomaterial_type_name ctn ON ((u.biomaterial_type = ctn.biomaterial_type_id)))
      JOIN public.t_campaign c ON ((u.campaign_id = c.campaign_id)));

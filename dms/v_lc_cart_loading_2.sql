@@ -6,7 +6,7 @@ CREATE VIEW public.v_lc_cart_loading_2 AS
  SELECT cart.cart_name AS cart,
     rr.request_name AS name,
     rr.request_id AS request,
-    rr.cart_column,
+    rr.cart_column AS column_number,
     t_experiments.experiment,
     rr.priority,
     dtn.dataset_type AS type,

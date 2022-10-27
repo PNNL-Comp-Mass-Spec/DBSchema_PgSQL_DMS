@@ -12,7 +12,7 @@ CREATE VIEW public.v_internal_standards_composition_report AS
     components.charge_highest_abu,
     components.expected_ganet,
     components.internal_std_component_id AS id,
-    istds.name AS "#Name"
+    istds.name AS "#name"
    FROM ((public.t_internal_std_parent_mixes parentmix
      JOIN public.t_internal_standards istds ON ((parentmix.parent_mix_id = istds.parent_mix_id)))
      JOIN (public.t_internal_std_components components

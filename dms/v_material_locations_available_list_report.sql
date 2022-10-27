@@ -14,7 +14,7 @@ CREATE VIEW public.v_material_locations_available_list_report AS
     ml.containers,
     ml.available,
     'New Container'::text AS action,
-    ml."#ID"
+    ml."#id"
    FROM public.v_material_location_list_report ml
   WHERE ((ml.available > 0) AND (ml.status OPERATOR(public.=) 'Active'::public.citext));
 

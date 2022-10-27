@@ -11,8 +11,8 @@ CREATE VIEW public.v_notification_analysis_job_request_by_research_team AS
     t.name AS person,
     public.get_research_team_user_role_list(t.team_id, t.user_id) AS person_role,
     tne.entered,
-    tet.target_entity_type AS "#EntityType",
-    t."#PRN",
+    tet.target_entity_type AS "#entity_type",
+    t.username AS "#prn",
     tet.event_type,
     tne.event_type_id,
     tet.link_template
@@ -24,7 +24,7 @@ CREATE VIEW public.v_notification_analysis_job_request_by_research_team AS
             t_dataset.dataset,
             t_campaign.campaign,
             t_users.name,
-            t_users.username AS "#PRN",
+            t_users.username,
             srtm.team_id,
             srtm.user_id
            FROM ((((((public.t_dataset

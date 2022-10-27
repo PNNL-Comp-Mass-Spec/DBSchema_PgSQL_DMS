@@ -16,7 +16,7 @@ CREATE VIEW public.v_instrument_config_history_list_report AS
             WHEN (u.username IS NULL) THEN h.entered_by
             ELSE u.name_with_username
         END AS entered_by,
-    h.note AS "#NoteFull"
+    h.note AS "#note_full"
    FROM (public.t_instrument_config_history h
      LEFT JOIN public.t_users u ON ((h.entered_by OPERATOR(public.=) u.username)));
 

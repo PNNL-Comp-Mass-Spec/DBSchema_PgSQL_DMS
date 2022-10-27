@@ -52,7 +52,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
         CASE
             WHEN ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (cc.activation_state >= 3)) THEN 10
             ELSE (cc.activation_state)::integer
-        END AS "#WPActivationState"
+        END AS "#wp_activation_state"
    FROM (((((((((((((((((((public.t_dataset_type_name dtn
      JOIN (public.t_requested_run rr
      JOIN public.t_experiments e ON ((rr.exp_id = e.exp_id))) ON ((dtn.dataset_type_id = rr.request_type_id)))
@@ -82,7 +82,7 @@ ALTER TABLE public.v_requested_run_detail_report OWNER TO d3l243;
 -- Name: VIEW v_requested_run_detail_report; Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON VIEW public.v_requested_run_detail_report IS 'If the requested run is active, but the charge code is inactive, return 10 for #WPActivationState';
+COMMENT ON VIEW public.v_requested_run_detail_report IS 'If the requested run is active, but the charge code is inactive, return 10 for #wp_activation_state';
 
 --
 -- Name: TABLE v_requested_run_detail_report; Type: ACL; Schema: public; Owner: d3l243

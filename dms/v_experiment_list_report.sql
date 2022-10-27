@@ -13,7 +13,7 @@ CREATE VIEW public.v_experiment_list_report AS
     c.campaign,
     cec.biomaterial_list AS cell_cultures,
     cec.reference_compound_list AS ref_compounds,
-    e.exp_id AS "#ID"
+    e.exp_id AS "#id"
    FROM ((((public.t_experiments e
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)))

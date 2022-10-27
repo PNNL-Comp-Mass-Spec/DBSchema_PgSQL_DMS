@@ -61,7 +61,7 @@ CREATE VIEW public.v_sample_prep_request_detail_report AS
         CASE
             WHEN ((spr.state_id <> 5) AND (cc.activation_state >= 3)) THEN 10
             ELSE (cc.activation_state)::integer
-        END AS "#WPActivationState"
+        END AS "#wp_activation_state"
    FROM (((((((((public.t_sample_prep_request spr
      JOIN public.t_sample_prep_request_state_name sn ON ((spr.state_id = sn.state_id)))
      LEFT JOIN public.t_users qp ON ((spr.requester_prn OPERATOR(public.=) qp.username)))
@@ -84,7 +84,7 @@ ALTER TABLE public.v_sample_prep_request_detail_report OWNER TO d3l243;
 -- Name: VIEW v_sample_prep_request_detail_report; Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON VIEW public.v_sample_prep_request_detail_report IS 'If the request is not closed, but the charge code is inactive, return 10 for #WPActivationState';
+COMMENT ON VIEW public.v_sample_prep_request_detail_report IS 'If the request is not closed, but the charge code is inactive, return 10 for #wp_activation_state';
 
 --
 -- Name: TABLE v_sample_prep_request_detail_report; Type: ACL; Schema: public; Owner: d3l243

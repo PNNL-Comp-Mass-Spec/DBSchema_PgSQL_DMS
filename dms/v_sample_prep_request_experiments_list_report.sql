@@ -10,7 +10,7 @@ CREATE VIEW public.v_sample_prep_request_experiments_list_report AS
     e.comment,
     e.created,
     c.campaign,
-    e.sample_prep_request_id AS "#ID"
+    e.sample_prep_request_id AS "#id"
    FROM ((public.t_experiments e
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_organisms o ON ((e.organism_id = o.organism_id)));

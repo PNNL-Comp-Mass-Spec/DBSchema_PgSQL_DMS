@@ -16,7 +16,7 @@ CREATE VIEW public.v_mts_pt_db_jobs AS
     aj.param_file_name AS param_file,
     aj.settings_file_name AS settings_file,
     aj.protein_collection_list,
-    jm.sort_key AS "#SortKey"
+    jm.sort_key AS "#sort_key"
    FROM (public.t_mts_pt_db_jobs_cached jm
      LEFT JOIN (((((public.t_dataset ds
      JOIN public.t_analysis_job aj ON ((ds.dataset_id = aj.dataset_id)))

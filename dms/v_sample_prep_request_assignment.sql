@@ -32,7 +32,7 @@ CREATE VIEW public.v_sample_prep_request_assignment AS
             WHEN (qt.days_in_queue <= (60)::numeric) THEN 60
             WHEN (qt.days_in_queue <= (90)::numeric) THEN 90
             ELSE 120
-        END AS "#DaysInQueue"
+        END AS "#days_in_queue"
    FROM ((((((public.t_sample_prep_request spr
      JOIN public.t_sample_prep_request_state_name sn ON ((spr.state_id = sn.state_id)))
      LEFT JOIN public.t_users qp ON ((spr.requester_prn OPERATOR(public.=) qp.username)))

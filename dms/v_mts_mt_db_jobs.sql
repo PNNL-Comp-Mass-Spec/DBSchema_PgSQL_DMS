@@ -18,7 +18,7 @@ CREATE VIEW public.v_mts_mt_db_jobs AS
     j.protein_collection_list,
     ds.separation_type,
     dfp.dataset_folder_path,
-    jm.sort_key AS "#SortKey"
+    jm.sort_key AS "#sort_key"
    FROM ((public.t_mts_mt_db_jobs_cached jm
      JOIN public.t_mts_mt_dbs_cached mtdbs ON ((jm.mt_db_name OPERATOR(public.=) mtdbs.mt_db_name)))
      LEFT JOIN ((((((public.t_dataset ds

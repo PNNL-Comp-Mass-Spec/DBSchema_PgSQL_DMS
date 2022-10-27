@@ -39,8 +39,8 @@ CREATE VIEW public.v_active_requested_runs AS
     v_requested_run_list_report_2.cart_config,
     v_requested_run_list_report_2.dataset_comment,
     v_requested_run_list_report_2.request_name_code,
-    v_requested_run_list_report_2."#DaysInQueue",
-    v_requested_run_list_report_2."#WPActivationState"
+    v_requested_run_list_report_2."#days_in_queue",
+    v_requested_run_list_report_2."#wp_activation_state"
    FROM public.v_requested_run_list_report_2
   WHERE (v_requested_run_list_report_2.status OPERATOR(public.=) 'Active'::public.citext);
 

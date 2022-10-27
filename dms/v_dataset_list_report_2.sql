@@ -33,7 +33,7 @@ CREATE VIEW public.v_dataset_list_report_2 AS
     rr.requester_prn AS requester,
     org.organism,
     bto.tissue,
-    ds.date_sort_key AS "#DateSortKey"
+    ds.date_sort_key AS "#date_sort_key"
    FROM (((((((((((((public.t_dataset_state_name dsn
      JOIN public.t_dataset ds ON ((dsn.dataset_state_id = ds.dataset_state_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))

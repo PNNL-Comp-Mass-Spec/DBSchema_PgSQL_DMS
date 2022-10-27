@@ -40,7 +40,7 @@ CREATE VIEW public.v_data_analysis_request_detail_report AS
         CASE
             WHEN ((r.state <> 4) AND (cc.activation_state >= 3)) THEN 10
             ELSE (cc.activation_state)::integer
-        END AS "#WPActivationState"
+        END AS "#wp_activation_state"
    FROM ((((((((public.t_data_analysis_request r
      JOIN public.t_data_analysis_request_state_name sn ON ((r.state = sn.state_id)))
      LEFT JOIN public.t_users u ON ((r.requester_prn OPERATOR(public.=) u.username)))
@@ -61,7 +61,7 @@ ALTER TABLE public.v_data_analysis_request_detail_report OWNER TO d3l243;
 -- Name: VIEW v_data_analysis_request_detail_report; Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON VIEW public.v_data_analysis_request_detail_report IS 'If the analysis request is not closed, but the charge code is inactive, return 10 for #WPActivationState';
+COMMENT ON VIEW public.v_data_analysis_request_detail_report IS 'If the analysis request is not closed, but the charge code is inactive, return 10 for #wp_activation_state';
 
 --
 -- Name: TABLE v_data_analysis_request_detail_report; Type: ACL; Schema: public; Owner: d3l243
