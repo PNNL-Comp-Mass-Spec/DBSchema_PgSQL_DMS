@@ -40,14 +40,14 @@ CREATE VIEW public.v_run_planning_report AS
             WHEN (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (groupq.date_created)::timestamp with time zone)) / (86400)::numeric)) <= (60)::numeric) THEN 60
             WHEN (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (groupq.date_created)::timestamp with time zone)) / (86400)::numeric)) <= (90)::numeric) THEN 90
             ELSE 120
-        END AS "#days_in_queue",
-    groupq.wp_activation_state AS "#wp_activation_state",
-    groupq.requested_batch_priority AS "#batch_priority",
+        END AS days_in_queue_bin,
+    groupq.wp_activation_state,
+    groupq.requested_batch_priority AS batch_priority,
         CASE
             WHEN (groupq.fraction_count > 1) THEN 1
             WHEN (groupq.fractionbasedrequestcount > 1) THEN 2
             ELSE 0
-        END AS "#fraction_color_mode"
+        END AS fraction_color_mode
    FROM ((( SELECT requestq.inst_group,
             min(requestq.requestid) AS min_request,
             count(requestq.requestid) AS run_count,

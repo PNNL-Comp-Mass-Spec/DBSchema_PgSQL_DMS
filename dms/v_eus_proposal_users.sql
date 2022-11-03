@@ -5,7 +5,7 @@
 CREATE VIEW public.v_eus_proposal_users AS
  SELECT u.person_id AS user_id,
     u.name_fm AS user_name,
-    pu.proposal_id AS "#proposal",
+    pu.proposal_id AS proposal,
     COALESCE(usageq.prep_requests, (0)::bigint) AS prep_requests,
     pu.last_affected,
     p.proposal_start_date,

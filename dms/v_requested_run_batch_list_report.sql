@@ -42,7 +42,7 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
             WHEN (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (activereqstats.oldest_request_created)::timestamp with time zone)) / (86400)::numeric)) <= (60)::numeric) THEN 60
             WHEN (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (activereqstats.oldest_request_created)::timestamp with time zone)) / (86400)::numeric)) <= (90)::numeric) THEN 90
             ELSE 120
-        END AS "#days_in_queue"
+        END AS days_in_queue_bin
    FROM (((((public.t_requested_run_batches rrb
      JOIN public.t_users ON ((rrb.owner = t_users.user_id)))
      LEFT JOIN ( SELECT rr1.batch_id AS batchid,

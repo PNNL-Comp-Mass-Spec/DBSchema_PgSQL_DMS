@@ -12,9 +12,9 @@ CREATE VIEW public.v_material_containers_list_report AS
     containerq.status,
     'New Biomaterial'::text AS action,
     containerq.created,
-    public.get_material_container_campaign_list(containerq."#id", containerq.items) AS campaigns,
+    public.get_material_container_campaign_list(containerq.container_id, containerq.items) AS campaigns,
     containerq.researcher,
-    containerq."#id"
+    containerq.container_id AS id
    FROM ( SELECT mc.container,
             mc.type,
             ml.tag AS location,
@@ -22,7 +22,7 @@ CREATE VIEW public.v_material_containers_list_report AS
             mc.comment,
             mc.status,
             mc.created,
-            mc.container_id AS "#id",
+            mc.container_id,
             mc.researcher,
             tfa.filecount
            FROM (((public.t_material_containers mc

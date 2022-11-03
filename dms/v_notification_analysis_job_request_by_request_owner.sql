@@ -11,8 +11,8 @@ CREATE VIEW public.v_notification_analysis_job_request_by_request_owner AS
     u.name AS person,
     'Request Owner'::text AS person_role,
     tne.entered,
-    tet.target_entity_type AS "#entity_type",
-    u.username AS "#prn",
+    tet.target_entity_type AS entity_type,
+    u.username AS prn,
     tet.event_type,
     tne.event_type_id,
     tet.link_template

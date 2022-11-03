@@ -14,7 +14,7 @@ CREATE VIEW public.v_material_location_list_report AS
     count(mc.location_id) AS containers,
     (ml.container_limit - count(mc.location_id)) AS available,
     ml.status,
-    ml.location_id AS "#id"
+    ml.location_id AS id
    FROM ((public.t_material_locations ml
      JOIN public.t_material_freezers f ON ((ml.freezer_tag OPERATOR(public.=) f.freezer_tag)))
      LEFT JOIN public.t_material_containers mc ON ((ml.location_id = mc.location_id)))

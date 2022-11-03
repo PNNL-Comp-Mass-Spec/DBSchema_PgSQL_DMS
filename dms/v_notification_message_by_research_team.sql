@@ -11,8 +11,8 @@ CREATE VIEW public.v_notification_message_by_research_team AS
     v_notification_requested_run_batches_by_research_team.person,
     v_notification_requested_run_batches_by_research_team.person_role,
     v_notification_requested_run_batches_by_research_team.entered,
-    v_notification_requested_run_batches_by_research_team."#entity_type",
-    v_notification_requested_run_batches_by_research_team."#prn",
+    v_notification_requested_run_batches_by_research_team.entity_type,
+    v_notification_requested_run_batches_by_research_team.prn,
     replace((v_notification_requested_run_batches_by_research_team.link_template)::text, '@ID@'::text, (v_notification_requested_run_batches_by_research_team.entity)::text) AS link,
     v_notification_requested_run_batches_by_research_team.event_type_id
    FROM public.v_notification_requested_run_batches_by_research_team
@@ -26,8 +26,8 @@ UNION
     v_notification_analysis_job_request_by_research_team.person,
     v_notification_analysis_job_request_by_research_team.person_role,
     v_notification_analysis_job_request_by_research_team.entered,
-    v_notification_analysis_job_request_by_research_team."#entity_type",
-    v_notification_analysis_job_request_by_research_team."#prn",
+    v_notification_analysis_job_request_by_research_team.entity_type,
+    v_notification_analysis_job_request_by_research_team.prn,
     replace((v_notification_analysis_job_request_by_research_team.link_template)::text, '@ID@'::text, (v_notification_analysis_job_request_by_research_team.entity)::text) AS link,
     v_notification_analysis_job_request_by_research_team.event_type_id
    FROM public.v_notification_analysis_job_request_by_research_team
@@ -41,17 +41,17 @@ UNION
     src.person,
     src.person_role,
     src.entered,
-    src."#entity_type",
-    src."#prn",
+    src.entity_type,
+    src.prn,
     replace((src.link_template)::text, '@ID@'::text, (src.entity)::text) AS link,
     src.event_type_id
    FROM (public.v_notification_analysis_job_request_by_request_owner src
      LEFT JOIN ( SELECT v_notification_analysis_job_request_by_research_team.event,
             v_notification_analysis_job_request_by_research_team.entity,
-            v_notification_analysis_job_request_by_research_team."#prn"
+            v_notification_analysis_job_request_by_research_team.prn
            FROM public.v_notification_analysis_job_request_by_research_team
-          WHERE (v_notification_analysis_job_request_by_research_team.entered > (CURRENT_TIMESTAMP - '24:00:00'::interval))) filterq ON (((src.event OPERATOR(public.=) filterq.event) AND (src.entity = filterq.entity) AND (src."#prn" OPERATOR(public.=) filterq."#prn"))))
-  WHERE ((src.entered > (CURRENT_TIMESTAMP - '24:00:00'::interval)) AND (filterq."#prn" IS NULL))
+          WHERE (v_notification_analysis_job_request_by_research_team.entered > (CURRENT_TIMESTAMP - '24:00:00'::interval))) filterq ON (((src.event OPERATOR(public.=) filterq.event) AND (src.entity = filterq.entity) AND (src.prn OPERATOR(public.=) filterq.prn))))
+  WHERE ((src.entered > (CURRENT_TIMESTAMP - '24:00:00'::interval)) AND (filterq.prn IS NULL))
 UNION
  SELECT v_notification_sample_prep_request_by_research_team.seq,
     v_notification_sample_prep_request_by_research_team.event,
@@ -61,8 +61,8 @@ UNION
     v_notification_sample_prep_request_by_research_team.person,
     v_notification_sample_prep_request_by_research_team.person_role,
     v_notification_sample_prep_request_by_research_team.entered,
-    v_notification_sample_prep_request_by_research_team."#entity_type",
-    v_notification_sample_prep_request_by_research_team."#prn",
+    v_notification_sample_prep_request_by_research_team.entity_type,
+    v_notification_sample_prep_request_by_research_team.prn,
     replace((v_notification_sample_prep_request_by_research_team.link_template)::text, '@ID@'::text, (v_notification_sample_prep_request_by_research_team.entity)::text) AS link,
     v_notification_sample_prep_request_by_research_team.event_type_id
    FROM public.v_notification_sample_prep_request_by_research_team
@@ -76,8 +76,8 @@ UNION
     v_notification_datasets_by_research_team.person,
     v_notification_datasets_by_research_team.person_role,
     v_notification_datasets_by_research_team.entered,
-    v_notification_datasets_by_research_team."#entity_type",
-    v_notification_datasets_by_research_team."#prn",
+    v_notification_datasets_by_research_team.entity_type,
+    v_notification_datasets_by_research_team.prn,
     replace((v_notification_datasets_by_research_team.link_template)::text, '@ID@'::text, (v_notification_datasets_by_research_team.entity)::text) AS link,
     v_notification_datasets_by_research_team.event_type_id
    FROM public.v_notification_datasets_by_research_team

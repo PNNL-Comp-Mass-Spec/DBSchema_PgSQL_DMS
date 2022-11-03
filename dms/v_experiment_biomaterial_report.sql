@@ -7,7 +7,7 @@ CREATE VIEW public.v_experiment_biomaterial_report AS
     e.researcher_prn AS researcher,
     org.organism,
     e.comment,
-    b.biomaterial_name AS "#biomaterial"
+    b.biomaterial_name AS biomaterial
    FROM (((public.t_experiment_biomaterial eb
      JOIN public.t_experiments e ON ((eb.exp_id = e.exp_id)))
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)))

@@ -26,7 +26,7 @@ CREATE VIEW public.v_operations_tasks_list_report AS
             WHEN (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (opstask.created)::timestamp with time zone)) / (86400)::numeric)) <= (60)::numeric) THEN 60
             WHEN (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (opstask.created)::timestamp with time zone)) / (86400)::numeric)) <= (90)::numeric) THEN 90
             ELSE 120
-        END AS "#age_bracket"
+        END AS age_bracket
    FROM (((public.t_operations_tasks opstask
      JOIN public.t_operations_task_type tasktype ON ((opstask.task_type_id = tasktype.task_type_id)))
      JOIN public.t_lab_locations l ON ((opstask.lab_id = l.lab_id)))

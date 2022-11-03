@@ -11,8 +11,8 @@ CREATE VIEW public.v_notification_requested_run_batches_by_research_team AS
     t.name AS person,
     public.get_research_team_user_role_list(t.team_id, t.user_id) AS person_role,
     tne.entered,
-    tet.target_entity_type AS "#entity_type",
-    t.username AS "#prn",
+    tet.target_entity_type AS entity_type,
+    t.username AS prn,
     tet.event_type,
     tne.event_type_id,
     tet.link_template

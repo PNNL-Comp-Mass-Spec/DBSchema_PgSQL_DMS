@@ -10,7 +10,7 @@ CREATE VIEW public.v_material_move_containers_list_report AS
     count(contentsq.material_id) AS items,
     mc.comment,
     mc.created,
-    mc.container_id AS "#id"
+    mc.container_id AS id
    FROM ((public.t_material_containers mc
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
      LEFT JOIN ( SELECT t_biomaterial.container_id,

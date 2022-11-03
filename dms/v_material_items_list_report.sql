@@ -8,7 +8,7 @@ CREATE VIEW public.v_material_items_list_report AS
     contentsq.material_id AS id,
     mc.container,
     mc.type,
-    (("substring"(contentsq.item_type, 1, 1) || ':'::text) || (contentsq.material_id)::text) AS "#item_id",
+    (("substring"(contentsq.item_type, 1, 1) || ':'::text) || (contentsq.material_id)::text) AS item_id,
     ml.tag AS location,
     contentsq.material_status AS item_status,
     mc.status AS container_status,

@@ -8,7 +8,7 @@ CREATE VIEW public.v_material_containers_picklist AS
     mc.status,
     mc.comment,
     ml.tag AS location,
-    mc.sort_key AS "#sort_key"
+    mc.sort_key
    FROM (public.t_material_containers mc
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)));
 

@@ -24,7 +24,7 @@ CREATE VIEW cap.v_capture_job_steps_list_report AS
     js.completion_message,
     js.evaluation_code,
     js.evaluation_message,
-    js.job_plus_step AS "#id",
+    js.job_plus_step AS id,
     j.storage_server,
     j.instrument
    FROM ((((cap.t_task_steps js

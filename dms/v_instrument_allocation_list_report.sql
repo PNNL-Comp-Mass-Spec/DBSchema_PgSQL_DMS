@@ -19,7 +19,7 @@ CREATE VIEW public.v_instrument_allocation_list_report AS
     sumq.gc,
     sumq.qqq,
     sumq.last_affected AS last_updated,
-    sumq.fy_proposal AS "#fy_proposal"
+    sumq.fy_proposal
    FROM (((( SELECT t_instrument_allocation.fiscal_year,
             t_instrument_allocation.proposal_id,
             sum(

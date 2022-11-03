@@ -7,7 +7,7 @@ CREATE VIEW public.v_notification_event_list_report AS
     eventtype.event_type AS event,
     ne.target_id AS entity,
     ne.entered,
-    eventtype.target_entity_type AS "#entity_type"
+    eventtype.target_entity_type AS entity_type
    FROM (public.t_notification_event ne
      JOIN public.t_notification_event_type eventtype ON ((ne.event_type_id = eventtype.event_type_id)));
 

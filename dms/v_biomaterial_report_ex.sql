@@ -13,7 +13,7 @@ CREATE VIEW public.v_biomaterial_report_ex AS
     r.campaign,
     count(t_experiment_biomaterial.biomaterial_id) AS exp_count
    FROM (public.v_biomaterial_report r
-     JOIN public.t_experiment_biomaterial ON ((r."#id" = t_experiment_biomaterial.biomaterial_id)))
+     JOIN public.t_experiment_biomaterial ON ((r.id = t_experiment_biomaterial.biomaterial_id)))
   GROUP BY r.name, r.source, r.pi, r.type, r.reason, r.comment, r.campaign, r.contact;
 
 

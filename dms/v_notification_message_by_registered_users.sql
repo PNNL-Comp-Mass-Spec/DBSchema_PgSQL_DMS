@@ -10,15 +10,15 @@ CREATE VIEW public.v_notification_message_by_registered_users AS
     vnmrt.campaign,
     vnmrt.person_role AS role,
     vnmrt.event_type_id,
-    vnmrt."#entity_type",
-    vnmrt."#prn",
+    vnmrt.entity_type,
+    vnmrt.prn,
     vnmrt.person,
     tner.user_id,
     vnmrt.entered,
     tu.email
    FROM ((public.t_notification_entity_user tner
      JOIN public.t_users tu ON ((tner.user_id = tu.user_id)))
-     JOIN public.v_notification_message_by_research_team vnmrt ON (((tu.username OPERATOR(public.=) vnmrt."#prn") AND (tner.entity_type_id = vnmrt."#entity_type"))));
+     JOIN public.v_notification_message_by_research_team vnmrt ON (((tu.username OPERATOR(public.=) vnmrt.prn) AND (tner.entity_type_id = vnmrt.entity_type))));
 
 
 ALTER TABLE public.v_notification_message_by_registered_users OWNER TO d3l243;
