@@ -7,7 +7,7 @@ CREATE VIEW public.v_archive_list_report_2 AS
     ds.dataset,
     tin.instrument,
     dasn.archive_state AS state,
-    aus.archive_update_state AS update,
+    aus.archive_update_state AS update_state,
     da.archive_date AS entered,
     da.archive_state_last_affected AS state_last_affected,
     da.archive_update_state_last_affected AS update_state_last_affected,
