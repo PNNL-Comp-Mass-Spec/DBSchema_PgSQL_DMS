@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          01/25/2020 mem - Ported to PostgreSQL
 **          01/28/2020 mem - Add argument _targetTableSchema
 **                         - Remove exception handler and remove argument _returnCode
+**          04/16/2022 mem - Rename procedure
 **
 *****************************************************/
 DECLARE

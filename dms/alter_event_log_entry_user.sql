@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          01/26/2020 mem - Ported to PostgreSQL
 **          01/28/2020 mem - Add arguments _eventLogSchema and _previewsql
 **                         - Remove exception handler and remove argument _returnCode
+**          04/16/2022 mem - Rename procedure
 **
 *****************************************************/
 DECLARE

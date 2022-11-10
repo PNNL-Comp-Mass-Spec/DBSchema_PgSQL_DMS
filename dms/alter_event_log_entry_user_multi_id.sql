@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _event
 /****************************************************
 **
 **  Desc:
-**      Calls AlterEventLogEntryUser for each entry in temporary table Tmp_ID_Update_List
+**      Calls alter_event_log_entry_user for each entry in temporary table Tmp_ID_Update_List
 **      Updates the user associated with the given event log entries to be _newUser
 **
 **      The calling procedure must create and populate the temporary table:
@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _event
 **          01/28/2020 mem - Add arguments _eventLogSchema and _previewsql
 **                         - Remove exception handler and remove argument _returnCode
 **          10/20/2022 mem - Rename temporary table
+**          11/09/2022 mem - Use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -96,7 +97,7 @@ BEGIN
 
     ------------------------------------------------
     -- Parse the values in Tmp_ID_Update_List
-    -- Call AlterEventLogEntryUser for each
+    -- Call alter_event_log_entry_user for each
     ------------------------------------------------
 
     _countUpdated := 0;
@@ -106,7 +107,7 @@ BEGIN
         FROM Tmp_ID_Update_List
         ORDER BY TargetID
     Loop
-        Call AlterEventLogEntryUser(
+        Call public.alter_event_log_entry_user(
                             _eventlogschema,
                             _targetType,
                             _targetID,
@@ -133,4 +134,10 @@ $$;
 
 
 ALTER PROCEDURE public.alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly integer, IN _previewsql integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly integer, IN _previewsql integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly integer, IN _previewsql integer) IS 'AlterEventLogEntryUserMultiID';
 
