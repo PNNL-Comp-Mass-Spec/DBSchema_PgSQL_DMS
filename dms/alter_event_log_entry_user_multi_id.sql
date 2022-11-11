@@ -39,19 +39,15 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _event
 **          10/20/2022 mem - Rename temporary table
 **          11/09/2022 mem - Use new procedure name
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
+**                         - Remove unused variables and use clock_timestamp()
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _targetID int;
     _countUpdated int;
-    _continue int;
     _startTime timestamp;
     _entryTimeWindowSecondsCurrent int;
     _elapsedSeconds int;
-    _sqlstate text;
-    _exceptionMessage text;
-    _exceptionContext text;
 BEGIN
 
     ------------------------------------------------
@@ -93,7 +89,7 @@ BEGIN
     --  if too much time elapses
     ------------------------------------------------
     --
-    _startTime := CURRENT_TIMESTAMP;
+    _startTime := clock_timestamp();
     _entryTimeWindowSecondsCurrent := _entryTimeWindowSeconds;
 
     ------------------------------------------------
@@ -103,11 +99,11 @@ BEGIN
 
     _countUpdated := 0;
 
-    For _targetID In
+    FOR _targetID IN
         SELECT TargetID
         FROM Tmp_ID_Update_List
         ORDER BY TargetID
-    Loop
+    LOOP
         Call public.alter_event_log_entry_user(
                             _eventlogschema,
                             _targetType,
@@ -122,13 +118,13 @@ BEGIN
 
         _countUpdated := _countUpdated + 1;
         If _countUpdated % 5 = 0 Then
-            _elapsedSeconds := extract(epoch FROM (current_timestamp - _startTime));
+            _elapsedSeconds := extract(epoch FROM (clock_timestamp() - _startTime));
 
             If _elapsedSeconds * 2 > _entryTimeWindowSecondsCurrent Then
                 _entryTimeWindowSecondsCurrent := _elapsedSeconds * 4;
             End If;
         End If;
-    End Loop;
+    END LOOP;
 
 END
 $$;

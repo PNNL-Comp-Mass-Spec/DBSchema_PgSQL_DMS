@@ -34,7 +34,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _myRowCount int;
     _entryDateStart timestamp;
     _entryDateEnd timestamp;
     _entryDescription text := '';
@@ -197,7 +197,6 @@ BEGIN
             _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
         Else
             EXECUTE _s USING _eventID, _enteredByNew;
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             _message := 'Updated ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
         End If;
@@ -215,8 +214,6 @@ BEGIN
             _eventLogSchema);
 
     EXECUTE _s INTO _previewData USING _eventID, _enteredByNew;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     _infoHead := format('%-10s %-12s %-10s %-12s %-18s %-20s %-20s %-20s',
                             'event_id',

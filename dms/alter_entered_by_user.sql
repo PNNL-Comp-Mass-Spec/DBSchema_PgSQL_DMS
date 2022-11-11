@@ -35,7 +35,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _myRowCount int;
     _entryDateStart timestamp;
     _entryDateEnd timestamp;
     _entryDescription text := '';
@@ -222,8 +222,6 @@ BEGIN
         Else
             Execute _s USING _targetID, _entryDateStart, _entryDateEnd;
         End If;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
     End If;

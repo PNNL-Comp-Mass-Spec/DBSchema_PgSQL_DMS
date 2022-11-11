@@ -40,18 +40,11 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user_multi_id(IN _targettabl
 **          10/20/2022 mem - Rename temporary table
 **          11/09/2022 mem - Use new procedure name
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
+**                         - Remove unused variables and use clock_timestamp()
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _entryDateStart timestamp;
-    _entryDateEnd timestamp;
-    _entryIndex int;
-    _matchIndex int;
-    _enteredBy text;
     _targetID int;
-    _enteredByNew text := '';
-    _currentTime timestamp := CURRENT_TIMESTAMP;
     _countUpdated int;
     _startTime timestamp;
     _entryTimeWindowSecondsCurrent int;
@@ -62,7 +55,7 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-     _targetTableSchema := COALESCE(_targetTableSchema, '');
+    _targetTableSchema := COALESCE(_targetTableSchema, '');
     If (char_length(_targetTableSchema) = 0) Then
         _targetTableSchema := 'public';
     End If;
@@ -97,7 +90,7 @@ BEGIN
     --  if too much time elapses
     ------------------------------------------------
     --
-    _startTime := CURRENT_TIMESTAMP;
+    _startTime := clock_timestamp();
     _entryTimeWindowSecondsCurrent := _entryTimeWindowSeconds;
 
     ------------------------------------------------
@@ -128,13 +121,13 @@ BEGIN
 
         _countUpdated := _countUpdated + 1;
         If _countUpdated % 5 = 0 Then
-            _elapsedSeconds := extract(epoch FROM (current_timestamp - _startTime));
+            _elapsedSeconds := extract(epoch FROM (clock_timestamp() - _startTime));
 
             If _elapsedSeconds * 2 > _entryTimeWindowSecondsCurrent Then
                 _entryTimeWindowSecondsCurrent := _elapsedSeconds * 4;
             End If;
         End If;
-    End Loop;
+    END LOOP;
 
 END
 $$;
