@@ -1,8 +1,8 @@
 --
--- Name: alter_event_log_entry_user_multi_id(text, integer, integer, text, integer, integer, text, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: alter_event_log_entry_user_multi_id(text, integer, integer, text, boolean, integer, text, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter integer DEFAULT 1, IN _entrytimewindowseconds integer DEFAULT 15, INOUT _message text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, IN _previewsql integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter boolean DEFAULT true, IN _entrytimewindowseconds integer DEFAULT 15, INOUT _message text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _previewsql boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -16,28 +16,29 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _event
 **
 **      Increased performance can be obtained by adding an index to the table;
 **      thus it is advisable that the calling procedure also create this index:
-**        CREATE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
+**        CREATE UNIQUE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 **
 **  Arguments:
 **    _eventLogSchema           Schema of the t_event_log table to update; if empty or null, assumes "public"
 **    _targetType               Event type; 1=Manager Enable/Disable
 **    _targetState              Logged state value to match
 **    _newUser                  New username to add to the entered_by field
-**    _applyTimeFilter          If 1, filters by the current date and time; if 0, looks for the most recent matching entry
-**    _entryTimeWindowSeconds   Only used if _applyTimeFilter = 1
+**    _applyTimeFilter          When true, filters by the current date and time; when false, looks for the most recent matching entry
+**    _entryTimeWindowSeconds   Only used if _applyTimeFilter is true
 **    _message                  Warning or status message
-**    _infoOnly                 If 1, preview updates
-**    _previewSql               If 1, show the SQL that would be used
+**    _infoOnly                 When true, preview updates
+**    _previewSql               When true, show the SQL that would be used
 **
 **  Auth:   mem
 **  Date:   02/29/2008 mem - Initial version (Ticket: #644)
 **          05/23/2008 mem - Expanded @EntryDescription to varchar(512)
 **          03/30/2009 mem - Ported to the Manager Control DB
 **          01/26/2020 mem - Ported to PostgreSQL
-**          01/28/2020 mem - Add arguments _eventLogSchema and _previewsql
+**          01/28/2020 mem - Add arguments _eventLogSchema and _previewSql
 **                         - Remove exception handler and remove argument _returnCode
 **          10/20/2022 mem - Rename temporary table
 **          11/09/2022 mem - Use new procedure name
+**          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **
 *****************************************************/
 DECLARE
@@ -63,11 +64,11 @@ BEGIN
     End If;
 
     _newUser := Coalesce(_newUser, '');
-    _applyTimeFilter := Coalesce(_applyTimeFilter, 0);
+    _applyTimeFilter := Coalesce(_applyTimeFilter, false);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
     _message := '';
-    _infoOnly := Coalesce(_infoOnly, 0);
-    _previewsql := Coalesce(_previewSql, 0);
+    _infoOnly := Coalesce(_infoOnly, false);
+    _previewSql := Coalesce(_previewSql, false);
 
     If _targetType Is Null Or _targetState Is Null Then
         _message := '_targetType and _targetState must be defined; unable to continue';
@@ -117,7 +118,7 @@ BEGIN
                             _entryTimeWindowSeconds,
                             _message,
                             _infoOnly,
-                            _previewsql);
+                            _previewSql);
 
         _countUpdated := _countUpdated + 1;
         If _countUpdated % 5 = 0 Then
@@ -133,11 +134,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly integer, IN _previewsql integer) OWNER TO d3l243;
+ALTER PROCEDURE public.alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter boolean, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly boolean, IN _previewsql boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly integer, IN _previewsql integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter boolean, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly boolean, IN _previewsql boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly integer, IN _previewsql integer) IS 'AlterEventLogEntryUserMultiID';
+COMMENT ON PROCEDURE public.alter_event_log_entry_user_multi_id(IN _eventlogschema text, IN _targettype integer, IN _targetstate integer, IN _newuser text, IN _applytimefilter boolean, IN _entrytimewindowseconds integer, INOUT _message text, IN _infoonly boolean, IN _previewsql boolean) IS 'AlterEventLogEntryUserMultiID';
 

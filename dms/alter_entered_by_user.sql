@@ -1,8 +1,8 @@
 --
--- Name: alter_entered_by_user(text, text, text, integer, text, integer, integer, text, text, text, integer, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: alter_entered_by_user(text, text, text, integer, text, boolean, integer, text, text, text, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _targetid integer, IN _newuser text, IN _applytimefilter integer DEFAULT 1, IN _entrytimewindowseconds integer DEFAULT 15, IN _entrydatecolumnname text DEFAULT 'entered'::text, IN _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, IN _infoonly integer DEFAULT 0, IN _previewsql integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _targetid integer, IN _newuser text, IN _applytimefilter boolean DEFAULT true, IN _entrytimewindowseconds integer DEFAULT 15, IN _entrydatecolumnname text DEFAULT 'entered'::text, IN _enteredbycolumnname text DEFAULT 'entered_by'::text, INOUT _message text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _previewsql boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
@@ -16,21 +16,22 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **    _targetIDColumnName       ID column name
 **    _targetID                 ID of the entry to update
 **    _newUser                  New username to add to the entered_by field
-**    _applyTimeFilter          If 1, filters by the current date and time; if 0, looks for the most recent matching entry
-**    _entryTimeWindowSeconds   Only used if _applyTimeFilter = 1
-**    _entryDateColumnName      Column name to use when _applyTimeFilter is non-zero
+**    _applyTimeFilter          When true, filters by the current date and time; when false, looks for the most recent matching entry
+**    _entryTimeWindowSeconds   Only used if _applyTimeFilter is true
+**    _entryDateColumnName      Column name to use when _applyTimeFilter is true
 **    _enteredByColumnName      Column name to update the username
 **    _message                  Warning or status message
-**    _infoOnly                 If 1, preview updates
-**    _previewSql               If 1, show the SQL that would be used
+**    _infoOnly                 When true, preview updates
+**    _previewSql               When true, show the SQL that would be used
 **
 **  Auth:   mem
 **  Date:   03/25/2008 mem - Initial version (Ticket: #644)
-**          05/23/2008 mem - Expanded @EntryDescription to varchar(512)
+**          05/23/2008 mem - Expanded _EntryDescription to varchar(512)
 **          01/25/2020 mem - Ported to PostgreSQL
 **          01/28/2020 mem - Add argument _targetTableSchema
 **                         - Remove exception handler and remove argument _returnCode
 **          04/16/2022 mem - Rename procedure
+**          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **
 *****************************************************/
 DECLARE
@@ -60,11 +61,11 @@ BEGIN
     End If;
 
     _newUser := Coalesce(_newUser, '');
-    _applyTimeFilter := Coalesce(_applyTimeFilter, 0);
+    _applyTimeFilter := Coalesce(_applyTimeFilter, false);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
     _message := '';
-    _infoOnly := Coalesce(_infoOnly, 0);
-    _previewSql := Coalesce(_previewSql, 0);
+    _infoOnly := Coalesce(_infoOnly, false);
+    _previewSql := Coalesce(_previewSql, false);
 
     If _targetTableName Is Null Or _targetIDColumnName Is Null Or _targetID Is Null Then
         _message := '_targetTableName and _targetIDColumnName and _targetID must be defined; unable to continue';
@@ -86,7 +87,7 @@ BEGIN
             _targetTableSchema, _targetTableName,
             _targetIDColumnName);
 
-    If _applyTimeFilter <> 0 And _entryTimeWindowSeconds >= 1 Then
+    If _applyTimeFilter And _entryTimeWindowSeconds >= 1 Then
         ------------------------------------------------
         -- Filter using the current date/time
         ------------------------------------------------
@@ -94,7 +95,7 @@ BEGIN
         _entryDateStart := _currentTime - (_entryTimeWindowSeconds || ' seconds')::INTERVAL;
         _entryDateEnd   := _currentTime + INTERVAL '1 second';
 
-        If _infoOnly <> 0 Then
+        If _infoOnly Then
             RAISE INFO 'Filtering on entries dated between % and % (Window = % seconds)',
                 to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss'),
                 to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss'),
@@ -111,7 +112,7 @@ BEGIN
                             '%I between $2 And $3',
                              _entryDateColumnName);
 
-        If _previewSql <> 0 Then
+        If _previewSql Then
             _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
         Else
             _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
@@ -120,7 +121,7 @@ BEGIN
         _entryDescription := _entryDescription || ' with ' || _entryDateFilterSqlWithValues;
     End If;
 
-    If _previewSql <> 0 Then
+    If _previewSql Then
         -- Show the SQL both with the dollar signs, and with values
         RAISE INFO '%;', _s;
         RAISE INFO '%;', regexp_replace(_s, '\$1', _targetID::text);
@@ -135,7 +136,7 @@ BEGIN
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _previewSql = 0 AND (_myRowCount <= 0 Or _targetIDMatch <> _targetID) Then
+    If Not _previewSql AND (_myRowCount = 0 Or _targetIDMatch <> _targetID) Then
         _message := 'Match not found for ' || _entryDescription;
         Return;
     End If;
@@ -162,7 +163,7 @@ BEGIN
         _message := 'Match not found; unable to continue';
     End If;
 
-    If _infoOnly = 0 Then
+    If Not _infoOnly Then
 
         _s := format(
                 'UPDATE %I.%I '
@@ -173,14 +174,14 @@ BEGIN
                 _targetIDColumnName);
 
         If char_length(_entryDateFilterSqlWithVariables) > 0 Then
-            If _previewSql <> 0 Then
+            If _previewSql Then
                 _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
             Else
                 _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
             End If;
         End If;
 
-        If _previewSql <> 0 Then
+        If _previewSql Then
             -- Show the SQL both with the dollar signs, and with values
             RAISE INFO '%;', _s;
             _s := regexp_replace(_s, '\$1', _targetID::text);
@@ -189,13 +190,11 @@ BEGIN
         Else
             EXECUTE _s USING _targetID, _entryDateStart, _entryDateEnd, _enteredByNew;
         End If;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _previewSql = 0 Then
-            _message := 'Updated ';
-        Else
+        If _previewSql Then
             _message := 'SQL previewed for updating ';
+        Else
+            _message := 'Updated ';
         End If;
 
         _message := _message || _entryDescription || ' to indicate "' || _enteredByNew || '"';
@@ -209,14 +208,14 @@ BEGIN
                 _targetIDColumnName);
 
         If char_length(_entryDateFilterSqlWithVariables) > 0 Then
-            If _previewSql <> 0 Then
+            If _previewSql Then
                 _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
             Else
                 _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
             End If;
         End If;
 
-        If _previewSql <> 0 Then
+        If _previewSql Then
             -- Show the SQL both with the dollar signs, and with values
             RAISE INFO '%;', _s;
             RAISE INFO '%;', regexp_replace(_s, '\$1', _targetID::text);
@@ -233,11 +232,11 @@ END
 $_$;
 
 
-ALTER PROCEDURE public.alter_entered_by_user(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _targetid integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer) OWNER TO d3l243;
+ALTER PROCEDURE public.alter_entered_by_user(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _targetid integer, IN _newuser text, IN _applytimefilter boolean, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly boolean, IN _previewsql boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE alter_entered_by_user(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _targetid integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE alter_entered_by_user(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _targetid integer, IN _newuser text, IN _applytimefilter boolean, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly boolean, IN _previewsql boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.alter_entered_by_user(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _targetid integer, IN _newuser text, IN _applytimefilter integer, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly integer, IN _previewsql integer) IS 'AlterEnteredByUser';
+COMMENT ON PROCEDURE public.alter_entered_by_user(IN _targettableschema text, IN _targettablename text, IN _targetidcolumnname text, IN _targetid integer, IN _newuser text, IN _applytimefilter boolean, IN _entrytimewindowseconds integer, IN _entrydatecolumnname text, IN _enteredbycolumnname text, INOUT _message text, IN _infoonly boolean, IN _previewsql boolean) IS 'AlterEnteredByUser';
 
