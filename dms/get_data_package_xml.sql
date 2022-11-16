@@ -13,7 +13,8 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **  Return value: XML, as text
 **
 **  Arguments:
-**    _options      'Parameters', 'Experiments', 'Datasets', 'Jobs', 'Paths', or 'All'
+**    _dataPackageID    Data package ID
+**    _options          'Parameters', 'Experiments', 'Datasets', 'Jobs', 'Paths', or 'All'
 **
 **  Example output (excerpt)
 **    <data_package>
@@ -42,12 +43,13 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **  Date:   04/25/2012
 **          05/06/2012 grk - Added support for experiments
 **          06/18/2022 mem - Ported to PostgreSQL
+**          11/15/2022 mem - Use new column name
 **
 *****************************************************/
 DECLARE
     _includeAll bool;
     _result text;
-    _newline text := CHR(13);
+    _newline text := chr(10);
     _paramXML XML;
     _experimentXML XML;
     _datasetXML XML;
@@ -162,7 +164,7 @@ BEGIN
                        ) AS xml_item
                FROM dpkg.V_Data_Package_Dataset_Export AS DPD
                     INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
-               WHERE DPD.data_pkg_id = _dataPackageID
+               WHERE DPD.data_package_id = _dataPackageID
             ) AS LookupQ;
 
         _result := _result || Coalesce(_datasetXML::text, '');
@@ -250,7 +252,7 @@ BEGIN
                FROM dpkg.v_data_package_dataset_export AS DPD
                     INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
                     INNER JOIN t_cached_dataset_folder_paths AS DFP ON DFP.dataset_id = DS.Dataset_ID
-               WHERE DPD.data_pkg_id = _dataPackageID
+               WHERE DPD.data_package_id = _dataPackageID
             ) AS LookupQ;
 
         _result := _result || _newline || _newline;
