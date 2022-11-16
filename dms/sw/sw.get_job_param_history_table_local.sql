@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_history_table_local(_job integer) RE
 **          06/26/2022 mem - Ported to PostgreSQL
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          11/15/2022 mem - Add second example query
 **
 *****************************************************/
 DECLARE
@@ -32,14 +33,21 @@ BEGIN
     ---------------------------------------------------
 
     /*
-    -- Obtain a specific parameter value:
-    --   '\\proto-8\QEHFX03\2022_2\'
+    -- \\proto-3\QEHFX01\2022_1\
     --
     SELECT unnest(xpath('//params/Param[@Name="DatasetStoragePath"]/@Value', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
            FROM sw.t_job_parameters_history
-           WHERE job = _job
+           WHERE job = 2014771
          ) Src;
+
+    -- \\proto-3\DMS3_Xfer\
+    --
+    SELECT ((xpath('//params/Param[@Name = "transferFolderPath"]/@Value', rooted_xml))[1])::text
+    FROM ( SELECT ('<root>' || parameters::text || '</root>')::xml as rooted_xml
+           FROM sw.t_job_parameters_history
+           WHERE job = 2014771) FilterQ;
+
     */
 
     ---------------------------------------------------
