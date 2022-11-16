@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.xml_to_html(_xml xml) RETURNS text
 **  Desc:
 **      Converts XML to HTML text, surrounded by <pre> and </pre>
 **
-**      Adds CRLF before each XML tag and changes the
+**      Adds a linefeed before each XML tag and changes the
 **      less than and greater than signs to &lt; and &gt;
 **
 **  Return value: the XML as text
@@ -18,25 +18,26 @@ CREATE OR REPLACE FUNCTION public.xml_to_html(_xml xml) RETURNS text
 **  Auth:   mem
 **  Date:   06/10/2010 mem - Initial version
 **          06/24/2022 mem - Ported to PostgreSQL
+**          11/15/2022 mem - Use a newline character (\n) to separate lines
 **
 *****************************************************/
 DECLARE
     _text text;
-    _crlf text;
+    _newline text;
 BEGIN
     If _xml Is Null Then
         _text := '';
     Else
-        _crlf := CHR(13) || CHR(10);
+        _newline := chr(10);
 
-        _text := Trim(REPLACE(_xml::text, '<', _crlf || '<'));
+        _text := Trim(REPLACE(_xml::text, '<', _newline || '<'));
         _text := '<pre>' ||
                  REPLACE(REPLACE(_text, '<', '&lt;'), '>', '&gt;') ||
-                 _crlf ||
+                 _newline ||
                  '</pre>';
     End If;
 
-    Return _text;
+    RETURN _text;
 END
 $$;
 
