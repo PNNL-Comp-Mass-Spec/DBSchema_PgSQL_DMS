@@ -14,13 +14,14 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid inte
 **
 **  Arguments:
 **    _campaignID   Campaign ID
-**    _role         Role name
+**    _role         Role name: 'Project Mgr', 'PI', 'Dataset Acquisition', 'Technical Lead', 'Sample Preparation', 'Informatics', or 'Observer'
 **    _mode         Name mode; if 'PRN' or 'USERNAME', return the username; otherwise return person's name and username
 **
 **  Auth:   grk
 **  Date:   02/04/2010
 **          12/08/2014 mem - Now using Name_with_PRN to obtain each user's name and PRN
 **          07/07/2022 mem - Ported to PostgreSQL
+**          11/14/2022 mem - Allow mode to be either PRN or USERNAME
 **
 *****************************************************/
 DECLARE
@@ -30,7 +31,7 @@ BEGIN
     IF NOT _campaignID IS NULL AND NOT _role IS NULL Then
         SELECT string_agg(LookupQ.Value, ', ' ORDER BY LookupQ.Value)
         INTO _result
-        FROM (  SELECT CASE WHEN _mode = 'PRN'
+        FROM (  SELECT CASE WHEN _mode IN ('PRN', 'USERNAME')
                             THEN t_users.username
                             ELSE t_users.name_with_username
                        END as Value
