@@ -31,7 +31,6 @@ DECLARE
     _exceptionContext text;
 
     _stepToolId int;
-    _logErrors bool := true;
     _myRowCount int;
 BEGIN
 

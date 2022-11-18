@@ -40,7 +40,6 @@ DECLARE
     _exceptionContext text;
 
     _scriptId int;
-    _logErrors bool := true;
     _scriptXML xml;
     _myRowCount int;
     _alterEnteredByMessage text;
@@ -190,14 +189,9 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-
-        If _logErrors Then
-            _message := local_error_handler (
-                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                            _callingProcLocation => '', _logError => true);
-        Else
-            _message := _exceptionMessage;
-        End If;
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
