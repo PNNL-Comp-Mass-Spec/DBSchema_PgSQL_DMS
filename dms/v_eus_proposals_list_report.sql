@@ -10,8 +10,7 @@ CREATE VIEW public.v_eus_proposals_list_report AS
     eup.import_date,
     eup.proposal_start_date AS start_date,
     eup.proposal_end_date AS end_date,
-    eup.proposal_type,
-    ept.proposal_type_name AS type_name,
+    ept.proposal_type_name AS proposal_type,
     ept.abbreviation,
     eup.numeric_id,
     eup.proposal_id_auto_supersede AS superseded_by
