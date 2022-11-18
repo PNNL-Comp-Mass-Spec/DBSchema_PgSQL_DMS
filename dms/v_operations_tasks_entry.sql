@@ -5,7 +5,7 @@
 CREATE VIEW public.v_operations_tasks_entry AS
  SELECT opstask.task_id AS id,
     tasktype.task_type_name,
-    opstask.tab,
+    opstask.task,
     opstask.requester,
     opstask.requested_personnel,
     opstask.assigned_personnel,

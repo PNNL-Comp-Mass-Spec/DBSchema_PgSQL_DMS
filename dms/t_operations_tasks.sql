@@ -5,7 +5,7 @@
 CREATE TABLE public.t_operations_tasks (
     task_id integer NOT NULL,
     task_type_id integer DEFAULT 1 NOT NULL,
-    tab public.citext,
+    task public.citext,
     requester public.citext,
     requested_personnel public.citext,
     assigned_personnel public.citext,

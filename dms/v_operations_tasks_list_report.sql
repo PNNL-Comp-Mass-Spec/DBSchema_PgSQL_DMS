@@ -5,7 +5,7 @@
 CREATE VIEW public.v_operations_tasks_list_report AS
  SELECT opstask.task_id AS id,
     tasktype.task_type_name AS task_type,
-    opstask.tab,
+    opstask.task,
     opstask.description,
     COALESCE(u.name_with_username, opstask.requester) AS requester,
     opstask.assigned_personnel,
