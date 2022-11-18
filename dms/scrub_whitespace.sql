@@ -7,9 +7,10 @@ CREATE OR REPLACE FUNCTION public.scrub_whitespace(_text text) RETURNS text
     AS $$
 /****************************************************
 **
-**  Desc:   Removes whitespace (including Cr, Lf, and tab) from the start and end of text
+**  Desc:
+**      Removes whitespace (including Cr, Lf, and tab) from the start and end of text
 **
-**  Return value: error message
+**  Return value: updated text
 **
 **  Auth:   mem
 **  Date:   07/01/2014 mem - Initial release
