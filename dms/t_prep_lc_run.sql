@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_prep_lc_run (
     prep_run_id integer NOT NULL,
-    tab public.citext,
+    prep_run_name public.citext,
     instrument public.citext NOT NULL,
     type public.citext,
     lc_column public.citext,

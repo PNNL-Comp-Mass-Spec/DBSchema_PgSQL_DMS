@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_prep_lc_run_detail_report AS
  SELECT preprun.prep_run_id AS id,
-    preprun.tab,
+    preprun.prep_run_name AS name,
     preprun.instrument,
     preprun.type,
     preprun.lc_column,

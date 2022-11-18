@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_helper_prep_lc_run_list_report AS
  SELECT t_prep_lc_run.prep_run_id AS id,
-    t_prep_lc_run.tab,
+    t_prep_lc_run.prep_run_name,
     t_prep_lc_run.instrument,
     t_prep_lc_run.type,
     t_prep_lc_run.lc_column,
