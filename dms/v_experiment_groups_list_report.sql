@@ -5,7 +5,7 @@
 CREATE VIEW public.v_experiment_groups_list_report AS
  SELECT eg.group_id AS id,
     eg.group_type,
-    eg.tab,
+    eg.group_name,
     eg.description,
     eg.member_count AS members,
     ta.attachments AS files,

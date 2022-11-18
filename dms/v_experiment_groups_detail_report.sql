@@ -5,7 +5,7 @@
 CREATE VIEW public.v_experiment_groups_detail_report AS
  SELECT eg.group_id AS id,
     eg.group_type,
-    eg.tab,
+    eg.group_name,
     e.experiment AS parent_experiment,
     count(egm.exp_id) AS members,
     eg.description,
@@ -27,7 +27,7 @@ CREATE VIEW public.v_experiment_groups_detail_report AS
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'experiment_group'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id) fa ON ((eg.group_id = (fa.entity_id)::integer)))
-  GROUP BY eg.group_id, eg.group_type, eg.tab, eg.description, eg.created, e.experiment, eg.prep_lc_run_id, fa.filecount,
+  GROUP BY eg.group_id, eg.group_type, eg.group_name, eg.description, eg.created, e.experiment, eg.prep_lc_run_id, fa.filecount,
         CASE
             WHEN (eg.researcher IS NULL) THEN ''::public.citext
             ELSE u.name_with_username

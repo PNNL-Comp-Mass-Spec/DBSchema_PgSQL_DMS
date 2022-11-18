@@ -10,7 +10,7 @@ CREATE TABLE public.t_experiment_groups (
     parent_exp_id integer DEFAULT 0 NOT NULL,
     prep_lc_run_id integer,
     researcher public.citext,
-    tab public.citext,
+    group_name public.citext,
     member_count integer DEFAULT 0 NOT NULL
 );
 

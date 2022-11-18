@@ -5,7 +5,7 @@
 CREATE VIEW public.v_experiment_groups_entry AS
  SELECT eg.group_id AS id,
     eg.group_type,
-    eg.tab,
+    eg.group_name,
     eg.description,
     e.experiment AS parent_exp,
     public.get_exp_group_experiment_list(eg.group_id) AS experiment_list,
