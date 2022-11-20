@@ -12,7 +12,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
     ml.tag AS staging_location,
     instname.instrument AS instrument_used,
     rr.instrument_group,
-    dtn.dataset_type AS type,
+    dtn.dataset_type AS run_type,
     rr.separation_group,
     u.name_with_username AS requester,
     rr.requester_prn AS username,
