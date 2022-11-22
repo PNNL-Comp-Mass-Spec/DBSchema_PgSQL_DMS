@@ -9,7 +9,7 @@ CREATE VIEW public.v_file_attachment_list_report AS
     fa.entity_type,
     fa.entity_id,
     u.name_with_username AS owner,
-    fa.file_size_bytes AS size_kb,
+    fa.file_size_kb AS size_kb,
     fa.created,
     fa.last_affected
    FROM (public.t_file_attachment fa

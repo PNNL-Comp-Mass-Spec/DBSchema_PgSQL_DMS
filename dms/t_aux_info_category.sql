@@ -37,7 +37,7 @@ ALTER TABLE ONLY public.t_aux_info_category
 --
 
 ALTER TABLE ONLY public.t_aux_info_category
-    ADD CONSTRAINT fk_t_aux_info_category_t_aux_info_target FOREIGN KEY (target_type_id) REFERENCES public.t_aux_info_target(aux_target_id);
+    ADD CONSTRAINT fk_t_aux_info_category_t_aux_info_target FOREIGN KEY (target_type_id) REFERENCES public.t_aux_info_target(target_type_id);
 
 --
 -- Name: TABLE t_aux_info_category; Type: ACL; Schema: public; Owner: d3l243

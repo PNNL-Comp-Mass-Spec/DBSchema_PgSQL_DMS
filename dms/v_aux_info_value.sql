@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_aux_info_value AS
- SELECT category_target.aux_target AS target,
+ SELECT category_target.target_type_name AS target,
     val.target_id,
     category.aux_category AS category,
     subcategory.aux_subcategory AS subcategory,
@@ -18,7 +18,7 @@ CREATE VIEW public.v_aux_info_value AS
      JOIN public.t_aux_info_subcategory subcategory ON ((category.aux_category_id = subcategory.aux_category_id)))
      JOIN public.t_aux_info_description item ON ((subcategory.aux_subcategory_id = item.aux_subcategory_id)))
      JOIN public.t_aux_info_value val ON ((item.aux_description_id = val.aux_description_id)))
-     JOIN public.t_aux_info_target category_target ON ((category.target_type_id = category_target.aux_target_id)))
+     JOIN public.t_aux_info_target category_target ON ((category.target_type_id = category_target.target_type_id)))
   WHERE (item.active = 'Y'::bpchar);
 
 

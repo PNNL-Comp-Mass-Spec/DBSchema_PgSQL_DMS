@@ -10,7 +10,7 @@ CREATE TABLE public.t_file_attachment (
     entity_id public.citext NOT NULL,
     entity_id_value integer,
     owner_prn public.citext NOT NULL,
-    file_size_bytes public.citext,
+    file_size_kb public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     archive_folder_path public.citext NOT NULL,
