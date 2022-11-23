@@ -5,7 +5,7 @@
 CREATE VIEW public.v_material_containers_entry AS
  SELECT mc.container,
     mc.type,
-    ml.tag AS location,
+    ml.location,
     mc.status,
     mc.comment,
     mc.barcode,

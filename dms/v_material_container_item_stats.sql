@@ -5,7 +5,7 @@
 CREATE VIEW public.v_material_container_item_stats AS
  SELECT mc.container,
     mc.type,
-    ml.tag AS location,
+    ml.location,
     (count(contentsq.material_id))::integer AS items,
     mc.comment,
     mc.status,
@@ -28,7 +28,7 @@ CREATE VIEW public.v_material_container_item_stats AS
             t_reference_compound.compound_id AS material_id
            FROM public.t_reference_compound
           WHERE (t_reference_compound.active > 0)) contentsq ON ((contentsq.container_id = mc.container_id)))
-  GROUP BY mc.container, mc.type, ml.tag, mc.comment, mc.created, mc.status, mc.container_id, mc.researcher;
+  GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.created, mc.status, mc.container_id, mc.researcher;
 
 
 ALTER TABLE public.v_material_container_item_stats OWNER TO d3l243;

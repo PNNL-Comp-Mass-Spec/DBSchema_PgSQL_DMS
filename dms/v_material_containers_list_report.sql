@@ -17,7 +17,7 @@ CREATE VIEW public.v_material_containers_list_report AS
     containerq.container_id AS id
    FROM ( SELECT mc.container,
             mc.type,
-            ml.tag AS location,
+            ml.location,
             (count(contentsq.material_id))::integer AS items,
             mc.comment,
             mc.status,
@@ -46,7 +46,7 @@ CREATE VIEW public.v_material_containers_list_report AS
                    FROM public.t_file_attachment
                   WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'material_container'::public.citext) AND (t_file_attachment.active > 0))
                   GROUP BY t_file_attachment.entity_id) tfa ON ((tfa.entity_id OPERATOR(public.=) mc.container)))
-          GROUP BY mc.container, mc.type, ml.tag, mc.comment, mc.created, mc.status, mc.container_id, mc.researcher, tfa.filecount) containerq;
+          GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.created, mc.status, mc.container_id, mc.researcher, tfa.filecount) containerq;
 
 
 ALTER TABLE public.v_material_containers_list_report OWNER TO d3l243;

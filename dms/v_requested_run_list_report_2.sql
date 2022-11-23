@@ -32,7 +32,7 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
     rr.well,
     rr.vialing_conc,
     rr.vialing_vol,
-    ml.tag AS staging_location,
+    ml.location AS staging_location,
     rr.block,
     rr.run_order,
     lc.cart_name AS cart,

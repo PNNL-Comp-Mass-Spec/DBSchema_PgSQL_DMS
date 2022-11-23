@@ -17,7 +17,7 @@ CREATE VIEW public.v_biomaterial_detail_report AS
     c.campaign,
     b.biomaterial_id AS id,
     mc.container,
-    ml.tag AS location,
+    ml.location,
     public.get_biomaterial_organism_list(b.biomaterial_id) AS organism_list,
     b.mutation,
     b.plasmid,

@@ -22,7 +22,7 @@ CREATE VIEW public.v_experiment_list_report_2 AS
     intstd2.name AS postdigest,
     e.sample_prep_request_id AS request,
     mc.container,
-    ml.tag AS location,
+    ml.location,
     e.wellplate,
     e.well,
     e.alkylation AS alkylated

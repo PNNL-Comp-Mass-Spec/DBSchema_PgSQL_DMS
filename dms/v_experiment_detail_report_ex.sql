@@ -30,7 +30,7 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
     COALESCE(expgroupfilecount.filecount, (0)::bigint) AS experiment_group_files,
     e.exp_id AS id,
     mc.container,
-    ml.tag AS location,
+    ml.location,
     e.material_active AS material_status,
     e.last_used,
     e.wellplate,

@@ -16,7 +16,7 @@ CREATE VIEW public.v_requested_run_entry AS
     rr.vialing_conc,
     rr.vialing_vol,
     rr.comment,
-    ml.tag AS staging_location,
+    ml.location AS staging_location,
     rr.batch_id,
     rr.block,
     rr.run_order,

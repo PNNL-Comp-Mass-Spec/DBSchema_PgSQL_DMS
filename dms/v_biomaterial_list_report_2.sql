@@ -14,7 +14,7 @@ CREATE VIEW public.v_biomaterial_list_report_2 AS
     b.comment,
     c.campaign,
     mc.container,
-    ml.tag AS location,
+    ml.location,
     b.cached_organism_list AS organisms,
     b.mutation,
     b.plasmid,

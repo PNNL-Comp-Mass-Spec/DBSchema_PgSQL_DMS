@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_material_location_entry AS
  SELECT ml.location_id AS id,
-    ml.tag AS location,
+    ml.location,
     ml.comment,
     ml.status
    FROM public.t_material_locations ml;

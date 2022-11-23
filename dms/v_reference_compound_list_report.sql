@@ -15,7 +15,7 @@ CREATE VIEW public.v_reference_compound_list_report AS
     rc.created,
     c.campaign,
     mc.container,
-    ml.tag AS location,
+    ml.location,
     rc.supplier,
     rc.product_id,
     rc.purchase_date,

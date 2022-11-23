@@ -13,7 +13,7 @@ CREATE TABLE public.t_material_locations (
     barcode public.citext,
     comment public.citext,
     container_limit integer DEFAULT 1 NOT NULL,
-    tag public.citext GENERATED ALWAYS AS (
+    location public.citext GENERATED ALWAYS AS (
 CASE
     WHEN (freezer_tag OPERATOR(public.=) ANY (ARRAY['QC_Staging'::public.citext, 'Phosphopep_Staging'::public.citext, '-80_Staging'::public.citext, '-20_Met_Staging'::public.citext, '-20_Staging_1206'::public.citext, '-20_Staging'::public.citext, 'None'::public.citext])) THEN (freezer_tag)::text
     ELSE (((((((((freezer_tag)::text || '.'::text) || (shelf)::text) || '.'::text) || (rack)::text) || '.'::text) || ("row")::text) || '.'::text) || (col)::text)
@@ -45,16 +45,16 @@ ALTER TABLE ONLY public.t_material_locations
     ADD CONSTRAINT pk_t_material_locations PRIMARY KEY (location_id);
 
 --
--- Name: ix_t_material_locations_id_include_tag; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_material_locations_id_include_location; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_material_locations_id_include_tag ON public.t_material_locations USING btree (location_id) INCLUDE (tag);
+CREATE INDEX ix_t_material_locations_id_include_location ON public.t_material_locations USING btree (location_id) INCLUDE (location);
 
 --
--- Name: ix_t_material_locations_tag; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_material_locations_location; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_material_locations_tag ON public.t_material_locations USING btree (tag);
+CREATE UNIQUE INDEX ix_t_material_locations_location ON public.t_material_locations USING btree (location);
 
 --
 -- Name: t_material_locations fk_t_material_locations_t_material_freezers; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

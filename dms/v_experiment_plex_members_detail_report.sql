@@ -23,7 +23,7 @@ CREATE VIEW public.v_experiment_plex_members_detail_report AS
     COALESCE(fc.factor_count, (0)::bigint) AS factors,
     e.exp_id AS id,
     mc.container,
-    ml.tag AS location,
+    ml.location,
     e.material_active AS material_status,
     e.last_used,
     e.barcode
@@ -42,7 +42,7 @@ CREATE VIEW public.v_experiment_plex_members_detail_report AS
            FROM public.t_dataset
           GROUP BY t_dataset.exp_id) dscountq ON ((dscountq.exp_id = e.exp_id)))
      LEFT JOIN public.v_factor_count_by_experiment fc ON ((fc.exp_id = e.exp_id)))
-  GROUP BY plexmembers.plex_exp_id, e.experiment, u.name_with_username, org.organism, e.reason, e.comment, e.created, c.campaign, bto.tissue, e.labelling, e.alkylation, e.sample_prep_request_id, bto.identifier, dscountq.datasets, dscountq.most_recent_dataset, fc.factor_count, e.exp_id, mc.container, ml.tag, e.material_active, e.last_used, e.barcode;
+  GROUP BY plexmembers.plex_exp_id, e.experiment, u.name_with_username, org.organism, e.reason, e.comment, e.created, c.campaign, bto.tissue, e.labelling, e.alkylation, e.sample_prep_request_id, bto.identifier, dscountq.datasets, dscountq.most_recent_dataset, fc.factor_count, e.exp_id, mc.container, ml.location, e.material_active, e.last_used, e.barcode;
 
 
 ALTER TABLE public.v_experiment_plex_members_detail_report OWNER TO d3l243;

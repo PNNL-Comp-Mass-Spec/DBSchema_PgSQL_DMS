@@ -12,7 +12,7 @@ CREATE VIEW public.v_requested_run_fraction_entry AS
     ''::text AS separation_group,
     rr.requester_prn AS requester,
     rr.instrument_setting AS instrument_settings,
-    ml.tag AS staging_location,
+    ml.location AS staging_location,
     rr.wellplate,
     rr.well,
     rr.vialing_conc AS vialing_concentration,

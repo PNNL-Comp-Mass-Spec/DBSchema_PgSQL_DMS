@@ -9,7 +9,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
     c.campaign,
     e.experiment,
     ds.dataset,
-    ml.tag AS staging_location,
+    ml.location AS staging_location,
     instname.instrument AS instrument_used,
     rr.instrument_group,
     dtn.dataset_type AS run_type,

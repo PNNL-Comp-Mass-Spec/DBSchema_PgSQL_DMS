@@ -18,7 +18,7 @@ CREATE VIEW public.v_reference_compound_detail_report AS
     rc.created,
     c.campaign,
     mc.container,
-    ml.tag AS location,
+    ml.location,
     rc.wellplate_name AS wellplate,
     rc.well_number AS well,
     rc.supplier,

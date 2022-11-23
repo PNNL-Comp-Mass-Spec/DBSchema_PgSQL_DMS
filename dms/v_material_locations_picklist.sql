@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_material_locations_picklist AS
- SELECT ml.tag AS location,
+ SELECT ml.location,
     ml.comment,
     f.freezer,
     ml.shelf,
@@ -17,7 +17,7 @@ CREATE VIEW public.v_material_locations_picklist AS
      JOIN public.t_material_freezers f ON ((ml.freezer_tag OPERATOR(public.=) f.freezer_tag)))
      LEFT JOIN public.t_material_containers mc ON ((ml.location_id = mc.location_id)))
   WHERE (ml.status OPERATOR(public.=) 'Active'::public.citext)
-  GROUP BY ml.location_id, f.freezer, ml.shelf, ml.rack, ml."row", ml.comment, ml.tag, ml.col, ml.status, ml.container_limit
+  GROUP BY ml.location_id, f.freezer, ml.shelf, ml.rack, ml."row", ml.comment, ml.location, ml.col, ml.status, ml.container_limit
  HAVING ((ml.container_limit - count(mc.location_id)) > 0);
 
 

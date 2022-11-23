@@ -6,7 +6,7 @@ CREATE VIEW public.v_material_move_containers_list_report AS
  SELECT mc.container,
     ''::text AS sel,
     mc.type,
-    ml.tag AS location,
+    ml.location,
     count(contentsq.material_id) AS items,
     mc.comment,
     mc.created,
@@ -25,7 +25,7 @@ CREATE VIEW public.v_material_move_containers_list_report AS
             t_reference_compound.compound_id AS material_id
            FROM public.t_reference_compound) contentsq ON ((contentsq.container_id = mc.container_id)))
   WHERE (mc.status OPERATOR(public.=) 'Active'::public.citext)
-  GROUP BY mc.container, mc.type, ml.tag, mc.comment, mc.created, mc.status, mc.container_id;
+  GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.created, mc.status, mc.container_id;
 
 
 ALTER TABLE public.v_material_move_containers_list_report OWNER TO d3l243;

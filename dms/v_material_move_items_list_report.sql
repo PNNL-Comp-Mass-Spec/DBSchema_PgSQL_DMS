@@ -9,7 +9,7 @@ CREATE VIEW public.v_material_move_items_list_report AS
     mc.container,
     mc.type,
     (("substring"(contentsq.item_type, 1, 1) || ':'::text) || (contentsq.material_id)::text) AS item_id,
-    ml.tag AS location,
+    ml.location,
     mc.status AS container_status,
     contentsq.request_id AS prep_request
    FROM ((public.t_material_containers mc

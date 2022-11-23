@@ -15,7 +15,7 @@ CREATE VIEW dpkg.v_data_package_biomaterial_list_report AS
     COALESCE(u_pi.name, b.pi_prn) AS pi,
     b.comment,
     mc.container,
-    ml.tag AS location,
+    ml.location,
     b.material_active AS material_status,
     b.biomaterial_id,
     dpb.item_added
