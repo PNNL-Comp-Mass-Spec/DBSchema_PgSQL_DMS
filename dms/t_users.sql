@@ -20,7 +20,7 @@ CREATE TABLE public.t_users (
     hid_number public.citext GENERATED ALWAYS AS ("substring"((hid)::text, 2, 20)) STORED,
     CONSTRAINT ck_t_users_active CHECK (((active OPERATOR(public.=) 'N'::public.citext) OR (active OPERATOR(public.=) 'Y'::public.citext))),
     CONSTRAINT ck_t_users_name_not_empty CHECK ((name OPERATOR(public.<>) ''::public.citext)),
-    CONSTRAINT ck_t_users_name_white_space CHECK ((public.has_whitespace_chars((name)::text, 1) = false)),
+    CONSTRAINT ck_t_users_name_whitespace CHECK ((public.has_whitespace_chars((name)::text, 1) = false)),
     CONSTRAINT ck_t_users_update CHECK (((update OPERATOR(public.=) 'N'::public.citext) OR (update OPERATOR(public.=) 'Y'::public.citext)))
 );
 
