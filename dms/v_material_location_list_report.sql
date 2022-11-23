@@ -5,6 +5,7 @@
 CREATE VIEW public.v_material_location_list_report AS
  SELECT ml.location,
     f.freezer,
+    f.freezer_tag,
     ml.shelf,
     ml.rack,
     ml."row",
@@ -18,7 +19,7 @@ CREATE VIEW public.v_material_location_list_report AS
    FROM ((public.t_material_locations ml
      JOIN public.t_material_freezers f ON ((ml.freezer_tag OPERATOR(public.=) f.freezer_tag)))
      LEFT JOIN public.t_material_containers mc ON ((ml.location_id = mc.location_id)))
-  GROUP BY ml.location_id, f.freezer, ml.shelf, ml.rack, ml."row", ml.comment, ml.location, ml.col, ml.status, ml.container_limit;
+  GROUP BY ml.location_id, f.freezer, f.freezer_tag, ml.shelf, ml.rack, ml."row", ml.comment, ml.location, ml.col, ml.status, ml.container_limit;
 
 
 ALTER TABLE public.v_material_location_list_report OWNER TO d3l243;
