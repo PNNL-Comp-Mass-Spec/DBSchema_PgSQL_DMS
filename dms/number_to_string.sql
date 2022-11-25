@@ -41,12 +41,13 @@ CREATE OR REPLACE FUNCTION public.number_to_string(_value numeric, _digitsafterd
 **          10/27/2017 mem - Update while loop to reduce string updates
 **                         - Change '-0' to '0'
 **          06/14/2022 mem - Ported to PostgreSQL
+**          11/24/2022 mem - Change _continue to a boolean
 **
 *****************************************************/
 DECLARE
     _valueText text;
     _formatCode text;
-    _continue int;
+    _continue boolean;
     _matchPos int;
 BEGIN
 
@@ -79,16 +80,18 @@ BEGIN
         -- If the text has several zeroes before e+, remove the extra zeroes
         -- For example, change from '3.3000e+22' to '3.3e+22'
 
-        _continue := 1;
-        While _continue = 1 Loop
+        _continue := true;
+
+        WHILE _continue
+        LOOP
             _matchPos := strpos(_valueText, '0e+');
 
             If _matchPos > 0 Then
                 _valueText = replace( _valueText, '0e+', 'e+');
             Else
-                _continue := 0;
+                _continue := false;
             End If;
-        End Loop;
+        END LOOP;
 
         -- If the text is of the form '3.e+22', change to '3e+22'
         _valueText = replace(_valueText, '.e+', 'e+');
