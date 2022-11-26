@@ -22,7 +22,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
     COALESCE(assignedinstrument.instrument, ''::public.citext) AS queued_instrument,
     rr.origin,
     rr.instrument_setting AS instrument_settings,
-    rr.wellplate AS well_plate,
+    rr.wellplate,
     rr.well,
     rr.vialing_conc AS vialing_concentration,
     rr.vialing_vol AS vialing_volume,
