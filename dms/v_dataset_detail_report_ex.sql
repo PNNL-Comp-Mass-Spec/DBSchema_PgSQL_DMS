@@ -37,7 +37,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     dl.qc_metric_stats,
     COALESCE(jobcountq.jobs, (0)::bigint) AS jobs,
     COALESCE(psmjobsq.jobs, (0)::bigint) AS psm_jobs,
-    public.get_dataset_pmtask_count(ds.dataset_id) AS peak_matching_results,
+    public.get_dataset_pm_task_count(ds.dataset_id) AS peak_matching_results,
     public.get_dataset_factor_count(ds.dataset_id) AS factors,
     public.get_dataset_predefine_job_count(ds.dataset_id) AS predefines_triggered,
     ds.acq_time_start AS acquisition_start,

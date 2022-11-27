@@ -1,8 +1,8 @@
 --
--- Name: get_dataset_pmtask_count(integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_dataset_pm_task_count(integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_dataset_pmtask_count(_datasetid integer) RETURNS integer
+CREATE OR REPLACE FUNCTION public.get_dataset_pm_task_count(_datasetid integer) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -29,11 +29,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_dataset_pmtask_count(_datasetid integer) OWNER TO d3l243;
+ALTER FUNCTION public.get_dataset_pm_task_count(_datasetid integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_dataset_pmtask_count(_datasetid integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_dataset_pm_task_count(_datasetid integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_dataset_pmtask_count(_datasetid integer) IS 'GetDatasetPMTaskCount';
+COMMENT ON FUNCTION public.get_dataset_pm_task_count(_datasetid integer) IS 'GetDatasetPMTaskCount';
 
