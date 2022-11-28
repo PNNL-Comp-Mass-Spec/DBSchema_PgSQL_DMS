@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_residues (
     residue_id integer NOT NULL,
-    residue_symbol character(1) NOT NULL,
+    residue_symbol public.citext NOT NULL,
     description public.citext NOT NULL,
     abbreviation public.citext DEFAULT ''::public.citext NOT NULL,
     average_mass double precision NOT NULL,
@@ -57,7 +57,7 @@ CREATE TRIGGER trig_t_residues_after_insert AFTER INSERT ON public.t_residues RE
 -- Name: t_residues trig_t_residues_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_residues_after_update AFTER UPDATE ON public.t_residues FOR EACH ROW WHEN (((old.residue_symbol <> new.residue_symbol) OR (old.average_mass <> new.average_mass) OR (old.monoisotopic_mass <> new.monoisotopic_mass) OR (old.num_c <> new.num_c) OR (old.num_h <> new.num_h) OR (old.num_n <> new.num_n) OR (old.num_o <> new.num_o) OR (old.num_s <> new.num_s))) EXECUTE FUNCTION public.trigfn_t_residues_after_update();
+CREATE TRIGGER trig_t_residues_after_update AFTER UPDATE ON public.t_residues FOR EACH ROW WHEN (((old.residue_symbol OPERATOR(public.<>) new.residue_symbol) OR (old.average_mass <> new.average_mass) OR (old.monoisotopic_mass <> new.monoisotopic_mass) OR (old.num_c <> new.num_c) OR (old.num_h <> new.num_h) OR (old.num_n <> new.num_n) OR (old.num_o <> new.num_o) OR (old.num_s <> new.num_s))) EXECUTE FUNCTION public.trigfn_t_residues_after_update();
 
 --
 -- Name: TABLE t_residues; Type: ACL; Schema: public; Owner: d3l243
