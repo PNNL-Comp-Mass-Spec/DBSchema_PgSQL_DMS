@@ -1,14 +1,14 @@
 --
--- Name: create_steps_for_job(integer, xml, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: create_steps_for_job(integer, xml, text, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, IN _debugmode boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Make entries in temporary tables for the the given capture task job according to definition of scriptXML
+**      Make entries in temporary tables for the the given capture task job according to definition of _scriptXML
 **      Uses temp tables:
 **        Tmp_Job_Steps
 **        Tmp_Job_Step_Dependencies
@@ -19,14 +19,39 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_job(IN _job integer, IN _script
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
+**          11/30/2022 mem - Add parameter _returnCode and add check for missing step tools
 **
 *****************************************************/
 DECLARE
+    _missingTools text;
     _stepCount int;
     _stepDependencyCount int;
 BEGIN
     _message := '';
+    _returnCode := '';
     _debugMode := Coalesce(_debugMode, false);
+
+    ---------------------------------------------------
+    -- Make sure that the tools in the script exist
+    ---------------------------------------------------
+    --
+    SELECT string_agg(TS.step_tool, ', ')
+    INTO _missingTools
+    FROM ( SELECT xmltable.step_tool
+           FROM ( SELECT _scriptXML As ScriptXML ) Src,
+                XMLTABLE('//JobScript/Step'
+                         PASSING Src.ScriptXML
+                         COLUMNS step int PATH '@Number',
+                                 step_tool citext PATH '@Tool',
+                                 special_instructions citext PATH '@Special')
+         ) TS
+    WHERE NOT TS.step_tool IN ( SELECT StepTools.step_tool FROM cap.t_step_tools StepTools );
+
+    If _missingTools <> '' Then
+        _message := 'Step tool(s) ' || _missingTools || ' do not exist in cap.t_step_tools';
+        _returnCode := 'U5301';
+        RETURN;
+    End If;
 
     ---------------------------------------------------
     -- Make set of capture task job steps for job based on _scriptXML
@@ -111,11 +136,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, IN _debugmode boolean) OWNER TO d3l243;
+ALTER PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, IN _debugmode boolean) IS 'CreateStepsForJob';
+COMMENT ON PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CreateStepsForJob';
 
