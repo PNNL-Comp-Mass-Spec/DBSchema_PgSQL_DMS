@@ -2,7 +2,7 @@
 -- Name: create_task_steps(text, boolean, text, integer, text, integer, integer, boolean, integer, boolean, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''::text, IN _debugmode boolean DEFAULT false, IN _mode text DEFAULT 'CreateFromImportedJobs'::text, IN _existingjob integer DEFAULT 0, IN _extensionscriptnamelist text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''::text, IN _debugmode boolean DEFAULT false, IN _mode text DEFAULT 'CreateFromImportedJobs'::text, IN _existingjob integer DEFAULT 0, IN _extensionscriptname text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -335,15 +335,15 @@ BEGIN
             CONTINUE;
         End If;
 
-        -- Add additional scripts, if specified
-        If _extensionScriptNameList <> '' Then
+        -- Add additional script if extending an existing job
+        If _extensionScriptName <> '' Then
             SELECT contents
             INTO _scriptXML2
             FROM cap.t_scripts
             WHERE script = extensionScriptNameList;
 
             -- FUTURE: process as list INTO _scriptXML2
-            _scriptXML := _scriptXML::text || _scriptXML2::text;
+            _scriptXML := (_scriptXML::text || _scriptXML2::text)::xml;
         End If;
 
         -- Get parameters for the capture task job as XML
@@ -547,11 +547,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptnamelist text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptnamelist text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptnamelist text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text) IS 'CreateJobSteps';
+COMMENT ON PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text) IS 'CreateJobSteps';
 
