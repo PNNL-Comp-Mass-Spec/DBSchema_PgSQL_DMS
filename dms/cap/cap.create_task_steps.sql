@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          10/11/2022 mem - Ported to PostgreSQL
 **          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
 **                         - Skip the current job if the return code from create_steps_for_job() is not an empty string
+**                         - Use sw.show_tmp_job_steps_and_job_step_dependencies() and sw.show_tmp_jobs() to display the contents of the temporary tables
 **
 *****************************************************/
 DECLARE
@@ -50,14 +51,6 @@ DECLARE
     _scriptXML xml;
     _tag text;
     _scriptXML2 xml;
-
-    _formatSpecifier text;
-    _infoHead text;
-    _infoHeadSeparator text;
-    _infoData text;
-    _previewSteps record;
-    _previewDependencies record;
-    _previewJobs record;
 BEGIN
 
     ---------------------------------------------------
@@ -133,9 +126,9 @@ BEGIN
     CREATE TEMP TABLE Tmp_Jobs (
         Job int NOT NULL,
         Priority int NULL,
-        Script text NULL,
+        Script citext NULL,
         State int NOT NULL,
-        Dataset text NULL,
+        Dataset citext NULL,
         Dataset_ID int NULL,
         Results_Directory_Name text NULL,
         Storage_Server text NULL,
@@ -150,16 +143,16 @@ BEGIN
     CREATE TEMP TABLE Tmp_Job_Steps (
         Job int NOT NULL,
         Step int NOT NULL,
-        Step_Tool text NOT NULL,
+        Step_Tool citext NOT NULL,
         CPU_Load int NULL,
         Dependencies int NULL ,
         Filter_Version int NULL,
         Signature int NULL,
         State int NULL ,
-        Input_Directory_Name text NULL,
-        Output_Directory_Name text NULL,
-        Processor text NULL,
-        Special_Instructions text NULL,
+        Input_Directory_Name citext NULL,
+        Output_Directory_Name citext NULL,
+        Processor citext NULL,
+        Special_Instructions citext NULL,
         Holdoff_Interval_Minutes int NOT NULL,
         Retry_Count int NOT NULL
     );
@@ -186,7 +179,6 @@ BEGIN
 
     ---------------------------------------------------
     -- Get capture task jobs that need to be processed
-    -- into temp table
     ---------------------------------------------------
     --
     If _mode = 'CreateFromImportedJobs' Then
@@ -197,7 +189,7 @@ BEGIN
         End If;
 
         If Not _debugMode OR (_debugMode And _existingJob = 0) Then
-            INSERT INTO Tmp_Jobs(
+            INSERT INTO Tmp_Jobs (
                 Job,
                 Priority,
                 Script,
@@ -373,85 +365,20 @@ BEGIN
         End If;
 
         If _debugMode Then
-
-            -- Show contents of Tmp_Job_Steps
+            -- Show contents of Tmp_Job_Steps and Tmp_Job_Step_Dependencies
             --
-            RAISE INFO ' ';
-
-            _formatSpecifier := '%-10s %-10s %-20s';
-
-            _infoHead := format(_formatSpecifier,
-                                'Job',
-                                'Step',
-                                'Step_Tool'
-                            );
-
-            _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '----------',
-                                '--------------------'
-                            );
-
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoHeadSeparator;
-
-            FOR _previewSteps IN
-                SELECT Job, Step, Step_Tool
-                FROM Tmp_Job_Steps
-                ORDER BY Job, Step
-            LOOP
-                _infoData := format(_formatSpecifier,
-                                        _previewSteps.Job,
-                                        _previewSteps.Step,
-                                        _previewSteps.Step_Tool
-                                );
-
-                RAISE INFO '%', _infoData;
-
-            END LOOP;
-
-            -- Show contents of Tmp_Job_Step_Dependencies
-            --
-            RAISE INFO ' ';
-
-            _formatSpecifier := '%-10s %-10s %-20s';
-
-            _infoHead := format(_formatSpecifier,
-                                'Job',
-                                'Step',
-                                'Target_Step'
-                            );
-
-            _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '----------',
-                                '--------------------'
-                            );
-
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoHeadSeparator;
-
-            FOR _previewDependencies IN
-                SELECT Job, Step, Target_Step
-                FROM Tmp_Job_Step_Dependencies
-                ORDER BY Job, Step
-            LOOP
-                _infoData := format(_formatSpecifier,
-                                        _previewDependencies.Job,
-                                        _previewDependencies.Step,
-                                        _previewDependencies.Target_Step
-                                );
-
-                RAISE INFO '%', _infoData;
-
-            END LOOP;
-
-            -- Perform a mixed bag of operations on the capture task jobs in the temporary tables to finalize them before
-            --  copying to the main database tables
-            Call cap.finish_task_creation (_jobInfo.Job, _message => _message, _debugMode => _debugMode);
-
-            _jobsProcessed := _jobsProcessed + 1;
+            CALL sw.show_tmp_job_steps_and_job_step_dependencies();
         End If;
+
+        -- Perform a mixed bag of operations on the capture task jobs in the temporary tables to finalize them before
+        --  copying to the main database tables
+        Call cap.finish_task_creation (
+                 _jobInfo.Job,
+                 _message => _message,
+                 _debugMode => _debugMode);
+
+        _jobsProcessed := _jobsProcessed + 1;
+
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             -- Make sure _loggingEnabled is true
             _loggingEnabled := true;
@@ -497,46 +424,9 @@ BEGIN
     End If;
 
     If _debugMode Then
-        If Not Exists (SELECT * FROM Tmp_Jobs) Then
-            RAISE INFO 'Temp table Tmp_Jobs is empty; nothing to preview';
-        Else
-            -- Show contents of Tmp_Jobs
-            --
-            RAISE INFO ' ';
-
-            _formatSpecifier := '%-10s %-15s %-40s';
-
-            _infoHead := format(_formatSpecifier,
-                                'Job',
-                                'Script',
-                                'Dataset'
-                            );
-
-            _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '---------------',
-                                '----------------------------------------'
-                            );
-
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoHeadSeparator;
-
-            FOR _previewJobs IN
-                SELECT Job, Script, Dataset
-                FROM Tmp_Jobs
-                ORDER BY Job
-            LOOP
-                _infoData := format(_formatSpecifier,
-                                        _previewJobs.Job,
-                                        _previewJobs.Script,
-                                        _previewJobs.Dataset
-                                );
-
-                RAISE INFO '%', _infoData;
-
-            END LOOP;
-
-        End If;
+        -- Show contents of Tmp_Jobs
+        --
+        CALL sw.show_tmp_jobs();
     End If;
 
     DROP TABLE Tmp_Jobs;
