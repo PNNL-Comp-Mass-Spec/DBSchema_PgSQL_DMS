@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
 **          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
+**                         - Skip the current job if the return code from create_steps_for_job() is not an empty string
 **
 *****************************************************/
 DECLARE
@@ -358,7 +359,18 @@ BEGIN
 
         -- Create the basic capture task job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-        Call cap.create_steps_for_job (_jobInfo.Job, _scriptXML, _jobInfo.ResultsDirectoryName, _message => _message, _debugMode => _debugMode);
+        Call cap.create_steps_for_job (
+                _jobInfo.Job,
+                _scriptXML,
+                _jobInfo.ResultsDirectoryName,
+                _message => _message,
+                _returnCode => _returnCode,
+                _debugMode => _debugMode);
+
+        If _returnCode <> '' Then
+            RAISE WARNING 'Error %: %', _returnCode, _message;
+            CONTINUE;
+        End If;
 
         If _debugMode Then
 
