@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          09/17/2015 mem - Added parameter _infoOnly
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
+**          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
 **
 *****************************************************/
 DECLARE
@@ -96,7 +97,7 @@ BEGIN
         _loopingUpdateInterval := 2;
     End If;
 
-    If _loggingEnabled Or extract(epoch FROM CURRENT_TIMESTAMP - _startTime) >= _logIntervalThreshold Then
+    If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Entering';
         Call public.post_log_entry ('Progress', _statusMessage, 'create_task_steps', 'cap');
     End If;
@@ -301,7 +302,7 @@ BEGIN
     FROM Tmp_Jobs;
 
     _jobsProcessed := 0;
-    _lastLogTime := CURRENT_TIMESTAMP;
+    _lastLogTime := clock_timestamp();
 
     FOR _jobInfo IN
         SELECT
@@ -439,15 +440,14 @@ BEGIN
 
             _jobsProcessed := _jobsProcessed + 1;
         End If;
-
-        If extract(epoch FROM CURRENT_TIMESTAMP - _lastLogTime) >= _loopingUpdateInterval Then
+        If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             -- Make sure _loggingEnabled is true
             _loggingEnabled := true;
 
             _statusMessage := format('... Creating capture task job steps: %s / %s', _jobsProcessed, _jobCountToProcess);
             Call public.post_log_entry ('Progress', _statusMessage, 'create_task_steps', 'cap');
 
-            _lastLogTime := CURRENT_TIMESTAMP;
+            _lastLogTime := clock_timestamp();
         End If;
 
     END LOOP;
@@ -469,7 +469,7 @@ BEGIN
         End If;
     End If;
 
-    If _loggingEnabled Or extract(epoch FROM CURRENT_TIMESTAMP - _startTime) >= _logIntervalThreshold Then
+    If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Create task steps complete';
         Call public.post_log_entry ('Progress', _statusMessage, 'create_task_steps', 'cap');
@@ -479,7 +479,7 @@ BEGIN
     -- Exit
     ---------------------------------------------------
     --
-    If _loggingEnabled Or extract(epoch FROM CURRENT_TIMESTAMP - _startTime) >= _logIntervalThreshold Then
+    If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Exiting';
         Call public.post_log_entry ('Progress', _statusMessage, 'create_task_steps', 'cap');
     End If;

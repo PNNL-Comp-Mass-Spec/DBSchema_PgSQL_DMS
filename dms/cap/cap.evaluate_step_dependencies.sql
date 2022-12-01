@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_step_dependencies(INOUT _message text D
 **          05/17/2019 mem - Switch from folder to directory
 **          06/01/2020 mem - Add support for step state 13 (Inactive)
 **          10/11/2022 mem - Ported to PostgreSQL
+**          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
 **
 *****************************************************/
 DECLARE
@@ -148,7 +149,7 @@ BEGIN
 
     _done := false;
     _rowsProcessed := 0;
-    _lastLogTime := CURRENT_TIMESTAMP;
+    _lastLogTime := clock_timestamp();
 
     WHILE Not _done
     LOOP
@@ -315,11 +316,11 @@ BEGIN
             _rowsProcessed := _rowsProcessed + 1;
         End If;
 
-        If extract(epoch FROM CURRENT_TIMESTAMP - _lastLogTime) >= _loopingUpdateInterval Then
+        If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := format('... Evaluating step dependencies: %s / %s', _rowsProcessed, _rowCountToProcess);
             Call public.post_log_entry ('Progress', _statusMessage, 'evaluate_step_dependencies', 'cap');
 
-            _lastLogTime := CURRENT_TIMESTAMP;
+            _lastLogTime := clock_timestamp();
         End If;
 
     END LOOP;
