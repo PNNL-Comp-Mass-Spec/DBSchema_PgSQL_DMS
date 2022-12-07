@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 **  Arguments:
 **    _job                  Capture task job number
 **    _jobState             Current job state
-**    _overrideSaveTime     Set to true to use _saveTimeOverride for the SaveTime instead of current_timestamp
+**    _overrideSaveTime     Set to true to use _saveTimeOverride for the SaveTime instead of CURRENT_TIMESTAMP
 **    _saveTimeOverride     Timestamp to use when _overrideSaveTime is true
 **
 **  Auth:   grk
@@ -59,9 +59,9 @@ BEGIN
     --
 
     If Coalesce(_overrideSaveTime, false) Then
-        _saveTime := Coalesce(_saveTimeOverride, current_timestamp);
+        _saveTime := Coalesce(_saveTimeOverride, CURRENT_TIMESTAMP);
     Else
-        _saveTime := current_timestamp;
+        _saveTime := CURRENT_TIMESTAMP;
     End If;
 
     ---------------------------------------------------
