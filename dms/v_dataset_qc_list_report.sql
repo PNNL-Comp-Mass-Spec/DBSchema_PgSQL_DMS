@@ -17,11 +17,12 @@ CREATE VIEW public.v_dataset_qc_list_report AS
     dsrating.dataset_rating AS rating,
     ds.acq_length_minutes AS acq_length,
     COALESCE(ds.acq_time_start, rr.request_run_start) AS acq_start,
+    COALESCE(ds.acq_time_end, rr.request_run_finish) AS acq_end,
     dtn.dataset_type,
     ds.operator_prn AS operator,
     lc.lc_column,
     rr.request_id AS request,
-    COALESCE(ds.acq_time_end, rr.request_run_finish) AS acq_end,
+    rr.batch_id AS batch,
     ds.separation_type
    FROM ((((((((((public.t_dataset_state_name dsn
      JOIN public.t_dataset ds ON ((dsn.dataset_state_id = ds.dataset_state_id)))
