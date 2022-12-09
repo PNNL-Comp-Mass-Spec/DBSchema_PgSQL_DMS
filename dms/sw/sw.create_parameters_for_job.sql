@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION sw.create_parameters_for_job(_job integer, _settingsf
 **  Arguments:
 **    _job                    Job number to obtain parameters for (should exist in sw.t_jobs, but not required)
 **    _settingsFileOverride   When defined, will use this settings file name instead of the one obtained with public.v_get_pipeline_job_parameters (in get_job_param_table)
-**    _debugMode                When true, show additional debug messages
+**    _debugMode              When true, show additional debug messages
 **
 **  Example usage:
 **
