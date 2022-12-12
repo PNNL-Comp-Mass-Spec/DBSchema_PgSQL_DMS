@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
 **                         - Skip the current job if the return code from create_steps_for_job() is not an empty string
 **                         - Use sw.show_tmp_job_steps_and_job_step_dependencies() and sw.show_tmp_jobs() to display the contents of the temporary tables
+**          12/09/2022 mem - Change _mode to lowercase
 **
 *****************************************************/
 DECLARE
@@ -63,14 +64,14 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _debugMode := Coalesce(_debugMode, false);
     _existingJob := Coalesce(_existingJob, 0);
-    _mode := Coalesce(_mode, '');
+    _mode := Trim(Lower(Coalesce(_mode, '')));
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     If _debugMode Then
         RAISE INFO ' ';
     End If;
 
-    If Not _mode In ('CreateFromImportedJobs') Then
+    If Not _mode::citext In ('CreateFromImportedJobs') Then
         _message := 'Unknown mode: ' || _mode;
         _returnCode := 'U5201';
 
@@ -181,7 +182,7 @@ BEGIN
     -- Get capture task jobs that need to be processed
     ---------------------------------------------------
     --
-    If _mode = 'CreateFromImportedJobs' Then
+    If _mode::citext = 'CreateFromImportedJobs' Then
         If _maxJobsToProcess > 0 Then
             _maxJobsToAdd := _maxJobsToProcess;
         Else
@@ -398,7 +399,7 @@ BEGIN
     If _infoOnly Then
         _message = _infoMessage;
     Else
-        If _mode = 'CreateFromImportedJobs' Then
+        If _mode::citext = 'CreateFromImportedJobs' Then
             -- Copies data from the following temp tables to actual database tables:
             --     Tmp_Jobs
             --     Tmp_Job_Steps

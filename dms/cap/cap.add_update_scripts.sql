@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_scripts(IN _script text, IN _descript
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/04/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Raise a warning if an invalid operation
+**          12/09/2022 mem - Change _mode to lowercase
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,7 @@ BEGIN
 
         _description := Coalesce(_description, '');
         _enabled := Coalesce(_enabled, 'Y');
-        _mode := Coalesce(_mode, '');
+        _mode := Trim(Lower(Coalesce(_mode, '')));
         _callingUser := Coalesce(_callingUser, '');
 
         If _description = '' Then

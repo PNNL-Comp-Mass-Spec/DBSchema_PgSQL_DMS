@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_step_tools(IN _name text, IN _descrip
 **      Adds new or edits existing T_Step_Tools
 **
 **  Arguments:
-**    _mode   or 'update'
+**    _mode   'add' or 'update'
 **
 **  Auth:   grk
 **  Date:   09/15/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_step_tools(IN _name text, IN _descrip
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/06/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Raise a warning if an invalid operation
+**          12/09/2022 mem - Change _mode to lowercase
 **
 *****************************************************/
 DECLARE
@@ -69,6 +70,8 @@ BEGIN
         WHERE step_tool = _name;
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         -- Cannot update a non-existent entry
         --
