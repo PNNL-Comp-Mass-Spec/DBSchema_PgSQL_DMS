@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_job_psm_stats(_job integer) RETURNS text
 **          01/17/2014 mem - Added support for MSGF_Threshold_Is_EValue = 1
 **          07/15/2020 mem - Report % PSMs without TMT or iTRAQ
 **          06/15/2022 mem - Ported to PostgreSQL
+**          12/09/2022 mem - Cast FDR_Threshold to numeric
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
                    END ||
                 'Unique Peptides: '  || Unique_Peptides_FDR_Filter::text || ', ' ||
                 'Unique Proteins: '  || Unique_Proteins_FDR_Filter::text ||
-                '  (FDR < '          || (FDR_Threshold*100.0)::decimal(9,2) || '%)'
+                '  (FDR < '          || (FDR_Threshold*100.0)::numeric(9,2) || '%)'
            ELSE
                 'Spectra Searched: ' || Spectra_Searched::text || ', ' ||
                 'Total PSMs: '       || Total_PSMs::text       || ', ' ||

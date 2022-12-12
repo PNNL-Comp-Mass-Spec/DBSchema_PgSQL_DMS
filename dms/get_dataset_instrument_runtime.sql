@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          05/16/2022 mem - Add renamed proposal type 'Resource Owner'
 **          05/18/2022 mem - Treat additional proposal types as not EMSL funded
 **          06/19/2022 mem - Ported to PostgreSQL
+**          12/09/2022 mem - Change data type of column Fraction_EMSL_Funded to numeric
 **
 *****************************************************/
 DECLARE
@@ -119,7 +120,7 @@ BEGIN
         LC_Column citext,
         Instrument citext,
         Campaign_ID int,
-        Fraction_EMSL_Funded decimal(3, 2),
+        Fraction_EMSL_Funded numeric(3, 2),
         Campaign_Proposals citext
     );
 
