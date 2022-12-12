@@ -21,12 +21,14 @@ CREATE OR REPLACE FUNCTION public.get_sample_prep_request_eus_users_list(_reques
 **          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
 **          08/02/2018 mem - T_Sample_Prep_Request now tracks EUS User ID as an integer
 **          06/15/2022 mem - Ported to PostgreSQL
+**          12/09/2022 mem - Assure that _mode is uppercase
 **
 *****************************************************/
 DECLARE
     _eusUserID int;
     _list text := '';
 BEGIN
+    _mode := Upper(_mode);
 
     SELECT eus_user_id
     INTO _eusUserID
@@ -34,7 +36,7 @@ BEGIN
     WHERE prep_request_id = _requestID;
 
     If Coalesce(_eusUserID, 0) > 0 Then
-        IF _mode = 'I' Then
+        If _mode = 'I' Then
             SELECT EU.person_id::text
             INTO _list
             FROM t_eus_users EU

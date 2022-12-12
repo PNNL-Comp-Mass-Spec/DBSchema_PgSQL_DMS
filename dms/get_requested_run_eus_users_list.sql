@@ -18,11 +18,14 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid in
 **  Auth:   grk
 **  Date:   02/15/2006
 **          06/13/2022 mem - Ported to PostgreSQL
+**          12/09/2022 mem - Assure that _mode is uppercase
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
+     _mode := Upper(_mode);
+
     If _mode = 'I' Then
         SELECT string_agg(EUS_Person_ID::text, ', ' ORDER BY EUS_Person_ID)
         INTO _result
