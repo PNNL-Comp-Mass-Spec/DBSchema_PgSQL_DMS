@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          05/18/2022 mem - Treat additional proposal types as not EMSL funded
 **          06/19/2022 mem - Ported to PostgreSQL
 **          12/09/2022 mem - Change data type of column Fraction_EMSL_Funded to numeric
+**          12/12/2022 mem - Use a single Interval when computing _endIntervalEOD
 **
 *****************************************************/
 DECLARE
@@ -156,7 +157,7 @@ BEGIN
     -- on the end day
     ---------------------------------------------------
 
-    _endIntervalEOD := date_trunc('day', _endInterval) + Interval '86399 seconds' + Interval '999 milliseconds';
+    _endIntervalEOD := date_trunc('day', _endInterval) + Interval '86399.999 seconds';
 
     ---------------------------------------------------
     -- Optionally set up anchor for start of month
