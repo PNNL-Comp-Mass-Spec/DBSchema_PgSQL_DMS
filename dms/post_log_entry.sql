@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          08/19/2022 mem - Remove local variable _message that was masking the _message argument
 **          08/24/2022 mem - Log to public.t_log_entries if the specified schema does not have a t_log_entries table
 **          08/26/2022 mem - Use new column name in t_log_entries
+**          12/12/2022 mem - Whitespace update
 **
 *****************************************************/
 DECLARE
@@ -51,6 +52,7 @@ BEGIN
     ------------------------------------------------
 
     _targetSchema := COALESCE(_targetSchema, '');
+
     If (char_length(_targetSchema) = 0) Then
         _targetSchema := 'public';
     End If;
@@ -107,7 +109,8 @@ BEGIN
             'VALUES ( $1, CURRENT_TIMESTAMP, $2, $3)',
             _targetTableWithSchema);
 
-    EXECUTE _s USING _postedBy, _type, _message;
+    EXECUTE _s
+    USING _postedBy, _type, _message;
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 

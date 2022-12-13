@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **                         - Remove exception handler and remove argument _returnCode
 **          04/16/2022 mem - Rename procedure
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
+**          12/12/2022 mem - Whitespace update
 **
 *****************************************************/
 DECLARE
@@ -103,13 +104,13 @@ BEGIN
         End If;
 
         _entryDateFilterSqlWithValues := format(
-                            '%I between ''%s'' And ''%s''',
+                            '%I BETWEEN ''%s'' And ''%s''',
                              _entryDateColumnName,
                             to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss'),
                             to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss'));
 
         _entryDateFilterSqlWithVariables := format(
-                            '%I between $2 And $3',
+                            '%I BETWEEN $2 And $3',
                              _entryDateColumnName);
 
         If _previewSql Then
@@ -129,7 +130,10 @@ BEGIN
         _enteredBy := session_user || '_simulated';
         _targetIDMatch := _targetID;
     Else
-        EXECUTE _s INTO _lookupResults USING _targetID, _entryDateStart, _entryDateEnd;
+        EXECUTE _s
+        INTO _lookupResults
+        USING _targetID, _entryDateStart, _entryDateEnd;
+
         _enteredBy := _lookupResults.entered_by;
         _targetIDMatch := _lookupResults.target_id_match;
     End If;
@@ -188,7 +192,8 @@ BEGIN
             _s := regexp_replace(_s, '\$4', '''' || _enteredByNew || '''');
             RAISE INFO '%;', _s;
         Else
-            EXECUTE _s USING _targetID, _entryDateStart, _entryDateEnd, _enteredByNew;
+            EXECUTE _s
+            USING _targetID, _entryDateStart, _entryDateEnd, _enteredByNew;
         End If;
 
         If _previewSql Then
@@ -220,7 +225,8 @@ BEGIN
             RAISE INFO '%;', _s;
             RAISE INFO '%;', regexp_replace(_s, '\$1', _targetID::text);
         Else
-            Execute _s USING _targetID, _entryDateStart, _entryDateEnd;
+            EXECUTE _s
+            USING _targetID, _entryDateStart, _entryDateEnd;
         End If;
 
         _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
