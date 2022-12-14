@@ -45,7 +45,7 @@ BEGIN
 
     If Not Exists (SELECT * FROM Tmp_Jobs) Then
         RAISE INFO 'Temp table Tmp_Jobs is empty; nothing to preview';
-        return;
+        RETURN;
     End If;
 
     -- Show contents of Tmp_Jobs
