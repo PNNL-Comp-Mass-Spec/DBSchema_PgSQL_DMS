@@ -50,44 +50,44 @@ CREATE VIEW cap.v_task_steps AS
     js.dataset_folder_path,
     js.capture_subfolder,
     js.job_state
-   FROM (( SELECT js_1.job,
+   FROM (( SELECT steps.job,
             j.dataset,
             j.dataset_id,
-            js_1.step,
+            steps.step,
             s.script,
-            js_1.step_tool AS tool,
+            steps.step_tool AS tool,
             ssn.step_state AS state_name,
-            js_1.state,
-            js_1.start,
-            js_1.finish,
-            round((EXTRACT(epoch FROM (COALESCE((js_1.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js_1.start)::timestamp with time zone)) / 60.0), 1) AS runtime_minutes,
-            js_1.processor,
-            js_1.input_folder_name AS input_folder,
-            js_1.output_folder_name AS output_folder,
+            steps.state,
+            steps.start,
+            steps.finish,
+            round((EXTRACT(epoch FROM (COALESCE((steps.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (steps.start)::timestamp with time zone)) / 60.0), 1) AS runtime_minutes,
+            steps.processor,
+            steps.input_folder_name AS input_folder,
+            steps.output_folder_name AS output_folder,
             j.priority,
-            js_1.dependencies,
-            js_1.cpu_load,
-            js_1.completion_code,
-            js_1.completion_message,
-            js_1.evaluation_code,
-            js_1.evaluation_message,
-            js_1.holdoff_interval_minutes,
-            js_1.next_try,
-            js_1.retry_count,
+            steps.dependencies,
+            steps.cpu_load,
+            steps.completion_code,
+            steps.completion_message,
+            steps.evaluation_code,
+            steps.evaluation_message,
+            steps.holdoff_interval_minutes,
+            steps.next_try,
+            steps.retry_count,
             j.instrument,
             j.storage_server,
             j.transfer_folder_path,
-            js_1.tool_version_id,
+            steps.tool_version_id,
             stv.tool_version,
             dfp.dataset_folder_path,
             j.capture_subfolder,
             j.state AS job_state
-           FROM (((((cap.t_task_steps js_1
-             JOIN cap.t_task_step_state_name ssn ON ((js_1.state = ssn.step_state_id)))
-             JOIN cap.t_tasks j ON ((js_1.job = j.job)))
+           FROM (((((cap.t_task_steps steps
+             JOIN cap.t_task_step_state_name ssn ON ((steps.state = ssn.step_state_id)))
+             JOIN cap.t_tasks j ON ((steps.job = j.job)))
              JOIN cap.t_scripts s ON ((j.script OPERATOR(public.=) s.script)))
              LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((j.dataset_id = dfp.dataset_id)))
-             LEFT JOIN cap.t_step_tool_versions stv ON ((js_1.tool_version_id = stv.tool_version_id)))
+             LEFT JOIN cap.t_step_tool_versions stv ON ((steps.tool_version_id = stv.tool_version_id)))
           WHERE (j.state <> 101)) js
      LEFT JOIN cap.t_processor_status ps ON ((js.processor OPERATOR(public.=) ps.processor_name)));
 
