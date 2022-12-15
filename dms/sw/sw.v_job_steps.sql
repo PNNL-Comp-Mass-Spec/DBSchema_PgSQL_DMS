@@ -8,7 +8,7 @@ CREATE VIEW sw.v_job_steps AS
     js.step,
     js.script,
     js.tool,
-    js.statename,
+    js.state_name,
     js.state,
     js.start,
     js.finish,
@@ -81,7 +81,7 @@ CREATE VIEW sw.v_job_steps AS
             jobsteps.step,
             s.script,
             jobsteps.step_tool AS tool,
-            ssn.step_state AS statename,
+            ssn.step_state AS state_name,
             jobsteps.state,
                 CASE
                     WHEN ((jobsteps.state <> 4) AND (NOT (jobsteps.remote_start IS NULL))) THEN jobsteps.remote_start
