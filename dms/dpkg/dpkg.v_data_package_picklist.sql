@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW dpkg.v_data_package_picklist AS
- SELECT (t_data_package.data_pkg_id::text || chr(32)) || t_data_package.package_name::text AS label,
+ SELECT (((t_data_package.data_pkg_id)::text || chr(32)) || (t_data_package.package_name)::text) AS label,
     t_data_package.data_pkg_id AS value
-   FROM t_data_package;
+   FROM dpkg.t_data_package;
 
 
 ALTER TABLE dpkg.v_data_package_picklist OWNER TO d3l243;
