@@ -17,6 +17,12 @@ CREATE VIEW public.v_lcmsnet_column_export AS
 ALTER TABLE public.v_lcmsnet_column_export OWNER TO d3l243;
 
 --
+-- Name: VIEW v_lcmsnet_column_export; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON VIEW public.v_lcmsnet_column_export IS 'Used by method GetColumnListFromDMS() in Buzzard\BuzzardWPF\IO\DMS\DMSDBTools.cs';
+
+--
 -- Name: TABLE v_lcmsnet_column_export; Type: ACL; Schema: public; Owner: d3l243
 --
 
