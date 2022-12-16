@@ -8,9 +8,9 @@ CREATE TABLE sw.t_job_step_processing_stats (
     job integer NOT NULL,
     step integer NOT NULL,
     processor public.citext,
-    run_time_minutes numeric(9,1),
+    runtime_minutes numeric(9,1),
     job_progress real,
-    run_time_predicted_hours numeric(9,2),
+    runtime_predicted_hours numeric(9,2),
     prog_runner_core_usage real,
     cpu_load smallint,
     actual_cpu_load smallint
