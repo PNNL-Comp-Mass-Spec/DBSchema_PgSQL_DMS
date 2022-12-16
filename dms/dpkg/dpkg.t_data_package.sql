@@ -15,7 +15,7 @@ CREATE TABLE dpkg.t_data_package (
     state public.citext DEFAULT 'Active'::public.citext NOT NULL,
     package_directory public.citext NOT NULL,
     storage_path_id integer,
-    path_year public.citext DEFAULT date_part('year'::text, CURRENT_TIMESTAMP) NOT NULL,
+    path_year public.citext DEFAULT EXTRACT(year FROM CURRENT_TIMESTAMP) NOT NULL,
     path_team public.citext DEFAULT 'General'::public.citext NOT NULL,
     biomaterial_item_count integer DEFAULT 0 NOT NULL,
     experiment_item_count integer DEFAULT 0 NOT NULL,

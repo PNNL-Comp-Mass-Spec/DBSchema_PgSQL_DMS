@@ -15,17 +15,18 @@ CREATE OR REPLACE FUNCTION public.get_fy_from_date(_rawdate timestamp without ti
 **  Auth:   grk
 **  Date:   03/15/2012
 **          06/21/2022 mem - Ported to PostgreSQL
+**          12/15/2022 mem - Use extract(year from _variable) and extract(month from) to extract the year and month from timestamps
 **
 *****************************************************/
 DECLARE
     _fiscalYear timestamp;
 BEGIN
-    _fiscalYear := CASE WHEN date_part('month', _rawDate) > 9
+    _fiscalYear := CASE WHEN extract(month from _rawDate) > 9
                         THEN _rawDate + Interval '1 year'
                         ELSE _rawDate
                    END;
 
-    Return date_part('year', _fiscalYear);
+    Return extract(year from _fiscalYear);
 END
 $$;
 

@@ -52,6 +52,7 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype public.ci
 **          02/24/2017 mem - Update capitalization and add comments
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/21/2022 mem - Ported to PostgreSQL
+**          12/15/2022 mem - Use extract(year from _variable) and extract(month from) to extract the year and month from timestamps
 **
 *****************************************************/
 DECLARE
@@ -74,7 +75,7 @@ BEGIN
             WHERE campaign = _entityID;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         Else
             SELECT created
@@ -83,7 +84,7 @@ BEGIN
             WHERE campaign_id = _campaignID;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         End If;
     End If;
@@ -98,7 +99,7 @@ BEGIN
             WHERE experiment = _entityID;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         Else
             SELECT created INTO _created
@@ -106,7 +107,7 @@ BEGIN
             WHERE exp_id = _experimentID;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         End If;
     End If;
@@ -121,7 +122,7 @@ BEGIN
             WHERE dataset = _entityID;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         Else
             SELECT created INTO _created
@@ -129,7 +130,7 @@ BEGIN
             WHERE dataset_id = _datasetID;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         End If;
     End If;
@@ -144,7 +145,7 @@ BEGIN
             WHERE request_name = _idValue;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         Else
             SELECT created INTO _created
@@ -152,7 +153,7 @@ BEGIN
             WHERE prep_request_id = _samplePrepID;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         End If;
     End If;
@@ -168,7 +169,7 @@ BEGIN
             WHERE entry_id = _idValue;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text;
+                _spreadFolder := extract(year from _created)::text;
             End If;
         End If;
     End If;
@@ -184,7 +185,7 @@ BEGIN
             WHERE entry_id = _idValue;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text;
+                _spreadFolder := extract(year from _created)::text;
             End If;
         End If;
     End If;
@@ -200,7 +201,7 @@ BEGIN
             WHERE entry_id = _idValue;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text;
+                _spreadFolder := extract(year from _created)::text;
             End If;
         End If;
     End If;
@@ -215,7 +216,7 @@ BEGIN
             WHERE group_id = _idValue;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text;
+                _spreadFolder := extract(year from _created)::text;
             End If;
         End If;
     End If;
@@ -230,7 +231,7 @@ BEGIN
             WHERE submission_id = _idValue;
 
             If FOUND Then
-                _spreadFolder := date_part('year', _created)::text || '_' || date_part('month', _created)::text;
+                _spreadFolder := extract(year from _created)::text || '_' || extract(month from _created)::text;
             End If;
         End If;
     End If;
