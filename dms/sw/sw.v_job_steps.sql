@@ -13,7 +13,7 @@ CREATE VIEW sw.v_job_steps AS
     js.start,
     js.finish,
     js.runtime_minutes,
-    (EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60.0) AS last_cpu_status_minutes,
+    ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60.0))::integer AS last_cpu_status_minutes,
         CASE
             WHEN ((js.state = 9) OR (js.retry_count > 0)) THEN js.remote_progress
             WHEN (js.state = 4) THEN ps.progress
