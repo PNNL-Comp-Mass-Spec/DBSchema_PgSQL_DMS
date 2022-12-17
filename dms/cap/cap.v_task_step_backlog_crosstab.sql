@@ -4,16 +4,16 @@
 
 CREATE VIEW cap.v_task_step_backlog_crosstab AS
  SELECT ct.posting_time,
-    ct."ArchiveStatusCheck",
-    ct."ArchiveUpdate",
-    ct."ArchiveVerify",
-    ct."DatasetArchive",
-    ct."DatasetCapture",
-    ct."DatasetInfo",
-    ct."DatasetIntegrity",
-    ct."DatasetQuality",
-    ct."SourceFileRename",
-    ct."ImsDeMultiplex"
+    COALESCE(ct."ArchiveStatusCheck", 0) AS archive_status_check,
+    COALESCE(ct."ArchiveUpdate", 0) AS archive_update,
+    COALESCE(ct."ArchiveVerify", 0) AS archive_verify,
+    COALESCE(ct."DatasetArchive", 0) AS dataset_archive,
+    COALESCE(ct."DatasetCapture", 0) AS dataset_capture,
+    COALESCE(ct."DatasetInfo", 0) AS dataset_info,
+    COALESCE(ct."DatasetIntegrity", 0) AS dataset_integrity,
+    COALESCE(ct."DatasetQuality", 0) AS dataset_quality,
+    COALESCE(ct."SourceFileRename", 0) AS source_file_rename,
+    COALESCE(ct."ImsDeMultiplex", 0) AS ims_demultiplex
    FROM public.crosstab('SELECT date_trunc(''minute'', posting_time) AS posting_time,
            step_tool,
            backlog_count
