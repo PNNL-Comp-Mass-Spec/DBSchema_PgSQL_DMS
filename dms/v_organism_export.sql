@@ -28,8 +28,13 @@ CREATE VIEW public.v_organism_export AS
     o.active,
     o.organism_db_path AS organismdbpath
    FROM ((public.t_organisms o
-     LEFT JOIN ont.v_cv_newt newt ON ((o.ncbi_taxonomy_id = newt.identifier)))
-     LEFT JOIN ont.v_ncbi_taxonomy_cached ncbi ON ((o.ncbi_taxonomy_id = ncbi.tax_id)));
+     LEFT JOIN ( SELECT t_cv_newt.term_name,
+            t_cv_newt.identifier
+           FROM ont.t_cv_newt) newt ON ((o.ncbi_taxonomy_id = newt.identifier)))
+     LEFT JOIN ( SELECT t_ncbi_taxonomy_cached.tax_id,
+            t_ncbi_taxonomy_cached.name,
+            t_ncbi_taxonomy_cached.synonyms
+           FROM ont.t_ncbi_taxonomy_cached) ncbi ON ((o.ncbi_taxonomy_id = ncbi.tax_id)));
 
 
 ALTER TABLE public.v_organism_export OWNER TO d3l243;
