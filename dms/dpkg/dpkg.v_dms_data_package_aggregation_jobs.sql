@@ -7,25 +7,25 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_jobs AS
     aj.job,
     analysistool.analysis_tool AS tool,
     ds.dataset,
-    ((dsarch.archive_path)::text || '\'::text) AS archivestoragepath,
-    public.combine_paths((sp.vol_name_client)::text, (sp.storage_path)::text) AS serverstoragepath,
-    ds.folder_name AS datasetfolder,
-    aj.results_folder_name AS resultsfolder,
-    aj.dataset_id AS datasetid,
+    ((dsarch.archive_path)::text || '\'::text) AS archive_storage_path,
+    public.combine_paths((sp.vol_name_client)::text, (sp.storage_path)::text) AS server_storage_path,
+    ds.folder_name AS dataset_folder,
+    aj.results_folder_name AS results_folder,
+    aj.dataset_id,
     org.name AS organism,
-    instname.instrument AS instrumentname,
-    instname.instrument_group AS instrumentgroup,
-    instname.instrument_class AS instrumentclass,
+    instname.instrument AS instrument_name,
+    instname.instrument_group,
+    instname.instrument_class,
     aj.finish AS completed,
-    aj.param_file_name AS parameterfilename,
-    aj.settings_file_name AS settingsfilename,
-    aj.organism_db_name AS organismdbname,
-    aj.protein_collection_list AS proteincollectionlist,
-    aj.protein_options_list AS proteinoptions,
-    analysistool.result_type AS resulttype,
-    ds.created AS ds_created,
+    aj.param_file_name AS parameter_file_name,
+    aj.settings_file_name,
+    aj.organism_db_name,
+    aj.protein_collection_list,
+    aj.protein_options_list AS protein_options,
+    analysistool.result_type,
+    ds.created AS dataset_created,
     tpj.package_comment,
-    instclass.raw_data_type AS rawdatatype,
+    instclass.raw_data_type,
     e.experiment,
     e.reason AS experiment_reason,
     e.comment AS experiment_comment,
@@ -49,7 +49,7 @@ ALTER TABLE dpkg.v_dms_data_package_aggregation_jobs OWNER TO d3l243;
 -- Name: VIEW v_dms_data_package_aggregation_jobs; Type: COMMENT; Schema: dpkg; Owner: d3l243
 --
 
-COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_jobs IS 'Note that this view is used by V_DMS_Data_Package_Aggregation_Jobs in DMS_Pipeline, and the PRIDE converter plugin uses that view to retrieve metadata for data package jobs';
+COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_jobs IS 'Note that this view is used by V_DMS_Data_Package_Aggregation_Jobs in the sw schema, and the DMS Analysis Manager uses that view to retrieve metadata for data package jobs';
 
 --
 -- Name: TABLE v_dms_data_package_aggregation_jobs; Type: ACL; Schema: dpkg; Owner: d3l243

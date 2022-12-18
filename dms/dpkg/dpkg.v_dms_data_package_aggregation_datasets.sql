@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW dpkg.v_dms_data_package_aggregation_datasets AS
- SELECT tpd.data_pkg_id,
+ SELECT tpd.data_pkg_id AS data_package_id,
     ds.dataset_id,
     ds.dataset,
     dfp.dataset_folder_path,
@@ -13,7 +13,7 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_datasets AS
     instname.instrument_class,
     instclass.raw_data_type,
     ds.acq_time_start,
-    ds.created,
+    ds.created AS dataset_created,
     org.organism,
     org.ncbi_taxonomy_id AS experiment_newt_id,
     newt.term_name AS experiment_newt_name,
