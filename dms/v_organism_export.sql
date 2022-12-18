@@ -28,7 +28,7 @@ CREATE VIEW public.v_organism_export AS
     o.active,
     o.organism_db_path AS organismdbpath
    FROM ((public.t_organisms o
-     LEFT JOIN ont.v_cv_newt newt ON (((o.ncbi_taxonomy_id)::text = (newt.identifier)::text)))
+     LEFT JOIN ont.v_cv_newt newt ON ((o.ncbi_taxonomy_id = newt.identifier)))
      LEFT JOIN ont.v_ncbi_taxonomy_cached ncbi ON ((o.ncbi_taxonomy_id = ncbi.tax_id)));
 
 
