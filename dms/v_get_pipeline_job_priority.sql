@@ -12,6 +12,12 @@ CREATE VIEW public.v_get_pipeline_job_priority AS
 ALTER TABLE public.v_get_pipeline_job_priority OWNER TO d3l243;
 
 --
+-- Name: VIEW v_get_pipeline_job_priority; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON VIEW public.v_get_pipeline_job_priority IS 'Returns job number and priority for jobs with state 1, 2, or 8 (new, in progress, or holding)';
+
+--
 -- Name: TABLE v_get_pipeline_job_priority; Type: ACL; Schema: public; Owner: d3l243
 --
 
