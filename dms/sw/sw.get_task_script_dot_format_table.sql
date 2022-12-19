@@ -134,8 +134,8 @@ BEGIN
             SELECT format('%s -> %s%s%s;',
                           XmlTableA.parent_step,
                           _scriptStep.step_number,
-                          CASE WHEN XmlTableA.condition_test IS NULL THEN '' ELSE ' "label="Skip if:' || XmlTableA.condition_test || '""' END,
-                          CASE WHEN Coalesce(XmlTableA.enable_only, 0) > 0 THEN ' "style=dotted"' ELSE '' END)
+                          CASE WHEN XmlTableA.condition_test IS NULL THEN '' ELSE ' [label="Skip if:' || XmlTableA.condition_test || '"]' END,
+                          CASE WHEN Coalesce(XmlTableA.enable_only, 0) > 0 THEN ' [style=dotted]' ELSE '' END)
                      As script_line,
                    1 As seq
             FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml as rooted_xml

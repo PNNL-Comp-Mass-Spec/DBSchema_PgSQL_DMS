@@ -37,10 +37,10 @@ UNION
     ((((((enableonlyq.target_step)::text || ' -> '::text) || (enableonlyq.step)::text) ||
         CASE
             WHEN (enableonlyq.condition_test IS NULL) THEN ''::text
-            ELSE ((' "label="Skip if:'::text || (enableonlyq.condition_test)::text) || '""'::text)
+            ELSE ((' [label="Skip if:'::text || (enableonlyq.condition_test)::text) || '"]'::text)
         END) ||
         CASE
-            WHEN (COALESCE(enableonlyq.enable_only, 0) > 0) THEN ' "style=dotted"'::text
+            WHEN (COALESCE(enableonlyq.enable_only, 0) > 0) THEN ' [style=dotted]'::text
             ELSE ''::text
         END) || ';'::text) AS line,
     1 AS seq
