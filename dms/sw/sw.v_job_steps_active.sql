@@ -14,7 +14,7 @@ CREATE VIEW sw.v_job_steps_active AS
     dataq.finish,
     dataq.runtime_minutes,
     dataq.processor,
-    (((dataq.last_cpu_status_minutes)::numeric / 60.0))::numeric(9,1) AS last_cpu_status_hours,
+    round(((dataq.last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
     dataq.job_progress,
     dataq.runtime_predicted_hours,
     dataq.priority,
