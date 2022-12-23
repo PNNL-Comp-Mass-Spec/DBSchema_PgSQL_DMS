@@ -215,7 +215,7 @@ CREATE TRIGGER trig_t_dataset_after_update_all AFTER UPDATE ON public.t_dataset 
 -- Name: t_dataset trig_t_dataset_after_update_row; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_dataset_after_update_row AFTER UPDATE ON public.t_dataset FOR EACH ROW WHEN (((old.dataset_state_id <> new.dataset_state_id) OR (old.dataset_rating_id <> new.dataset_rating_id) OR (old.dataset OPERATOR(public.<>) new.dataset) OR (old.exp_id <> new.exp_id) OR (old.created <> new.created) OR (old.folder_name IS DISTINCT FROM new.folder_name) OR (old.acq_time_start IS DISTINCT FROM new.acq_time_start))) EXECUTE FUNCTION public.trigfn_t_dataset_after_update();
+CREATE TRIGGER trig_t_dataset_after_update_row AFTER UPDATE ON public.t_dataset FOR EACH ROW WHEN (((old.dataset_state_id <> new.dataset_state_id) OR (old.dataset_rating_id <> new.dataset_rating_id) OR (old.dataset OPERATOR(public.<>) new.dataset) OR (old.exp_id <> new.exp_id) OR (old.created <> new.created) OR ((old.folder_name)::text IS DISTINCT FROM (new.folder_name)::text) OR (old.acq_time_start IS DISTINCT FROM new.acq_time_start))) EXECUTE FUNCTION public.trigfn_t_dataset_after_update();
 
 --
 -- Name: t_dataset fk_t_dataset_t_dataset_rating_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

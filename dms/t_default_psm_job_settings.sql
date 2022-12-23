@@ -51,7 +51,7 @@ CREATE TRIGGER trig_t_default_psm_job_settings_after_insert AFTER INSERT ON publ
 -- Name: t_default_psm_job_settings trig_t_default_psm_job_settings_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_default_psm_job_settings_after_update AFTER UPDATE ON public.t_default_psm_job_settings FOR EACH ROW WHEN (((old.tool_name OPERATOR(public.<>) new.tool_name) OR (old.enabled <> new.enabled) OR (old.settings_file_name IS DISTINCT FROM new.settings_file_name))) EXECUTE FUNCTION public.trigfn_t_default_psm_job_settings_after_insert_or_update();
+CREATE TRIGGER trig_t_default_psm_job_settings_after_update AFTER UPDATE ON public.t_default_psm_job_settings FOR EACH ROW WHEN (((old.tool_name OPERATOR(public.<>) new.tool_name) OR (old.enabled <> new.enabled) OR ((old.settings_file_name)::text IS DISTINCT FROM (new.settings_file_name)::text))) EXECUTE FUNCTION public.trigfn_t_default_psm_job_settings_after_insert_or_update();
 
 --
 -- Name: t_default_psm_job_settings fk_t_default_psm_job_settings_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

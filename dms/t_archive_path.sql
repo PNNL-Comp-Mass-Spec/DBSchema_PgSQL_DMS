@@ -53,7 +53,7 @@ CREATE TRIGGER trig_t_archive_path_after_insert AFTER INSERT ON public.t_archive
 -- Name: t_archive_path trig_t_archive_path_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_archive_path_after_update AFTER UPDATE ON public.t_archive_path FOR EACH ROW WHEN (((old.archive_path OPERATOR(public.<>) new.archive_path) OR (old.archive_url IS DISTINCT FROM new.archive_url))) EXECUTE FUNCTION public.trigfn_t_archive_path_after_insert_or_update();
+CREATE TRIGGER trig_t_archive_path_after_update AFTER UPDATE ON public.t_archive_path FOR EACH ROW WHEN (((old.archive_path OPERATOR(public.<>) new.archive_path) OR ((old.archive_url)::text IS DISTINCT FROM (new.archive_url)::text))) EXECUTE FUNCTION public.trigfn_t_archive_path_after_insert_or_update();
 
 --
 -- Name: t_archive_path fk_t_archive_path_t_archive_path_function; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

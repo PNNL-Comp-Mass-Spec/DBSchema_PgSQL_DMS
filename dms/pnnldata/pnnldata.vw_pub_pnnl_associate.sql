@@ -55,7 +55,11 @@ CREATE FOREIGN TABLE pnnldata.vw_pub_pnnl_associate (
     "WORK_ROOM_NO" character varying(5),
     "WORK_STATE" character varying(6),
     "WORK_ZIP" character varying(10),
-    "PNL_NELS_POI_TYPE" character varying(6)
+    "PNL_NELS_POI_TYPE" character varying(6),
+    "PERSON_TYPE" character varying(5),
+    "PERSON_TYPE_DESC" character varying(30),
+    "PERSON_SUB_TYPE" character varying(6),
+    "PERSON_SUB_TYPE_DESC" character varying(60)
 )
 SERVER op_warehouse_fdw
 OPTIONS (
@@ -221,13 +225,19 @@ ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate ALTER COLUMN "WORK_ZIP" OPTIO
 ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate ALTER COLUMN "PNL_NELS_POI_TYPE" OPTIONS (
     column_name 'PNL_NELS_POI_TYPE'
 );
+ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate ALTER COLUMN "PERSON_TYPE" OPTIONS (
+    column_name 'PERSON_TYPE'
+);
+ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate ALTER COLUMN "PERSON_TYPE_DESC" OPTIONS (
+    column_name 'PERSON_TYPE_DESC'
+);
+ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate ALTER COLUMN "PERSON_SUB_TYPE" OPTIONS (
+    column_name 'PERSON_SUB_TYPE'
+);
+ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate ALTER COLUMN "PERSON_SUB_TYPE_DESC" OPTIONS (
+    column_name 'PERSON_SUB_TYPE_DESC'
+);
 
 
 ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate OWNER TO d3l243;
-
---
--- Name: TABLE vw_pub_pnnl_associate; Type: ACL; Schema: pnnldata; Owner: d3l243
---
-
-GRANT SELECT ON TABLE pnnldata.vw_pub_pnnl_associate TO writeaccess;
 

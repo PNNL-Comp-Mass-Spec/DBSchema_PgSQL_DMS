@@ -40,7 +40,7 @@ CREATE INDEX ix_t_cached_dataset_folder_paths_update_required ON public.t_cached
 -- Name: t_cached_dataset_folder_paths trig_t_cached_dataset_folder_paths_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_cached_dataset_folder_paths_after_update AFTER UPDATE ON public.t_cached_dataset_folder_paths FOR EACH ROW WHEN (((old.dataset_row_version IS DISTINCT FROM new.dataset_row_version) OR (old.storage_path_row_version IS DISTINCT FROM new.storage_path_row_version) OR (old.dataset_folder_path IS DISTINCT FROM new.dataset_folder_path) OR (old.archive_folder_path IS DISTINCT FROM new.archive_folder_path) OR (old.myemsl_path_flag IS DISTINCT FROM new.myemsl_path_flag) OR (old.dataset_url IS DISTINCT FROM new.dataset_url))) EXECUTE FUNCTION public.trigfn_t_cached_dataset_folder_paths_after_update();
+CREATE TRIGGER trig_t_cached_dataset_folder_paths_after_update AFTER UPDATE ON public.t_cached_dataset_folder_paths FOR EACH ROW WHEN (((old.dataset_row_version IS DISTINCT FROM new.dataset_row_version) OR (old.storage_path_row_version IS DISTINCT FROM new.storage_path_row_version) OR ((old.dataset_folder_path)::text IS DISTINCT FROM (new.dataset_folder_path)::text) OR ((old.archive_folder_path)::text IS DISTINCT FROM (new.archive_folder_path)::text) OR ((old.myemsl_path_flag)::text IS DISTINCT FROM (new.myemsl_path_flag)::text) OR ((old.dataset_url)::text IS DISTINCT FROM (new.dataset_url)::text))) EXECUTE FUNCTION public.trigfn_t_cached_dataset_folder_paths_after_update();
 
 --
 -- Name: t_cached_dataset_folder_paths fk_t_cached_dataset_folder_paths_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
