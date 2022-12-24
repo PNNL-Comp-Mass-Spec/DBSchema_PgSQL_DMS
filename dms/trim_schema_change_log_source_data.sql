@@ -2,7 +2,7 @@
 -- Name: trim_schema_change_log_source_data(integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infoonly integer DEFAULT 1) RETURNS TABLE(schema_change_log_id integer, entered timestamp without time zone, schema_name public.citext, object_name public.citext, version_rank integer, function_name public.citext, function_source public.citext, source_length_current integer, source_length_new integer)
+CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infolevel integer DEFAULT 1) RETURNS TABLE(schema_change_log_id integer, entered timestamp without time zone, schema_name public.citext, object_name public.citext, version_rank integer, function_name public.citext, function_source public.citext, source_length_current integer, source_length_new integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -18,11 +18,20 @@ CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infoonly i
 **      This was observed when foreign data tables were imported using "IMPORT FOREIGN SCHEMA".
 **
 **  Arguments:
-**    _infoOnly                 If 1, show objects with rows that would be trimmed
-**                              If 2, show all rows
+**    _infoLevel        When 0, remove the extra rows from t_schema_change_log
+**                      When 1, show objects with rows that would be trimmed
+**                      When 2, show all rows
+**
+**  Example usage:
+**      SELECT count(*) FROM trim_schema_change_log_source_data(1);
+**
+**      SELECT * FROM trim_schema_change_log_source_data(1);
+**      SELECT * FROM trim_schema_change_log_source_data(0);
+**
 **  Auth:   mem
 **  Date:   07/30/2022 mem - Initial version
-*           07/31/2022 mem - Remove duplicate entries (same object, command, and entry time)
+**          07/31/2022 mem - Remove duplicate entries (same object, command, and entry time)
+**          12/23/2022 mem - Rename parameter to _infoLevel
 **
 *****************************************************/
 DECLARE
@@ -34,7 +43,7 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _infoonly := Coalesce(_infoonly, 1);
+    _infoLevel := Coalesce(_infoLevel, 1);
 
     ------------------------------------------------
     -- Create a temporary table to hold the rank data
@@ -61,7 +70,7 @@ BEGIN
     SET trim_data = true
     WHERE target.version_rank > 3 And target.current_source_length > 100;
 
-    If _infoOnly > 0 Then
+    If _infoLevel > 0 Then
         RETURN QUERY
         SELECT SCL.schema_change_log_id,
                SCL.entered,
@@ -83,7 +92,7 @@ BEGIN
                  FROM T_Tmp_SchemaChangeLogRank SCLR
                       INNER JOIN t_schema_change_log L
                       ON SCLR.schema_change_log_id = L.schema_change_log_id
-                 WHERE SCLR.trim_data = true Or _infoOnly > 1) FilterQ
+                 WHERE SCLR.trim_data = true Or _infoLevel > 1) FilterQ
                ON SCL.schema_name = FilterQ.schema_name AND
                   SCL.object_name = FilterQ.object_name
              INNER JOIN
@@ -199,5 +208,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.trim_schema_change_log_source_data(_infoonly integer) OWNER TO d3l243;
+ALTER FUNCTION public.trim_schema_change_log_source_data(_infolevel integer) OWNER TO d3l243;
 
