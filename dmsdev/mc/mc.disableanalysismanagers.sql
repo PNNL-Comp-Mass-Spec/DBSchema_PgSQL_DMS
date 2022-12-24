@@ -20,10 +20,10 @@ DECLARE
 
 BEGIN
     Call EnableDisableAllManagers (
-        _managerTypeIDList := '11', 
-        _managerNameList := '', 
+        _managerTypeIDList := '11',
+        _managerNameList := '',
         _enable := 0,
-        _infoOnly := _infoOnly, 
+        _infoOnly := _infoOnly,
         _message := _message,
         _returnCode := _returnCode);
 

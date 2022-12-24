@@ -16,9 +16,3 @@ CREATE VIEW mc.v_mgr_param_defaults AS
 
 ALTER TABLE mc.v_mgr_param_defaults OWNER TO d3l243;
 
---
--- Name: TABLE v_mgr_param_defaults; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_mgr_param_defaults TO readaccess;
-

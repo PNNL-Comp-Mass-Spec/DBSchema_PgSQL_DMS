@@ -30,9 +30,3 @@ CREATE INDEX ix_t_sp_authorization_login_name ON mc.t_sp_authorization USING btr
 
 CREATE INDEX ix_t_sp_authorization_proc_name ON mc.t_sp_authorization USING btree (procedure_name);
 
---
--- Name: TABLE t_sp_authorization; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.t_sp_authorization TO readaccess;
-

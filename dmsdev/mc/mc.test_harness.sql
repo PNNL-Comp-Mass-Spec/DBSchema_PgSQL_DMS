@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION mc.test_harness(_managernamelist text) RETURNS TABLE(manager_name text)
     LANGUAGE plpgsql
     AS $$
-DECLARE    
+DECLARE
     _message TEXT;
     _sqlstate text;
     _exceptionMessage text;

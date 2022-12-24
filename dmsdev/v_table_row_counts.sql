@@ -16,9 +16,3 @@ CREATE VIEW public.v_table_row_counts AS
 
 ALTER TABLE public.v_table_row_counts OWNER TO d3l243;
 
---
--- Name: TABLE v_table_row_counts; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.v_table_row_counts TO readaccess;
-

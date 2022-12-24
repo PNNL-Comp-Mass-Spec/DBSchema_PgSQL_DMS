@@ -120,7 +120,7 @@ BEGIN
     End If;
 
     DELETE FROM TmpManagerList
-    WHERE TmpManagerList.mgr_id Is Null OR 
+    WHERE TmpManagerList.mgr_id Is Null OR
           TmpManagerList.control_from_web > 0;
 
     If Exists (Select * From TmpManagerList Src INNER JOIN mc.t_mgrs Target ON Src.mgr_id = Target.mgr_id) Then
@@ -235,7 +235,7 @@ BEGIN
                            FROM mc.t_param_value_old_managers PV
                                 INNER JOIN TmpManagerList Src
                                   ON PV.mgr_id = Src.mgr_id
-                           GROUP BY PV.mgr_id, PV.type_id 
+                           GROUP BY PV.mgr_id, PV.type_id
                          );
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;

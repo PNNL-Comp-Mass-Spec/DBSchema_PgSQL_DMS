@@ -17,13 +17,13 @@ CREATE OR REPLACE PROCEDURE mc.enablearchivedependentmanagers(IN _infoonly integ
 DECLARE
 
 BEGIN
-    
+
     -- Enable Space managers (type 8)
     Call EnableDisableAllManagers (
-        _managerTypeIDList := '8', 
-        _managerNameList := 'All', 
+        _managerTypeIDList := '8',
+        _managerNameList := 'All',
         _enable := 1,
-        _infoOnly := _infoOnly, 
+        _infoOnly := _infoOnly,
         _message := _message,
         _returnCode := _returnCode);
 

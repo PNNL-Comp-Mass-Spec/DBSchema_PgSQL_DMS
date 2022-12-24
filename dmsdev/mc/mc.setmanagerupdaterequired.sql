@@ -209,12 +209,12 @@ BEGIN
         RAISE INFO '%', _infoHead;
 
         FOR _previewData IN
-            SELECT U.mgr_id, 
-                   U.manager, 
-                   U.param_name, 
-                   U.value as update_required, 
+            SELECT U.mgr_id,
+                   U.manager,
+                   U.param_name,
+                   U.value as update_required,
                    U.last_affected
-            FROM mc.v_analysis_mgr_params_update_required U               
+            FROM mc.v_analysis_mgr_params_update_required U
                 INNER JOIN TmpManagerList MgrList
                    ON U.mgr_id = MgrList.mgr_id
             ORDER BY U.Manager

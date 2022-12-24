@@ -52,6 +52,5 @@ ALTER TABLE ONLY mc.t_event_log
 -- Name: TABLE t_event_log; Type: ACL; Schema: mc; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE mc.t_event_log TO readaccess;
 GRANT INSERT,UPDATE ON TABLE mc.t_event_log TO writeaccess;
 

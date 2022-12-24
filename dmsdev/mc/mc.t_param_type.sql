@@ -38,9 +38,3 @@ ALTER TABLE ONLY mc.t_param_type
 
 CREATE UNIQUE INDEX ix_t_param_type_param_name ON mc.t_param_type USING btree (param_name);
 
---
--- Name: TABLE t_param_type; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.t_param_type TO readaccess;
-

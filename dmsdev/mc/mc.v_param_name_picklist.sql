@@ -12,9 +12,3 @@ CREATE VIEW mc.v_param_name_picklist AS
 
 ALTER TABLE mc.v_param_name_picklist OWNER TO d3l243;
 
---
--- Name: TABLE v_param_name_picklist; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_param_name_picklist TO readaccess;
-

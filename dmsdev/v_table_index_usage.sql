@@ -18,9 +18,3 @@ CREATE VIEW public.v_table_index_usage AS
 
 ALTER TABLE public.v_table_index_usage OWNER TO d3l243;
 
---
--- Name: TABLE v_table_index_usage; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.v_table_index_usage TO readaccess;
-

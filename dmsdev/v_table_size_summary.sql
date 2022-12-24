@@ -43,9 +43,3 @@ CREATE VIEW public.v_table_size_summary AS
 
 ALTER TABLE public.v_table_size_summary OWNER TO d3l243;
 
---
--- Name: TABLE v_table_size_summary; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.v_table_size_summary TO readaccess;
-

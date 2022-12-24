@@ -57,7 +57,7 @@ BEGIN
          INNER JOIN mc.t_mgrs M
            ON M.mgr_id = PV.mgr_id
     WHERE PT.param_name = _paramName AND
-          M.mgr_type_id IN ( SELECT value 
+          M.mgr_type_id IN ( SELECT value
                              FROM public.udf_parse_delimited_integer_list(_managerTypeIDList, ',')
                            ) AND
           M.control_from_website > 0;
@@ -65,7 +65,7 @@ BEGIN
     IF NOT FOUND THEN
         _message := 'Did not find any managers of type ' || _managerTypeIDList || ' with parameter ' || _paramName || ' and control_from_website > 0';
         _returnCode := 'U5100';
-        Return;    
+        Return;
     END IF;
 
     ---------------------------------------------------

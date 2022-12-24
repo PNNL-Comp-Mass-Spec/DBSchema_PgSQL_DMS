@@ -1,6 +1,10 @@
+--
+-- Name: post_log_entry(text, text, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
 CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message text, IN _postedby text DEFAULT 'na'::text, IN _targetschema text DEFAULT 'public'::text, IN _duplicateentryholdoffhours integer DEFAULT 0)
- LANGUAGE plpgsql
-AS $procedure$
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
@@ -93,5 +97,14 @@ BEGIN
     End If;
 
 END
-$procedure$
-;
+$_$;
+
+
+ALTER PROCEDURE public.post_log_entry(IN _type text, IN _message text, IN _postedby text, IN _targetschema text, IN _duplicateentryholdoffhours integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE post_log_entry(IN _type text, IN _message text, IN _postedby text, IN _targetschema text, IN _duplicateentryholdoffhours integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.post_log_entry(IN _type text, IN _message text, IN _postedby text, IN _targetschema text, IN _duplicateentryholdoffhours integer) IS 'PostLogEntry';
+

@@ -28,7 +28,7 @@ DECLARE
     _myRowCount int := 0;
     _iterations int := 0;
 BEGIN
-    
+
     _message := '';
 
     -----------------------------------------------
@@ -85,7 +85,7 @@ BEGIN
     -----------------------------------------------
     --
 
-    While Exists (Select * from Tmp_Mgr_Params Where ParentParamPointerState = 1) And _iterations < _maxRecursion 
+    While Exists (Select * from Tmp_Mgr_Params Where ParentParamPointerState = 1) And _iterations < _maxRecursion
     Loop
         Truncate table Tmp_Manager_Group_Info;
 

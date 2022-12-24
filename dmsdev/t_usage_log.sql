@@ -46,9 +46,3 @@ CREATE INDEX ix_t_usage_log_calling_user ON public.t_usage_log USING btree (call
 
 CREATE INDEX ix_t_usage_log_posted_by ON public.t_usage_log USING btree (posted_by);
 
---
--- Name: TABLE t_usage_log; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.t_usage_log TO readaccess;
-

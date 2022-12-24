@@ -31,9 +31,3 @@ ALTER TABLE mc.t_mgr_types ALTER COLUMN mgr_type_id ADD GENERATED ALWAYS AS IDEN
 ALTER TABLE ONLY mc.t_mgr_types
     ADD CONSTRAINT pk_t_mgr_types PRIMARY KEY (mgr_type_id);
 
---
--- Name: TABLE t_mgr_types; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.t_mgr_types TO readaccess;
-

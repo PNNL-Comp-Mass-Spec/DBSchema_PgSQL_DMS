@@ -18,11 +18,11 @@ DECLARE
     _filename TEXT;
 BEGIN
     _filename := '';
-    
+
     If Trim(Coalesce(_filePath, '')) <> '' Then
         _filename := regexp_replace(_filePath, '^.+[/\\]', '');
     End If;
-        
+
     RETURN _filename;
 END
 $$;

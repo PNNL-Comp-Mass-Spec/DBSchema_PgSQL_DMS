@@ -18,9 +18,3 @@ CREATE VIEW mc.v_analysis_mgr_params_active_and_debug_level AS
 
 ALTER TABLE mc.v_analysis_mgr_params_active_and_debug_level OWNER TO d3l243;
 
---
--- Name: TABLE v_analysis_mgr_params_active_and_debug_level; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_analysis_mgr_params_active_and_debug_level TO readaccess;
-

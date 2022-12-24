@@ -21,9 +21,3 @@ ALTER TABLE mc.t_old_managers OWNER TO d3l243;
 ALTER TABLE ONLY mc.t_old_managers
     ADD CONSTRAINT pk_t_old_managers PRIMARY KEY (mgr_id);
 
---
--- Name: TABLE t_old_managers; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.t_old_managers TO readaccess;
-

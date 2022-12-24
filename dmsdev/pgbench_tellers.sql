@@ -20,9 +20,3 @@ ALTER TABLE public.pgbench_tellers OWNER TO d3l243;
 ALTER TABLE ONLY public.pgbench_tellers
     ADD CONSTRAINT pgbench_tellers_pkey PRIMARY KEY (tid);
 
---
--- Name: TABLE pgbench_tellers; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.pgbench_tellers TO readaccess;
-

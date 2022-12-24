@@ -34,9 +34,3 @@ CREATE VIEW public.v_table_index_duplicates AS
 
 ALTER TABLE public.v_table_index_duplicates OWNER TO d3l243;
 
---
--- Name: TABLE v_table_index_duplicates; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.v_table_index_duplicates TO readaccess;
-

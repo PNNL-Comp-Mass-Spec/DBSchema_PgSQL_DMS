@@ -47,9 +47,3 @@ ALTER TABLE public.get_load_average_copy OWNER TO d3l243;
 
 GRANT ALL ON FUNCTION public.get_load_average_copy(OUT load_1min double precision, OUT load_5min double precision, OUT load_15min double precision) TO pgwatch2;
 
---
--- Name: TABLE get_load_average_copy; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.get_load_average_copy TO readaccess;
-

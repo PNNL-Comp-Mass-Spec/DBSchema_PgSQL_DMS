@@ -11,9 +11,3 @@ CREATE VIEW mc.v_manager_entry AS
 
 ALTER TABLE mc.v_manager_entry OWNER TO d3l243;
 
---
--- Name: TABLE v_manager_entry; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_manager_entry TO readaccess;
-

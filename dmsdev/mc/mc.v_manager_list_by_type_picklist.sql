@@ -12,9 +12,3 @@ CREATE VIEW mc.v_manager_list_by_type_picklist AS
 
 ALTER TABLE mc.v_manager_list_by_type_picklist OWNER TO d3l243;
 
---
--- Name: TABLE v_manager_list_by_type_picklist; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_manager_list_by_type_picklist TO readaccess;
-

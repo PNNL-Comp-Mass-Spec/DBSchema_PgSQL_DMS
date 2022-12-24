@@ -77,11 +77,11 @@ BEGIN
         UPDATE TmpManagerList
         SET mgr_id = M.mgr_id
         FROM mc.t_mgrs M
-        WHERE TmpManagerList.Manager_Name = M.mgr_name;   
+        WHERE TmpManagerList.Manager_Name = M.mgr_name;
 
         DELETE FROM TmpManagerList
         WHERE mgr_id IS NULL;
-    
+
     Else
         INSERT INTO TmpManagerList (mgr_id, manager_name)
         SELECT mgr_id, mgr_name
@@ -153,7 +153,7 @@ BEGIN
         RAISE INFO '%', _infoHead;
 
        _countToUpdate := 0;
-  
+
         FOR _previewData IN
             SELECT MP.mgr_id,
                    MP.manager,
@@ -178,7 +178,7 @@ BEGIN
                             );
 
             RAISE INFO '%', _infoData;
-            
+
             _countToUpdate := _countToUpdate + 1;
         END LOOP;
 

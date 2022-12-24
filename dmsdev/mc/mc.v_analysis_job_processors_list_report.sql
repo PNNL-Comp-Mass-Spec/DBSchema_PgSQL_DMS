@@ -12,9 +12,3 @@ CREATE VIEW mc.v_analysis_job_processors_list_report AS
 
 ALTER TABLE mc.v_analysis_job_processors_list_report OWNER TO d3l243;
 
---
--- Name: TABLE v_analysis_job_processors_list_report; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_analysis_job_processors_list_report TO readaccess;
-

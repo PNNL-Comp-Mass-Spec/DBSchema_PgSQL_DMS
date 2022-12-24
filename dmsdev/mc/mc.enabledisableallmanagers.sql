@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE mc.enabledisableallmanagers(IN _managertypeidlist te
 **
 **  Arguments:
 **    _managerTypeIDList   Optional: comma separated list of manager type IDs to disable, e.g. '1, 2, 3'
-**    _managerNameList     Optional: if defined, only managers specified here will be enabled; 
+**    _managerNameList     Optional: if defined, only managers specified here will be enabled;
 **                         Supports the % wildcard; also supports 'all'
 **    _enable              1 to enable, 0 to disable
 **    _infoOnly            When non-zero, show the managers that would be updated
@@ -44,12 +44,12 @@ BEGIN
     _returnCode := '';
 
     DROP TABLE IF EXISTS TmpManagerTypeIDs;
-    
+
     CREATE TEMP TABLE TmpManagerTypeIDs (
         mgr_type_id int NOT NULL
     );
 
-    If char_length(_managerTypeIDList) > 0 THEN    
+    If char_length(_managerTypeIDList) > 0 THEN
         -- Parse _managerTypeIDList
         --
         INSERT INTO TmpManagerTypeIDs (mgr_type_id)
@@ -75,12 +75,12 @@ BEGIN
         SELECT mgr_type_id
         FROM TmpManagerTypeIDs
     LOOP
- 
+
         Call EnableDisableManagers (
-            _enable := _enable, 
-            _managerTypeID := _mgrTypeID, 
-            _managerNameList := _managerNameList, 
-            _infoOnly := _infoOnly, 
+            _enable := _enable,
+            _managerTypeID := _mgrTypeID,
+            _managerNameList := _managerNameList,
+            _infoOnly := _infoOnly,
             _message := _message,
             _returnCode := _returnCode);
 

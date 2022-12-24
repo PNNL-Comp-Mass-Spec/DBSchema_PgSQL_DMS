@@ -83,47 +83,47 @@ BEGIN
 
         Return;
     End If;
-    
+
     -- Concatenate together the parameters to build up the XML
     --
     _remoteInfoXML := '';
 
-    SELECT _remoteInfoXML || 
+    SELECT _remoteInfoXML ||
          '<host>' || value || '</host>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostName' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<user>' || value || '</user>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostUser' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<dmsPrograms>' || value || '</dmsPrograms>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostDMSProgramsPath' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<taskQueue>' || value || '</taskQueue>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteTaskQueuePath' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<workDir>' || value || '</workDir>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteWorkDirPath' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<orgDB>' || value || '</orgDB>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteOrgDBPath' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<privateKey>' || public.udf_get_filename(value) || '</privateKey>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostPrivateKeyFile' And mgr_name = _managerName);
-    
-    SELECT _remoteInfoXML || 
+
+    SELECT _remoteInfoXML ||
          '<passphrase>' || public.udf_get_filename(value) || '</passphrase>' INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
     WHERE (param_name = 'RemoteHostPassphraseFile' And mgr_name = _managerName);

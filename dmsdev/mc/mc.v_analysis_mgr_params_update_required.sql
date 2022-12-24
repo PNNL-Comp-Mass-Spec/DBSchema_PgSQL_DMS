@@ -18,9 +18,3 @@ CREATE VIEW mc.v_analysis_mgr_params_update_required AS
 
 ALTER TABLE mc.v_analysis_mgr_params_update_required OWNER TO d3l243;
 
---
--- Name: TABLE v_analysis_mgr_params_update_required; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_analysis_mgr_params_update_required TO readaccess;
-

@@ -38,9 +38,3 @@ ALTER TABLE public.t_schema_change_log ALTER COLUMN schema_change_log_id ADD GEN
 ALTER TABLE ONLY public.t_schema_change_log
     ADD CONSTRAINT pk_t_schema_change_log PRIMARY KEY (schema_change_log_id);
 
---
--- Name: TABLE t_schema_change_log; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT,INSERT ON TABLE public.t_schema_change_log TO readaccess;
-

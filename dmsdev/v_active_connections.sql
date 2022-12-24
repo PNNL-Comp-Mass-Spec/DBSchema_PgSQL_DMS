@@ -20,9 +20,3 @@ CREATE VIEW public.v_active_connections AS
 
 ALTER TABLE public.v_active_connections OWNER TO d3l243;
 
---
--- Name: TABLE v_active_connections; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.v_active_connections TO readaccess;
-

@@ -21,9 +21,3 @@ CREATE VIEW mc.v_old_param_value AS
 
 ALTER TABLE mc.v_old_param_value OWNER TO d3l243;
 
---
--- Name: TABLE v_old_param_value; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_old_param_value TO readaccess;
-

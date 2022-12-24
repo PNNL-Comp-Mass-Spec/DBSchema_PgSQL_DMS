@@ -47,9 +47,3 @@ CREATE UNIQUE INDEX ix_t_mgrs_m_name ON mc.t_mgrs USING btree (mgr_name);
 ALTER TABLE ONLY mc.t_mgrs
     ADD CONSTRAINT fk_t_mgrs_t_mgr_types FOREIGN KEY (mgr_type_id) REFERENCES mc.t_mgr_types(mgr_type_id);
 
---
--- Name: TABLE t_mgrs; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.t_mgrs TO readaccess;
-

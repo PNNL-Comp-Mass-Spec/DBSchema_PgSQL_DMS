@@ -24,10 +24,10 @@ BEGIN
 
     -- Disable Space managers (type 8)
     Call EnableDisableAllManagers (
-        _managerTypeIDList := '8', 
-        _managerNameList := '', 
+        _managerTypeIDList := '8',
+        _managerNameList := '',
         _enable := 0,
-        _infoOnly := _infoOnly, 
+        _infoOnly := _infoOnly,
         _message := _message,
         _returnCode := _returnCode);
 

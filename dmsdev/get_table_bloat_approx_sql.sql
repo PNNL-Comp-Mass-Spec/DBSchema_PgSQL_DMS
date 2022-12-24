@@ -133,5 +133,6 @@ COMMENT ON FUNCTION public.get_table_bloat_approx_sql(OUT full_table_name text, 
 -- Name: FUNCTION get_table_bloat_approx_sql(OUT full_table_name text, OUT approx_bloat_percent double precision, OUT approx_bloat_bytes double precision, OUT fillfactor integer); Type: ACL; Schema: public; Owner: d3l243
 --
 
+REVOKE ALL ON FUNCTION public.get_table_bloat_approx_sql(OUT full_table_name text, OUT approx_bloat_percent double precision, OUT approx_bloat_bytes double precision, OUT fillfactor integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.get_table_bloat_approx_sql(OUT full_table_name text, OUT approx_bloat_percent double precision, OUT approx_bloat_bytes double precision, OUT fillfactor integer) TO pgwatch2;
 

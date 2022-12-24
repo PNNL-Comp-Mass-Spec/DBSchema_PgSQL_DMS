@@ -14,9 +14,3 @@ CREATE VIEW mc.v_mgr_work_dir AS
 
 ALTER TABLE mc.v_mgr_work_dir OWNER TO d3l243;
 
---
--- Name: TABLE v_mgr_work_dir; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT SELECT ON TABLE mc.v_mgr_work_dir TO readaccess;
-

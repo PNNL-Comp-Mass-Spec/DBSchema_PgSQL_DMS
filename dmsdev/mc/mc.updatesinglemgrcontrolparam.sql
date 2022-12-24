@@ -46,7 +46,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, 0);
     _message := '';
     _returnCode := '';
-    
+
     ---------------------------------------------------
     -- Create a temporary table that will hold the entry_id
     -- values that need to be updated in mc.t_param_value
@@ -83,7 +83,7 @@ BEGIN
 
 
     RAISE Info 'Param type ID is %', _paramTypeID;
-    
+
     ---------------------------------------------------
     -- Parse the manager ID list
     ---------------------------------------------------
@@ -95,7 +95,7 @@ BEGIN
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     RAISE Info 'Inserted % manager IDs into TmpMgrIDs', _myRowCount;
-    
+
     If _infoOnly <> 0 Then
         _infoHead := format('%-10s %-10s %-25s %-25s %-15s %-15s %-15s %-15s',
                             'Entry_ID',
@@ -141,7 +141,7 @@ BEGIN
                  INNER JOIN mc.v_param_value PV
                    ON PV.mgr_id = M.mgr_id AND
                       PV.type_id = _paramTypeID
-            WHERE M.control_from_website = 0           
+            WHERE M.control_from_website = 0
             UNION
             SELECT NULL AS entry_id,
                    M.mgr_id,
@@ -175,7 +175,7 @@ BEGIN
         END LOOP;
 
         _message := public.udf_append_to_text(_message, 'See the Output window for details');
-    
+
         Return;
     End If;
 

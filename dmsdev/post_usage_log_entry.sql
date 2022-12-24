@@ -1,8 +1,8 @@
 --
--- Name: postusagelogentry(text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: post_usage_log_entry(text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text DEFAULT ''::text, IN _minimumupdateinterval integer DEFAULT 1)
+CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _message text DEFAULT ''::text, IN _minimumupdateinterval integer DEFAULT 1)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -40,12 +40,12 @@ BEGIN
     --
     If Not Exists (SELECT posted_by FROM t_usage_stats WHERE posted_by = _postedBy) THEN
         _currentOperation := 'appending to';
-    
+
         INSERT INTO t_usage_stats (posted_by, last_posting_time, usage_count)
         VALUES (_postedBy, CURRENT_TIMESTAMP, 1);
     Else
         _currentOperation := 'updating';
-    
+
         UPDATE t_usage_stats
         SET last_posting_time = CURRENT_TIMESTAMP, usage_count = usage_count + 1
         WHERE posted_by = _postedBy;
@@ -60,7 +60,7 @@ BEGIN
         SELECT MAX(posting_time) INTO _lastUpdated
         FROM t_usage_log
         WHERE posted_by = _postedBy AND calling_user = _callingUser;
-       
+
         IF Found Then
             If CURRENT_TIMESTAMP <= _lastUpdated + _minimumUpdateInterval * INTERVAL '1 hour' Then
                 -- The last usage message was posted recently
@@ -84,23 +84,23 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := format('Error %s %s: %s', 
+    _message := format('Error %s %s: %s',
                 _currentOperation, _currentTargetTable, _exceptionMessage);
 
     RAISE Warning '%', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'PostUsageLogEntry', 'public');
+    Call post_log_entry ('Error', _message, 'post_usage_log_entry', 'public');
 
 END
 $$;
 
 
-ALTER PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) OWNER TO d3l243;
+ALTER PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE post_usage_log_entry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.postusagelogentry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) IS 'PostUsageLogEntry';
+COMMENT ON PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _message text, IN _minimumupdateinterval integer) IS 'PostUsageLogEntry';
 

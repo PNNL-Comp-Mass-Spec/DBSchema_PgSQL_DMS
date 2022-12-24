@@ -18,9 +18,3 @@ ALTER TABLE public.t_usage_stats OWNER TO d3l243;
 ALTER TABLE ONLY public.t_usage_stats
     ADD CONSTRAINT pk_t_usage_stats PRIMARY KEY (posted_by);
 
---
--- Name: TABLE t_usage_stats; Type: ACL; Schema: public; Owner: d3l243
---
-
-GRANT SELECT ON TABLE public.t_usage_stats TO readaccess;
-
