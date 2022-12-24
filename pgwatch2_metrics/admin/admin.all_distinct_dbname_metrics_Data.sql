@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.2
--- Dumped by pg_dump version 14.2
+-- Dumped from database version 15.1
+-- Dumped by pg_dump version 15.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -46,10 +46,12 @@ DMS_PrismWeb3	locks_mode	2020-05-12 11:43:35.56476-07
 DMS_PrismWeb3	psutil_disk_io_total	2020-05-12 11:43:35.566517-07
 DMS_PrismWeb3	backup_age_pgbackrest	2020-05-12 12:43:15.068505-07
 DMS_PrismWeb3	configured_dbs	2020-05-12 23:42:19.439743-07
-DMS_PrismWeb3	configuration_changes	2022-02-14 09:50:29.418858-08
-DMS_PrismWeb3	object_changes	2022-02-14 09:50:29.453651-08
 DMS_PrismWeb3	psutil_disk_io_total_per_disk	2020-05-13 19:13:52.113185-07
-DMS_PrismDB1	configuration_changes	2022-02-23 20:30:24.934738-08
+DMS_PrismDB1	index_changes	2022-10-26 18:21:40.630226-07
+DMS_PrismWeb3	configuration_changes	2022-11-14 04:09:44.996261-08
+DMS_PrismWeb3	object_changes	2022-11-14 04:20:45.066754-08
+DMS_PrismDB1	show_plans_realtime	2022-12-05 17:26:50.358599-08
+DMS_PrismDB1	configuration_changes	2022-12-22 02:56:54.198659-08
 DMS_PrismDB1	server_log_event_counts	2020-06-23 16:36:04.624322-07
 DMS_PrismDB1	recommendations	2020-06-23 16:36:04.625543-07
 DMS_PrismDB1	psutil_mem	2020-06-23 16:36:04.626274-07
@@ -86,12 +88,8 @@ DMS_PrismDB1	instance_up	2022-03-04 15:12:28.99984-08
 DMS_PrismWeb3	sequence_health	2022-03-04 15:12:29.00544-08
 DMS_PrismWeb3	instance_up	2022-03-04 15:12:29.011733-08
 DMS_PrismDB1	privilege_changes	2022-03-05 18:16:44.158301-08
-DMS_PrismWeb3	privilege_changes	2022-03-05 18:16:44.158301-08
-DMS_PrismDB1	sproc_changes	2022-03-05 18:26:44.217098-08
-DMS_PrismWeb3	sproc_changes	2022-03-05 18:26:44.217098-08
-DMS_PrismWeb3	table_changes	2022-03-21 04:01:47.444848-07
-DMS_PrismWeb3	index_changes	2022-03-24 05:25:48.047134-07
-DMS_PrismDB1	index_changes	2022-03-24 05:25:48.047134-07
+DMS_PrismDB1	table_changes	2022-03-29 08:47:49.3182-07
+DMS_PrismDB1	sproc_changes	2022-05-31 21:52:04.133405-07
 \.
 
 

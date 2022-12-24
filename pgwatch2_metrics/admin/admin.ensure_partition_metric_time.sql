@@ -33,7 +33,7 @@ BEGIN
     EXECUTE l_sql;
     EXECUTE format($$COMMENT ON TABLE public.%s IS 'pgwatch2-generated-metric-lvl'$$, quote_ident(metric));
   END IF;
-  
+
   FOR i IN 0..partitions_to_precreate LOOP
 
     IF l_unlogged > '' THEN     /* realtime / unlogged metrics have always 1d partitions */
@@ -84,7 +84,7 @@ BEGIN
 
   END LOOP;
 
-  
+
 END;
 $_$;
 

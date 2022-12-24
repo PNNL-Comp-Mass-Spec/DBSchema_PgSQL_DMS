@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION admin.get_top_level_metric_tables(OUT table_name text
     LANGUAGE sql
     AS $$
   select nspname||'.'||quote_ident(c.relname) as tbl
-  from pg_class c 
+  from pg_class c
   join pg_namespace n on n.oid = c.relnamespace
   where relkind in ('r', 'p') and nspname = 'public'
   and exists (select 1 from pg_attribute where attrelid = c.oid and attname = 'time')

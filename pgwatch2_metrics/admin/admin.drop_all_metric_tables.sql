@@ -15,9 +15,9 @@ BEGIN
     EXECUTE 'DROP TABLE ' || r.table_name;
     i := i + 1;
   END LOOP;
-  
+
   EXECUTE 'truncate admin.all_distinct_dbname_metrics';
-  
+
   RETURN i;
 END;
 $$;

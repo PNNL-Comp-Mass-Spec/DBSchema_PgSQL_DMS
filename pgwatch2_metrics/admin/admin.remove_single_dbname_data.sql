@@ -12,7 +12,7 @@ DECLARE
   l_schema_type text;
 BEGIN
   SELECT schema_type INTO l_schema_type FROM admin.storage_schema_type;
-  
+
   IF l_schema_type IN ('metric', 'metric-time') THEN
     FOR r IN select * from admin.get_top_level_metric_tables()
     LOOP
@@ -26,7 +26,7 @@ BEGIN
  select 'subpartitions.'|| quote_ident(c.relname) as table_name
                  from pg_class c
                 join pg_namespace n on n.oid = c.relnamespace
-                join pg_inherits i ON c.oid=i.inhrelid                
+                join pg_inherits i ON c.oid=i.inhrelid
                 join pg_class c2 on i.inhparent = c2.oid
                 where c.relkind in ('r', 'p') and nspname = 'subpartitions'
                 and exists (select 1 from pg_attribute where attrelid = c.oid and attname = 'time')
@@ -43,9 +43,9 @@ BEGIN
   ELSE
     raise exception 'unsupported schema type: %', l_schema_type;
   END IF;
-  
+
   EXECUTE 'delete from admin.all_distinct_dbname_metrics where dbname = $1' USING dbname;
-  
+
   RETURN i;
 END;
 $_$;
