@@ -241,3 +241,9 @@ ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate ALTER COLUMN "PERSON_SUB_TYPE
 
 ALTER FOREIGN TABLE pnnldata.vw_pub_pnnl_associate OWNER TO d3l243;
 
+--
+-- Name: TABLE vw_pub_pnnl_associate; Type: ACL; Schema: pnnldata; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pnnldata.vw_pub_pnnl_associate TO writeaccess;
+

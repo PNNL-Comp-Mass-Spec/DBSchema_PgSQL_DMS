@@ -129,3 +129,9 @@ ALTER FOREIGN TABLE pnnldata."VW_PUB_DATE_DIM" ALTER COLUMN "RPT_DATE" OPTIONS (
 
 ALTER FOREIGN TABLE pnnldata."VW_PUB_DATE_DIM" OWNER TO d3l243;
 
+--
+-- Name: TABLE "VW_PUB_DATE_DIM"; Type: ACL; Schema: pnnldata; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE pnnldata."VW_PUB_DATE_DIM" TO writeaccess;
+
