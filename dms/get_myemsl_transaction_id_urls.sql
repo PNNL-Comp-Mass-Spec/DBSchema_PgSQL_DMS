@@ -13,12 +13,13 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_transaction_id_urls(_datasetid inte
 **  Auth:   mem
 **  Date:   02/28/2018 mem - Initial version
 **          06/13/2022 mem - Ported to PostgreSQL
+**          12/24/2022 mem - Use ::text
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    SELECT string_agg('https://status.my.emsl.pnl.gov/view/' || Cast(transaction_id AS text), ', ' ORDER BY transaction_id)
+    SELECT string_agg('https://status.my.emsl.pnl.gov/view/' || transaction_id::text, ', ' ORDER BY transaction_id)
     INTO _result
     FROM cap.V_MyEMSL_DatasetID_TransactionID
     WHERE Dataset_ID = _datasetID AND

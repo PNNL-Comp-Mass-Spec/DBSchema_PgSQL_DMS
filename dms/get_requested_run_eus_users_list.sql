@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid in
 **  Date:   02/15/2006
 **          06/13/2022 mem - Ported to PostgreSQL
 **          12/09/2022 mem - Assure that _mode is uppercase
+**          12/24/2022 mem - Use ::text
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,7 @@ BEGIN
         WHERE t_requested_run_eus_users.request_id = _requestID;
 
     ElseIf _mode = 'V' Then
-        SELECT string_agg(NAME_FM || ' (' || CAST(EUS_Person_ID AS text) || ')', '; ' ORDER BY NAME_FM)
+        SELECT string_agg(NAME_FM || ' (' || EUS_Person_ID::text || ')', '; ' ORDER BY NAME_FM)
         INTO _result
         FROM t_requested_run_eus_users INNER JOIN
              t_eus_users ON t_requested_run_eus_users.eus_person_id = t_eus_users.person_id

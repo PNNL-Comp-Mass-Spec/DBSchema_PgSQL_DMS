@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION public.get_dem_code_string(_code integer) RETURNS tex
 **  Auth:   grk
 **  Date:   07/27/2006
 **          06/14/2022 mem - Ported to PostgreSQL
+**          12/24/2022 mem - Use format()
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ BEGIN
                         else 'Undefined'
                     end;
 
-    RETURN _description || ' (' || cast(_code as text) || ')';
+    RETURN format('%s (%s)',  _description, _code);
 END
 $$;
 
