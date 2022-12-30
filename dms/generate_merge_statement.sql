@@ -1,10 +1,10 @@
 --
--- Name: generate_merge_statement(text, text, text, boolean, boolean, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: generate_merge_statement(text, text, text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sourceschema text DEFAULT 'public'::text, _targetschema text DEFAULT 'target_schema'::text, _includedeletetest boolean DEFAULT true, _includeactionsummary boolean DEFAULT true, _includecreatetablesql boolean DEFAULT true) RETURNS text
+CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sourceschema text DEFAULT 'public'::text, _targetschema text DEFAULT 'target_schema'::text, _includedeletetest boolean DEFAULT true) RETURNS text
     LANGUAGE plpgsql
-    AS $_$
+    AS $$
 /****************************************************
 **
 **  Desc:   Creates a Merge statement for the specified table (which must exist in schema _sourceSchema)
@@ -15,7 +15,11 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
 **          Modeled after code from http://weblogs.sqlteam.com/billg/archive/2011/02/15/generate-merge-statements-FROM-a-table.aspx
 **
 **  Arguments:
-**    _includeCreateTableSql   When _includeActionSummary is non-zero, includes the T-SQL for creating table Tmp_SummaryOfChanges
+**    _tableName            Source table name
+**    _sourceSchema         Source table schema
+**    _targetSchema         Target schema name
+**    _includeDeleteTest    When false, use "WHEN NOT MATCHED BY SOURCE And t.PrimaryKeyColumn = _targetItemID THEN DELETE"
+**                          When true,  use "WHEN NOT MATCHED BY SOURCE And t.PrimaryKeyColumn = _targetItemID And _deleteExtras THEN DELETE"
 **
 **  Auth:   mem
 **  Date:   10/26/2015 mem - Initial version
@@ -24,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
 **          11/06/2019 mem - Add an additional test to the WHEN NOT MATCHED BY SOURCE clause
 **          01/06/2022 mem - Fix bug showing target table name in the action table
 **          11/15/2022 mem - Ported to PostgreSQL
+**          12/30/2022 mem - Removed _includeActionSummary and _includeCreateTableSQL since PostgreSQL does not support creating a change summary table
 **
 *****************************************************/
 DECLARE
@@ -44,11 +49,9 @@ DECLARE
 BEGIN
     _tableName := Coalesce(_tableName, '');
     _sourceSchema := Coalesce(_sourceSchema, '');
-    _targetSchema := Coalesce(_targetSchema, '');
+    _targetSchema := Coalesce(_targetSchema, 'target_schema');
 
     _includeDeleteTest := Coalesce(_includeDeleteTest, true);
-    _includeActionSummary := Coalesce(_includeActionSummary, true);
-    _includeCreateTableSql := Coalesce(_includeCreateTableSql, true);
     _message := '';
 
     If _tableName = '' Then
@@ -59,6 +62,10 @@ BEGIN
     If _sourceSchema = '' Then
         _message := '_sourceSchema cannot be empty';
         RETURN _message;
+    End If;
+
+    If _targetSchema = '' Then
+        _targetSchema := 'target_schema';
     End If;
 
     _newLine := chr(10);
@@ -191,27 +198,6 @@ BEGIN
            (2205, 'regclass', true),
            (2206, 'regtype',  true),
            (2275, 'cstring',  true);
-
-    ---------------------------------------------------
-    -- Include Action Summary statements if specified
-    ---------------------------------------------------
-
-    If _includeActionSummary Then
-        If _includeCreateTableSql Then
-            INSERT INTO Tmp_SQL (value) VALUES ('CREATE TEMP TABLE Tmp_SummaryOfChanges (');
-            INSERT INTO Tmp_SQL (value) VALUES ('    TableName text,');
-            INSERT INTO Tmp_SQL (value) VALUES ('    UpdateAction text,');
-            INSERT INTO Tmp_SQL (value) VALUES ('    InsertedKey text,');
-            INSERT INTO Tmp_SQL (value) VALUES ('    DeletedKey text');
-            INSERT INTO Tmp_SQL (value) VALUES (');');
-            INSERT INTO Tmp_SQL (value) VALUES ('');
-            INSERT INTO Tmp_SQL (value) VALUES ('Declare _tableName text;');
-            INSERT INTO Tmp_SQL (value) VALUES ('_tableName := ''' || _tableName || ''';');
-            INSERT INTO Tmp_SQL (value) VALUES ('');
-        End If;
-
-        INSERT INTO Tmp_SQL (value) VALUES ('DELETE FROM Tmp_SummaryOfChanges;');
-    End If;
 
     ---------------------------------------------------
     -- Show a message if the table has an identity column
@@ -481,53 +467,7 @@ BEGIN
         INSERT INTO Tmp_SQL (value) VALUES (format('WHEN NOT MATCHED BY SOURCE And t.%I = _targetItemID And _deleteExtras THEN DELETE', _firstPrimaryKeyColumn));
     End If;
 
-    If NOT _includeActionSummary Then
-        INSERT INTO Tmp_SQL (value) VALUES (';');
-    Else
-        ---------------------------------------------------
-        -- SQL to populate the action summary table
-        ---------------------------------------------------
-        --
-        INSERT INTO Tmp_SQL (value) VALUES (format('OUTPUT ''%s'', $action,', _tableName));
-
-        ---------------------------------------------------
-        -- Loop through the the list of primary keys
-        ---------------------------------------------------
-        --
-        FOR _columnInfo IN
-            SELECT ColumnName,
-                   IsNumberCol,
-                   IsDateCol
-            FROM Tmp_PrimaryKeyColumns
-            ORDER BY ColumnName
-        LOOP
-            If _insertedList <> '' Then
-                -- Concatenate updated values
-                --
-                _insertedList := _insertedList || ' || '', '' || ';
-                _deletedList := _deletedList  || ' || '', '' || ';
-            End If;
-
-            If Not _columnInfo.IsNumberCol And Not _columnInfo.IsDateCol Then
-                -- Text column
-                --
-                _insertedList := _insertedList || format('Inserted.%I', _columnInfo.ColumnName);
-                _deletedList  := _deletedList  || format('Deleted.%I' , _columnInfo.ColumnName);
-            Else
-                -- Number or Date column
-                --
-                _insertedList := _insertedList || format('Inserted.%I::text', _columnInfo.ColumnName);
-                _deletedList  := _deletedList  || format('Deleted.%I::text' , _columnInfo.ColumnName);
-            End If;
-
-        END LOOP;
-
-        INSERT INTO Tmp_SQL (value) VALUES (format('       %s,', _insertedList));
-        INSERT INTO Tmp_SQL (value) VALUES (format('       %s' , _deletedList));
-        INSERT INTO Tmp_SQL (value) VALUES (format('       INTO Tmp_SummaryOfChanges;'));
-        INSERT INTO Tmp_SQL (value) VALUES ('');
-
-    End If;
+    INSERT INTO Tmp_SQL (value) VALUES (';');
 
     SELECT string_agg(value, _newline ORDER BY entry_id)
     INTO _message
@@ -541,14 +481,8 @@ BEGIN
 
     RETURN _message;
 END
-$_$;
+$$;
 
 
-ALTER FUNCTION public.generate_merge_statement(_tablename text, _sourceschema text, _targetschema text, _includedeletetest boolean, _includeactionsummary boolean, _includecreatetablesql boolean) OWNER TO d3l243;
-
---
--- Name: FUNCTION generate_merge_statement(_tablename text, _sourceschema text, _targetschema text, _includedeletetest boolean, _includeactionsummary boolean, _includecreatetablesql boolean); Type: COMMENT; Schema: public; Owner: d3l243
---
-
-COMMENT ON FUNCTION public.generate_merge_statement(_tablename text, _sourceschema text, _targetschema text, _includedeletetest boolean, _includeactionsummary boolean, _includecreatetablesql boolean) IS 'GenerateMergeStatement';
+ALTER FUNCTION public.generate_merge_statement(_tablename text, _sourceschema text, _targetschema text, _includedeletetest boolean) OWNER TO d3l243;
 
