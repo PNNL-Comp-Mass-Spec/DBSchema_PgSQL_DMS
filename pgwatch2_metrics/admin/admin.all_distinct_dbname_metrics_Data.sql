@@ -50,7 +50,6 @@ DMS_PrismWeb3	psutil_disk_io_total_per_disk	2020-05-13 19:13:52.113185-07
 DMS_PrismDB1	index_changes	2022-10-26 18:21:40.630226-07
 DMS_PrismWeb3	configuration_changes	2022-11-14 04:09:44.996261-08
 DMS_PrismWeb3	object_changes	2022-11-14 04:20:45.066754-08
-DMS_PrismDB1	show_plans_realtime	2022-12-05 17:26:50.358599-08
 DMS_PrismDB1	configuration_changes	2022-12-22 02:56:54.198659-08
 DMS_PrismDB1	server_log_event_counts	2020-06-23 16:36:04.624322-07
 DMS_PrismDB1	recommendations	2020-06-23 16:36:04.625543-07
