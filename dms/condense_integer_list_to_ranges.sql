@@ -1,8 +1,8 @@
 --
--- Name: condense_integer_list_to_ranges(boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: condense_integer_list_to_ranges(boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.condense_integer_list_to_ranges(IN _debugmode boolean DEFAULT false)
+CREATE OR REPLACE FUNCTION public.condense_integer_list_to_ranges(_debugmode boolean DEFAULT false) RETURNS TABLE(category text, valuelist text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,20 +14,15 @@ CREATE OR REPLACE PROCEDURE public.condense_integer_list_to_ranges(IN _debugmode
 **      Leverages code from Dwain Camps
 **      https://www.simple-talk.com/sql/database-administration/condensing-a-delimited-list-of-integers-in-sql-server/
 **
-**  The calling procedure must create two temporary tables
-**  The Tmp_ValuesByCategory table must be populated with the integers
+**  The calling procedure must create a temporary table with category names and integer values
 **
 **      CREATE TEMP TABLE Tmp_ValuesByCategory (
 **          Category text,
-**          Value int Not null
+**          Value int             -- Null values will be ignored
 **      );
 **
-**      CREATE TEMP TABLE Tmp_Condensed_Data (
-**          Category text,
-**          ValueList text
-**      );
+**  Example commands:
 **
-**  Example data:
 **      INSERT INTO Tmp_ValuesByCategory
 **      VALUES ('Job', 100),
 **             ('Job', 101),
@@ -42,9 +37,12 @@ CREATE OR REPLACE PROCEDURE public.condense_integer_list_to_ranges(IN _debugmode
 **             ('Dataset', 508),
 **             ('Dataset', 512);
 **
-**      After calling this procedure, Tmp_Condensed_Data will have:
+**      SELECT * FROM condense_integer_list_to_ranges(false);
+**
+**      Example results:
+**
 **          Category  ValueList
-**          Job       100-102, 114-115, 118
+**          --------  ---------------------
 **          Job       100-102, 114-115, 118
 **          Dataset   500, 505-508, 512
 **
@@ -55,7 +53,6 @@ CREATE OR REPLACE PROCEDURE public.condense_integer_list_to_ranges(IN _debugmode
 *****************************************************/
 DECLARE
     _categoryRange record;
-    _categoryRangeList record;
 BEGIN
     ----------------------------------------------------
     -- Validate the inputs
@@ -73,87 +70,75 @@ BEGIN
         RETURN;
     End If;
 
-    If Not EXISTS (
-       SELECT *
-       FROM information_schema.tables
-       WHERE table_type = 'LOCAL TEMPORARY' AND
-             table_name::citext = 'Tmp_Condensed_Data'
-    ) Then
-        RAISE WARNING 'Target table Tmp_Condensed_Data not found: cannot store the results';
-        RETURN;
-    End If;
-
     ----------------------------------------------------
-    -- Validate the temporary tables
+    -- Validate the temporary table
     ----------------------------------------------------
     --
-    UPDATE Tmp_ValuesByCategory
+    UPDATE Tmp_ValuesByCategory V
     SET Category = ''
-    WHERE Category IS NULL;
+    WHERE V.Category IS NULL;
 
-    TRUNCATE TABLE Tmp_Condensed_Data;
+    CREATE TEMP TABLE Tmp_ValueCategories (
+        Category text
+    );
 
     ----------------------------------------------------
     -- Process the data
     ----------------------------------------------------
     --
-    INSERT INTO Tmp_Condensed_Data (Category, ValueList)
-    SELECT Category, ''
-    FROM Tmp_ValuesByCategory
-    GROUP BY Category;
+    INSERT INTO Tmp_ValueCategories (Category)
+    SELECT V.Category
+    FROM Tmp_ValuesByCategory V
+    GROUP BY V.Category;
 
+    RETURN QUERY
     WITH Islands AS (
         SELECT RankQ.Category, MIN(RankQ.Value) AS StartValue, MAX(RankQ.Value) AS EndValue
         FROM (
-            SELECT Category,
-                   Value,
-                   Value - ROW_NUMBER() OVER (PARTITION BY Category ORDER BY Value) AS rn  -- This column represents the 'staggered rows'
-            FROM Tmp_ValuesByCategory) RankQ
+            SELECT V.Category,
+                   V.Value,
+                   V.Value - ROW_NUMBER() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn  -- This column represents the 'staggered rows'
+            FROM Tmp_ValuesByCategory V
+            WHERE Not V.Value Is Null
+            ) RankQ
         GROUP BY RankQ.Category, RankQ.rn
     )
-    UPDATE Tmp_Condensed_Data
-    SET ValueList = RangeListQ.RangeList
+    SELECT ValueListQ.Category, ValueListQ.ValueList
     FROM (
-        SELECT RangeQ.Category, string_agg(RangeQ.ValueList, ', ') RangeList
+        SELECT RangeQ.Category, string_agg(RangeQ.ValueList, ', ') ValueList
         FROM (
-            SELECT a.category, Case When b.StartValue = b.EndValue Then b.StartValue::text Else format('%s-%s', b.StartValue,b.EndValue) End as ValueList
-            FROM Tmp_Condensed_Data a INNER JOIN Islands b ON a.Category = b.Category
+            SELECT a.category, Case When b.StartValue = b.EndValue Then b.StartValue::text Else format('%s-%s', b.StartValue,b.EndValue) End As ValueList
+            FROM Tmp_ValueCategories a INNER JOIN Islands b ON a.Category = b.Category
             ORDER BY b.StartValue) RangeQ
-        GROUP BY RangeQ.Category) RangeListQ
-    WHERE Tmp_Condensed_Data.Category = RangeListQ.Category;
+        GROUP BY RangeQ.Category) ValueListQ;
 
     If _debugMode Then
         FOR _categoryRange IN
             SELECT RankQ.Category, MIN(RankQ.Value) AS StartValue, MAX(RankQ.Value) AS EndValue
             FROM (
-                SELECT Category,
-                       Value,
-                       Value - ROW_NUMBER() OVER (PARTITION BY Category ORDER BY Value) AS rn
-                FROM Tmp_ValuesByCategory) RankQ
+                SELECT V.Category,
+                       V.Value,
+                       V.Value - ROW_NUMBER() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn
+                FROM Tmp_ValuesByCategory V
+                WHERE Not V.Value Is Null) RankQ
             GROUP BY RankQ.Category, RankQ.rn
             ORDER BY RankQ.Category, RankQ.rn
         LOOP
             RAISE INFO 'Category %, values % to %', _categoryRange.Category, _categoryRange.StartValue, _categoryRange.EndValue;
         END LOOP;
 
-        FOR _categoryRangeList IN
-            SELECT Category, ValueList
-            FROM Tmp_Condensed_Data
-            ORDER BY Category
-        LOOP
-            RAISE INFO 'Category %, ranges %', _categoryRangeList.Category, _categoryRangeList.ValueList;
-        END LOOP;
     End If;
 
+    DROP TABLE Tmp_ValueCategories;
 END
 $$;
 
 
-ALTER PROCEDURE public.condense_integer_list_to_ranges(IN _debugmode boolean) OWNER TO d3l243;
+ALTER FUNCTION public.condense_integer_list_to_ranges(_debugmode boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE condense_integer_list_to_ranges(IN _debugmode boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION condense_integer_list_to_ranges(_debugmode boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.condense_integer_list_to_ranges(IN _debugmode boolean) IS 'CondenseIntegerListToRanges';
+COMMENT ON FUNCTION public.condense_integer_list_to_ranges(_debugmode boolean) IS 'CondenseIntegerListToRanges';
 
