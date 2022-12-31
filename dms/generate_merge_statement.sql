@@ -18,8 +18,7 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
 **    _tableName            Source table name
 **    _sourceSchema         Source table schema
 **    _targetSchema         Target schema name
-**    _includeDeleteTest    When false, use "WHEN NOT MATCHED BY SOURCE And t.PrimaryKeyColumn = _targetItemID THEN DELETE"
-**                          When true,  use "WHEN NOT MATCHED BY SOURCE And t.PrimaryKeyColumn = _targetItemID And _deleteExtras THEN DELETE"
+**    _includeDeleteTest    When true, include "AND _deleteExtras" in the DELETE FROM query
 **
 **  Auth:   mem
 **  Date:   10/26/2015 mem - Initial version
@@ -29,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
 **          01/06/2022 mem - Fix bug showing target table name in the action table
 **          11/15/2022 mem - Ported to PostgreSQL
 **          12/30/2022 mem - Removed _includeActionSummary and _includeCreateTableSQL since PostgreSQL does not support creating a change summary table
+**                         - Use a DELETE query instead of WHEN NOT MATCHED BY SOURCE THEN DELETE
 **
 *****************************************************/
 DECLARE
@@ -221,7 +221,7 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_SQL (value) VALUES ('');
-    INSERT INTO Tmp_SQL (value) VALUES (format('MERGE %I.%I AS t', _targetSchema, _tableName));
+    INSERT INTO Tmp_SQL (value) VALUES (format('MERGE INTO %I.%I AS t', _targetSchema, _tableName));
     INSERT INTO Tmp_SQL (value) VALUES (format('USING (SELECT * FROM %I.%I) AS s', _sourceSchema, _tableName));
 
     -- Lookup the names of the primary key columns
@@ -413,7 +413,7 @@ BEGIN
     -- SQL for inserting new rows
     ---------------------------------------------------
     --
-    INSERT INTO Tmp_SQL (value) VALUES ('WHEN NOT MATCHED BY TARGET THEN');
+    INSERT INTO Tmp_SQL (value) VALUES ('WHEN NOT MATCHED THEN');
 
     INSERT INTO Tmp_InsertableColumns (ColumnName)
     SELECT a.attname AS column_name
@@ -451,6 +451,8 @@ BEGIN
 
     INSERT INTO Tmp_SQL (value) VALUES (format('    VALUES(%s)', _list));
 
+    INSERT INTO Tmp_SQL (value) VALUES (';');
+
     ---------------------------------------------------
     -- SQL for deleting extra rows
     ---------------------------------------------------
@@ -461,13 +463,14 @@ BEGIN
     FROM Tmp_PrimaryKeyColumns
     LIMIT 1;
 
-    If NOT _includeDeleteTest Then
-        INSERT INTO Tmp_SQL (value) VALUES (format('WHEN NOT MATCHED BY SOURCE And t.%I = _targetItemID THEN DELETE', _firstPrimaryKeyColumn));
-    Else
-        INSERT INTO Tmp_SQL (value) VALUES (format('WHEN NOT MATCHED BY SOURCE And t.%I = _targetItemID And _deleteExtras THEN DELETE', _firstPrimaryKeyColumn));
-    End If;
+    INSERT INTO Tmp_SQL (value) VALUES ('');
+    INSERT INTO Tmp_SQL (value) VALUES (format('DELETE FROM %I.%I t', _targetSchema, _tableName));
+    INSERT INTO Tmp_SQL (value) VALUES (format('WHERE t.%I = _targetItemID %s',
+                                                _firstPrimaryKeyColumn,
+                                                CASE WHEN _includeDeleteTest THEN 'AND _deleteExtras AND' ELSE 'AND' END));
 
-    INSERT INTO Tmp_SQL (value) VALUES (';');
+    INSERT INTO Tmp_SQL (value) VALUES (format('     t.%I NOT IN (SELECT %I FROM %I.%I)',
+                                                _firstPrimaryKeyColumn, _firstPrimaryKeyColumn, _sourceSchema, _tableName));
 
     SELECT string_agg(value, _newline ORDER BY entry_id)
     INTO _message
