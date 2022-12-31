@@ -61,7 +61,7 @@ BEGIN
         -- t_emsl_instruments with V_NEXUS_Import_Instruments
         ---------------------------------------------------
 
-        MERGE INTO t_emsl_instruments AS Target
+        MERGE INTO t_emsl_instruments AS t
         USING
             ( SELECT    instrument_id AS Instrument_ID,
                         instrument_name AS Instrument_Name,
@@ -69,18 +69,24 @@ BEGIN
                         available_hours AS Available_Hours,
                         CASE WHEN active_sw THEN '1' ELSE '0' END AS Active_Sw,
                         CASE WHEN primary_instrument THEN '1' ELSE '0' END AS Primary_Instrument
-              FROM      V_NEXUS_Import_Instruments Source
-            ) AS Source ( Instrument_ID, Instrument_Name, Display_Name,
-                          Available_Hours, Active_Sw, Primary_Instrument )
-        ON ( target.eus_instrument_id = source.Instrument_ID )
-        WHEN MATCHED
+              FROM      V_NEXUS_Import_Instruments
+            ) AS s ( Instrument_ID, Instrument_Name, Display_Name,
+                     Available_Hours, Active_Sw, Primary_Instrument )
+        ON ( t.eus_instrument_id = s.Instrument_ID )
+        WHEN MATCHED AND (
+                t.eus_instrument_name IS DISTINCT FROM s.Instrument_Name OR
+                t.eus_display_name IS DISTINCT FROM s.Display_Name OR
+                t.eus_available_hours IS DISTINCT FROM s.Available_Hours OR
+                t.eus_active_sw IS DISTINCT FROM s.Active_Sw OR
+                t.eus_primary_instrument IS DISTINCT FROM s.Primary_Instrument
+                )
             THEN UPDATE SET
-                eus_instrument_name = Instrument_Name,
-                eus_display_name = Display_Name,
-                eus_available_hours = Available_Hours,
+                eus_instrument_name = s.Instrument_Name,
+                eus_display_name = s.Display_Name,
+                eus_available_hours = s.Available_Hours,
                 last_affected = CURRENT_TIMESTAMP,
-                eus_active_sw = Active_Sw,
-                eus_primary_instrument = Primary_Instrument
+                eus_active_sw = s.Active_Sw,
+                eus_primary_instrument = s.Primary_Instrument
         WHEN NOT MATCHED
             THEN INSERT  (
                   eus_instrument_id,
@@ -90,12 +96,12 @@ BEGIN
                   eus_active_sw,
                   eus_primary_instrument
                 ) VALUES
-                ( source.Instrument_ID,
-                  source.Instrument_Name,
-                  source.Display_Name,
-                  source.Available_Hours,
-                  source.Active_Sw,
-                  source.Primary_Instrument
+                ( s.Instrument_ID,
+                  s.Instrument_Name,
+                  s.Display_Name,
+                  s.Available_Hours,
+                  s.Active_Sw,
+                  s.Primary_Instrument
                 )
         ;
 
@@ -117,6 +123,11 @@ BEGIN
 
             _message := '';
         End If;
+
+        -- Find EUS instruments that could be deleted:
+        -- SELECT *
+        -- FROM public.t_emsl_instruments t
+        -- WHERE t.eus_instrument_id NOT IN (SELECT instrument_id FROM public.V_NEXUS_Import_Instruments)
 
     EXCEPTION
         WHEN OTHERS THEN
