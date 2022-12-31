@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
 **          11/06/2019 mem - Add an additional test to the WHEN NOT MATCHED BY SOURCE clause
 **          01/06/2022 mem - Fix bug showing target table name in the action table
 **          11/15/2022 mem - Ported to PostgreSQL
-**          12/30/2022 mem - Removed _includeActionSummary and _includeCreateTableSQL since PostgreSQL does not support creating a change summary table
+**          12/30/2022 mem - Remove _includeActionSummary and _includeCreateTableSQL since PostgreSQL does not support creating a change summary table
 **                         - Use a DELETE query instead of WHEN NOT MATCHED BY SOURCE THEN DELETE
 **
 *****************************************************/
@@ -469,7 +469,7 @@ BEGIN
                                                 _firstPrimaryKeyColumn,
                                                 CASE WHEN _includeDeleteTest THEN 'AND _deleteExtras AND' ELSE 'AND' END));
 
-    INSERT INTO Tmp_SQL (value) VALUES (format('     t.%I NOT IN (SELECT %I FROM %I.%I)',
+    INSERT INTO Tmp_SQL (value) VALUES (format('     NOT t.%I IN (SELECT %I FROM %I.%I)',
                                                 _firstPrimaryKeyColumn, _firstPrimaryKeyColumn, _sourceSchema, _tableName));
 
     SELECT string_agg(value, _newline ORDER BY entry_id)
