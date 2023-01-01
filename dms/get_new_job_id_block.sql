@@ -13,6 +13,8 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id_block(_jobcount integer, _note 
 **
 **  Example usage:
 **
+**      CREATE TEMP TABLE Tmp_Jobs (Job int);
+**
 **      INSERT INTO Tmp_Jobs (Job)
 **      SELECT job
 **      FROM get_new_job_id_block (4, 'Job created in DMS');
