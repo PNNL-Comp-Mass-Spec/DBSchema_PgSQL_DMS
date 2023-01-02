@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
 **          11/15/2022 mem - Ported to PostgreSQL
 **          12/30/2022 mem - Remove _includeActionSummary and _includeCreateTableSQL since PostgreSQL does not support creating a change summary table
 **                         - Use a DELETE query instead of WHEN NOT MATCHED BY SOURCE THEN DELETE
+**          01/01/2023 mem - Update whitespace
 **
 *****************************************************/
 DECLARE
@@ -284,7 +285,7 @@ BEGIN
     INTO _list
     FROM Tmp_PrimaryKeyColumns;
 
-    INSERT INTO Tmp_SQL (value) VALUES (format('ON ( %s )', _list));
+    INSERT INTO Tmp_SQL (value) VALUES (format('ON (%s)', _list));
 
     -- Find the updatable columns (those that are not primary keys, identity columns, computed columns, or transaction ID columns)
     --
@@ -337,7 +338,8 @@ BEGIN
         -- Do not update primary keys or identity columns
         ---------------------------------------------------
         --
-        INSERT INTO Tmp_SQL (value) VALUES ('WHEN MATCHED AND (');
+        INSERT INTO Tmp_SQL (value) VALUES ('WHEN MATCHED AND');
+        INSERT INTO Tmp_SQL (value) VALUES ('     (');
 
         ---------------------------------------------------
         -- SQL to determine if matched rows have different values
@@ -360,7 +362,7 @@ BEGIN
 
         -- Compare the non-nullable columns
         --
-        SELECT string_agg(format('    t.%I <> s.%I', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
+        SELECT string_agg(format('      t.%I <> s.%I', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
         INTO _whereListA
         FROM Tmp_UpdatableColumns C
         WHERE Not C.is_nullable AND
@@ -368,7 +370,7 @@ BEGIN
 
         -- Compare the nullable columns
         --
-        SELECT string_agg(format('    t.%I IS DISTINCT FROM s.%I', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
+        SELECT string_agg(format('      t.%I IS DISTINCT FROM s.%I', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
         INTO _whereListB
         FROM Tmp_UpdatableColumns C
         WHERE C.is_nullable AND
@@ -376,7 +378,7 @@ BEGIN
 
         -- Compare XML columns
         --
-        SELECT string_agg(format('    Coalesce(t.%I::text, '''') IS DISTINCT FROM Coalesce(s.%I::text, '''')', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
+        SELECT string_agg(format('      Coalesce(t.%I::text, '''') IS DISTINCT FROM Coalesce(s.%I::text, '''')', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
         INTO _whereListC
         FROM Tmp_UpdatableColumns C
         WHERE C.data_type_id = 142;
@@ -395,16 +397,16 @@ BEGIN
             INSERT INTO Tmp_SQL (value) VALUES (_whereListC);
         End If;
 
-        INSERT INTO Tmp_SQL (value) VALUES ('    )');
+        INSERT INTO Tmp_SQL (value) VALUES ('     ) THEN');
 
         -- SQL that actually updates the data
         --
 
-        SELECT string_agg(format('    %I = s.%I', ColumnName, ColumnName), ', ' || _newline)
+        SELECT string_agg(format('        %I = s.%I', ColumnName, ColumnName), ', ' || _newline)
         INTO _list
         FROM Tmp_UpdatableColumns;
 
-        INSERT INTO Tmp_SQL (value) VALUES ('THEN UPDATE SET');
+        INSERT INTO Tmp_SQL (value) VALUES ('    UPDATE SET');
         INSERT INTO Tmp_SQL (value) VALUES (_list);
 
     End If;
@@ -443,13 +445,13 @@ BEGIN
     INTO _list
     FROM Tmp_InsertableColumns;
 
-    INSERT INTO Tmp_SQL (value) VALUES (format('    INSERT(%s)', _list));
+    INSERT INTO Tmp_SQL (value) VALUES (format('    INSERT (%s)', _list));
 
     SELECT string_agg(format('s.%I', ColumnName), ', ')
     INTO _list
     FROM Tmp_InsertableColumns;
 
-    INSERT INTO Tmp_SQL (value) VALUES (format('    VALUES(%s)', _list));
+    INSERT INTO Tmp_SQL (value) VALUES (format('    VALUES (%s)', _list));
 
     INSERT INTO Tmp_SQL (value) VALUES (';');
 
