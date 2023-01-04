@@ -12,7 +12,7 @@ CREATE VIEW public.v_param_file_picklist AS
         CASE
             WHEN (COALESCE(pf.job_usage_last_year, 0) > 0) THEN (pf.job_usage_last_year + 1000000)
             ELSE COALESCE(pf.job_usage_count, 0)
-        END AS sortkey
+        END AS sort_key
    FROM (public.t_param_files pf
      JOIN public.t_analysis_tool tool ON ((pf.param_file_type_id = tool.param_file_type_id)))
   WHERE (pf.valid = 1);

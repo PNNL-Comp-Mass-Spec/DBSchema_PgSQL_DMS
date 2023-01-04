@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_event_log_24_hour_summary AS
- SELECT get_event_log_summary.sortkey,
+ SELECT get_event_log_summary.sortkey AS sort_key,
     get_event_log_summary.label,
     get_event_log_summary.value
    FROM public.get_event_log_summary((CURRENT_TIMESTAMP - '24:00:00'::interval), CURRENT_TIMESTAMP) get_event_log_summary(sortkey, label, value)

@@ -11,16 +11,12 @@ CREATE VIEW public.v_settings_file_picklist AS
         CASE
             WHEN (filterq.job_count > 0) THEN (filterq.job_count + 1000000)
             ELSE filterq.jobs_all_time
-        END AS sortkey
+        END AS sort_key
    FROM ( SELECT sf.file_name,
             sf.description,
             COALESCE(sf.job_usage_last_year, 0) AS job_count,
             COALESCE(sf.job_usage_count, 0) AS jobs_all_time,
-            sf.analysis_tool,
-                CASE
-                    WHEN (COALESCE(sf.job_usage_last_year, 0) > 0) THEN sf.job_usage_last_year
-                    ELSE (COALESCE(sf.job_usage_count, 0) - 100000000)
-                END AS sortkey
+            sf.analysis_tool
            FROM (public.t_settings_files sf
              JOIN public.t_analysis_tool antool ON ((sf.analysis_tool OPERATOR(public.=) antool.analysis_tool)))
           WHERE (sf.active <> 0)
@@ -29,11 +25,7 @@ CREATE VIEW public.v_settings_file_picklist AS
             sf.description,
             COALESCE(sf.job_usage_last_year, 0) AS job_count,
             COALESCE(sf.job_usage_count, 0) AS jobs_all_time,
-            antool.analysis_tool,
-                CASE
-                    WHEN (COALESCE(sf.job_usage_last_year, 0) > 0) THEN sf.job_usage_last_year
-                    ELSE (COALESCE(sf.job_usage_count, 0) - 100000000)
-                END AS sortkey
+            antool.analysis_tool
            FROM (public.t_settings_files sf
              JOIN public.t_analysis_tool antool ON ((sf.analysis_tool OPERATOR(public.=) antool.tool_base_name)))
           WHERE (sf.active <> 0)) filterq;

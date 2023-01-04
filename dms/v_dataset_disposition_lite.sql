@@ -15,7 +15,7 @@ CREATE VIEW public.v_dataset_disposition_lite AS
     v_dataset_disposition.state,
     v_dataset_disposition.instrument,
     v_dataset_disposition.created,
-    v_dataset_disposition.oper
+    v_dataset_disposition.operator
    FROM public.v_dataset_disposition;
 
 

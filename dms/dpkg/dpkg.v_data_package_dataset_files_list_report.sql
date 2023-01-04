@@ -27,7 +27,7 @@ CREATE VIEW dpkg.v_data_package_dataset_files_list_report AS
     rr.request_id AS request,
     dpd.item_added,
     ds.comment,
-    dtn.dataset_type AS type
+    dtn.dataset_type
    FROM ((((((((((dpkg.t_data_package_datasets dpd
      JOIN public.t_dataset ds ON ((dpd.dataset_id = ds.dataset_id)))
      JOIN public.t_dataset_state_name dsn ON ((dsn.dataset_state_id = ds.dataset_state_id)))

@@ -10,7 +10,7 @@ CREATE VIEW public.v_run_planning_report AS
             ELSE groupq.run_count
         END AS run_count,
     groupq.blocked,
-    groupq.blkmissing,
+    groupq.block_missing,
         CASE
             WHEN (requestlookupq.batch_id > 0) THEN groupq.batch_prefix
             ELSE groupq.request_prefix
@@ -76,7 +76,7 @@ CREATE VIEW public.v_run_planning_report AS
                     ELSE 0
                 END) AS fractionbasedrequestcount,
             max(requestq.days_in_prep_queue) AS days_in_prep_queue,
-            sum(requestq.blkmissing) AS blkmissing,
+            sum(requestq.block_missing) AS block_missing,
             sum(requestq.blocked) AS blocked
            FROM ( SELECT rr.instrument_group AS inst_group,
                     rr.separation_group,
@@ -118,7 +118,7 @@ CREATE VIEW public.v_run_planning_report AS
                         CASE
                             WHEN ((COALESCE(spr.block_and_randomize_runs, ''::bpchar) = 'yes'::bpchar) AND ((COALESCE(rr.block, 0) = 0) OR (COALESCE(rr.run_order, 0) = 0))) THEN 1
                             ELSE 0
-                        END AS blkmissing,
+                        END AS block_missing,
                         CASE
                             WHEN ((COALESCE(rr.block, 0) > 0) AND (COALESCE(rr.run_order, 0) > 0)) THEN 1
                             ELSE 0

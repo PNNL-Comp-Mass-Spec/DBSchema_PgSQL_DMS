@@ -12,8 +12,8 @@ CREATE VIEW ont.v_term AS
     t.is_root_term,
     t.is_leaf,
     t.ontology_id,
-    o.short_name AS ontology_shortname,
-    o.full_name AS ontology_fullname
+    o.short_name AS ontology_short_name,
+    o.full_name AS ontology_full_name
    FROM (ont.t_ontology o
      JOIN ont.t_term t ON ((o.ontology_id = t.ontology_id)));
 

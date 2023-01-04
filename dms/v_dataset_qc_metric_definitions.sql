@@ -13,7 +13,7 @@ CREATE VIEW public.v_dataset_qc_metric_definitions AS
     t_dataset_qc_metric_names.optimal,
     t_dataset_qc_metric_names.purpose,
     t_dataset_qc_metric_names.description,
-    t_dataset_qc_metric_names.sort_key AS sortkey
+    t_dataset_qc_metric_names.sort_key
    FROM public.t_dataset_qc_metric_names
   WHERE (t_dataset_qc_metric_names.ignored = 0);
 

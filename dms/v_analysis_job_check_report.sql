@@ -11,7 +11,7 @@ CREATE VIEW public.v_analysis_job_check_report AS
     tool.analysis_tool AS tool_name,
     ds.dataset,
     j.comment,
-    j.priority AS pri,
+    j.priority,
     spath.machine_name AS storage,
     spath.storage_path AS path,
     j.param_file_name AS param_file,

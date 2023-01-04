@@ -16,7 +16,7 @@ CREATE VIEW public.v_param_file_detail_report AS
     public.combine_paths((tool.param_file_storage_path)::text, (pf.param_file_name)::text) AS file_path,
     pf.valid,
     public.get_param_file_mass_mods_table_code(pf.param_file_id) AS mass_mods,
-    public.get_maxquant_mass_mods_list(pf.param_file_id) AS max_quant_mods,
+    public.get_maxquant_mass_mods_list(pf.param_file_id) AS maxquant_mods,
     pf.mod_list AS mod_code_list,
     public.get_param_file_mass_mod_code_list(pf.param_file_id, 1) AS mod_codes_with_symbols
    FROM ((public.t_param_files pf

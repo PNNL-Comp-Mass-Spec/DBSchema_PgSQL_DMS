@@ -11,7 +11,7 @@ CREATE VIEW public.v_experiment_list_report AS
     e.sample_concentration AS concentration,
     e.created,
     c.campaign,
-    cec.biomaterial_list AS cell_cultures,
+    cec.biomaterial_list,
     cec.reference_compound_list AS ref_compounds,
     e.exp_id AS id
    FROM ((((public.t_experiments e

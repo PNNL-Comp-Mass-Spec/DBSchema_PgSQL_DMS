@@ -21,7 +21,7 @@ CREATE VIEW public.v_requested_run_admin_report AS
     qs.queue_state_name AS queue_state,
     COALESCE(assignedinstrument.instrument, ''::public.citext) AS queued_instrument,
     rr.queue_date,
-    rr.priority AS pri,
+    rr.priority,
     rr.batch_id AS batch,
     rr.block,
     rr.run_order,

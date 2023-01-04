@@ -18,7 +18,7 @@ CREATE VIEW ont.v_ncbi_taxonomy_detail_report AS
     nodes.genetic_code_id,
     gencode.genetic_code_name,
     nodes.mito_genetic_code_id,
-    gencodemit.genetic_code_name AS mito_gencodename,
+    gencodemit.genetic_code_name AS mito_gen_code_name,
     nodes.gen_bank_hidden,
     nodes.rank
    FROM (((((((ont.t_ncbi_taxonomy_names nodenames

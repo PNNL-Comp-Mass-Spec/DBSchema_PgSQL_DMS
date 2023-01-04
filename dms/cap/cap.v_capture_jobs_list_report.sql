@@ -10,7 +10,7 @@ CREATE VIEW cap.v_capture_jobs_list_report AS
     statsq.num_steps AS steps,
     (((js.step_tool)::text || ':'::text) || (ssn.step_state)::text) AS active_step,
     j.dataset,
-    j.dataset_id AS ds_id,
+    j.dataset_id,
     j.results_folder_name,
     j.imported,
     j.start,

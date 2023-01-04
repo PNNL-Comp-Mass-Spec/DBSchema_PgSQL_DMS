@@ -15,7 +15,7 @@ CREATE VIEW public.v_organism_detail_report AS
     ont.get_taxid_taxonomy_list(o.ncbi_taxonomy_id, 0) AS taxonomy_list,
     o.domain,
     o.kingdom,
-    o.phylum AS phylum_division,
+    o.phylum AS phylum_or_division,
     o.class,
     o."order",
     o.family,

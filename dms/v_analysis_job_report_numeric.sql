@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_analysis_job_report_numeric AS
  SELECT j.job,
-    j.priority AS pri,
+    j.priority,
     j.state_name_cached AS state,
     tool.analysis_tool AS tool_name,
     ds.dataset,

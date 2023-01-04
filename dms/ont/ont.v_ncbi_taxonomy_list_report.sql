@@ -12,7 +12,7 @@ CREATE VIEW ont.v_ncbi_taxonomy_list_report AS
     nodes.embl_code,
     division.division_name AS division,
     gencode.genetic_code_name,
-    gencodemit.genetic_code_name AS mito_gencodename,
+    gencodemit.genetic_code_name AS mito_gen_code_name,
     synonymstats.synonyms,
     nodes.gen_bank_hidden
    FROM (((((((ont.t_ncbi_taxonomy_names nodenames

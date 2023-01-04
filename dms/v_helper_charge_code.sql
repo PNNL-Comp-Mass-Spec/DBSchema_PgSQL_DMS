@@ -13,7 +13,7 @@ CREATE VIEW public.v_helper_charge_code AS
     COALESCE((dmsuser.username)::text, ('D'::text || (cc.resp_prn)::text)) AS owner_prn,
     dmsuser.name AS owner_name,
     cc.setup_date,
-    cc.sort_key AS sortkey,
+    cc.sort_key,
     cc.activation_state
    FROM ((public.t_charge_code cc
      JOIN public.t_charge_code_activation_state cca ON ((cc.activation_state = cca.activation_state)))
