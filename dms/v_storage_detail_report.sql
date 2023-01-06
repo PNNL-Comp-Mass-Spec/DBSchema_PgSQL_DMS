@@ -7,7 +7,7 @@ CREATE VIEW public.v_storage_detail_report AS
     t_storage_path.storage_path AS path,
     t_storage_path.vol_name_client AS vol_client,
     t_storage_path.vol_name_server AS vol_server,
-    t_storage_path.storage_path_function AS function,
+    t_storage_path.storage_path_function,
     t_storage_path.instrument,
     t_storage_path.description
    FROM public.t_storage_path;

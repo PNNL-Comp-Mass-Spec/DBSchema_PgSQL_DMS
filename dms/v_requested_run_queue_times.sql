@@ -10,7 +10,7 @@ CREATE VIEW public.v_requested_run_queue_times AS
     dataq.batch_id,
     dataq.dataset_id,
     dataq.dataset_created,
-    dataq.dataset_acqtimestart,
+    dataq.dataset_acqtimestart AS dataset_acq_time_start,
         CASE
             WHEN (dataq."Days From Requested Run Create To Dataset Acquired" IS NULL) THEN
             CASE

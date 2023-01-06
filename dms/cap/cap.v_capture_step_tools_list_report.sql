@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW cap.v_capture_step_tools_list_report AS
- SELECT t_step_tools.step_tool,
+ SELECT t_step_tools.step_tool AS name,
     t_step_tools.description,
     t_step_tools.bionet_required,
     t_step_tools.only_on_storage_server,

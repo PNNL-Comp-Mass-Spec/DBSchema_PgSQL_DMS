@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_prep_lc_column_entry AS
- SELECT prepcolumn.prep_column,
+ SELECT prepcolumn.prep_column AS column_name,
     prepcolumn.mfg_name,
     prepcolumn.mfg_model,
-    prepcolumn.mfg_serial,
+    prepcolumn.mfg_serial AS mfg_serial_number,
     prepcolumn.packing_mfg,
     prepcolumn.packing_type,
     prepcolumn.particle_size,

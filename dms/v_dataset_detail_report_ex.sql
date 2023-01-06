@@ -12,7 +12,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     lccart.cart_name AS lc_cart,
     cartconfig.cart_config_name AS lc_cart_config,
     lccol.lc_column,
-    ds.wellplate AS wellplate_name,
+    ds.wellplate,
     ds.well,
     dst.dataset_type AS type,
     u.name_with_username AS operator,

@@ -13,7 +13,7 @@ CREATE TABLE ont.t_ncbi_taxonomy_nodes (
     inherited_gc smallint NOT NULL,
     mito_genetic_code_id smallint NOT NULL,
     inherited_mito_gc smallint NOT NULL,
-    gen_bank_hidden smallint NOT NULL,
+    genbank_hidden smallint NOT NULL,
     hidden_subtree smallint NOT NULL,
     comments public.citext
 );

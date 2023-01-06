@@ -4,7 +4,7 @@
 
 CREATE VIEW cap.v_capture_step_tools_entry AS
  SELECT t_step_tools.step_tool_id AS id,
-    t_step_tools.step_tool,
+    t_step_tools.step_tool AS name,
     t_step_tools.description,
     t_step_tools.bionet_required,
     t_step_tools.only_on_storage_server,

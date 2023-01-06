@@ -5,8 +5,8 @@
 CREATE VIEW public.v_charge_code_export AS
  SELECT cc.charge_code,
     cca.activation_state_name AS state,
-    cc.sub_account_title AS subaccount,
-    cc.wbs_title AS workbreakdownstructure,
+    cc.sub_account_title AS sub_account,
+    cc.wbs_title AS work_breakdown_structure,
     cc.charge_code_title AS title,
     cc.usage_sample_prep,
     cc.usage_requested_run,

@@ -5,7 +5,7 @@
 CREATE VIEW public.v_lc_cart_detail_report AS
  SELECT cart.cart_id AS id,
     cart.cart_name,
-    cart.cart_description AS descripton,
+    cart.cart_description AS description,
     cartstate.cart_state AS state,
     COALESCE(cartconfigq.configcount, (0)::bigint) AS configuration_count
    FROM ((public.t_lc_cart cart

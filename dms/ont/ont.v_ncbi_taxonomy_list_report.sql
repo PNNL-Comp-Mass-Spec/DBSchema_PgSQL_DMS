@@ -14,7 +14,7 @@ CREATE VIEW ont.v_ncbi_taxonomy_list_report AS
     gencode.genetic_code_name,
     gencodemit.genetic_code_name AS mito_gen_code_name,
     synonymstats.synonyms,
-    nodes.gen_bank_hidden
+    nodes.genbank_hidden
    FROM (((((((ont.t_ncbi_taxonomy_names nodenames
      JOIN ont.t_ncbi_taxonomy_nodes nodes ON ((nodenames.tax_id = nodes.tax_id)))
      JOIN ont.t_ncbi_taxonomy_division division ON ((nodes.division_id = division.division_id)))

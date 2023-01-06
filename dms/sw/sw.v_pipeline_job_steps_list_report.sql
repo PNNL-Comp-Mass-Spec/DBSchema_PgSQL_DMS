@@ -52,7 +52,7 @@ CREATE VIEW sw.v_pipeline_job_steps_list_report AS
     js.remote_info_id,
     js.remote_start,
     js.remote_finish,
-    js.job_plus_step AS "#id"
+    js.job_plus_step AS id
    FROM (((((sw.t_job_steps js
      JOIN sw.t_job_step_state_name ssn ON ((js.state = ssn.step_state_id)))
      JOIN sw.t_jobs j ON ((js.job = j.job)))

@@ -4,7 +4,7 @@
 
 CREATE VIEW sw.v_pipeline_step_tools_entry AS
  SELECT t_step_tools.step_tool_id AS id,
-    t_step_tools.step_tool,
+    t_step_tools.step_tool AS name,
     t_step_tools.type,
     t_step_tools.description,
     t_step_tools.shared_result_version,

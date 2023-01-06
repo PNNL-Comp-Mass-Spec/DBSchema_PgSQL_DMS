@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_lcmsnet_column_export AS
- SELECT lc.lc_column AS columnnumber,
-    lc.column_state_id AS stateid,
+ SELECT lc.lc_column AS column_number,
+    lc.column_state_id AS state_id,
     statename.column_state AS state,
     lc.created,
     lc.operator_prn AS operator,

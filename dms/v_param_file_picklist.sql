@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_param_file_picklist AS
  SELECT pf.param_file_name AS name,
-    pf.param_file_description AS "desc",
+    pf.param_file_description AS description,
     COALESCE(pf.job_usage_last_year, 0) AS job_count,
     COALESCE(pf.job_usage_count, 0) AS jobs_all_time,
     pf.param_file_id AS id,

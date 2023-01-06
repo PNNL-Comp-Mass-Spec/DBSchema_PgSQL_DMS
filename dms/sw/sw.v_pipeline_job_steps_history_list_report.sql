@@ -36,7 +36,7 @@ CREATE VIEW sw.v_pipeline_job_steps_history_list_report AS
     js.completion_message,
     js.evaluation_code,
     js.evaluation_message,
-    js.job_step_saved_combo AS "#id"
+    js.job_step_saved_combo AS id
    FROM (((sw.t_job_steps_history js
      JOIN sw.t_job_step_state_name ssn ON ((js.state = ssn.step_state_id)))
      JOIN ( SELECT t_jobs_history.job,

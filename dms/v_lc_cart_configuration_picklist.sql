@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_lc_cart_configuration_picklist AS
  SELECT config.cart_config_name AS name,
-    config.description AS "desc",
+    config.description,
     COALESCE(config.dataset_usage_last_year, 0) AS dataset_count,
     COALESCE(config.dataset_usage_count, 0) AS datasets_all_time,
     cart.cart_name AS cart,

@@ -7,7 +7,7 @@ CREATE VIEW public.v_biomaterial_entry AS
     b.source_name,
     b.contact_prn,
     b.pi_prn,
-    btn.biomaterial_type AS culture_type_name,
+    btn.biomaterial_type AS biomaterial_type_name,
     b.reason,
     b.comment,
     c.campaign,
