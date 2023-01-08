@@ -28,6 +28,12 @@ CREATE VIEW dpkg.v_myemsl_uploads AS
 ALTER TABLE dpkg.v_myemsl_uploads OWNER TO d3l243;
 
 --
+-- Name: VIEW v_myemsl_uploads; Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON VIEW dpkg.v_myemsl_uploads IS 'This view is used by clsDataPackageArchiver in the DataPackage Archive Manager';
+
+--
 -- Name: TABLE v_myemsl_uploads; Type: ACL; Schema: dpkg; Owner: d3l243
 --
 

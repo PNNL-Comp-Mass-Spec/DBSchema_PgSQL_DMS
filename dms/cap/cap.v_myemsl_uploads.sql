@@ -35,6 +35,12 @@ CREATE VIEW cap.v_myemsl_uploads AS
 ALTER TABLE cap.v_myemsl_uploads OWNER TO d3l243;
 
 --
+-- Name: VIEW v_myemsl_uploads; Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON VIEW cap.v_myemsl_uploads IS 'This view is used by clsPluginMain of the ArchiveStatusCheckPlugin';
+
+--
 -- Name: TABLE v_myemsl_uploads; Type: ACL; Schema: cap; Owner: d3l243
 --
 
