@@ -12,7 +12,7 @@ CREATE VIEW sw.v_pipeline_job_steps_history_list_report AS
     j.dataset,
     js.start,
     js.finish,
-    round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 2) AS runtime,
+    round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 2) AS runtime_minutes,
     js.processor,
     js.state,
         CASE

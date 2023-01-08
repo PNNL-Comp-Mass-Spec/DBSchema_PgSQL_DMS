@@ -16,7 +16,7 @@ CREATE VIEW sw.v_pipeline_job_steps_list_report AS
         CASE
             WHEN ((js.state = 9) OR (js.remote_info_id > 1)) THEN round((EXTRACT(epoch FROM (COALESCE((js.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.remote_start)::timestamp with time zone)) / 60.0), 2)
             ELSE round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 2)
-        END AS runtime,
+        END AS runtime_minutes,
     js.processor,
     js.state,
         CASE

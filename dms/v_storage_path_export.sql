@@ -4,11 +4,11 @@
 
 CREATE VIEW public.v_storage_path_export AS
  SELECT t_storage_path.storage_path_id AS id,
-    t_storage_path.storage_path AS "Path",
-    t_storage_path.machine_name AS machinename,
-    t_storage_path.vol_name_client AS volclient,
-    t_storage_path.vol_name_server AS volserver,
-    t_storage_path.storage_path_function AS "Function",
+    t_storage_path.storage_path,
+    t_storage_path.machine_name,
+    t_storage_path.vol_name_client AS vol_client,
+    t_storage_path.vol_name_server AS vol_server,
+    t_storage_path.storage_path_function,
     t_storage_path.instrument,
     t_storage_path.description,
     t_storage_path.created

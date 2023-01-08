@@ -5,7 +5,7 @@
 CREATE VIEW public.v_analysis_delta_t_report AS
  SELECT j.job,
     (EXTRACT(epoch FROM (j.finish - j.start)) / 60.0) AS delta_t,
-    j.priority AS pri,
+    j.priority,
     js.job_state AS state,
     tool.analysis_tool AS tool_name,
     ds.dataset,

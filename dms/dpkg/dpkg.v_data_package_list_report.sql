@@ -4,7 +4,7 @@
 
 CREATE VIEW dpkg.v_data_package_list_report AS
  SELECT dp.data_pkg_id AS id,
-    dp.package_name,
+    dp.package_name AS name,
     dp.description,
     COALESCE(ownerinfo.name, dp.owner) AS owner,
     dp.path_team AS team,

@@ -20,7 +20,7 @@ CREATE VIEW dpkg.v_data_package_analysis_jobs_list_report AS
     aj.protein_options_list AS protein_options,
     aj.state_name_cached AS state,
     aj.finish AS finished,
-    round((aj.processing_time_minutes)::numeric, 2) AS runtime,
+    round((aj.processing_time_minutes)::numeric, 2) AS runtime_minutes,
     aj.request_id AS job_request,
     COALESCE(aj.results_folder_name, '(none)'::public.citext) AS results_folder,
         CASE

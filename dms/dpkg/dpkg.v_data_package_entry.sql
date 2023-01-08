@@ -4,7 +4,7 @@
 
 CREATE VIEW dpkg.v_data_package_entry AS
  SELECT t_data_package.data_pkg_id AS id,
-    t_data_package.package_name,
+    t_data_package.package_name AS name,
     t_data_package.package_type,
     t_data_package.description,
     t_data_package.comment,

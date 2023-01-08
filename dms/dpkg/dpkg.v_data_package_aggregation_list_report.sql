@@ -13,7 +13,7 @@ CREATE VIEW dpkg.v_data_package_aggregation_list_report AS
             WHEN (datapkgjobs.job IS NULL) THEN 'No'::public.citext
             ELSE 'Yes'::public.citext
         END AS in_package,
-    jobq.param_file_name,
+    jobq.param_file_name AS param_file,
     jobq.settings_file,
     datapkgdatasets.data_pkg_id AS data_package_id,
     jobq.organism_db,

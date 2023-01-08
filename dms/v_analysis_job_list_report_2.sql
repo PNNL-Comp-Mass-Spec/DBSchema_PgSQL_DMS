@@ -24,7 +24,7 @@ CREATE VIEW public.v_analysis_job_list_report_2 AS
     j.created,
     j.start AS started,
     j.finish AS finished,
-    round((j.processing_time_minutes)::numeric, 2) AS runtime,
+    round((j.processing_time_minutes)::numeric, 2) AS runtime_minutes,
     round((j.progress)::numeric, 2) AS progress,
     round((j.eta_minutes)::numeric, 1) AS eta_minutes,
     j.request_id AS job_request,

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW dpkg.v_osm_package_state_picklist AS
- SELECT t_osm_package_state.state_name,
+ SELECT t_osm_package_state.state_name AS name,
     t_osm_package_state.description
    FROM dpkg.t_osm_package_state;
 

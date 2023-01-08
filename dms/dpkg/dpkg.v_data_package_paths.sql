@@ -4,7 +4,7 @@
 
 CREATE VIEW dpkg.v_data_package_paths AS
  SELECT dp.data_pkg_id AS id,
-    dp.package_directory,
+    dp.package_directory AS package_file_folder,
     (((((dp.path_team)::text || '\'::text) || (dp.path_year)::text) || '\'::text) || (dp.package_directory)::text) AS storage_path_relative,
     ((((((dps.path_shared_root)::text || (dp.path_team)::text) || '\'::text) || (dp.path_year)::text) || '\'::text) || (dp.package_directory)::text) AS share_path,
     ((((((dps.path_web_root)::text || (dp.path_team)::text) || '/'::text) || (dp.path_year)::text) || '/'::text) || (dp.package_directory)::text) AS web_path,

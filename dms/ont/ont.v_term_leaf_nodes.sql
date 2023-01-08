@@ -12,8 +12,8 @@ CREATE VIEW ont.v_term_leaf_nodes AS
     v_term.is_root_term,
     v_term.is_leaf,
     v_term.ontology_id,
-    v_term.ontology_short_name AS ontology_shortname,
-    v_term.ontology_full_name AS ontology_fullname
+    v_term.ontology_short_name,
+    v_term.ontology_full_name
    FROM ont.v_term
   WHERE (v_term.is_leaf = 1);
 

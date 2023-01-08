@@ -4,7 +4,7 @@
 
 CREATE VIEW dpkg.v_osm_package_list_report AS
  SELECT o.osm_pkg_id AS id,
-    o.osm_package_name,
+    o.osm_package_name AS name,
     o.package_type AS type,
     o.description,
     o.keywords,

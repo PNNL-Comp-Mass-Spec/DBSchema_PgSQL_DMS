@@ -41,7 +41,7 @@ CREATE VIEW public.v_data_package_analysis_job_psm_list_report AS
     aj.protein_options_list AS protein_options,
     aj.comment,
     aj.finish AS finished,
-    (aj.processing_time_minutes)::numeric(9,2) AS runtime,
+    (aj.processing_time_minutes)::numeric(9,2) AS runtime_minutes,
     aj.request_id AS job_request,
     COALESCE(aj.results_folder_name, '(none)'::public.citext) AS results_folder,
         CASE

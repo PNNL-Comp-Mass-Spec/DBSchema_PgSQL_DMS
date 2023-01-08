@@ -19,7 +19,7 @@ CREATE VIEW public.v_analysis_job_report_numeric AS
     j.created,
     j.start AS started,
     j.finish AS finished,
-    round((j.processing_time_minutes)::numeric, 2) AS runtime,
+    round((j.processing_time_minutes)::numeric, 2) AS runtime_minutes,
     COALESCE(j.assigned_processor_name, '(none)'::public.citext) AS cpu,
     COALESCE(j.results_folder_name, '(none)'::public.citext) AS results_folder,
     j.batch_id AS batch,

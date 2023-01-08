@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW dpkg.v_data_package_state_picklist AS
- SELECT t_data_package_state.state_name,
+ SELECT t_data_package_state.state_name AS name,
     t_data_package_state.description
    FROM dpkg.t_data_package_state;
 

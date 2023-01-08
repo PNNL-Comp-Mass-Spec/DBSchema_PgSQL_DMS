@@ -23,7 +23,7 @@ CREATE VIEW public.v_analysis_request_jobs_list_report AS
     j.batch_id AS batch,
     j.request_id,
     (((dfp.dataset_folder_path)::text || '\'::text) || (j.results_folder_name)::text) AS results_folder,
-    (j.processing_time_minutes)::numeric(9,2) AS runtime,
+    (j.processing_time_minutes)::numeric(9,2) AS runtime_minutes,
     ds.dataset_id
    FROM (((((public.t_analysis_job j
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))

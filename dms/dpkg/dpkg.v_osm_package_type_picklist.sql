@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW dpkg.v_osm_package_type_picklist AS
- SELECT t_osm_package_type.package_type,
+ SELECT t_osm_package_type.package_type AS name,
     t_osm_package_type.description
    FROM dpkg.t_osm_package_type;
 
