@@ -16,9 +16,9 @@ CREATE VIEW cap.v_myemsl_uploads AS
     mu.status_num,
     mu.error_code,
     mu.transaction_id,
-    (((statusu.uri_path)::text || (mu.status_num)::text) ||
+    (((p.uri_path)::text || (mu.status_num)::text) ||
         CASE
-            WHEN (statusu.uri_path OPERATOR(public.~~) '%/status/%'::public.citext) THEN '/xml'::text
+            WHEN (p.uri_path OPERATOR(public.~~) '%/status/%'::public.citext) THEN '/xml'::text
             ELSE ''::text
         END) AS status_uri,
     mu.verified,
@@ -28,7 +28,7 @@ CREATE VIEW cap.v_myemsl_uploads AS
     mu.eus_proposal_id,
     mu.eus_uploader_id
    FROM ((cap.t_myemsl_uploads mu
-     LEFT JOIN cap.t_uri_paths statusu ON ((mu.status_uri_path_id = statusu.uri_path_id)))
+     LEFT JOIN cap.t_uri_paths p ON ((mu.status_uri_path_id = p.uri_path_id)))
      LEFT JOIN public.t_dataset ds ON ((mu.dataset_id = ds.dataset_id)));
 
 
