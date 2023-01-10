@@ -8,6 +8,8 @@ CREATE VIEW public.v_dataset_qc_metrics_detail_report AS
     dataq.acq_time_start,
     dataq.dataset_id,
     dataq.dataset,
+    dataq.dataset_rating,
+    dataq.dataset_rating_id,
     dataq.dataset_folder_path,
     dataq.qc_metric_stats,
     dataq.quameter_job,
@@ -113,18 +115,22 @@ CREATE VIEW public.v_dataset_qc_metrics_detail_report AS
     (dataq.ms2_rep_ion_2missing || '| Number of peptides (PSMs) where all but 2 of the reporter ions were seen'::text) AS ms2_rep_ion_2missing,
     (dataq.ms2_rep_ion_3missing || '| Number of peptides (PSMs) where all but 3 of the reporter ions were seen'::text) AS ms2_rep_ion_3missing,
     dataq.smaqc_last_affected,
+    dataq.psm_source_job,
     (dataq.qcdm || '| Overall confidence using model developed by Brett Amidan'::text) AS qcdm,
     dataq.qcdm_last_affected,
     dataq.mass_error_ppm,
     dataq.mass_error_ppm_refined,
     dataq.mass_error_ppm_viper,
     dataq.amts_10pct_fdr,
+    dataq.amts_25pct_fdr,
     (dataq.qcart || '| Overall confidence using model developed by Allison Thompson and Ryan Butner'::text) AS qcart
    FROM ( SELECT instname.instrument_group,
             instname.instrument,
             ds.acq_time_start,
             dqc.dataset_id,
             ds.dataset,
+            drn.dataset_rating,
+            ds.dataset_rating_id,
             dfp.dataset_folder_path,
             ('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/instrument/'::text || (instname.instrument)::text) AS qc_metric_stats,
             dqc.quameter_job,
@@ -232,14 +238,17 @@ CREATE VIEW public.v_dataset_qc_metrics_detail_report AS
             dqc.last_affected AS smaqc_last_affected,
             public.number_to_string((dqc.qcdm)::double precision, 3) AS qcdm,
             dqc.qcdm_last_affected,
+            dqc.psm_source_job,
             public.number_to_string((dqc.mass_error_ppm)::double precision, 3) AS mass_error_ppm,
             public.number_to_string((dqc.mass_error_ppm_refined)::double precision, 3) AS mass_error_ppm_refined,
             public.number_to_string(dqc.mass_error_ppm_viper, 3) AS mass_error_ppm_viper,
             dqc.amts_10pct_fdr,
+            dqc.amts_25pct_fdr,
             public.number_to_string((dqc.qcart)::double precision, 3) AS qcart
-           FROM (((public.t_dataset_qc dqc
+           FROM ((((public.t_dataset_qc dqc
              JOIN public.t_dataset ds ON ((dqc.dataset_id = ds.dataset_id)))
              JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
+             JOIN public.t_dataset_rating_name drn ON ((ds.dataset_rating_id = drn.dataset_rating_id)))
              LEFT JOIN public.v_dataset_folder_paths dfp ON ((dqc.dataset_id = dfp.dataset_id)))) dataq;
 
 
