@@ -4,7 +4,7 @@
 
 CREATE VIEW dpkg.v_myemsl_uploads AS
  SELECT mu.entry_id,
-    mu.data_pkg_id,
+    mu.data_pkg_id AS data_package_id,
     mu.subfolder,
     mu.file_count_new,
     mu.file_count_updated,

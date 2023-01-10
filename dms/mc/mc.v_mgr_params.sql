@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW mc.v_mgr_params AS
- SELECT pv.mgr_id AS managerid,
-    m.mgr_name AS managername,
-    mt.mgr_type_name AS managertype,
-    pt.param_name AS parametername,
-    pv.value AS parametervalue,
+ SELECT pv.mgr_id AS manager_id,
+    m.mgr_name AS manager_name,
+    mt.mgr_type_name AS manager_type,
+    pt.param_name AS parameter_name,
+    pv.value AS parameter_value,
     pv.comment,
     pv.entry_id,
     pv.last_affected,
