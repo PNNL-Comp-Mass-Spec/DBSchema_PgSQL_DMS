@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_capture_task(IN _jobnumber integer, INOUT
 **      Deletes the given capture task job from t_tasks and t_task_steps, t_task_step_dependencies, and t_task_parameters
 **
 **  Auth:   mem
-**          09/12/2009 mem - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
+**  Date:   09/12/2009 mem - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          09/11/2012 mem - Renamed from DeleteJob to DeleteCaptureTask
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          06/16/2017 mem - Restrict access using verify_sp_authorized

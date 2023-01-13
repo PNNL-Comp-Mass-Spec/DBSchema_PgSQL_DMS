@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION sw.get_sha1_hash(_input text, _capitalize boolean DEF
 **    Select sw.get_sha1_hash(null);            -- null
 **
 **  Auth:   mem
-**          06/26/2022 mem - Initial version
+**  Date:   06/26/2022 mem - Initial version
 **
 *****************************************************/
 DECLARE

@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION sw.get_results_directory_name(_job integer, _tag text
 **      SELECT * FROM sw.get_results_directory_name(100000, 'MSG');
 **
 **  Auth:   grk
-**          01/31/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
+**  Date:   01/31/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
 **          11/30/2022 mem - Ported to PostgresQL
 **
 *****************************************************/

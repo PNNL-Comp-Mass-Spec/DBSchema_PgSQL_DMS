@@ -20,9 +20,9 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 **      In this case, blank lines will not be included in output table
 **
 **  Arguments:
-**      _delimitedList     List of values, e.g. 'Value1,Value2'
-**      _delimiter         Delimiter (comma by default)
-**      _maxRows           Maximum number of rows to return (0 to return all); useful if parsing a comma-separated list of items and the final item is a comment field, which itself might contain commas
+**    _delimitedList     List of values, e.g. 'Value1,Value2'
+**    _delimiter         Delimiter (comma by default)
+**    _maxRows           Maximum number of rows to return (0 to return all); useful if parsing a comma-separated list of items and the final item is a comment field, which itself might contain commas
 **
 **  Auth:   mem
 **  Date:   10/16/2007

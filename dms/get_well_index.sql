@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition public.citext) RE
 **  Return values: corresponding well index, or 0 if invalid position
 **
 **  Arguments:
-**      _wellPosition   Well position, e.g. B3 or H04
+**    _wellPosition   Well position, e.g. B3 or H04
 **
 **  Auth:   grk
 **  Date:   07/15/2000

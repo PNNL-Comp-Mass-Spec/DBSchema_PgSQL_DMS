@@ -10,7 +10,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_orphaned_jobs(IN _infoonly boolean DEFAUL
 **  Desc:   Delete capture task jobs with state = 0 where the dataset no longer exists in DMS
 **
 **  Auth:   mem
-**          05/22/2019 mem - Initial version
+**  Date:   05/22/2019 mem - Initial version
 **          10/11/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/

@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoo
 **          agree with the capture task job steps for each capture task job
 **
 **  Auth:   mem
-**          01/22/2010 mem - Initial version
+**  Date:   01/22/2010 mem - Initial version
 **          03/10/2014 mem - Fixed logic related to _completedJobsOnly
 **          09/30/2022 mem - Fixed bug that used the wrong state_id for completed tasks
 **                         - Ported to PostgreSQL

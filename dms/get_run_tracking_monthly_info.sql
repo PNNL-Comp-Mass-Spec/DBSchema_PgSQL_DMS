@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text
 **    _options      Reserved for future use
 **
 **  Auth:   grk
-**          02/14/2012 grk - initial release
+**  Date:   02/14/2012 grk - initial release
 **          02/15/2012 grk - added interval comment handing
 **          06/08/2012 grk - added lookup for _maxNormalInterval
 **          04/27/2020 mem - Update data validation checks
