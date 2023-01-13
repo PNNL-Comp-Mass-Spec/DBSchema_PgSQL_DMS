@@ -28,7 +28,8 @@ CREATE VIEW sw.v_job_steps_history_export AS
     js.remote_finish,
     j.transfer_folder_path,
     js.tool_version_id,
-    stv.tool_version
+    stv.tool_version,
+    js.saved
    FROM (((sw.t_job_steps_history js
      JOIN sw.t_job_step_state_name ssn ON ((js.state = ssn.step_state_id)))
      JOIN sw.t_jobs_history j ON (((js.job = j.job) AND (js.saved = j.saved))))

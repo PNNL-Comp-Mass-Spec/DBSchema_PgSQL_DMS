@@ -26,7 +26,8 @@ CREATE VIEW cap.v_task_steps_history AS
     js.tool_version_id,
     stv.tool_version,
     dfp.dataset_folder_path,
-    j.state AS job_state
+    j.state AS job_state,
+    js.saved
    FROM (((((((cap.t_task_steps_history js
      JOIN cap.t_task_step_state_name ssn ON ((js.state = ssn.step_state_id)))
      JOIN cap.t_tasks_history j ON (((js.job = j.job) AND (js.saved = j.saved))))
