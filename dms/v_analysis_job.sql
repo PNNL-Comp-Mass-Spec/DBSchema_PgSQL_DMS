@@ -11,7 +11,7 @@ CREATE VIEW public.v_analysis_job AS
     j.param_file_name,
     j.settings_file_name,
     tool.param_file_storage_path,
-    j.organism_db_name AS organism_dbname,
+    j.organism_db_name,
     j.protein_collection_list,
     j.protein_options_list AS protein_options,
     o.organism_db_path AS organism_dbstorage_path,

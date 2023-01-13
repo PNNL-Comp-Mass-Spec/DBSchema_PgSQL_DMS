@@ -8,16 +8,16 @@ CREATE VIEW public.v_instrument_list_export AS
     inst.description,
     inst.room_number AS room,
     inst.usage,
-    inst.operations_role AS opsrole,
+    inst.operations_role AS ops_role,
     inst.status,
     inst.instrument_class AS class,
     inst.capture_method AS capture,
-    instclass.raw_data_type AS rawdatatype,
-    srcpath.source_path AS sourcepath,
-    storagepath.storage_path AS storagepath,
-    instclass.is_purgeable AS ispurgable,
-    instclass.requires_preparation AS requirespreparation,
-    inst.percent_emsl_owned AS percentemslowned
+    instclass.raw_data_type,
+    srcpath.source_path,
+    storagepath.storage_path,
+    instclass.is_purgeable,
+    instclass.requires_preparation,
+    inst.percent_emsl_owned
    FROM (((public.t_instrument_name inst
      JOIN ( SELECT t_storage_path.storage_path_id,
             ((t_storage_path.vol_name_client)::text || (t_storage_path.storage_path)::text) AS storage_path
