@@ -1,8 +1,8 @@
 --
--- Name: v_analysis_job_export_multi_align; Type: VIEW; Schema: public; Owner: d3l243
+-- Name: v_analysis_job_export_multialign; Type: VIEW; Schema: public; Owner: d3l243
 --
 
-CREATE VIEW public.v_analysis_job_export_multi_align AS
+CREATE VIEW public.v_analysis_job_export_multialign AS
  SELECT ds.dataset_id AS datasetid,
     spath.vol_name_client AS volname,
     spath.storage_path AS path,
@@ -38,12 +38,12 @@ CREATE VIEW public.v_analysis_job_export_multi_align AS
   WHERE ((j.analysis_tool_id = ANY (ARRAY[2, 7, 10, 11, 12, 16, 18, 27])) AND (j.job_state_id = 4));
 
 
-ALTER TABLE public.v_analysis_job_export_multi_align OWNER TO d3l243;
+ALTER TABLE public.v_analysis_job_export_multialign OWNER TO d3l243;
 
 --
--- Name: TABLE v_analysis_job_export_multi_align; Type: ACL; Schema: public; Owner: d3l243
+-- Name: TABLE v_analysis_job_export_multialign; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE public.v_analysis_job_export_multi_align TO readaccess;
-GRANT SELECT ON TABLE public.v_analysis_job_export_multi_align TO writeaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_export_multialign TO readaccess;
+GRANT SELECT ON TABLE public.v_analysis_job_export_multialign TO writeaccess;
 
