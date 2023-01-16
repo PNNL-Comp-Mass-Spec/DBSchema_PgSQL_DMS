@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_dataset_type_list(_instru
 **  Date:   08/28/2010 grk - Initial version
 **          02/04/2021 mem - Add argument _delimiter
 **          06/14/2022 mem - Ported to PostgreSQL
+**          01/15/2023 mem - Cast _instrumentGroup to citext
 **
 *****************************************************/
 DECLARE
@@ -23,7 +24,7 @@ BEGIN
     SELECT string_agg(dataset_type, _delimiter ORDER BY dataset_type)
     INTO _result
     FROM t_instrument_group_allowed_ds_type
-    WHERE instrument_group = _instrumentGroup;
+    WHERE instrument_group = _instrumentGroup::citext;
 
     RETURN _result;
 END
