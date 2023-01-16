@@ -17,6 +17,7 @@ CREATE VIEW public.v_dataset_export AS
     ds.comment,
     dsrating.dataset_rating AS rating,
     rr.request_id AS request,
+    ds.dataset_state_id AS state_id,
     dsn.dataset_state AS state,
     ds.created,
     ds.folder_name,
