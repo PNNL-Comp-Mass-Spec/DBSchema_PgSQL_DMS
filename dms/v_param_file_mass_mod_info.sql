@@ -6,6 +6,7 @@ CREATE VIEW public.v_param_file_mass_mod_info AS
  SELECT pf.param_file_name,
     pfmm.param_file_id,
     s.local_symbol,
+    pfmm.local_symbol_id,
     pfmm.mod_type_symbol,
     r.residue_symbol,
     mcf.affected_atom,
