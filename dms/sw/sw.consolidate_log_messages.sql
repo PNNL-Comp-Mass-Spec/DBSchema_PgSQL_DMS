@@ -30,10 +30,6 @@ CREATE OR REPLACE FUNCTION sw.consolidate_log_messages(_messagetype text DEFAULT
 *****************************************************/
 DECLARE
     _message text;
-    _sqlState text;
-    _exceptionMessage text;
-    _exceptionDetail text;
-    _exceptionContext text;
 
     _deletedMessageCount int := 0;
     _duplicateMessageCount int := 0;
@@ -41,6 +37,11 @@ DECLARE
     _statusDelete citext;
     _callingProcName text;
     _retriesRemaining int := 2;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
 
     ---------------------------------------------------

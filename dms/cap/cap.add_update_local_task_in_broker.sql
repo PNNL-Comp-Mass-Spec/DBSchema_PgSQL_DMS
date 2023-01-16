@@ -53,14 +53,15 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized bool;
-    _sqlState text;
-    _exceptionMessage text;
-    _exceptionDetail text;
-    _exceptionContext text;
 
     _logErrors bool := true;
     _state int;
     _reset bool := false;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
 
     _message := '';

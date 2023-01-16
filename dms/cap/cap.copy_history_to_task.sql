@@ -31,11 +31,6 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 **
 *****************************************************/
 DECLARE
-    _sqlState text;
-    _exceptionMessage text;
-    _exceptionDetail text;
-    _exceptionContext text;
-
     _currentLocation text := 'Start';
     _dateStamp timestamp;
     _newJob int;
@@ -43,6 +38,11 @@ DECLARE
     _similarJob int;
     _jobList text;
     _myRowCount int;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
 
     _message := '';

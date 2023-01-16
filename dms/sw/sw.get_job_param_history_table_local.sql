@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_history_table_local(_job integer) RE
 *****************************************************/
 DECLARE
     _message citext;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;

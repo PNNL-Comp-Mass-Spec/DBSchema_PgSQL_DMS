@@ -41,10 +41,6 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized bool;
-    _sqlState text;
-    _exceptionMessage text;
-    _exceptionDetail text;
-    _exceptionContext text;
 
     _jobInfo record;
     _xmlParameters xml;
@@ -54,6 +50,11 @@ DECLARE
     _infoHeadSeparator text;
     _infoData text;
     _previewData record;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
 
     _message := '';

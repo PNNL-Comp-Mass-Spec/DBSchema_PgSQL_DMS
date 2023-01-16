@@ -71,7 +71,8 @@ DECLARE
     _previewData record;
 
     _mgrNames text[];
-    _sqlstate text;
+
+    _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
@@ -426,7 +427,7 @@ EXCEPTION
                     _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
                     _logError => true);
 
-    _returnCode := _sqlstate;
+    _returnCode := _sqlState;
 
     DROP TABLE IF EXISTS Tmp_ManagerList;
 END

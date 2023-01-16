@@ -23,6 +23,7 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized bool;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;

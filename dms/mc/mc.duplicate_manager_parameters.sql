@@ -32,7 +32,8 @@ DECLARE
     _myRowCount int := 0;
     _message text = '';
     _returnCode text = '';
-    _sqlstate text;
+
+    _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;

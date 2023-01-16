@@ -26,13 +26,14 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized bool;
+
+    _stepToolId int;
+    _myRowCount int;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
-
-    _stepToolId int;
-    _myRowCount int;
 BEGIN
 
     _message := '';

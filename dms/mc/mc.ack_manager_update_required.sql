@@ -29,7 +29,8 @@ DECLARE
     _myRowCount int;
     _mgrID int;
     _paramID int;
-    _sqlstate text;
+
+    _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
@@ -108,7 +109,7 @@ EXCEPTION
                     format('update of ManagerUpdateRequired for %s', _managerName),
                     _logError => true);
 
-    _returnCode := _sqlstate;
+    _returnCode := _sqlState;
 
 END
 $$;

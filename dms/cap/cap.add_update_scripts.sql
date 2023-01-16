@@ -35,15 +35,16 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized bool;
-    _sqlState text;
-    _exceptionMessage text;
-    _exceptionDetail text;
-    _exceptionContext text;
 
     _scriptId int;
     _scriptXML xml;
     _myRowCount int;
     _alterEnteredByMessage text;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
 
     _message := '';

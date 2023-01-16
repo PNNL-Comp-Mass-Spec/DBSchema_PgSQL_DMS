@@ -31,7 +31,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_proc(IN _datasetname
 **
 *****************************************************/
 DECLARE
-    _sqlstate text;
+    _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;

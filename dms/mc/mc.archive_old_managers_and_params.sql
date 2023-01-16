@@ -49,7 +49,8 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 DECLARE
     _myRowCount int := 0;
     _message text;
-    _sqlstate text;
+
+    _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;

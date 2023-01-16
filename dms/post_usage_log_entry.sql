@@ -37,6 +37,7 @@ DECLARE
     _currentOperation text := 'initializing';
     _callingUser text := session_user;
     _lastUpdated timestamp;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;

@@ -25,15 +25,15 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **
 *****************************************************/
 DECLARE
-    _sqlState text;
-    _exceptionMessage text;
-    _exceptionDetail text;
-    _exceptionContext text;
-
     _currentLocation text := 'Start';
     _infoCutoffDateTime timestamp;
     _dateThreshold text;
     _myRowCount int;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
 
     _message := '';

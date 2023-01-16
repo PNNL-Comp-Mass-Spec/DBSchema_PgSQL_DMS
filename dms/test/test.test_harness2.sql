@@ -9,7 +9,8 @@ DECLARE
     _message text;
     _managerParamCount int;
     _paramTypeID int;
-    _sqlstate text;
+
+    _sqlState text;
     _exceptionMessage text;
     _exceptionContext text;
 BEGIN
@@ -60,7 +61,7 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS
-            _sqlstate = returned_sqlstate,
+            _sqlState = returned_sqlstate,
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
@@ -69,7 +70,7 @@ EXCEPTION
     RAISE Info '%', _message;
     RAISE Info 'Exception context; %', _exceptionContext;
 
-    RAISE Exception '%, code %; see the output for context', _message, _sqlstate;
+    RAISE Exception '%, code %; see the output for context', _message, _sqlState;
 
 End
 $$;

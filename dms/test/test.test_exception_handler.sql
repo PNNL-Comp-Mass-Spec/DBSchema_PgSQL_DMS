@@ -35,7 +35,8 @@ DECLARE
     _divisorValue numeric;
     _result numeric;
     _message text;
-    _sqlstate text;
+
+    _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;

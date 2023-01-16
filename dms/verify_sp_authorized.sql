@@ -61,6 +61,7 @@ DECLARE
     _result int;
     _authorized int := 0;
     _message text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;

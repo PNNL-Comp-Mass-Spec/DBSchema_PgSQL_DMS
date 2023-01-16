@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table_local(_job integer) RETURNS TA
 *****************************************************/
 DECLARE
     _message citext;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;

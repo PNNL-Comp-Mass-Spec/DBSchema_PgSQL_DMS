@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 *****************************************************/
 DECLARE
     _result citext;
+
     _sqlState text;
     _message text;
     _exceptionMessage text;

@@ -31,7 +31,7 @@ CREATE OR REPLACE PROCEDURE public.getrequestedrunsforgrid(IN _itemlist text, IN
 
 *****************************************************/
 DECLARE
-    _sqlstate text;
+    _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
