@@ -1,8 +1,8 @@
 --
--- Name: v_processor_status_warnings; Type: VIEW; Schema: cap; Owner: d3l243
+-- Name: v_processor_status_warnings_ctm; Type: VIEW; Schema: cap; Owner: d3l243
 --
 
-CREATE VIEW cap.v_processor_status_warnings AS
+CREATE VIEW cap.v_processor_status_warnings_ctm AS
  SELECT ps.processor_name,
     COALESCE(ps.mgr_status, 'Unknown_Status'::public.citext) AS mgr_status,
     COALESCE(ps.task_status, 'Unknown_Status'::public.citext) AS task_status,
@@ -20,12 +20,12 @@ CREATE VIEW cap.v_processor_status_warnings AS
   WHERE ((ps.monitor_processor <> 0) AND (((ps.status_date >= (CURRENT_TIMESTAMP - '21 days'::interval)) AND (ps.mgr_status OPERATOR(public.~~) '%Error'::public.citext)) OR (ps.mgr_status OPERATOR(public.~~) 'Disabled%'::public.citext) OR (NOT (staleq.status_state IS NULL))));
 
 
-ALTER TABLE cap.v_processor_status_warnings OWNER TO d3l243;
+ALTER TABLE cap.v_processor_status_warnings_ctm OWNER TO d3l243;
 
 --
--- Name: TABLE v_processor_status_warnings; Type: ACL; Schema: cap; Owner: d3l243
+-- Name: TABLE v_processor_status_warnings_ctm; Type: ACL; Schema: cap; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE cap.v_processor_status_warnings TO readaccess;
-GRANT SELECT ON TABLE cap.v_processor_status_warnings TO writeaccess;
+GRANT SELECT ON TABLE cap.v_processor_status_warnings_ctm TO readaccess;
+GRANT SELECT ON TABLE cap.v_processor_status_warnings_ctm TO writeaccess;
 
