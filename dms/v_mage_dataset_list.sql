@@ -10,7 +10,7 @@ CREATE VIEW public.v_mage_dataset_list AS
     dsn.dataset_state AS state,
     instname.instrument,
     ds.created,
-    dtn.dataset_type AS type,
+    dtn.dataset_type,
         CASE
             WHEN (COALESCE((da.instrument_data_purged)::integer, 0) = 0) THEN dfp.dataset_folder_path
             ELSE
