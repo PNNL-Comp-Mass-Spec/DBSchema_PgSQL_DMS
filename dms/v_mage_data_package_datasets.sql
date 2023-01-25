@@ -10,7 +10,7 @@ CREATE VIEW public.v_mage_data_package_datasets AS
     vmd.state,
     vmd.instrument,
     vmd.created,
-    vmd.type,
+    vmd.dataset_type,
     vmd.folder,
     vmd.comment,
     tpd.data_pkg_id AS data_package_id,
