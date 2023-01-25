@@ -7,7 +7,7 @@ CREATE VIEW sw.v_pipeline_script_parameters AS
     t_scripts.script,
     t_scripts.parameters,
     t_scripts.fields
-   FROM t_scripts;
+   FROM sw.t_scripts;
 
 
 ALTER TABLE sw.v_pipeline_script_parameters OWNER TO d3l243;
