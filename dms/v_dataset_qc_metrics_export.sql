@@ -121,7 +121,8 @@ CREATE VIEW public.v_dataset_qc_metrics_export AS
     dqc.psm_source_job,
     dqc.qcdm,
     dqc.qcdm_last_affected,
-    dqc.qcart
+    dqc.qcart,
+    ds.separation_type
    FROM (((public.t_dataset_qc dqc
      JOIN public.t_dataset ds ON ((dqc.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
@@ -129,6 +130,12 @@ CREATE VIEW public.v_dataset_qc_metrics_export AS
 
 
 ALTER TABLE public.v_dataset_qc_metrics_export OWNER TO d3l243;
+
+--
+-- Name: VIEW v_dataset_qc_metrics_export; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON VIEW public.v_dataset_qc_metrics_export IS 'LLRC retrieves data with this view, including filtering on separation_type';
 
 --
 -- Name: TABLE v_dataset_qc_metrics_export; Type: ACL; Schema: public; Owner: d3l243
