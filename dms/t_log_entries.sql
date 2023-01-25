@@ -50,8 +50,8 @@ CREATE INDEX ix_t_log_entries_posted_by ON public.t_log_entries USING btree (pos
 -- Name: TABLE t_log_entries; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT,INSERT ON TABLE public.t_log_entries TO writeaccess;
 GRANT SELECT ON TABLE public.t_log_entries TO readaccess;
+GRANT SELECT,INSERT ON TABLE public.t_log_entries TO writeaccess;
 
 --
 -- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: public; Owner: d3l243
