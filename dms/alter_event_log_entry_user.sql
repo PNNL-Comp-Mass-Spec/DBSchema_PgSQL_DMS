@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **                         - Remove exception handler and remove argument _returnCode
 **          04/16/2022 mem - Rename procedure
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
+**          01/24/2023 mem - Update whitespace
 **
 *****************************************************/
 DECLARE
@@ -142,7 +143,10 @@ BEGIN
         _enteredBy := session_user || '_simulated';
         _targetIdMatched := _targetId;
     Else
-        EXECUTE _s INTO _lookupResults USING _targetType, _targetID, _targetState, _entryDateStart, _entryDateEnd;
+        EXECUTE _s
+        INTO _lookupResults
+        USING _targetType, _targetID, _targetState, _entryDateStart, _entryDateEnd;
+
         _eventID   := _lookupResults.event_id;
         _enteredBy := _lookupResults.entered_by;
         _targetIdMatched := _lookupResults.target_id;
@@ -196,7 +200,8 @@ BEGIN
 
             _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
         Else
-            EXECUTE _s USING _eventID, _enteredByNew;
+            EXECUTE _s
+            USING _eventID, _enteredByNew;
 
             _message := 'Updated ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
         End If;
@@ -213,7 +218,9 @@ BEGIN
             'WHERE event_id = $1',
             _eventLogSchema);
 
-    EXECUTE _s INTO _previewData USING _eventID, _enteredByNew;
+    EXECUTE _s
+    INTO _previewData
+    USING _eventID, _enteredByNew;
 
     _infoHead := format('%-10s %-12s %-10s %-12s %-18s %-20s %-20s %-20s',
                             'event_id',
