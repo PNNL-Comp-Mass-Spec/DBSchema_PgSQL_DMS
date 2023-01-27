@@ -2,7 +2,7 @@
 -- Name: predefined_analysis_jobs_mds(text, boolean, boolean, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text, _excludedatasetsnotreleased boolean DEFAULT true, _createjobsforunrevieweddatasets boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(dataset public.citext, priority integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_db_name public.citext, organism_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, owner_prn public.citext, comment public.citext, propagation_mode smallint, special_processing public.citext, id integer, existing_job_count integer, message public.citext, returncode public.citext)
+CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text, _excludedatasetsnotreleased boolean DEFAULT true, _createjobsforunrevieweddatasets boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(predefine_id integer, dataset public.citext, priority integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_db_name public.citext, organism_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, owner_prn public.citext, comment public.citext, propagation_mode smallint, special_processing public.citext, id integer, existing_job_count integer, message public.citext, returncode public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 **          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
 **          06/30/2022 mem - Rename parameter file column
 **          11/09/2022 mem - Ported to PostgreSQL
+**          01/26/2023 mem - Include Predefine_ID in the query results
 **
 *****************************************************/
 DECLARE
@@ -63,8 +64,9 @@ BEGIN
 
         RETURN QUERY
         SELECT
+            0,              -- Predefine_ID
             ''::citext,     -- Dataset
-            0 int,          -- Priority
+            0,              -- Priority
             ''::citext,     -- analysis_tool_name
             ''::citext,     -- param_file_name
             ''::citext,     -- settings_file_name
@@ -90,6 +92,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_PredefineJobsToCreate_MDS (
+        predefine_id int,
         dataset citext,
         priority int,
         analysis_tool_name citext,
@@ -124,12 +127,13 @@ BEGIN
         -- Add jobs created for the dataset to the job holding table
         ---------------------------------------------------
         INSERT INTO Tmp_PredefineJobsToCreate_MDS (
-            dataset, priority, analysis_tool_name, param_file_name, settings_file_name,
+            predefine_id, dataset, priority, analysis_tool_name, param_file_name, settings_file_name,
             organism_db_name, organism_name, protein_collection_list, protein_options_list,
             owner_prn, comment, propagation_mode, special_processing,
             existing_job_count, message, returncode
         )
-        SELECT Src.dataset,
+        SELECT Src.predefine_id,
+               Src.dataset,
                Src.priority,
                Src.analysis_tool_name,
                Src.param_file_name,
@@ -161,6 +165,7 @@ BEGIN
 
     RETURN QUERY
     SELECT
+        Src.predefine_id,
         Src.dataset,
         Src.priority,
         Src.analysis_tool_name,

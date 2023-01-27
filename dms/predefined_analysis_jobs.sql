@@ -2,7 +2,7 @@
 -- Name: predefined_analysis_jobs(text, boolean, boolean, boolean, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _raiseerrormessages boolean DEFAULT true, _excludedatasetsnotreleased boolean DEFAULT true, _createjobsforunrevieweddatasets boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(dataset public.citext, priority integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_db_name public.citext, organism_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, owner_prn public.citext, comment public.citext, propagation_mode smallint, special_processing public.citext, id integer, existing_job_count integer, message public.citext, returncode public.citext)
+CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _raiseerrormessages boolean DEFAULT true, _excludedatasetsnotreleased boolean DEFAULT true, _createjobsforunrevieweddatasets boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(predefine_id integer, dataset public.citext, priority integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_db_name public.citext, organism_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, owner_prn public.citext, comment public.citext, propagation_mode smallint, special_processing public.citext, id integer, existing_job_count integer, message public.citext, returncode public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -54,6 +54,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **          08/29/2018 mem - Create jobs for datasets with rating -6: "Rerun (Good Data)"
 **          06/30/2022 mem - Rename parameter file column
 **          11/08/2022 mem - Ported to PostgreSQL
+**          01/26/2023 mem - Include Predefine_ID in the query results
 **
 *****************************************************/
 DECLARE
@@ -143,8 +144,9 @@ BEGIN
 
         RETURN QUERY
         SELECT
+            0,              -- Predefine_ID
             ''::citext,     -- Dataset
-            0 int,          -- Priority
+            0,              -- Priority
             ''::citext,     -- analysis_tool_name
             ''::citext,     -- param_file_name
             ''::citext,     -- settings_file_name
@@ -307,8 +309,9 @@ BEGIN
 
         RETURN QUERY
         SELECT
+            0,              -- Predefine_ID
             ''::citext,     -- Dataset
-            0 int,          -- Priority
+            0,              -- Priority
             ''::citext,     -- analysis_tool_name
             ''::citext,     -- param_file_name
             ''::citext,     -- settings_file_name
@@ -349,6 +352,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_PredefineJobsToCreate (
+        predefine_id int,
         dataset citext,
         priority int,
         analysis_tool_name citext,
@@ -414,6 +418,7 @@ BEGIN
 
     RETURN QUERY
     SELECT
+        Src.predefine_id,
         Src.dataset,
         Src.priority,
         Src.analysis_tool_name,

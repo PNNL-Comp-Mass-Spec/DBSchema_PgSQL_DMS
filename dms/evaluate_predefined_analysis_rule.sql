@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version
+**          01/26/2023 mem - Store the Predefine ID in Tmp_PredefineJobsToCreate
 **
 *****************************************************/
 DECLARE
@@ -214,6 +215,7 @@ BEGIN
         -- Note that AddUpdateAnalysisJob will call ValidateAnalysisJobParameters to validate this data
 
         INSERT INTO Tmp_PredefineJobsToCreate (
+            predefine_id,
             dataset,
             priority,
             analysis_tool_name,
@@ -228,6 +230,7 @@ BEGIN
             propagation_mode,
             special_processing
         ) VALUES (
+            _predefineInfo.PredefineID,
             _datasetName,
             _predefineInfo.Priority,
             _predefineInfo.AnalysisToolName,

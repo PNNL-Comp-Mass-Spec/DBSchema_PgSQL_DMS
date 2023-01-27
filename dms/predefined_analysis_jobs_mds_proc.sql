@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _dataset
 **
 **  Auth:   mem
 **  Date:   11/09/2022 mem - Initial version
+**          01/26/2023 mem - Include Predefine_ID in the query results
 **
 *****************************************************/
 DECLARE
@@ -47,6 +48,7 @@ BEGIN
     DROP TABLE If Exists Tmp_PredefinedAnalysisJobResults;
 
     CREATE TEMP TABLE Tmp_PredefinedAnalysisJobResults (
+        predefine_id int,
         dataset text,
         priority int,
         analysis_tool_name citext,
@@ -67,6 +69,7 @@ BEGIN
     );
 
     INSERT INTO Tmp_PredefinedAnalysisJobResults (
+        predefine_id,
         dataset,
         priority,
         analysis_tool_name,
@@ -85,7 +88,8 @@ BEGIN
         message,
         returncode
     )
-    SELECT  dataset,
+    SELECT  predefine_id,
+            dataset,
             priority,
             analysis_tool_name,
             param_file_name,
@@ -98,7 +102,7 @@ BEGIN
             comment,
             propagation_mode,
             special_processing,
-            id,
+            id,                         -- GENERATED ALWAYS AS IDENTITY column
             existing_job_count,
             message,
             returncode
@@ -129,6 +133,7 @@ BEGIN
         Open _results For
             SELECT
                 'Entry' AS Job,
+                predefine_id,
                 dataset,
                 existing_job_count AS Jobs,
                 analysis_tool_name AS Tool,
@@ -149,6 +154,7 @@ BEGIN
         Open _results For
             SELECT
                 'Entry' AS Job,
+                predefine_id
                 dataset,
                 existing_job_count AS Jobs,
                 analysis_tool_name AS Tool,
