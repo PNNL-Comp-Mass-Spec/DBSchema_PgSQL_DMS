@@ -2,7 +2,7 @@
 -- Name: predefined_analysis_jobs(text, boolean, boolean, boolean, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _raiseerrormessages boolean DEFAULT true, _excludedatasetsnotreleased boolean DEFAULT true, _createjobsforunrevieweddatasets boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(predefine_id integer, dataset public.citext, priority integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_db_name public.citext, organism_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, owner_prn public.citext, comment public.citext, propagation_mode smallint, special_processing public.citext, id integer, existing_job_count integer, message public.citext, returncode public.citext)
+CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _raiseerrormessages boolean DEFAULT true, _excludedatasetsnotreleased boolean DEFAULT true, _createjobsforunrevieweddatasets boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(predefine_id integer, dataset public.citext, priority integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, organism_db_name public.citext, owner_prn public.citext, comment public.citext, propagation_mode smallint, special_processing public.citext, id integer, existing_job_count integer, message public.citext, returncode public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************

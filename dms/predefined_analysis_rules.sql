@@ -2,7 +2,7 @@
 -- Name: predefined_analysis_rules(text, boolean, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(step integer, level integer, seq integer, predefine_id integer, next_lvl integer, trigger_mode text, export_mode text, action text, reason text, notes text, analysis_tool text, instrument_class_criteria public.citext, instrument_criteria public.citext, instrument_exclusion public.citext, campaign_criteria public.citext, campaign_exclusion public.citext, experiment_criteria public.citext, experiment_exclusion public.citext, organism_criteria public.citext, dataset_criteria public.citext, dataset_exclusion public.citext, dataset_type public.citext, exp_comment_criteria public.citext, labelling_incl public.citext, labelling_excl public.citext, separation_type_criteria public.citext, scancount_min integer, scancount_max integer, param_file text, settings_file text, organism text, organism_db text, prot_collection text, prot_options text, special_proc text, priority integer)
+CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(step integer, level integer, seq integer, predefine_id integer, next_lvl integer, trigger_mode text, export_mode text, action text, reason text, notes text, analysis_tool text, instrument_class_criteria public.citext, instrument_criteria public.citext, instrument_exclusion public.citext, campaign_criteria public.citext, campaign_exclusion public.citext, experiment_criteria public.citext, experiment_exclusion public.citext, organism_criteria public.citext, dataset_criteria public.citext, dataset_exclusion public.citext, dataset_type public.citext, exp_comment_criteria public.citext, labelling_inclusion public.citext, labelling_exclusion public.citext, separation_type_criteria public.citext, scan_count_min integer, scan_count_max integer, param_file text, settings_file text, organism text, protein_collections text, protein_options text, organism_db text, special_processing text, priority integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **  Auth:   mem
 **          11/08/2022 mem - Initial version
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
+**                         - Rename columns in the query results
 **
 *****************************************************/
 DECLARE
@@ -149,18 +150,18 @@ BEGIN
         Dataset_Exclusion citext,
         Dataset_Type citext,
         Exp_Comment_Criteria citext,
-        Labelling_Incl citext NULL,
-        Labelling_Excl citext NULL,
+        Labelling_Inclusion citext NULL,
+        Labelling_Exclusion citext NULL,
         Separation_Type_Criteria citext NULL,
-        ScanCount_Min int NULL,
-        ScanCount_Max int NULL,
+        Scan_Count_Min int NULL,
+        Scan_Count_Max int NULL,
         Param_File text NULL,
         Settings_File text NULL,
         Organism text NULL,
+        Protein_Collections text NULL,
+        Protein_Options text NULL,
         Organism_DB text NULL,
-        Prot_Collection text NULL,
-        Prot_Options text NULL,
-        Special_Proc text NULL,
+        Special_Processing text NULL,
         Priority int NULL
     );
 
@@ -282,13 +283,13 @@ BEGIN
         Organism_Criteria,
         Dataset_Criteria, Dataset_Exclusion, Dataset_Type,
         Exp_Comment_Criteria,
-        Labelling_Incl, Labelling_Excl,
+        Labelling_Inclusion, Labelling_Exclusion,
         Separation_Type_Criteria,
-        ScanCount_Min, ScanCount_Max,
+        Scan_Count_Min, Scan_Count_Max,
         Param_File, Settings_File,
-        Organism, Organism_DB,
-        Prot_Collection, Prot_Options,
-        Special_Proc,
+        Organism,
+        Protein_Collections, Protein_Options,
+        Organism_DB, Special_Processing,
         Priority)
     SELECT  C.predefine_level, C.predefine_sequence, C.predefine_id, C.next_level,
             CASE WHEN C.Trigger_Before_Disposition = 1
@@ -332,6 +333,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_PredefineJobsToCreate (
+        predefine_id int,
         dataset text,
         priority int,
         analysis_tool_name citext,
@@ -396,42 +398,42 @@ BEGIN
 
     RETURN QUERY
     SELECT
-        Src.Step int,
-        Src.Level int,
-        Src.Seq int,
-        Src.Predefine_ID int,
-        Src.Next_Lvl int,
-        Src.Trigger_Mode text,
-        Src.Export_Mode text,
-        Src.Action text,
-        Src.Reason text,
-        Src.Notes text,
-        Src.Analysis_Tool text,
-        Src.Instrument_Class_Criteria citext,
-        Src.Instrument_Criteria citext,
-        Src.Instrument_Exclusion citext,
-        Src.Campaign_Criteria citext,
-        Src.Campaign_Exclusion citext,
-        Src.Experiment_Criteria citext,
-        Src.Experiment_Exclusion citext,
-        Src.Organism_Criteria citext,
-        Src.Dataset_Criteria citext,
-        Src.Dataset_Exclusion citext,
-        Src.Dataset_Type citext,
-        Src.Exp_Comment_Criteria citext,
-        Src.Labelling_Incl citext,
-        Src.Labelling_Excl citext,
-        Src.Separation_Type_Criteria citext,
-        Src.ScanCount_Min int,
-        Src.ScanCount_Max int,
-        Src.Param_File text,
-        Src.Settings_File text,
-        Src.Organism text,
-        Src.Organism_DB text,
-        Src.Prot_Collection text,
-        Src.Prot_Options text,
-        Src.Special_Proc text,
-        Src.Priority int
+        Src.Step,
+        Src.Level,
+        Src.Seq,
+        Src.Predefine_ID,
+        Src.Next_Lvl,
+        Src.Trigger_Mode,
+        Src.Export_Mode,
+        Src.Action,
+        Src.Reason,
+        Src.Notes,
+        Src.Analysis_Tool,
+        Src.Instrument_Class_Criteria,
+        Src.Instrument_Criteria,
+        Src.Instrument_Exclusion,
+        Src.Campaign_Criteria,
+        Src.Campaign_Exclusion,
+        Src.Experiment_Criteria,
+        Src.Experiment_Exclusion,
+        Src.Organism_Criteria,
+        Src.Dataset_Criteria,
+        Src.Dataset_Exclusion,
+        Src.Dataset_Type,
+        Src.Exp_Comment_Criteria,
+        Src.Labelling_Inclusion,
+        Src.Labelling_Exclusion,
+        Src.Separation_Type_Criteria,
+        Src.Scan_Count_Min,
+        Src.Scan_Count_Max,
+        Src.Param_File,
+        Src.Settings_File,
+        Src.Organism,
+        Src.Protein_Collections,
+        Src.Protein_Options,
+        Src.Organism_DB,
+        Src.Special_Processing,
+        Src.Priority
     FROM Tmp_PredefineRuleEval Src
     ORDER BY Src.Step;
 

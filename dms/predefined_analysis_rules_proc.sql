@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetnam
 **
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version
+**          01/27/2023 mem - Rename columns in the query results
 **
 *****************************************************/
 DECLARE
@@ -67,18 +68,18 @@ BEGIN
             Dataset_Exclusion,
             Dataset_Type,
             Exp_Comment_Criteria,
-            Labelling_Incl,
-            Labelling_Excl,
+            Labelling_Inclusion,
+            Labelling_Exclusion,
             Separation_Type_Criteria,
-            ScanCount_Min,
-            ScanCount_Max,
+            Scan_Count_Min,
+            Scan_Count_Max,
             Param_File,
             Settings_File,
             Organism,
+            Protein_Collections,
+            Protein_Options,
             Organism_DB,
-            Prot_Collection,
-            Prot_Options,
-            Special_Proc,
+            Special_Processing,
             Priority
         FROM public.predefined_analysis_rules(
                 _datasetName,

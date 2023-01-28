@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _dataset
 **  Auth:   mem
 **  Date:   11/09/2022 mem - Initial version
 **          01/26/2023 mem - Include Predefine_ID in the query results
+**          01/27/2023 mem - Include ID column in the query results
 **                         - Show legacy FASTA file name after the protein collection info
 **
 *****************************************************/
@@ -133,43 +134,45 @@ BEGIN
     If _returnCode = '' Then
         Open _results For
             SELECT
-                'Entry' AS Job,
+                id,
+                'Entry' AS job,
                 predefine_id,
                 dataset,
-                existing_job_count AS Jobs,
-                analysis_tool_name AS Tool,
-                priority AS Pri,
+                existing_job_count AS jobs,
+                analysis_tool_name AS tool,
+                priority AS pri,
                 comment,
-                param_file_name AS Param_File,
-                settings_file_name AS Settings_File,
-                organism_db_name AS OrganismDB_File,
-                organism_name AS Organism,
-                protein_collection_list AS Protein_Collections,
-                protein_options_list AS Protein_Options,
-                owner_prn AS Owner,
-                CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS Export_Mode,
-                special_processing AS Special_Processing
+                param_file_name AS param_file,
+                settings_file_name AS settings_file,
+                organism_name AS organism,
+                protein_collection_list AS protein_collections,
+                protein_options_list AS protein_options,
+                organism_db_name,
+                owner_prn AS owner,
+                CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS export_mode,
+                special_processing
             FROM Tmp_PredefinedAnalysisJobResults
             WHERE id > 0;
     Else
         Open _results For
             SELECT
-                'Entry' AS Job,
+                id,
+                'Entry' AS job,
                 predefine_id
                 dataset,
-                existing_job_count AS Jobs,
-                analysis_tool_name AS Tool,
-                priority AS Pri,
+                existing_job_count AS jobs,
+                analysis_tool_name AS tool,
+                priority AS pri,
                 comment,
-                param_file_name AS Param_File,
-                settings_file_name AS Settings_File,
-                organism_db_name AS OrganismDB_File,
-                organism_name AS Organism,
-                protein_collection_list AS Protein_Collections,
-                protein_options_list AS Protein_Options,
-                owner_prn AS Owner,
-                CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS Export_Mode,
-                special_processing AS Special_Processing
+                param_file_name AS param_file,
+                settings_file_name AS settings_file,
+                organism_name AS organism,
+                protein_collection_list AS protein_collections,
+                protein_options_list AS protein_options,
+                organism_db_name,
+                owner_prn AS owner,
+                CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS export_mode,
+                special_processing
             FROM Tmp_PredefinedAnalysisJobResults;
     End If;
 
