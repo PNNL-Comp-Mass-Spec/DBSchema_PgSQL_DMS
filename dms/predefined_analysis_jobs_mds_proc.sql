@@ -148,9 +148,9 @@ BEGIN
                 protein_collection_list AS protein_collections,
                 protein_options_list AS protein_options,
                 organism_db_name,
+                special_processing,
                 owner_prn AS owner,
-                CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS export_mode,
-                special_processing
+                CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS export_mode
             FROM Tmp_PredefinedAnalysisJobResults
             WHERE id > 0;
     Else
@@ -170,9 +170,9 @@ BEGIN
                 protein_collection_list AS protein_collections,
                 protein_options_list AS protein_options,
                 organism_db_name,
+                special_processing,
                 owner_prn AS owner,
-                CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS export_mode,
-                special_processing
+                CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS export_mode
             FROM Tmp_PredefinedAnalysisJobResults;
     End If;
 
