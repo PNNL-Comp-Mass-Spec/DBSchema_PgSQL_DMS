@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_proc(IN _datasetname
 **
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version
+**          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **
 *****************************************************/
 DECLARE
@@ -47,15 +48,16 @@ BEGIN
     DROP TABLE If Exists Tmp_PredefinedAnalysisJobResults;
 
     CREATE TEMP TABLE Tmp_PredefinedAnalysisJobResults (
+        predefine_id int,
         dataset text,
         priority int,
         analysis_tool_name citext,
         param_file_name citext,
         settings_file_name citext,
-        organism_db_name citext,
         organism_name citext,
         protein_collection_list citext,
         protein_options_list citext,
+        organism_db_name citext,
         owner_prn text,
         comment text,
         propagation_mode smallint,
@@ -67,15 +69,16 @@ BEGIN
     );
 
     INSERT INTO Tmp_PredefinedAnalysisJobResults (
+        predefine_id,
         dataset,
         priority,
         analysis_tool_name,
         param_file_name,
         settings_file_name,
-        organism_db_name,
         organism_name,
         protein_collection_list,
         protein_options_list,
+        organism_db_name,
         owner_prn,
         comment,
         propagation_mode,
@@ -85,29 +88,30 @@ BEGIN
         message,
         returncode
     )
-    SELECT  dataset,
-            priority,
-            analysis_tool_name,
-            param_file_name,
-            settings_file_name,
-            organism_db_name,
-            organism_name,
-            protein_collection_list,
-            protein_options_list,
-            owner_prn,
-            comment,
-            propagation_mode,
-            special_processing,
-            id,
-            existing_job_count,
-            message,
-            returncode
-        FROM public.predefined_analysis_jobs(
-                _datasetName,
-                _raiseErrorMessages => true,
-                _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-                _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
-                _analysisToolNameFilter => _analysisToolNameFilter);
+    SELECT predefine_id,
+           dataset,
+           priority,
+           analysis_tool_name,
+           param_file_name,
+           settings_file_name,
+           organism_name,
+           protein_collection_list,
+           protein_options_list,
+           organism_db_name,
+           owner_prn,
+           comment,
+           propagation_mode,
+           special_processing,
+           id,
+           existing_job_count,
+           message,
+           returncode
+    FROM public.predefined_analysis_jobs(
+            _datasetName,
+            _raiseErrorMessages => true,
+            _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
+            _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
+            _analysisToolNameFilter => _analysisToolNameFilter);
 
     If Not FOUND Then
         _message := format('Function predefined_analysis_jobs did not return any results for dataset %s', _datasetName);

@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **
 **  Auth:   mem
 **          11/08/2022 mem - Initial version
+**          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **
 *****************************************************/
 DECLARE
@@ -114,9 +115,9 @@ BEGIN
         settings_file_name citext NULL,
         organism_id int NOT NULL,
         organism citext NOT NULL,
-        organism_db_name citext NOT NULL,
         protein_collection_list citext NOT NULL,
         protein_options_list citext NOT NULL,
+        organism_db_name citext NOT NULL,
         priority int NOT NULL,
         next_level int NULL,
         trigger_before_disposition smallint NOT NULL,
@@ -195,9 +196,9 @@ BEGIN
         settings_file_name,
         organism_id,
         organism,
-        organism_db_name,
         protein_collection_list,
         protein_options_list,
+        organism_db_name,
         priority,
         next_level,
         trigger_before_disposition,
@@ -231,9 +232,9 @@ BEGIN
         Src.settings_file_name,
         Src.organism_id,
         Src.organism,
-        Src.organism_db_name,
         Src.protein_collection_list,
         Src.protein_options_list,
+        Src.organism_db_name,
         Src.priority,
         Src.next_level,
         Src.trigger_before_disposition,
@@ -312,8 +313,9 @@ BEGIN
             C.separation_type_criteria,
             C.scan_count_min_criteria, C.scan_count_max_criteria,
             C.param_file_name, C.settings_file_name,
-            C.organism, C.organism_db_name,
+            C.organism,
             C.protein_collection_list, C.protein_options_list,
+            C.organism_db_name,
             C.Special_Processing,
             C.priority
     FROM Tmp_Criteria C
@@ -335,10 +337,10 @@ BEGIN
         analysis_tool_name citext,
         param_file_name citext,
         settings_file_name citext,
-        organism_db_name citext,
         organism_name citext,
         protein_collection_list citext,
         protein_options_list citext,
+        organism_db_name citext,
         owner_prn text,
         comment text,
         propagation_mode int2,

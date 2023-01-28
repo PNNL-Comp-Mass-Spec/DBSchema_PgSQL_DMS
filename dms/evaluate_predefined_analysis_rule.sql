@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version
 **          01/26/2023 mem - Store the Predefine ID in Tmp_PredefineJobsToCreate
+**          01/27/2023 mem - Track legacy FASTA file name after the protein collection info
 **
 *****************************************************/
 DECLARE
@@ -62,9 +63,9 @@ BEGIN
         param_file_name AS ParamFileName,
         settings_file_name AS SettingsFileName,
         organism AS OrganismName,
-        organism_db_name AS OrganismDBName,
         protein_collection_list AS ProteinCollectionList,
         protein_options_list AS ProteinOptionsList,
+        organism_db_name AS OrganismDBName,
         priority AS Priority,
         next_level AS RuleNextLevel,
         trigger_before_disposition AS TriggerBeforeDisposition,
@@ -221,10 +222,10 @@ BEGIN
             analysis_tool_name,
             param_file_name,
             settings_file_name,
-            organism_db_name,
             organism_name,
             protein_collection_list,
             protein_options_list,
+            organism_db_name,
             owner_prn,
             comment,
             propagation_mode,
@@ -236,10 +237,10 @@ BEGIN
             _predefineInfo.AnalysisToolName,
             _predefineInfo.ParamFileName,
             _predefineInfo.SettingsFileName,
-            _predefineInfo.OrganismDBName,
             _predefineInfo.OrganismName,
             _proteinCollectionListValidated,
             _predefineInfo.ProteinOptionsList,
+            _predefineInfo.OrganismDBName,
             _ownerPRN,
             _comment,
             _predefineInfo.PropagationMode,
@@ -254,7 +255,7 @@ BEGIN
             Reason = _ruleActionReason,
             Notes = _ruleEvalNotes,
             Priority = _predefineInfo.Priority
-        WHERE Predefine_ID  = _predefineInfo.PredefineID;
+        WHERE Predefine_ID = _predefineInfo.PredefineID;
     End If;
 
 END

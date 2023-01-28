@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _dataset
 **  Auth:   mem
 **  Date:   11/09/2022 mem - Initial version
 **          01/26/2023 mem - Include Predefine_ID in the query results
+**                         - Show legacy FASTA file name after the protein collection info
 **
 *****************************************************/
 DECLARE
@@ -54,10 +55,10 @@ BEGIN
         analysis_tool_name citext,
         param_file_name citext,
         settings_file_name citext,
-        organism_db_name citext,
         organism_name citext,
         protein_collection_list citext,
         protein_options_list citext,
+        organism_db_name citext,
         owner_prn text,
         comment text,
         propagation_mode smallint,
@@ -75,10 +76,10 @@ BEGIN
         analysis_tool_name,
         param_file_name,
         settings_file_name,
-        organism_db_name,
         organism_name,
         protein_collection_list,
         protein_options_list,
+        organism_db_name,
         owner_prn,
         comment,
         propagation_mode,
@@ -88,29 +89,29 @@ BEGIN
         message,
         returncode
     )
-    SELECT  predefine_id,
-            dataset,
-            priority,
-            analysis_tool_name,
-            param_file_name,
-            settings_file_name,
-            organism_db_name,
-            organism_name,
-            protein_collection_list,
-            protein_options_list,
-            owner_prn,
-            comment,
-            propagation_mode,
-            special_processing,
-            id,                         -- GENERATED ALWAYS AS IDENTITY column
-            existing_job_count,
-            message,
-            returncode
-        FROM public.predefined_analysis_jobs_mds(
-                _datasetList,
-                _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-                _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
-                _analysisToolNameFilter => _analysisToolNameFilter);
+    SELECT predefine_id,
+           dataset,
+           priority,
+           analysis_tool_name,
+           param_file_name,
+           settings_file_name,
+           organism_name,
+           protein_collection_list,
+           protein_options_list,
+           organism_db_name,
+           owner_prn,
+           comment,
+           propagation_mode,
+           special_processing,
+           id,                         -- GENERATED ALWAYS AS IDENTITY column
+           existing_job_count,
+           message,
+           returncode
+    FROM public.predefined_analysis_jobs_mds(
+            _datasetList,
+            _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
+            _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
+            _analysisToolNameFilter => _analysisToolNameFilter);
 
     If Not FOUND Then
         _message := format('Function predefined_analysis_jobs_mds did not return any results for datasets %s', _datasetList);
