@@ -6,7 +6,7 @@ CREATE VIEW mc.v_analysis_mgr_params_update_required AS
  SELECT pv.mgr_id,
     m.mgr_name AS manager,
     pt.param_name,
-    pv.type_id AS paramtypeid,
+    pv.type_id AS param_type_id,
     pv.value,
     pv.last_affected,
     pv.entered_by

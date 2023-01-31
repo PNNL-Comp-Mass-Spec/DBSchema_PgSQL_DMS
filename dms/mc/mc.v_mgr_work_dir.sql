@@ -7,7 +7,7 @@ CREATE VIEW mc.v_mgr_work_dir AS
         CASE
             WHEN (v_param_value.value OPERATOR(public.~~) '\\%'::public.citext) THEN (v_param_value.value)::text
             ELSE ('\\ServerName\'::text || public.replace(v_param_value.value, ':\'::public.citext, '$\'::public.citext))
-        END AS workdir_adminshare
+        END AS work_dir_admin_share
    FROM mc.v_param_value
   WHERE (v_param_value.param_name OPERATOR(public.=) 'workdir'::public.citext);
 

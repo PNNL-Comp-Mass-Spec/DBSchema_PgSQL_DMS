@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _showTable and _infoOnly from integer to boolean
+**          01/30/2023 mem - Use new column name in view
 **
 *****************************************************/
 DECLARE
@@ -190,7 +191,7 @@ BEGIN
             FROM mc.v_analysis_mgr_params_active_and_debug_level MP
                  INNER JOIN Tmp_ManagerList MgrList
                    ON MP.mgr_id = MgrList.mgr_id
-            WHERE MP.ParamTypeID = _paramTypeID
+            WHERE MP.param_type_id = _paramTypeID
             ORDER BY MP.manager
         LOOP
 
@@ -266,7 +267,7 @@ BEGIN
             FROM mc.v_analysis_mgr_params_active_and_debug_level MP
                  INNER JOIN Tmp_ManagerList MgrList
                    ON MP.mgr_id = MgrList.mgr_id
-            WHERE MP.ParamTypeID = _paramTypeID
+            WHERE MP.param_type_id = _paramTypeID
             ORDER BY MP.manager
         LOOP
 

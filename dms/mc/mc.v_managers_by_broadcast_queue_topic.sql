@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW mc.v_managers_by_broadcast_queue_topic AS
- SELECT m.mgr_name AS mgrname,
-    mt.mgr_type_name AS mgrtype,
-    tb.broadcastqueuetopic AS broadcasttopic,
-    tm.messagequeueuri AS msgqueueuri
+ SELECT m.mgr_name,
+    mt.mgr_type_name AS mgr_type,
+    tb.broadcastqueuetopic AS broadcast_topic,
+    tm.messagequeueuri AS msg_queue_uri
    FROM (((mc.t_mgrs m
      JOIN ( SELECT pv.mgr_id,
             pv.value AS broadcastqueuetopic
