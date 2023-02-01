@@ -6,7 +6,7 @@ CREATE VIEW mc.v_param_value AS
  SELECT m.mgr_name,
     pt.param_name,
     pv.entry_id,
-    pv.type_id,
+    pv.param_type_id,
     pv.value,
     pv.mgr_id,
     pv.comment,

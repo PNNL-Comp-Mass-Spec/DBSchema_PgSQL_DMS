@@ -5,7 +5,7 @@
 CREATE VIEW mc.v_param_name_picklist AS
  SELECT pt.param_name AS val,
     pt.param_name AS ex,
-    mtpm.mgr_type_id AS m_typeid
+    mtpm.mgr_type_id
    FROM (mc.t_param_type pt
      JOIN mc.t_mgr_type_param_type_map mtpm ON ((pt.param_id = mtpm.param_type_id)));
 

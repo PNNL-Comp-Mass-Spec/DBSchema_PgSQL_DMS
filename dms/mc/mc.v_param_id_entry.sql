@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW mc.v_param_id_entry AS
- SELECT t_param_type.param_id,
+ SELECT t_param_type.param_type_id AS param_id,
     t_param_type.param_name,
     t_param_type.picklist_name,
     t_param_type.comment
