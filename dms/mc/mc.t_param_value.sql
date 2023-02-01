@@ -4,7 +4,7 @@
 
 CREATE TABLE mc.t_param_value (
     entry_id integer NOT NULL,
-    type_id integer NOT NULL,
+    param_type_id integer NOT NULL,
     value public.citext NOT NULL,
     mgr_id integer NOT NULL,
     comment public.citext,
@@ -39,13 +39,13 @@ ALTER TABLE ONLY mc.t_param_value
 -- Name: ix_t_param_value; Type: INDEX; Schema: mc; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_param_value ON mc.t_param_value USING btree (mgr_id, type_id);
+CREATE UNIQUE INDEX ix_t_param_value ON mc.t_param_value USING btree (mgr_id, param_type_id);
 
 --
 -- Name: ix_t_param_value_type_id_include_entry_id_mgr_id; Type: INDEX; Schema: mc; Owner: d3l243
 --
 
-CREATE INDEX ix_t_param_value_type_id_include_entry_id_mgr_id ON mc.t_param_value USING btree (type_id) INCLUDE (entry_id, mgr_id);
+CREATE INDEX ix_t_param_value_type_id_include_entry_id_mgr_id ON mc.t_param_value USING btree (param_type_id) INCLUDE (entry_id, mgr_id);
 
 --
 -- Name: t_param_value trig_t_param_value_after_delete; Type: TRIGGER; Schema: mc; Owner: d3l243
@@ -63,7 +63,7 @@ CREATE TRIGGER trig_t_param_value_after_insert AFTER INSERT ON mc.t_param_value 
 -- Name: t_param_value trig_t_param_value_after_update; Type: TRIGGER; Schema: mc; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_param_value_after_update AFTER UPDATE ON mc.t_param_value FOR EACH ROW WHEN (((old.type_id <> new.type_id) OR (old.value OPERATOR(public.<>) new.value) OR (old.mgr_id <> new.mgr_id))) EXECUTE FUNCTION mc.trigfn_t_param_value_after_update();
+CREATE TRIGGER trig_t_param_value_after_update AFTER UPDATE ON mc.t_param_value FOR EACH ROW WHEN (((old.param_type_id <> new.param_type_id) OR (old.value OPERATOR(public.<>) new.value) OR (old.mgr_id <> new.mgr_id))) EXECUTE FUNCTION mc.trigfn_t_param_value_after_update();
 
 --
 -- Name: t_param_value fk_t_param_value_t_mgrs; Type: FK CONSTRAINT; Schema: mc; Owner: d3l243
@@ -77,7 +77,7 @@ ALTER TABLE ONLY mc.t_param_value
 --
 
 ALTER TABLE ONLY mc.t_param_value
-    ADD CONSTRAINT fk_t_param_value_t_param_type FOREIGN KEY (type_id) REFERENCES mc.t_param_type(param_id) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_param_value_t_param_type FOREIGN KEY (param_type_id) REFERENCES mc.t_param_type(param_type_id) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_param_value; Type: ACL; Schema: mc; Owner: d3l243

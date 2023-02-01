@@ -38,7 +38,7 @@ ALTER TABLE ONLY mc.t_mgr_type_param_type_map
 --
 
 ALTER TABLE ONLY mc.t_mgr_type_param_type_map
-    ADD CONSTRAINT fk_t_mgr_type_param_type_map_t_param_type FOREIGN KEY (param_type_id) REFERENCES mc.t_param_type(param_id) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_mgr_type_param_type_map_t_param_type FOREIGN KEY (param_type_id) REFERENCES mc.t_param_type(param_type_id) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_mgr_type_param_type_map; Type: ACL; Schema: mc; Owner: d3l243
