@@ -11,7 +11,7 @@ CREATE VIEW mc.v_all_mgr_params_by_mgr_type AS
     tpt.param_id,
     tpt.param_name,
     tpt.comment
-   FROM (( SELECT DISTINCT t_param_type.param_id,
+   FROM (( SELECT DISTINCT t_param_type.param_type_id AS param_id,
             t_param_type.param_name,
             t_param_type.comment,
             t_mgr_types.mgr_type_id,

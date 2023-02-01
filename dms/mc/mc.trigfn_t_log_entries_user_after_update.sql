@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION mc.trigfn_t_log_entries_user_after_update() RETURNS t
 /****************************************************
 **
 **  Desc:
-**      Updates the entered_by field in t_log_entries
+**      Updates the entered_by field in mc.t_log_entries
 **
 **  Auth:   mem
 **  Date:   01/09/2020 mem - Initial version

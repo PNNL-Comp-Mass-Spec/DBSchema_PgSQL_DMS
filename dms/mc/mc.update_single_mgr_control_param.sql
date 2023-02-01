@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          08/23/2022 mem - Add missing semicolon (which resulted in the RETURN statement being ignored)
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -71,7 +72,7 @@ BEGIN
     -- Resolve _paramName to _paramTypeID
     ---------------------------------------------------
 
-    SELECT param_id
+    SELECT param_type_id
     INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = _paramName;
@@ -159,7 +160,7 @@ BEGIN
                    M.mgr_id,
                    M.mgr_name,
                    PV.param_name,
-                   PV.type_id,
+                   PV.param_type_id,
                    PV.value,
                    _newValue AS NewValue,
                    Case When Coalesce(PV.value, '') <> _newValue Then 'Changed' Else 'Unchanged' End As Status
@@ -168,14 +169,14 @@ BEGIN
                    ON M.mgr_id = Tmp_MgrIDs.mgr_id
                  INNER JOIN mc.v_param_value PV
                    ON PV.mgr_id = M.mgr_id AND
-                      PV.type_id = _paramTypeID
+                      PV.param_type_id = _paramTypeID
             WHERE M.control_from_website > 0
             UNION
             SELECT PV.entry_id,
                    M.mgr_id,
                    M.mgr_name,
                    PV.param_name,
-                   PV.type_id,
+                   PV.param_type_id,
                    PV.value,
                    '' AS NewValue,
                    'Skipping: control_from_website is 0 in mc.t_mgrs' AS  Status
@@ -184,7 +185,7 @@ BEGIN
                    ON M.mgr_id = Tmp_MgrIDs.mgr_id
                  INNER JOIN mc.v_param_value PV
                    ON PV.mgr_id = M.mgr_id AND
-                      PV.type_id = _paramTypeID
+                      PV.param_type_id = _paramTypeID
             WHERE M.control_from_website = 0
             UNION
             SELECT NULL AS entry_id,
@@ -200,15 +201,15 @@ BEGIN
                    ON M.mgr_id = Tmp_MgrIDs.mgr_id
                  LEFT OUTER JOIN mc.t_param_value PV
                    ON PV.mgr_id = M.mgr_id AND
-                      PV.type_id = _paramTypeID
-            WHERE PV.type_id IS NULL
+                      PV.param_type_id = _paramTypeID
+            WHERE PV.param_type_id IS NULL
         LOOP
             _infoData := format(_formatSpecifier,
                                     _previewData.entry_id,
                                     _previewData.mgr_id,
                                     _previewData.mgr_name,
                                     _previewData.param_name,
-                                    _previewData.type_id,
+                                    _previewData.param_type_id,
                                     _previewData.value,
                                     _previewData.NewValue,
                                     _previewData.Status
@@ -237,7 +238,7 @@ BEGIN
     -- but the query that populates Tmp_ParamValueEntriesToUpdate does filter on that parameter
     ---------------------------------------------------
 
-    INSERT INTO mc.t_param_value( type_id,
+    INSERT INTO mc.t_param_value( param_type_id,
                                   value,
                                   mgr_id )
     SELECT _paramTypeID,
@@ -248,8 +249,8 @@ BEGIN
            ON M.mgr_id = Tmp_MgrIDs.mgr_id
          LEFT OUTER JOIN mc.t_param_value PV
            ON PV.mgr_id = M.mgr_id AND
-              PV.type_id = _paramTypeID
-    WHERE PV.type_id IS NULL;
+              PV.param_type_id = _paramTypeID
+    WHERE PV.param_type_id IS NULL;
 
     ---------------------------------------------------
     -- Find the entries for the Managers in _managerIDList
@@ -264,7 +265,7 @@ BEGIN
          INNER JOIN Tmp_MgrIDs
            ON M.mgr_id = Tmp_MgrIDs.mgr_id
     WHERE M.control_from_website > 0 AND
-          PV.type_id = _paramTypeID AND
+          PV.param_type_id = _paramTypeID AND
           Coalesce(PV.value, '') <> _newValue;
 
     If Not FOUND THEN
@@ -275,7 +276,7 @@ BEGIN
                             INNER JOIN Tmp_MgrIDs
                               ON M.mgr_id = Tmp_MgrIDs.mgr_id
                        WHERE M.control_from_website > 0 AND
-                             PV.type_id = _paramTypeID) Then
+                             PV.param_type_id = _paramTypeID) Then
 
             IF _managerCount > 1 THEN
                 _message = 'Managers ' || _managerIDList || ' do not have parameter ' || _paramName;

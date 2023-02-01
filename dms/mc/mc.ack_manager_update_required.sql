@@ -13,6 +13,14 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **
 **      This SP will thus set ManagerUpdateRequired to False for this manager
 **
+**  Example usage:
+**
+**      Update mc.v_param_value
+**      Set Value = 'True'
+**      Where mgr_name = 'monroe_analysis' and param_name = 'ManagerUpdateRequired';
+**
+**      Call mc.ack_manager_update_required('monroe_analysis')
+**
 **  Auth:   mem
 **  Date:   01/16/2009 mem - Initial version
 **          09/09/2009 mem - Added support for 'ManagerUpdateRequired' already being False
@@ -23,12 +31,13 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
     _myRowCount int;
     _mgrID int;
-    _paramID int;
+    _paramTypeID int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -67,7 +76,7 @@ BEGIN
     UPDATE mc.t_param_value PV
     SET value = 'False'
     FROM mc.t_param_type PT
-    WHERE PT.param_id = PV.type_id AND
+    WHERE PT.param_type_id = PV.param_type_id AND
           PT.param_name = 'ManagerUpdateRequired' AND
           PV.mgr_id = _mgrID AND
           PV.value <> 'False';
@@ -79,17 +88,17 @@ BEGIN
     Else
         -- No rows were updated; may need to make a new entry for 'ManagerUpdateRequired' in the t_param_value table
 
-        SELECT param_id
-        INTO _paramID
+        SELECT param_type_id
+        INTO _paramTypeID
         FROM mc.t_param_type
         WHERE param_name = 'ManagerUpdateRequired';
 
         IF FOUND THEN
-            If Exists (SELECT * FROM mc.t_param_value WHERE mgr_id = _mgrID AND type_id = _paramID) Then
+            If Exists (SELECT * FROM mc.t_param_value WHERE mgr_id = _mgrID AND param_type_id = _paramTypeID) Then
                 _message := 'ManagerUpdateRequired was already acknowledged in t_param_value';
             Else
-                INSERT INTO mc.t_param_value (mgr_id, type_id, value)
-                VALUES (_mgrID, _paramID, 'False');
+                INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
+                VALUES (_mgrID, _paramTypeID, 'False');
 
                 _message := 'Acknowledged that update is required (added new entry to t_param_value)';
             End If;

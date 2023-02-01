@@ -15,7 +15,7 @@ CREATE VIEW mc.v_mgr_params AS
    FROM (((mc.t_mgrs m
      JOIN mc.t_mgr_types mt ON ((m.mgr_type_id = mt.mgr_type_id)))
      JOIN mc.t_param_value pv ON ((m.mgr_id = pv.mgr_id)))
-     JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)));
+     JOIN mc.t_param_type pt ON ((pv.param_type_id = pt.param_type_id)));
 
 
 ALTER TABLE mc.v_mgr_params OWNER TO d3l243;

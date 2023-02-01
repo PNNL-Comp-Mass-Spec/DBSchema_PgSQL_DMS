@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 **          08/21/2022 mem - Update return codes
 **          10/04/2022 mem - Rename temporary tables
 **                         - Move temporary table drop to the end of the if block
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ BEGIN
 
     -- Lookup the param_type_id for param _paramName
     --
-    SELECT param_id
+    SELECT param_type_id
     INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = _paramName::citext;

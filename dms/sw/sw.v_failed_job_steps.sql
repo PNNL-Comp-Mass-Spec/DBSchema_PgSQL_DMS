@@ -28,9 +28,9 @@ CREATE VIEW sw.v_failed_job_steps AS
      JOIN ( SELECT m.mgr_name,
             v.value
            FROM ((mc.t_param_type t
-             JOIN mc.t_param_value v ON ((t.param_id = v.type_id)))
+             JOIN mc.t_param_value v ON ((t.param_type_id = v.param_type_id)))
              JOIN mc.t_mgrs m ON ((v.mgr_id = m.mgr_id)))
-          WHERE (t.param_id = 114)) failurefolderq ON ((localprocs.processor_name OPERATOR(public.=) failurefolderq.mgr_name)))
+          WHERE (t.param_type_id = 114)) failurefolderq ON ((localprocs.processor_name OPERATOR(public.=) failurefolderq.mgr_name)))
   WHERE ((js.state = 6) OR (((js.evaluation_code & 2) = 2) AND (js.start >= (CURRENT_TIMESTAMP - '2 days'::interval))));
 
 

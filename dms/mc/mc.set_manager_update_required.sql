@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **
 **  Example usage:
 **
+**      UPDATE mc.v_param_value SET value = 'false' WHERE mgr_name = 'pub-10-1' AND param_name = 'ManagerUpdateRequired';
 **      Call mc.set_manager_update_required ('Pub-10-1, Pub-12-%', _showTable => true, _infoOnly => true);
 **
 **  Auth:   mem
@@ -32,6 +33,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly and _showTable from integer to boolean
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -101,7 +103,7 @@ BEGIN
     -- Lookup the ParamID value for 'ManagerUpdateRequired'
     ---------------------------------------------------
 
-    SELECT param_id
+    SELECT param_type_id
     INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = 'ManagerUpdateRequired';
@@ -119,7 +121,7 @@ BEGIN
     --  in mc.t_param_value for 'ManagerUpdateRequired'
     ---------------------------------------------------
 
-    INSERT INTO mc.t_param_value (mgr_id, type_id, value)
+    INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
     SELECT A.mgr_id, _paramTypeID, '0'
     FROM ( SELECT MgrListA.mgr_id
            FROM Tmp_ManagerList MgrListA
@@ -129,7 +131,7 @@ BEGIN
             FROM Tmp_ManagerList MgrListB
                  INNER JOIN mc.t_param_value PV
                    ON MgrListB.mgr_id = PV.mgr_id
-            WHERE PV.type_id = _paramTypeID
+            WHERE PV.param_type_id = _paramTypeID
          ) B
            ON A.mgr_id = B.mgr_id
     WHERE B.mgr_id IS NULL;
@@ -174,7 +176,7 @@ BEGIN
             FROM mc.v_analysis_mgr_params_update_required MP
                  INNER JOIN Tmp_ManagerList MgrList
                    ON MP.mgr_id = MgrList.mgr_id
-            WHERE MP.ParamTypeID = _paramTypeID
+            WHERE MP.param_type_id = _paramTypeID
             ORDER BY MP.manager
         LOOP
 
@@ -207,7 +209,7 @@ BEGIN
         FROM mc.t_param_value PV
             INNER JOIN Tmp_ManagerList MgrList
             ON PV.mgr_id = MgrList.mgr_id
-        WHERE PV.type_id = _paramTypeID AND
+        WHERE PV.param_type_id = _paramTypeID AND
             PV.value <> 'True');
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;

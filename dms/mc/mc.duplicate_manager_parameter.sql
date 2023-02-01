@@ -2,7 +2,7 @@
 -- Name: duplicate_manager_parameter(integer, integer, text, text, text, text, boolean); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly boolean DEFAULT true) RETURNS TABLE(status text, type_id integer, value public.citext, mgr_id integer, comment public.citext)
+CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly boolean DEFAULT true) RETURNS TABLE(status text, param_type_id integer, value public.citext, mgr_id integer, comment public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -22,9 +22,9 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **    _infoOnly                False to perform the update, true to preview
 **
 **  Example usage:
-**    Select * From duplicate_manager_parameter (157, 172, _paramValueSearchText => 'msfileinfoscanner', _paramValueReplaceText => 'AgilentToUimfConverter', _infoOnly => true);
+**    Select * From mc.duplicate_manager_parameter (157, 172, _paramValueSearchText => 'msfileinfoscanner', _paramValueReplaceText => 'AgilentToUimfConverter', _infoOnly => true);
 **
-**    Select * From duplicate_manager_parameter (179, 182, _paramValueSearchText => 'PbfGen', _paramValueReplaceText => 'ProMex', _infoOnly => true);
+**    Select * From mc.duplicate_manager_parameter (179, 182, _paramValueSearchText => 'PbfGen', _paramValueReplaceText => 'ProMex', _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   08/26/2013 mem - Initial release
@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -75,7 +76,7 @@ BEGIN
     If _returnCode <> '' Then
         RETURN QUERY
         SELECT 'Warning' AS status,
-               0 as type_id,
+               0 as param_type_id,
                _message::citext as value,
                0,
                ''::citext as comment;
@@ -86,19 +87,19 @@ BEGIN
     -- Make sure the soure parameter exists
     ---------------------------------------------------
 
-    If _returnCode = '' And Not Exists (Select * From mc.t_param_value PV Where PV.type_id = _sourceParamTypeID) Then
+    If _returnCode = '' And Not Exists (Select * From mc.t_param_value PV Where PV.param_type_id = _sourceParamTypeID) Then
         _message := '_sourceParamTypeID ' || _sourceParamTypeID || ' not found in mc.t_param_value; unable to continue';
         RAISE WARNING '%', _message;
         _returnCode := 'U5203';
     End If;
 
-    If _returnCode = '' And Exists (Select * From mc.t_param_value PV Where PV.type_id = _newParamTypeID) Then
+    If _returnCode = '' And Exists (Select * From mc.t_param_value PV Where PV.param_type_id = _newParamTypeID) Then
         _message := '_newParamTypeID ' || _newParamTypeID || ' already exists in mc.t_param_value; unable to continue';
         RAISE WARNING '%', _message;
         _returnCode := 'U5204';
     End If;
 
-    If _returnCode = '' And Not Exists (Select * From mc.t_param_type PT Where PT.param_id = _newParamTypeID) Then
+    If _returnCode = '' And Not Exists (Select * From mc.t_param_type PT Where PT.param_type_id = _newParamTypeID) Then
         _message := '_newParamTypeID ' || _newParamTypeID || ' not found in mc.t_param_type; unable to continue';
         RAISE WARNING '%', _message;
         _returnCode := 'U5205';
@@ -107,7 +108,7 @@ BEGIN
     If _returnCode <> '' Then
         RETURN QUERY
         SELECT 'Warning' AS status,
-               0 as type_id,
+               0 as param_type_id,
                _message::citext as value,
                0 as mgr_id,
                ''::citext as comment;
@@ -123,17 +124,17 @@ BEGIN
                    PV.mgr_id,
                    Coalesce(_commentOverride, '')::citext AS comment
             FROM mc.t_param_value PV
-            WHERE PV.type_id = _sourceParamTypeID;
+            WHERE PV.param_type_id = _sourceParamTypeID;
             Return;
         End If;
 
-        INSERT INTO mc.t_param_value( type_id, value, mgr_id, comment )
-        SELECT _newParamTypeID AS type_id,
+        INSERT INTO mc.t_param_value( param_type_id, value, mgr_id, comment )
+        SELECT _newParamTypeID AS param_type_id,
                Replace(PV.value::citext, _paramValueSearchText::citext, _paramValueReplaceText::citext) AS value,
                PV.mgr_id,
                Coalesce(_commentOverride, '') AS comment
         FROM mc.t_param_value PV
-        WHERE PV.type_id = _sourceParamTypeID;
+        WHERE PV.param_type_id = _sourceParamTypeID;
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     Else
@@ -146,25 +147,25 @@ BEGIN
                    PV.mgr_id,
                    Coalesce(_commentOverride, '')::citext AS comment
             FROM mc.t_param_value PV
-            WHERE PV.type_id = _sourceParamTypeID;
+            WHERE PV.param_type_id = _sourceParamTypeID;
             Return;
         End If;
 
-        INSERT INTO mc.t_param_value( type_id, value, mgr_id, comment )
-        SELECT _newParamTypeID AS type_id,
+        INSERT INTO mc.t_param_value( param_type_id, value, mgr_id, comment )
+        SELECT _newParamTypeID AS param_type_id,
                Coalesce(_paramValueOverride, PV.value) AS value,
                PV.mgr_id,
                Coalesce(_commentOverride, '') AS comment
         FROM mc.t_param_value PV
-        WHERE PV.type_id = _sourceParamTypeID;
+        WHERE PV.param_type_id = _sourceParamTypeID;
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     End If;
 
     RETURN QUERY
-        SELECT 'Duplicated' as Status, PV.type_id, PV.value, PV.mgr_id, PV.comment
+        SELECT 'Duplicated' as Status, PV.param_type_id, PV.value, PV.mgr_id, PV.comment
         FROM mc.t_param_value PV
-        WHERE PV.type_id = _newParamTypeID;
+        WHERE PV.param_type_id = _newParamTypeID;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -182,7 +183,7 @@ EXCEPTION
 
     RETURN QUERY
     SELECT 'Error' AS Status,
-           0 as type_id,
+           0 as param_type_id,
            _message::citext as value,
            0 as mgr_id,
            ''::citext as comment;

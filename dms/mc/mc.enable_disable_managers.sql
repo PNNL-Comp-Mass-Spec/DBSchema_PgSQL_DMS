@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **                         - Update return codes
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _enable, _infoOnly and _includeDisabled from integer to boolean
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -200,7 +201,7 @@ BEGIN
     INTO _countToUpdate
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
-           ON PV.type_id = PT.param_id
+           ON PV.param_type_id = PT.param_type_id
          INNER JOIN mc.t_mgrs M
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
@@ -219,7 +220,7 @@ BEGIN
     INTO _countUnchanged
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
-           ON PV.type_id = PT.param_id
+           ON PV.param_type_id = PT.param_type_id
          INNER JOIN mc.t_mgrs M
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
@@ -281,7 +282,7 @@ BEGIN
                    M.control_from_website
             FROM mc.t_param_value PV
                  INNER JOIN mc.t_param_type PT
-                   ON PV.type_id = PT.param_id
+                   ON PV.param_type_id = PT.param_type_id
                  INNER JOIN mc.t_mgrs M
                    ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
@@ -313,7 +314,7 @@ BEGIN
                    M.control_from_website
             FROM mc.t_param_value PV
                  INNER JOIN mc.t_param_type PT
-                   ON PV.type_id = PT.param_id
+                   ON PV.param_type_id = PT.param_type_id
                  INNER JOIN mc.t_mgrs M
                    ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
@@ -348,7 +349,7 @@ BEGIN
                    M.control_from_website
             FROM mc.t_param_value PV
                  INNER JOIN mc.t_param_type PT
-                   ON PV.type_id = PT.param_id
+                   ON PV.param_type_id = PT.param_type_id
                  INNER JOIN mc.t_mgrs M
                    ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
@@ -367,7 +368,7 @@ BEGIN
     SET value = _newValue
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
-           ON PV.type_id = PT.param_id
+           ON PV.param_type_id = PT.param_type_id
          INNER JOIN mc.t_mgrs M
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
@@ -406,7 +407,7 @@ BEGIN
                M.control_from_website
         FROM mc.t_param_value PV
              INNER JOIN mc.t_param_type PT
-               ON PV.type_id = PT.param_id
+               ON PV.param_type_id = PT.param_type_id
              INNER JOIN mc.t_mgrs M
                ON PV.mgr_id = M.mgr_id
              INNER JOIN mc.t_mgr_types MT

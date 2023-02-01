@@ -8,11 +8,12 @@ CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_after_delete() RETURNS trigge
 /****************************************************
 **
 **  Desc:
-**      Adds an entry to mc.t_event_log if type_id 17 (mgractive) is deleted
+**      Adds an entry to mc.t_event_log if param_type_id 17 (mgractive) is deleted
 **
 **  Auth:   mem
 **  Date:   01/14/2020 mem - Initial version
 *           07/30/2022 mem - Use schema name when referencing tables
+**          01/31/2023 mem - Use new column name in table
 **
 *****************************************************/
 BEGIN
@@ -31,7 +32,7 @@ BEGIN
                ELSE 0
            END AS prev_target_state
     FROM deleted
-    WHERE deleted.type_id = 17
+    WHERE deleted.param_type_id = 17
     ORDER BY deleted.mgr_id;
 
     RETURN null;

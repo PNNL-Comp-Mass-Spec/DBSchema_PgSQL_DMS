@@ -38,6 +38,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly and _enableControlFromWebsite from integer to boolean
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -91,7 +92,7 @@ BEGIN
                0 as manager_type_id,
                ''::citext as param_name,
                0 as entry_id,
-               0 as type_id,
+               0 as param_type_id,
                ''::citext as value,
                0 as mgr_id,
                ''::citext as comment,
@@ -182,7 +183,7 @@ BEGIN
                PV.mgr_type_id,
                PV.param_name,
                PV.Entry_ID,
-               PV.type_id,
+               PV.param_type_id,
                PV.Value,
                PV.mgr_id,
                PV.Comment,
@@ -198,7 +199,7 @@ BEGIN
                0 as manager_type_id,
                ''::citext as param_name,
                0 as entry_id,
-               0 as type_id,
+               0 as param_type_id,
                ''::citext as value,
                0 as mgr_id,
                ''::citext as comment,
@@ -248,7 +249,7 @@ BEGIN
 
     INSERT INTO mc.t_param_value (
              entry_id,
-             type_id,
+             param_type_id,
              value,
              mgr_id,
              comment,
@@ -256,7 +257,7 @@ BEGIN
              entered_by )
     OVERRIDING SYSTEM VALUE
     SELECT PV.entry_id,
-           PV.type_id,
+           PV.param_type_id,
            PV.value,
            PV.mgr_id,
            PV.comment,
@@ -267,7 +268,7 @@ BEGIN
                            FROM mc.t_param_value_old_managers PV
                                 INNER JOIN Tmp_ManagerList Src
                                   ON PV.mgr_id = Src.mgr_id
-                           GROUP BY PV.mgr_id, PV.type_id
+                           GROUP BY PV.mgr_id, PV.param_type_id
                          );
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
@@ -296,7 +297,7 @@ BEGIN
            OldMgrs.mgr_type_id,
            PT.param_name,
            PV.entry_id,
-           PV.type_id,
+           PV.param_type_id,
            PV.value,
            PV.mgr_id,
            PV.comment,
@@ -308,7 +309,7 @@ BEGIN
          LEFT OUTER JOIN mc.t_param_value_old_managers PV
            ON PV.mgr_id = Src.mgr_id
          LEFT OUTER JOIN mc.t_param_type PT ON
-         PV.type_id = PT.param_id
+         PV.param_type_id = PT.param_type_id
     ORDER BY Src.Manager_Name, param_name;
 
     DROP TABLE Tmp_ManagerList;
@@ -333,7 +334,7 @@ EXCEPTION
            0 as manager_type_id,
            ''::citext as param_name,
            0 as entry_id,
-           0 as type_id,
+           0 as param_type_id,
            ''::citext as value,
            0 as mgr_id,
            ''::citext as comment,

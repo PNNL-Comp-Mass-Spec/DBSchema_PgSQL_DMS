@@ -16,7 +16,7 @@ CREATE VIEW mc.v_old_param_value AS
     pt.param_name AS paramtype
    FROM ((mc.t_param_value_old_managers pv
      JOIN mc.t_old_managers m ON ((pv.mgr_id = m.mgr_id)))
-     JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)));
+     JOIN mc.t_param_type pt ON ((pv.param_type_id = pt.param_type_id)));
 
 
 ALTER TABLE mc.v_old_param_value OWNER TO d3l243;

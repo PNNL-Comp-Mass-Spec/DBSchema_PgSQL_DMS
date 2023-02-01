@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION mc.trigfn_v_mgr_params_instead_of_update() RETURNS tr
 **
 **  Auth:   mem
 **  Date:   03/15/2022 mem - Initial version
+*           01/31/2023 mem - Use new column name in view
 **
 *****************************************************/
 BEGIN
@@ -19,7 +20,7 @@ BEGIN
 
     IF TG_OP = 'UPDATE' THEN
         UPDATE mc.t_param_value
-        SET value   = NEW.parametervalue,
+        SET value   = NEW.parameter_value,
             comment = NEW.comment
         WHERE entry_id = OLD.entry_id;
 

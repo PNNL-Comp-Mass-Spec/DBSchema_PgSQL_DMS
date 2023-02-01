@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _showTable and _infoOnly from integer to boolean
 **          01/30/2023 mem - Use new column name in view
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -114,7 +115,7 @@ BEGIN
     -- Lookup the ParamID value for 'ManagerErrorCleanupMode'
     ---------------------------------------------------
 
-    SELECT param_id
+    SELECT param_type_id
     INTO _paramTypeID
     FROM mc.t_param_type
     WHERE param_name = 'ManagerErrorCleanupMode';
@@ -132,7 +133,7 @@ BEGIN
     --  in mc.t_param_value for 'ManagerErrorCleanupMode'
     ---------------------------------------------------
 
-    INSERT INTO mc.t_param_value (mgr_id, type_id, value)
+    INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
     SELECT A.mgr_id, _paramTypeID, '0'
     FROM ( SELECT MgrListA.mgr_id
            FROM Tmp_ManagerList MgrListA
@@ -142,7 +143,7 @@ BEGIN
             FROM Tmp_ManagerList MgrListB
                  INNER JOIN mc.t_param_value PV
                    ON MgrListB.mgr_id = PV.mgr_id
-            WHERE PV.type_id = _paramTypeID
+            WHERE PV.param_type_id = _paramTypeID
          ) B
            ON A.mgr_id = B.mgr_id
     WHERE B.mgr_id IS NULL;
@@ -224,7 +225,7 @@ BEGIN
         FROM mc.t_param_value PV
             INNER JOIN Tmp_ManagerList MgrList
             ON PV.mgr_id = MgrList.mgr_id
-        WHERE PV.type_id = _paramTypeID AND
+        WHERE PV.param_type_id = _paramTypeID AND
             PV.value <> _cleanupModeString);
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;

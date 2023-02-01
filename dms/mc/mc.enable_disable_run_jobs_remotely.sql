@@ -18,8 +18,8 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **
 **  Example usage:
 **
-**      Call mc.enable_disable_run_jobs_remotely(1, 'Pub-14-2,Pub-15-2', _infoOnly => true,  _addMgrParamsIfMissing => false);
-**      Call mc.enable_disable_run_jobs_remotely(1, 'Pub-14-2,Pub-15-2', _infoOnly => false, _addMgrParamsIfMissing => false);
+**      Call mc.enable_disable_run_jobs_remotely(true, 'Pub-14-2,Pub-15-2', _infoOnly => true,  _addMgrParamsIfMissing => false);
+**      Call mc.enable_disable_run_jobs_remotely(true, 'Pub-14-2,Pub-15-2', _infoOnly => false, _addMgrParamsIfMissing => false);
 **
 **  Auth:   mem
 **  Date:   03/28/2018 mem - Initial version
@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **                         - Update return codes
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _enable and _infoOnly and false from integer to boolean
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -147,7 +148,7 @@ BEGIN
             If Not Exists (SELECT * FROM mc.v_mgr_params Where ParameterName = 'RunJobsRemotely' And ManagerName = _mgrName) Then
                 -- <d1>
 
-                SELECT param_id
+                SELECT param_type_id
                 INTO _paramTypeId
                 FROM mc.t_param_type
                 WHERE param_name = 'RunJobsRemotely';
@@ -160,10 +161,10 @@ BEGIN
 
                         -- Actually do go ahead and create the parameter, but use a value of False even if _newValue is True
                         -- We need to do this so the managers are included in the query below with PT.ParamName = 'RunJobsRemotely'
-                        INSERT INTO mc.t_param_value (mgr_id, type_id, value)
+                        INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
                         VALUES (_mgrId, _paramTypeId, 'False');
                     Else
-                        INSERT INTO mc.t_param_value (mgr_id, type_id, value)
+                        INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
                         VALUES (_mgrId, _paramTypeId, _newValue);
                     End If;
                 End If;
@@ -172,7 +173,7 @@ BEGIN
             If Not Exists (SELECT * FROM mc.v_mgr_params Where ParameterName = 'RemoteHostName' And ManagerName = _mgrName) Then
                 -- <d2>
 
-                SELECT param_id
+                SELECT param_type_id
                 INTO _paramTypeId
                 FROM mc.t_param_type
                 WHERE param_name = 'RemoteHostName';
@@ -183,7 +184,7 @@ BEGIN
                     If _infoOnly Then
                         RAISE INFO '%', 'Would create parameter RemoteHostName  for Manager ' || _mgrName || ', value PrismWeb2';
                     Else
-                        INSERT INTO mc.t_param_value (mgr_id, type_id, value)
+                        INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
                         VALUES (_mgrId, _paramTypeId, 'PrismWeb2');
                     End If;
                 End If;
@@ -203,7 +204,7 @@ BEGIN
     INTO _countToUpdate
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
-           ON PV.type_id = PT.param_id
+           ON PV.param_type_id = PT.param_type_id
          INNER JOIN mc.t_mgrs M
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
@@ -222,7 +223,7 @@ BEGIN
     INTO _countUnchanged
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
-           ON PV.type_id = PT.param_id
+           ON PV.param_type_id = PT.param_type_id
          INNER JOIN mc.t_mgrs M
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT
@@ -275,7 +276,7 @@ BEGIN
                    M.mgr_name AS manager_name
             FROM mc.t_param_value PV
                  INNER JOIN mc.t_param_type PT
-                   ON PV.type_id = PT.param_id
+                   ON PV.param_type_id = PT.param_type_id
                  INNER JOIN mc.t_mgrs M
                    ON PV.mgr_id = M.mgr_id
                  INNER JOIN mc.t_mgr_types MT
@@ -312,7 +313,7 @@ BEGIN
     SET value = _newValue
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
-           ON PV.type_id = PT.param_id
+           ON PV.param_type_id = PT.param_type_id
          INNER JOIN mc.t_mgrs M
            ON PV.mgr_id = M.mgr_id
          INNER JOIN mc.t_mgr_types MT

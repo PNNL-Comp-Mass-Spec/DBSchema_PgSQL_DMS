@@ -44,6 +44,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          08/21/2022 mem - Parse manager names using function parse_manager_name_list
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -95,7 +96,7 @@ BEGIN
                0 as manager_type_id,
                ''::citext as param_name,
                0 as entry_id,
-               0 as type_id,
+               0 as param_type_id,
                ''::citext as value,
                0 as mgr_id,
                ''::citext as comment,
@@ -183,7 +184,7 @@ BEGIN
                PV.mgr_type_id,
                PV.param_name,
                PV.Entry_ID,
-               PV.type_id,
+               PV.param_type_id,
                PV.Value,
                PV.mgr_id,
                PV.Comment,
@@ -199,7 +200,7 @@ BEGIN
                0 as manager_type_id,
                ''::citext as param_name,
                0 as entry_id,
-               0 as type_id,
+               0 as param_type_id,
                ''::citext as value,
                0 as mgr_id,
                ''::citext as comment,
@@ -248,14 +249,14 @@ BEGIN
 
     INSERT INTO mc.t_param_value_old_managers(
              entry_id,
-             type_id,
+             param_type_id,
              value,
              mgr_id,
              comment,
              last_affected,
              entered_by )
     SELECT PV.entry_id,
-           PV.type_id,
+           PV.param_type_id,
            PV.value,
            PV.mgr_id,
            PV.comment,
@@ -266,7 +267,7 @@ BEGIN
            ON PV.mgr_id = Src.mgr_id
    ON CONFLICT ON CONSTRAINT pk_t_param_value_old_managers
    DO UPDATE SET
-        type_id = EXCLUDED.type_id,
+        param_type_id = EXCLUDED.param_type_id,
         value = EXCLUDED.value,
         mgr_id = EXCLUDED.mgr_id,
         comment = EXCLUDED.comment,
@@ -294,7 +295,7 @@ BEGIN
            OldMgrs.mgr_type_id,
            PT.param_name,
            PV.entry_id,
-           PV.type_id,
+           PV.param_type_id,
            PV.value,
            PV.mgr_id,
            PV.comment,
@@ -306,7 +307,7 @@ BEGIN
          LEFT OUTER JOIN mc.t_param_value_old_managers PV
            ON PV.mgr_id = Src.mgr_id
          LEFT OUTER JOIN mc.t_param_type PT ON
-         PV.type_id = PT.param_id
+         PV.param_type_id = PT.param_type_id
     ORDER BY Src.manager_name, param_name;
 
     DROP TABLE TmpManagerList;
@@ -332,7 +333,7 @@ EXCEPTION
            0 as manager_type_id,
            ''::citext as param_name,
            0 as entry_id,
-           0 as type_id,
+           0 as param_type_id,
            ''::citext as value,
            0 as mgr_id,
            ''::citext as comment,

@@ -18,7 +18,7 @@ CREATE VIEW mc.v_manager_list_by_type AS
             pv.last_affected,
             pv.entered_by
            FROM (mc.t_param_value pv
-             JOIN mc.t_param_type pt ON ((pv.type_id = pt.param_id)))
+             JOIN mc.t_param_type pt ON ((pv.param_type_id = pt.param_type_id)))
           WHERE (pt.param_name OPERATOR(public.=) 'mgractive'::public.citext)) activeq ON ((m.mgr_id = activeq.mgr_id)))
   WHERE (m.control_from_website > 0);
 

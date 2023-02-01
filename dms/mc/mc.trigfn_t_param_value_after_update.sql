@@ -9,11 +9,12 @@ CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_after_update() RETURNS trigge
 **
 **  Desc:
 **      Updates last_affected and entered_by if the parameter value changes
-**      Adds an entry to mc.t_event_log if type_id 17 (mgractive) is updated
+**      Adds an entry to mc.t_event_log if param_type_id 17 (mgractive) is updated
 **
 **  Auth:   mem
 **  Date:   01/14/2020 mem - Initial version
 **          03/14/2022 mem - Only append to t_event_log if the value changes
+**          01/31/2023 mem - Use new column name in table
 **
 *****************************************************/
 BEGIN
@@ -41,8 +42,8 @@ BEGIN
                ELSE 0
            END AS prev_target_state
     WHERE OLD.mgr_id = NEW.mgr_id AND
-          OLD.type_id = NEW.type_id AND
-          NEW.type_id = 17 AND
+          OLD.param_type_id = NEW.param_type_id AND
+          NEW.param_type_id = 17 AND
           NEW.value <> OLD.value;
 
     RETURN null;

@@ -16,19 +16,24 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **    _state         1 = Cleanup Attempt start, 2 = Cleanup Successful, 3 = Cleanup Failed
 **    _failuremsg    Failure message (only used if _state is 3)
 **
+**  Example Usage:
+**
+**      Call mc.report_manager_error_cleanup ('monroe_analysis', 2);
+**
 **  Auth:   mem
 **  Date:   09/10/2009 mem - Initial version
 **          02/07/2020 mem - Ported to PostgreSQL
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
     _mgrInfo record;
     _mgrID int;
-    _paramID int;
+    _paramTypeID int;
     _messageType text;
     _cleanupMode text;
 
@@ -54,7 +59,7 @@ BEGIN
     SELECT mgr_id, mgr_name
     INTO _mgrInfo
     FROM mc.t_mgrs
-    WHERE mgr_name = _managerName;
+    WHERE mgr_name = _managerName::citext;
 
     If Not Found Then
         _message := 'Could not find entry for manager: ' || _managerName;
@@ -110,21 +115,21 @@ BEGIN
     INTO _cleanupMode
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
-           ON PV.type_id = PT.param_id
+           ON PV.param_type_id = PT.param_type_id
     WHERE PT.param_name = 'ManagerErrorCleanupMode' AND
           PV.mgr_id = _mgrID;
 
     If Not Found Then
         -- Entry not found; make a new entry for 'ManagerErrorCleanupMode' in the mc.t_param_value table
 
-        SELECT param_id
-        INTO _paramID
+        SELECT param_type_id
+        INTO _paramTypeID
         FROM mc.t_param_type
         WHERE param_name = 'ManagerErrorCleanupMode';
 
         If Found Then
-            INSERT INTO mc.t_param_value (mgr_id, type_id, value)
-            VALUES (_mgrID, _paramID, '0');
+            INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
+            VALUES (_mgrID, _paramTypeID, '0');
 
             _cleanupMode := '0';
         End If;
@@ -140,7 +145,7 @@ BEGIN
             SELECT PV.entry_id
             FROM mc.t_param_value PV
                  INNER JOIN mc.t_param_type PT
-                   ON PV.type_id = PT.param_id
+                   ON PV.param_type_id = PT.param_type_id
             WHERE PT.param_name = 'ManagerErrorCleanupMode' AND
                   PV.mgr_id = _mgrID);
 

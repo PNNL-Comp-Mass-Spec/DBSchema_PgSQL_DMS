@@ -7,7 +7,7 @@ CREATE VIEW mc.v_mgr_types_by_param AS
     mt.mgr_type_name
    FROM ((mc.t_mgr_type_param_type_map mtpm
      JOIN mc.t_mgr_types mt ON ((mtpm.mgr_type_id = mt.mgr_type_id)))
-     JOIN mc.t_param_type pt ON ((mtpm.param_type_id = pt.param_id)));
+     JOIN mc.t_param_type pt ON ((mtpm.param_type_id = pt.param_type_id)));
 
 
 ALTER TABLE mc.v_mgr_types_by_param OWNER TO d3l243;

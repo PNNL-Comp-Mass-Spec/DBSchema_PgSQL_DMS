@@ -8,16 +8,20 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 /****************************************************
 **
 **  Desc:
-**      Changes single manager params for set of given manager Types
+**      Changes single manager params for set of given manager types
 **
 **  Arguments:
 **    _paramName          The parameter name to update
 **    _newValue           The new value to assign for this parameter
 **    _managerTypeIDList  Manager type IDs to update (11=Analyis Manager, 15=Capture Task Manager, etc.)
 **
+**  Example Usage:
+**
+**      Call mc.update_single_mgr_type_control_param('ManagerUpdateRequired', 'False', '11, 15')
+**
 **  Auth:   jds
 **  Date:   07/17/2007
-**          07/31/2007 grk - changed for 'controlfromwebsite' no longer a parameter
+**          07/31/2007 grk - Changed for 'controlfromwebsite' no longer a parameter
 **          03/30/2009 mem - Added optional parameter _callingUser; if provided, then will call alter_entered_by_user_multi_id and possibly alter_event_log_entry_user_multi_id
 **          04/16/2009 mem - Now calling UpdateSingleMgrParamWork to perform the updates
 **          02/15/2020 mem - Ported to PostgreSQL
@@ -28,6 +32,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **                         - Drop temp table before exiting the procedure
 **          08/21/2022 mem - Update return code
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          01/31/2023 mem - Use new column names in tables
 **
 *****************************************************/
 DECLARE
@@ -61,7 +66,7 @@ BEGIN
     SELECT PV.entry_id
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
-           ON PV.type_id = PT.param_id
+           ON PV.param_type_id = PT.param_type_id
          INNER JOIN mc.t_mgrs M
            ON M.mgr_id = PV.mgr_id
     WHERE PT.param_name = _paramName AND

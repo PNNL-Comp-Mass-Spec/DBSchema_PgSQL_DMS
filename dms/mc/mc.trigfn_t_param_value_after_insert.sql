@@ -8,11 +8,12 @@ CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_after_insert() RETURNS trigge
 /****************************************************
 **
 **  Desc:
-**      Adds an entry to mc.t_event_log for new entries with type_id = 17 (mgractive)
+**      Adds an entry to mc.t_event_log for new entries with param_type_id = 17 (mgractive)
 **
 **  Auth:   mem
 **  Date:   01/14/2020 mem - Initial version
 *           07/30/2022 mem - Use schema name when referencing tables
+**          01/31/2023 mem - Use new column name in table
 **
 *****************************************************/
 BEGIN
@@ -31,7 +32,7 @@ BEGIN
            END AS target_state,
            -1 AS prev_target_state
     FROM inserted
-    WHERE inserted.type_id = 17
+    WHERE inserted.param_type_id = 17
     ORDER BY inserted.mgr_id;
 
     RETURN null;
