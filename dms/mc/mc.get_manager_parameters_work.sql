@@ -8,13 +8,28 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 /****************************************************
 **
 **  Desc:
-**      Populates temporary tables with the parameters for the given analysis manager(s)
+**      Populates a temporary table with the parameters for the given analysis manager(s)
 **      Uses MgrSettingGroupName to lookup parameters from the parent group, if any
 **
 **  Requires that the calling procedure create temporary table Tmp_Mgr_Params
 **
+**      CREATE TEMP TABLE Tmp_Mgr_Params (
+**          mgr_name text NOT NULL,
+**          param_name text NOT NULL,
+**          entry_id int NOT NULL,
+**          param_type_id int NOT NULL,
+**          value text NOT NULL,
+**          mgr_id int NOT NULL,
+**          comment text NULL,
+**          last_affected timestamp NULL,
+**          entered_by text NULL,
+**          mgr_type_id int NOT NULL,
+**          parent_param_pointer_state int,
+**          source text NOT NULL
+**      );
+**
 **  Arguments:
-**    _sortMode   0 means sort by ParamTypeID then mgr_name,
+**    _sortMode   0 means sort by param_type_id then mgr_name,
 **                1 means param_name, then mgr_name,
 **                2 means mgr_name, then param_name,
 **                3 means value then param_name
@@ -25,6 +40,7 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 **          04/02/2022 mem - Remove initial temp table drop since unnecessary
 **                         - Use case insensitive matching of manager name
 **          04/16/2022 mem - Use new function name
+**          02/01/2023 mem - Rename column in temp table
 **
 *****************************************************/
 DECLARE
@@ -51,19 +67,19 @@ BEGIN
     INSERT INTO Tmp_Mgr_Params(  mgr_name,
                                  param_name,
                                  entry_id,
-                                 type_id,
+                                 param_type_id,
                                  value,
                                  mgr_id,
                                  comment,
                                  last_affected,
                                  entered_by,
                                  mgr_type_id,
-                                 ParentParamPointerState,
+                                 parent_param_pointer_state,
                                  source )
     SELECT mgr_name,
            param_name,
            entry_id,
-           type_id,
+           param_type_id,
            value,
            mgr_id,
            comment,
@@ -71,9 +87,9 @@ BEGIN
            entered_by,
            mgr_type_id,
            CASE
-               WHEN type_id = 162 THEN 1        -- param_name 'Default_AnalysisMgr_Params'
+               WHEN param_type_id = 162 THEN 1        -- param_name 'Default_AnalysisMgr_Params'
                ELSE 0
-           End As ParentParamPointerState,
+           End As parent_param_pointer_state,
            mgr_name
     FROM mc.v_param_value
     WHERE (mgr_name IN (Select value::citext From public.parse_delimited_list(_managerNameList, ',')));
@@ -82,39 +98,39 @@ BEGIN
 
     -----------------------------------------------
     -- Append parameters for parent groups, which are
-    -- defined by parameter Default_AnalysisMgr_Params (type_id 162)
+    -- defined by parameter Default_AnalysisMgr_Params (param_type_id 162)
     -----------------------------------------------
     --
 
-    While Exists (Select * from Tmp_Mgr_Params Where ParentParamPointerState = 1) And _iterations < _maxRecursion
+    While Exists (Select * from Tmp_Mgr_Params Where parent_param_pointer_state = 1) And _iterations < _maxRecursion
     Loop
         Truncate table Tmp_Manager_Group_Info;
 
         INSERT INTO Tmp_Manager_Group_Info (mgr_name, Group_Name)
         SELECT mgr_name, value
         FROM Tmp_Mgr_Params
-        WHERE ParentParamPointerState = 1;
+        WHERE parent_param_pointer_state = 1;
 
         UPDATE Tmp_Mgr_Params
-        Set ParentParamPointerState = 2
-        WHERE ParentParamPointerState = 1;
+        Set parent_param_pointer_state = 2
+        WHERE parent_param_pointer_state = 1;
 
         INSERT INTO Tmp_Mgr_Params( mgr_name,
                                      param_name,
                                      entry_id,
-                                     type_id,
+                                     param_type_id,
                                      value,
                                      mgr_id,
                                      comment,
                                      last_affected,
                                      entered_by,
                                      mgr_type_id,
-                                     ParentParamPointerState,
+                                     parent_param_pointer_state,
                                      source )
         SELECT ValuesToAppend.mgr_name,
                ValuesToAppend.param_name,
                ValuesToAppend.entry_id,
-               ValuesToAppend.type_id,
+               ValuesToAppend.param_type_id,
                ValuesToAppend.value,
                ValuesToAppend.mgr_id,
                ValuesToAppend.comment,
@@ -122,15 +138,15 @@ BEGIN
                ValuesToAppend.entered_by,
                ValuesToAppend.mgr_type_id,
                CASE
-                   WHEN ValuesToAppend.type_id = 162 THEN 1
+                   WHEN ValuesToAppend.param_type_id = 162 THEN 1
                    ELSE 0
-               End As ParentParamPointerState,
+               End As parent_param_pointer_state,
                ValuesToAppend.source
         FROM Tmp_Mgr_Params Target
              RIGHT OUTER JOIN ( SELECT FilterQ.mgr_name,
                                        PV.param_name,
                                        PV.entry_id,
-                                       PV.type_id,
+                                       PV.param_type_id,
                                        PV.value,
                                        PV.mgr_id,
                                        PV.comment,
@@ -144,8 +160,8 @@ BEGIN
                                                   FROM Tmp_Manager_Group_Info ) FilterQ
                                        ON PV.mgr_name::citext = FilterQ.Group_Name::citext ) ValuesToAppend
                ON Target.mgr_name = ValuesToAppend.mgr_name AND
-                  Target.type_id = ValuesToAppend.type_id
-        WHERE (Target.type_id IS NULL Or ValuesToAppend.type_id = 162);
+                  Target.param_type_id = ValuesToAppend.param_type_id
+        WHERE (Target.param_type_id IS NULL Or ValuesToAppend.param_type_id = 162);
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 

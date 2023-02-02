@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managerna
 **          04/02/2022 mem - Use new procedure name
 **                         - Use case insensitive matching of manager name
 **          04/16/2022 mem - Use new function name
+**          02/01/2023 mem - Rename columns in temporary table
 **
 *****************************************************/
 DECLARE
@@ -57,14 +58,14 @@ BEGIN
         mgr_name text NOT NULL,
         param_name text NOT NULL,
         entry_id int NOT NULL,
-        type_id int NOT NULL,
+        param_type_id int NOT NULL,
         value text NOT NULL,
         mgr_id int NOT NULL,
         comment text NULL,
         last_affected timestamp NULL,
         entered_by text NULL,
         mgr_type_id int NOT NULL,
-        ParentParamPointerState int,
+        Parent_Param_Pointer_State int,
         source text NOT NULL
     );
 
