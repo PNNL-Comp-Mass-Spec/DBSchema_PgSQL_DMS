@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_instrument_class_export AS
  SELECT t_instrument_class.instrument_class,
-    t_instrument_class.is_purgeable AS is_purgable,
+    t_instrument_class.is_purgeable,
     t_instrument_class.raw_data_type,
     t_instrument_class.comment
    FROM public.t_instrument_class;

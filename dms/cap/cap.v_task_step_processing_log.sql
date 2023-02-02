@@ -20,7 +20,7 @@ CREATE VIEW cap.v_task_step_processing_log AS
         CASE
             WHEN (jspl.processor OPERATOR(public.~) similar_to_escape('%[-_][1-9]'::text)) THEN "right"((jspl.processor)::text, 2)
             ELSE ''::text
-        END) || '\Logs\CapTaskMan_'::text) || to_char(jspl.entered, 'yyyy-mm-dd'::text)) || '.txt'::text) AS logfilepath
+        END) || '\Logs\CapTaskMan_'::text) || to_char(jspl.entered, 'yyyy-mm-dd'::text)) || '.txt'::text) AS log_file_path
    FROM ((((cap.t_task_step_processing_log jspl
      JOIN cap.t_task_step_events jse ON (((jspl.job = jse.job) AND (jspl.step = jse.step) AND (jse.entered >= (jspl.entered - '00:00:01'::interval)))))
      JOIN rankq thisjspl ON (((jspl.job = thisjspl.job) AND (jspl.step = thisjspl.step) AND (jspl.entered = thisjspl.jobstart))))
