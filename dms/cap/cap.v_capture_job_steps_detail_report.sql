@@ -3,35 +3,35 @@
 --
 
 CREATE VIEW cap.v_capture_job_steps_detail_report AS
- SELECT js.job_plus_step AS id,
-    js.job,
-    js.step,
-    j.dataset,
+ SELECT ts.job_plus_step AS id,
+    ts.job,
+    ts.step,
+    t.dataset,
     s.script,
-    js.step_tool AS tool,
+    ts.step_tool AS tool,
     ssn.step_state,
-    jsn.job_state AS job_state_b,
-    js.state AS state_id,
-    js.start,
-    js.finish,
-    round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 2) AS runtime_minutes,
-    js.processor,
-    js.input_folder_name AS input_folder,
-    js.output_folder_name AS output_folder,
-    j.priority,
-    js.cpu_load,
-    js.completion_code,
-    js.completion_message,
-    js.evaluation_code,
-    js.evaluation_message,
-    j.transfer_folder_path,
-    js.next_try,
-    js.retry_count
-   FROM ((((cap.t_task_steps js
-     JOIN cap.t_task_step_state_name ssn ON ((js.state = ssn.step_state_id)))
-     JOIN cap.t_tasks j ON ((js.job = j.job)))
-     JOIN cap.t_task_state_name jsn ON ((j.state = jsn.job_state_id)))
-     JOIN cap.t_scripts s ON ((j.script OPERATOR(public.=) s.script)));
+    tsn.job_state AS job_state_b,
+    ts.state AS state_id,
+    ts.start,
+    ts.finish,
+    round((EXTRACT(epoch FROM (COALESCE((ts.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts.start)::timestamp with time zone)) / 60.0), 2) AS runtime_minutes,
+    ts.processor,
+    ts.input_folder_name AS input_folder,
+    ts.output_folder_name AS output_folder,
+    t.priority,
+    ts.cpu_load,
+    ts.completion_code,
+    ts.completion_message,
+    ts.evaluation_code,
+    ts.evaluation_message,
+    t.transfer_folder_path,
+    ts.next_try,
+    ts.retry_count
+   FROM ((((cap.t_task_steps ts
+     JOIN cap.t_task_step_state_name ssn ON ((ts.state = ssn.step_state_id)))
+     JOIN cap.t_tasks t ON ((ts.job = t.job)))
+     JOIN cap.t_task_state_name tsn ON ((t.state = tsn.job_state_id)))
+     JOIN cap.t_scripts s ON ((t.script OPERATOR(public.=) s.script)));
 
 
 ALTER TABLE cap.v_capture_job_steps_detail_report OWNER TO d3l243;

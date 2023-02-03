@@ -3,39 +3,39 @@
 --
 
 CREATE VIEW cap.v_task_steps_history AS
- SELECT js.job,
-    j.dataset,
-    j.dataset_id,
-    js.step,
+ SELECT ts.job,
+    t.dataset,
+    t.dataset_id,
+    ts.step,
     s.script,
-    js.step_tool AS tool,
+    ts.step_tool AS tool,
     ssn.step_state AS state_name,
-    js.state,
-    js.start,
-    js.finish,
-    round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 1) AS runtime_minutes,
-    js.processor,
-    js.input_folder_name AS input_folder,
-    js.output_folder_name AS output_folder,
-    j.priority,
-    js.completion_code,
-    js.completion_message,
-    js.evaluation_code,
-    js.evaluation_message,
+    ts.state,
+    ts.start,
+    ts.finish,
+    round((EXTRACT(epoch FROM (COALESCE((ts.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts.start)::timestamp with time zone)) / 60.0), 1) AS runtime_minutes,
+    ts.processor,
+    ts.input_folder_name AS input_folder,
+    ts.output_folder_name AS output_folder,
+    t.priority,
+    ts.completion_code,
+    ts.completion_message,
+    ts.evaluation_code,
+    ts.evaluation_message,
     instname.instrument,
-    js.tool_version_id,
+    ts.tool_version_id,
     stv.tool_version,
     dfp.dataset_folder_path,
-    j.state AS job_state,
-    js.saved
-   FROM (((((((cap.t_task_steps_history js
-     JOIN cap.t_task_step_state_name ssn ON ((js.state = ssn.step_state_id)))
-     JOIN cap.t_tasks_history j ON (((js.job = j.job) AND (js.saved = j.saved))))
-     JOIN cap.t_scripts s ON ((j.script OPERATOR(public.=) s.script)))
-     JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
+    t.state AS job_state,
+    ts.saved
+   FROM (((((((cap.t_task_steps_history ts
+     JOIN cap.t_task_step_state_name ssn ON ((ts.state = ssn.step_state_id)))
+     JOIN cap.t_tasks_history t ON (((ts.job = t.job) AND (ts.saved = t.saved))))
+     JOIN cap.t_scripts s ON ((t.script OPERATOR(public.=) s.script)))
+     JOIN public.t_dataset ds ON ((t.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
-     LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((j.dataset_id = dfp.dataset_id)))
-     LEFT JOIN cap.t_step_tool_versions stv ON ((js.tool_version_id = stv.tool_version_id)));
+     LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((t.dataset_id = dfp.dataset_id)))
+     LEFT JOIN cap.t_step_tool_versions stv ON ((ts.tool_version_id = stv.tool_version_id)));
 
 
 ALTER TABLE cap.v_task_steps_history OWNER TO d3l243;

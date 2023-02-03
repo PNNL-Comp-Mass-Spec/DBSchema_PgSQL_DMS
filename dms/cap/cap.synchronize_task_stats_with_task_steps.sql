@@ -15,6 +15,7 @@ CREATE OR REPLACE PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoo
 **          03/10/2014 mem - Fixed logic related to _completedJobsOnly
 **          09/30/2022 mem - Fixed bug that used the wrong state_id for completed tasks
 **                         - Ported to PostgreSQL
+**          02/02/2023 mem - Update table aliases
 **
 *****************************************************/
 DECLARE
@@ -46,21 +47,21 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_JobsToUpdate ( Job )
-    SELECT J.job
-    FROM cap.t_tasks J
-         INNER JOIN cap.t_task_steps js
-           ON J.Job = JS.Job
-    WHERE (J.State = 3 And _completedJobsOnly OR Not _completedJobsOnly) AND
-          J.Finish < JS.Finish
-    GROUP BY J.job
+    SELECT T.job
+    FROM cap.t_tasks T
+         INNER JOIN cap.t_task_steps TS
+           ON T.Job = TS.Job
+    WHERE (T.State = 3 And _completedJobsOnly OR Not _completedJobsOnly) AND
+          T.Finish < TS.Finish
+    GROUP BY T.job
     UNION
-    SELECT J.Job
-    FROM cap.t_tasks J
-         INNER JOIN cap.t_task_steps js
-           ON J.Job = JS.Job
-    WHERE (J.State = 3 And _completedJobsOnly OR Not _completedJobsOnly) AND
-          J.Start > JS.Start
-    GROUP BY J.Job;
+    SELECT T.Job
+    FROM cap.t_tasks T
+         INNER JOIN cap.t_task_steps TS
+           ON T.Job = TS.Job
+    WHERE (T.State = 3 And _completedJobsOnly OR Not _completedJobsOnly) AND
+          T.Start > TS.Start
+    GROUP BY T.Job;
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -88,14 +89,14 @@ BEGIN
     UPDATE Tmp_JobsToUpdate
     SET StartNew = SourceQ.Step_Start,
         FinishNew = SourceQ.Step_Finish
-    FROM ( SELECT J.Job,
-                  MIN(JS.Start) AS Step_Start,
-                  MAX(JS.Finish) AS Step_Finish
-           FROM cap.t_tasks J
-                INNER JOIN cap.t_task_steps js
-                  ON J.Job = JS.Job
-           WHERE J.Job IN (SELECT Job FROM Tmp_JobsToUpdate)
-           GROUP BY J.Job
+    FROM ( SELECT T.Job,
+                  MIN(TS.Start) AS Step_Start,
+                  MAX(TS.Finish) AS Step_Finish
+           FROM cap.t_tasks T
+                INNER JOIN cap.t_task_steps TS
+                  ON T.Job = TS.Job
+           WHERE T.Job IN (SELECT Job FROM Tmp_JobsToUpdate)
+           GROUP BY T.Job
          ) SourceQ
     WHERE Tmp_JobsToUpdate.Job = SourceQ.Job;
 
@@ -125,15 +126,15 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT J.Job,
-                   J.State,
-                   J.Start,
-                   J.Finish,
+            SELECT T.Job,
+                   T.State,
+                   T.Start,
+                   T.Finish,
                    JTU.StartNew,
                    JTU.FinishNew
-            FROM cap.t_tasks J
+            FROM cap.t_tasks T
                  INNER JOIN Tmp_JobsToUpdate JTU
-                   ON J.Job = JTU.Job
+                   ON T.Job = JTU.Job
         LOOP
             _infoData := format(_formatSpecifier,
                                     _previewData.Job,

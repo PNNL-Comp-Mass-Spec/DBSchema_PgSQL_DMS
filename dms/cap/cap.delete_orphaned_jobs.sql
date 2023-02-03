@@ -12,6 +12,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_orphaned_jobs(IN _infoonly boolean DEFAUL
 **  Auth:   mem
 **  Date:   05/22/2019 mem - Initial version
 **          10/11/2022 mem - Ported to PostgreSQL
+**          02/02/2023 mem - Update table aliases
 **
 *****************************************************/
 DECLARE
@@ -48,12 +49,12 @@ BEGIN
     CREATE INDEX IX_Tmp_JobsToDelete_Job On Tmp_JobsToDelete (Job);
 
     INSERT INTO Tmp_JobsToDelete ( Job, HasDependencies )
-    SELECT J.Job, false
-    FROM cap.t_tasks J
+    SELECT T.Job, false
+    FROM cap.t_tasks T
          LEFT OUTER JOIN public.T_Dataset DS
-           ON J.Dataset_ID = DS.Dataset_ID
-    WHERE J.State = 0 AND
-          J.Imported < CURRENT_TIMESTAMP - Interval '5 days' AND
+           ON T.Dataset_ID = DS.Dataset_ID
+    WHERE T.State = 0 AND
+          T.Imported < CURRENT_TIMESTAMP - Interval '5 days' AND
           DS.Dataset_ID IS NULL;
     --
     GET DIAGNOSTICS _jobCount = ROW_COUNT;
@@ -83,13 +84,13 @@ BEGIN
 
     UPDATE Tmp_JobsToDelete Target
     SET HasDependencies = true
-    FROM cap.t_task_steps JS
-    WHERE Target.Job = JS.Job;
+    FROM cap.t_task_steps TS
+    WHERE Target.Job = TS.Job;
 
     UPDATE Tmp_JobsToDelete Target
     SET HasDependencies = true
-    FROM cap.t_task_step_dependencies JSD
-    WHERE Target.Job = JSD.Job;
+    FROM cap.t_task_step_dependencies TSD
+    WHERE Target.Job = TSD.Job;
 
     UPDATE Tmp_JobsToDelete Target
     SET HasDependencies = true
@@ -132,12 +133,12 @@ BEGIN
 
         FOR _previewData IN
             SELECT D.HasDependencies,
-                   J.job, J.script, J.state, J.state_name,
-                   timestamp_text(J.imported) as imported, J.dataset_id, J.dataset, J.instrument
-            FROM cap.V_Tasks J
+                   T.job, T.script, T.state, T.state_name,
+                   timestamp_text(T.imported) as imported, T.dataset_id, T.dataset, T.instrument
+            FROM cap.V_Tasks T
                  INNER JOIN Tmp_JobsToDelete D
-                   ON J.Job = D.Job
-            ORDER BY J.Job
+                   ON T.Job = D.Job
+            ORDER BY T.Job
         LOOP
             _infoData := format(_formatSpecifier,
                                     CASE WHEN _previewData.hasDependencies THEN 'Yes' ELSE 'No' End,

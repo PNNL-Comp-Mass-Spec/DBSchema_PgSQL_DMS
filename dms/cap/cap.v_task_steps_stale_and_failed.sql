@@ -21,47 +21,47 @@ CREATE VIEW cap.v_task_steps_stale_and_failed AS
     dataq.evaluation_message
    FROM ( SELECT
                 CASE
-                    WHEN ((js.state = 4) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (js.start)::timestamp with time zone)) / 3600.0) >= (5)::numeric)) THEN 'Job step running over 5 hours'::text
-                    WHEN ((js.state = 6) AND (js.start >= (CURRENT_TIMESTAMP - '14 days'::interval)) AND (js.job_state <> 101)) THEN 'Job step failed within the last 14 days'::text
+                    WHEN ((ts.state = 4) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ts.start)::timestamp with time zone)) / 3600.0) >= (5)::numeric)) THEN 'Job step running over 5 hours'::text
+                    WHEN ((ts.state = 6) AND (ts.start >= (CURRENT_TIMESTAMP - '14 days'::interval)) AND (ts.job_state <> 101)) THEN 'Job step failed within the last 14 days'::text
                     WHEN (NOT (failedjobq.job IS NULL)) THEN 'Overall job state is "failed"'::text
                     ELSE ''::text
                 END AS warning_message,
-            js.job,
-            js.dataset,
-            js.dataset_id,
-            js.step,
-            js.script,
-            js.tool,
-            js.state,
+            ts.job,
+            ts.dataset,
+            ts.dataset_id,
+            ts.step,
+            ts.script,
+            ts.tool,
+            ts.state,
                 CASE
-                    WHEN (js.state = 4) THEN 'Stale'::text
+                    WHEN (ts.state = 4) THEN 'Stale'::text
                     ELSE
                     CASE
-                        WHEN ((failedjobq.job IS NULL) OR (js.state = 6)) THEN (js.state_name)::text
-                        ELSE ((js.state_name)::text || ' (Failed in cap.t_tasks)'::text)
+                        WHEN ((failedjobq.job IS NULL) OR (ts.state = 6)) THEN (ts.state_name)::text
+                        ELSE ((ts.state_name)::text || ' (Failed in cap.t_tasks)'::text)
                     END
                 END AS state_name,
-            js.start,
-            js.runtime_minutes,
-            js.last_cpu_status_minutes,
-            js.job_progress,
-            js.runtime_predicted_hours,
-            js.processor,
-            js.priority,
-            COALESCE(js.completion_message, ''::public.citext) AS completion_message,
-            COALESCE(js.evaluation_message, ''::public.citext) AS evaluation_message
-           FROM ((cap.v_task_steps js
+            ts.start,
+            ts.runtime_minutes,
+            ts.last_cpu_status_minutes,
+            ts.job_progress,
+            ts.runtime_predicted_hours,
+            ts.processor,
+            ts.priority,
+            COALESCE(ts.completion_message, ''::public.citext) AS completion_message,
+            COALESCE(ts.evaluation_message, ''::public.citext) AS evaluation_message
+           FROM ((cap.v_task_steps ts
              LEFT JOIN ( SELECT lookupq.job,
                     lookupq.step
                    FROM ( SELECT js_1.job,
                             js_1.step,
                             js_1.state AS stepstate,
-                            row_number() OVER (PARTITION BY j.job ORDER BY js_1.state DESC) AS rowrank
-                           FROM (cap.t_tasks j
-                             JOIN cap.t_task_steps js_1 ON ((j.job = js_1.job)))
-                          WHERE ((j.state = 5) AND (j.start >= (CURRENT_TIMESTAMP - '14 days'::interval)))) lookupq
-                  WHERE (lookupq.rowrank = 1)) failedjobq ON (((js.job = failedjobq.job) AND (js.step = failedjobq.step))))
-             LEFT JOIN cap.t_local_processors lp ON ((js.processor OPERATOR(public.=) lp.processor_name)))) dataq
+                            row_number() OVER (PARTITION BY t.job ORDER BY js_1.state DESC) AS rowrank
+                           FROM (cap.t_tasks t
+                             JOIN cap.t_task_steps js_1 ON ((t.job = js_1.job)))
+                          WHERE ((t.state = 5) AND (t.start >= (CURRENT_TIMESTAMP - '14 days'::interval)))) lookupq
+                  WHERE (lookupq.rowrank = 1)) failedjobq ON (((ts.job = failedjobq.job) AND (ts.step = failedjobq.step))))
+             LEFT JOIN cap.t_local_processors lp ON ((ts.processor OPERATOR(public.=) lp.processor_name)))) dataq
   WHERE (dataq.warning_message <> ''::text);
 
 

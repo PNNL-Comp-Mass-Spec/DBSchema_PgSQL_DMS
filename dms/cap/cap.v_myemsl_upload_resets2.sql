@@ -9,13 +9,13 @@ CREATE VIEW cap.v_myemsl_upload_resets2 AS
     r.subfolder,
     r.error_message,
     r.entered,
-    js.step,
-    js.tool,
-    js.state_name,
-    js.state,
-    js.finish,
-    js.processor,
-    js.dataset,
+    ts.step,
+    ts.tool,
+    ts.state_name,
+    ts.state,
+    ts.finish,
+    ts.processor,
+    ts.dataset,
     u.entry_id AS upload_entry_id,
     u.file_count_new,
     u.file_count_updated,
@@ -27,9 +27,9 @@ CREATE VIEW cap.v_myemsl_upload_resets2 AS
     u.verified,
     u.ingest_steps_completed
    FROM ((cap.t_myemsl_upload_resets r
-     JOIN cap.v_task_steps js ON ((r.job = js.job)))
+     JOIN cap.v_task_steps ts ON ((r.job = ts.job)))
      JOIN cap.v_myemsl_uploads u ON ((r.job = u.job)))
-  WHERE (js.step = 1);
+  WHERE (ts.step = 1);
 
 
 ALTER TABLE cap.v_myemsl_upload_resets2 OWNER TO d3l243;

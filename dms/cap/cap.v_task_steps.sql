@@ -3,93 +3,93 @@
 --
 
 CREATE VIEW cap.v_task_steps AS
- SELECT js.job,
-    js.dataset,
-    js.dataset_id,
-    js.step,
-    js.script,
-    js.tool,
-    js.state_name,
-    js.state,
-    js.start,
-    js.finish,
-    js.runtime_minutes,
+ SELECT ts.job,
+    ts.dataset,
+    ts.dataset_id,
+    ts.step,
+    ts.script,
+    ts.tool,
+    ts.state_name,
+    ts.state,
+    ts.start,
+    ts.finish,
+    ts.runtime_minutes,
     ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60.0))::integer AS last_cpu_status_minutes,
         CASE
-            WHEN (js.state = 4) THEN ps.progress
-            WHEN (js.state = 5) THEN (100)::real
+            WHEN (ts.state = 4) THEN ps.progress
+            WHEN (ts.state = 5) THEN (100)::real
             ELSE (0)::real
         END AS job_progress,
         CASE
-            WHEN ((js.state = 4) AND (ps.progress > (0)::double precision)) THEN round(((((js.runtime_minutes)::double precision / (ps.progress / (100.0)::double precision)) / (60.0)::double precision))::numeric, 2)
+            WHEN ((ts.state = 4) AND (ps.progress > (0)::double precision)) THEN round(((((ts.runtime_minutes)::double precision / (ps.progress / (100.0)::double precision)) / (60.0)::double precision))::numeric, 2)
             ELSE (0)::numeric
         END AS runtime_predicted_hours,
-    js.processor,
+    ts.processor,
         CASE
-            WHEN (js.state = 4) THEN ps.process_id
+            WHEN (ts.state = 4) THEN ps.process_id
             ELSE NULL::integer
         END AS process_id,
-    js.input_folder,
-    js.output_folder,
-    js.priority,
-    js.dependencies,
-    js.cpu_load,
-    js.tool_version_id,
-    js.tool_version,
-    js.completion_code,
-    js.completion_message,
-    js.evaluation_code,
-    js.evaluation_message,
-    js.holdoff_interval_minutes,
-    js.next_try,
-    js.retry_count,
-    js.instrument,
-    ('http://dms2.pnl.gov/helper_inst_source/view/'::text || (js.instrument)::text) AS instrument_source_files,
-    js.storage_server,
-    js.transfer_folder_path,
-    js.dataset_folder_path,
-    js.capture_subfolder,
-    js.job_state
-   FROM (( SELECT steps.job,
-            j.dataset,
-            j.dataset_id,
-            steps.step,
+    ts.input_folder,
+    ts.output_folder,
+    ts.priority,
+    ts.dependencies,
+    ts.cpu_load,
+    ts.tool_version_id,
+    ts.tool_version,
+    ts.completion_code,
+    ts.completion_message,
+    ts.evaluation_code,
+    ts.evaluation_message,
+    ts.holdoff_interval_minutes,
+    ts.next_try,
+    ts.retry_count,
+    ts.instrument,
+    ('http://dms2.pnl.gov/helper_inst_source/view/'::text || (ts.instrument)::text) AS instrument_source_files,
+    ts.storage_server,
+    ts.transfer_folder_path,
+    ts.dataset_folder_path,
+    ts.capture_subfolder,
+    ts.job_state
+   FROM (( SELECT ts_1.job,
+            t.dataset,
+            t.dataset_id,
+            ts_1.step,
             s.script,
-            steps.step_tool AS tool,
+            ts_1.step_tool AS tool,
             ssn.step_state AS state_name,
-            steps.state,
-            steps.start,
-            steps.finish,
-            round((EXTRACT(epoch FROM (COALESCE((steps.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (steps.start)::timestamp with time zone)) / 60.0), 1) AS runtime_minutes,
-            steps.processor,
-            steps.input_folder_name AS input_folder,
-            steps.output_folder_name AS output_folder,
-            j.priority,
-            steps.dependencies,
-            steps.cpu_load,
-            steps.completion_code,
-            steps.completion_message,
-            steps.evaluation_code,
-            steps.evaluation_message,
-            steps.holdoff_interval_minutes,
-            steps.next_try,
-            steps.retry_count,
-            j.instrument,
-            j.storage_server,
-            j.transfer_folder_path,
-            steps.tool_version_id,
+            ts_1.state,
+            ts_1.start,
+            ts_1.finish,
+            round((EXTRACT(epoch FROM (COALESCE((ts_1.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts_1.start)::timestamp with time zone)) / 60.0), 1) AS runtime_minutes,
+            ts_1.processor,
+            ts_1.input_folder_name AS input_folder,
+            ts_1.output_folder_name AS output_folder,
+            t.priority,
+            ts_1.dependencies,
+            ts_1.cpu_load,
+            ts_1.completion_code,
+            ts_1.completion_message,
+            ts_1.evaluation_code,
+            ts_1.evaluation_message,
+            ts_1.holdoff_interval_minutes,
+            ts_1.next_try,
+            ts_1.retry_count,
+            t.instrument,
+            t.storage_server,
+            t.transfer_folder_path,
+            ts_1.tool_version_id,
             stv.tool_version,
             dfp.dataset_folder_path,
-            j.capture_subfolder,
-            j.state AS job_state
-           FROM (((((cap.t_task_steps steps
-             JOIN cap.t_task_step_state_name ssn ON ((steps.state = ssn.step_state_id)))
-             JOIN cap.t_tasks j ON ((steps.job = j.job)))
-             JOIN cap.t_scripts s ON ((j.script OPERATOR(public.=) s.script)))
-             LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((j.dataset_id = dfp.dataset_id)))
-             LEFT JOIN cap.t_step_tool_versions stv ON ((steps.tool_version_id = stv.tool_version_id)))
-          WHERE (j.state <> 101)) js
-     LEFT JOIN cap.t_processor_status ps ON ((js.processor OPERATOR(public.=) ps.processor_name)));
+            t.capture_subfolder,
+            t.state AS job_state
+           FROM (((((cap.t_task_steps ts_1
+             JOIN cap.t_task_step_state_name ssn ON ((ts_1.state = ssn.step_state_id)))
+             JOIN cap.t_tasks t ON ((ts_1.job = t.job)))
+             JOIN cap.t_scripts s ON ((t.script OPERATOR(public.=) s.script)))
+             LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((t.dataset_id = dfp.dataset_id)))
+             LEFT JOIN cap.t_step_tool_versions stv ON ((ts_1.tool_version_id = stv.tool_version_id)))
+          WHERE (t.state <> 101)) ts
+     LEFT JOIN cap.t_processor_status ps ON ((ts.processor OPERATOR(public.=) ps.processor_name)));
 
 
 ALTER TABLE cap.v_task_steps OWNER TO d3l243;

@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_step_dependencies(INOUT _message text D
 **          06/01/2020 mem - Add support for step state 13 (Inactive)
 **          10/11/2022 mem - Ported to PostgreSQL
 **          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
+**          02/02/2023 mem - Update table aliases
 **
 *****************************************************/
 DECLARE
@@ -94,24 +95,24 @@ BEGIN
         TestValue,
         EnableOnly
     )
-    SELECT JS.Job,
-           JSD.Step AS DependentStep,
-           JS.Step AS TargetStep,
-           JS.State AS TargetState,
-           JS.Completion_Code AS TargetCompletionCode,
-           JSD.Condition_Test,
-           JSD.Test_Value,
-           JSD.Enable_Only
-    FROM cap.t_task_step_dependencies jsd
-         INNER JOIN cap.t_task_steps js
-           ON JSD.Target_Step = JS.Step AND
-              JSD.Job = JS.Job
-         INNER JOIN cap.t_task_steps AS JS_B
-           ON JSD.Job = JS_B.Job AND
-              JSD.Step = JS_B.Step
-    WHERE JSD.Evaluated = 0 AND
-          JS.State IN (3, 5, 13) AND
-          JS_B.State = 1;
+    SELECT TS.Job,
+           TSD.Step AS DependentStep,
+           TS.Step AS TargetStep,
+           TS.State AS TargetState,
+           TS.Completion_Code AS TargetCompletionCode,
+           TSD.Condition_Test,
+           TSD.Test_Value,
+           TSD.Enable_Only
+    FROM cap.t_task_step_dependencies TSD
+         INNER JOIN cap.t_task_steps TS
+           ON TSD.Target_Step = TS.Step AND
+              TSD.Job = TS.Job
+         INNER JOIN cap.t_task_steps AS TS_B
+           ON TSD.Job = TS_B.Job AND
+              TSD.Step = TS_B.Step
+    WHERE TSD.Evaluated = 0 AND
+          TS.State IN (3, 5, 13) AND
+          TS_B.State = 1;
 
     If Not FOUND Then
         -- Nothing found, nothing to process

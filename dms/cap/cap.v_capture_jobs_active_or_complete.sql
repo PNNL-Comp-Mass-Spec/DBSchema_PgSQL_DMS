@@ -3,29 +3,29 @@
 --
 
 CREATE VIEW cap.v_capture_jobs_active_or_complete AS
- SELECT j.job,
-    j.priority,
-    j.script,
-    j.state,
-    jsn.job_state AS state_name,
-    j.dataset,
-    j.dataset_id,
-    j.storage_server,
-    j.instrument,
-    j.instrument_class,
-    j.imported,
-    j.start,
-    j.finish,
+ SELECT t.job,
+    t.priority,
+    t.script,
+    t.state,
+    tsn.job_state AS state_name,
+    t.dataset,
+    t.dataset_id,
+    t.storage_server,
+    t.instrument,
+    t.instrument_class,
+    t.imported,
+    t.start,
+    t.finish,
     sum(
         CASE
-            WHEN (js.state = ANY (ARRAY[2, 4, 5])) THEN 1
+            WHEN (ts.state = ANY (ARRAY[2, 4, 5])) THEN 1
             ELSE 0
         END) AS step_count_active_or_complete
-   FROM ((cap.t_tasks j
-     JOIN cap.t_task_state_name jsn ON ((j.state = jsn.job_state_id)))
-     LEFT JOIN cap.t_task_steps js ON ((j.job = js.job)))
-  WHERE ((j.script OPERATOR(public.~~) '%DatasetCapture%'::public.citext) AND ((j.state = ANY (ARRAY[0, 1, 2, 3, 6, 9, 20, 100])) OR (js.state = ANY (ARRAY[2, 4, 5]))))
-  GROUP BY j.job, j.priority, j.script, j.state, jsn.job_state, j.dataset, j.dataset_id, j.storage_server, j.instrument, j.instrument_class, j.results_folder_name, j.imported, j.start, j.finish;
+   FROM ((cap.t_tasks t
+     JOIN cap.t_task_state_name tsn ON ((t.state = tsn.job_state_id)))
+     LEFT JOIN cap.t_task_steps ts ON ((t.job = ts.job)))
+  WHERE ((t.script OPERATOR(public.~~) '%DatasetCapture%'::public.citext) AND ((t.state = ANY (ARRAY[0, 1, 2, 3, 6, 9, 20, 100])) OR (ts.state = ANY (ARRAY[2, 4, 5]))))
+  GROUP BY t.job, t.priority, t.script, t.state, tsn.job_state, t.dataset, t.dataset_id, t.storage_server, t.instrument, t.instrument_class, t.results_folder_name, t.imported, t.start, t.finish;
 
 
 ALTER TABLE cap.v_capture_jobs_active_or_complete OWNER TO d3l243;

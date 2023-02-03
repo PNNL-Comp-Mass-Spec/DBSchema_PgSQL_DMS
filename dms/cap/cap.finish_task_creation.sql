@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.finish_task_creation(IN _job integer, INOUT _mes
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
+**          02/02/2023 mem - Update table aliases
 **
 *****************************************************/
 DECLARE
@@ -96,12 +97,12 @@ BEGIN
     -- These datasets have already been demultiplexed
     ---------------------------------------------------
     --
-    UPDATE Tmp_Job_Steps JS
+    UPDATE Tmp_Job_Steps TS
     SET State = 3
-    FROM Tmp_Jobs J
-    WHERE JS.Job = J.Job AND
-          J.Dataset SIMILAR TO '%[_]inverse' AND
-          JS.Step_Tool = 'ImsDeMultiplex';
+    FROM Tmp_Jobs T
+    WHERE TS.Job = T.Job AND
+          T.Dataset SIMILAR TO '%[_]inverse' AND
+          TS.Step_Tool = 'ImsDeMultiplex';
 
     If FOUND Then
         RAISE INFO 'Skipped the ImsDeMultiplex step for job % because the dataset name ends with "_inverse"', _job;

@@ -3,25 +3,25 @@
 --
 
 CREATE VIEW cap.v_capture_jobs_list_report AS
- SELECT j.job,
-    j.priority,
-    j.script,
+ SELECT t.job,
+    t.priority,
+    t.script,
     taskstatename.job_state AS job_state_b,
     statsq.num_steps AS steps,
-    (((js.step_tool)::text || ':'::text) || (ssn.step_state)::text) AS active_step,
-    j.dataset,
-    j.dataset_id,
-    j.results_folder_name,
-    j.imported,
-    j.start,
-    j.finish,
-    j.storage_server,
-    j.instrument,
-    j.instrument_class,
-    j.max_simultaneous_captures,
-    j.comment
-   FROM ((((cap.t_tasks j
-     JOIN cap.t_task_state_name taskstatename ON ((j.state = taskstatename.job_state_id)))
+    (((ts.step_tool)::text || ':'::text) || (ssn.step_state)::text) AS active_step,
+    t.dataset,
+    t.dataset_id,
+    t.results_folder_name,
+    t.imported,
+    t.start,
+    t.finish,
+    t.storage_server,
+    t.instrument,
+    t.instrument_class,
+    t.max_simultaneous_captures,
+    t.comment
+   FROM ((((cap.t_tasks t
+     JOIN cap.t_task_state_name taskstatename ON ((t.state = taskstatename.job_state_id)))
      JOIN ( SELECT tasksteps.job,
             count(tasksteps.step) AS num_steps,
             max(
@@ -37,9 +37,9 @@ CREATE VIEW cap.v_capture_jobs_list_report AS
            FROM ((cap.t_task_steps tasksteps
              JOIN cap.t_step_tools steptools ON ((tasksteps.step_tool OPERATOR(public.=) steptools.step_tool)))
              JOIN cap.t_tasks j_1 ON ((tasksteps.job = j_1.job)))
-          GROUP BY tasksteps.job) statsq ON ((statsq.job = j.job)))
-     JOIN cap.t_task_steps js ON (((j.job = js.job) AND (statsq.active_step = js.step))))
-     JOIN cap.t_task_step_state_name ssn ON ((js.state = ssn.step_state_id)));
+          GROUP BY tasksteps.job) statsq ON ((statsq.job = t.job)))
+     JOIN cap.t_task_steps ts ON (((t.job = ts.job) AND (statsq.active_step = ts.step))))
+     JOIN cap.t_task_step_state_name ssn ON ((ts.state = ssn.step_state_id)));
 
 
 ALTER TABLE cap.v_capture_jobs_list_report OWNER TO d3l243;

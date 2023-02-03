@@ -3,25 +3,25 @@
 --
 
 CREATE VIEW cap.v_capture_jobs_detail_report AS
- SELECT j.job,
-    j.priority,
-    j.script,
-    jsn.job_state AS job_state_b,
+ SELECT t.job,
+    t.priority,
+    t.script,
+    tsn.job_state AS job_state_b,
     'Steps'::text AS steps,
-    j.dataset,
-    j.dataset_id,
-    j.results_folder_name,
-    j.imported,
-    j.finish,
-    j.storage_server,
-    j.instrument,
-    j.instrument_class,
-    j.max_simultaneous_captures,
-    j.comment,
-    j.capture_subfolder,
-    cap.get_task_param_list(j.job) AS parameters
-   FROM (cap.t_tasks j
-     JOIN cap.t_task_state_name jsn ON ((j.state = jsn.job_state_id)));
+    t.dataset,
+    t.dataset_id,
+    t.results_folder_name,
+    t.imported,
+    t.finish,
+    t.storage_server,
+    t.instrument,
+    t.instrument_class,
+    t.max_simultaneous_captures,
+    t.comment,
+    t.capture_subfolder,
+    cap.get_task_param_list(t.job) AS parameters
+   FROM (cap.t_tasks t
+     JOIN cap.t_task_state_name tsn ON ((t.state = tsn.job_state_id)));
 
 
 ALTER TABLE cap.v_capture_jobs_detail_report OWNER TO d3l243;

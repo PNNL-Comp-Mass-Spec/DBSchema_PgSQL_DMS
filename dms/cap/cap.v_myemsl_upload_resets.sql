@@ -9,16 +9,16 @@ CREATE VIEW cap.v_myemsl_upload_resets AS
     r.subfolder,
     r.error_message,
     r.entered,
-    js.step,
-    js.tool,
-    js.state_name,
-    js.state,
-    js.finish,
-    js.processor,
-    js.dataset
+    ts.step,
+    ts.tool,
+    ts.state_name,
+    ts.state,
+    ts.finish,
+    ts.processor,
+    ts.dataset
    FROM (cap.t_myemsl_upload_resets r
-     JOIN cap.v_task_steps js ON ((r.job = js.job)))
-  WHERE (js.step = 1);
+     JOIN cap.v_task_steps ts ON ((r.job = ts.job)))
+  WHERE (ts.step = 1);
 
 
 ALTER TABLE cap.v_myemsl_upload_resets OWNER TO d3l243;
