@@ -34,6 +34,12 @@ ALTER TABLE ONLY cap.t_tasks_history
 CREATE INDEX ix_t_tasks_history_dataset ON cap.t_tasks_history USING btree (dataset);
 
 --
+-- Name: ix_t_tasks_history_dataset_id; Type: INDEX; Schema: cap; Owner: d3l243
+--
+
+CREATE INDEX ix_t_tasks_history_dataset_id ON cap.t_tasks_history USING btree (dataset_id);
+
+--
 -- Name: ix_t_tasks_history_job; Type: INDEX; Schema: cap; Owner: d3l243
 --
 
