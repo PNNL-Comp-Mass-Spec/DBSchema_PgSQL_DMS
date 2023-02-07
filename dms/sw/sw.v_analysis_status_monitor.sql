@@ -3,22 +3,9 @@
 --
 
 CREATE VIEW sw.v_analysis_status_monitor AS
- SELECT COALESCE(asm.id, lp.processor_id) AS id,
-    COALESCE(asm.name, ps.processor_name) AS name,
-        CASE
-            WHEN (asm.name IS NULL) THEN sw.get_processor_step_tool_list((ps.processor_name)::text)
-            ELSE
-            CASE
-                WHEN (sw.get_processor_step_tool_list((asm.name)::text) = ''::text) THEN asm.tools
-                ELSE sw.get_processor_step_tool_list((asm.name)::text)
-            END
-        END AS tools,
-    COALESCE(asm.enabled_groups, ''::text) AS enabled_groups,
-    COALESCE(asm.disabled_groups, ''::text) AS disabled_groups,
-    COALESCE(asm.status_file_name_path, ''::public.citext) AS status_file_name_path,
-    COALESCE((asm.check_box_state)::integer, 1) AS check_box_state,
-    COALESCE((asm.use_for_status_check)::integer, 1) AS use_for_status_check,
-    COALESCE(ps.mgr_status, 'Unknown_Status'::public.citext) AS status_name,
+ SELECT lp.processor_id,
+    ps.processor_name,
+    sw.get_processor_step_tool_list((ps.processor_name)::text) AS tools,
     ps.job,
     ps.job_step,
     ps.step_tool,
@@ -31,10 +18,8 @@ CREATE VIEW sw.v_analysis_status_monitor AS
     ps.most_recent_error_message,
     ps.status_date,
     round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60.0), 1) AS last_cpu_status_minutes
-   FROM ((sw.t_local_processors lp
-     RIGHT JOIN sw.t_processor_status ps ON ((lp.processor_name OPERATOR(public.=) ps.processor_name)))
-     FULL JOIN public.v_analysis_status_monitor asm ON ((ps.processor_name OPERATOR(public.=) asm.name)))
-  WHERE (COALESCE((asm.use_for_status_check)::integer, 1) > 0);
+   FROM (sw.t_local_processors lp
+     RIGHT JOIN sw.t_processor_status ps ON ((lp.processor_name OPERATOR(public.=) ps.processor_name)));
 
 
 ALTER TABLE sw.v_analysis_status_monitor OWNER TO d3l243;
