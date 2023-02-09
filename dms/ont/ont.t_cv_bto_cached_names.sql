@@ -29,7 +29,13 @@ ALTER TABLE ont.t_cv_bto_cached_names ALTER COLUMN entry_id ADD GENERATED ALWAYS
 --
 
 ALTER TABLE ONLY ont.t_cv_bto_cached_names
-    ADD CONSTRAINT pk_t_cv_bto_cached_names PRIMARY KEY (identifier, term_name);
+    ADD CONSTRAINT pk_t_cv_bto_cached_names PRIMARY KEY (entry_id);
+
+--
+-- Name: ix_t_cv_bto_cached_names_identifier_term_name; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_cv_bto_cached_names_identifier_term_name ON ont.t_cv_bto_cached_names USING btree (identifier, term_name);
 
 --
 -- Name: ix_t_cv_bto_cached_names_term_name; Type: INDEX; Schema: ont; Owner: d3l243
