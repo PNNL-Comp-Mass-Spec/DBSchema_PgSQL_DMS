@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_table_index_sizes AS
- SELECT statsq.schema_name,
-    statsq.table_name,
-    statsq.index_name,
+ SELECT (statsq.schema_name)::public.citext AS schema_name,
+    (statsq.table_name)::public.citext AS table_name,
+    (statsq.index_name)::public.citext AS index_name,
     statsq.num_rows,
     pg_size_pretty(statsq.table_size_bytes) AS table_size,
     pg_size_pretty(statsq.index_size_bytes) AS index_size,

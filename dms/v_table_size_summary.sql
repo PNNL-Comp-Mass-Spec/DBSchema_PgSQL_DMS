@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_table_size_summary AS
- SELECT statsq.table_schema,
-    statsq.table_name,
+ SELECT (statsq.table_schema)::public.citext AS table_schema,
+    (statsq.table_name)::public.citext AS table_name,
     statsq.table_row_count,
     pg_size_pretty(statsq.size_bytes) AS size,
     statsq.size_bytes,

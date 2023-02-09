@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_table_index_usage AS
- SELECT statsq.schema_name,
-    statsq.table_name,
-    statsq.index_name,
+ SELECT (statsq.schema_name)::public.citext AS schema_name,
+    (statsq.table_name)::public.citext AS table_name,
+    (statsq.index_name)::public.citext AS index_name,
     statsq.idx_usage,
     statsq.idx_scan,
     statsq.idx_tup_read,

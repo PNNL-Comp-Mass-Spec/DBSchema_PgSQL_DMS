@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_table_row_counts AS
- SELECT t.schema_name,
-    t.relname AS object_name,
+ SELECT (t.schema_name)::public.citext AS schema_name,
+    (t.relname)::public.citext AS object_name,
         CASE t.relkind
             WHEN 'r'::public.citext THEN 'Table'::public.citext
             WHEN 'i'::public.citext THEN 'Index'::public.citext
@@ -20,7 +20,15 @@ CREATE VIEW public.v_table_row_counts AS
         END AS object_type,
     t.table_row_count,
     pg_size_pretty(t.size_bytes) AS size,
-    t.size_bytes
+    t.size_bytes,
+        CASE
+            WHEN (t.relkind OPERATOR(public.=) ANY (ARRAY['r'::public.citext, 't'::public.citext, 'f'::public.citext, 'p'::public.citext])) THEN (t.relname)::public.citext
+            ELSE NULL::public.citext
+        END AS table_name,
+        CASE
+            WHEN (t.relkind OPERATOR(public.=) ANY (ARRAY['v'::public.citext, 'm'::public.citext])) THEN (t.relname)::public.citext
+            ELSE NULL::public.citext
+        END AS view_name
    FROM ( SELECT pg_namespace.nspname AS schema_name,
             pg_class.relname,
             (pg_class.relkind)::public.citext AS relkind,
