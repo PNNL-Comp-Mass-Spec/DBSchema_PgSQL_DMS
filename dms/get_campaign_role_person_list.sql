@@ -2,7 +2,7 @@
 -- Name: get_campaign_role_person_list(integer, public.citext, public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid integer, _role public.citext, _mode public.citext DEFAULT 'PRN'::public.citext) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid integer, _role public.citext, _mode public.citext DEFAULT 'USERNAME'::public.citext) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid inte
 **          12/08/2014 mem - Now using name_with_username to obtain each user's name and PRN
 **          07/07/2022 mem - Ported to PostgreSQL
 **          11/14/2022 mem - Allow mode to be either PRN or USERNAME
+**          02/09/2023 mem - Change default value for _mode to 'USERNAME'
 **
 *****************************************************/
 DECLARE
