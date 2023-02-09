@@ -13,11 +13,11 @@ CREATE TABLE mc.t_param_type (
 ALTER TABLE mc.t_param_type OWNER TO d3l243;
 
 --
--- Name: t_param_type_param_id_seq; Type: SEQUENCE; Schema: mc; Owner: d3l243
+-- Name: t_param_type_param_type_id_seq; Type: SEQUENCE; Schema: mc; Owner: d3l243
 --
 
 ALTER TABLE mc.t_param_type ALTER COLUMN param_type_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME mc.t_param_type_param_id_seq
+    SEQUENCE NAME mc.t_param_type_param_type_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE

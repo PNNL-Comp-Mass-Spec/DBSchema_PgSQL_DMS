@@ -14,11 +14,11 @@ CREATE TABLE public.t_aux_info_target (
 ALTER TABLE public.t_aux_info_target OWNER TO d3l243;
 
 --
--- Name: t_aux_info_target_aux_target_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
+-- Name: t_aux_info_target_target_type_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
 --
 
 ALTER TABLE public.t_aux_info_target ALTER COLUMN target_type_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.t_aux_info_target_aux_target_id_seq
+    SEQUENCE NAME public.t_aux_info_target_target_type_id_seq
     START WITH 500
     INCREMENT BY 1
     NO MINVALUE

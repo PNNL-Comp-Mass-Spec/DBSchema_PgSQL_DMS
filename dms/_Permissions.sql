@@ -220,11 +220,11 @@ GRANT SELECT ON SEQUENCE mc.t_mgrs_mgr_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE mc.t_mgrs_mgr_id_seq TO writeaccess;
 
 --
--- Name: SEQUENCE t_param_type_param_id_seq; Type: ACL; Schema: mc; Owner: d3l243
+-- Name: SEQUENCE t_param_type_param_type_id_seq; Type: ACL; Schema: mc; Owner: d3l243
 --
 
-GRANT SELECT ON SEQUENCE mc.t_param_type_param_id_seq TO readaccess;
-GRANT SELECT ON SEQUENCE mc.t_param_type_param_id_seq TO writeaccess;
+GRANT SELECT ON SEQUENCE mc.t_param_type_param_type_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE mc.t_param_type_param_type_id_seq TO writeaccess;
 
 --
 -- Name: SEQUENCE t_param_value_entry_id_seq; Type: ACL; Schema: mc; Owner: d3l243
@@ -675,11 +675,11 @@ GRANT SELECT ON SEQUENCE public.t_aux_info_subcategory_aux_subcategory_id_seq TO
 GRANT SELECT ON SEQUENCE public.t_aux_info_subcategory_aux_subcategory_id_seq TO writeaccess;
 
 --
--- Name: SEQUENCE t_aux_info_target_aux_target_id_seq; Type: ACL; Schema: public; Owner: d3l243
+-- Name: SEQUENCE t_aux_info_target_target_type_id_seq; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON SEQUENCE public.t_aux_info_target_aux_target_id_seq TO readaccess;
-GRANT SELECT ON SEQUENCE public.t_aux_info_target_aux_target_id_seq TO writeaccess;
+GRANT SELECT ON SEQUENCE public.t_aux_info_target_target_type_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_aux_info_target_target_type_id_seq TO writeaccess;
 
 --
 -- Name: SEQUENCE t_aux_info_value_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
