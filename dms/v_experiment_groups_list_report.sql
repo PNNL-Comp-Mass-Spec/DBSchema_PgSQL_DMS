@@ -12,7 +12,7 @@ CREATE VIEW public.v_experiment_groups_list_report AS
     e.experiment AS parent_experiment,
     eg.created,
         CASE
-            WHEN (eg.researcher IS NULL) THEN ''::public.citext
+            WHEN (eg.researcher_username IS NULL) THEN ''::public.citext
             ELSE t_users.name_with_username
         END AS researcher
    FROM (((public.t_experiment_groups eg
@@ -22,7 +22,7 @@ CREATE VIEW public.v_experiment_groups_list_report AS
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'experiment_group'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id) ta ON ((eg.group_id = ta.entity_id)))
-     LEFT JOIN public.t_users ON ((eg.researcher OPERATOR(public.=) t_users.username)));
+     LEFT JOIN public.t_users ON ((eg.researcher_username OPERATOR(public.=) t_users.username)));
 
 
 ALTER TABLE public.v_experiment_groups_list_report OWNER TO d3l243;

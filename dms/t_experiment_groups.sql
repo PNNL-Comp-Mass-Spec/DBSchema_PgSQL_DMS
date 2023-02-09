@@ -9,7 +9,7 @@ CREATE TABLE public.t_experiment_groups (
     description public.citext,
     parent_exp_id integer DEFAULT 0 NOT NULL,
     prep_lc_run_id integer,
-    researcher public.citext,
+    researcher_username public.citext,
     group_name public.citext,
     member_count integer DEFAULT 0 NOT NULL
 );
@@ -62,7 +62,7 @@ ALTER TABLE ONLY public.t_experiment_groups
 --
 
 ALTER TABLE ONLY public.t_experiment_groups
-    ADD CONSTRAINT fk_t_experiment_groups_t_users FOREIGN KEY (researcher) REFERENCES public.t_users(username) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_experiment_groups_t_users FOREIGN KEY (researcher_username) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_experiment_groups; Type: ACL; Schema: public; Owner: d3l243

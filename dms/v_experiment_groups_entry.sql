@@ -9,7 +9,7 @@ CREATE VIEW public.v_experiment_groups_entry AS
     eg.description,
     e.experiment AS parent_exp,
     public.get_exp_group_experiment_list(eg.group_id) AS experiment_list,
-    eg.researcher
+    eg.researcher_username AS researcher
    FROM (public.t_experiment_groups eg
      JOIN public.t_experiments e ON ((eg.parent_exp_id = e.exp_id)));
 

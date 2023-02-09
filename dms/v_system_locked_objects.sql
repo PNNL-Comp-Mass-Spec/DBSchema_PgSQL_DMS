@@ -5,7 +5,7 @@
 CREATE VIEW public.v_system_locked_objects AS
  SELECT psa.pid,
     psa.datname AS database,
-    psa.usename AS "user",
+    psa.usename AS username,
     psa.application_name,
     psa.state,
     psa.query_start,

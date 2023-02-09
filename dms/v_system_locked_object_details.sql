@@ -5,7 +5,7 @@
 CREATE VIEW public.v_system_locked_object_details AS
  SELECT a.pid,
     a.datname AS database,
-    a.usename AS "user",
+    a.usename AS username,
     a.application_name,
     a.state,
     c.relname AS object_name,
