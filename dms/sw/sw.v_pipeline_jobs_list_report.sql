@@ -15,7 +15,7 @@ CREATE VIEW sw.v_pipeline_jobs_list_report AS
     j.finish,
     j.runtime_minutes,
     j.data_pkg_id,
-    j.owner,
+    j.owner_username AS owner,
     j.transfer_folder_path,
     j.archive_busy,
     j.comment

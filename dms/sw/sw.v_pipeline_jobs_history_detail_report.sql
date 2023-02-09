@@ -13,7 +13,7 @@ CREATE VIEW sw.v_pipeline_jobs_history_detail_report AS
     aj.settings_file_name AS settings_file,
     aj.param_file_name AS parameter_file,
     j.comment,
-    j.owner,
+    j.owner_username AS owner,
     j.special_processing,
     j.data_pkg_id AS data_package_id,
     j.results_folder_name,

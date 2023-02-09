@@ -8,7 +8,7 @@ CREATE VIEW sw.v_dms_data_packages AS
     dp.package_type,
     dp.description,
     dp.comment,
-    COALESCE(u1.name, dp.owner) AS owner,
+    COALESCE(u1.name, dp.owner_username) AS owner,
     COALESCE(u2.name, dp.requester) AS requester,
     dp.path_team AS team,
     dp.created,
@@ -27,7 +27,7 @@ CREATE VIEW sw.v_dms_data_packages AS
     dp.wiki_page_link AS prism_wiki
    FROM (((dpkg.t_data_package dp
      JOIN dpkg.v_data_package_paths dpp ON ((dp.data_pkg_id = dpp.id)))
-     LEFT JOIN public.t_users u1 ON ((dp.owner OPERATOR(public.=) u1.username)))
+     LEFT JOIN public.t_users u1 ON ((dp.owner_username OPERATOR(public.=) u1.username)))
      LEFT JOIN public.t_users u2 ON ((dp.requester OPERATOR(public.=) u2.username)));
 
 

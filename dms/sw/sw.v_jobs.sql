@@ -17,7 +17,7 @@ CREATE VIEW sw.v_jobs AS
     j.finish,
     j.archive_busy,
     j.transfer_folder_path,
-    j.owner,
+    j.owner_username AS owner,
     j.data_pkg_id,
     j.comment,
     j.storage_server,

@@ -14,7 +14,7 @@ CREATE VIEW sw.v_pipeline_jobs_backfill AS
     j.finish,
     j.transfer_folder_path,
     j.comment,
-    j.owner,
+    j.owner_username AS owner,
     jpt.processing_time_minutes,
     j.data_pkg_id
    FROM ((sw.t_jobs j

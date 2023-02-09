@@ -6,7 +6,7 @@ CREATE VIEW dpkg.v_data_package_export AS
  SELECT dp.data_pkg_id AS id,
     dp.package_name AS name,
     dp.description,
-    dp.owner,
+    dp.owner_username AS owner,
     dp.path_team AS team,
     dp.state,
     dp.package_type,

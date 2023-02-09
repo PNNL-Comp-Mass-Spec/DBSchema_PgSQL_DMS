@@ -8,7 +8,7 @@ CREATE VIEW dpkg.v_osm_package_detail_report AS
     osmpackage.package_type,
     osmpackage.description,
     osmpackage.keywords,
-    COALESCE(u.name, osmpackage.owner) AS owner,
+    COALESCE(u.name, osmpackage.owner_username) AS owner,
     osmpackage.created,
     osmpackage.last_modified,
     osmpackage.sample_prep_requests,
@@ -17,7 +17,7 @@ CREATE VIEW dpkg.v_osm_package_detail_report AS
     osmpackage.user_folder_path AS user_folder,
     packagepaths.share_path AS managed_folder
    FROM ((dpkg.t_osm_package osmpackage
-     LEFT JOIN public.t_users u ON ((osmpackage.owner OPERATOR(public.=) u.username)))
+     LEFT JOIN public.t_users u ON ((osmpackage.owner_username OPERATOR(public.=) u.username)))
      LEFT JOIN dpkg.v_osm_package_paths packagepaths ON ((osmpackage.osm_pkg_id = packagepaths.id)));
 
 

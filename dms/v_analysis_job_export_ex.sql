@@ -23,7 +23,7 @@ CREATE VIEW public.v_analysis_job_export_ex AS
     public.combine_paths((sp.vol_name_client)::text, (sp.storage_path)::text) AS storagepathserver,
     ds.folder_name AS datasetfolder,
     aj.results_folder_name AS resultsfolder,
-    aj.owner,
+    aj.owner_username AS owner,
     aj.comment,
     ds.separation_type AS separationsystype,
     analysistool.result_type AS resulttype,

@@ -6,7 +6,7 @@ CREATE VIEW dpkg.v_data_package_list_report AS
  SELECT dp.data_pkg_id AS id,
     dp.package_name AS name,
     dp.description,
-    COALESCE(ownerinfo.name, dp.owner) AS owner,
+    COALESCE(ownerinfo.name, dp.owner_username) AS owner,
     dp.path_team AS team,
     dp.state,
     dp.package_type,
@@ -22,7 +22,7 @@ CREATE VIEW dpkg.v_data_package_list_report AS
     dp.data_doi,
     dp.manuscript_doi
    FROM ((dpkg.t_data_package dp
-     LEFT JOIN public.t_users ownerinfo ON ((dp.owner OPERATOR(public.=) ownerinfo.username)))
+     LEFT JOIN public.t_users ownerinfo ON ((dp.owner_username OPERATOR(public.=) ownerinfo.username)))
      LEFT JOIN public.t_users requesterinfo ON ((dp.requester OPERATOR(public.=) requesterinfo.username)));
 
 

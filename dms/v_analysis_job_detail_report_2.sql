@@ -35,7 +35,7 @@ CREATE VIEW public.v_analysis_job_detail_report_2 AS
             ELSE (js.job_state)::text
         END AS state,
     (j.processing_time_minutes)::numeric(9,2) AS runtime_minutes,
-    j.owner,
+    j.owner_username AS owner,
     j.comment,
     j.special_processing,
         CASE

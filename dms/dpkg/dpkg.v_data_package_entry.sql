@@ -8,7 +8,7 @@ CREATE VIEW dpkg.v_data_package_entry AS
     t_data_package.package_type,
     t_data_package.description,
     t_data_package.comment,
-    t_data_package.owner,
+    t_data_package.owner_username AS owner,
     t_data_package.requester,
     t_data_package.state,
     t_data_package.path_team AS team,

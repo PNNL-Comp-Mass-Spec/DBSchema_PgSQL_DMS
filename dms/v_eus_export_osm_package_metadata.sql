@@ -10,13 +10,13 @@ CREATE VIEW public.v_eus_export_osm_package_metadata AS
     osmpkg.keywords,
     osmpkg.comment,
     u.name AS owner,
-    COALESCE(osmpkg.owner, ''::public.citext) AS owner_prn,
+    COALESCE(osmpkg.owner_username, ''::public.citext) AS owner_username,
     osmpkg.created,
     osmpkg.last_modified AS modified,
     osmpkg.state,
     ('/aurora/dmsarch/dms_attachments/osm_package/spread/'::text || (osmpkg.osm_pkg_id)::text) AS archive_path
    FROM (dpkg.t_osm_package osmpkg
-     LEFT JOIN public.t_users u ON ((u.username OPERATOR(public.=) osmpkg.owner)));
+     LEFT JOIN public.t_users u ON ((u.username OPERATOR(public.=) osmpkg.owner_username)));
 
 
 ALTER TABLE public.v_eus_export_osm_package_metadata OWNER TO d3l243;

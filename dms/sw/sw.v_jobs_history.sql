@@ -19,7 +19,7 @@ CREATE VIEW sw.v_jobs_history AS
     jh.saved,
     jh.most_recent_entry,
     jh.transfer_folder_path,
-    jh.owner,
+    jh.owner_username AS owner,
     jh.data_pkg_id,
     jh.comment,
     jh.special_processing

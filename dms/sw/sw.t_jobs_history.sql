@@ -19,7 +19,7 @@ CREATE TABLE sw.t_jobs_history (
     saved timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     most_recent_entry smallint DEFAULT 0 NOT NULL,
     transfer_folder_path public.citext,
-    owner public.citext,
+    owner_username public.citext,
     data_pkg_id integer,
     comment public.citext
 );

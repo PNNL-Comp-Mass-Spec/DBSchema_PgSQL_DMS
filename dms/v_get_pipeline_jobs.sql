@@ -14,7 +14,7 @@ CREATE VIEW public.v_get_pipeline_jobs AS
     ((((spath.vol_name_client)::text || 'DMS3_XFER\'::text) || (ds.dataset)::text) || '\'::text) AS transfer_folder_path,
     j.comment,
     j.special_processing,
-    j.owner
+    j.owner_username AS owner
    FROM ((((public.t_analysis_job j
      JOIN public.t_analysis_tool tool ON ((j.analysis_tool_id = tool.analysis_tool_id)))
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))

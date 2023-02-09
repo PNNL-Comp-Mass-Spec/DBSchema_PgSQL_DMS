@@ -20,7 +20,7 @@ CREATE TABLE sw.t_jobs (
     comment public.citext,
     storage_server public.citext,
     special_processing public.citext,
-    owner public.citext,
+    owner_username public.citext,
     data_pkg_id integer
 );
 

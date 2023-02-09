@@ -9,13 +9,13 @@ CREATE VIEW dpkg.v_osm_package_list_report AS
     o.description,
     o.keywords,
     o.comment,
-    ((((u.name)::text || ' ('::text) || (COALESCE(o.owner, ''::public.citext))::text) || ')'::text) AS owner,
+    ((((u.name)::text || ' ('::text) || (COALESCE(o.owner_username, ''::public.citext))::text) || ')'::text) AS owner,
     o.created,
     o.state,
     o.last_modified AS modified,
     o.sample_prep_requests AS sample_prep
    FROM (dpkg.t_osm_package o
-     LEFT JOIN public.t_users u ON ((u.username OPERATOR(public.=) o.owner)));
+     LEFT JOIN public.t_users u ON ((u.username OPERATOR(public.=) o.owner_username)));
 
 
 ALTER TABLE dpkg.v_osm_package_list_report OWNER TO d3l243;

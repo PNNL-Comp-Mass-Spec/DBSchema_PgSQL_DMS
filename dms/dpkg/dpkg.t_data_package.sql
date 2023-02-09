@@ -8,7 +8,7 @@ CREATE TABLE dpkg.t_data_package (
     package_type public.citext DEFAULT 'General'::public.citext NOT NULL,
     description public.citext DEFAULT ''::public.citext,
     comment public.citext DEFAULT ''::public.citext,
-    owner public.citext,
+    owner_username public.citext,
     requester public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_modified timestamp without time zone,

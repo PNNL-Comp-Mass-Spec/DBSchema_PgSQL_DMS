@@ -11,7 +11,7 @@ CREATE VIEW public.v_analysis_job_entry AS
     j.settings_file_name AS settings_file,
     org.organism,
     j.organism_db_name AS organism_db,
-    j.owner,
+    j.owner_username AS owner,
     j.comment,
     j.special_processing,
     j.batch_id,

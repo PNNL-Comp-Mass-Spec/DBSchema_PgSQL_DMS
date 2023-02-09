@@ -50,7 +50,7 @@ CREATE VIEW public.v_analysis_job_psm_detail_report AS
     j.protein_options_list,
     js.job_state AS state,
     (j.processing_time_minutes)::numeric(9,2) AS runtime_minutes,
-    j.owner,
+    j.owner_username AS owner,
     j.comment,
     j.special_processing,
     j.created,

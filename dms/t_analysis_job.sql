@@ -16,7 +16,7 @@ CREATE TABLE public.t_analysis_job (
     organism_id integer NOT NULL,
     dataset_id integer NOT NULL,
     comment public.citext DEFAULT ''::public.citext,
-    owner public.citext,
+    owner_username public.citext,
     job_state_id integer DEFAULT 1 NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     assigned_processor_name public.citext,
@@ -152,7 +152,7 @@ CREATE INDEX ix_t_analysis_job_tool_id_job_id_dataset_id_include_ajstart ON publ
 -- Name: ix_t_analysis_job_tool_id_state_id_include_job_priority; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_analysis_job_tool_id_state_id_include_job_priority ON public.t_analysis_job USING btree (analysis_tool_id, job_state_id) INCLUDE (job, priority, dataset_id, comment, owner, special_processing);
+CREATE INDEX ix_t_analysis_job_tool_id_state_id_include_job_priority ON public.t_analysis_job USING btree (analysis_tool_id, job_state_id) INCLUDE (job, priority, dataset_id, comment, owner_username, special_processing);
 
 --
 -- Name: t_analysis_job trig_t_analysis_job_after_delete_all; Type: TRIGGER; Schema: public; Owner: d3l243

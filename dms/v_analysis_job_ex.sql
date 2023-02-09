@@ -19,7 +19,7 @@ CREATE VIEW public.v_analysis_job_ex AS
     j.priority,
     j.comment,
     instname.instrument_class AS inst_class,
-    j.owner
+    j.owner_username AS owner
    FROM (((((public.t_analysis_job j
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
      JOIN public.t_organisms org ON ((j.organism_id = org.organism_id)))
