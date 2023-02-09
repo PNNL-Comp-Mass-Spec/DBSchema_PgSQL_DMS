@@ -56,7 +56,7 @@ CREATE VIEW sw.v_job_steps2 AS
     dataq.dataset_id,
     dataq.data_pkg_id,
     dataq.machine,
-    dataq.workdirpath,
+    dataq.workdirpath AS work_dir_path,
     dataq.transfer_folder_path,
     (paramq.dataset_storage_path || (dataq.dataset)::text) AS dataset_folder_path,
     ((((((((dataq.log_file_path ||

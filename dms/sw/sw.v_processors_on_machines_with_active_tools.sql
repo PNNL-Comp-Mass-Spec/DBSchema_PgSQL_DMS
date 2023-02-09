@@ -16,7 +16,7 @@ CREATE VIEW sw.v_processors_on_machines_with_active_tools AS
     st.group_id,
     st.group_name,
     st.group_enabled,
-    count(DISTINCT (((busyprocessorsq.job)::text || '_'::text) || (busyprocessorsq.step)::text)) AS activetools,
+    count(DISTINCT (((busyprocessorsq.job)::text || '_'::text) || (busyprocessorsq.step)::text)) AS active_tools,
     min(busyprocessorsq.start) AS start_min,
     max(busyprocessorsq.start) AS start_max,
     max(busyprocessorsq.runtime_predicted_hours) AS runtime_predicted_hours_max
