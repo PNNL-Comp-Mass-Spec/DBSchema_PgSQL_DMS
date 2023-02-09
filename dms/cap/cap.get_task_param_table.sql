@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **                         - Add parameter SHA1_Hash
 **          08/31/2022 mem - Rename view V_DMS_Capture_Job_Parameters to V_DMS_Dataset_Metadata
 **          09/28/2022 mem - Ported to PostgreSQL
+**          02/09/2023 mem - Switch from Operator_PRN to Operator_Username
 **
 *****************************************************/
 DECLARE
@@ -84,7 +85,6 @@ BEGIN
                   EUS_Instrument_ID::text AS EUS_Instrument_ID,
                   EUS_Proposal_ID::text AS EUS_Proposal_ID,
                   EUS_Operator_ID::text AS EUS_Operator_ID,
-                  Operator_Username AS Operator_PRN,
                   Operator_Username
            FROM cap.V_DMS_Dataset_Metadata
            WHERE Dataset_ID = _datasetID) AS m
@@ -106,7 +106,6 @@ BEGIN
                 ('EUS_Instrument_ID', m.EUS_Instrument_ID),
                 ('EUS_Proposal_ID', m.EUS_Proposal_ID),
                 ('EUS_Operator_ID', m.EUS_Operator_ID),
-                ('Operator_PRN', m.Operator_PRN),
                 ('Operator_Username', m.Operator_Username)
            ) AS UnpivotQ(Name, Value)
     WHERE Not UnpivotQ.value Is Null;
