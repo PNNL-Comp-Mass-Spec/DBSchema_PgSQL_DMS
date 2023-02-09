@@ -42,7 +42,6 @@ COPY public.t_dataset_type_name (dataset_type_id, dataset_type, description, act
 11	HMS-ETD-MSn	High res MS with low res ETD-based MSn	1
 48	HMS-EThcD-HMSn	High res MS with ETD fragmentation, then further fragmented by HCD in the orbitrap	1
 45	HMS-EThcD-MSn	High res MS with ETD fragmentation, then further fragmented by HCD in the ion routing multipole	1
-6	IMS-HMS	Ion mobility sep then high res MS detection	1
 24	HMS-HCD-CID-HMSn	High res MS with high res HCD MSn and high res CID MSn	1
 23	HMS-HCD-CID-MSn	High res MS with high res HCD MSn and low res CID MSn	1
 20	HMS-HCD-CID/ETD-HMSn	High res MS with high res HCD MSn and high res CID or ETD MSn (decision tree)	1
@@ -53,6 +52,7 @@ COPY public.t_dataset_type_name (dataset_type_id, dataset_type, description, act
 54	HMS-HCD-MSn	High res MS with low res HCD MSn	1
 5	HMS-HMSn	High res MS with high res CID MSn (and possibly some low res MSn)	1
 3	HMS-MSn	High res MS with low res CID MSn	1
+6	IMS-HMS	Ion mobility sep then high res MS detection	1
 16	HMS-PQD-CID/ETD-MSn	High res MS with low res PQD MSn and low res CID or ETD MSn (decision tree)	1
 17	HMS-PQD-ETD-MSn	High res MS with low res PQD MSn and low res ETD-based MSn	1
 30	IMS-HMS-HMSn	Ion mobility sep with high res MS, fragmentation of all ions with high res MSn	1
