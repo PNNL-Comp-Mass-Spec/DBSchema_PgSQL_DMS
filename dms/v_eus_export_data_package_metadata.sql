@@ -6,7 +6,7 @@ CREATE VIEW public.v_eus_export_data_package_metadata AS
  SELECT v_data_package_export.id,
     v_data_package_export.name,
     v_data_package_export.description,
-    v_data_package_export.owner AS owner_prn,
+    v_data_package_export.owner AS owner_username,
     v_data_package_export.team,
     v_data_package_export.state,
     v_data_package_export.package_type,

@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person(_campaignid integer, 
 **
 **  Auth:   grk
 **  Date:   02/03/2010
-**          12/08/2014 mem - Now using Name_with_PRN to obtain the user's name and PRN
+**          12/08/2014 mem - Now using name_with_username to obtain the user's name and username
 **          07/07/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/

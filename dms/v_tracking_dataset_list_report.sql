@@ -21,7 +21,7 @@ CREATE VIEW public.v_tracking_dataset_list_report AS
      JOIN public.t_requested_run rr ON ((rr.dataset_id = ds.dataset_id)))
      JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
-     LEFT JOIN public.t_users u ON ((ds.operator_prn OPERATOR(public.=) u.username)))
+     LEFT JOIN public.t_users u ON ((ds.operator_username OPERATOR(public.=) u.username)))
   WHERE (dtn.dataset_type OPERATOR(public.=) 'Tracking'::public.citext);
 
 

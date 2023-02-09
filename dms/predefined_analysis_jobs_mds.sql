@@ -2,7 +2,7 @@
 -- Name: predefined_analysis_jobs_mds(text, boolean, boolean, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text, _excludedatasetsnotreleased boolean DEFAULT true, _createjobsforunrevieweddatasets boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(predefine_id integer, dataset public.citext, priority integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, organism_db_name public.citext, owner_prn public.citext, comment public.citext, propagation_mode smallint, special_processing public.citext, id integer, existing_job_count integer, message public.citext, returncode public.citext)
+CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text, _excludedatasetsnotreleased boolean DEFAULT true, _createjobsforunrevieweddatasets boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(predefine_id integer, dataset public.citext, priority integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, organism_db_name public.citext, owner_username public.citext, comment public.citext, propagation_mode smallint, special_processing public.citext, id integer, existing_job_count integer, message public.citext, returncode public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 **          11/09/2022 mem - Ported to PostgreSQL
 **          01/26/2023 mem - Include Predefine_ID in the query results
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
+**          02/08/2023 mem - Switch from PRN to username
 **
 *****************************************************/
 DECLARE
@@ -75,7 +76,7 @@ BEGIN
             ''::citext,     -- protein_collection_list
             ''::citext,     -- protein_options_list
             ''::citext,     -- organism_db_name
-            ''::citext,     -- owner_prn
+            ''::citext,     -- owner_username
             ''::citext,     -- comment
             0::smallint,    -- propagation_mode
             ''::citext,     -- special_processing
@@ -103,7 +104,7 @@ BEGIN
         protein_collection_list citext,
         protein_options_list citext,
         organism_db_name citext,
-        owner_prn citext,
+        owner_username citext,
         comment citext,
         propagation_mode smallint,
         special_processing citext,
@@ -130,7 +131,7 @@ BEGIN
         INSERT INTO Tmp_PredefineJobsToCreate_MDS (
             predefine_id, dataset, priority, analysis_tool_name, param_file_name, settings_file_name,
             organism_name, protein_collection_list, protein_options_list, organism_db_name,
-            owner_prn, comment, propagation_mode, special_processing,
+            owner_username, comment, propagation_mode, special_processing,
             existing_job_count, message, returncode
         )
         SELECT Src.predefine_id,
@@ -143,7 +144,7 @@ BEGIN
                Src.protein_collection_list,
                Src.protein_options_list,
                Src.organism_db_name,
-               Src.owner_prn,
+               Src.owner_username,
                Src.comment,
                Src.propagation_mode,
                Src.special_processing,
@@ -176,7 +177,7 @@ BEGIN
         Src.protein_collection_list,
         Src.protein_options_list,
         Src.organism_db_name,
-        Src.owner_prn,
+        Src.owner_username,
         Src.comment,
         Src.propagation_mode,
         Src.special_processing,

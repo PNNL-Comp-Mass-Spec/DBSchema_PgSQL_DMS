@@ -12,7 +12,7 @@ CREATE VIEW public.v_reference_compound_detail_report AS
     org.organism,
     rc.pub_chem_cid,
         CASE
-            WHEN (u.name IS NULL) THEN rc.contact_prn
+            WHEN (u.name IS NULL) THEN rc.contact_username
             ELSE u.name_with_username
         END AS contact,
     rc.created,
@@ -35,7 +35,7 @@ CREATE VIEW public.v_reference_compound_detail_report AS
      JOIN public.t_material_containers mc ON ((rc.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
      JOIN public.t_yes_no yn ON ((rc.active = yn.flag)))
-     LEFT JOIN public.t_users u ON ((rc.contact_prn OPERATOR(public.=) u.username)));
+     LEFT JOIN public.t_users u ON ((rc.contact_username OPERATOR(public.=) u.username)));
 
 
 ALTER TABLE public.v_reference_compound_detail_report OWNER TO d3l243;

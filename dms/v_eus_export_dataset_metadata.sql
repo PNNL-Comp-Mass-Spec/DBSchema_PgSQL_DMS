@@ -20,13 +20,13 @@ CREATE VIEW public.v_eus_export_dataset_metadata AS
     spr.assigned_personnel AS prep_request_staff,
     sprstate.state_name AS prep_request_state,
     c.campaign,
-    COALESCE(u_projmgr.name, c.project_mgr_prn) AS project_manager,
-    COALESCE(u_pi.name, c.pi_prn) AS project_pi,
+    COALESCE(u_projmgr.name, c.project_mgr_username) AS project_manager,
+    COALESCE(u_pi.name, c.pi_username) AS project_pi,
     COALESCE(u_techlead.name, c.technical_lead) AS project_technical_lead,
-    d.operator_prn AS instrument_operator_prn,
-    e.researcher_prn AS experiment_researcher_prn,
-    c.project_mgr_prn AS project_manager_prn,
-    c.pi_prn AS project_pi_prn,
+    d.operator_username AS instrument_operator_prn,
+    e.researcher_username AS experiment_researcher_prn,
+    c.project_mgr_username AS project_manager_prn,
+    c.pi_username AS project_pi_prn,
     c.technical_lead AS project_technical_lead_prn,
     eut.eus_usage_type AS eus_usage,
     rr.eus_proposal_id AS eus_proposal,
@@ -35,14 +35,14 @@ CREATE VIEW public.v_eus_export_dataset_metadata AS
      JOIN (((((((public.t_dataset d
      JOIN public.t_instrument_name inst ON ((d.instrument_id = inst.instrument_id)))
      JOIN public.t_dataset_type_name dtn ON ((d.dataset_type_id = dtn.dataset_type_id)))
-     JOIN public.t_users u_ds_operator ON ((d.operator_prn OPERATOR(public.=) u_ds_operator.username)))
+     JOIN public.t_users u_ds_operator ON ((d.operator_username OPERATOR(public.=) u_ds_operator.username)))
      JOIN public.t_dataset_rating_name drn ON ((d.dataset_rating_id = drn.dataset_rating_id)))
      JOIN public.t_experiments e ON ((d.exp_id = e.exp_id)))
-     JOIN public.t_users u_ex_researcher ON ((e.researcher_prn OPERATOR(public.=) u_ex_researcher.username)))
+     JOIN public.t_users u_ex_researcher ON ((e.researcher_username OPERATOR(public.=) u_ex_researcher.username)))
      JOIN public.t_organisms o ON ((e.organism_id = o.organism_id))) ON ((c.campaign_id = e.campaign_id)))
      LEFT JOIN public.t_users u_techlead ON ((c.technical_lead OPERATOR(public.=) u_techlead.username)))
-     LEFT JOIN public.t_users u_pi ON ((c.pi_prn OPERATOR(public.=) u_pi.username)))
-     LEFT JOIN public.t_users u_projmgr ON ((c.project_mgr_prn OPERATOR(public.=) u_projmgr.username)))
+     LEFT JOIN public.t_users u_pi ON ((c.pi_username OPERATOR(public.=) u_pi.username)))
+     LEFT JOIN public.t_users u_projmgr ON ((c.project_mgr_username OPERATOR(public.=) u_projmgr.username)))
      LEFT JOIN public.t_sample_prep_request spr ON (((e.sample_prep_request_id = spr.prep_request_id) AND (spr.prep_request_id <> 0))))
      LEFT JOIN public.t_sample_prep_request_state_name sprstate ON ((spr.state_id = sprstate.state_id)))
      LEFT JOIN public.t_requested_run rr ON ((rr.dataset_id = d.dataset_id)))

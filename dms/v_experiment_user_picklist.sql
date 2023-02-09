@@ -6,7 +6,7 @@ CREATE VIEW public.v_experiment_user_picklist AS
  SELECT DISTINCT u.username,
     u.name
    FROM (public.t_users u
-     JOIN public.t_experiments e ON ((e.researcher_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_experiments e ON ((e.researcher_username OPERATOR(public.=) u.username)))
   WHERE ((e.created > (CURRENT_TIMESTAMP - '1 year'::interval)) AND (u.status OPERATOR(public.=) 'Active'::public.citext));
 
 

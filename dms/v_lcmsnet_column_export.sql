@@ -7,7 +7,7 @@ CREATE VIEW public.v_lcmsnet_column_export AS
     lc.column_state_id AS state_id,
     statename.column_state AS state,
     lc.created,
-    lc.operator_prn AS operator,
+    lc.operator_username AS operator,
     lc.comment,
     lc.lc_column_id AS id
    FROM (public.t_lc_column lc

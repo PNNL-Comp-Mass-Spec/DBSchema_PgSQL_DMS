@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_operations_task_staff_picklist AS
- SELECT u.username AS prn,
+ SELECT u.username,
     u.name_with_username AS name
    FROM (public.t_user_operations_permissions o
      JOIN public.t_users u ON ((o.user_id = u.user_id)))

@@ -13,7 +13,7 @@ CREATE VIEW public.v_lcmsnet_experiment_export AS
     e.sample_prep_request_id AS request,
     e.last_used
    FROM ((public.t_experiments e
-     JOIN public.t_users u ON ((e.researcher_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)));
 
 

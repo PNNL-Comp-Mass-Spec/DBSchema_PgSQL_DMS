@@ -19,7 +19,7 @@ CREATE VIEW public.v_requested_run_batch_detail_report AS
     rrb.requested_instrument AS instrument_group,
     rrb.comment
    FROM ((public.t_requested_run_batches rrb
-     JOIN public.t_users u ON ((rrb.owner = u.user_id)))
+     JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)))
      LEFT JOIN public.v_factor_count_by_req_run_batch fc ON ((fc.batch_id = rrb.batch_id)));
 
 

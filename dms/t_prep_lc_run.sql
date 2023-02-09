@@ -12,7 +12,7 @@ CREATE TABLE public.t_prep_lc_run (
     comment public.citext,
     guard_column public.citext DEFAULT 'No'::public.citext NOT NULL,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    operator_prn public.citext,
+    operator_username public.citext,
     digestion_method public.citext,
     sample_type public.citext,
     sample_prep_request public.citext,

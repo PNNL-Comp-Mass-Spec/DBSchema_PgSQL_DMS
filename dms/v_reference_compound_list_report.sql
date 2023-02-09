@@ -11,7 +11,7 @@ CREATE VIEW public.v_reference_compound_list_report AS
     rc.modifications,
     org.organism,
     rc.pub_chem_cid,
-    COALESCE(u.name, rc.contact_prn) AS contact,
+    COALESCE(u.name, rc.contact_username) AS contact,
     rc.created,
     c.campaign,
     mc.container,
@@ -31,7 +31,7 @@ CREATE VIEW public.v_reference_compound_list_report AS
      JOIN public.t_material_containers mc ON ((rc.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
      JOIN public.t_yes_no yn ON ((rc.active = yn.flag)))
-     LEFT JOIN public.t_users u ON ((rc.contact_prn OPERATOR(public.=) u.username)));
+     LEFT JOIN public.t_users u ON ((rc.contact_username OPERATOR(public.=) u.username)));
 
 
 ALTER TABLE public.v_reference_compound_list_report OWNER TO d3l243;

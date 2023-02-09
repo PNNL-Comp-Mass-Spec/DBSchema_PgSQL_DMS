@@ -13,7 +13,7 @@ CREATE VIEW public.v_lc_column_detail_report AS
     lc.column_inner_dia AS inner_diam,
     lc.column_outer_dia AS outer_diam,
     lc.column_length AS length,
-    lc.operator_prn AS operator,
+    lc.operator_username AS operator,
     lc.comment,
     lc.lc_column_id AS column_id
    FROM (public.t_lc_column lc

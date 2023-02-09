@@ -6,7 +6,7 @@ CREATE VIEW public.v_experiment_entry AS
  SELECT e.experiment,
     e.exp_id AS id,
     c.campaign,
-    e.researcher_prn,
+    e.researcher_username,
     org.organism AS organism_name,
     e.reason,
     e.sample_concentration,

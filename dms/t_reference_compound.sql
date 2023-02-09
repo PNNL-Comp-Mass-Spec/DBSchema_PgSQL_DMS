@@ -15,7 +15,7 @@ CREATE TABLE public.t_reference_compound (
     container_id integer DEFAULT 1 NOT NULL,
     wellplate_name public.citext,
     well_number public.citext,
-    contact_prn public.citext,
+    contact_username public.citext,
     supplier public.citext,
     product_id public.citext,
     purchase_date timestamp without time zone,
@@ -144,7 +144,7 @@ ALTER TABLE ONLY public.t_reference_compound
 --
 
 ALTER TABLE ONLY public.t_reference_compound
-    ADD CONSTRAINT fk_t_reference_compound_t_users FOREIGN KEY (contact_prn) REFERENCES public.t_users(username) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_reference_compound_t_users FOREIGN KEY (contact_username) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_reference_compound; Type: ACL; Schema: public; Owner: d3l243

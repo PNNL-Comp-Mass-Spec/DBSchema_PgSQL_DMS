@@ -33,7 +33,7 @@ CREATE VIEW public.v_requested_run_active_export AS
     rr.vialing_vol
    FROM ((((((public.t_dataset_type_name dtn
      JOIN public.t_requested_run rr ON ((dtn.dataset_type_id = rr.request_type_id)))
-     JOIN public.t_users u ON ((rr.requester_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((rr.requester_username OPERATOR(public.=) u.username)))
      JOIN public.t_experiments e ON ((rr.exp_id = e.exp_id)))
      JOIN public.t_lc_cart lc ON ((rr.cart_id = lc.cart_id)))
      JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))

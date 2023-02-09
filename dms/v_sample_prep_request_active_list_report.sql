@@ -43,7 +43,7 @@ CREATE VIEW public.v_sample_prep_request_active_list_report AS
         END AS wp_activation_state
    FROM ((((((((public.t_sample_prep_request spr
      JOIN public.t_sample_prep_request_state_name sn ON ((spr.state_id = sn.state_id)))
-     LEFT JOIN public.t_users qp ON ((spr.requester_prn OPERATOR(public.=) qp.username)))
+     LEFT JOIN public.t_users qp ON ((spr.requester_username OPERATOR(public.=) qp.username)))
      LEFT JOIN public.v_sample_prep_request_queue_times qt ON ((spr.prep_request_id = qt.request_id)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id_value,
             count(*) AS attachments

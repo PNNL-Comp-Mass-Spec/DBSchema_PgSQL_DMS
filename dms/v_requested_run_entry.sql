@@ -9,7 +9,7 @@ CREATE VIEW public.v_requested_run_entry AS
     rr.instrument_group,
     dtn.dataset_type,
     rr.separation_group,
-    rr.requester_prn,
+    rr.requester_username,
     rr.instrument_setting AS instrument_settings,
     rr.wellplate,
     rr.well,

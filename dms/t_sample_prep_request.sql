@@ -6,7 +6,7 @@ CREATE TABLE public.t_sample_prep_request (
     prep_request_id integer NOT NULL,
     request_type public.citext DEFAULT 'Default'::public.citext NOT NULL,
     request_name public.citext,
-    requester_prn public.citext,
+    requester_username public.citext,
     reason public.citext,
     organism public.citext,
     tissue_id public.citext,

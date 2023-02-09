@@ -39,7 +39,7 @@ CREATE VIEW public.v_sample_prep_request_planning_report AS
     spr.assigned_personnel_sort_key AS assigned_sort_key
    FROM ((((public.t_sample_prep_request spr
      JOIN public.t_sample_prep_request_state_name sn ON ((spr.state_id = sn.state_id)))
-     LEFT JOIN public.t_users u ON ((spr.requester_prn OPERATOR(public.=) u.username)))
+     LEFT JOIN public.t_users u ON ((spr.requester_username OPERATOR(public.=) u.username)))
      LEFT JOIN public.v_sample_prep_request_queue_times qt ON ((spr.prep_request_id = qt.request_id)))
      LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package OPERATOR(public.=) cc.charge_code)))
   WHERE ((spr.state_id > 0) AND (spr.state_id < 5) AND (spr.request_type OPERATOR(public.=) 'Default'::public.citext))

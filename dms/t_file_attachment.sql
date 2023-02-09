@@ -9,7 +9,7 @@ CREATE TABLE public.t_file_attachment (
     entity_type public.citext NOT NULL,
     entity_id public.citext NOT NULL,
     entity_id_value integer,
-    owner_prn public.citext NOT NULL,
+    owner_username public.citext NOT NULL,
     file_size_kb public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,

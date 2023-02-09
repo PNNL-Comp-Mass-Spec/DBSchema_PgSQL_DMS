@@ -8,7 +8,7 @@ CREATE VIEW public.v_dataset_entry AS
     dtn.dataset_type,
     ds.dataset,
     ds.folder_name,
-    ds.operator_prn,
+    ds.operator_username,
     ds.wellplate,
     ds.well,
     ds.separation_type,

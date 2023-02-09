@@ -13,7 +13,7 @@ CREATE VIEW public.v_find_dataset AS
     ds.comment,
     dsrating.dataset_rating AS rating,
     dtn.dataset_type AS type,
-    ds.operator_prn AS operator,
+    ds.operator_username AS operator,
     dfp.dataset_folder_path,
     dfp.archive_folder_path,
     COALESCE(ds.acq_time_start, rrh.request_run_start) AS acq_start,

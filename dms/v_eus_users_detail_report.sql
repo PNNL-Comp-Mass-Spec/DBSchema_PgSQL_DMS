@@ -8,7 +8,7 @@ CREATE VIEW public.v_eus_users_detail_report AS
     eu.hid AS hanford_id,
     ss.eus_site_status AS site_status,
     eu.last_affected,
-    u.username AS prn,
+    u.username,
     u.user_id AS dms_user_id
    FROM ((public.t_eus_users eu
      JOIN public.t_eus_site_status ss ON ((eu.site_status_id = ss.eus_site_status_id)))

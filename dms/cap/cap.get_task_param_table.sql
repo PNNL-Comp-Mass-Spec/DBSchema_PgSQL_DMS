@@ -84,7 +84,8 @@ BEGIN
                   EUS_Instrument_ID::text AS EUS_Instrument_ID,
                   EUS_Proposal_ID::text AS EUS_Proposal_ID,
                   EUS_Operator_ID::text AS EUS_Operator_ID,
-                  Operator_PRN AS Operator_PRN
+                  Operator_Username AS Operator_PRN,
+                  Operator_Username
            FROM cap.V_DMS_Dataset_Metadata
            WHERE Dataset_ID = _datasetID) AS m
          CROSS JOIN LATERAL (
@@ -105,7 +106,8 @@ BEGIN
                 ('EUS_Instrument_ID', m.EUS_Instrument_ID),
                 ('EUS_Proposal_ID', m.EUS_Proposal_ID),
                 ('EUS_Operator_ID', m.EUS_Operator_ID),
-                ('Operator_PRN', m.Operator_PRN)
+                ('Operator_PRN', m.Operator_PRN),
+                ('Operator_Username', m.Operator_Username)
            ) AS UnpivotQ(Name, Value)
     WHERE Not UnpivotQ.value Is Null;
 

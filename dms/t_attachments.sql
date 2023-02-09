@@ -7,7 +7,7 @@ CREATE TABLE public.t_attachments (
     attachment_type public.citext NOT NULL,
     attachment_name public.citext NOT NULL,
     attachment_description public.citext,
-    owner_prn public.citext,
+    owner_username public.citext,
     active public.citext DEFAULT 'Y'::public.citext NOT NULL,
     contents public.citext,
     file_name public.citext NOT NULL,

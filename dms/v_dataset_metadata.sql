@@ -30,7 +30,7 @@ CREATE VIEW public.v_dataset_metadata AS
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
-     JOIN public.t_users u ON ((ds.operator_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((ds.operator_username OPERATOR(public.=) u.username)))
      JOIN public.t_dataset_rating_name dsrating ON ((ds.dataset_rating_id = dsrating.dataset_rating_id)))
      JOIN public.t_lc_column lc ON ((ds.lc_column_id = lc.lc_column_id)))
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))

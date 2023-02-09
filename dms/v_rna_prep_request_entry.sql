@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_rna_prep_request_entry AS
  SELECT spr.request_name,
-    spr.requester_prn,
+    spr.requester_username,
     spr.reason,
     spr.organism,
     spr.biohazard_level,

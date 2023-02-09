@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_charge_code (
     charge_code public.citext NOT NULL,
-    resp_prn public.citext,
+    resp_username public.citext,
     resp_hid public.citext,
     wbs_title public.citext,
     charge_code_title public.citext,
@@ -17,7 +17,7 @@ CREATE TABLE public.t_charge_code (
     inactive_date_most_recent timestamp without time zone,
     deactivated public.citext DEFAULT 'N'::public.citext NOT NULL,
     auth_amt bigint NOT NULL,
-    auth_prn public.citext,
+    auth_username public.citext,
     auth_hid public.citext,
     auto_defined smallint DEFAULT 0 NOT NULL,
     charge_code_state smallint DEFAULT 1 NOT NULL,
@@ -43,10 +43,10 @@ ALTER TABLE ONLY public.t_charge_code
     ADD CONSTRAINT pk_t_charge_code PRIMARY KEY (charge_code);
 
 --
--- Name: ix_t_charge_code_resp_prn; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_charge_code_resp_username; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_charge_code_resp_prn ON public.t_charge_code USING btree (resp_prn);
+CREATE INDEX ix_t_charge_code_resp_username ON public.t_charge_code USING btree (resp_username);
 
 --
 -- Name: ix_t_charge_code_sort_key; Type: INDEX; Schema: public; Owner: d3l243

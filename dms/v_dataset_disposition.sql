@@ -16,7 +16,7 @@ CREATE VIEW public.v_dataset_disposition AS
     dsn.dataset_state AS state,
     instname.instrument,
     ds.created,
-    ds.operator_prn AS operator
+    ds.operator_username AS operator
    FROM (((public.t_lc_cart lcc
      JOIN public.t_requested_run rr ON ((lcc.cart_id = rr.cart_id)))
      RIGHT JOIN (((public.t_dataset_state_name dsn

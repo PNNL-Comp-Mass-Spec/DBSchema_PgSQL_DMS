@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_proc(IN _datasetname
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
+**          02/08/2023 mem - Switch from PRN to username
 **
 *****************************************************/
 DECLARE
@@ -58,7 +59,7 @@ BEGIN
         protein_collection_list citext,
         protein_options_list citext,
         organism_db_name citext,
-        owner_prn text,
+        owner_username text,
         comment text,
         propagation_mode smallint,
         special_processing citext,
@@ -79,7 +80,7 @@ BEGIN
         protein_collection_list,
         protein_options_list,
         organism_db_name,
-        owner_prn,
+        owner_username,
         comment,
         propagation_mode,
         special_processing,
@@ -98,7 +99,7 @@ BEGIN
            protein_collection_list,
            protein_options_list,
            organism_db_name,
-           owner_prn,
+           owner_username,
            comment,
            propagation_mode,
            special_processing,
@@ -147,7 +148,7 @@ BEGIN
                 protein_options_list AS protein_options,
                 organism_db_name,
                 special_processing AS special_processing,
-                owner_prn AS owner,
+                owner_username AS owner,
                 CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS export_mode
             FROM Tmp_PredefinedAnalysisJobResults
             WHERE id > 0;
@@ -168,7 +169,7 @@ BEGIN
                 protein_options_list AS protein_options,
                 organism_db_name,
                 special_processing AS special_processing,
-                owner_prn AS owner,
+                owner_username AS owner,
                 CASE propagation_mode WHEN 0 THEN 'Export' ELSE 'No Export' END AS export_mode
             FROM Tmp_PredefinedAnalysisJobResults;
     End If;

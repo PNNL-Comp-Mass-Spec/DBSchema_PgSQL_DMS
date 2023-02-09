@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION test.test_triggers(_createitems integer DEFAULT 0, _u
 **
 **  Auth:   mem
 **  Date:   08/09/2022 mem - Initial version
+**          02/08/2023 mem - Switch from PRN to username
 **
 *****************************************************/
 DECLARE
@@ -314,7 +315,7 @@ BEGIN
 
     ElsIf _createItems > 0 Then
         -- Create the experiments
-        INSERT INTO t_experiments (experiment, researcher_prn, organism_id, campaign_id, labelling)
+        INSERT INTO t_experiments (experiment, researcher_username, organism_id, campaign_id, labelling)
         SELECT E.experiment_name, _username, _organismID, E.campaign_id, 'None'
         FROM T_Tmp_Experiments E
         ORDER BY E.experiment_name;
@@ -378,7 +379,7 @@ BEGIN
 
     ElsIf _createItems > 0 Then
         -- Create the datasets
-        INSERT INTO t_dataset (dataset, operator_prn, instrument_id, exp_id, folder_name, dataset_type_id, lc_column_id, storage_path_id)
+        INSERT INTO t_dataset (dataset, operator_username, instrument_id, exp_id, folder_name, dataset_type_id, lc_column_id, storage_path_id)
         SELECT D.dataset_name, _username, _instrumentID, _experimentID, D.dataset_name, _datasetTypeID, _lcColumnID, _storagePathID
         FROM T_Tmp_Datasets D
         ORDER BY D.dataset_name;

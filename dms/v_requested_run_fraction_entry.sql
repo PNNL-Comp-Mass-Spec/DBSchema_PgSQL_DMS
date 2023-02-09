@@ -10,7 +10,7 @@ CREATE VIEW public.v_requested_run_fraction_entry AS
     dtn.dataset_type AS run_type,
     rr.separation_group AS source_separation_group,
     ''::text AS separation_group,
-    rr.requester_prn AS requester,
+    rr.requester_username AS requester,
     rr.instrument_setting AS instrument_settings,
     ml.location AS staging_location,
     rr.wellplate,

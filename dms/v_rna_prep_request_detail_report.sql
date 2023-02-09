@@ -34,7 +34,7 @@ CREATE VIEW public.v_rna_prep_request_detail_report AS
         END AS wp_activation_state
    FROM ((((public.t_sample_prep_request spr
      JOIN public.t_sample_prep_request_state_name sn ON ((spr.state_id = sn.state_id)))
-     LEFT JOIN public.t_users qp ON ((spr.requester_prn OPERATOR(public.=) qp.username)))
+     LEFT JOIN public.t_users qp ON ((spr.requester_username OPERATOR(public.=) qp.username)))
      LEFT JOIN ( SELECT t_sample_prep_request_updates.request_id,
             count(*) AS updates
            FROM public.t_sample_prep_request_updates

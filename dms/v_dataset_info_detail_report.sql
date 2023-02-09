@@ -62,7 +62,7 @@ CREATE VIEW public.v_dataset_info_detail_report AS
      JOIN public.t_dataset_info dsinfo ON ((ds.dataset_id = dsinfo.dataset_id)))
      JOIN public.t_experiments te ON ((ds.exp_id = te.exp_id)))
      JOIN public.t_organisms og ON ((te.organism_id = og.organism_id)))
-     JOIN public.t_users u ON ((ds.operator_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((ds.operator_username OPERATOR(public.=) u.username)))
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
      LEFT JOIN public.t_storage_path spath ON ((spath.storage_path_id = ds.storage_path_id)))
      LEFT JOIN public.t_lc_cart lccart ON ((lccart.cart_id = rr.cart_id)))

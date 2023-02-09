@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_sample_prep_request_experiments_list_report AS
  SELECT e.experiment,
-    e.researcher_prn AS researcher,
+    e.researcher_username AS researcher,
     o.organism,
     e.reason,
     e.comment,

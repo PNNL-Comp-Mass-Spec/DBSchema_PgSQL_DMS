@@ -5,7 +5,7 @@
 CREATE VIEW public.v_tracking_dataset_entry AS
  SELECT ds.dataset,
     e.experiment,
-    ds.operator_prn AS oper_prn,
+    ds.operator_username,
     instname.instrument AS instrument_name,
     ds.acq_time_start AS run_start,
     ds.acq_length_minutes AS run_duration,

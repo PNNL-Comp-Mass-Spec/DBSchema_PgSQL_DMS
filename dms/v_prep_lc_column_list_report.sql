@@ -16,12 +16,12 @@ CREATE VIEW public.v_prep_lc_column_list_report AS
     prepcolumn.length,
     sum(t_prep_lc_run.number_of_runs) AS runs,
     prepcolumn.state,
-    prepcolumn.operator_prn,
+    prepcolumn.operator_username,
     prepcolumn.comment,
     prepcolumn.created
    FROM (public.t_prep_lc_column prepcolumn
      LEFT JOIN public.t_prep_lc_run ON ((prepcolumn.prep_column OPERATOR(public.=) t_prep_lc_run.lc_column)))
-  GROUP BY prepcolumn.prep_column, prepcolumn.mfg_name, prepcolumn.mfg_model, prepcolumn.mfg_serial, prepcolumn.packing_mfg, prepcolumn.packing_type, prepcolumn.particle_size, prepcolumn.particle_type, prepcolumn.column_inner_dia, prepcolumn.column_outer_dia, prepcolumn.length, prepcolumn.state, prepcolumn.operator_prn, prepcolumn.comment, prepcolumn.created;
+  GROUP BY prepcolumn.prep_column, prepcolumn.mfg_name, prepcolumn.mfg_model, prepcolumn.mfg_serial, prepcolumn.packing_mfg, prepcolumn.packing_type, prepcolumn.particle_size, prepcolumn.particle_type, prepcolumn.column_inner_dia, prepcolumn.column_outer_dia, prepcolumn.length, prepcolumn.state, prepcolumn.operator_username, prepcolumn.comment, prepcolumn.created;
 
 
 ALTER TABLE public.v_prep_lc_column_list_report OWNER TO d3l243;

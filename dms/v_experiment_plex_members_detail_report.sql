@@ -32,7 +32,7 @@ CREATE VIEW public.v_experiment_plex_members_detail_report AS
      JOIN public.t_experiments channelexperiment ON ((plexmembers.exp_id = channelexperiment.exp_id)))
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
-     JOIN public.t_users u ON ((e.researcher_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))
      LEFT JOIN ont.v_bto_id_to_name bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)))
      JOIN public.t_material_containers mc ON ((e.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))

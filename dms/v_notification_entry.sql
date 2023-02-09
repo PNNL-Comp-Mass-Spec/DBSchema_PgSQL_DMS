@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_notification_entry AS
- SELECT t.prn,
+ SELECT t.username,
     t.name,
         CASE
             WHEN (t.r1 > 0) THEN 'Yes'::text
@@ -25,7 +25,7 @@ CREATE VIEW public.v_notification_entry AS
             WHEN (t.r5 > 0) THEN 'Yes'::text
             ELSE 'No'::text
         END AS dataset_released
-   FROM ( SELECT u.username AS prn,
+   FROM ( SELECT u.username,
             u.name,
             max(
                 CASE

@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **          11/08/2022 mem - Initial version
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **                         - Rename columns in the query results
+**          02/08/2023 mem - Switch from PRN to username
 **
 *****************************************************/
 DECLARE
@@ -343,7 +344,7 @@ BEGIN
         protein_collection_list citext,
         protein_options_list citext,
         organism_db_name citext,
-        owner_prn text,
+        owner_username text,
         comment text,
         propagation_mode int2,
         special_processing citext,

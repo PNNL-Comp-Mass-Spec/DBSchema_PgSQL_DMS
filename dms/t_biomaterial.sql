@@ -6,8 +6,8 @@ CREATE TABLE public.t_biomaterial (
     biomaterial_id integer NOT NULL,
     biomaterial_name public.citext NOT NULL,
     source_name public.citext,
-    contact_prn public.citext,
-    pi_prn public.citext,
+    contact_username public.citext,
+    pi_username public.citext,
     biomaterial_type integer,
     reason public.citext,
     comment public.citext,
@@ -133,7 +133,7 @@ ALTER TABLE ONLY public.t_biomaterial
 --
 
 ALTER TABLE ONLY public.t_biomaterial
-    ADD CONSTRAINT fk_t_biomaterial_t_users FOREIGN KEY (pi_prn) REFERENCES public.t_users(username) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_biomaterial_t_users FOREIGN KEY (pi_username) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_biomaterial; Type: ACL; Schema: public; Owner: d3l243

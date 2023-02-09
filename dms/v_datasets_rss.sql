@@ -7,12 +7,12 @@ CREATE VIEW public.v_datasets_rss AS
     (((filterq.id)::text || ' - '::text) || (filterq.dataset)::text) AS post_title,
     (filterq.id)::text AS guid,
     (((((((((' Dataset:'::text || (filterq.dataset)::text) || '| Experiment:'::text) || (filterq.experiment)::text) || '| Researcher:'::text) || (filterq.researcher)::text) || '| Experiment Group:'::text) || (filterq.exp_group)::text) || ', Experiment Group ID:'::text) || (filterq.group_id)::text) AS post_body,
-    filterq.researcher AS u_prn,
+    filterq.researcher AS username,
     filterq.created AS post_date
    FROM ( SELECT ds.dataset_id AS id,
             ds.dataset,
             e.experiment,
-            e.researcher_prn AS researcher,
+            e.researcher_username AS researcher,
             t_experiment_groups.description AS exp_group,
             t_experiment_groups.group_id,
             ds.created

@@ -6,7 +6,7 @@ CREATE VIEW public.v_biomaterial_detail_report AS
  SELECT b.biomaterial_name AS name,
     b.source_name AS supplier,
         CASE
-            WHEN (u_contact.name IS NULL) THEN b.contact_prn
+            WHEN (u_contact.name IS NULL) THEN b.contact_username
             ELSE u_contact.name_with_username
         END AS contact_usually_pnnl_staff,
     btn.biomaterial_type AS type,
@@ -28,8 +28,8 @@ CREATE VIEW public.v_biomaterial_detail_report AS
      JOIN public.t_campaign c ON ((b.campaign_id = c.campaign_id)))
      JOIN public.t_material_containers mc ON ((b.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
-     LEFT JOIN public.t_users u_contact ON ((b.contact_prn OPERATOR(public.=) u_contact.username)))
-     LEFT JOIN public.t_users u_pi ON ((b.pi_prn OPERATOR(public.=) u_pi.username)));
+     LEFT JOIN public.t_users u_contact ON ((b.contact_username OPERATOR(public.=) u_contact.username)))
+     LEFT JOIN public.t_users u_pi ON ((b.pi_username OPERATOR(public.=) u_pi.username)));
 
 
 ALTER TABLE public.v_biomaterial_detail_report OWNER TO d3l243;

@@ -15,7 +15,7 @@ CREATE VIEW public.v_prep_lc_column_entry AS
     prepcolumn.column_outer_dia,
     prepcolumn.length,
     prepcolumn.state,
-    prepcolumn.operator_prn,
+    prepcolumn.operator_username,
     prepcolumn.comment,
     prepcolumn.created,
     prepcolumn.prep_column_id AS id

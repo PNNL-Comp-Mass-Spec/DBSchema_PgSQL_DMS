@@ -13,7 +13,7 @@ CREATE VIEW public.v_dataset_list_report_2 AS
     ds.comment,
     dsrating.dataset_rating AS rating,
     dtn.dataset_type,
-    ds.operator_prn AS operator,
+    ds.operator_username AS operator,
     dl.dataset_folder_path,
     dl.archive_folder_path,
     dl.qc_link,
@@ -30,7 +30,7 @@ CREATE VIEW public.v_dataset_list_report_2 AS
     eut.eus_usage_type AS usage,
     rr.eus_proposal_id AS proposal,
     rr.work_package,
-    rr.requester_prn AS requester,
+    rr.requester_username AS requester,
     org.organism,
     bto.tissue,
     ds.date_sort_key

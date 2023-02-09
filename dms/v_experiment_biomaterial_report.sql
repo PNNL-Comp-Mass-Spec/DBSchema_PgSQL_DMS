@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_experiment_biomaterial_report AS
  SELECT e.experiment,
-    e.researcher_prn AS researcher,
+    e.researcher_username AS researcher,
     org.organism,
     e.comment,
     b.biomaterial_name AS biomaterial

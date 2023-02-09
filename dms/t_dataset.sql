@@ -5,7 +5,7 @@
 CREATE TABLE public.t_dataset (
     dataset_id integer NOT NULL,
     dataset public.citext NOT NULL,
-    operator_prn public.citext NOT NULL,
+    operator_username public.citext NOT NULL,
     comment public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     instrument_id integer,
@@ -292,7 +292,7 @@ ALTER TABLE ONLY public.t_dataset
 --
 
 ALTER TABLE ONLY public.t_dataset
-    ADD CONSTRAINT fk_t_dataset_t_users FOREIGN KEY (operator_prn) REFERENCES public.t_users(username) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_dataset_t_users FOREIGN KEY (operator_username) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_dataset; Type: ACL; Schema: public; Owner: d3l243

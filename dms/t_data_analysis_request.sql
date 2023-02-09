@@ -6,7 +6,7 @@ CREATE TABLE public.t_data_analysis_request (
     request_id integer NOT NULL,
     request_name public.citext NOT NULL,
     analysis_type public.citext DEFAULT 'Metabolomics'::public.citext NOT NULL,
-    requester_prn public.citext,
+    requester_username public.citext,
     description public.citext DEFAULT ''::public.citext NOT NULL,
     analysis_specifications public.citext,
     comment public.citext,

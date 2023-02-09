@@ -5,8 +5,8 @@
 CREATE VIEW public.v_biomaterial_entry AS
  SELECT b.biomaterial_name AS name,
     b.source_name,
-    b.contact_prn,
-    b.pi_prn,
+    b.contact_username,
+    b.pi_username,
     btn.biomaterial_type AS biomaterial_type_name,
     b.reason,
     b.comment,

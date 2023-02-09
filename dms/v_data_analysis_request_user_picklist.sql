@@ -5,7 +5,7 @@
 CREATE VIEW public.v_data_analysis_request_user_picklist AS
  SELECT u.name AS val,
     u.name_with_username AS ex,
-    u.username AS prn
+    u.username
    FROM ((public.t_users u
      JOIN public.t_user_operations_permissions uop ON ((u.user_id = uop.user_id)))
      JOIN public.t_user_operations uo ON ((uop.operation_id = uo.operation_id)))

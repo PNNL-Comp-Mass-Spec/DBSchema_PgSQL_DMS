@@ -6,7 +6,7 @@ CREATE VIEW public.v_data_analysis_request_entry AS
  SELECT r.request_id AS id,
     r.request_name,
     r.analysis_type,
-    r.requester_prn,
+    r.requester_username,
     r.description,
     r.analysis_specifications,
     r.comment,

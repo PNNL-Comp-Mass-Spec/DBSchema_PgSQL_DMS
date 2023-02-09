@@ -19,7 +19,7 @@ CREATE VIEW public.v_experiment_stats_list_report AS
             count(*) AS experiments,
             u.name AS researcher
            FROM (public.t_experiments e
-             JOIN public.t_users u ON ((e.researcher_prn OPERATOR(public.=) u.username)))
+             JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))
           GROUP BY (EXTRACT(month FROM e.created)), (EXTRACT(year FROM e.created)), u.name) countq
   ORDER BY countq.year DESC, countq.month DESC, countq.experiments DESC;
 

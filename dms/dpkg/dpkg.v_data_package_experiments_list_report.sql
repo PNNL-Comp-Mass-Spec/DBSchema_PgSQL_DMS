@@ -24,7 +24,7 @@ CREATE VIEW dpkg.v_data_package_experiments_list_report AS
    FROM (((((((((dpkg.t_data_package_experiments dpe
      JOIN public.t_experiments e ON ((e.exp_id = dpe.experiment_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
-     JOIN public.t_users u ON ((e.researcher_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))
      JOIN public.t_enzymes enz ON ((e.enzyme_id = enz.enzyme_id)))
      JOIN public.t_internal_standards intstd1 ON ((e.internal_standard_id = intstd1.internal_standard_id)))
      JOIN public.t_internal_standards intstd2 ON ((e.post_digest_internal_std_id = intstd2.internal_standard_id)))

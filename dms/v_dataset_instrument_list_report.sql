@@ -8,9 +8,9 @@ CREATE VIEW public.v_dataset_instrument_list_report AS
     ds.dataset_id AS id,
     ds.created,
     rr.request_id AS request,
-    rr.requester_prn AS requester,
+    rr.requester_username AS requester,
     e.experiment,
-    e.researcher_prn AS researcher,
+    e.researcher_username AS researcher,
     c.campaign,
     instname.instrument_id
    FROM ((((public.t_dataset ds

@@ -7,14 +7,14 @@ CREATE VIEW public.v_requested_run_batch_entry AS
     rrb.batch AS name,
     rrb.description,
     public.get_batch_requested_run_list(rrb.batch_id) AS requested_run_list,
-    u.username AS owner_prn,
+    u.username AS owner_username,
     rrb.requested_batch_priority,
     rrb.requested_completion_date,
     rrb.justification_for_high_priority AS justification_high_priority,
     rrb.requested_instrument,
     rrb.comment
    FROM (public.t_requested_run_batches rrb
-     JOIN public.t_users u ON ((rrb.owner = u.user_id)));
+     JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)));
 
 
 ALTER TABLE public.v_requested_run_batch_entry OWNER TO d3l243;

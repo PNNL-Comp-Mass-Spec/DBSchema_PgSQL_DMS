@@ -15,7 +15,7 @@ CREATE VIEW public.v_file_attachment_export AS
     fa.archive_folder_path,
     fa.active
    FROM (public.t_file_attachment fa
-     JOIN public.t_users u ON ((fa.owner_prn OPERATOR(public.=) u.username)));
+     JOIN public.t_users u ON ((fa.owner_username OPERATOR(public.=) u.username)));
 
 
 ALTER TABLE public.v_file_attachment_export OWNER TO d3l243;

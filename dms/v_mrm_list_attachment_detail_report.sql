@@ -6,7 +6,7 @@ CREATE VIEW public.v_mrm_list_attachment_detail_report AS
  SELECT t_attachments.attachment_id AS id,
     t_attachments.attachment_name AS name,
     t_attachments.attachment_description AS description,
-    t_attachments.owner_prn AS owner,
+    t_attachments.owner_username AS owner,
     t_attachments.active,
     t_attachments.created,
     t_attachments.file_name,

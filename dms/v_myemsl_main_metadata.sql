@@ -5,7 +5,7 @@
 CREATE VIEW public.v_myemsl_main_metadata AS
  SELECT ds.dataset_id,
     ds.dataset AS dataset_name,
-    ds.operator_prn AS submitter_prn,
+    ds.operator_username AS submitter_username,
     COALESCE(rr.eus_proposal_id, '17797'::public.citext) AS proposal_id,
     COALESCE(dmsinstmap.eus_instrument_id, 34127) AS instrument_id,
     ds.created AS dataset_ctime,

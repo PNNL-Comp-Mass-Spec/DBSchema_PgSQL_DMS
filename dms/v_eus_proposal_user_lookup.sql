@@ -8,7 +8,7 @@ CREATE VIEW public.v_eus_proposal_user_lookup AS
     p.proposal_id,
     p.proposal_start_date,
     p.proposal_end_date,
-    u.username AS user_prn,
+    u.username,
     eu.valid AS valid_eus_id
    FROM (((public.t_eus_proposal_users pu
      JOIN public.t_eus_users eu ON ((pu.person_id = eu.person_id)))

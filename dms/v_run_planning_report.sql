@@ -126,7 +126,7 @@ CREATE VIEW public.v_run_planning_report AS
                     sg.fraction_count
                    FROM (((((((((((((public.t_dataset_type_name dtn
                      JOIN public.t_requested_run rr ON ((dtn.dataset_type_id = rr.request_type_id)))
-                     JOIN public.t_users u ON ((rr.requester_prn OPERATOR(public.=) u.username)))
+                     JOIN public.t_users u ON ((rr.requester_username OPERATOR(public.=) u.username)))
                      JOIN public.t_experiments e ON ((rr.exp_id = e.exp_id)))
                      JOIN public.t_requested_run_queue_state qs ON ((rr.queue_state = qs.queue_state)))
                      JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))

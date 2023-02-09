@@ -13,7 +13,7 @@ CREATE TABLE public.t_lc_column (
     column_outer_dia public.citext NOT NULL,
     column_length public.citext NOT NULL,
     column_state_id integer DEFAULT 0 NOT NULL,
-    operator_prn public.citext NOT NULL,
+    operator_username public.citext NOT NULL,
     comment public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
@@ -65,7 +65,7 @@ ALTER TABLE ONLY public.t_lc_column
 --
 
 ALTER TABLE ONLY public.t_lc_column
-    ADD CONSTRAINT fk_t_lc_column_t_users FOREIGN KEY (operator_prn) REFERENCES public.t_users(username);
+    ADD CONSTRAINT fk_t_lc_column_t_users FOREIGN KEY (operator_username) REFERENCES public.t_users(username);
 
 --
 -- Name: TABLE t_lc_column; Type: ACL; Schema: public; Owner: d3l243

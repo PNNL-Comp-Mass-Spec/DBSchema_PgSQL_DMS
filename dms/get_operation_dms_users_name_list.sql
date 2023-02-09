@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_operation_dms_users_name_list(_operationid
 **  Auth:   jds
 **  Date:   12/11/2006 jds - Initial version
 **          06/28/2010 ??? - Now limiting to active users
-**          12/08/2014 mem - Now using Name_with_PRN to obtain each user's name and PRN
+**          12/08/2014 mem - Now using name_with_username to obtain each user's name and username
 **          11/17/2016 mem - Add parameter _formatAsTable
 **                         - Also change parameter _operationID to an integer
 **          08/24/2018 mem - Tabs to spaces

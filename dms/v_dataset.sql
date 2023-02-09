@@ -14,7 +14,7 @@ CREATE VIEW public.v_dataset AS
     ds.last_affected,
     ds.instrument_id,
     instname.instrument,
-    ds.operator_prn,
+    ds.operator_username,
     ds.dataset_type_id,
     dtn.dataset_type,
     ds.separation_type,

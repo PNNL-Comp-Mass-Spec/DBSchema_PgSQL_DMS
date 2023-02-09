@@ -14,7 +14,7 @@ CREATE VIEW public.v_material_log_list_report AS
     tmc.comment AS container_comment,
     ml.item_type
    FROM ((public.t_material_log ml
-     LEFT JOIN public.t_users u ON ((ml.user_prn OPERATOR(public.=) u.username)))
+     LEFT JOIN public.t_users u ON ((ml.username OPERATOR(public.=) u.username)))
      LEFT JOIN public.t_material_containers tmc ON ((ml.item OPERATOR(public.=) tmc.container)));
 
 

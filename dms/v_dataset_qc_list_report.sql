@@ -19,7 +19,7 @@ CREATE VIEW public.v_dataset_qc_list_report AS
     COALESCE(ds.acq_time_start, rr.request_run_start) AS acq_start,
     COALESCE(ds.acq_time_end, rr.request_run_finish) AS acq_end,
     dtn.dataset_type,
-    ds.operator_prn AS operator,
+    ds.operator_username AS operator,
     lc.lc_column,
     rr.request_id AS request,
     rr.batch_id AS batch,

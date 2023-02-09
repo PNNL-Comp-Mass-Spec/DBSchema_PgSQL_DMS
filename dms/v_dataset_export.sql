@@ -40,7 +40,7 @@ CREATE VIEW public.v_dataset_export AS
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
-     JOIN public.t_users u ON ((ds.operator_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((ds.operator_username OPERATOR(public.=) u.username)))
      JOIN public.t_dataset_rating_name dsrating ON ((ds.dataset_rating_id = dsrating.dataset_rating_id)))
      JOIN public.t_lc_column lc ON ((ds.lc_column_id = lc.lc_column_id)))
      JOIN public.t_internal_standards dsintstd ON ((ds.internal_standard_id = dsintstd.internal_standard_id)))

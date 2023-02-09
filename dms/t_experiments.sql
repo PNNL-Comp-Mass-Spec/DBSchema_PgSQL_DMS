@@ -5,7 +5,7 @@
 CREATE TABLE public.t_experiments (
     exp_id integer NOT NULL,
     experiment public.citext NOT NULL,
-    researcher_prn public.citext,
+    researcher_username public.citext,
     organism_id integer NOT NULL,
     reason public.citext,
     comment public.citext,
@@ -226,7 +226,7 @@ ALTER TABLE ONLY public.t_experiments
 --
 
 ALTER TABLE ONLY public.t_experiments
-    ADD CONSTRAINT fk_t_experiments_t_users FOREIGN KEY (researcher_prn) REFERENCES public.t_users(username) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_experiments_t_users FOREIGN KEY (researcher_username) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_experiments; Type: ACL; Schema: public; Owner: d3l243

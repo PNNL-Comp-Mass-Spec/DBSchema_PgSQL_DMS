@@ -9,7 +9,7 @@ CREATE VIEW sw.v_pipeline_jobs_entry AS
     j.dataset,
     j.results_folder_name,
     j.comment,
-    j.owner AS owner_prn,
+    j.owner_username,
     j.data_pkg_id AS data_package_id,
     (jp.parameters)::text AS job_param
    FROM (sw.t_jobs j

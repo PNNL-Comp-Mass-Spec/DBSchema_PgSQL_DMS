@@ -7,7 +7,7 @@ CREATE VIEW public.v_mrm_list_attachment_entry AS
     t_attachments.attachment_type,
     t_attachments.attachment_name,
     t_attachments.attachment_description,
-    t_attachments.owner_prn,
+    t_attachments.owner_username,
     t_attachments.active,
     t_attachments.contents,
     t_attachments.file_name

@@ -40,7 +40,7 @@ CREATE VIEW public.v_data_analysis_request_active_list_report AS
         END AS wp_activation_state
    FROM (((((((public.t_data_analysis_request r
      JOIN public.t_data_analysis_request_state_name sn ON ((r.state = sn.state_id)))
-     LEFT JOIN public.t_users u ON ((r.requester_prn OPERATOR(public.=) u.username)))
+     LEFT JOIN public.t_users u ON ((r.requester_username OPERATOR(public.=) u.username)))
      LEFT JOIN public.v_data_analysis_request_queue_times qt ON ((r.request_id = qt.request_id)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id_value,
             count(*) AS attachments

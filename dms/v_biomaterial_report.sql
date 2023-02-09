@@ -5,11 +5,11 @@
 CREATE VIEW public.v_biomaterial_report AS
  SELECT u.biomaterial_name AS name,
     u.source_name AS source,
-    u.contact_prn AS contact,
+    u.contact_username AS contact,
     ctn.biomaterial_type AS type,
     u.reason,
     u.created,
-    u.pi_prn AS pi,
+    u.pi_username AS pi,
     u.comment,
     c.campaign,
     u.biomaterial_id AS id

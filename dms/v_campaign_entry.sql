@@ -5,7 +5,7 @@
 CREATE VIEW public.v_campaign_entry AS
  SELECT c.campaign,
     c.project,
-    public.get_campaign_role_person_list(c.campaign_id, 'PI'::public.citext, 'PRN'::public.citext) AS pi_prn,
+    public.get_campaign_role_person_list(c.campaign_id, 'PI'::public.citext, 'PRN'::public.citext) AS pi_username,
     public.get_campaign_role_person_list(c.campaign_id, 'Project Mgr'::public.citext, 'PRN'::public.citext) AS project_mgr,
     public.get_campaign_role_person_list(c.campaign_id, 'Technical Lead'::public.citext, 'PRN'::public.citext) AS technical_lead,
     public.get_campaign_role_person_list(c.campaign_id, 'Sample Preparation'::public.citext, 'PRN'::public.citext) AS sample_preparation_staff,

@@ -5,7 +5,7 @@
 CREATE VIEW public.v_sample_prep_request_entry AS
  SELECT spr.prep_request_id AS id,
     spr.request_name,
-    spr.requester_prn,
+    spr.requester_username,
     ((spr.reason)::text || '__NoCopy__'::text) AS reason,
     spr.organism,
     bto.tissue,

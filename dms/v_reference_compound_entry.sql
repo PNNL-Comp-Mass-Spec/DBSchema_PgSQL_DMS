@@ -11,7 +11,7 @@ CREATE VIEW public.v_reference_compound_entry AS
     rc.modifications,
     org.organism AS organism_name,
     rc.pub_chem_cid,
-    rc.contact_prn,
+    rc.contact_username,
     rc.created,
     c.campaign,
     mc.container,
@@ -30,7 +30,7 @@ CREATE VIEW public.v_reference_compound_entry AS
      JOIN public.t_organisms org ON ((rc.organism_id = org.organism_id)))
      JOIN public.t_material_containers mc ON ((rc.container_id = mc.container_id)))
      JOIN public.t_yes_no yn ON ((rc.active = yn.flag)))
-     LEFT JOIN public.t_users u ON ((rc.contact_prn OPERATOR(public.=) u.username)));
+     LEFT JOIN public.t_users u ON ((rc.contact_username OPERATOR(public.=) u.username)));
 
 
 ALTER TABLE public.v_reference_compound_entry OWNER TO d3l243;

@@ -12,7 +12,7 @@ CREATE VIEW public.v_prep_lc_run_entry AS
     preprun.comment,
     preprun.guard_column,
     preprun.created,
-    preprun.operator_prn,
+    preprun.operator_username,
     preprun.digestion_method,
     preprun.sample_type,
     preprun.number_of_runs,

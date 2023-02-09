@@ -9,7 +9,7 @@ CREATE VIEW public.v_find_capture_failures_with_user AS
     instname.instrument AS inst_name,
     ilr.assigned_source AS xfer_folder
    FROM ((((public.t_dataset ds
-     JOIN public.t_users u ON ((ds.operator_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((ds.operator_username OPERATOR(public.=) u.username)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_dataset_state_name dsn ON ((ds.dataset_state_id = dsn.dataset_state_id)))
      JOIN public.v_instrument_list_report ilr ON ((ds.instrument_id = ilr.id)))

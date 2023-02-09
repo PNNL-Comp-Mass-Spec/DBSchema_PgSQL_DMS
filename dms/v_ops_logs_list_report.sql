@@ -55,7 +55,7 @@ UNION
    FROM public.t_run_interval
 UNION
  SELECT ds.acq_time_start AS entered,
-    ds.operator_prn AS entered_by,
+    ds.operator_username AS entered_by,
     t_instrument_name.instrument,
     'Dataset'::text AS type,
     ''::text AS id,

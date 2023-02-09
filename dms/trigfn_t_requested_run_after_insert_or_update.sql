@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_after_insert_or_update(
 **                         - Log dataset_id changes (ignoring change from null to a value)
 **                         - Log exp_id changes
 **                         - Log requested runs that have the same dataset_id
+**          02/08/2023 mem - Switch from PRN to username
 **
 *****************************************************/
 DECLARE
@@ -40,16 +41,16 @@ DECLARE
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    -- Use <> for request_name, created, requester_prn, and batch_id since they are never null
+    -- Use <> for request_name, created, requester_username, and batch_id since they are never null
     -- For the others, use IS DISTINCT FROM
     If TG_OP = 'INSERT' OR
-       OLD.request_name      <> NEW.request_name OR
-       OLD.created           <> NEW.created OR
-       OLD.requester_prn     <> NEW.requester_prn OR
-       OLD.batch_id          <> NEW.batch_id OR
-       OLD.request_name_code IS DISTINCT FROM NEW.request_name_code OR
-       OLD.request_type_id   IS DISTINCT FROM NEW.request_type_id OR
-       OLD.separation_group  IS DISTINCT FROM NEW.separation_group Then
+       OLD.request_name       <> NEW.request_name OR
+       OLD.created            <> NEW.created OR
+       OLD.requester_username <> NEW.requester_username OR
+       OLD.batch_id           <> NEW.batch_id OR
+       OLD.request_name_code  IS DISTINCT FROM NEW.request_name_code OR
+       OLD.request_type_id    IS DISTINCT FROM NEW.request_type_id OR
+       OLD.separation_group   IS DISTINCT FROM NEW.separation_group Then
 
         SELECT batch, created
         INTO _batchInfo
@@ -57,7 +58,7 @@ BEGIN
         WHERE batch_id = NEW.batch_id;
 
         _requestNameCode := public.get_requested_run_name_code(
-                                        NEW.request_name, NEW.created, NEW.requester_prn,
+                                        NEW.request_name, NEW.created, NEW.requester_username,
                                         NEW.batch_id, _batchInfo.batch, _batchInfo.created,
                                         NEW.request_type_id, NEW.separation_group);
 

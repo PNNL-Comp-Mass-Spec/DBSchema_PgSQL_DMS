@@ -17,7 +17,7 @@ CREATE VIEW public.v_experiment_list_report AS
    FROM ((((public.t_experiments e
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)))
-     JOIN public.t_users u ON ((e.researcher_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))
      LEFT JOIN public.t_cached_experiment_components cec ON ((e.exp_id = cec.exp_id)));
 
 

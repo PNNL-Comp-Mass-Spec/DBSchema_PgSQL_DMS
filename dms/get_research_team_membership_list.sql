@@ -13,9 +13,9 @@ CREATE OR REPLACE FUNCTION public.get_research_team_membership_list(_researchtea
 **
 **  Auth:   grk
 **  Date:   02/03/2010
-**          12/08/2014 mem - Now using Name_with_PRN to obtain each user's name and PRN
+**          12/08/2014 mem - Now using name_with_username to obtain each user's name and username
 **          06/10/2022 mem - Ported to PostgreSQL
-**          06/12/2022 mem - Rename Name_with_PRN to name_with_username
+**          06/12/2022 mem - Rename name_with_username to name_with_username
 **
 *****************************************************/
 DECLARE

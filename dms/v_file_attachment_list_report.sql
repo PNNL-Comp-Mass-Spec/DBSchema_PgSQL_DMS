@@ -13,7 +13,7 @@ CREATE VIEW public.v_file_attachment_list_report AS
     fa.created,
     fa.last_affected
    FROM (public.t_file_attachment fa
-     JOIN public.t_users u ON ((fa.owner_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((fa.owner_username OPERATOR(public.=) u.username)))
   WHERE (fa.active > 0);
 
 

@@ -10,7 +10,7 @@ CREATE VIEW public.v_dataset_detail_report AS
     dsn.dataset_state AS state,
     dtn.dataset_type AS type,
     ds.comment,
-    ds.operator_prn AS operator,
+    ds.operator_username AS operator,
     ds.well,
     ds.separation_type,
     ds.folder_name,

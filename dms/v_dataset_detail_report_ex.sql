@@ -75,7 +75,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
      JOIN public.t_instrument_name tin ON ((ds.instrument_id = tin.instrument_id)))
      JOIN public.t_dataset_type_name dst ON ((ds.dataset_type_id = dst.dataset_type_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
-     JOIN public.t_users u ON ((ds.operator_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((ds.operator_username OPERATOR(public.=) u.username)))
      JOIN public.t_dataset_rating_name tdrn ON ((ds.dataset_rating_id = tdrn.dataset_rating_id)))
      JOIN public.t_lc_column lccol ON ((ds.lc_column_id = lccol.lc_column_id)))
      JOIN public.t_internal_standards tispre ON ((e.internal_standard_id = tispre.internal_standard_id)))

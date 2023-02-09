@@ -38,7 +38,7 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
     e.barcode
    FROM ((((((((((((((public.t_experiments e
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
-     JOIN public.t_users u ON ((e.researcher_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))
      JOIN public.t_enzymes enz ON ((e.enzyme_id = enz.enzyme_id)))
      JOIN public.t_internal_standards intstdpre ON ((e.internal_standard_id = intstdpre.internal_standard_id)))
      JOIN public.t_internal_standards intstdpost ON ((e.post_digest_internal_std_id = intstdpost.internal_standard_id)))

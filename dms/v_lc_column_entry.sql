@@ -11,7 +11,7 @@ CREATE VIEW public.v_lc_column_entry AS
     lc.column_inner_dia,
     lc.column_outer_dia,
     lc.column_length,
-    lc.operator_prn,
+    lc.operator_username,
     lc.comment,
     lc.lc_column_id AS column_id,
     statename.column_state

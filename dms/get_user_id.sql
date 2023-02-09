@@ -2,16 +2,16 @@
 -- Name: get_user_id(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_user_id(_userprn text DEFAULT ''::text) RETURNS integer
+CREATE OR REPLACE FUNCTION public.get_user_id(_username text DEFAULT ''::text) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Gets UserID for given user PRN
+**      Gets UserID for given user
 **
 **  Arguments:
-**    _userPRN      Username, or user's name with username in parentheses
+**    _username      Username, or user's name with username in parentheses
 **
 **  Returns:
 **      User ID if found, otherwise 0
@@ -28,23 +28,24 @@ CREATE OR REPLACE FUNCTION public.get_user_id(_userprn text DEFAULT ''::text) RE
 **          08/03/2017 mem - Add set nocount on
 **          10/22/2020 mem - Add support for names of the form 'LastName, FirstName (Username)'
 **          10/13/2022 mem - Ported to PostgreSQL
+**          02/08/2023 mem - Rename argument to _username
 **
 *****************************************************/
 DECLARE
     _userID int;
     _startLoc int;
 BEGIN
-    If _userPRN LIKE '%(%)' Then
-        _startLoc := position('(' in _userPRN);
+    If _username LIKE '%(%)' Then
+        _startLoc := position('(' in _username);
         If _startLoc > 0 Then
-            _userPRN := Substring(_userPRN, _startLoc + 1, char_length(_userPRN) - _startLoc - 1);
+            _username := Substring(_username, _startLoc + 1, char_length(_username) - _startLoc - 1);
         End If;
     End If;
 
     SELECT user_id
     INTO _userID
     FROM t_users
-    WHERE username::citext = _userPRN::citext;
+    WHERE username::citext = _username::citext;
 
     If FOUND Then
         RETURN _userID;
@@ -55,11 +56,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_user_id(_userprn text) OWNER TO d3l243;
+ALTER FUNCTION public.get_user_id(_username text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_user_id(_userprn text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_user_id(_username text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_user_id(_userprn text) IS 'GetUserID';
+COMMENT ON FUNCTION public.get_user_id(_username text) IS 'GetUserID';
 

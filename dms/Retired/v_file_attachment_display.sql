@@ -14,7 +14,7 @@ CREATE VIEW public.v_file_attachment_display AS
     fa.archive_folder_path,
     fa.file_mime_type
    FROM (public.t_file_attachment fa
-     JOIN public.t_users u ON ((fa.owner_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((fa.owner_username OPERATOR(public.=) u.username)))
   WHERE (fa.active > 0);
 
 

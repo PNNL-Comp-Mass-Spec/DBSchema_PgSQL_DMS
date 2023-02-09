@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION cap.get_metadata_for_dataset(_datasetname text) RETUR
 **          07/28/2020 mem - Add Dataset_ID
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          09/30/2022 mem - Ported to PostgreSQL
+**          02/08/2023 mem - Switch from PRN to Username
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
            LCCol.lc_column AS LcColumn,
            Coalesce(DS.well, 'na') AS DatasetWell,
            E.experiment AS Experiment,
-           E.researcher_prn AS ExperimentResearcherPRN,
+           E.researcher_username AS ExperimentResearcherUsername,
            Org.organism AS ExperimentOrganism,
            Coalesce(E.comment, '') AS ExperimentComment,
            Coalesce(E.sample_concentration, 'na') AS ExperimentSampleConc,
@@ -107,22 +108,22 @@ BEGIN
     ---------------------------------------------------
 
     RETURN QUERY
-    SELECT _stepParamSectionName, 'Meta_Dataset_created', timestamp_text(_datasetInfo.DatasetCreated)        UNION
-    SELECT _stepParamSectionName, 'Meta_Dataset_ID', _datasetInfo.DatasetId::text                            UNION
-    SELECT _stepParamSectionName, 'Meta_Instrument_name', _datasetInfo.Instrument                            UNION
-    SELECT _stepParamSectionName, 'Meta_Dataset_comment', _datasetInfo.DatasetComment                        UNION
-    SELECT _stepParamSectionName, 'Meta_Dataset_sec_sep', _datasetInfo.SeparationType                        UNION
-    SELECT _stepParamSectionName, 'Meta_LC_Cart_Name', _datasetInfo.LcCartName                               UNION
-    SELECT _stepParamSectionName, 'Meta_LC_Cart_Config', _datasetInfo.LcCartConfig                           UNION
-    SELECT _stepParamSectionName, 'Meta_LC_Column', _datasetInfo.LcColumn                                    UNION
-    SELECT _stepParamSectionName, 'Meta_Dataset_well_num', _datasetInfo.DatasetWell                          UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_Num', _datasetInfo.Experiment                             UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_researcher_PRN', _datasetInfo.ExperimentResearcherPRN     UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_Reason', _datasetInfo.ExperimentReason                    UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_Cell_Culture', _datasetInfo.BiomaterialList               UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_organism_name', _datasetInfo.ExperimentOrganism           UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_comment', _datasetInfo.ExperimentComment                  UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_sample_concentration', _datasetInfo.ExperimentSampleConc  UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_created', timestamp_text(_datasetInfo.DatasetCreated)         UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_ID', _datasetInfo.DatasetId::text                             UNION
+    SELECT _stepParamSectionName, 'Meta_Instrument_name', _datasetInfo.Instrument                             UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_comment', _datasetInfo.DatasetComment                         UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_sec_sep', _datasetInfo.SeparationType                         UNION
+    SELECT _stepParamSectionName, 'Meta_LC_Cart_Name', _datasetInfo.LcCartName                                UNION
+    SELECT _stepParamSectionName, 'Meta_LC_Cart_Config', _datasetInfo.LcCartConfig                            UNION
+    SELECT _stepParamSectionName, 'Meta_LC_Column', _datasetInfo.LcColumn                                     UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_well_num', _datasetInfo.DatasetWell                           UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Num', _datasetInfo.Experiment                              UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_researcher_PRN', _datasetInfo.ExperimentResearcherUsername UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Reason', _datasetInfo.ExperimentReason                     UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Cell_Culture', _datasetInfo.BiomaterialList                UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_organism_name', _datasetInfo.ExperimentOrganism            UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_comment', _datasetInfo.ExperimentComment                   UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_sample_concentration', _datasetInfo.ExperimentSampleConc   UNION
     SELECT _stepParamSectionName, 'Meta_Experiment_sample_labelling', _datasetInfo.ExperimentLabelling ;
 
     If _datasetInfo.LabellingReporterMzMin > 0 Then

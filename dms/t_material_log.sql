@@ -9,7 +9,7 @@ CREATE TABLE public.t_material_log (
     item public.citext NOT NULL,
     initial_state public.citext,
     final_state public.citext,
-    user_prn public.citext,
+    username public.citext,
     comment public.citext,
     item_type public.citext GENERATED ALWAYS AS (
 CASE

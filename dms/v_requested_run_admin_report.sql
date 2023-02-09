@@ -41,7 +41,7 @@ CREATE VIEW public.v_requested_run_admin_report AS
         END AS wp_activation_state
    FROM ((((((((((public.t_requested_run rr
      JOIN public.t_dataset_type_name dtn ON ((dtn.dataset_type_id = rr.request_type_id)))
-     JOIN public.t_users u ON ((rr.requester_prn OPERATOR(public.=) u.username)))
+     JOIN public.t_users u ON ((rr.requester_username OPERATOR(public.=) u.username)))
      JOIN public.t_experiments e ON ((rr.exp_id = e.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_requested_run_queue_state qs ON ((rr.queue_state = qs.queue_state)))

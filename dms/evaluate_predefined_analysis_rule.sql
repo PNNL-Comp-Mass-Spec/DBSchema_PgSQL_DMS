@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **  Date:   11/08/2022 mem - Initial version
 **          01/26/2023 mem - Store the Predefine ID in Tmp_PredefineJobsToCreate
 **          01/27/2023 mem - Track legacy FASTA file name after the protein collection info
+**          02/08/2023 mem - Switch from PRN to username
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,7 @@ DECLARE
     _ruleEvalNotes text;
 
     _comment text;
-    _ownerPRN text;
+    _ownerUsername text;
 
     _schedulingRulePriority int;
     _schedulingRuleID int;
@@ -192,7 +193,7 @@ BEGIN
         ---------------------------------------------------
         --
         _comment := format('Auto predefined %s', _predefineInfo.PredefineID);
-        _ownerPRN := 'H09090911'; -- autouser
+        _ownerUsername := 'H09090911'; -- autouser
 
         ---------------------------------------------------
         -- Possibly auto-add tEnzyme-related protein collections to _predefineInfo.ProteinCollectionList
@@ -226,7 +227,7 @@ BEGIN
             protein_collection_list,
             protein_options_list,
             organism_db_name,
-            owner_prn,
+            owner_username,
             comment,
             propagation_mode,
             special_processing
@@ -241,7 +242,7 @@ BEGIN
             _proteinCollectionListValidated,
             _predefineInfo.ProteinOptionsList,
             _predefineInfo.OrganismDBName,
-            _ownerPRN,
+            _ownerUsername,
             _comment,
             _predefineInfo.PropagationMode,
             _predefineInfo.SpecialProcessing

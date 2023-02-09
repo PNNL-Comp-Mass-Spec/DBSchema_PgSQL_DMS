@@ -13,7 +13,7 @@ CREATE VIEW public.v_prep_lc_run_detail_report AS
     preprun.guard_column,
     preprun.quality_control AS qc,
     preprun.created,
-    preprun.operator_prn,
+    preprun.operator_username,
     preprun.digestion_method,
     preprun.sample_type,
     preprun.sample_prep_request,
