@@ -14,12 +14,12 @@ CREATE VIEW public.v_requested_run_batch_rss AS
             max(ds.created) AS post_date,
             count(ds.dataset_id) AS datasets,
             rrb.description,
-            rrb.owner
+            rrb.owner_user_id AS owner
            FROM ((public.t_dataset ds
              JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
              JOIN public.t_requested_run_batches rrb ON ((rr.batch_id = rrb.batch_id)))
           WHERE (rrb.batch_id <> 0)
-          GROUP BY rrb.batch_id, rrb.batch, rrb.description, rrb.owner
+          GROUP BY rrb.batch_id, rrb.batch, rrb.description, rrb.owner_user_id
          HAVING (max(ds.created) > (CURRENT_TIMESTAMP - '30 days'::interval))) filterq
      JOIN public.t_users u ON ((filterq.owner = u.user_id)));
 

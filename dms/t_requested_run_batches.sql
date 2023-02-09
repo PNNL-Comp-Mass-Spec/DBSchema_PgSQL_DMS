@@ -6,7 +6,7 @@ CREATE TABLE public.t_requested_run_batches (
     batch_id integer NOT NULL,
     batch public.citext NOT NULL,
     description public.citext,
-    owner integer,
+    owner_user_id integer,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     locked public.citext DEFAULT 'Yes'::public.citext NOT NULL,
     last_ordered timestamp without time zone,
@@ -59,7 +59,7 @@ CREATE TRIGGER trig_t_requested_run_batches_after_update AFTER UPDATE ON public.
 --
 
 ALTER TABLE ONLY public.t_requested_run_batches
-    ADD CONSTRAINT fk_t_requested_run_batches_t_users FOREIGN KEY (owner) REFERENCES public.t_users(user_id);
+    ADD CONSTRAINT fk_t_requested_run_batches_t_users FOREIGN KEY (owner_user_id) REFERENCES public.t_users(user_id);
 
 --
 -- Name: TABLE t_requested_run_batches; Type: ACL; Schema: public; Owner: d3l243
