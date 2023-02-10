@@ -14,7 +14,7 @@ CREATE VIEW public.v_requested_run_batch_entry AS
     rrb.requested_instrument_group AS requested_instrument,
     rrb.comment
    FROM (public.t_requested_run_batches rrb
-     JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)));
+     LEFT JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)));
 
 
 ALTER TABLE public.v_requested_run_batch_entry OWNER TO d3l243;

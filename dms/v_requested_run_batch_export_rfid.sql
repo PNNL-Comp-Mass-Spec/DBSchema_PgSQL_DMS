@@ -13,7 +13,7 @@ CREATE VIEW public.v_requested_run_batch_export_rfid AS
     rrb.created,
     rrb.rfid_hex_id AS hexid
    FROM ((public.t_requested_run_batches rrb
-     JOIN public.t_users ON ((rrb.owner_user_id = t_users.user_id)))
+     LEFT JOIN public.t_users ON ((rrb.owner_user_id = t_users.user_id)))
      LEFT JOIN ( SELECT rr1.batch_id,
             count(*) AS requests,
             sum(

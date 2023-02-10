@@ -21,7 +21,7 @@ CREATE VIEW public.v_requested_run_batch_rss AS
           WHERE (rrb.batch_id <> 0)
           GROUP BY rrb.batch_id, rrb.batch, rrb.description, rrb.owner_user_id
          HAVING (max(ds.created) > (CURRENT_TIMESTAMP - '30 days'::interval))) filterq
-     JOIN public.t_users u ON ((filterq.owner = u.user_id)));
+     LEFT JOIN public.t_users u ON ((filterq.owner = u.user_id)));
 
 
 ALTER TABLE public.v_requested_run_batch_rss OWNER TO d3l243;
