@@ -20,7 +20,7 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
             END
             ELSE ''::text
         END AS instrument,
-    rrb.requested_instrument AS inst_group,
+    rrb.requested_instrument_group AS inst_group,
     rrb.description,
     t_users.name AS owner,
     rrb.created,

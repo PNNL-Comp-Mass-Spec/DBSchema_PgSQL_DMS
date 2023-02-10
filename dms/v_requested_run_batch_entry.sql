@@ -11,7 +11,7 @@ CREATE VIEW public.v_requested_run_batch_entry AS
     rrb.requested_batch_priority,
     rrb.requested_completion_date,
     rrb.justification_for_high_priority AS justification_high_priority,
-    rrb.requested_instrument,
+    rrb.requested_instrument_group AS requested_instrument,
     rrb.comment
    FROM (public.t_requested_run_batches rrb
      JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)));

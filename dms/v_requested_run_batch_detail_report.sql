@@ -16,7 +16,7 @@ CREATE VIEW public.v_requested_run_batch_detail_report AS
     rrb.requested_completion_date,
     rrb.justification_for_high_priority,
     public.get_batch_dataset_instrument_list(rrb.batch_id) AS instrument_used,
-    rrb.requested_instrument AS instrument_group,
+    rrb.requested_instrument_group AS instrument_group,
     rrb.comment
    FROM ((public.t_requested_run_batches rrb
      JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)))
