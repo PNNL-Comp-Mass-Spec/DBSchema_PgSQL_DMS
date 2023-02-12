@@ -16,6 +16,8 @@ CREATE TABLE public.t_requested_run_batches (
     justification_for_high_priority public.citext,
     comment public.citext,
     requested_instrument_group public.citext DEFAULT 'na'::public.citext NOT NULL,
+    batch_group_id integer,
+    batch_group_order integer,
     rfid_hex_id public.citext GENERATED ALWAYS AS ("left"((encode(((batch_id)::text)::bytea, 'hex'::text) || '000000000000000000000000'::text), 24)) STORED
 );
 
@@ -49,10 +51,23 @@ ALTER TABLE ONLY public.t_requested_run_batches
 CREATE UNIQUE INDEX ix_t_requested_run_batches ON public.t_requested_run_batches USING btree (batch);
 
 --
+-- Name: ix_t_requested_run_batches_batch_group_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_batches_batch_group_id ON public.t_requested_run_batches USING btree (batch_group_id);
+
+--
 -- Name: t_requested_run_batches trig_t_requested_run_batches_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
 CREATE TRIGGER trig_t_requested_run_batches_after_update AFTER UPDATE ON public.t_requested_run_batches FOR EACH ROW WHEN (((old.batch OPERATOR(public.<>) new.batch) OR (old.created <> new.created))) EXECUTE FUNCTION public.trigfn_t_requested_run_batches_after_update();
+
+--
+-- Name: t_requested_run_batches fk_t_requested_run_batches_t_requested_run_batch_group; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run_batches
+    ADD CONSTRAINT fk_t_requested_run_batches_t_requested_run_batch_group FOREIGN KEY (batch_group_id) REFERENCES public.t_requested_run_batch_group(batch_group_id);
 
 --
 -- Name: t_requested_run_batches fk_t_requested_run_batches_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
