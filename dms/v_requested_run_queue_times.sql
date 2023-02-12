@@ -12,17 +12,17 @@ CREATE VIEW public.v_requested_run_queue_times AS
     dataq.dataset_created,
     dataq.dataset_acqtimestart AS dataset_acq_time_start,
         CASE
-            WHEN (dataq."Days From Requested Run Create To Dataset Acquired" IS NULL) THEN
+            WHEN (dataq.days_from_requested_run_create_to_dataset_acquired IS NULL) THEN
             CASE
                 WHEN (dataq.state_name OPERATOR(public.=) 'Active'::public.citext) THEN round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (dataq.requested_run_created)::timestamp with time zone)) / (86400)::numeric))
                 ELSE NULL::numeric
             END
-            WHEN (dataq."Days From Requested Run Create To Dataset Acquired" <= (0)::numeric) THEN
+            WHEN (dataq.days_from_requested_run_create_to_dataset_acquired <= (0)::numeric) THEN
             CASE
                 WHEN (dataq.origin OPERATOR(public.=) 'Auto'::public.citext) THEN NULL::numeric
-                ELSE dataq."Days From Requested Run Create To Dataset Acquired"
+                ELSE dataq.days_from_requested_run_create_to_dataset_acquired
             END
-            ELSE dataq."Days From Requested Run Create To Dataset Acquired"
+            ELSE dataq.days_from_requested_run_create_to_dataset_acquired
         END AS days_in_queue
    FROM ( SELECT rr.request_id AS requested_run_id,
             rr.created AS requested_run_created,
@@ -33,7 +33,7 @@ CREATE VIEW public.v_requested_run_queue_times AS
             ds.dataset_id,
             ds.created AS dataset_created,
             ds.acq_time_start AS dataset_acqtimestart,
-            round((EXTRACT(epoch FROM (COALESCE(ds.acq_time_start, ds.created) - rr.created)) / (86400)::numeric)) AS "Days From Requested Run Create To Dataset Acquired"
+            round((EXTRACT(epoch FROM (COALESCE(ds.acq_time_start, ds.created) - rr.created)) / (86400)::numeric)) AS days_from_requested_run_create_to_dataset_acquired
            FROM (public.t_requested_run rr
              LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))) dataq;
 
