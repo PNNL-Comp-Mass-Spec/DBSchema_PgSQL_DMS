@@ -26,20 +26,21 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id(_note text, _infoonly boolean D
 **          06/24/2015 mem - Added parameter _infoOnly
 **          10/20/2022 mem - Ported to PostgreSQL
 **          12/31/2022 mem - Rename variable
+**          02/14/2023 mem - Rename variable
 **
 *****************************************************/
 DECLARE
-    _jobNumber int;
+    _job int;
 BEGIN
 
     If Coalesce(_infoOnly, false) Then
         -- Preview the next job number
         SELECT MAX(job) + 1
-        INTO _jobNumber
+        INTO _job
         FROM t_analysis_job_id;
 
         If FOUND Then
-            RETURN _jobNumber;
+            RETURN _job;
         Else
             RETURN 1;
         End If;
@@ -50,9 +51,9 @@ BEGIN
     INSERT INTO t_analysis_job_id ( note )
     VALUES (Coalesce(_note, ''))
     RETURNING job
-    INTO _jobNumber;
+    INTO _job;
 
-    RETURN _jobNumber;
+    RETURN _job;
 END
 $$;
 
