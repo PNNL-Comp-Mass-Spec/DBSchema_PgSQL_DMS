@@ -2,7 +2,7 @@
 -- Name: delete_capture_task(integer, text, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.delete_capture_task(IN _jobnumber integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.delete_capture_task(IN _job integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -55,8 +55,8 @@ BEGIN
 
     BEGIN
 
-        If Not Exists (SELECT * FROM cap.t_tasks WHERE Job = _jobNumber) THEN
-            _message := format('Capture task job %s not found in cap.t_tasks', _jobNumber);
+        If Not Exists (SELECT * FROM cap.t_tasks WHERE Job = _job) THEN
+            _message := format('Capture task job %s not found in cap.t_tasks', _job);
             RAISE WARNING '%', _message;
             RETURN;
         End If;
@@ -66,30 +66,30 @@ BEGIN
         ---------------------------------------------------
         --
         DELETE FROM cap.t_task_step_dependencies
-        WHERE Job = _jobNumber;
+        WHERE Job = _job;
 
         ---------------------------------------------------
         -- Delete the capture task job parameters
         ---------------------------------------------------
         --
         DELETE FROM cap.t_task_parameters
-        WHERE Job = _jobNumber;
+        WHERE Job = _job;
 
         ---------------------------------------------------
         -- Delete the capture task job steps
         ---------------------------------------------------
         --
         DELETE FROM cap.t_task_steps
-        WHERE Job = _jobNumber;
+        WHERE Job = _job;
 
         ---------------------------------------------------
         -- Delete the capture task job
         ---------------------------------------------------
         --
         DELETE FROM cap.t_tasks
-        WHERE Job = _jobNumber;
+        WHERE Job = _job;
 
-        _message := format('Deleted capture task job %s', _jobNumber);
+        _message := format('Deleted capture task job %s', _job);
         RAISE INFO '%', _message;
 
     EXCEPTION
@@ -114,11 +114,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.delete_capture_task(IN _jobnumber integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE cap.delete_capture_task(IN _job integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE delete_capture_task(IN _jobnumber integer, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE delete_capture_task(IN _job integer, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.delete_capture_task(IN _jobnumber integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteCaptureTask';
+COMMENT ON PROCEDURE cap.delete_capture_task(IN _job integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteCaptureTask';
 
