@@ -232,7 +232,7 @@ BEGIN
     -- don't yet have an entry in mc.t_param_value for parameter _paramName
     --
     -- Adding value '##_DummyParamValue_##' so that
-    --  we'll force a call to update_single_mgr_param_work
+    -- we'll force a call to update_single_mgr_param_work
     --
     -- Intentionally not filtering on M.control_from_website > 0 here,
     -- but the query that populates Tmp_ParamValueEntriesToUpdate does filter on that parameter

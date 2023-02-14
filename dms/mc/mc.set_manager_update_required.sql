@@ -118,7 +118,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Make sure each manager in Tmp_ManagerList has an entry
-    --  in mc.t_param_value for 'ManagerUpdateRequired'
+    -- in mc.t_param_value for 'ManagerUpdateRequired'
     ---------------------------------------------------
 
     INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)

@@ -335,17 +335,18 @@ BEGIN
 
     --------------------------------------------------------------
     -- Collapse Tmp_ProteinCollections into _protCollNameList
+    --
     -- The Order By statements in this query assure that the
-    --  internal standard collections and contaminant collections
-    --  are listed first and that the original collection order is preserved
+    -- internal standard collections and contaminant collections
+    -- are listed first and that the original collection order is preserved
     --
     -- Note that Validate_Analysis_Job_Parameters will call Validate_Protein_Collection_Params,
-    --  which calls pc.Validate_Analysis_Job_Protein_Parameters
-    --  and that procedure uses Standardize_Protein_Collection_List to order the protein collections in a standard manner,
-    --  so the order here is not critical
+    -- which calls pc.Validate_Analysis_Job_Protein_Parameters
+    -- and that procedure uses Standardize_Protein_Collection_List to order the protein collections in a standard manner,
+    -- so the order here is not critical
     --
     -- The standard order is:
-    --  Internal Standards, Normal Protein Collections, Contaminant collections
+    --   Internal Standards, Normal Protein Collections, Contaminant collections
     --------------------------------------------------------------
 
     SELECT string_agg(Protein_Collection_Name, ',' ORDER BY Collection_Appended, RowNumberID)

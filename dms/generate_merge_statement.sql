@@ -345,19 +345,20 @@ BEGIN
         -- SQL to determine if matched rows have different values
         --
         -- Comparison option #1 (misses edge cases where either value is null and the other is 0)
-        --  WHERE ((Coalesce(Source.ColumnA, 0) <> Coalesce(Target.ColumnA, 1))) OR
-        --        ((Coalesce(Source.ColumnA, 'BogusNonWordValue12345') <> Coalesce(Target.ColumnA, 'BogusNonWordValue67890')))
+        --   WHERE ((Coalesce(Source.ColumnA, 0) <> Coalesce(Target.ColumnA, 1))) OR
+        --         ((Coalesce(Source.ColumnA, 'BogusNonWordValue12345') <> Coalesce(Target.ColumnA, 'BogusNonWordValue67890')))
         --
         -- Comparison option #2 (contributed by WileCau at http://stackoverflow.com/questions/1075142/how-to-compare-values-which-may-both-be-null-is-t-sql )
-        --  NullIf returns Null if the two values are equal, or returns the first value if the fields are not equal
-        --  This expression is a bit hard to follow, but it's a compact way to compare two fields to see if they are equal
+        -- NullIf returns Null if the two values are equal, or returns the first value if the fields are not equal
         --
-        --  WHERE Coalesce(NULLIF(Target.Field1, Source.Field1),
-        --                 NULLIF(Source.Field1, Target.Field1)
-        --         ) IS NOT NULL
+        -- This expression is a bit hard to follow, but it's a compact way to compare two fields to see if they are equal
+        --
+        --   WHERE Coalesce(NULLIF(Target.Field1, Source.Field1),
+        --                  NULLIF(Source.Field1, Target.Field1)
+        --          ) IS NOT NULL
         --
         -- Comparison option #3 (specific to PostgreSQL)
-        --  WHERE Source.ColumnA IS DISTINCT FROM Target.ColumnA
+        --   WHERE Source.ColumnA IS DISTINCT FROM Target.ColumnA
         ---------------------------------------------------
 
         -- Compare the non-nullable columns

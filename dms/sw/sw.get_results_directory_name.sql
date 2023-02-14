@@ -33,7 +33,7 @@ BEGIN
     --  c) the current time, format hh24mi,   for example 1439     for 2:39 pm
     --  d) the text _Auto
     --  e) the Job number
-    --
+
     _resultsDirectoryName := format('%s%s_Auto%s', _tag, to_char(CURRENT_TIMESTAMP, 'yyyymmddhh24mi'), _job);
 
     RETURN _resultsDirectoryName;

@@ -66,7 +66,7 @@ BEGIN
         _resultType := Coalesce(_resultType, 'Unknown');
 
         -- When looking for existing jobs, if the analysis tool is not a Peptide_Hit tool,
-        --  then we ignore OrganismDBName, Organism Name, Protein Collection List, and Protein Options List
+        -- then we ignore OrganismDBName, Organism Name, Protein Collection List, and Protein Options List
         --
         -- If the tool is a Peptide_Hit tool, we only consider Organism Name when searching
         -- against a legacy Fasta file (i.e. when the Protein Collection List is 'na')
@@ -105,10 +105,10 @@ BEGIN
     End If;
 
     RETURN QUERY
-    Select Src.Job
-    From Tmp_Jobs Src;
+    SELECT Src.Job
+    FROM Tmp_Jobs Src;
 
-    Drop Table Tmp_Jobs;
+    DROP TABLE Tmp_Jobs;
 END
 $$;
 

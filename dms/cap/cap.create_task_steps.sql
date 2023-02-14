@@ -372,7 +372,8 @@ BEGIN
         End If;
 
         -- Perform a mixed bag of operations on the capture task jobs in the temporary tables to finalize them before
-        --  copying to the main database tables
+        -- copying to the main database tables
+
         Call cap.finish_task_creation (
                  _jobInfo.Job,
                  _message => _message,

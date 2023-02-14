@@ -86,10 +86,11 @@ BEGIN
 
     ------------------------------------------------
     -- Initialize _entryTimeWindowSecondsCurrent
-    -- This variable will be automatically increased
-    --  if too much time elapses
-    ------------------------------------------------
     --
+    -- This variable will be automatically increased
+    -- if too much time elapses
+    ------------------------------------------------
+
     _startTime := clock_timestamp();
     _entryTimeWindowSecondsCurrent := _entryTimeWindowSeconds;
 
