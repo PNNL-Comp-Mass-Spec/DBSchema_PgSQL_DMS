@@ -50,6 +50,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          08/23/2022 mem - Log messages to t_log_entries in the public schema
 **          08/24/2022 mem - Use function local_error_handler() to display the formatted error message
 **          08/26/2022 mem - Change _logError and _infoOnly to booleans
+**          02/14/2023 mem - Use case-insensitive comparisons with procedure_name and login_name
 **
 *****************************************************/
 DECLARE
@@ -128,8 +129,8 @@ BEGIN
     _s := format(
             'SELECT COUNT(*) '
             'FROM %s auth '
-            'WHERE auth.procedure_name = $1 AND '
-            '      auth.login_name = $2 AND '
+            'WHERE auth.procedure_name = $1::citext AND '
+            '      auth.login_name = $2::citext AND '
             '      (auth.host_ip = $3::text Or auth.host_ip = ''*'')',
             _targetTableWithSchema);
 
@@ -144,7 +145,7 @@ BEGIN
                 'SELECT COUNT(*) '
                 'FROM %s auth '
                 'WHERE auth.procedure_name = ''*'' AND '
-                '      auth.login_name = $1 AND '
+                '      auth.login_name = $1::citext AND '
                 '      (auth.host_ip = $2::text Or auth.host_ip = ''*'')',
                 _targetTableWithSchema);
 
