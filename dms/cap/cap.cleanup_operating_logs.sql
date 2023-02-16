@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **          08/25/2022 mem - Use new column name in T_Log_Entries
 **          10/07/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          02/15/2023 mem - Add Commit statement
 **
 *****************************************************/
 DECLARE
@@ -92,6 +93,8 @@ BEGIN
                 RAISE INFO 'Deleted % rows from cap.t_log_entries since Info or Warn messages older than %', _myRowCount, _dateThreshold;
             End If;
         End If;
+
+        COMMIT;
     END;
 
     ----------------------------------------------------

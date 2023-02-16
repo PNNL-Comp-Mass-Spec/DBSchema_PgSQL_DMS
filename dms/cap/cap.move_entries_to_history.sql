@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE cap.move_entries_to_history(IN _intervaldays integer
 **          08/25/2022 mem - Use new column name in T_Log_Entries
 **          10/07/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          02/15/2023 mem - Add commit statements
 **
 *****************************************************/
 DECLARE
@@ -94,6 +95,8 @@ BEGIN
                 RAISE INFO 'Deleted % rows from cap.t_task_parameters_history since saved before %', _myRowCount, _dateThreshold;
             End If;
         End If;
+
+        COMMIT;
     END;
 
     ----------------------------------------------------------
@@ -152,6 +155,8 @@ BEGIN
                 RAISE INFO 'Deleted % rows from cap.t_task_step_events since saved before %', _myRowCount, _dateThreshold;
             End If;
         End If;
+
+        COMMIT;
     END;
 
     ----------------------------------------------------------
@@ -207,6 +212,8 @@ BEGIN
                 RAISE INFO 'Deleted % rows from cap.t_task_step_processing_log since saved before %', _myRowCount, _dateThreshold;
             End If;
         End If;
+
+        COMMIT;
     END;
 
     ----------------------------------------------------------
@@ -263,6 +270,8 @@ BEGIN
                 RAISE INFO 'Deleted % rows from cap.t_log_entries since saved before %', _myRowCount, _dateThreshold;
             End If;
         End If;
+
+        COMMIT;
     END;
 
     ----------------------------------------------------------
