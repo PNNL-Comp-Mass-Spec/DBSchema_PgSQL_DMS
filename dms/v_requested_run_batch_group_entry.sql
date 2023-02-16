@@ -6,8 +6,8 @@ CREATE VIEW public.v_requested_run_batch_group_entry AS
  SELECT bg.batch_group_id AS id,
     bg.batch_group AS name,
     bg.description,
-    public.get_batch_group_member_list(bg.batch_group_id) AS batches,
-    u.username AS owner
+    public.get_batch_group_member_list(bg.batch_group_id) AS requested_run_batch_list,
+    u.username AS owner_username
    FROM (public.t_requested_run_batch_group bg
      LEFT JOIN public.t_users u ON ((bg.owner_user_id = u.user_id)));
 
