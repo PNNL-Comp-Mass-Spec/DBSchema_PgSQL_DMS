@@ -12,7 +12,9 @@ CREATE VIEW public.v_requested_run_batch_entry AS
     rrb.requested_completion_date,
     rrb.justification_for_high_priority AS justification_high_priority,
     rrb.requested_instrument_group AS requested_instrument,
-    rrb.comment
+    rrb.comment,
+    rrb.batch_group_id AS batch_group,
+    rrb.batch_group_order
    FROM (public.t_requested_run_batches rrb
      LEFT JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)));
 

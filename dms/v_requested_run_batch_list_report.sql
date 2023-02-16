@@ -33,6 +33,8 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
             WHEN (rbs.separation_group_first = rbs.separation_group_last) THEN rbs.separation_group_first
             ELSE ((rbs.separation_group_first || ' - '::text) || rbs.separation_group_last)
         END AS separation_group,
+    rrb.batch_group_id AS batch_group,
+    rrb.batch_group_order,
         CASE
             WHEN (COALESCE(rbs.active_requests, 0) = 0) THEN 0
             WHEN (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (rbs.oldest_active_request_created)::timestamp with time zone)) / (86400)::numeric)) <= (30)::numeric) THEN 30
