@@ -16,6 +16,11 @@ CREATE VIEW public.v_run_planning_report AS
             ELSE groupq.request_prefix
         END AS request_or_batch_name,
     requestlookupq.batch_id AS batch,
+    groupq.batch_group_id AS batch_group,
+        CASE
+            WHEN (groupq.batch_group_id > 0) THEN public.get_batch_group_member_list(groupq.batch_group_id)
+            ELSE ''::text
+        END AS batches,
     groupq.requester,
     round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (groupq.date_created)::timestamp with time zone)) / (86400)::numeric)) AS days_in_queue,
     groupq.days_in_prep_queue,
@@ -66,6 +71,7 @@ CREATE VIEW public.v_run_planning_report AS
             requestq.batch_prefix,
             requestq.requested_batch_priority,
             requestq.batch_comment,
+            requestq.batch_group_id,
             requestq.last_ordered,
             requestq.queue_state,
             requestq.queued_instrument,
@@ -100,6 +106,7 @@ CREATE VIEW public.v_run_planning_report AS
                     rrb.requested_batch_priority,
                     rr.batch_id AS batch,
                     rrb.comment AS batch_comment,
+                    rrb.batch_group_id,
                     qs.queue_state_name AS queue_state,
                         CASE
                             WHEN (rr.queue_state = 2) THEN COALESCE(assignedinstrument.instrument, ''::public.citext)
@@ -139,7 +146,7 @@ CREATE VIEW public.v_run_planning_report AS
                      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
                      LEFT JOIN public.t_instrument_name assignedinstrument ON ((rr.queue_instrument_id = assignedinstrument.instrument_id)))
                   WHERE ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (rr.dataset_id IS NULL))) requestq
-          GROUP BY requestq.inst_group, requestq.separation_group, requestq.fraction_count, requestq.ds_type, requestq.request_name_code, requestq.requester, requestq.work_package, requestq.wp_state, requestq.wp_activation_state, requestq.proposal, requestq.proposal_type, requestq.locked, requestq.last_ordered, requestq.queue_state, requestq.queued_instrument, requestq.batch, requestq.batch_prefix, requestq.requested_batch_priority, requestq.batch_comment) groupq
+          GROUP BY requestq.inst_group, requestq.separation_group, requestq.fraction_count, requestq.ds_type, requestq.request_name_code, requestq.requester, requestq.work_package, requestq.wp_state, requestq.wp_activation_state, requestq.proposal, requestq.proposal_type, requestq.locked, requestq.last_ordered, requestq.queue_state, requestq.queued_instrument, requestq.batch, requestq.batch_prefix, requestq.requested_batch_priority, requestq.batch_comment, requestq.batch_group_id) groupq
      JOIN public.t_requested_run requestlookupq ON ((groupq.min_request = requestlookupq.request_id)))
      JOIN public.t_eus_usage_type teut ON ((requestlookupq.eus_usage_type_id = teut.eus_usage_type_id)));
 
