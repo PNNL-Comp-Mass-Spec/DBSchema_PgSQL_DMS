@@ -60,7 +60,7 @@ CREATE INDEX ix_t_requested_run_batches_batch_group_id ON public.t_requested_run
 -- Name: t_requested_run_batches trig_t_requested_run_batches_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_requested_run_batches_after_update AFTER UPDATE ON public.t_requested_run_batches FOR EACH ROW WHEN (((old.batch OPERATOR(public.<>) new.batch) OR (old.created <> new.created))) EXECUTE FUNCTION public.trigfn_t_requested_run_batches_after_update();
+CREATE TRIGGER trig_t_requested_run_batches_after_update AFTER UPDATE ON public.t_requested_run_batches FOR EACH ROW WHEN (((old.batch OPERATOR(public.<>) new.batch) OR (old.created <> new.created) OR (old.batch_group_id IS DISTINCT FROM new.batch_group_id))) EXECUTE FUNCTION public.trigfn_t_requested_run_batches_after_update();
 
 --
 -- Name: t_requested_run_batches fk_t_requested_run_batches_t_requested_run_batch_group; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

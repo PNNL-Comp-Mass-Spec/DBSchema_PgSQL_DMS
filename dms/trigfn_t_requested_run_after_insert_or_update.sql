@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_after_insert_or_update(
 **                         - Log exp_id changes
 **                         - Log requested runs that have the same dataset_id
 **          02/08/2023 mem - Switch from PRN to username
+**          02/21/2023 mem - Pass batch group ID to get_requested_run_name_code
 **
 *****************************************************/
 DECLARE
@@ -52,14 +53,14 @@ BEGIN
        OLD.request_type_id    IS DISTINCT FROM NEW.request_type_id OR
        OLD.separation_group   IS DISTINCT FROM NEW.separation_group Then
 
-        SELECT batch, created
+        SELECT batch, created, batch_group_id
         INTO _batchInfo
         FROM t_requested_run_batches
         WHERE batch_id = NEW.batch_id;
 
         _requestNameCode := public.get_requested_run_name_code(
                                         NEW.request_name, NEW.created, NEW.requester_username,
-                                        NEW.batch_id, _batchInfo.batch, _batchInfo.created,
+                                        NEW.batch_id, _batchInfo.batch, _batchInfo.batch_group_id, _batchInfo.created,
                                         NEW.request_type_id, NEW.separation_group);
 
         If _requestNameCode IS DISTINCT FROM NEW.request_name_code Then
@@ -67,6 +68,23 @@ BEGIN
             SET request_name_code = _requestNameCode
             WHERE t_requested_run.request_id = NEW.request_id;
         End If;
+
+        -- The following can be used to verify that request_name_code is up-to-date for all requested runs
+
+        /*
+
+        UPDATE t_requested_run
+        SET request_name_code = public.get_requested_run_name_code(
+                                        request_name, t_requested_run.created, requester_username,
+                                        t_requested_run.batch_id, rrb.batch, rrb.batch_group_id, rrb.created,
+                                        request_type_id, separation_group)
+        FROM t_requested_run_batches RRB
+        WHERE t_requested_run.batch_id = RRB.batch_id AND
+              request_name_code is distinct from public.get_requested_run_name_code(
+                                        request_name, t_requested_run.created, requester_username,
+                                        t_requested_run.batch_id, rrb.batch, rrb.batch_group_id, rrb.created,
+                                        request_type_id, separation_group);
+        */
 
     End If;
 

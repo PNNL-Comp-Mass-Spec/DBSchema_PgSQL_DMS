@@ -1,8 +1,8 @@
 --
--- Name: get_requested_run_name_code(text, timestamp without time zone, text, integer, text, timestamp without time zone, integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_requested_run_name_code(text, timestamp without time zone, text, integer, text, integer, timestamp without time zone, integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text, _requestcreated timestamp without time zone, _requesterusername text, _batchid integer, _batchname text, _batchcreated timestamp without time zone, _datasettypeid integer, _separationtype text) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text, _requestcreated timestamp without time zone, _requesterusername text, _batchid integer, _batchname text, _batchgroupid integer, _batchcreated timestamp without time zone, _datasettypeid integer, _separationtype text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -27,10 +27,11 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text,
 **          08/26/2021 mem - Use Batch ID instead of username
 **          06/22/2022 mem - Ported to PostgreSQL
 **          02/08/2023 mem - Switch from PRN to username
+**          02/21/2023 mem - Add parameter _batchGroupID
 **
 *****************************************************/
 BEGIN
-    Return CASE WHEN _batchID = 0
+    Return CASE WHEN Coalesce(_batchID, 0) = 0
                 THEN
                     SUBSTRING(_requestName, 1, 3) || '_' ||
                     to_char(_requestCreated, 'yyyymmdd') || '_' ||
@@ -39,6 +40,10 @@ BEGIN
                     Coalesce(_datasetTypeID, 0)::text || '_' ||
                     Coalesce(_separationType, '')
                 ELSE
+                    CASE WHEN Coalesce(_batchGroupID, 0) > 0
+                         THEN _batchGroupID::text || '_'
+                         ELSE ''
+                    END ||
                     SUBSTRING(_batchName, 1, 3) || '_' ||
                     to_char(_batchCreated, 'yyyymmdd') || '_' ||
                     'B_' ||
@@ -50,11 +55,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_requested_run_name_code(_requestname text, _requestcreated timestamp without time zone, _requesterusername text, _batchid integer, _batchname text, _batchcreated timestamp without time zone, _datasettypeid integer, _separationtype text) OWNER TO d3l243;
+ALTER FUNCTION public.get_requested_run_name_code(_requestname text, _requestcreated timestamp without time zone, _requesterusername text, _batchid integer, _batchname text, _batchgroupid integer, _batchcreated timestamp without time zone, _datasettypeid integer, _separationtype text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_requested_run_name_code(_requestname text, _requestcreated timestamp without time zone, _requesterusername text, _batchid integer, _batchname text, _batchcreated timestamp without time zone, _datasettypeid integer, _separationtype text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_requested_run_name_code(_requestname text, _requestcreated timestamp without time zone, _requesterusername text, _batchid integer, _batchname text, _batchgroupid integer, _batchcreated timestamp without time zone, _datasettypeid integer, _separationtype text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_requested_run_name_code(_requestname text, _requestcreated timestamp without time zone, _requesterusername text, _batchid integer, _batchname text, _batchcreated timestamp without time zone, _datasettypeid integer, _separationtype text) IS 'GetRequestedRunNameCode';
+COMMENT ON FUNCTION public.get_requested_run_name_code(_requestname text, _requestcreated timestamp without time zone, _requesterusername text, _batchid integer, _batchname text, _batchgroupid integer, _batchcreated timestamp without time zone, _datasettypeid integer, _separationtype text) IS 'GetRequestedRunNameCode';
 

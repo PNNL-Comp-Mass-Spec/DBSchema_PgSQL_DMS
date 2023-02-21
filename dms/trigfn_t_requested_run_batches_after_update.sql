@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_batches_after_update() 
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **          02/08/2023 mem - Switch from PRN to username
+**          02/21/2023 mem - Pass batch group ID to get_requested_run_name_code
 **
 *****************************************************/
 BEGIN
@@ -28,7 +29,7 @@ BEGIN
     UPDATE t_requested_run
     SET request_name_code = public.get_requested_run_name_code(
                                         request_name, created, requester_username,
-                                        batch_id, NEW.batch, NEW.created,
+                                        batch_id, NEW.batch, NEW.Batch_Group_ID, NEW.created,
                                         request_type_id, separation_group)
     WHERE t_requested_run.batch_id = NEW.batch_id;
 
