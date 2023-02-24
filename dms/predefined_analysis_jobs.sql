@@ -57,6 +57,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **          01/26/2023 mem - Include Predefine_ID in the query results
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
+**          02/23/2023 mem - Update procedure name in comments
 **
 *****************************************************/
 DECLARE
@@ -127,9 +128,9 @@ BEGIN
                 _message := '';
             Else
                 -- Do not allow the jobs to be created
-                -- Note that SP create_predefined_analyses_jobs expects the format of _message to be something like:
+                -- Note that procedure create_predefined_analysis_jobs expects the format of _message to be something like:
                 --   Dataset rating (-10) does not allow creation of jobs: 47538_Pls_FF_IGT_23_25Aug10_Andromeda_10-07-10
-                -- Thus, be sure to update CreatePredefinedAnalysesJobs if you change the following line
+                -- Thus, be sure to update create_predefined_analysis_jobs if you change the following line
                 _message := format('Dataset rating (%s) does not allow creation of jobs: %s', _datasetRating, _datasetName);
 
                 If _raiseErrorMessages Then
