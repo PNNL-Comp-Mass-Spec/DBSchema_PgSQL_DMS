@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_emsl_actual_usage_by_category AS
- SELECT public.get_fiscal_year_from_date(filterq.run_date) AS fy,
+ SELECT public.get_fiscal_year_text_from_date(filterq.run_date) AS fy,
     filterq.proposal_id,
     filterq.category,
     (sum(filterq.duration) / (60)::numeric) AS actual_hours_used
@@ -22,7 +22,7 @@ CREATE VIEW public.v_emsl_actual_usage_by_category AS
                    FROM (public.t_emsl_dms_instrument_mapping instmap
                      JOIN public.t_emsl_instruments emslinst ON ((instmap.eus_instrument_id = emslinst.eus_instrument_id)))) instcategory ON ((instcategory.dms_instrument_id = ds.instrument_id)))
           WHERE ((rr.eus_proposal_id IS NOT NULL) AND (ds.dataset_state_id = 3))) filterq
-  GROUP BY (public.get_fiscal_year_from_date(filterq.run_date)), filterq.proposal_id, filterq.category;
+  GROUP BY (public.get_fiscal_year_text_from_date(filterq.run_date)), filterq.proposal_id, filterq.category;
 
 
 ALTER TABLE public.v_emsl_actual_usage_by_category OWNER TO d3l243;

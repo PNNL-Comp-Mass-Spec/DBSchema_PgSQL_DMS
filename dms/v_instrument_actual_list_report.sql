@@ -128,7 +128,7 @@ CREATE VIEW public.v_instrument_actual_list_report AS
             tac.ltq_emsl_actual,
             tac.gc_emsl_actual,
             tac.qqq_emsl_actual
-           FROM (( SELECT public.get_fy_from_date(ds.acq_time_start) AS fy,
+           FROM (( SELECT public.get_fiscal_year_from_date(ds.acq_time_start) AS fy,
                     rr.eus_proposal_id AS proposal,
                     count(DISTINCT c.campaign) AS campaigns,
                     public.min(c.campaign) AS campaign_first,
@@ -210,7 +210,7 @@ CREATE VIEW public.v_instrument_actual_list_report AS
                      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
                      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
                   WHERE ((ds.dataset_rating_id > 1) AND (rr.eus_usage_type_id <> ALL (ARRAY[10, 12, 13])) AND (ds.dataset_state_id = 3) AND (instname.operations_role OPERATOR(public.<>) ALL (ARRAY['Offsite'::public.citext, 'InSilico'::public.citext])))
-                  GROUP BY (public.get_fy_from_date(ds.acq_time_start)), rr.eus_proposal_id) tac
+                  GROUP BY (public.get_fiscal_year_from_date(ds.acq_time_start)), rr.eus_proposal_id) tac
              FULL JOIN ( SELECT t_instrument_allocation.fiscal_year,
                     t_instrument_allocation.proposal_id,
                     sum(

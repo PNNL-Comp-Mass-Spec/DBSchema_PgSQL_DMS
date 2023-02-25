@@ -1,8 +1,8 @@
 --
--- Name: get_fy_from_date(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_fiscal_year_from_date(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_fy_from_date(_rawdate timestamp without time zone) RETURNS integer
+CREATE OR REPLACE FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time zone) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -31,11 +31,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_fy_from_date(_rawdate timestamp without time zone) OWNER TO d3l243;
+ALTER FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time zone) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_fy_from_date(_rawdate timestamp without time zone); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_fiscal_year_from_date(_rawdate timestamp without time zone); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_fy_from_date(_rawdate timestamp without time zone) IS 'GetFYFromDate';
+COMMENT ON FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time zone) IS 'GetFYFromDate';
 
