@@ -8,7 +8,7 @@ CREATE TABLE public.t_lc_cart (
     cart_state_id integer DEFAULT 2 NOT NULL,
     cart_description public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT ck_t_lc_cart_cart_name_white_space CHECK ((public.has_whitespace_chars((cart_name)::text, 0) = false))
+    CONSTRAINT ck_t_lc_cart_cart_name_whitespace CHECK ((public.has_whitespace_chars((cart_name)::text, false) = false))
 );
 
 

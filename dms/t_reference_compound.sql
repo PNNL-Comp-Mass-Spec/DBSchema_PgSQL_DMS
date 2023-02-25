@@ -25,7 +25,7 @@ CREATE TABLE public.t_reference_compound (
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     active smallint DEFAULT 1 NOT NULL,
     id_name public.citext GENERATED ALWAYS AS (((((compound_id)::public.citext)::text || ':'::text) || (compound_name)::text)) STORED,
-    CONSTRAINT ck_t_reference_compound_name_white_space CHECK ((public.has_whitespace_chars((compound_name)::text, 1) = false))
+    CONSTRAINT ck_t_reference_compound_name_whitespace CHECK ((public.has_whitespace_chars((compound_name)::text, true) = false))
 );
 
 

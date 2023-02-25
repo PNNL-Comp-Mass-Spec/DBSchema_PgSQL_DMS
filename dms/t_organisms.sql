@@ -32,7 +32,7 @@ END) STORED,
     ncbi_taxonomy_id integer,
     auto_define_taxonomy smallint DEFAULT 1 NOT NULL,
     CONSTRAINT ck_t_organisms_name_no_space_or_comma CHECK (((NOT (organism OPERATOR(public.~~) '% %'::public.citext)) AND (NOT (organism OPERATOR(public.~~) '%,%'::public.citext)))),
-    CONSTRAINT ck_t_organisms_organism_name_white_space CHECK ((public.has_whitespace_chars((organism)::text, 0) = false)),
+    CONSTRAINT ck_t_organisms_organism_name_whitespace CHECK ((public.has_whitespace_chars((organism)::text, false) = false)),
     CONSTRAINT ck_t_organisms_short_name_no_space_or_comma CHECK (((NOT (short_name OPERATOR(public.~~) '% %'::public.citext)) AND (NOT (short_name OPERATOR(public.~~) '%,%'::public.citext))))
 );
 

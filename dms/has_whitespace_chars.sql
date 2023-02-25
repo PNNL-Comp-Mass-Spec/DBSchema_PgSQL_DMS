@@ -1,8 +1,8 @@
 --
--- Name: has_whitespace_chars(text, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: has_whitespace_chars(text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allowspace integer DEFAULT 0) RETURNS boolean
+CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allowspace boolean DEFAULT false) RETURNS boolean
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -20,16 +20,15 @@ CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allows
 **  Auth:   mem
 **  Date:   02/15/2011
 **          04/05/2022 mem - Ported to PostgreSQL
+**          02/24/2023 mem - Change _allowSpace argument to boolean
 **
 ****************************************************/
-DECLARE
-    _invalidChars int := 0;
 BEGIN
 
     If Position(Chr(10) In _entityName) > 0 OR              -- CR
        Position(Chr(13) In _entityName) > 0 OR              -- LF
        Position(Chr(9) In _entityName) > 0 OR               -- Tab
-       _allowSpace = 0 And Position(' ' In _entityName) > 0 -- Space
+       Not _allowspace And Position(' ' In _entityName) > 0 -- Space
     Then
         Return True;
     Else
@@ -40,11 +39,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.has_whitespace_chars(_entityname text, _allowspace integer) OWNER TO d3l243;
+ALTER FUNCTION public.has_whitespace_chars(_entityname text, _allowspace boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION has_whitespace_chars(_entityname text, _allowspace integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION has_whitespace_chars(_entityname text, _allowspace boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.has_whitespace_chars(_entityname text, _allowspace integer) IS 'HasWhitespaceChars or udfWhitespaceChars';
+COMMENT ON FUNCTION public.has_whitespace_chars(_entityname text, _allowspace boolean) IS 'HasWhitespaceChars or udfWhitespaceChars';
 

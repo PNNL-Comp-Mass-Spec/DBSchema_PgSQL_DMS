@@ -62,7 +62,7 @@ CASE
     WHEN (assigned_personnel OPERATOR(public.=) 'na'::public.citext) THEN 'zz_na'::text
     ELSE "left"((assigned_personnel)::text, 64)
 END) STORED,
-    CONSTRAINT ck_t_sample_prep_request_sample_prep_request_name_white_space CHECK ((public.has_whitespace_chars((request_name)::text, 1) = false))
+    CONSTRAINT ck_t_sample_prep_request_request_name_whitespace CHECK ((public.has_whitespace_chars((request_name)::text, true) = false))
 );
 
 

@@ -23,7 +23,7 @@ CREATE TABLE public.t_campaign (
     data_release_restrictions integer DEFAULT 0 NOT NULL,
     fraction_emsl_funded numeric(3,2) DEFAULT 0 NOT NULL,
     eus_usage_type_id smallint DEFAULT 1 NOT NULL,
-    CONSTRAINT ck_t_campaign_campaign_name_white_space CHECK ((public.has_whitespace_chars((campaign)::text, 1) = false))
+    CONSTRAINT ck_t_campaign_campaign_name_whitespace CHECK ((public.has_whitespace_chars((campaign)::text, true) = false))
 );
 
 

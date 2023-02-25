@@ -34,7 +34,7 @@ CREATE TABLE public.t_dataset (
     capture_subfolder public.citext,
     cart_config_id integer,
     CONSTRAINT ck_t_dataset_dataset_name_not_empty CHECK ((COALESCE(dataset, ''::public.citext) OPERATOR(public.<>) ''::public.citext)),
-    CONSTRAINT ck_t_dataset_dataset_name_white_space CHECK ((public.has_whitespace_chars((dataset)::text, 0) = false)),
+    CONSTRAINT ck_t_dataset_dataset_name_whitespace CHECK ((public.has_whitespace_chars((dataset)::text, false) = false)),
     CONSTRAINT ck_t_dataset_ds_folder_name_not_empty CHECK ((COALESCE(folder_name, ''::public.citext) OPERATOR(public.<>) ''::public.citext))
 );
 

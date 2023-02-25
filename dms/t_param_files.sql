@@ -14,7 +14,7 @@ CREATE TABLE public.t_param_files (
     job_usage_last_year integer DEFAULT 0,
     mod_list public.citext DEFAULT ''::public.citext NOT NULL,
     CONSTRAINT ck_t_param_files CHECK ((POSITION((' '::text) IN (param_file_name)) = 0)),
-    CONSTRAINT ck_t_param_files_param_file_name_white_space CHECK ((public.has_whitespace_chars((param_file_name)::text, 0) = false))
+    CONSTRAINT ck_t_param_files_param_file_name_whitespace CHECK ((public.has_whitespace_chars((param_file_name)::text, false) = false))
 );
 
 

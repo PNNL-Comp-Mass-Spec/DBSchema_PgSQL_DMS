@@ -7,7 +7,7 @@ CREATE TABLE public.t_wellplates (
     wellplate public.citext NOT NULL,
     description public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT ck_t_wellplates_well_plate_name_white_space CHECK ((public.has_whitespace_chars((wellplate)::text, 1) = false))
+    CONSTRAINT ck_t_wellplates_wellplate_name_whitespace CHECK ((public.has_whitespace_chars((wellplate)::text, true) = false))
 );
 
 
