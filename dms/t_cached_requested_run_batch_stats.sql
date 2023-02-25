@@ -21,7 +21,7 @@ CREATE TABLE public.t_cached_requested_run_batch_stats (
     days_in_prep_queue integer,
     blocked integer,
     block_missing integer,
-    last_affected timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+    last_affected timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
