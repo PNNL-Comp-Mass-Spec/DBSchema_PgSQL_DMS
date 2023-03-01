@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION cap.get_metadata_for_dataset(_datasetname text) RETUR
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          09/30/2022 mem - Ported to PostgreSQL
 **          02/08/2023 mem - Switch from PRN to Username
+**          02/27/2023 mem - Capitalize XML element names
 **
 *****************************************************/
 DECLARE
@@ -35,7 +36,7 @@ BEGIN
     UNION
     SELECT _stepParamSectionName, 'Meta_Instrument_Type', 'Mass spectrometer'
     UNION
-    SELECT _stepParamSectionName, 'Meta_Dataset_Number', _datasetName;
+    SELECT _stepParamSectionName, 'Meta_Dataset_Name', _datasetName;
 
     ---------------------------------------------------
     -- Obtain metadata for the dataset
@@ -108,36 +109,36 @@ BEGIN
     ---------------------------------------------------
 
     RETURN QUERY
-    SELECT _stepParamSectionName, 'Meta_Dataset_created', timestamp_text(_datasetInfo.DatasetCreated)         UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_Created', timestamp_text(_datasetInfo.DatasetCreated)         UNION
     SELECT _stepParamSectionName, 'Meta_Dataset_ID', _datasetInfo.DatasetId::text                             UNION
-    SELECT _stepParamSectionName, 'Meta_Instrument_name', _datasetInfo.Instrument                             UNION
-    SELECT _stepParamSectionName, 'Meta_Dataset_comment', _datasetInfo.DatasetComment                         UNION
-    SELECT _stepParamSectionName, 'Meta_Dataset_sec_sep', _datasetInfo.SeparationType                         UNION
+    SELECT _stepParamSectionName, 'Meta_Instrument_Name', _datasetInfo.Instrument                             UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_Comment', _datasetInfo.DatasetComment                         UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_Sec_Sep', _datasetInfo.SeparationType                         UNION
     SELECT _stepParamSectionName, 'Meta_LC_Cart_Name', _datasetInfo.LcCartName                                UNION
     SELECT _stepParamSectionName, 'Meta_LC_Cart_Config', _datasetInfo.LcCartConfig                            UNION
     SELECT _stepParamSectionName, 'Meta_LC_Column', _datasetInfo.LcColumn                                     UNION
-    SELECT _stepParamSectionName, 'Meta_Dataset_well_num', _datasetInfo.DatasetWell                           UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_Num', _datasetInfo.Experiment                              UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_researcher_PRN', _datasetInfo.ExperimentResearcherUsername UNION
+    SELECT _stepParamSectionName, 'Meta_Dataset_Well_Number', _datasetInfo.DatasetWell                        UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Name', _datasetInfo.Experiment                             UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Researcher_Username', _datasetInfo.ExperimentResearcherUsername UNION
     SELECT _stepParamSectionName, 'Meta_Experiment_Reason', _datasetInfo.ExperimentReason                     UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_Cell_Culture', _datasetInfo.BiomaterialList                UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_organism_name', _datasetInfo.ExperimentOrganism            UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_comment', _datasetInfo.ExperimentComment                   UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_sample_concentration', _datasetInfo.ExperimentSampleConc   UNION
-    SELECT _stepParamSectionName, 'Meta_Experiment_sample_labelling', _datasetInfo.ExperimentLabelling ;
+    SELECT _stepParamSectionName, 'Meta_Experiment_Biomaterial', _datasetInfo.BiomaterialList                 UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Organism_Name', _datasetInfo.ExperimentOrganism            UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Comment', _datasetInfo.ExperimentComment                   UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Sample_Concentration', _datasetInfo.ExperimentSampleConc   UNION
+    SELECT _stepParamSectionName, 'Meta_Experiment_Sample_Labelling', _datasetInfo.ExperimentLabelling ;
 
     If _datasetInfo.LabellingReporterMzMin > 0 Then
         RETURN QUERY
-        SELECT _stepParamSectionName, 'Meta_Experiment_labelling_reporter_mz_min', _datasetInfo.LabellingReporterMzMin::text UNION
-        SELECT _stepParamSectionName, 'Meta_Experiment_labelling_reporter_mz_max', _datasetInfo.LabellingReporterMzMax::text;
+        SELECT _stepParamSectionName, 'Meta_Experiment_Labelling_Reporter_Mz_Min', _datasetInfo.LabellingReporterMzMin::text UNION
+        SELECT _stepParamSectionName, 'Meta_Experiment_Labelling_Reporter_Mz_Max', _datasetInfo.LabellingReporterMzMax::text;
     End If;
 
     RETURN QUERY
-    SELECT _stepParamSectionName, 'Meta_Experiment_lab_notebook_ref', _datasetInfo.ExperimentLabNotebook     UNION
-    SELECT _stepParamSectionName, 'Meta_Campaign_Num', _datasetInfo.Campaign                                 UNION
-    SELECT _stepParamSectionName, 'Meta_Campaign_Project_Num', _datasetInfo.CampaignProject                  UNION
-    SELECT _stepParamSectionName, 'Meta_Campaign_comment', _datasetInfo.CampaignComment                      UNION
-    SELECT _stepParamSectionName, 'Meta_Campaign_created', timestamp_text(_datasetInfo.CampaignCreated);
+    SELECT _stepParamSectionName, 'Meta_Experiment_Lab_Notebook_Ref', _datasetInfo.ExperimentLabNotebook     UNION
+    SELECT _stepParamSectionName, 'Meta_Campaign_Name', _datasetInfo.Campaign                                UNION
+    SELECT _stepParamSectionName, 'Meta_Campaign_Project_Name', _datasetInfo.CampaignProject                 UNION
+    SELECT _stepParamSectionName, 'Meta_Campaign_Comment', _datasetInfo.CampaignComment                      UNION
+    SELECT _stepParamSectionName, 'Meta_Campaign_Created', timestamp_text(_datasetInfo.CampaignCreated);
 
     ---------------------------------------------------
     -- Return auxiliary metadata for the dataset's experiment
