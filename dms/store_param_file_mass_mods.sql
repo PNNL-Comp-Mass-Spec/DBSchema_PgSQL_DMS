@@ -121,6 +121,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          09/07/2021 mem - Add support for dynamic N-terminal TMT mods in MSFragger (notated with n^)
 **          02/23/2023 mem - Ported to PostgreSQL
 **                         - Add support for DIA-NN
+**          02/28/2023 mem - Use renamed parameter file type, 'MSGFPlus'
 **
 *****************************************************/
 DECLARE
@@ -194,7 +195,7 @@ BEGIN
     If _paramFileID <= 0 Then
         _validateOnly := true;
         If _paramFileType = '' Then
-            _paramFileType := 'MSGFDB';
+            _paramFileType := 'MSGFPlus';
         End If;
     Else
         -----------------------------------------
@@ -234,8 +235,8 @@ BEGIN
         End If;
     End If;
 
-    If Not _paramFileType In ('MSGFDB', 'DIA-NN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
-        _paramFileType := 'MSGFDB';
+    If Not _paramFileType In ('MSGFPlus', 'DIA-NN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
+        _paramFileType := 'MSGFPlus';
     End If;
 
     -----------------------------------------
@@ -640,7 +641,7 @@ BEGIN
         INTO _rowCount
         FROM Tmp_ModDef;
 
-        If _paramFileType In ('MSGFDB', 'TopPIC') And _rowCount < 5 Then
+        If _paramFileType In ('MSGFPlus', 'TopPIC') And _rowCount < 5 Then
             If Position(chr(9) In _row) > 0 Then
                 If Position(',' In _row) > 0 Then
                     _message := 'Aborting since row has a mix of tabs and commas; should only be comma-separated: ' || _row;
@@ -762,18 +763,18 @@ BEGIN
 
         DELETE FROM Tmp_Residues;
 
-        If _paramFileType In ('MSGFDB', 'DIA-NN', 'TopPIC') Then
+        If _paramFileType In ('MSGFPlus', 'DIA-NN', 'TopPIC') Then
 
             -----------------------------------------
             -- Determine the modification name (preferably UniMod name, but could also be a mass correction tag name)
             -----------------------------------------
 
-            If _paramFileType In ('MSGFDB', 'TopPIC') Then
+            If _paramFileType In ('MSGFPlus', 'TopPIC') Then
 
                 SELECT Trim(Value)
                 INTO _modName
                 FROM Tmp_ModDef
-                WHERE _paramFileType::citext = 'MSGFDB' And EntryID = 5 Or
+                WHERE _paramFileType::citext = 'MSGFPlus' And EntryID = 5 Or
                       _paramFileType::citext = 'TopPIC' And EntryID = 1;
 
                 -- Auto change Glu->pyro-Glu to Dehydrated
@@ -917,10 +918,10 @@ BEGIN
             SELECT Trim(Value)
             INTO _location
             FROM Tmp_ModDef
-            WHERE _paramFileType::citext = 'MSGFDB' And EntryID = 4 Or
+            WHERE _paramFileType::citext = 'MSGFPlus' And EntryID = 4 Or
                   _paramFileType::citext = 'TopPIC' And EntryID = 4;
 
-            If _paramFileType::citext = 'MSGFDB' And _location Not In ('any', 'N-term', 'C-term', 'Prot-N-term', 'Prot-C-term') Then
+            If _paramFileType::citext = 'MSGFPlus' And _location Not In ('any', 'N-term', 'C-term', 'Prot-N-term', 'Prot-C-term') Then
                 _message := format('Invalid location "%s"; should be "any", "N-term", "C-term", "Prot-N-term", or "Prot-C-term"; see row: %s',
                                     _location, _row);
 
@@ -991,7 +992,7 @@ BEGIN
             SELECT Trim(Value)
             INTO _field
             FROM Tmp_ModDef
-            WHERE EntryID = 2 And _paramFileType::citext In ('MSGFDB') Or
+            WHERE EntryID = 2 And _paramFileType::citext In ('MSGFPlus') Or
                   EntryID = 3 And _paramFileType::citext In ('DIA-NN', 'TopPIC');
 
             If _field = 'any' Then
