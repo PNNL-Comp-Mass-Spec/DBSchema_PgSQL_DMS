@@ -111,7 +111,7 @@ BEGIN
             AND ((_predefineInfo.Organism                SIMILAR TO PA.organism_name_criteria)    OR PA.organism_name_criteria = '')
             AND (
                   -- Note that we always create jobs for predefines with Trigger_Before_Disposition = 1
-                  -- Procedure SchedulePredefinedAnalyses will typically be called with _preventDuplicateJobs = true so duplicate jobs will not get created after a dataset is reviewed
+                  -- Procedure schedule_predefined_analysis_jobs will typically be called with _preventDuplicateJobs = true so duplicate jobs will not get created after a dataset is reviewed
                  (PA.Trigger_Before_Disposition = 1) OR
                  (_predefineInfo.Rating <> -10 AND PA.Trigger_Before_Disposition = 0) OR
                  (_ignoreDatasetRating)
