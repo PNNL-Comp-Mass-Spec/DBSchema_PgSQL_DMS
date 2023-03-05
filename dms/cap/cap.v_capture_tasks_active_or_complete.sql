@@ -1,8 +1,8 @@
 --
--- Name: v_capture_jobs_active_or_complete; Type: VIEW; Schema: cap; Owner: d3l243
+-- Name: v_capture_tasks_active_or_complete; Type: VIEW; Schema: cap; Owner: d3l243
 --
 
-CREATE VIEW cap.v_capture_jobs_active_or_complete AS
+CREATE VIEW cap.v_capture_tasks_active_or_complete AS
  SELECT t.job,
     t.priority,
     t.script,
@@ -28,12 +28,12 @@ CREATE VIEW cap.v_capture_jobs_active_or_complete AS
   GROUP BY t.job, t.priority, t.script, t.state, tsn.job_state, t.dataset, t.dataset_id, t.storage_server, t.instrument, t.instrument_class, t.results_folder_name, t.imported, t.start, t.finish;
 
 
-ALTER TABLE cap.v_capture_jobs_active_or_complete OWNER TO d3l243;
+ALTER TABLE cap.v_capture_tasks_active_or_complete OWNER TO d3l243;
 
 --
--- Name: TABLE v_capture_jobs_active_or_complete; Type: ACL; Schema: cap; Owner: d3l243
+-- Name: TABLE v_capture_tasks_active_or_complete; Type: ACL; Schema: cap; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE cap.v_capture_jobs_active_or_complete TO readaccess;
-GRANT SELECT ON TABLE cap.v_capture_jobs_active_or_complete TO writeaccess;
+GRANT SELECT ON TABLE cap.v_capture_tasks_active_or_complete TO readaccess;
+GRANT SELECT ON TABLE cap.v_capture_tasks_active_or_complete TO writeaccess;
 

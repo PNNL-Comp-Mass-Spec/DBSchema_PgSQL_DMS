@@ -1,8 +1,8 @@
 --
--- Name: add_update_step_tools(text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: add_update_capture_step_tools(text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.add_update_step_tools(IN _name text, IN _description text, IN _bionetrequired text, IN _onlyonstorageserver text, IN _instrumentcapacitylimited text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN _description text, IN _bionetrequired text, IN _onlyonstorageserver text, IN _instrumentcapacitylimited text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -151,5 +151,5 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.add_update_step_tools(IN _name text, IN _description text, IN _bionetrequired text, IN _onlyonstorageserver text, IN _instrumentcapacitylimited text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN _description text, IN _bionetrequired text, IN _onlyonstorageserver text, IN _instrumentcapacitylimited text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 

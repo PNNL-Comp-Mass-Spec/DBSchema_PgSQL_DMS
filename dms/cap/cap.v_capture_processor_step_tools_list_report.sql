@@ -1,8 +1,8 @@
 --
--- Name: v_processor_step_tools_list_report; Type: VIEW; Schema: cap; Owner: d3l243
+-- Name: v_capture_processor_step_tools_list_report; Type: VIEW; Schema: cap; Owner: d3l243
 --
 
-CREATE VIEW cap.v_processor_step_tools_list_report AS
+CREATE VIEW cap.v_capture_processor_step_tools_list_report AS
  SELECT lp.processor_name,
     t_processor_tool.tool_name,
     t_processor_tool.priority,
@@ -20,12 +20,12 @@ CREATE VIEW cap.v_processor_step_tools_list_report AS
   WHERE (m.enabled > 0);
 
 
-ALTER TABLE cap.v_processor_step_tools_list_report OWNER TO d3l243;
+ALTER TABLE cap.v_capture_processor_step_tools_list_report OWNER TO d3l243;
 
 --
--- Name: TABLE v_processor_step_tools_list_report; Type: ACL; Schema: cap; Owner: d3l243
+-- Name: TABLE v_capture_processor_step_tools_list_report; Type: ACL; Schema: cap; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE cap.v_processor_step_tools_list_report TO readaccess;
-GRANT SELECT ON TABLE cap.v_processor_step_tools_list_report TO writeaccess;
+GRANT SELECT ON TABLE cap.v_capture_processor_step_tools_list_report TO readaccess;
+GRANT SELECT ON TABLE cap.v_capture_processor_step_tools_list_report TO writeaccess;
 

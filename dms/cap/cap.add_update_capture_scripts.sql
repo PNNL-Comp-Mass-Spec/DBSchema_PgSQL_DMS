@@ -1,8 +1,8 @@
 --
--- Name: add_update_scripts(text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: add_update_capture_scripts(text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.add_update_scripts(IN _script text, IN _description text, IN _enabled text, IN _resultstag text, IN _contents text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _description text, IN _enabled text, IN _resultstag text, IN _contents text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -205,11 +205,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.add_update_scripts(IN _script text, IN _description text, IN _enabled text, IN _resultstag text, IN _contents text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _description text, IN _enabled text, IN _resultstag text, IN _contents text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_scripts(IN _script text, IN _description text, IN _enabled text, IN _resultstag text, IN _contents text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE add_update_capture_scripts(IN _script text, IN _description text, IN _enabled text, IN _resultstag text, IN _contents text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.add_update_scripts(IN _script text, IN _description text, IN _enabled text, IN _resultstag text, IN _contents text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateScripts';
+COMMENT ON PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _description text, IN _enabled text, IN _resultstag text, IN _contents text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateScripts';
 
