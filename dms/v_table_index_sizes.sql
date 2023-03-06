@@ -3,19 +3,20 @@
 --
 
 CREATE VIEW public.v_table_index_sizes AS
- SELECT (statsq.schema_name)::public.citext AS schema_name,
-    (statsq.table_name)::public.citext AS table_name,
-    (statsq.index_name)::public.citext AS index_name,
-    statsq.num_rows,
-    pg_size_pretty(statsq.table_size_bytes) AS table_size,
-    pg_size_pretty(statsq.index_size_bytes) AS index_size,
-    statsq.unique_idx,
-    statsq.number_of_scans,
-    statsq.tuples_read,
-    statsq.tuples_fetched,
-    statsq.table_size_bytes,
-    statsq.index_size_bytes
-   FROM ( SELECT t.schemaname AS schema_name,
+ SELECT (indexq.schema_name)::public.citext AS schema_name,
+    (indexq.table_name)::public.citext AS table_name,
+    (indexq.index_name)::public.citext AS index_name,
+    indexq.num_rows AS index_row_count,
+    tableq.table_row_count,
+    pg_size_pretty(indexq.index_size_bytes) AS index_size,
+    pg_size_pretty(indexq.table_size_bytes) AS table_size,
+    indexq.unique_idx,
+    indexq.number_of_scans,
+    indexq.tuples_read,
+    indexq.tuples_fetched,
+    indexq.index_size_bytes,
+    indexq.table_size_bytes
+   FROM (( SELECT t.schemaname AS schema_name,
             t.tablename AS table_name,
             lookupq.indexname AS index_name,
             c.reltuples AS num_rows,
@@ -43,8 +44,14 @@ CREATE VIEW public.v_table_index_sizes AS
                      JOIN pg_class c_1 ON ((c_1.oid = x.indrelid)))
                      JOIN pg_class ipg ON ((ipg.oid = x.indexrelid)))
                      JOIN pg_stat_all_indexes psai ON ((x.indexrelid = psai.indexrelid)))) lookupq ON (((t.tablename = lookupq.ctablename) AND (t.schemaname = lookupq.schemaname))))
-          WHERE ((t.schemaname <> ALL (ARRAY['pg_catalog'::name, 'information_schema'::name])) AND (NOT (t.schemaname ~ similar_escape('pg[_]%temp[_]%'::text, NULL::text))))) statsq
-  ORDER BY statsq.schema_name, statsq.table_name, statsq.index_name;
+          WHERE ((t.schemaname <> ALL (ARRAY['pg_catalog'::name, 'information_schema'::name])) AND (NOT (t.schemaname ~ similar_escape('pg[_]%temp[_]%'::text, NULL::text))))) indexq
+     LEFT JOIN ( SELECT pg_namespace.nspname AS table_schema,
+            pg_class.relname AS table_name,
+            pg_class.reltuples AS table_row_count
+           FROM (pg_namespace
+             JOIN pg_class ON ((pg_namespace.oid = pg_class.relnamespace)))
+          WHERE ((NOT (pg_namespace.nspname = ANY (ARRAY['information_schema'::name, 'pg_catalog'::name]))) AND (NOT (pg_namespace.nspname ~ similar_escape('pg[_]%temp[_]%'::text, NULL::text))) AND (pg_class.relkind = ANY (ARRAY['r'::"char", 'm'::"char", 'f'::"char", 'p'::"char"])))) tableq ON (((tableq.table_schema = indexq.schema_name) AND (tableq.table_name = indexq.table_name))))
+  ORDER BY indexq.schema_name, indexq.table_name, indexq.index_name;
 
 
 ALTER TABLE public.v_table_index_sizes OWNER TO d3l243;
