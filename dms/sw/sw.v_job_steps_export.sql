@@ -8,7 +8,7 @@ CREATE VIEW sw.v_job_steps_export AS
     j.dataset_id,
     js.step,
     j.script,
-    js.step_tool AS tool,
+    js.tool,
     ssn.step_state AS state_name,
     js.state,
     js.start,

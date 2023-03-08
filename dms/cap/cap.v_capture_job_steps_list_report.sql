@@ -6,7 +6,7 @@ CREATE VIEW cap.v_capture_job_steps_list_report AS
  SELECT ts.job,
     ts.step,
     s.script,
-    ts.step_tool AS tool,
+    ts.tool,
     ssn.step_state,
     tsn.job_state AS job_state_b,
     ts.retry_count AS retry,

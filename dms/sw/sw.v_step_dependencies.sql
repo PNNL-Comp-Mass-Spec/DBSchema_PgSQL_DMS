@@ -5,7 +5,7 @@
 CREATE VIEW sw.v_step_dependencies AS
  SELECT jsd.job,
     jsd.step,
-    js.step_tool,
+    js.tool AS step_tool,
     jsd.target_step,
     jsd.condition_test,
     jsd.test_value,

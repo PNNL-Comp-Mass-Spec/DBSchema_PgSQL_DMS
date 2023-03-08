@@ -43,7 +43,7 @@ CREATE VIEW sw.v_job_step_stats AS
                     ELSE 0
                 END) AS stepcount_pending
            FROM ( SELECT js.job,
-                    js.step_tool,
+                    js.tool AS step_tool,
                     js.state,
                     EXTRACT(epoch FROM (js.finish - js.start)) AS secondselapsed1,
                         CASE

@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 **          03/10/2015 mem - Added t_task_step_dependencies_history
 **          03/10/2015 mem - Now updating t_task_steps.Dependencies if it doesn't match the dependent steps listed in t_task_step_dependencies
 **          10/10/2022 mem - Ported to PostgreSQL
+**          03/07/2023 mem - Use new column name
 **
 *****************************************************/
 DECLARE
@@ -191,7 +192,7 @@ BEGIN
         INSERT INTO cap.t_task_steps (
             Job,
             Step,
-            Step_Tool,
+            Tool,
             State,
             Input_Folder_Name,
             Output_Folder_Name,
@@ -207,7 +208,7 @@ BEGIN
         SELECT
             _newJob AS Job,
             Step,
-            Step_Tool,
+            Tool,
             State,
             Input_Folder_Name,
             Output_Folder_Name,

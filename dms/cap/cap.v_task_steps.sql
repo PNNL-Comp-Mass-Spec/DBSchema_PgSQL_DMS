@@ -55,7 +55,7 @@ CREATE VIEW cap.v_task_steps AS
             t.dataset_id,
             ts_1.step,
             s.script,
-            ts_1.step_tool AS tool,
+            ts_1.tool,
             ssn.step_state AS state_name,
             ts_1.state,
             ts_1.start,

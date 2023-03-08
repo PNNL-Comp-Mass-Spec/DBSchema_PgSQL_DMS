@@ -5,7 +5,7 @@
 CREATE TABLE sw.t_job_steps (
     job integer NOT NULL,
     step integer NOT NULL,
-    step_tool public.citext NOT NULL,
+    tool public.citext NOT NULL,
     cpu_load smallint,
     actual_cpu_load smallint,
     dependencies smallint DEFAULT 0 NOT NULL,
@@ -83,19 +83,19 @@ CREATE INDEX ix_t_job_steps_state_include_job_step_completion_code ON sw.t_job_s
 -- Name: ix_t_job_steps_state_job_step_dep_shared_results_ver_sig_tool; Type: INDEX; Schema: sw; Owner: d3l243
 --
 
-CREATE INDEX ix_t_job_steps_state_job_step_dep_shared_results_ver_sig_tool ON sw.t_job_steps USING btree (state, job, step, dependencies, shared_result_version, signature, step_tool);
+CREATE INDEX ix_t_job_steps_state_job_step_dep_shared_results_ver_sig_tool ON sw.t_job_steps USING btree (state, job, step, dependencies, shared_result_version, signature, tool);
 
 --
--- Name: ix_t_job_steps_step_tool_state; Type: INDEX; Schema: sw; Owner: d3l243
+-- Name: ix_t_job_steps_tool_state; Type: INDEX; Schema: sw; Owner: d3l243
 --
 
-CREATE INDEX ix_t_job_steps_step_tool_state ON sw.t_job_steps USING btree (step_tool, state);
+CREATE INDEX ix_t_job_steps_tool_state ON sw.t_job_steps USING btree (tool, state);
 
 --
 -- Name: ix_t_job_steps_tool_state_next_try_include_job_step_memory; Type: INDEX; Schema: sw; Owner: d3l243
 --
 
-CREATE INDEX ix_t_job_steps_tool_state_next_try_include_job_step_memory ON sw.t_job_steps USING btree (step_tool, state, next_try) INCLUDE (job, step, memory_usage_mb, remote_info_id);
+CREATE INDEX ix_t_job_steps_tool_state_next_try_include_job_step_memory ON sw.t_job_steps USING btree (tool, state, next_try) INCLUDE (job, step, memory_usage_mb, remote_info_id);
 
 --
 -- Name: t_job_steps trig_t_job_steps_after_delete; Type: TRIGGER; Schema: sw; Owner: d3l243
@@ -161,7 +161,7 @@ ALTER TABLE ONLY sw.t_job_steps
 --
 
 ALTER TABLE ONLY sw.t_job_steps
-    ADD CONSTRAINT fk_t_job_steps_t_step_tools FOREIGN KEY (step_tool) REFERENCES sw.t_step_tools(step_tool) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_job_steps_t_step_tools FOREIGN KEY (tool) REFERENCES sw.t_step_tools(step_tool) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_job_steps; Type: ACL; Schema: sw; Owner: d3l243

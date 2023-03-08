@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 **          03/22/2016 mem - Update _message when cannot copy a capture task job
 **          11/04/2016 mem - Return a more detailed error message in _message
 **          10/10/2022 mem - Ported to PostgreSQL
+**          03/07/2023 mem - Use new column name
 **
 *****************************************************/
 DECLARE
@@ -103,7 +104,7 @@ BEGIN
     INSERT INTO cap.t_task_steps_history (
         Job,
         Step,
-        Step_Tool,
+        Tool,
         State,
         Input_Folder_Name,
         Output_Folder_Name,
@@ -120,7 +121,7 @@ BEGIN
     SELECT
         Job,
         Step,
-        Step_Tool,
+        Tool,
         State,
         Input_Folder_Name,
         Output_Folder_Name,

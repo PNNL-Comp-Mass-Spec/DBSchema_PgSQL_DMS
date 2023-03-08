@@ -47,8 +47,8 @@ DECLARE
     _scriptStep record;
 BEGIN
     CREATE TEMP TABLE Tmp_ScriptSteps (
-        step_number int,
-        step_tool text,
+        step int,
+        tool text,
         special_instructions text,
         shared_result_version int
     );
@@ -74,8 +74,8 @@ BEGIN
     --     </Step>
     --   </JobScript>
 
-    INSERT INTO Tmp_ScriptSteps(step_number, step_tool, special_instructions, shared_result_version)
-    SELECT ScriptQ.step_number, ScriptQ.step_tool, ScriptQ.special_instructions, StepTools.shared_result_version   --, t1::text AS ScriptXML
+    INSERT INTO Tmp_ScriptSteps(step, tool, special_instructions, shared_result_version)
+    SELECT ScriptQ.step, ScriptQ.tool, ScriptQ.special_instructions, StepTools.shared_result_version   --, t1::text AS ScriptXML
     FROM ( SELECT XmlTableA.*
            FROM sw.t_scripts Src,
                LATERAL unnest((
@@ -84,33 +84,33 @@ BEGIN
                )) t1,
                XMLTABLE('//JobScript/Step'
                                  PASSING t1
-                                 COLUMNS step_number int PATH '@Number',
-                                         step_tool text PATH '@Tool',
+                                 COLUMNS step int PATH '@Number',
+                                         tool text PATH '@Tool',
                                          special_instructions citext PATH '@Special',
                                          parent_steps XML PATH 'Depends_On') As XmlTableA
             WHERE Src.script = _script::citext
           ) ScriptQ INNER JOIN
-          sw.t_step_tools StepTools ON ScriptQ.Step_Tool = StepTools.step_tool
-    ORDER BY ScriptQ.step_number;
+          sw.t_step_tools StepTools ON ScriptQ.tool = StepTools.step_tool
+    ORDER BY ScriptQ.step;
 
     -- Return the script lines that define the script steps
     RETURN QUERY
     SELECT format('%s [label="%s %s%s"] [shape=%s, color=black%s];',
-                  step_number, step_number, step_tool,
+                  step, step, tool,
                   CASE WHEN special_instructions IS NULL THEN '' ELSE ' (' || special_instructions || ')' END,
                   CASE WHEN COALESCE(special_instructions, '') = 'Clone' THEN 'trapezium' ELSE 'box' END,
                   CASE WHEN COALESCE(shared_result_version, 0) = 0 THEN '' ELSE ', style=filled, fillcolor=lightblue, peripheries=2' END)
              As script_line,
            0 As seq
     FROM Tmp_ScriptSteps
-    ORDER BY step_number;
+    ORDER BY step;
 
     -- Extract the job step dependencies
     -- Cannot directly use XMLTABLE() since some steps have multiple dependencies
     -- Note that this query uses XPATH to filter on script name
     --
     FOR _scriptStep IN
-        SELECT XmlTableA.step_number, XmlTableA.step_tool, XmlTableA.parent_steps::text
+        SELECT XmlTableA.step, XmlTableA.tool, XmlTableA.parent_steps::text
         FROM sw.t_scripts Src,
             LATERAL unnest((
                 SELECT
@@ -118,8 +118,8 @@ BEGIN
             )) t1,
             XMLTABLE('//JobScript/Step'
                               PASSING t1
-                              COLUMNS step_number int PATH '@Number',
-                                      step_tool text PATH '@Tool',
+                              COLUMNS step int PATH '@Number',
+                                      tool text PATH '@Tool',
                                       parent_steps XML PATH 'Depends_On') As XmlTableA
         WHERE Src.script = _script::citext
     LOOP
@@ -133,7 +133,7 @@ BEGIN
             RETURN QUERY
             SELECT format('%s -> %s%s%s;',
                           XmlTableA.parent_step,
-                          _scriptStep.step_number,
+                          _scriptStep.step,
                           CASE WHEN XmlTableA.condition_test IS NULL THEN '' ELSE ' [label="Skip if:' || XmlTableA.condition_test || '"]' END,
                           CASE WHEN Coalesce(XmlTableA.enable_only, 0) > 0 THEN ' [style=dotted]' ELSE '' END)
                      As script_line,
@@ -148,7 +148,7 @@ BEGIN
                                   enable_only    int PATH '@Enable_Only'
 
                           ) As XmlTableA
-            ORDER BY XmlTableA.parent_step, _scriptStep.step_number;
+            ORDER BY XmlTableA.parent_step, _scriptStep.step;
         End If;
 
     END LOOP;

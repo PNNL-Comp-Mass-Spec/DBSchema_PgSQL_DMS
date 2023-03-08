@@ -5,7 +5,7 @@
 CREATE TABLE cap.t_task_steps (
     job integer NOT NULL,
     step integer NOT NULL,
-    step_tool public.citext NOT NULL,
+    tool public.citext NOT NULL,
     cpu_load smallint,
     dependencies smallint DEFAULT 0 NOT NULL,
     state smallint DEFAULT 1 NOT NULL,
@@ -72,10 +72,10 @@ CREATE INDEX ix_t_task_steps_state ON cap.t_task_steps USING btree (state);
 CREATE INDEX ix_t_task_steps_state_include_job_step_completion_code ON cap.t_task_steps USING btree (state) INCLUDE (completion_code, job, step);
 
 --
--- Name: ix_t_task_steps_step_tool_state_next_try_include_job_step; Type: INDEX; Schema: cap; Owner: d3l243
+-- Name: ix_t_task_steps_tool_state_next_try_include_job_step; Type: INDEX; Schema: cap; Owner: d3l243
 --
 
-CREATE INDEX ix_t_task_steps_step_tool_state_next_try_include_job_step ON cap.t_task_steps USING btree (step_tool, state, next_try) INCLUDE (job, step);
+CREATE INDEX ix_t_task_steps_tool_state_next_try_include_job_step ON cap.t_task_steps USING btree (tool, state, next_try) INCLUDE (job, step);
 
 --
 -- Name: t_task_steps trig_t_task_steps_after_delete; Type: TRIGGER; Schema: cap; Owner: d3l243
@@ -127,7 +127,7 @@ ALTER TABLE ONLY cap.t_task_steps
 --
 
 ALTER TABLE ONLY cap.t_task_steps
-    ADD CONSTRAINT fk_t_task_steps_t_step_tools FOREIGN KEY (step_tool) REFERENCES cap.t_step_tools(step_tool);
+    ADD CONSTRAINT fk_t_task_steps_t_step_tools FOREIGN KEY (tool) REFERENCES cap.t_step_tools(step_tool);
 
 --
 -- Name: t_task_steps fk_t_task_steps_t_tasks; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243

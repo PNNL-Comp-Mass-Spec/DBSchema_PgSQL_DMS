@@ -12,7 +12,7 @@ CREATE VIEW cap.v_dms_pipeline_get_completed_results_transfer AS
     ts.job
    FROM (sw.t_job_steps ts
      JOIN sw.t_jobs t ON ((ts.job = t.job)))
-  WHERE ((ts.state = 5) AND (ts.step_tool OPERATOR(public.=) 'Results_Transfer'::public.citext));
+  WHERE ((ts.state = 5) AND (ts.tool OPERATOR(public.=) 'Results_Transfer'::public.citext));
 
 
 ALTER TABLE cap.v_dms_pipeline_get_completed_results_transfer OWNER TO d3l243;

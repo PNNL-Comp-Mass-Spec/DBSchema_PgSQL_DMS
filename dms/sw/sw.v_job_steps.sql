@@ -80,7 +80,7 @@ CREATE VIEW sw.v_job_steps AS
             j.data_pkg_id,
             jobsteps.step,
             s.script,
-            jobsteps.step_tool AS tool,
+            jobsteps.tool,
             ssn.step_state AS state_name,
             jobsteps.state,
                 CASE

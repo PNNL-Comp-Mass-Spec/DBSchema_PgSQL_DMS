@@ -8,7 +8,7 @@ CREATE VIEW cap.v_capture_check_report AS
     taskstatename.job_state AS state,
     statsq.steps_retrying AS retry,
     statsq.num_steps AS steps,
-    (((jobsteps.step_tool)::text || ':'::text) || (stepstatename.step_state)::text) AS active_step,
+    (((jobsteps.tool)::text || ':'::text) || (stepstatename.step_state)::text) AS active_step,
     j.dataset,
     j.results_folder_name,
     j.storage_server,
@@ -35,7 +35,7 @@ CREATE VIEW cap.v_capture_check_report AS
                     ELSE 0
                 END) AS steps_retrying
            FROM ((cap.t_task_steps filteredsteps
-             JOIN cap.t_step_tools tst ON ((filteredsteps.step_tool OPERATOR(public.=) tst.step_tool)))
+             JOIN cap.t_step_tools tst ON ((filteredsteps.tool OPERATOR(public.=) tst.step_tool)))
              JOIN cap.t_tasks j_1 ON ((filteredsteps.job = j_1.job)))
           WHERE (NOT (j_1.state = ANY (ARRAY[3, 101])))
           GROUP BY filteredsteps.job) statsq ON ((statsq.job = j.job)))

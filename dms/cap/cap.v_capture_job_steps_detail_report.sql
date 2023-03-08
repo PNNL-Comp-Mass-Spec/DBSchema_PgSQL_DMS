@@ -8,7 +8,7 @@ CREATE VIEW cap.v_capture_job_steps_detail_report AS
     ts.step,
     t.dataset,
     s.script,
-    ts.step_tool AS tool,
+    ts.tool,
     ssn.step_state,
     tsn.job_state AS job_state_b,
     ts.state AS state_id,

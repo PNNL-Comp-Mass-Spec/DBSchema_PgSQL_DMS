@@ -7,7 +7,7 @@ CREATE VIEW sw.v_job_steps_history2 AS
     j.dataset,
     js.step,
     s.script,
-    js.step_tool AS tool,
+    js.tool,
     paramq.settings_file,
     paramq.parameter_file,
     ssn.step_state AS state_name,

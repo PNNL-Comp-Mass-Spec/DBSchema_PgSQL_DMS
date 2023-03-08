@@ -8,7 +8,7 @@ CREATE VIEW cap.v_capture_jobs_list_report AS
     t.script,
     taskstatename.job_state AS job_state_b,
     statsq.num_steps AS steps,
-    (((ts.step_tool)::text || ':'::text) || (ssn.step_state)::text) AS active_step,
+    (((ts.tool)::text || ':'::text) || (ssn.step_state)::text) AS active_step,
     t.dataset,
     t.dataset_id,
     t.results_folder_name,
@@ -35,7 +35,7 @@ CREATE VIEW cap.v_capture_jobs_list_report AS
                     ELSE 0
                 END) AS steps_retrying
            FROM ((cap.t_task_steps tasksteps
-             JOIN cap.t_step_tools steptools ON ((tasksteps.step_tool OPERATOR(public.=) steptools.step_tool)))
+             JOIN cap.t_step_tools steptools ON ((tasksteps.tool OPERATOR(public.=) steptools.step_tool)))
              JOIN cap.t_tasks j_1 ON ((tasksteps.job = j_1.job)))
           GROUP BY tasksteps.job) statsq ON ((statsq.job = t.job)))
      JOIN cap.t_task_steps ts ON (((t.job = ts.job) AND (statsq.active_step = ts.step))))

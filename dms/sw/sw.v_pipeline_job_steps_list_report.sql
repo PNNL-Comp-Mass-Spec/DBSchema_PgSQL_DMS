@@ -6,7 +6,7 @@ CREATE VIEW sw.v_pipeline_job_steps_list_report AS
  SELECT js.job,
     js.step,
     j.script,
-    js.step_tool AS tool,
+    js.tool,
     paramq.parameter_file,
     ssn.step_state,
     jsn.job_state AS job_state_b,
@@ -26,7 +26,7 @@ CREATE VIEW sw.v_pipeline_job_steps_list_report AS
             ELSE (0)::numeric
         END AS job_progress,
         CASE
-            WHEN ((js.state = 4) AND (js.step_tool OPERATOR(public.=) 'XTandem'::public.citext)) THEN (0)::numeric
+            WHEN ((js.state = 4) AND (js.tool OPERATOR(public.=) 'XTandem'::public.citext)) THEN (0)::numeric
             WHEN (((js.state = 9) OR (js.remote_info_id > 1)) AND (COALESCE(js.remote_progress, (0)::real) > (0)::double precision)) THEN round((((EXTRACT(epoch FROM (COALESCE((js.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.remote_start)::timestamp with time zone)) / ((js.remote_progress)::numeric / 100.0)) / 60.0) / 60.0), 2)
             WHEN ((js.state = 4) AND (ps.progress > (0)::double precision)) THEN round((((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / ((ps.progress)::numeric / 100.0)) / 60.0) / 60.0), 2)
             WHEN (js.state = 5) THEN round(((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0) / 60.0), 2)

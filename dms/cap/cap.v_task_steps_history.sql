@@ -8,7 +8,7 @@ CREATE VIEW cap.v_task_steps_history AS
     t.dataset_id,
     ts.step,
     s.script,
-    ts.step_tool AS tool,
+    ts.tool,
     ssn.step_state AS state_name,
     ts.state,
     ts.start,

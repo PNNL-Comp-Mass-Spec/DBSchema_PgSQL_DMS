@@ -8,7 +8,7 @@ CREATE VIEW sw.v_pipeline_job_steps_history_detail_report AS
     js.step,
     j.dataset,
     j.script,
-    js.step_tool AS tool,
+    js.tool,
     ssn.step_state,
     jsn.job_state AS job_state_b,
     js.state AS state_id,

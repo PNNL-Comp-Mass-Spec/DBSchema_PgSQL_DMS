@@ -11,7 +11,7 @@ CREATE VIEW sw.v_job_processing_time AS
             max((COALESCE(statsq.secondselapsedcomplete, (0)::numeric) + COALESCE(statsq.secondselapsedinprogress, (0)::numeric))) AS maxsecondselapsedbytool,
             max(COALESCE(statsq.secondselapsedcomplete, (0)::numeric)) AS maxsecondselapsedbytool_completedsteps
            FROM ( SELECT t_job_steps.job,
-                    t_job_steps.step_tool,
+                    t_job_steps.tool AS step_tool,
                         CASE
                             WHEN (((t_job_steps.state = 9) OR (t_job_steps.retry_count > 0)) AND (NOT (t_job_steps.remote_start IS NULL))) THEN
                             CASE

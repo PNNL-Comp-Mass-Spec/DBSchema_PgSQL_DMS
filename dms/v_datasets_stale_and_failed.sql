@@ -8,7 +8,7 @@ CREATE VIEW public.v_datasets_stale_and_failed AS
             count(*) AS active_steps,
             sum(
                 CASE
-                    WHEN (js.step_tool OPERATOR(public.=) ANY (ARRAY['ArchiveStatusCheck'::public.citext, 'ArchiveVerify'::public.citext])) THEN 1
+                    WHEN (js.tool OPERATOR(public.=) ANY (ARRAY['ArchiveStatusCheck'::public.citext, 'ArchiveVerify'::public.citext])) THEN 1
                     ELSE 0
                 END) AS active_archive_status_steps
            FROM ((cap.t_task_steps js

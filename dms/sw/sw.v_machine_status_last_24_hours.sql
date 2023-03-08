@@ -24,8 +24,8 @@ CREATE VIEW sw.v_machine_status_last_24_hours AS
           GROUP BY ms.machine, ptg.group_name) statusq
      LEFT JOIN ( SELECT lp.machine,
             count(*) AS jobcount,
-            public.min(js.step_tool) AS step_tool_first,
-            public.max(js.step_tool) AS step_tool_last
+            public.min(js.tool) AS step_tool_first,
+            public.max(js.tool) AS step_tool_last
            FROM (sw.t_local_processors lp
              JOIN sw.t_job_steps js ON ((js.processor OPERATOR(public.=) lp.processor_name)))
           WHERE (js.state = 4)

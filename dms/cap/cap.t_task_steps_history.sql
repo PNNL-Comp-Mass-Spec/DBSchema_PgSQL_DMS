@@ -6,7 +6,7 @@ CREATE TABLE cap.t_task_steps_history (
     job integer NOT NULL,
     step integer NOT NULL,
     priority integer,
-    step_tool public.citext NOT NULL,
+    tool public.citext NOT NULL,
     shared_result_version smallint,
     signature integer,
     state smallint,

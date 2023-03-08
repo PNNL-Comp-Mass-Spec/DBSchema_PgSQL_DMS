@@ -102,7 +102,7 @@ BEGIN
     FROM Tmp_Jobs T
     WHERE TS.Job = T.Job AND
           T.Dataset SIMILAR TO '%[_]inverse' AND
-          TS.Step_Tool = 'ImsDeMultiplex';
+          TS.Tool = 'ImsDeMultiplex';
 
     If FOUND Then
         RAISE INFO 'Skipped the ImsDeMultiplex step for job % because the dataset name ends with "_inverse"', _job;

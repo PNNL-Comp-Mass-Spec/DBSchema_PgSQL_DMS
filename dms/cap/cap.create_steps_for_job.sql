@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_job(IN _job integer, IN _script
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
 **          11/30/2022 mem - Add parameter _returnCode and add check for missing step tools
+**          03/07/2023 mem - Rename column in temporary table
 **
 *****************************************************/
 DECLARE
@@ -35,17 +36,17 @@ BEGIN
     -- Make sure that the tools in the script exist
     ---------------------------------------------------
     --
-    SELECT string_agg(TS.step_tool, ', ')
+    SELECT string_agg(TS.tool, ', ')
     INTO _missingTools
-    FROM ( SELECT xmltable.step_tool
+    FROM ( SELECT xmltable.tool
            FROM ( SELECT _scriptXML As ScriptXML ) Src,
                 XMLTABLE('//JobScript/Step'
                          PASSING Src.ScriptXML
                          COLUMNS step int PATH '@Number',
-                                 step_tool citext PATH '@Tool',
+                                 tool citext PATH '@Tool',
                                  special_instructions citext PATH '@Special')
          ) TS
-    WHERE NOT TS.step_tool IN ( SELECT StepTools.step_tool FROM cap.t_step_tools StepTools );
+    WHERE NOT TS.tool IN ( SELECT StepTools.tool FROM cap.t_step_tools StepTools );
 
     If _missingTools <> '' Then
         _message := 'Step tool(s) ' || _missingTools || ' do not exist in cap.t_step_tools';
@@ -60,7 +61,7 @@ BEGIN
     INSERT INTO Tmp_Job_Steps (
         Job,
         Step,
-        Step_Tool,
+        Tool,
 --        CPU_Load,
         Dependencies,
         State,
@@ -71,7 +72,7 @@ BEGIN
     )
     SELECT _job AS Job,
            XmlQ.step,
-           XmlQ.step_tool,
+           XmlQ.tool,
     --     CPU_Load,
            0 AS Dependencies,
            1 AS State,
@@ -85,10 +86,10 @@ BEGIN
              XMLTABLE('//JobScript/Step'
                       PASSING Src.ScriptXML
                       COLUMNS step int PATH '@Number',
-                              step_tool citext PATH '@Tool',
+                              tool citext PATH '@Tool',
                               special_instructions citext PATH '@Special')
          ) XmlQ INNER JOIN
-         cap.t_step_tools T ON XmlQ.step_tool = T.step_tool;
+         cap.t_step_tools T ON XmlQ.tool = T.tool;
     --
     GET DIAGNOSTICS _stepCount = ROW_COUNT;
 

@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.move_jobs_to_main_tables(INOUT _message text, IN
 **          09/17/2015 mem - Added parameter _debugMode
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
+**          03/07/2023 mem - Rename column in temporary table
 **
 *****************************************************/
 DECLARE
@@ -80,7 +81,7 @@ BEGIN
         INSERT INTO cap.t_task_steps (
             Job,
             Step,
-            Step_Tool,
+            Tool,
             CPU_Load,
             Dependencies,
             State,
@@ -93,7 +94,7 @@ BEGIN
         SELECT
             Job,
             Step,
-            Step_Tool,
+            Tool,
             CPU_Load,
             Dependencies,
             State,
