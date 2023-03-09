@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_job(IN _job integer, IN _script
 **          10/11/2022 mem - Ported to PostgreSQL
 **          11/30/2022 mem - Add parameter _returnCode and add check for missing step tools
 **          03/07/2023 mem - Rename column in temporary table
+**          03/08/2023 mem - Switch back to t_step_tools.step_tool
 **
 *****************************************************/
 DECLARE
@@ -36,7 +37,7 @@ BEGIN
     -- Make sure that the tools in the script exist
     ---------------------------------------------------
     --
-    SELECT string_agg(TS.tool, ', ')
+    SELECT string_agg(XmlQ.tool, ', ')
     INTO _missingTools
     FROM ( SELECT xmltable.tool
            FROM ( SELECT _scriptXML As ScriptXML ) Src,
@@ -45,8 +46,8 @@ BEGIN
                          COLUMNS step int PATH '@Number',
                                  tool citext PATH '@Tool',
                                  special_instructions citext PATH '@Special')
-         ) TS
-    WHERE NOT TS.tool IN ( SELECT StepTools.tool FROM cap.t_step_tools StepTools );
+         ) XmlQ
+    WHERE NOT XmlQ.tool IN ( SELECT ST.step_tool FROM cap.t_step_tools ST );
 
     If _missingTools <> '' Then
         _message := 'Step tool(s) ' || _missingTools || ' do not exist in cap.t_step_tools';
@@ -89,7 +90,7 @@ BEGIN
                               tool citext PATH '@Tool',
                               special_instructions citext PATH '@Special')
          ) XmlQ INNER JOIN
-         cap.t_step_tools T ON XmlQ.tool = T.tool;
+         cap.t_step_tools ST ON XmlQ.tool = ST.step_tool;
     --
     GET DIAGNOSTICS _stepCount = ROW_COUNT;
 
