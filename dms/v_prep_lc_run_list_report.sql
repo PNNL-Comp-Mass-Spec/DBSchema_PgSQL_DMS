@@ -15,7 +15,8 @@ CREATE VIEW public.v_prep_lc_run_list_report AS
     preprun.operator_username,
     preprun.digestion_method,
     preprun.sample_type,
-    preprun.sample_prep_request,
+    preprun.sample_prep_requests,
+    preprun.sample_prep_work_packages AS work_packages,
     preprun.number_of_runs,
     preprun.instrument_pressure
    FROM public.t_prep_lc_run preprun;

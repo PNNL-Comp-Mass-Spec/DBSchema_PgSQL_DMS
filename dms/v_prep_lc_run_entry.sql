@@ -17,7 +17,7 @@ CREATE VIEW public.v_prep_lc_run_entry AS
     preprun.sample_type,
     preprun.number_of_runs,
     preprun.instrument_pressure,
-    preprun.sample_prep_request,
+    preprun.sample_prep_requests,
     preprun.quality_control,
     public.get_hplc_run_dataset_list(preprun.prep_run_id, 'name'::text) AS datasets
    FROM public.t_prep_lc_run preprun;
