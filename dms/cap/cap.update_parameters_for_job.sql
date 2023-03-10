@@ -341,9 +341,9 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
-        DROP TABLE If Exists Tmp_Job_List;
-        DROP TABLE If Exists Tmp_Jobs;
-        DROP TABLE If Exists Tmp_Job_Parameters;
+        DROP TABLE IF EXISTS Tmp_Job_List;
+        DROP TABLE IF EXISTS Tmp_Jobs;
+        DROP TABLE IF EXISTS Tmp_Job_Parameters;
 
     END;
 END

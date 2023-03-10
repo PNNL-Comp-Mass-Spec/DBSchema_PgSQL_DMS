@@ -145,7 +145,7 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
-        DROP TABLE If Exists Tmp_Job_List;
+        DROP TABLE IF EXISTS Tmp_Job_List;
     END;
 END
 $$;

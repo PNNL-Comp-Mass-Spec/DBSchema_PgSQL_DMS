@@ -46,7 +46,7 @@ BEGIN
     _createJobsForUnreviewedDatasets := Coalesce(_createJobsForUnreviewedDatasets, true);
     _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
 
-    DROP TABLE If Exists Tmp_PredefinedAnalysisJobResults;
+    DROP TABLE IF EXISTS Tmp_PredefinedAnalysisJobResults;
 
     CREATE TEMP TABLE Tmp_PredefinedAnalysisJobResults (
         predefine_id int,

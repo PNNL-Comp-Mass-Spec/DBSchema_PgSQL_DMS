@@ -64,7 +64,7 @@ EXCEPTION
 
     RAISE Exception '%, code %; see the output for context', _message, _sqlState;
 
-    DROP TABLE If Exists TmpManagerList;
+    DROP TABLE IF EXISTS TmpManagerList;
 
 End
 $$;
