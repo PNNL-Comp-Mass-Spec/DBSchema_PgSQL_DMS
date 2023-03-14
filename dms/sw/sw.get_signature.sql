@@ -8,9 +8,9 @@ CREATE OR REPLACE FUNCTION sw.get_signature(_settings text) RETURNS integer
 /****************************************************
 **
 **  Desc:
-**    Get signature for given input string
+**    Get signature ID for given input string
 **
-**    Input string is hashed to pattern, and stored in table
+**    Input string is hashed to pattern, and stored in table T_Signatures
 **    Signature is integer reference to pattern
 **
 **  Return values: signature (integer), otherwise, 0
@@ -28,7 +28,7 @@ BEGIN
     _reference := 0;
 
     ---------------------------------------------------
-    -- Convert string to hash
+    -- Convert string to SHA-1 hash (upper case hex string)
     ---------------------------------------------------
 
     _pattern := sw.get_sha1_hash(_settings);
@@ -39,7 +39,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Is it already in table?
+    -- Is it already in the signatures table?
     ---------------------------------------------------
     --
     SELECT reference
