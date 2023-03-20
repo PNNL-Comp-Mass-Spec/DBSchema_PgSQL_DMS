@@ -2,7 +2,7 @@
 -- Name: get_spectral_library_settings_hash(integer, text, text, real, real, integer, text, integer, integer, integer, real, real, integer, integer, integer, text, text, integer, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_library_id integer, _protein_collection_list text DEFAULT ''::text, _organism_db_file text DEFAULT ''::text, _fragment_ion_mz_min real DEFAULT 0, _fragment_ion_mz_max real DEFAULT 0, _trim_n_terminal_met integer DEFAULT 0, _cleavage_specificity text DEFAULT ''::text, _missed_cleavages integer DEFAULT 0, _peptide_length_min integer DEFAULT 0, _peptide_length_max integer DEFAULT 0, _precursor_mz_min real DEFAULT 0, _precursor_mz_max real DEFAULT 0, _precursor_charge_min integer DEFAULT 0, _precursor_charge_max integer DEFAULT 0, _static_cys_carbamidomethyl integer DEFAULT 0, _static_mods text DEFAULT ''::text, _dynamic_mods text DEFAULT ''::text, _max_dynamic_mods integer DEFAULT 0, _showdebug boolean DEFAULT false) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text DEFAULT ''::text, _organismdbfile text DEFAULT ''::text, _fragmentionmzmin real DEFAULT 0, _fragmentionmzmax real DEFAULT 0, _trimnterminalmet integer DEFAULT 0, _cleavagespecificity text DEFAULT ''::text, _missedcleavages integer DEFAULT 0, _peptidelengthmin integer DEFAULT 0, _peptidelengthmax integer DEFAULT 0, _precursormzmin real DEFAULT 0, _precursormzmax real DEFAULT 0, _precursorchargemin integer DEFAULT 0, _precursorchargemax integer DEFAULT 0, _staticcyscarbamidomethyl integer DEFAULT 0, _staticmods text DEFAULT ''::text, _dynamicmods text DEFAULT ''::text, _maxdynamicmods integer DEFAULT 0, _showdebug boolean DEFAULT false) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_library_id
 **
 **  Auth:   mem
 **  Date:   03/15/2023 mem - Initial Release
+**          03/18/2023 mem - Rename arguments
 **
 *****************************************************/
 DECLARE
@@ -29,10 +30,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _library_id := Coalesce(_library_id, 0);
+    _libraryId := Coalesce(_libraryId, 0);
     _showDebug := Coalesce(_showDebug, false);
 
-    If _library_id > 0 Then
+    If _libraryId > 0 Then
         SELECT Protein_Collection_List, Organism_DB_File,
                Fragment_Ion_Mz_Min, Fragment_Ion_Mz_Max,
                Trim_N_Terminal_Met, Cleavage_Specificity, Missed_Cleavages,
@@ -42,67 +43,67 @@ BEGIN
                Static_Cys_Carbamidomethyl,
                Static_Mods, Dynamic_Mods,
                Max_Dynamic_Mods
-        INTO _Protein_Collection_List, _Organism_DB_File,
-             _Fragment_Ion_Mz_Min, _Fragment_Ion_Mz_Max,
-             _Trim_N_Terminal_Met, _Cleavage_Specificity, _Missed_Cleavages,
-             _Peptide_Length_Min, _Peptide_Length_Max,
-             _Precursor_Mz_Min, _Precursor_Mz_Max,
-             _Precursor_Charge_Min, _Precursor_Charge_Max,
-             _Static_Cys_Carbamidomethyl,
-             _Static_Mods, _Dynamic_Mods,
-             _Max_Dynamic_Mods
+        INTO _proteinCollectionList, _organismDBFile,
+             _fragmentIonMzMin, _fragmentIonMzMax,
+             _trimNTerminalMet, _cleavageSpecificity, _missedCleavages,
+             _peptideLengthMin, _peptideLengthMax,
+             _precursorMzMin, _precursorMzMax,
+             _precursorChargeMin, _precursorChargeMax,
+             _staticCysCarbamidomethyl,
+             _staticMods, _dynamicMods,
+             _maxDynamicMods
         FROM T_Spectral_Library
-        WHERE Library_ID = _library_id;
+        WHERE Library_ID = _libraryId;
 
         If Not FOUND Then
-            RAISE WARNING 'Spectral library ID not found in T_Spectral_Library: %', _library_id;
+            RAISE WARNING 'Spectral library ID not found in T_Spectral_Library: %', _libraryId;
             Return '';
         End If;
     Else
-        _Protein_Collection_List := Coalesce(_Protein_Collection_List, '');
-        _Organism_DB_File := Coalesce(_Organism_DB_File, '');
-        _Fragment_Ion_Mz_Min := Coalesce(_Fragment_Ion_Mz_Min, 0);
-        _Fragment_Ion_Mz_Max := Coalesce(_Fragment_Ion_Mz_Max, 0);
-        _Trim_N_Terminal_Met := Coalesce(_Trim_N_Terminal_Met, 0);
-        _Cleavage_Specificity := Coalesce(_Cleavage_Specificity, '');
-        _Missed_Cleavages := Coalesce(_Missed_Cleavages, 0);
-        _Peptide_Length_Min := Coalesce(_Peptide_Length_Min, 0);
-        _Peptide_Length_Max := Coalesce(_Peptide_Length_Max, 0);
-        _Precursor_Mz_Min := Coalesce(_Precursor_Mz_Min, 0);
-        _Precursor_Mz_Max := Coalesce(_Precursor_Mz_Max, 0);
-        _Precursor_Charge_Min := Coalesce(_Precursor_Charge_Min, 0);
-        _Precursor_Charge_Max := Coalesce(_Precursor_Charge_Max, 0);
-        _Static_Cys_Carbamidomethyl := Coalesce(_Static_Cys_Carbamidomethyl, 0);
-        _Static_Mods := Coalesce(_Static_Mods, '');
-        _Dynamic_Mods := Coalesce(_Dynamic_Mods, '');
-        _Max_Dynamic_Mods := Coalesce(_Max_Dynamic_Mods, 0);
+        _proteinCollectionList := Coalesce(_proteinCollectionList, '');
+        _organismDBFile := Coalesce(_organismDBFile, '');
+        _fragmentIonMzMin := Coalesce(_fragmentIonMzMin, 0);
+        _fragmentIonMzMax := Coalesce(_fragmentIonMzMax, 0);
+        _trimNTerminalMet := Coalesce(_trimNTerminalMet, 0);
+        _cleavageSpecificity := Coalesce(_cleavageSpecificity, '');
+        _missedCleavages := Coalesce(_missedCleavages, 0);
+        _peptideLengthMin := Coalesce(_peptideLengthMin, 0);
+        _peptideLengthMax := Coalesce(_peptideLengthMax, 0);
+        _precursorMzMin := Coalesce(_precursorMzMin, 0);
+        _precursorMzMax := Coalesce(_precursorMzMax, 0);
+        _precursorChargeMin := Coalesce(_precursorChargeMin, 0);
+        _precursorChargeMax := Coalesce(_precursorChargeMax, 0);
+        _staticCysCarbamidomethyl := Coalesce(_staticCysCarbamidomethyl, 0);
+        _staticMods := Coalesce(_staticMods, '');
+        _dynamicMods := Coalesce(_dynamicMods, '');
+        _maxDynamicMods := Coalesce(_maxDynamicMods, 0);
     End If;
 
     -- Remove any spaces in the static and dynamic mods
-    _Static_Mods = Replace(_Static_Mods, ' ', '');
-    _Dynamic_Mods = Replace(_Dynamic_Mods, ' ', '');
+    _staticMods = Replace(_staticMods, ' ', '');
+    _dynamicMods = Replace(_dynamicMods, ' ', '');
 
     ---------------------------------------------------
     -- Store the options in _settings
     ---------------------------------------------------
 
-    _settings = _Protein_Collection_List || '_' ||
-                _Organism_DB_File || '_' ||
-                Cast(_Fragment_Ion_Mz_Min As text) || '_' ||
-                Cast(_Fragment_Ion_Mz_Max As text) || '_' ||
-                Cast(_Trim_N_Terminal_Met As text) || '_' ||
-                Cast(_Cleavage_Specificity As text) || '_' ||
-                Cast(_Missed_Cleavages As text) || '_' ||
-                Cast(_Peptide_Length_Min As text) || '_' ||
-                Cast(_Peptide_Length_Max As text) || '_' ||
-                Cast(_Precursor_Mz_Min As text) || '_' ||
-                Cast(_Precursor_Mz_Max As text) || '_' ||
-                Cast(_Precursor_Charge_Min As text) || '_' ||
-                Cast(_Precursor_Charge_Max As text) || '_' ||
-                Cast(_Static_Cys_Carbamidomethyl As text) || '_' ||
-                _Static_Mods || '_' ||
-                _Dynamic_Mods || '_' ||
-                Cast(_max_dynamic_mods As text) || '_';
+    _settings = _proteinCollectionList || '_' ||
+                _organismDBFile || '_' ||
+                Cast(_fragmentIonMzMin As text) || '_' ||
+                Cast(_fragmentIonMzMax As text) || '_' ||
+                Cast(_trimNTerminalMet As text) || '_' ||
+                Cast(_cleavageSpecificity As text) || '_' ||
+                Cast(_missedCleavages As text) || '_' ||
+                Cast(_peptideLengthMin As text) || '_' ||
+                Cast(_peptideLengthMax As text) || '_' ||
+                Cast(_precursorMzMin As text) || '_' ||
+                Cast(_precursorMzMax As text) || '_' ||
+                Cast(_precursorChargeMin As text) || '_' ||
+                Cast(_precursorChargeMax As text) || '_' ||
+                Cast(_staticCysCarbamidomethyl As text) || '_' ||
+                _staticMods || '_' ||
+                _dynamicMods || '_' ||
+                Cast(_maxDynamicMods As text) || '_';
 
     If _showDebug Then
         RAISE INFO '%', _settings;
@@ -119,5 +120,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_spectral_library_settings_hash(_library_id integer, _protein_collection_list text, _organism_db_file text, _fragment_ion_mz_min real, _fragment_ion_mz_max real, _trim_n_terminal_met integer, _cleavage_specificity text, _missed_cleavages integer, _peptide_length_min integer, _peptide_length_max integer, _precursor_mz_min real, _precursor_mz_max real, _precursor_charge_min integer, _precursor_charge_max integer, _static_cys_carbamidomethyl integer, _static_mods text, _dynamic_mods text, _max_dynamic_mods integer, _showdebug boolean) OWNER TO d3l243;
+ALTER FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text, _organismdbfile text, _fragmentionmzmin real, _fragmentionmzmax real, _trimnterminalmet integer, _cleavagespecificity text, _missedcleavages integer, _peptidelengthmin integer, _peptidelengthmax integer, _precursormzmin real, _precursormzmax real, _precursorchargemin integer, _precursorchargemax integer, _staticcyscarbamidomethyl integer, _staticmods text, _dynamicmods text, _maxdynamicmods integer, _showdebug boolean) OWNER TO d3l243;
 
