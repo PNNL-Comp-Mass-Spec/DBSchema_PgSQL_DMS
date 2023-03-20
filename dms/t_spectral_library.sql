@@ -10,7 +10,7 @@ CREATE TABLE public.t_spectral_library (
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     source_job integer,
     comment public.citext DEFAULT ''::public.citext NOT NULL,
-    server_share public.citext DEFAULT ''::public.citext NOT NULL,
+    storage_path public.citext DEFAULT ''::public.citext NOT NULL,
     protein_collection_list public.citext DEFAULT 'na'::public.citext NOT NULL,
     organism_db_file public.citext DEFAULT 'na'::public.citext NOT NULL,
     fragment_ion_mz_min real DEFAULT 0 NOT NULL,
@@ -61,10 +61,11 @@ ALTER TABLE ONLY public.t_spectral_library
 CREATE UNIQUE INDEX ix_t_spectral_library_library_name ON public.t_spectral_library USING btree (library_name);
 
 --
--- Name: ix_t_spectral_library_library_name_settings_hash; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_spectral_library_settings_hash; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_spectral_library_library_name_settings_hash ON public.t_spectral_library USING btree (library_name, settings_hash);
+CREATE INDEX ix_t_spectral_library_settings_hash ON public.t_spectral_library USING btree (settings_hash);
+
 
 --
 -- Name: t_spectral_library fk_t_spectral_library_t_spectral_library_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
