@@ -6,6 +6,7 @@ CREATE TABLE public.t_spectral_library (
     library_id integer NOT NULL,
     library_name public.citext NOT NULL,
     library_state_id integer NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     library_type_id integer NOT NULL,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     source_job integer,
@@ -66,6 +67,11 @@ CREATE UNIQUE INDEX ix_t_spectral_library_library_name ON public.t_spectral_libr
 
 CREATE INDEX ix_t_spectral_library_settings_hash ON public.t_spectral_library USING btree (settings_hash);
 
+--
+-- Name: t_spectral_library trig_t_spectral_library_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_spectral_library_after_update AFTER UPDATE ON public.t_spectral_library FOR EACH ROW WHEN ((old.library_state_id <> new.library_state_id)) EXECUTE FUNCTION public.trigfn_t_spectral_library_after_update();
 
 --
 -- Name: t_spectral_library fk_t_spectral_library_t_spectral_library_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
