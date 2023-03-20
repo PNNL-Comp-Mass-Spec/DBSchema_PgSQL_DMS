@@ -29,7 +29,8 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          05/18/2022 mem - Treat additional proposal types as not EMSL funded
 **          06/19/2022 mem - Ported to PostgreSQL
 **          12/09/2022 mem - Change data type of column Fraction_EMSL_Funded to numeric
-**          12/12/2022 mem - Use a single Interval when computing _endIntervalEOD
+**          12/12/2022 mem - Use a single interval when computing _endIntervalEOD
+**          03/20/2023 mem - Treat proposal types 'Capacity' and 'Staff Time' as EMSL funded
 **
 *****************************************************/
 DECLARE
@@ -344,11 +345,12 @@ BEGIN
             -- Fraction_EMSL_Funded = C.CM_Fraction_EMSL_Funded,   -- Campaign based estimation of fraction EMSL funded; this has been replaced by the following case statement
             Fraction_EMSL_Funded =
                CASE
-               WHEN Coalesce(EUP.Proposal_Type, 'PROPRIETARY') IN ('Capacity', 'Partner',
-                                                                   'Proprietary', 'Proprietary Public', 'Proprietary_Public',
-                                                                   'Resource Owner', 'Staff Time')
-                    THEN 0
-                    ELSE 1
+               WHEN Coalesce(EUP.Proposal_Type, 'PROPRIETARY')
+                    IN ('Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') THEN 0  -- Not EMSL Funded
+               ELSE 1             -- EMSL Funded:
+                                  -- 'Exploratory Research', 'FICUS JGI-EMSL', 'FICUS Research', 'Intramural S&T',
+                                  -- 'Large-Scale EMSL Research', 'Limited Scope', 'Science Area Research',
+                                  -- 'Capacity', 'Staff Time'
                END,
             Campaign_Proposals = C.eus_proposal_list
         FROM
