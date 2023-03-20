@@ -1,8 +1,8 @@
 --
--- Name: get_spectral_library_settings_hash(integer, text, text, real, real, integer, text, integer, integer, integer, real, real, integer, integer, integer, text, text, integer, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_spectral_library_settings_hash(integer, text, text, real, real, boolean, text, integer, integer, integer, real, real, integer, integer, boolean, text, text, integer, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text DEFAULT ''::text, _organismdbfile text DEFAULT ''::text, _fragmentionmzmin real DEFAULT 0, _fragmentionmzmax real DEFAULT 0, _trimnterminalmet integer DEFAULT 0, _cleavagespecificity text DEFAULT ''::text, _missedcleavages integer DEFAULT 0, _peptidelengthmin integer DEFAULT 0, _peptidelengthmax integer DEFAULT 0, _precursormzmin real DEFAULT 0, _precursormzmax real DEFAULT 0, _precursorchargemin integer DEFAULT 0, _precursorchargemax integer DEFAULT 0, _staticcyscarbamidomethyl integer DEFAULT 0, _staticmods text DEFAULT ''::text, _dynamicmods text DEFAULT ''::text, _maxdynamicmods integer DEFAULT 0, _showdebug boolean DEFAULT false) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text DEFAULT ''::text, _organismdbfile text DEFAULT ''::text, _fragmentionmzmin real DEFAULT 0, _fragmentionmzmax real DEFAULT 0, _trimnterminalmet boolean DEFAULT false, _cleavagespecificity text DEFAULT ''::text, _missedcleavages integer DEFAULT 0, _peptidelengthmin integer DEFAULT 0, _peptidelengthmax integer DEFAULT 0, _precursormzmin real DEFAULT 0, _precursormzmax real DEFAULT 0, _precursorchargemin integer DEFAULT 0, _precursorchargemax integer DEFAULT 0, _staticcyscarbamidomethyl boolean DEFAULT false, _staticmods text DEFAULT ''::text, _dynamicmods text DEFAULT ''::text, _maxdynamicmods integer DEFAULT 0, _showdebug boolean DEFAULT false) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **  Auth:   mem
 **  Date:   03/15/2023 mem - Initial Release
 **          03/18/2023 mem - Rename arguments
+**          03/20/2023 mem - Change _trimNTerminalMet and _staticCysCarbamidomethyl to boolean
 **
 *****************************************************/
 DECLARE
@@ -36,11 +37,12 @@ BEGIN
     If _libraryId > 0 Then
         SELECT Protein_Collection_List, Organism_DB_File,
                Fragment_Ion_Mz_Min, Fragment_Ion_Mz_Max,
-               Trim_N_Terminal_Met, Cleavage_Specificity, Missed_Cleavages,
+               CASE WHEN Trim_N_Terminal_Met > 0 THEN true ELSE false END,
+               Cleavage_Specificity, Missed_Cleavages,
                Peptide_Length_Min, Peptide_Length_Max,
                Precursor_Mz_Min, Precursor_Mz_Max,
                Precursor_Charge_Min, Precursor_Charge_Max,
-               Static_Cys_Carbamidomethyl,
+               CASE WHEN Static_Cys_Carbamidomethyl > 0 THEN true ELSE false END,
                Static_Mods, Dynamic_Mods,
                Max_Dynamic_Mods
         INTO _proteinCollectionList, _organismDBFile,
@@ -64,7 +66,7 @@ BEGIN
         _organismDBFile := Coalesce(_organismDBFile, '');
         _fragmentIonMzMin := Coalesce(_fragmentIonMzMin, 0);
         _fragmentIonMzMax := Coalesce(_fragmentIonMzMax, 0);
-        _trimNTerminalMet := Coalesce(_trimNTerminalMet, 0);
+        _trimNTerminalMet := Coalesce(_trimNTerminalMet, false);
         _cleavageSpecificity := Coalesce(_cleavageSpecificity, '');
         _missedCleavages := Coalesce(_missedCleavages, 0);
         _peptideLengthMin := Coalesce(_peptideLengthMin, 0);
@@ -73,7 +75,7 @@ BEGIN
         _precursorMzMax := Coalesce(_precursorMzMax, 0);
         _precursorChargeMin := Coalesce(_precursorChargeMin, 0);
         _precursorChargeMax := Coalesce(_precursorChargeMax, 0);
-        _staticCysCarbamidomethyl := Coalesce(_staticCysCarbamidomethyl, 0);
+        _staticCysCarbamidomethyl := Coalesce(_staticCysCarbamidomethyl, false);
         _staticMods := Coalesce(_staticMods, '');
         _dynamicMods := Coalesce(_dynamicMods, '');
         _maxDynamicMods := Coalesce(_maxDynamicMods, 0);
@@ -91,7 +93,7 @@ BEGIN
                 _organismDBFile || '_' ||
                 Cast(_fragmentIonMzMin As text) || '_' ||
                 Cast(_fragmentIonMzMax As text) || '_' ||
-                Cast(_trimNTerminalMet As text) || '_' ||
+                CASE WHEN _trimNTerminalMet THEN '1' ELSE '0' END || '_' ||
                 Cast(_cleavageSpecificity As text) || '_' ||
                 Cast(_missedCleavages As text) || '_' ||
                 Cast(_peptideLengthMin As text) || '_' ||
@@ -100,7 +102,7 @@ BEGIN
                 Cast(_precursorMzMax As text) || '_' ||
                 Cast(_precursorChargeMin As text) || '_' ||
                 Cast(_precursorChargeMax As text) || '_' ||
-                Cast(_staticCysCarbamidomethyl As text) || '_' ||
+                CASE WHEN _staticCysCarbamidomethyl THEN '1' ELSE '0' END || '_' ||
                 _staticMods || '_' ||
                 _dynamicMods || '_' ||
                 Cast(_maxDynamicMods As text) || '_';
@@ -120,5 +122,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text, _organismdbfile text, _fragmentionmzmin real, _fragmentionmzmax real, _trimnterminalmet integer, _cleavagespecificity text, _missedcleavages integer, _peptidelengthmin integer, _peptidelengthmax integer, _precursormzmin real, _precursormzmax real, _precursorchargemin integer, _precursorchargemax integer, _staticcyscarbamidomethyl integer, _staticmods text, _dynamicmods text, _maxdynamicmods integer, _showdebug boolean) OWNER TO d3l243;
+ALTER FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text, _organismdbfile text, _fragmentionmzmin real, _fragmentionmzmax real, _trimnterminalmet boolean, _cleavagespecificity text, _missedcleavages integer, _peptidelengthmin integer, _peptidelengthmax integer, _precursormzmin real, _precursormzmax real, _precursorchargemin integer, _precursorchargemax integer, _staticcyscarbamidomethyl boolean, _staticmods text, _dynamicmods text, _maxdynamicmods integer, _showdebug boolean) OWNER TO d3l243;
 
