@@ -93,4 +93,5 @@ ALTER TABLE ONLY public.t_spectral_library
 
 GRANT SELECT ON TABLE public.t_spectral_library TO readaccess;
 GRANT SELECT ON TABLE public.t_spectral_library TO writeaccess;
+GRANT INSERT,UPDATE ON TABLE public.t_spectral_library TO dmswebuser;
 
