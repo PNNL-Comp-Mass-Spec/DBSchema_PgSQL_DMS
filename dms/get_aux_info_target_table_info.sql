@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_target_table_info(_targettypename
 **
 **  Auth:   mem
 **  Date:   11/29/2022 mem - Initial release
+**          03/22/2023 mem - Use lowercase strings in comparisons
 **
 *****************************************************/
 DECLARE
@@ -51,7 +52,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _tgtTableName = 'T_Cell_Culture' Then
+    If _tgtTableName = 't_cell_culture' Then
 
         -- Auto-switch the target table to t_biomaterial if T_Cell_Culture does not exist but t_biomaterial does
         If Not Exists (Select * From information_schema.tables Where table_name::citext = 'T_Cell_Culture' And table_type::citext = 'BASE TABLE')
@@ -64,15 +65,15 @@ BEGIN
             _message := 'Switched from T_Cell_Culture to t_biomaterial';
         End If;
 
-    ElsIf _tgtTableName = 'T_Experiments' And _tgtTableNameCol = 'Experiment_Num' Then
+    ElsIf _tgtTableName = 't_experiments' And _tgtTableNameCol = 'experiment_num' Then
         _tgtTableNameCol := 'experiment';
         _message := 'Switched column name from Experiment_Num to experiment';
 
-    ElsIf _tgtTableName = 'T_Dataset' And _tgtTableNameCol = 'Dataset_Num' Then
+    ElsIf _tgtTableName = 't_dataset' And _tgtTableNameCol = 'dataset_num' Then
         _tgtTableNameCol := 'dataset';
         _message := 'Switched column name from Dataset_Num to dataset';
 
-    ElsIf _tgtTableName = 'T_Sample_Prep_Request' And _tgtTableNameCol = 'ID' Then
+    ElsIf _tgtTableName = 't_sample_prep_request' And _tgtTableNameCol = 'id' Then
         _tgtTableIDCol := 'prep_request_id';
         _tgtTableNameCol := 'prep_request_id';
         _message := 'Switched column name from ID to prep_request_id';
