@@ -44,7 +44,7 @@ BEGIN
 
     -- \\proto-3\DMS3_Xfer\
     --
-    SELECT ((xpath('//params/Param[@Name = "transferFolderPath"]/@Value', rooted_xml))[1])::text
+    SELECT ((xpath('//params/Param[@Name = "TransferFolderPath"]/@Value', rooted_xml))[1])::text
     FROM ( SELECT ('<root>' || parameters::text || '</root>')::xml as rooted_xml
            FROM sw.t_job_parameters_history
            WHERE job = 2014771) FilterQ;
