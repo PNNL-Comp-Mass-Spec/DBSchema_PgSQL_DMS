@@ -49,6 +49,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **                            given the AMT tag DB name, the code used a view to determine the server on which the MT DB resides)
 **                         - Remove check for DataImportFolder in the Special_Processing field
 **          10/14/2022 mem - Ported to PostgreSQL
+**          03/22/2023 mem - Rename dataset name parameter to DatasetName
 **
 *****************************************************/
 DECLARE
@@ -84,7 +85,7 @@ BEGIN
     SELECT 'JobParameters' As Section,
            UnpivotQ.Name,
            UnpivotQ.Value
-    FROM ( SELECT Dataset AS DatasetNum,
+    FROM ( SELECT Dataset AS DatasetName,
                   Dataset_ID::text AS DatasetID,
                   Dataset_Folder_Name AS DatasetFolderName,
                   Archive_Folder_Path AS DatasetArchivePath,
@@ -113,7 +114,7 @@ BEGIN
                 WHERE P.Job = _job) as m
          CROSS JOIN LATERAL (
            VALUES
-                ('DatasetNum', m.DatasetNum),
+                ('DatasetName', m.DatasetName),
                 ('DatasetID', m.DatasetID),
                 ('DatasetFolderName', m.DatasetFolderName),
                 ('DatasetStoragePath', m.DatasetStoragePath),
