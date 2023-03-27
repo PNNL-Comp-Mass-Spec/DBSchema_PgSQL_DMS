@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION sw.create_parameters_for_job(_job integer, _settingsf
 **          01/05/2010 mem - Added parameter _settingsFileOverride
 **          10/14/2022 mem - Ported to PostgreSQL
 **          03/26/2023 mem - Update logic to handle data package based jobs (which should have dataset name 'Aggregation')
+**          03/27/2023 mem - Remove step_number column from temp tables since unused
 **
 *****************************************************/
 DECLARE
@@ -42,7 +43,6 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_Job_Parameters (
         Job int,
-        Step_Number int,        -- This will be null for every row since get_job_param_table does not consider job step
         Section text,
         Name text,
         Value text
@@ -52,8 +52,8 @@ BEGIN
     -- Get job parameters from public schema tables
     ---------------------------------------------------
     --
-    INSERT INTO Tmp_Job_Parameters (Job, Step_Number, Section, Name, Value)
-    SELECT Job, null, Section, Name, Value
+    INSERT INTO Tmp_Job_Parameters (Job, Section, Name, Value)
+    SELECT Job, Section, Name, Value
     FROM sw.get_job_param_table(_job, _settingsFileOverride, _debugMode => _debugMode);
 
     -- Check whether this job is a data package based job
@@ -71,7 +71,6 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_Job_Parameters_Merged (
             Job int,
-            Step_Number int,        -- This will be null for every row since get_job_param_table does not consider job step
             Section text,
             Name text,
             Value text
@@ -79,9 +78,8 @@ BEGIN
 
         -- Populate Tmp_Job_Parameters_Merged with the existing job parameters
 
-        INSERT INTO Tmp_Job_Parameters_Merged (Job, Step_Number, Section, Name, Value)
+        INSERT INTO Tmp_Job_Parameters_Merged (Job, Section, Name, Value)
         SELECT _job,
-               Null,
                XmlQ.section,
                XmlQ.name,
                XmlQ.value
