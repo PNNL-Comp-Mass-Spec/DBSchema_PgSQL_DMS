@@ -122,6 +122,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          02/23/2023 mem - Ported to PostgreSQL
 **                         - Add support for DIA-NN
 **          02/28/2023 mem - Use renamed parameter file type, 'MSGFPlus'
+**          03/27/2023 mem - Cast _paramFileType to citext
 **
 *****************************************************/
 DECLARE
@@ -235,7 +236,7 @@ BEGIN
         End If;
     End If;
 
-    If Not _paramFileType In ('MSGFPlus', 'DIA-NN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
+    If Not _paramFileType::citext In ('MSGFPlus', 'DIA-NN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
         _paramFileType := 'MSGFPlus';
     End If;
 
@@ -296,7 +297,7 @@ BEGIN
     -- Store the data in Tmp_Mods
     -----------------------------------------
 
-    If _paramFileType = 'MaxQuant' Then
+    If _paramFileType::citext = 'MaxQuant' Then
         -- Parse the text as XML
 
         ---------------------------------------------------
@@ -477,7 +478,7 @@ BEGIN
         DELETE FROM Tmp_ModDef;
         _rowParsed := false;
 
-        If _paramFileType = 'MSFragger' Then
+        If _paramFileType::citext = 'MSFragger' Then
             _rowParsed := true;
 
             If _row SIMILAR TO 'variable[_]mod%' Then
@@ -540,7 +541,7 @@ BEGIN
 
         End If;
 
-        If _paramFileType = 'MaxQuant' Then
+        If _paramFileType::citext = 'MaxQuant' Then
             _rowParsed := true;
 
             If _row Like 'variable=%' Then
@@ -560,7 +561,7 @@ BEGIN
             End If;
         End If;
 
-        If _paramFileType = 'DIA-NN' Then
+        If _paramFileType::citext = 'DIA-NN' Then
             -- Check for setting StaticCysCarbamidomethyl=True
             If _row Like 'StaticCysCarbamidomethyl%=%True' Then
                _rowParsed := true;
@@ -641,7 +642,7 @@ BEGIN
         INTO _rowCount
         FROM Tmp_ModDef;
 
-        If _paramFileType In ('MSGFPlus', 'TopPIC') And _rowCount < 5 Then
+        If _paramFileType::citext In ('MSGFPlus', 'TopPIC') And _rowCount < 5 Then
             If Position(chr(9) In _row) > 0 Then
                 If Position(',' In _row) > 0 Then
                     _message := 'Aborting since row has a mix of tabs and commas; should only be comma-separated: ' || _row;
@@ -685,13 +686,13 @@ BEGIN
             CONTINUE;
         End If;
 
-        If _paramFileType In ('DIA-NN') And _rowCount < 3 Then
+        If _paramFileType::citext In ('DIA-NN') And _rowCount < 3 Then
             RAISE INFO '';
             RAISE INFO '%', 'Skipping row since not enough rows in Tmp_ModDef: ' || _row;
             CONTINUE;
         End If;
 
-        If _paramFileType In ('MSFragger') And _rowCount < 2 Then
+        If _paramFileType::citext In ('MSFragger') And _rowCount < 2 Then
             RAISE INFO '';
             RAISE INFO '%', 'Skipping row since not enough rows in Tmp_ModDef: ' || _row;
             CONTINUE;
@@ -699,7 +700,7 @@ BEGIN
 
         _field := '';
 
-        If _paramFileType In ('DIA-NN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
+        If _paramFileType::citext In ('DIA-NN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
             -- Mod defs for these tools don't include 'opt' or 'fix, so we update _field based on _modType
             If _modType = 'DynamicMod' Then
                 _field := 'opt';
@@ -763,13 +764,13 @@ BEGIN
 
         DELETE FROM Tmp_Residues;
 
-        If _paramFileType In ('MSGFPlus', 'DIA-NN', 'TopPIC') Then
+        If _paramFileType::citext In ('MSGFPlus', 'DIA-NN', 'TopPIC') Then
 
             -----------------------------------------
             -- Determine the modification name (preferably UniMod name, but could also be a mass correction tag name)
             -----------------------------------------
 
-            If _paramFileType In ('MSGFPlus', 'TopPIC') Then
+            If _paramFileType::citext In ('MSGFPlus', 'TopPIC') Then
 
                 SELECT Trim(Value)
                 INTO _modName
@@ -951,11 +952,11 @@ BEGIN
                 RETURN;
             End If;
 
-            If _paramFileType = 'DIA-NN' Then
+            If _paramFileType::citext = 'DIA-NN' Then
                 SELECT Trim(Value)
                 INTO _field
                 FROM Tmp_ModDef
-                WHERE _paramFileType = 'DIA-NN' And EntryID = 3;
+                WHERE _paramFileType::citext = 'DIA-NN' And EntryID = 3;
 
                 If _field = '*n' Then
                     _location := 'Prot-N-term';   -- Protein N-terminus
@@ -1011,7 +1012,7 @@ BEGIN
             _affectedResidues := _field;
         End If; -- MS-GF+, DIA-NN, and TopPIC
 
-        If _paramFileType In ('MSFragger') Then
+        If _paramFileType::citext In ('MSFragger') Then
             -----------------------------------------
             -- Determine the Mass_Correction_ID based on the mod mass
             -----------------------------------------
@@ -1099,7 +1100,7 @@ BEGIN
 
         End If; -- MSFragger
 
-        If _paramFileType In ('MaxQuant') Then
+        If _paramFileType::citext In ('MaxQuant') Then
             -----------------------------------------
             -- Determine the Mass_Correction_ID and affected residues based on the mod name
             -----------------------------------------
@@ -1207,7 +1208,7 @@ BEGIN
             _residueSymbol := SubString(_affectedResidues, _charIndex, 1);
 
             If _terminalMod Then
-                If _paramFileType = 'DIA-NN' Then
+                If _paramFileType::citext = 'DIA-NN' Then
                     -- This should be a peptide or protein N-terminal mod
                     -- Break out of the while loop
                     EXIT;
@@ -1223,7 +1224,7 @@ BEGIN
                 End If;
             Else
                 -- Not matching an N or C-Terminus
-                If _paramFileType In ('MSFragger') Then
+                If _paramFileType::citext In ('MSFragger') Then
                     If ascii(_residueSymbol) In (110, 99) Then
                         -- Lowercase n or c indicates peptide N- or C-terminus
                         If _charIndex = char_length(_affectedResidues) Then
