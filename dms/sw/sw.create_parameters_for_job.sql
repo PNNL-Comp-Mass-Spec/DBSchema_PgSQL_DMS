@@ -29,15 +29,20 @@ CREATE OR REPLACE FUNCTION sw.create_parameters_for_job(_job integer, _settingsf
 **                           to GetJobParamTable, which is local to this database (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **          01/05/2010 mem - Added parameter _settingsFileOverride
 **          10/14/2022 mem - Ported to PostgreSQL
+**          03/26/2023 mem - Update logic to handle data package based jobs (which should have dataset name 'Aggregation')
 **
 *****************************************************/
 DECLARE
     _xmlParameters xml;
+    _dataPackageID int;
+    _section text;
+    _name text;
+    _value text;
 BEGIN
 
     CREATE TEMP TABLE Tmp_Job_Parameters (
         Job int,
-        Step_Number int,
+        Step_Number int,        -- This will be null for every row since get_job_param_table does not consider job step
         Section text,
         Name text,
         Value text
@@ -51,23 +56,130 @@ BEGIN
     SELECT Job, null, Section, Name, Value
     FROM sw.get_job_param_table(_job, _settingsFileOverride, _debugMode => _debugMode);
 
-    ---------------------------------------------------
-    -- Convert the job parameters to XML
-    ---------------------------------------------------
-    --
-    SELECT xml_item
-    INTO _xmlParameters
-    FROM ( SELECT
-             XMLAGG(XMLELEMENT(
-                    NAME "Param",
-                    XMLATTRIBUTES(
-                        section As "Section",
-                        name As "Name",
-                        value As "Value"))
-                    ORDER BY section, name
-                   ) AS xml_item
-           FROM Tmp_Job_Parameters
-        ) AS LookupQ;
+    -- Check whether this job is a data package based job
+    SELECT data_pkg_id
+    INTO _dataPackageID
+    FROM sw.T_Jobs
+    WHERE Job = _job;
+
+    If FOUND And _dataPackageID > 0 And Exists (SELECT * FROM sw.T_Job_Parameters WHERE Job = _job) Then
+
+        ---------------------------------------------------
+        -- This is a data package based job with existing parameters
+        -- Selectively update the existing job parameters using the parameters in Tmp_Job_Parameters
+        ---------------------------------------------------
+
+        CREATE TEMP TABLE Tmp_Job_Parameters_Merged (
+            Job int,
+            Step_Number int,        -- This will be null for every row since get_job_param_table does not consider job step
+            Section text,
+            Name text,
+            Value text
+        );
+
+        -- Populate Tmp_Job_Parameters_Merged with the existing job parameters
+
+        INSERT INTO Tmp_Job_Parameters_Merged (Job, Step_Number, Section, Name, Value)
+        SELECT _job,
+               Null,
+               XmlQ.section,
+               XmlQ.name,
+               XmlQ.value
+        FROM (
+                SELECT xmltable.section,
+                       xmltable.name,
+                       xmltable.value
+                FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
+                       FROM sw.t_job_parameters
+                       WHERE sw.t_job_parameters.job = _job ) Src,
+                     XMLTABLE('//params/Param'
+                              PASSING Src.rooted_xml
+                              COLUMNS section citext PATH '@Section',
+                                      name citext PATH '@Name',
+                                      value citext PATH '@Value')
+             ) XmlQ;
+
+        -- Update Tmp_Job_Parameters_Merged using selected rows in Tmp_Job_Parameters
+        -- Only update settings that come from T_Analysis_Job
+
+        CREATE TEMP TABLE Tmp_Job_Parameters_To_Update (
+            Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            Section text,
+            Name text
+        );
+
+        INSERT INTO Tmp_Job_Parameters_To_Update (Section, Name)
+        VALUES ('JobParameters', 'DatasetID'),
+               ('JobParameters', 'SettingsFileName'),
+               ('PeptideSearch', 'LegacyFastaFileName'),
+               ('PeptideSearch', 'OrganismName'),
+               ('PeptideSearch', 'ParamFileName'),
+               ('PeptideSearch', 'ParamFileStoragePath'),
+               ('PeptideSearch', 'ProteinCollectionList'),
+               ('PeptideSearch', 'ProteinOptions');
+
+        FOR _section, _name IN
+            SELECT Section, Name
+            FROM Tmp_Job_Parameters_To_Update
+            ORDER BY Entry_ID
+        LOOP
+            SELECT Value
+            INTO _value
+            FROM Tmp_Job_Parameters
+            WHERE Section = _section AND Name = _name;
+
+            If Not FOUND Then
+                CONTINUE;
+            End If;
+
+            If Exists (Select * From Tmp_Job_Parameters_Merged WHERE Section = _section AND Name = _name) Then
+                UPDATE Tmp_Job_Parameters_Merged
+                SET Value = _value
+                WHERE Section = _section AND Name = _name;
+            Else
+                INSERT INTO Tmp_Job_Parameters_Merged (Job, Section, Name, Value)
+                VALUES (_job, _section, _name,  _value);
+            End If;
+
+        END LOOP;
+
+        SELECT xml_item
+        INTO _xmlParameters
+        FROM ( SELECT
+                 XMLAGG(XMLELEMENT(
+                        NAME "Param",
+                        XMLATTRIBUTES(
+                            section As "Section",
+                            name As "Name",
+                            value As "Value"))
+                        ORDER BY section, name
+                       ) AS xml_item
+               FROM Tmp_Job_Parameters_Merged
+            ) AS LookupQ;
+
+        DROP TABLE Tmp_Job_Parameters_Merged;
+        DROP TABLE Tmp_Job_Parameters_To_Update;
+
+    Else
+        ---------------------------------------------------
+        -- Convert the job parameters to XML
+        ---------------------------------------------------
+        --
+        SELECT xml_item
+        INTO _xmlParameters
+        FROM ( SELECT
+                 XMLAGG(XMLELEMENT(
+                        NAME "Param",
+                        XMLATTRIBUTES(
+                            section As "Section",
+                            name As "Name",
+                            value As "Value"))
+                        ORDER BY section, name
+                       ) AS xml_item
+               FROM Tmp_Job_Parameters
+            ) AS LookupQ;
+
+    End If;
 
     DROP TABLE Tmp_Job_Parameters;
 
