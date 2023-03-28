@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **  Date:   03/15/2023 mem - Initial Release
 **          03/18/2023 mem - Rename arguments
 **          03/20/2023 mem - Change _trimNTerminalMet and _staticCysCarbamidomethyl to boolean
+**          03/28/2023 mem - Change columns Trim_N_Terminal_Met and Static_Cys_Carbamidomethyl to boolean in T_Spectral_Library
 **
 *****************************************************/
 DECLARE
@@ -37,12 +38,11 @@ BEGIN
     If _libraryId > 0 Then
         SELECT Protein_Collection_List, Organism_DB_File,
                Fragment_Ion_Mz_Min, Fragment_Ion_Mz_Max,
-               CASE WHEN Trim_N_Terminal_Met > 0 THEN true ELSE false END,
-               Cleavage_Specificity, Missed_Cleavages,
+               Trim_N_Terminal_Met, Cleavage_Specificity, Missed_Cleavages,
                Peptide_Length_Min, Peptide_Length_Max,
                Precursor_Mz_Min, Precursor_Mz_Max,
                Precursor_Charge_Min, Precursor_Charge_Max,
-               CASE WHEN Static_Cys_Carbamidomethyl > 0 THEN true ELSE false END,
+               Static_Cys_Carbamidomethyl,
                Static_Mods, Dynamic_Mods,
                Max_Dynamic_Mods
         INTO _proteinCollectionList, _organismDBFile,
@@ -93,7 +93,7 @@ BEGIN
                 _organismDBFile || '_' ||
                 Cast(_fragmentIonMzMin As text) || '_' ||
                 Cast(_fragmentIonMzMax As text) || '_' ||
-                CASE WHEN _trimNTerminalMet THEN '1' ELSE '0' END || '_' ||
+                CASE WHEN _trimNTerminalMet THEN 'true' ELSE 'false' END || '_' ||
                 Cast(_cleavageSpecificity As text) || '_' ||
                 Cast(_missedCleavages As text) || '_' ||
                 Cast(_peptideLengthMin As text) || '_' ||
@@ -102,7 +102,7 @@ BEGIN
                 Cast(_precursorMzMax As text) || '_' ||
                 Cast(_precursorChargeMin As text) || '_' ||
                 Cast(_precursorChargeMax As text) || '_' ||
-                CASE WHEN _staticCysCarbamidomethyl THEN '1' ELSE '0' END || '_' ||
+                CASE WHEN _staticCysCarbamidomethyl THEN 'true' ELSE 'false' END || '_' ||
                 _staticMods || '_' ||
                 _dynamicMods || '_' ||
                 Cast(_maxDynamicMods As text) || '_';

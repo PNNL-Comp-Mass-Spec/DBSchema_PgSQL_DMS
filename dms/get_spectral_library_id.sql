@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **                         - Append organism name to the storage path
 **                         - Assign the source job to the spectral library if it has state 1 and _allowAddNew is enabled
 **          03/20/2023 mem - Ported to PostgreSQL
+**          03/28/2023 mem - Change columns Trim_N_Terminal_Met and Static_Cys_Carbamidomethyl to boolean in T_Spectral_Library
 **
 *****************************************************/
 DECLARE
@@ -300,7 +301,7 @@ BEGIN
                Organism_DB_File           = _organismDbFile And
                Fragment_Ion_Mz_Min        = _fragmentIonMzMin And
                Fragment_Ion_Mz_Max        = _fragmentIonMzMax And
-               Trim_N_Terminal_Met        = CASE WHEN _trimNTerminalMet THEN 1 ELSE 0 END And
+               Trim_N_Terminal_Met        = _trimNTerminalMet And
                Cleavage_Specificity       = _cleavageSpecificity And
                Missed_Cleavages           = _missedCleavages And
                Peptide_Length_Min         = _peptideLengthMin And
@@ -309,7 +310,7 @@ BEGIN
                Precursor_Mz_Max           = _precursorMzMax And
                Precursor_Charge_Min       = _precursorChargeMin And
                Precursor_Charge_Max       = _precursorChargeMax And
-               Static_Cys_Carbamidomethyl = CASE WHEN _staticCysCarbamidomethyl THEN 1 ELSE 0 END And
+               Static_Cys_Carbamidomethyl = _staticCysCarbamidomethyl And
                Static_Mods                = _staticMods And
                Dynamic_Mods               = _dynamicMods And
                Max_Dynamic_Mods           = _maxDynamicMods;
@@ -503,7 +504,7 @@ BEGIN
                 _organismDbFile,
                 _fragmentIonMzMin,
                 _fragmentIonMzMax,
-                CASE WHEN _trimNTerminalMet THEN 1 ELSE 0 END,
+                _trimNTerminalMet,
                 _cleavageSpecificity,
                 _missedCleavages,
                 _peptideLengthMin,
@@ -512,7 +513,7 @@ BEGIN
                 _precursorMzMax,
                 _precursorChargeMin,
                 _precursorChargeMax,
-                CASE WHEN _staticCysCarbamidomethyl THEN 1 ELSE 0 END,
+                _staticCysCarbamidomethyl,
                 _staticMods,
                 _dynamicMods,
                 _maxDynamicMods,
