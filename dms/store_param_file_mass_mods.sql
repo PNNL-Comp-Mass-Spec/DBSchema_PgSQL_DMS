@@ -92,7 +92,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **    _showResidueTable     When _infoOnly is true, if this is true will show Tmp_Residues for each modification
 **    _replaceExisting      When true, replace existing mass mods; if false, report an error if mass mods are already defined
 **    _validateUnimod       When true, require that the mod names are known Unimod names
-**    _paramFileType        MS-GF+, DIA-NN, TopPIC, MSFragger, or MaxQuant; if empty, will lookup using _paramFileID; if no match (or if _paramFileID is null or 0) assumes MS-GF+
+**    _paramFileType        MS-GF+, DiaNN, TopPIC, MSFragger, or MaxQuant; if empty, will lookup using _paramFileID; if no match (or if _paramFileID is null or 0) assumes MS-GF+
 **
 **  Auth:   mem
 **  Date:   05/16/2013 mem - Initial version
@@ -122,7 +122,8 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          02/23/2023 mem - Ported to PostgreSQL
 **                         - Add support for DIA-NN
 **          02/28/2023 mem - Use renamed parameter file type, 'MSGFPlus'
-**          03/27/2023 mem - Cast _paramFileType to citext
+**          03/27/2023 mem - Remove dash from DiaNN tool name
+**                         - Cast _paramFileType to citext
 **
 *****************************************************/
 DECLARE
@@ -236,7 +237,7 @@ BEGIN
         End If;
     End If;
 
-    If Not _paramFileType::citext In ('MSGFPlus', 'DIA-NN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
+    If Not _paramFileType::citext In ('MSGFPlus', 'DiaNN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
         _paramFileType := 'MSGFPlus';
     End If;
 
@@ -561,7 +562,7 @@ BEGIN
             End If;
         End If;
 
-        If _paramFileType::citext = 'DIA-NN' Then
+        If _paramFileType::citext = 'DiaNN' Then
             -- Check for setting StaticCysCarbamidomethyl=True
             If _row Like 'StaticCysCarbamidomethyl%=%True' Then
                _rowParsed := true;
@@ -686,7 +687,7 @@ BEGIN
             CONTINUE;
         End If;
 
-        If _paramFileType::citext In ('DIA-NN') And _rowCount < 3 Then
+        If _paramFileType::citext In ('DiaNN') And _rowCount < 3 Then
             RAISE INFO '';
             RAISE INFO '%', 'Skipping row since not enough rows in Tmp_ModDef: ' || _row;
             CONTINUE;
@@ -700,7 +701,7 @@ BEGIN
 
         _field := '';
 
-        If _paramFileType::citext In ('DIA-NN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
+        If _paramFileType::citext In ('DiaNN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
             -- Mod defs for these tools don't include 'opt' or 'fix, so we update _field based on _modType
             If _modType = 'DynamicMod' Then
                 _field := 'opt';
@@ -764,7 +765,7 @@ BEGIN
 
         DELETE FROM Tmp_Residues;
 
-        If _paramFileType::citext In ('MSGFPlus', 'DIA-NN', 'TopPIC') Then
+        If _paramFileType::citext In ('MSGFPlus', 'DiaNN', 'TopPIC') Then
 
             -----------------------------------------
             -- Determine the modification name (preferably UniMod name, but could also be a mass correction tag name)
@@ -952,11 +953,11 @@ BEGIN
                 RETURN;
             End If;
 
-            If _paramFileType::citext = 'DIA-NN' Then
+            If _paramFileType::citext = 'DiaNN' Then
                 SELECT Trim(Value)
                 INTO _field
                 FROM Tmp_ModDef
-                WHERE _paramFileType::citext = 'DIA-NN' And EntryID = 3;
+                WHERE _paramFileType::citext = 'DiaNN' And EntryID = 3;
 
                 If _field = '*n' Then
                     _location := 'Prot-N-term';   -- Protein N-terminus
@@ -994,7 +995,7 @@ BEGIN
             INTO _field
             FROM Tmp_ModDef
             WHERE EntryID = 2 And _paramFileType::citext In ('MSGFPlus') Or
-                  EntryID = 3 And _paramFileType::citext In ('DIA-NN', 'TopPIC');
+                  EntryID = 3 And _paramFileType::citext In ('DiaNN', 'TopPIC');
 
             If _field = 'any' Then
                 _message := 'Use * to match all residues, not the word "any"; see row: ' || _row;
@@ -1208,7 +1209,7 @@ BEGIN
             _residueSymbol := SubString(_affectedResidues, _charIndex, 1);
 
             If _terminalMod Then
-                If _paramFileType::citext = 'DIA-NN' Then
+                If _paramFileType::citext = 'DiaNN' Then
                     -- This should be a peptide or protein N-terminal mod
                     -- Break out of the while loop
                     EXIT;
