@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION pc.standardize_protein_collection_list(_protcollnamel
 **          10/04/2007 mem - Increased _protCollNameList from varchar(2048) to varchar(max)
 **          06/24/2013 mem - Now removing duplicate protein collection names in _protCollNameList
 **          03/17/2023 mem - Ported to PostgreSQL
+**          03/28/2023 mem - Use a custom collation to sort underscores before letters
 **
 *****************************************************/
 DECLARE
@@ -41,11 +42,28 @@ BEGIN
     ---------------------------------------------------
     -- Populate a temporary table with the protein collections
     -- in _protCollNameList
+    --
+    -- The Collection_Name column in this table uses collation 'general_ci_ai',
+    -- which sorts underscores before letters, as is the default for SQL Server
+    -- (by default, PostgreSQL sorts underscores after letters)
+    --
+    -- Use the following to create the 'general_ci_ai' custom collation
+    --   CREATE COLLATION general_ci_ai (
+    --      PROVIDER = icu,
+    --      DETERMINISTIC = FALSE,
+    --      LOCALE = '@ColStrength=primary'     -- This means to ignore case and ignore accents
+    --                                          -- To ignore accents but consider case, use
+    --                                          -- 'LOCALE = 'und@colStrength=primary;colCaseLevel=yes'
+    --   );
+    --
+    -- See also:
+    --   https://dba.stackexchange.com/a/313982/122858
+    --   https://postgresql.verite.pro/blog/2019/10/14/nondeterministic-collations.html
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Protein_Collections (
         Unique_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        Collection_Name text NOT NULL,
+        Collection_Name text COLLATE general_ci_ai NOT Null,
         Collection_Type_ID int NOT NULL DEFAULT 1
     );
 
