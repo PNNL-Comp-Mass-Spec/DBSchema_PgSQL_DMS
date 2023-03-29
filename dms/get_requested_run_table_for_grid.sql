@@ -1,8 +1,8 @@
 --
--- Name: get_requested_runs_for_grid(text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_requested_run_table_for_grid(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_requested_runs_for_grid(_itemlist text) RETURNS TABLE(request integer, name public.citext, status public.citext, batchid integer, instrument public.citext, separation_type public.citext, experiment public.citext, cart public.citext, "column" smallint, block integer, run_order integer)
+CREATE OR REPLACE FUNCTION public.get_requested_run_table_for_grid(_itemlist text) RETURNS TABLE(request integer, name public.citext, status public.citext, batchid integer, instrument public.citext, separation_type public.citext, experiment public.citext, cart public.citext, "column" smallint, block integer, run_order integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -45,11 +45,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_requested_runs_for_grid(_itemlist text) OWNER TO d3l243;
+ALTER FUNCTION public.get_requested_run_table_for_grid(_itemlist text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_requested_runs_for_grid(_itemlist text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_requested_run_table_for_grid(_itemlist text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_requested_runs_for_grid(_itemlist text) IS 'GetRequestedRunsForGrid';
+COMMENT ON FUNCTION public.get_requested_run_table_for_grid(_itemlist text) IS 'GetRequestedRunsForGrid';
 

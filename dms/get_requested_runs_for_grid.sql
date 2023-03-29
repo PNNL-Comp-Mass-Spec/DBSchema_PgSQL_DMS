@@ -1,8 +1,8 @@
 --
--- Name: getrequestedrunsforgrid(text, refcursor, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: get_requested_runs_for_grid(text, refcursor, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.getrequestedrunsforgrid(IN _itemlist text, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.get_requested_runs_for_grid(IN _itemlist text, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE public.getrequestedrunsforgrid(IN _itemlist text, IN
 **  Use this to view the data returned by the _results cursor
 **
 **      BEGIN;
-**          CALL public.GetRequestedRunsForGrid (
+**          CALL public.get_requested_runs_for_grid (
 **              _itemList => '123456,123457,323457,823457,229733,225708'
 **          );
 **          FETCH ALL FROM _results;
@@ -28,10 +28,11 @@ CREATE OR REPLACE PROCEDURE public.getrequestedrunsforgrid(IN _itemlist text, IN
 **
 **  Auth:   mem
 **  Date:   10/25/2022 mem - Initial version
-
+**          03/28/2023 mem - Use new function name
+**
 *****************************************************/
 DECLARE
-    _sqlState text;
+    _sqlstate text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
@@ -60,7 +61,7 @@ BEGIN
             "column",
             block,
             run_order
-        FROM public.get_requested_runs_for_grid(_itemList);
+        FROM public.get_requested_run_table_for_grid(_itemList);
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -82,11 +83,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.getrequestedrunsforgrid(IN _itemlist text, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.get_requested_runs_for_grid(IN _itemlist text, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE getrequestedrunsforgrid(IN _itemlist text, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE get_requested_runs_for_grid(IN _itemlist text, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.getrequestedrunsforgrid(IN _itemlist text, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'GetRequestedRunsForGrid returns results from function get_requested_runs_for_grid';
+COMMENT ON PROCEDURE public.get_requested_runs_for_grid(IN _itemlist text, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'get_requested_runs_for_grid returns results from function get_requested_run_table_for_grid';
 
