@@ -47,6 +47,8 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **                         - Add output parameter _sourceJobShouldMakeLibrary
 **                         - Append organism name to the storage path
 **                         - Assign the source job to the spectral library if it has state 1 and _allowAddNew is enabled
+**          03/19/2023 mem - Truncate protein collection lists to 110 characters
+**                         - Remove the extension from legacy FASTA file names
 **          03/20/2023 mem - Ported to PostgreSQL
 **          03/28/2023 mem - Change columns Trim_N_Terminal_Met and Static_Cys_Carbamidomethyl to boolean in T_Spectral_Library
 **
@@ -237,7 +239,7 @@ BEGIN
                     _defaultLibraryName := _defaultLibraryName || '_';
                 End If;
 
-                 _defaultLibraryName := format('%s_%s', _defaultLibraryName, Substring(_libraryNameHash, 1, 8));
+                 _defaultLibraryName := format('%s%s', _defaultLibraryName, Substring(_libraryNameHash, 1, 8));
             End If;
         End If;
 
