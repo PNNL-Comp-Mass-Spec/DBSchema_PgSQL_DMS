@@ -229,7 +229,7 @@ BEGIN
         -- Action for preview mode
         ---------------------------------------------------
         --
-        If _mode = Lower('PreviewAdd') Then
+        If _mode::citext = 'PreviewAdd' Then
             _message := 'Would create batch "' || _name || '" with ' || Cast(_count As text) || ' requested runs';
 
             DROP TABLE Tmp_RequestedRuns;
@@ -300,7 +300,7 @@ BEGIN
             SELECT Batch_Group_ID
             INTO _existingBatchGroupID
             FROM T_Requested_Run_Batches
-            WHERE batch_id = @id;
+            WHERE batch_id = _id;
 
             If Not FOUND Then
                 _existingBatchGroupID := Null;
