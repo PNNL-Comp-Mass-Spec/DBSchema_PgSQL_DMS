@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          02/16/2023 mem - Add _batchGroupID and _batchGroupOrder
 **                         - Rename _requestedInstrument to _requestedInstrumentGroup
 **          02/16/2023 mem - Ported to PostgreSQL
+**          03/30/2023 mem - Retrieve values from _message and _returnCode when calling update_cached_requested_run_batch_stats
 **
 *****************************************************/
 DECLARE
@@ -391,7 +392,12 @@ BEGIN
         ---------------------------------------------------
 
         If _id > 0 Then
-            Call update_cached_requested_run_batch_stats (_id);
+            Call update_cached_requested_run_batch_stats (
+                _id,
+                _fullrefresh => false,
+                _message => _message,           -- Output
+                _returncode => _returncode);    -- Output
+
         End If;
 
     EXCEPTION
@@ -419,7 +425,6 @@ BEGIN
     DROP TABLE IF EXISTS Tmp_RequestedRuns;
 END
 $$;
-
 
 ALTER PROCEDURE public.add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _batchgroupid integer, IN _batchgrouporder integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _raiseexceptions boolean) OWNER TO d3l243;
 
