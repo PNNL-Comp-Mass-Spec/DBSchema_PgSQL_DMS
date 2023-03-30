@@ -60,6 +60,8 @@ ALTER TABLE ONLY public.t_users
 
 CREATE UNIQUE INDEX ix_t_users_name ON public.t_users USING btree (name);
 
+ALTER TABLE public.t_users CLUSTER ON ix_t_users_name;
+
 --
 -- Name: t_users fk_t_users_t_user_status; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

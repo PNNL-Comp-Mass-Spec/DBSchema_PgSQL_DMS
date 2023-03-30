@@ -18,6 +18,8 @@ ALTER TABLE sw.t_job_step_state_name OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_job_step_state_name
     ADD CONSTRAINT pk_t_step_state PRIMARY KEY (step_state_id);
 
+ALTER TABLE sw.t_job_step_state_name CLUSTER ON pk_t_step_state;
+
 --
 -- Name: TABLE t_job_step_state_name; Type: ACL; Schema: sw; Owner: d3l243
 --
