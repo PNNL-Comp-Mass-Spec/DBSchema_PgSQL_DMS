@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **                         - Remove the extension from legacy FASTA file names
 **          03/20/2023 mem - Ported to PostgreSQL
 **          03/28/2023 mem - Change columns Trim_N_Terminal_Met and Static_Cys_Carbamidomethyl to boolean in T_Spectral_Library
+**          03/29/2023 mem - If the library state is 2 and _dmsSourceJob matches the Source_Job in T_Spectral_Library, assume the job failed and was re-started, and thus set _sourceJobShouldMakeLibrary to true
 **
 *****************************************************/
 DECLARE
@@ -366,8 +367,16 @@ BEGIN
                     RETURN;
                 End If;
             Else
-                _message := format('Found existing spectral library ID %s with state %s: %s',
-                                    _libraryId, _libraryStateID, _libraryName);
+                If _libraryStateID = 2 And _dmsSourceJob > 0 And _existingSourceJob = _dmsSourceJob Then
+                    _message := format('Found existing spectral library ID %s with state 2, already associated with job %2: %s',
+                                    _libraryId, _dmsSourceJob, _libraryName);
+
+                    _sourceJobShouldMakeLibrary := true;
+                Else
+                    _message := format('Found existing spectral library ID %s with state %s: %s',
+                                        _libraryId, _libraryStateID, _libraryName);
+                End If;
+
                 RETURN;
             End If;
         End If;
