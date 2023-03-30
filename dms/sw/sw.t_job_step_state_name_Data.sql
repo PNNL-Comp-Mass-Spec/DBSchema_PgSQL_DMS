@@ -30,6 +30,7 @@ COPY sw.t_job_step_state_name (step_state_id, step_state, description) FROM stdi
 7	Holding	Established and removed manually when deus ex machina is necessary
 9	Running_Remote	Job is running on a remote resource (Linux or Cloud)
 10	Holding_Staging	Waiting for the Aurora data archive to stage the required files
+11	Waiting_For_File	Waiting for another job to generate a required file
 16	Failed_Remote	Job failed while running on a remote resource
 \.
 
