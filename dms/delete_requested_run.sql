@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **
 **  Arguments:
 **    _requestID          Requested run ID to delete
-**    _skipDatasetCheck   Set to tre to allow deleting a requested run even if it has an associated dataset
+**    _skipDatasetCheck   Set to true to allow deleting a requested run even if it has an associated dataset
 **
 **  Auth:   grk
 **  Date:   02/23/2006
@@ -39,6 +39,7 @@ DECLARE
     _dataset text;
     _eusPersonID int;
     _stateID int;
+    _deletedRequestedRunEntryID int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -135,16 +136,6 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Add any factors to t_deleted_factor
-        ---------------------------------------------------
-
-        INSERT INTO t_deleted_factor (Factor_ID, Type, Target_ID, Name, Value, Last_Updated, Deleted_By)
-        SELECT Factor_ID, Type, Target_ID, Name, Value, Last_Updated, _deletedBy
-        FROM T_Factor
-        WHERE Type = 'Run_Request' AND
-              Target_ID = _requestID;
-
-        ---------------------------------------------------
         -- Add the requested run to t_deleted_requested_run
         ---------------------------------------------------
 
@@ -165,7 +156,19 @@ BEGIN
                Dataset_Id, Origin, State_Name, Request_Name_Code, Vialing_Conc, Vialing_Vol, Location_Id,
                Queue_State, Queue_Instrument_Id, Queue_Date, Entered, Updated, Updated_By, _deletedBy
         FROM T_Requested_Run
-        WHERE Request_Id = _requestID;
+        WHERE Request_Id = _requestID
+        RETURNING Entry_ID
+        INTO _deletedRequestedRunEntryID;
+
+        ---------------------------------------------------
+        -- Add any factors to t_deleted_factor
+        ---------------------------------------------------
+
+        INSERT INTO t_deleted_factor (Factor_ID, Type, Target_ID, Name, Value, Last_Updated, Deleted_By, Deleted_Requested_Run_Entry_ID)
+        SELECT Factor_ID, Type, Target_ID, Name, Value, Last_Updated, _deletedBy, _deletedRequestedRunEntryID
+        FROM T_Factor
+        WHERE Type = 'Run_Request' AND
+              Target_ID = _requestID;
 
         ---------------------------------------------------
         -- Delete associated factors
