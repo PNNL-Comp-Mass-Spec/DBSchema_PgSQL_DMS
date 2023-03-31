@@ -40,6 +40,7 @@ DECLARE
     _eusPersonID int;
     _stateID int;
     _deletedRequestedRunEntryID int;
+    _message2 text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -210,11 +211,11 @@ BEGIN
         Call update_cached_requested_run_batch_stats (
                 _batchID,
                 _fullrefresh => false,
-                _message => _message,           -- Output
+                _message => _message2,          -- Output
                 _returncode => _returncode);    -- Output
 
-        If _returnCode = '' Then
-            _message := '';
+        If _returnCode <> '' Then
+            _message := _message2;
         End If;
 
     End If;
