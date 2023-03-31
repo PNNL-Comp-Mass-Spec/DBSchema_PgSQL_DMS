@@ -426,6 +426,7 @@ BEGIN
 END
 $$;
 
+
 ALTER PROCEDURE public.add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _batchgroupid integer, IN _batchgrouporder integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _raiseexceptions boolean) OWNER TO d3l243;
 
 --
