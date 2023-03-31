@@ -11,7 +11,8 @@ CREATE TABLE public.t_deleted_factor (
     value public.citext NOT NULL,
     last_updated timestamp without time zone NOT NULL,
     deleted timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    deleted_by public.citext
+    deleted_by public.citext,
+    deleted_requested_run_entry_id integer NOT NULL
 );
 
 
@@ -42,6 +43,13 @@ ALTER TABLE ONLY public.t_deleted_factor
 --
 
 CREATE UNIQUE INDEX ix_t_deleted_factor_type_target_id_name ON public.t_deleted_factor USING btree (type, target_id, name);
+
+--
+-- Name: t_deleted_factor fk_t_deleted_factor_t_deleted_requested_run; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_deleted_factor
+    ADD CONSTRAINT fk_t_deleted_factor_t_deleted_requested_run FOREIGN KEY (deleted_requested_run_entry_id) REFERENCES public.t_deleted_requested_run(entry_id);
 
 --
 -- Name: TABLE t_deleted_factor; Type: ACL; Schema: public; Owner: d3l243
