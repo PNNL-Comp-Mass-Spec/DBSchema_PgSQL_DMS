@@ -23,7 +23,7 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **          06/13/2017 mem - Fix typo
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          02/10/2023 mem - Call UpdateCachedRequestedRunBatchStats
+**          02/10/2023 mem - Call update_cached_requested_run_batch_stats
 **          03/30/2023 mem - Ported to PostgreSQL
 **                         - Append data to t_deleted_requested_run and t_deleted_factor prior to deleting the requested run
 **
