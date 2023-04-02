@@ -18,10 +18,11 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **  Auth:   grk
 **  Date:   01/27/2010
 **          06/24/2022 mem - Ported to PostgreSQL
-**          06/26/2022 mem - Renamed from get_job_param_list to get_task_param_list
+**          06/26/2022 mem - Renamed from get_task_param_list to get_task_param_list
 **          06/28/2022 mem - Add <br> before </pre>
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE

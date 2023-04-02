@@ -23,7 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          01/14/2010 grk - Removed path ID fields
-**          05/25/2011 mem - Updated call to create_steps_for_job
+**          05/25/2011 mem - Updated call to create_steps_for_task
 **          04/09/2013 mem - Added additional comments
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          05/29/2015 mem - Add support for column Capture_Subfolder
@@ -31,9 +31,10 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
 **          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
-**                         - Skip the current job if the return code from create_steps_for_job() is not an empty string
+**                         - Skip the current job if the return code from create_steps_for_task() is not an empty string
 **                         - Use sw.show_tmp_job_steps_and_job_step_dependencies() and sw.show_tmp_jobs() to display the contents of the temporary tables
 **          12/09/2022 mem - Change _mode to lowercase
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -341,7 +342,7 @@ BEGIN
 
         -- Get parameters for the capture task job as XML
         --
-        _xmlParameters := cap.create_parameters_for_job (_jobInfo.Job, _jobInfo.Dataset, _jobInfo.DatasetID,
+        _xmlParameters := cap.create_parameters_for_task (_jobInfo.Job, _jobInfo.Dataset, _jobInfo.DatasetID,
                                                          _jobInfo.Script, _jobInfo.StorageServer,
                                                          _jobInfo.Instrument, _jobInfo.InstrumentClass,
                                                          _jobInfo.MaxSimultaneousCaptures, _jobInfo.CaptureSubdirectory);
@@ -352,7 +353,7 @@ BEGIN
 
         -- Create the basic capture task job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-        Call cap.create_steps_for_job (
+        Call cap.create_steps_for_task (
                 _jobInfo.Job,
                 _scriptXML,
                 _jobInfo.ResultsDirectoryName,
@@ -406,7 +407,7 @@ BEGIN
             --     Tmp_Job_Steps
             --     Tmp_Job_Step_Dependencies
             --     Tmp_Job_Parameters
-            Call cap.move_jobs_to_main_tables (_message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
+            Call cap.move_tasks_to_main_tables (_message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
         End If;
     End If;
 

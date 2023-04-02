@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          08/28/2022 mem - Ported to PostgreSQL
 **          08/31/2022 mem - Remove unused variables and fix call to local_error_handler
 **          09/01/2022 mem - Change default value for _mode and send '<auto>' to get_current_function_info()
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -137,7 +138,7 @@ BEGIN
             UPDATE  cap.t_tasks
             SET     priority = _priority ,
                     comment = _comment ,
-                    state = CASE WHEN _reset THEN 20 ELSE state END -- 20=resuming (update_job_state will handle final task state update)
+                    state = CASE WHEN _reset THEN 20 ELSE state END -- 20=resuming (update_task_state will handle final task state update)
             WHERE   job = _job;
 
             -- Only update parameters if not an empty string

@@ -1,8 +1,8 @@
 --
--- Name: evaluate_step_dependencies(text, text, integer, integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: evaluate_task_step_dependencies(text, text, integer, integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.evaluate_step_dependencies(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, IN _showdebug boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_step_dependencies(INOUT _message text D
 **          10/11/2022 mem - Ported to PostgreSQL
 **          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
 **          02/02/2023 mem - Update table aliases
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -319,7 +320,7 @@ BEGIN
 
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := format('... Evaluating step dependencies: %s / %s', _rowsProcessed, _rowCountToProcess);
-            Call public.post_log_entry ('Progress', _statusMessage, 'evaluate_step_dependencies', 'cap');
+            Call public.post_log_entry ('Progress', _statusMessage, 'evaluate_task_step_dependencies', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;
@@ -332,11 +333,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.evaluate_step_dependencies(INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _showdebug boolean) OWNER TO d3l243;
+ALTER PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _showdebug boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE evaluate_step_dependencies(INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _showdebug boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE evaluate_task_step_dependencies(INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _showdebug boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.evaluate_step_dependencies(INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _showdebug boolean) IS 'EvaluateStepDependencies';
+COMMENT ON PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _showdebug boolean) IS 'EvaluateStepDependencies';
 

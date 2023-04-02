@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **          10/07/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          02/15/2023 mem - Add Commit statement
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -101,9 +102,9 @@ BEGIN
     -- Move old log entries and event entries to historic log tables
     ----------------------------------------------------
     --
-    _currentLocation := 'Call cap.move_entries_to_history';
+    _currentLocation := 'Call cap.move_capture_entries_to_history';
 
-    Call cap.move_entries_to_history (_logRetentionIntervalDays, _infoOnly);
+    Call cap.move_capture_entries_to_history (_logRetentionIntervalDays, _infoOnly);
 
     If _infoOnly Then
         _message := 'See the output window for status messages';

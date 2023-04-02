@@ -1,8 +1,8 @@
 --
--- Name: move_entries_to_history(integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: move_capture_entries_to_history(integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.move_entries_to_history(IN _intervaldays integer DEFAULT 240, IN _infoonly boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays integer DEFAULT 240, IN _infoonly boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.move_entries_to_history(IN _intervaldays integer
 **          10/07/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          02/15/2023 mem - Add commit statements
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -278,7 +279,7 @@ BEGIN
     -- Delete old entries in T_task_Parameters_History
     --
     -- Note that this data is intentionally not copied to the historic log tables
-    -- because it is very easy to re-generate (use update_parameters_for_job)
+    -- because it is very easy to re-generate (use update_parameters_for_task)
     ----------------------------------------------------------
     --
     If _infoOnly Then
@@ -308,11 +309,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.move_entries_to_history(IN _intervaldays integer, IN _infoonly boolean) OWNER TO d3l243;
+ALTER PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays integer, IN _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE move_entries_to_history(IN _intervaldays integer, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE move_capture_entries_to_history(IN _intervaldays integer, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.move_entries_to_history(IN _intervaldays integer, IN _infoonly boolean) IS 'MoveEntriesToHistory';
+COMMENT ON PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays integer, IN _infoonly boolean) IS 'MoveEntriesToHistory';
 

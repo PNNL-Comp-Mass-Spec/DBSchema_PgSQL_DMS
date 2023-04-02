@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.
 **
 **  Desc:
 **      Determines if the dataset warrants preferential processing priority for dataset capture
-**      This procedure is used by make_new_jobs_from_dms to define the capture job priority
+**      This procedure is used by make_new_tasks_from_dms to define the capture job priority
 **
 **      If the dataset name matches one of the filters below, the capture priority will be 2 instead of 4
 **      Otherwise, if the instrument group matches one of the filters, the capture priority will be 6 instead of 4
@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.
 **  Date:   06/27/2019 mem - Initial version
 **          06/24/2022 mem - Ported to PostgreSQL
 **          08/24/2022 mem - Fix ElsIf typo
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE

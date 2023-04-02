@@ -1,8 +1,8 @@
 --
--- Name: get_processor_step_tool_list(public.citext); Type: FUNCTION; Schema: cap; Owner: d3l243
+-- Name: get_ctm_processor_step_tool_list(public.citext); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_processor_step_tool_list(_processorname public.citext) RETURNS text
+CREATE OR REPLACE FUNCTION cap.get_ctm_processor_step_tool_list(_processorname public.citext) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION cap.get_processor_step_tool_list(_processorname publi
 **  Auth:   mem
 **  Date:   03/30/2009
 **          06/28/2022 mem - Ported to PostgreSQL
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -30,11 +31,11 @@ END
 $$;
 
 
-ALTER FUNCTION cap.get_processor_step_tool_list(_processorname public.citext) OWNER TO d3l243;
+ALTER FUNCTION cap.get_ctm_processor_step_tool_list(_processorname public.citext) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_processor_step_tool_list(_processorname public.citext); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: FUNCTION get_ctm_processor_step_tool_list(_processorname public.citext); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.get_processor_step_tool_list(_processorname public.citext) IS 'GetProcessorStepToolList';
+COMMENT ON FUNCTION cap.get_ctm_processor_step_tool_list(_processorname public.citext) IS 'GetProcessorStepToolList';
 

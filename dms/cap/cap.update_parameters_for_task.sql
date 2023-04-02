@@ -1,8 +1,8 @@
 --
--- Name: update_parameters_for_job(text, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: update_parameters_for_task(text, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.update_parameters_for_job(IN _joblist text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.update_parameters_for_task(IN _joblist text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_job(IN _joblist text, INOU
 **  Auth:   grk
 **  Date:   12/16/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          01/14/2010 grk - removed path ID fields
-**          01/28/2010 grk - modified to use create_parameters_for_job, and to take list of capture task jobs
+**          01/28/2010 grk - modified to use create_parameters_for_task, and to take list of capture task jobs
 **          04/13/2010 mem - Fixed bug that didn't properly update T_task_Parameters when Tmp_Job_Parameters contains multiple capture task jobs (because _jobList contained multiple capture task jobs)
 **                         - Added support for capture task jobs being present in T_Tasks but not present in T_task_Parameters
 **          05/18/2011 mem - Updated _jobList to varchar(max)
@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_job(IN _joblist text, INOU
 **          05/17/2019 mem - Switch from folder to directory
 **          08/31/2022 mem - Rename view V_DMS_Capture_Job_Parameters to V_DMS_Dataset_Metadata
 **          10/08/2022 mem - Ported to PostgreSQL
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -250,7 +251,7 @@ BEGIN
         LOOP
             -- Get parameters for the capture task job as XML
             --
-            _xmlParameters := cap.create_parameters_for_job (
+            _xmlParameters := cap.create_parameters_for_task (
                                     _jobInfo.Job, _jobInfo.Dataset, _jobInfo.DatasetID,
                                     _jobInfo.Script, _jobInfo.StorageServer,
                                     _jobInfo.Instrument, _jobInfo.InstrumentClass,
@@ -350,11 +351,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.update_parameters_for_job(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
+ALTER PROCEDURE cap.update_parameters_for_task(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE update_parameters_for_job(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE update_parameters_for_task(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.update_parameters_for_job(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'UpdateParametersForJob';
+COMMENT ON PROCEDURE cap.update_parameters_for_task(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'UpdateParametersForJob';
 

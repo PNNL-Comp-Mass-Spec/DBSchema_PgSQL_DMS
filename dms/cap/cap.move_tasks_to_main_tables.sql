@@ -1,8 +1,8 @@
 --
--- Name: move_jobs_to_main_tables(text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: move_tasks_to_main_tables(text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.move_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.move_jobs_to_main_tables(INOUT _message text, IN
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
 **          03/07/2023 mem - Rename column in temporary table
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -174,11 +175,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.move_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+ALTER PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE move_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE move_tasks_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.move_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'MoveJobsToMainTables';
+COMMENT ON PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'MoveJobsToMainTables';
 

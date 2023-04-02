@@ -1,8 +1,8 @@
 --
--- Name: create_steps_for_job(integer, xml, text, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: create_steps_for_task(integer, xml, text, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_job(IN _job integer, IN _script
 **          11/30/2022 mem - Add parameter _returnCode and add check for missing step tools
 **          03/07/2023 mem - Rename column in temporary table
 **          03/08/2023 mem - Switch back to t_step_tools.step_tool
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -138,11 +139,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+ALTER PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE create_steps_for_task(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CreateStepsForJob';
+COMMENT ON PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CreateStepsForJob';
 

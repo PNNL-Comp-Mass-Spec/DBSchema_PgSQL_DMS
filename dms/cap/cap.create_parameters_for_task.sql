@@ -1,8 +1,8 @@
 --
--- Name: create_parameters_for_job(integer, text, integer, text, text, text, text, integer, text); Type: FUNCTION; Schema: cap; Owner: d3l243
+-- Name: create_parameters_for_task(integer, text, integer, text, text, text, text, integer, text); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.create_parameters_for_job(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) RETURNS xml
+CREATE OR REPLACE FUNCTION cap.create_parameters_for_task(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) RETURNS xml
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION cap.create_parameters_for_job(_job integer, _dataset 
 **                         - Added support for script 'MyEMSLDatasetPush'
 **          07/11/2013 mem - Added support for script 'MyEMSLDatasetPushRecursive'
 **          09/28/2022 mem - Ported to PostgreSQL
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -72,11 +73,11 @@ END
 $$;
 
 
-ALTER FUNCTION cap.create_parameters_for_job(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) OWNER TO d3l243;
+ALTER FUNCTION cap.create_parameters_for_task(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION create_parameters_for_job(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: FUNCTION create_parameters_for_task(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.create_parameters_for_job(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) IS 'CreateParametersForJob';
+COMMENT ON FUNCTION cap.create_parameters_for_task(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) IS 'CreateParametersForJob';
 

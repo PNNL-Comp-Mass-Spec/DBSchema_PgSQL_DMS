@@ -1,8 +1,8 @@
 --
--- Name: delete_old_jobs_from_history(boolean, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: delete_old_tasks_from_history(boolean, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.delete_old_jobs_from_history(IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -15,6 +15,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_old_jobs_from_history(IN _infoonly boolea
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version
 **          10/11/2022 mem - Ported to PostgreSQL
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -204,7 +205,7 @@ BEGIN
     _message := format('%s %s old capture task jobs from the history tables; job number range %s to %s', _message, _jobCountToDelete, _jobFirst, _jobLast);
 
     If Not _infoOnly And _jobCountToDelete > 0 Then
-        Call public.post_log_entry ('Normal', _message, 'delete_old_jobs_from_history', 'cap');
+        Call public.post_log_entry ('Normal', _message, 'delete_old_tasks_from_history', 'cap');
     End If;
 
     If char_length(_message) > 0 Then
@@ -216,11 +217,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.delete_old_jobs_from_history(IN _infoonly boolean, INOUT _message text) OWNER TO d3l243;
+ALTER PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boolean, INOUT _message text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE delete_old_jobs_from_history(IN _infoonly boolean, INOUT _message text); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE delete_old_tasks_from_history(IN _infoonly boolean, INOUT _message text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.delete_old_jobs_from_history(IN _infoonly boolean, INOUT _message text) IS 'DeleteOldJobsFromHistory';
+COMMENT ON PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boolean, INOUT _message text) IS 'DeleteOldJobsFromHistory';
 

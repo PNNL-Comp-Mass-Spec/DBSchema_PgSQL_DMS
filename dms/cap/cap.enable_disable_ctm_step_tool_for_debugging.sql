@@ -1,8 +1,8 @@
 --
--- Name: enable_disable_step_tool_for_debugging(text, boolean, boolean); Type: FUNCTION; Schema: cap; Owner: d3l243
+-- Name: enable_disable_ctm_step_tool_for_debugging(text, boolean, boolean); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.enable_disable_step_tool_for_debugging(_tool text DEFAULT ''::text, _debugmode boolean DEFAULT false, _infoonly boolean DEFAULT false) RETURNS TABLE(task text, processor_name public.citext, tool_name public.citext, priority smallint, enabled smallint, comment public.citext, last_affected timestamp without time zone)
+CREATE OR REPLACE FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool text DEFAULT ''::text, _debugmode boolean DEFAULT false, _infoonly boolean DEFAULT false) RETURNS TABLE(task text, processor_name public.citext, tool_name public.citext, priority smallint, enabled smallint, comment public.citext, last_affected timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,13 +14,13 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_step_tool_for_debugging(_tool text
 **    _tool             Step tool name
 **    _debugMode        True to disable managers (and thus allow for debugging); false to re-enable the managers
 **    _infoOnly         View step tools that would be updated
-
 **
 **  Auth:   mem
 **  Date:   10/29/2013 mem - Initial version
 **          04/30/2014 mem - Now validating _tool
 **          09/01/2017 mem - Implement functionality of _infoOnly
 **          10/11/2022 mem - Ported to PostgreSQL
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -152,11 +152,11 @@ END
 $$;
 
 
-ALTER FUNCTION cap.enable_disable_step_tool_for_debugging(_tool text, _debugmode boolean, _infoonly boolean) OWNER TO d3l243;
+ALTER FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool text, _debugmode boolean, _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION enable_disable_step_tool_for_debugging(_tool text, _debugmode boolean, _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: FUNCTION enable_disable_ctm_step_tool_for_debugging(_tool text, _debugmode boolean, _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.enable_disable_step_tool_for_debugging(_tool text, _debugmode boolean, _infoonly boolean) IS 'EnableDisableStepToolForDebugging';
+COMMENT ON FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool text, _debugmode boolean, _infoonly boolean) IS 'EnableDisableStepToolForDebugging';
 

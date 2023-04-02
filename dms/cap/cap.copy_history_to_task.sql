@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 **          03/10/2015 mem - Now updating t_task_steps.Dependencies if it doesn't match the dependent steps listed in t_task_step_dependencies
 **          10/10/2022 mem - Ported to PostgreSQL
 **          03/07/2023 mem - Use new column name
+**          04/02/2023 mem - Rename procedure and functions
 **
 *****************************************************/
 DECLARE
@@ -409,10 +410,10 @@ BEGIN
 
     If Not Exists (SELECT * FROM cap.t_task_parameters WHERE Job = _newJob) Then
         If _debugMode Then
-            RAISE INFO 'Capture task job % was not found in cap.t_task_parameters_history; re-generating the parameters using cap.update_parameters_for_job', _newJob;
+            RAISE INFO 'Capture task job % was not found in cap.t_task_parameters_history; re-generating the parameters using cap.update_parameters_for_task', _newJob;
         End If;
 
-        Call cap.update_parameters_for_job (_newJob::text, _message => _message, _returnCode => _returnCode);
+        Call cap.update_parameters_for_task (_newJob::text, _message => _message, _returnCode => _returnCode);
     End If;
 
     ---------------------------------------------------
@@ -421,10 +422,10 @@ BEGIN
     --
 
     If _debugMode Then
-        RAISE INFO 'Verifying storage server info by calling cap.update_parameters_for_job for capture task job %', _newJob;
+        RAISE INFO 'Verifying storage server info by calling cap.update_parameters_for_task for capture task job %', _newJob;
     End If;
 
-    Call cap.update_parameters_for_job (_jobList, _message => _message, _returnCode => _returnCode);
+    Call cap.update_parameters_for_task (_jobList, _message => _message, _returnCode => _returnCode);
 
     ---------------------------------------------------
     -- Make sure the Dependencies column is up-to-date in t_task_steps
