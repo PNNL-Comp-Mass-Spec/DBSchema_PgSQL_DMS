@@ -149,11 +149,11 @@ BEGIN
         _xmlParameters = ''::xml;
     End If;
 
-    If character_length(Trim(_section)) = 0 Then
+    If char_length(Trim(_section)) = 0 Then
         RAISE EXCEPTION 'Section name cannot be null or empty';
     End If;
 
-    If character_length(Trim(_paramName)) = 0 Then
+    If char_length(Trim(_paramName)) = 0 Then
         RAISE EXCEPTION 'Parameter name cannot be null or empty';
     End If;
 

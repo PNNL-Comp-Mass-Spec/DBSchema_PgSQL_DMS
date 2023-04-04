@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION dpkg.get_data_package_dataset_list(_datapackageid int
 **  Auth:   mem
 **  Date:   10/22/2014 mem - Initial version
 **          06/12/2022 mem - Ported to PostgreSQL
+**          04/04/2023 mem - Use char_length() to determine string length
 **
 *****************************************************/
 DECLARE
@@ -24,7 +25,7 @@ BEGIN
     INTO _result
     FROM dpkg.t_data_package_datasets
     WHERE data_pkg_id = _dataPackageID And
-          Length(Coalesce(dataset, '')) > 0;
+          char_length(Coalesce(dataset, '')) > 0;
 
     RETURN _result;
 END

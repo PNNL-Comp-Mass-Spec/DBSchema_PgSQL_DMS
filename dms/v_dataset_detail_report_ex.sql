@@ -31,7 +31,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     dl.qc_link,
     dl.qc_2d,
         CASE
-            WHEN (length((COALESCE(dl.masic_directory_name, ''::public.citext))::text) = 0) THEN ''::text
+            WHEN (char_length((COALESCE(dl.masic_directory_name, ''::public.citext))::text) = 0) THEN ''::text
             ELSE ((dfp.dataset_url)::text || (dl.masic_directory_name)::text)
         END AS masic_qc_link,
     dl.qc_metric_stats,

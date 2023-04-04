@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_dataset_type_list(_instrumentid
 **          08/28/2010 mem - Updated to use GetInstrumentGroupDatasetTypeList
 **          02/04/2021 mem - Provide a delimiter when calling GetInstrumentGroupDatasetTypeList
 **          06/14/2022 mem - Ported to PostgreSQL
+**          04/04/2023 mem - Use char_length() to determine string length
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
     FROM t_instrument_name
     WHERE instrument_id = _instrumentID;
 
-    IF Length(_instrumentGroup) > 0 Then
+    IF char_length(_instrumentGroup) > 0 Then
         _list = public.get_instrument_group_dataset_type_list(_instrumentGroup, ', ');
     End If;
 

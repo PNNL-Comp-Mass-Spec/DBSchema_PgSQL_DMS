@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid in
 **          06/13/2022 mem - Ported to PostgreSQL
 **          12/09/2022 mem - Assure that _mode is uppercase
 **          12/24/2022 mem - Use ::text
+**          04/04/2023 mem - Use char_length() to determine string length
 **
 *****************************************************/
 DECLARE
@@ -48,7 +49,7 @@ BEGIN
              t_eus_users ON t_requested_run_eus_users.eus_person_id = t_eus_users.person_id
         WHERE t_requested_run_eus_users.request_id = _requestID;
 
-        If Length(Coalesce(_result, '')) = 0 Then
+        If char_length(Coalesce(_result, '')) = 0 Then
             _result := '(none)';
         End If;
 

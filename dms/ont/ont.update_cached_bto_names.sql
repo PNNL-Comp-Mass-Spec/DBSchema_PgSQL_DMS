@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly boolean DEFAULT
 **  Date:   09/01/2017 mem - Initial version
 **          04/07/2022 mem - Ported to PostgreSQL
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
+**          04/04/2023 mem - Use char_length() to determine string length
 **
 *****************************************************/
 DECLARE
@@ -65,7 +66,7 @@ BEGIN
             _rowsUpdated := _rowsUpdated + _myRowCount;
             _message2 := format('Deleted %s extra rows from ont.t_cv_bto_cached_names', Cast(_myRowCount as varchar(9)));
 
-            If length(_message) > 0 Then
+            If char_length(_message) > 0 Then
                 _message := _message || '; ' || _message2;
             Else
                 _message := _message2;
