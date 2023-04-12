@@ -11,6 +11,7 @@ CREATE VIEW cap.v_myemsl_uploads AS
     mu.file_count_new,
     mu.file_count_updated,
     round((((mu.bytes)::numeric / 1024.0) / 1024.0), 3) AS mb,
+    round(((((mu.bytes)::numeric / 1024.0) / 1024.0) / 1024.0), 3) AS gb,
     round((mu.upload_time_seconds)::numeric, 1) AS upload_time_seconds,
     mu.status_uri_path_id,
     mu.status_num,
