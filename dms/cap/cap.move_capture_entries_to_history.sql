@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays
 **          10/22/2022 mem - Directly pass value to function argument
 **          02/15/2023 mem - Add commit statements
 **          04/02/2023 mem - Rename procedure and functions
+**          04/12/2023 mem - Use new table names
 **
 *****************************************************/
 DECLARE
@@ -55,19 +56,19 @@ BEGIN
             WHERE entered < _cutoffDateTime;
 
             If _myRowCount > 0 Then
-                RAISE INFO 'Would move % rows from cap.t_task_events to logcap.t_job_events since entered before %', _myRowCount, _dateThreshold;
+                RAISE INFO 'Would move % rows from cap.t_task_events to logcap.t_task_events since entered before %', _myRowCount, _dateThreshold;
             Else
                 RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_events', 26, ' '), _dateThreshold;
             End If;
 
         Else
 
-            INSERT INTO logcap.t_job_events( event_id,
-                                             job,
-                                             target_state,
-                                             prev_target_state,
-                                             entered,
-                                             entered_by )
+            INSERT INTO logcap.t_task_events( event_id,
+                                              job,
+                                              target_state,
+                                              prev_target_state,
+                                              entered,
+                                              entered_by )
             SELECT event_id,
                    job,
                    target_state,
@@ -112,20 +113,20 @@ BEGIN
             WHERE entered < _cutoffDateTime;
 
             If _myRowCount > 0 Then
-                RAISE INFO 'Would move % rows from cap.t_task_step_events to logcap.t_job_step_events since entered before %', _myRowCount, _dateThreshold;
+                RAISE INFO 'Would move % rows from cap.t_task_step_events to logcap.t_task_step_events since entered before %', _myRowCount, _dateThreshold;
             Else
                 RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_step_events', 26, ' '), _dateThreshold;
             End If;
 
         Else
 
-            INSERT INTO logcap.t_job_step_events( event_id,
-                                                  job,
-                                                  step,
-                                                  target_state,
-                                                  prev_target_state,
-                                                  entered,
-                                                  entered_by )
+            INSERT INTO logcap.t_task_step_events( event_id,
+                                                   job,
+                                                   step,
+                                                   target_state,
+                                                   prev_target_state,
+                                                   entered,
+                                                   entered_by )
             SELECT event_id,
                    job,
                    step,
@@ -172,19 +173,19 @@ BEGIN
             WHERE entered < _cutoffDateTime;
 
             If _myRowCount > 0 Then
-                RAISE INFO 'Would move % rows from cap.t_task_step_processing_log to logcap.t_job_step_processing_log since entered before %', _myRowCount, _dateThreshold;
+                RAISE INFO 'Would move % rows from cap.t_task_step_processing_log to logcap.t_task_step_processing_log since entered before %', _myRowCount, _dateThreshold;
             Else
                 RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_step_processing_log', 26, ' '), _dateThreshold;
             End If;
 
         Else
 
-            INSERT INTO logcap.t_job_step_processing_log( event_id,
-                                                          job,
-                                                          step,
-                                                          processor,
-                                                          entered,
-                                                          entered_by )
+            INSERT INTO logcap.t_task_step_processing_log( event_id,
+                                                           job,
+                                                           step,
+                                                           processor,
+                                                           entered,
+                                                           entered_by )
             SELECT event_id,
                    job,
                    step,
