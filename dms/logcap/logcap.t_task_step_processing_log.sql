@@ -1,8 +1,9 @@
 --
--- Name: t_job_step_processing_log; Type: TABLE; Schema: logcap; Owner: d3l243
+-- Name: t_task_step_processing_log; Type: TABLE; Schema: logcap; Owner: d3l243
 --
 
-CREATE TABLE logcap.t_job_step_processing_log (
+CREATE TABLE logcap.t_task_step_processing_log (
+    id integer NOT NULL,
     event_id integer NOT NULL,
     job integer NOT NULL,
     step integer NOT NULL,
@@ -12,30 +13,36 @@ CREATE TABLE logcap.t_job_step_processing_log (
 );
 
 
-ALTER TABLE logcap.t_job_step_processing_log OWNER TO d3l243;
+ALTER TABLE logcap.t_task_step_processing_log OWNER TO d3l243;
 
 --
--- Name: t_job_step_processing_log pk_t_job_step_processing_log; Type: CONSTRAINT; Schema: logcap; Owner: d3l243
+-- Name: t_task_step_processing_log pk_t_task_step_processing_log; Type: CONSTRAINT; Schema: logcap; Owner: d3l243
 --
 
-ALTER TABLE ONLY logcap.t_job_step_processing_log
-    ADD CONSTRAINT pk_t_job_step_processing_log PRIMARY KEY (event_id);
+ALTER TABLE ONLY logcap.t_task_step_processing_log
+    ADD CONSTRAINT pk_t_task_step_processing_log PRIMARY KEY (id);
 
 --
--- Name: ix_t_job_step_processing_log_job_step; Type: INDEX; Schema: logcap; Owner: d3l243
+-- Name: ix_t_task_step_processing_log_event_id; Type: INDEX; Schema: logcap; Owner: d3l243
 --
 
-CREATE INDEX ix_t_job_step_processing_log_job_step ON logcap.t_job_step_processing_log USING btree (job, step);
+CREATE INDEX ix_t_task_step_processing_log_event_id ON logcap.t_task_step_processing_log USING btree (event_id);
 
 --
--- Name: ix_t_job_step_processing_log_processor; Type: INDEX; Schema: logcap; Owner: d3l243
+-- Name: ix_t_task_step_processing_log_job_step; Type: INDEX; Schema: logcap; Owner: d3l243
 --
 
-CREATE INDEX ix_t_job_step_processing_log_processor ON logcap.t_job_step_processing_log USING btree (processor);
+CREATE INDEX ix_t_task_step_processing_log_job_step ON logcap.t_task_step_processing_log USING btree (job, step);
 
 --
--- Name: TABLE t_job_step_processing_log; Type: ACL; Schema: logcap; Owner: d3l243
+-- Name: ix_t_task_step_processing_log_processor; Type: INDEX; Schema: logcap; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE logcap.t_job_step_processing_log TO writeaccess;
+CREATE INDEX ix_t_task_step_processing_log_processor ON logcap.t_task_step_processing_log USING btree (processor);
+
+--
+-- Name: TABLE t_task_step_processing_log; Type: ACL; Schema: logcap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logcap.t_task_step_processing_log TO writeaccess;
 
