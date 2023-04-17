@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          03/20/2023 mem - Ported to PostgreSQL
 **          03/28/2023 mem - Change columns Trim_N_Terminal_Met and Static_Cys_Carbamidomethyl to boolean in T_Spectral_Library
 **          03/29/2023 mem - If the library state is 2 and _dmsSourceJob matches the Source_Job in T_Spectral_Library, assume the job failed and was re-started, and thus set _sourceJobShouldMakeLibrary to true
+**          04/16/2023 mem - Auto-update _proteinCollectionList and _organismDbFile to 'na' if an empty string
 **
 *****************************************************/
 DECLARE
@@ -136,6 +137,14 @@ BEGIN
         _libraryName := '';
         _storagePath := '';
         _sourceJobShouldMakeLibrary := false;
+
+        If char_length(_proteinCollectionList) = 0 Then
+            _proteinCollectionList := 'na';
+        End If;
+
+        If char_length(_organismDbFile) = 0 Then
+            _organismDbFile := 'na';
+        End If;
 
         ---------------------------------------------------
         -- Assure that the protein collection list is in the standard format

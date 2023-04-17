@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **          03/18/2023 mem - Rename arguments
 **          03/20/2023 mem - Change _trimNTerminalMet and _staticCysCarbamidomethyl to boolean
 **          03/28/2023 mem - Change columns Trim_N_Terminal_Met and Static_Cys_Carbamidomethyl to boolean in T_Spectral_Library
+**          04/16/2023 mem - Auto-update _proteinCollectionList and _organismDbFile to 'na' if an empty string
 **
 *****************************************************/
 DECLARE
@@ -79,11 +80,19 @@ BEGIN
         _staticMods := Coalesce(_staticMods, '');
         _dynamicMods := Coalesce(_dynamicMods, '');
         _maxDynamicMods := Coalesce(_maxDynamicMods, 0);
+
+        If char_length(_proteinCollectionList) = 0 Then
+            _proteinCollectionList := 'na';
+        End If;
+
+        If char_length(_organismDbFile) = 0 Then
+            _organismDbFile := 'na';
+        End If;
     End If;
 
     -- Remove any spaces in the static and dynamic mods
-    _staticMods = Replace(_staticMods, ' ', '');
-    _dynamicMods = Replace(_dynamicMods, ' ', '');
+    _staticMods := Replace(_staticMods, ' ', '');
+    _dynamicMods := Replace(_dynamicMods, ' ', '');
 
     ---------------------------------------------------
     -- Store the options in _settings
