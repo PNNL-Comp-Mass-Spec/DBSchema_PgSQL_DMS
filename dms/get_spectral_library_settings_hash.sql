@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **          03/20/2023 mem - Change _trimNTerminalMet and _staticCysCarbamidomethyl to boolean
 **          03/28/2023 mem - Change columns Trim_N_Terminal_Met and Static_Cys_Carbamidomethyl to boolean in T_Spectral_Library
 **          04/16/2023 mem - Auto-update _proteinCollectionList and _organismDbFile to 'na' if an empty string
+**          04/17/2023 mem - Use 'na' for _organismDBFile if _proteinCollectionList is not 'na' or an empty string
 **
 *****************************************************/
 DECLARE
@@ -98,8 +99,20 @@ BEGIN
     -- Store the options in _settings
     ---------------------------------------------------
 
-    _settings = _proteinCollectionList || '_' ||
-                _organismDBFile || '_' ||
+    If public.validate_na_parameter(_proteinCollectionList, 1) <> 'na' Then
+        _settings := _proteinCollectionList || '_na_';
+    Else
+        _settings := 'na_';
+
+        If public.validate_na_parameter(_organismDBFile, 1) <> 'na' Then
+            _settings := _settings || _organismDBFile || '_';
+        Else
+            _settings := _settings || 'na_';
+        End If;
+
+    End If;
+
+    _settings := _settings ||
                 Cast(_fragmentIonMzMin As text) || '_' ||
                 Cast(_fragmentIonMzMax As text) || '_' ||
                 CASE WHEN _trimNTerminalMet THEN 'true' ELSE 'false' END || '_' ||
