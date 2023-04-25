@@ -12,6 +12,7 @@ CREATE VIEW public.v_dataset_info_detail_report AS
     ds.scan_count AS scan_count_total,
     dsinfo.scan_count_ms,
     dsinfo.scan_count_msn,
+    dsinfo.scan_count_dia,
     (
         CASE
             WHEN (COALESCE(dsinfo.elution_time_max, (0)::real) < ('1000000'::numeric)::double precision) THEN dsinfo.elution_time_max

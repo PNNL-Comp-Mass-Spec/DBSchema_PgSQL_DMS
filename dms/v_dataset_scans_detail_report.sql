@@ -13,6 +13,7 @@ CREATE VIEW public.v_dataset_scans_detail_report AS
     dsinfo.profile_scan_count_msn,
     dsinfo.centroid_scan_count_ms,
     dsinfo.centroid_scan_count_msn,
+    dsinfo.scan_count_dia,
     sum(
         CASE
             WHEN (dst.scan_type OPERATOR(public.=) 'MS'::public.citext) THEN dst.scan_count
@@ -45,7 +46,7 @@ CREATE VIEW public.v_dataset_scans_detail_report AS
         END) AS scan_count_hmsn,
     sum(
         CASE
-            WHEN (dst.scan_type OPERATOR(public.=) 'HCD-HMSn'::public.citext) THEN dst.scan_count
+            WHEN (dst.scan_type OPERATOR(public.=) ANY (ARRAY['HCD-HMSn'::public.citext, 'DIA-HCD-HMSn'::public.citext])) THEN dst.scan_count
             ELSE 0
         END) AS scan_count_hcd_hmsn,
     sum(
@@ -85,7 +86,7 @@ CREATE VIEW public.v_dataset_scans_detail_report AS
         END) AS scan_count_cid_srm,
     sum(
         CASE
-            WHEN (NOT (dst.scan_type OPERATOR(public.=) ANY (ARRAY['MS'::public.citext, 'HMS'::public.citext, 'Zoom-MS'::public.citext, 'CID-MSn'::public.citext, 'CID-HMSn'::public.citext, 'HMSn'::public.citext, 'HCD-HMSn'::public.citext, 'ETD-MSn'::public.citext, 'ETD-HMSn'::public.citext, 'SA_ETD-MSn'::public.citext, 'SA_ETD-HMSn'::public.citext, 'Q1MS'::public.citext, 'Q3MS'::public.citext, 'CID-SRM'::public.citext]))) THEN dst.scan_count
+            WHEN (NOT (dst.scan_type OPERATOR(public.=) ANY (ARRAY['MS'::public.citext, 'HMS'::public.citext, 'Zoom-MS'::public.citext, 'CID-MSn'::public.citext, 'CID-HMSn'::public.citext, 'HMSn'::public.citext, 'HCD-HMSn'::public.citext, 'DIA-HCD-HMSn'::public.citext, 'ETD-MSn'::public.citext, 'ETD-HMSn'::public.citext, 'SA_ETD-MSn'::public.citext, 'SA_ETD-HMSn'::public.citext, 'Q1MS'::public.citext, 'Q3MS'::public.citext, 'CID-SRM'::public.citext]))) THEN dst.scan_count
             ELSE 0
         END) AS scan_count_other,
         CASE
@@ -98,7 +99,7 @@ CREATE VIEW public.v_dataset_scans_detail_report AS
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_dataset_info dsinfo ON ((ds.dataset_id = dsinfo.dataset_id)))
      JOIN public.t_dataset_scan_types dst ON ((ds.dataset_id = dst.dataset_id)))
-  GROUP BY ds.dataset_id, ds.dataset, instname.instrument, dtn.dataset_type, ds.scan_count, dsinfo.elution_time_max, ds.file_size_bytes, dsinfo.scan_types, dsinfo.profile_scan_count_ms, dsinfo.profile_scan_count_msn, dsinfo.centroid_scan_count_ms, dsinfo.centroid_scan_count_msn;
+  GROUP BY ds.dataset_id, ds.dataset, instname.instrument, dtn.dataset_type, ds.scan_count, dsinfo.elution_time_max, ds.file_size_bytes, dsinfo.scan_types, dsinfo.profile_scan_count_ms, dsinfo.profile_scan_count_msn, dsinfo.centroid_scan_count_ms, dsinfo.centroid_scan_count_msn, dsinfo.scan_count_dia;
 
 
 ALTER TABLE public.v_dataset_scans_detail_report OWNER TO d3l243;

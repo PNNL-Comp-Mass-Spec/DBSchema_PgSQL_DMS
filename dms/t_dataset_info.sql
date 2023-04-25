@@ -20,7 +20,8 @@ CREATE TABLE public.t_dataset_info (
     profile_scan_count_ms integer,
     profile_scan_count_msn integer,
     centroid_scan_count_ms integer,
-    centroid_scan_count_msn integer
+    centroid_scan_count_msn integer,
+    scan_count_dia integer
 );
 
 

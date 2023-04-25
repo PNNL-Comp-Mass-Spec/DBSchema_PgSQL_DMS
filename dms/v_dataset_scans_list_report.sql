@@ -20,6 +20,7 @@ CREATE VIEW public.v_dataset_scans_list_report AS
     dsinfo.profile_scan_count_msn,
     dsinfo.centroid_scan_count_ms,
     dsinfo.centroid_scan_count_msn,
+    dsinfo.scan_count_dia,
     dst.entry_id AS scan_type_entry_id
    FROM ((((public.t_dataset ds
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
