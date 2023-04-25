@@ -22,10 +22,11 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_rollup(_year integer
 **          03/17/2022 mem - Only return rows where Dataset_ID_Acq_Overlap is Null
 **          06/20/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          04/20/2023 mem - Cast to float8 for clarity
 **
 *****************************************************/
 DECLARE
-    _done int;
+    _continue boolean;
 BEGIN
     -- Table for processing runs and intervals for reporting month
     --
@@ -99,13 +100,14 @@ BEGIN
           InstUsage.month = _month AND
           InstUsage.dataset_id_acq_overlap Is Null;
 
-    _done := 0;
+    _continue := true;
 
     -- While loop to pull records out of working table
     -- into accumulation table, allowing for durations that
     -- cross daily boundaries
     --
-    WHILE _done = 0 Loop
+    WHILE _continue
+    LOOP
 
         -- Update working table with end times
         --
@@ -194,10 +196,10 @@ BEGIN
         -- We are done when there is nothing left to process in working table
         --
         IF NOT EXISTS (SELECT * FROM Tmp_T_Working) Then
-            _done := 1;
+            _continue := false;
         End If;
 
-    End Loop;
+    END LOOP;
 
     ----------------------------------------------------
     -- Return the contents of Tmp_T_Report_Accumulation
@@ -210,7 +212,7 @@ BEGIN
            Src.Day,
            Src.Proposal::citext,
            Src.Usage::citext,
-           CEILING(SUM(Src.Duration_Seconds)::float / 60)::int AS Minutes
+           CEILING(SUM(Src.Duration_Seconds)::float8 / 60)::int AS Minutes
     FROM Tmp_T_Report_Accumulation AS Src
     GROUP BY Src.EMSL_Inst_ID,
              Src.DMS_Instrument,

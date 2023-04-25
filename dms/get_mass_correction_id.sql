@@ -17,11 +17,12 @@ CREATE OR REPLACE FUNCTION public.get_mass_correction_id(_modmass double precisi
 **          11/30/2018 mem - Renamed the Monoisotopic_Mass and Average_Mass columns
 **          04/02/2020 mem - Change _modMass from a varchar to a float
 **          10/24/2022 mem - Ported to PostgreSQL
+**          04/20/2023 mem - Use float8 for double precision variable _mcVariance
 **
 *****************************************************/
 DECLARE
     _massCorrectionID int;
-    _mcVariance float := 0.00006;
+    _mcVariance float8 := 0.00006;
 BEGIN
     SELECT mass_correction_id
     INTO _massCorrectionID
