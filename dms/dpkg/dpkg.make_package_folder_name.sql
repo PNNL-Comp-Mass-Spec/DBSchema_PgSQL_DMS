@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION dpkg.make_package_directory_name(_datapackageid integ
 /****************************************************
 **
 **  Desc:
-*       Generates a package directory name given a data package ID and name
+*       Generates a data package folder name given a data package ID and name
 **
 **  Auth:   grk
 **  Date:   05/21/2009 grk
@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION dpkg.make_package_directory_name(_datapackageid integ
 **          11/08/2010 mem - Now using first 96 characters of _packageName instead of first 40 characters
 **          04/10/2013 mem - Now replacing commas
 **          06/25/2022 mem - Ported to PostgreSQL
+**          04/27/2023 mem - Rename function to use "folder" instead of "directory"
 **
 *****************************************************/
 DECLARE
