@@ -1,0 +1,175 @@
+--
+CREATE OR REPLACE PROCEDURE public.add_update_lc_cart
+(
+    INOUT _id int,
+    _cartName text,
+    _cartDescription text,
+    _cartState text,
+    _mode text = 'add',
+    INOUT _message text
+)
+LANGUAGE plpgsql
+AS $$
+/****************************************************
+**
+**  Desc:
+**      Adds new or edits existing LC Cart
+**
+**  Arguments:
+**    _mode   'add' or 'update'
+**
+**  Auth:   grk
+**  Date:   02/23/2006
+**          03/03/2006 grk - Fixed problem with duplicate entries
+**          06/13/2017 mem - Use SCOPE_IDENTITY()
+**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          08/01/2017 mem - Use THROW if not authorized
+**          05/10/2018 mem - Fix bug checking for duplicate carts when adding a new cart
+**          04/11/2022 mem - Check for whitespace in _cartName
+**          12/15/2023 mem - Ported to PostgreSQL
+**
+*****************************************************/
+DECLARE
+    _schemaName text;
+    _nameWithSchema text;
+    _authorized boolean;
+
+    _myRowCount int := 0;
+    _cartStateID int := 0;
+    _currentName text := '';
+BEGIN
+
+    _message := '';
+
+    ---------------------------------------------------
+    -- Verify that the user can execute this procedure from the given client host
+    ---------------------------------------------------
+
+    SELECT schema_name, name_with_schema
+    INTO _schemaName, _nameWithSchema
+    FROM get_current_function_info('<auto>', _showDebug => false);
+
+    SELECT authorized
+    INTO _authorized
+    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+
+    If Not _authorized Then
+        -- Commit changes to persist the message logged to public.t_log_entries
+        COMMIT;
+
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        RAISE EXCEPTION '%', _message;
+    End If;
+
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+    --
+    _cartName := Trim(Coalesce(_cartName, ''));
+    _cartDescription := Trim(Coalesce(_cartDescription, ''));
+    _cartState := Trim(Coalesce(_cartState, ''));
+    _mode := Trim(Lower(Coalesce(_mode, '')));
+
+    If public.has_whitespace_chars(_cartName, 0) Then
+        If Position(chr(9) In _cartName) > 0 Then
+            RAISE EXCEPTION 'LC Cart name cannot contain tabs';
+        Else
+            RAISE EXCEPTION 'LC Cart name cannot contain spaces';
+        End If;
+    End If;
+
+    ---------------------------------------------------
+    -- Resolve cart state name to ID
+    ---------------------------------------------------
+    --
+    --
+    SELECT cart_state_id
+    INTO _cartStateID
+    FROM t_lc_cart_state_name
+    WHERE cart_state = _cartState
+
+    If Not FOUND Then
+        _message := 'Could not resolve state name to ID';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
+    -- Verify whether entry exists or not
+    ---------------------------------------------------
+
+    If _mode = 'add' Then
+        _id := 0;
+
+        If Exists (SELECT * FROM t_lc_cart WHERE cart_name = _cartName) Then
+            _message := 'Cannot Add - Entry already exists for cart "' || _cartName || '"';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5202';
+            RETURN;
+        End If;
+    End If;
+
+    If _mode = 'update' Then
+        If Not Exists (SELECT * FROM t_lc_cart WHERE cart_id = _id) Then
+            _message := format('Cannot update - cart cart_id %s does not exist', _id);
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5203';
+            RETURN;
+        End If;
+
+        SELECT cart_name
+        INTO _currentName
+        FROM t_lc_cart
+        WHERE cart_id = _id
+
+        If _cartName <> _currentName And Exists (SELECT * FROM t_lc_cart WHERE cart_name = _cartName) Then
+            _message := 'Cannot rename - Entry already exists for cart "' || _cartName || '"';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5204';
+            RETURN;
+        End If;
+    End If;
+
+    ---------------------------------------------------
+    -- Action for add mode
+    ---------------------------------------------------
+
+    If _mode = 'add' Then
+
+        INSERT INTO t_lc_cart (
+            cart_name,
+            cart_state_id,
+            cart_description
+        ) VALUES (
+            _cartName,
+            _cartStateID,
+            _cartDescription
+        )
+        RETURNING cart_id
+        INTO _id;
+
+    End If;
+
+    ---------------------------------------------------
+    -- Action for update mode
+    ---------------------------------------------------
+    --
+    If _mode = 'update' Then
+
+        UPDATE t_lc_cart
+        SET cart_name = _cartName,
+            cart_state_id = _cartStateID,
+            cart_description = _cartDescription
+        WHERE cart_id = _id
+
+    End If;
+
+END
+$$;
+
+COMMENT ON PROCEDURE public.add_update_lc_cart IS 'AddUpdateLCCart';

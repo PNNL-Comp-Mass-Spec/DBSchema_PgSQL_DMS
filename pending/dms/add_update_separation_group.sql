@@ -1,0 +1,154 @@
+--
+CREATE OR REPLACE PROCEDURE public.add_update_separation_group
+(
+    _separationGroup text,
+    _comment text,
+    _active int,
+    _samplePrepVisible int,
+    _fractionCount int,
+    _mode text = 'add',
+    INOUT _message text,
+    _callingUser text = ''
+)
+LANGUAGE plpgsql
+AS $$
+/****************************************************
+**
+**  Desc:
+**      Adds new or edits existing item in T_Separation_Group
+**
+**  Arguments:
+**    _mode   'add' or 'update'
+**
+**  Auth:   mem
+**  Date:   06/12/2017 mem - Initial version
+**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          08/01/2017 mem - Use THROW if not authorized
+**          03/15/2021 mem - Add _fractionCount
+**          12/15/2023 mem - Ported to PostgreSQL
+**
+*****************************************************/
+DECLARE
+    _schemaName text;
+    _nameWithSchema text;
+    _authorized boolean;
+
+    _myRowCount int := 0;
+    _datasetTypeID int;
+    _tmp text := '';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
+BEGIN
+
+    ---------------------------------------------------
+    -- Verify that the user can execute this procedure from the given client host
+    ---------------------------------------------------
+
+    SELECT schema_name, name_with_schema
+    INTO _schemaName, _nameWithSchema
+    FROM get_current_function_info('<auto>', _showDebug => false);
+
+    SELECT authorized
+    INTO _authorized
+    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+
+    If Not _authorized Then
+        -- Commit changes to persist the message logged to public.t_log_entries
+        COMMIT;
+
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        RAISE EXCEPTION '%', _message;
+    End If;
+
+    BEGIN
+
+        ---------------------------------------------------
+        -- Validate input fields
+        ---------------------------------------------------
+
+        _comment := Coalesce(_comment, '');
+        _active := Coalesce(_active, 0);
+        _samplePrepVisible := Coalesce(_samplePrepVisible, 0);
+        _fractionCount := Coalesce(_fractionCount, 0);
+
+        _message := '';
+
+        _mode := Trim(Lower(Coalesce(_mode, '')));
+
+        ---------------------------------------------------
+        -- Is entry already in database? (only applies to updates)
+        ---------------------------------------------------
+
+        If _mode = 'update' Then
+            -- Cannot update a non-existent entry
+            --
+            --
+            SELECT separation_group
+            INTO _tmp
+            FROM  t_separation_group
+            WHERE (separation_group = _separationGroup)
+
+            If Not FOUND Then
+                RAISE EXCEPTION 'No entry could be found in database for update';
+            End If;
+        End If;
+
+        ---------------------------------------------------
+        -- Action for add mode
+        ---------------------------------------------------
+        --
+        If _mode = 'add' Then
+
+            INSERT INTO t_separation_group( separation_group,
+                                            comment,
+                                            active,
+                                            sample_prep_visible,
+                                            fraction_count)
+            VALUES (_separationGroup, _comment, _active, _samplePrepVisible, _fractionCount)
+            --
+            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+        End If; -- add mode
+
+        ---------------------------------------------------
+        -- Action for update mode
+        ---------------------------------------------------
+        --
+        If _mode = 'update' Then
+            --
+            UPDATE t_separation_group
+            SET comment = _comment,
+                active = _active,
+                sample_prep_visible = _samplePrepVisible,
+                fraction_count = _fractionCount
+            WHERE separation_group = _separationGroup
+            --
+            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+        End If; -- update mode
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+
+    END;
+
+END
+$$;
+
+COMMENT ON PROCEDURE public.add_update_separation_group IS 'AddUpdateSeparationGroup';

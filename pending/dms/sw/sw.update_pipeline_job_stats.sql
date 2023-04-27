@@ -1,0 +1,120 @@
+--
+CREATE OR REPLACE PROCEDURE sw.update_pipeline_job_stats
+(
+    _infoOnly boolean = false,
+    INOUT _message text = ''
+)
+LANGUAGE plpgsql
+AS $$
+/****************************************************
+**
+**  Desc:
+**      Update processing statistics in T_Pipeline_Job_Stats
+**
+**  Auth:   mem
+**  Date:   05/29/2022 mem - Initial version
+**          12/15/2023 mem - Ported to PostgreSQL
+**
+*****************************************************/
+DECLARE
+    _myRowCount int := 0;
+BEGIN
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _infoOnly := Coalesce(_infoOnly, false);
+    _message := '';
+
+    ---------------------------------------------------
+    -- Create a temp table to hold the statistics
+    ---------------------------------------------------
+
+    CREATE TEMP TABLE Tmp_Pipeline_Job_Stats (
+        Script     text NOT NULL,
+        Instrument_Group text NOT NULL,
+        Year     int NOT NULL,
+        Jobs       int NOT NULL,
+        PRIMARY KEY CLUSTERED ( Script, Instrument_Group, Year )
+    )
+
+    ---------------------------------------------------
+    -- Summarize jobs by script, instrument group, and year
+    ---------------------------------------------------
+
+    INSERT INTO Tmp_Pipeline_Job_Stats( script, Instrument_Group, Year, Jobs )
+    SELECT JH.script,
+           Coalesce(InstName.IN_Group, '') AS Instrument_Group,
+           Extract(year from JH.start) AS Year,
+           COUNT(*) AS Jobs
+    FROM sw.t_jobs_history JH
+         LEFT OUTER JOIN public.T_Analysis_Job J
+           ON JH.job = J.job
+         LEFT OUTER JOIN public.T_Dataset DS
+           ON J.dataset_id = DS.dataset_id
+         LEFT OUTER JOIN public.T_Instrument_Name InstName
+           ON DS.instrument_name_ID = InstName.Instrument_ID
+    WHERE NOT JH.start IS NULL
+    GROUP BY JH.script, Coalesce(InstName.IN_Group, ''), Extract(year from JH.start)
+    --
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    If _myRowCount = 0 Then
+        _message := 'No rows were added to Tmp_Pipeline_Job_Stats; exiting';
+        RETURN;
+    End If;
+
+    If _infoOnly Then
+        SELECT Script,
+               Instrument_Group,
+               Year,
+               Jobs
+        FROM Tmp_Pipeline_Job_Stats
+        ORDER BY Script, Instrument_Group, Year
+
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
+    -- Update cached stats in sw.t_pipeline_job_stats
+    --
+    -- Since old jobs get deleted from sw.t_jobs_history,
+    -- assure that the maximum value is used for each row
+    ---------------------------------------------------
+
+    MERGE sw.t_pipeline_job_stats AS t
+    USING ( SELECT script, instrument_group, year, Jobs
+            FROM Tmp_Pipeline_Job_Stats
+          ) AS s
+    ON ( t.instrument_group = s.instrument_group AND t.script = s.script AND t.year = s.year)
+    WHEN MATCHED AND t.jobs < s.jobs THEN
+        UPDATE SET jobs = s.jobs
+    WHEN NOT MATCHED THEN
+        INSERT (script, instrument_group, year, Jobs)
+        VALUES (s.script, s.instrument_group, s.year, s.Jobs);
+    --
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    _message := 'Updated ' || Cast(_myRowCount As text) || ' rows in sw.t_pipeline_job_stats';
+
+    If _returnCode <> '' Then
+        If _message = '' Then
+            _message := 'Error in UpdatePipelineJobStats';
+        End If;
+
+        _message := _message || '; error code = ' || _myError::text;
+
+        If Not _infoOnly Then
+            Call public.post_log_entry ('Error', _message, 'UpdatePipelineJobStats');
+        End If;
+    End If;
+
+    If char_length(_message) > 0 Then
+        RAISE INFO '%', _message;
+    End If;
+
+    DROP TABLE Tmp_Pipeline_Job_Stats;
+END
+$$;
+
+COMMENT ON PROCEDURE sw.update_pipeline_job_stats IS 'UpdatePipelineJobStats';
