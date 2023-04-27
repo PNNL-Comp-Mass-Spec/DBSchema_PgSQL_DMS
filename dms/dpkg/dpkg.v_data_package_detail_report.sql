@@ -14,7 +14,7 @@ CREATE VIEW dpkg.v_data_package_detail_report AS
     dp.created,
     dp.last_modified,
     dp.state,
-    dp.package_directory AS package_file_folder,
+    dp.package_folder AS package_file_folder,
     dpp.share_path,
     dpp.web_path,
     dp.mass_tag_database AS amt_tag_database,

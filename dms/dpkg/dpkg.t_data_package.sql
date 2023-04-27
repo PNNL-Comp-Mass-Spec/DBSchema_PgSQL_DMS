@@ -13,7 +13,7 @@ CREATE TABLE dpkg.t_data_package (
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_modified timestamp without time zone,
     state public.citext DEFAULT 'Active'::public.citext NOT NULL,
-    package_directory public.citext NOT NULL,
+    package_folder public.citext NOT NULL,
     storage_path_id integer,
     path_year public.citext DEFAULT EXTRACT(year FROM CURRENT_TIMESTAMP) NOT NULL,
     path_team public.citext DEFAULT 'General'::public.citext NOT NULL,
@@ -57,10 +57,10 @@ ALTER TABLE ONLY dpkg.t_data_package
     ADD CONSTRAINT pk_t_data_package PRIMARY KEY (data_pkg_id);
 
 --
--- Name: ix_t_data_package_package_directory; Type: INDEX; Schema: dpkg; Owner: d3l243
+-- Name: ix_t_data_package_package_folder; Type: INDEX; Schema: dpkg; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_data_package_package_directory ON dpkg.t_data_package USING btree (package_directory);
+CREATE UNIQUE INDEX ix_t_data_package_package_folder ON dpkg.t_data_package USING btree (package_folder);
 
 --
 -- Name: ix_t_data_package_package_name; Type: INDEX; Schema: dpkg; Owner: d3l243

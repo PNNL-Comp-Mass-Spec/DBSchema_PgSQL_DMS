@@ -18,7 +18,7 @@ CREATE VIEW dpkg.v_data_package_export AS
     dp.biomaterial_item_count AS biomaterial,
     dp.last_modified,
     dp.created,
-    dp.package_directory AS package_file_folder,
+    dp.package_folder AS package_file_folder,
     dpp.storage_path_relative,
     dpp.share_path,
     dpp.archive_path,

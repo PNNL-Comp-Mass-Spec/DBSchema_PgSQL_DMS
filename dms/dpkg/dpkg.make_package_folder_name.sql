@@ -1,8 +1,8 @@
 --
--- Name: make_package_directory_name(integer, text); Type: FUNCTION; Schema: dpkg; Owner: d3l243
+-- Name: make_package_folder_name(integer, text); Type: FUNCTION; Schema: dpkg; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION dpkg.make_package_directory_name(_datapackageid integer, _packagename text) RETURNS text
+CREATE OR REPLACE FUNCTION dpkg.make_package_folder_name(_datapackageid integer, _packagename text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -49,5 +49,5 @@ END
 $$;
 
 
-ALTER FUNCTION dpkg.make_package_directory_name(_datapackageid integer, _packagename text) OWNER TO d3l243;
+ALTER FUNCTION dpkg.make_package_folder_name(_datapackageid integer, _packagename text) OWNER TO d3l243;
 
