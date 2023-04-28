@@ -16,7 +16,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _result int;
     _callingProcName text;
     _currentLocation text;
@@ -29,13 +28,17 @@ BEGIN
 
     Begin Try
 
-        _result := 0;
-        SELECT enabled FROM pc.t_process_step_control WHERE (processing_step_name = 'PromoteProteinCollectionStates') INTO _result
+        SELECT enabled
+        INTO _result
+        FROM pc.t_process_step_control
+        WHERE (processing_step_name = 'PromoteProteinCollectionStates');
+
         If _result > 0 Then
             _currentLocation := 'Call PromoteProteinCollectionState';
-            Call promote_protein_collection_state _message => _message output
-            If _myError <> 0 Then
-                Goto Done;
+            Call promote_protein_collection_state (_message => _message,        -- Output
+                                                   _returnCode => _returnCode); -- Output
+            If _returnCode <> '' Then
+                RETURN;
             End If;
         End If;
 
