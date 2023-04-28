@@ -966,17 +966,17 @@ BEGIN
                 ---------------------------------------------------
 
                 Call validate_eus_usage (
-                                        _eusUsageType   => _eusUsageType,   -- Input/Output
-                                        _eusProposalID  => _eusProposalID,  -- Input/Output
-                                        _eusUsersList   => _eusUsersList,   -- Input/Output
-                                        _eusUsageTypeID => _eusUsageTypeID, -- Output
-                                        _message => _msg,                   -- Output
-                                        _returnCode => _returnCode,         -- Output
-                                        _autoPopulateUserListIfBlank => false,
-                                        _samplePrepRequest => false,
-                                        _experimentID => _experimentID,
-                                        _campaignID => 0,
-                                        _addingItem => _addingDataset);
+                                _eusUsageType   => _eusUsageType,   -- Input/Output
+                                _eusProposalID  => _eusProposalID,  -- Input/Output
+                                _eusUsersList   => _eusUsersList,   -- Input/Output
+                                _eusUsageTypeID => _eusUsageTypeID, -- Output
+                                _message => _msg,                   -- Output
+                                _returnCode => _returnCode,         -- Output
+                                _autoPopulateUserListIfBlank => false,
+                                _samplePrepRequest => false,
+                                _experimentID => _experimentID,
+                                _campaignID => 0,
+                                _addingItem => _addingDataset);
 
                 If _returnCode <> '' Then
                     _logErrors := false;

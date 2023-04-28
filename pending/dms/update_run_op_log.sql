@@ -153,14 +153,13 @@ BEGIN
             ORDER BY request
         LOOP
             Call validate_eus_usage (
-                        _eusUsageType,                  -- Output
-                        _eusProposalID,                 -- Output
-                        _eusUsersList,                  -- Output
-                        _eusUsageTypeID,                -- Output
-                        _message => _msg,               -- Output
-                        _returnCode => _returnCode,     -- Output
-                        _autoPopulateUserListIfBlank
-                        );
+                            _eusUsageType   => _eusUsageType,       -- Input/Output
+                            _eusProposalID  => _eusProposalID,      -- Input/Output
+                            _eusUsersList   => _eusUsersList,       -- Input/Output
+                            _eusUsageTypeID => _eusUsageTypeID,     -- Output
+                            _message => _msg,                       -- Output
+                            _returnCode => _returnCode,             -- Output
+                            _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank);
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'ValidateEUSUsage: %', _msg;
