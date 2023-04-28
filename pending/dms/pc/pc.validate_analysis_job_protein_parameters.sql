@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters
     _organismDBFileName text,
     INOUT _protCollNameList text,
     INOUT _protCollOptionsList text,
-    INOUT _message text
+    INOUT _message text,
+    INOUT _returnCode text
 )
 LANGUAGE plpgsql
 AS $$
@@ -20,12 +21,16 @@ AS $$
 **    The protein collection list and protein options
 **    list should be returned in canonical format.
 **
-**  original argument specs: grk
-**  Date:   04/04/2006
-**          12/15/2023 mem - Ported to PostgreSQL
+**  Error Return Codes:
+**      'U5001' = both values cannot be blank or 'na'
+**      'U5002' = ambiguous combination of legacy name and protein collection
+**                  (different values for each)
+**      'U5010' = General database retrieval error
+**      'U5011' = Lookup keyword or value not valid
+**      'U5020' = Encrypted collection authorization failure
 **
-**  Auth:   kja
-**  Date:   04/11/2006
+**  Auth:   04/04/2006 grk
+**  Date:   04/11/2006 kja
 **          06/06/2006 mem - Updated Creation Options List logic to allow wider range of _protCollOptionsList values
 **          06/08/2006 mem - Added call to StandardizeProteinCollectionList to validate the order of _protCollNameList
 **          06/26/2006 mem - Updated to ignore _organismDBFileName If _protCollNameList is <> 'na'
@@ -35,14 +40,6 @@ AS $$
 **          05/15/2012 mem - Updated error message for error -50001
 **          09/25/2012 mem - Expanded _organismDBFileName to varchar(128)
 **          06/24/2013 mem - Now removing duplicate protein collection names in _protCollNameList
-
-**  Error Return Codes:
-**      (-50001) = both values cannot be blank or 'na'
-**      (-50002) = ambiguous combination of legacy name and protein collection
-**                  (different values for each)
-**      (-50010) = General database retrieval error
-**      (-50011) = Lookup keyword or value not valid
-**      (-50020) = Encrypted collection authorization failure
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -69,6 +66,7 @@ DECLARE
     _tmpOptionValue text;
     _keywordDefaultValue text;
     _keywordIsReqd int;
+    _keywordFound boolean;
     _tmpOptionString text;
     _tmpOptionTable table(Keyword_ID int, Keyword text, Value text);
     _tmpEqualsPosition int;
@@ -78,6 +76,7 @@ DECLARE
     _continue int;
 BEGIN
     _message := '';
+    _returnCode := '';
 
     -- Check for Null values
     _organismDBFileName := Trim(Coalesce(_organismDBFileName, ''));
@@ -92,8 +91,8 @@ BEGIN
 
     If char_length(_organismName) < 1 Then
         _msg := 'Org DB validation failure: Organism Name cannot be blank';
-        _myError := -50001;
-        RAISERROR(_msg, 10, 1)
+        _returnCode := 'U5001';
+        RAISE WARNING '%', _msg;
     End If;
 
     If char_length(_organismDBFileName) < 1 and char_length(_protCollNameList) > 0 Then
@@ -108,8 +107,8 @@ BEGIN
 
     If (char_length(_organismDBFileName) = 0 and char_length(_protCollNameList) = 0) OR (_organismDBFileName = 'na' AND _protCollNameList = 'na') Then
         _msg := 'Org DB validation failure: Protein collection list and Legacy Fasta (OrgDBName) name cannot both be blank (or "na")';
-        _myError := -50001;
-        RAISERROR(_msg, 10 ,1)
+        _returnCode := 'U5001';
+        RAISE WARNING '%', _msg;
     End If;
 
     If _protCollNameList <> 'na' AND char_length(_protCollNameList) > 0 Then
@@ -117,35 +116,25 @@ BEGIN
         -- No error needed, just fix it
     End If;
 
-    If _myError <> 0 Then
+    If _returnCode <> '' Then
         _message := _msg;
-        return _myError
+        RETURN;
     End If;
 
     /****************************************************************
     ** Check Validity of Organism Name
     ****************************************************************/
 
-    SELECT ID INTO _organismID
+    SELECT ID
+    INTO _organismID
     FROM V_Organism_Picker
-    WHERE Short_Name = _organismName
+    WHERE Short_Name = _organismName;
 
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    If _myError <> 0 Then
-        _msg := 'Database retrieval error during organism name check (Protein_Sequences.V_Organism_Picker)';
-        _myError := -50010;
-        _message := _msg;
-        RAISERROR (_msg, 10, 1)
-        return _myError
-    End If;
-
-    If _myRowCount < 1 Then
-        _msg := 'Organism "' || _organismName || '" does not exist (Protein_Sequences.V_Organism_Picker)';
-        _myError := -50011;
-        _message := _msg;
-        RAISERROR (_msg, 10, 1)
-        return _myError
+    If Not FOUND Then
+        _message := 'Organism "' || _organismName || '" does not exist (Protein_Sequences.V_Organism_Picker)';
+        _returnCode := 'U5011';
+        RAISE WARNING '%', _message;
+        RETURN;
     End If;
 
     /****************************************************************
@@ -158,26 +147,16 @@ BEGIN
             _organismDBFileName := _organismDBFileName || '.fasta';
         End If;
 
-        SELECT ID INTO _legacyFileID
+        SELECT ID
+        INTO _legacyFileID
         FROM V_Legacy_Static_File_Locations
         WHERE FileName = _organismDBFileName
 
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        If _myError <> 0 Then
-            _msg := 'Database retrieval error during Organsim DB Filename check (Protein_Sequences.V_Legacy_Static_File_Locations)';
-            _myError := -50010;
-            _message := _msg;
-            RAISERROR (_msg, 10, 1)
-            return _myError
-        End If;
-
-        If _myRowCount < 1 Then
-            _msg := 'FASTA file "' || _organismDBFileName || '" does not exist (Protein_Sequences.V_Legacy_Static_File_Locations)';
-            _myError := -50011;
-            _message := _msg;
-            RAISERROR (_msg, 10, 1)
-            return _myError
+        If Not FOUND Then
+            _message := 'FASTA file "' || _organismDBFileName || '" does not exist (Protein_Sequences.V_Legacy_Static_File_Locations)';
+            _returnCode := 'U5011';
+            RAISE WARNING '%', _message;
+            RETURN;
         End If;
     End If; -- </a1>
 
@@ -219,20 +198,11 @@ BEGIN
             FROM pc.t_protein_collections
             WHERE collection_name = _tmpCollName
 
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            If _myError <> 0 Then
-                _msg := 'Database retrieval error during collection name check (Protein_Sequences.t_protein_collections)';
-                _message := _msg;
-                RAISERROR (_msg, 10, 1)
-                return _myError
-            End If;
-
-            If _myRowCount = 0 Then
-                _msg := '"' || _tmpCollName || '" was not found in the Protein Collection List';
-                _message := _msg;
-                RAISERROR (_msg, 10, 1)
-                return -50001
+            If Not FOUND Then
+                _message := '"' || _tmpCollName || '" was not found in the Protein Collection List';
+                _returnCode := 'U5011';
+                RAISE WARNING '%', _message;
+                RETURN;
             End If;
 
             If _isEncrypted > 0 Then
@@ -245,10 +215,10 @@ BEGIN
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
                 If _myRowCount = 0 Then
-                    _msg := _ownerPRN || ' is not authorized for the encrypted collection "' || _tmpCollName || '"';
-                    _message := _msg;
-                    RAISERROR (_msg, 10, 1)
-                    return -50020
+                    _message := _ownerPRN || ' is not authorized for the encrypted collection "' || _tmpCollName || '"';
+                    _returnCode := 'U5020';
+                    RAISE WARNING '%', _message;
+                    RETURN;
                 End If;
 
             End If; -- </c2>
@@ -298,7 +268,7 @@ BEGIN
                     If _tmpOptionString <> 'na' Then
                         _msg := 'Keyword: "' || _tmpOptionString || '" not followed by an equals sign';
                         _message := _msg;
-                        return -50011
+                        return 'U5011'
                     End If;
                 Else
                 -- <d3>
@@ -315,24 +285,16 @@ BEGIN
                     FROM pc.t_creation_option_keywords
                     WHERE keyword = _tmpOptionKeyword
 
-                    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-                    If _myError = 0 and _myRowCount > 0 Then
-                        INSERT INTO _tmpOptionTable (Keyword_ID, Keyword, Value)
-                        VALUES (_tmpOptionKeywordID, _tmpOptionKeyword, _tmpOptionValue)
+                    If Not FOUND Then
+                        _message := 'Keyword: "' || _tmpOptionKeyword || '" not located';
+                        _returnCode := 'U5011';
+                        RAISE WARNING '%', _message;
+                        RETURN;
                     End If;
 
-                    If _myError > 0 Then
-                        _msg := 'Database retrieval error during keyword validity check';
-                        _message := _msg;
-                        return _myError
-                    End If;
+                    INSERT INTO _tmpOptionTable (Keyword_ID, Keyword, Value)
+                    VALUES (_tmpOptionKeywordID, _tmpOptionKeyword, _tmpOptionValue);
 
-                    If _myRowCount = 0 Then
-                        _msg := 'Keyword: "' || _tmpOptionKeyword || '" not located';
-                        _message := _msg;
-                        return -50011
-                    End If;
                 End If; -- </d3>
             End If; -- </c3>
 
@@ -375,37 +337,29 @@ BEGIN
                 End If;
 
                 --Check Specified Value Existence
-                SELECT Value INTO _tmpOptionValue
+                SELECT Value
+                INTO _tmpOptionValue
                 FROM _tmpOptionTable
-                WHERE Keyword = _tmpOptionKeyword
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE Keyword = _tmpOptionKeyword;
 
-                If _myError = 0 and _myRowCount > 0 Then
-                -- <d4>
+                If FOUND Then
+                    _keywordFound := true;
+
                     -- Validate _tmpOptionValue against pc.t_creation_option_values
                     SELECT OptValues.value_string INTO _tmpOptionValue
                     FROM pc.t_creation_option_values OptValues INNER JOIN
                             pc.t_creation_option_keywords OptKeywords ON OptValues.keyword_id = OptKeywords.keyword_id
                     WHERE OptKeywords.keyword = _tmpOptionKeyword AND
                             OptValues.value_string = _tmpOptionValue
-                    --
-                    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                    If _myError = 0 and _myRowCount > 0 Then
-                        _cleanOptionString := _cleanOptionString + _tmpOptionKeyword || '=' || _tmpOptionValue;
+                    If FOUND Then
+                        _cleanOptionString := _cleanOptionString || _tmpOptionKeyword || '=' || _tmpOptionValue;
                     End If;
 
                 End If;-- </d4>
 
-                If _myError <> 0 Then
-                    _msg := 'Database retrieval error during keyword validity check';
-                    _message := _msg;
-                    return _myError
-                End If;
-
-                If _myRowCount = 0 and _keywordIsReqd > 0 Then
-                    _cleanOptionString := _cleanOptionString + _tmpOptionKeyword || '=' || _keywordDefaultValue;
+                If Not _keywordFound And _keywordIsReqd > 0 Then
+                    _cleanOptionString := _cleanOptionString || _tmpOptionKeyword || '=' || _keywordDefaultValue;
                 End If;
 
             End If; -- </c4>
@@ -413,8 +367,6 @@ BEGIN
 
         _protCollOptionsList := _cleanOptionString;
     End If; -- </a2>
-
-    return _myError
 
 END
 $$;
