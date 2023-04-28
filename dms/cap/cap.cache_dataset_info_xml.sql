@@ -7,19 +7,21 @@ CREATE OR REPLACE PROCEDURE cap.cache_dataset_info_xml(IN _datasetid integer, IN
     AS $$
 /****************************************************
 **
-**  Desc:   Caches the XML-based dataset info in table cap.t_dataset_info_xml
+**  Desc:
+**      Caches the XML-based dataset info in table cap.t_dataset_info_xml
 **
 **  Auth:   mem
 **  Date:   05/03/2010 mem - Initial version
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/07/2022 mem - Ported to PostgreSQL
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
     _schemaName text;
     _nameWithSchema text;
-    _authorized bool;
+    _authorized boolean;
 BEGIN
 
     _message := '';

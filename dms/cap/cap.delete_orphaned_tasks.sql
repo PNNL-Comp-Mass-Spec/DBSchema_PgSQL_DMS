@@ -7,13 +7,15 @@ CREATE OR REPLACE PROCEDURE cap.delete_orphaned_tasks(IN _infoonly boolean DEFAU
     AS $$
 /****************************************************
 **
-**  Desc:   Delete capture task jobs with state = 0 where the dataset no longer exists in DMS
+**  Desc:
+**      Delete capture task jobs with state = 0 where the dataset no longer exists in DMS
 **
 **  Auth:   mem
 **  Date:   05/22/2019 mem - Initial version
 **          10/11/2022 mem - Ported to PostgreSQL
 **          02/02/2023 mem - Update table aliases
 **          04/02/2023 mem - Rename procedure and functions
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
@@ -44,7 +46,7 @@ BEGIN
     --
     CREATE TEMP TABLE Tmp_JobsToDelete (
         Job int Not Null,
-        HasDependencies bool Not null
+        HasDependencies boolean Not null
     );
 
     CREATE INDEX IX_Tmp_JobsToDelete_Job On Tmp_JobsToDelete (Job);

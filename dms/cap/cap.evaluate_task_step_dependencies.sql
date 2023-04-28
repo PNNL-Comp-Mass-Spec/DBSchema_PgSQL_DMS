@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **          11/30/2022 mem - Use clock_timestamp() when determining elapsed runtime
 **          02/02/2023 mem - Update table aliases
 **          04/02/2023 mem - Rename procedure and functions
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
@@ -36,7 +37,7 @@ DECLARE
     _stepInfo record;
     _triggered int;
     _actualValue int;
-    _done bool;
+    _done boolean;
     _outputDirectoryName text;
     _targetCompletionMessage text;
 BEGIN

@@ -33,11 +33,12 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          08/24/2022 mem - Log to public.t_log_entries if the specified schema does not have a t_log_entries table
 **          08/26/2022 mem - Use new column name in t_log_entries
 **          12/12/2022 mem - Whitespace update
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
     _targetTableWithSchema text;
-    _logTableFound bool;
+    _logTableFound boolean;
     _minimumPostingTime timestamp;
     _duplicateRowCount int := 0;
     _s text;

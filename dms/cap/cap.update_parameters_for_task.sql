@@ -36,12 +36,13 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_task(IN _joblist text, INO
 **          08/31/2022 mem - Rename view V_DMS_Capture_Job_Parameters to V_DMS_Dataset_Metadata
 **          10/08/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
     _schemaName text;
     _nameWithSchema text;
-    _authorized bool;
+    _authorized boolean;
 
     _jobInfo record;
     _xmlParameters xml;

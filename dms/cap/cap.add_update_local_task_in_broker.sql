@@ -48,16 +48,17 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          08/31/2022 mem - Remove unused variables and fix call to local_error_handler
 **          09/01/2022 mem - Change default value for _mode and send '<auto>' to get_current_function_info()
 **          04/02/2023 mem - Rename procedure and functions
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
     _schemaName text;
     _nameWithSchema text;
-    _authorized bool;
+    _authorized boolean;
 
-    _logErrors bool := true;
+    _logErrors boolean := true;
     _state int;
-    _reset bool := false;
+    _reset boolean := false;
 
     _sqlState text;
     _exceptionMessage text;

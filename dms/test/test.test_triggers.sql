@@ -27,17 +27,18 @@ CREATE OR REPLACE FUNCTION test.test_triggers(_createitems integer DEFAULT 0, _u
 **  Auth:   mem
 **  Date:   08/09/2022 mem - Initial version
 **          02/08/2023 mem - Switch from PRN to username
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
     _baseName text;
     _today date;
     _action text;
-    _campaignsFoundOrCreated bool;
-    _experimentsFoundOrCreated bool;
-    _datasetsFoundOrCreated bool;
-    _jobsFoundOrCreated bool;
-    _plexMappingFoundOrCreated bool;
+    _campaignsFoundOrCreated boolean;
+    _experimentsFoundOrCreated boolean;
+    _datasetsFoundOrCreated boolean;
+    _jobsFoundOrCreated boolean;
+    _plexMappingFoundOrCreated boolean;
     _username text;
     _campaignID int;
     _experimentID int;
@@ -97,7 +98,7 @@ BEGIN
         Exp_ID int not null,
         Channel_Type_ID int not null,
         Comment text null,
-        Mapping_Defined bool not null
+        Mapping_Defined boolean not null
     );
 
     -----------------------------------------------------------------

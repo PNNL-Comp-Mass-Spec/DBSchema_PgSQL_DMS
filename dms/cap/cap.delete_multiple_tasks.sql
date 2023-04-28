@@ -21,12 +21,13 @@ CREATE OR REPLACE PROCEDURE cap.delete_multiple_tasks(IN _joblist text, INOUT _m
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/11/2022 mem - Ported to PostgreSQL
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
     _schemaName text;
     _nameWithSchema text;
-    _authorized bool;
+    _authorized boolean;
 
     _jobCount int;
     _jobCountDeleted int;

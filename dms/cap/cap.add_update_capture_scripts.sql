@@ -29,12 +29,13 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          10/04/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Raise a warning if an invalid operation
 **          12/09/2022 mem - Change _mode to lowercase
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
     _schemaName text;
     _nameWithSchema text;
-    _authorized bool;
+    _authorized boolean;
 
     _scriptId int;
     _scriptXML xml;

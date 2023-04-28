@@ -20,11 +20,12 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_after_insert_or_update_v
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/07/2022 mem - Use If Not Exists() when validating the settings file name
 **                         - Reference the NEW and OLD variables directly instead of using transition tables (which contain every new or updated row, not just the current row)
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
-    _validateSettingsFile bool;
-    _updateDeconToolsJob bool;
+    _validateSettingsFile boolean;
+    _updateDeconToolsJob boolean;
     _iteration int;
     _datasetID int;
     _bestJobByDataset record;

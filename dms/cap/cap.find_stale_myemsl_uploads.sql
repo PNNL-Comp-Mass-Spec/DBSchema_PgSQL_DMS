@@ -18,10 +18,11 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **                         - Pass _logMessage to PostLogEntry
 **          10/11/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
-    _foundRetrySuccessTasks bool := false;
+    _foundRetrySuccessTasks boolean := false;
     _entryID int;
     _job int;
     _entryIDList text;
@@ -61,7 +62,7 @@ BEGIN
         Dataset_ID int Not Null,
         Subdirectory text Not Null,
         Entered timestamp,
-        RetrySucceeded bool
+        RetrySucceeded boolean
     );
 
     INSERT INTO Tmp_StaleUploads( entry_id,

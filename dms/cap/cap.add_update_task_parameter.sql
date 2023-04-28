@@ -34,14 +34,15 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          08/26/2022 mem - verify_sp_authorized now has boolean parameters
 **          08/27/2022 mem - Change arguments _infoOnly and _deleteParam from int to boolean
 **          09/01/2022 mem - Send '<auto>' to get_current_function_info()
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
-    _showDebug bool;
+    _showDebug boolean;
     _schemaName text;
     _nameWithSchema text;
-    _authorized bool;
-    _existingParamsFound bool = false;
+    _authorized boolean;
+    _existingParamsFound boolean = false;
     _xmlParameters xml;
     _results record;
 BEGIN

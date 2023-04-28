@@ -20,12 +20,13 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN 
 **          10/06/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Raise a warning if an invalid operation
 **          12/09/2022 mem - Change _mode to lowercase
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
     _schemaName text;
     _nameWithSchema text;
-    _authorized bool;
+    _authorized boolean;
 
     _stepToolId int;
     _myRowCount int;

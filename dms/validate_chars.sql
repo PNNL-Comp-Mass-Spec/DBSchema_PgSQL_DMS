@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.validate_chars(_string text, _validch text DEF
 **  Date:   04/30/2007 grk - Ticket #450
 **          02/13/2008 mem - Updated to check for _string containing a space (Ticket #602)
 **          06/24/2022 mem - Ported to PostgreSQL
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
@@ -28,7 +29,7 @@ DECLARE
     _position int;
     _stringLength int;
     _badChars text;
-    _warnSpace bool;
+    _warnSpace boolean;
 BEGIN
     IF Coalesce(_validCh, '') = '' Then
         _validCh := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';

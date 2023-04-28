@@ -44,10 +44,11 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **          05/06/2012 grk - Added support for experiments
 **          06/18/2022 mem - Ported to PostgreSQL
 **          11/15/2022 mem - Use new column name
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
-    _includeAll bool;
+    _includeAll boolean;
     _result text;
     _newline text := chr(10);
     _paramXML XML;

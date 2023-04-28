@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infolevel 
 **  Date:   07/30/2022 mem - Initial version
 **          07/31/2022 mem - Remove duplicate entries (same object, command, and entry time)
 **          12/23/2022 mem - Rename parameter to _infoLevel
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
         schema_change_log_id int,
         version_rank int,
         current_source_length int,
-        trim_data bool Null
+        trim_data boolean Null
     );
 
     INSERT INTO T_Tmp_SchemaChangeLogRank (schema_change_log_id, version_rank, current_source_length)

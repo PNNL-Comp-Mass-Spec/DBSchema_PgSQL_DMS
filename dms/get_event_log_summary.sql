@@ -6,12 +6,14 @@ CREATE OR REPLACE FUNCTION public.get_event_log_summary(_startdate timestamp wit
     LANGUAGE plpgsql
     AS $$
 /****************************************************
+**
 **  Desc:
 **      Summarizes DMS activity, errors, and warnings between the start and end timestamps
 **
 **  Auth:   mem
 **  Date:   07/12/2022 mem - Initial release (based on view V_Event_Log_24_Hour_Summary)
 **          08/26/2022 mem - Use new column name in t_log_entries
+**          04/27/2023 mem - Use boolean for data type name
 **
 *****************************************************/
 DECLARE
@@ -19,7 +21,7 @@ DECLARE
     _rangeDescription citext;
     _hoursInRange int;
     _daysInRange int;
-    _isPreviousHours bool;
+    _isPreviousHours boolean;
 BEGIN
 
     _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '24 hours');
