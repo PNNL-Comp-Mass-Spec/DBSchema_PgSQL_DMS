@@ -6,9 +6,9 @@ CREATE VIEW public.v_run_planning_report AS
  SELECT groupq.inst_group,
     groupq.ds_type,
         CASE
-            WHEN (groupq.fraction_count > 1) THEN (groupq.run_count * groupq.fraction_count)
-            ELSE groupq.run_count
-        END AS run_count,
+            WHEN (groupq.fraction_count > 1) THEN (groupq.requests * groupq.fraction_count)
+            ELSE groupq.requests
+        END AS requests,
     groupq.blocked,
     groupq.block_missing,
         CASE
@@ -55,7 +55,7 @@ CREATE VIEW public.v_run_planning_report AS
         END AS fraction_color_mode
    FROM ((( SELECT requestq.inst_group,
             min(requestq.requestid) AS min_request,
-            count(requestq.requestid) AS run_count,
+            count(requestq.requestid) AS requests,
             min(requestq.request_prefix) AS request_prefix,
             requestq.requester,
             min(requestq.request_created) AS date_created,

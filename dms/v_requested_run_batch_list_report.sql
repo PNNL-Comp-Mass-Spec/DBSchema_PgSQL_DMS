@@ -6,7 +6,7 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
  SELECT rrb.batch_id AS id,
     rrb.batch AS name,
     rbs.active_requests AS requests,
-    rbs.datasets AS runs,
+    rbs.datasets,
     rbs.blocked,
     rbs.block_missing,
     rbs.first_active_request,
