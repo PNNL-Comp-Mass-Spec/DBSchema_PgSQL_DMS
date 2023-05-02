@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset
     _datasetNameOld text = '',
     _datasetNameNew text = '',
     _newRequestedRunID int = 0,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = true
 )
 LANGUAGE plpgsql

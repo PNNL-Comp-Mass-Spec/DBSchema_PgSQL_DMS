@@ -11,17 +11,17 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package
     _state text,
     _samplePrepRequestList text,
     _userFolderPath text,
-    _mode text = 'add',
-    INOUT _message text,
-    _callingUser text = ''
+    _mode text default 'add',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
+    _callingUser text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**    Adds new or edits existing item in
-**    T_OSM_Package
+**    Adds new or edits existing item in T_OSM_Package
 **
 **  Arguments:
 **    _mode   or 'update'
@@ -49,185 +49,185 @@ DECLARE
     _logErrors int := 0;
     _authorized int := 0;
     _rootPath int;
-    _iTM TABLE (;
     _badIDs text := '';
     _goodIDs text := '';
-    _tmp int := 0;
     _wikiLink text := '';
     _msgForLog text := ERROR_MESSAGE();
 BEGIN
-
     _message := '';
-
-    BEGIN TRY
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    Call _authorized => verify_sp_authorized 'AddUpdateOSMPackage', _raiseError => 1
-    If _authorized = 0 Then
-        RAISERROR ('Access denied', 11, 3)
+    SELECT schema_name, name_with_schema
+    INTO _schemaName, _nameWithSchema
+    FROM get_current_function_info('<auto>', _showDebug => false);
+
+    SELECT authorized
+    INTO _authorized
+    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+
+    If Not _authorized Then
+        -- Commit changes to persist the message logged to public.t_log_entries
+        COMMIT;
+
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        RAISE EXCEPTION '%', _message;
     End If;
 
-    ---------------------------------------------------
-    -- Get active path
-    ---------------------------------------------------
-    --
-    --
-    SELECT path_id INTO _rootPath
-    FROM dpkg.t_osm_package_storage
-    WHERE state = 'Active'
+    BEGIN TRY
 
-    ---------------------------------------------------
-    -- Validate sample prep request list
-    ---------------------------------------------------
 
-    -- Table variable to hold items from sample prep request list
-        Item INT,
-        Valid CHAR(1) null
-    )
-    -- populate table from sample prep request list
-    INSERT INTO _iTM ( Item, Valid)
-    SELECT Item, 'N' FROM public.parse_delimited_list(_samplePrepRequestList)
-
-    -- mark sample prep requests that exist in the database
-    UPDATE TX
-    SET Valid = 'Y'
-    FROM _iTM TX INNER JOIN dbo.S_Sample_Prep_Request_List SPL ON TX.Item = SPL.ID
-
-    -- get list of any list items that weren't in the database
-    SELECT @badIDs + CASE WHEN @badIDs <> '' THEN ', ' + CONVERT(VARCHAR(12), Item) ELSE CONVERT(VARCHAR(12), Item) END INTO _badIDs
-    FROM _iTM
-    WHERE Valid = 'N'
-
-    IF _badIDs <> '' Then
-        _message := 'Sample prep request IDs "' || _badIDs || '" do not exist';
-        RAISERROR (_message, 11, 31)
-    End If;
-
-    SELECT @goodIDs + CASE WHEN @goodIDs <> '' THEN ', ' + CONVERT(VARCHAR(12), Item) ELSE CONVERT(VARCHAR(12), Item) END INTO _goodIDs
-    FROM _iTM
-    ORDER BY Item
-
-    ---------------------------------------------------
-    -- Validate the state
-    ---------------------------------------------------
-
-    If Not Exists (SELECT * FROM dpkg.t_osm_package_state WHERE "state_name" = _state) Then
-        _message := 'Invalid state: ' || _state;
-        RAISERROR (_message, 11, 32)
-    End If;
-
-    ---------------------------------------------------
-    -- Is entry already in database? (only applies to updates)
-    ---------------------------------------------------
-
-    if _mode = 'update' Then
-        -- cannot update a non-existent entry
+        ---------------------------------------------------
+        -- Get active path
+        ---------------------------------------------------
         --
-        --
-        SELECT osm_pkg_id INTO _tmp
-        FROM  dpkg.t_osm_package
-        WHERE (osm_pkg_id = _id)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 OR _tmp = 0 Then
-            RAISERROR ('No entry could be found in database for update', 11, 16);
-        End If;
-    End If;
+        SELECT path_id
+        INTO _rootPath
+        FROM dpkg.t_osm_package_storage
+        WHERE state = 'Active';
 
-    _logErrors := 1;
+        ---------------------------------------------------
+        -- Validate sample prep request list
+        ---------------------------------------------------
 
-    ---------------------------------------------------
-    -- action for add mode
-    ---------------------------------------------------
-    if _mode = 'add' Then
+        -- Table variable to hold items from sample prep request list
+        CREATE TEMP TABLE Tmp_PrepRequestItems
+            Item int,
+            Valid boolean not null
+        );
 
-    -- Make sure the data package name doesn't already exist
-    If Exists (SELECT * FROM dpkg.t_osm_package WHERE osm_package_name = _name) Then
-        _message := 'OSM package osm_package_name "' || _name || '" already exists; cannot create an identically named package';
-        RAISERROR (_message, 11, 1)
-    End If;
+        -- populate table from sample prep request list
+        INSERT INTO Tmp_PrepRequestItems ( Item, Valid)
+        SELECT Item, false
+        FROM public.parse_delimited_integer_list(_samplePrepRequestList);
 
-    -- create wiki page link
-    if NOT _name IS NULL Then
-        _wikiLink := 'http://prismwiki.pnl.gov/wiki/OSMPackages:' || REPLACE(_name, ' ', '_');
-    End If;
+        -- Mark sample prep requests that exist in the database
+        UPDATE Tmp_PrepRequestItems
+        SET Valid = true
+        WHERE Item in (SELECT prep_request_id FROM T_Sample_Prep_Request);
 
-    INSERT INTO dpkg.t_osm_package (
-        osm_package_name,
-        package_type,
-        description,
-        keywords,
-        comment,
-        owner,
-        state,
-        wiki_page_link,
-        path_root,
-        sample_prep_requests,
-        user_folder_path
-    ) VALUES (
-        _name,
-        _packageType,
-        _description,
-        _keywords,
-        _comment,
-        _owner,
-        _state,
-        _wikiLink,
-        _rootPath,
-        _goodIDs,
-        _userFolderPath
-    )
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    if _myError <> 0 Then
-        RAISERROR ('Insert operation failed', 11, 7);
-    End If;
+        -- get list of any list items that weren't in the database
+        SELECT string_agg(item::text, ', ' ORDER BY item)
+        INTO _badIDs
+        FROM Tmp_PrepRequestItems
+        WHERE Not Valid;
 
-    -- return ID of newly created entry
-    --
-    _id := IDENT_CURRENT('dpkg.t_osm_package');
-
-    End If; -- add mode
-
-    ---------------------------------------------------
-    -- action for update mode
-    ---------------------------------------------------
-    --
-    if _mode = 'update' Then
-        --
-        UPDATE dpkg.t_osm_package
-        SET
-            osm_package_name = _name,
-            package_type = _packageType,
-            description = _description,
-            keywords = _keywords,
-            comment = _comment,
-            owner = _owner,
-            state = _state,
-            last_modified = CURRENT_TIMESTAMP,
-            sample_prep_requests = _goodIDs,
-            user_folder_path = _userFolderPath
-        WHERE (osm_pkg_id = _id)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            RAISERROR ('Update operation failed: "%s"', 11, 4, _id);
+        IF _badIDs <> '' Then
+            _message := format('Sample prep request IDs "%s" do not exist', _badIDs);
+            RAISERROR (_message, 11, 31)
         End If;
 
-    End If; -- update mode
+        SELECT string_agg(Item::text, ', ' ORDER BY item)
+        INTO _goodIDs
+        FROM Tmp_PrepRequestItems;
 
-    ---------------------------------------------------
-    -- Create the OSM package folder when adding a new OSM package
-    ---------------------------------------------------
-    if _mode = 'add' Then
-        Call _my_error => MakeOSMPackageStorageFolder _id, _mode, _message => _message output, _callingUser => _callingUser;
-    End If;
+        ---------------------------------------------------
+        -- Validate the state
+        ---------------------------------------------------
+
+        If Not Exists (SELECT * FROM dpkg.t_osm_package_state WHERE state_name = _state) Then
+            _message := 'Invalid state: ' || _state;
+            RAISERROR (_message, 11, 32)
+        End If;
+
+        ---------------------------------------------------
+        -- Is entry already in database? (only applies to updates)
+        ---------------------------------------------------
+
+        if _mode = 'update' Then
+            -- cannot update a non-existent entry
+            --
+            If Not Exists (SELECT osm_pkg_id FROM dpkg.t_osm_package WHERE osm_pkg_id = _id) Then
+                RAISERROR ('No entry could be found in database for update', 11, 16);
+            End If;
+        End If;
+
+        _logErrors := 1;
+
+        ---------------------------------------------------
+        -- action for add mode
+        ---------------------------------------------------
+        if _mode = 'add' Then
+
+            -- Make sure the data package name doesn't already exist
+            If Exists (SELECT * FROM dpkg.t_osm_package WHERE osm_package_name = _name) Then
+                _message := 'OSM package osm_package_name "' || _name || '" already exists; cannot create an identically named package';
+                RAISERROR (_message, 11, 1)
+            End If;
+
+            -- create wiki page link
+            if NOT _name IS NULL Then
+                _wikiLink := 'http://prismwiki.pnl.gov/wiki/OSMPackages:' || REPLACE(_name, ' ', '_');
+            End If;
+
+            INSERT INTO dpkg.t_osm_package (
+                osm_package_name,
+                package_type,
+                description,
+                keywords,
+                comment,
+                owner,
+                state,
+                wiki_page_link,
+                path_root,
+                sample_prep_requests,
+                user_folder_path
+            ) VALUES (
+                _name,
+                _packageType,
+                _description,
+                _keywords,
+                _comment,
+                _owner,
+                _state,
+                _wikiLink,
+                _rootPath,
+                _goodIDs,
+                _userFolderPath
+            )
+            RETURNING xyz
+            INTO _id;
+
+        End If; -- add mode
+
+        ---------------------------------------------------
+        -- action for update mode
+        ---------------------------------------------------
+        --
+        if _mode = 'update' Then
+            --
+            UPDATE dpkg.t_osm_package
+            SET
+                osm_package_name = _name,
+                package_type = _packageType,
+                description = _description,
+                keywords = _keywords,
+                comment = _comment,
+                owner = _owner,
+                state = _state,
+                last_modified = CURRENT_TIMESTAMP,
+                sample_prep_requests = _goodIDs,
+                user_folder_path = _userFolderPath
+            WHERE osm_pkg_id = _id;
+
+        End If; -- update mode
+
+        ---------------------------------------------------
+        -- Create the OSM package folder when adding a new OSM package
+        ---------------------------------------------------
+        If _mode = 'add' Then
+            Call Make_OSM_Package_Storage_Folder (
+                        _id,
+                        _mode,
+                        _message => _message,           -- Output
+                        _returnCode => returnCode,      -- Output
+                        _callingUser => _callingUser);
+        End If;
+
+        DROP TABLE Tmp_PrepRequestItems;
 
     END TRY
     BEGIN CATCH
@@ -242,9 +242,9 @@ BEGIN
             Call post_log_entry 'Error', _msgForLog, 'AddUpdateOSMPackage'
         End If;
 
+        DROP TABLE IF EXISTS Tmp_PrepRequestItems;
     END CATCH
 
-    return _myError
 END
 $$;
 

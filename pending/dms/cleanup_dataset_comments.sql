@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.cleanup_dataset_comments
 (
     _datasetIDs text,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = true
 )
 LANGUAGE plpgsql

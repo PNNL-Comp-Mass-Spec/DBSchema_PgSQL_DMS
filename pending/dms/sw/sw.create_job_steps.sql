@@ -1,8 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.create_job_steps
 (
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _mode text = 'CreateFromImportedJobs',
     _existingJob int = 0,
     _extensionScriptName text = '',

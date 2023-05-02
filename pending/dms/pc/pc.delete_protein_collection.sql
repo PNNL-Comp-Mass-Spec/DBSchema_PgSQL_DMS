@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE pc.delete_protein_collection
 (
     _collectionID int,
-    INOUT _message text=''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -35,6 +36,7 @@ BEGIN
     Set XACT_ABORT, nocount on
 
     _message := '';
+    _returnCode:= '';
 
     _currentLocation := 'Start';
 
@@ -110,20 +112,12 @@ BEGIN
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myError <> 0 Then
-            RAISERROR ('Error deleting rows from pc.t_archived_output_file_collections_xref', 11, 1);
-        End If;
-
         -- Delete the entry from pc.t_archived_output_files if not used in pc.t_archived_output_file_collections_xref
         If Not Exists (SELECT * FROM pc.t_archived_output_file_collections_xref where archived_file_id = _archivedFileID) Then
             DELETE FROM pc.t_archived_output_files
             WHERE (archived_file_id = _archivedFileID)
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            If _myError <> 0 Then
-                RAISERROR ('Error deleting rows from pc.t_archived_output_files', 11, 1);
-            End If;
         End If;
 
         -- Delete the entry from pc.t_annotation_groups
@@ -132,28 +126,16 @@ BEGIN
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myError <> 0 Then
-            RAISERROR ('Error deleting rows from pc.t_annotation_groups', 11, 1);
-        End If;
-
         DELETE FROM pc.t_protein_collection_members_cached
         WHERE (protein_collection_id = _collectionID)
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        If _myError <> 0 Then
-            RAISERROR ('Error deleting rows from pc.t_protein_collection_members_cached', 11, 1);
-        End If;
 
         -- Delete the entry from pc.t_protein_collections
         DELETE FROM pc.t_protein_collections
         WHERE protein_collection_id = _collectionID
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        If _myError <> 0 Then
-            RAISERROR ('Error deleting rows from pc.t_protein_collections', 11, 1);
-        End If;
 
         commit transaction _transname
 

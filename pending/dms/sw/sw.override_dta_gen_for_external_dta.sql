@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.override_dta_gen_for_external_dta
 (
     _job int,
     _xmlParameters xml,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -28,6 +29,7 @@ DECLARE
     _externalDTAFolderName text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Get parameter, if present

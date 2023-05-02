@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_run_op_log
 (
     _changes text,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -125,7 +125,7 @@ BEGIN
         WHERE Tmp_RequestedRunUsageInfo.request = RR.request_id;
 
         ---------------------------------------------------
-        -- Create temp table to hold interval changes
+        -- Create temporary table to hold interval changes
         -- and populate it from the input XML
         ---------------------------------------------------
 

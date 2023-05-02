@@ -6,8 +6,8 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats
     _topNPct int,
     _observationStatsTopNPct text,
     _medianIntensitiesTopNPct text,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql

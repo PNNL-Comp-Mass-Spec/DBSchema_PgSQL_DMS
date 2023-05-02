@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.add_bom_tracking_dataset
     _year text = '',
     _instrumentName text,
     _mode text = 'add',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text  = 'D3E154',
 )
 LANGUAGE plpgsql

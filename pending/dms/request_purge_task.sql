@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.request_purge_task
     _serverDisk text,
     _excludeStageMD5RequiredDatasets boolean = true,
     INOUT _results refcursor DEFAULT '_results'::refcursor
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _previewCount int = 5,
     _previewSql boolean = false

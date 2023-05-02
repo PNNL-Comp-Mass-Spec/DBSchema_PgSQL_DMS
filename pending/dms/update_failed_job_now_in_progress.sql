@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE public.update_failed_job_now_in_progress
     _jobStart timestamp,
     _updateCode int,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -32,6 +33,7 @@ DECLARE
     _updateCodeExpected int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _datasetName := '';
 

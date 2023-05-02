@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.update_instrument_group_allowed_dataset_type
     _datasetType text,
     _comment text,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

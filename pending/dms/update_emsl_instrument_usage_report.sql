@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report
     _instrument text,
     _eusInstrumentId int,
     _endDate timestamp,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -130,6 +131,7 @@ BEGIN
     End If;
 
     _message := '';
+    _returnCode:= '';
 
     BEGIN
         _maxNormalInterval := get_long_interval_threshold();

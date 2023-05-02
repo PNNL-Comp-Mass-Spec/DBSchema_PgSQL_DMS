@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE cap.reset_failed_capture_task_managers
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -35,6 +36,7 @@ BEGIN
     --
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Find managers reporting error 'Flag file' within the last 6 hours

@@ -2,7 +2,8 @@
 
 CREATE OR REPLACE PROCEDURE cap.update_task_step_states
 (
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _maxJobsToProcess int = 0,
     _loopingUpdateInterval int = 5
@@ -30,6 +31,7 @@ DECLARE
     _done boolean := false;
 BEGIN
     _message := '';
+    _returnCode:= '';
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     ---------------------------------------------------

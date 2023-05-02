@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_separation_type
     _sampleType text,
     _state text = 'Active',
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -45,6 +46,7 @@ DECLARE
     _datasetName text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate input fields

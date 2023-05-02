@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.report_dataset_instrument_runtime
     _endDate text = '',
     _instrumentName text = 'Exact01',
     _reportOptions text = 'Show All',
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.duplicate_param_file_mass_mods
     _destParamFileID int,
     _updateParamEntries boolean = true,
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

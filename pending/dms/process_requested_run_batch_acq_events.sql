@@ -27,6 +27,7 @@ DECLARE
     _batchID int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _callingUser := get_user_login_without_domain();
 

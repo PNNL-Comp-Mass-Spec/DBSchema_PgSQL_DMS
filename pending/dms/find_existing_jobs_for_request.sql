@@ -40,6 +40,7 @@ DECLARE
     _misMatchCount int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     CREATE TEMP TABLE Tmp_ExistingJobs (
         Job Int Not null

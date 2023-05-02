@@ -1,82 +1,53 @@
---
 CREATE OR REPLACE PROCEDURE pc.update_protein_sequence_info
 (
     _proteinID int,
     _sequence text,
     _length int,
     _molecularFormula text,
-    _monoisotopicMass float,
-    _averageMass float,
+    _monoisotopicMass float8,
+    _averageMass float8,
     _sha1Hash text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds a new protein sequence entry to T_Proteins
-**
-**
+**  Desc:
+**      Update an existing protein
 **
 **  Auth:   kja
 **  Date:   10/06/2004
-**          12/15/2023 mem - Ported to PostgreSQL
+**          05/01/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
-    _tmpHash as text;
-    _transName text;
+    _tmpHash text;
 BEGIN
+
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Does entry already exist?
     ---------------------------------------------------
 
-    SELECT sha1_hash INTO _tmpHash
+    SELECT sha1_hash
+    INTO _tmpHash
     FROM pc.t_proteins
-    WHERE protein_id = _proteinID
+    WHERE protein_id = _proteinID;
 
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    if _myRowCount = 0 Then
-        _msg := 'Protein ID ' || _proteinID || ' not found';
-        RAISERROR(_msg, 10, 1)
-        return  -50001
+    If Not FOUND Then
+        _message := format('Protein ID %s not found', _proteinID);
+        RAISE WARNING '%', _message;
+        _returnCode := 'U5001';
+        RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Start transaction
+    -- Action for update mode
     ---------------------------------------------------
-
-    _transName := 'UpdateProteinCollectionEntry';
-    begin transaction _transName
-
-    ---------------------------------------------------
-    -- action for update mode
-    ---------------------------------------------------
-/*        INSERT INTO pc.t_proteins (
-            "sequence",
-            length,
-            molecular_formula,
-            monoisotopic_mass,
-            average_mass,
-            sha1_hash,
-            date_created,
-            date_modified
-        ) VALUES (
-            _sequence,
-            _length,
-            _molecularFormula,
-            _monoisotopicMass,
-            _averageMass,
-            _sha1Hash,
-            CURRENT_TIMESTAMP,
-            CURRENT_TIMESTAMP
-        )
-
-    SELECT @@Identity          INTO _proteinID
-*/
 
     UPDATE pc.t_proteins
     SET "sequence" = _sequence,
@@ -86,22 +57,17 @@ BEGIN
         average_mass = _averageMass,
         sha1_hash = _sha1Hash,
         date_modified = CURRENT_TIMESTAMP
-    WHERE protein_id = _proteinID
+    WHERE protein_id = _proteinID;
 
-        --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-    if _myError <> 0 Then
-        rollback transaction _transName
-        _msg := 'Update operation failed!';
-        RAISERROR (_msg, 10, 1)
-        return 51007
-    End If;
-
-    commit transaction _transName
-
-    return 0
 END
 $$;
 
 COMMENT ON PROCEDURE pc.update_protein_sequence_info IS 'UpdateProteinSequenceInfo';
+
+
+select * from pc.t_proteins where protein_id=117057175;
+
+call pc.update_protein_sequence_info(117057175,
+'MLLQRRSWLWLYIRIGVILGDILGRKPSIREQHGGNSCYQLNRLFCDFQEADNYCHAQRGRLAHTWNPKLRGFLKSFLNEETVWWVRGNLTLPGSHPGINQTGGDDVLRNQKPGECPSVVTHSNAVFSRWNLCIEKHHFICQAAAFPPQGASIWRNEFGPGPLLPMKRRGAETERHMIPGNGPPLAMCHQPAPPELFETLCFPIDPASSAPPKATHRMTITSLTGRPQVTSDTLASSSPPQGTSDTPASSSPPQVTSATSASSSPPQGTSDTPASSSPPQVTSATSASSSPPQGTSDTPASSSPPQVTSATSASSSPPQGTSDTPASSSPPQVTSATSASSSPPQGTSDTPASSSPPQGTLDTPSSSSPPQGTSDTPASSSPPQGTSETPASNSPPQGTSETPGFSSPPQVTTATLVSSSPPQVTSETPASSSPTQVTSETPASSSPTQVTSDTPASNSPPQGTSDTPGFSSPTQVTTATLVSSSPPQVTSDTPASSSPPQVTSDTPASSSPPQVTSETPASSSPPQVTSDTSASISPPQVISDTPASSSPPQVTSETPASSSPTNMTSDTPASSSPTNMTSDTPASSSPTNMTSDTPASSSPPWPVITEVTRPESTIPAGRSLANITSKAQEDSPLGVISTHPQMSFQSSTSQALDETAGERVPTIPDFQAHSEFQKACAILQRLRDFLPTSPTSAQKNNSWSSQTPAVSCPFQPLGRLTTTEKSSHQMAQQDMEQHPMDGAHNAFGISAGGSEIQSDIQLRSEFEVEDMLETSLMALGEIHRAFCQQSLCPQSAVTLASPSATLMLSSQNVSTLPLSTYTLGEPAPLTLGFPSAEALKELLNKHPGVNLQVTGLAFNPFKTLDDKNIVGSIGNVQLSSAYQSIRVHDLIEDIEIMLWRNASMETQPTSLNTSTDHFTISVNITSLEKTLIVTIEPESPLLMTLHLGFQDQLAHTHFYLNISLPRDQVWQKDEEYTWVLTPENLWYGTGTYYIMAVENKSTEAAQHTPVLVSVVTAVTQCYFWDRYNRTWKSDGCQVGPKSTILKTQCLCDHLTFFSSDFFIVPRTVDVENTIKLLLHVTNNPVGVSLLSSLLGFYILLAMWASRKDREDMQKVKVTVLADNDPSSASHYLIQVYTGYRRRAATTAKVVITLYGSEGHSEPHHLCDPEKTVFERGALDVFLLSTGSWLGDLHGLRLWHDNSGDSPSWYVSQVIVSDMTTRKKWHFQCNCWLAVDLGNCERDRVFTPASRSELSSFRHLFSSTIVEKFTQDYLWLSVATRHPWNQFTRVQRLSCCMALLLCDMVINIMFWKMGGTTAKRGTEQLGPLAVTLSELLVSIQTSIILFPIHLIFGRLFQLIHPPEALPQLPFIQAAWPPALVCESPSLTQVVKELKETVGFLLRRNTQLLSECEPSSCSSCDINKLAKLLSGLIYCHLEDEGCHQQTESHWEDAVSENHYHFCRYLLQLLRRLKAHLEALGATQDHQSCDFSEAVSQLQNLQELLETQTLRRGPGPCRHSTSFPILSPGEGKKPMSFCLFRWLKCSCWLLLGVISLASAFFITLYSLELDKDQATSWVISMMLSVLQDIFISQPIKVIFLTLLFSLMANHMPWLNKDKEQHARRIVALWAKCPWSAPGLRDKNNPIYTAPAMNNLAKPTRKAWKKQLSKLTGGTLVQILFLTLLMTTVYSAKDSSRFFLHRAIWKRFSHRFSEIKTVEDFYPWANGTLLPNLYGDYRGFITDGNSFLLGNVLIRQTRIPNDIFFPGSLHKQMKSPPQHQEDRENYGAGWVPPDTNITKVDSIWHYQNQESLGGYPIQGELATYSGGGYVVRLGRNHSAATRVLQHLEQRRWLDHCTKALFVEFTVFNANVNLLCAVTLILESSGVGTFLTSLQLDSLTSLQSSERGFAWIVSQVVYYLLVCYYAFIQGCRLKRQRLAFFTRKRNLLDTSIVLISFSILGLSMQSLSLLHKKMQQYHCDRDRFISFYEALRVNSAVTHLRGFLLLFATVRVWDLLRHHAQLQVINKTLSKAWDEVLGFILIIVVLLSSYAMTFNLLFGWSISDYQSFFRSIVTVVGLLMGTSKHKEVIALYPILGSLLVLSSIILMGLVIINLFVSAILIAFGKERKACEKEATLTDMLLQKLSSLLGIRLHQNPSEEHADNTGSSNLRERSSKSMSSDAEVLAPADAVGSVSGTDGNSGSTKGTRDI'::text,
+2204, 'C10716 H16770 N2914 O3281 S83', 241431.168379233, 241585.647391234, '6D49471D322E5A52827187B994AD356AA16B3C4C')
+

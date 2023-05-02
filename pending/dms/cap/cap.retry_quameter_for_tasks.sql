@@ -4,8 +4,8 @@ CREATE OR REPLACE FUNCTION cap.retry_quameter_for_tasks
     _jobs text,
     _infoOnly boolean = false,
     _ignoreQuameterErrors boolean = true,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 RETURNS TABLE (
     Job int,
@@ -57,6 +57,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _ignoreQuameterErrors := Coalesce(_ignoreQuameterErrors, true);
     _message := '';
+    _returnCode:= '';
 
     If _jobs = '' Then
         _message := 'Job number not supplied';

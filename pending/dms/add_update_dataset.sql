@@ -20,7 +20,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset
     _requestID int = 0,
     _workPackage text = 'none',
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _aggregationJobDataset boolean = false,
     _captureSubfolder text = '',
@@ -219,6 +220,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
     _warning := '';
 
     ---------------------------------------------------

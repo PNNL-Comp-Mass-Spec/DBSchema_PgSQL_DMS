@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table
     _massModFilterTextColumn text = '',
     _massModFilterText text = '',
     _massModFilterSql text = ''output,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -59,6 +60,7 @@ BEGIN
     _massModFilterText := Coalesce(_massModFilterText, '');
 
     _message := '';
+    _returnCode:= '';
     _massModFilterSql := '';
 
     If char_length(_massModFilterTextColumn) > 0 Then

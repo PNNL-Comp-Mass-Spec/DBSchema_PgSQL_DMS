@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_experiment_usage
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -27,6 +28,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, true);
     _message := '';
+    _returnCode:= '';
 
     If _infoOnly Then
         ---------------------------------------------------

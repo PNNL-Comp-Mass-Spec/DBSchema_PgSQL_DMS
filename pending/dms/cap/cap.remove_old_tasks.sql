@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks
     _intervalDaysForSuccess numeric = 60,
     _intervalDaysForFail int = 135,
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _validateJobStepSuccess boolean
 )
 LANGUAGE plpgsql
@@ -71,6 +72,7 @@ BEGIN
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Make sure the capture task job Start and Finish values are up-to-date

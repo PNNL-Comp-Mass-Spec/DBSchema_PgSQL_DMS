@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset
     _datasetName text,
     _templateRequestID int,
     _mode text = 'add',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

@@ -7,8 +7,8 @@ CREATE OR REPLACE PROCEDURE public.copy_aux_info
     _subCategoryName text,
     _sourceEntityName text,
     _mode text,
-    INOUT _message text = ''
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

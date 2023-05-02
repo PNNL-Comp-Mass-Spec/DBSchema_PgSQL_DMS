@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE public.report_tissue_usage_stats
     _campaignIDFilterList text = '',
     _organismIDFilterList text = '',
     _instrumentFilterList text = '',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -6,8 +6,8 @@ CREATE OR REPLACE PROCEDURE public.move_material_container
     _newLocation text = '',
     _newResearcher text = '',
     _infoOnly boolean = true,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

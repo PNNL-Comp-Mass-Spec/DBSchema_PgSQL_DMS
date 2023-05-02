@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE cap.report_capture_task_manager_idle
 (
     _managerName text = '',
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

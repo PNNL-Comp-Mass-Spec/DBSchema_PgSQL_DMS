@@ -11,7 +11,8 @@ CREATE OR REPLACE PROCEDURE public.delete_old_data_experiments_jobs_and_logs
     _deleteDatasets boolean = true,
     _deleteExperiments boolean = true,
     _maxItemsToProcess int = 75000,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -127,6 +128,7 @@ BEGIN
     End If;
 
     _message := '';
+    _returnCode:= '';
 
     _deleteThreshold := CURRENT_TIMESTAMP - make_interval(years => _yearsToRetain);
     _jobKeepThreshold := CURRENT_TIMESTAMP - make_interval(days => Round(_recentJobOverrideYears * 365)::int);

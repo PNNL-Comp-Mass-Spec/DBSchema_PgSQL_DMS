@@ -9,8 +9,8 @@ CREATE OR REPLACE PROCEDURE public.update_notification_user_registration
     _datasetNotReleased text,
     _datasetReleased text,
     _mode text = 'update',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

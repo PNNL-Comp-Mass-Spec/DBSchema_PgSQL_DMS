@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE sw.request_folder_create_task
     _processorName text,
     INOUT _taskID int = 0,
     INOUT _parameters text,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _taskCountToPreview int = 10
 )

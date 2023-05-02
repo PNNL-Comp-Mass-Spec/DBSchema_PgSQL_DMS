@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.sync_job_param_and_settings_with_request
     _requestMinimum int = 0,
     _recentRequestDays int = 14,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -40,6 +41,7 @@ BEGIN
     _recentRequestDays := Coalesce(_recentRequestDays, 14);
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _requestMinimum < 1 And _recentRequestDays < 1 Then
         _recentRequestDays := 14;

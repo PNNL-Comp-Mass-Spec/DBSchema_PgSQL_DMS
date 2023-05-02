@@ -7,8 +7,8 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params
     INOUT _protCollNameList text,
     INOUT _protCollOptionsList text,
     _ownerUsername text := '',
-    INOUT _message text := '',
-    INOUT _returnCode text := '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean := false
 )
 LANGUAGE plpgsql

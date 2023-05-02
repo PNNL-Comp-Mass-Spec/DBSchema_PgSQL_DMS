@@ -7,8 +7,8 @@ CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_complete
     _completionMessage text = '',
     _evaluationCode int = 0,
     _evaluationMessage text = '',
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

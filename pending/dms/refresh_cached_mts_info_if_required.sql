@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.refresh_cached_mts_info_if_required
     _dynamicMinimumCountThreshold int = 5000,
     _updateIntervalAllItems real = 24,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -55,6 +56,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _currentTime := CURRENT_TIMESTAMP;
 

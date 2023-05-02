@@ -17,7 +17,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request
     _state text,
     INOUT _requestID int,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _autoRemoveNotReleasedDatasets int = 0,     -- Leave this as an integer since used by the website
     _callingUser text = ''
 )

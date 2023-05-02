@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_factor_id
     _generateSQLOnly boolean = false,
     INOUT _crossTabSql text = '',
     INOUT _factorNameList text = '',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -42,6 +43,7 @@ BEGIN
     _crossTabSql := '';
     _factorNameList := '';
     _message := '';
+    _returnCode:= '';
 
     If Not Exists (SELECT * FROM Tmp_FactorItems) Then
         _crossTabSql := 'SELECT type, target_id FROM t_factor WHERE 1 = 2';

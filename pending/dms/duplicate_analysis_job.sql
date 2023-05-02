@@ -7,7 +7,8 @@ CREATE OR REPLACE PROCEDURE public.duplicate_analysis_job
     _appendOldJobToComment boolean = true,
     _newSettingsFile text = '',
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -52,6 +53,7 @@ BEGIN
     _newSettingsFile := Trim(Coalesce(_newSettingsFile, ''));
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _job = 0 Then
         _message := '_job is invalid';

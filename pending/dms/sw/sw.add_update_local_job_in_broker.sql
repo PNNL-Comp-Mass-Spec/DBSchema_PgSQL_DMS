@@ -10,9 +10,9 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker
     _ownerUsername text,
     _dataPackageID int,
     INOUT _resultsDirectoryName text,
-    _mode text = 'add',
-    INOUT _message text,
-    INOUT _returnCode text,
+    _mode text default 'add',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _debugMode boolean = false,
     _logDebugMessages boolean = false

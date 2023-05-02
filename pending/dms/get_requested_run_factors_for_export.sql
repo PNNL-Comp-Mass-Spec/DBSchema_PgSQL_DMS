@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.get_requested_run_factors_for_export
 (
     _itemList TEXT,
     _itemType text = 'Batch_ID',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

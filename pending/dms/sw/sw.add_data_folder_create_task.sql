@@ -9,7 +9,8 @@ CREATE OR REPLACE PROCEDURE sw.add_data_folder_create_task
     _sourceID int,
     _sourceIDFieldName text,
     _command text = 'add',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -46,6 +47,7 @@ DECLARE
     _myRowCount int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

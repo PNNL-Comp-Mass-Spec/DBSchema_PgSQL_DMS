@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_copy_factors
 (
     _srcRequestID int,
     _destRequestID int,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -27,6 +28,7 @@ DECLARE
     _usageMessage text := '';
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _callingUser := Coalesce(_callingUser, '(copy factors)');
 

@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.copy_job_to_history
 (
     _job int,
     _jobState int,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _overrideSaveTime boolean = false,
     _saveTimeOverride timestamp = Null
 )
@@ -45,6 +46,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Bail if no candidates found

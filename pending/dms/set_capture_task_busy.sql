@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_busy
 (
     _datasetName text,
     _machineName text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -23,6 +24,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     UPDATE t_dataset
     SET dataset_state_id = 2,

@@ -14,7 +14,8 @@ CREATE OR REPLACE PROCEDURE cap.store_myemsl_upload_stats
     _eusInstrumentID int=null,
     _eusProposalID text=null,
     _eusUploaderID int=null,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -52,7 +53,7 @@ DECLARE
     _charLoc int;
     _subString text;
     _logMsg text := '';
-    _invalidFormat int;
+    _invalidFormat boolean;
     _statusURI_PathID int := 1;
     _statusURI_Path text := '';
     _statusNum int := null;
@@ -69,6 +70,7 @@ BEGIN
     _usedTestInstance := Coalesce(_usedTestInstance, 0);
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
@@ -108,9 +110,9 @@ BEGIN
     Else
     -- <a1>
 
-        -- Setup the log message in case we need it; also, set _invalidFormat to 1 for now
+        -- Setup the log message in case we need it; also, set _invalidFormat to true for now
         _logMsg := 'Unable to extract Status_Num from Status_URI for capture task job ' || _job::text || ', dataset ' || _datasetID::text;
-        _invalidFormat := 1;
+        _invalidFormat := true;
 
         _charLoc := position('/status/' in _statusURI);
         If _charLoc = 0 Then
@@ -138,17 +140,17 @@ BEGIN
                         -- Match not found; _subString is simply an integer
                         _statusNum := public.try_cast(_subString, null::int);
                         If Not _statusNum Is Null Then
-                            _invalidFormat := 0;
+                            _invalidFormat := false;
                         End If;
                     End If;
 
                     If _charLoc > 1 Then
-                        _statusNum := CONVERT(int, SUBSTRING(_subString, 1, _charLoc-1));
-                        _invalidFormat := 0;
+                        _statusNum := public.try_cast(SUBSTRING(_subString, 1, _charLoc - 1), null::int);
+                        _invalidFormat := false;
                     End If;
                 End If;
 
-                If _invalidFormat > 0 Then
+                If _invalidFormat Then
                     _logMsg := _logMsg || ': number not found after ' || _getStateToken || ' in ' || _statusURI;
                 End If;
 
@@ -171,7 +173,7 @@ BEGIN
                 -- Match not found; _subString is simply an integer
                 _statusNum := public.try_cast(_subString, null::int);
                 If Coalesce(_subString, '') <> '' And Not _statusNum Is Null Then
-                    _invalidFormat := 0;
+                    _invalidFormat := false;
                 Else
                     _logMsg := _logMsg || ': number not found after /status/ in ' || _statusURI;
                 End If;
@@ -182,13 +184,13 @@ BEGIN
             End If;
 
             If _charLoc > 1 Then
-                _statusNum := CONVERT(int, SUBSTRING(_subString, 1, _charLoc-1));
-                _invalidFormat := 0;
+                _statusNum := public.try_cast(SUBSTRING(_subString, 1, _charLoc-1), null::int);
+                _invalidFormat := false;
             End If;
 
         End If; -- </b2>
 
-        If _invalidFormat <> 0 Then
+        If _invalidFormat Then
             If Not _infoOnly Then
                 If _errorCode = 0 Then
                     Call public.post_log_entry('Error', _logMsg, 'store_myemsl_upload_stats';, 'cap');

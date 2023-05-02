@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.add_new_jobs
 (
     _bypassDMS boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _maxJobsToProcess int = 0,
     _logIntervalThreshold int = 15,
     _loggingEnabled boolean = false,
@@ -126,6 +126,7 @@ BEGIN
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _message := '';
+    _returnCode:= '';
 
     If _bypassDMS Then
         RETURN;

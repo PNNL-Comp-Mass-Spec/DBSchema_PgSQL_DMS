@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE public.refresh_cached_mtdbs
 (
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -36,6 +37,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _mergeInsertCount := 0;
     _mergeUpdateCount := 0;

@@ -26,8 +26,8 @@ CREATE OR REPLACE PROCEDURE public.store_job_psm_stats
     _percentPSMsMissingNTermReporterIon real = 0,
     _percentPSMsMissingReporterIon real = 0,
     _uniqueAcetylPeptidesFDR int = 0,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql

@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.delete_job_if_new_or_failed
 (
     _job int,
     _callingUser text = '',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -58,6 +59,7 @@ BEGIN
     End If;
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     _jobText := 'job ' || Coalesce(_job::text, '??');

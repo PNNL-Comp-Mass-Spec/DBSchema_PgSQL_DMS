@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps
 (
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     INOUT _numStepsSkipped int = 0,
     _infoOnly boolean = false,
     _maxJobsToProcess int = 0,
@@ -50,6 +51,7 @@ DECLARE
     _rowsProcessed int;
 BEGIN
     _message := '';
+    _returnCode:= '';
     _numStepsSkipped := 0;
     _infoOnly := Coalesce(_infoOnly, false);
 
@@ -62,6 +64,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
     _message := '';
+    _returnCode:= '';
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _startTime := CURRENT_TIMESTAMP;

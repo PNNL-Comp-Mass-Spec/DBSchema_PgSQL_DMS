@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.make_automatic_requested_run_factors
 (
     _batchID int,
     _mode text = 'all',
-    INOUT _message text,
-    INOUT _returnCode text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

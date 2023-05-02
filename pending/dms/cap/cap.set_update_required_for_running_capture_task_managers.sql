@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE cap.set_update_required_for_running_capture_task_managers
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -23,6 +24,7 @@ DECLARE
 BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Get a list of the currently running managers

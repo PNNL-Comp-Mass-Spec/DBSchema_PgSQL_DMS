@@ -10,7 +10,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_biomaterial
     _comment text,
     _campaignName text,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _container text = 'na',
     _organismList text,
     _mutation text = '',
@@ -93,6 +94,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

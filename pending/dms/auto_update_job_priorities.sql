@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.auto_update_job_priorities
 (
     _infoOnly boolean = true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -34,6 +35,7 @@ BEGIN
     --
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     ----------------------------------------------
     -- Create temporary tables

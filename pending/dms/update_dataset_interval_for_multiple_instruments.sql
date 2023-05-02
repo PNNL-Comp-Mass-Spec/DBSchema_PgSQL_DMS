@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
     _infoOnly boolean = false,
     _previewProcedureCall boolean = false,
     _instrumentsToProcess text = '',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -113,6 +114,7 @@ BEGIN
     _instrumentsToProcess := Coalesce(_instrumentsToProcess, '');
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Set up date interval and key values
@@ -299,7 +301,7 @@ BEGIN
                 Call update_dataset_interval (_instrumentInfo.Instrument, _startDate, _startOfNextMonth, _message => _message, _infoOnly => _infoOnly);
             End If;
 
-            If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EmslInstrument = 'Y' OR _instrumentInfo.Tracked = 1)) Then
+            If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EmslInstrument = 'Y'::citext OR _instrumentInfo.Tracked = 1)) Then
                 If _infoOnly Then
                     RAISE INFO '%', 'Skip call to UpdateEMSLInstrumentUsageReport for Instrument ' || _instrument;
                     RAISE INFO ' ';

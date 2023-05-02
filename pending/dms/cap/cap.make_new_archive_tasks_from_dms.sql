@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE cap.make_new_archive_tasks_from_dms
 (
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _maxJobsToProcess int = 0,
     _logIntervalThreshold int = 15,
     _loggingEnabled boolean = false,
@@ -50,6 +51,7 @@ BEGIN
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _message := '';
+    _returnCode:= '';
 
     If _maxJobsToProcess <= 0 Then
         _maxJobsToAddResetOrResume := 1000000;

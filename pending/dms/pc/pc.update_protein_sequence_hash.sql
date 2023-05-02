@@ -2,17 +2,22 @@
 CREATE OR REPLACE PROCEDURE pc.update_protein_sequence_hash
 (
     _proteinID int,
-    _sHA1Hash text,
-    _sEGUID text,
-    INOUT _message text
+    _sha1Hash text,
+    _seguid text,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Updates the SHA1 fingerprint for a given Protein Sequence Entry
+**  Desc:
+**      Updates the SHA1 fingerprint for a given Protein Sequence Entry
 **
-**
+**  Arguments:
+**      _proteinID
+**      _sha1Hash
+**      _seguid     Unique sequence identifier (SEGUID) checksum (see https://www.nature.com/articles/npre.2007.278.1.pdf and https://pubmed.ncbi.nlm.nih.gov/16858731/)
 **
 **  Auth:   kja
 **  Date:   03/13/2006
@@ -38,8 +43,8 @@ BEGIN
 
     UPDATE pc.t_proteins
     SET
-        sha1_hash = _sHA1Hash,
-        seguid = _sEGUID
+        sha1_hash = _sha1Hash,
+        seguid = _seguid
     WHERE (protein_id = _proteinID)
 
         --

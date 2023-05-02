@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset
 (
     _datasetName text,
     _infoOnly boolean = true,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -84,6 +85,7 @@ BEGIN
 
     _datasetName := Coalesce(_datasetName, '');
     _message := '';
+    _returnCode:= '';
 
     If _datasetName = '' Then
         _msg := '_datasetName parameter is blank; nothing to delete';

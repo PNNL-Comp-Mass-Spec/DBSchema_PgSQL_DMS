@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.validate_dataset_type
 (
     _datasetID int,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _autoDefineOnAllMismatches boolean = true
 )
@@ -71,6 +72,7 @@ BEGIN
     -----------------------------------------------------------
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
     _autoDefineOnAllMismatches := Coalesce(_autoDefineOnAllMismatches, true);
 

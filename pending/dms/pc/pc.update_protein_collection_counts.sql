@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE pc.update_protein_collection_counts
     _collectionID int,
     _numProteins int,
     _numResidues int,
-    INOUT _message text=''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

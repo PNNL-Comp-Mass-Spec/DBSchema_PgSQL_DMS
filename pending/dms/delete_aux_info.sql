@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.delete_aux_info
 (
     _targetName text = '',
     _targetEntityName text = '',
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

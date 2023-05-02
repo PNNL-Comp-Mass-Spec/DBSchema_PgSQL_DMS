@@ -11,7 +11,8 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_stats_by_campaign
     _campaignNameExclude text = '',
     _instrumentBuilding text = '',
     _previewSql boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -53,6 +54,7 @@ BEGIN
     _instrumentBuilding := Coalesce(_instrumentBuilding, '');
     _previewSql := Coalesce(_previewSql, false);
     _message := '';
+    _returnCode:= '';
 
     If _mostRecentWeeks < 1 Then
         _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '20 weeks');

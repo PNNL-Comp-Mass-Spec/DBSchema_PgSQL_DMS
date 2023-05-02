@@ -2,8 +2,9 @@
 CREATE OR REPLACE PROCEDURE pc.add_legacy_file_upload_request
 (
     _legacyfileName text,
-    INOUT _message text = '',
-    _authenticationHash varchar(8) = ''
+    _authenticationHash text default '',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -28,11 +29,12 @@ DECLARE
     _msg text;
     _memberID int;
     _legacyFileID int;
-    _authenticationHashStored varchar(8);
+    _authenticationHashStored text;
     _requestID int;
     _transName text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Does entry already exist?

@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE public.update_mts_cached_data_status
     _deleteCountNew int = 0,
     _fullRefreshPerformed boolean = false,
     _lastRefreshMinimumID int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -41,6 +42,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _currentLocation := 'Start';
 

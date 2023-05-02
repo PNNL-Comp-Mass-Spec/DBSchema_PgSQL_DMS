@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_and_dataset_type
     _datasetType text,
     INOUT _instrumentGroup text,
     INOUT _datasetTypeID int,
-    INOUT _message text,
-    INOUT _returnCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

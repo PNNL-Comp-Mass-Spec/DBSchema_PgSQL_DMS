@@ -3,7 +3,8 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_parameters_and_factors
 (
     _itemList TEXT,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 RETURNS TABLE (
     x

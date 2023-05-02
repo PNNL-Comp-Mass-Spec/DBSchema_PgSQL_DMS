@@ -4,10 +4,10 @@ CREATE OR REPLACE PROCEDURE cap.update_myemsl_upload_ingest_stats
     _datasetID int,
     _statusNum int,
     _ingestStepsCompleted int,
-    _fatalError boolean = false,
-    _transactionId int = 0,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    _fatalError boolean default false,
+    _transactionId int default 0,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -21,7 +21,7 @@ AS $$
 **  Arguments:
 **    _statusNum              The status number must match the specified DatasetID (this is a safety check)
 **    _ingestStepsCompleted   Number of ingest steps that were completed for this entry
-**    _fatalError             Set to true if the ingest failed and the ErrorCode column needs to be set to -1 (if currently 0 or null)
+**    _fatalError             True if the ingest failed and the ErrorCode column needs to be set to -1 (if currently 0 or null)
 **    _transactionId          Transaction ID (null or 0 if unknown); starting in July 2017, transactionId and Status_Num should match
 **
 **  Auth:   mem

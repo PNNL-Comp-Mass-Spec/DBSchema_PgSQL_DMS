@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE public.update_eus_proposals_from_eus_imports
 (
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

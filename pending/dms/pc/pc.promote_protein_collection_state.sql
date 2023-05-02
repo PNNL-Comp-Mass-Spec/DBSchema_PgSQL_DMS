@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE pc.promote_protein_collection_state
     _addNewProteinHeaders int = 1,
     _mostRecentMonths int = 12,
     _infoOnly int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -46,6 +47,7 @@ BEGIN
     _proteinCollectionsUpdated := '';
 
     _message := '';
+    _returnCode:= '';
 
     --------------------------------------------------------------
     -- Validate the inputs

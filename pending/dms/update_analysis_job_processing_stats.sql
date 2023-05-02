@@ -13,7 +13,8 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats
     _processingTimeMinutes real,
     _updateCode int,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -47,6 +48,7 @@ DECLARE
     _updateCodeExpected int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _jobCommentAddnl := Trim(Coalesce(_jobCommentAddnl, ''));
 

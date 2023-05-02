@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.hold_jobs_for_purged_datasets
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -22,6 +23,7 @@ DECLARE
     _holdMessage text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _holdMessage := '; holding since dataset purged';
 

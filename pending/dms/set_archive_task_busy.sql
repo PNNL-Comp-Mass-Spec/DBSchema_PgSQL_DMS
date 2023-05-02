@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.set_archive_task_busy
 (
     _datasetName text,
     _storageServerName text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,6 +25,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     UPDATE t_dataset_archive
     SET archive_state_id = 2,

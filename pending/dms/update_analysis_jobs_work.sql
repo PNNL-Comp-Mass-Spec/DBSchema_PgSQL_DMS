@@ -17,8 +17,8 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work
     _protCollOptionsList text = '[no change]',
     --
     _mode text = 'update',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _disableRaiseError boolean = false
 )
@@ -113,6 +113,7 @@ BEGIN
     _action := '';
     _action2 := '';
     _message := '';
+    _returnCode:= '';
 
     _stateID := 0;
     _newPriority := 2;

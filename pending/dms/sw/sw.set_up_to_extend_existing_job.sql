@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.set_up_to_extend_existing_job
 (
     _job int,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -32,6 +33,7 @@ DECLARE
     _myRowCount int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- If job not in main tables,

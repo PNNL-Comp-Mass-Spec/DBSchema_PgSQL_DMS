@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading
     INOUT _wellNumber text,
     _totalCount int,
     INOUT _wellIndex int,
-    INOUT _message text,
-    INOUT _returCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

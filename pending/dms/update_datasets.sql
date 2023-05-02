@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE public.update_datasets
     _findText text = '',
     _replaceText text = '',
     _mode text = 'update',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -59,6 +60,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _datasetStateUpdated := 0;
     _datasetRatingUpdated := 0;

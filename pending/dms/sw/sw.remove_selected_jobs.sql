@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.remove_selected_jobs
 (
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _logDeletions boolean = false,
     _logToConsoleOnly boolean = false
 )
@@ -41,6 +42,7 @@ DECLARE
 BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     _logDeletions := Coalesce(_logDeletions, false);
     _logToConsoleOnly := Coalesce(_logToConsoleOnly, false);

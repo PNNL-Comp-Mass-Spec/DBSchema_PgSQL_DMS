@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.validate_job_server_info
 (
     _job int,
     _useJobParameters boolean = true,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
     _debugMode boolean = false
 )
 LANGUAGE plpgsql
@@ -39,6 +40,7 @@ BEGIN
     _job := Coalesce(_job, 0);
     _useJobParameters := Coalesce(_useJobParameters, true);
     _message := '';
+    _returnCode:= '';
 
     _transferFolderPath := '';
     _dataset := '';

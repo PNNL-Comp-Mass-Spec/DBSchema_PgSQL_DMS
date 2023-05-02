@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.finish_job_creation
 (
     _job int,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 LANGUAGE plpgsql
@@ -28,6 +29,7 @@ AS $$
 *****************************************************/
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Update step dependency count

@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE dpkg.get_auto_import_osm_package_items
 (
     _packageID int,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -23,6 +24,7 @@ DECLARE
     _myRowCount int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
      ---------------------------------------------------
     --

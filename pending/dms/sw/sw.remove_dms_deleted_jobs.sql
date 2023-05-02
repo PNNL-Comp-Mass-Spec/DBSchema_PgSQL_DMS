@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.remove_dms_deleted_jobs
 (
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _maxJobsToProcess int = 0
 )
 LANGUAGE plpgsql
@@ -29,6 +30,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _infoOnly := Coalesce(_infoOnly, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);

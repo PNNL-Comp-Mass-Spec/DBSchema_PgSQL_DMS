@@ -3,7 +3,8 @@ CREATE OR REPLACE FUNCTION public.get_monthly_emsl_instrument_usage_report
 (
     _year text,
     _month text,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _getUsageReportData boolean = true
 )
@@ -60,6 +61,7 @@ BEGIN
     ---------------------------------------------------
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

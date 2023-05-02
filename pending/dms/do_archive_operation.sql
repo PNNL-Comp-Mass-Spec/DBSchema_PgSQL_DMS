@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.do_archive_operation
 (
     _datasetName text,
     _mode text,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -38,6 +39,7 @@ DECLARE
     _newState int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

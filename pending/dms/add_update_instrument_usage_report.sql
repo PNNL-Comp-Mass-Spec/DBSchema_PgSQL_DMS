@@ -16,7 +16,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument_usage_report
     _operator text,
     _comment text,
     _mode text = 'update',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -72,6 +73,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

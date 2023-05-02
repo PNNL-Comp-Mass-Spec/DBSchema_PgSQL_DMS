@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.import_job_processors
 (
     _bypassDMS boolean = false,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -27,6 +28,7 @@ DECLARE
 
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     If _bypassDMS Then
         RETURN;

@@ -18,7 +18,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job
     _stateName text,
     INOUT _job text = '0',
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _preventDuplicateJobs boolean = false,
     _preventDuplicatesIgnoresNoExport boolean = true,
@@ -162,6 +163,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

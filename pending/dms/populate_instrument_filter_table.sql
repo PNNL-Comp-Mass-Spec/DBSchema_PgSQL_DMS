@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.populate_instrument_filter_table
 (
     _instrumentFilterList text = '',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -31,6 +32,7 @@ DECLARE
 BEGIN
     _instrumentFilterList := Trim(Coalesce(_instrumentFilterList, ''));
     _message := '';
+    _returnCode:= '';
 
     If _instrumentFilterList <> '' Then
 

@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE sw.validate_data_package_for_mac_job
     _scriptName citext,
     INOUT _tool text,
     _mode text = 'add',
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

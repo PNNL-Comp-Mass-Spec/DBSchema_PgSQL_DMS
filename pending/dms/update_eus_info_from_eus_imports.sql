@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_eus_info_from_eus_imports
 (
     _updateUsersOnInactiveProposals boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -34,6 +35,7 @@ BEGIN
 
     _updateUsersOnInactiveProposals := Coalesce(_updateUsersOnInactiveProposals, false);
     _message := '';
+    _returnCode:= '';
 
     -- Lookup the highest entry_id in t_log_entries
     SELECT MAX(entry_id) INTO _entryID

@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_experiment_name_for_qc_datasets
 (
     _infoOnly boolean = true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -33,6 +34,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, true);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create some temporary tables

@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_job_steps
     _stepTool text = 'MASIC_Finnigan',
     _targetCandidates int = 15,
     _maxCandidatesPlusJobs int = 30,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -35,6 +36,7 @@ BEGIN
     _stepTool := Coalesce(_stepTool, '');
     _targetCandidates := Coalesce(_targetCandidates, 250);
     _message := '';
+    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Count the number of job steps in state 2 for step tool _stepTool

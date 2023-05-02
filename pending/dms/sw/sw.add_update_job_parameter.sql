@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter
     _paramName text,
     _value text,
     _deleteParam boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -68,6 +69,7 @@ BEGIN
     ---------------------------------------------------
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

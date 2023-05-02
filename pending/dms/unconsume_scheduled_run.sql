@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run
 (
     _datasetName text,
     _retainHistory boolean = false,
-    INOUT _message text,
-    INOUT _returnCode text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

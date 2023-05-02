@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.set_purge_task_complete
 (
     _datasetName text,
     _completionCode int = 0,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -56,6 +57,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Resolve dataset into ID

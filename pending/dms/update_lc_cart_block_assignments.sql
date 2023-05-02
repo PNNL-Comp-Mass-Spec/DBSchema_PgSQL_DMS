@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.update_lc_cart_block_assignments
 (
     _cartAssignmentList text,
     _mode text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -46,6 +47,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     -- Uncomment to log the XML for debugging purposes
     -- call PostLogEntry ('Debug', _cartAssignmentList, 'UpdateLCCartBlockAssignments');

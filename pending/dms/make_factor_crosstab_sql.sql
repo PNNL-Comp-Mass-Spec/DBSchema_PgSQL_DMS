@@ -18,7 +18,7 @@ AS $$
 **              Request int
 **          );
 **
-**      It must also create temporary table Tmp_Factors, but this function will populate it
+**      It must also CREATE TEMP TABLE Tmp_Factors, but this function will populate it
 **          CREATE TEMP TABLE Tmp_Factors
 **              FactorID int,
 **              FactorName text NULL

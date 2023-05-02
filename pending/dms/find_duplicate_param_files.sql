@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE public.find_duplicate_param_files
     _checkValidOnly boolean = true,
     _maxFilesToTest int = 0,
     _previewSql boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

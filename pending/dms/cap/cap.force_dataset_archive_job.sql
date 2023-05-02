@@ -4,7 +4,8 @@
 CREATE OR REPLACE PROCEDURE cap.force_dataset_archive_job
 (
     _job int,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,6 +25,7 @@ DECLARE
     _hit int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Find capture task job

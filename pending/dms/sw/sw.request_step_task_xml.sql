@@ -3,8 +3,9 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml
 (
     _processorName text,
     INOUT _job int = 0,
-    INOUT _parameters text,
-    INOUT _message text,
+    INOUT _parameters text default '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoLevel int = 0,
     _analysisManagerVersion text = '',
     _remoteInfo text = '',
@@ -194,6 +195,7 @@ BEGIN
     _job := 0;
     _parameters := '';
     _message := '';
+    _returnCode:= '';
     _infoLevel := Coalesce(_infoLevel, 0);
     _analysisManagerVersion := Coalesce(_analysisManagerVersion, '');
     _remoteInfo := Coalesce(_remoteInfo, '');

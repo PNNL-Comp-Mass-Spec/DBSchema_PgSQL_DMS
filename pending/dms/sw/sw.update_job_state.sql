@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.update_job_state
 (
     _bypassDMS boolean = false,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _maxJobsToProcess int = 0,
     _loopingUpdateInterval int = 5,
     _infoOnly boolean = false
@@ -140,6 +141,7 @@ BEGIN
 
     _bypassDMS := Coalesce(_bypassDMS, false);
     _message := '';
+    _returnCode:= '';
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _startTime := CURRENT_TIMESTAMP;

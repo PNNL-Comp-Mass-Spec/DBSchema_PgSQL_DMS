@@ -27,6 +27,7 @@ DECLARE
     _message text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Make sure _callingUser is not blank

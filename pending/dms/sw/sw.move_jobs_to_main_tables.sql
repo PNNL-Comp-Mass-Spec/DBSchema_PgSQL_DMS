@@ -1,8 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.move_jobs_to_main_tables
 (
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 LANGUAGE plpgsql

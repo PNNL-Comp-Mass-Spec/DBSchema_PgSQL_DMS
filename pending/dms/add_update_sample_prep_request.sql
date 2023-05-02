@@ -35,8 +35,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request
     _reasonForHighPriority text,
     _tissue text = '',
     _mode text = 'add',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -166,7 +166,7 @@ DECLARE
     _stateID int := 0;
     _eusUsageTypeID int;
     _eusUsersList text := '';
-    _addingItem int := 0;
+    _addingItem boolean := false;
     _allowNoneWP boolean := false;
     _separationGroupAlt text := '';
     _tmp int := 0;
@@ -481,7 +481,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            _addingItem := 1;
+            _addingItem := true;
         End If;
 
         If Coalesce(_eusUserID, 0) > 0 Then

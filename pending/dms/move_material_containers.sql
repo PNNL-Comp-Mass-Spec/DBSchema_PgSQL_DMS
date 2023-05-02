@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE public.move_material_containers
     _shelfNew int,
     _rackNew int,
     _infoOnly boolean = true,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -52,6 +53,7 @@ BEGIN
     _rackNew := Coalesce(_rackNew, -1);
     _infoOnly := Coalesce(_infoOnly, true);
     _message := '';
+    _returnCode:= '';
     _callingUser := Coalesce(_callingUser, '');
 
     If _freezerTagOld = '' Then

@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.store_dataset_file_info
 (
     _datasetFileInfo text,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _updateExisting text = ''
 )
@@ -113,7 +114,7 @@ BEGIN
     End If;
 
     -----------------------------------------------------------
-    -- Create temp tables to hold the data
+    -- Create temporary tables to hold the data
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_FileData (
@@ -161,6 +162,7 @@ BEGIN
     ---------------------------------------------------
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
     _updateExisting := Coalesce(_updateExisting, '');
 

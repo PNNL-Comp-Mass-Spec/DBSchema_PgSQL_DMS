@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.merge_jobs_to_main_tables
 (
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -27,6 +28,7 @@ AS $$
 DECLARE
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     If _infoOnly Then
 

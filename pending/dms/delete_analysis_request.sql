@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.delete_analysis_request
 (
     _requestID int,
-    INOUT _message text,
-    INOUT _returnCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

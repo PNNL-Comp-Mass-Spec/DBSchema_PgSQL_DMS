@@ -5,8 +5,9 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_xml
     _comment text,
     _mode text = 'update',
     _removeParents int = 0,
-    INOUT _message text,
-    _callingUser text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
+    _callingUser text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -37,55 +38,55 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _itemCountChanged int;
-    _wasModified int;
+    _itemCountChanged int := 0;
     _authorized int := 0;
-    _logUsage int := 0;
+    _logUsage bool := false;
     _logMessage text;
     _xml xml;
     _msgForLog text := ERROR_MESSAGE();
 BEGIN
     _message := '';
+    _returnCode := '';
 
-    _itemCountChanged := 0;
+    ---------------------------------------------------
+    -- Verify that the user can execute this procedure from the given client host
+    ---------------------------------------------------
 
-    _wasModified := 0;
+    SELECT schema_name, name_with_schema
+    INTO _schemaName, _nameWithSchema
+    FROM get_current_function_info('<auto>', _showDebug => false);
 
-    -- these are necessary to avoid XML throwing errors
-    -- when this stored procedure is called from web page
-    --
-    SET CONCAT_NULL_YIELDS_NULL ON
-    SET ANSI_PADDING ON
-    SET ANSI_WARNINGS ON
+    SELECT authorized
+    INTO _authorized
+    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+
+    If Not _authorized Then
+        -- Commit changes to persist the message logged to public.t_log_entries
+        COMMIT;
+
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        RAISE EXCEPTION '%', _message;
+    End If;
 
     BEGIN TRY
 
-        ---------------------------------------------------
-        -- Verify that the user can EXECUTE this procedure from the given client host
-        ---------------------------------------------------
-
-        Call _authorized => verify_sp_authorized 'UpdateDataPackageItemsXML', _raiseError => 1
-        If _authorized = 0 Then
-            RAISERROR ('Access denied', 11, 3)
-        End If;
-
         _removeParents := Coalesce(_removeParents, 0);
 
-        -- Set this to 1 to debug
+        -- Set this to true to log a debug message
+        If _logUsage Then
+            _logMessage := format('Mode: %s; RemoveParents: %s; %s',
+                                _mode,
+                                _removeParents,
+                                Coalesce(_paramListXML, 'Error: _paramListXML is null'));
 
-        If _logUsage > 0 Then
-            _logMessage := 'Mode: ' ||;
-                              Coalesce(_mode, 'Null mode') || '; ' ||
-                              'RemoveParents: ' || Cast(_removeParents as varchar(2)) || '; ' ||
-                              Coalesce(_paramListXML, 'Error: _paramListXML is null')
-            Call post_log_entry 'Debug', _logMessage, 'UpdateDataPackageItemsXML'
+            Call post_log_entry ('Debug', _logMessage, 'dpkg.update_data_package_items_xml');
         End If;
 
         ---------------------------------------------------
         -- Create and populate a temporary table using the XML in _paramListXML
         ---------------------------------------------------
         --
-        CREATE TEMPORARY TABLE Tmp_DataPackageItems (
+        CREATE TEMP TABLE Tmp_DataPackageItems (
             DataPackageID int not null,   -- Data package ID
             ItemType text null,           -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
             Identifier text null          -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID

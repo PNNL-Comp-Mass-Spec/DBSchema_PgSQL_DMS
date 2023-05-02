@@ -21,8 +21,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment
     _wellNumber text,
     _alkylation text,
     _mode text = 'add',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _container text = 'na',
     _barcode text = '',
     _tissue text = '',
@@ -609,7 +609,7 @@ BEGIN
 
         -- Populate the Compound_ID column using any integers in Compound_IDName
         UPDATE Tmp_ExpToRefCompoundMap
-        SET Compound_ID = public.try_cast(Compound_IDName, true, 0)
+        SET Compound_ID = public.try_cast(Compound_IDName, null::int)
 
         -- If any entries still have a null Compound_ID value, try matching via reference compound name
         -- We have numerous reference compounds with identical names, so matches found this way will be ambiguous

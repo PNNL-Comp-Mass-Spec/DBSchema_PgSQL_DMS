@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi
 (
     _jobList text,
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 LANGUAGE plpgsql

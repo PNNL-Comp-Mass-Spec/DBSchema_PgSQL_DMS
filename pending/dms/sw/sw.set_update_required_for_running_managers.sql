@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.set_update_required_for_running_managers
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -29,6 +30,7 @@ DECLARE
 BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

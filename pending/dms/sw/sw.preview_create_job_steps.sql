@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.preview_create_job_steps
 (
     _jobToPreview int = 0,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

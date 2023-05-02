@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE public.add_new_freezer
     _sourceFreezerTag text = '2240B',
     _newFreezerTag text = '1215A',
     _infoOnly boolean = true,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

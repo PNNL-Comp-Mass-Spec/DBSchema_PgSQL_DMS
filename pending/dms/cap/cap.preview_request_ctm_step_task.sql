@@ -5,8 +5,8 @@ CREATE OR REPLACE FUNCTION cap.preview_request_ctm_step_task
     _jobCountToPreview int = 10,
     INOUT _job int = 0,
     INOUT _parameters text = '',
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
     _infoLevel int = 1
 )
 RETURNS Table (

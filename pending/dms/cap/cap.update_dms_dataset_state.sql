@@ -7,8 +7,8 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_dataset_state
     _script text,
     _storageServerName text,
     _jobInfo.NewState int,
-    INOUT _message text,
-    INOUT _returnCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

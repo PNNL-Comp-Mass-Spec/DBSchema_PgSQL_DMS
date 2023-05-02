@@ -46,6 +46,7 @@ BEGIN
     _requireValidRequestedPersonnel := Coalesce(_requireValidRequestedPersonnel, true);
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate requested and assigned personnel

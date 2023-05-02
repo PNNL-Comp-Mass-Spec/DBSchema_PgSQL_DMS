@@ -15,9 +15,10 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_data_package
     _manuscriptDOI text,
     INOUT _prismWikiLink text,
     INOUT _creationParams text,
-    _mode text = 'add',
-    INOUT _message text,
-    _callingUser text = ''
+    _mode text default 'add',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
+    _callingUser text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -67,17 +68,29 @@ DECLARE
 BEGIN
     _teamChangeWarning := '';
     _message := '';
-
-    BEGIN TRY
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    Call _authorized => verify_sp_authorized 'AddUpdateDataPackage', _raiseError => 1
-    If _authorized = 0 Then
-        RAISERROR ('Access denied', 11, 3)
+    SELECT schema_name, name_with_schema
+    INTO _schemaName, _nameWithSchema
+    FROM get_current_function_info('<auto>', _showDebug => false);
+
+    SELECT authorized
+    INTO _authorized
+    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+
+    If Not _authorized Then
+        -- Commit changes to persist the message logged to public.t_log_entries
+        COMMIT;
+
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        RAISE EXCEPTION '%', _message;
     End If;
+
+    BEGIN TRY
 
     ---------------------------------------------------
     -- Validate input fields
@@ -127,7 +140,7 @@ BEGIN
     -- Validate the state
     ---------------------------------------------------
 
-    If Not Exists (SELECT * FROM dpkg.t_data_package_state WHERE "state_name" = _state) Then
+    If Not Exists (SELECT * FROM dpkg.t_data_package_state WHERE state_name = _state) Then
         _message := 'Invalid state: ' || _state;
         RAISERROR (_message, 11, 32)
     End If;

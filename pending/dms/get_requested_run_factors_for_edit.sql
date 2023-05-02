@@ -4,7 +4,8 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_factors_for_edit
     _itemList TEXT,
     _itemType text = 'Batch_ID',
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 RETURNS TABLE (
     sel citext,

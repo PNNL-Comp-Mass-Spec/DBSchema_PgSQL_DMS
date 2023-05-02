@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_experiment_group_member_count
 (
     _groupID int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -30,6 +31,7 @@ BEGIN
 
     _groupID := Coalesce(_groupID, 0);
     _message := '';
+    _returnCode:= '';
 
     If _groupID <= 0 Then
 

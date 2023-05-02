@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection_member
     _proteinCollectionID int,
     _sortingIndex int,
     _mode text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

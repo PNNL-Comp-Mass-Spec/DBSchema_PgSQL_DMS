@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.handle_dataset_capture_validation_failure
     _datasetNameOrID text,
     _comment text = 'Bad .raw file',
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -51,6 +52,7 @@ BEGIN
     _datasetNameOrID := Coalesce(_datasetNameOrID, '');
     _comment := Coalesce(_comment, '');
     _message := '';
+    _returnCode:= '';
 
     If _comment = '' Then
         _comment := 'Bad dataset';

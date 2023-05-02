@@ -1,8 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.evaluate_step_dependencies
 (
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _maxJobsToProcess int = 0,
     _loopingUpdateInterval int = 5,
     _infoOnly boolean = false
@@ -59,6 +59,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
     _message := '';
+    _returnCode:= '';
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _startTime := CURRENT_TIMESTAMP;

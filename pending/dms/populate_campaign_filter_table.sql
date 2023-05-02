@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.populate_campaign_filter_table
 (
     _campaignIDFilterList text = '',
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

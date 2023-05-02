@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_run_interval
     _id int,
     _comment text,
     _mode text = 'update',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _showDebug boolean = false,
     INOUT _invalidUsage int = 0             -- Leave as an integer since called from the website
@@ -64,6 +65,7 @@ BEGIN
 
     _id := Coalesce(_id, -1);
     _message := '';
+    _returnCode:= '';
     _showDebug := Coalesce(_showDebug, false);
     _invalidUsage := 0;
 

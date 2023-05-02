@@ -10,7 +10,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_settings_file
     _hmsAutoSupersede text = '',
     _msgfPlusAutoCentroid text = '',
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -51,6 +52,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _xmlContents := _contents;
 

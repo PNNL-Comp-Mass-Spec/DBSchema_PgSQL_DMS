@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.refresh_cached_mts_peak_matching_tasks
 (
     _jobMinimum int = 0,
     _jobMaximum int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -47,6 +48,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _maxint := 2147483647;
 

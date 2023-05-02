@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.update_job_in_main_tables
 (
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -26,6 +27,7 @@ AS $$
 DECLARE
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Replace job parameters

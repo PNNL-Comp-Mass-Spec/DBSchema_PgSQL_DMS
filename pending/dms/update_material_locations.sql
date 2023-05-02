@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_material_locations
 (
     _locationList text,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _infoOnly boolean = false
 )
@@ -52,6 +53,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

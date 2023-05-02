@@ -8,8 +8,9 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_sequence
     _averageMass float,
     _sha1Hash text,
     _isEncrypted int,
-    _mode text = 'add',
-    INOUT _message text
+    _mode text default 'add',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

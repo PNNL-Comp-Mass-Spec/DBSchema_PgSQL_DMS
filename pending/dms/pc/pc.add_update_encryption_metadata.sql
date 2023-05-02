@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE pc.add_update_encryption_metadata
     _proteinCollectionID int,
     _encryptionPassphrase text,
     _passphraseSHA1Hash text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

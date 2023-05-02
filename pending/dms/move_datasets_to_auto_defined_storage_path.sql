@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.move_datasets_to_auto_defined_storage_path
 (
     _datasetIDList text,
     _infoOnly boolean = true,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

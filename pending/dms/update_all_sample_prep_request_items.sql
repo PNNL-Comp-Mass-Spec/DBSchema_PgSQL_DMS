@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_all_sample_prep_request_items
 (
     _daysPriorToUpdateClosedRequests int = 365,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -39,6 +40,7 @@ BEGIN
 
     _daysPriorToUpdateClosedRequests := Abs(Coalesce(_daysPriorToUpdateClosedRequests, 365));
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

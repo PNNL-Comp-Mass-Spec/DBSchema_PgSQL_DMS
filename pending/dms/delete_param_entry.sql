@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.delete_param_entry
     _entrySeqOrder int,
     _entryType text,
     _entrySpecifier text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -33,6 +34,7 @@ DECLARE
     _transName text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
 --    declare _state int
 

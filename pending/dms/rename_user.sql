@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.rename_user
 (
     _oldUserName text = '',
     _newUserName text = '',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = true
 )
 LANGUAGE plpgsql

@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads
     _maxJobsToReset int = 0,
     _jobListOverride text = '',
     _resetHoldoffMinutes numeric = 15,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

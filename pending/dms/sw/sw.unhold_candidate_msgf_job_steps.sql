@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_msgf_job_steps
 (
     _stepTool text = 'MSGF',
     _targetCandidates int = 25,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -34,6 +35,7 @@ BEGIN
     _stepTool := Coalesce(_stepTool, '');
     _targetCandidates := Coalesce(_targetCandidates, 25);
     _message := '';
+    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Count the number of job steps in state 2 for step tool _stepTool

@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.lookup_eus_from_experiment_sample_prep
     INOUT _eusUsageType text,
     INOUT _eusProposalID text,
     INOUT _eusUsersList text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -37,6 +38,7 @@ DECLARE
     _ovr citext := '(lookup)';
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _eusUsageType := Trim(Coalesce(_eusUsageType, ''));
     _eusProposalID := Trim(Coalesce(_eusProposalID, ''));

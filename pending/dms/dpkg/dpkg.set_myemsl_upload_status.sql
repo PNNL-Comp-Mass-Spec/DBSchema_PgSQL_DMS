@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE dpkg.set_myemsl_upload_status
     _dataPackageID int,
     _available int,
     _verified int,
-    INOUT _message text=''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -41,6 +42,7 @@ BEGIN
     _verified := Coalesce(_verified, 0);
 
     _message := '';
+    _returnCode:= '';
 
     If _entryID <= 0 Then
         _message := '_entryID must be positive; unable to continue';

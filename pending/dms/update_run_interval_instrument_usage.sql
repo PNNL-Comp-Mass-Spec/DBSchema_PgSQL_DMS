@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.update_run_interval_instrument_usage
     _runIntervalId int,
     _daysToProcess Int = 90,
     _infoOnly boolean = false,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -44,6 +45,7 @@ BEGIN
     _daysToProcess := Coalesce(_daysToProcess, 90);
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     _callingUser := Coalesce(_callingUser, '');
     If _callingUser = '' Then

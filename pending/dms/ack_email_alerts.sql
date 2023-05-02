@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.ack_email_alerts
 (
     _alertIDs text,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -30,6 +31,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create a temporary table

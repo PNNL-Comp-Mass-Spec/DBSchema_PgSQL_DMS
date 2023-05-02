@@ -4,8 +4,9 @@ CREATE OR REPLACE PROCEDURE dpkg.check_for_myemsl_errors
     _mostRecentDays int = 2,
     _startDate datetime = null,
     _endDate datetime = null,
-    _logErrors int = 1,
-    INOUT _message text = ''
+    _logErrors boolean = true,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -32,6 +33,7 @@ DECLARE
     _duplicateRate float8 := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     -----------------------------------------------
     -- Validate the inputs
@@ -41,7 +43,7 @@ BEGIN
     _startDate := Coalesce(_startDate, DateAdd(day, -2, CURRENT_TIMESTAMP));
 
     _endDate := Coalesce(_endDate, CURRENT_TIMESTAMP);
-    _logErrors := Coalesce(_logErrors, 1);
+    _logErrors := Coalesce(_logErrors, true);
 
     If _mostRecentDays > 0 Then
         _endDate := CURRENT_TIMESTAMP;
@@ -92,8 +94,8 @@ BEGIN
         --
         _message := 'More than 1% of the uploads to MyEMSL had an error; error rate: ' || _uploadErrorRate*100::text::int || '% for ' || _uploadAttempts::text || ' upload attempts';
 
-        If _logErrors <> 0 Then
-            Call post_log_entry 'Error', _message, 'CheckForMyEMSLErrors'
+        If _logErrors Then
+            Call post_log_entry ('Error', _message, 'CheckForMyEMSLErrors');
         Else
             RAISE INFO '%', _message;
         End If;
@@ -104,8 +106,8 @@ BEGIN
         --
         _message := 'More than 5% of the uploads to MyEMSL involved uploading the same data package and subfolder 2 or more times; duplicate rate: ' || _duplicateRate*100::text::int || '% for ' || _dataPkgFolderUploads::text || ' DataPkg/folder combos';
 
-        If _logErrors <> 0 Then
-            Call post_log_entry 'Error', _message, 'CheckForMyEMSLErrors'
+        If _logErrors Then
+            Call post_log_entry ('Error', _message, 'CheckForMyEMSLErrors');
         Else
             RAISE INFO '%', _message;
         End If;

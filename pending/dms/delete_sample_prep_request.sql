@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.delete_sample_prep_request
 (
     _requestID int,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -33,6 +34,7 @@ DECLARE
     _num int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

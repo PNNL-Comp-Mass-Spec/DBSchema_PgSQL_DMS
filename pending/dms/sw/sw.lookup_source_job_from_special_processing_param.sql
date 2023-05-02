@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param
 (
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _previewSql boolean= false
 )
 LANGUAGE plpgsql
@@ -11,7 +12,7 @@ AS $$
 **  Desc:
 **      Looks up the source job defined for a new job
 *
-**      The calling procedure must create temporary table Tmp_Source_Job_Folders
+**      The calling procedure must CREATE TEMP TABLE Tmp_Source_Job_Folders
 **
 **      CREATE TEMP TABLE Tmp_Source_Job_Folders (
 **              Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

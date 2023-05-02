@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions_by_name
     _comment text = '',
     _recycleRequest text = '',
     _mode text = 'update',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

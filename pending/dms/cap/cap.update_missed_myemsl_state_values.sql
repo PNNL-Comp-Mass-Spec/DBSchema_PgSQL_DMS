@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_myemsl_state_values
 (
     _windowDays int = 30,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -36,6 +37,7 @@ BEGIN
     _windowDays := Abs(Coalesce(_windowDays, 30));
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _windowDays < 1 Then
         _windowDays := 1;

@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE cap.make_local_task_in_broker
     _debugMode boolean = false,
     INOUT _job int,
     INOUT _resultsDirectoryName text,
-    INOUT _message text,
-    INOUT _returnCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

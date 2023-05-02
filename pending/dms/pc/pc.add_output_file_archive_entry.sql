@@ -1,27 +1,18 @@
 --
 CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry
 (
-    /*    _proteinCollectionID int,
-    _sha1Authentication text,
-    _fileModificationDate datetime,
-    _fileSize bigint,
-    _archivedFilePath text,
-    _archivedFileType text,
-    _outputSequenceType text,
-    _creationOptions text,
-    INOUT _message text
-    */
     _proteinCollectionID int,
-    _crc32Authentication varchar(8),
+    _crc32Authentication text,
     _fileModificationDate datetime,
     _fileSize bigint,
-    _proteinCount int = 0,
+    _proteinCount int default 0,
     _archivedFileType text,
     _creationOptions text,
-    _proteinCollectionString VARCHAR (8000),
+    _proteinCollectionString text,
     _collectionStringHash text,
-    INOUT _archivedFilePath text,
-    INOUT _message text
+    INOUT _archivedFilePath text default '',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -263,24 +254,14 @@ BEGIN
         _proteinCount,
         _proteinCollectionString,
         _collectionStringHash)
+    RETURNING archived_file_id
+    INTO _archiveEntryID;
 
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            rollback transaction _transName
-            _msg := 'Insert operation failed: Archive File Entry for file with hash = "' || _crc32Authentication || '"';
-            RAISERROR (_msg, 10, 1)
-            _message := _msg;
-            return -51007
-        End If;
+    _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT('000000' || archived_file_id::text, 6));
 
-        SELECT @@Identity INTO _archiveEntryID
-
-        _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT('000000'||CAST(_archiveEntryID AS VARCHAR),6));
-
-        UPDATE pc.t_archived_output_files
-        SET archived_file_path = _archivedFilePath
-        WHERE archived_file_id = _archiveEntryID
+    UPDATE pc.t_archived_output_files
+    SET archived_file_path = _archivedFilePath
+    WHERE archived_file_id = _archiveEntryID
 
     ---------------------------------------------------
     -- Parse and Store Creation Options

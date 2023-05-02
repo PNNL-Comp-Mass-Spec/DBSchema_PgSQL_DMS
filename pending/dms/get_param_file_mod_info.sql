@@ -7,7 +7,8 @@ CREATE OR REPLACE PROCEDURE public.get_param_file_mod_info
     INOUT _pmTargetSymbolList text = '',
     INOUT _pmMassCorrectionTagList text = '',
     INOUT _npMassCorrectionTagList text = '',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -38,6 +39,7 @@ DECLARE
     _ln int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _paramFileID := 0;
     _pmTargetSymbolList := '';

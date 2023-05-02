@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.auto_update_dataset_rating_via_qc_metrics
     _experimentExclusion text = '%Intact%',
     _datasetCreatedMinimum timestamp = '2000-01-01'::timestamp,
     _infoOnly boolean = true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -49,6 +50,7 @@ BEGIN
     _datasetCreatedMinimum := Coalesce(_datasetCreatedMinimum, make_date(2000, 1, 1));
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     CREATE TEMP TABLE Tmp_DatasetsToUpdate (
         Dataset_ID int not null

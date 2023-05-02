@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters
     INOUT _jobParam text,
     _scriptName text,
     _dataPackageID int,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 LANGUAGE plpgsql

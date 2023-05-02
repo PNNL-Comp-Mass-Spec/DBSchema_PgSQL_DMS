@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.get_psm_job_definitions
     INOUT _metadata text,
     INOUT _defaults text,
     _mode text = 'PSM',
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

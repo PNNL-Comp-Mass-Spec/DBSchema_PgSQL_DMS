@@ -6,8 +6,8 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters
     _organismDBFileName text,
     INOUT _protCollNameList text,
     INOUT _protCollOptionsList text,
-    INOUT _message text,
-    INOUT _returnCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE cap.reset_dependent_task_steps
 (
     _jobs text,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

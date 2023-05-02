@@ -12,8 +12,8 @@ CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker
     _logDebugMessages boolean = false
     INOUT _job int,
     INOUT _resultsFolderName text,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

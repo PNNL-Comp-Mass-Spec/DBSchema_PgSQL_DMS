@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE cap.update_task_step_status_history
 (
     _minimumTimeIntervalMinutes integer = 60,
     _minimumTimeIntervalMinutesForIdenticalStats integer = 355,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -55,6 +56,7 @@ BEGIN
     -----------------------------------------------------
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     _mostRecentPostingTime := Null;

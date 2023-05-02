@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE pc.reindex_database
 (
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -28,6 +29,7 @@ BEGIN
     _tableCount := 0;
 
     _message := '';
+    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Reindex the data tables

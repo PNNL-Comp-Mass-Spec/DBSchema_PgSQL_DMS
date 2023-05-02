@@ -30,7 +30,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_lc_cart_configuration
     _entryUser text = '',
     _state text = 'Active',
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -81,6 +82,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate input fields

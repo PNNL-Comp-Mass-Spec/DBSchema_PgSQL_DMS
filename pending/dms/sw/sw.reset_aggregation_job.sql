@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.reset_aggregation_job
 (
     _job int,
     _infoOnly boolean = true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -53,6 +54,7 @@ BEGIN
     _job := Coalesce(_job, 0);
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _job = 0 Then
         _message := 'Job number not supplied';

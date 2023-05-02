@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.populate_param_file_info_table_sequest
 (
     INOUT _paramFileInfoColumnList text = '',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

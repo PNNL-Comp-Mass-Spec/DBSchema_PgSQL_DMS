@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.consume_scheduled_run
 (
     _datasetID int,
     _requestID int,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _logDebugMessages boolean = false
 )
@@ -48,6 +49,7 @@ DECLARE
     _statusID int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate that experiments match

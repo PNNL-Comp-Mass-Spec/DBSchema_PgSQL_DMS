@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.do_file_attachment_operation
 (
     _id int,
     _mode text,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -58,6 +59,7 @@ BEGIN
     End If;
 
     _message := '';
+    _returnCode:= '';
 
     BEGIN
 

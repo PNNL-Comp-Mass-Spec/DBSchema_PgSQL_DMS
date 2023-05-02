@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE pc.add_naming_authority
     _name text,
     _description text,
     _webAddress text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -7,8 +7,8 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs
     _excludeDatasetsNotReleased boolean = true,
     _preventDuplicateJobs boolean = true,
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     INOUT _jobsCreated int = 0
 )
 LANGUAGE plpgsql

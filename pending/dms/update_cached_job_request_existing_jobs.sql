@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs
     _requestID int = 0,
     _jobSearchHours int = 0,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -42,6 +43,7 @@ BEGIN
     _jobSearchHours := Coalesce(_jobSearchHours, 0);
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _requestID = 1 Then
         Select '_requestID 1 is a special placeholder request; table t_analysis_job_request_existing_jobs does not track jobs for _requestID 1' As Warning

@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.move_entries_to_history
 (
     _intervalDays int = 365,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -2,8 +2,9 @@
 CREATE OR REPLACE PROCEDURE pc.add_sha1_file_authentication
 (
     _collectionID int,
-    _cRC32FileHash varchar(8),
-    INOUT _message text
+    _crc32FileHash text,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -36,11 +37,9 @@ BEGIN
     begin
 
     UPDATE pc.t_protein_collections
-    SET
-        authentication_hash = _cRC32FileHash,
+    SET authentication_hash = _crc32FileHash,
         date_modified = CURRENT_TIMESTAMP
-
-    WHERE (Protein_Collection_ID = _collectionID)
+    WHERE Protein_Collection_ID = _collectionID;
 
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;

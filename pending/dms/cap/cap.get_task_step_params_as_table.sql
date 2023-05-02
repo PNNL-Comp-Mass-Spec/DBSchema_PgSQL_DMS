@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.get_task_step_params_as_table
     _job int,
     _step int,
     _paramName text = '',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 LANGUAGE plpgsql
@@ -29,6 +30,7 @@ DECLARE
 BEGIN
     --
     _message := '';
+    _returnCode:= '';
 
     _paramName := Trim(Coalesce(_paramName, ''));
 

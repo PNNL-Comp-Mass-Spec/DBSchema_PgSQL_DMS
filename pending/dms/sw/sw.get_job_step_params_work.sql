@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.get_job_step_params_work
 (
     _job int,
     _step int,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 LANGUAGE plpgsql
@@ -16,7 +16,7 @@ AS $$
 **
 **      Note: Data comes from sw.T_Job_Parameters, not from the public schema tables
 **
-**      The calling procedure must create temporary table Tmp_JobParamsTable
+**      The calling procedure must CREATE TEMP TABLE Tmp_JobParamsTable
 **
 **      CREATE TEMP TABLE Tmp_JobParamsTable (
 **          Section text,

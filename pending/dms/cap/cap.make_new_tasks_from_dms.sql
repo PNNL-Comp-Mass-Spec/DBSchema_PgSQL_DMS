@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_dms
 (
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _maxJobsToProcess int = 0,
     _logIntervalThreshold int = 15,
     _loggingEnabled boolean = false,
@@ -52,6 +53,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.delete_experiment_group
 (
     _groupID int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -30,6 +31,7 @@ DECLARE
     _transName text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

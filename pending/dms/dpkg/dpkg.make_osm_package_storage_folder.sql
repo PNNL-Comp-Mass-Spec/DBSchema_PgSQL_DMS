@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE dpkg.make_osm_package_storage_folder
 (
     _id int,
     _mode text = 'add',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -30,6 +31,7 @@ DECLARE
     _sourceDB text := DB_Name();
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Lookup the parameters needed to call AddDataFolderCreateTask

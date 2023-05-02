@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE pc.add_archived_file_entry_xref
 (
     _collectionID int,
     _archivedFileID int,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -25,6 +26,7 @@ DECLARE
     _transName text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     -------------------------------------------------
     -- Verify the File ID and Collection ID

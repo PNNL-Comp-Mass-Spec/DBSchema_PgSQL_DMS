@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.set_folder_create_task_complete
 (
     _taskID int,
     _completionCode int,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -34,6 +35,7 @@ DECLARE
     _stepState int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

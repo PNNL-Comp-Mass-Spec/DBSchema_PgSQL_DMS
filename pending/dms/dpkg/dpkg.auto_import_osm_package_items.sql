@@ -7,14 +7,6 @@ AS $$
 **  Desc:
 **      Calls auto import function for all currently active OSM packages
 **
-**  Arguments:
-**       <d>
-**       <e>
-**       <e>
-**       <f>
-**       <f>
-**       <d>
-**
 **  Auth:   grk
 **  Date:   03/20/2013 grk - initial release
 **          02/23/2016 mem - Add set XACT_ABORT on
@@ -77,13 +69,14 @@ BEGIN
             _prevId := _currentId;
             -- SELECT '->' + CONVERT(text, _currentId)
 
-            Call UpdateOSMPackageItems (
+            Call Update_OSM_Package_Items (
                     _currentId,
                     _itemType,
                     _itemList,
                     _comment,
                     _mode,
                     _message => _message,      -- Output
+                    _returnCode => _returnCode,      -- Output
                     _callingUser
 
         END LOOP;
@@ -96,13 +89,9 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        If _logErrors Then
-            _message := local_error_handler (
-                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                            _callingProcLocation => '', _logError => true);
-        Else
-            _message := _exceptionMessage;
-        End If;
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

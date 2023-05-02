@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE cap.merge_tasks_to_main_tables
 (
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -30,6 +31,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
 /*
 select * from Tmp_Jobs

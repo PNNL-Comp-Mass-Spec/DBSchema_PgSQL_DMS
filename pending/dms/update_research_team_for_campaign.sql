@@ -10,7 +10,8 @@ CREATE OR REPLACE PROCEDURE public.update_research_team_for_campaign
     _informaticsStaff text,
     _collaborators text,
     INOUT _researchTeamID int,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -61,6 +62,7 @@ DECLARE
     _usageMessage text := '';
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

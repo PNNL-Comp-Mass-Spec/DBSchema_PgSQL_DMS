@@ -20,7 +20,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run
     _eusUsersList text = '',
     _mode text = 'add',
     INOUT _request int,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _secSep text = 'LC-Formic_100min',
     _mrmAttachment text,
     _status text = 'Active',
@@ -185,7 +186,7 @@ DECLARE
     _matchedSeparationGroup text := '';
     _mrmAttachmentID int;
     _eusUsageTypeID Int;
-    _addingItem int := 0;
+    _addingItem boolean := false;
     _commaPosition int;
     _locationID int := null;
     _allowNoneWP boolean := _autoPopulateUserListIfBlank;
@@ -200,6 +201,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
     _resolvedInstrumentInfo := '';
 
     _separationGroup := _secSep;
@@ -648,7 +650,7 @@ BEGIN
         End If;
 
         If _mode::citext In ('add', 'check_add') Then
-            _addingItem := 1;
+            _addingItem := true;
         End If;
 
         Call validate_eus_usage (

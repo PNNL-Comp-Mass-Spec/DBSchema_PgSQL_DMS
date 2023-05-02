@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE public.update_organism_list_for_biomaterial
     _biomaterialName text,
     _organismList text,
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

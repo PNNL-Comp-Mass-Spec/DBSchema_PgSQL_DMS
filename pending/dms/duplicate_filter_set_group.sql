@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE public.duplicate_filter_set_group
     _filterSetID int,
     _filterCriteriaGroupID int,
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

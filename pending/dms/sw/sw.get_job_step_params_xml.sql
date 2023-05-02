@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE sw.get_job_step_params_xml
     _job int,
     _step int,
     INOUT _parameters text,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _jobIsRunningRemote int = 0,
     _debugMode boolean = false
 )

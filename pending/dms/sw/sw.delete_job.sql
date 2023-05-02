@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.delete_job
 (
     _job text,
     _callingUser text = '',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

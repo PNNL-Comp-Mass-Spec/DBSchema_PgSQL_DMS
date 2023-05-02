@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE pc.master_update_protein_database
 (
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -23,6 +24,7 @@ BEGIN
     Set XACT_ABORT, nocount on
 
     _message := '';
+    _returnCode:= '';
 
     _currentLocation := 'Start';
 

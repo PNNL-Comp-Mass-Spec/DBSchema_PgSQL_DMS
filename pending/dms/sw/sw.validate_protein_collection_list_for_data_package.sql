@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package
     INOUT _protCollNameList text = '',
     INOUT _collectionCountAdded int = 0,
     _showMessages boolean = true,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

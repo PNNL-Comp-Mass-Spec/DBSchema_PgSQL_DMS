@@ -17,7 +17,8 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions
     _eusUserID text = '',
     _mrmAttachment text,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _autoPopulateUserListIfBlank boolean = false,
     _callingUser text = '',
     _logDebugMessages boolean = false
@@ -101,7 +102,7 @@ DECLARE
     _newUsername text;
     _datasetTypeID int;
     _eusUsageTypeID int;
-    _addingItem int := 0;
+    _addingItem boolean := false;
     _commaPosition int;
     _locationID int := null;
     _allowNoneWP boolean := _autoPopulateUserListIfBlank;
@@ -115,10 +116,11 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     -- Default priority at which new requests will be created
 
-    _logDebugMessages := Coalesce(_logDebugMessages, 0);
+    _logDebugMessages := Coalesce(_logDebugMessages, false);
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -476,7 +478,7 @@ BEGIN
         End If;
 
         If _mode = 'add' Then
-            _addingItem := 1;
+            _addingItem := true;
         End If;
 
         Call validate_eus_usage (

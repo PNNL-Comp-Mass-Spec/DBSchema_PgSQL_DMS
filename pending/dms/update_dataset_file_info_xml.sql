@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml
 (
     _datasetID int = 0,
     _datasetInfoXML xml,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _validateDatasetType boolean = true
 )
@@ -152,6 +152,7 @@ BEGIN
 
     _datasetID := Coalesce(_datasetID, 0);
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
     _validateDatasetType := Coalesce(_validateDatasetType, true);
 
@@ -171,7 +172,7 @@ BEGIN
     End If;
 
     -----------------------------------------------------------
-    -- Create temp tables to hold the data
+    -- Create temporary tables to hold the data
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DSInfoTable (

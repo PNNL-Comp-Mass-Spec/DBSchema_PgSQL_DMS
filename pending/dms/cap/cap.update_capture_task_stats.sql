@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE cap.update_capture_task_stats
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -26,6 +27,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create a temp table to hold the statistics

@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE public.populate_factor_last_updated
     _infoOnly boolean = true,
     _dateFilterStart date = null,
     _dateFilterEnd date = null,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -62,6 +62,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, true);
     _message := '';
+    _returnCode:= '';
 
     If _dateFilterStart Is Null And _dateFilterEnd Is Null Then
         _eventID := -1;

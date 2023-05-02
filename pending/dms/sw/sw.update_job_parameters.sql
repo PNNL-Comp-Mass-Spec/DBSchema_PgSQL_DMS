@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE sw.update_job_parameters
     _job int,
     _infoOnly boolean = false,
     _settingsFileOverride text = '',
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

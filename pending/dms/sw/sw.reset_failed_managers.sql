@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.reset_failed_managers
 (
     _infoOnly boolean = false,
     _resetAllWithError boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

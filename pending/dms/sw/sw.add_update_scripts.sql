@@ -10,8 +10,8 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts
     _parameters text,
     _fields text,
     _mode text = 'add',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -82,6 +82,7 @@ BEGIN
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
     _message := '';
+    _returnCode:= '';
     _callingUser := Coalesce(_callingUser, '');
 
     If _backfillToDMS = 'Y' Then

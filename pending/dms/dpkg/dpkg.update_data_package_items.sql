@@ -6,10 +6,11 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items
     _itemList text,
     _comment text,
     _mode text = 'update',
-    _removeParents int = 0,
-    INOUT _message text = '',
-    _callingUser text = '',
-    _infoOnly boolean = false
+    _removeParents int default 0,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
+    _callingUser text default '',
+    _infoOnly boolean default false
 )
 LANGUAGE plpgsql
 AS $$
@@ -44,42 +45,54 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _wasModified int := 0;
     _authorized int := 0;
     _entityName text;
-    _logUsage int := 0;
-    _usageMessage text := 'Updating ' + @entityName + 's for data package ' + Cast(@packageID as varchar(12));
+    _logUsage bool := false;
+    _usageMessage text;
     _msgForLog text := ERROR_MESSAGE();
 BEGIN
     _message := '';
+    _returnCode := '';
+
+    ---------------------------------------------------
+    -- Verify that the user can execute this procedure from the given client host
+    ---------------------------------------------------
+
+    SELECT schema_name, name_with_schema
+    INTO _schemaName, _nameWithSchema
+    FROM get_current_function_info('<auto>', _showDebug => false);
+
+    SELECT authorized
+    INTO _authorized
+    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+
+    If Not _authorized Then
+        -- Commit changes to persist the message logged to public.t_log_entries
+        COMMIT;
+
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        RAISE EXCEPTION '%', _message;
+    End If;
 
     BEGIN TRY
-
-        ---------------------------------------------------
-        -- Verify that the user can EXECUTE this procedure from the given client host
-        ---------------------------------------------------
-
-        Call _authorized => verify_sp_authorized 'UpdateDataPackageItems', _raiseError => 1
-
-        If _authorized = 0 Then
-            RAISERROR ('Access denied', 11, 3)
-        End If;
-
-        SELECT CASE INTO _entityName
-                                 WHEN _itemType IN ('analysis_jobs', 'job', 'jobs') THEN 'Job'
-                                 WHEN _itemType IN ('datasets', 'dataset') THEN 'Dataset'
-                                 WHEN _itemType IN ('experiments', 'experiment') THEN 'Experiment'
-                                 WHEN _itemType = 'biomaterial' THEN 'Biomaterial'
-                                 WHEN _itemType = 'proposals' THEN 'EUSProposal'
-                                 ELSE ''
-                             END
+        SELECT CASE
+                WHEN _itemType::citext IN ('analysis_jobs', 'job', 'jobs') THEN 'Job'
+                WHEN _itemType::citext IN ('datasets', 'dataset') THEN 'Dataset'
+                WHEN _itemType::citext IN ('experiments', 'experiment') THEN 'Experiment'
+                WHEN _itemType::citext = 'biomaterial' THEN 'Biomaterial'
+                WHEN _itemType::citext = 'proposals' THEN 'EUSProposal'
+                ELSE ''
+               END
+        INTO _entityName;
         --
         If Coalesce(_entityName, '') = '' Then
             RAISERROR('Item type "%s" is unrecognized', 11, 14, _itemType);
         End If;
 
-        If _logUsage > 0 Then
-            Call post_log_entry 'Debug', _usageMessage, 'UpdateDataPackageItems'
+        -- Set this to true to log a debug message
+        If _logUsage Then
+            _usageMessage := format('Updating %ss for data package %s', _entityName, _packageID);
+            Call post_log_entry ('Debug', _usageMessage, 'dpkg.update_data_package_items')
         End If;
 
         _itemList := Trim(Coalesce(_itemList, ''));
@@ -89,7 +102,7 @@ BEGIN
         -- Create and populate a temporary table using the XML in _paramListXML
         ---------------------------------------------------
         --
-        CREATE TEMPORARY TABLE Tmp_DataPackageItems (
+        CREATE TEMP TABLE Tmp_DataPackageItems (
             DataPackageID int not null,   -- Data package ID
             ItemType text null,           -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
             Identifier text null          -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID

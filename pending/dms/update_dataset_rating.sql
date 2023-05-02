@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_rating
 (
     _datasets text,
     _rating text = 'Unknown',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _callingUser text = ''
 )

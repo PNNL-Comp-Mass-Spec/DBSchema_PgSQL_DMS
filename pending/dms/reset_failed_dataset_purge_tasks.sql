@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_purge_tasks
     _resetHoldoffHours real = 2,
     _maxTasksToReset int = 0,
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _resetCount int = 0 output
 )
 LANGUAGE plpgsql
@@ -51,6 +52,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     _message := '';
+    _returnCode:= '';
     _resetCount := 0;
 
     If _maxTasksToReset <= 0 Then

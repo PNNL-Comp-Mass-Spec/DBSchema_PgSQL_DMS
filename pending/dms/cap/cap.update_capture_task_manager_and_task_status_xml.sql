@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_manager_and_task_status_xml
     _managerStatusXML text = '',
     _infoLevel int = 0,
     _logProcessorNames boolean = false,
-    INOUT _message text,
-    INOUT _returnCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

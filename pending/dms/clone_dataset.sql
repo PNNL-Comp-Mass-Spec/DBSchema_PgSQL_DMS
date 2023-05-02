@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.clone_dataset
     _dataset text,
     _suffix text = '_Test1',
     _createDatasetArchiveTask boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -65,6 +66,7 @@ BEGIN
     _createDatasetArchiveTask := Coalesce(_createDatasetArchiveTask, false);
 
     _message := '';
+    _returnCode:= '';
 
     If _dataset = '' Then
         _message := '_dataset parameter cannot be empty';

@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.validate_wp
 (
     _workPackage text,
     _allowNoneWP boolean,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

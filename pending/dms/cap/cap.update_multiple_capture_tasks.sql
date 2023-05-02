@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE cap.update_multiple_capture_tasks
 (
     _jobList text,
-    _action text = 'Retry',
-    _mode text = 'Update',
+    _action text default 'Retry',
+    _mode text default 'Update',
     INOUT _message text DEFAULT '',
     INOUT _returnCode text DEFAULT '',
     _callingUser text DEFAULT ''

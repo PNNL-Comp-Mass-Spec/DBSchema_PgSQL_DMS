@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE public.process_waiting_special_proc_jobs
     _infoOnly boolean = false,
     _previewSql boolean = false,
     _jobsToProcess int = 0,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _jobsUpdated int = 0 output
 )
 LANGUAGE plpgsql
@@ -71,6 +72,7 @@ BEGIN
     _jobsToProcess := Coalesce(_jobsToProcess, 0);
 
     _message := '';
+    _returnCode:= '';
     _jobsUpdated := 0;
 
     If _errorMessagePostingIntervalHours < 1 Then

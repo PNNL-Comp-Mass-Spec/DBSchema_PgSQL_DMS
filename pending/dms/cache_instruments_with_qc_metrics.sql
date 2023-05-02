@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.cache_instruments_with_qc_metrics
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

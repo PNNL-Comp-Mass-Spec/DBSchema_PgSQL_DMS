@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE cap.remove_selected_tasks
 (
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _logDeletions boolean
 )
 LANGUAGE plpgsql
@@ -35,6 +36,7 @@ DECLARE
 BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
     _logDeletions := Coalesce(_logDeletions, false);
 
     ---------------------------------------------------

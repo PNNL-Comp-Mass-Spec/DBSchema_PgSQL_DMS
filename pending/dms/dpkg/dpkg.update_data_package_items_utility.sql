@@ -3,11 +3,11 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_utility
 (
     _comment text,
     _mode text = 'add',
-    _removeParents int = 0,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
-    _callingUser text = '',
-    _infoOnly boolean = false
+    _removeParents int default 0,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
+    _callingUser text default '',
+    _infoOnly boolean default false
 )
 LANGUAGE plpgsql
 AS $$
@@ -17,10 +17,10 @@ AS $$
 **      Updates data package items in list according to command mode
 **      Expects list of items to be in temp table Tmp_DataPackageItems
 **
-**      CREATE TEMPORARY TABLE Tmp_DataPackageItems (
-**                DataPackageID int not null,   -- Data package ID
-**                ItemType text null,           -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
-**                Identifier text null          -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID
+**      CREATE TEMP TABLE Tmp_DataPackageItems (
+**          DataPackageID int not null,   -- Data package ID
+**          ItemType text null,           -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
+**          Identifier text null          -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID
 **      )
 **
 **  Arguments:
@@ -103,28 +103,20 @@ BEGIN
         CREATE TEMP TABLE Tmp_DatasetIDsToAdd (
             DataPackageID int NOT NULL,
             DatasetID int NOT NULL
-        )
+        );
 
         CREATE TEMP TABLE Tmp_JobsToAddOrDelete (
             DataPackageID int not null,            -- Data package ID
             Job int not null
-        )
+        );
 
-    CREATE INDEX IX_Tmp_JobsToAddOrDelete ON Tmp_JobsToAddOrDelete (Job, DataPackageID)
-        ---------------------------------------------------
-        -- Verify that the user can EXECUTE this procedure from the given client host
-        ---------------------------------------------------
-
-        Call _authorized => verify_sp_authorized 'UpdateDataPackageItemsUtility', _raiseError => 1
-        If _authorized = 0 Then
-            RAISERROR ('Access denied', 11, 3)
-        End If;
+        CREATE INDEX IX_Tmp_JobsToAddOrDelete ON Tmp_JobsToAddOrDelete (Job, DataPackageID)
 
         -- If working with analysis jobs, populate Tmp_JobsToAddOrDelete with all numeric job entries
         --
         If Exists ( SELECT * FROM Tmp_DataPackageItems WHERE ItemType = 'Job' ) Then
             DELETE Tmp_DataPackageItems
-            WHERE Coalesce(Identifier, '') = '' OR Try_Parse(Identifier as int) Is Null
+            WHERE Coalesce(Identifier, '') = '' OR try_cast(Identifier, null::int) Is Null;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -136,7 +128,7 @@ BEGIN
             SELECT DataPackageID,
                    Job
             FROM ( SELECT DataPackageID,
-                          Try_Parse(Identifier as int) as Job
+                          try_cast(Identifier, null::int) As Job
                    FROM Tmp_DataPackageItems
                    WHERE ItemType = 'Job' AND
                          Not DataPackageID Is Null) SourceQ
@@ -159,7 +151,7 @@ BEGIN
             SELECT DataPackageID,
                    DatasetID
             FROM ( SELECT DataPackageID,
-                          Try_Parse(Identifier as int) AS DatasetID
+                          try_cast(Identifier, null::int) AS DatasetID
                    FROM Tmp_DataPackageItems
                    WHERE ItemType = 'Dataset' AND
                          NOT DataPackageID IS NULL ) SourceQ
@@ -180,21 +172,8 @@ BEGIN
                 -- Update the Type of the Dataset IDs so that they will be ignored
                 UPDATE Tmp_DataPackageItems
                 SET ItemType = 'DatasetID'
-                FROM Tmp_DataPackageItems
-
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE Tmp_DataPackageItems
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = Tmp_DataPackageItems.id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
-                     INNER JOIN Tmp_DatasetIDsToAdd Source
-                       ON Tmp_DataPackageItems.Identifier = Cast(Source.DatasetID AS text)
+                FROM Tmp_DatasetIDsToAdd
+                WHERE Tmp_DataPackageItems.Identifier = Tmp_DatasetIDsToAdd.DatasetID::text;
 
             End If;
 
@@ -1166,7 +1145,7 @@ BEGIN
 
         If _itemCountChanged > 0 Then
         -- <UpdateDataPackageItemCounts>
-            CREATE TEMPORARY TABLE Tmp_DataPackageDatasets (ID int)
+            CREATE TEMP TABLE Tmp_DataPackageDatasets (ID int)
 
             INSERT INTO Tmp_DataPackageDatasets (ID)
             SELECT DISTINCT DataPackageID
@@ -1187,14 +1166,14 @@ BEGIN
         ---------------------------------------------------
         --
         If _itemCountChanged > 0 Then
-        -- <UpdateEUSInfo>
 
-            SELECT @DataPackageList + Cast(DataPackageID AS varchar(12)) + ',' INTO _dataPackageList
+            SELECT string_agg(DataPackageID::text, ',' ORDER BY DataPackageID)
+            INTO _dataPackageList
             FROM ( SELECT DISTINCT DataPackageID
-                   FROM Tmp_DataPackageItems ) AS ListQ
+                   FROM Tmp_DataPackageItems ) AS ListQ;
 
-            Call update_data_package_eus_info _dataPackageList
-        End If; -- </UpdateEUSInfo>
+            Call update_data_package_eus_info (_dataPackageList);
+        End If;
 
         ---------------------------------------------------
         -- Update the last modified date for affected data packages

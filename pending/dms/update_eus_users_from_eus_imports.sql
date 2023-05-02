@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_eus_users_from_eus_imports
 (
     _updateUsersOnInactiveProposals boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -6,8 +6,8 @@ CREATE OR REPLACE PROCEDURE public.add_missing_requested_run
     _eusUsageType text = 'Cap_Dev',
     _eusUsersList text = '',
     _infoOnly boolean = true,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

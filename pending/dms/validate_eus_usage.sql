@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.validate_eus_usage
     INOUT _eusProposalID text,
     INOUT _eusUsersList text,
     INOUT _eusUsageTypeID int,
-    INOUT _message text,
-    INOUT _returnCode text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _autoPopulateUserListIfBlank boolean = false,
     _samplePrepRequest boolean = false,
     _experimentID int = 0,
@@ -34,7 +34,7 @@ AS $$
 **    _samplePrepRequest            When true, validating EUS fields for a sample prep request
 **    _experimentID                 When non-zero, validate EUS Usage Type against the experiment's campaign
 **    _campaignID                   When non-zero, validate EUS Usage Type against the campaign
-**    _addingItem                   When _experimentID or _campaignID is non-zero, set this to 1 if creating a new prep request or new requested run
+**    _addingItem                   When _experimentID or _campaignID is non-zero, set this to true if creating a new prep request or new requested run
 **    _infoOnly                     When true, show debug info
 **
 **  Auth:   grk
@@ -583,7 +583,7 @@ BEGIN
         End If;
 
         If _eusUsageTypeCampaign::citext = 'USER_REMOTE' And _eusUsageType::citext In ('USER_ONSITE', 'USER') And _proposalType::citext <> 'Resource Owner' Then
-            If _addingItem > 0 Then
+            If _addingItem Then
                 _eusUsageType := 'USER_REMOTE';
                 _msg := 'Auto-updated EUS Usage Type to USER_REMOTE since the campaign has USER_REMOTE';
                 _usageTypeUpdated := 1;

@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_blocking_and_factors
 (
     _blockingList text,
     _factorList text,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

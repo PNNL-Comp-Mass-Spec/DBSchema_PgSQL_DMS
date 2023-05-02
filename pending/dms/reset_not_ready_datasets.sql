@@ -28,6 +28,7 @@ DECLARE
     _stateNew int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Reset all datasets that are in 'Not Ready' state

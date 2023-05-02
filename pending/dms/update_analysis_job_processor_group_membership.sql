@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processor_group_membershi
     _processorGroupID text,
     _newValue text,
     _mode text = '',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -39,6 +40,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate the inputs

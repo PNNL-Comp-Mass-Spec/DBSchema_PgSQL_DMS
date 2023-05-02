@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_manually_verified
     _job int,
     _statusNumList text = '',
     _infoOnly boolean = true,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

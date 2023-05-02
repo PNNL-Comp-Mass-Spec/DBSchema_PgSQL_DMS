@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.add_missing_filter_criteria
 (
     _filterSetID int,
     _processGroupsWithNoCurrentCriteriaDefined int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -37,6 +38,7 @@ DECLARE
     _criterionValue float8;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _groupsProcessed := 0;
     _criteriaAdded := 0;

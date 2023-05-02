@@ -38,6 +38,7 @@ BEGIN
     _cells := 0;
     _spaceUsageMB := 0;
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Obtain the stats using 3 system tables and the view V_Table_Size_Summary

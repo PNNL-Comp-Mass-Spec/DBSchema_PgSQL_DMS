@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.delete_old_jobs_from_history
 (
     _infoOnly boolean = true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -40,6 +41,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create a temp table to hold the jobs to delete

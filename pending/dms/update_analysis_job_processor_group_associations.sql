@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processor_group_associati
     _processorGroupID text,
     _newValue text = '',
     _mode text = 'add',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

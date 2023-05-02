@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names
 (
     _expID int,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -38,6 +39,7 @@ BEGIN
     _expID := Coalesce(_expID, 0);
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _expID > 0 Then
     -- <SingleExperiment>

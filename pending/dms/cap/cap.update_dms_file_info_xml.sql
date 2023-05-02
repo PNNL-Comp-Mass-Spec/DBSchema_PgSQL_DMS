@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_file_info_xml
 (
     _datasetID int,
     _deleteFromTableOnSuccess boolean = true,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql

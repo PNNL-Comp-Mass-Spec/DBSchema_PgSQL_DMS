@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset
 (
     _xmlDoc text,
     _mode text = 'add',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _logDebugMessages boolean = false
 )
 LANGUAGE plpgsql
@@ -123,7 +123,7 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-    _logDebugMessages := Coalesce(_logDebugMessages, 0);
+    _logDebugMessages := Coalesce(_logDebugMessages, false);
 
     ---------------------------------------------------
     -- Convert _xmlDoc to XML

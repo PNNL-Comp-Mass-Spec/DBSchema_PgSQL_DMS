@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.cross_check_job_parameters
 (
     _job int,
-    INOUT _message text,
-    INOUT _returnCode text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _ignoreSignatureMismatch boolean = false
 )
 LANGUAGE plpgsql

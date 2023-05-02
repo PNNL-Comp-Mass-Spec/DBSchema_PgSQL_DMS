@@ -3,12 +3,12 @@ CREATE OR REPLACE PROCEDURE public.parse_usage_text
 (
     INOUT _comment text,
     INOUT _usageXML XML,
-    INOUT _message text,
-    INOUT _returnCode text,
-    _seq int = -1,
-    _showDebug boolean = false,
-    _validateTotal boolean = true,
-    INOUT _invalidUsage int = 0             -- Leave as an integer since add_update_run_interval tracks this using an integer
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
+    _seq int default -1,
+    _showDebug boolean default false,
+    _validateTotal boolean default true,
+    INOUT _invalidUsage int default 0             -- Leave as an integer since add_update_run_interval tracks this using an integer
 )
 LANGUAGE plpgsql
 AS $$

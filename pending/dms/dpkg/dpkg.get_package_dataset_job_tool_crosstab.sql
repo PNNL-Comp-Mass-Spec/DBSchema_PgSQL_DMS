@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE dpkg.get_package_dataset_job_tool_crosstab
 (
     _dataPackageID INT,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -26,6 +27,7 @@ DECLARE
     _msgForLog text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     ---------------------------------------------------

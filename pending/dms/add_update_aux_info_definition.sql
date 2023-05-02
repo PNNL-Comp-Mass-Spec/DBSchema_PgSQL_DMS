@@ -10,8 +10,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_aux_info_definition
     _param1 text = '',
     _param2 text = '',
     _param3 text = '',
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE cap.update_task_context
     _loggingEnabled boolean = false,
     _loopingUpdateInterval int = 5,
     _debugMode boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

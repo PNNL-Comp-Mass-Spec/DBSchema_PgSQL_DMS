@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_instruments
     _processingMode int = 0,
     _datasetId Int = 0,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -34,6 +35,7 @@ BEGIN
     _datasetId := Coalesce(_datasetId, 0);
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _datasetId > 0 And Not _infoOnly Then
         MERGE INTO t_cached_dataset_instruments AS t

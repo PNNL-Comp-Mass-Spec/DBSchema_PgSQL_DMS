@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.copy_history_to_job
 (
     _job int,
-    INOUT _message text = '',
-    INOUT _returnCode text DEFAULT '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 LANGUAGE plpgsql

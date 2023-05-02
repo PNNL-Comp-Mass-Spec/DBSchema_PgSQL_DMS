@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE pc.add_annotation_type
     _description text,
     _example text,
     _authID int,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

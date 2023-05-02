@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE pc.add_new_protein_headers
     _proteinIDStart int = 0,
     _maxProteinsToProcess int = 0,
     _infoOnly int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -46,6 +47,7 @@ BEGIN
     _maxProteinsToProcess := Coalesce(_maxProteinsToProcess, 0);
     _infoOnly := Coalesce(_infoOnly, 0);
     _message := '';
+    _returnCode:= '';
 
     _currentLocation := 'Start';
 

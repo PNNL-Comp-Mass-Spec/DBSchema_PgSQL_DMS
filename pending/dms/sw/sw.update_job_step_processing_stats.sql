@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_processing_stats
 (
     _minimumTimeIntervalMinutes integer = 4,
     _minimumTimeIntervalMinutesForIdenticalStats integer = 60,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -50,6 +51,7 @@ BEGIN
     -----------------------------------------------------
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     _mostRecentPostingTime := Null;

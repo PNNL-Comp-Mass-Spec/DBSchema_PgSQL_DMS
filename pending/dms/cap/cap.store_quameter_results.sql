@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE cap.store_quameter_results
 (
     _datasetID int = 0,
     _resultsXML xml,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -36,6 +37,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

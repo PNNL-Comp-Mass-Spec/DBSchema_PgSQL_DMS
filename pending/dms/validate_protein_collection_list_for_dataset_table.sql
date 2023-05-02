@@ -1,11 +1,12 @@
 --
 CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_table
 (
-    INOUT _protCollNameList text = '',
-    INOUT _collectionCountAdded int = 0,
+    INOUT _protCollNameList text default '',
+    INOUT _collectionCountAdded int default 0,
     _showMessages boolean = true,
-    INOUT _message text = '',
-    _showDebug boolean = false
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
+    _showDebug boolean default false
 )
 LANGUAGE plpgsql
 AS $$
@@ -57,6 +58,7 @@ BEGIN
     _protCollNameList := Coalesce(_protCollNameList,'');
     _collectionCountAdded := 0;
     _message := '';
+    _returnCode:= '';
     _showMessages := Coalesce(_showMessages, true);
     _showDebug := Coalesce(_showDebug, false);
 

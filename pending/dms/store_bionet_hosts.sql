@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.store_bionet_hosts
 (
     _hostList text,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -56,6 +57,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     _message := '';
+    _returnCode:= '';
 
     If _hostList = '' Then
         _message := '_hostList cannot be empty; unable to continue';

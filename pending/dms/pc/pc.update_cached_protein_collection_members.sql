@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE pc.update_cached_protein_collection_members
     _collectionIdFilter int = 0,
     _updateAll int = 0,
     _maxCollectionsToUpdate int = 0,
-    INOUT _message text=''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -41,6 +42,7 @@ BEGIN
     _updateAll := Coalesce(_updateAll, 0);
     _maxCollectionsToUpdate := Coalesce(_maxCollectionsToUpdate, 0);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create some temporary tables
@@ -204,10 +206,11 @@ BEGIN
             _continue := 0;
         Else
         -- <b>
-            _currentRange := Cast(_currentRangeCount as varchar(9)) || ' protein ' || dbo.CheckPlural(_currentRangeCount, 'collection', 'collections') +;
-                                ' (' || Cast(_currentRangeStart as varchar(9)) || ' to ' || Cast(_currentRangeEnd as varchar(9)) || ')'
+            _currentRange := format('%s protein %s (%s to %s)',
+                                _currentRangeCount, check_plural(_currentRangeCount, 'collection', 'collections'),
+                                _currentRangeStart, _currentRangeEnd);
 
-            RAISE INFO '%', 'Processing ' || _currentRange;
+            RAISE INFO 'Processing %', _currentRange;
 
             ---------------------------------------------------
             -- Add/update data for protein collections in Tmp_CurrentIDs
@@ -256,7 +259,7 @@ BEGIN
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If _myRowCount > 0 Then
-                _statusMsg := 'Inserted ' || Cast(_myRowCount as varchar(9)) || ' rows for ' || _currentRange;
+                _statusMsg := format('Inserted %s rows for %s', _myRowCount, _currentRange);
                 RAISE INFO '%', _statusMsg;
                 Call post_log_entry 'Normal', _statusMsg, 'UpdateCachedProteinCollectionMembers'
             End If;
@@ -282,7 +285,7 @@ BEGIN
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If _myRowCount > 0 Then
-                _statusMsg := 'Deleted ' || Cast(_myRowCount as varchar(9)) || ' extra rows from pc.t_protein_collection_members_cached for ' || _currentRange;
+                _statusMsg := format('Deleted %s extra rows from pc.t_protein_collection_members_cached fo %s', _myRowCount, _currentRange);
                 RAISE INFO '%', _statusMsg;
                 Call post_log_entry 'Normal', _statusMsg, 'UpdateCachedProteinCollectionMembers'
             End If;
@@ -364,11 +367,9 @@ BEGIN
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                _statusMsg := 'Changed number of proteins' || ;
-                                ' from ' || Cast(_numProteinsOld as varchar(9)) +
-                                ' to '   || Cast(_numProteinsNew as varchar(9)) +
-                                ' for protein collection '  || Cast(_proteinCollectionID as varchar(9)) +
-                                ' in pc.t_protein_collections'
+                _statusMsg := format('Changed number of proteins from %s to %s for protein collection % in pc.t_protein_collections',
+                                _numProteinsOld, _numProteinsNew, _proteinCollectionID);
+
                 RAISE INFO '%', _statusMsg;
 
                 Call post_log_entry 'Warning', _statusMsg, 'UpdateCachedProteinCollectionMembers'

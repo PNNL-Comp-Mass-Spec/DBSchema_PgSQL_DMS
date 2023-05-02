@@ -7,8 +7,8 @@ CREATE OR REPLACE PROCEDURE cap.make_new_archive_update_task
     _pushDatasetToMyEMSL int = 0,
     _pushDatasetRecursive int = 0,
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

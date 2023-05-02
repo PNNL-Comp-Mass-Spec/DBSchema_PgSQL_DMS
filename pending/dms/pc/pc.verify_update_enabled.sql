@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE pc.verify_update_enabled
     _postLogEntryIfDisabled int = 1,
     _minimumHealthUpdateIntervalSeconds int = 5,
     INOUT _updateEnabled int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -52,6 +53,7 @@ DECLARE
     _lastCurrentActivityUpdateTime timestamp;
 BEGIN
     _message := '';
+    _returnCode:= '';
     _minimumHealthUpdateIntervalSeconds := Coalesce(_minimumHealthUpdateIntervalSeconds, 5);
 
     -- Make sure _callingFunctionDescription is not null, and prepend it with the database name
@@ -166,7 +168,8 @@ BEGIN
                     --
                     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                    _message := 'Processing step ' || _stepName || ' has been paused for ' || _maximumPauseLengthHours::varchar(9) || ' hours; updated Execution_State to 0 for this step and aborting the pause (called by ' || _callingFunctionDescription || ')';
+                    _message := format('Processing step %s has been paused for %s hours; updated Execution_State to 0 for this step and aborting the pause (called by %s)',
+                                        _stepName, _maximumPauseLengthHours, _callingFunctionDescription);
 
                     Call post_log_entry 'Error', _message, 'VerifyUpdateEnabled'
 

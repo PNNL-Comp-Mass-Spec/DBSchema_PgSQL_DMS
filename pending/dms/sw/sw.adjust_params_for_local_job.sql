@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE sw.adjust_params_for_local_job
     _datasetName text = 'na',
     _dataPackageID int,
     INOUT _jobParamXML xml,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

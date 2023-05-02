@@ -3,7 +3,8 @@ CREATE OR REPLACE FUNCTION public.get_protein_collection_member_detail
 (
     _id int,
     _mode text = 'get',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 RETURNS TABLE (
@@ -56,6 +57,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     BEGIN
 

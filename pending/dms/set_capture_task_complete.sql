@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_complete
 (
     _datasetName text,
     _completionCode int = 0,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _failureMessage text = ''
 )
 LANGUAGE plpgsql
@@ -48,6 +49,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
+    _returnCode:= '';
     _failureMessage := Coalesce(_failureMessage, '');
 
     _maxRetries := 20;

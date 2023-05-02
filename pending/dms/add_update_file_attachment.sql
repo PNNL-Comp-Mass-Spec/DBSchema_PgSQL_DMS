@@ -10,7 +10,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_file_attachment
     _archiveFolderPath text,
     _fileMimeType text,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -59,6 +60,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -142,7 +144,7 @@ BEGIN
                 _entityID,
                 Case When _entityType::citext In ('campaign', 'cell_culture', 'biomaterial', 'experiment', 'material_container')
                      Then Null
-                     Else public.try_cast(_entityID, true, 0)
+                     Else public.try_cast(_entityID, null::int)
                 End
                 _callingUser,
                 _fileSizeBytes,
@@ -168,7 +170,7 @@ BEGIN
                 entity_id_value =
                     Case When _entityType::citext In ('campaign', 'cell_culture', 'biomaterial', 'experiment', 'material_container')
                          Then Null
-                         Else public.try_cast(_entityID, true, 0)
+                         Else public.try_cast(_entityID, null::int)
                     End
                 File_Size_Bytes = _fileSizeBytes,
                 Last_Affected = CURRENT_TIMESTAMP,

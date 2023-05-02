@@ -27,7 +27,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis
     _nextLevel text,
     INOUT _id int,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _separationTypeCriteria text = '',
     _campaignExclCriteria text = '',
     _experimentExclCriteria text = '',
@@ -114,6 +115,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

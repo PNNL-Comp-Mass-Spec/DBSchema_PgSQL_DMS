@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pk
 (
     _dataPackageID int,
     INOUT _paramsUpdated int = 0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -54,6 +55,7 @@ BEGIN
     _dataPackageID := Coalesce(_dataPackageID, 0);
     _paramsUpdated := 0;
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Update _dataPackageID if 0 yet defined in Tmp_Job_Params

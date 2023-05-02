@@ -14,8 +14,8 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete
     _remoteStart timestamp = null,
     _remoteFinish timestamp = null,
     _processorName text = '',
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

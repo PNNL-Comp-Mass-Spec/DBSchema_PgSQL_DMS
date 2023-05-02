@@ -22,7 +22,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_campaign
     _fractionEMSLFunded text = '0',
     _eusUsageType text = 'USER_ONSITE',
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -110,6 +111,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

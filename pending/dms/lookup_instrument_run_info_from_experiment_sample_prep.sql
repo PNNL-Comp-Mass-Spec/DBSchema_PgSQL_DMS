@@ -6,8 +6,8 @@ CREATE OR REPLACE PROCEDURE public.lookup_instrument_run_info_from_experiment_sa
     INOUT _datasetType text,
     INOUT _instrumentSettings text,
     INOUT _secSep text,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

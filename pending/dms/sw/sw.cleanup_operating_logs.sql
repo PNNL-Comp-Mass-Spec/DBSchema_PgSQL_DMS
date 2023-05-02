@@ -31,6 +31,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _currentLocation := 'Start';
 

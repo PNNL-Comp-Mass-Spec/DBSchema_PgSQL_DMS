@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.update_cart_parameters
     _mode text,
     _requestID int,
     INOUT _newValue text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -40,6 +41,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _mode = Coalesce(_mode, 'InvalidMode');
     _requestID = Coalesce(_requestID, 0);

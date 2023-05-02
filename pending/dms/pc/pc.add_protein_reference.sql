@@ -6,8 +6,9 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_reference
     _authorityID int,
     _proteinID int,
     _nameDescHash text,
-    INOUT _message text,
-    _maxProteinNameLength int = 32
+    _maxProteinNameLength int default 32,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -35,6 +36,7 @@ DECLARE
     _referenceID int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     If Coalesce(_maxProteinNameLength, 0) <= 0 Then
         _maxProteinNameLength := 32;

@@ -3,7 +3,8 @@ CREATE OR REPLACE FUNCTION public.get_instrument_usage_allocations_for_grid
 (
     _itemList text,
     _fiscalYear text,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 RETURNS TABLE
 (

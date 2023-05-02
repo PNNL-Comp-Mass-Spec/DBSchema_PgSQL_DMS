@@ -58,7 +58,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment_plex_members
     _comment17 text = '',
     _comment18 text = '',
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -192,6 +193,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -225,7 +227,7 @@ BEGIN
             RAISE EXCEPTION 'plexExperimentIdOrName cannot be null';
         End If;
 
-        _plexExperimentId := public.try_cast(_plexExperimentIdOrName, true 0);
+        _plexExperimentId := public.try_cast(_plexExperimentIdOrName, null::int);
 
         If _plexExperimentId Is Null Then
             -- Assume _plexExperimentIdOrName is an experiment name
@@ -458,7 +460,7 @@ BEGIN
 
                     If char_length(_channelText) > 0 Then
                         -- <ChannelNum>
-                        _channelNum := public.try_cast(_channelText, true, 0);
+                        _channelNum := public.try_cast(_channelText, null::int);
 
                         If _channelNum Is Null Then
                             _message := 'Could not convert channel number ' || _channelText || ' to an integer in row ' || Cast(_entryID As text) || ' of the Plex Members table';
@@ -488,7 +490,7 @@ BEGIN
                         End If;
                     End If; -- </TagName>
 
-                    _experimentId := public.try_cast(_experimentIdOrName, true, 0);
+                    _experimentId := public.try_cast(_experimentIdOrName, null::int);
 
                     If _experimentId Is Null Then
                         -- Not an integer; is it a valid experiment name?
@@ -617,7 +619,7 @@ BEGIN
                         -- Look for a colon
                         _charIndex := Position(':' In _experimentIdOrName);
                         If _charIndex > 1 Then
-                            _experimentId := public.try_cast(Substring(_experimentIdOrName, 1, _charIndex-1), true, 0);
+                            _experimentId := public.try_cast(Substring(_experimentIdOrName, 1, _charIndex-1), null::int);
 
                             If _experimentId Is Null Then
                                 _message := 'Could not parse out the experiment ID from ' || Substring(_experimentIdOrName, 1, _charIndex-1) || ' for channel ' || Cast(_channelNum As text);
@@ -627,7 +629,7 @@ BEGIN
                         Else
                             -- No colon (or the first character is a colon)
                             -- First try to match experiment ID
-                            _experimentId := public.try_cast(_experimentIdOrName, true, 0);
+                            _experimentId := public.try_cast(_experimentIdOrName, null::int);
 
                             If _experimentId Is Null Then
                                 -- No match; try to match experiment name

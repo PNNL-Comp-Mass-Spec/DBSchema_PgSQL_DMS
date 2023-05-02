@@ -19,7 +19,8 @@ CREATE OR REPLACE PROCEDURE public.add_new_instrument
     _archivePath text,
     _archiveServer text,
     _archiveNote text,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     INUOT _returnCode text = ''
 )
 LANGUAGE plpgsql
@@ -116,7 +117,7 @@ BEGIN
     ---------------------------------------------------
     _autoDefineStoragePath := Coalesce(_autoDefineStoragePath, 'No');
 
-    _percentEMSLOwnedVal := Round(public.try_cast(_percentEMSLOwned, true, 0.0))::int;
+    _percentEMSLOwnedVal := Round(public.try_cast(_percentEMSLOwned, null::numeric))::int;
 
     If _percentEMSLOwnedVal Is Null Then
         RAISE EXCEPTION 'Percent EMSL Owned should be a number between 0 and 100';

@@ -1,8 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE pc.refresh_cached_organism_db_info
 (
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

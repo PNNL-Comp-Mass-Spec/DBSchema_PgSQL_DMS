@@ -7,7 +7,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file_entry
     _entrySpecifier text,
     _entryValue text,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _infoOnly boolean = false
 )
@@ -47,6 +48,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate input fields

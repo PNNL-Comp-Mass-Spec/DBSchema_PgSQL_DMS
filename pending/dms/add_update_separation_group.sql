@@ -7,7 +7,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_separation_group
     _samplePrepVisible int,
     _fractionCount int,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

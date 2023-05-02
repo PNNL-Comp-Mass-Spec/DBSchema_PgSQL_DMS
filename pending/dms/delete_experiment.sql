@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.delete_experiment
 (
     _experimentName text,
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -49,6 +50,7 @@ DECLARE
     _stateID int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _experimentName := Coalesce(_experimentName, '');
     _infoOnly := Coalesce(_infoOnly, false);

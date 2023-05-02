@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE dpkg.update_data_package_eus_info
 (
     _dataPackageList text,
-    INOUT _message text=''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -33,13 +34,24 @@ DECLARE
     _authorized int := 0;
     _firstID int;
 BEGIN
-    ---------------------------------------------------
-    -- Verify that the user can EXECUTE this procedure from the given client host
+---------------------------------------------------
+    -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    Call _authorized => verify_sp_authorized 'UpdateDataPackageEUSInfo', _raiseError => 1
-    If _authorized = 0 Then
-        RAISERROR ('Access denied', 11, 3)
+    SELECT schema_name, name_with_schema
+    INTO _schemaName, _nameWithSchema
+    FROM get_current_function_info('<auto>', _showDebug => false);
+
+    SELECT authorized
+    INTO _authorized
+    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+
+    If Not _authorized Then
+        -- Commit changes to persist the message logged to public.t_log_entries
+        COMMIT;
+
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        RAISE EXCEPTION '%', _message;
     End If;
 
     ---------------------------------------------------
@@ -48,6 +60,7 @@ BEGIN
 
     _dataPackageList := Coalesce(_dataPackageList, '');
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Populate a temporary table with the data package IDs to update

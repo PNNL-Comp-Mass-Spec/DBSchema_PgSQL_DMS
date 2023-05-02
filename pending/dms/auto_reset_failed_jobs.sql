@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.auto_reset_failed_jobs
     _windowHours int = 12,
     _infoOnly boolean = true,
     _stepToolFilter text = '',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

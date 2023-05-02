@@ -2,8 +2,9 @@
 CREATE OR REPLACE PROCEDURE pc.update_protein_desc_hash
 (
     _descriptionID int,
-    _sHA1Hash text,
-    INOUT _message text
+    _sha1Hash text,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -37,7 +38,7 @@ BEGIN
 
     UPDATE pc.t_protein_descriptions
     SET
-        fingerprint = _sHA1Hash
+        fingerprint = _sha1Hash
     WHERE (description_id = _descriptionID)
 
         --

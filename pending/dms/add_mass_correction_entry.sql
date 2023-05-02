@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.add_mass_correction_entry
     _modDescription text,
     _modMassChange float8,
     _modAffectedAtom text = '-',
-    INOUT _message text = '',
-    inout _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

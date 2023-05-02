@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.delete_analysis_job
     _job text,
     _callingUser text = '',
     _infoOnly boolean = false
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -47,6 +48,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     _message := '';
+    _returnCode:= '';
 
     _jobID := public.try_cast(_job, null::int);
 

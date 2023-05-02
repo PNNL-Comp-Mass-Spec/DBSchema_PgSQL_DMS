@@ -3,9 +3,10 @@ CREATE OR REPLACE PROCEDURE pc.get_archived_file_id_for_protein_collection_list
 (
     _proteinCollectionList text,
     _creationOptions text = 'seq_direction=forward,filetype=fasta',
-    INOUT _archivedFileID int=0,
-    INOUT _proteinCollectionCount int=0,
-    INOUT _message text=''
+    INOUT _archivedFileID int = 0,
+    INOUT _proteinCollectionCount int = 0,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -38,6 +39,7 @@ BEGIN
     _archivedFileID := 0;
     _proteinCollectionCount := 0;
     _message := '';
+    _returnCode:= '';
 
     If char_length(_proteinCollectionList) = 0 Then
         _message := 'Warning: Protein collection list is empty';

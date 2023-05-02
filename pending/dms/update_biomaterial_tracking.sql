@@ -19,6 +19,7 @@ DECLARE
     _myRowCount int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ----------------------------------------------------------
     -- Create a temporary table to hold the stats

@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_requested_run_factors
 (
     _factorList text,
-    INOUT _message text,
-    INOUT _returnCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
     _callingUser text = '',
     _infoOnly boolean = false
 )
@@ -127,6 +127,7 @@ BEGIN
     -----------------------------------------------------------
 
     _message := '';
+    _returnCode:= '';
 
     If Coalesce(_callingUser, '') = '' Then
         _callingUser := get_user_login_without_domain('');

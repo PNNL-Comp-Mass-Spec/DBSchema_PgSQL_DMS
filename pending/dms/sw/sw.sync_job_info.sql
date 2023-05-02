@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE sw.sync_job_info
 (
     _bypassDMS boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -35,6 +36,7 @@ DECLARE
     _mergeDeleteCount int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     If _bypassDMS Then
         RETURN;

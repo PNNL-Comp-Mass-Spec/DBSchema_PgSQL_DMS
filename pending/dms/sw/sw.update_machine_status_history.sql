@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.update_machine_status_history
 (
     _minimumTimeIntervalHours int = 1,
     _activeProcessWindowHours int = 24,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -36,6 +37,7 @@ BEGIN
     _minimumTimeIntervalHours := Coalesce(_minimumTimeIntervalHours, 1);
     _activeProcessWindowHours := Coalesce(_activeProcessWindowHours, 24);
     _message := '';
+    _returnCode:= '';
 
     If Coalesce(_minimumTimeIntervalHours, 0) = 0 Then
         _updateTable := true;

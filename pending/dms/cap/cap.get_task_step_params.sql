@@ -3,8 +3,8 @@ CREATE OR REPLACE FUNCTION cap.get_task_step_params
 (
     _job int,
     _step int,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 RETURNS TABLE (

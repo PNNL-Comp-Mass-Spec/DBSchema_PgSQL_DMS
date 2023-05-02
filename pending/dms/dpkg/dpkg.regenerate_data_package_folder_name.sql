@@ -2,10 +2,11 @@
 CREATE OR REPLACE PROCEDURE dpkg.regenerate_data_package_folder_name
 (
     _dataPkgID int,
-    _infoOnly boolean = true,
-    _updateWikiLink boolean = true,
-    INOUT _message text = '',
-    _callingUser text = ''
+    _infoOnly boolean default true,
+    _updateWikiLink boolean default true,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
+    _callingUser text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -41,6 +42,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, true);
     _message := '';
+    _returnCode:= '';
 
     If _dataPkgID Is Null Then
         _message := 'Data Package ID cannot be null; unable to continue';

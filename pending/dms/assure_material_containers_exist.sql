@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist
     _type text = 'Box',
     _researcher text,
     _mode text = 'verify_only',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -42,6 +43,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
     _msg := '';
 
     BEGIN

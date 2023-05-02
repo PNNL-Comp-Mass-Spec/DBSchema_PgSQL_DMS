@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.report_manager_idle
 (
     _managerName text = '',
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -62,6 +62,7 @@ BEGIN
     _managerName := Coalesce(_managerName, '');
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _managerName = '' Then
         _message := 'Manager name cannot be empty';

@@ -6,8 +6,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file
     _numProteins int,
     _numResidues bigint,
     _fileSizeKB int = 0,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

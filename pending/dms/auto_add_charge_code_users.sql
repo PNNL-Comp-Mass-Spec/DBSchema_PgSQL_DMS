@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.auto_add_charge_code_users
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -39,6 +40,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create temporary table to keep track of users to add

@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.assign_eus_users_to_requested_run
     _request int,
     _eusProposalID text = '',
     _eusUsersList text = '',
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -38,6 +39,7 @@ DECLARE
     _validateEUSData int := 1;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _eusProposalID := Coalesce(_eusProposalID, '');
     _eusUsersList := Coalesce(_eusUsersList, '');

@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE dpkg.find_stale_myemsl_uploads
 (
     _staleUploadDays int = 45,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -32,6 +33,7 @@ BEGIN
     _staleUploadDays := Coalesce(_staleUploadDays, 45);
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     If _staleUploadDays < 20 Then
         -- Require _staleUploadDays to be at least 20
@@ -109,22 +111,21 @@ BEGIN
             FROM Tmp_StaleUploads
 
             -- MyEMSL upload task 3944 for data package 2967 has been unverified for over 45 days; ErrorCode set to 101
-            _message := 'MyEMSL upload task ' || Cast(_entryID As text) +;
-                           ' for data package '  || Cast(_dataPackageID As text) || ' has been'
+            _message := format('MyEMSL upload task %s for data package %s has been', _entryID, _dataPackageID);
         Else
             _entryIDList := '';
             _dataPackageList := '';
 
-            SELECT @entryIDList + Cast(Entry_ID As Varchar(12)) + ',', INTO _entryIDList
-                   _dataPackageList = _dataPackageList + Cast(Data_Package_ID As text) || ','
+            SELECT string_agg(Entry_ID::text, ',' ORDER BY Entry_ID),
+                   string_agg(Data_Package_ID::text, ',' ORDER BY Data_Package_ID),
+            INTO _entryIDList, _dataPackageList
             FROM Tmp_StaleUploads
 
             -- MyEMSL upload tasks 3944,4119,4120 for data packages 2967,2895,2896 have been unverified for over 45 days; ErrorCode set to 101
-            _message := 'MyEMSL upload tasks ' || Substring(_entryIDList, 1, char_length(_entryIDList) - 1) +;
-                           ' for data packages '  || Substring(_dataPackageList, 1, char_length(_dataPackageList) - 1) || ' have been'
+            _message := format('MyEMSL upload tasks %s for data packages %s have been', _entryIDList, _dataPackageList);
         End If;
 
-        _message := _message || ' unverified for over ' || Cast(_staleUploadDays As text) || ' days; ErrorCode set to 101';
+        _message := format('%s unverified for over %s days; ErrorCode set to 101', _message, _staleUploadDays);
 
         Call post_log_entry 'Error', _message, 'FindStaleMyEMSLUploads'
 

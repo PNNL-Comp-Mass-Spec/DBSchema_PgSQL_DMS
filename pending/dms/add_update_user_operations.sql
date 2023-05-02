@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_user_operations
 (
     _userID int,
     _operationsList text,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

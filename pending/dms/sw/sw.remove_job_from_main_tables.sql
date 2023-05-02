@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.remove_job_from_main_tables
 (
     _job int,
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _validateJobStepSuccess boolean = false
 )
 LANGUAGE plpgsql
@@ -50,6 +51,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Insert specified job to Tmp_SJL

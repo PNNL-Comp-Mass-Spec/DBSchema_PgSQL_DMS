@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.update_cpu_loading
 (
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -31,6 +32,7 @@ DECLARE
     _myRowCount int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     CREATE TEMP TABLE Tmp_MachineStats (
         Machine text NOT NULL,

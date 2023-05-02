@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_memory_usage
 (
     _job int,
     _xmlParameters xml,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -38,6 +39,7 @@ DECLARE
     _valMemoryRequiredMB int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Look for the memory size parmeters

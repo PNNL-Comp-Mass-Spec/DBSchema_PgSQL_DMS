@@ -2,7 +2,8 @@
 CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets
 (
     _ruleID int,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _previewSql boolean = false,
     _populateTempTable boolean = false
@@ -69,6 +70,7 @@ BEGIN
     _previewSql := Coalesce(_previewSql, false);
     _populateTempTable := Coalesce(_populateTempTable, false);
     _message := '';
+    _returnCode:= '';
 
     If _populateTempTable Then
         DROP TABLE IF EXISTS T_Tmp_PredefinedAnalysisDatasets;

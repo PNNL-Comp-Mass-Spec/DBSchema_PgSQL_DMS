@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_dms
 (
     _jobListToProcess text = '',
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -31,6 +32,7 @@ BEGIN
     _jobListToProcess := Coalesce(_jobListToProcess, '');
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     _defaultDate := make_date(2000, 1, 1);
 

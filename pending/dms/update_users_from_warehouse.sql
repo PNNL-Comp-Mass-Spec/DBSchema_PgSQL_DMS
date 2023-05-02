@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_users_from_warehouse
 (
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

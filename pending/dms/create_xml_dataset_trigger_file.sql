@@ -143,6 +143,7 @@ BEGIN
     _lcCartConfig := Coalesce(_lcCartConfig, '');
 
     _message := '';
+    _returnCode:= '';
 
     -- Look for '..\' at the start of _captureSubfolder
     --

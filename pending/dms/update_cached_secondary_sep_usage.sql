@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE public.update_cached_secondary_sep_usage
 (
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -27,6 +28,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     Begin
 

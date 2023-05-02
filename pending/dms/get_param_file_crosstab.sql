@@ -9,8 +9,8 @@ CREATE OR REPLACE PROCEDURE public.get_param_file_crosstab
     _showModName int = 1,
     _showModMass int = 1,
     _useModMassAlternativeName int = 1,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _previewSql boolean = false,
     _massModFilterTextColumn text = '',
     _massModFilterText text = ''

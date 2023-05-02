@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE public.duplicate_dataset
     _newOperatorUsername text = '',
     _datasetStateID int = 1,
     _infoOnly boolean = true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -66,6 +67,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
 
     _message := '';
+    _returnCode:= '';
 
     If _sourceDataset = '' Then
         _message := '_sourceDataset is empty';

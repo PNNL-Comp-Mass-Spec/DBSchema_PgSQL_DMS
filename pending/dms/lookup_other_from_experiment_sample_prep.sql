@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE public.lookup_other_from_experiment_sample_prep
 (
     _experimentName text,
     INOUT _workPackage text,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

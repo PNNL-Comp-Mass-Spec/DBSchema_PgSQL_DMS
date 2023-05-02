@@ -147,6 +147,7 @@ BEGIN
 
     _mode := 'update';
     _message := '';
+    _returnCode:= '';
     _callingUser := '';
 
     ---------------------------------------------------

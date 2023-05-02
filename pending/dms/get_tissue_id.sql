@@ -4,7 +4,7 @@ CREATE OR REPLACE PROCEDURE public.get_tissue_id
     _tissueNameOrID text,
     INOUT _tissueIdentifier text,
     INOUT _tissueName text,
-    INOUT _returnCode text
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

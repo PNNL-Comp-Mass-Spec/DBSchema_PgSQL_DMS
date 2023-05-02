@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE sw.remove_old_jobs
     _intervalDaysForSuccess real = 45,
     _intervalDaysForFail int = 135,
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _validateJobStepSuccess boolean = false,
     _jobListOverride text = '',
     _maxJobsToProcess int = 25000,
@@ -88,6 +89,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Make sure the job Start and Finish values are up-to-date

@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.retire_stale_campaigns
 (
     _infoOnly boolean = true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -25,6 +26,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, true);
     _message := '';
+    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Create a temporary table to track the campaigns to retire

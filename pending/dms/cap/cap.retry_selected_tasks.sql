@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE cap.retry_selected_tasks
 (
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -23,6 +24,7 @@ DECLARE
 
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Set any failed or holding capture task job steps to waiting

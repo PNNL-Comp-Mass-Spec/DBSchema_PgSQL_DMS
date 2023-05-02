@@ -7,7 +7,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument_class
     _params text,
     _comment text,
     _mode text = 'update',
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -69,6 +70,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

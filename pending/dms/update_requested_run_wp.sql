@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_wp
     _oldWorkPackage text,
     _newWorkPackage text,
     _requestedIdList text = '',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _infoOnly boolean = false
 )

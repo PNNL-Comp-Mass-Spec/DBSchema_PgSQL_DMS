@@ -6,8 +6,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_eus_users
     _eusSiteStatus text,
     _hanfordID text,
     _mode text = 'add',
-    INOUT _message text,
-    INOUT _returnCode text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

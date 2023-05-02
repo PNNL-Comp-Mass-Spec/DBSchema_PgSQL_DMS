@@ -2,8 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.delete_new_analysis_job
 (
     _job text,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
     _callingUser text = '',
     _infoOnly boolean = false
 )

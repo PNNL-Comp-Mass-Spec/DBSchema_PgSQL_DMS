@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_job_steps
 (
     _infoOnly boolean = true,
     _completedJobsOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -28,6 +29,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
         Job int,

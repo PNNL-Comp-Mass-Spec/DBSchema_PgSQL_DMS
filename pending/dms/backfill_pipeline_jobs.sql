@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs
     _infoOnly boolean = false,
     _jobsToProcess int = 0,
     _startJob int = 0,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

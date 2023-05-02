@@ -2,8 +2,9 @@
 CREATE OR REPLACE PROCEDURE pc.delete_protein_collection_members
 (
     _collectionID int,
-    INOUT _message text,
-    _numProteinsForReLoad int = 0
+    _numProteinsForReLoad int default 0,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

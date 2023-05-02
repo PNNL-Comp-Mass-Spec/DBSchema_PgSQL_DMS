@@ -35,6 +35,7 @@ DECLARE
     _identityUpdated int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     /*
     ** Use the following to find all tables in this DB that have identity columns

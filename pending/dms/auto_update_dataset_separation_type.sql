@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.auto_update_dataset_separation_type
     _endDatasetId int,
     _infoOnly boolean = true,
     _verbose boolean = false
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -35,6 +36,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
     _verbose := Coalesce(_infoOnly, false);
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create a temporary table to track update stats

@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.add_new_charge_code
 (
     _chargeCodeList text,
     _infoOnly boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -28,6 +29,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _chargeCodeList := Coalesce(_chargeCodeList, '');
     _message := '';
+    _returnCode:= '';
 
     If _chargeCodeList = '' Then
         _message := '_chargeCodeList is empty; nothing to do';

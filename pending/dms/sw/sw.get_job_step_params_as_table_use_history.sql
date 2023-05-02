@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE sw.get_job_step_params_as_table_use_history
     _step int,
     _section text = '',
     _paramName text = '',
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     INOUT _firstParameterValue text = '',
     _debugMode boolean = false
 )

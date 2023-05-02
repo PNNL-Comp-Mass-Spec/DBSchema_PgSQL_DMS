@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_para
     _jobList text,
     _infoOnly boolean = false,
     _showResultsMode int = 2,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

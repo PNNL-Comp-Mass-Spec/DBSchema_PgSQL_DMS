@@ -19,7 +19,8 @@ CREATE OR REPLACE PROCEDURE public.update_instrument_usage_allocations
     _qqq text = '',
     _qqqComment text = '',
     _mode text = 'update',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _infoOnly boolean = false
 )

@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE public.backup_storage_state
 (
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -25,6 +26,7 @@ DECLARE
     _myRowCount int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Clear t_storage_path_bkup

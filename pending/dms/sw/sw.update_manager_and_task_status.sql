@@ -25,7 +25,8 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status
     _mostRecentLogMessage text = '',
     _mostRecentJobInfo text = '',
     _spectrumCount int=0,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -67,6 +68,7 @@ DECLARE
     _myRowCount int := 0;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -88,6 +90,7 @@ BEGIN
     _spectrumCount := Coalesce(_spectrumCount, 0);
 
     _message := '';
+    _returnCode:= '';
 
     If char_length(_mgrName) = 0 Then
         _message := 'Processor name is empty; unable to continue';

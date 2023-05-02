@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.update_step_states
 (
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _maxJobsToProcess int = 0,
     _loopingUpdateInterval int = 5
@@ -36,6 +37,7 @@ BEGIN
     ---------------------------------------------------
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);

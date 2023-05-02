@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.store_qcart_results
 (
     _datasetID int = 0,
     _resultsXML xml,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -70,6 +71,7 @@ BEGIN
 
     _datasetID := Coalesce(_datasetID, 0);
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

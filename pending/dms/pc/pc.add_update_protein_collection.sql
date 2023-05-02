@@ -3,15 +3,16 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection
 (
     _collectionName text,
     _description text,
-    _collectionSource text = '',
-    _collectionType int = 1,
+    _collectionSource text default '',
+    _collectionType int default 1,
     _collectionState int,
     _primaryAnnotationTypeId int,
-    _numProteins int = 0,
-    _numResidues int = 0,
-    _active int = 1,
-    _mode text = 'add',
-    INOUT _message text
+    _numProteins int default 0,
+    _numResidues int default 0,
+    _active int default 1,
+    _mode text default 'add',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

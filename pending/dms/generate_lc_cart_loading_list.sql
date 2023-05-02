@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.generate_lc_cart_loading_list
     _blanksFollowingRequests text,
     _columnsWithLeadingBlanks text,
     _mode text = '',
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -47,6 +48,7 @@ DECLARE
     _dsTypeForBlanks text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 

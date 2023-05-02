@@ -3,10 +3,10 @@ CREATE OR REPLACE PROCEDURE pc.update_file_archive_entry_collection_list
 (
     _archivedFileEntryID int,
     _proteinCollectionList text,
-    _sHA1Hash text,
-    INOUT _message text,
-    _collectionListHexHash text
-)
+    _sha1Hash text,
+    _collectionListHexHash text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '')
 LANGUAGE plpgsql
 AS $$
 /****************************************************
@@ -42,7 +42,7 @@ BEGIN
     UPDATE pc.t_archived_output_files
     SET
         protein_collection_list = _proteinCollectionList,
-        authentication_hash =     _sHA1Hash,
+        authentication_hash =     _sha1Hash,
         collection_list_hex_hash  = _collectionListHexHash
     WHERE (archived_file_id = _archivedFileEntryID)
 

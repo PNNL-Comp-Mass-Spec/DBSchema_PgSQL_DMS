@@ -14,7 +14,8 @@ CREATE OR REPLACE PROCEDURE public.create_psm_job_request
     _comment text,
     _ownerUsername text,
     _infoOnly boolean = false,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

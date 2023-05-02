@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.update_charge_codes_from_warehouse
     _updateAll boolean = false,
     _onlyShowChanged boolean = false;
     _explicitChargeCodeList text = '',
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -64,6 +65,7 @@ BEGIN
 
     _explicitChargeCodeList := Coalesce(_explicitChargeCodeList, '');
     _message := '';
+    _returnCode:= '';
 
     -- Create a temporary table to keep track of WPs used within the last 12 months
     CREATE TEMP TABLE Tmp_WPsInUseLast3Years (

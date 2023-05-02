@@ -9,7 +9,8 @@ CREATE OR REPLACE PROCEDURE public.clone_analysis_jobs
     _updateOldJobComment boolean = true,
     _allowDuplicateJob boolean = false,
     _infoOnly boolean = true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.extend_multiple_jobs
 (
     _jobList text,
     _extensionScriptName text,
-    INOUT _message text = '',
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _debugMode boolean = false
 )

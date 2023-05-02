@@ -7,7 +7,8 @@ CREATE OR REPLACE PROCEDURE public.copy_requested_run
     _notation text,
     _requestNameAppendText text = '',
     _requestNameOverride text = '',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = '',
     _infoOnly boolean = false
 )
@@ -58,6 +59,7 @@ DECLARE
     _msg text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     _requestNameAppendText := Trim(Coalesce(_requestNameAppendText, ''));
     _requestNameOverride := Trim(Coalesce(_requestNameOverride, ''));

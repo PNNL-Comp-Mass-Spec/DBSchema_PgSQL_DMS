@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_folder_paths
     -- 1 to process new datasets, those with UpdateRequired=1, and the 10,000 most recent datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
     -- 2 to process new datasets, those with UpdateRequired=1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
     -- 3 to re-process all of the entries in T_Cached_Dataset_Folder_Paths (this is the slowest update and will take 10 to 20 seconds)
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _showDebug int = 0
 )
 LANGUAGE plpgsql
@@ -44,6 +45,7 @@ BEGIN
     --
     _processingMode := Coalesce(_processingMode, 0);
     _message := '';
+    _returnCode:= '';
     _showDebug := Coalesce(_showDebug, 0);
 
     If _processingMode IN (0, 1) Then

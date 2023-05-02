@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.do_analysis_job_operation
 (
     _job text,
     _mode text,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -51,6 +52,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 

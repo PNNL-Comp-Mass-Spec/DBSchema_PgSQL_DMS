@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_superseded_if_failed
     _datasetID int,
     _statusNumList text,
     _ingestStepsCompleted int,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

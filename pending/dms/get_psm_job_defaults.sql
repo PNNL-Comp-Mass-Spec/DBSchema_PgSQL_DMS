@@ -12,7 +12,8 @@ CREATE OR REPLACE PROCEDURE public.get_psm_job_defaults
     INOUT _organismName text,
     INOUT _protCollNameList text,
     INOUT _protCollOptionsList text,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -79,6 +80,7 @@ BEGIN
     _protCollNameList := '';
     _protCollOptionsList := '';
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Dataset list shouldn't be empty

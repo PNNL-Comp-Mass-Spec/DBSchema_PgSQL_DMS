@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.update_requested_run_status_history
 (
     _minimumTimeIntervalHours integer = 1,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -28,6 +29,7 @@ DECLARE
     _s text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     If Coalesce(_minimumTimeIntervalHours, 0) = 0 Then
         _updateTable := 1;

@@ -5,8 +5,8 @@ CREATE OR REPLACE PROCEDURE public.add_remove_request_cart_assignment
     _cartName text,
     _cartConfigName text = '',
     _mode text = 'add',
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

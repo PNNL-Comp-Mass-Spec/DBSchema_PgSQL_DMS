@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE pc.add_collection_organism_xref
 (
     _proteinCollectionID int,
     _organismID int,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -1,7 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE cap.retry_capture_for_dms_reset_tasks
 (
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql

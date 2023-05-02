@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info
     _deleteFromTableOnSuccess boolean = true,
     _replaceExistingData boolean = false,
     _datasetIDs text = '',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -41,6 +42,7 @@ BEGIN
     _replaceExistingData := Coalesce(_replaceExistingData, false);
     _datasetIDs := Coalesce(_datasetIDs, '');
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     --------------------------------------------

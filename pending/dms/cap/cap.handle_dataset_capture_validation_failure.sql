@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure
     _datasetNameOrID text,
     _comment text = 'Bad .raw file',
     _infoOnly boolean = false,
-    INOUT _message text = '',
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

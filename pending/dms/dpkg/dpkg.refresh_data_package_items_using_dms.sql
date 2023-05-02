@@ -22,6 +22,7 @@ DECLARE
     _message text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Update the experiment name associated with each dataset

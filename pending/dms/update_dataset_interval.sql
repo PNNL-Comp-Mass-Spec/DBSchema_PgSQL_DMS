@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval
     _instrumentName text,
     _startDate timestamp,
     _endDate timestamp,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -57,6 +58,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     _maxNormalInterval := get_long_interval_threshold();

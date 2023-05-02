@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.check_data_integrity
 (
     _logErrors boolean := true,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -30,6 +31,7 @@ BEGIN
 
     _logErrors := Coalesce(_logErrors, true);
     _message := '';
+    _returnCode:= '';
 
     ----------------------------------------------------------
     -- Look for datasets that map to multiple requested runs

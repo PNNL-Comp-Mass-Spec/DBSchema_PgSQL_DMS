@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE sw.create_signatures_for_job_steps
     _job int,
     _xmlParameters xml,
     _datasetOrDataPackageId int,
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _debugMode boolean = false
 )
 LANGUAGE plpgsql
@@ -50,6 +51,7 @@ DECLARE
     _sharedResultsDirectoryName text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Get job parameters into table format

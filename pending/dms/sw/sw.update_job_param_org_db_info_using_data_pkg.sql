@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg
     _deleteIfInvalid boolean = false,
     _debugMode boolean = false,
     _scriptNameForDebug text = '',
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -56,6 +57,7 @@ BEGIN
     _deleteIfInvalid := Coalesce(_deleteIfInvalid, false);
     _debugMode := Coalesce(_debugMode, false);
     _message := '';
+    _returnCode:= '';
 
     If _debugMode Then
         RAISE INFO '%', '';

@@ -12,9 +12,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument
     _usage text,
     _operationsRole text,
     _percentEMSLOwned text,
-    _autoDefineStoragePath text = 'No',
-    _trackUsageWhenInactive text = 'No',
-    _scanSourceDir text = 'Yes',
+    _autoDefineStoragePath text default 'No',
+    _trackUsageWhenInactive text default 'No',
+    _scanSourceDir text default 'Yes',
     _autoSPVolNameClient text,
     _autoSPVolNameServer text,
     _autoSPPathRoot text,
@@ -22,8 +22,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument
     _autoSPArchiveServerName text,
     _autoSPArchivePathRoot text,
     _autoSPArchiveSharePathRoot text,
-    _mode text = 'update',
-    INOUT _message text = ''
+    _mode text default 'update',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -83,6 +84,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -114,7 +116,7 @@ BEGIN
             _usage := '';
         End If;
 
-        _percentEMSLOwnedVal := public.try_cast(_percentEMSLOwned, true, 0);
+        _percentEMSLOwnedVal := public.try_cast(_percentEMSLOwned, null::int);
 
         If _percentEMSLOwnedVal Is Null Or _percentEMSLOwnedVal < 0 Or _percentEMSLOwnedVal > 100 Then
             RAISE EXCEPTION 'Percent EMSL Owned should be a number between 0 and 100' USING ERRCODE = 'U5201';

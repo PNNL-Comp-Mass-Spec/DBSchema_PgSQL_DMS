@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_acq_overlap_data
     _instrument text,
     _year int,
     _month int,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _showStartTimes boolean = false
     _showPendingUpdates boolean = false

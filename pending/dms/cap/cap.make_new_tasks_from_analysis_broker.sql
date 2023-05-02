@@ -2,7 +2,8 @@
 CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_analysis_broker
 (
     _infoOnly boolean = false,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _importWindowDays int = NULL,
     _loggingEnabled boolean = NULL,
     _bypassDatasetArchive boolean = NULL,

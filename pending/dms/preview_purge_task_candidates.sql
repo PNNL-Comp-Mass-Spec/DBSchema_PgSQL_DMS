@@ -5,7 +5,8 @@ CREATE OR REPLACE PROCEDURE public.preview_purge_task_candidates
     _storageVol text = '',
     _datasetsPerShare int = 5,
     _previewSql boolean = false,
-    INOUT _message text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -41,6 +42,7 @@ BEGIN
     _previewSql := Coalesce(_previewSql, false);
 
     _message := '';
+    _returnCode:= '';
 
     If _datasetsPerShare < 1 Then
         _datasetsPerShare := 1;

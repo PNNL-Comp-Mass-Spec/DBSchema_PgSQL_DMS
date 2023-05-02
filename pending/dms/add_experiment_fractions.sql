@@ -20,8 +20,8 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions
     _container text = 'na',
     _prepLCRunID int,
     _mode text,
-    INOUT _message text,
-    INOUT _returnCode text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -322,7 +322,7 @@ BEGIN
         If _requestOverride <> 'parent' Then
 
             -- Try to cast as an integer, but store null if not an integer
-            _samplePrepRequest := public.try_cast(_requestOverride, true, 0);
+            _samplePrepRequest := public.try_cast(_requestOverride, null::int);
 
             If _samplePrepRequest Is Null Then
                 _logErrors := false;

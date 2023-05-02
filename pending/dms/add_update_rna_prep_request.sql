@@ -23,7 +23,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_rna_prep_request
     _state text,
     INOUT _id int,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -83,6 +84,7 @@ DECLARE
 BEGIN
 
     _message := '';
+    _returnCode:= '';
 
     If Coalesce(_eusUserID, 0) <= 0 Then
         _eusUserID := Null;

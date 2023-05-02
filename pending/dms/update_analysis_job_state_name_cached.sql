@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_state_name_cached
 (
     _jobStart int = 0,
     _jobFinish int = 0,
-    INOUT _message text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -32,6 +33,7 @@ BEGIN
     _jobStart := Coalesce(_jobStart, 0);
     _jobFinish := Coalesce(_jobFinish, 0);
     _message := '';
+    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _jobFinish = 0 Then

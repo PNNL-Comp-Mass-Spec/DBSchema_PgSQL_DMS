@@ -10,7 +10,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_attachments
     _contents text,
     _fileName text,
     _mode text = 'add',
-    INOUT _message text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql

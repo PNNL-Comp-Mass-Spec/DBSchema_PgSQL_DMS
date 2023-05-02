@@ -4,8 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task
     _processorName text,
     INOUT _job int = 0,
     INOUT _results refcursor DEFAULT '_results'::refcursor
-    INOUT _message text,
-    INOUT _returnCode text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoLevel int = 0,
     _managerVersion text = '',
     _jobCountToPreview int = 10,

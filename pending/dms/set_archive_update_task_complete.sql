@@ -2,9 +2,9 @@
 CREATE OR REPLACE PROCEDURE public.set_archive_update_task_complete
 (
     _datasetName text,
-    _completionCode int := 0,
-    INOUT _message text := '',
-    INOUT _returnCode text := ''
+    _completionCode int default 0,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

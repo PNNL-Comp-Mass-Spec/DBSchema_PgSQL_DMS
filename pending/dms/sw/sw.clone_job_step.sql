@@ -3,7 +3,8 @@ CREATE OR REPLACE PROCEDURE sw.clone_job_step
 (
     _job int,
     _xmlParameters xml,
-    INOUT _message text
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -51,6 +52,7 @@ DECLARE
     _clone_step int;
 BEGIN
     _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Get clone parameters
