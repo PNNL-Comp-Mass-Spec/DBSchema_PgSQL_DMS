@@ -41,7 +41,6 @@ DECLARE
     _container text;
     _continue boolean;
 BEGIN
-
     _message := '';
     _returnCode:= '';
     _msg := '';

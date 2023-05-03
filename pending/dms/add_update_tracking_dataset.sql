@@ -102,7 +102,6 @@ DECLARE
     _matchCount int;
     _newUsername text;
     _storagePathID int := 0;
-    _transName text;
     _warningWithPrefix text;
     _endDate timestamp;
     _startDate timestamp;
@@ -112,7 +111,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
     _warning := '';
@@ -329,11 +327,6 @@ BEGIN
                 _msg := 'Valid storage path could not be found';
                 RAISE EXCEPTION '%', _msg;
             End If;
-
-            -- Start transaction
-            --
-            _transName := 'AddNewDataset';
-            Begin transaction _transName
 
             _newDSStateID := 3;
 

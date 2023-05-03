@@ -608,8 +608,6 @@ BEGIN
 
         If _mode = 'add' Then
 
-            Begin Tran
-
             INSERT INTO t_analysis_job_request
             (
                 request_name,
@@ -655,8 +653,6 @@ BEGIN
                                                          dataset_id )
             SELECT _newRequestNum, Tmp_DatasetInfo.dataset_id
             FROM Tmp_DatasetInfo;
-
-            Commit Tran
 
             -- return ID of the newly created request
             --
@@ -722,7 +718,6 @@ BEGIN
                 WHERE target.Request_ID = _requestID AND
                       NOT EXISTS (SELECT DI.Dataset_ID FROM Tmp_DatasetInfo DI WHERE target.dataset_id = DI.dataset_id);
 
-                COMMIT;
             End;
 
             If char_length(_callingUser) > 0 Then

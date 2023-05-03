@@ -42,7 +42,6 @@ DECLARE
     _outputFolder text;
     _removeJobsMessage text;
     _jobMatch int;
-    _resetTran text := 'Reset Job';
 BEGIN
 
     BEGIN TRY
@@ -78,10 +77,6 @@ BEGIN
         Job int,
         State int
     );
-
-    If Not _infoOnly Then
-        Begin Tran _ResetTran
-    End If;
 
     If _sharedResultFolderName = '' Then
         -----------------------------------------------------------
@@ -253,10 +248,6 @@ BEGIN
 
     End If;
 
-    If Not _infoOnly Then
-        Commit Tran _resetTran;
-    End If;
-
     END TRY
     BEGIN CATCH
         Call public.format_error_message _message => _message, _myError output
@@ -264,7 +255,7 @@ BEGIN
         -- Rollback any open transactions
         ROLLBACK;
 
-        Call public.post_log_entry ('Error', _message, 'ResetJobAndSharedResults');
+        Call public.post_log_entry ('Error', _message, 'Reset_Job_And_Shared_Results', 'sw');
     END CATCH
 
     DROP TABLE Tmp_SharedResultFolders;

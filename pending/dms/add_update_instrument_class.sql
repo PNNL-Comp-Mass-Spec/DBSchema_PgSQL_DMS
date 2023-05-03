@@ -25,7 +25,7 @@ AS $$
 **    _comment          Instrument class comment
 **    _mode             The only valid mode is 'update', since 'add' is not allowed in this procedure; instead directly edit table T_Instrument_Class
 **
-**  Example value for @params
+**  Example value for _params
 **
 **      <sections>
 **        <section name="DatasetQC">
@@ -123,7 +123,7 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
-        -- Note: the add mode is not enabled in this stored procedure
+        -- Note: the add mode is not enabled in this procedure
         ---------------------------------------------------
 
         If _mode = 'add' Then

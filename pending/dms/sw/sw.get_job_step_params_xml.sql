@@ -38,7 +38,6 @@ DECLARE
     _x xml;
     _xp text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

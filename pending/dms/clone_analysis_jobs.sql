@@ -125,7 +125,7 @@ BEGIN
             AJ_organismDBName text NULL,
             AJ_organismID int NOT NULL,
             AJ_datasetID int NOT NULL,
-            AJ_comment text NULL,
+            comment text NULL,
             AJ_owner text NULL,
             AJ_proteinCollectionList text NULL,
             AJ_proteinOptionsList text NOT NULL,
@@ -147,6 +147,9 @@ BEGIN
 
         If Not Exists (SELECT * FROM Tmp_SourceJobs) Then
             _message := '_sourceJobs did not have any valid Job IDs: ' || _sourceJobs;
+
+            DROP TABLE Tmp_SourceJobs;
+            DROP TABLE Tmp_NewJobInfo;
             RETURN;
         End If;
 
@@ -156,41 +159,33 @@ BEGIN
         --
         UPDATE Tmp_SourceJobs
         SET Valid = 1,
-            StateID = J.AJ_StateID
-        FROM Tmp_SourceJobs
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE Tmp_SourceJobs
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = Tmp_SourceJobs.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN t_analysis_job J
-               ON Tmp_SourceJobs.JobID = J.job
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            StateID = J.job_state_id
+        FROM t_analysis_job J
+        WHERE J.job = Tmp_SourceJobs.JobID;
 
         If Exists (SELECT * FROM Tmp_SourceJobs WHERE Valid = 0) Then
             _message := 'One or more Job IDs are invalid';
+
+            -- ToDo: Use RAISE INFO to show this info
             Select *
             FROM Tmp_SourceJobs
             Order By JobId
 
+            DROP TABLE Tmp_SourceJobs;
+            DROP TABLE Tmp_NewJobInfo;
             RETURN;
         End If;
 
         If Exists (SELECT * FROM Tmp_SourceJobs WHERE NOT StateID IN (4, 14)) Then
             _message := 'One or more Job IDs are not in state 4 or 14';
 
+            -- ToDo: Use RAISE INFO to show this info
             SELECT *
             FROM Tmp_SourceJobs
             Order By StateID, JobId
 
+            DROP TABLE Tmp_SourceJobs;
+            DROP TABLE Tmp_NewJobInfo;
             RETURN;
         End If;
 
@@ -239,6 +234,8 @@ BEGIN
                    ON Tmp_SourceJobs.JobID = J.job
             ORDER BY CASE WHEN J.param_file_name = _mostCommonParamFile THEN 1 ELSE 0 END, J.job
 
+            DROP TABLE Tmp_SourceJobs;
+            DROP TABLE Tmp_NewJobInfo;
             RETURN;
         End If;
 
@@ -280,6 +277,7 @@ BEGIN
             ORDER BY CASE WHEN J.settings_file_name = _mostCommonSettingsFile THEN 1 ELSE 0 END, J.job
 
             DROP TABLE Tmp_SourceJobs;
+            DROP TABLE Tmp_NewJobInfo;
             RETURN;
         End If;
 
@@ -299,6 +297,7 @@ BEGIN
                 RAISE WARNING '%', _message;
 
                 DROP TABLE Tmp_SourceJobs;
+                DROP TABLE Tmp_NewJobInfo;
                 RETURN;
 
             End If;
@@ -313,6 +312,7 @@ BEGIN
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_SourceJobs;
+            DROP TABLE Tmp_NewJobInfo;
             RETURN;
         Else
             If Not _allowDuplicateJob Then
@@ -321,6 +321,7 @@ BEGIN
                     RAISE WARNING '%', _message;
 
                     DROP TABLE Tmp_SourceJobs;
+                    DROP TABLE Tmp_NewJobInfo;
                     RETURN;
                 End If;
 
@@ -329,6 +330,7 @@ BEGIN
                     RAISE WARNING '%', _message;
 
                     DROP TABLE Tmp_SourceJobs;
+                    DROP TABLE Tmp_NewJobInfo;
                     RETURN;
                 End If;
             End If;
@@ -349,11 +351,11 @@ BEGIN
 
             INSERT INTO Tmp_NewJobIDs (ID)
             SELECT Job
-            FROM get_new_job_id_block (_jobCount, 'CloneAnalysisJobs');
+            FROM get_new_job_id_block (_jobCount, 'Clone_Analysis_Jobs');
 
             SELECT MIN(Id)
             INTO _newJobIdStart
-            FROM Tmp_NewJobIDs
+            FROM Tmp_NewJobIDs;
 
             DROP TABLE Tmp_NewJobIDs;
         Else
@@ -376,7 +378,7 @@ BEGIN
                                      AJ_organismDBName,
                                      AJ_organismID,
                                      AJ_datasetID,
-                                     AJ_comment,
+                                     comment,
                                      AJ_owner,
                                      AJ_proteinCollectionList,
                                      AJ_proteinOptionsList,
@@ -398,7 +400,7 @@ BEGIN
                J.AJ_organismDBName,
                J.AJ_organismID,
                J.AJ_datasetID,
-               'Rerun of job ' || J.job::text AS AJ_comment,
+               'Rerun of job ' || J.job::text AS comment,
                J.AJ_owner,
                CASE
                    WHEN Coalesce(_newProteinCollectionList, '') = '' THEN J.AJ_proteinCollectionList
@@ -413,69 +415,54 @@ BEGIN
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If Not _infoOnly Then
-
-            -----------------------------------------
-            -- Make the new jobs
-            -----------------------------------------
-            --
-            INSERT INTO t_analysis_job (
-                job, batch_id, AJ_priority, created, analysis_tool_id, AJ_parmFileName, AJ_settingsFileName, AJ_organismDBName,
-                organism_id, dataset_id, comment, AJ_owner, AJ_StateID, AJ_proteinCollectionList, AJ_proteinOptionsList,
-                request_id, propagation_mode)
-            SELECT
-                JobId_New, batch_id, AJ_priority, CURRENT_TIMESTAMP, analysis_tool_id, AJ_parmFileName, AJ_settingsFileName, organism_db_name,
-                organism_id, dataset_id, comment, AJ_owner, 1 AS AJ_StateID, AJ_proteinCollectionList, AJ_proteinOptionsList,
-                request_id, propagation_mode
-            FROM Tmp_NewJobInfo
-            ORDER BY JobId_New
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            If _supersedeOldJob Or _updateOldJobComment Then
-
-                If _supersedeOldJob Then
-                    _action := 'superseded by job';
-                Else
-                    _action := 'compare to job';
-                End If;
-
-                UPDATE t_analysis_job
-                SET comment = CASE
-                                     WHEN Not _updateOldJobComment THEN Target.comment
-                                     ELSE public.append_to_text(Target.AJ_Comment, _action || ' ' || Src.JobId_New::text, 0, '; ', 512)
-                              END,
-                    AJ_StateID = CASE
-                                     WHEN Not _supersedeOldJob THEN Target.AJ_StateID
-                                     ELSE 14
-                                 END
-                FROM t_analysis_job Target
-
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE t_analysis_job
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = t_analysis_job.id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
-                     INNER JOIN Tmp_NewJobInfo Src
-                       ON Target.job = Src.JobId_Old
-            End
-
-        ELSE
+        If _infoOnly Then
             -- ToDo: Use RAISE INFO to display this info
 
             SELECT *
             FROM Tmp_NewJobInfo
             ORDER BY JobId_New;
 
-        End
+            DROP TABLE Tmp_SourceJobs;
+            DROP TABLE Tmp_NewJobInfo;
 
-        COMMIT;
+            RETURN;
+        End If;
+
+        -----------------------------------------
+        -- Make the new jobs
+        -----------------------------------------
+        --
+        INSERT INTO t_analysis_job (
+            job, batch_id, AJ_priority, created, analysis_tool_id, AJ_parmFileName, AJ_settingsFileName, AJ_organismDBName,
+            organism_id, dataset_id, comment, AJ_owner, job_state_id, AJ_proteinCollectionList, AJ_proteinOptionsList,
+            request_id, propagation_mode)
+        SELECT
+            JobId_New, batch_id, AJ_priority, CURRENT_TIMESTAMP, analysis_tool_id, AJ_parmFileName, AJ_settingsFileName, organism_db_name,
+            organism_id, dataset_id, comment, AJ_owner, 1 AS job_state_id, AJ_proteinCollectionList, AJ_proteinOptionsList,
+            request_id, propagation_mode
+        FROM Tmp_NewJobInfo
+        ORDER BY JobId_New
+        --
+        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+        If _supersedeOldJob Or _updateOldJobComment Then
+
+            If _supersedeOldJob Then
+                _action := 'superseded by job';
+            Else
+                _action := 'compare to job';
+            End If;
+
+            UPDATE t_analysis_job
+            SET comment = CASE WHEN Not _updateOldJobComment THEN Target.comment
+                               ELSE public.append_to_text(Target.comment, _action || ' ' || Src.JobId_New::text, 0, '; ', 512)
+                          END,
+                job_state_id = CASE WHEN Not _supersedeOldJob THEN Target.job_state_id
+                                    ELSE 14
+                             END
+            FROM Tmp_NewJobInfo Src
+            WHERE Src.JobID_Old = t_analysis_job.job;
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

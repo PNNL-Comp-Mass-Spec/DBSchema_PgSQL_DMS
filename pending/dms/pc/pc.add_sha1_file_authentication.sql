@@ -20,41 +20,14 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
-    _transName text;
+
 BEGIN
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-
-    _transName := 'AddCRC32FileAuthentication';
-    begin transaction _transName
-
-    ---------------------------------------------------
-    -- action for add mode
-    ---------------------------------------------------
-    begin
 
     UPDATE pc.t_protein_collections
     SET authentication_hash = _crc32FileHash,
         date_modified = CURRENT_TIMESTAMP
     WHERE Protein_Collection_ID = _collectionID;
 
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            rollback transaction _transName
-            _msg := 'Update operation failed!';
-            RAISERROR (_msg, 10, 1)
-            return 51007
-        End If;
-    end
-
-    commit transaction _transName
-
-    return 0
 END
 $$;
 

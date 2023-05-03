@@ -368,7 +368,7 @@ BEGIN
                ON Target.job = Src.Job
         WHERE Target.Progress IS NULL AND NOT Src.Progress_New IS NULL OR
               Coalesce(Target.Progress, 0) <> Coalesce(Src.Progress_New, 0) OR
-              Target.AJ_StateID IN (4,7,14) AND (Target.Progress IS NULL Or Target.ETA_Minutes IS NULL)
+              Target.job_state_id IN (4,7,14) AND (Target.Progress IS NULL Or Target.ETA_Minutes IS NULL)
 
     End If;
 

@@ -162,7 +162,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Note: the add mode is not enabled in this stored procedure
+        -- Note: the add mode is not enabled in this procedure
         ---------------------------------------------------
 
         If _mode = 'add' Then

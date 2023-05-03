@@ -89,7 +89,7 @@ BEGIN
 
     If _jobUpdateCount > 0 Then
         _message := format('Job priorities changed: updated %s %s in sw.t_jobs', _jobUpdateCount, public.check_plural('job', 'jobs'));
-        Call public.post_log_entry ('Normal', _message, 'SyncJobInfo');
+        Call public.post_log_entry ('Normal', _message, 'Sync_Job_Info', 'sw');
         _message := '';
     End If;
 
@@ -151,7 +151,7 @@ BEGIN
 --
 --    If _mergeCount > 0 Or _mergeDeleteCount > 0 Then
 --        Set _message = format('Added/updated sw.t_local_job_processors; UpdateCount = %s; InsertCount = %s, DeleteCount = %s', _mergeUpdateCount, _mergeInsertCount, _mergeDeleteCount);
---        Call public.post_log_entry ('Normal', _message, 'SyncJobInfo');
+--        Call public.post_log_entry ('Normal', _message, 'Sync_Job_Info', 'sw');
 --        Set _message = ''
 --    End If;
 

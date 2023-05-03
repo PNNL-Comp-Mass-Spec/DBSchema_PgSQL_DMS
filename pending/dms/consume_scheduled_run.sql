@@ -182,7 +182,6 @@ BEGIN
             Call alter_event_log_entry_user (11, _requestID, _statusID, _callingUser);
         End If;
 
-        COMMIT;
     END;
 
     If _logDebugMessages Then

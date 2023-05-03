@@ -33,18 +33,15 @@ AS $$
 DECLARE
     _myRowCount int := 0;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
-
-    _currentLocation := 'Start';
 
     BEGIN
         _currentLocation := 'Validate the inputs';

@@ -47,7 +47,6 @@ DECLARE
     _cartID int;
     _tmp int := 0;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

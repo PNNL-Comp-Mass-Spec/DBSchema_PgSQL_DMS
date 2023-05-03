@@ -46,7 +46,6 @@ DECLARE
     _counter int;
     _paramEntryID int := 0;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
@@ -135,9 +134,6 @@ BEGIN
 
         End If;
 
-        _transName := 'AddMassModEntry';
-        begin transaction _transName
-
         _counter := 0;
 
         _massCorrectionID := GetMassCorrectionID(_entryValue);
@@ -223,8 +219,6 @@ BEGIN
             End If;
 
         END LOOP;
-
-        commit transaction _transname
 
         RETURN;
     End If;

@@ -65,7 +65,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -581,7 +580,7 @@ BEGIN
 
             _logMessage := format('%s, processors %s', _statusMessageInfo, _updatedProcessors);
 
-            Call public.post_log_entry('Debug', _logMessage, 'UpdateManagerAndTaskStatusXML', 'cap');
+            Call public.post_log_entry('Debug', _logMessage, 'Update_Manager_And_Task_Status_XML', 'sw');
         End If;
 
     EXCEPTION

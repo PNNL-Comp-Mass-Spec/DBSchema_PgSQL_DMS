@@ -38,7 +38,6 @@ DECLARE
     _hits int;
     _wellList text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

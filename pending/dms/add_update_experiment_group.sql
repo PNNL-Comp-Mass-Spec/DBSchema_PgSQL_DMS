@@ -52,9 +52,7 @@ DECLARE
     _userID int;
     _matchCount int;
     _newUsername text;
-    _transName text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
@@ -185,6 +183,7 @@ BEGIN
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5204';
+        DROP TABLE Tmp_Experiments;
         RETURN;
     End If;
 
@@ -217,16 +216,11 @@ BEGIN
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5205';
+            DROP TABLE Tmp_Experiments;
             RETURN;
         End If;
 
     End If;
-
-    ---------------------------------------------------
-    -- Start transaction
-    --
-    _transName := 'AddUpdateExperimentGroup';
-    Begin transaction _transName
 
     ---------------------------------------------------
     -- Action for add mode

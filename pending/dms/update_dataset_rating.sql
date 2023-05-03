@@ -93,7 +93,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Call stored procedure UpdateDatasets
+    -- Call procedure UpdateDatasets
     ---------------------------------------------------
 
     Call update_datasets (_datasets, _rating => _rating, _mode => _mode, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser)

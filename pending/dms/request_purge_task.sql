@@ -437,9 +437,9 @@ BEGIN
             WHERE dataset_id = _datasetID;
 
         End If;
-
-        COMMIT;
     END;
+
+    COMMIT;
 
     ---------------------------------------------------
     -- Get information for assigned dataset

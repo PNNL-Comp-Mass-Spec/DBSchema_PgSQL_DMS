@@ -26,9 +26,7 @@ AS $$
 DECLARE
     _msg text;
     _massCorrectionID int := 0;
-    _transName text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -81,13 +79,6 @@ BEGIN
         _returnCode := 'U5104';
         RETURN;
     End If;
-
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-
-    _transName := 'AddMassCorrectionFactor';
-    begin transaction _transName
 
     ---------------------------------------------------
     -- Action for add mode

@@ -47,20 +47,17 @@ DECLARE
     _limitToMaxKnownDMSJobs int;
     _maxKnownDMSJob int;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
     _currentTime := CURRENT_TIMESTAMP;
-
-    _currentLocation := 'Start';
 
     Begin
         _currentLocation := 'Validate the inputs';

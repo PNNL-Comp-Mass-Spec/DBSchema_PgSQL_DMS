@@ -193,8 +193,8 @@ BEGIN
                                  J.job AS Job,
                                  J.Results_Folder_Name AS MasicDirectoryName,
                                  CASE
-                                     WHEN J.AJ_StateID = 4 THEN 1
-                                     WHEN J.AJ_StateID = 14 THEN 2
+                                     WHEN J.job_state_id = 4 THEN 1
+                                     WHEN J.job_state_id = 14 THEN 2
                                      ELSE 3
                                  END AS JobStateRank
                           FROM t_analysis_job J
@@ -278,8 +278,8 @@ BEGIN
                                                    J.job AS Job,
                                                    J.Results_Folder_Name AS MasicDirectoryName,
                                                    CASE
-                                                       WHEN J.AJ_StateID = 4 THEN 1
-                                                       WHEN J.AJ_StateID = 14 THEN 2
+                                                       WHEN J.job_state_id = 4 THEN 1
+                                                       WHEN J.job_state_id = 14 THEN 2
                                                        ELSE 3
                                                    END LOOP; AS JobStateRank
                                             FROM t_analysis_job J

@@ -93,7 +93,7 @@ BEGIN
                 _message := 'Error examining state of processing step ' || _stepName || ' in MT_Main.dbo.T_Process_Step_Control';
             End If;
 
-            Call post_log_entry 'Error', _message, 'VerifyUpdateEnabled', 1
+            Call post_log_entry ('Error', _message, 'Verify_Update_Enabled', 'pc', _duplicateEntryHoldoffHours => 1);
 
             _executionState := 0;
         Else
@@ -109,7 +109,7 @@ BEGIN
                 -- Post a log entry if this is the first loop
                 If _pauseStartLogged = 0 Then
                     _message := 'Pausing processing step ' || _stepName || ' (called by ' || _callingFunctionDescription || ')';
-                    Call post_log_entry 'Normal', _message, 'VerifyUpdateEnabled'
+                    Call post_log_entry ('Normal', _message, 'Verify_Update_Enabled', 'pc');
                     _message := '';
 
                     _pauseStartTime := CURRENT_TIMESTAMP;
@@ -171,7 +171,7 @@ BEGIN
                     _message := format('Processing step %s has been paused for %s hours; updated Execution_State to 0 for this step and aborting the pause (called by %s)',
                                         _stepName, _maximumPauseLengthHours, _callingFunctionDescription);
 
-                    Call post_log_entry 'Error', _message, 'VerifyUpdateEnabled'
+                    Call post_log_entry ('Error', _message, 'Verify_Update_Enabled', 'pc');
 
                     _executionState := 0;
                     _pauseAborted := 1;
@@ -200,7 +200,7 @@ BEGIN
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
             End If; -- </c2>
-        End Loop; -- </b2>
+        END LOOP; -- </b2>
     End -- </a>
 
     If _pauseStartLogged = 1 Then
@@ -226,7 +226,7 @@ BEGIN
         -- Post a message to T_Log_Entries
         If _pauseAborted = 0 Then
             _message := 'Resuming processing step ' || _stepName;
-            Call post_log_entry 'Normal', _message, 'VerifyUpdateEnabled'
+            Call post_log_entry ('Normal', _message, 'Verify_Update_Enabled', 'pc');
             _message := '';
         End If;
     End If;
@@ -240,7 +240,7 @@ BEGIN
 
         If _postLogEntryIfDisabled = 1 Then
             -- Post a warning to the log, but limit to one posting every hour
-            Call post_log_entry 'Warning', _message, 'VerifyUpdateEnabled', 1
+            Call post_log_entry ('Warning', _message, 'Verify_Update_Enabled', 'pc', _duplicateEntryHoldoffHours => 1);
         End If;
     End If;
 

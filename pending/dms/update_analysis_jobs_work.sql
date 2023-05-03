@@ -94,7 +94,6 @@ DECLARE
     _action2 text;
     _stateID int;
     _newPriority int;
-    _transName text;
     _orgid int := 0;
     _result int;
     _commaList as text;
@@ -117,8 +116,6 @@ BEGIN
 
     _stateID := 0;
     _newPriority := 2;
-
-    _transName := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -335,10 +332,6 @@ BEGIN
 
         _alterData := true;
 
-        ---------------------------------------------------
-        _transName := 'UpadateAnalysisJobs';
-        begin transaction _transName
-
         -----------------------------------------------
         If _state <> _noChangeText Then
             UPDATE t_analysis_job
@@ -490,11 +483,6 @@ BEGIN
     If _mode = 'reset' Then
 
         _alterData := true;
-
-        ---------------------------------------------------
-        _transName := 'UpadateAnalysisJobs';
-        begin transaction _transName
-
         _stateID := 1;
 
         UPDATE t_analysis_job
@@ -574,7 +562,7 @@ BEGIN
     -- Handle associated processor Group
     -- (though only if we're actually performing an update or reset)
     --
-    If _associatedProcessorGroup <> _noChangeText and _transName <> '' Then
+    If _associatedProcessorGroup <> _noChangeText And _mode IN ('update', 'reset') Then
     -- <associated processor group>
 
         ---------------------------------------------------
@@ -682,14 +670,6 @@ BEGIN
 
             Call alter_entered_by_user_multi_id ('t_analysis_job_processor_group_associations', 'job', _callingUser);
         End If;
-    End If;
-
-    ---------------------------------------------------
-    -- Finalize the changes
-    ---------------------------------------------------
-
-    If _transName <> '' Then
-        commit transaction _transName
     End If;
 
     _message := 'Number of jobs to update: ' || _jobCountToUpdate::text;

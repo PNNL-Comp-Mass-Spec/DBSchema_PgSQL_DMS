@@ -35,7 +35,7 @@ DECLARE
 
     _myRowCount int := 0;
     _observerRoleID int := 10;
-    _username text := @callingUser;
+    _username text;
     _campaignID int := 0;
     _researchTeamID int := 0;
     _userID int := 0;
@@ -76,7 +76,8 @@ BEGIN
         _message := 'User ID is missing';
         RETURN;
     End If;
-    --
+
+    _username := _callingUser;
 
     ---------------------------------------------------
     -- Resolve
@@ -101,11 +102,12 @@ BEGIN
     ---------------------------------------------------
     --
     --
-    SELECT user_id INTO _userID
+    SELECT user_id
+    INTO _userID
     FROM t_users
-    WHERE username = _username
-    --
-    If _userID = 0 Then
+    WHERE username = _username;
+
+    If Not FOUND Then
         _returnCode := 'U5103';
         _message := 'User "' || _username || '" is not valid';
         RETURN;

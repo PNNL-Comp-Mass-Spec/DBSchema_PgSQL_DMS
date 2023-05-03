@@ -79,12 +79,12 @@ BEGIN
 
     If _myError <> 0 Then
         If _message = '' Then
-            _message := 'Error in SetMyEMSLUploadStatus';
+            _message := 'Error in Set_MyEMSL_Upload_Status';
         End If;
 
         _message := _message || '; error code = ' || _myError::text;
 
-        Call post_log_entry 'Error', _message, 'SetMyEMSLUploadStatus'
+        Call post_log_entry ('Error', _message, 'Set_MyEMSL_Upload_Status', 'dpkg');
     End If;
 
     Return _myError

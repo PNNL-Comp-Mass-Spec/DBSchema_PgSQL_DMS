@@ -410,7 +410,7 @@ BEGIN
         SELECT * FROM Tmp_Job_Parameters
 
         If _logDebugMessages Then
-            Call public.post_log_entry ('Debug', _jobParamXML::text, 'MakeLocalJobInBroker');
+            Call public.post_log_entry ('Debug', _jobParamXML::text, 'Make_Local_Job_In_Broker', 'sw');
         End If;
     End If;
 

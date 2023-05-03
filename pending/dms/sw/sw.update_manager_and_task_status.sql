@@ -44,7 +44,7 @@ AS $$
 **
 **      However, if the message broker stops working, running analysis managers
 **      will set LogStatusToBrokerDB to true, meaning calls to WriteStatusFile
-**      will cascade into method LogStatus, which will call this stored procedure
+**      will cascade into method LogStatus, which will call this procedure
 **
 **  Arguments:
 **    _spectrumCount   The total number of spectra that need to be processed (or have been generated).  For Sequest, this is the DTA count

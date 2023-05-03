@@ -67,7 +67,7 @@ AS $$
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          04/09/2008 mem - Added call to alter_event_log_entry_user to handle dataset rating entries (event log target type 8)
 **          05/23/2008 mem - Now calling schedule_predefined_analysis_jobs if the dataset rating is changed from -5 to 5 and no jobs exist yet for this dataset (Ticket #675)
-**          04/08/2009 jds - Added support for the additional parameters _secSep and _mRMAttachment to the AddUpdateRequestedRun stored procedure (Ticket #727)
+**          04/08/2009 jds - Added support for the additional parameters _secSep and _mRMAttachment to the AddUpdateRequestedRun procedure (Ticket #727)
 **          09/16/2009 mem - Now checking dataset type (_msType) against the Instrument_Allowed_Dataset_Type table (Ticket #748)
 **          01/14/2010 grk - assign storage path on creation of dataset
 **          02/28/2010 grk - added add-auto mode for requested run
@@ -187,7 +187,7 @@ DECLARE
     _sepID int := 0;
     _intStdID int := -1;
     _experimentID int;
-    _newExperiment text := Replace(@experimentNum, '-', '_');
+    _newExperiment text;
     _instrumentID int;
     _instrumentGroup text := '';
     _defaultDatasetTypeID int;
@@ -206,7 +206,6 @@ DECLARE
     _runFinish text;
     _storagePathID int;
     _refDate timestamp;
-    _transName text;
     _datasetIDConfirm int;
     _jobStateID int;
     _warningWithPrefix text;
@@ -218,7 +217,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
     _warning := '';
@@ -556,6 +554,7 @@ BEGIN
 
         If _experimentID = 0 And _experimentName::citext SIMILAR TO 'QC_Shew_[0-9][0-9]_[0-9][0-9]' And _experimentName LIKE '%-%' Then
 
+            _newExperiment := Replace(_experimentName, '-', '_');
             _experimentID := get_experiment_id(_newExperiment);
 
             If _experimentID > 0 Then
@@ -895,7 +894,7 @@ BEGIN
         -- <AddTrigger>
 
             If _requestID <> 0 Then
-                --**Check code taken from ConsumeScheduledRun stored procedure**
+                --**Check code taken from ConsumeScheduledRun procedure**
                 ---------------------------------------------------
                 -- Validate that experiments match
                 ---------------------------------------------------
@@ -940,7 +939,7 @@ BEGIN
                 -- RequestID not specified
                 -- Try to determine EUS information using Experiment name
 
-                --**Check code taken from AddUpdateRequestedRun stored procedure**
+                --**Check code taken from AddUpdateRequestedRun procedure**
 
                 ---------------------------------------------------
                 -- Lookup EUS field (only effective for experiments that have associated sample prep requests)
@@ -1086,236 +1085,227 @@ BEGIN
                 Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
             End If;
 
-            -- Start transaction
-            --
-            _transName := 'AddNewDataset';
+            BEGIN
 
-            Begin transaction _transName
+                If Coalesce(_aggregationJobDataset, false) Then
+                    _newDSStateID := 3;
+                Else
+                    _newDSStateID := 1;
+                End If;
 
-            If Coalesce(_aggregationJobDataset, false) Then
-                _newDSStateID := 3;
-            Else
-                _newDSStateID := 1;
-            End If;
-
-            If _logDebugMessages Then
-                RAISE INFO '%', 'Insert into t_dataset';
-            End If;
-
-            -- Insert values into a new row
-            --
-            INSERT INTO t_dataset (
-                dataset,
-                operator_username,
-                comment,
-                created,
-                instrument_id,
-                dataset_type_ID,
-                well,
-                separation_type,
-                dataset_state_id,
-                folder_name,
-                storage_path_ID,
-                exp_id,
-                dataset_rating_id,
-                lc_column_ID,
-                wellplate,
-                internal_standard_ID,
-                capture_subfolder,
-                cart_config_id
-            ) VALUES (
-                _datasetName,
-                _operatorUsername,
-                _comment,
-                _refDate,
-                _instrumentID,
-                _datasetTypeID,
-                _wellNumber,
-                _secSep,
-                _newDSStateID,
-                _folderName,
-                _storagePathID,
-                _experimentID,
-                _ratingID,
-                _columnID,
-                _wellplateName,
-                _intStdID,
-                _captureSubfolder,
-                _cartConfigID
-            )
-            RETURNING dataset_id
-            INTO _datasetID;
-
-            If Not FOUND Then
-                _msg := 'Insert operation failed for dataset ' || _datasetName;
-                RAISE EXCEPTION '%', _msg;
-            End If;
-
-            -- As a precaution, query t_dataset using Dataset name to make sure we have the correct Dataset_ID
-
-            SELECT dataset_id
-            INTO _datasetIDConfirm
-            FROM t_dataset
-            WHERE dataset = _datasetName
-
-            If _datasetID <> Coalesce(_datasetIDConfirm, _datasetID) Then
-                _debugMsg := ;
-                    'Warning: Inconsistent identity values when adding dataset ' || _datasetName || ': Found ID ' ||
-                    _datasetIDConfirm::text || ' but the INSERT INTO query reported ' ||
-                    _datasetID::text;
-
-                Call post_log_entry ('Error', _debugMsg, 'AddUpdateDataset');
-
-                _datasetID := _datasetIDConfirm;
-            End If;
-
-            -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
                 If _logDebugMessages Then
-                    RAISE INFO '%', 'Call public.alter_event_log_entry_user';
+                    RAISE INFO '%', 'Insert into t_dataset';
                 End If;
 
-                Call alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser);
+                -- Insert values into a new row
+                --
+                INSERT INTO t_dataset (
+                    dataset,
+                    operator_username,
+                    comment,
+                    created,
+                    instrument_id,
+                    dataset_type_ID,
+                    well,
+                    separation_type,
+                    dataset_state_id,
+                    folder_name,
+                    storage_path_ID,
+                    exp_id,
+                    dataset_rating_id,
+                    lc_column_ID,
+                    wellplate,
+                    internal_standard_ID,
+                    capture_subfolder,
+                    cart_config_id
+                ) VALUES (
+                    _datasetName,
+                    _operatorUsername,
+                    _comment,
+                    _refDate,
+                    _instrumentID,
+                    _datasetTypeID,
+                    _wellNumber,
+                    _secSep,
+                    _newDSStateID,
+                    _folderName,
+                    _storagePathID,
+                    _experimentID,
+                    _ratingID,
+                    _columnID,
+                    _wellplateName,
+                    _intStdID,
+                    _captureSubfolder,
+                    _cartConfigID
+                )
+                RETURNING dataset_id
+                INTO _datasetID;
 
-                Call alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
-            End If;
-
-            ---------------------------------------------------
-            -- If scheduled run is not specified, create one
-            ---------------------------------------------------
-
-            If _requestID = 0 Then
-            -- <b3>
-
-                If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
-                    _warning := _message;
+                If Not FOUND Then
+                    _msg := 'Insert operation failed for dataset ' || _datasetName;
+                    RAISE EXCEPTION '%', _msg;
                 End If;
 
-                If _workPackage::citext In ('', 'none', 'na', '(lookup)') Then
+                -- As a precaution, query t_dataset using Dataset name to make sure we have the correct Dataset_ID
+
+                SELECT dataset_id
+                INTO _datasetIDConfirm
+                FROM t_dataset
+                WHERE dataset = _datasetName
+
+                If _datasetID <> Coalesce(_datasetIDConfirm, _datasetID) Then
+                    _debugMsg := ;
+                        'Warning: Inconsistent identity values when adding dataset ' || _datasetName || ': Found ID ' ||
+                        _datasetIDConfirm::text || ' but the INSERT INTO query reported ' ||
+                        _datasetID::text;
+
+                    Call post_log_entry ('Error', _debugMsg, 'AddUpdateDataset');
+
+                    _datasetID := _datasetIDConfirm;
+                End If;
+
+                -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+                If char_length(_callingUser) > 0 Then
                     If _logDebugMessages Then
-                        RAISE INFO '%', 'Call GetWPforEUSProposal';
+                        RAISE INFO '%', 'Call public.alter_event_log_entry_user';
                     End If;
 
-                    SELECT work_package
-                    INTO _workPackage
-                    FROM public.get_wp_for_eus_proposal (_eusProposalID);
+                    Call alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser);
+
+                    Call alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
                 End If;
 
-                _requestName := 'AutoReq_' || _datasetName;
+                ---------------------------------------------------
+                -- If scheduled run is not specified, create one
+                ---------------------------------------------------
 
-                If _logDebugMessages Then
-                    RAISE INFO '%', 'Call AddUpdateRequestedRun';
-                End If;
+                If _requestID = 0 Then
+                -- <b3>
 
-                Call add_update_requested_run (
-                                        _requestName => _requestName,
-                                        _experimentName => _experimentName,
-                                        _requesterUsername => _operatorUsername,
-                                        _instrumentName => _instrumentName,
-                                        _workPackage => _workPackage,
-                                        _msType => _msType,
-                                        _instrumentSettings => 'na',
-                                        _wellplateName => NULL,
-                                        _wellNumber => NULL,
-                                        _internalStandard => 'na',
-                                        _comment => 'Automatically created by Dataset entry',
-                                        _eusProposalID => _eusProposalID,
-                                        _eusUsageType => _eusUsageType,
-                                        _eusUsersList => _eusUsersList,
-                                        _mode => 'add-auto',
-                                        _request => _requestID,         -- Output
-                                        _message => _message,           -- Output
-                                        _returnCode => _returnCode,     -- Output
-                                        _secSep => _secSep,
-                                        _mRMAttachment => '',
-                                        _status => 'Completed',
-                                        _skipTransactionRollback => true,
-                                        _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                        _callingUser => _callingUser,
-                                        _logDebugMessages => _logDebugMessages);
-
-                If _returnCode <> '' Then
-                    If _eusProposalID = '' And _eusUsageType = '' and _eusUsersList = '' Then
-                        _msg := 'Create AutoReq run request failed: dataset ' || _datasetName || '; EUS Proposal ID, Usage Type, and Users list cannot all be blank ->' || _message;
-                    Else
-                        _msg := 'Create AutoReq run request failed: dataset ' || _datasetName || ' with EUS Proposal ID ' || _eusProposalID || ', Usage Type ' || _eusUsageType || ', and Users List ' || _eusUsersList || ' ->' || _message;
+                    If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
+                        _warning := _message;
                     End If;
 
-                    _logErrors := false;
+                    If _workPackage::citext In ('', 'none', 'na', '(lookup)') Then
+                        If _logDebugMessages Then
+                            RAISE INFO '%', 'Call GetWPforEUSProposal';
+                        End If;
 
-                    RAISE EXCEPTION '%', _msg;
+                        SELECT work_package
+                        INTO _workPackage
+                        FROM public.get_wp_for_eus_proposal (_eusProposalID);
+                    End If;
+
+                    _requestName := 'AutoReq_' || _datasetName;
+
+                    If _logDebugMessages Then
+                        RAISE INFO '%', 'Call AddUpdateRequestedRun';
+                    End If;
+
+                    Call add_update_requested_run (
+                                            _requestName => _requestName,
+                                            _experimentName => _experimentName,
+                                            _requesterUsername => _operatorUsername,
+                                            _instrumentName => _instrumentName,
+                                            _workPackage => _workPackage,
+                                            _msType => _msType,
+                                            _instrumentSettings => 'na',
+                                            _wellplateName => NULL,
+                                            _wellNumber => NULL,
+                                            _internalStandard => 'na',
+                                            _comment => 'Automatically created by Dataset entry',
+                                            _eusProposalID => _eusProposalID,
+                                            _eusUsageType => _eusUsageType,
+                                            _eusUsersList => _eusUsersList,
+                                            _mode => 'add-auto',
+                                            _request => _requestID,         -- Output
+                                            _message => _message,           -- Output
+                                            _returnCode => _returnCode,     -- Output
+                                            _secSep => _secSep,
+                                            _mRMAttachment => '',
+                                            _status => 'Completed',
+                                            _skipTransactionRollback => true,
+                                            _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                                            _callingUser => _callingUser,
+                                            _logDebugMessages => _logDebugMessages);
+
+                    If _returnCode <> '' Then
+                        If _eusProposalID = '' And _eusUsageType = '' and _eusUsersList = '' Then
+                            _msg := 'Create AutoReq run request failed: dataset ' || _datasetName || '; EUS Proposal ID, Usage Type, and Users list cannot all be blank ->' || _message;
+                        Else
+                            _msg := 'Create AutoReq run request failed: dataset ' || _datasetName || ' with EUS Proposal ID ' || _eusProposalID || ', Usage Type ' || _eusUsageType || ', and Users List ' || _eusUsersList || ' ->' || _message;
+                        End If;
+
+                        _logErrors := false;
+
+                        RAISE EXCEPTION '%', _msg;
+                    End If;
+                End If; -- </b3>
+
+                ---------------------------------------------------
+                -- If a cart name is specified, update it for the
+                -- requested run
+                ---------------------------------------------------
+                --
+                If Not _lcCartName::citext IN ('', 'no update') And _requestID > 0 Then
+
+                    If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
+                        _warning := _message;
+                    End If;
+
+                    If _logDebugMessages Then
+                        RAISE INFO '%', 'Call update_cart_parameters';
+                    End If;
+
+                    Call update_cart_parameters (
+                                        'CartName',
+                                        _requestID,
+                                        _lcCartName,    -- Output
+                                        _message,       -- Output
+                                        _returnCode);   -- Output
+
+                    If _returnCode <> '' Then
+                        _msg := 'Update LC cart name failed: dataset ' || _datasetName || ' -> ' || _message;
+                        RAISE EXCEPTION '%', _msg;
+                    End If;
                 End If;
-            End If; -- </b3>
 
-            ---------------------------------------------------
-            -- If a cart name is specified, update it for the
-            -- requested run
-            ---------------------------------------------------
-            --
-            If Not _lcCartName::citext IN ('', 'no update') And _requestID > 0 Then
+                ---------------------------------------------------
+                -- Consume the scheduled run
+                ---------------------------------------------------
+
+                _datasetID := 0;
+
+                SELECT dataset_id
+                INTO _datasetID
+                FROM t_dataset
+                WHERE dataset = _datasetName
 
                 If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
                     _warning := _message;
                 End If;
 
                 If _logDebugMessages Then
-                    RAISE INFO '%', 'Call update_cart_parameters';
+                    RAISE INFO 'Call consume_scheduled_run';
                 End If;
 
-                Call update_cart_parameters (
-                                    'CartName',
-                                    _requestID,
-                                    _lcCartName,    -- Output
-                                    _message,       -- Output
-                                    _returnCode);   -- Output
+                Call consume_scheduled_run (
+                            _datasetID,
+                            _requestID,
+                            _message => _message,           -- Output
+                            _callingUser => _callingUser,
+                            _logDebugMessages => _logDebugMessages,
+                            _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
-                    _msg := 'Update LC cart name failed: dataset ' || _datasetName || ' -> ' || _message;
+                    _msg := 'Consume operation failed: dataset ' || _datasetName || ' -> ' || _message;
                     RAISE EXCEPTION '%', _msg;
                 End If;
-            End If;
 
-            ---------------------------------------------------
-            -- Consume the scheduled run
-            ---------------------------------------------------
-
-            _datasetID := 0;
-
-            SELECT dataset_id
-            INTO _datasetID
-            FROM t_dataset
-            WHERE dataset = _datasetName
-
-            If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
-                _warning := _message;
-            End If;
+            END;
 
             If _logDebugMessages Then
-                RAISE INFO 'Call consume_scheduled_run';
-            End If;
-
-            Call consume_scheduled_run (
-                        _datasetID,
-                        _requestID,
-                        _message => _message,           -- Output
-                        _callingUser => _callingUser,
-                        _logDebugMessages => _logDebugMessages,
-                        _returnCode => _returnCode);    -- Output
-
-            If _returnCode <> '' Then
-                _msg := 'Consume operation failed: dataset ' || _datasetName || ' -> ' || _message;
-                RAISE EXCEPTION '%', _msg;
-            End If;
-
-            If @@trancount > 0 Then
-                commit transaction _transName
-            Else
-                _debugMsg := '@@trancount is 0; this is unexpected';
-                Call post_log_entry ('Error', _debugMsg, 'AddUpdateDataset');
-            End If;
-
-            If _logDebugMessages Then
-                _debugMsg := 'Call UpdateCachedDatasetInstruments with _datasetId = ' || _datasetId::text
+                _debugMsg := 'Call update_cached_dataset_instruments with _datasetId = ' || _datasetId::text
                 Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
             End If;
 
@@ -1336,7 +1326,6 @@ BEGIN
                 Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
             End If;
 
-            --
             UPDATE t_dataset
             Set     operator_username = _operatorUsername,
                     comment = _comment,

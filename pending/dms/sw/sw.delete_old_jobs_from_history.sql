@@ -237,7 +237,7 @@ BEGIN
                         _message, _jobCountToDelete, _jobFirst, _jobLast);
 
     If Not _infoOnly And _jobCountToDelete > 0 Then
-        Call public.post_log_entry ('Normal', _message, 'DeleteOldJobsFromHistory');
+        Call public.post_log_entry ('Normal', _message, 'Delete_Old_Jobs_From_History', 'sw');
     End If;
 
     ---------------------------------------------------

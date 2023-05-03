@@ -40,7 +40,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

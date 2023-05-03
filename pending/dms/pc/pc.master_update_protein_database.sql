@@ -19,14 +19,17 @@ AS $$
 DECLARE
     _result int;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
-    Set XACT_ABORT, nocount on
+
 
     _message := '';
     _returnCode:= '';
-
-    _currentLocation := 'Start';
 
     Begin Try
 

@@ -41,9 +41,6 @@ DECLARE
     _datasetID int;
     _datasetState int;
     _datasetRating int;
-    _compressonState int;
-    _compressionDate timestamp;
-    _transName text;
     _result int;
 BEGIN
     _message := '';
@@ -115,42 +112,11 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Set up proper compression state
-    -- Note: as of February 2010, datasets no longer go through 'prep'
-    -- Thus, _compressonState and _compressionDate will be null
-    ---------------------------------------------------
-    --
-    --
-    -- If dataset is in preparation,
-    -- compression fields must be marked with values
-    -- appropriate to success or failure
-    --
-    If _datasetState = 7  -- dataset is in preparation Then
-        If _completionState = 8 -- preparation failed Then
-                _compressonState := null;
-                _compressionDate := null;
-        Else                    -- preparation succeeded
-                _compressonState := 1;
-                _compressionDate := CURRENT_TIMESTAMP;
-        End If;
-    End If;
-
-    --
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-    --
-    _transName := 'SetCaptureComplete';
-    begin transaction _transName
-
-    ---------------------------------------------------
     -- Update state of dataset
     ---------------------------------------------------
     --
     UPDATE t_dataset
-    SET dtaset_state_id = _completionState,
-        -- Remove or update since skipped column: DS_Comp_State = _compressonState,
-        -- Remove or update since skipped column: DS_Compress_Date = _compressionDate
+    SET dataset_state_id = _completionState,
     WHERE dataset_id = _datasetID;
 
     If Not FOUND Then
@@ -185,7 +151,7 @@ BEGIN
         RETURN;
     End If;
 
-    commit transaction _transName
+    COMMIT;
 
     ---------------------------------------------------
     -- Schedule default analyses for this dataset

@@ -35,7 +35,7 @@ AS $$
 **      <r i="OpSaliva_009_b_7Mar11_Phoenix_11-01-20" f="Factor2" v="Bb" />
 **
 **
-**      XML coming from stored procedure Make_Automatic_Requested_Run_Factors will look like the following
+**      XML coming from procedure Make_Automatic_Requested_Run_Factors will look like the following
 **      - Here, the identifier is RequestID
 **
 **      <r i="1197727" f="Actual_Run_Order" v="1" />
@@ -98,7 +98,6 @@ DECLARE
     _changeSummary text := '';
     _usageMessage text := '';
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -526,95 +525,94 @@ BEGIN
                          Tmp_FactorInfo.value = t_factor.value )
 
     If _infoOnly Then
+        -- ToDo: Show this info using RAISE INFO
         -- Preview the contents of the Temp table
         SELECT *
         FROM Tmp_FactorInfo
-    Else
-    -- <CommitChanges>
+        RETURN;
+    End If;
 
-        -----------------------------------------------------------
-        -- Remove blank values from factors table
-        -----------------------------------------------------------
-        --
-        DELETE FROM t_factor
-        WHERE t_factor.type = 'Run_Request' AND
-              EXISTS ( SELECT *
-                       FROM Tmp_FactorInfo
-                       WHERE UpdateSkipCode = 0 AND
-                             Tmp_FactorInfo.RequestID = t_factor.target_id AND
+    -----------------------------------------------------------
+    -- Remove blank values from factors table
+    -----------------------------------------------------------
+    --
+    DELETE FROM t_factor
+    WHERE t_factor.type = 'Run_Request' AND
+          EXISTS ( SELECT *
+                   FROM Tmp_FactorInfo
+                   WHERE UpdateSkipCode = 0 AND
+                         Tmp_FactorInfo.RequestID = t_factor.target_id AND
+                         Tmp_FactorInfo.Factor = t_factor.name AND
+                         Trim(Tmp_FactorInfo.value) = '' )
+    --
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    -----------------------------------------------------------
+    -- Update existing items in factors tables
+    -----------------------------------------------------------
+    --
+    UPDATE t_factor Target
+    SET value = Tmp_FactorInfo.value,
+        last_updated = CURRENT_TIMESTAMP
+    FROM Tmp_FactorInfo Src
+    WHERE Src.RequestID = Target.TargetID AND
+          Src.Factor = Target.Name AND
+          Target.Type = 'Run_Request' AND
+          Src.UpdateSkipCode = 0 AND
+          Src.Value <> Target.Value
+    --
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    -----------------------------------------------------------
+    -- Add new factors
+    -----------------------------------------------------------
+    --
+    INSERT INTO t_factor( type,
+                          target_id,
+                          name,
+                          value,
+                          last_updated )
+    SELECT 'Run_Request' AS Type,
+           RequestID AS TargetID,
+           Factor AS FactorName,
+           value,
+           CURRENT_TIMESTAMP
+    FROM Tmp_FactorInfo
+    WHERE UpdateSkipCode = 0 AND
+          Trim(Tmp_FactorInfo.value) <> '' AND
+          NOT EXISTS ( SELECT *
+                       FROM t_factor
+                       WHERE Tmp_FactorInfo.RequestID = t_factor.target_id AND
                              Tmp_FactorInfo.Factor = t_factor.name AND
-                             Trim(Tmp_FactorInfo.value) = '' )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                             t_factor.type = 'Run_Request' )
+    --
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        -----------------------------------------------------------
-        -- Update existing items in factors tables
-        -----------------------------------------------------------
-        --
-        UPDATE t_factor Target
-        SET value = Tmp_FactorInfo.value,
-            last_updated = CURRENT_TIMESTAMP
-        FROM Tmp_FactorInfo Src
-        WHERE Src.RequestID = Target.TargetID AND
-              Src.Factor = Target.Name AND
-              Target.Type = 'Run_Request' AND
-              Src.UpdateSkipCode = 0 AND
-              Src.Value <> Target.Value
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    -----------------------------------------------------------
+    -- Convert changed items to XML for logging
+    -----------------------------------------------------------
+    --
+    --
+    SELECT string_agg(string.Format('<r i="%s" f="%s" v="%s" />', RequestID, Factor, Value))
+    INTO _changeSummary
+    FROM Tmp_FactorInfo
+    WHERE UpdateSkipCode = 0;
 
-        -----------------------------------------------------------
-        -- Add new factors
-        -----------------------------------------------------------
-        --
-        INSERT INTO t_factor( type,
-                              target_id,
-                              name,
-                              value,
-                              last_updated )
-        SELECT 'Run_Request' AS Type,
-               RequestID AS TargetID,
-               Factor AS FactorName,
-               value,
-               CURRENT_TIMESTAMP
-        FROM Tmp_FactorInfo
-        WHERE UpdateSkipCode = 0 AND
-              Trim(Tmp_FactorInfo.value) <> '' AND
-              NOT EXISTS ( SELECT *
-                           FROM t_factor
-                           WHERE Tmp_FactorInfo.RequestID = t_factor.target_id AND
-                                 Tmp_FactorInfo.Factor = t_factor.name AND
-                                 t_factor.type = 'Run_Request' )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        -----------------------------------------------------------
-        -- Convert changed items to XML for logging
-        -----------------------------------------------------------
-        --
-        --
-        SELECT string_agg(string.Format('<r i="%s" f="%s" v="%s" />', RequestID, Factor, Value))
-        INTO _changeSummary
-        FROM Tmp_FactorInfo
-        WHERE UpdateSkipCode = 0;
-
-        -----------------------------------------------------------
-        -- Log changes
-        -----------------------------------------------------------
-        --
-        If _changeSummary <> '' Then
-            INSERT INTO t_factor_log (changed_by, changes)
-            VALUES (_callingUser, _changeSummary);
-        End If;
-
-    End If; -- </CommitChanges>
+    -----------------------------------------------------------
+    -- Log changes
+    -----------------------------------------------------------
+    --
+    If _changeSummary <> '' Then
+        INSERT INTO t_factor_log (changed_by, changes)
+        VALUES (_callingUser, _changeSummary);
+    End If;
 
     ---------------------------------------------------
     -- Log SP usage
     ---------------------------------------------------
 
     _usageMessage := '';
-    Call post_usage_log_entry ('UpdateRequestedRunFactors', _usageMessage);
+    Call post_usage_log_entry ('Update_Requested_Run_Factors', _usageMessage);
 
     DROP TABLE Tmp_FactorInfo;
 END

@@ -423,7 +423,7 @@ BEGIN
         End If;
 
         If _returnCode <> '' Then
-            Call public.post_log_entry ('Error', _errorMessage, 'CreateJobSteps');
+            Call public.post_log_entry ('Error', _errorMessage, 'Create_Job_Steps', 'sw');
 
             UPDATE Tmp_Jobs
             SET State = 5
@@ -603,7 +603,7 @@ BEGIN
             _loggingEnabled := true;
 
             _statusMessage := format('... Creating job steps: %s / %s', _jobsProcessed, _jobCountToProcess);
-            Call public.post_log_entry ('Progress', _statusMessage, 'create_job_steps', 'sw');
+            Call public.post_log_entry ('Progress', _statusMessage, 'Create_Job_Steps', 'sw');
             _lastLogTime := clock_timestamp();
         End If;
 
@@ -652,7 +652,7 @@ BEGIN
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Create job steps complete';
-        Call public.post_log_entry ('Progress', _statusMessage, 'create_job_steps', 'sw');
+        Call public.post_log_entry ('Progress', _statusMessage, 'Create_Job_Steps', 'sw');
     End If;
 
     ---------------------------------------------------

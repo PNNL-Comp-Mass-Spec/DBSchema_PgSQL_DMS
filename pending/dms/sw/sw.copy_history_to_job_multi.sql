@@ -33,7 +33,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _currentLocation text;
+    _currentLocation text := 'Start';
     _jobCount int;
     _jobDateDescription text;
     _myRowCount int := 0;
@@ -49,7 +49,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
     _debugMode := Coalesce(_debugMode, false);
@@ -64,8 +63,6 @@ BEGIN
     );
 
     CREATE INDEX IX_Tmp_JobsToCopy ON Tmp_JobsToCopy (Job);
-
-    _currentLocation := 'Start';
 
     INSERT INTO Tmp_JobsToCopy (Job)
     SELECT Value
@@ -450,7 +447,7 @@ BEGIN
         --
         _message := format('Copied %s jobs from the history tables to the main tables', _jobsCopied);
 
-        Call public.post_log_entry ('Normal', _message, 'CopyHistoryToJobMulti');
+        Call public.post_log_entry ('Normal', _message, 'Copy_History_To_Job_Multi', 'sw');
 
         _currentLocation := 'Updating job parameters and storage server info';
 
@@ -480,7 +477,7 @@ BEGIN
             If extract(epoch FROM (clock_timestamp() - _lastStatusTime)) >= 60 Then
                 _lastStatusTime := clock_timestamp();
                 _progressMsg := format('Updating job parameters and storage info for copied jobs: %s / %s', _jobsRefreshed, _jobsCopied);
-                Call public.post_log_entry ('Progress', _progressMsg, 'CopyHistoryToJobMulti');
+                Call public.post_log_entry ('Progress', _progressMsg, 'Copy_History_To_Job_Multi', 'sw');
             End If;
 
         END LOOP;

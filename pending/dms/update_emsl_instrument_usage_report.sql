@@ -50,7 +50,7 @@ AS $$
 **                         - Replace SQL server specific syntax with more generic syntax for assigning sequential values to the seq column
 **          02/15/2022 mem - Define column names when previewing updates
 **          03/17/2022 mem - After populating the staging table, update _instrument if required
-**                         - Call stored procedure UpdateEMSLInstrumentAcqOverlapColumn
+**                         - Call procedure UpdateEMSLInstrumentAcqOverlapColumn
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          12/15/2023 mem - Ported to PostgreSQL
 **

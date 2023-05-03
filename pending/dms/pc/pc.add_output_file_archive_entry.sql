@@ -10,6 +10,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry
     _creationOptions text,
     _proteinCollectionString text,
     _collectionStringHash text,
+    OUT _archiveEntryID int,
     INOUT _archivedFilePath text default '',
     INOUT _message text default '',
     INOUT _returnCode text default ''
@@ -33,326 +34,213 @@ AS $$
 DECLARE
     _myRowCount int := 0;
     _msg text;
-    _archiveEntryID int;
     _skipOutputTableAdd int;
     _archivedFileTypeID int;
     _outputSequenceTypeID int;
     _archivedFileState text;
     _archivedFileStateID int;
-    _transName text;
-    _tmpOptionKeyword text;
-    _tmpOptionKeywordID int;
-    _tmpOptionValue text;
-    _tmpOptionValueID int;
-    _tmpOptionString text;
-    _tmpEqualsPosition int;
-    _tmpStartPosition int;
-    _tmpEndPosition int;
-    _tmpCommaPosition int;
+
+    _optionItem text
+    _equalsPosition int;
+
+    _optionKeyword text;
+    _optionKeywordID int;
+    _optionValue text;
+    _optionValueID int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
+    _archiveEntryID := 0;
+
     ---------------------------------------------------
     -- Validate input fields
     ---------------------------------------------------
 
--- is the hash the right length?
+    _archivedFilePath := Trim(Coalesce(_archivedFilePath ''));
 
-    if char_length(_crc32Authentication) <> 8 Then
-        _myError := -51000;
-        _msg := 'Authentication hash must be 8 alphanumeric characters in length (0-9, A-F)';
-        RAISERROR (_msg, 10, 1)
+    -- Is the hash the right length?
+
+    If char_length(_crc32Authentication) <> 8 Then
+        _message := 'Authentication hash must be 8 alphanumeric characters in length (0-9, A-F)';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
     End If;
 
--- does this hash code already exist?
+    -- Does this hash code already exist?
 
-    _archiveEntryID := 0;
+    SELECT Archived_File_ID
+    INTO _archiveEntryID
+    FROM V_Archived_Output_Files
+    WHERE Authentication_Hash = _crc32Authentication;
 
-    SELECT Archived_File_ID INTO _archiveEntryID
-        FROM V_Archived_Output_Files
-        WHERE (Authentication_Hash = _crc32Authentication)
-
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    if _myError <> 0 Then
-        _msg := 'Database retrieval error during hash duplication check';
-        RAISERROR (_msg, 10, 1)
-        _message := _msg;
-        return _myError
+    If Not FOUND Then
+        _archiveEntryID := 0;
     End If;
 
---    if _myRowCount > 0
---    begin
+    -- Does the protein collection exist?
 
---        set _myError = -51009
---        set _msg = 'SHA-1 Authentication Hash already exists for this collection'
---        RAISERROR (_msg, 10, 1)
---        return _myError
---    end
+    If Not Exists ( SELECT *
+                    FROM pc.T_Protein_Collections
+                    WHERE protein_collection_id = _proteinCollectionID)
+    Then
+        _message := format('Protein collection ID not found in T_Protein_Collections: %s', _proteinCollectionID);
+        RAISE WARNING '%', _message;
 
--- Does this protein collection even exist?
-
-    SELECT ID FROM V_Collection_Picker
-     WHERE (ID = _proteinCollectionID)
-
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    if _myRowCount = 0 Then
-        _myError := -51001;
-        _msg := 'Collection does not exist';
-        RAISERROR (_msg, 10, 1)
-        return _myError
+        _returnCode := 'U5202';
+        RETURN;
     End If;
 
--- Is the archive path length valid?
+    -- Is the archive path length valid?
 
-    if char_length(_archivedFilePath) < 1 Then
-        _myError := -51002;
-        _msg := 'No archive path specified!';
-        RAISERROR (_msg, 10, 1)
-        return _myError
+    If _archivedFilePath = '' Then
+         _message := 'Argument _archivedFilePath is an empty string';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
+        RETURN;
     End If;
 
 -- Check for existence of output file type in pc.t_archived_file_types
 
-    SELECT archived_file_type_id  INTO _archivedFileTypeID
-        FROM pc.t_archived_file_types
-        WHERE file_type_name = _archivedFileType
+    SELECT archived_file_type_id
+    INTO _archivedFileTypeID
+    FROM pc.t_archived_file_types
+    WHERE file_type_name = _archivedFileType
 
-    if _archivedFileTypeID < 1 Then
-        _myError := -51003;
-        _msg := 'archived_file_type does not exist';
-        RAISERROR (_msg, 10, 1)
-        return _myError
+    If Not FOUND Then
+        _message := format('Invalid archived file type; %s not found in t_archived_file_types', _archivedFileType);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5204';
+        RETURN;
     End If;
 
-/*-- Check for existence of sequence type in pc.t_output_sequence_types
+    -- Determine the state of the entry based on provided data
 
-    SELECT output_sequence_type_id  INTO _outputSequenceTypeID
-        FROM pc.t_output_sequence_types
-        WHERE output_sequence_type = _outputSequenceType
-
-    if _outputSequenceTypeID < 1 Then
-        _myError := -51003;
-        _msg := 'output_sequence_type does not exist';
-        RAISERROR (_msg, 10, 1)
-        return _myError
-    End If;
-*/
-
--- Does this path already exist?
-
---    SELECT archived_file_id
---        FROM pc.t_archived_output_files
---        WHERE (archived_file_path = _archivedFilePath)
---
---    SELECT _myError = @@error, _myRowCount = @@rowcount
---
---    if _myError <> 0
---    begin
---        set _msg = 'Database retrieval error during archive path duplication check'
---        RAISERROR (_msg, 10, 1)
---        set _message = _msg
---        return _myError
---    end
---
---    if _myRowCount <> 0
---    begin
---        set _myError = -51010
---        set _msg = 'An archived file already exists at this location'
---        RAISERROR (_msg, 10, 1)
---        return _myError
---    end
---
-
---    if _myError <> 0
---    begin
---        set _message = _msg
---        return _myError
---    end
-
--- Determine the state of the entry based on provided data
-
-    SELECT archived_file_id
-    FROM pc.t_archived_output_file_collections_xref
-    WHERE protein_collection_id = _proteinCollectionID
-
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    if _myError <> 0 Then
-        _msg := 'Database retrieval error';
-        RAISERROR (_msg, 10, 1)
-        _message := _msg;
-        return _myError
-    End If;
-
-    if _myRowCount = 0 Then
+    If Exists ( SELECT archived_file_id
+                FROM pc.t_archived_output_file_collections_xref
+                WHERE protein_collection_id = _proteinCollectionID)
+    Then
+        _archivedFileState := 'modified';
+    Else
         _archivedFileState := 'original';
     End If;
 
-    if _myRowCount > 0 Then
-        _archivedFileState := 'modified';
-    End If;
-
-    SELECT archived_file_state_id INTO _archivedFileStateID
+    SELECT archived_file_state_id
+    INTO _archivedFileStateID
     FROM pc.t_archived_file_states
-    WHERE archived_file_state = _archivedFileState
+    WHERE archived_file_state = _archivedFileState;
 
     ---------------------------------------------------
-    -- Start transaction
+    -- Make the initial entry
     ---------------------------------------------------
 
-    _transName := 'AddOutputFileArchiveEntry';
-    begin transaction _transName
+    If _archiveEntryID = 0 Then
 
-    ---------------------------------------------------
-    -- Make the initial entry with what we have
-    ---------------------------------------------------
+        INSERT INTO pc.t_archived_output_files (
+            archived_file_type_id,
+            archived_file_state_id,
+            archived_file_path,
+            authentication_hash,
+            archived_file_creation_date,
+            file_modification_date,
+            creation_options,
+            filesize,
+            protein_count,
+            protein_collection_list,
+            collection_list_hex_hash
+        ) VALUES (
+            _archivedFileTypeID,
+            _archivedFileStateID,
+            _archivedFilePath,
+            _crc32Authentication,
+            CURRENT_TIMESTAMP,
+            _fileModificationDate,
+            _creationOptions,
+            _fileSize,
+            _proteinCount,
+            _proteinCollectionString,
+            _collectionStringHash)
+        RETURNING archived_file_id
+        INTO _archiveEntryID;
 
-    if _archiveEntryID = 0 Then
+        _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT('000000' || archived_file_id::text, 6));
 
-/*    INSERT INTO pc.t_archived_output_files (
-        archived_file_type_id,
-        archived_file_state_id,
-        Output_Sequence_Type_ID,
-        archived_file_path,
-        Creation_Options_String,
-        SHA1Authentication,
-        archived_file_creation_date,
-        file_modification_date,
-        filesize
-    ) VALUES (
-        _archivedFileTypeID,
-        _archivedFileStateID,
-        _outputSequenceTypeID,
-        _archivedFilePath,
-        _creationOptions,
-        _sha1Authentication,
-        CURRENT_TIMESTAMP,
-        _fileModificationDate,
-        _fileSize)
-*/
-    INSERT INTO pc.t_archived_output_files (
-        archived_file_type_id,
-        archived_file_state_id,
-        archived_file_path,
-        authentication_hash,
-        archived_file_creation_date,
-        file_modification_date,
-        creation_options,
-        filesize,
-        protein_count,
-        protein_collection_list,
-        collection_list_hex_hash
-    ) VALUES (
-        _archivedFileTypeID,
-        _archivedFileStateID,
-        _archivedFilePath,
-        _crc32Authentication,
-        CURRENT_TIMESTAMP,
-        _fileModificationDate,
-        _creationOptions,
-        _fileSize,
-        _proteinCount,
-        _proteinCollectionString,
-        _collectionStringHash)
-    RETURNING archived_file_id
-    INTO _archiveEntryID;
+        UPDATE pc.t_archived_output_files
+        SET archived_file_path = _archivedFilePath
+        WHERE archived_file_id = _archiveEntryID;
 
-    _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT('000000' || archived_file_id::text, 6));
+        ---------------------------------------------------
+        -- Parse and Store Creation Options
+        ---------------------------------------------------
 
-    UPDATE pc.t_archived_output_files
-    SET archived_file_path = _archivedFilePath
-    WHERE archived_file_id = _archiveEntryID
+        _tmpOptionKeyword := '';
+        _tmpOptionValue := '';
 
-    ---------------------------------------------------
-    -- Parse and Store Creation Options
-    ---------------------------------------------------
+        _tmpOptionString := '';
 
-    _tmpOptionKeyword := '';
-    _tmpOptionValue := '';
+        For _optionItem IN
+            SELECT value
+            FROM public.parse_delimited_list(_creationOptions, ',')
+        LOOP
+            _equalsPosition := Position('=' in _optionItem);
 
-    _tmpOptionString := '';
+            If _equalsPosition = 0 Then
+                _message := format('Equals sign missing from creation option "%"', _optionItem);
 
-    _tmpEqualsPosition := 0;
-    _tmpStartPosition := 0;
-    _tmpEndPosition := 0;
-    _tmpCommaPosition := 0;
-
-    _tmpCommaPosition := position(',' in _creationOptions);
-    if _tmpCommaPosition = 0 Then
-        _tmpCommaPosition := char_length(_creationOptions);
-    End If;
-
-        WHILE(_tmpCommaPosition < char_length(_creationOptions))
-        begin
-            _tmpCommaPosition := position(',', _creationOptions in _tmpStartPosition);
-            if _tmpCommaPosition = 0 Then
-                _tmpCommaPosition := char_length(_creationOptions) + 1;
+                _returnCode := 'U5205';
+                ROLLBACK;
+                RETURN;
             End If;
-            _tmpEndPosition := _tmpCommaPosition - _tmpStartPosition;
-            _tmpOptionString := LTRIM(SUBSTRING(_creationOptions, _tmpStartPosition, _tmpCommaPosition));
-            _tmpEqualsPosition := position('=' in _tmpOptionString);
 
-            _tmpOptionKeyword := LEFT(_tmpOptionString, _tmpEqualsPosition - 1);
-            _tmpOptionValue := RIGHT(_tmpOptionString, char_length(_tmpOptionString) - _tmpEqualsPosition);
+             If _equalsPosition = 1 Or _equalsPosition = char_length(_optionItem) Then
+                _message := format('Equals sign at invalid location in creation option "%"', _optionItem);
 
-            SELECT keyword_id INTO _tmpOptionKeywordID
+                _returnCode := 'U5206';
+                ROLLBACK;
+                RETURN;
+            End If;
+
+            _optionKeyword := Trim(Substring(_optionItem, 1, _equalsPosition - 1));
+            _optionValue   := Trim(Substring(_optionItem, _equalsPosition + 1));
+
+            SELECT keyword_id
+            INTO _optionKeywordID
             FROM pc.t_creation_option_keywords
-            WHERE keyword = _tmpOptionKeyword
+            WHERE keyword = _optionKeyword;
 
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            if _myError > 0 Then
-                _msg := 'Database retrieval error during keyword validity check';
-                _message := _msg;
-                return _myError
+            If Not FOUND Then
+                _message := format('Keyword: "%s" not found in t_creation_option_keywords', _optionKeyword);
+
+                _returnCode := 'U5207';
+                ROLLBACK;
+                RETURN;
             End If;
 
-            if _myRowCount = 0 Then
-                _msg := 'Keyword: "' || _tmpOptionKeyword || '" not located';
-                _message := _msg;
-                return -50011
-            End If;
+            SELECT value_id
+            INTO _optionValueID
+            FROM pc.t_creation_option_values
+            WHERE value_string = _optionValue;
 
-            if _myError = 0 and _myRowCount > 0 Then
-                SELECT value_id INTO _tmpOptionValueID
-                FROM pc.t_creation_option_values
-                WHERE value_string = _tmpOptionValue
-
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-                if _myError > 0 Then
-                    _msg := 'Database retrieval error during value validity check';
-                    _message := _msg;
-                End If;
-
-                if _myRowCount = 0 Then
-                    _msg := 'Value: "' || _tmpOptionValue || '" not located';
-                    _message := _msg;
-                End If;
-
-                if _myError = 0 and _myRowCount > 0 Then
+            If Not FOUND Then
+                _message := format('Value: "%s" not found in t_creation_option_values', _optionValue);
+                RAISE WARNING '%', _message;
+            Else
                 INSERT INTO pc.t_archived_file_creation_options (
                     keyword_id,
                     value_id,
                     archived_file_id
                 ) VALUES (
-                    _tmpOptionKeywordID,
-                    _tmpOptionValueID,
+                    _optionKeywordID,
+                    _optionValueID,
                     _archiveEntryID)
-
-                End If;
-
-                if _myError <> 0 Then
-                    rollback transaction _transName
-                    _msg := 'Insert operation failed: Creation Options';
-                    RAISERROR (_msg, 10, 1)
-                    _message := _msg;
-                    return -51007
-                End If;
 
             End If;
 
-            _tmpStartPosition := _tmpCommaPosition + 1;
-        End If;
+        END LOOP;
 
         INSERT INTO pc.t_archived_output_file_collections_xref (
             archived_file_id,
@@ -361,20 +249,8 @@ BEGIN
             _archiveEntryID,
             _proteinCollectionID)
 
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            rollback transaction _transName
-            _msg := 'Insert operation failed: Archive File Member Entry for "' || _proteinCollectionID || '"';
-            RAISERROR (_msg, 10, 1)
-            _message := _msg;
-            return -51011
-        End If;
-    end
+    End If;
 
-    commit transaction _transName
-
-    return _archiveEntryID
 END
 $$;
 

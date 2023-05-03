@@ -10,8 +10,9 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Deletes Protein Collection Member Entries from a given Protein Collection ID
-**          Called by the Organism Database Handler when replacing the proteins for an existing protein collection
+**  Desc:
+**      Deletes Protein Collection Member Entries from a given Protein Collection ID
+**      Called by the Organism Database Handler when replacing the proteins for an existing protein collection
 **
 **  Arguments:
 **    _numProteinsForReLoad   Number of proteins that will be associated with this collection after they are added to the database following this delete
@@ -24,25 +25,25 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
-    _result int;
     _collectionState int;
     _collectionName text;
     _stateName text;
-    _transName text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _numProteinsForReLoad := Coalesce(_numProteinsForReLoad, 0);
-    _message := ''    ;
 
     ---------------------------------------------------
     -- Check if collection is OK to delete
     ---------------------------------------------------
 
     If Not Exists (SELECT * FROM pc.t_protein_collections WHERE protein_collection_id = _collectionID) Then
-        _msg := 'Protein collection ID not found: ' || Cast(_collectionID as text);
-        RAISERROR (_msg, 10, 1)
-        return 51140
+        _message := format('Protein collection ID not found: %s', _collectionID)
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5140';
+        RETURN;
     End If;
 
     SELECT collection_state_id
@@ -55,46 +56,30 @@ BEGIN
     FROM pc.t_protein_collections
     WHERE (protein_collection_id = _collectionID)
 
-    SELECT state INTO _stateName
+    SELECT state
+    INTO _stateName
     FROM pc.t_protein_collection_states
     WHERE (collection_state_id = _collectionState)
 
-    if _collectionState > 2     Then
-        _msg := 'Cannot Delete collection "' || _collectionName || '": ' || _stateName || ' collections are protected';
-        RAISERROR (_msg,10, 1)
+    if _collectionState > 2 Then
+        _message := 'Cannot delete collection "%s" since it has state %s', _collectionName, _stateName)
+        RAISE WARNING '%', _message;
 
-        return 51140
+        _returnCode := 'U5141';
+        RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-
-    _transName := 'DeleteProteinCollectionMembers';
-    begin transaction _transName
-
-    ---------------------------------------------------
-    -- delete the proteins for this protein collection
+    -- Delete the proteins for this protein collection
     ---------------------------------------------------
 
     DELETE FROM pc.t_protein_collection_members
-    WHERE (protein_collection_id = _collectionID)
-
-    if @@error <> 0 Then
-        rollback transaction _transName
-        RAISERROR ('Delete from entries table was unsuccessful for collection',
-            10, 1)
-        return 51130
-    End If;
+    WHERE protein_collection_id = _collectionID;
 
     UPDATE pc.t_protein_collections
     SET num_proteins = _numProteinsForReLoad,
         num_residues = 0
-    WHERE protein_collection_id = _collectionID
-
-    commit transaction _transname
-
-    return 0
+    WHERE protein_collection_id = _collectionID;
 
 END
 $$;

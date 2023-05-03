@@ -41,6 +41,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
+    _currentLocation text := 'Start';
     _entryID int;
     _job int;
     _dataset text;
@@ -59,15 +60,12 @@ DECLARE
     _warningMessage citext;
     _logMessage text;
     _callingProcName text;
-    _currentLocation text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-    _currentLocation := 'Start';
 
     _message := Coalesce(_message, '');
     _previewSql := Coalesce(_previewSql, false);
@@ -123,7 +121,7 @@ BEGIN
 
                 If _warningMessage = '' And Not _specialProcessingText LIKE '%SourceJob:%' Then
                     _warningMessage := format('Special_Processing parameter for job %s does not contain tag "SourceJob:0000" Or "SourceJob:Auto{Sql_Where_Clause}"', _job);
-                    Call public.post_log_entry ('Debug', _warningMessage, 'LookupSourceJobFromSpecialProcessingParam');
+                    Call public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
                 End If;
             End If;
 
@@ -142,7 +140,7 @@ BEGIN
                                           _autoQuerySql => _autoQuerySql);      -- Output
 
                 If Coalesce(_warningMessage, '') <> '' Then
-                    Call public.post_log_entry ('Debug', _warningMessage, 'LookupSourceJobFromSpecialProcessingParam');
+                    Call public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
 
                     -- Override _sourceJobResultsFolder with an error message; this will force the job to fail since the input folder will not be found
                     If _warningMessage Like '%exception%' Then
@@ -214,7 +212,7 @@ BEGIN
                           _autoQuerySql = _autoQuerySql);       -- Output
 
                 If Coalesce(_warningMessage, '') <> '' Then
-                    Call public.post_log_entry ('Debug', _warningMessage, 'LookupSourceJobFromSpecialProcessingParam');
+                    Call public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
 
                     -- Override _sourceJobResultsFolder with an error message; this will force the job to fail since the input folder will not be found
                     If _warningMessage Like '%exception%' Then
@@ -237,7 +235,7 @@ BEGIN
                 _sourceJobResultsFolderOverride := 'UnknownFolder_Job1_and_Job2_are_both_' || _sourceJob::text;
 
                 _logMessage := 'Auto-query used to lookup Job2 for job ' || _job::text || ': ' || Coalesce(_autoQuerySql, '');
-                Call public.post_log_entry ('Debug', _logMessage, 'LookupSourceJobFromSpecialProcessingParam');
+                Call public.post_log_entry ('Debug', _logMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
             End If;
 
             If _sourceJob2 > 0 AND _warningMessage = '' Then

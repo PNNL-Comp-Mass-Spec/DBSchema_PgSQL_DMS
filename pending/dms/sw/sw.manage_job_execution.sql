@@ -117,7 +117,7 @@ BEGIN
 
         If _jobUpdateCount > 0 Then
             _message := format('Job priorities changed: updated %s job(s) in sw.t_jobs', _jobUpdateCount);
-            Call public.post_log_entry ('Normal', _message, 'ManageJobExecution');
+            Call public.post_log_entry ('Normal', _message, 'Manage_Job_Execution', 'sw');
 
             _message := '';
         End If;
@@ -138,7 +138,7 @@ BEGIN
 
             If _jobUpdateCount > 0 Then
                 _message := format('Updated sw.t_local_job_processors; UpdateCount = 0; InsertCount = 0; DeleteCount = %s', _jobUpdateCount);
-                Call public.post_log_entry ('Normal', _message, 'ManageJobExecution');
+                Call public.post_log_entry ('Normal', _message, 'Manage_Job_Execution', 'sw');
 
                 _message := '';
             End If;

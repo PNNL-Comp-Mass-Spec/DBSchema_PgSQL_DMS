@@ -39,7 +39,6 @@ DECLARE
     _cartStateID int := 0;
     _currentName text := '';
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

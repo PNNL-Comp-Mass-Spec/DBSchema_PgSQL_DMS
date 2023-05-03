@@ -35,7 +35,6 @@ DECLARE
     _startPos int;
     _failureMessage text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

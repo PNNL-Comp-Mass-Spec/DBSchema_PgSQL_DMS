@@ -174,7 +174,7 @@ BEGIN
         If _invalidFormat Then
             If _infoOnly = false Then
                 If _errorCode = 0 Then
-                    Call post_log_entry 'Error', _logMsg, 'StoreMyEMSLUploadStats';
+                    Call post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'dpkg');
                 End If;
             Else
                 RAISE INFO '%', _logMsg;
@@ -189,7 +189,7 @@ BEGIN
                 _logMsg := 'Unable to resolve StatusURI_Path to URI_PathID for Data Package ' || _dataPackageID::text || ': ' || _statusURI_Path;
 
                 If _infoOnly = false Then
-                    Call post_log_entry 'Error', _logMsg, 'StoreMyEMSLUploadStats'
+                    Call post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'dpkg');
                 Else
                     RAISE INFO '%', _logMsg;
                 End If;
@@ -261,7 +261,7 @@ BEGIN
         _message := _message || '; error code = ' || _myError::text;
 
         If _infoOnly = false Then
-            Call post_log_entry 'Error', _message, 'StoreMyEMSLUploadStats';
+            Call post_log_entry ('Error', _message, 'Store_MyEMSL_Upload_Stats', 'dpkg');
         End If;
     End If;
 

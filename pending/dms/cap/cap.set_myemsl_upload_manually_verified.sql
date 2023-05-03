@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Use this stored procedure to mark an ArchiveVerify capture task job step or ArchiveStatusCheck as complete
+**      Use this procedure to mark an ArchiveVerify capture task job step or ArchiveStatusCheck as complete
 **
 **      This is required when the automated processing fails, but you have
 **      manually verified that the files are downloadable from MyEMSL

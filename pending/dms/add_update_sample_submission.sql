@@ -58,7 +58,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
@@ -253,9 +252,8 @@ BEGIN
                 --
                 UPDATE t_sample_submission
                 SET container_list = _containerList
-                WHERE submission_id = _id
+                WHERE submission_id = _id;
 
-                COMMIT;
             END;
 
         End If; -- add mode
@@ -274,8 +272,6 @@ BEGIN
                 container_list = _containerList,
                 description = _description
             WHERE (submission_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         End If; -- update mode
 

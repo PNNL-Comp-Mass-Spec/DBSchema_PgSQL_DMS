@@ -33,7 +33,7 @@ AS $$
 **  Note: This procedure depends upon the caller having created
 **        temporary table Tmp_DatasetInfo and populating it with the dataset names
 **
-**  This stored procedure will call ValidateAnalysisJobRequestDatasets to populate the remaining columns
+**  This procedure will call ValidateAnalysisJobRequestDatasets to populate the remaining columns
 **
 **  CREATE TEMP TABLE Tmp_DatasetInfo (
 **      Dataset_Name text,
@@ -129,8 +129,8 @@ DECLARE
     _centroidSetting text := '';
     _fileSizeKB real := 0;
     _sizeDescription text := '';
-    _fileSizeMB real := @FileSizeKB/1024.0;
-    _fileSizeGB real := @FileSizeMB/1024.0;
+    _fileSizeMB numeric;
+    _fileSizeGB numeric;
     _dynModCount int := 0;
     _xml xml;
     _numberOfClonedSteps int := 0;
@@ -649,11 +649,26 @@ BEGIN
         WHERE file_name = _organismDBName;
 
         If _fileSizeKB > 0 Then
+            _fileSizeMB := _fileSizeKB / 1024.0;
+            _fileSizeGB := _fileSizeMB / 1024.0;
 
-            If _fileSizeGB < 1 Then
-                _sizeDescription := Cast(Cast(_fileSizeMB As int) As text) || ' MB';
-            Else
-                _sizeDescription := Cast(Cast(_fileSizeGB As numeric(9,1)) As text) || ' GB';
+            If _fileSizeKB > 0 Then
+                _fileSizeMB := _fileSizeKB / 1024.0;
+                _fileSizeGB := _fileSizeMB / 1024.0;
+
+                If _fileSizeGB < 1 Then
+                    If _fileSizeMB < 5 Then
+                        _sizeDescription := format('%s MB', round(_fileSizeMB, 1));
+                    Else
+                        _sizeDescription := format('%s MB', round(_fileSizeMB));
+                    End If;
+                Else
+                    If _fileSizeGB < 5 Then
+                        _sizeDescription := format('%s GB', round(_fileSizeGB, 1));
+                    Else
+                        _sizeDescription := format('%s GB', round(_fileSizeGB));
+                    End If;
+                End If;
             End If;
         End If;
 

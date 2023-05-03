@@ -21,15 +21,13 @@ DECLARE
     _itemList text;
     _message text;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-    _currentLocation := 'Start';
-
     BEGIN
 
         _infoOnly := Coalesce(_infoOnly, false);

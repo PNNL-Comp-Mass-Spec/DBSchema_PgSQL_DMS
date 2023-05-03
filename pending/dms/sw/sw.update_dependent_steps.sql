@@ -386,7 +386,7 @@ BEGIN
                         If _infoOnly Then
                             RAISE INFO '%', _msg;
                         Else
-                            Call public.post_log_entry ('Warning', _msg, 'UpdateDependentSteps');
+                            Call public.post_log_entry ('Warning', _msg, 'Update_Dependent_Steps', 'sw');
                         End If;
 
                         _newState := 2      ; -- 'Enabled'
@@ -432,7 +432,7 @@ BEGIN
                     -- then a subsequent job step could not find the shared results (e.g. step 3)
                     -- and the analysis manager updates the shared result step's state to 2 (enabled),
                     -- then step 2 runs, but fails and has its state set back to 1 (waiting),
-                    -- then it is skipped again (via update logic defined earlier in this stored procedure),
+                    -- then it is skipped again (via update logic defined earlier in this procedure),
                     -- then the subsequent step (step 3) runs again, and this time the shared results were able to be found and it thus succeeds.
 
                     -- In this scenario (which happened with job 2010021), we do not want the completion message to have any text,
@@ -494,7 +494,7 @@ BEGIN
 
         If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
             _statusMessage := '... Updating dependent steps: ' || _rowsProcessed::text || ' / ' || _rowCountToProcess::text;
-            Call public.post_log_entry ('Progress', _statusMessage, 'UpdateDependentSteps');
+            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Dependent_Steps', 'sw');
             _lastLogTime := clock_timestamp();
         End If;
 

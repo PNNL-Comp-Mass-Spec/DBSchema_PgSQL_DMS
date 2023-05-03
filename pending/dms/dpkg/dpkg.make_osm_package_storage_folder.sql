@@ -66,7 +66,7 @@ BEGIN
         _message := 'Called SendMessage for OSM Package ID ' || _packageID::text || ': ' || _pathFolder;
     End If;
 
-    Call post_log_entry 'Normal', _message, 'MakeODMPackageStorageFolder', _callingUser => @CallingUser
+    Call post_log_entry ('Normal', _message, 'Make_OSM_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser)
     */
 
     ---------------------------------------------------

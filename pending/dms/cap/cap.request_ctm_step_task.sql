@@ -105,7 +105,6 @@ DECLARE
 --   _stepTool text;
 --   _machineLockedStepTools text := null;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

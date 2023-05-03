@@ -255,27 +255,19 @@ BEGIN
     INTO _list
     FROM Tmp_TeamMembers
     WHERE USER_ID IS NULL
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
+
     If _list <> '' Then
         _message := 'Could not resolve following usernames (or last names) to user ID: ' || _list;
         _returnCode := 'U5101';
         RETURN;
     End If;
 
-    _list := '';
-    --
-    SELECT @list + CASE INTO _list
-                               WHEN _list = '' THEN ''
-                               ELSE ', '
-                           END + Role
+    SELECT string_agg(Role, ', ' ORDER BY Role)
+    INTO _list
     FROM ( SELECT DISTINCT Role
            FROM Tmp_TeamMembers
-           WHERE Role_ID IS NULL ) LookupQ
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
+           WHERE Role_ID IS NULL ) LookupQ;
+
     If _list <> '' Then
         _message := 'Unknown role names: ' || _list;
         _returnCode := 'U5103';

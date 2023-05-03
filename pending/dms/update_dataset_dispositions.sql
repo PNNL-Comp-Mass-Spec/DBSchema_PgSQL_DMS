@@ -52,15 +52,13 @@ DECLARE
     _list text;
     _datasetCount int := 0;
     _ratingID int;
-    _prevDatasetID int := 0;
+    _prevDatasetID int;
     _curDatasetID int := 0;
     _curDatasetName text := '';
     _curRatingID int := 0;
     _curDatasetState int := 0;
     _curDatasetStateName text := '';
     _curComment text := '';
-    _continue boolean;
-    _transName text := 'UpdateDatasetDispositions';
     _usageMessage text;
 
     _sqlState text;
@@ -68,7 +66,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -171,121 +168,13 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE M
-        SET
-            M.RatingID = T.dataset_rating_id,
+        SET M.RatingID = T.dataset_rating_id,
             M.DatasetName = T.dataset,
-            M.State =  dataset_state_id,
-            M.comment = comment
-        FROM Tmp_DatasetInfo M INNER JOIN
-        t_dataset T ON T.dataset_id = M.DatasetID
-
-        ---------------------------------------------------
-        -- Update datasets from temporary table
-        ---------------------------------------------------
-        --
-        If _mode = 'update' Then
-
-            _continue := true;
-
-            WHILE _continue
-            LOOP
-
-                -----------------------------------------------
-                -- Get next dataset ID from temp table
-                --
-                _curDatasetID := 0;
-
-                SELECT
-                    _curDatasetID = D.DatasetID,
-                    _curDatasetName = D.DatasetName,
-                    _curRatingID = D.RatingID,
-                    _curDatasetState = D.State,
-                    _curComment = D.Comment,
-                    _curDatasetStateName = DSN.DSS_name
-                FROM Tmp_DatasetInfo AS D INNER JOIN
-                     t_dataset_rating_name DSN ON D.State = DSN.Dataset_state_ID
-                WHERE D.DatasetID > _prevDatasetID
-                ORDER BY D.DatasetID
-                LIMIT 1;
-
-                If _curDatasetID = 0 Then
-                    _continue := false;
-                Else
-                    If _curDatasetState = 5 Then
-                        -- Do not allow update to rating of 2 or higher when the dataset state is 5 (Capture Failed)
-                        If _ratingID >= 2 Then
-                            _msg := 'Cannot set dataset rating to ' || _rating || ' for dataset "' || _curDatasetName || '" since its state is ' || _curDatasetStateName;
-                            RAISE EXCEPTION '%', _msg;
-                        End If;
-                    End If;
-
-                    -- Transaction block
-                    BEGIN
-
-                        If _curComment <> '' AND _comment <> '' Then
-                            -- Append the new comment only if it is not already present
-                            If Position(_comment In _curComment) <= 0 Then
-                                _curComment := _curComment || '; ' || _comment;
-                            End If;
-
-                        ElsIf _curComment = '' AND _comment <> '' Then
-                            _curComment := _comment;
-
-                        End If;
-
-                        UPDATE t_dataset
-                        SET comment = _curComment,
-                            dataset_rating_id = _ratingID
-                        WHERE dataset_id = _curDatasetID;
-
-                        -----------------------------------------------
-                        -- Recycle request?
-                        --
-                        If _recycleRequest = 'yes' Then
-                            Call unconsume_scheduled_run (
-                                    _curDatasetName,
-                                    _retainHistory => true,
-                                    _message => _message,           -- Output
-                                    _returnCode => _returnCode,     -- Output
-                                    _callingUser => _callingUser);
-
-                            If _returnCode <> '' Then
-                                RAISE EXCEPTION '%', _message;
-                            End If;
-                        End If;
-
-                        -----------------------------------------------
-                        -- Evaluate predefined analyses
-                        --
-                        -- If rating changes from unreviewed to released
-                        -- and dataset capture is complete
-                        --
-                        If _curRatingID = -10 and _ratingID = 5 AND _curDatasetState IN (3, 4) Then
-                            -- schedule default analyses for this dataset
-                            --
-                            Call schedule_predefined_analysis_jobs (_curDatasetName, _callingUser, _returnCode => _returnCode);
-
-                            If _returnCode <> '' Then
-                                ROLLBACK;
-
-                                RETURN;
-                            End If;
-
-                        End If;
-
-                        COMMIT;
-                    END;
-
-                    -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-                    If char_length(_callingUser) > 0 Then
-                        Call alter_event_log_entry_user (8, _curDatasetID, _ratingID, _callingUser);
-                    End If;
-
-                    _prevDatasetID := _curDatasetID;
-                End If;
-
-            END LOOP; -- while
-        End If; -- update mode
+            M.State = dataset_state_id,
+            M.Comment = Comment
+        FROM Tmp_DatasetInfo M
+             INNER JOIN t_dataset T
+               ON T.dataset_id = M.DatasetID
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -303,6 +192,171 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
+
+    ---------------------------------------------------
+    -- Update datasets from temporary table
+    ---------------------------------------------------
+    --
+    If _mode = 'update' Then
+
+        _prevDatasetID := 0;
+
+        WHILE true
+        LOOP
+            -----------------------------------------------
+            -- Get next dataset ID from temp table
+            --
+            _curDatasetID := 0;
+
+            SELECT
+                _curDatasetID = D.DatasetID,
+                _curDatasetName = D.DatasetName,
+                _curRatingID = D.RatingID,
+                _curDatasetState = D.State,
+                _curComment = D.Comment,
+                _curDatasetStateName = DSN.DSS_name
+            FROM Tmp_DatasetInfo AS D INNER JOIN
+                 t_dataset_rating_name DSN ON D.State = DSN.Dataset_state_ID
+            WHERE D.DatasetID > _prevDatasetID
+            ORDER BY D.DatasetID
+            LIMIT 1;
+
+            If Not FOUND Then
+                -- Break out of the while loop
+                EXIT;
+            End If;
+
+            BEGIN
+                If _curDatasetState = 5 Then
+                    -- Do not allow update to rating of 2 or higher when the dataset state is 5 (Capture Failed)
+                    If _ratingID >= 2 Then
+                        _msg := 'Cannot set dataset rating to ' || _rating || ' for dataset "' || _curDatasetName || '" since its state is ' || _curDatasetStateName;
+                        RAISE EXCEPTION '%', _msg;
+                    End If;
+                End If;
+            EXCEPTION
+                WHEN OTHERS THEN
+                    GET STACKED DIAGNOSTICS
+                        _sqlState         = returned_sqlstate,
+                        _exceptionMessage = message_text,
+                        _exceptionDetail  = pg_exception_detail,
+                        _exceptionContext = pg_exception_context;
+
+                _message := local_error_handler (
+                                _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                                _callingProcLocation => '', _logError => true);
+
+                If Coalesce(_returnCode, '') = '' Then
+                    _returnCode := _sqlState;
+                End If;
+
+                -- Break out of the while loop
+                EXIT;
+            END;
+
+            If _curComment <> '' AND _comment <> '' Then
+                -- Append the new comment only if it is not already present
+                If Position(_comment In _curComment) <= 0 Then
+                    _curComment := _curComment || '; ' || _comment;
+                End If;
+
+            ElsIf _curComment = '' AND _comment <> '' Then
+                _curComment := _comment;
+
+            End If;
+
+            UPDATE t_dataset
+            SET comment = _curComment,
+                dataset_rating_id = _ratingID
+            WHERE dataset_id = _curDatasetID;
+
+            -----------------------------------------------
+            -- Recycle request?
+            --
+            If _recycleRequest = 'yes' Then
+                BEGIN
+                    Call unconsume_scheduled_run (
+                            _curDatasetName,
+                            _retainHistory => true,
+                            _message => _message,           -- Output
+                            _returnCode => _returnCode,     -- Output
+                            _callingUser => _callingUser);
+
+                    If _returnCode <> '' Then
+                        RAISE EXCEPTION '%', _message;
+                    End If;
+
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        GET STACKED DIAGNOSTICS
+                            _sqlState         = returned_sqlstate,
+                            _exceptionMessage = message_text,
+                            _exceptionDetail  = pg_exception_detail,
+                            _exceptionContext = pg_exception_context;
+
+                    _message := local_error_handler (
+                                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                                    _callingProcLocation => '', _logError => true);
+
+                    If Coalesce(_returnCode, '') = '' Then
+                        _returnCode := _sqlState;
+                    End If;
+
+                    -- Break out of the while loop
+                    EXIT;
+                END;
+            End If;
+
+            -----------------------------------------------
+            -- Evaluate predefined analyses
+            --
+            -- If rating changes from unreviewed to released
+            -- and dataset capture is complete
+            --
+            If _curRatingID = -10 and _ratingID = 5 AND _curDatasetState IN (3, 4) Then
+                -- schedule default analyses for this dataset
+                --
+                Call schedule_predefined_analysis_jobs (_curDatasetName, _callingUser, _returnCode => _returnCode);
+
+                If _returnCode <> '' Then
+                    ROLLBACK;
+                    DROP TABLE Tmp_DatasetInfo;
+                    RETURN;
+                End If;
+
+            End If;
+
+            COMMIT;
+
+            BEGIN
+                -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+                If char_length(_callingUser) > 0 Then
+                    Call alter_event_log_entry_user (8, _curDatasetID, _ratingID, _callingUser);
+                End If;
+            EXCEPTION
+                WHEN OTHERS THEN
+                    GET STACKED DIAGNOSTICS
+                        _sqlState         = returned_sqlstate,
+                        _exceptionMessage = message_text,
+                        _exceptionDetail  = pg_exception_detail,
+                        _exceptionContext = pg_exception_context;
+
+                _message := local_error_handler (
+                                _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                                _callingProcLocation => '', _logError => true);
+
+                If Coalesce(_returnCode, '') = '' Then
+                    _returnCode := _sqlState;
+                End If;
+
+                -- Break out of the while loop
+                EXIT;
+            END;
+
+            _prevDatasetID := _curDatasetID;
+        END LOOP;
+
+    End If; -- update mode
 
     ---------------------------------------------------
     -- Log SP usage

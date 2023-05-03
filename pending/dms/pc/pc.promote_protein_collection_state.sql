@@ -39,9 +39,14 @@ DECLARE
     _proteinCollectionsUpdated text;
     _proteinCollectionCountUpdated int;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
-    Set XACT_ABORT, nocount on
+
 
     _proteinCollectionCountUpdated := 0;
     _proteinCollectionsUpdated := '';
@@ -71,8 +76,6 @@ BEGIN
     -- Limit to protein collections created within the last _mostRecentMonths months
     --------------------------------------------------------------
     --
-    _currentLocation := 'Start';
-
     Begin Try
 
         _proteinCollectionID := 0;
@@ -121,7 +124,7 @@ BEGIN
                         SET collection_state_id = 3
                         WHERE protein_collection_id = _proteinCollectionID AND collection_state_id = 1
 
-                        Call post_log_entry 'Normal', _message, 'PromoteProteinCollectionState'
+                        Call post_log_entry ('Normal', _message, 'Promote_Protein_Collection_State', 'pc');
                     Else
                         RAISE INFO '%', _message;
                     End If;
@@ -134,7 +137,7 @@ BEGIN
                     _proteinCollectionCountUpdated := _proteinCollectionCountUpdated + 1;
                 End If;
             End If;
-        End Loop;
+        END LOOP;
 
         _currentLocation := 'Done iterating';
 

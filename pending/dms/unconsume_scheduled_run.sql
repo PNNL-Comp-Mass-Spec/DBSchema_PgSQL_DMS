@@ -74,7 +74,6 @@ DECLARE
     _warningMessage text;
     _notation text;
     _addnlText text;
-    _transName text;
     _charIndex int;
     _extracted text;
     _originalRequestStatus text := '';
@@ -94,7 +93,7 @@ BEGIN
     --
     SELECT dataset_id INTO _datasetID
     FROM t_dataset
-    WHERE (dataset = _datasetName)
+    WHERE dataset = _datasetName;
     --
     If _datasetID = 0 Then
         _message := 'Dataset does not exist"' || _datasetName || '"';
@@ -135,7 +134,7 @@ BEGIN
     ---------------------------------------------------
 
     SELECT cart_id INTO _newCartID
-    FROM   t_lc_cart
+    FROM t_lc_cart
     WHERE cart_name = 'unknown'
 
     If Not FOUND Then
@@ -181,7 +180,6 @@ BEGIN
             --
             If _returnCode <> '' Then
                 ROLLBACK;
-
                 RETURN;
             End If;
         Else
@@ -273,7 +271,7 @@ BEGIN
         -- Copy the request and associate the dataset with the newly created request
         ---------------------------------------------------
         --
-        -- Warning: The text 'Automatically created by recycling request' is used earlier in this stored procedure; thus, do not update it here
+        -- Warning: The text 'Automatically created by recycling request' is used earlier in this procedure; thus, do not update it here
         --
         _notation := format('Automatically created by recycling request %s from dataset %s on %s',
                             _requestIDOriginal, _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));

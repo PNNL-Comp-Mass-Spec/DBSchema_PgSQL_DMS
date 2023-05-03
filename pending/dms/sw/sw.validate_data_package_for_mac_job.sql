@@ -49,7 +49,7 @@ BEGIN
     _dataPackageID := Coalesce(_dataPackageID, 0);
     _tool := '';
 
-    Begin Try
+    BEGIN
         ---------------------------------------------------
         -- Create table to hold data package datasets
         -- and job counts
@@ -260,16 +260,24 @@ BEGIN
              RAISE EXCEPTION '%', _errMsg;
         End If;
 
-    End Try
-    Begin Catch
-        Call public.format_error_message _message => _message, _myError output
-        Call public.post_log_entry ('Error', _message, 'ValidateDataPackageForMACJob');
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-        If _returnCode = '' Then
-            _myError := 20000;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
 
-    End Catch
+    END;
 
     DROP TABLE Tmp_DataPackageItems;
 END

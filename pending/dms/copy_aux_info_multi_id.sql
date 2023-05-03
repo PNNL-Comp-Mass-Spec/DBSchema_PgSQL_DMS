@@ -45,7 +45,6 @@ DECLARE
     _tgtTableIDCol text;
     _idList text;
     _idListMaxLength int;
-    _transName text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -230,8 +229,6 @@ BEGIN
                                           FROM V_Aux_Info_Definition
                                           WHERE (Target = _targetName) AND
                                                 (Category = _categoryName) ))
-
-        COMMIT;
     End If;
 
     ---------------------------------------------------
@@ -270,8 +267,6 @@ BEGIN
                                           WHERE (Target = _targetName) AND
                                                 (Category = _categoryName) AND
                                                 (Subcategory = _subCategoryName) ))
-
-        COMMIT;
     End If;
 
     ---------------------------------------------------
@@ -304,8 +299,6 @@ BEGIN
               (AI.Aux_Description_ID IN ( SELECT Item_ID
                                           FROM V_Aux_Info_Definition
                                           WHERE (Target = _targetName) ))
-
-        COMMIT;
     End If;
 
     DROP TABLE Tmp_TargetEntities;

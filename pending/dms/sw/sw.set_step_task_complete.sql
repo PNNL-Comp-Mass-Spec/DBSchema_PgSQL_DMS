@@ -164,7 +164,7 @@ BEGIN
     If Not FOUND Then
         _message := format('Empty query results for job %s, step %s when obtaining the current state of the job step', _job, _step);
 
-        Call public.post_log_entry ('Error', _message, 'SetStepTaskComplete');
+        Call public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
         _returnCode := 'U5265';
         RETURN;
@@ -174,7 +174,7 @@ BEGIN
         _message := format('Could not find machine name in sw.t_local_processors using sw.t_job_steps; cannot mark %s complete for processor %s',
                             _jobStepDescription, _processorName);
 
-        Call public.post_log_entry ('Error', _message, 'SetStepTaskComplete');
+        Call public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
         _returnCode := 'U5266';
         RETURN;
@@ -184,7 +184,7 @@ BEGIN
         _message := format('%s is not in the correct state (4) to be marked complete by processor %s; actual state is %s',
                             _jobStepDescriptionCapital, _processorName, _state);
 
-        Call public.post_log_entry ('Error', _message, 'SetStepTaskComplete');
+        Call public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
         _returnCode := 'U5267';
         RETURN;
@@ -194,7 +194,7 @@ BEGIN
             _message := format('%s is being processed by %s; processor %s is not allowed to mark it as complete',
                                 _jobStepDescriptionCapital, _jobStepsProcessor, _processorName);
 
-            Call public.post_log_entry ('Error', _message, 'SetStepTaskComplete');
+            Call public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
             _returnCode := 'U5268';
             RETURN;
@@ -261,7 +261,7 @@ BEGIN
                 _stepToolsToSkip := array_append(_stepToolsToSkip, 'LCMSFeatureFinder');
 
                 _message := 'Warning, ' || _jobStepDescription || ' has no results in the DeconTools _isos.csv file; either it is a bad dataset or analysis parameters are incorrect';
-                Call public.post_log_entry ('Error', _message, 'SetStepTaskComplete');
+                Call public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
 
             If _stepTool IN ('DataExtractor') Then
@@ -272,7 +272,7 @@ BEGIN
                 _stepToolsToSkip := array_cat(_stepToolsToSkip, ARRAY ['MSGF', 'IDPicker', 'MSAlign_Quant']);
 
                 _message := 'Warning, ' || _jobStepDescription || ' has an empty synopsis file (no results above threshold); either it is a bad dataset or analysis parameters are incorrect';
-                Call public.post_log_entry ('Error', _message, 'SetStepTaskComplete');
+                Call public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
         End If;
 
@@ -431,7 +431,7 @@ BEGIN
                                ' does not have a Mz_Refinery, MSXML_Gen, MSXML_Bruker, PBF_Gen, or ProMex step prior to step ' || Cast(_step as text) +
                                '; CompletionCode ' || Cast(_completionCode as text) || ' (' || _completionCodeDescription || ') is invalid'
 
-                Call public.post_log_entry ('Error', _message, 'SetStepTaskComplete');
+                Call public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
                 _abortReset := true;
             Else
@@ -459,14 +459,14 @@ BEGIN
                     _message := format('Step %s in job %s %s; will not reset step %s again because this likely represents a problem; this step is now in state "holding"',
                                         _step, _job, _message, _sharedResultStep);
 
-                    Call public.post_log_entry ('Error', _message, 'SetStepTaskComplete');
+                    Call public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
                     _abortReset := true;
 
                 End If;
 
                 If Not _abortReset Then
-                    Call public.post_log_entry ('Normal', _message, 'SetStepTaskComplete');
+                    Call public.post_log_entry ('Normal', _message, 'Set_Step_Task_Complete', 'sw');
 
                     -- Reset shared results step just upstream from this step
                     --
@@ -519,7 +519,7 @@ BEGIN
                 WHERE job = _job AND step = _nextStep
 
                 _message := format('Updated job step dependencies for job %s since step %s has been skipped', _job, _step);
-                Call public.post_log_entry ('Normal', _message, 'SetStepTaskComplete');
+                Call public.post_log_entry ('Normal', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
 
         End If;

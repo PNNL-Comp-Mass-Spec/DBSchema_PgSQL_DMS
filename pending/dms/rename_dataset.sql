@@ -70,7 +70,7 @@ DECLARE
     _mzRefineryOutputFolder text;
     _badCh text;
     _jobFileUpdateCount int := 0;
-    _datasetInfoFile text := @datasetNameNew + '_DatasetInfo.xml';
+    _datasetInfoFile text;
 BEGIN
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -603,6 +603,8 @@ BEGIN
             _jobFileUpdateCount := _jobFileUpdateCount + 1;
 
         END LOOP;
+
+        _datasetInfoFile := _datasetNameNew || '_DatasetInfo.xml'
 
         If _resultsFolder = 'QC' Then
             RAISE INFO '%', '';

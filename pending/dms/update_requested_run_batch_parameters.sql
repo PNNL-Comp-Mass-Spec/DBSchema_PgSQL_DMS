@@ -61,7 +61,6 @@ DECLARE
     _debugEnabled boolean := false;
     _logMessage text;
     _misnamedCarts text := '';
-    _transName text;
     _minBatchID int := 0;
     _maxBatchID int := 0;
     _requestedRunList text := null;
@@ -114,7 +113,7 @@ BEGIN
     If _debugEnabled Then
         _logMessage := Cast(_blockingList as text);
 
-        Call post_log_entry ('Debug', _logMessage, 'UpdateRequestedRunBatchParameters');
+        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Batch_Parameters');
     End If;
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
@@ -277,8 +276,34 @@ BEGIN
                 WHERE Tmp_NewBatchParams.Parameter = 'Instrument' AND
                       Tmp_NewBatchParams.request_id = t_requested_run.request_id;
 
-                COMMIT;
             END;
+
+        End If;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+    END;
+
+    If _mode = 'update' Then
+
+        -- Commit the changes, then call update_cached_requested_run_batch_stats and update_cached_requested_run_eus_users
+        --
+        COMMIT;
+
+        BEGIN;
 
             If Exists (SELECT * FROM Tmp_NewBatchParams WHERE Parameter = 'Run Order') Then
                 -- If all of the updated requests come from the same batch,
@@ -306,7 +331,7 @@ BEGIN
                         _logMessage := format('Requested runs do not all belong to the same batch: %s vs. %s; see requested runs %s',
                                             _minBatchID, _maxBatchID, _requestedRunList);
 
-                        Call post_log_entry ('Warning', _logMessage, 'UpdateRequestedRunBatchParameters');
+                        Call post_log_entry ('Warning', _logMessage, 'Update_Requested_Run_Batch_Parameters');
                     End If;
 
                     -- Update cached data in T_Cached_Requested_Run_Batch_Stats
@@ -386,26 +411,26 @@ BEGIN
                 End If;
             End If;
 
-            Call post_usage_log_entry ('UpdateRequestedRunBatchParameters', _usageMessage);
+            Call post_usage_log_entry ('Update_Requested_Run_Batch_Parameters', _usageMessage);
 
-        End If;
+        EXCEPTION
+            WHEN OTHERS THEN
+                GET STACKED DIAGNOSTICS
+                    _sqlState         = returned_sqlstate,
+                    _exceptionMessage = message_text,
+                    _exceptionDetail  = pg_exception_detail,
+                    _exceptionContext = pg_exception_context;
 
-    EXCEPTION
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS
-                _sqlState         = returned_sqlstate,
-                _exceptionMessage = message_text,
-                _exceptionDetail  = pg_exception_detail,
-                _exceptionContext = pg_exception_context;
+            _message := local_error_handler (
+                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                            _callingProcLocation => '', _logError => true);
 
-        _message := local_error_handler (
-                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+            If Coalesce(_returnCode, '') = '' Then
+                _returnCode := _sqlState;
+            End If;
+        END;
 
-        If Coalesce(_returnCode, '') = '' Then
-            _returnCode := _sqlState;
-        End If;
-    END;
+    End If;
 
     DROP TABLE IF EXISTS Tmp_NewBatchParams;
 END

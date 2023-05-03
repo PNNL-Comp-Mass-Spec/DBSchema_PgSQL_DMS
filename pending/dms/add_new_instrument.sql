@@ -97,9 +97,8 @@ DECLARE
     _autoSPArchiveServerName text;
     _autoSPArchivePathRoot text;
     _autoSPArchiveSharePathRoot text;
-    _transName text;
     _instrumentId int;
-    _sourceMachineNameToFind text := replace(@sourceMachineName, '\', '');
+    _sourceMachineNameToFind text;
     _hostName text;
     _suffix text;
     _periodLoc Int;
@@ -245,12 +244,13 @@ BEGIN
         _autoSPArchiveServerName,
         _autoSPArchivePathRoot,
         _autoSPArchiveSharePathRoot
-    )
+    );
 
     ---------------------------------------------------
     -- Make sure the source machine exists in t_storage_path_hosts
     ---------------------------------------------------
     --
+    _sourceMachineNameToFind := replace(_sourceMachineName, '\', '');
 
     If Not Exists (Select * From t_storage_path_hosts Where sp_machine_name = _sourceMachineNameToFind) Then
         _periodLoc := Position('.' In _sourceMachineNameToFind);

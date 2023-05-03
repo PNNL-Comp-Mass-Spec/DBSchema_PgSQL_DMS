@@ -44,8 +44,7 @@ DECLARE
     _medianIntensityText text;
     _observationRateTopNPct real;
     _medianIntensity int;
-    _transName text := 'AddUpdate_T_Reporter_Ion_Observation_Rates';
-    _sql text := @sqlInsert + ' ' + @sqlValues;
+    _sql text
 BEGIN
 WITH EXECUTE AS OWNER
 
@@ -265,15 +264,16 @@ WITH EXECUTE AS OWNER
     -----------------------------------------------
     --
 
-    Begin Transaction _transName
+    BEGIN
 
-    If Exists (SELECT * FROM t_reporter_ion_observation_rates WHERE job = _job) Then
-        DELETE FROM t_reporter_ion_observation_rates WHERE job = _job
-    End If;
+        If Exists (SELECT * FROM t_reporter_ion_observation_rates WHERE job = _job) Then
+            DELETE FROM t_reporter_ion_observation_rates WHERE job = _job
+        End If;
 
-    EXECUTE _sql;
+        _sql := _sqlInsert || ' ' || _sqlValues;
+        EXECUTE _sql;
 
-    Commit Transaction _transName
+    END;
 
     _message := 'Reporter Ion Observation Rates stored';
 

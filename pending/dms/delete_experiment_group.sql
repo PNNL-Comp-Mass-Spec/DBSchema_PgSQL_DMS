@@ -28,7 +28,6 @@ DECLARE
     _count int;
     _myRowCount int := 0;
     _msg text;
-    _transName text;
 BEGIN
     _message := '';
     _returnCode:= '';

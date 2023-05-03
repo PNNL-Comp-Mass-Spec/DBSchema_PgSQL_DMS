@@ -83,7 +83,6 @@ BEGIN
                ON Uploads.Entry_ID = Stale.Entry_ID
         ORDER BY Entry_ID
     Else
-        Begin Tran
 
         UPDATE dpkg.t_myemsl_uploads
         SET error_code = 101
@@ -128,8 +127,6 @@ BEGIN
         _message := format('%s unverified for over %s days; ErrorCode set to 101', _message, _staleUploadDays);
 
         Call post_log_entry 'Error', _message, 'FindStaleMyEMSLUploads'
-
-        Commit
 
         RAISE INFO '%', _message;
 

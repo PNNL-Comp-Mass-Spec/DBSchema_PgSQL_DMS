@@ -53,7 +53,7 @@ DECLARE
     _instrumentClass text;
     _currentState as int;
     _currentUpdateState as int;
-    _postedBy text := 'SetPurgeTaskComplete: ' + @storageServerName;
+    _postedBy text;
     _usageMessage text;
 BEGIN
     _message := '';
@@ -166,6 +166,8 @@ Code 6 (Purged all data except QC folder)
     If Coalesce(_storageServerName, '') = '' Then
         _storageServerName := '??';
     End If;
+
+    _postedBy := format('Set_Purge_Task_Complete: %s', _storageServerName);
 
     If _completionState < 0 And _completionCode = 4 Then
         -- Drive Missing

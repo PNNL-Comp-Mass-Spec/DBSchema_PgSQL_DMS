@@ -176,7 +176,7 @@ BEGIN
         -- Rollback any open transactions
         ROLLBACK;
 
-        Call public.post_log_entry ('Error', _message, 'ResetDependentJobSteps');
+        Call public.post_log_entry ('Error', _message, 'Reset_Dependent_Job_Steps', 'sw');
     END CATCH
 
     DROP TABLE Tmp_Jobs;

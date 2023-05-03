@@ -45,7 +45,6 @@ DECLARE
     _rrCount int := 0;
     _rrhCount int := 0;
     _plexMemberCount int := 0;
-    _transName text := 'DeleteExperiment';
     _groupID int := 0;
     _stateID int := 0;
 BEGIN
@@ -159,17 +158,12 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-
-    Begin Transaction _transName
-
-    ---------------------------------------------------
     -- Delete any entries for the Experiment from the
     -- biomaterial map table
     ---------------------------------------------------
 
     If _infoOnly Then
+        -- ToDo: Show this using RAISE INFO
         SELECT *
         FROM T_Experiment_Biomaterial
         WHERE Exp_ID = _experimentId
@@ -177,8 +171,6 @@ BEGIN
         DELETE FROM T_Experiment_Biomaterial
         WHERE Exp_ID = _experimentId
     End If;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Delete any entries for the Experiment from
@@ -199,8 +191,6 @@ BEGIN
             DELETE FROM t_experiment_group_members
             WHERE exp_id = _experimentId
         End If;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If Not _infoOnly Then
             -- Update MemberCount
@@ -216,6 +206,7 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
+        -- ToDo: Show this using RAISE INFO
         SELECT *
         FROM t_experiment_groups
         WHERE parent_exp_id = _experimentId
@@ -224,14 +215,13 @@ BEGIN
         SET parent_exp_id = 15
         WHERE parent_exp_id = _experimentId
     End If;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Delete experiment plex info
     ---------------------------------------------------
 
     If _infoOnly Then
+        -- ToDo: Show this using RAISE INFO
         SELECT *
         FROM t_experiment_plex_members
         WHERE plex_exp_id = _experimentId
@@ -239,11 +229,9 @@ BEGIN
         DELETE FROM t_experiment_plex_members
         WHERE plex_exp_id = _experimentId
     End If;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _infoOnly Then
-        Select 'exec DeleteAuxInfo for ' || _experimentName
+        Select 'Call Delete_Aux_Info for ' || _experimentName
     Else
         ---------------------------------------------------
         -- Delete any auxiliary info associated with Experiment

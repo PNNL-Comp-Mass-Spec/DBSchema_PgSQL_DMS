@@ -102,7 +102,7 @@ BEGIN
                            _returnCode => _returnCode,      -- Output
                            _useRaiseError => false);
 
-    --check for any errors from stored procedure
+    --check for any errors from procedure
     If _message <> '' Then
         _message := 'message';
         RAISE WARNING '%', _message;

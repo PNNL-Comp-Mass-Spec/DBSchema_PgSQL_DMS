@@ -52,7 +52,7 @@ AS $$
 **    _mode                          'add', 'check_add', 'update', 'check_update', or 'add-auto'
 **    _secSep                        Separation group
 **    _status                        'Active', 'Inactive', 'Completed'
-**    _skipTransactionRollback       This is set to true when stored procedure add_update_dateset calls this stored procedure
+**    _skipTransactionRollback       This is set to true when procedure add_update_dateset calls this procedure
 **    _autoPopulateUserListIfBlank   When true, will auto-populate _eusUsersList if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
 **    _requestIDForUpdate            Only used if _mode is 'update' or 'check_update' and only used if not 0 or null.  Can be used to rename an existing request
 **    _resolvedInstrumentInfo        Output parameter that lists the the instrument group, run type, and separation group; used by AddRequestedRuns when previewing updates
@@ -199,7 +199,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
     _resolvedInstrumentInfo := '';
@@ -867,7 +866,7 @@ BEGIN
             End If;
 
             If _logDebugMessages Then
-                _debugMsg := 'Call AssignEUSUsersToRequestedRun';
+                _debugMsg := 'Call assign_eus_users_to_requested_run';
                 Call post_log_entry ('Debug', _debugMsg, 'AddUpdateRequestedRun');
             End If;
 
@@ -880,11 +879,11 @@ BEGIN
                                     _msg output
             --
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'AssignEUSUsersToRequestedRun: %', _msg;
+                RAISE EXCEPTION 'Assign_EUS_Users_To_Requested_Run: %', _msg;
             End If;
 
             If _logDebugMessages Then
-                _debugMsg := 'Transaction committed';
+                _debugMsg := 'Called assign_eus_users_to_requested_run';
                 Call post_log_entry ('Debug', _debugMsg, 'AddUpdateRequestedRun');
             End If;
 
@@ -957,7 +956,6 @@ BEGIN
                     RAISE EXCEPTION 'AssignEUSUsersToRequestedRun: %', _msg;
                 End If;
 
-                COMMIT;
             END;
 
             -- Make sure that t_active_requested_run_cached_eus_users is up-to-date

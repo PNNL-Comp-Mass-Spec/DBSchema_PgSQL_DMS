@@ -48,7 +48,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -161,7 +160,7 @@ BEGIN
             _message := format('Would create a new archive update task (%s) for dataset ID %s: %s', _script, _datasetID, _datasetName);
 
             If _resultsDirectoryName <> '' Then
-                _message := format('%s, results folder %', _message, _resultsDirectoryName);
+                _message := format('%s, results folder %s', _message, _resultsDirectoryName);
             End If;
 
         Else

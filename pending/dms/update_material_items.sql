@@ -45,7 +45,6 @@ DECLARE
     _mixedMaterialCount int;
     _experimentCount int;
     _retiredExperiment text := '';
-    _transName text;
     _moveType text := '??';
 BEGIN
     _message = '';

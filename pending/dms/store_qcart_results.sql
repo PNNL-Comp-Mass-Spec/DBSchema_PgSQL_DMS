@@ -184,7 +184,7 @@ BEGIN
              ON Target.Dataset_Name = DS.dataset
 
         If _datasetIDCheck <> _datasetID Then
-            _message := 'Error: dataset ID values for ' || _datasetName || ' do not match; expecting ' || _datasetIDCheck::text || ' but stored procedure param _datasetID is ' || _datasetID::text;
+            _message := 'Error: dataset ID values for ' || _datasetName || ' do not match; expecting ' || _datasetIDCheck::text || ' but procedure argument _datasetID is ' || _datasetID::text;
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_DatasetInfo;

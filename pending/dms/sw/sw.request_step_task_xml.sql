@@ -1289,7 +1289,7 @@ BEGIN
                                     END
                                     );
 
-                Call public.post_log_entry ('Debug', _debugMsg, 'RequestStepTaskXML');
+                Call public.post_log_entry ('Debug', _debugMsg, 'Request_Step_Task_XML', 'sw');
             */
 
             UPDATE sw.t_job_steps

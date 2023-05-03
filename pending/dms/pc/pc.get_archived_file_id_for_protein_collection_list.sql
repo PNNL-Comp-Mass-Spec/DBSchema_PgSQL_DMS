@@ -230,7 +230,7 @@ BEGIN
                 End If;
 
             End If; -- </c>
-        End Loop; -- </b>
+        END LOOP; -- </b>
 
         -----------------------------------------------------
         -- Grab the last entry in TmpArchived_Output_File_IDs with

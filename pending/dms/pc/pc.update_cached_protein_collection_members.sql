@@ -261,7 +261,7 @@ BEGIN
             If _myRowCount > 0 Then
                 _statusMsg := format('Inserted %s rows for %s', _myRowCount, _currentRange);
                 RAISE INFO '%', _statusMsg;
-                Call post_log_entry 'Normal', _statusMsg, 'UpdateCachedProteinCollectionMembers'
+                Call post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
             End If;
 
             ---------------------------------------------------
@@ -287,7 +287,7 @@ BEGIN
             If _myRowCount > 0 Then
                 _statusMsg := format('Deleted %s extra rows from pc.t_protein_collection_members_cached fo %s', _myRowCount, _currentRange);
                 RAISE INFO '%', _statusMsg;
-                Call post_log_entry 'Normal', _statusMsg, 'UpdateCachedProteinCollectionMembers'
+                Call post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
             End If;
 
             ---------------------------------------------------
@@ -305,7 +305,7 @@ BEGIN
 
         End If; -- </b>
 
-    End Loop; -- </a>
+    END LOOP; -- </a>
 
     ---------------------------------------------------
     -- Validate the num_proteins value in pc.t_protein_collections
@@ -367,15 +367,15 @@ BEGIN
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                _statusMsg := format('Changed number of proteins from %s to %s for protein collection % in pc.t_protein_collections',
+                _statusMsg := format('Changed number of proteins from %s to %s for protein collection %s in pc.t_protein_collections',
                                 _numProteinsOld, _numProteinsNew, _proteinCollectionID);
 
                 RAISE INFO '%', _statusMsg;
 
-                Call post_log_entry 'Warning', _statusMsg, 'UpdateCachedProteinCollectionMembers'
+                Call post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc')
             End If; -- </e>
 
-        End Loop; -- </d>
+        END LOOP; -- </d>
 
     End If; -- </c>
 

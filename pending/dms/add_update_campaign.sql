@@ -109,7 +109,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
@@ -320,8 +319,6 @@ BEGIN
         ---------------------------------------------------
         If _mode = 'add' Then
 
-            Begin transaction _transName
-
             ---------------------------------------------------
             -- Create research team
             ---------------------------------------------------
@@ -400,8 +397,6 @@ BEGIN
                 _campaignID := _idConfirm;
             End If;
 
-            commit transaction _transName
-
             _stateID := 1;
             _percentEMSLFunded := (_fractionEMSLFundedToStore * 100)::int;
 
@@ -419,9 +414,7 @@ BEGIN
         ---------------------------------------------------
         --
         If _mode = 'update' Then
-            Begin transaction _transName
-            --
-            --
+
             ---------------------------------------------------
             -- Update campaign
             ---------------------------------------------------
@@ -462,8 +455,6 @@ BEGIN
                 _message := _msg;
                 RAISE EXCEPTION '%', _message;
             End If;
-
-            commit transaction _transName
 
             _percentEMSLFunded := (_fractionEMSLFundedToStore * 100)::int
 

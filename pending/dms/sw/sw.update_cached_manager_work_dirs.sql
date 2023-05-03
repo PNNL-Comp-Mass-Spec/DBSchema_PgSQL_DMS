@@ -20,12 +20,15 @@ DECLARE
     _myRowCount int := 0;
     _message text;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
-
-    _currentLocation := 'Start';
 
     ---------------------------------------------------
     -- Create a temporary table to cache the data
@@ -80,19 +83,29 @@ BEGIN
                 _message := format('Updated work_dir_admin_share for %s %s in sw.t_local_processors',
                                     _myRowCount, public.check_plural(_myRowCount, ' manager', ' managers'));
 
-                Call public.post_log_entry ('Normal', _message, 'UpdateCachedManagerWorkDirs');
+                Call public.post_log_entry ('Normal', _message, 'Update_Cached_Manager_Work_Dirs', 'sw');
             End If;
 
         End If;
 
-    End Try
-    Begin Catch
-        -- Error caught; log the error, then continue at the next section
-        _callingProcName := Coalesce(ERROR_PROCEDURE(), 'UpdateCachedManagerWorkDirs');
-        Call local_error_handler  _callingProcName, _currentLocation, _logError => 1,
-                                _errorNum = _myError output, _message = _message => _message
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-    End Catch
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+
+    END;
+
 
     DROP TABLE Tmp_MgrWorkDirs;
 END

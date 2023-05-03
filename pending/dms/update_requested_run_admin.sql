@@ -57,7 +57,6 @@ DECLARE
     _argLength Int;
     _requestID int := -100000;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

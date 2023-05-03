@@ -179,7 +179,7 @@ BEGIN
         End If;
 
     Else
-        _message := format('Update skipped since last update was % minutes ago', Round(_timeIntervalLastUpdateMinutes, 1));
+        _message := format('Update skipped since last update was %s minutes ago', Round(_timeIntervalLastUpdateMinutes, 1));
     End If;
 
     DROP TABLE Tmp_TaskStepStatusHistory;

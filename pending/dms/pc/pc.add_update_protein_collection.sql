@@ -11,6 +11,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection
     _numResidues int default 0,
     _active int default 1,
     _mode text default 'add',
+    OUT _collectionID int default 0,
     INOUT _message text default '',
     INOUT _returnCode text default ''
 )
@@ -18,9 +19,8 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds a new protein collection entry
-**
-**  Return values: The new Protein Collection ID if success; otherwise, 0
+**  Desc:
+**      Adds a new protein collection entry
 **
 **  Arguments:
 **    _collectionName   Protein collection name (not the original .fasta file name)
@@ -39,35 +39,40 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _collectionID Int := 0;
-    _transName text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+    _collectionID := 0;
+
     ---------------------------------------------------
     -- Validate input fields
     ---------------------------------------------------
 
-    if char_length(_collectionName) < 1 Then
-        _myError := 51000;
+    If char_length(_collectionName) < 1 Then
         _message := '_collectionName was blank';
-        RAISERROR (_message, 10, 1)
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5101'
+        RETURN;
     End If;
 
     -- Make sure _collectionName does not contain a space
     _collectionName := Trim(_collectionName);
 
     If _collectionName Like '% %' Then
-        _myError := 51001;
-        _message := 'Protein collection contains a space: "' || _collectionName || '"';
-        RAISERROR (_message, 10, 1)
+        _message := format('Protein collection contains a space: "%s"', _collectionName);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5102'
+        RETURN;
     End If;
 
-    if _myError <> 0 Then
-        -- Return zero, since we did not create a protein collection
-        Return 0
-    End If;
-
+    ---------------------------------------------------
     -- Make sure the Source and Description do not have text surrounded by < and >, since web browsers will treat that as an HTML tag
+    ---------------------------------------------------
+
     _collectionSource := REPLACE(REPLACE(Coalesce(_collectionSource, ''), '<', '('), '>', ')');
+
     _description := REPLACE(REPLACE(Coalesce(_description,      ''), '<', '('), '>', ')');
 
     ---------------------------------------------------
@@ -76,28 +81,21 @@ BEGIN
 
     _collectionID := pc.get_protein_collection_id (_collectionName);
 
-    if _collectionID > 0 and _mode = 'add' Then
+    if _collectionID > 0 And _mode = 'add' Then
         -- Collection already exists; change _mode to 'update'
         _mode := 'update';
     End If;
 
-    if _collectionID = 0 and _mode = 'update' Then
+    if _collectionID = 0 And _mode = 'update' Then
         -- Collection not found; change _mode to 'add'
         _mode := 'add';
     End If;
 
     -- Uncomment to debug
     --
-    -- set _message = 'mode ' || _mode || ', collection '|| _collectionName
-    -- exec PostLogEntry 'Debug', _message, 'AddUpdateProteinCollection'
-    -- set _message=''
-
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-
-    _transName := 'AddProteinCollectionEntry';
-    begin transaction _transName
+    -- _message := 'mode ' || _mode || ', collection '|| _collectionName
+    -- Call PostLogEntry ('Debug', _message, 'AddUpdateProteinCollection');
+    -- _message := ''
 
     ---------------------------------------------------
     -- action for add mode
@@ -128,31 +126,11 @@ BEGIN
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP,
             SYSTEM_USER
-        )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            rollback transaction _transName
-            _message := 'Insert operation failed: "' || _collectionName || '"';
-            RAISERROR (_message, 10, 1)
-            -- Return zero, since we did not create a protein collection
-            Return 0
-        End If;
-
---            INSERT INTO pc.t_annotation_groups (
---            protein_collection_id,
---            annotation_group,
---            annotation_type_id
---            ) VALUES (
---            _collectionID,
---            0,
---            _primaryAnnotationTypeId
---            )
+        );
 
     End If;
 
-    if _mode = 'update' Then
+    If _mode = 'update' Then
 
         UPDATE pc.t_protein_collections
         SET
@@ -164,26 +142,13 @@ BEGIN
             num_residues = _numResidues,
             date_modified = CURRENT_TIMESTAMP
         WHERE collection_name = _collectionName;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            rollback transaction _transName
-            _message := 'Update operation failed: "' || _collectionName || '"';
-            RAISERROR (_message, 10, 1)
-            -- Return zero, since we did not create a protein collection
-            Return 0
-        End If;
-    End If;
 
-    commit transaction _transName
+    End If;
 
     -- Lookup the collection ID for _collectionName
     _collectionID := pc.get_protein_collection_id (_collectionName);
 
-    if _mode = 'add' Then
-        _transName := 'AddProteinCollectionEntry';
-        begin transaction _transName
+    If _mode = 'add' And _collectionID > 0 Then
 
         INSERT INTO pc.t_annotation_groups (
             protein_collection_id,
@@ -194,21 +159,9 @@ BEGIN
             0,
             _primaryAnnotationTypeId
         )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            rollback transaction _transName
-            _message := 'Update operation failed: "' || _collectionName || '"';
-            RAISERROR (_message, 10, 1)
-            -- Return zero, since we did not create a protein collection
-            Return 0
-        End If;
 
-        commit transaction _transName
     End If;
 
-    return _collectionID
 END
 $$;
 

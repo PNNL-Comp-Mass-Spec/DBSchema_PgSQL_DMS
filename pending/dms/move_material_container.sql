@@ -39,7 +39,7 @@ DECLARE
 
     _myRowCount int := 0;
     _callingUser text := session_user;
-    _slashLoc int := Position('\' In @callingUser);
+    _slashLoc int;
     _containerInfo record;
     /*
     _containerID int := 0;
@@ -51,6 +51,11 @@ DECLARE
     */
     _mode text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
+    _slashLoc := Position('\' In _callingUser);
+
     If _slashLoc > 0 Then
         _callingUser := Substring(_callingUser, _slashLoc + 1, 100);
     End If;

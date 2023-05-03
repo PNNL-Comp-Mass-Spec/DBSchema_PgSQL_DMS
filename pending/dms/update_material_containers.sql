@@ -48,7 +48,6 @@ DECLARE
     _locStatus text;
     _nonEmptyContainerCount int := 1;
     _nonEmptyContainers text;
-    _transName text := 'UpdateMaterialContainers';
     _moveType text := '??';
 BEGIN
 
@@ -279,12 +278,6 @@ BEGIN
             RETURN;
         End If;
      End If;
-
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-    --
-    Begin transaction _transName
 
     ---------------------------------------------------
     -- Update containers to be at new location

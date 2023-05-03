@@ -114,7 +114,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
@@ -677,10 +676,6 @@ BEGIN
                 Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
             End If;
 
-            -- Start transaction
-            --
-            Begin transaction
-
             If char_length(Coalesce(_fractionBasedInstrumentGroup, '')) > 0 Then
                 -- Fix the instrument group name in the source requested run
                 UPDATE t_requested_run
@@ -794,15 +789,8 @@ BEGIN
             SET state_name = 'Completed'
             WHERE request_id = _sourceRequestID
 
-            If @@trancount > 0 Then
-                Commit Transaction
-            Else
-                _debugMsg := '@@trancount is 0; this is unexpected';
-                Call post_log_entry ('Error', _debugMsg, 'AddRequestedRunFractions');
-            End If;
-
             If _logDebugMessages Then
-                _debugMsg := 'Transaction committed';
+                _debugMsg := 'Fractions created';
                 Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
             End If;
 

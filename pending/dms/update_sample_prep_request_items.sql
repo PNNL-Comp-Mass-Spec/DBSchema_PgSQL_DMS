@@ -33,16 +33,13 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized boolean;
-
     _myRowCount int := 0;
-    _transName text := 'UpdateSamplePrepRequestItems';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -238,8 +235,6 @@ BEGIN
         ---------------------------------------------------
         If _mode = 'update' Then
 
-            BEGIN TRANSACTION _transName
-
             ---------------------------------------------------
             -- Insert unmarked items into database
             ---------------------------------------------------
@@ -307,8 +302,6 @@ BEGIN
             ---------------------------------------------------
 
             Call update_sample_prep_request_item_count (_samplePrepRequestID);
-
-            COMMIT TRANSACTION _transName
 
         End If; --<update>
 

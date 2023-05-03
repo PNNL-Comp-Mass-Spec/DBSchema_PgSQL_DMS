@@ -46,7 +46,7 @@ DECLARE
     _scriptBaseName citext := '';
     _paramDefinition xml;
     _jobParamXML XML;
-    _s text := '';
+    _missingParameters text := '';
 BEGIN
     _message := Coalesce(_message, '');
     _returnCode := Coalesce(_returnCode, '');
@@ -62,8 +62,8 @@ BEGIN
     --
     SELECT parameters
     INTO _paramDefinition
-    FROM   t_scripts
-    WHERE  script = _scriptName;
+    FROM t_scripts
+    WHERE script = _scriptName;
 
     If Not FOUND Then
         _message := 'script not found in sw.t_scripts: ' || Coalesce(_scriptName, '??');
@@ -81,7 +81,7 @@ BEGIN
         Section text,
         Name text,
         Value text NULL,
-        Reqd text NULL
+        Reqd citext NULL
     )
 
     INSERT INTO Tmp_ParamDefinition (Section, Name, Value, Reqd)
@@ -118,18 +118,17 @@ BEGIN
     ---------------------------------------------------
     --
 
-    SELECT
-        @s = @s + Tmp_ParamDefinition.Section || '/' || Tmp_ParamDefinition.Name || ','
-    FROM
-        Tmp_ParamDefinition
-        LEFT OUTER JOIN Tmp_JobParameters ON Tmp_ParamDefinition.Name = Tmp_JobParameters.Name
-                        AND Tmp_ParamDefinition.Section = Tmp_JobParameters.Section
-    WHERE
-        Tmp_ParamDefinition.Reqd = 'Yes'
-        AND Coalesce(Tmp_JobParameters.Value, '') = ''
+    SELECT string_agg(Tmp_ParamDefinition.Section || '/' || Tmp_ParamDefinition.Name, ',')
+    INTO _missingParameters
+    FROM Tmp_ParamDefinition
+         LEFT OUTER JOIN Tmp_JobParameters
+             ON Tmp_ParamDefinition.Name = Tmp_JobParameters.Name AND
+                Tmp_ParamDefinition.Section = Tmp_JobParameters.Section
+    WHERE Tmp_ParamDefinition.Reqd = 'Yes' AND
+          Coalesce(Tmp_JobParameters.Value, '') = '';
 
-    If @s <> '' Then
-        _message := 'Missing required parameters:' || _s;
+    If _missingParameters <> '' Then
+        _message := 'Missing required parameters: ' || _missingParameters;
         RAISE INFO '%', _message;
 
         _returnCode := 'U5101';

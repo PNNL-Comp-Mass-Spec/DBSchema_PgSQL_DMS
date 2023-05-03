@@ -38,7 +38,7 @@ DECLARE
     _message text;
     _instrumentInfo record;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
     _currentYear int;
     _currentQuarter int;
     _storagePathName text;
@@ -50,8 +50,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-    _currentLocation := 'Start';
 
     Begin
 

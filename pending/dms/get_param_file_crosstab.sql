@@ -188,7 +188,7 @@ BEGIN
     -- ToDo: Return the query results using the RefCursor
 
     If _previewSql Then
-        RAISE INFO '%', @S;
+        RAISE INFO '%', _s;
     Else
         EXECUTE _s;
     End If;

@@ -380,7 +380,7 @@ BEGIN
 
                 If FOUND And Coalesce(_existingSize, 0) > 0 Then
                     INSERT INTO Tmp_Warnings (Warning, RowText)
-                    VALUES (format('Skipping row since file size is already defined for %s, Dataset ID %', _filePath, _datasetId),
+                    VALUES (format('Skipping row since file size is already defined for %s, Dataset ID %s', _filePath, _datasetId),
                             _row);
 
                     CONTINUE;

@@ -42,9 +42,7 @@ DECLARE
     _sql text;
     _destEntityID int;
     _sourceEntityID int;
-    _transName text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -118,28 +116,28 @@ BEGIN
 
         -- Delete any existing values
         --
-        Delete From t_aux_info_value
-        WHERE (target_id = _destEntityID)
-        AND (Aux_Description_ID IN
-        )
+        DELETE FROM t_aux_info_value
+        WHERE (Target_ID = _destEntityID) AND
+              (Aux_Description_ID IN ( SELECT Item_ID
+                                       FROM V_Aux_Info_Definition
+                                       WHERE (Target = _targetName) AND
+                                             (Category = _categoryName) ));
 
         -- Insert new values
         --
-        INSERT INTO t_aux_info_value
-           (target_id, Aux_Description_ID, value)
-        SELECT _destEntityID AS Target_ID, Aux_Description_ID, Value
+        INSERT INTO t_aux_info_value (target_id,
+                                      Aux_Description_ID,
+                                      Value )
+        SELECT _destEntityID AS Target_ID,
+               Aux_Description_ID,
+               Value
         FROM t_aux_info_value
-        WHERE (target_id = _sourceEntityID)
-        AND (Aux_Description_ID IN
-            (
-                SELECT Item_ID
-                FROM V_Aux_Info_Definition
-                WHERE (Target = _targetName) AND
-                      (Category = _categoryName)
-            )
-        )
+        WHERE (target_id = _sourceEntityID) AND
+              (Aux_Description_ID IN ( SELECT Item_ID
+                                       FROM V_Aux_Info_Definition
+                                       WHERE (Target = _targetName) AND
+                                             (Category = _categoryName) ));
 
-        COMMIT;
     End If;
 
     ---------------------------------------------------
@@ -149,40 +147,33 @@ BEGIN
     -- to given destination entity
     ---------------------------------------------------
 
-    if _mode::citext = 'copySubcategory' Then
+    If _mode::citext = 'copySubcategory' Then
 
         -- Delete any existing values
         --
-        Delete from t_aux_info_value
-        WHERE (target_id = _destEntityID)
-        AND (Aux_Description_ID IN
-            (
-                SELECT Item_ID
-                FROM V_Aux_Info_Definition
-                WHERE (Target = _targetName) AND
-                      (Category = _categoryName) AND
-                      (Subcategory = _subCategoryName)
-            )
-        )
+        DELETE FROM t_aux_info_value
+        WHERE (target_id = _destEntityID) AND
+              (Aux_Description_ID IN ( SELECT Item_ID
+                                       FROM V_Aux_Info_Definition
+                                       WHERE (Target = _targetName) AND
+                                             (Category = _categoryName) AND
+                                             (Subcategory = _subCategoryName) ));
 
         -- Insert new values
         --
-        INSERT INTO t_aux_info_value
-           (target_id, Aux_Description_ID, value)
-        SELECT _destEntityID AS Target_ID, Aux_Description_ID, Value
+        INSERT INTO t_aux_info_value (target_id,
+                                      Aux_Description_ID,
+                                      Value )
+        SELECT _destEntityID AS Target_ID,
+               Aux_Description_ID,
+               Value
         FROM t_aux_info_value
-        WHERE (target_id = _sourceEntityID)
-        AND (Aux_Description_ID IN
-            (
-                SELECT Item_ID
-                FROM V_Aux_Info_Definition
-                WHERE (Target = _targetName) AND
-                      (Category = _categoryName) AND
-                      (Subcategory = _subCategoryName)
-            )
-        )
-
-        COMMIT;
+        WHERE (target_id = _sourceEntityID) AND
+              (Aux_Description_ID IN ( SELECT Item_ID
+                                       FROM V_Aux_Info_Definition
+                                       WHERE (Target = _targetName) AND
+                                             (Category = _categoryName) AND
+                                             (Subcategory = _subCategoryName) ));
     End If;
 
     ---------------------------------------------------
@@ -196,30 +187,23 @@ BEGIN
 
         -- Delete any existing values
         --
-        Delete from t_aux_info_value
-        WHERE (target_id = _destEntityID)
-        AND (Aux_Description_ID IN
-            (
-                SELECT Item_ID
-                FROM V_Aux_Info_Definition
-                WHERE (Target = _targetName)
-            )
-        )
+        DELETE FROM t_aux_info_value
+        WHERE (target_id = _destEntityID) AND
+              (Aux_Description_ID IN ( SELECT Item_ID
+                                       FROM V_Aux_Info_Definition
+                                       WHERE (Target = _targetName) ));
 
-        INSERT INTO t_aux_info_value
-           (target_id, Aux_Description_ID, value)
-        SELECT _destEntityID AS Target_ID, Aux_Description_ID, Value
+        INSERT INTO t_aux_info_value( target_id,
+                                      Aux_Description_ID,
+                                      Value )
+        SELECT _destEntityID AS Target_ID,
+               Aux_Description_ID,
+               Value
         FROM t_aux_info_value
-        WHERE (target_id = _sourceEntityID)
-        AND (Aux_Description_ID IN
-            (
-                SELECT Item_ID
-                FROM V_Aux_Info_Definition
-                WHERE (Target = _targetName)
-            )
-        )
-
-        COMMIT;
+        WHERE (target_id = _sourceEntityID) AND
+              (Aux_Description_ID IN ( SELECT Item_ID
+                                       FROM V_Aux_Info_Definition
+                                       WHERE (Target = _targetName) ));
     End If;
 
 END

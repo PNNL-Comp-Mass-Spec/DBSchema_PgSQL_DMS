@@ -107,7 +107,7 @@ BEGIN
         _message := _message || '; error code = ' || _myError::text;
 
         If Not _infoOnly Then
-            Call public.post_log_entry ('Error', _message, 'UpdatePipelineJobStats');
+            Call public.post_log_entry ('Error', _message, 'Update_Pipeline_Job_Stats', 'sw');
         End If;
     End If;
 

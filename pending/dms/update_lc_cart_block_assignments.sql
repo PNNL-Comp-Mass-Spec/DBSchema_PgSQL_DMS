@@ -45,7 +45,6 @@ DECLARE
     _xml AS xml;
     _usageMessage text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

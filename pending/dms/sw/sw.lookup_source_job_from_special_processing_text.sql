@@ -39,6 +39,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
+    _currentLocation text := 'Start';
     _myRowCount int := 0;
     _sourceJobText text;
     _indexStart int;
@@ -46,7 +47,6 @@ DECLARE
     _whereClause text := '';
     _orderBy text := '';
     _callingProcName text;
-    _currentLocation text;
     _part1 text := '';
     _part2 text := '';
     _part3 text := '';
@@ -60,8 +60,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-    _currentLocation := 'Start';
 
     ------------------------------------------------
     -- Validate the inputs
@@ -279,7 +277,7 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _whereClause <> '' Then
-            _currentLocation := _currentLocation || '; using Sql Where Clause (see separate log entry)';
+            _currentLocation := _currentLocation || '; using SQL Where Clause (see separate log entry)';
         End If;
 
         _message := local_error_handler (
@@ -288,7 +286,7 @@ BEGIN
 
         If _whereClause <> '' Then
             _warningMessage := format('Query for SourceJob determination for job %s: %s', _job, _autoQuerySql);
-            Call public.post_log_entry ('Debug', _warningMessage, 'LookupSourceJobFromSpecialProcessingText');
+            Call public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Text', 'sw');
         End If;
 
         If _warningMessage = '' Then

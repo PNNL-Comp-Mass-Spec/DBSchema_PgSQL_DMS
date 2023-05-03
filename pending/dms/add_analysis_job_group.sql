@@ -183,7 +183,6 @@ DECLARE
     _value text;
     _jobParam text;
     _scriptName text := 'Undefined_Script';
-    _transName text;
     _batchID int := 0;
     _numDatasets int := 0;
 
@@ -192,7 +191,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -952,8 +950,6 @@ BEGIN
                 End If;
             End If;
             */
-
-            COMMIT;
 
             If _requestID > 1 Then
                 -------------------------------------------------

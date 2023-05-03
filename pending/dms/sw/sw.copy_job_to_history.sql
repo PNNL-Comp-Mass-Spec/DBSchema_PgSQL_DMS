@@ -44,7 +44,6 @@ AS $$
 DECLARE
     _saveTime timestamp;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

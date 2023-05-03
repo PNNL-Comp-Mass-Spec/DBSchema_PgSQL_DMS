@@ -54,7 +54,6 @@ DECLARE
     _datasetID int;
     _state int;
     _datasetDirectoryPath text := Null;
-    _transName text;
     _requestID int := Null;
     _stateID int := 0;
 BEGIN
@@ -201,13 +200,6 @@ BEGIN
 
         RETURN;
     End If;
-
-    ---------------------------------------------------
-    -- Start a transaction
-    ---------------------------------------------------
-
-    _transName := 'DeleteDataset';
-    begin transaction _transName
 
     ---------------------------------------------------
     -- Delete any entries for the dataset from the archive table

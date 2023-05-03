@@ -138,7 +138,6 @@ DECLARE
     _postdigestIntStdID int := 0;
     _contID int := 0;
     _curContainerName text := '';
-    _transName text;
     _expIDConfirm int := 0;
     _debugMsg text;
     _stateID int := 1;
@@ -149,7 +148,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -671,11 +669,6 @@ BEGIN
             -- Action for add mode
             ---------------------------------------------------
 
-            -- Start transaction
-            --
-            _transName := 'AddNewExperiment';
-            Begin transaction _transName
-
             INSERT INTO t_experiments (
                     experiment,
                     researcher_username,
@@ -732,7 +725,7 @@ BEGIN
             WHERE experiment = _experimentName
 
             If _experimentID <> Coalesce(_expIDConfirm, _experimentID) Then
-                _debugMsg := format('Warning: Inconsistent identity values when adding experiment %s: Found ID % but INSERT query reported %',
+                _debugMsg := format('Warning: Inconsistent identity values when adding experiment %s: Found ID %s but INSERT query reported %s',
                                     _experimentName, _expIDConfirm, _experimentID);
 
                 Call post_log_entry ('Error', _debugMsg, 'AddUpdateExperiment');
@@ -746,7 +739,7 @@ BEGIN
             End If;
 
             -- Add the experiment to biomaterial mapping
-            -- The stored procedure uses table Tmp_Experiment_to_Biomaterial_Map
+            -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
             --
             Call add_experiment_biomaterial (
                                     _experimentID,
@@ -759,7 +752,7 @@ BEGIN
             End If;
 
             -- Add the experiment to reference compound mapping
-            -- The stored procedure uses table Tmp_ExpToRefCompoundMap
+            -- The procedure uses table Tmp_ExpToRefCompoundMap
             --
             Call add_experiment_reference_compound (
                                     _experimentID,
@@ -783,21 +776,12 @@ BEGIN
                     'Experiment added');
             End If;
 
-            -- We made it this far, commit
-            --
-            commit transaction _transName
-
         End If; -- add mode
 
         If _mode = 'update' Then
             ---------------------------------------------------
             -- Action for update mode
             ---------------------------------------------------
-
-            -- Start transaction
-            --
-            _transName := 'UpdateExperiment';
-            Begin transaction _transName
 
             UPDATE t_experiments Set
                 experiment = _experimentName,
@@ -833,7 +817,7 @@ BEGIN
             WHERE Exp_ID = _experimentId;
 
             -- Update the experiment to biomaterial mapping
-            -- The stored procedure uses table Tmp_Experiment_to_Biomaterial_Map
+            -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
             --
             Call add_experiment_biomaterial (
                                     _experimentID,
@@ -847,7 +831,7 @@ BEGIN
             End If;
 
             -- Update the experiment to reference compound mapping
-            -- The stored procedure uses table Tmp_ExpToRefCompoundMap
+            -- The procedure uses table Tmp_ExpToRefCompoundMap
             --
             Call add_experiment_reference_compound (
                                     _experimentID,
@@ -874,10 +858,6 @@ BEGIN
             If char_length(_existingExperimentName) > 0 And _existingExperimentName <> _experimentName Then
                 _message := format('Renamed experiment from "%s" to "%s"', _existingExperimentName, _experimentName);
             End If;
-
-            -- We made it this far, commit
-            --
-            commit transaction _transName
 
         End If; -- update mode
 

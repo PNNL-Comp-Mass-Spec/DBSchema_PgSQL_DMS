@@ -74,15 +74,13 @@ DECLARE
     _jobCountAdded int;
     _startDate timestamp;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-    _currentLocation := 'Start';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -471,7 +469,6 @@ BEGIN
     LOOP
         BEGIN
 
-
             If _infoOnly And _showRules Then
 
                 _currentLocation := 'Querying predefined_analysis_jobs for ' || _datasetName;
@@ -553,8 +550,6 @@ BEGIN
                 _message := '';
             End If;
 
-            COMMIT;
-
         EXCEPTION
             WHEN OTHERS THEN
                 GET STACKED DIAGNOSTICS
@@ -567,6 +562,11 @@ BEGIN
                             _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
                             _callingProcLocation => '', _logError => true);
         END;
+
+        If Not _infoOnly Then
+            -- Commit the newly created jobs
+            COMMIT;
+        End If;
 
         _datasetsProcessed := _datasetsProcessed + 1;
 

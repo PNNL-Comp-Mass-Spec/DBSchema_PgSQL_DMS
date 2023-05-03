@@ -64,9 +64,3 @@ END
 $$;
 
 COMMENT ON PROCEDURE sw.override_dta_gen_for_external_dta IS 'OverrideDTAGenForExternalDTA';
-
--- Skip this procedure since we can just call public.post_log_entry directly
---
--- CREATE OR REPLACE PROCEDURE sw.post_log_entry
---
--- COMMENT ON PROCEDURE sw.post_log_entry IS 'post_log_entry';

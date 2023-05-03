@@ -40,7 +40,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/03/2017 mem - Allow resetting a dataset if DatasetIntegrity failed
 **          08/08/2017 mem - Use function RemoveCaptureErrorsFromString to remove common dataset capture errors when resetting a dataset
-**          09/07/2018 mem - Remove mode 'delete_all'; if you need to delete a dataset, manually call stored procedure DeleteDataset
+**          09/07/2018 mem - Remove mode 'delete_all'; if you need to delete a dataset, manually call procedure DeleteDataset
 **                         - Rename _datasetName to _datasetNameOrID
 **          09/27/2018 mem - Use named parameter names when calling DeleteDataset
 **          11/16/2018 mem - Pass _infoOnly to DeleteDataset
@@ -74,7 +74,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

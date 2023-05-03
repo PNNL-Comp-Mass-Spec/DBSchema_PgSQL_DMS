@@ -52,7 +52,7 @@ BEGIN
     If _myRowCount > 0 Then
         _message := 'Updated the experiment name for ' || _myRowCount::text || ' datasets associated with data package ' || _packageID::text;
 
-        Call post_log_entry 'Info', _message, 'RefreshDataPackageItemsUsingDMS'
+        Call post_log_entry ('Info', _message, 'Refresh_Data_Package_Items_Using_DMS', 'dpkg');
     End If;
 
     ---------------------------------------------------
@@ -69,7 +69,7 @@ BEGIN
     If _myRowCount > 0 Then
         _message := 'Updated the campaign name for ' || _myRowCount::text || ' biomaterial entries associated with data package ' || _packageID::text;
 
-        Call post_log_entry 'Info', _message, 'RefreshDataPackageItemsUsingDMS'
+        Call post_log_entry ('Info', _message, 'Refresh_Data_Package_Items_Using_DMS', 'dpkg');
     End If;
 
      ---------------------------------------------------

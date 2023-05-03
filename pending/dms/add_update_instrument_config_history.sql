@@ -42,7 +42,6 @@ DECLARE
     _validatedDate timestamp;
     _tmp int := 0;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

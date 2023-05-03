@@ -35,7 +35,7 @@ AS $$
 **          08/23/2010 mem - Added parameter _infoOnly
 **          05/18/2017 mem - Call GetDefaultRemoteInfoForManager to retrieve the _remoteInfo XML for _processorName
 **                           Pass this to RequestStepTaskXML
-**                           (GetDefaultRemoteInfoForManager is a synonym for the stored procedure in the Manager_Control DB)
+**                           (GetDefaultRemoteInfoForManager is a synonym for the procedure in the Manager_Control DB)
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

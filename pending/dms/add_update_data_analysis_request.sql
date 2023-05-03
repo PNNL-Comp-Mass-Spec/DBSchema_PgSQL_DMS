@@ -90,7 +90,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
@@ -683,7 +682,6 @@ BEGIN
                 RETURNING request_id
                 INTO _id;
 
-                COMMIT;
             END;
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
@@ -741,7 +739,6 @@ BEGIN
                     Dataset_Count = _datasetCount
                 WHERE ID = _id;
 
-                COMMIT;
             END;
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates

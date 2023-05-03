@@ -68,7 +68,7 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _n int;
+    _invalidCount int;
     _userCount int;
     _personID int;
     _newUserList text;
@@ -86,8 +86,7 @@ DECLARE
     _stringLength int;
     _charNum int := 1;
     _integerList text := '';
-    _currentChar char := Substring(@eusUsersList, @charNum, 1);
-    _tmpUsers TABLE;
+    _currentChar char;
     _eusUsageTypeCampaign text;
     _msg text;
 BEGIN
@@ -408,9 +407,10 @@ BEGIN
 
                 WHILE _charNum <= _stringLength
                 LOOP
+                    _currentChar := Substring(_eusUsersList, _charNum, 1);
 
                     If _currentChar = ',' Or _currentChar SIMILAR TO '[0-9]' Then
-                        _integerList := _integerList + _currentChar;
+                        _integerList := _integerList || _currentChar;
                     End If;
 
                     _charNum := _charNum + 1;
@@ -429,9 +429,10 @@ BEGIN
                 _eusUsersList := Substring(_eusUsersList, 1, char_length(_eusUsersList) - 1);
             End If;
 
+            CREATE TEMP TABLE Tmp_Users
             (
                 Item text
-            )
+            );
 
             If _infoOnly Then
                 RAISE INFO '%', 'Splitting: "' || _eusUsersList || '"';
@@ -440,30 +441,35 @@ BEGIN
             -- Split items in _eusUsersList on commas
             --
             If _eusUsersList Like '%,%' Then
-                INSERT INTO _tmpUsers (Item)
+                INSERT INTO Tmp_Users (Item)
                 SELECT Item
                 FROM public.parse_delimited_list(_eusUsersList)
-            Else
-                INSERT INTO _tmpUsers (Item)
-                VALUES (_eusUsersList)
-            End If;
 
-            If _infoOnly Then
-                Select Item As EUS_UserID From _tmpUsers
+                If _infoOnly Then
+                    RAISE INFO 'User IDs: %', _eusUsersList;
+                End If;
+            Else
+                INSERT INTO Tmp_Users (Item)
+                VALUES (_eusUsersList)
+
+                If _infoOnly Then
+                    RAISE INFO 'User ID: %', _eusUsersList;
+                End If;
             End If;
 
             -- Look for entries that are not integers
             --
-            _n := 0;
-            SELECT COUNT(*) INTO _n
-            FROM _tmpUsers
-            WHERE public.try_cast(item, null::int) IS NULL
+            SELECT COUNT(*)
+            INTO _invalidCount
+            FROM Tmp_Users
+            WHERE public.try_cast(item, null::int) IS NULL;
 
-            If @n > 0 Then
-                If @n = 1 Then
+            If _invalidCount > 0 Then
+
+                If _invalidCount = 1 Then
                     _message := 'EMSL User ID is not numeric';
                 Else
-                    _message := Cast(_n as text) || ' EMSL User IDs are not numeric';
+                    _message := Cast(_invalidCount as text) || ' EMSL User IDs are not numeric';
                 End If;
 
                 _returnCode := 'U5376';
@@ -472,42 +478,38 @@ BEGIN
 
             -- Look for entries that are not in t_eus_proposal_users
             --
-            _n := 0;
-            SELECT COUNT(*) INTO _n
-            FROM _tmpUsers
+            SELECT COUNT(*)
+            INTO _invalidCount
+            FROM Tmp_Users
             WHERE
-                CAST(Item as int) NOT IN
+                public.try_cast(item, 0) NOT IN
                 (
                     SELECT person_id
                     FROM  t_eus_proposal_users
                     WHERE proposal_id = _eusProposalID
-                )
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                );
 
-            If @n <> 0 Then
+            If _invalidCount > 0 Then
             -- <f>
 
                 -- Invalid users were found
                 --
                 If Not _autoPopulateUserListIfBlank Then
-                    _message := _n::text;
-                    If @n = 1 Then
-                        _message := _message || ' user is';
-                    Else
-                        _message := _message || ' users are';
-                    End If;
 
-                    _message := _message || ' not associated with the specified proposal';
+                    If _invalidCount = 1 Then
+                        _message := format('%s user is not associated with the specified proposal', _invalidCount);
+                    Else
+                        _message := format('%s users are not associated with the specified proposal', _invalidCount);
+                    End If;
 
                     _returnCode := 'U5377';
                     RETURN;
                 End If;
 
-                -- Auto-remove invalid entries from _tmpUsers
+                -- Auto-remove invalid entries from Tmp_Users
                 --
                 DELETE
-                FROM  _tmpUsers
+                FROM  Tmp_Users
                 WHERE
                     CAST(Item as int) NOT IN
                     (
@@ -516,22 +518,19 @@ BEGIN
                         WHERE proposal_id = _eusProposalID
                     )
 
-                _userCount := 0;
-                SELECT COUNT(*) INTO _userCount
-                FROM _tmpUsers
+                SELECT COUNT(*)
+                INTO _userCount
+                FROM Tmp_Users
 
                 _newUserList := '';
 
                 If _userCount >= 1 Then
                     -- Reconstruct the users list
-                    _newUserList := '';
-                    SELECT @newUserList + ', ' + Item INTO _newUserList
-                    FROM _tmpUsers
+                    --
+                    SELECT string_agg(Item, ', ' ORDER BY Item)
+                    INTO _newUserList
+                    FROM Tmp_Users;
 
-                    -- Remove the first two characters
-                    If Coalesce(_newUserList, '') <> '' Then
-                        _newUserList := SubString(_newUserList, 3, char_length(_newUserList));
-                    End If;
                 End If;
 
                 If Coalesce(_newUserList, '') = '' Then

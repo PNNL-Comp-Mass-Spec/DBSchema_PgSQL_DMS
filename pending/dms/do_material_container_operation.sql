@@ -51,7 +51,6 @@ DECLARE
     _exceptionContext text;
     _comment text := '';
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

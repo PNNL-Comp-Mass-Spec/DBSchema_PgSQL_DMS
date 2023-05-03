@@ -313,8 +313,8 @@ BEGIN
 
         If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
 
-            _statusMessage := format('... Evaluating step dependencies: % / %', _rowsProcessed, _rowCountToProcess);
-            Call public.post_log_entry ('Progress', _statusMessage, 'EvaluateStepDependencies');
+            _statusMessage := format('... Evaluating step dependencies: %s / %s', _rowsProcessed, _rowCountToProcess);
+            Call public.post_log_entry ('Progress', _statusMessage, 'Evaluate_Step_Dependencies', 'sw');
 
             _lastLogTime := clock_timestamp();
         End If;

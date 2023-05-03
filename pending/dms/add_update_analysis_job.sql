@@ -132,7 +132,6 @@ DECLARE
     _organismID int;
     _warning text := '';
     _datasetID int;
-    _transName text := 'AddUpdateAnalysisJob';
     _existingJobCount int := 0;
     _existingMatchingJob int := 0;
     _datasetUnreviewed int := 0;
@@ -587,7 +586,6 @@ BEGIN
                     VALUES (_jobID, _gid)
                 End If;
 
-                COMMIT;
             End If;
         End If; -- add mode
 
@@ -725,8 +723,6 @@ BEGIN
 
                     _alterEnteredByRequired := true;
                 End If;
-
-                COMMIT;
 
                 If char_length(_callingUser) > 0 AND _alterEnteredByRequired Then
                     -- Call public.alter_entered_by_user

@@ -154,7 +154,7 @@ BEGIN
 
     Else
         _message := 'Unable to determine TransferFolderPath and/or Dataset name for job ' || _job::text;
-        Call public.post_log_entry ('Error', _message, 'ValidateJobServerInfo');
+        Call public.post_log_entry ('Error', _message, 'Validate_Job_Server_Info', 'sw');
         _myError := 52005;
 
         If _debugMode Then

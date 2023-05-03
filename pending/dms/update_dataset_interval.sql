@@ -49,14 +49,12 @@ DECLARE
     _start timestamp, _end timestamp, _interval int;
     _index int := 1;
     _seqIncrement int := 1;
-    _transName text := 'UpdateDatasetInterval';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
@@ -224,7 +222,7 @@ BEGIN
             End If;
 
             _index := _index + _seqIncrement;
-        END Loop;
+        END LOOP;
 
         If _infoOnly Then
 

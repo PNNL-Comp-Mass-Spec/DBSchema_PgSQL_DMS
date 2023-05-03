@@ -32,9 +32,14 @@ DECLARE
     _proteinsProcessed int;
     _batchSize int;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
-    Set XACT_ABORT, nocount on
+
 
     _proteinsProcessed := 0;
     _batchSize := 100000;
@@ -48,8 +53,6 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, 0);
     _message := '';
     _returnCode:= '';
-
-    _currentLocation := 'Start';
 
     Begin Try
 
@@ -111,7 +114,7 @@ BEGIN
                 End If;
 
             End If; -- </b>
-        End Loop; -- </a>
+        END LOOP; -- </a>
 
         _currentLocation := 'Done iterating';
 

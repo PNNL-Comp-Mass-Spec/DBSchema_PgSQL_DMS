@@ -44,7 +44,7 @@ DECLARE
     _xml AS xml;
     _debugMode boolean := false;
     _debugMsg text;
-    _requestCountInXML int := @myRowCount;
+    _requestCountInXML int;
     _invalidCart text := '';
     _invalidCartConfig text := '';
     _firstLocked int;
@@ -119,6 +119,10 @@ BEGIN
                               cartConfig citext PATH '@cg',
                               cart_column citext PATH '@co')
          ) XmlQ;
+    --
+    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    _requestCountInXML := _myRowCount
 
     UPDATE Tmp_BlockingInfo
     SET cart_config_name = ''

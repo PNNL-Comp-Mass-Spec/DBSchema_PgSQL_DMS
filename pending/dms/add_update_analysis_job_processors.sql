@@ -40,7 +40,6 @@ DECLARE
     _authorized boolean;
 
     _tmp int;
-    _transName text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -133,18 +132,9 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Set up transaction name
-    ---------------------------------------------------
-    _transName := 'AddUpdateAnalysisJobProcessors';
-
-    ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
     If _mode = 'add' Then
-        ---------------------------------------------------
-        -- Start transaction
-        --
-        begin transaction _transName
 
         INSERT INTO t_analysis_job_processors (
             state,
@@ -172,11 +162,6 @@ BEGIN
     ---------------------------------------------------
     --
     If _mode = 'update' Then
-
-        ---------------------------------------------------
-        -- Start transaction
-        --
-        begin transaction _transName
 
         UPDATE t_analysis_job_processors
         SET

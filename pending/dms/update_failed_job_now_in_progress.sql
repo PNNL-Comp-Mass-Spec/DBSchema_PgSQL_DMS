@@ -66,8 +66,8 @@ BEGIN
         -- ToDo: Show this data using RAISE INFO
 
         SELECT job,
-               AJ_StateID,
-               2 AS AJ_StateID_New,
+               job_state_id,
+               2 AS job_state_id_New,
                AJ_Start,
                CASE
                    WHEN _newBrokerJobState >= 2 THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)

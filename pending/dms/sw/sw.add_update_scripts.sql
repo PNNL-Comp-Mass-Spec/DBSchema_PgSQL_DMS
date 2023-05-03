@@ -47,7 +47,6 @@ DECLARE
     _backFill int;
     _tmp int;
     _scriptIDNew int := 1;
-    _tranAddScript text := 'AddScript';
 BEGIN
     _message := '';
     _returnCode := '';
@@ -144,8 +143,6 @@ BEGIN
     ---------------------------------------------------
     If _mode = 'add' Then
 
-        Begin Tran _tranAddScript
-
         SELECT Coalesce(MAX(script_id), 0) + 1
         INTO _scriptIDNew
         FROM sw.t_scripts;
@@ -173,8 +170,6 @@ BEGIN
         )
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        Commit Tran _tranAddScript
 
         -- If _callingUser is defined, update entered_by in sw.t_scripts_history
         If char_length(_callingUser) > 0 Then

@@ -66,7 +66,6 @@ DECLARE
     _authorized boolean;
 
     _myRowCount int := 0;
-    _msg text;
     _machineName text;
     _num int := 0;
     _tmpID int := 0;
@@ -105,10 +104,7 @@ BEGIN
     ---------------------------------------------------
 
     If char_length(_path) < 1 Then
-        _msg := 'path was blank';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := 'path was blank';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -116,10 +112,7 @@ BEGIN
     End If;
 
     If char_length(_instrumentName) < 1 Then
-        _msg := 'instrumentName was blank';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := 'instrumentName was blank';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -127,10 +120,7 @@ BEGIN
     End If;
 
     If Not _storFunction::citext In ('inbox', 'old-storage', 'raw-storage') Then
-        _msg := 'Function "' || _storFunction || '" is not recognized';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := 'Function "' || _storFunction || '" is not recognized';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -140,10 +130,7 @@ BEGIN
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
     If Not _mode::citext In ('add', 'update') Then
-        _msg := 'Function "' || _mode || '" is not recognized';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := 'Function "' || _mode || '" is not recognized';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -167,10 +154,7 @@ BEGIN
     ---------------------------------------------------
 
     If NOT Exists (SELECT * FROM t_instrument_name WHERE instrument = _instrumentName) Then
-        _msg := 'Unknown instrument "' || _instrumentName || '"';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := 'Unknown instrument "' || _instrumentName || '"';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -206,10 +190,7 @@ BEGIN
         WHERE storage_path_id = _spID;
         --
         If Not FOUND Then
-            _msg := 'Cannot update:  Storage path "' || _id || '" is not in database ';
-            RAISE EXCEPTION '%', _msg;
-
-            _message := 'message';
+            _message := 'Cannot update:  Storage path "' || _id || '" is not in database ';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
@@ -245,15 +226,12 @@ BEGIN
                 -- Save existing state of instrument and storage tables
                 ---------------------------------------------------
                 --
-                Call backup_storage_state (_message => _msg, _returnCode => _returnCode);
+                Call backup_storage_state (_message => _message, _returnCode => _returnCode);
                 --
                 If _returnCode <> '' Then
                     ROLLBACK;
 
-                    _msg := 'Backup failed: ' || _msg;
-                    RAISE EXCEPTION '%', _msg;
-
-                    _message := 'message';
+                    _message := 'Backup failed: ' || _message;
                     RAISE WARNING '%', _message;
 
                     _returnCode := 'U5201';
@@ -308,10 +286,7 @@ BEGIN
                     If FOUND Then
                         ROLLBACK;
 
-                        _msg := 'Cannot add new inbox path if one (' || cast(_tmpID as text)|| ') already exists for instrument';
-                        RAISE EXCEPTION '%', _msg;
-
-                        _message := 'message';
+                        _message := format('Cannot add new inbox path if one (%s) already exists for instrument', _tmpID);
                         RAISE WARNING '%', _message;
 
                         _returnCode := 'U5201';
@@ -343,8 +318,9 @@ BEGIN
                     _urlDomain
                 );
 
-                COMMIT;
             END;
+
+            COMMIT;
 
             _storagePathID := _newID;
         End If;
@@ -369,7 +345,7 @@ BEGIN
 
         -- Return storage path ID as text
         --
-        _id := cast(_storagePathID as text);
+        _id := _storagePathID::text;
 
     End If;
 
@@ -380,25 +356,15 @@ BEGIN
     If _mode = 'update' Then
 
         ---------------------------------------------------
-        -- Begin transaction
-        ---------------------------------------------------
-        --
-        _transName := 'AddUpdateStoragePath';
-        Begin transaction _transName
-
-        ---------------------------------------------------
         -- Save existing state of instrument and storage tables
         ---------------------------------------------------
         --
-        Call backup_storage_state (_message => _msg, _returnCode => _returnCode);
+        Call backup_storage_state (_message => _message, _returnCode => _returnCode);
         --
         If _returnCode <> '' Then
             ROLLBACK;
 
-            _msg := 'Backup failed: ' || _msg;
-            RAISE EXCEPTION '%', _msg;
-
-            _message := 'message';
+            _message := 'Backup failed: ' || _message;
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
@@ -444,13 +410,10 @@ BEGIN
         -- to old-storage
         ---------------------------------------------------
         --
-        If _storFunction <> 'raw-storage' and _oldFunction = 'raw-storage' Then
+        If _storFunction <> 'raw-storage' And _oldFunction = 'raw-storage' Then
             ROLLBACK;
 
-            _msg := 'Cannot change existing raw-storage path to old-storage';
-            RAISE EXCEPTION '%', _msg;
-
-             _message := 'message';
+            _message := 'Cannot change existing raw-storage path to old-storage';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
@@ -461,13 +424,10 @@ BEGIN
         -- Validate against any existing inbox assignments
         ---------------------------------------------------
 
-        If _storFunction <> 'inbox' and _oldFunction = 'inbox' Then
+        If _storFunction <> 'inbox' And _oldFunction = 'inbox' Then
             ROLLBACK;
 
-            _msg := 'Cannot change existing inbox path to another function';
-            RAISE EXCEPTION '%', _msg;
-
-             _message := 'message';
+            _message := 'Cannot change existing inbox path to another function';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';

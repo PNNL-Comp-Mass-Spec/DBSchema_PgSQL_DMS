@@ -51,7 +51,6 @@ DECLARE
     _columnID int := -1;
     _stateID int := -1;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

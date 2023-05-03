@@ -487,7 +487,6 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
                         _callingProcLocation => _currentLocation, _logError => Not _infoOnly);

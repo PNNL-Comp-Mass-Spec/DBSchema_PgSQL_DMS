@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**  Crosstab of data package datasets against job count per tool
+**      Crosstab of data package datasets against job count per tool
 **
 **  Auth:   grk
 **  Date:   05/26/2010 grk - Initial release
@@ -25,6 +25,8 @@ AS $$
 DECLARE
     _myRowCount int := 0;
     _msgForLog text;
+    _colName text := '';
+    _sql text;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -39,18 +41,18 @@ BEGIN
         --
         CREATE TEMP TABLE Tmp_Tools (
             tool text
-        )
+        );
 
         CREATE TEMP TABLE Tmp_Scratch  (
             dataset text,
             total INT
-        )
+        );
 
         CREATE TEMP TABLE Tmp_Datasets (
             dataset text,
             jobs INT NULL,
             id INT
-        )
+        );
 
         ---------------------------------------------------
         -- get list of package datasets
@@ -84,18 +86,11 @@ BEGIN
         WHERE data_pkg_id = _dataPackageID
 
         ---------------------------------------------------
-        -- Add cols to temp dataset table for each tool
+        -- Add columns to temp dataset table for each tool
         -- and update it with package job count
         ---------------------------------------------------
 
-
-
-        DECLARE
-        _colName text = 0,
-        _done int = 0,
-        @s text
-
-        WHILE _done = 0
+        WHILE true
         LOOP
 
             SELECT Tool
@@ -104,28 +99,27 @@ BEGIN
             LIMIT 1;
 
             IF Not FOUND Then
-                _done := 1;
-            Else
-            --<b>
-                DELETE FROM Tmp_Tools WHERE Tool = _colName;
+                -- Break out of the while loop
+                EXIT;
+            End If;
 
-                _s := format('ALTER TABLE Tmp_Datasets ADD %I INT NULL', _colName);
-                EXEC(_s);
+            DELETE FROM Tmp_Tools WHERE Tool = _colName;
 
-                DELETE FROM Tmp_Scratch
-                --
-                INSERT INTO Tmp_Scratch
-                ( dataset, Total )
-                SELECT dataset, COUNT(*) AS Total
-                FROM dpkg.t_data_package_analysis_jobs
-                WHERE data_pkg_id = _dataPackageID AND tool = _colName
-                GROUP BY dataset
+            _sql := format('ALTER TABLE Tmp_Datasets ADD %I INT NULL', _colName);
+            EXEC(_sql);
 
-                _s := format('UPDATE Tmp_Datasets SET %I = TX.Total FROM Tmp_Datasets INNER JOIN Tmp_Scratch TX ON TX.Dataset = Tmp_Datasets.Dataset', _colName);
-                EXEC(_s)
+            DELETE FROM Tmp_Scratch
 
-            End If; --<b>
-        End Loop; --<a>
+            INSERT INTO Tmp_Scratch ( dataset, Total )
+            SELECT dataset, COUNT(*) AS Total
+            FROM dpkg.t_data_package_analysis_jobs
+            WHERE data_pkg_id = _dataPackageID AND tool = _colName
+            GROUP BY dataset;
+
+            _sql := format('UPDATE Tmp_Datasets SET %I = TX.Total FROM Tmp_Datasets INNER JOIN Tmp_Scratch TX ON TX.Dataset = Tmp_Datasets.Dataset', _colName);
+            EXEC(_sql)
+
+        END LOOP;
 
         -- ToDo: Return the results using a cursor, since the number of columns can vary
 

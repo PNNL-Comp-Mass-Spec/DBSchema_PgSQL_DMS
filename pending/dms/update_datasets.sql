@@ -47,7 +47,6 @@ DECLARE
     _authorized boolean;
     _stateID int;
     _ratingID int;
-    _transName text;
     _entryID int := 0;
     _currentDataset text;
     _continueUpdate boolean;
@@ -58,7 +57,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
@@ -254,11 +252,6 @@ BEGIN
         --
         If _mode = 'update' Then
 
-            ---------------------------------------------------
-            _transName := 'UpdateDatasets';
-            begin transaction _transName
-
-            -----------------------------------------------
             If _state <> '[no change]' Then
                 UPDATE t_dataset
                 SET dataset_state_id = _stateID
@@ -348,9 +341,7 @@ BEGIN
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
             End If;
 
-            commit transaction _transName
-
-             If char_length(_callingUser) > 0 And (_datasetStateUpdated <> 0 Or _datasetRatingUpdated <> 0) Then
+            If char_length(_callingUser) > 0 And (_datasetStateUpdated <> 0 Or _datasetRatingUpdated <> 0) Then
                 -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
                 --

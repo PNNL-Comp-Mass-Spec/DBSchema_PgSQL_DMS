@@ -65,7 +65,7 @@ DECLARE
     _ch text;
     _cleanName text;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
     _peptideAtlasStagingPathID int := 0;
 
     _sqlState text;
@@ -73,8 +73,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-    _currentLocation := 'Start';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -584,7 +582,7 @@ BEGIN
                         INSERT INTO t_analysis_job
                                (job, batch_id, AJ_priority, created, AJ_start, AJ_finish, analysis_tool_id,
                                 AJ_parmFileName, AJ_settingsFileName, organism_db_name, AJ_organismID, dataset_id, comment, AJ_owner,
-                                AJ_StateID, assigned_processor_name, Results_Folder_Name, protein_collection_list, protein_options_list,
+                                job_state_id, assigned_processor_name, Results_Folder_Name, protein_collection_list, protein_options_list,
                                 AJ_requestID, propagation_mode, processing_time_minutes, purged)
                         Select job, BatchID, priority, created, Start, Finish, AnalysisToolID,
                             ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, comment, owner,

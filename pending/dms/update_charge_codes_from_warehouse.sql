@@ -45,15 +45,13 @@ DECLARE
     _mergeInsertCount int;
     _mergeUpdateCount int;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-    _currentLocation := 'Start';
 
     ----------------------------------------------------------
     -- Validate the inputs

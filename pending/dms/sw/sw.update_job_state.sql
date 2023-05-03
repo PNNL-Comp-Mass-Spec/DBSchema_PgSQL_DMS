@@ -519,7 +519,7 @@ BEGIN
                     _returncode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                Call public.post_log_entry ('Error', _message, 'UpdateJobState');
+                Call public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');
             End If;
 
         End If; --</c1>
@@ -539,7 +539,7 @@ BEGIN
 
         If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
             _statusMessage := '... Updating job state: ' || _jobsProcessed::text || ' / ' || _jobCountToProcess::text;
-            Call public.post_log_entry ('Progress', _statusMessage, 'UpdateJobState');
+            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Job_State', 'sw');
             _lastLogTime := clock_timestamp();
         End If;
 
@@ -652,7 +652,7 @@ BEGIN
                 _returncode => _returnCode);        -- Output
 
         If _returnCode <> '' Then
-            Call public.post_log_entry ('Error', _message, 'UpdateJobState');
+            Call public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');
         End If;
 
     END LOOP;

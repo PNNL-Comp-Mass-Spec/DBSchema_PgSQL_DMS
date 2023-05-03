@@ -50,7 +50,6 @@ DECLARE
     _analysisToolForAutoSupersede text := '';
     _analysisToolForAutoCentroid text := '';
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

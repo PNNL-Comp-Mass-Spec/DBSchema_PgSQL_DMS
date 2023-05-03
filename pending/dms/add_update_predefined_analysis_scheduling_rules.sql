@@ -44,7 +44,6 @@ DECLARE
     _processorGroupID int;
     _tmp int;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 

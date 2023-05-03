@@ -29,7 +29,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _containerInfo record;
     _locationTagNew text;
     _locationIDNew int;
@@ -38,7 +37,6 @@ DECLARE
     _containterCountLimit int;
     _locStatus text;
     _moveStatus text;
-    _transName text := 'UpdateMaterialContainers';
 BEGIN
     ---------------------------------------------------
     -- Validate the Inputs
@@ -129,8 +127,6 @@ BEGIN
           ML.shelf = CAST(_shelfOld AS text) AND
           ML.rack = CAST(_rackOld AS text)
     ORDER BY ML.location;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If Not Exists (SELECT * FROM Tmp_ContainersToProcess) Then
         _message := 'No containers found in freezer ' || _freezerTagOld || ', shelf ' || CAST(_shelfOld AS text) || ', rack ' || CAST(_rackOld AS text);
@@ -182,11 +178,12 @@ BEGIN
                ON ml.location_id = mc.location_id
         WHERE ml.location = _locationTagNew
         GROUP BY ml.location_id, ml.status, ml.container_limit;
-        --
+
         If Not FOUND Then
             _message := 'Destination location "' || _locationTagNew || '" could not be found in database';
             ROLLBACK;
 
+            DROP TABLE Tmp_ContainersToProcess;
             RETURN;
         End If;
 
@@ -198,6 +195,7 @@ BEGIN
             _message := format('Location "%s" is not in the "Active" state', _locationTagNew);
             ROLLBACK;
 
+            DROP TABLE Tmp_ContainersToProcess;
             RETURN;
         End If;
 
@@ -205,14 +203,13 @@ BEGIN
             _message := format('The maximum container capacity (%s) of location "%s" would be exceeded by the move', _containterCountLimit, _locationTagNew);
             ROLLBACK;
 
+            DROP TABLE Tmp_ContainersToProcess;
             RETURN;
         End If;
 
         If _infoOnly Then
             _moveStatus := 'Preview';
         Else
-        -- <c>
-
             _moveStatus := 'Moved';
 
             ---------------------------------------------------
@@ -222,8 +219,6 @@ BEGIN
             UPDATE t_material_containers
             SET location_id = _locationIDNew
             WHERE container_id = _containerID;
-               --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             INSERT INTO t_material_log (
                 type,
@@ -241,10 +236,8 @@ BEGIN
                 'pnl\d3l243',
                 'Rearrange after replacing freezer 1206A'
             )
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        End If; -- </c>
+        End If;
 
         INSERT INTO Tmp_Move_Status (Container_ID, Container, Type, Location_Old, Location_Current, Location_New, LocationIDNew, Status)
         SELECT mc.container_id AS Container_ID,

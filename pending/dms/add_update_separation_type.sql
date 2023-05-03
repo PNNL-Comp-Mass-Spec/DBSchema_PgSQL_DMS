@@ -234,11 +234,10 @@ BEGIN
     ---------------------------------------------------
     --
     If _mode = 'add' Then
-        Begin Tran
 
         SELECT MAX(separation_type_id) + 1
         INTO _nextID
-        FROM t_secondary_sep
+        FROM t_secondary_sep;
 
         INSERT INTO t_secondary_sep( separation_type,
                                      separation_type_id,
@@ -256,14 +255,6 @@ BEGIN
             _stateInt,
             CURRENT_TIMESTAMP
         )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        -- Return ID of newly created entry
-        --
-        _id := _nextID;
-
-        Commit
 
     End If; -- add mode
 

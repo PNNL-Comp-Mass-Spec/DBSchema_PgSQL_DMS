@@ -177,20 +177,18 @@ BEGIN
         RETURN;
     End If;
 
-    Begin Tran _instrumentUpdateTran
-
-    Update t_dataset
-    Set instrument_id = _instrumentIdNew,
+    UPDATE t_dataset
+    SET instrument_id = _instrumentIdNew,
         storage_path_ID = _storagePathIdNew
-    Where dataset_id = _datasetId
+    WHERE dataset_id = _datasetId
 
     If Not _deleteCaptureJob Then
 
-        Update cap.t_tasks
-        Set Storage_Server = _storageServerNew,
+        UPDATE cap.t_tasks
+        SET Storage_Server = _storageServerNew,
             Instrument = _instrumentNameNew,
             Instrument_Class = _instrumentClassNew
-        Where Job = _captureJob And Dataset_ID = _datasetId
+        WHERE Job = _captureJob And Dataset_ID = _datasetId
 
         Call cap.update_parameters_for_job (_captureJob);
     Else
@@ -209,8 +207,6 @@ BEGIN
                 Cast(_storagePathIdOld As text) || ' to ' || Cast(_storagePathIdNew As text)
 
     Call post_log_entry ('Normal', _message, 'UpdateDatasetInstrument');
-
-    Commit Tran _instrumentUpdateTran
 
     ---------------------------------------------------
     -- Done

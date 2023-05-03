@@ -28,10 +28,6 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized boolean;
-
-    _myRowCount int := 0;
-    _transName text;
-    _num int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -56,24 +52,13 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-       ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-    --
-    _transName := 'DeleteSamplePrepRequest';
-    begin transaction _transName
-
     ---------------------------------------------------
     -- Remove any references from experiments
     ---------------------------------------------------
     --
-    _num := 1;
-    --
     UPDATE t_experiments
     SET sample_prep_request_id = 0
     WHERE (sample_prep_request_id = _requestID)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Delete all entries from auxiliary value table
@@ -90,8 +75,6 @@ BEGIN
             WHERE (Target = 'SamplePrepRequest')
         )
     )
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Delete the sample prep request itself
@@ -99,13 +82,11 @@ BEGIN
     --
     DELETE FROM t_sample_prep_request
     WHERE     (prep_request_id = _requestID)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
-    -- If we got here, complete transaction
+    -- If we got here, commit the changes
     ---------------------------------------------------
-    commit transaction _transName
+    COMMIT;
 
     -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
     If char_length(_callingUser) > 0 Then

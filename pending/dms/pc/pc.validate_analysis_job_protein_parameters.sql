@@ -224,7 +224,7 @@ BEGIN
             End If; -- </c2>
 
             _cleanCollNameList := _cleanCollNameList + _tmpCollName;
-        End Loop; -- </b2>
+        END LOOP; -- </b2>
 
         /****************************************************************
         ** Copy the data from _cleanCollNameList to _protCollNameList and
@@ -299,7 +299,7 @@ BEGIN
             End If; -- </c3>
 
             _tmpStartPosition := _tmpCommaPosition + 1;
-        End Loop; -- </b3>
+        END LOOP; -- </b3>
 
         -- Cruise through collected Keyword/Value Pairs and check for validity
         _keywordID := 0;
@@ -363,7 +363,7 @@ BEGIN
                 End If;
 
             End If; -- </c4>
-        End Loop; -- <b4>
+        END LOOP; -- <b4>
 
         _protCollOptionsList := _cleanOptionString;
     End If; -- </a2>

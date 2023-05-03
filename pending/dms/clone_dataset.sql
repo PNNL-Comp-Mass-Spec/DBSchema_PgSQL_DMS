@@ -160,6 +160,7 @@ BEGIN
             -- Preview the new dataset
             ---------------------------------------------------
 
+            -- ToDo: Use RAISE INFO to show this info
             SELECT _datasetNew AS Dataset_Name_New, *
             FROM t_dataset
             WHERE (dataset = _dataset);
@@ -168,6 +169,7 @@ BEGIN
             -- Preview the new requested run
             ---------------------------------------------------
 
+            -- ToDo: Use RAISE INFO to show this info
             SELECT _requestNameNew AS Request_Name_New,
                    _datasetInfo.ExperimentName AS Experiment,
                    _datasetInfo.InstrumentName AS Instrument,
@@ -183,310 +185,340 @@ BEGIN
                    _datasetInfo.EusUsersList AS EUS_UsersList,
                    _datasetInfo.SecSep AS Sec_Sep;
 
+            RETURN;
+        End If;
+
+        ---------------------------------------------------
+        -- Duplicate the dataset
+        ---------------------------------------------------
+
+        -- Add a new row to t_dataset
+        --
+        INSERT INTO t_dataset (dataset, DS_Oper_username, comment, created, DS_instrument_name_ID, DS_LC_column_ID, DS_type_ID,
+                               DS_wellplate_num, DS_well_num, separation_type, dataset_state_id, last_affected, folder_name, DS_storage_path_ID,
+                               -- Remove or update since skipped column: exp_id, DS_internal_standard_ID, dataset_rating_id, DS_Comp_State, DS_Compress_Date, ds_prep_server_name,
+                               acq_time_start, acq_time_end, scan_count, File_Size_Bytes, File_Info_Last_Modified, Interval_to_Next_DS
+        )
+        SELECT _datasetNew AS Dataset_Name,
+            operator_username,
+            'Cloned from dataset ' || _dataset AS DS_comment,
+            CURRENT_TIMESTAMP AS Created,
+            instrument_id,
+            lc_column_ID,
+            dataset_type_ID,
+            wellplate,
+            well,
+            separation_type,
+            dataset_state_id,
+            CURRENT_TIMESTAMP AS DS_Last_Affected,
+            _datasetNew AS DS_folder_name,
+            storage_path_ID,
+            exp_id,
+            internal_standard_ID,
+            dataset_rating_id,
+            -- Remove or update since skipped column: DS_Comp_State,
+            -- Remove or update since skipped column: DS_Compress_Date,
+            ds_prep_server_name,
+            acq_time_start,
+            acq_time_end,
+            scan_count,
+            file_size_bytes,
+            file_info_last_modified,
+            interval_to_next_ds
+        FROM t_dataset
+        WHERE dataset = _dataset
+        RETURNING dataset_id
+        INTO _datasetIDNew;
+        --
+        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+        -- Create a requested run for the dataset
+        -- (code is from AddUpdateDataset)
+
+        Call dbo.add_update_requested_run (
+                                _requestName => _requestNameNew,
+                                _experimentName => _datasetInfo.ExperimentName,
+                                _requesterUsername =>_datasetInfo.OperatorUsername,
+                                _instrumentName => _datasetInfo.InstrumentName,
+                                _workPackage => _datasetInfo.WorkPackage,
+                                _msType => _datasetInfo.DatasetType,
+                                _instrumentSettings => _datasetInfo.nstrumentSettings,
+                                _wellplateName => _datasetInfo.Wellplate,
+                                _wellNumber => _datasetInfo.WellNum,
+                                _internalStandard => _datasetInfo.InternalStandard,
+                                _comment => _datasetInfo.Comment,
+                                _eusProposalID => _datasetInfo.EusProposalID,
+                                _eusUsageType => _datasetInfo.EusUsageType,
+                                _eusUsersList => _datasetInfo.EusUsersList,
+                                _mode => 'add-auto',
+                                _request => _requestID,         -- Output
+                                _message => _message,           -- Output
+                                _returnCode => _returnCode,     -- Output
+                                _secSep => _datasetInfo.SecSep,
+                                _mRMAttachment => '',
+                                _status => 'Completed',
+                                _skipTransactionRollback => true,
+                                _autoPopulateUserListIfBlank => true);        -- Auto populate _eusUsersList if blank since this is an Auto-Request
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+
+    END;
+
+    If _returnCode <> '' Then
+        ROLLBACK;
+
+        Call post_log_entry ('Error', _message, 'Clone_Dataset');
+        RETURN;
+    End If;
+
+    BEGIN
+        -- Associate the requested run with the dataset
+        --
+        UPDATE t_requested_run
+        SET dataset_id = _datasetIDNew
+        WHERE request_name = _requestNameNew AND dataset_id Is Null
+
+        -- Possibly create a Dataset Archive task
+        --
+        If _createDatasetArchiveTask Then
+            Call AddArchiveDataset (_datasetIDNew);
         Else
-        -- <b>
+            RAISE INFO '%', 'You should manually create a dataset archive task using: execute AddArchiveDataset ' || _datasetIDNew::text;
+        End If;
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-            ---------------------------------------------------
-            -- Duplicate the dataset
-            ---------------------------------------------------
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
 
-            -- Start a transaction
-            Begin Tran _tranClone
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
 
-            -- Add a new row to t_dataset
-            --
-            INSERT INTO t_dataset (dataset, DS_Oper_username, comment, created, DS_instrument_name_ID, DS_LC_column_ID, DS_type_ID,
-                                   DS_wellplate_num, DS_well_num, separation_type, dataset_state_id, last_affected, folder_name, DS_storage_path_ID,
-                                   -- Remove or update since skipped column: exp_id, DS_internal_standard_ID, dataset_rating_id, DS_Comp_State, DS_Compress_Date, ds_prep_server_name,
-                                   acq_time_start, acq_time_end, scan_count, File_Size_Bytes, File_Info_Last_Modified, Interval_to_Next_DS
-            )
-            SELECT _datasetNew AS Dataset_Name,
-                operator_username,
-                'Cloned from dataset ' || _dataset AS DS_comment,
-                CURRENT_TIMESTAMP AS Created,
-                instrument_id,
-                lc_column_ID,
-                dataset_type_ID,
-                wellplate,
-                well,
-                separation_type,
-                dataset_state_id,
-                CURRENT_TIMESTAMP AS DS_Last_Affected,
-                _datasetNew AS DS_folder_name,
-                storage_path_ID,
-                exp_id,
-                internal_standard_ID,
-                dataset_rating_id,
-                -- Remove or update since skipped column: DS_Comp_State,
-                -- Remove or update since skipped column: DS_Compress_Date,
-                ds_prep_server_name,
-                acq_time_start,
-                acq_time_end,
-                scan_count,
-                file_size_bytes,
-                file_info_last_modified,
-                interval_to_next_ds
-            FROM t_dataset
-            WHERE dataset = _dataset
-            RETURNING dataset_id
-            INTO _datasetIDNew;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    END;
 
-            -- Create a requested run for the dataset
-            -- (code is from AddUpdateDataset)
+    -- Commit changes now
+    COMMIT;
 
-            Call dbo.add_update_requested_run (
-                                    _requestName => _requestNameNew,
-                                    _experimentName => _datasetInfo.ExperimentName,
-                                    _requesterUsername =>_datasetInfo.OperatorUsername,
-                                    _instrumentName => _datasetInfo.InstrumentName,
-                                    _workPackage => _datasetInfo.WorkPackage,
-                                    _msType => _datasetInfo.DatasetType,
-                                    _instrumentSettings => _datasetInfo.nstrumentSettings,
-                                    _wellplateName => _datasetInfo.Wellplate,
-                                    _wellNumber => _datasetInfo.WellNum,
-                                    _internalStandard => _datasetInfo.InternalStandard,
-                                    _comment => _datasetInfo.Comment,
-                                    _eusProposalID => _datasetInfo.EusProposalID,
-                                    _eusUsageType => _datasetInfo.EusUsageType,
-                                    _eusUsersList => _datasetInfo.EusUsersList,
-                                    _mode => 'add-auto',
-                                    _request => _requestID,         -- Output
-                                    _message => _message,           -- Output
-                                    _returnCode => _returnCode,     -- Output
-                                    _secSep => _datasetInfo.SecSep,
-                                    _mRMAttachment => '',
-                                    _status => 'Completed',
-                                    _skipTransactionRollback => true,
-                                    _autoPopulateUserListIfBlank => true        -- Auto populate _eusUsersList if blank since this is an Auto-Request
+    BEGIN
+        _message := 'Created dataset ' || _datasetNew || ' by cloning ' || _dataset;
 
-            If _returnCode <> '' Then
-                ROLLBACK;
+        Call post_log_entry ('Normal', _message, 'CloneDataset');
 
-                Call post_log_entry ('Error', _message, 'CloneDataset');
+        -- Create a Capture job for the newly cloned dataset
+
+        SELECT MAX(Job)
+        INTO _captureJob
+        FROM cap.t_tasks
+        WHERE Dataset = _dataset AND Script LIKE '%capture%'
+
+        If Coalesce(_captureJob, 0) = 0 Then
+        -- <c1>
+            -- Job not found; examine T_Jobs_History
+            SELECT Job, Saved
+            INTO _captureJob, _dateStamp
+            FROM cap.t_tasks_History
+            WHERE Dataset = _dataset AND
+                  Script LIKE '%capture%'
+            ORDER BY Saved DESC
+            LIMIT 1;
+
+            If Not FOUND Then
+                RAISE INFO '%', 'Unable to create capture job in DMS_Capture since source job not found for dataset ' || _dataset;
                 RETURN;
             End If;
 
-            -- Associate the requested run with the dataset
-            --
-            UPDATE t_requested_run
-            SET dataset_id = _datasetIDNew
-            WHERE request_name = _requestNameNew AND dataset_id Is Null
-
-            -- Possibly create a Dataset Archive task
-            --
-            If _createDatasetArchiveTask Then
-                Call AddArchiveDataset (_datasetIDNew);
-            Else
-                RAISE INFO '%', 'You should manually create a dataset archive task using: execute AddArchiveDataset ' || _datasetIDNew::text;
-            End If;
-
-            -- Finalize the transaction
-            Commit
-
-            _message := 'Created dataset ' || _datasetNew || ' by cloning ' || _dataset;
-
-            Call post_log_entry ('Normal', _message, 'CloneDataset');
-
-            -- Create a Capture job for the newly cloned dataset
-
-            SELECT MAX(Job)
-            INTO _captureJob
-            FROM cap.t_tasks
-            WHERE Dataset = _dataset AND Script LIKE '%capture%'
+            INSERT INTO cap.t_tasks (Priority, Script, State,
+                                     Dataset, Dataset_ID, Results_Folder_Name,
+                                     Imported, Start, Finish)
+            SELECT Priority,
+                   Script,
+                   3 AS State,
+                   _datasetNew AS Dataset,
+                   _datasetIDNew AS Dataset_ID,
+                   '' AS Results_Folder_Name,
+                   CURRENT_TIMESTAMP AS Imported,
+                   CURRENT_TIMESTAMP AS Start,
+                   CURRENT_TIMESTAMP AS Finish
+            FROM cap.t_tasks_History
+            WHERE Job = _captureJob AND
+                  Saved = _dateStamp
+            RETURNING cap.t_tasks.Job
+            INTO _captureJobNew;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount = 0 Or Coalesce(_captureJob, 0) = 0 Then
-            -- <c1>
-                -- Job not found; examine T_Jobs_History
-                SELECT Job, Saved
-                INTO _captureJob, _dateStamp
-                FROM cap.t_tasks_History
-                WHERE Dataset = _dataset AND
-                      Script LIKE '%capture%'
-                ORDER BY Saved DESC
-                LIMIT 1;
+            --
+            -- ToDo: Verify that RETURNING returns the job number of the inserted row
+            --
 
-                If Not FOUND Then
-                    RAISE INFO '%', 'Unable to create capture job in DMS_Capture since source job not found for dataset ' || _dataset;
-                    RETURN;
-                End If;
+            If FOUND And _captureJobNew > 0 Then
+            -- <d1>
 
-                INSERT INTO cap.t_tasks (Priority, Script, State,
-                                        Dataset, Dataset_ID, Results_Folder_Name,
-                                        Imported, Start, Finish)
-                SELECT Priority,
-                       Script,
-                       3 AS State,
-                       _datasetNew AS Dataset,
-                       _datasetIDNew AS Dataset_ID,
-                       '' AS Results_Folder_Name,
-                       CURRENT_TIMESTAMP AS Imported,
-                       CURRENT_TIMESTAMP AS Start,
-                       CURRENT_TIMESTAMP AS Finish
-                FROM cap.t_tasks_History
+                INSERT INTO cap.T_Job_Steps( Job,
+                                             Step_Number,
+                                             Step_Tool,
+                                             State,
+                                             Input_Folder_Name,
+                                             Output_Folder_Name,
+                                             Processor,
+                                             Start,
+                                             Finish,
+                                             Tool_Version_ID,
+                                             Completion_Code,
+                                             Completion_Message,
+                                             Evaluation_Code,
+                                             Evaluation_Message,
+                                             Holdoff_Interval_Minutes,
+                                             Next_Try,
+                                             Retry_Count )
+                SELECT _captureJobNew AS Job,
+                       Step_Number,
+                       Step_Tool,
+                       Case When State Not In (3,5,7) Then 7 Else State End As State,
+                       Input_Folder_Name,
+                       Output_Folder_Name,
+                       'In-Silico' AS Processor,
+                       Case When Start Is Null Then Null Else CURRENT_TIMESTAMP End As Start,
+                       Case When Finish Is Null Then Null Else CURRENT_TIMESTAMP End As Finish,
+                       1 As Tool_Version_ID,
+                       0 AS Completion_Code,
+                       '' AS Completion_Message,
+                       0 AS Evaluation_Code,
+                       '' AS Evaluation_Message,
+                       0 AS Holdoff_Interval_Minutes,
+                       CURRENT_TIMESTAMP AS Next_Try,
+                       0 AS Retry_Count
+                FROM cap.T_Job_Steps_History
                 WHERE Job = _captureJob AND
-                      Saved = _dateStamp
-                RETURNING cap.t_tasks.Job
-                INTO _captureJobNew;
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                      Saved = _dateStamp;
 
-                --
-                -- ToDo: Verify that RETURNING returns the job number of the inserted row
-                --
+            End If; -- </d1>
 
-                If FOUND And _captureJobNew > 0 Then
-                -- <d1>
+        Else
+        -- <c2>
+            INSERT INTO cap.t_tasks (Priority, Script, State,
+                                     Dataset, Dataset_ID, Storage_Server, Instrument, Instrument_Class,
+                                     Max_Simultaneous_Captures,
+                                     Imported, Start, Finish, Archive_Busy, Comment)
+            SELECT Priority,
+                   Script,
+                   State,
+                   _datasetNew AS Dataset,
+                   _datasetIDNew AS Dataset_ID,
+                   Storage_Server,
+                   Instrument,
+                   Instrument_Class,
+                   Max_Simultaneous_Captures,
+                   CURRENT_TIMESTAMP AS Imported,
+                   CURRENT_TIMESTAMP AS Start,
+                   CURRENT_TIMESTAMP AS Finish,
+                   0 AS Archive_Busy,
+                   'Cloned from dataset ' || _dataset AS Comment
+            FROM cap.t_tasks
+            WHERE Dataset = _dataset AND
+                  Script LIKE '%capture%'
+            ORDER BY cap.t_tasks.Job Desc
+            LIMIT 1
+            RETURNING cap.t_tasks.Job
+            INTO _captureJobNew;
 
-                    INSERT INTO cap.T_Job_Steps( Job,
-                                                Step_Number,
-                                                Step_Tool,
-                                                State,
-                                                Input_Folder_Name,
-                                                Output_Folder_Name,
-                                                Processor,
-                                                Start,
-                                                Finish,
-                                                Tool_Version_ID,
-                                                Completion_Code,
-                                                Completion_Message,
-                                                Evaluation_Code,
-                                                Evaluation_Message,
-                                                Holdoff_Interval_Minutes,
-                                                Next_Try,
-                                                Retry_Count )
-                    SELECT _captureJobNew AS Job,
-                           Step_Number,
-                           Step_Tool,
-                           Case When State Not In (3,5,7) Then 7 Else State End As State,
-                           Input_Folder_Name,
-                           Output_Folder_Name,
-                           'In-Silico' AS Processor,
-                           Case When Start Is Null Then Null Else CURRENT_TIMESTAMP End As Start,
-                           Case When Finish Is Null Then Null Else CURRENT_TIMESTAMP End As Finish,
-                           1 As Tool_Version_ID,
-                           0 AS Completion_Code,
-                           '' AS Completion_Message,
-                           0 AS Evaluation_Code,
-                           '' AS Evaluation_Message,
-                           0 AS Holdoff_Interval_Minutes,
-                           CURRENT_TIMESTAMP AS Next_Try,
-                           0 AS Retry_Count
-                    FROM cap.T_Job_Steps_History
-                    WHERE Job = _captureJob AND
-                          Saved = _dateStamp;
+            --
+            -- ToDo: Verify that RETURNING returns the job number of the inserted row
+            --
 
-                End If; -- </d1>
+            If _captureJobNew > 0 Then
+            -- <d2>
 
-            Else
-            -- <c2>
-                INSERT INTO cap.t_tasks (Priority, Script, State,
-                                        Dataset, Dataset_ID, Storage_Server, Instrument, Instrument_Class,
-                                        Max_Simultaneous_Captures,
-                                        Imported, Start, Finish, Archive_Busy, Comment)
-                SELECT Priority,
-                       Script,
-                       State,
-                       _datasetNew AS Dataset,
-                       _datasetIDNew AS Dataset_ID,
-                       Storage_Server,
-                       Instrument,
-                       Instrument_Class,
-                       Max_Simultaneous_Captures,
-                       CURRENT_TIMESTAMP AS Imported,
-                       CURRENT_TIMESTAMP AS Start,
-                       CURRENT_TIMESTAMP AS Finish,
-                       0 AS Archive_Busy,
-                       'Cloned from dataset ' || _dataset AS Comment
-                FROM cap.t_tasks
-                WHERE Dataset = _dataset AND
-                      Script LIKE '%capture%'
-                ORDER BY cap.t_tasks.Job Desc
-                LIMIT 1
-                RETURNING cap.t_tasks.Job
-                INTO _captureJobNew;
+                INSERT INTO cap.T_Job_Steps( Job,
+                                             Step_Number,
+                                             Step_Tool,
+                                             CPU_Load,
+                                             Dependencies,
+                                             State,
+                                             Input_Folder_Name,
+                                             Output_Folder_Name,
+                                             Processor,
+                                             Start,
+                                             Finish,
+                                             Tool_Version_ID,
+                                             Completion_Code,
+                                             Completion_Message,
+                                             Evaluation_Code,
+                                             Evaluation_Message,
+                                             Holdoff_Interval_Minutes,
+                                             Next_Try,
+                                             Retry_Count )
+                SELECT _captureJobNew AS Job,
+                       Step_Number,
+                       Step_Tool,
+                       CPU_Load,
+                       Dependencies,
+                       Case When State Not In (3,5,7) Then 7 Else State End As State,
+                       Input_Folder_Name,
+                       Output_Folder_Name,
+                       'In-Silico' AS Processor,
+                       Case When Start Is Null Then Null Else CURRENT_TIMESTAMP End As Start,
+                       Case When Finish Is Null Then Null Else CURRENT_TIMESTAMP End As Finish,
+                       1 AS Tool_Version_ID,
+                       0 AS Completion_Code,
+                       '' AS Completion_Message,
+                       0 AS Evaluation_Code,
+                       '' AS Evaluation_Message,
+                       Holdoff_Interval_Minutes,
+                       CURRENT_TIMESTAMP AS Next_Try,
+                       Retry_Count
+                FROM cap.T_Job_Steps
+                WHERE Job = _captureJob
 
-                --
-                -- ToDo: Verify that RETURNING returns the job number of the inserted row
-                --
+                INSERT INTO cap.T_Job_Step_Dependencies (Job, Step_Number, Target_Step_Number,
+                                                         Condition_Test, Test_Value, Evaluated,
+                                                         Triggered, Enable_Only)
+                SELECT _captureJobNew AS Job,
+                       Step_Number,
+                       Target_Step_Number,
+                       Condition_Test,
+                       Test_Value,
+                       Evaluated,
+                       Triggered,
+                       Enable_Only
+                FROM cap.T_Job_Step_Dependencies
+                WHERE Job = _captureJob;
 
-                If _captureJobNew > 0 Then
-                -- <d2>
+            End If; -- </d2>
 
-                    INSERT INTO cap.T_Job_Steps( Job,
-                                                 Step_Number,
-                                                 Step_Tool,
-                                                 CPU_Load,
-                                                 Dependencies,
-                                                 State,
-                                                 Input_Folder_Name,
-                                                 Output_Folder_Name,
-                                                 Processor,
-                                                 Start,
-                                                 Finish,
-                                                 Tool_Version_ID,
-                                                 Completion_Code,
-                                                 Completion_Message,
-                                                 Evaluation_Code,
-                                                 Evaluation_Message,
-                                                 Holdoff_Interval_Minutes,
-                                                 Next_Try,
-                                                 Retry_Count )
-                    SELECT _captureJobNew AS Job,
-                           Step_Number,
-                           Step_Tool,
-                           CPU_Load,
-                           Dependencies,
-                           Case When State Not In (3,5,7) Then 7 Else State End As State,
-                           Input_Folder_Name,
-                           Output_Folder_Name,
-                           'In-Silico' AS Processor,
-                           Case When Start Is Null Then Null Else CURRENT_TIMESTAMP End As Start,
-                           Case When Finish Is Null Then Null Else CURRENT_TIMESTAMP End As Finish,
-                           1 AS Tool_Version_ID,
-                           0 AS Completion_Code,
-                           '' AS Completion_Message,
-                           0 AS Evaluation_Code,
-                           '' AS Evaluation_Message,
-                           Holdoff_Interval_Minutes,
-                           CURRENT_TIMESTAMP AS Next_Try,
-                           Retry_Count
-                    FROM cap.T_Job_Steps
-                    WHERE Job = _captureJob
+        End If; -- </c2>
 
-                    INSERT INTO cap.T_Job_Step_Dependencies (Job, Step_Number, Target_Step_Number,
-                                                             Condition_Test, Test_Value, Evaluated,
-                                                             Triggered, Enable_Only)
-                    SELECT _captureJobNew AS Job,
-                           Step_Number,
-                           Target_Step_Number,
-                           Condition_Test,
-                           Test_Value,
-                           Evaluated,
-                           Triggered,
-                           Enable_Only
-                    FROM cap.T_Job_Step_Dependencies
-                    WHERE Job = _captureJob;
+        If Coalesce(_captureJobNew, 0) > 0 Then
+            Call cap.update_parameters_for_job (_captureJobNew)
 
-                End If; -- </d2>
+            _jobMessage := format('Created capture task job %s for dataset %s by cloning job %s',
+                                    _captureJobNew, _datasetNew, _captureJob
 
-            End If; -- </c2>
+            Call post_log_entry ('Normal', _jobMessage, 'CloneDataset');
 
-            If Coalesce(_captureJobNew, 0) > 0 Then
-                Call cap.update_parameters_for_job (_captureJobNew)
-
-                _jobMessage := format('Created capture task job %s for dataset %s by cloning job %s',
-                                        _captureJobNew, _datasetNew, _captureJob
-
-                Call post_log_entry ('Normal', _jobMessage, 'CloneDataset');
-
-                _message := _message || '; ' || _jobMessage;
-            End If;
-
-        End If; -- </b>
+            _message := _message || '; ' || _jobMessage;
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

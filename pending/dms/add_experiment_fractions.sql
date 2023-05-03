@@ -121,7 +121,6 @@ DECLARE
     _wn text;
     _nameFractionLinker text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
@@ -551,7 +550,7 @@ BEGIN
                 INTO _newExpID;
 
                 -- Add the experiment to biomaterial mapping
-                -- The stored procedure uses table Tmp_Experiment_to_Biomaterial_Map
+                -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
                 --
                 Call add_experiment_biomaterial (
                                         _newExpID,
@@ -565,7 +564,7 @@ BEGIN
                 End If;
 
                 -- Add the experiment to reference compound mapping
-                -- The stored procedure uses table Tmp_ExpToRefCompoundMap
+                -- The procedure uses table Tmp_ExpToRefCompoundMap
                 --
                 Call add_experiment_reference_compound (
                                         _newExpID,

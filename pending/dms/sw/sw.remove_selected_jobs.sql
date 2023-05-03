@@ -29,7 +29,7 @@ AS $$
 **          02/26/2009 mem - Added parameter _logDeletions
 **          02/28/2009 grk - Added logic to preserve record of successful shared results
 **          08/20/2013 mem - Added support for _logToConsoleOnly
-**                         - Now disabling trigger trig_ud_T_Jobs when deleting rows from T_Jobs (required because stored procedure RemoveOldJobs wraps the call to this procedure with a transaction)
+**                         - Now disabling trigger trig_ud_T_Jobs when deleting rows from T_Jobs (required because procedure RemoveOldJobs wraps the call to this procedure with a transaction)
 **          06/16/2014 mem - Now disabling trigger trig_ud_T_Job_Steps when deleting rows from T_Job_Steps
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -156,7 +156,7 @@ BEGIN
             WHERE job = _job;
 
             _message := 'Deleted job ' || _job::text || ' from sw.t_jobs';
-            Call public.post_log_entry ('Normal', _message, 'RemoveSelectedJobs');
+            Call public.post_log_entry ('Normal', _message, 'Remove_Selected_Jobs', 'sw');
 
         END LOOP;
 

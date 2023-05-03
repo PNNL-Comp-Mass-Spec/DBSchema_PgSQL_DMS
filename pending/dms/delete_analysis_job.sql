@@ -40,7 +40,6 @@ DECLARE
 
     _myRowCount int := 0;
     _jobID int;
-    _transName text := 'DeleteAnalysisJob';
     _stateID int;
     _msg text;
 BEGIN
@@ -96,15 +95,12 @@ BEGIN
     End If;
 
     If _infoOnly Then
+        -- ToDo: Show this using RAISE INFO
         SELECT 'To be deleted' as Action, *
         FROM t_analysis_job
         WHERE (job = _jobID);
+        RETURN;
     Else
-        -------------------------------------------------------
-        -- Start transaction
-        -------------------------------------------------------
-        --
-        Begin transaction _transName
 
         -------------------------------------------------------
         -- Delete the job from t_reporter_ion_observation_rates (if it exists)
@@ -112,8 +108,6 @@ BEGIN
         --
         DELETE FROM t_reporter_ion_observation_rates
         WHERE job = _jobID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -------------------------------------------------------
         -- Delete the job from t_analysis_job
@@ -136,7 +130,7 @@ BEGIN
             Call alter_event_log_entry_user (5, _jobID, _stateID, _callingUser);
         End If;
 
-        commit transaction _transName
+        COMMIT;
     End If;
 
     -------------------------------------------------------

@@ -34,14 +34,13 @@ DECLARE
     _mergeDeleteCount int;
     _fullRefreshPerformed boolean;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode:= '';
 
@@ -85,8 +84,6 @@ BEGIN
 
         _message := '';
     End If;
-
-    _currentLocation := 'Start';
 
     Begin
         _currentLocation := 'Validate the inputs';

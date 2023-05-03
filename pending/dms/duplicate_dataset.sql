@@ -16,7 +16,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Duplicates a dataset by adding a new row to T_Dataset and calling AddUpdateRequestedRun
+**      Duplicates a dataset by adding a new row to T_Dataset and calling add_update_requested_run
 **
 **  Arguments:
 **    _sourceDataset         Existing dataset to copy
@@ -52,7 +52,6 @@ DECLARE
     _userID int;
     _matchCount int;
     _newUsername text;
-    _transName text := 'AddNewDataset';
 BEGIN
     ---------------------------------------------------
     -- Validate the inputs
@@ -244,125 +243,124 @@ BEGIN
                                 '' As MRMAttachment,
                                 'Completed' As Status
 
-    Else
-
-        Begin transaction _transName
-
-        ---------------------------------------------------
-        -- Create the new dataset
-        ---------------------------------------------------
-        --
-        INSERT INTO t_dataset (
-            dataset,
-            operator_username,
-            comment,
-            created,
-            instrument_id,
-            dataset_type_ID,
-            well,
-            separation_type,
-            dataset_state_id,
-            folder_name,
-            storage_path_ID,
-            exp_id,
-            dataset_rating_id,
-            lc_column_ID,
-            wellplate,
-            internal_standard_ID,
-            capture_subfolder,
-            cart_config_id
-        ) VALUES (
-            _newDataset,
-            _datasetInfo.OperUsername,
-            _datasetInfo.Comment,
-            CURRENT_TIMESTAMP,
-            _datasetInfo.InstrumentID,
-            _datasetInfo.DatasetTypeID,
-            _datasetInfo.WellNum,
-            _datasetInfo.SecSep,
-            _datasetStateID,
-            _newDataset,        -- folder_name
-            _datasetInfo.StoragePathID,
-            _datasetInfo.ExperimentID,
-            _datasetInfo.RatingID,
-            _datasetInfo.ColumnID,
-            _datasetInfo.Wellplate,
-            _datasetInfo.IntStdID,
-            _datasetInfo.CaptureSubfolder,
-            _datasetInfo.CartConfigID
-        )
-        RETURNING dataset_id
-        INTO _datasetID;
-
-        ---------------------------------------------------
-        -- Create a requested run
-        ---------------------------------------------------
-        --
-        _requestName := 'AutoReq_' || _newDataset;
-
-        Call add_update_requested_run (
-                _requestName => _requestName,
-                _experimentName => _datasetInfo.ExperimentName,
-                _requesterUsername => _datasetInfo.OperUsername,
-                _instrumentName => _requestedRunInfo.InstrumentName,
-                _workPackage => _requestedRunInfo.WorkPackage,
-                _msType => _requestedRunInfo.MsType,
-                _instrumentSettings => _requestedRunInfo.InstrumentSettings,
-                _wellplateName => _datasetInfo.Wellplate,
-                _wellNumber => _datasetInfo.WellNum,
-                _internalStandard => 'na',
-                _comment => 'Automatically created by Dataset entry',
-                _eusProposalID => _requestedRunInfo.EusProposalID,
-                _eusUsageType => _requestedRunInfo.EusUsageType,
-                _eusUsersList => _eusUsersList,
-                _mode => 'add-auto',
-                _request => _requestID,         -- Output
-                _message => _message,           -- Output
-                _returnCode => _returnCode,     -- Output
-                _secSep => _requestedRunInfo.SeparationGroup,
-                _mRMAttachment => '',
-                _status => 'Completed',
-                _skipTransactionRollback => true,
-                _autoPopulateUserListIfBlank => true);        -- Auto populate _eusUsersList if blank since this is an Auto-Request
-
-        If _returnCode <> '' Then
-            ROLLBACK;
-
-            _message := format('Create AutoReq run request failed: dataset %s with Proposal ID %s, Usage Type %s, and Users List % -> %s',
-                                _newDataset, _requestedRunInfo.EusProposalID, _requestedRunInfo.EusUsageType, _eusUsersList, _message
-
-            RAISE ERROR '%', _message;
-
-            RETURN;
-        End If;
-
-        ---------------------------------------------------
-        -- Consume the scheduled run
-        ---------------------------------------------------
-
-        Call consume_scheduled_run _datasetID, _requestID, _message => _message
-        --
-        If _returnCode <> '' Then
-            ROLLBACK;
-
-            _message := 'Consume operation failed: dataset ' || _newDataset || ' -> ' || _message;
-            RAISE ERROR '%', _message;
-
-            RETURN;
-        End If;
-
-        Commit transaction _transName
-
-        -- Update t_cached_dataset_instruments
-        Call public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
-
-        Select _newDataset As Dataset_New, _datasetID As Dataset_ID, _requestID As RequestedRun_ID, 'Duplicated dataset ' || _sourceDataset As Status
-
-        SELECT *
-        FROM V_Dataset_Detail_Report_Ex
-        WHERE ID = _datasetID
-
+        RETURN;
     End If;
+
+    ---------------------------------------------------
+    -- Create the new dataset
+    ---------------------------------------------------
+    --
+    INSERT INTO t_dataset (
+        dataset,
+        operator_username,
+        comment,
+        created,
+        instrument_id,
+        dataset_type_ID,
+        well,
+        separation_type,
+        dataset_state_id,
+        folder_name,
+        storage_path_ID,
+        exp_id,
+        dataset_rating_id,
+        lc_column_ID,
+        wellplate,
+        internal_standard_ID,
+        capture_subfolder,
+        cart_config_id
+    ) VALUES (
+        _newDataset,
+        _datasetInfo.OperUsername,
+        _datasetInfo.Comment,
+        CURRENT_TIMESTAMP,
+        _datasetInfo.InstrumentID,
+        _datasetInfo.DatasetTypeID,
+        _datasetInfo.WellNum,
+        _datasetInfo.SecSep,
+        _datasetStateID,
+        _newDataset,        -- folder_name
+        _datasetInfo.StoragePathID,
+        _datasetInfo.ExperimentID,
+        _datasetInfo.RatingID,
+        _datasetInfo.ColumnID,
+        _datasetInfo.Wellplate,
+        _datasetInfo.IntStdID,
+        _datasetInfo.CaptureSubfolder,
+        _datasetInfo.CartConfigID
+    )
+    RETURNING dataset_id
+    INTO _datasetID;
+
+    ---------------------------------------------------
+    -- Create a requested run
+    ---------------------------------------------------
+    --
+    _requestName := 'AutoReq_' || _newDataset;
+
+    Call add_update_requested_run (
+            _requestName => _requestName,
+            _experimentName => _datasetInfo.ExperimentName,
+            _requesterUsername => _datasetInfo.OperUsername,
+            _instrumentName => _requestedRunInfo.InstrumentName,
+            _workPackage => _requestedRunInfo.WorkPackage,
+            _msType => _requestedRunInfo.MsType,
+            _instrumentSettings => _requestedRunInfo.InstrumentSettings,
+            _wellplateName => _datasetInfo.Wellplate,
+            _wellNumber => _datasetInfo.WellNum,
+            _internalStandard => 'na',
+            _comment => 'Automatically created by Dataset entry',
+            _eusProposalID => _requestedRunInfo.EusProposalID,
+            _eusUsageType => _requestedRunInfo.EusUsageType,
+            _eusUsersList => _eusUsersList,
+            _mode => 'add-auto',
+            _request => _requestID,         -- Output
+            _message => _message,           -- Output
+            _returnCode => _returnCode,     -- Output
+            _secSep => _requestedRunInfo.SeparationGroup,
+            _mRMAttachment => '',
+            _status => 'Completed',
+            _skipTransactionRollback => true,
+            _autoPopulateUserListIfBlank => true);        -- Auto populate _eusUsersList if blank since this is an Auto-Request
+
+    If _returnCode <> '' Then
+        ROLLBACK;
+
+        _message := format('Create AutoReq run request failed: dataset %s with Proposal ID %s, Usage Type %s, and Users List %s -> %s',
+                            _newDataset, _requestedRunInfo.EusProposalID, _requestedRunInfo.EusUsageType, _eusUsersList, _message
+
+        RAISE ERROR '%', _message;
+
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
+    -- Consume the scheduled run
+    ---------------------------------------------------
+
+    Call consume_scheduled_run _datasetID, _requestID, _message => _message
+    --
+    If _returnCode <> '' Then
+        ROLLBACK;
+
+        _message := 'Consume operation failed: dataset ' || _newDataset || ' -> ' || _message;
+        RAISE ERROR '%', _message;
+
+        RETURN;
+    End If;
+
+    COMMIT;
+
+    -- Update t_cached_dataset_instruments
+    Call public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+
+    RAISE INFO 'Duplicated dataset %, creating %', _sourceDataset, _newDataset;
+    RAISE INFO 'New Dataset ID: %, New Requested Run ID: %', _datasetID, _requestID;
+
+    -- ToDo: Show this using RAISE INFO
+    SELECT *
+    FROM V_Dataset_Detail_Report_Ex
+    WHERE ID = _datasetID
 
 END
 $$;

@@ -55,7 +55,7 @@ DECLARE
 
     _myRowCount int := 0;
     _callingProcName text;
-    _currentLocation text;
+    _currentLocation text := 'Start';
     _deleteThreshold timestamp;
     _jobKeepThreshold timestamp;
     _logDeleteThreshold timestamp;
@@ -68,8 +68,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-    _currentLocation := 'Start';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -448,8 +446,6 @@ BEGIN
                 _message := 'Deleted ' || _myRowCount::text || ' entries from t_analysis_job_id since orphaned and older than ' || _logDeleteThreshold::text;
                 Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
             End If;
-
-            COMMIT;
 
         EXCEPTION
             WHEN OTHERS THEN
