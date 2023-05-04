@@ -35,6 +35,11 @@ AS $$
 DECLARE
     _myRowCount int := 0;
     _jobResetTran text := 'DependentJobStepReset';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -50,9 +55,11 @@ BEGIN
         _message := '';
 
         If _jobs = '' Then
-            _message := 'Job number not supplied';
-            RAISE INFO '%', _message;
-            RAISE EXCEPTION '%', _message;
+            _message := 'The jobs parameter is empty';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5201';
+            RETURN
         End If;
 
         -----------------------------------------------------------
@@ -62,12 +69,12 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_Jobs (
             Job int
-        )
+        );
 
         CREATE TEMP TABLE Tmp_JobStepsToReset (
             Job int,
             Step int
-        )
+        );
 
         -----------------------------------------------------------
         -- Parse the job list
@@ -105,80 +112,97 @@ BEGIN
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _infoOnly Then
-            -- ToDo: Use Raise Info
+            -- Preview steps that would be updated
 
-            SELECT JS.*
-            FROM V_Job_Steps2 JS
-                 INNER JOIN Tmp_JobStepsToReset JR
-                   ON JS.Job = JR.Job AND
-                      JS.Step = JR.Step
-            ORDER BY JS.Job, JS.Step
-        Else
+            RAISE INFO ' ';
 
-            BEGIN
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'Dataset_ID',
+                                'Step',
+                                'Tool',
+                                'State_Name',
+                                'State',
+                                'Dataset'
+                            );
 
-                -- Reset evaluated to 0 for the affected steps
-                --
-                UPDATE sw.t_job_step_dependencies
-                SET evaluated = 0, triggered = 0
-                FROM sw.t_job_step_dependencies JSD
+            _infoHeadSeparator := format(_formatSpecifier,
+                                '----------',
+                                '----------',
+                                '-----',
+                                '--------------------',
+                                '----------',
+                                '-----',
+                                '--------------------------------------------------'
+                            );
 
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE sw.t_job_step_dependencies
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = sw.t_job_step_dependencies.id;
-                ********************************************************************************/
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
 
-                                       ToDo: Fix this query
-
-                    INNER JOIN Tmp_JobStepsToReset JR
-                    ON JSD.Job = JR.Job AND
-                        JSD.Step = JR.Step
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-                -- Update the Job Steps to state Waiting
-                --
-                UPDATE sw.t_job_steps
-                SET state = 1,                    -- 1=waiting
-                    tool_version_id = 1,        -- 1=Unknown
-                    next_try = CURRENT_TIMESTAMP,
-                    remote_info_id = 1            -- 1=Unknown
-                FROM sw.t_job_steps JS
-
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE sw.t_job_steps
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = sw.t_job_steps.id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
+            FOR _previewData IN
+                SELECT JS.job, JS.dataset_id, JS.step, JS.tool, JS.state_name, JS.state, JS.dataset
+                FROM sw.V_job_steps JS
                      INNER JOIN Tmp_JobStepsToReset JR
                        ON JS.Job = JR.Job AND
                           JS.Step = JR.Step
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                ORDER BY JS.Job, JS.Step;
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                        _previewData.job,
+                                        _previewData.dataset_id,
+                                        _previewData.step,
+                                        _previewData.tool,
+                                        _previewData.state_name,
+                                        _previewData.state,
+                                        _previewData.dataset
+                                   );
 
-            END;
+                RAISE INFO '%', _infoData;
+
+            END LOOP;
+
+            DROP TABLE Tmp_Jobs;
+            DROP TABLE Tmp_JobStepsToReset;
+
+            RETURN;
 
         End If;
 
-    END TRY
-    BEGIN CATCH
-        Call public.format_error_message _message => _message, _myError output
+        -- Reset evaluated to 0 for the affected steps
+        --
+        UPDATE sw.t_job_step_dependencies JSD
+        SET evaluated = 0, triggered = 0
+        FROM Tmp_JobStepsToReset JR
+        WHERE JSD.Job  = JR.Job AND
+              JSD.Step = JR.Step;
 
-        -- Rollback any open transactions
-        ROLLBACK;
+        -- Update the Job Steps to state Waiting
+        --
+        UPDATE sw.t_job_steps JS
+        SET state = 1,                      -- 1=waiting
+            tool_version_id = 1,            -- 1=Unknown
+            next_try = CURRENT_TIMESTAMP,
+            remote_info_id = 1              -- 1=Unknown
+        FROM Tmp_JobStepsToReset JR
+        WHERE JS.Job  = JR.Job AND
+              JS.Step = JR.Step;
 
-        Call public.post_log_entry ('Error', _message, 'Reset_Dependent_Job_Steps', 'sw');
-    END CATCH
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+    END;
 
     DROP TABLE Tmp_Jobs;
     DROP TABLE Tmp_JobStepsToReset;

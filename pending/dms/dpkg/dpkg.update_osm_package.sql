@@ -26,6 +26,11 @@ AS $$
 DECLARE
     _debugMode int := 0;
     _authorized int := 0;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -50,50 +55,49 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    BEGIN TRY
+    BEGIN
 
-    ---------------------------------------------------
-    -- verify OSM package exists
-    ---------------------------------------------------
+        If _mode = 'delete' Then
+        --<delete>
 
-    If _mode = 'delete' Then
-    --<delete>
+            ---------------------------------------------------
+            -- 'delete' (mark as inactive) associated file attachments
+            ---------------------------------------------------
 
-        ---------------------------------------------------
-        -- 'delete' (mark as inactive) associated file attachments
-        ---------------------------------------------------
+            UPDATE T_File_Attachment
+            SET active = 0
+            WHERE Entity_Type = 'osm_package' AND
+                  Entity_ID = _osmPackageID;
 
-        UPDATE T_File_Attachment
-        SET active = 0
-        WHERE Entity_Type = 'osm_package' AND
-              Entity_ID = _osmPackageID;
+            ---------------------------------------------------
+            -- remove OSM package from table
+            ---------------------------------------------------
 
-        ---------------------------------------------------
-        -- remove OSM package from table
-        ---------------------------------------------------
+            DELETE FROM t_osm_package
+            WHERE osm_pkg_id = _osmPackageID;
 
-        DELETE FROM t_osm_package
-        WHERE osm_pkg_id = _osmPackageID;
+        End If; --<delete>
 
-    End If; --<delete>
-
-    If _mode = 'test' Then
-        RAISERROR ('Test: %d', 11, 20, _osmPackageID)
-    End If;
-
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
-
-        -- rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
+        If _mode = 'test' Then
+            RAISERROR ('Test: %d', 11, 20, _osmPackageID)
         End If;
 
-        Call post_log_entry 'Error', _msgForLog, 'UpdateOSMPackage'
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-    END CATCH
-    RETURN _myError
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+    END;
 
 END
 $$;

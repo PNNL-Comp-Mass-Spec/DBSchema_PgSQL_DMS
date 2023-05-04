@@ -2,14 +2,17 @@
 CREATE OR REPLACE PROCEDURE pc.get_protein_collection_state
 (
     _collectionID int,
-    _stateName text OUTPUT
+    INOUT _stateName text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Gets Collection State Name for given CollectionID
-          Returns state 0 if the _collectionID does not exist
+**  Desc:
+**      Gets Collection State Name for given CollectionID
+        Returns state 0 if the _collectionID does not exist
 **
 **
 **  Auth:   kja
@@ -21,20 +24,28 @@ AS $$
 DECLARE
     _stateID int;
 BEGIN
-    _stateID := 0;
-    _stateName := 'Unknown';
+    _message := '';
+    _returnCode := '';
 
-    If Exists (Select * From pc.t_protein_collections WHERE protein_collection_id = _collectionID) Then
-        SELECT collection_state_id INTO _stateID
-        FROM pc.t_protein_collections
-        WHERE (protein_collection_id = _collectionID)
+    SELECT collection_state_id
+    INTO _stateID
+    FROM pc.t_protein_collections
+    WHERE protein_collection_id = _collectionID;
+
+    If Not FOUND Then
+        _stateName := 'Unknown';
+        RETURN;
     End If;
 
-    SELECT state INTO _stateName
+    SELECT state
+    INTO _stateName
     FROM pc.t_protein_collection_states
-    WHERE (collection_state_id = _stateID)
+    WHERE collection_state_id = _stateID;
 
-    return 0
+    If NOT FOUND Then
+        _stateName := 'Unknown';
+    End If;
+
 END
 $$;
 

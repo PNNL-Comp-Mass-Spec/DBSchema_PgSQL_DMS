@@ -161,7 +161,7 @@ DECLARE
     _msg text;
     _folderName text;
     _addingDataset boolean := false;
-    _warning text;
+    _warning text := '';
     _warningAddon text;
     _experimentCheck text;
     _debugMsg text;
@@ -219,7 +219,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode:= '';
-    _warning := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

@@ -21,6 +21,7 @@ DECLARE
     _message text;
     _proposalList text;
 BEGIN
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------

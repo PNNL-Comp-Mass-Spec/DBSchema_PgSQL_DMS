@@ -36,8 +36,6 @@ BEGIN
     _message := '';
     _returnCode:= '';
 
---    declare _state int
-
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------

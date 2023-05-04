@@ -41,7 +41,6 @@ select * from Tmp_Job_Parameters
 RETURN;
 */
 
-    --
     ---------------------------------------------------
     -- Replace capture task job parameters
     ---------------------------------------------------

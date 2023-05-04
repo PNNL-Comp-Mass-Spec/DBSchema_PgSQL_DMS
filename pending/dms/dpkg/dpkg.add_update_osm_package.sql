@@ -45,13 +45,17 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _logErrors int := 0;
     _authorized int := 0;
     _rootPath int;
     _badIDs text := '';
     _goodIDs text := '';
     _wikiLink text := '';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -76,8 +80,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    BEGIN TRY
-
+    BEGIN
 
         ---------------------------------------------------
         -- Get active path
@@ -136,7 +139,7 @@ BEGIN
         -- Is entry already in database? (only applies to updates)
         ---------------------------------------------------
 
-        if _mode = 'update' Then
+        If _mode = 'update' Then
             -- cannot update a non-existent entry
             --
             If Not Exists (SELECT osm_pkg_id FROM dpkg.t_osm_package WHERE osm_pkg_id = _id) Then
@@ -149,7 +152,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        if _mode = 'add' Then
+        If _mode = 'add' Then
 
             -- Make sure the data package name doesn't already exist
             If Exists (SELECT * FROM dpkg.t_osm_package WHERE osm_package_name = _name) Then
@@ -158,7 +161,7 @@ BEGIN
             End If;
 
             -- create wiki page link
-            if NOT _name IS NULL Then
+            If NOT _name IS NULL Then
                 _wikiLink := 'http://prismwiki.pnl.gov/wiki/OSMPackages:' || REPLACE(_name, ' ', '_');
             End If;
 
@@ -196,7 +199,7 @@ BEGIN
         -- Action for update mode
         ---------------------------------------------------
         --
-        if _mode = 'update' Then
+        If _mode = 'update' Then
             --
             UPDATE dpkg.t_osm_package
             SET
@@ -228,17 +231,28 @@ BEGIN
 
         DROP TABLE Tmp_PrepRequestItems;
 
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-        -- rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
+        If _logErrors Then
+            If Coalesce(_id, 0) > 0 Then
+                _exceptionMessage := format('%s; OSM Package ID %s', _exceptionMessage, _id);
+            End If;
+
+            _message := local_error_handler (
+                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                            _callingProcLocation => '', _logError => true);
+        Else
+            _message := _exceptionMessage;
         End If;
 
-        If _logErrors > 0 Then
-            Call post_log_entry 'Error', _msgForLog, 'AddUpdateOSMPackage'
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
 
         DROP TABLE IF EXISTS Tmp_PrepRequestItems;

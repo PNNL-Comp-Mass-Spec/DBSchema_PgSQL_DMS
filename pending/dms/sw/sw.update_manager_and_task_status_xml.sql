@@ -17,7 +17,7 @@ AS $$
 **  Arguments:
 **    _managerStatusXML     Manager status XML
 **    _infoLevel            0 to update tables; 1 to view debug messages and update the tables; 2 to preview the data but not update tables, 3 to ignore _managerStatusXML, use test data, and update tables, 4 to ignore _managerStatusXML, use test data, and not update tables
-**    _logProcessorNames    true to log the names of updated processors (in cap.T_Log_Entries)
+**    _logProcessorNames    true to log the names of updated processors (in sw.T_Log_Entries)
 **    _message              Output message
 **    _returnCode           Return code
 **
@@ -39,7 +39,7 @@ AS $$
 **                           Use Try_Cast to convert from varchar to numbers
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/19/2018 mem - Add parameter _logProcessorNames
-**          12/15/2023 mem - Renamed _debugMode to _infoLevel and ported to PostgreSQL
+**          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -191,22 +191,22 @@ BEGIN
                FROM Src,
                     XMLTABLE('//StatusInfo/Root/Manager'
                               PASSING Src.StatusXML
-                              COLUMNS Processor_Name            citext PATH 'MgrName',             -- xmlNode.value('data((Manager/MgrName)[1])', 'text') Processor_Name,
-                                      Remote_Manager            citext PATH 'RemoteMgrName',       -- xmlNode.value('data((Manager/RemoteMgrName)[1])', 'text') Remote_Manager,
-                                      Mgr_Status                citext PATH 'MgrStatus',           -- xmlNode.value('data((Manager/MgrStatus)[1])', 'text') Mgr_Status,
-                                      Status_Date               citext PATH 'LastUpdate',          -- xmlNode.value('data((Manager/LastUpdate)[1])', 'text') Status_Date,
-                                      Last_Start_Time           citext PATH 'LastStartTime',       -- xmlNode.value('data((Manager/LastStartTime)[1])', 'text') Last_Start_Time,
-                                      CPU_Utilization           citext PATH 'CPUUtilization',      -- xmlNode.value('data((Manager/CPUUtilization)[1])', 'text') CPU_Utilization,
-                                      Free_Memory_MB            citext PATH 'FreeMemoryMB',        -- xmlNode.value('data((Manager/FreeMemoryMB)[1])', 'text') Free_Memory_MB,
-                                      Process_ID                citext PATH 'ProcessID',           -- xmlNode.value('data((Manager/ProcessID)[1])', 'text') Process_ID,
-                                      ProgRunner_ProcessID      citext PATH 'ProgRunnerProcessID', -- xmlNode.value('data((Manager/ProgRunnerProcessID)[1])', 'text') ProgRunner_ProcessID,
-                                      ProgRunner_CoreUsage      citext PATH 'ProgRunnerCoreUsage'  -- xmlNode.value('data((Manager/ProgRunnerCoreUsage)[1])', 'text') ProgRunner_CoreUsage
+                              COLUMNS Processor_Name            citext PATH 'MgrName',
+                                      Remote_Manager            citext PATH 'RemoteMgrName',
+                                      Mgr_Status                citext PATH 'MgrStatus',
+                                      Status_Date               citext PATH 'LastUpdate',
+                                      Last_Start_Time           citext PATH 'LastStartTime',
+                                      CPU_Utilization           citext PATH 'CPUUtilization',
+                                      Free_Memory_MB            citext PATH 'FreeMemoryMB',
+                                      Process_ID                citext PATH 'ProcessID',
+                                      ProgRunner_ProcessID      citext PATH 'ProgRunnerProcessID',
+                                      ProgRunner_CoreUsage      citext PATH 'ProgRunnerCoreUsage'
                             )
              ) ManagerInfoQ
              LEFT OUTER JOIN
                  ( SELECT xmltable.*
                    FROM Src,
-                        XMLTABLE('//StatusInfo/Root/Manager/RecentErrorMessages'                   -- xmlNode.value('data((Manager/RecentErrorMessages/ErrMsg)[1])', 'text') Most_Recent_Error_Message
+                        XMLTABLE('//StatusInfo/Root/Manager/RecentErrorMessages'
                                  PASSING Src.StatusXML
                                  COLUMNS Processor_Name            citext PATH '../MgrName',
                                          Status_Date               citext PATH '../LastUpdate',
@@ -222,11 +222,11 @@ BEGIN
                               PASSING Src.StatusXML
                               COLUMNS Processor_Name            citext PATH '../Manager/MgrName',
                                       Status_Date               citext PATH '../Manager/LastUpdate',
-                                      Step_Tool                 citext PATH 'Tool',                  -- XmlNode.value('data((Task/Tool)[1])', 'text') Step_Tool,
-                                      Task_Status               citext PATH 'Status',                -- XmlNode.value('data((Task/Status)[1])', 'text') Task_Status,
-                                      Duration_Minutes          citext PATH 'DurationMinutes',       -- XmlNode.value('data((Task/DurationMinutes)[1])', 'text') Duration_Minutes, -- needs minutes/hours conversion
-                                      Progress                  citext PATH 'Progress',              -- XmlNode.value('data((Task/Progress)[1])', 'text') Progress,
-                                      Current_Operation         citext PATH 'CurrentOperation'       -- XmlNode.value('data((Task/CurrentOperation)[1])', 'text') Current_Operation
+                                      Step_Tool                 citext PATH 'Tool',
+                                      Task_Status               citext PATH 'Status',
+                                      Duration_Minutes          citext PATH 'DurationMinutes',
+                                      Progress                  citext PATH 'Progress',
+                                      Current_Operation         citext PATH 'CurrentOperation'
                              )
                  ) TaskQ
                  ON ManagerInfoQ.Processor_Name = TaskQ.Processor_Name AND
@@ -238,13 +238,13 @@ BEGIN
                               PASSING Src.StatusXML
                               COLUMNS Processor_Name            citext PATH '../../Manager/MgrName',
                                       Status_Date               citext PATH '../../Manager/LastUpdate',
-                                      Task_Detail_Status        citext PATH 'Status',                  -- xmlNode.value('data((Task/TaskDetails/Status)[1])', 'text') Task_Detail_Status,
-                                      Job                       citext PATH 'Job',                     -- xmlNode.value('data((Task/TaskDetails/Job)[1])', 'text') Job,
-                                      Job_Step                  citext PATH 'Step',                    -- xmlNode.value('data((Task/TaskDetails/Step)[1])', 'text') Job_Step,
-                                      Dataset                   citext PATH 'Dataset',                 -- xmlNode.value('data((Task/TaskDetails/Dataset)[1])', 'text') Dataset,
-                                      Most_Recent_Log_Message   citext PATH 'MostRecentLogMessage',    -- xmlNode.value('data((Task/TaskDetails/MostRecentLogMessage)[1])', 'text') Most_Recent_Log_Message,
-                                      Most_Recent_Job_Info      citext PATH 'MostRecentJobInfo',       -- xmlNode.value('data((Task/TaskDetails/MostRecentJobInfo)[1])', 'text') Most_Recent_Job_Info,
-                                      Spectrum_Count            citext PATH 'SpectrumCount'            -- xmlNode.value('data((Task/TaskDetails/SpectrumCount)[1])', 'text') Spectrum_Count
+                                      Task_Detail_Status        citext PATH 'Status',
+                                      Job                       citext PATH 'Job',
+                                      Job_Step                  citext PATH 'Step',
+                                      Dataset                   citext PATH 'Dataset',
+                                      Most_Recent_Log_Message   citext PATH 'MostRecentLogMessage',
+                                      Most_Recent_Job_Info      citext PATH 'MostRecentJobInfo',
+                                      Spectrum_Count            citext PATH 'SpectrumCount'
                               )
                  ) TaskDetailQ
                 ON ManagerInfoQ.Processor_Name = TaskDetailQ.Processor_Name AND
@@ -351,25 +351,25 @@ BEGIN
             LOOP
                 _infoData := format(_formatSpecifier,
                                         _previewData.Processor_Name,
-                                         _previewData.Remote_Manager,
-                                         _previewData.Mgr_Status,
-                                         _previewData.Status_Date,
-                                         _previewData.Last_Start_Time,
-                                         _previewData.CPU_Utilization,
-                                         _previewData.Free_Memory_MB,
-                                         _previewData.Process_ID,
-                                         _previewData.ProgRunner_ProcessID,
-                                         _previewData.ProgRunner_CoreUsage,
-                                         _previewData.Most_Recent_Error_Message,
-                                         _previewData.Step_Tool,
-                                         _previewData.Task_Status,
-                                         _previewData.Duration_Minutes,
-                                         _previewData.Progress,
-                                         _previewData.Current_Operation,
-                                         _previewData.Task_Detail_Status,
-                                         _previewData.Job,
-                                         _previewData.Job_Step,
-                                         _previewData.Dataset
+                                        _previewData.Remote_Manager,
+                                        _previewData.Mgr_Status,
+                                        _previewData.Status_Date,
+                                        _previewData.Last_Start_Time,
+                                        _previewData.CPU_Utilization,
+                                        _previewData.Free_Memory_MB,
+                                        _previewData.Process_ID,
+                                        _previewData.ProgRunner_ProcessID,
+                                        _previewData.ProgRunner_CoreUsage,
+                                        _previewData.Most_Recent_Error_Message,
+                                        _previewData.Step_Tool,
+                                        _previewData.Task_Status,
+                                        _previewData.Duration_Minutes,
+                                        _previewData.Progress,
+                                        _previewData.Current_Operation,
+                                        _previewData.Task_Detail_Status,
+                                        _previewData.Job,
+                                        _previewData.Job_Step,
+                                        _previewData.Dataset
                                 );
 
                 RAISE INFO '%', _infoData;
@@ -435,7 +435,7 @@ BEGIN
             last_start_time = Src.Last_Start_Time_Value,
             cpu_utilization = public.try_cast(Src.cpu_utilization, null::real),
             free_memory_mb = public.try_cast(Src.free_memory_mb, null::real),
-            process_id = Src.process_id,
+            process_id = public.try_cast(Src.process_id, null::int),
             prog_runner_process_id = public.try_cast(Src.prog_runner_process_id, null::int),
             prog_runner_core_usage = public.try_cast(Src.prog_runner_core_usage, null::real),
             step_tool = Src.step_tool,
@@ -545,7 +545,7 @@ BEGIN
             Src.Last_Start_Time_Value,
             public.try_cast(Src.cpu_utilization, null::real),
             public.try_cast(Src.free_memory_mb, null::real),
-            Src.process_id,
+            public.try_cast(Src.process_id, null::int),
             public.try_cast(Src.prog_runner_process_id, null::int),
             public.try_cast(Src.prog_runner_core_usage, null::real),
             Src.most_recent_error_message,
@@ -560,7 +560,7 @@ BEGIN
             Src.dataset,
             Src.most_recent_log_message,
             Src.most_recent_job_info,
-            Src.spectrum_count,
+            public.try_cast(Src.spectrum_count, null::int),
             1 AS Monitor_Processor
         FROM Tmp_Processor_Status_Info Src
             LEFT OUTER JOIN sw.t_processor_status Target
@@ -580,7 +580,7 @@ BEGIN
 
             _logMessage := format('%s, processors %s', _statusMessageInfo, _updatedProcessors);
 
-            Call public.post_log_entry('Debug', _logMessage, 'Update_Manager_And_Task_Status_XML', 'sw');
+            Call public.post_log_entry('Debug', _logMessage, 'Update_Manager_and_Task_Status_XML', 'sw');
         End If;
 
     EXCEPTION

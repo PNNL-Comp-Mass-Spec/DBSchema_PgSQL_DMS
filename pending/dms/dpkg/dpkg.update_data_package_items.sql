@@ -44,7 +44,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _authorized int := 0;
     _entityName text;
     _logUsage bool := false;
@@ -74,7 +73,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    BEGIN TRY
+    BEGIN
         SELECT CASE
                 WHEN _itemType::citext IN ('analysis_jobs', 'job', 'jobs') THEN 'Job'
                 WHEN _itemType::citext IN ('datasets', 'dataset') THEN 'Dataset'
@@ -124,29 +123,32 @@ BEGIN
                                     _returnCode => _returnCode,     -- Output
                                     _callingUser => _callingUser,
                                     _infoOnly => _infoOnly);
-        if _myError <> 0 Then
+        If _myError <> 0 Then
             RAISERROR(_message, 11, 14);
         End If;
 
         DROP TABLE Tmp_DataPackageItems;
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
 
-        -- Rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _exceptionMessage := format('%s; Data Package ID %s', _exceptionMessage, _packageID);
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
 
-        Call post_log_entry 'Error', _msgForLog, 'UpdateDataPackageItems'
-
-        DROP TABLE IF EXISTS Tmp_DataPackageItems;
-    END CATCH
-
-    ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-    return _myError
+        DROP TABLE If Exists Tmp_DataPackageItems;
+    END;
 
 END
 $$;

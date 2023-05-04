@@ -106,7 +106,7 @@ DECLARE
     _lcCartName          text  := '';
     _lcCartConfig        text  := '';
     _lcColumn            text  := '';
-    _wellplateName           text  := '';
+    _wellplateName       text  := '';
     _wellNumber          text  := '';
     _datasetType         text  := '';
     _operatorUsername    text  := '';
@@ -123,6 +123,7 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
     _logDebugMessages := Coalesce(_logDebugMessages, false);
 
     ---------------------------------------------------

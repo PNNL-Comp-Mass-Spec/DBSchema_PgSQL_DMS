@@ -50,6 +50,11 @@ DECLARE
     _logErrors boolean := true;
     _columnID int := -1;
     _stateID int := -1;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode:= '';

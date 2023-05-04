@@ -21,6 +21,7 @@ AS $$
 DECLARE
     _message text;
 BEGIN
+
     _separationType := Coalesce(_separationType, '');
     _acqLengthMinutes := Coalesce(_acqLengthMinutes, 0);
     _optimalSeparationType := '';

@@ -41,11 +41,11 @@ BEGIN
         ID             int NOT NULL,
         Processor_Name text NOT NULL,
         MgrWorkDir     text NULL
-    )
+    );
 
     CREATE INDEX IX_Tmp_MgrWorkDirs ON Tmp_MgrWorkDirs (ID);
 
-    Begin Try
+    BEGIN
 
         ---------------------------------------------------
         -- Populate a temporary table with the new information
@@ -108,7 +108,6 @@ BEGIN
         End If;
 
     END;
-
 
     DROP TABLE Tmp_MgrWorkDirs;
 END

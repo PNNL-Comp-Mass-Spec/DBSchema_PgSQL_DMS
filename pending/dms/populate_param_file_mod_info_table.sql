@@ -41,7 +41,7 @@ DECLARE
     _continueAppendDescriptions boolean;
     _modTypeFilter text;
     _s text;
-    _mMD text;
+    _mmd text;
     _massModFilterComparison text;
     _addFilter boolean;
 BEGIN
@@ -214,11 +214,11 @@ BEGIN
 
             _modTypeFilter := format('(ModType = ''%s'')', _currentColumn);
 
-            _mMD := '';
-            _mMD := _mMD || ' SELECT Param_File_ID, MIN(Mod_Description) AS Mod_Description';
-            _mMD := _mMD || ' FROM Tmp_ParamFileModInfo';
-            _mMD := _mMD || ' WHERE (Used = 0) AND ' || _modTypeFilter;
-            _mMD := _mMD || ' GROUP BY Param_File_ID';
+            _mmd := '';
+            _mmd := _mmd || ' SELECT Param_File_ID, MIN(Mod_Description) AS Mod_Description';
+            _mmd := _mmd || ' FROM Tmp_ParamFileModInfo';
+            _mmd := _mmd || ' WHERE (Used = 0) AND ' || _modTypeFilter;
+            _mmd := _mmd || ' GROUP BY Param_File_ID';
 
             _s := '';
             _s := _s || ' UPDATE Tmp_ParamFileModResults';
@@ -228,7 +228,7 @@ BEGIN
             _s := _s ||            ' ELSE '''' ';
             _s := _s ||            ' END || SourceQ.Mod_Description';
             _s := _s || ' FROM Tmp_ParamFileModResults PFMR INNER JOIN';
-            _s := _s ||      ' (' || _mMD || ') SourceQ ';
+            _s := _s ||      ' (' || _mmd || ') SourceQ ';
             _s := _s ||      ' ON PFMR.Param_File_ID = SourceQ.Param_File_ID';
             --
             EXECUTE format(_s, _currentColumn, _currentColumn, _currentColumn);
@@ -242,7 +242,7 @@ BEGIN
                 _s := _s || ' UPDATE Tmp_ParamFileModInfo';
                 _s := _s || ' SET Used = 1';
                 _s := _s || ' FROM Tmp_ParamFileModInfo PFMI INNER JOIN';
-                _s := _s ||      ' (' || _mMD || ') SourceQ';
+                _s := _s ||      ' (' || _mmd || ') SourceQ';
                 _s := _s ||      ' ON PFMI.Param_File_ID = SourceQ.Param_File_ID AND';
                 _s := _s ||         ' PFMI.Mod_Description = SourceQ.Mod_Description';
                 _s := _s || ' WHERE ' || _modTypeFilter;

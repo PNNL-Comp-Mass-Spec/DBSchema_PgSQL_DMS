@@ -43,8 +43,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-    Set ANSI_PADDING ON
-
     _message := '';
     _returnCode:= '';
 

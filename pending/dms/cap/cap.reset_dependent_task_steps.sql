@@ -47,7 +47,6 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-
     BEGIN
 
         -----------------------------------------------------------
@@ -58,8 +57,9 @@ BEGIN
         _infoOnly := Coalesce(_infoOnly, false);
 
         If _jobs = '' Then
-            _message := 'Job number not supplied';
-            RAISE INFO '%', _message;
+            _message := 'The jobs parameter is empty';
+            RAISE WARNING '%', _message;
+
             _returnCode := 'U5201';
             RETURN
         End If;
@@ -137,7 +137,7 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT TS.job, TS.dataset_id, TS.step, TS.tool, TS.state_name, TS.state, TS.dataset;
+                SELECT TS.job, TS.dataset_id, TS.step, TS.tool, TS.state_name, TS.state, TS.dataset
                 FROM cap.V_task_steps TS
                      INNER JOIN Tmp_JobStepsToReset JR
                        ON TS.Job = JR.Job AND
@@ -186,15 +186,11 @@ BEGIN
               TS.Step = JR.Step;
 
         -- Change the capture task job state from failed to running
-        UPDATE cap.t_tasks
+        UPDATE cap.t_tasks T
         SET State = 2
         FROM Tmp_JobStepsToReset JR
-        WHERE T.Job  = JR.Job;
-
-        DROP TABLE Tmp_Jobs;
-        DROP TABLE Tmp_JobStepsToReset;
-
-        RETURN;
+        WHERE T.Job = JR.Job AND
+              T.State = 5;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -211,11 +207,10 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
-        DROP TABLE IF EXISTS Tmp_Jobs;
-        DROP TABLE IF EXISTS Tmp_JobStepsToReset;
     END;
 
+    DROP TABLE Tmp_Jobs;
+    DROP TABLE Tmp_JobStepsToReset;
 END
 $$;
 

@@ -25,9 +25,14 @@ DECLARE
     _mode text := 'auto-import';
     _callingUser text;
 
-    _myRowCount int := 0;
-    _message text := '';
+    _message text;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
+    _message := '';
 
     BEGIN
 
@@ -77,7 +82,7 @@ BEGIN
                     _mode,
                     _message => _message,      -- Output
                     _returnCode => _returnCode,      -- Output
-                    _callingUser
+                    _callingUser => _callingUser);
 
         END LOOP;
 

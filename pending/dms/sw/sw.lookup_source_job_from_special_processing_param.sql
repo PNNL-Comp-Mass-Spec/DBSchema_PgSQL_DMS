@@ -137,6 +137,7 @@ BEGIN
                                           _sourceJob => _sourceJob,             -- Output
                                           _autoQueryUsed => _autoQueryUsed,     -- Output
                                           _warningMessage => _warningMessage,   -- Output
+                                          _returnCode => _returnCode,           -- Output
                                           _previewSql => _previewSql,
                                           _autoQuerySql => _autoQuerySql);      -- Output
 
@@ -209,6 +210,7 @@ BEGIN
                           _sourceJob => _sourceJob2,            -- Output
                           _autoQueryUsed => _autoQueryUsed,     -- Output
                           _warningMessage => _warningMessage,   -- Output
+                          _returnCode => _returnCode,           -- Output
                           _previewSql = _previewSql,
                           _autoQuerySql = _autoQuerySql);       -- Output
 

@@ -16,34 +16,40 @@ AS $$
 **
 **  Desc:
 **      Examines the list of containers and/or locations in _containerList
-**
 **      For items that are locations, creates a new container by calling add_update_material_container
-**
 **      Returns a consolidated list of container names
 **
 **  Arguments:
-**    _containerList        Comma separated list of locations and containers (can be a mix of both)
-**    _mode                 'add' or 'create'
+**    _containerList        Input / Output: Comma separated list of locations and containers (can be a mix of both)
+**    _comment              Comment
+**    _type                 Container type: 'Box', 'Bag', or 'Wellplate'
+**    _researcher           Researcher name; supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
+**    _mode                 Typically 'add' or 'create'
+**                          However, if _mode is 'verify_only', will populate a temporary table with items in _containerList, then will exit the procedure without making any changes
 **
 **  Returns:
-**    Comma separated list of container names
+**    Comma separated list of container names (via argument _containerList)
 **
 **  Auth:   grk
 **  Date:   04/27/2010 grk - initial release
 **          09/23/2011 grk - accomodate researcher field in AddUpdateMaterialContainer
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
+**          05/04/2023 mem - Use TOP 1 when retrieving the next item to process
 **
 *****************************************************/
 DECLARE
     _msg text;
     _item text;
     _container text;
-    _continue boolean;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode:= '';
-    _msg := '';
 
     BEGIN
 
@@ -104,18 +110,18 @@ BEGIN
         -- Make new containers for locations
         ---------------------------------------------------
         --
-        _continue := true;
-
-        WHILE _continue
+        WHILE true
         LOOP
 
             SELECT Item
             INTO _item
             FROM Tmp_ContainerItems
-            WHERE IsLocation;
+            WHERE IsLocation
+            LIMIT 1;
 
             If Not FOUND Then
-                _continue := false;
+                -- Break out of the while loop
+                EXIT;
             Else
                 _container := '(generate name)';
 
@@ -147,11 +153,10 @@ BEGIN
         -- Make consolidated list of containers
         ---------------------------------------------------
         --
-        SELECT string_agg(Container, ', ')
+        SELECT string_agg(Container, ', ' ORDER BY Container)
         INTO _containerList
         FROM Tmp_ContainerItems
-        WHERE NOT Container IS NULL
-        ORDER BY Container;
+        WHERE NOT Container IS NULL;
 
     EXCEPTION
         WHEN OTHERS THEN

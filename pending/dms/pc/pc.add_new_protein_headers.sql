@@ -114,17 +114,22 @@ BEGIN
 
         _currentLocation := 'Done iterating';
 
-    End Try
-    Begin Catch
-        -- Error caught; log the error then abort processing
-        _callingProcName := Coalesce(ERROR_PROCEDURE(), 'AddNewProteinHeaders');
-        Call _logError => 1,
-                                _errorNum = _myError output, _message = _message output
-        Return;
-    End Catch
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-Done:
-    Return _myError
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+    END;
 
 END
 $$;

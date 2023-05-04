@@ -194,7 +194,7 @@ BEGIN
             ORDER BY EUS_Instrument_ID
         LOOP
             If _infoOnly Then
-                RAISE INFO '%', 'EXEC GetMonthlyInstrumentUsageReport '''', ' || Cast( _eusInstrumentId As text) || ', ' || _year || ', ' || _month || ', ''report'', _message => _message';
+                RAISE INFO 'SELECT * FROM get_monthly_instrument_usage_report ('''', %, %, %, ''report'')', _eusInstrumentId, _year, _month;
             End If;
 
             If Not _skipProcedureCall Then
@@ -253,7 +253,7 @@ BEGIN
 
     END;
 
-    If _infoOnly and _returnCode <> '' Then
+    If _infoOnly And _returnCode <> '' Then
         RAISE INFO '%', _message;
     End If;
 

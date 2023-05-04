@@ -34,7 +34,7 @@ AS $$
 **                           Add parameter _debugMode
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/19/2018 mem - Add parameter _logProcessorNames
-**          12/15/2023 mem - Renamed _debugMode to _infoLevel and ported to PostgreSQL
+**          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -123,7 +123,7 @@ BEGIN
             Free_Memory_MB text, -- numeric
             Process_ID text, -- int
             Most_Recent_Error_Message text,
-            Tool text,
+            Step_Tool text,
             Task_Status text,
             Duration_Minutes text, -- numeric
             Progress text, -- numeric
@@ -133,7 +133,7 @@ BEGIN
             Job_Step text, -- int
             Dataset text,
             Most_Recent_Log_Message text,
-            Most_Recent_task_Info text,
+            Most_Recent_Job_Info text,
             Spectrum_Count text, -- int
             Monitor_Processor boolean,
             Remote_Status_Location text
@@ -155,7 +155,7 @@ BEGIN
                           Free_Memory_MB,
                           Process_ID,
                           Most_Recent_Error_Message,
-                          Tool,
+                          Step_Tool,
                           Task_Status,
                           Duration_Minutes,
                           Progress,
@@ -165,7 +165,7 @@ BEGIN
                           Job_Step,
                           Dataset,
                           Most_Recent_Log_Message,
-                          Most_Recent_task_Info,
+                          Most_Recent_Job_Info,
                           Spectrum_Count,
                           Monitor_Processor,
                           Remote_Status_Location)
@@ -175,7 +175,7 @@ BEGIN
                RecentErrorMessageQ.Most_Recent_Error_Message,
                TaskQ.Tool, TaskQ.Task_Status, TaskQ.Duration_Minutes, TaskQ.Progress, TaskQ.Current_Operation,
                TaskDetailQ.Task_Detail_Status, TaskDetailQ.Job, TaskDetailQ.Job_Step, TaskDetailQ.Dataset,
-               TaskDetailQ.Most_Recent_Log_Message, TaskDetailQ.Most_Recent_Task_Info, TaskDetailQ.Spectrum_Count,
+               TaskDetailQ.Most_Recent_Log_Message, TaskDetailQ.Most_Recent_Job_Info, TaskDetailQ.Spectrum_Count,
                true As Monitor_Processor,
                '' As Remote_Status_Location
         FROM ( SELECT xmltable.*
@@ -210,7 +210,7 @@ BEGIN
                               PASSING Src.StatusXML
                               COLUMNS Processor_Name            citext PATH '../Manager/MgrName',
                                       Status_Date               citext PATH '../Manager/LastUpdate',
-                                      Tool                      citext PATH 'Tool',
+                                      Step_Tool                 citext PATH 'Tool',
                                       Task_Status               citext PATH 'Status',
                                       Duration_Minutes          citext PATH 'DurationMinutes',
                                       Progress                  citext PATH 'Progress',
@@ -231,7 +231,7 @@ BEGIN
                                       Job_Step                  citext PATH 'Step',
                                       Dataset                   citext PATH 'Dataset',
                                       Most_Recent_Log_Message   citext PATH 'MostRecentLogMessage',
-                                      Most_Recent_Task_Info     citext PATH 'MostRecentJobInfo',
+                                      Most_Recent_Job_Info      citext PATH 'MostRecentJobInfo',
                                       Spectrum_Count            citext PATH 'SpectrumCount'
                               )
                  ) TaskDetailQ
@@ -256,7 +256,7 @@ BEGIN
                                 'Free_Mem_MB',
                                 'Process_ID',
                                 'Most_Recent_Error',
-                                'Tool',
+                                'Step_Tool',
                                 'Task_Status',
                                 'Duration_Min',
                                 'Progress',
@@ -295,7 +295,7 @@ BEGIN
                        Free_Memory_MB,
                        Process_ID,
                        Most_Recent_Error_Message,
-                       Tool,
+                       Step_Tool,
                        Task_Status,
                        Duration_Minutes,
                        Progress,
@@ -314,7 +314,7 @@ BEGIN
                                         _previewData.Free_Memory_MB,
                                         _previewData.Process_ID,
                                         _previewData.Most_Recent_Error_Message,
-                                        _previewData.Tool,
+                                        _previewData.Step_Tool,
                                         _previewData.Task_Status,
                                         _previewData.Duration_Minutes,
                                         _previewData.Progress,
@@ -360,19 +360,19 @@ BEGIN
         SET mgr_status = Src.mgr_status,
             status_date = Status_Date_Value,
             last_start_time = Src.Last_Start_Time_Value,
-            cpu_utilization = public.try_cast(Src.cpu_utilization, 0.0),
-            free_memory_mb = public.try_cast(Src.free_memory_mb, 0.0),
-            process_id = public.try_cast(Src.process_id, 0),
-            step_tool = Src.tool,
+            cpu_utilization = public.try_cast(Src.cpu_utilization, null::real),
+            free_memory_mb = public.try_cast(Src.free_memory_mb, null::real),
+            process_id = public.try_cast(Src.process_id, null::int),
+            step_tool = Src.step_tool,
             task_status = Src.task_status,
-            duration_hours = Coalesce(public.try_cast(Src.Duration_Minutes, 0.0) / 60.0, 0),
-            progress = Coalesce(public.try_cast(Src.progress, 0.0), 0),
+            duration_hours = Coalesce(public.try_cast(Src.Duration_Minutes, null::real) / 60.0, 0),
+            progress = Coalesce(public.try_cast(Src.progress, null::real), 0),
             current_operation = Src.current_operation,
             task_detail_status = Src.task_detail_status,
-            job = public.try_cast(Src.job, 0),
-            job_step = public.try_cast(Src.job_step, 0),
+            job = public.try_cast(Src.job, null::int),
+            job_step = public.try_cast(Src.job_step, null::int),
             dataset = Src.dataset,
-            spectrum_count = public.try_cast(Src.spectrum_count, 0),
+            spectrum_count = public.try_cast(Src.spectrum_count, null::int),
             most_recent_error_message = CASE WHEN Src.most_recent_error_message <> ''
                                         THEN Src.most_recent_error_message
                                         ELSE Target.Most_Recent_Error_Message
@@ -381,10 +381,10 @@ BEGIN
                                       THEN Src.Most_Recent_Log_Message
                                       ELSE Target.Most_Recent_Log_Message
                                       END,
-            Most_Recent_task_Info = CASE WHEN Src.Most_Recent_task_Info <> ''
-                                    THEN Src.Most_Recent_task_Info
-                                    ELSE Target.Most_Recent_task_Info
-                                    END
+            Most_Recent_Job_Info = CASE WHEN Src.Most_Recent_Job_Info <> ''
+                                   THEN Src.Most_Recent_Job_Info
+                                   ELSE Target.Most_Recent_Job_Info
+                                   END
         FROM Tmp_Processor_Status_Info Src
         WHERE Src.Processor_Name = Target.Processor_Name;
         --
@@ -393,7 +393,7 @@ BEGIN
         _statusMessageInfo := format('%s, Preserved: %s', _statusMessageInfo, _myRowCount);
 
         ---------------------------------------------------
-        -- Add missing processors to the table
+        -- Add missing processors to cap.t_processor_status
         ---------------------------------------------------
         --
         INSERT INTO cap.t_processor_status (
@@ -415,7 +415,7 @@ BEGIN
             job_step,
             dataset,
             most_recent_log_message,
-            most_recent_task_info,
+            most_recent_job_info,
             spectrum_count,
             monitor_processor,
             remote_status_location
@@ -424,22 +424,22 @@ BEGIN
                Src.mgr_status,
                Src.Status_Date_Value,
                Src.Last_Start_Time_Value,
-               public.try_cast(Src.cpu_utilization, 0.0),
-               public.try_cast(Src.free_memory_mb, 0.0),
-               public.try_cast(Src.process_id, 0),
+               public.try_cast(Src.cpu_utilization, null::real),
+               public.try_cast(Src.free_memory_mb, null::real),
+               public.try_cast(Src.process_id, null::int),
                Src.most_recent_error_message,
-               Src.tool,
+               Src.step_tool,
                Src.task_status,
-               Coalesce(public.try_cast(Src.Duration_Minutes, 0.0) / 60.0, 0),
-               Coalesce(public.try_cast(Src.progress, 0.0), 0),
+               Coalesce(public.try_cast(Src.Duration_Minutes, null::real) / 60.0, 0),
+               Coalesce(public.try_cast(Src.progress, null::real), 0),
                Src.current_operation,
                Src.task_detail_status,
-               public.try_cast(Src.job, 0),
-               public.try_cast(Src.job_step, 0),
+               public.try_cast(Src.job, null::int),
+               public.try_cast(Src.job_step, null::int),
                Src.dataset,
                Src.most_recent_log_message,
-               Src.most_recent_task_info,
-               public.try_cast(Src.spectrum_count, 0),
+               Src.most_recent_job_info,
+               public.try_cast(Src.spectrum_count, null::int),
                CASE WHEN Src.monitor_processor THEN 1 ELSE 0 END,
                Src.remote_status_location
         FROM Tmp_Processor_Status_Info Src
@@ -451,7 +451,7 @@ BEGIN
 
         _statusMessageInfo := format('%s, Inserted: %s', _statusMessageInfo, _myRowCount);
 
-        If _logProcessorNames > 0 Then
+        If _logProcessorNames Then
 
             SELECT string_agg(Processor_Name, ', ')
             INTO _updatedProcessors
@@ -460,7 +460,7 @@ BEGIN
 
             _logMessage := format('%s, processors %s', _statusMessageInfo, _updatedProcessors);
 
-            Call public.post_log_entry('Debug', _logMessage, 'UpdateManagerAndTaskStatusXML', 'cap');
+            Call public.post_log_entry('Debug', _logMessage, 'Update_Capture_Task_Manager_and_Task_Status_XML', 'cap');
         End If;
 
     EXCEPTION

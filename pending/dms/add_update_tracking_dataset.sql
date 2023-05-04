@@ -102,7 +102,7 @@ DECLARE
     _matchCount int;
     _newUsername text;
     _storagePathID int := 0;
-    _warningWithPrefix text;
+    _warningWithPrefix text := '';
     _endDate timestamp;
     _startDate timestamp;
 
@@ -113,7 +113,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode:= '';
-    _warning := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

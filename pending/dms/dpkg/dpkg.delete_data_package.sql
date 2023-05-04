@@ -29,7 +29,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _dataPackageName text;
     _datasetOrExperiment text := '';
     _datasetOrExperimentCount int := 0;
@@ -37,6 +36,11 @@ DECLARE
     _lastDatasetOrExperiment text;
     _logMessage text;
     _sharePath text := '';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -47,7 +51,7 @@ BEGIN
     --
     _infoOnly := Coalesce(_infoOnly, true);
 
-    BEGIN TRY
+    BEGIN
 
         If Not Exists (SELECT * FROM dpkg.t_data_package WHERE data_pkg_id = _packageID) Then
             _message := format('Data package %s not found in dpkg.t_data_package', _packageID);
@@ -92,9 +96,10 @@ BEGIN
         -- Lookup the data package name
         ---------------------------------------------------
         --
-        SELECT "package_name" INTO _dataPackageName
+        SELECT package_name
+        INTO _dataPackageName
         FROM dpkg.t_data_package
-        WHERE data_pkg_id = _packageID
+        WHERE data_pkg_id = _packageID;
 
         ---------------------------------------------------
         -- Find the first and last dataset in the data package
@@ -106,10 +111,8 @@ BEGIN
         INTO _firstDatasetOrExperiment, _lastDatasetOrExperiment, _datasetOrExperimentCount
         FROM dpkg.t_data_package_datasets
         WHERE data_pkg_id = _packageID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
+        If _datasetOrExperimentCount > 0 Then
             _datasetOrExperiment := 'Datasets';
         Else
             SELECT Min(experiment),
@@ -118,10 +121,8 @@ BEGIN
             INTO _firstDatasetOrExperiment, _lastDatasetOrExperiment, _datasetOrExperimentCount
             FROM dpkg.t_data_package_experiments
             WHERE data_pkg_id = _packageID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
+            If _datasetOrExperimentCount > 0 Then
                 _datasetOrExperiment := 'Experiments';
             End If;
         End If;
@@ -130,9 +131,10 @@ BEGIN
         -- Lookup the share path on Protoapps
         ---------------------------------------------------
         --
-        SELECT Share_Path INTO _sharePath
-        FROM V_Data_Package_Paths
-        WHERE ID = _packageID
+        SELECT Share_Path
+        INTO _sharePath
+        FROM dpkg.V_Data_Package_Paths
+        WHERE ID = _packageID;
 
         ---------------------------------------------------
         -- Delete the associated items
@@ -150,14 +152,12 @@ BEGIN
         End If;
 
         DELETE FROM dpkg.t_data_package
-        WHERE data_pkg_id = _packageID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE data_pkg_id = _packageID;
 
-        If _myRowCount = 0 Then
-            _message := format('No rows were deleted from dpkg.t_data_package for data package %s; this is unexpected', _packageID);
-        Else
+        If FOUND Then
             _message := format('Deleted data package %s and all associated metadata', _packageID);
+        Else
+            _message := format('No rows were deleted from dpkg.t_data_package for data package %s; this is unexpected', _packageID);
         End If;
 
         -- Log the deletion
@@ -165,7 +165,7 @@ BEGIN
         _logMessage := _message || ': ' || _dataPackageName;
 
         If _datasetOrExperimentCount > 0 Then
-            -- Next append the dataset or experiment names
+            -- Append the dataset or experiment counts and first/last names
             _logMessage := format('%s; Included %s %s: %s - %s',
                                 _logMessage,
                                 _datasetOrExperimentCount,
@@ -184,17 +184,25 @@ BEGIN
         RAISE INFO '%', '';
         RAISE INFO '%', 'Be sure to delete directory ' || _sharePath;
 
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-        -- rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
+        _exceptionMessage := format('%s; Data Package ID %s', _exceptionMessage, _packageID);
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
 
-        Call post_log_entry 'Error', _msgForLog, 'DeleteDataPackage'
-    END CATCH
+    END;
 
 END
 $$;

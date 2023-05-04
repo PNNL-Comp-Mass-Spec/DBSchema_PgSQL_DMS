@@ -120,12 +120,14 @@ DECLARE
     _expId int;
     _wn text;
     _nameFractionLinker text;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode := '';
-
-    -- t_experiments column variables
-    --
 
     Begin
 
@@ -185,13 +187,13 @@ BEGIN
         CREATE TEMP TABLE Tmp_Experiment_to_Biomaterial_Map (
             Biomaterial_Name text not null,
             Biomaterial_ID int null
-        )
+        );
 
         CREATE TEMP TABLE Tmp_ExpToRefCompoundMap (
             Compound_IDName text not null,
             Colon_Pos int null,
             Compound_ID int null
-        )
+        );
 
         _dropTempTables := true;
 

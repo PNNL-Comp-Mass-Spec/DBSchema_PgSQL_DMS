@@ -33,7 +33,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run
     _stagingLocation text = null,
     _requestIDForUpdate int = null,
     _logDebugMessages boolean = false,
-    _resolvedInstrumentInfo text = '' output
+    INOUT _resolvedInstrumentInfo text = ''
 )
 LANGUAGE plpgsql
 AS $$

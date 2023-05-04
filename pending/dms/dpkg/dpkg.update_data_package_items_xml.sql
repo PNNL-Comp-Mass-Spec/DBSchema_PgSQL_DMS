@@ -42,6 +42,11 @@ DECLARE
     _logUsage bool := false;
     _logMessage text;
     _xml xml;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -66,7 +71,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    BEGIN TRY
+    BEGIN
 
         _removeParents := Coalesce(_removeParents, 0);
 
@@ -107,31 +112,31 @@ BEGIN
                                 _message output,
                                 _callingUser);
 
-        if _myError <> 0 Then
+        If _myError <> 0 Then
             RAISERROR(_message, 11, 14);
         End If;
 
         DROP TABLE Tmp_DataPackageItems;
-     ---------------------------------------------------
-     ---------------------------------------------------
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
 
-        -- rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
 
-        Call post_log_entry 'Error', _msgForLog, 'UpdateDataPackageItemsXML'
+        DROP TABLE If Exists Tmp_DataPackageItems;
+    END;
 
-        DROP TABLE IF EXISTS Tmp_DataPackageItems;
-    END CATCH
-
-     ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-    return _myError
 END
 $$;
 

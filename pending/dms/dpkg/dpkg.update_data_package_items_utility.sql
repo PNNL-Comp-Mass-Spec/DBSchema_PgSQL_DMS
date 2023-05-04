@@ -67,10 +67,17 @@ DECLARE
 
     _myRowCount int := 0;
     _itemCountChanged int := 0;
+    _createdDataPackageDatasetsTable boolean := false;
+
     _actionMsg text;
     _datasetsRemoved text;
     _packageID int;
     _dataPackageList text := '';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -97,7 +104,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    BEGIN TRY
+    BEGIN
 
         CREATE TEMP TABLE Tmp_DatasetIDsToAdd (
             DataPackageID int NOT NULL,
@@ -1052,6 +1059,8 @@ BEGIN
         -- <UpdateDataPackageItemCounts>
             CREATE TEMP TABLE Tmp_DataPackageDatasets (ID int)
 
+            _createdDataPackageDatasetsTable := true;
+
             INSERT INTO Tmp_DataPackageDatasets (ID)
             SELECT DISTINCT DataPackageID
             FROM Tmp_DataPackageItems
@@ -1084,7 +1093,7 @@ BEGIN
         -- Update the last modified date for affected data packages
         ---------------------------------------------------
         --
-        if _itemCountChanged > 0 Then
+        If _itemCountChanged > 0 Then
             UPDATE dpkg.t_data_package
             SET last_modified = CURRENT_TIMESTAMP
             WHERE data_pkg_id IN (
@@ -1104,26 +1113,32 @@ BEGIN
             End If;
         End If;
 
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-        -- rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
+        _exceptionMessage := format('%s; Data Package ID %s', _exceptionMessage, _packageID);
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
 
-        Call post_log_entry 'Error', _msgForLog, 'UpdateDataPackageItemsUtility'
-    END CATCH
-
-    ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-    return _myError
+    END;
 
     DROP TABLE Tmp_DatasetIDsToAdd;
     DROP TABLE Tmp_JobsToAddOrDelete;
-    DROP TABLE Tmp_DataPackageDatasets;
+
+    If _createdDataPackageDatasetsTable Then
+        DROP TABLE Tmp_DataPackageDatasets;
+    End If;
 END
 $$;
 

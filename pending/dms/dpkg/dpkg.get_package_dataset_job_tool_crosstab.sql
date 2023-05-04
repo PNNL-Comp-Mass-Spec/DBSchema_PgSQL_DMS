@@ -23,19 +23,22 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _colName text := '';
     _sql text;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode:= '';
 
-    ---------------------------------------------------
-    ---------------------------------------------------
+
     BEGIN
 
         ---------------------------------------------------
-        -- temp tables
+        -- Create temporary tables
         ---------------------------------------------------
         --
         CREATE TEMP TABLE Tmp_Tools (

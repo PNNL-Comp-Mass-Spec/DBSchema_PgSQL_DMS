@@ -35,7 +35,8 @@ AS $$
 DECLARE
     _myRowCount int := 0;
     _storagePathID int;
-    _message text;
+    _message text := '';
+    _returnCode text := '';
     _instrumentInfo record;
     _callingProcName text;
     _currentLocation text := 'Start';
@@ -92,7 +93,7 @@ BEGIN
                 If _infoOnly Then
                     RAISE INFO '%', _message;
                 Else
-                    Call post_log_entry ('Error', _message, 'GetInstrumentStoragePathForNewDatasets');
+                    Call post_log_entry ('Error', _message, 'Get_Instrument_Storage_Path_For_New_Datasets');
                 End If;
             Else
             -- <b>

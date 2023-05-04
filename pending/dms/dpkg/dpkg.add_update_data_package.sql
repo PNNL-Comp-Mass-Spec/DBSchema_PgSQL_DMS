@@ -24,7 +24,8 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds new or edits existing T_Data_Package
+**  Desc:
+**      Adds new or edits existing item in T_Data_Package
 **
 **  Arguments:
 **    _id     Data Package ID
@@ -64,6 +65,11 @@ DECLARE
     _logErrors int := 0;
     _authorized int := 0;
     _rootPath int;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -90,270 +96,251 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    BEGIN TRY
+    BEGIN
 
-    ---------------------------------------------------
-    -- Validate input fields
-    ---------------------------------------------------
+        ---------------------------------------------------
+        -- Validate input fields
+        ---------------------------------------------------
 
-    _team := Coalesce(_team, '');
-    _packageType := Coalesce(_packageType, '');
-    _description := Coalesce(_description, '');
-    _comment := Coalesce(_comment, '');
+        _team := Coalesce(_team, '');
+        _packageType := Coalesce(_packageType, '');
+        _description := Coalesce(_description, '');
+        _comment := Coalesce(_comment, '');
 
-    If _team = '' Then
-        _message := 'Data package team cannot be blank';
-        RAISERROR (_message, 10, 1)
-        return 51005
-    End If;
-
-    If _packageType = '' Then
-        _message := 'Data package type cannot be blank';
-        RAISERROR (_message, 10, 1)
-        return 51006
-    End If;
-
-    -- Make sure the team name is valid
-    If Not Exists (SELECT * FROM dpkg.t_data_package_teams WHERE team_name = _team) Then
-        _message := 'Teams "' || _team || '" is not a valid data package team';
-        RAISERROR (_message, 10, 1)
-        return 51007
-    End If;
-
-    -- Make sure the data package type is valid
-    If Not Exists (SELECT * FROM dpkg.t_data_package_type WHERE package_type = _packageType) Then
-        _message := 'Type "' || _packageType || '" is not a valid data package type';
-        RAISERROR (_message, 10, 1)
-        return 51008
-    End If;
-
-    ---------------------------------------------------
-    -- Get active path
-    ---------------------------------------------------
-    --
-    --
-    SELECT path_id INTO _rootPath
-    FROM dpkg.t_data_package_storage
-    WHERE state = 'Active'
-
-    ---------------------------------------------------
-    -- Validate the state
-    ---------------------------------------------------
-
-    If Not Exists (SELECT * FROM dpkg.t_data_package_state WHERE state_name = _state) Then
-        _message := 'Invalid state: ' || _state;
-        RAISERROR (_message, 11, 32)
-    End If;
-
-    ---------------------------------------------------
-    -- Is entry already in database? (only applies to updates)
-    ---------------------------------------------------
-
-    if _mode = 'update' Then
-        -- cannot update a non-existent entry
-        --
-        _currentID := 0;
-        --
-        SELECT data_pkg_id, INTO _currentID
-               _teamCurrent = path_team
-        FROM dpkg.t_data_package
-        WHERE (data_pkg_id = _id)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 OR _currentID = 0 Then
-            _message := 'No entry could be found in database for update';
+        If _team = '' Then
+            _message := 'Data package team cannot be blank';
             RAISERROR (_message, 10, 1)
-            return 51009
+            return 51005
         End If;
 
-        -- Warn if the user is changing the team
-        If Coalesce(_teamCurrent, '') <> '' Then
-            If _teamCurrent <> _team Then
-                _teamChangeWarning := 'Warning: Team changed from "' || _teamCurrent || '" to "' || _team || '"; the data package files will need to be moved from the old location to the new one';
+        If _packageType = '' Then
+            _message := 'Data package type cannot be blank';
+            RAISERROR (_message, 10, 1)
+            return 51006
+        End If;
+
+        -- Make sure the team name is valid
+        If Not Exists (SELECT * FROM dpkg.t_data_package_teams WHERE team_name = _team) Then
+            _message := 'Teams "' || _team || '" is not a valid data package team';
+            RAISERROR (_message, 10, 1)
+            return 51007
+        End If;
+
+        -- Make sure the data package type is valid
+        If Not Exists (SELECT * FROM dpkg.t_data_package_type WHERE package_type = _packageType) Then
+            _message := 'Type "' || _packageType || '" is not a valid data package type';
+            RAISERROR (_message, 10, 1)
+            return 51008
+        End If;
+
+        ---------------------------------------------------
+        -- Get active path
+        ---------------------------------------------------
+        --
+        --
+        SELECT path_id
+        INTO _rootPath
+        FROM dpkg.t_data_package_storage
+        WHERE state = 'Active'
+
+        ---------------------------------------------------
+        -- Validate the state
+        ---------------------------------------------------
+
+        If Not Exists (SELECT * FROM dpkg.t_data_package_state WHERE state_name = _state) Then
+            _message := 'Invalid state: ' || _state;
+            RAISERROR (_message, 11, 32)
+        End If;
+
+        ---------------------------------------------------
+        -- Is entry already in database? (only applies to updates)
+        ---------------------------------------------------
+
+        If _mode = 'update' Then
+            -- cannot update a non-existent entry
+            --
+            _currentID := 0;
+            --
+            SELECT data_pkg_id, INTO _currentID
+                   _teamCurrent = path_team
+            FROM dpkg.t_data_package
+            WHERE data_pkg_id = _id;
+            --
+            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            --
+            If _myError <> 0 OR _currentID = 0 Then
+                _message := 'No entry could be found in database for update';
+                RAISERROR (_message, 10, 1)
+                return 51009
             End If;
-        End If;
 
-    End If; -- mode update
-
-    _logErrors := 1;
-
-    ---------------------------------------------------
-    -- Action for add mode
-    ---------------------------------------------------
-    If _mode = 'add' Then
-
-        If _name Like '%&%' Then
-            -- Replace & with 'and'
-
-            If _name SIMILAR TO '%[a-z0-9]&[a-z0-9]%' Then
-                If _name Like '% %' Then
-                    _name := Replace(_name, '&', ' and ');
-                Else
-                    _name := Replace(_name, '&', '_and_');
+            -- Warn if the user is changing the team
+            If Coalesce(_teamCurrent, '') <> '' Then
+                If _teamCurrent <> _team Then
+                    _teamChangeWarning := 'Warning: Team changed from "' || _teamCurrent || '" to "' || _team || '"; the data package files will need to be moved from the old location to the new one';
                 End If;
             End If;
 
-            _name := Replace(_name, '&', 'and');
-        End If;
+        End If; -- mode update
 
-        If _name Like '%;%' Then
-            -- Replace each semicolon with a comma
-            _name := Replace(_name, ';', ',');
-        End If;
-
-        -- Make sure the data package name doesn't already exist
-        If Exists (SELECT * FROM dpkg.t_data_package WHERE package_name = _name) Then
-            _message := 'Data package package_name "' || _name || '" already exists; cannot create an identically named data package';
-            RAISERROR (_message, 10, 1)
-            return 51010
-        End If;
-
-        INSERT INTO dpkg.t_data_package (
-            package_name,
-            package_type,
-            description,
-            comment,
-            owner,
-            requester,
-            created,
-            state,
-            package_directory,
-            storage_path_id,
-            path_team,
-            mass_tag_database,
-            wiki_page_link,
-            data_doi,
-            manuscript_doi
-        ) VALUES (
-            _name,
-            _packageType,
-            _description,
-            _comment,
-            _owner,
-            _requester,
-            CURRENT_TIMESTAMP,
-            _state,
-            Convert(text, NewID()),        -- package_directory cannot be null and must be unique; this guarantees both.  Also, we'll rename it below using dbo.MakePackageFolderName
-            _rootPath,
-            _team,
-            _massTagDatabase,
-            Coalesce(_prismWikiLink, ''),
-            _dataDOI,
-            _manuscriptDOI
-        )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            _message := 'Insert operation failed';
-            RAISERROR (_message, 10, 1)
-            return 51011
-        End If;
-
-        -- return ID of newly created entry
-        --
-        _id := IDENT_CURRENT('dpkg.t_data_package');
+        _logErrors := 1;
 
         ---------------------------------------------------
-        -- data package folder and wiki page auto naming
+        -- Action for add mode
         ---------------------------------------------------
-        --
-        _pkgFileFolder := dbo.MakePackageFolderName(_id, _name);
-        _prismWikiLink := dbo.MakePRISMWikiPageLink(_id, _name);
-        --
-        UPDATE dpkg.t_data_package
-        SET
-            package_directory = _pkgFileFolder,
-            wiki_page_link = _prismWikiLink
-        WHERE data_pkg_id = _id
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            _message := 'Updating package folder name failed';
-            RAISERROR (_message, 10, 1)
-            return 51012
-        End If;
+        If _mode = 'add' Then
 
-    End If; -- add mode
+            If _name Like '%&%' Then
+                -- Replace & with 'and'
 
-    ---------------------------------------------------
-    -- Action for update mode
-    ---------------------------------------------------
-    --
-    if _mode = 'update'  Then
-        --
-        UPDATE dpkg.t_data_package
-        SET
-            package_name = _name,
-            package_type = _packageType,
-            description = _description,
-            comment = _comment,
-            owner = _owner,
-            requester = _requester,
-            last_modified = CURRENT_TIMESTAMP,
-            state = _state,
-            path_team = _team,
-            mass_tag_database = _massTagDatabase,
-            wiki_page_link = _prismWikiLink,
-            data_doi = _dataDOI,
-            manuscript_doi = _manuscriptDOI
-        WHERE data_pkg_id = _id
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            _message := 'Update operation failed for ID "' || _id::text || '"';
-            RAISERROR (_message, 10, 1)
-            return 51013
-        End If;
+                If _name SIMILAR TO '%[a-z0-9]&[a-z0-9]%' Then
+                    If _name Like '% %' Then
+                        _name := Replace(_name, '&', ' and ');
+                    Else
+                        _name := Replace(_name, '&', '_and_');
+                    End If;
+                End If;
 
-    End If; -- update mode
-
-    ---------------------------------------------------
-    -- Create the data package folder when adding a new data package
-    ---------------------------------------------------
-    if _mode = 'add' Then
-        Call _my_error => MakeDataPackageStorageFolder _id, _mode, _message => _message output, _callingUser => _callingUser;
-    End If;
-
-    If _teamChangeWarning <> '' Then
-        If Coalesce(_message, '') <> '' Then
-            _message := _message || '; ';
-        Else
-            _message := ': ';
-        End If;
-
-        _message := _message + _teamChangeWarning;
-    End If;
-
-    ---------------------------------------------------
-    -- Update EUS_Person_ID and EUS_Proposal_ID
-    ---------------------------------------------------
-    --
-    Call update_data_package_eus_info _id
-
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
-
-        -- rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
-        End If;
-
-        If _logErrors > 0 Then
-            If Not _id Is Null Then
-                _msgForLog := _msgForLog || '; Data Package ID ' || Cast(_id As text);
+                _name := Replace(_name, '&', 'and');
             End If;
 
-            Call post_log_entry 'Error', _msgForLog, 'AddUpdateDataPackage'
+            If _name Like '%;%' Then
+                -- Replace each semicolon with a comma
+                _name := Replace(_name, ';', ',');
+            End If;
+
+            -- Make sure the data package name doesn't already exist
+            If Exists (SELECT * FROM dpkg.t_data_package WHERE package_name = _name) Then
+                _message := 'Data package package_name "' || _name || '" already exists; cannot create an identically named data package';
+                RAISERROR (_message, 10, 1)
+                return 51010
+            End If;
+
+            INSERT INTO dpkg.t_data_package (
+                package_name,
+                package_type,
+                description,
+                comment,
+                owner,
+                requester,
+                created,
+                state,
+                package_directory,
+                storage_path_id,
+                path_team,
+                mass_tag_database,
+                wiki_page_link,
+                data_doi,
+                manuscript_doi
+            ) VALUES (
+                _name,
+                _packageType,
+                _description,
+                _comment,
+                _owner,
+                _requester,
+                CURRENT_TIMESTAMP,
+                _state,
+                Convert(text, NewID()),        -- package_directory cannot be null and must be unique; this guarantees both.  Also, we'll rename it below using dbo.MakePackageFolderName
+                _rootPath,
+                _team,
+                _massTagDatabase,
+                Coalesce(_prismWikiLink, ''),
+                _dataDOI,
+                _manuscriptDOI
+            )
+            RETURNING data_pkg_id
+            INTO _id;
+
+            ---------------------------------------------------
+            -- data package folder and wiki page auto naming
+            ---------------------------------------------------
+            --
+            _pkgFileFolder := dbo.MakePackageFolderName(_id, _name);
+            _prismWikiLink := dbo.MakePRISMWikiPageLink(_id, _name);
+            --
+            UPDATE dpkg.t_data_package
+            SET
+                package_directory = _pkgFileFolder,
+                wiki_page_link = _prismWikiLink
+            WHERE data_pkg_id = _id
+
+        End If; -- add mode
+
+        ---------------------------------------------------
+        -- Action for update mode
+        ---------------------------------------------------
+        --
+        If _mode = 'update'  Then
+            --
+            UPDATE dpkg.t_data_package
+            SET
+                package_name = _name,
+                package_type = _packageType,
+                description = _description,
+                comment = _comment,
+                owner = _owner,
+                requester = _requester,
+                last_modified = CURRENT_TIMESTAMP,
+                state = _state,
+                path_team = _team,
+                mass_tag_database = _massTagDatabase,
+                wiki_page_link = _prismWikiLink,
+                data_doi = _dataDOI,
+                manuscript_doi = _manuscriptDOI
+            WHERE data_pkg_id = _id
+
+        End If; -- update mode
+
+        ---------------------------------------------------
+        -- Create the data package folder when adding a new data package
+        ---------------------------------------------------
+
+        If _mode = 'add' Then
+            Call MakeDataPackageStorageFolder (_id, _mode, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
         End If;
 
-    END CATCH
+        If _teamChangeWarning <> '' Then
+            If Coalesce(_message, '') <> '' Then
+                _message := _message || '; ';
+            Else
+                _message := ': ';
+            End If;
 
-    return _myError
+            _message := _message || _teamChangeWarning;
+        End If;
+
+        ---------------------------------------------------
+        -- Update EUS_Person_ID and EUS_Proposal_ID
+        ---------------------------------------------------
+        --
+        Call update_data_package_eus_info (_id, _message => _message, _returnCode => _returnCode);
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        If _logErrors Then
+            If Coalesce(_id, 0) > 0 Then
+                _exceptionMessage := format('%s; Data Package ID %s', _exceptionMessage, _id);
+            End If;
+
+            _message := local_error_handler (
+                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                            _callingProcLocation => '', _logError => true);
+        Else
+            _message := _exceptionMessage;
+        End If;
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+
+    END;
 END
 $$;
 

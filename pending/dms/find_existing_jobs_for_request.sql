@@ -39,8 +39,6 @@ DECLARE
     _cachedCount int := 0;
     _misMatchCount int := 0;
 BEGIN
-    _message := '';
-    _returnCode:= '';
 
     CREATE TEMP TABLE Tmp_ExistingJobs (
         Job Int Not null
@@ -59,7 +57,7 @@ BEGIN
     WHERE request_id = _requestID;
 
     If _cachedCount <> _myRowCount Then
-        RAISE INFO '%', 'Calling UpdateCachedJobRequestExistingJobs due to differing count';
+        RAISE INFO '%', 'Calling update_cached_job_request_existing_jobs due to differing count';
         Call update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
     Else
         SELECT COUNT(*)
@@ -71,7 +69,7 @@ BEGIN
         WHERE AJR.job IS NULL;
 
         If _misMatchCount > 0 Then
-            RAISE INFO '%', 'Calling UpdateCachedJobRequestExistingJobs due to differing jobs';
+            RAISE INFO '%', 'Calling update_cached_job_request_existing_jobs due to differing jobs';
             Call update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
         End If;
     End If;
@@ -100,44 +98,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.find_existing_jobs_for_request IS 'FindExistingJobsForRequest';
-(
-    _requestID int,
-    INOUT _results refcursor DEFAULT '_results'::refcursor,
-    INOUT _message text DEFAULT ''::text,
-    INOUT _returnCode text DEFAULT ''::text
-)
-LANGUAGE plpgsql
-AS $$
-/****************************************************
-**
-**  Desc:
-**      Return list of datasets for given job request
-**      showing how many jobs exist for each that
-**      match the parameters of the request
-**      (regardless of whether or not job is linked to request)
-**
-**  Auth:   mem
-**  Date:   12/15/2023 mem - Ported to PostgreSQL
-**
-*****************************************************/
-BEGIN
-    _message := '';
-    _returnCode := '';
-
-    -- ToDo: Query function find_matching_datasets_for_job_request and return the results using a cursor
-
-    Open _results For
-        SELECT '' AS Sel,
-               Dataset,
-               Jobs,
-               New,
-               Busy,
-               Complete,
-               Failed,
-               Holding
-        FROM find_matching_datasets_for_job_request(_requestID);
-
-END
-$$;
-
+COMMENT ON FUNCTION public.find_existing_jobs_for_request IS 'FindExistingJobsForRequest';

@@ -24,8 +24,12 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _authorized int := 0;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -50,7 +54,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    BEGIN TRY
+    BEGIN
 
         DELETE FROM dpkg.t_data_package_analysis_jobs
         WHERE data_pkg_id  = _packageID;
@@ -67,21 +71,30 @@ BEGIN
         DELETE FROM dpkg.t_data_package_eus_proposals
         WHERE data_pkg_id = _packageID;
 
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-        -- rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
+        _exceptionMessage := format('%s; Data Package ID %s', _exceptionMessage, _packageID);
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
 
-        Call post_log_entry 'Error', _msgForLog, 'DeleteAllItemsFromDataPackage'
-    END CATCH
+        RETURN;
+    END;
 
     COMMIT;
 
-    BEGIN TRY
+    BEGIN
 
         ---------------------------------------------------
         -- Update item counts
@@ -93,22 +106,26 @@ BEGIN
         SET last_modified = CURRENT_TIMESTAMP
         WHERE data_pkg_id = _packageID;
 
-    END TRY
-    BEGIN CATCH
-        Call format_error_message _message output, _myError output
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-        -- rollback any open transactions
-        If (XACT_STATE()) <> 0 Then
-            ROLLBACK TRANSACTION;
+        _exceptionMessage := format('%s; calling update_data_package_item_counts for data package ID %s', _exceptionMessage, _packageID);
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
 
-        Call post_log_entry 'Error', _msgForLog, 'DeleteAllItemsFromDataPackage'
-    END CATCH
-
-    ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-    return _myError
+        RETURN;
+    END;
 
 END
 $$;

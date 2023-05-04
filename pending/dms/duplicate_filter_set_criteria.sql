@@ -20,21 +20,21 @@ AS $$
 **
 **      The following query is useful for editing filter sets:
 **
-            SELECT FS.Filter_Set_ID, FS.Filter_Set_Name,
-                FS.Filter_Set_Description, FSC.Filter_Criteria_Group_ID,
-                FSC.Filter_Set_Criteria_ID, FSC.Criterion_ID,
-                FSCN.Criterion_Name, FSC.Criterion_Comparison,
-                FSC.Criterion_Value
-            FROM t_Filter_Sets FS INNER JOIN
-                t_Filter_Set_Criteria_Groups FSCG ON
-                FS.Filter_Set_ID = FSCG.Filter_Set_ID INNER JOIN
-                t_Filter_Set_Criteria FSC ON
-                FSCG.Filter_Criteria_Group_ID = FSC.Filter_Criteria_Group_ID INNER
-                JOIN
-                t_Filter_Set_Criteria_Names FSCN ON
-                FSC.Criterion_ID = FSCN.Criterion_ID
-            WHERE (FS.Filter_Set_ID = 184)
-            ORDER BY FSCN.Criterion_Name, FSC.Filter_Criteria_Group_ID
+**         SELECT FS.Filter_Set_ID, FS.Filter_Set_Name,
+**             FS.Filter_Set_Description, FSC.Filter_Criteria_Group_ID,
+**             FSC.Filter_Set_Criteria_ID, FSC.Criterion_ID,
+**             FSCN.Criterion_Name, FSC.Criterion_Comparison,
+**             FSC.Criterion_Value
+**         FROM t_Filter_Sets FS INNER JOIN
+**             t_Filter_Set_Criteria_Groups FSCG ON
+**             FS.Filter_Set_ID = FSCG.Filter_Set_ID INNER JOIN
+**             t_Filter_Set_Criteria FSC ON
+**             FSCG.Filter_Criteria_Group_ID = FSC.Filter_Criteria_Group_ID INNER
+**             JOIN
+**             t_Filter_Set_Criteria_Names FSCN ON
+**             FSC.Criterion_ID = FSCN.Criterion_ID
+**         WHERE (FS.Filter_Set_ID = 184)
+**         ORDER BY FSCN.Criterion_Name, FSC.Filter_Criteria_Group_ID
 **
 **
 **  Auth:   mem
@@ -56,8 +56,6 @@ BEGIN
 
     _addMissingFilterCriteria := Coalesce(_addMissingFilterCriteria, true);
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode := '';
 
     If _sourceFilterSetID Is Null Or _destFilterSetID Is Null Then
         _message := 'Both the source and target filter set ID must be defined; unable to continue';
