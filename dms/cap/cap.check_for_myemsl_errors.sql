@@ -1,8 +1,8 @@
 --
--- Name: check_for_myemsl_errors(integer, timestamp without time zone, timestamp without time zone, boolean, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: check_for_myemsl_errors(integer, timestamp without time zone, timestamp without time zone, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integer DEFAULT 2, IN _startdate timestamp without time zone DEFAULT NULL::timestamp without time zone, IN _enddate timestamp without time zone DEFAULT NULL::timestamp without time zone, IN _logerrors boolean DEFAULT true, INOUT _message text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integer DEFAULT 2, IN _startdate timestamp without time zone DEFAULT NULL::timestamp without time zone, IN _enddate timestamp without time zone DEFAULT NULL::timestamp without time zone, IN _logerrors boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
 **          08/13/2017 mem - Increase the error rate threshold from 1% to 3% since we're now auto-retrying uploads
 **          10/07/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          05/04/2023 mem - Add _returnCode procedure argument
 **
 *****************************************************/
 DECLARE
@@ -29,6 +30,8 @@ DECLARE
     _duplicateUploads int;
     _duplicateRate numeric := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     -----------------------------------------------
     -- Validate the inputs
@@ -39,7 +42,6 @@ BEGIN
 
     _endDate := Coalesce(_endDate, CURRENT_TIMESTAMP);
     _logErrors := Coalesce(_logErrors, true);
-    _message := '';
 
     If _mostRecentDays > 0 Then
         _endDate := CURRENT_TIMESTAMP;
@@ -112,11 +114,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integer, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _logerrors boolean, INOUT _message text) OWNER TO d3l243;
+ALTER PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integer, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _logerrors boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE check_for_myemsl_errors(IN _mostrecentdays integer, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _logerrors boolean, INOUT _message text); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE check_for_myemsl_errors(IN _mostrecentdays integer, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _logerrors boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integer, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _logerrors boolean, INOUT _message text) IS 'CheckForMyEMSLErrors';
+COMMENT ON PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integer, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _logerrors boolean, INOUT _message text, INOUT _returncode text) IS 'CheckForMyEMSLErrors';
 

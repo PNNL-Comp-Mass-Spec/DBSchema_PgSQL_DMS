@@ -1,8 +1,8 @@
 --
--- Name: add_update_task_parameter(integer, text, text, text, boolean, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: add_update_task_parameter(integer, text, text, text, boolean, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean DEFAULT false, INOUT _message text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          08/27/2022 mem - Change arguments _infoOnly and _deleteParam from int to boolean
 **          09/01/2022 mem - Send '<auto>' to get_current_function_info()
 **          04/27/2023 mem - Use boolean for data type name
+**          05/04/2023 mem - Add _returnCode procedure argument
 **
 *****************************************************/
 DECLARE
@@ -46,6 +47,8 @@ DECLARE
     _xmlParameters xml;
     _results record;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -146,11 +149,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, IN _infoonly boolean) OWNER TO d3l243;
+ALTER PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, IN _infoonly boolean) IS 'AddUpdateJobParameter';
+COMMENT ON PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'AddUpdateTaskParameter';
 
