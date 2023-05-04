@@ -46,6 +46,8 @@ DECLARE
     _workPackage text := 'none';
     _requestID int;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -53,8 +55,6 @@ BEGIN
 
     _dataset := Coalesce(_dataset, '');
     _infoOnly := Coalesce(_infoOnly, true);
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Lookup the dataset details

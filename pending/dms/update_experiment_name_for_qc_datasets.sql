@@ -25,16 +25,17 @@ DECLARE
     _experiment text;
     _msg text;
 BEGIN
-    -- Format the date in the form 2022-10-25
-    _dateStamp := to_char(CURRENT_TIMESTAMP, 'YYYY-MM-DD')
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, true);
-    _message := '';
-    _returnCode:= '';
+
+    -- Format the date in the form 2022-10-25
+    _dateStamp := to_char(CURRENT_TIMESTAMP, 'YYYY-MM-DD')
 
     ---------------------------------------------------
     -- Create some temporary tables

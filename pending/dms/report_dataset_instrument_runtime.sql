@@ -39,10 +39,10 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     BEGIN
-
-        _message := '';
 
         --------------------------------------------------------------------
         -- If _endDate is empty, auto-set to the end of the current day

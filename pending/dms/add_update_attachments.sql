@@ -40,7 +40,8 @@ DECLARE
 
     _tmp int;
 BEGIN
-  _message := '';
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

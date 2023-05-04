@@ -26,13 +26,14 @@ DECLARE
     _datasetID int;
     _jobID int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode := '';
 
     If _datasetName Is Null Then
         _message := 'Dataset name not defined';

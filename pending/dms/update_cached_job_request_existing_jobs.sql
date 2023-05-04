@@ -34,6 +34,9 @@ DECLARE
     _jobRequestsUpdated int := 0;
     _addon text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
@@ -42,8 +45,6 @@ BEGIN
     _requestID := Coalesce(_requestID, 0);
     _jobSearchHours := Coalesce(_jobSearchHours, 0);
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     If _requestID = 1 Then
         Select '_requestID 1 is a special placeholder request; table t_analysis_job_request_existing_jobs does not track jobs for _requestID 1' As Warning

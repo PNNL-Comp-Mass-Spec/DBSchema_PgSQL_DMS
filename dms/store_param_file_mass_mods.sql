@@ -169,6 +169,9 @@ DECLARE
     _residueInfo record;
     _formatString text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Validate the input parameters
     -----------------------------------------
@@ -178,9 +181,6 @@ BEGIN
     _validateUnimod := Coalesce(_validateUnimod, true);
 
     _paramFileType := Trim(Coalesce(_paramFileType, ''));
-
-    _message := '';
-    _returnCode := '';
 
     If _paramFileID Is Null Then
         _message := 'The Parameter file ID must be defined; unable to continue';

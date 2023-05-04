@@ -30,9 +30,10 @@ DECLARE
     _msg text;
     _matchSpec text;
 BEGIN
-    _instrumentFilterList := Trim(Coalesce(_instrumentFilterList, ''));
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
+
+    _instrumentFilterList := Trim(Coalesce(_instrumentFilterList, ''));
 
     If _instrumentFilterList <> '' Then
 

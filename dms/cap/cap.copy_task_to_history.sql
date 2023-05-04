@@ -31,7 +31,6 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 DECLARE
     _saveTime timestamp;
 BEGIN
-
     _message := '';
 
     ---------------------------------------------------

@@ -42,15 +42,16 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returncode := '';
+
     ---------------------------------------------------
-    -- Cleanup the inputs
+    -- Validate the inputs
     ---------------------------------------------------
 
     _managerName := Coalesce(_managerName, '');
     _state := Coalesce(_state, 0);
     _failureMsg := Coalesce(_failureMsg, '');
-    _message := '';
-    _returncode := '';
 
     ---------------------------------------------------
     -- Confirm that the manager name is valid

@@ -58,6 +58,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     BEGIN
 
         -----------------------------------------
@@ -73,8 +76,6 @@ BEGIN
         _updateOldJobComment := Coalesce(_updateOldJobComment, true);
         _allowDuplicateJob := Coalesce(_supersedeOldJob, false);
         _infoOnly := Coalesce(_infoOnly, true);
-
-        _message := '';
 
         If _sourceJobs = '' Then
             _message := '_sourceJobs cannot both be empty';

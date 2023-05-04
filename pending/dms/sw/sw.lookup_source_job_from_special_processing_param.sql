@@ -66,8 +66,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := Coalesce(_message, '');
+    _returnCode:= '';
+
     _previewSql := Coalesce(_previewSql, false);
 
     ---------------------------------------------------

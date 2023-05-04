@@ -52,6 +52,9 @@ DECLARE
     _massModFilterSql text;
     _addWildcardChars int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _paramFileInfoColumnList := '';
 
     _s := '';
@@ -69,8 +72,6 @@ BEGIN
     _showModName := Coalesce(_showModName, 1);
     _showModMass := Coalesce(_showModMass, 1);
     _useModMassAlternativeName := Coalesce(_useModMassAlternativeName, 1);
-    _message := '';
-    _returnCode := '';
     _previewSql := Coalesce(_previewSql, false);
     _massModFilterTextColumn := Coalesce(_massModFilterTextColumn, '');
     _massModFilterText := Coalesce(_massModFilterText, '');

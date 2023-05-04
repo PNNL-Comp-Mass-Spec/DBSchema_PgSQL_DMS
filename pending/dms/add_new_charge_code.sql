@@ -22,14 +22,15 @@ AS $$
 *****************************************************/
 DECLARE
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ----------------------------------------------------------
     -- Validate the inputs
     ----------------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
     _chargeCodeList := Coalesce(_chargeCodeList, '');
-    _message := '';
-    _returnCode:= '';
 
     If _chargeCodeList = '' Then
         _message := '_chargeCodeList is empty; nothing to do';

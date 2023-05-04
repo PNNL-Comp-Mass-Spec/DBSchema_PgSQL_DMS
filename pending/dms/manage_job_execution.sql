@@ -69,6 +69,9 @@ DECLARE
     _message text;
     _callingUser text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _result := '';
 
     ---------------------------------------------------

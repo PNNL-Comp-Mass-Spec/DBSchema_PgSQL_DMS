@@ -30,6 +30,9 @@ AS $$
 DECLARE
     _memberID int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Does entry already exist?
     ---------------------------------------------------

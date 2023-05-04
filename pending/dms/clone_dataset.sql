@@ -55,6 +55,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -64,9 +66,6 @@ BEGIN
     _dataset := Coalesce(_dataset, '');
     _suffix := Coalesce(_suffix, '');
     _createDatasetArchiveTask := Coalesce(_createDatasetArchiveTask, false);
-
-    _message := '';
-    _returnCode:= '';
 
     If _dataset = '' Then
         _message := '_dataset parameter cannot be empty';

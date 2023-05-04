@@ -18,7 +18,12 @@ AS $$
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
+DECLARE
+
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     If Not Exists (SELECT * FROM pc.t_protein_collections WHERE protein_collection_id = _collectionID) Then
         _message := 'Protein collection ID not found in pc.t_protein_collections: ' || Cast(_collectionID as text);
         _myError := 15000;
@@ -31,7 +36,6 @@ BEGIN
         _message := 'Counts updated for Protein collection ID ' || Cast(_collectionID as text);
     End If;
 
-    return _myError
 END
 $$;
 

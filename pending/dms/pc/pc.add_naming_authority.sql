@@ -31,6 +31,8 @@ AS $$
 DECLARE
     _authId int;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Does entry already exist?

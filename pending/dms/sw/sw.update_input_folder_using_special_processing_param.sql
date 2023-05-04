@@ -36,6 +36,9 @@ DECLARE
     _actionText text;
     _jobInfo record;
 BEGIN
+    _message := Coalesce(_message, '');
+    _returnCode := '';
+
     CREATE TEMP TABLE Tmp_JobList (
         Job int NOT NULL,
         Script text NOT NULL,
@@ -60,7 +63,6 @@ BEGIN
     ---------------------------------------------------
     _infoOnly := Coalesce(_infoOnly, false);
     _showResultsMode := Coalesce(_showResultsMode, 2);
-    _message := Coalesce(_message, '');
 
     ---------------------------------------------------
     -- Parse the jobs in _jobList

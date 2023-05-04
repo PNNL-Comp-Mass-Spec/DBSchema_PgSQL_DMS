@@ -134,14 +134,14 @@ DECLARE
     _jobInDMS boolean := false;
     _jobCommentAddnl text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _bypassDMS := Coalesce(_bypassDMS, false);
-    _message := '';
-    _returnCode:= '';
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _startTime := CURRENT_TIMESTAMP;

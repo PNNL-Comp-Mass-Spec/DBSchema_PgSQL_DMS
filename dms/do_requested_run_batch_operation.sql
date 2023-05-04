@@ -37,7 +37,6 @@ DECLARE
     _locked citext;
     _message2 text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

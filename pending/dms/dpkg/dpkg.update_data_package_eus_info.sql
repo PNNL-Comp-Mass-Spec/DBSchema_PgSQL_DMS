@@ -34,7 +34,10 @@ DECLARE
     _authorized int := 0;
     _firstID int;
 BEGIN
----------------------------------------------------
+    _message := '';
+    _returnCode := '';
+
+    ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 

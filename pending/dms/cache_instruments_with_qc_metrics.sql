@@ -23,6 +23,9 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     _infoOnly := Coalesce(_infoOnly, false);
 
     CREATE TEMP TABLE Tmp_Instruments (Instrument_ID int NOT NULL)

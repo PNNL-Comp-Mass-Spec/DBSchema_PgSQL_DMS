@@ -28,9 +28,10 @@ DECLARE
     _mgrList text;
     _mgrCount int;
 BEGIN
-    _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
     _returnCode:= '';
+
+    _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

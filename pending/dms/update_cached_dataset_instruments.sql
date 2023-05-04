@@ -27,6 +27,9 @@ DECLARE
     _myRowCount int := 0;
     _addon text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
@@ -34,8 +37,6 @@ BEGIN
     _processingMode := Coalesce(_processingMode, 0);
     _datasetId := Coalesce(_datasetId, 0);
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     If _datasetId > 0 And Not _infoOnly Then
         MERGE INTO t_cached_dataset_instruments AS t

@@ -36,6 +36,8 @@ DECLARE
     _serverPerspectiveEnabled int := 0;
     _perspective text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _infoLevel := Coalesce(_infoLevel, 1);
 

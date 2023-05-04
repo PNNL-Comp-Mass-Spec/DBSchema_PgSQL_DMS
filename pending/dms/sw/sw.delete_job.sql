@@ -2,9 +2,9 @@
 CREATE OR REPLACE PROCEDURE sw.delete_job
 (
     _job text,
-    _callingUser text = '',
     INOUT _message text default '',
-    INOUT _returnCode text default ''
+    INOUT _returnCode text default '',
+    _callingUser text = ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -31,6 +31,9 @@ DECLARE
 
     _jobID int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------

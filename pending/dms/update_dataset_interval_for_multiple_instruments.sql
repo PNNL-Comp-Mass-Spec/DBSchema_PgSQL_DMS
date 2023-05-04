@@ -76,6 +76,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -112,9 +114,6 @@ BEGIN
     _previewProcedureCall := Coalesce(_previewProcedureCall, false);
 
     _instrumentsToProcess := Coalesce(_instrumentsToProcess, '');
-
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Set up date interval and key values

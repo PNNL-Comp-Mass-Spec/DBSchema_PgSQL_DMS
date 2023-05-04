@@ -61,6 +61,9 @@ DECLARE
     _s text;
     _sqlWhere text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -69,8 +72,6 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _previewSql := Coalesce(_previewSql, false);
     _populateTempTable := Coalesce(_populateTempTable, false);
-    _message := '';
-    _returnCode:= '';
 
     If _populateTempTable Then
         DROP TABLE IF EXISTS T_Tmp_PredefinedAnalysisDatasets;

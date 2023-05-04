@@ -38,12 +38,13 @@ DECLARE
     _logMessage text;
     _sharePath text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
     --
-    _message := '';
-    _returnCode := '';
     _infoOnly := Coalesce(_infoOnly, true);
 
     BEGIN TRY

@@ -4,6 +4,8 @@ CREATE OR REPLACE PROCEDURE public.add_bom_tracking_datasets
     _month text = '',
     _year text = '',
     _mode text = 'add',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text  = 'D3E154'
 )
 LANGUAGE plpgsql
@@ -33,8 +35,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _message text := '';
-    _returnCode text;
     _instrumentName text;
     _entryID int;
 
@@ -43,6 +43,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Temp table to hold list of tracked instruments

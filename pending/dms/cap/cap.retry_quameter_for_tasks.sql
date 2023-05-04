@@ -48,6 +48,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     -----------------------------------------------------------
     -- Validate the inputs
@@ -56,8 +58,6 @@ BEGIN
     _jobs := Coalesce(_jobs, '');
     _infoOnly := Coalesce(_infoOnly, false);
     _ignoreQuameterErrors := Coalesce(_ignoreQuameterErrors, true);
-    _message := '';
-    _returnCode:= '';
 
     If _jobs = '' Then
         _message := 'Job number not supplied';

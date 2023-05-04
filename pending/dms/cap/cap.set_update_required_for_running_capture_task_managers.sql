@@ -22,9 +22,10 @@ DECLARE
     _mgrList text;
     _mgrCount int;
 BEGIN
-    _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
+
+    _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Get a list of the currently running managers

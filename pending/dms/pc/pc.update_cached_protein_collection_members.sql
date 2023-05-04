@@ -34,6 +34,9 @@ DECLARE
     _numProteinsOld int;
     _numProteinsNew int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -41,8 +44,6 @@ BEGIN
     _collectionIdFilter := Coalesce(_collectionIdFilter, 0);
     _updateAll := Coalesce(_updateAll, 0);
     _maxCollectionsToUpdate := Coalesce(_maxCollectionsToUpdate, 0);
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create some temporary tables

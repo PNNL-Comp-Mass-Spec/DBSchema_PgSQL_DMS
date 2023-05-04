@@ -52,6 +52,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -84,7 +86,6 @@ BEGIN
         _samplePrepVisible := Coalesce(_samplePrepVisible, 0);
         _requestedRunVisible := Coalesce(_requestedRunVisible, 0);
 
-        _message := '';
         _defaultDatasetTypeName := Coalesce(_defaultDatasetTypeName, '');
 
         If _defaultDatasetTypeName <> '' Then

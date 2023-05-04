@@ -41,13 +41,12 @@ DECLARE
     _outputDirectoryName text;
     _targetCompletionMessage text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-
-    _message := '';
-    _returnCode := '';
 
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 

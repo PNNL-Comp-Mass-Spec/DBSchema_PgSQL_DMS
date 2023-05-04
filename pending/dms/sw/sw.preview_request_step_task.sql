@@ -42,6 +42,9 @@ AS $$
 DECLARE
     _remoteInfo text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     _infoLevel := Coalesce(_infoLevel, 1);
 
     If _infoLevel < 1 Then

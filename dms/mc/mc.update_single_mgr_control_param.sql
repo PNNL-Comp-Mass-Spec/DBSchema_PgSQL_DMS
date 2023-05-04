@@ -59,14 +59,15 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _newValue := Coalesce(_newValue, '');
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Resolve _paramName to _paramTypeID

@@ -47,7 +47,6 @@ DECLARE
     _myRowCount int := 0;
     _iterations int := 0;
 BEGIN
-
     _message := '';
 
     -----------------------------------------------

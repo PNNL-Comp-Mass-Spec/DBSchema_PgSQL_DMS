@@ -33,6 +33,9 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
@@ -40,8 +43,6 @@ BEGIN
     _requestMinimum := Coalesce(_requestMinimum, 0);
     _recentRequestDays := Coalesce(_recentRequestDays, 14);
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     If _requestMinimum < 1 And _recentRequestDays < 1 Then
         _recentRequestDays := 14;

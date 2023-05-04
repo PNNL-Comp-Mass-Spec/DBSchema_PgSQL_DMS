@@ -102,14 +102,13 @@ DECLARE
     */
 
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _excludeStageMD5RequiredDatasets := Coalesce(_excludeStageMD5RequiredDatasets, true);
     _infoOnly := Coalesce(_infoOnly, false);
     _previewCount := Coalesce(_previewCount, 10);
     _previewSql := Coalesce(_previewSql, false);
-
-    _message := '';
-    _returnCode := '';
 
     --------------------------------------------------
     -- Validate the inputs

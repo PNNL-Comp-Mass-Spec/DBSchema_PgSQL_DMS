@@ -22,11 +22,14 @@ AS $$
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
+DECLARE
+
 BEGIN
-    _workPackage := Coalesce(_workPackage, '');
-    _allowNoneWP := Coalesce(_allowNoneWP, false);
     _message := '';
     _returnCode := '';
+
+    _workPackage := Coalesce(_workPackage, '');
+    _allowNoneWP := Coalesce(_allowNoneWP, false);
 
     If Coalesce(_workPackage, '') = '' Then
         _message := 'Work package cannot be blank';

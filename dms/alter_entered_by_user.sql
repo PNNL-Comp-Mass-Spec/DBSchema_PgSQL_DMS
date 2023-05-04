@@ -51,6 +51,7 @@ DECLARE
     _entryDateFilterSqlWithValues text := '';
     _lookupResults record;
 BEGIN
+    _message := '';
 
     ------------------------------------------------
     -- Validate the inputs
@@ -64,7 +65,6 @@ BEGIN
     _newUser := Coalesce(_newUser, '');
     _applyTimeFilter := Coalesce(_applyTimeFilter, false);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
-    _message := '';
     _infoOnly := Coalesce(_infoOnly, false);
     _previewSql := Coalesce(_previewSql, false);
 

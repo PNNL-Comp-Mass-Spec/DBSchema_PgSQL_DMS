@@ -58,14 +58,14 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _id := Coalesce(_id, -1);
-    _message := '';
-    _returnCode:= '';
     _showDebug := Coalesce(_showDebug, false);
     _invalidUsage := 0;
 

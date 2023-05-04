@@ -61,9 +61,6 @@ DECLARE
     _cpuLoad int := 1;
     _stepParmSectionName text := 'StepParameters';
 BEGIN
-    _myRowCount := 0;
-
-    -- Clear the outputs
     _message := '';
     _returnCode := '';
 

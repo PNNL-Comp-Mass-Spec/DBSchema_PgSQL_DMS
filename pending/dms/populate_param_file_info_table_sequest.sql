@@ -25,6 +25,9 @@ DECLARE
     _paramEntry record;
     _s text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Append the new columns to Tmp_ParamFileInfo
     -----------------------------------------------------------

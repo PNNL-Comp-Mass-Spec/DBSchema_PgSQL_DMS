@@ -36,8 +36,10 @@ DECLARE
     _myRowCount int := 0;
     _jobResetTran text := 'DependentJobStepReset';
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
-    BEGIN TRY
+    BEGIN
 
         -----------------------------------------------------------
         -- Validate the inputs

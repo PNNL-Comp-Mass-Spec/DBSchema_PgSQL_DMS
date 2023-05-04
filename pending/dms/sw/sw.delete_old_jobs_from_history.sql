@@ -34,14 +34,14 @@ DECLARE
     _jobFirst int;
     _jobLast int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, true);
-
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create a temp table to hold the jobs to delete

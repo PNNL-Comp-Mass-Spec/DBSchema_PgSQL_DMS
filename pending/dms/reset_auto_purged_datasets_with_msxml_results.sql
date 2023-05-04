@@ -40,15 +40,16 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
+
     _resetCount := 0;
-    _message := '';
-    _returnCode := '';
 
     CREATE TEMP TABLE Tmp_Datasets (
         Dataset_ID int NOT NULL

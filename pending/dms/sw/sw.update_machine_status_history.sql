@@ -30,6 +30,9 @@ DECLARE
     _timeIntervalLastUpdateHours real;
     _updateTable boolean;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ----------------------------------------
     -- Validate the inputs
     ----------------------------------------

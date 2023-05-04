@@ -32,14 +32,15 @@ DECLARE
     _currentExpID int;
     _continue boolean;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
     --
     _expID := Coalesce(_expID, 0);
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     If _expID > 0 Then
     -- <SingleExperiment>

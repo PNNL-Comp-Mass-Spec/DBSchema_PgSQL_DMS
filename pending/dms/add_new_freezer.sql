@@ -26,6 +26,9 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -33,8 +36,6 @@ BEGIN
     _sourceFreezerTag := Coalesce(_sourceFreezerTag, '');
     _newFreezerTag := Coalesce(_newFreezerTag, '');
     _infoOnly := Coalesce(_infoOnly, true);
-    _message := '';
-    _returnCode := '';
 
     If _sourceFreezerTag = '' Then
         _message := 'Source freezer tag is empty';

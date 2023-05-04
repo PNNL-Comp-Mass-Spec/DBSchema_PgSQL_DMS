@@ -41,6 +41,9 @@ DECLARE
     _optionalBuildingNot text := '';
     _totalRuntimeHours real;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     -----------------------------------------
     -- Validate the inputs
     -----------------------------------------
@@ -53,8 +56,6 @@ BEGIN
     _campaignNameExclude := Coalesce(_campaignNameExclude, '');
     _instrumentBuilding := Coalesce(_instrumentBuilding, '');
     _previewSql := Coalesce(_previewSql, false);
-    _message := '';
-    _returnCode:= '';
 
     If _mostRecentWeeks < 1 Then
         _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '20 weeks');

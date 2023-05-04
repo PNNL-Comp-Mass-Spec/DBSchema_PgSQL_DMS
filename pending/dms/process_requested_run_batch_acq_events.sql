@@ -2,6 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.process_requested_run_batch_acq_events
 (
     _interval int = 24
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -22,7 +24,6 @@ AS $$
 *****************************************************/
 DECLARE
     _callingUser text;
-    _message text;
     _threshold timestamp;
     _batchID int;
 BEGIN

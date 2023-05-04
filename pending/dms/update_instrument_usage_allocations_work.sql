@@ -46,12 +46,12 @@ DECLARE
     _enteredBy text;
     _enteredByNew text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
-
-    _message := '';
-    _returnCode:= '';
 
     If Coalesce(_callingUser, '') = '' Then
         _callingUser := get_user_login_without_domain('');

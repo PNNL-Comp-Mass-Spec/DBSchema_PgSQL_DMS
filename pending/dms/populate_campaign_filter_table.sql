@@ -32,9 +32,10 @@ DECLARE
     _myRowCount int := 0;
     _msg text;
 BEGIN
-    _campaignIDFilterList := Trim(Coalesce(_campaignIDFilterList, ''));
     _message := '';
     _returnCode := '';
+
+    _campaignIDFilterList := Trim(Coalesce(_campaignIDFilterList, ''));
 
     If _campaignIDFilterList <> '' Then
         INSERT INTO Tmp_CampaignFilter (Campaign_ID)

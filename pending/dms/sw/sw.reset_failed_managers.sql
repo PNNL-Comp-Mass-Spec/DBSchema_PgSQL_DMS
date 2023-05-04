@@ -27,6 +27,8 @@ DECLARE
     _myRowCount int := 0;
     _managerList text := null;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Validate the inputs
@@ -34,8 +36,6 @@ BEGIN
     --
     _infoOnly := Coalesce(_infoOnly, false);
     _resetAllWithError := Coalesce(_resetAllWithError, false);
-    _message := '';
-    _returnCode := '';
 
     -- Temp table for managers
     CREATE TEMP TABLE Tmp_ManagersToReset (

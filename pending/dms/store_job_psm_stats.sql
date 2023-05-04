@@ -75,13 +75,14 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _job := Coalesce(_job, 0);
-    _message := '';
-    _returnCode := '';
 
     _infoOnly := Coalesce(_infoOnly, false);
     _fdrThreshold := Coalesce(_fdrThreshold, 1);

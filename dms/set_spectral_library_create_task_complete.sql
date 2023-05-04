@@ -34,7 +34,6 @@ DECLARE
     _libraryStateId int := 0;
     _newLibraryState int;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

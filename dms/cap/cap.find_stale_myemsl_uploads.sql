@@ -38,6 +38,7 @@ DECLARE
     _infoHeadSeparator text;
     _infoData text;
 BEGIN
+    _message := '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -45,7 +46,6 @@ BEGIN
 
     _staleUploadDays := Abs(Coalesce(_staleUploadDays, 45));
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
 
     If _staleUploadDays < 14 Then
         -- Require _staleUploadDays to be at least 14

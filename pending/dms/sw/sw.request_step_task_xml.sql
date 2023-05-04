@@ -5,7 +5,6 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml
     INOUT _job int = 0,
     INOUT _parameters text default '',
     INOUT _message text default '',
-    INOUT _returnCode text default '',
     _infoLevel int = 0,
     _analysisManagerVersion text = '',
     _remoteInfo text = '',
@@ -15,7 +14,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml
     _maxStepNumToThrottle int = 10,
     _throttleAllStepTools int = 0,
     _logSPUsage boolean = false,
-    INOUT _returnCode text = ''
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -156,7 +155,8 @@ DECLARE
     _step int := 0;
     _jobIsRunningRemote int := 0;
 BEGIN
-    _returnCode := '';
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

@@ -30,6 +30,9 @@ DECLARE
     _myRowCount int := 0;
     _allowedDatasetTypes text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -37,8 +40,6 @@ BEGIN
     _datasetType := Coalesce(_datasetType, '');
     _instrumentGroup := Coalesce(_instrumentGroup, '');
     _datasetTypeID := 0;
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that dataset type is valid

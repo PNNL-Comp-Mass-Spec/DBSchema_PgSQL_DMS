@@ -29,6 +29,9 @@ DECLARE
     _activeStepThreshold int := 25;
     _longRunningThreshold int := 10;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ----------------------------------------------
     -- Validate the Inputs
     ----------------------------------------------

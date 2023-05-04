@@ -38,12 +38,13 @@ DECLARE
     _xmlParameters xml;
     _existingParamsFound boolean := false;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate input fields
     ---------------------------------------------------
 
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

@@ -91,7 +91,8 @@ DECLARE
     _itemsToUpdate int := 0;
     _usageMessage text;
 BEGIN
-    -- The following will have the current dataset name and ID when stepping through rows of data in _datasetFileInfo
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

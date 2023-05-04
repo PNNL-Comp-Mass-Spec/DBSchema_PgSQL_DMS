@@ -29,6 +29,9 @@ DECLARE
     _messageID int;
     _messageText text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ----------------------------------------------------
     -- Validate the inputs
     ----------------------------------------------------
@@ -44,8 +47,6 @@ BEGIN
     End If;
 
     _infoOnly := Coalesce(_infoOnly, true);
-    _message := '';
-    _returnCode := '';
 
     ----------------------------------------------------
     -- Create some Temporary Tables

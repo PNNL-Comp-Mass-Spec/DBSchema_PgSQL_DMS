@@ -52,6 +52,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -59,8 +62,6 @@ BEGIN
     _mgrList := Coalesce(_mgrList, '');
     _showTable := Coalesce(_showTable, false);
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode := '';
 
     CREATE TEMP TABLE Tmp_ManagerList (
         manager_name citext NOT NULL,

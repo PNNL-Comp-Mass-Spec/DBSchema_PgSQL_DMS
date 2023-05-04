@@ -36,6 +36,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -44,8 +46,6 @@ BEGIN
     _runIntervalId := Coalesce(_runIntervalId, -1);
     _daysToProcess := Coalesce(_daysToProcess, 90);
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     _callingUser := Coalesce(_callingUser, '');
     If _callingUser = '' Then

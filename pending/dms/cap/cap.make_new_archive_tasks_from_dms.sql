@@ -43,15 +43,15 @@ DECLARE
     _infoData text;
     _previewData record;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
     --
     _infoOnly := Coalesce(_infoOnly, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
-
-    _message := '';
-    _returnCode:= '';
 
     If _maxJobsToProcess <= 0 Then
         _maxJobsToAddResetOrResume := 1000000;

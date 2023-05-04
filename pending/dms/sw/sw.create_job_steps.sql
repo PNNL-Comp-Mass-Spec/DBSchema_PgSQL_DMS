@@ -94,13 +94,13 @@ DECLARE
     _tag text;
     _scriptXML2 xml;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
     --
-    _message := '';
-    _returnCode := '';
-
     _infoOnly := Coalesce(_infoOnly, false);
     _debugMode := Coalesce(_debugMode, false);
     _existingJob := Coalesce(_existingJob, 0);

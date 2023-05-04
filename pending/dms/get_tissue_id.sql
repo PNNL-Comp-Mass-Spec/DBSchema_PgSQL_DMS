@@ -4,6 +4,7 @@ CREATE OR REPLACE PROCEDURE public.get_tissue_id
     _tissueNameOrID text,
     INOUT _tissueIdentifier text,
     INOUT _tissueName text,
+    INOUT _message text default ''
     INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
@@ -31,11 +32,13 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _tissueNameOrID := Trim(Coalesce(_tissueNameOrID, ''));
 
     _tissueIdentifier := null;
     _tissueName := null;
-    _returnCode := '';
 
     If _tissueNameOrID::citext IN ('none', 'na', 'n/a') Then
         _tissueNameOrID := '';

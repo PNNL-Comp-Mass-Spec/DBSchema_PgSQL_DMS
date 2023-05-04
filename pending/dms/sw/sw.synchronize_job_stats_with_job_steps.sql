@@ -23,14 +23,15 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
-    ---------------------------------------------------
-    -- Validate the inputs; clear the outputs
-    ---------------------------------------------------
-
-    _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
     _returnCode:= '';
 
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _infoOnly := Coalesce(_infoOnly, false);
+]
     CREATE TEMP TABLE Tmp_JobsToUpdate (
         Job int,
         StartNew timestamp Null,

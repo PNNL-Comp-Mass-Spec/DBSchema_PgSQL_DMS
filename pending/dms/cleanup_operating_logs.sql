@@ -2,7 +2,9 @@
 CREATE OR REPLACE PROCEDURE public.cleanup_operating_logs
 (
     _logRetentionIntervalHours int = 336,
-    _eventLogRetentionIntervalDays int = 365
+    _eventLogRetentionIntervalDays int = 365,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,7 +26,6 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _message text := '';
     _callingProcName text;
     _currentLocation text := 'Start';
 
@@ -33,6 +34,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     BEGIN
 

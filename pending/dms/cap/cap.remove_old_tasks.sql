@@ -37,6 +37,9 @@ DECLARE
     _cutoffDateTimeForFail timestamp;
     _jobInfo record
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Create table to track the list of affected capture task jobs
     ---------------------------------------------------

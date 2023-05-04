@@ -39,13 +39,14 @@ DECLARE
     _continue boolean;
     _addon text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
     --
     _processingMode := Coalesce(_processingMode, 0);
-    _message := '';
-    _returnCode:= '';
     _showDebug := Coalesce(_showDebug, 0);
 
     If _processingMode IN (0, 1) Then

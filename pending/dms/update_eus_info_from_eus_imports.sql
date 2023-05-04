@@ -32,10 +32,10 @@ DECLARE
     _statusMessage text := '';
     _usageMessage text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _updateUsersOnInactiveProposals := Coalesce(_updateUsersOnInactiveProposals, false);
-    _message := '';
-    _returnCode:= '';
 
     -- Lookup the highest entry_id in t_log_entries
     SELECT MAX(entry_id) INTO _entryID

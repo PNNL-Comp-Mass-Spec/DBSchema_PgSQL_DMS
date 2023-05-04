@@ -32,6 +32,9 @@ DECLARE
     _numStepsSkipped int;
     _done boolean;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------

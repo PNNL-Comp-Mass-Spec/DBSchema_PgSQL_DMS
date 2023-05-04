@@ -38,6 +38,9 @@ DECLARE
     _locStatus text;
     _moveStatus text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the Inputs
     ---------------------------------------------------
@@ -50,8 +53,6 @@ BEGIN
     _shelfNew := Coalesce(_shelfNew, -1);
     _rackNew := Coalesce(_rackNew, -1);
     _infoOnly := Coalesce(_infoOnly, true);
-    _message := '';
-    _returnCode:= '';
     _callingUser := Coalesce(_callingUser, '');
 
     If _freezerTagOld = '' Then

@@ -146,6 +146,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -160,9 +162,6 @@ BEGIN
     _preventDuplicateJobs := Coalesce(_preventDuplicateJobs, false);
     _preventDuplicatesIgnoresNoExport := Coalesce(_preventDuplicatesIgnoresNoExport, true);
     _infoOnly := Coalesce(_infoOnly, false);
-
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

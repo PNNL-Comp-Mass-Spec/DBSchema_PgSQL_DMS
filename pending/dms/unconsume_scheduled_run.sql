@@ -83,7 +83,6 @@ DECLARE
     _newQueueState int;
     _stateID int := 0;
 BEGIN
-
     _message := Coalesce(_message, '');
     _returnCode := '';
 

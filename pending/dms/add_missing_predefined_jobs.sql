@@ -81,6 +81,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -94,8 +96,6 @@ BEGIN
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
     _excludeUnreviewedDatasets := Coalesce(_excludeUnreviewedDatasets, true);
     _instrumentSkipList := Coalesce(_instrumentSkipList, '');
-    _message := '';
-    _returnCode := '';
     _datasetNameIgnoreExistingJobs := Coalesce(_datasetNameIgnoreExistingJobs, '');
     _ignoreJobsCreatedBeforeDisposition := Coalesce(_ignoreJobsCreatedBeforeDisposition, true);
     _campaignFilter := Coalesce(_campaignFilter, '');

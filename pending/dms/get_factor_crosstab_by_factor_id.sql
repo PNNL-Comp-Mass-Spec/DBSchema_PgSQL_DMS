@@ -35,6 +35,9 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     -----------------------------------------
     -- Validate the input parameters
     -----------------------------------------
@@ -42,8 +45,6 @@ BEGIN
     _generateSQLOnly := Coalesce(_generateSQLOnly, false);
     _crossTabSql := '';
     _factorNameList := '';
-    _message := '';
-    _returnCode:= '';
 
     If Not Exists (SELECT * FROM Tmp_FactorItems) Then
         _crossTabSql := 'SELECT type, target_id FROM t_factor WHERE 1 = 2';

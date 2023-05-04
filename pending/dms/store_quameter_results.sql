@@ -49,8 +49,11 @@ DECLARE
     _datasetIDCheck int;
     _usageMessage text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
-    -- Create the table to hold the data
+    -- Create the tables to hold the data
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DatasetInfo (
@@ -118,8 +121,6 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

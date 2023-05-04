@@ -38,6 +38,9 @@ DECLARE
     _myEMSLStateNew int := 2;
     _statusURIList text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -45,9 +48,6 @@ BEGIN
     _job := Coalesce(_job, 0);
     _statusNumList := Coalesce(_statusNumList, '');
     _infoOnly := Coalesce(_infoOnly, true);
-
-    _message := '';
-    _returnCode := '';
 
     If _job <= 0 Then
         _message := '_job must be positive; unable to continue';

@@ -21,13 +21,14 @@ DECLARE
     _statItem record;
     _myRowCount int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create a temp table to hold the statistics

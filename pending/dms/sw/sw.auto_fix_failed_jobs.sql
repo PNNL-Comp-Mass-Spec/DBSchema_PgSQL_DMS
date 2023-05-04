@@ -24,6 +24,9 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     CREATE TEMP TABLE Tmp_JobsToFix (
         Job int not null,
         Step int not null
@@ -35,8 +38,6 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
     --
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

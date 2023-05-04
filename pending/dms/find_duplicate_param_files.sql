@@ -42,6 +42,9 @@ DECLARE
     _entryCount int;
     _entryInfo record;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Validate the input parameters
     -----------------------------------------
@@ -53,8 +56,6 @@ BEGIN
     _checkValidOnly := Coalesce(_checkValidOnly, true);
     _maxFilesToTest := Coalesce(_maxFilesToTest, 0);
     _previewSql := Coalesce(_previewSql, false);
-    _message := '';
-    _returnCode := '';
 
     If _previewSql Then
         _maxFilesToTest := 1;

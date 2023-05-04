@@ -27,13 +27,14 @@ DECLARE
     _jobCount int := 0;
     _usageMessage text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
     _jobStart := Coalesce(_jobStart, 0);
     _jobFinish := Coalesce(_jobFinish, 0);
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _jobFinish = 0 Then

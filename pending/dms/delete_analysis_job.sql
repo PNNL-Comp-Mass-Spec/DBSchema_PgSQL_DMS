@@ -43,11 +43,11 @@ DECLARE
     _stateID int;
     _msg text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _job := Coalesce(_job, '');
     _infoOnly := Coalesce(_infoOnly, false);
-
-    _message := '';
-    _returnCode:= '';
 
     _jobID := public.try_cast(_job, null::int);
 

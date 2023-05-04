@@ -30,14 +30,15 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
     --
     _windowDays := Abs(Coalesce(_windowDays, 30));
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     If _windowDays < 1 Then
         _windowDays := 1;

@@ -48,13 +48,13 @@ DECLARE
     _thresholdOneYear timestamp;
     _statInfo record;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
     --
-    _message := '';
-    _returnCode := '';
-
     _previewSql := Coalesce(_previewSql, false);
     _updateParamSettingsFileCounts := Coalesce(_updateParamSettingsFileCounts, true);
     _updateGeneralStatistics := Coalesce(_updateGeneralStatistics, false);

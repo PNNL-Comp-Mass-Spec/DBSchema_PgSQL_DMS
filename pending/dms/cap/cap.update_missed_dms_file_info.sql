@@ -34,6 +34,9 @@ DECLARE
     _logMsg text;
     _logMsgType text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     --------------------------------------------
     -- Validate the inputs
     --------------------------------------------
@@ -41,8 +44,6 @@ BEGIN
     _deleteFromTableOnSuccess := Coalesce(_deleteFromTableOnSuccess, true);
     _replaceExistingData := Coalesce(_replaceExistingData, false);
     _datasetIDs := Coalesce(_datasetIDs, '');
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     --------------------------------------------

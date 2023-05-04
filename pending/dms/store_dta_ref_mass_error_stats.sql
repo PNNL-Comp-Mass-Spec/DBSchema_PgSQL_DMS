@@ -45,6 +45,9 @@ DECLARE
     _datasetIDCheck int;
     _usageMessage text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Create the temporary tables to hold the data
     -----------------------------------------------------------
@@ -72,8 +75,6 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

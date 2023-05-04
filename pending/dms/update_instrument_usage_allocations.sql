@@ -78,6 +78,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -125,7 +127,6 @@ BEGIN
         _gcComment := Coalesce(_gcComment,  '');
         _qqqComment := Coalesce(_qqqComment, '');
 
-        _message := '';
         _infoOnly := Coalesce(_infoOnly, false);
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

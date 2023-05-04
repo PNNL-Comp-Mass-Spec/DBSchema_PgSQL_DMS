@@ -37,10 +37,10 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _daysPriorToUpdateClosedRequests := Abs(Coalesce(_daysPriorToUpdateClosedRequests, 365));
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

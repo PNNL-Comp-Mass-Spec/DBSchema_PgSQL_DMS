@@ -34,13 +34,13 @@ DECLARE
     _infoData text;
     _previewData record;
 BEGIN
+    _message := '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
 
     ---------------------------------------------------
     -- Create a temp table to hold the capture task jobs to delete

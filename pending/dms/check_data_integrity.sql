@@ -25,13 +25,14 @@ DECLARE
     _datasetCount int;
     _firstDatasetID int;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ----------------------------------------------------------
     -- Validate the inputs
     ----------------------------------------------------------
 
     _logErrors := Coalesce(_logErrors, true);
-    _message := '';
-    _returnCode:= '';
 
     ----------------------------------------------------------
     -- Look for datasets that map to multiple requested runs

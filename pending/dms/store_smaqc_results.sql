@@ -63,6 +63,9 @@ DECLARE
     _datasetIDCheck int;
     _usageMessage text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Create the table to hold the data
     -----------------------------------------------------------

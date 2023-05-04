@@ -36,8 +36,8 @@ DECLARE
     _proteinCollectionName text;
     _nameFilter text;
     _jobCount int;
-    _proteinCollectionsUpdated text;
-    _proteinCollectionCountUpdated int;
+    _proteinCollectionsUpdated text := '';
+    _proteinCollectionCountUpdated int := 0;
     _callingProcName text;
     _currentLocation text := 'Start';
 
@@ -46,13 +46,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-
-    _proteinCollectionCountUpdated := 0;
-    _proteinCollectionsUpdated := '';
-
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     --------------------------------------------------------------
     -- Validate the inputs

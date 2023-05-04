@@ -59,6 +59,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     -----------------------------------------------
     -- Validate the inputs
@@ -67,9 +69,6 @@ BEGIN
     _managerNameList := Coalesce(_managerNameList, '');
     _infoOnly := Coalesce(_infoOnly, false);
     _addMgrParamsIfMissing := Coalesce(_addMgrParamsIfMissing, false);
-
-    _message := '';
-    _returnCode := '';
 
     If _enable Is Null Then
         _message := '_enable cannot be null';

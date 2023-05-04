@@ -30,6 +30,9 @@ DECLARE
 
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------

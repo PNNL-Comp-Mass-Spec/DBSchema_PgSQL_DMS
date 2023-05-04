@@ -31,12 +31,13 @@ DECLARE
     _datasetsProcessed int;
     _updateInfo record;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     _startDatasetId := Coalesce(_startDatasetId, 0);
     _endDatasetId := Coalesce(_endDatasetId, 0);
     _infoOnly := Coalesce(_infoOnly, true);
     _verbose := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create a temporary table to track update stats

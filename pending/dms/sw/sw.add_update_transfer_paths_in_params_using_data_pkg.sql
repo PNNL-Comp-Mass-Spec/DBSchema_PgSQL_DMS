@@ -48,14 +48,15 @@ DECLARE
     _cacheFolderPathOld text := '';
     _xferPathOld text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
     --
     _dataPackageID := Coalesce(_dataPackageID, 0);
     _paramsUpdated := 0;
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Update _dataPackageID if 0 yet defined in Tmp_Job_Params

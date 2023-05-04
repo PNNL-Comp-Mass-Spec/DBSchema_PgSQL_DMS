@@ -27,6 +27,9 @@ DECLARE
     _factorNameList text;
     _colList text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Temp tables to hold list of requests and factors
     --

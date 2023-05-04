@@ -53,6 +53,8 @@ DECLARE
     _infoData text;
     _previewData record;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Create a temporary table containing defaults for this SP

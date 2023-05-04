@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_tool_version
     _job int,
     _step int,
     _toolVersionInfo text,
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -30,7 +31,8 @@ DECLARE
     _myRowCount int := 0;
     _toolVersionID int := 0;
 BEGIN
-    _returnCode := '';
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

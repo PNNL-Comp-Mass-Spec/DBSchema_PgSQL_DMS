@@ -67,12 +67,13 @@ DECLARE
     _hasIMS boolean := false;
     _requiredAction text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
     _autoDefineOnAllMismatches := Coalesce(_autoDefineOnAllMismatches, true);
 

@@ -50,6 +50,7 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode:= '';
+
     _failureMessage := Coalesce(_failureMessage, '');
 
     _maxRetries := 20;

@@ -26,12 +26,13 @@ DECLARE
     _infoData text;
     _previewData record;
 BEGIN
+    _message := '';
+
     ---------------------------------------------------
     -- Validate the inputs; clear the outputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
         Job int,

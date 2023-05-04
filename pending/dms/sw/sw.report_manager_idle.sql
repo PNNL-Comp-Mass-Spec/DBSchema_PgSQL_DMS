@@ -33,7 +33,8 @@ DECLARE
     _remoteInfoId int := 0;
     _newJobState int;
 BEGIN
-    _returnCode := '';
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

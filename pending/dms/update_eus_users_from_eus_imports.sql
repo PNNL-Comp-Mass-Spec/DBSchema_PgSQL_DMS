@@ -45,6 +45,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _updateUsersOnInactiveProposals := Coalesce(_updateUsersOnInactiveProposals, false);
 

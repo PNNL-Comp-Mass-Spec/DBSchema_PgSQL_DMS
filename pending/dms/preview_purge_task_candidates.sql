@@ -32,6 +32,9 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     --------------------------------------------------
     -- Validate the inputs
     --------------------------------------------------
@@ -40,9 +43,6 @@ BEGIN
     _storageVol := Coalesce(_storageVol, '');
     _datasetsPerShare := Coalesce(_datasetsPerShare, 5);
     _previewSql := Coalesce(_previewSql, false);
-
-    _message := '';
-    _returnCode:= '';
 
     If _datasetsPerShare < 1 Then
         _datasetsPerShare := 1;

@@ -41,13 +41,14 @@ AS $$
 DECLARE
     _datasetInfoXML xml;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     --------------------------------------------
     -- Validate the inputs
     --------------------------------------------
     --
     _deleteFromTableOnSuccess := Coalesce(_deleteFromTableOnSuccess, true);
-    _message := '';
-    _returnCode := '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     SELECT ds_info_xml

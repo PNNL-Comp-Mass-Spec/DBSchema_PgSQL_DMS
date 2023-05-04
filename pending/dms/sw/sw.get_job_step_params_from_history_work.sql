@@ -43,8 +43,6 @@ DECLARE
     _stepInputFolderName text := '';
     _stepParmSectionName text;
 BEGIN
-
-    -- Clear the outputs
     _message := '';
     _returnCode := '';
 

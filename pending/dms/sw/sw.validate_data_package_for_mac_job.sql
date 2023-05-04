@@ -45,6 +45,8 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _dataPackageID := Coalesce(_dataPackageID, 0);
     _tool := '';

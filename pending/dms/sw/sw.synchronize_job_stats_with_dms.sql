@@ -26,13 +26,14 @@ DECLARE
     _myRowCount int := 0;
     _defaultDate datetime;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
     _jobListToProcess := Coalesce(_jobListToProcess, '');
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     _defaultDate := make_date(2000, 1, 1);
 

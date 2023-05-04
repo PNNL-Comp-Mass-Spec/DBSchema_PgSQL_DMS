@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE pc.update_file_archive_entry_collection_list
     _sha1Hash text,
     _collectionListHexHash text,
     INOUT _message text default '',
-    INOUT _returnCode text default '')
+    INOUT _returnCode text default ''
+)
 LANGUAGE plpgsql
 AS $$
 /****************************************************
@@ -24,6 +25,8 @@ AS $$
 DECLARE
 
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     UPDATE pc.t_archived_output_files
     SET

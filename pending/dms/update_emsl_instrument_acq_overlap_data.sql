@@ -49,12 +49,12 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := Trim(Coalesce(_message, ''));
+    _returnCode := '';
 
     _instrument := Coalesce(_instrument, '');
     _year := Coalesce(_year, 0);
     _month := Coalesce(_month, 0);
-
-    _message := Trim(Coalesce(_message, ''));
 
     _infoOnly := Coalesce(_infoOnly, false);
     _showStartTimes := Coalesce(_showStartTimes, false);

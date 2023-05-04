@@ -65,9 +65,10 @@ DECLARE
     _authorized int := 0;
     _rootPath int;
 BEGIN
-    _teamChangeWarning := '';
     _message := '';
     _returnCode:= '';
+
+    _teamChangeWarning := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

@@ -28,6 +28,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
 
     -- Require that _intervalDays be at least 32
     If Coalesce(_intervalDays, 0) < 32 Then
@@ -35,9 +38,6 @@ BEGIN
     End If;
 
     _cutoffDateTime := CURRENT_TIMESTAMP - make_interval(days => _intervalDays);
-
-    _message := '';
-    _returnCode := '';
 
     ----------------------------------------------------------
     -- Copy Job_Events entries into historic log tables

@@ -44,15 +44,15 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _myRowCount := 0;
 
     _managerName := Trim(Coalesce(_managerName, ''));
     If (char_length(_managerName) = 0) Then
         _managerName := '??Undefined_Manager??';
     End If;
-
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Confirm that the manager name is valid

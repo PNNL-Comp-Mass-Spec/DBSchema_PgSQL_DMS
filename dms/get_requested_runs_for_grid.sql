@@ -37,15 +37,14 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
     --
     _itemList := Coalesce(_itemList, '');
-
-    _message := '';
-    _returnCode := '';
 
     RAISE INFO '%', _message;
 

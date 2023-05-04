@@ -44,6 +44,9 @@ DECLARE
     _existingParamsFound boolean := false;
     _dataPkgID int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
@@ -68,8 +71,6 @@ BEGIN
     -- Validate input fields
     ---------------------------------------------------
 
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

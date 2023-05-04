@@ -26,14 +26,15 @@ DECLARE
     _entryIDList text;
     _dataPackageList text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _staleUploadDays := Coalesce(_staleUploadDays, 45);
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     If _staleUploadDays < 20 Then
         -- Require _staleUploadDays to be at least 20

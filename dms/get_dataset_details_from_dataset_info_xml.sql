@@ -35,11 +35,11 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 DECLARE
     _datasetIDCheck int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _datasetID := Coalesce(_datasetID, 0);
     _datasetName := '';
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Parse out the dataset name from _datasetInfoXML

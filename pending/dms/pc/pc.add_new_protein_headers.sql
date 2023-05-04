@@ -29,8 +29,8 @@ DECLARE
     _myRowCount int := 0;
     _continue int;
     _proteinIDEnd int;
-    _proteinsProcessed int;
-    _batchSize int;
+    _proteinsProcessed int := 0;
+    _batchSize int := 100000;
     _callingProcName text;
     _currentLocation text := 'Start';
 
@@ -39,10 +39,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-
-    _proteinsProcessed := 0;
-    _batchSize := 100000;
+    _message := '';
+    _returnCode := '';
 
     --------------------------------------------------------------
     -- Validate the inputs
@@ -51,10 +49,8 @@ BEGIN
     _proteinIDStart := Coalesce(_proteinIDStart, 0);
     _maxProteinsToProcess := Coalesce(_maxProteinsToProcess, 0);
     _infoOnly := Coalesce(_infoOnly, 0);
-    _message := '';
-    _returnCode:= '';
 
-    Begin Try
+    BEGIN
 
         _currentLocation := 'Initialize _proteinIDStart';
 

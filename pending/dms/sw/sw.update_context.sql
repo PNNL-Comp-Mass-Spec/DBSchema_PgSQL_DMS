@@ -7,7 +7,9 @@ CREATE OR REPLACE PROCEDURE sw.update_context
     _loggingEnabled boolean = false,
     _loopingUpdateInterval int = 5,
     _infoOnly boolean = false,
-    _debugMode boolean = false
+    _debugMode boolean = false,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -47,7 +49,6 @@ AS $$
 DECLARE
     _myRowCount int := 0;
     _statusMessage text;
-    _message text := '';
     _startTime timestamp := CURRENT_TIMESTAMP;
     _result int;
     _action text;
@@ -59,6 +60,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     -- Part A: Validate inputs, Remove Deleted Jobs, Add New Jobs, Hold/Resume/Reset jobs
     BEGIN

@@ -49,6 +49,9 @@ DECLARE
     _cutoffDateTimeForFail timestamp;
     _jobInfo record
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ---------------------------------------------------
     -- Create table to track the list of affected jobs
     ---------------------------------------------------
@@ -88,8 +91,6 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Make sure the job Start and Finish values are up-to-date

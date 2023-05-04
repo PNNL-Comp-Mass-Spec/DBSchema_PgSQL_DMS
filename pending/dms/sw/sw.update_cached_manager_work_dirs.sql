@@ -1,6 +1,8 @@
 --
 CREATE OR REPLACE PROCEDURE sw.update_cached_manager_work_dirs
 (
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -18,7 +20,6 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _message text;
     _callingProcName text;
     _currentLocation text := 'Start';
 
@@ -27,6 +28,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     _infoOnly := Coalesce(_infoOnly, false);
 

@@ -2,9 +2,9 @@
 CREATE OR REPLACE PROCEDURE sw.delete_job_if_new_or_failed
 (
     _job int,
-    _callingUser text = '',
     INOUT _message text default '',
     INOUT _returnCode text default '',
+    _callingUser text = '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -38,6 +38,9 @@ DECLARE
     _skipMessage text := '';
     _jobText text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
@@ -58,8 +61,6 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     _jobText := 'job ' || Coalesce(_job::text, '??');

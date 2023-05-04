@@ -42,6 +42,9 @@ DECLARE
     _propagationMode text;
     _newJob text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -52,8 +55,6 @@ BEGIN
     _appendOldJobToComment := Coalesce(_appendOldJobToComment, true);
     _newSettingsFile := Trim(Coalesce(_newSettingsFile, ''));
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     If _job = 0 Then
         _message := '_job is invalid';

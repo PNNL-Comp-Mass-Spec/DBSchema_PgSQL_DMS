@@ -60,6 +60,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ------------------------------------------------
     -- Validate the inputs
@@ -71,8 +73,6 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _jobsToProcess := Coalesce(_jobsToProcess, 0);
 
-    _message := '';
-    _returnCode:= '';
     _jobsUpdated := 0;
 
     If _errorMessagePostingIntervalHours < 1 Then

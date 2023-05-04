@@ -32,6 +32,8 @@ AS $$
 DECLARE
     _annotationTypeID int;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Does entry already exist?
@@ -39,7 +41,7 @@ BEGIN
 
     _annotationTypeID := get_annotation_type_id (_name, _authID)
 
-    if _annotationTypeID > 0 Then
+    if Coalesce(_annotationTypeID, 0) > 0 Then
         _message := format('Annotation type "%s" already exists for naming authority ID %s', _name, _authId);
         RAISE WARNING '%', _message;
 

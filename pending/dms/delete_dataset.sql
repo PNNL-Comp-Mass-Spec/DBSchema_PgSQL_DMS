@@ -57,6 +57,8 @@ DECLARE
     _requestID int := Null;
     _stateID int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -83,8 +85,6 @@ BEGIN
     ------------------------------------------------
 
     _datasetName := Coalesce(_datasetName, '');
-    _message := '';
-    _returnCode:= '';
 
     If _datasetName = '' Then
         _msg := '_datasetName parameter is blank; nothing to delete';

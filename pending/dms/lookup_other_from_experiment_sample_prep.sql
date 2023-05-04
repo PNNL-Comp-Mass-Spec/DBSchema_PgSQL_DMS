@@ -30,10 +30,10 @@ DECLARE
     _prepRequestID int := 0;
     _newWorkPackage text;
 BEGIN
-
-    _workPackage := Trim(_workPackage);
     _message := '';
     _returnCode := '';
+
+    _workPackage := Trim(_workPackage);
 
     ---------------------------------------------------
     -- Find associated sample prep request for experiment

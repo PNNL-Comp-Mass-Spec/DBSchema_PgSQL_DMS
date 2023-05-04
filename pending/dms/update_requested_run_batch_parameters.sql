@@ -76,6 +76,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -100,9 +102,6 @@ BEGIN
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
-
-    _message := '';
-    _returnCode:= '';
 
     If Coalesce(_callingUser, '') = '' Then
         _callingUser := get_user_login_without_domain('');

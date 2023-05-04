@@ -54,6 +54,7 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode:= '';
+
     _minimumHealthUpdateIntervalSeconds := Coalesce(_minimumHealthUpdateIntervalSeconds, 5);
 
     -- Make sure _callingFunctionDescription is not null, and prepend it with the database name

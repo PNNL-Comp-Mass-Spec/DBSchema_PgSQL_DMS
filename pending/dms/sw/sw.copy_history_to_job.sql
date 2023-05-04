@@ -56,6 +56,7 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
     _debugMode := Coalesce(_debugMode, false);
 
     ---------------------------------------------------

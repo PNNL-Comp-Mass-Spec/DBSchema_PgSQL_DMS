@@ -58,6 +58,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
 
     BEGIN
 
@@ -69,7 +72,6 @@ BEGIN
         _maxJobsToReset := Coalesce(_maxJobsToReset, 0);
         _jobListOverride := Coalesce(_jobListOverride, '');
         _resetHoldoffMinutes := Coalesce(_resetHoldoffMinutes, 15);
-        _message := '';
 
         -----------------------------------------------------------
         -- Create the temporary tables

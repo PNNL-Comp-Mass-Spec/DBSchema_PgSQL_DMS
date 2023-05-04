@@ -83,6 +83,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
 
     BEGIN
 
@@ -90,17 +93,13 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
         --
-
         _windowHours := Coalesce(_windowHours, 12);
         If _windowHours < 2 Then
             _windowHours := 2;
         End If;
 
         _infoOnly := Coalesce(_infoOnly, false);
-
         _stepToolFilter := Coalesce(_stepToolFilter, '');
-
-        _message := '';
 
         CREATE TEMP TABLE Tmp_FailedJobs (
             Job int NOT NULL,

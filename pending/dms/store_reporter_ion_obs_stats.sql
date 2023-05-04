@@ -48,13 +48,14 @@ DECLARE
 BEGIN
 WITH EXECUTE AS OWNER
 
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _job := Coalesce(_job, 0);
-    _message := '';
-    _returnCode := '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     _topNPct := Coalesce(_topNPct, 0);

@@ -64,6 +64,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Initialize the output parameters
@@ -79,8 +81,6 @@ BEGIN
     _organismName := '';
     _protCollNameList := '';
     _protCollOptionsList := '';
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Dataset list shouldn't be empty

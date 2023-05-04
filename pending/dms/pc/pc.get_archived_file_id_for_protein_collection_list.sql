@@ -28,9 +28,10 @@ DECLARE
     _proteinCollectionName text;
     _uniqueID int;
     _continue int;
-    _proteinCollectionListClean text;
+    _proteinCollectionListClean text := '';
 BEGIN
-    _proteinCollectionListClean := '';
+    _message := '';
+    _returnCode := '';
 
     -----------------------------------------------------
     -- Validate the intputs
@@ -38,8 +39,6 @@ BEGIN
     _proteinCollectionList := Trim(Coalesce(_proteinCollectionList, ''));
     _archivedFileID := 0;
     _proteinCollectionCount := 0;
-    _message := '';
-    _returnCode:= '';
 
     If char_length(_proteinCollectionList) = 0 Then
         _message := 'Warning: Protein collection list is empty';

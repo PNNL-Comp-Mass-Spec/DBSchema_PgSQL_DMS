@@ -47,6 +47,9 @@ DECLARE
     _groupCount int;
     _filterCriteriaGroupIDNext int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Validate the input parameters
     -----------------------------------------

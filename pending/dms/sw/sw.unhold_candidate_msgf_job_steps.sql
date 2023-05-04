@@ -28,14 +28,15 @@ DECLARE
     _candidateSteps int := 0;
     _jobsToRelease int := 0;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
 
     _stepTool := Coalesce(_stepTool, '');
     _targetCandidates := Coalesce(_targetCandidates, 25);
-    _message := '';
-    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Count the number of job steps in state 2 for step tool _stepTool

@@ -60,6 +60,8 @@ DECLARE
     _taxonomyName text;
     _taxonomyRank text;
 BEGIN
+    _message := '';
+
     ---------------------------------------------------
     -- Validate input fields
     ---------------------------------------------------

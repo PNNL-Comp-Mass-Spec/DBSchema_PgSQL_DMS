@@ -33,14 +33,14 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate input fields
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Create temporary table to keep track of users to add

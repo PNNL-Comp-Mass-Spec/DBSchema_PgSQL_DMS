@@ -44,11 +44,11 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _batchID := Coalesce(_batchID, 0);
     _fullRefresh := Coalesce(_fullRefresh, false);
-    _message := '';
-    _returnCode := '';
 
     BEGIN
         _startTime := clock_timestamp();

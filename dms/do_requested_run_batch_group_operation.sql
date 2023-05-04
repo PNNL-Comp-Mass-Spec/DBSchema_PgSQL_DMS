@@ -23,7 +23,6 @@ DECLARE
     _authorized boolean;
 
 BEGIN
-
     _message := '';
     _returnCode := '';
 

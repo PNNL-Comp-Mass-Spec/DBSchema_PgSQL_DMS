@@ -41,6 +41,9 @@ DECLARE
     _datasetName text;
     _existingComment text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _datasetName := '';
     _datasetID := 0;
     _existingComment := '';
@@ -51,8 +54,6 @@ BEGIN
 
     _datasetNameOrID := Coalesce(_datasetNameOrID, '');
     _comment := Coalesce(_comment, '');
-    _message := '';
-    _returnCode:= '';
 
     If _comment = '' Then
         _comment := 'Bad dataset';

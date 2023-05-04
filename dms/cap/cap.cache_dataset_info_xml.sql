@@ -23,7 +23,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

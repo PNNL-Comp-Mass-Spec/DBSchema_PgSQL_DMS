@@ -81,7 +81,6 @@ DECLARE
     _actualSourceJob int;
     _logMessage text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

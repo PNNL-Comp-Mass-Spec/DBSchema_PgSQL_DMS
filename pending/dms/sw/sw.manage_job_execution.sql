@@ -2,7 +2,9 @@
 CREATE OR REPLACE PROCEDURE sw.manage_job_execution
 (
     _parameters text = '',
-    INOUT _result text
+    INOUT _result text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,7 +26,6 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _message text;
     _priority text;
     _newPriority int;
     _associatedProcessorGroup text;
@@ -33,6 +34,8 @@ DECLARE
     _action citext;
     _value citext;
 BEGIN
+    _message := '';
+    _returnCode:= '';
     _result := '';
 
     ---------------------------------------------------

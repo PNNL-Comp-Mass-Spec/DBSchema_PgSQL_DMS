@@ -151,6 +151,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -180,8 +182,6 @@ BEGIN
 
         _requestName := Coalesce(_requestName, '');
         _comment := Coalesce(_comment, '');
-
-        _message := '';
 
         If _requestName = '' Then
             RAISE EXCEPTION 'Cannot add: request name cannot be blank';

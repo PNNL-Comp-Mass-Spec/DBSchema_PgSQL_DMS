@@ -6,6 +6,8 @@ CREATE OR REPLACE PROCEDURE public.create_analysis_job_from_request_list
     _priority int = 2,
     _associatedProcessorGroup text = '',
     _propagationMode text = 'Export'
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -40,10 +42,12 @@ AS $$
 DECLARE
     _myRowCount int := 0;
     _requestInfo record;
-    _message text;
     _existingJobMsg text;
     _existingJobCount int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -------------------------------------------------
     -- Temporary table to hold job requests
     -------------------------------------------------

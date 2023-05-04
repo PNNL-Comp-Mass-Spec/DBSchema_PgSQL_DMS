@@ -70,6 +70,8 @@ DECLARE
     _datasetIDCheck int;
     _msg text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -111,8 +113,6 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
     _skipValidation := Coalesce(_skipValidation, false);
 

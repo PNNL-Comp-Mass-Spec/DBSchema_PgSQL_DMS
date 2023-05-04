@@ -37,7 +37,6 @@ DECLARE
     _state int := 0;
     _result int;
 BEGIN
-    _job := Coalesce(_job, '');
     _message := '';
     _returnCode := '';
 
@@ -63,6 +62,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
+    _job := Coalesce(_job, '');
     _jobID := public.try_cast(_job, null::int);
 
     If _jobID is null Then

@@ -32,6 +32,7 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode:= '';
+
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     ---------------------------------------------------

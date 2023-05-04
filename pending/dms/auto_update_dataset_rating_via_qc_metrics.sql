@@ -32,6 +32,9 @@ DECLARE
     _thresholdP_2A int := 250;
     _thresholdP_2C int := 100;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     ----------------------------------------------
     -- Validate the Inputs
     ----------------------------------------------
@@ -49,8 +52,6 @@ BEGIN
 
     _datasetCreatedMinimum := Coalesce(_datasetCreatedMinimum, make_date(2000, 1, 1));
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     CREATE TEMP TABLE Tmp_DatasetsToUpdate (
         Dataset_ID int not null

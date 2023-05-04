@@ -2,6 +2,8 @@
 CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks
 (
     _maxDatasetsToProcess int = 0,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _infoOnly boolean = false
 )
 LANGUAGE plpgsql
@@ -29,13 +31,15 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _message text := '';
     _continue boolean;
     _currentItemID int;
     _currentItem record;
     _datasetsProcessed int;
     _jobsCreated int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------

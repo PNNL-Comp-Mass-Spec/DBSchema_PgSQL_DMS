@@ -27,6 +27,9 @@ DECLARE
     _infoData text;
     _previewData record;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     CREATE TEMP TABLE Tmp_Selected_Jobs (
         Job int NOT NULL,
         ResetFailedStepsOnly int NOT NULL

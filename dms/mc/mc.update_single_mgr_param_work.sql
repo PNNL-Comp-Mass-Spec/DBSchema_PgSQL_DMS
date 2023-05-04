@@ -35,7 +35,6 @@ DECLARE
     _targetState int;
     _alterEnteredByMessage text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

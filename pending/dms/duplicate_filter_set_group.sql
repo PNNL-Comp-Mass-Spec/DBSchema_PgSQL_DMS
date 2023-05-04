@@ -25,13 +25,14 @@ DECLARE
     _myRowCount int := 0;
     _filterCriteriaGroupIDNext int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Validate the input parameters
     -----------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode := '';
 
     If _filterSetID Is Null Or _filterCriteriaGroupID Is Null Then
         _message := 'Both the filter set ID and the filter criteria group ID must be defined; unable to continue';

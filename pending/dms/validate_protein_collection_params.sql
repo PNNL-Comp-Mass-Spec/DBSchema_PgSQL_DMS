@@ -40,12 +40,12 @@ DECLARE
     _orgDbReqd int;
     _organismMatch text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
-
-    _message := '';
-    _returnCode := '';
 
     _ownerUsername := Coalesce(_ownerUsername, '');
     _debugMode := Coalesce(_debugMode, false);

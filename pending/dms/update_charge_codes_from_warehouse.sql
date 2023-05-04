@@ -52,6 +52,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
 
     ----------------------------------------------------------
     -- Validate the inputs
@@ -62,8 +65,6 @@ BEGIN
     _onlyShowChanged := Coalesce(_onlyShowChanged, false);
 
     _explicitChargeCodeList := Coalesce(_explicitChargeCodeList, '');
-    _message := '';
-    _returnCode:= '';
 
     -- Create a temporary table to keep track of WPs used within the last 12 months
     CREATE TEMP TABLE Tmp_WPsInUseLast3Years (

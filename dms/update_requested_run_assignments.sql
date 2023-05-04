@@ -84,7 +84,6 @@ DECLARE
     _exceptionContext text;
     _logMessage text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 

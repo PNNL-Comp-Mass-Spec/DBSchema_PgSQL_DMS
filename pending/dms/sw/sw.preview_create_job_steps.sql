@@ -27,14 +27,12 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _stepCount int;
-    _stepCountNew int;
+    _stepCount int := 0;
+    _stepCountNew int := 0;
 BEGIN
-    _stepCount := 0;
-    _stepCountNew := 0;
-
     _message := '';
-    _returnCode := '';
+    _returnCode:= '';
+
     _jobToPreview := Coalesce(_jobToPreview, 0);
 
     Call sw.create_job_steps (

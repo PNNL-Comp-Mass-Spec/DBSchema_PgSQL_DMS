@@ -28,6 +28,9 @@ DECLARE
     _myRowCount int := 0;
     _saveTime timestamp;
 BEGIN
+    _message := '';
+    _returnCode:= '';
+
     _saveTime := CURRENT_TIMESTAMP;
 
     ---------------------------------------------------
@@ -50,8 +53,6 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
-    _message := '';
-    _returnCode:= '';
 
     ---------------------------------------------------
     -- Insert specified job to Tmp_SJL

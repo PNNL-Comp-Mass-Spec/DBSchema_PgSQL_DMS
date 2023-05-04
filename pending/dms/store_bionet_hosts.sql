@@ -49,15 +49,15 @@ DECLARE
     _instruments text;
     _isAlias int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Validate the input parameters
     -----------------------------------------
 
     _hostList := Coalesce(_hostList, '');
     _infoOnly := Coalesce(_infoOnly, false);
-
-    _message := '';
-    _returnCode:= '';
 
     If _hostList = '' Then
         _message := '_hostList cannot be empty; unable to continue';

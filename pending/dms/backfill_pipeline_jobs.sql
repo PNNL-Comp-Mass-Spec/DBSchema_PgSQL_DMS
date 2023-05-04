@@ -73,6 +73,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -81,8 +83,6 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
     _jobsToProcess := Coalesce(_jobsToProcess, 0);
     _startJob := Coalesce(_startJob, 0);
-    _message := '';
-    _returnCode := '';
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 

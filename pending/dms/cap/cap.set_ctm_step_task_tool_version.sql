@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_tool_version
     _job int,
     _step int,
     _toolVersionInfo text,
-    INOUT _returnCode text = ''
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

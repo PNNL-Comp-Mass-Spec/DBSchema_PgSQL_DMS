@@ -42,6 +42,8 @@ DECLARE
     _proteinCollectionList text := '';
     _proteinOptions text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -56,8 +58,6 @@ BEGIN
 
     _deleteIfInvalid := Coalesce(_deleteIfInvalid, false);
     _debugMode := Coalesce(_debugMode, false);
-    _message := '';
-    _returnCode:= '';
 
     If _debugMode Then
         RAISE INFO '%', '';

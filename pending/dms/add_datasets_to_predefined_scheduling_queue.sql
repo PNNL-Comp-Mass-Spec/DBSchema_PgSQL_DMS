@@ -3,6 +3,8 @@ CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue
 (
     _datasetIDs text = '',
     _infoOnly boolean = false,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -29,6 +31,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs

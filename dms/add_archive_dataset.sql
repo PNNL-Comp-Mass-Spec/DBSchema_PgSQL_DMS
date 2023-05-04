@@ -34,14 +34,14 @@ DECLARE
     _purgePriority int := 0;
     _purgeHoldoffMonths int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Don't allow duplicate dataset IDs in table

@@ -20,8 +20,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_instrument
     _archiveServer text,
     _archiveNote text,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    INUOT _returnCode text = ''
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -50,6 +50,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
 
     ------------------------------------------------
     -- Validate the inputs
@@ -59,8 +62,6 @@ BEGIN
     _maxDatasetsToReset := Coalesce(_maxDatasetsToReset, 0);
     _infoOnly := Coalesce(_infoOnly, false);
 
-    _message := '';
-    _returnCode:= '';
     _resetCount := 0;
 
     If _maxDatasetsToReset <= 0 Then

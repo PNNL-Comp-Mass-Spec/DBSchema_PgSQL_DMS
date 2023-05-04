@@ -30,8 +30,11 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -40,9 +43,6 @@ BEGIN
     _dataPackageID := Coalesce(_dataPackageID, 0);
     _available := Coalesce(_available, 0);
     _verified := Coalesce(_verified, 0);
-
-    _message := '';
-    _returnCode:= '';
 
     If _entryID <= 0 Then
         _message := '_entryID must be positive; unable to continue';
@@ -63,7 +63,7 @@ BEGIN
     If Not Exists (SELECT * FROM dpkg.t_myemsl_uploads WHERE entry_id = _entryID AND data_pkg_id = _dataPackageID) Then
         _message := 'Entry ' || _entryID::text || ' does not correspond to data package ' || _dataPackageID::text;
         _myError := 60002;
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------

@@ -36,6 +36,8 @@ DECLARE
     _captureJob int;
     _infoMessage text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ----------------------------------------
     -- Validate the inputs
@@ -43,8 +45,6 @@ BEGIN
 
     _datasetNameOrID := Coalesce(_datasetNameOrID, '');
     _comment := Coalesce(_comment, '');
-    _message := '';
-    _returnCode := '';
 
     If _comment = '' Then
         _comment := 'Bad dataset';

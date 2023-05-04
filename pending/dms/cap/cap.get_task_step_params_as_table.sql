@@ -28,9 +28,8 @@ AS $$
 DECLARE
 
 BEGIN
-    --
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _paramName := Trim(Coalesce(_paramName, ''));
 

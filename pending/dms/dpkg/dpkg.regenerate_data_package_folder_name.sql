@@ -36,6 +36,9 @@ DECLARE
     _newDataPackageFolder text;
     _newDataPackageWiki text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate input fields
     ---------------------------------------------------

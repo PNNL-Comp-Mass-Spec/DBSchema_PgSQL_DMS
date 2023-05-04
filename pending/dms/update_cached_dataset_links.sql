@@ -40,13 +40,14 @@ DECLARE
     _datasetID int;
     _masicDirectoryName text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
     --
     _processingMode := Coalesce(_processingMode, 0);
-    _message := '';
-    _returnCode:= '';
     _showDebug := Coalesce(_showDebug, false);
 
     If _processingMode IN (0, 1) Then

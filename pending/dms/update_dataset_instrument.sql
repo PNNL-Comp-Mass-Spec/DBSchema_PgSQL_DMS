@@ -47,6 +47,9 @@ DECLARE
     _deleteCaptureJob int := 0;
     _instrumentUpdateTran text := 'Instrument update';
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ----------------------------------------------------------
     -- Validate the inputs
     ----------------------------------------------------------
@@ -55,9 +58,6 @@ BEGIN
     _newInstrument := Coalesce(_newInstrument, '');
     _infoOnly := Coalesce(_infoOnly, true);
     _updateCaptured := Coalesce(_updateCaptured, false);
-
-    _message := '';
-    _returnCode := '';
 
     ----------------------------------------------------------
     -- Lookup the dataset id and dataset state

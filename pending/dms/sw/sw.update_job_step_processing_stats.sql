@@ -31,6 +31,9 @@ DECLARE
     _mostRecentPostingTime timestamp;
     _updateTable boolean := true;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _timeIntervalLastUpdateMinutes := 0;
     _timeIntervalIdenticalStatsMinutes := 0;
 

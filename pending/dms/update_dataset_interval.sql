@@ -57,6 +57,7 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode:= '';
+
     _infoOnly := Coalesce(_infoOnly, false);
 
     _maxNormalInterval := get_long_interval_threshold();

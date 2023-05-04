@@ -26,8 +26,8 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _timeIntervalLastUpdateMinutes numeric;
-    _timeIntervalIdenticalStatsMinutes numeric;
+    _timeIntervalLastUpdateMinutes numeric := 0;
+    _timeIntervalIdenticalStatsMinutes numeric := 0;
     _newStatCount int;
     _identicalStatCount int;
     _updateTable boolean;
@@ -39,8 +39,8 @@ DECLARE
     _infoData text;
     _previewData record;
 BEGIN
-    _timeIntervalLastUpdateMinutes := 0;
-    _timeIntervalIdenticalStatsMinutes := 0;
+    _message := '';
+    _returnCode := '';
 
     _updateTable := true;
 

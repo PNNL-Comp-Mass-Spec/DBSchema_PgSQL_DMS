@@ -20,13 +20,14 @@ AS $$
 DECLARE
     _myRowCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, true);
-    _message := '';
-    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Create a temporary table to track the campaigns to retire

@@ -34,12 +34,12 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
-    _requestID := Coalesce(_requestID, 0);
     _message := '';
     _returnCode := '';
 
-    Begin
+    _requestID := Coalesce(_requestID, 0);
+
+    BEGIN
 
         If _requestID <> 0 Then
             -- Updating a specific requested run

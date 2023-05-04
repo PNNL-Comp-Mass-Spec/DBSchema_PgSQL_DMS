@@ -24,6 +24,9 @@ AS $$
 DECLARE
     _managerList text := null;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -- Temp table for managers
     CREATE TEMP TABLE Tmp_ManagersToReset (
         Processor_Name text NOT NULL,
@@ -35,8 +38,6 @@ BEGIN
     -----------------------------------------------------------
     --
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Find managers reporting error 'Flag file' within the last 6 hours

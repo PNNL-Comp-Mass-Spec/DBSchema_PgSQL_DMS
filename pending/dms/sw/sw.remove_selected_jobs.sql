@@ -40,10 +40,10 @@ DECLARE
     _job int;
     _numJobs int;
 BEGIN
-    _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
     _returnCode:= '';
 
+    _infoOnly := Coalesce(_infoOnly, false);
     _logDeletions := Coalesce(_logDeletions, false);
     _logToConsoleOnly := Coalesce(_logToConsoleOnly, false);
 

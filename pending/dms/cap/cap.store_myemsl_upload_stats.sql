@@ -59,6 +59,9 @@ DECLARE
     _statusNum int := null;
     _getStateToken text := 'get_state?job_id=';
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -68,9 +71,6 @@ BEGIN
     _subfolder := Coalesce(_subfolder, '');
     _statusURI := Coalesce(_statusURI, '');
     _usedTestInstance := Coalesce(_usedTestInstance, 0);
-
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

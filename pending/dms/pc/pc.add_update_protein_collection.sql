@@ -48,11 +48,10 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _collectionID int
+    _collectionID int := 0;
 BEGIN
     _message := '';
     _returnCode := '';
-    _collectionID := 0;
 
     ---------------------------------------------------
     -- Validate input fields

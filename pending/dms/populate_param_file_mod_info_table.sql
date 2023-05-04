@@ -45,6 +45,9 @@ DECLARE
     _massModFilterComparison text;
     _addFilter boolean;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
@@ -59,8 +62,6 @@ BEGIN
     _massModFilterTextColumn := Coalesce(_massModFilterTextColumn, '');
     _massModFilterText := Coalesce(_massModFilterText, '');
 
-    _message := '';
-    _returnCode:= '';
     _massModFilterSql := '';
 
     If char_length(_massModFilterTextColumn) > 0 Then

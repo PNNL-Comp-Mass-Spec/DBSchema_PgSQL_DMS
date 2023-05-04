@@ -78,11 +78,11 @@ DECLARE
     _exceptionContext text;
 
 BEGIN
+    _message := Trim(Coalesce(_message, ''));
+    _returnCode := '';
 
     _instrument := Coalesce(_instrument, '');
     _eusInstrumentId := Coalesce(_eusInstrumentId, 0);
-
-    _message := Trim(Coalesce(_message, ''));
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

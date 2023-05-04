@@ -37,6 +37,9 @@ DECLARE
     _xmlParameters xml;
     _showResultsMode int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ----------------------------------------------
     -- Validate the inputs
     ----------------------------------------------
@@ -48,8 +51,6 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, true);
     _settingsFileOverride := Coalesce(_settingsFileOverride, '');
-    _message := '';
-    _returnCode := '';
 
     -- Make sure _job exists in sw.t_jobs
     If Not Exists (SELECT * FROM sw.t_jobs WHERE job = _job) Then

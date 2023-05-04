@@ -43,6 +43,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode:= '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -74,8 +76,6 @@ BEGIN
         _active := Coalesce(_active, 0);
         _samplePrepVisible := Coalesce(_samplePrepVisible, 0);
         _fractionCount := Coalesce(_fractionCount, 0);
-
-        _message := '';
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 

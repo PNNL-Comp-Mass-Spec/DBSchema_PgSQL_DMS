@@ -54,6 +54,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -62,9 +65,6 @@ BEGIN
     _cleanupMode := Coalesce(_cleanupMode, 1);
     _showTable := Coalesce(_showTable, true);
     _infoOnly := Coalesce(_infoOnly, false);
-
-    _message := '';
-    _returnCode := '';
 
     If _cleanupMode < 0 Then
         _cleanupMode := 0;

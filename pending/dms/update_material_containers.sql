@@ -50,6 +50,8 @@ DECLARE
     _nonEmptyContainers text;
     _moveType text := '??';
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -79,8 +81,6 @@ BEGIN
     _containerList := Coalesce(_containerList, '');
     _newValue := Coalesce(_newValue, '');
     _comment := Coalesce(_comment, '');
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Temporary table to hold containers

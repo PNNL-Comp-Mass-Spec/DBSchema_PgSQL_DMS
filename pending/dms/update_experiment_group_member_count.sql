@@ -25,13 +25,14 @@ DECLARE
     _myRowCount int := 0;
     _memberCount int := 0;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate inputs
     ---------------------------------------------------
 
     _groupID := Coalesce(_groupID, 0);
-    _message := '';
-    _returnCode:= '';
 
     If _groupID <= 0 Then
 

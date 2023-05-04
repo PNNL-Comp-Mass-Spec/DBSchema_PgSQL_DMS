@@ -35,8 +35,10 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
-
 BEGIN
+    _message := '';
+    _returnCode := '';
+
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -57,9 +59,6 @@ BEGIN
         _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
         RAISE EXCEPTION '%', _message;
     End If;
-
-    _message := '';
-    _returnCode:= '';
 
     BEGIN
 

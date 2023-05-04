@@ -41,6 +41,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     BEGIN
 
@@ -51,8 +53,6 @@ BEGIN
         _campaignIDFilterList := Trim(Coalesce(_campaignIDFilterList, ''));
         _organismIDFilterList := Trim(Coalesce(_organismIDFilterList, ''));
         _instrumentFilterList := Trim(Coalesce(_instrumentFilterList, ''));
-
-        _message := '';
 
         --------------------------------------------------------------------
         -- Populate a temporary table with the Campaign IDs to filter on

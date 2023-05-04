@@ -53,6 +53,9 @@ DECLARE
     _matchCount int;
     _newUsername text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -64,9 +67,6 @@ BEGIN
     _newOperatorUsername := Coalesce(_newOperatorUsername, '');
     _datasetStateID := Coalesce(_datasetStateID, 1);
     _infoOnly := Coalesce(_infoOnly, true);
-
-    _message := '';
-    _returnCode:= '';
 
     If _sourceDataset = '' Then
         _message := '_sourceDataset is empty';

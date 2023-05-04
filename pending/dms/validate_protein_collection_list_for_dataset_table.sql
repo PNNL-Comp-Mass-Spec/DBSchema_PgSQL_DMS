@@ -51,6 +51,9 @@ DECLARE
     _experimentCountTotal int;
     _dups text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     --------------------------------------------------------------
     -- Validate the inputs
     --------------------------------------------------------------

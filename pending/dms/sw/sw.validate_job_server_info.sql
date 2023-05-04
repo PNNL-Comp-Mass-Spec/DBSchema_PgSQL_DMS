@@ -33,14 +33,15 @@ DECLARE
     _dataset text;
     _datasetFolderName text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
     --
     _job := Coalesce(_job, 0);
     _useJobParameters := Coalesce(_useJobParameters, true);
-    _message := '';
-    _returnCode:= '';
 
     _transferFolderPath := '';
     _dataset := '';

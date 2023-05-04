@@ -8,8 +8,9 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text
     INOUT _sourceJob int = 0,
     INOUT _autoQueryUsed boolean = false,
     INOUT _warningMessage text = '',
+    INOUT _returnCode text default '',
     _previewSql boolean= false,
-    _autoQuerySql text = '' output
+    INOUT _autoQuerySql text = ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -60,6 +61,9 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _warningMessage := '';
+    _returnCode := '';
+    _autoQuerySql := '';
 
     ------------------------------------------------
     -- Validate the inputs

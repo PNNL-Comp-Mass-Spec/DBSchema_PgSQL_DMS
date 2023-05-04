@@ -90,6 +90,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     BEGIN
 
@@ -103,8 +105,6 @@ BEGIN
         _instrumentFilterList := Trim(Coalesce(_instrumentFilterList, ''));
         _includeProposalType := Coalesce(_includeProposalType, 0);
         _showDebug := Coalesce(_showDebug, false);
-
-        _message := '';
 
         --------------------------------------------------------------------
         -- Populate a temporary table with the Campaign IDs to filter on

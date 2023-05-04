@@ -37,6 +37,9 @@ DECLARE
     _datasetCount int := 0;
     _mode text := 'update';
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _rating := Coalesce(_rating, '');
     _infoOnly := Coalesce(_infoOnly, false);
 

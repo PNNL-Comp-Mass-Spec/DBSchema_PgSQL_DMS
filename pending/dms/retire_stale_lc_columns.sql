@@ -24,13 +24,14 @@ DECLARE
     _usedThresholdMonths int := 9;
     _unusedThresholdMonths int := 24;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, true);
-    _message := '';
-    _returnCode:= '';
 
     -----------------------------------------------------------
     -- Create a temporary table to track the columns to retire

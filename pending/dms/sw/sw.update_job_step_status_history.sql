@@ -34,6 +34,9 @@ DECLARE
     _updateTable booleahn;
     _mostRecentPostingTime timestamp;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     _timeIntervalLastUpdateMinutes := 0;
     _timeIntervalIdenticalStatsMinutes := 0;
 
