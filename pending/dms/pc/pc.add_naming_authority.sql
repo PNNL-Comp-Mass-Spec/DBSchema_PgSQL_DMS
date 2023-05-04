@@ -11,9 +11,17 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds or changes an annotation naming authority
+**  Desc:
+**      Adds or updates an annotation naming authority in t_naming_authorities
 **
+**  Arguments:
+**    _name         Authority name
+**    _description  Description
+**    _webAddress   website
 **
+**  Returns:
+**    _returnCode will have the naming authority ID if a new row was added to t_naming_authorities
+**    _returnCode will be the negative value of the authority ID if the authority already exists in t_naming_authorities
 **
 **  Auth:   kja
 **  Date:   12/14/2005
@@ -21,52 +29,37 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
-    _memberID int;
     _authId int;
-    _transName text;
 BEGIN
-    _authId := 0;
 
     ---------------------------------------------------
     -- Does entry already exist?
     ---------------------------------------------------
 
-    execute _authId = GetNamingAuthorityID _name
-
-    if _authId > 0 Then
-        return -_authId
-    End If;
-
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-
-    _transName := 'AddNamingAuthority';
-    begin transaction _transName
-
-    ---------------------------------------------------
-    -- action for add mode
-    ---------------------------------------------------
-    INSERT INTO pc.t_naming_authorities
-               ("name", description, web_address)
-    VALUES     (_name, _description, _webAddress)
-    RETURNING authority_id
+    SELECT authority_id
     INTO _authId
+    FROM pc.t_naming_authorities
+    WHERE name = _authName::citext;
 
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    if _myError <> 0 Then
-        rollback transaction _transName
-        _msg := 'Insert operation failed: "' || _name || '"';
-        RAISERROR (_msg, 10, 1)
-        return 51007
+    If FOUND Then
+        _message := format('Naming authority "%s" already exists, ID %s', _authName, _authId
+        RAISE WARNING '%', _message;
+
+        -- The Organism Database Handler expects this procedure to return negative _authId if _authName already exists
+        _returnCode := format('-%s', _authId);
+        RETURN;
     End If;
 
-    commit transaction _transName
+    ---------------------------------------------------
+    -- Action for add mode
+    ---------------------------------------------------
 
-    return _authID
+    INSERT INTO pc.t_naming_authorities (name, description, web_address)
+    VALUES (_name, _description, _webAddress)
+    RETURNING authority_id
+    INTO _authId;
+
+    _returnCode := _authId::text;
 END
 $$;
 

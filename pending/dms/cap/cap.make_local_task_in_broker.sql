@@ -230,7 +230,6 @@ BEGIN
 
                 Call cap.move_tasks_to_main_tables (_message => _message, _returnCode => _returnCode);
 
-                COMMIT;
             END;
 
         End If;

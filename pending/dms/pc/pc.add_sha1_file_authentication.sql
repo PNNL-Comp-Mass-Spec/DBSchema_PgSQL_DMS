@@ -10,9 +10,8 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds a SHA1 fingerprint to a given Protein Collection Entry
-**
-**
+**  Desc:
+**      Adds a SHA1 fingerprint to a given Protein Collection Entry
 **
 **  Auth:   kja
 **  Date:   04/15/2005

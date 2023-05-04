@@ -135,7 +135,7 @@ BEGIN
 
          INNER JOIN TmpDataPackagesToUpdate Src
            ON DP.ID = Src.ID
-         INNER JOIN S_DMS_V_EUS_User_ID_Lookup EUSUser
+         INNER JOIN V_EUS_User_ID_Lookup EUSUser
            ON DP.Owner = EUSUser.Username
     WHERE Coalesce(DP.EUS_Person_ID, '') <> Coalesce(EUSUser.EUS_Person_ID, '')
     --
@@ -178,7 +178,7 @@ BEGIN
                                     FROM dpkg.t_data_package_datasets DPD
                                          INNER JOIN TmpDataPackagesToUpdate Src
                                            ON DPD.data_pkg_id = Src.ID
-                                         INNER JOIN S_V_Dataset_List_Report_2 DR
+                                         INNER JOIN V_Dataset_List_Report_2 DR
                                            ON DPD.dataset_id = DR.ID
                                     WHERE NOT DR.Proposal IS NULL AND NOT DR.Proposal LIKE 'EPR%'
                                     GROUP BY DPD.data_pkg_id, DR.Proposal
@@ -299,7 +299,7 @@ BEGIN
 
                            ToDo: Fix this query
 
-         INNER JOIN S_V_EUS_Instrument_ID_Lookup EUSInst
+         INNER JOIN V_EUS_Instrument_ID_Lookup EUSInst
            ON Target.Best_Instrument_Name = EUSInst.Instrument_Name
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;

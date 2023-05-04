@@ -46,13 +46,12 @@ BEGIN
         -- Check if collection is OK to delete
         ---------------------------------------------------
 
-        SELECT collection_state_id INTO _collectionState
+        SELECT collection_state_id
+        INTO _collectionState
         FROM pc.t_protein_collections
         WHERE protein_collection_id = _collectionID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             _message := format('Collection_ID %s not found in pc.t_protein_collections; unable to continue', _collectionID);
             RAISE WARNING '%', _message;
 

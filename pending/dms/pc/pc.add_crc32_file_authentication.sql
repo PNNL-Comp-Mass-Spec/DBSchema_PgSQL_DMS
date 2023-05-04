@@ -14,7 +14,7 @@ AS $$
 **
 **  Desc:
 **      Adds a CRC32 fingerprint to a given Protein Collection Entry
-**      Note: If _numProteins is 0 or _totalResidueCount is 0 , T_Protein_Collections will not be updated
+**      Note: If _numProteins is 0 or _totalResidueCount is 0, T_Protein_Collections will not be updated
 **
 **  Arguments:
 **    _numProteins         The number of proteins for this protein collection; used to update T_Protein_Collections
@@ -27,47 +27,25 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
-    _transName text;
+
 BEGIN
     _message := '';
     _returnCode:= '';
     _numProteins := Coalesce(_numProteins, 0);
     _totalResidueCount := Coalesce(_totalResidueCount, 0);
 
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-
-    _transName := 'AddCRC32FileAuthentication';
-    begin transaction _transName
-
     UPDATE pc.t_protein_collections
-    SET
-        authentication_hash = _crc32FileHash,
+    SET authentication_hash = _crc32FileHash,
         date_modified = CURRENT_TIMESTAMP
-    WHERE (protein_collection_id = _collectionID)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    if _myError <> 0 Then
-        rollback transaction _transName
-        _msg := 'Update operation failed!';
-        RAISERROR (_msg, 10, 1)
-        return 51007
-    End If;
+    WHERE protein_collection_id = _collectionID;
 
     If _numProteins > 0 And _totalResidueCount > 0 Then
         UPDATE pc.t_protein_collections
         SET num_proteins = _numProteins,
             num_residues = _totalResidueCount
-        WHERE protein_collection_id = _collectionID
+        WHERE protein_collection_id = _collectionID;
     End If;
 
-    commit transaction _transName
-
-    return 0
 END
 $$;
 

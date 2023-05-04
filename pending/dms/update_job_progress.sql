@@ -163,7 +163,7 @@ BEGIN
                                              ELSE JS.Job_Progress * Tools.AvgRuntime_Minutes
                                         END) AS WeightedProgressSum,
                                     SUM(RunTime_Minutes) AS TotalRuntime_Minutes
-                             FROM S_V_Pipeline_Job_Steps JS
+                             FROM sw.V_Job_Steps JS
                                   INNER JOIN S_T_Pipeline_Step_Tools Tools
                                     ON JS.Tool = Tools.Name
                                   INNER JOIN ( SELECT Job
@@ -186,7 +186,7 @@ BEGIN
                            ) ProgressQ
                            INNER JOIN ( SELECT JS.Job,
                                                SUM(Tools.AvgRuntime_Minutes) AS WeightSum
-                                        FROM S_V_Pipeline_Job_Steps JS
+                                        FROM sw.V_Job_Steps JS
                                              INNER JOIN S_T_Pipeline_Step_Tools Tools
                                                ON JS.Tool = Tools.Name
                                              INNER JOIN ( SELECT Job
@@ -258,7 +258,7 @@ BEGIN
 
          INNER JOIN ( SELECT JS.Job,
                              MAX(JS.RunTime_Predicted_Hours * 60) AS RunTime_Predicted_Minutes
-                      FROM S_V_Pipeline_Job_Steps JS
+                      FROM sw.V_Job_Steps JS
                            INNER JOIN ( SELECT Job
                                         FROM Tmp_JobsToUpdate
 

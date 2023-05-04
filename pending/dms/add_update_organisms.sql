@@ -54,7 +54,7 @@ AS $$
 **          09/25/2012 mem - Expanded _orgName and _orgDBName to varchar(128)
 **          11/20/2012 mem - No longer allowing _orgDBName to contain '.fasta'
 **          05/10/2013 mem - Added _newtIdentifier
-**          05/13/2013 mem - Now validating _newtIdentifier against S_V_CV_NEWT
+**          05/13/2013 mem - Now validating _newtIdentifier against ont.V_CV_NEWT
 **          05/24/2013 mem - Added _newtIDList
 **          10/15/2014 mem - Removed _orgDBPath and added validation logic to _orgStorageLocation
 **          06/25/2015 mem - Now validating that the protein collection specified by _orgDBName exists
@@ -80,7 +80,7 @@ AS $$
 **          12/11/2020 mem - Allow duplicate metagenome organisms
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          04/11/2022 mem - Check for whitespace in _orgName
-**          07/27/2022 mem - Switch from FileName to Collection_Name when querying S_V_Protein_Collections_by_Organism
+**          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_By_Organism
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -416,11 +416,11 @@ BEGIN
         ---------------------------------------------------
 
         If _orgDBName <> '' Then
-            -- Protein collections in S_V_Protein_Collection_Picker are those with state 1, 2, or 3
-            -- In contrast, S_V_Protein_Collections_by_Organism has all protein collections
+            -- Protein collections in pc.V_Collection_Picker are those with state 1, 2, or 3
+            -- In contrast, pc.V_Protein_Collections_by_Organism has all protein collections
 
-            If Not Exists (SELECT * FROM S_V_Protein_Collection_Picker WHERE Name = _orgDBName) Then
-                If Exists (SELECT * FROM S_V_Protein_Collections_by_Organism WHERE Collection_Name = _orgDBName AND Collection_State_ID = 4) Then
+            If Not Exists (SELECT * FROM pc.V_Collection_Picker WHERE Name = _orgDBName) Then
+                If Exists (SELECT * FROM pc.V_Protein_Collections_by_Organism WHERE Collection_Name = _orgDBName AND Collection_State_ID = 4) Then
                     _msg := 'Default protein collection is invalid because it is inactive: ' || _orgDBName;
                 Else
                     _msg := 'Protein collection not found: ' || _orgDBName;

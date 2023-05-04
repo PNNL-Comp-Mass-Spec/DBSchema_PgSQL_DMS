@@ -345,7 +345,6 @@ BEGIN
         End If;
     End If;
 
-    -- Start transaction
     BEGIN
 
         ---------------------------------------------------
@@ -537,9 +536,9 @@ BEGIN
 
         End If;
 
-        COMMIT;
-
     END;
+
+    COMMIT;
 
     ---------------------------------------------------
     -- Update fasta file name (if one was passed in from the analysis tool manager)

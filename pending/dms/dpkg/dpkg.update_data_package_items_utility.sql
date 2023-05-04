@@ -32,7 +32,7 @@ AS $$
 **          06/10/2009 grk - changed size of item list to max
 **          06/10/2009 mem - Now calling UpdateDataPackageItemCounts to update the data package item counts
 **          10/01/2009 mem - Now populating Campaign in T_Data_Package_Biomaterial
-**          12/31/2009 mem - Added DISTINCT keyword to the INSERT INTO queries in case the source views include some duplicate rows (in particular, S_V_Experiment_Detail_Report_Ex)
+**          12/31/2009 mem - Added DISTINCT keyword to the INSERT INTO queries in case the source views include some duplicate rows (in particular, V_Experiment_Detail_Report_Ex)
 **          05/23/2010 grk - create this sproc from common function factored out of UpdateDataPackageItems and UpdateDataPackageItemsXML
 **          12/31/2013 mem - Added support for EUS Proposals
 **          09/02/2014 mem - Updated to remove non-numeric items when working with analysis jobs
@@ -71,7 +71,6 @@ DECLARE
     _datasetsRemoved text;
     _packageID int;
     _dataPackageList text := '';
-    _msgForLog text := ERROR_MESSAGE();
 BEGIN
     _message := '';
     _returnCode := '';
@@ -166,7 +165,7 @@ BEGIN
                        'Dataset' AS ItemType,
                        DL.Dataset
                 FROM Tmp_DatasetIDsToAdd Source
-                     INNER JOIN S_V_Dataset_List_Report_2 DL
+                     INNER JOIN V_Dataset_List_Report_2 DL
                        ON Source.DatasetID = DL.ID
 
                 -- Update the Type of the Dataset IDs so that they will be ignored
@@ -178,7 +177,6 @@ BEGIN
             End If;
 
             If Exists (SELECT * FROM Tmp_DataPackageItems WHERE ItemType = 'Dataset' And Identifier Like 'DataPackage[_][0-9][0-9]%') Then
-                Set @datasetsRemoved = ''
 
                 SELECT string_agg(Identifier, ', ' ORDER BY Identifier)
                 INTO _datasetsRemoved
@@ -197,7 +195,7 @@ BEGIN
         -- Add parent items and associated items to list for items in the list
         -- This process cascades up the DMS hierarchy of tracking entities, but not down
         --
-        IF _mode = 'add' Then
+        If _mode = 'add' Then
         -- <add_associated_items>
 
             -- Add datasets to list that are parents of jobs in the list
@@ -209,7 +207,7 @@ BEGIN
                 TX.Dataset
             FROM
                 Tmp_JobsToAddOrDelete J
-                INNER JOIN S_V_Analysis_Job_List_Report_2 TX
+                INNER JOIN V_Analysis_Job_List_Report_2 TX
                   ON J.Job = TX.Job
             WHERE
                 NOT EXISTS (
@@ -227,7 +225,7 @@ BEGIN
                 TX.Experiment
             FROM
                 Tmp_DataPackageItems TP
-                INNER JOIN S_V_Dataset_List_Report_2 TX
+                INNER JOIN V_Dataset_List_Report_2 TX
                 ON TP.Identifier = TX.Dataset
             WHERE
                 TP.ItemType = 'Dataset'
@@ -246,7 +244,7 @@ BEGIN
                 TX.Proposal
             FROM
                 Tmp_DataPackageItems TP
-                INNER JOIN S_V_Dataset_List_Report_2 TX
+                INNER JOIN V_Dataset_List_Report_2 TX
                 ON TP.Identifier = TX.Dataset
             WHERE
                 TP.ItemType = 'Dataset'
@@ -265,7 +263,7 @@ BEGIN
                 TX.Biomaterial_Name
             FROM
                 Tmp_DataPackageItems TP
-                INNER JOIN S_V_Experiment_Biomaterial TX
+                INNER JOIN V_Experiment_Biomaterial TX
                 ON TP.Identifier = TX.Experiment
             WHERE
                 TP.ItemType = 'Experiment' AND
@@ -292,7 +290,7 @@ BEGIN
                                    'Dataset' AS ItemType,
                                    TX.Dataset AS Dataset
                    FROM Tmp_JobsToAddOrDelete J
-                       INNER JOIN S_V_Analysis_Job_List_Report_2 TX
+                       INNER JOIN V_Analysis_Job_List_Report_2 TX
                           ON J.Job = TX.Job
                  ) ToDelete
                  LEFT OUTER JOIN (
@@ -312,8 +310,6 @@ BEGIN
                    ON ToDelete.DataPackageID = ToKeep.data_pkg_id AND
                       ToDelete.dataset = ToKeep.dataset
             WHERE ToKeep.data_pkg_id IS NULL
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             -- Find parent experiments that will have no jobs or datasets remaining once we remove the jobs in Tmp_DataPackageItems
             --
@@ -325,14 +321,14 @@ BEGIN
                                    'Experiment' AS ItemType,
                                    TX.Experiment AS Experiment
                    FROM Tmp_JobsToAddOrDelete J
-                        INNER JOIN S_V_Analysis_Job_List_Report_2 TX
+                        INNER JOIN V_Analysis_Job_List_Report_2 TX
                           ON J.Job = TX.Job
                    UNION
                    SELECT DISTINCT TP.DataPackageID,
                                    'Experiment',
                                    TX.Experiment
                    FROM Tmp_DataPackageItems TP
-                        INNER JOIN S_V_Dataset_List_Report_2 TX
+                        INNER JOIN V_Dataset_List_Report_2 TX
                           ON TP.Identifier = TX.Dataset
                    WHERE TP.ItemType = 'Dataset'
                  ) ToDelete
@@ -365,7 +361,7 @@ BEGIN
                                   Datasets.data_pkg_id = Experiments.data_pkg_id
                              LEFT OUTER JOIN Tmp_DataPackageItems ItemsQ
                                ON Datasets.data_pkg_id = ItemsQ.DataPackageID AND
-                                   ItemsQ."Type" = 'dataset' AND
+                                   ItemsQ.type = 'dataset' AND
                                    ItemsQ.Identifier = Datasets.dataset
                         WHERE Datasets.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_DataPackageItems) AND
                               ItemsQ.Identifier IS NULL
@@ -374,27 +370,25 @@ BEGIN
                       ToDelete.experiment = ToKeep2.experiment
             WHERE ToKeep1.data_pkg_id IS NULL AND
                   ToKeep2.data_pkg_id IS NULL
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             -- Find parent biomaterial that will have no jobs or datasets remaining once we remove the jobs in Tmp_DataPackageItems
             --
             INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
-            SELECT ToDelete.DataPackageID, ToDelete.ItemType, ToDelete.Cell_Culture_Name
+            SELECT ToDelete.DataPackageID, ToDelete.ItemType, ToDelete.Biomaterial_Name
             FROM (
                    -- Biomaterial associated with jobs that we are removing
                    SELECT DISTINCT J.DataPackageID,
                                    'Biomaterial' AS ItemType,
-                                   Biomaterial.Cell_Culture_Name
+                                   Biomaterial.Biomaterial_Name
                    FROM Tmp_JobsToAddOrDelete J
-                        INNER JOIN S_V_Analysis_Job_List_Report_2 TX
+                        INNER JOIN V_Analysis_Job_List_Report_2 TX
                           ON J.Job = TX.Job
-                        INNER JOIN S_V_Experiment_Cell_Culture Biomaterial
-                          ON Biomaterial.Experiment_Num = TX.Experiment
+                        INNER JOIN V_Experiment_Biomaterial Biomaterial
+                          ON Biomaterial.Experiment = TX.Experiment
                  ) ToDelete
                  LEFT OUTER JOIN (
                         -- Biomaterial associated with the data package; skipping the jobs that we're deleting
-                        SELECT DISTINCT biomaterial.biomaterial AS Cell_Culture_Name,
+                        SELECT DISTINCT biomaterial.biomaterial AS biomaterial_name,
                                         Datasets.data_pkg_id
                         FROM dpkg.t_data_package_analysis_jobs Jobs
                              INNER JOIN dpkg.t_data_package_datasets Datasets
@@ -405,9 +399,9 @@ BEGIN
                                   Datasets.data_pkg_id = Experiments.data_pkg_id
                              INNER JOIN dpkg.t_data_package_biomaterial biomaterial
                                ON Experiments.data_pkg_id = biomaterial.data_pkg_id
-                             INNER JOIN S_V_Experiment_Cell_Culture Exp_CC_Map
-                               ON Experiments.experiment = Exp_CC_Map.Experiment_Num AND
-                                  Exp_CC_Map.Cell_Culture_Name = biomaterial.biomaterial
+                             INNER JOIN V_Experiment_Biomaterial Exp_Biomaterial_Map
+                               ON Experiments.experiment = Exp_Biomaterial_Map.Experiment AND
+                                  Exp_Biomaterial_Map.biomaterial_name = biomaterial.biomaterial
                              LEFT OUTER JOIN Tmp_JobsToAddOrDelete ItemsQ
                                ON Jobs.data_pkg_id = ItemsQ.DataPackageID AND
                                   Jobs.job = ItemsQ.job
@@ -415,10 +409,8 @@ BEGIN
                               ItemsQ.job IS NULL
                  ) AS ToKeep
                    ON ToDelete.DataPackageID = ToKeep.data_pkg_id AND
-                      ToDelete.Cell_Culture_Name = ToKeep.Cell_Culture_Name
+                      ToDelete.biomaterial_name = ToKeep.biomaterial_name
             WHERE ToKeep.data_pkg_id IS NULL
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         End If;
 
@@ -431,6 +423,7 @@ BEGIN
                 SELECT '_mode should be add, comment, or delete; ' || _mode || ' is invalid' As Warning
             End If;
 
+            -- ToDo: use RAISE INFO to show this info
             SELECT *
             FROM Tmp_DataPackageItems
             ORDER BY DataPackageID, ItemType, Identifier
@@ -440,25 +433,26 @@ BEGIN
         -- Biomaterial operations
         ---------------------------------------------------
 
-        IF _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
+        If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
         -- <delete biomaterial>
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT 'biomaterial to delete' AS Biomaterial_Msg, Target.*
                 FROM dpkg.t_data_package_biomaterial Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems."type" = 'biomaterial'
+                          Tmp_DataPackageItems.type = 'biomaterial'
             Else
                 DELETE Target
                 FROM dpkg.t_data_package_biomaterial Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems."type" = 'biomaterial'
+                          Tmp_DataPackageItems.type = 'biomaterial'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Deleted %s biomaterial %s', _myRowCount, public.check_plural(_myRowCount, 'item', 'items'));
@@ -467,39 +461,27 @@ BEGIN
             End If;
         End If; -- </delete biomaterial>
 
-        IF _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
+        If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
         -- <comment biomaterial>
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT 'Update biomaterial comment' AS Item_Type,
                        _comment AS New_Comment, *
                 FROM dpkg.t_data_package_biomaterial Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems."type" = 'biomaterial'
+                          Tmp_DataPackageItems.type = 'biomaterial'
             Else
                 UPDATE dpkg.t_data_package_biomaterial
                 SET package_comment = _comment
-                FROM dpkg.t_data_package_biomaterial Target
-
-                /********************************************************************************
-                ** This UPDATE query includes the target table biomaterial in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE dpkg.t_data_package_biomaterial
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = dpkg.t_data_package_biomaterial.id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
-                          Tmp_DataPackageItems.Identifier = Target.Name AND
-                          Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                FROM Tmp_DataPackageItems Src
+                WHERE Src.DataPackageID = dpkg.t_data_package_biomaterial.Data_Package_ID AND
+                      Src.Identifier = dpkg.t_data_package_biomaterial.Name AND
+                      Src.ItemType = 'Biomaterial'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Updated the comment for %s biomaterial %s', _myRowCount, public.check_plural(_myRowCount, 'item', 'items'));
@@ -508,45 +490,36 @@ BEGIN
             End If;
         End If; -- </comment biomaterial>
 
-        IF _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
+        If _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
         -- <add biomaterial>
 
             -- Delete extras
-            DELETE Tmp_DataPackageItems
-            FROM Tmp_DataPackageItems
-
-            /********************************************************************************
-            ** This DELETE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE Tmp_DataPackageItems
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = Tmp_DataPackageItems.id;
-            **
-            ** Delete queries must also include the USING keyword
-            ** Alternatively, the more standard approach is to rearrange the query to be similar to
-            **   DELETE FROM Tmp_DataPackageItems WHERE id in (SELECT id from ...)
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN dpkg.t_data_package_biomaterial TX
-                   ON Tmp_DataPackageItems.DataPackageID = TX.data_pkg_id AND
-                      Tmp_DataPackageItems.Identifier = TX.biomaterial AND
-                      Tmp_DataPackageItems."type" = 'biomaterial'
+            DELETE FROM Tmp_DataPackageItems target
+            WHERE EXISTS
+                ( SELECT 1
+                  FROM Tmp_DataPackageItems PkgItems
+                       INNER JOIN dpkg.t_data_package_biomaterial TX
+                         ON PkgItems.DataPackageID = TX.data_pkg_id AND
+                            PkgItems.Identifier = TX.biomaterial AND
+                            PkgItems.ItemType = 'biomaterial'
+                  WHERE target.DataPackageID = PkgItems.DataPackageID AND
+                        target.Identifier = PkgItems.Identifier AND
+                        target.ItemType = PkgItems.type
+                );
 
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
                                 'New Biomaterial' AS Item_Type,
                                 TX.ID,
-                                _comment AS [Comment],
+                                _comment AS Comment,
                                 TX.Name,
                                 TX.Campaign,
                                 TX.Created,
-                                TX.ItemType
+                                TX.Type
                 FROM Tmp_DataPackageItems
-                     INNER JOIN S_V_Cell_Culture_List_Report_2 TX
-                       ON Tmp_DataPackageItems.Identifier = Name
+                     INNER JOIN V_Biomaterial_List_Report_2 TX
+                       ON Tmp_DataPackageItems.Identifier = TX.Name
 
                 WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial'
             Else
@@ -559,24 +532,24 @@ BEGIN
                     biomaterial,
                     campaign,
                     created,
-                    "type"
+                    type
                 )
                 SELECT DISTINCT
                     Tmp_DataPackageItems.DataPackageID,
                     TX.ID,
                     _comment,
-                    TX.biomaterial,
+                    TX.name,
                     TX.campaign,
                     TX.created,
-                    TX."type"
+                    TX.type
                 FROM
                     Tmp_DataPackageItems
-                    INNER JOIN S_V_Cell_Culture_List_Report_2 TX
-                    ON Tmp_DataPackageItems.Identifier = biomaterial
-                WHERE Tmp_DataPackageItems."type" = 'biomaterial'
+                    INNER JOIN V_Biomaterial_List_Report_2 TX
+                    ON Tmp_DataPackageItems.Identifier = TX.name
+                WHERE Tmp_DataPackageItems.type = 'biomaterial'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Added %s biomaterial %s', _myRowCount, public.check_plural(_myRowCount, 'item', 'items'));
@@ -589,25 +562,26 @@ BEGIN
         -- EUS Proposal operations
         ---------------------------------------------------
 
-        IF _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
+        If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
         -- <delete EUS Proposals>
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT 'EUS Proposal to delete' AS EUS_Proposal_Msg, Target.*
                 FROM dpkg.t_data_package_eus_proposals Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.proposal_id AND
-                          Tmp_DataPackageItems."Type" = 'EUSProposal'
+                          Tmp_DataPackageItems.type = 'EUSProposal'
             Else
                 DELETE Target
                 FROM dpkg.t_data_package_eus_proposals Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.proposal_id AND
-                          Tmp_DataPackageItems."Type" = 'EUSProposal'
+                          Tmp_DataPackageItems.type = 'EUSProposal'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := 'Deleted %s EUS %s', _myRowCount, public.check_plural(_myRowCount, 'proposal', 'proposals'));
@@ -616,9 +590,10 @@ BEGIN
             End If;
         End If; -- </delete EUS Proposal>
 
-        IF _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
+        If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
         -- <comment EUS Proposals>
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT 'Update EUS Proposal comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
@@ -626,30 +601,17 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
                           Tmp_DataPackageItems.Identifier = Target.Proposal_ID AND
-                          Tmp_DataPackageItems."Type" = 'EUSProposal'
+                          Tmp_DataPackageItems.type = 'EUSProposal'
             Else
                 UPDATE dpkg.t_data_package_eus_proposals
                 SET package_comment = _comment
-                FROM dpkg.t_data_package_eus_proposals Target
-
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE dpkg.t_data_package_eus_proposals
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = dpkg.t_data_package_eus_proposals.id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
-                          Tmp_DataPackageItems.Identifier = Target.Proposal_ID AND
-                          Tmp_DataPackageItems.ItemType = 'EUSProposal'
+                FROM Tmp_DataPackageItems
+                WHERE Tmp_DataPackageItems.DataPackageID = dpkg.t_data_package_eus_proposals.Data_Package_ID AND
+                      Tmp_DataPackageItems.Identifier = dpkg.t_data_package_eus_proposals.Proposal_ID AND
+                      Tmp_DataPackageItems.ItemType = 'EUSProposal';
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := 'Updated the comment for %s EUS %s', _myRowCount, public.check_plural(_myRowCount, 'proposal', 'proposals'));
@@ -658,59 +620,50 @@ BEGIN
             End If;
         End If; -- </comment EUS Proposals>
 
-        IF _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
+        If _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
         -- <add EUS Proposals>
 
             -- Delete extras
-            DELETE Tmp_DataPackageItems
-            FROM Tmp_DataPackageItems
-
-            /********************************************************************************
-            ** This DELETE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE Tmp_DataPackageItems
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = Tmp_DataPackageItems.id;
-            **
-            ** Delete queries must also include the USING keyword
-            ** Alternatively, the more standard approach is to rearrange the query to be similar to
-            **   DELETE FROM Tmp_DataPackageItems WHERE id in (SELECT id from ...)
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN dpkg.t_data_package_eus_proposals TX
-                   ON Tmp_DataPackageItems.DataPackageID = TX.data_pkg_id AND
-                      Tmp_DataPackageItems.Identifier = TX.proposal_id AND
-                      Tmp_DataPackageItems."Type" = 'EUSProposal'
+            DELETE FROM Tmp_DataPackageItems target
+            WHERE EXISTS
+                ( SELECT 1
+                  FROM Tmp_DataPackageItems PkgItems
+                       INNER JOIN dpkg.t_data_package_eus_proposals TX
+                         ON PkgItems.DataPackageID = TX.data_pkg_id AND
+                            PkgItems.Identifier = TX.proposal_id AND
+                            PkgItems.ItemType = 'EUSProposal'
+                  WHERE target.DataPackageID = PkgItems.DataPackageID AND
+                        target.Identifier = PkgItems.Identifier AND
+                        target.ItemType = PkgItems.type
+                );
 
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
                                 'New EUS Proposal' AS Item_Type,
                                 TX.ID,
-                                _comment AS [Comment]
+                                _comment AS Comment
                 FROM Tmp_DataPackageItems
-                     INNER JOIN S_V_EUS_Proposals_List_Report TX
+                     INNER JOIN V_EUS_Proposals_List_Report TX
                        ON Tmp_DataPackageItems.Identifier = TX.ID
                 WHERE Tmp_DataPackageItems.ItemType = 'EUSProposal'
 
             Else
                 -- Add new items
                 INSERT INTO dpkg.t_data_package_eus_proposals( data_pkg_id,
-                                                          proposal_id,
-                                                          package_comment )
+                                                               proposal_id,
+                                                               package_comment )
                 SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
                                 TX.ID,
                                 _comment
                 FROM Tmp_DataPackageItems
-                     INNER JOIN S_V_EUS_Proposals_List_Report TX
+                     INNER JOIN V_EUS_Proposals_List_Report TX
                        ON Tmp_DataPackageItems.Identifier = TX.ID
-                WHERE Tmp_DataPackageItems."Type" = 'EUSProposal'
+                WHERE Tmp_DataPackageItems.type = 'EUSProposal'
 
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Added %s EUS %s', _myRowCount, public.check_plural(_myRowCount, 'proposal', 'proposals'));
@@ -723,15 +676,16 @@ BEGIN
         -- Experiment operations
         ---------------------------------------------------
 
-        IF _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
+        If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
         -- <delete experiments>
             If _infoOnly Then
-                SELECT 'experiment to delete' AS Experiment_Msg, Target.*
+                -- ToDo: Use RAISE INFO to show this info
+                SELECT 'Experiment to delete' AS Experiment_Msg, Target.*
                 FROM dpkg.t_data_package_experiments Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.experiment AND
-                          Tmp_DataPackageItems."Type" = 'experiment'
+                          Tmp_DataPackageItems.type = 'experiment'
 
             Else
                 DELETE Target
@@ -739,10 +693,10 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                   Tmp_DataPackageItems.Identifier = Target.experiment AND
-                          Tmp_DataPackageItems."Type" = 'experiment'
+                          Tmp_DataPackageItems.type = 'experiment'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := 'Deleted %s %s', _myRowCount, public.check_plural(_myRowCount, 'experiment', 'experiments');
@@ -751,9 +705,10 @@ BEGIN
             End If;
         End If; -- </delete experiments>
 
-        IF _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
+        If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
         -- <comment experiments>
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT 'Update experiment comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
@@ -761,31 +716,18 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.experiment AND
-                          Tmp_DataPackageItems."Type" = 'experiment'
+                          Tmp_DataPackageItems.type = 'experiment'
 
             Else
                 UPDATE dpkg.t_data_package_experiments
                 SET package_comment = _comment
-                FROM dpkg.t_data_package_experiments Target
-
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE dpkg.t_data_package_experiments
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = dpkg.t_data_package_experiments.id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
-                          Tmp_DataPackageItems.Identifier = Target.Experiment AND
-                          Tmp_DataPackageItems.ItemType = 'Experiment'
+                FROM Tmp_DataPackageItems
+                WHERE Tmp_DataPackageItems.DataPackageID = dpkg.t_data_package_experiments.Data_Package_ID AND
+                      Tmp_DataPackageItems.Identifier = dpkg.t_data_package_experiments.Experiment AND
+                      Tmp_DataPackageItems.ItemType = 'Experiment'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Added %s %s', _myRowCount, public.check_plural(_myRowCount, 'experiment', 'experiments'));
@@ -796,44 +738,35 @@ BEGIN
             End If;
         End If; -- </comment experiments>
 
-        IF _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
+        If _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
         -- <add experiments>
 
             -- Delete extras
-            DELETE Tmp_DataPackageItems
-            FROM Tmp_DataPackageItems
-
-            /********************************************************************************
-            ** This DELETE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE Tmp_DataPackageItems
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = Tmp_DataPackageItems.id;
-            **
-            ** Delete queries must also include the USING keyword
-            ** Alternatively, the more standard approach is to rearrange the query to be similar to
-            **   DELETE FROM Tmp_DataPackageItems WHERE id in (SELECT id from ...)
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN dpkg.t_data_package_experiments TX
-                   ON Tmp_DataPackageItems.DataPackageID = TX.data_pkg_id AND
-                      Tmp_DataPackageItems.Identifier = TX.experiment AND
-                      Tmp_DataPackageItems."Type" = 'experiment'
+            DELETE FROM Tmp_DataPackageItems target
+            WHERE EXISTS
+                ( SELECT 1
+                  FROM Tmp_DataPackageItems PkgItems
+                       INNER JOIN dpkg.t_data_package_experiments TX
+                         ON PkgItems.DataPackageID = TX.data_pkg_id AND
+                            PkgItems.Identifier = TX.experiment AND
+                            PkgItems.ItemType = 'experiment'
+                  WHERE target.DataPackageID = PkgItems.DataPackageID AND
+                        target.Identifier = PkgItems.Identifier AND
+                        target.ItemType = PkgItems.type
+                );
 
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT DISTINCT
                     Tmp_DataPackageItems.DataPackageID,
                     'New Experiment ID' as Item_Type,
                     TX.ID,
-                    _comment AS [Comment],
+                    _comment AS Comment,
                     TX.Experiment,
                     TX.Created
                 FROM
                     Tmp_DataPackageItems
-                    INNER JOIN S_V_Experiment_Detail_Report_Ex TX
+                    INNER JOIN V_Experiment_Detail_Report_Ex TX
                     ON Tmp_DataPackageItems.Identifier = TX.Experiment
                 WHERE Tmp_DataPackageItems.ItemType = 'Experiment'
             Else
@@ -853,12 +786,12 @@ BEGIN
                     TX.created
                 FROM
                     Tmp_DataPackageItems
-                    INNER JOIN S_V_Experiment_Detail_Report_Ex TX
+                    INNER JOIN V_Experiment_Detail_Report_Ex TX
                     ON Tmp_DataPackageItems.Identifier = TX.experiment
-                WHERE Tmp_DataPackageItems."Type" = 'experiment'
+                WHERE Tmp_DataPackageItems.type = 'experiment'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Added %s %s', _myRowCount, public.check_plural(_myRowCount, 'experiment', 'experiments'));
@@ -871,15 +804,16 @@ BEGIN
         -- Dataset operations
         ---------------------------------------------------
 
-        IF _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
+        If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
         -- <delete datasets>
             If _infoOnly Then
-                SELECT 'dataset to delete' AS Dataset_Msg, Target.*
+                -- ToDo: Use RAISE INFO to show this info
+                SELECT 'Dataset to delete' AS Dataset_Msg, Target.*
                 FROM dpkg.t_data_package_datasets Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.dataset AND
-                          Tmp_DataPackageItems."Type" = 'dataset'
+                          Tmp_DataPackageItems.type = 'dataset'
 
             Else
                 DELETE Target
@@ -887,10 +821,10 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.dataset AND
-                          Tmp_DataPackageItems."Type" = 'dataset'
+                          Tmp_DataPackageItems.type = 'dataset'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Deleted %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
@@ -899,9 +833,10 @@ BEGIN
             End If;
         End If; -- </delete datasets>
 
-        IF _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
+        If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
         -- <comment datasets>
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT 'Update dataset comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
@@ -909,31 +844,18 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.dataset AND
-                          Tmp_DataPackageItems."Type" = 'dataset'
+                          Tmp_DataPackageItems.type = 'dataset'
 
             Else
                 UPDATE dpkg.t_data_package_datasets
                 SET package_comment = _comment
-                FROM dpkg.t_data_package_datasets Target
-
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE dpkg.t_data_package_datasets
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = dpkg.t_data_package_datasets.id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
-                          Tmp_DataPackageItems.Identifier = Target.Dataset AND
-                          Tmp_DataPackageItems.ItemType = 'Dataset'
+                FROM Tmp_DataPackageItems
+                WHERE Tmp_DataPackageItems.DataPackageID = dpkg.t_data_package_datasets.Data_Package_ID AND
+                      Tmp_DataPackageItems.Identifier = dpkg.t_data_package_datasets.Dataset AND
+                      Tmp_DataPackageItems.ItemType = 'Dataset'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Updated the comment for %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
@@ -942,56 +864,47 @@ BEGIN
             End If;
         End If; -- </comment datasets>
 
-        IF _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
+        If _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
         -- <add datasets>
 
             -- Delete extras
-            DELETE Tmp_DataPackageItems
-            FROM Tmp_DataPackageItems
-
-            /********************************************************************************
-            ** This DELETE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE Tmp_DataPackageItems
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = Tmp_DataPackageItems.id;
-            **
-            ** Delete queries must also include the USING keyword
-            ** Alternatively, the more standard approach is to rearrange the query to be similar to
-            **   DELETE FROM Tmp_DataPackageItems WHERE id in (SELECT id from ...)
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN dpkg.t_data_package_datasets TX
-                   ON Tmp_DataPackageItems.DataPackageID = TX.data_pkg_id AND
-                      Tmp_DataPackageItems.Identifier = TX.dataset AND
-                      Tmp_DataPackageItems."Type" = 'dataset'
+            DELETE FROM Tmp_DataPackageItems target
+            WHERE EXISTS
+                ( SELECT 1
+                  FROM Tmp_DataPackageItems PkgItems
+                       INNER JOIN dpkg.t_data_package_datasets TX
+                         ON PkgItems.DataPackageID = TX.data_pkg_id AND
+                            PkgItems.Identifier = TX.dataset AND
+                            PkgItems.ItemType = 'dataset'
+                  WHERE target.DataPackageID = PkgItems.DataPackageID AND
+                        target.Identifier = PkgItems.Identifier AND
+                        target.ItemType = PkgItems.type
+                );
 
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
                                 'New Dataset ID' AS Item_Type,
                                 TX.ID,
-                                _comment AS [Comment],
+                                _comment AS Comment,
                                 TX.Dataset,
                                 TX.Created,
                                 TX.Experiment,
                                 TX.Instrument
                 FROM Tmp_DataPackageItems
-                     INNER JOIN S_V_Dataset_List_Report_2 TX
+                     INNER JOIN V_Dataset_List_Report_2 TX
                        ON Tmp_DataPackageItems.Identifier = TX.Dataset
                 WHERE Tmp_DataPackageItems.ItemType = 'Dataset'
 
             Else
                 -- Add new items
                 INSERT INTO dpkg.t_data_package_datasets( data_pkg_id,
-                                                     dataset_id,
-                                                     package_comment,
-                                                     dataset,
-                                                     created,
-                                                     experiment,
-                                                     instrument )
+                                                          dataset_id,
+                                                          package_comment,
+                                                          dataset,
+                                                          created,
+                                                          experiment,
+                                                          instrument )
                 SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
                                 TX.ID,
                                 _comment,
@@ -1000,12 +913,12 @@ BEGIN
                                 TX.experiment,
                                 TX.instrument
                 FROM Tmp_DataPackageItems
-                     INNER JOIN S_V_Dataset_List_Report_2 TX
+                     INNER JOIN V_Dataset_List_Report_2 TX
                        ON Tmp_DataPackageItems.Identifier = TX.dataset
-                WHERE Tmp_DataPackageItems."Type" = 'dataset'
+                WHERE Tmp_DataPackageItems.type = 'dataset'
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Added %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
@@ -1018,9 +931,10 @@ BEGIN
         -- Analysis_job operations
         ---------------------------------------------------
 
-        IF _mode = 'delete' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
+        If _mode = 'delete' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
         -- <delete analysis_jobs>
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT 'job to delete' AS Job_Msg, *
                 FROM dpkg.t_data_package_analysis_jobs Target
                      INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
@@ -1034,7 +948,7 @@ BEGIN
                           Target.job = ItemsQ.job
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Deleted %s analysis %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
@@ -1043,9 +957,10 @@ BEGIN
             End If;
         End If; -- </delete analysis_jobs>
 
-        IF _mode = 'comment' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
+        If _mode = 'comment' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
         -- <comment analysis_jobs>
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT 'Update job comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
@@ -1062,7 +977,7 @@ BEGIN
                           Target.job = ItemsQ.job
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Updated the comment for %s analysis %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
@@ -1071,53 +986,43 @@ BEGIN
             End If;
         End If; -- </comment analysis_jobs>
 
-        IF _mode = 'add' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
+        If _mode = 'add' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
         -- <add analysis_jobs>
 
             -- Delete extras
-            DELETE Tmp_JobsToAddOrDelete
-            FROM Tmp_JobsToAddOrDelete Target
-
-            /********************************************************************************
-            ** This DELETE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE #Tmp_JobsToAddOrDelete
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = #Tmp_JobsToAddOrDelete.id;
-            **
-            ** Delete queries must also include the USING keyword
-            ** Alternatively, the more standard approach is to rearrange the query to be similar to
-            **   DELETE FROM #Tmp_JobsToAddOrDelete WHERE id in (SELECT id from ...)
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN dpkg.t_data_package_analysis_jobs TX
-                   ON Target.DataPackageID = TX.data_pkg_id AND
-                      Target.job = TX.job
+            DELETE FROM Tmp_JobsToAddOrDelete target
+            WHERE EXISTS
+                ( SELECT 1
+                  FROM Tmp_JobsToAddOrDelete PkgJobs
+                       INNER JOIN dpkg.t_data_package_analysis_jobs TX
+                         ON PkgJobs.DataPackageID = TX.data_pkg_id AND
+                            PkgJobs.job = TX.job
+                  WHERE target.DataPackageID = PkgJobs.DataPackageID AND
+                        target.job = PkgJobs.job
+                );
 
             If _infoOnly Then
+                -- ToDo: Use RAISE INFO to show this info
                 SELECT DISTINCT ItemsQ.DataPackageID,
                                 'New Job' AS Item_Type,
                                 TX.Job,
-                                _comment AS [Comment],
+                                _comment AS Comment,
                                 TX.Created,
                                 TX.Dataset,
                                 TX.Tool
-                FROM S_V_Analysis_Job_List_Report_2 TX
+                FROM V_Analysis_Job_List_Report_2 TX
                      INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
                        ON TX.Job = ItemsQ.Job
 
             Else
                 -- Add new items
                 INSERT INTO dpkg.t_data_package_analysis_jobs( data_pkg_id,
-                                                          job,
-                                                          package_comment,
-                                                          created,
-                                                          dataset_id,
-                                                          dataset,
-                                                          tool )
+                                                               job,
+                                                               package_comment,
+                                                               created,
+                                                               dataset_id,
+                                                               dataset,
+                                                               tool )
                 SELECT DISTINCT ItemsQ.DataPackageID,
                                 TX.job,
                                 _comment,
@@ -1125,12 +1030,12 @@ BEGIN
                                 TX.dataset_id,
                                 TX.dataset,
                                 TX.tool
-                FROM S_V_Analysis_Job_List_Report_2 TX
+                FROM V_Analysis_Job_List_Report_2 TX
                      INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
                        ON TX.job = ItemsQ.job
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-                --
+
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
                     _actionMsg := format('Added %s analysis %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
@@ -1204,7 +1109,7 @@ BEGIN
         Call format_error_message _message output, _myError output
 
         -- rollback any open transactions
-        IF (XACT_STATE()) <> 0 Then
+        If (XACT_STATE()) <> 0 Then
             ROLLBACK TRANSACTION;
         End If;
 

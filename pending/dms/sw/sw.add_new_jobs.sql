@@ -261,8 +261,6 @@ BEGIN
 
     CREATE INDEX IX_Tmp_JobDebugMessages_Job ON Tmp_JobDebugMessages (Job);
 
-    -- Start transaction #1
-    --
     BEGIN
 
         ---------------------------------------------------
@@ -503,9 +501,10 @@ BEGIN
             End If;
         End If; -- </SuspendUpdates>
 
-        -- Commit the changes for Transaction #1
-        COMMIT;
     END;
+
+    -- Commit changes
+    COMMIT;
 
     If _resumeUpdatesRequired Then
     -- <ResumeUpdates>
@@ -611,8 +610,6 @@ BEGIN
             Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
-        -- Start transaction #2
-        --
         BEGIN
 
             ---------------------------------------------------
@@ -654,9 +651,10 @@ BEGIN
             SET state = 20                        -- 20=resuming
             WHERE job IN (SELECT job From Tmp_JobsToResumeOrReset);
 
-            -- Commit the changes for Transaction #2
-            COMMIT;
         END;
+
+        -- Commit changes
+        COMMIT;
 
     End If; -- </ResumeUpdates>
 

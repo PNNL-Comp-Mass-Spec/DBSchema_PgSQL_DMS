@@ -1240,7 +1240,6 @@ BEGIN
         RAISE INFO '%, RequestStepTaskXML: Start transaction', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
-    -- Start transaction
     BEGIN
 
         ---------------------------------------------------
@@ -1326,9 +1325,9 @@ BEGIN
                   Step = _step
 
         End If;
-
-        COMMIT;
     END;
+
+    COMMIT;
 
     If _infoLevel > 1 Then
         RAISE INFO '%, RequestStepTaskXML: Transaction committed', public.timestamp_text_immutable(clock_timestamp());

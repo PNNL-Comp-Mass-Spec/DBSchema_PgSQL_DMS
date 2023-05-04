@@ -220,8 +220,6 @@ BEGIN
                                     _infoOnly => _infoOnly);
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -240,6 +238,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part C: Create capture task job steps
     BEGIN
@@ -277,8 +277,6 @@ BEGIN
 
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -297,6 +295,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part D: Update step states
     BEGIN
@@ -329,8 +329,6 @@ BEGIN
                                     _loopingUpdateInterval => _loopingUpdateInterval);
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -349,6 +347,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part E: Update capture task job states
     --         This calls update_task_state, which calls update_dms_dataset_state, which calls update_dms_file_info_xml
@@ -383,8 +383,6 @@ BEGIN
                                     _infoOnly => _infoOnly);
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -403,6 +401,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part F: Retry capture for datasets that failed capture but for which the dataset state in DMS is 1=New
     BEGIN
@@ -427,8 +427,6 @@ BEGIN
             Call cap.retry_capture_for_dms_reset_tasks (_message => _message, _infoOnly => _infoOnly);
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -447,6 +445,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
 /*
     -- Part G: Update CPU Loading
@@ -476,8 +476,6 @@ BEGIN
             Call cap.update_cpu_loading _message => _message;
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -496,6 +494,9 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
+
 */
 
     If _loggingEnabled Then

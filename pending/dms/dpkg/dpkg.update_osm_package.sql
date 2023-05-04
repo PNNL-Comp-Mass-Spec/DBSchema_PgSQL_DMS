@@ -1,5 +1,4 @@
 --
-
 CREATE OR REPLACE PROCEDURE dpkg.update_osm_package
 (
     _osmPackageID INT,
@@ -25,11 +24,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _debugMode int := 0;
     _authorized int := 0;
-    _transName text;
-    _msgForLog text := ERROR_MESSAGE();
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -60,37 +56,28 @@ BEGIN
     -- verify OSM package exists
     ---------------------------------------------------
 
-    IF _mode = 'delete' Then
+    If _mode = 'delete' Then
     --<delete>
-
-        ---------------------------------------------------
-        -- start transaction
-        ---------------------------------------------------
-        --
-        _transName := 'UpdateOSMPackage';
-        begin transaction _transName
 
         ---------------------------------------------------
         -- 'delete' (mark as inactive) associated file attachments
         ---------------------------------------------------
 
-        UPDATE S_File_Attachment
-        SET [Active] = 0
-        WHERE Entity_Type = 'osm_package'
-        AND Entity_ID = _osmPackageID
+        UPDATE T_File_Attachment
+        SET active = 0
+        WHERE Entity_Type = 'osm_package' AND
+              Entity_ID = _osmPackageID;
 
         ---------------------------------------------------
         -- remove OSM package from table
         ---------------------------------------------------
 
-        DELETE  FROM dbo.t_osm_package
-        WHERE   osm_pkg_id = _osmPackageID
-
-        commit transaction _transName
+        DELETE FROM t_osm_package
+        WHERE osm_pkg_id = _osmPackageID;
 
     End If; --<delete>
 
-    IF _mode = 'test' Then
+    If _mode = 'test' Then
         RAISERROR ('Test: %d', 11, 20, _osmPackageID)
     End If;
 
@@ -99,7 +86,7 @@ BEGIN
         Call format_error_message _message output, _myError output
 
         -- rollback any open transactions
-        IF (XACT_STATE()) <> 0 Then
+        If (XACT_STATE()) <> 0 Then
             ROLLBACK TRANSACTION;
         End If;
 
@@ -108,8 +95,6 @@ BEGIN
     END CATCH
     RETURN _myError
 
-/*
-*/
 END
 $$;
 

@@ -66,8 +66,6 @@ BEGIN
         DELETE FROM sw.t_job_events
         WHERE entered < _cutoffDateTime;
 
-        COMMIT;
-
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -117,8 +115,6 @@ BEGIN
         DELETE FROM sw.t_job_step_events
         WHERE entered < _cutoffDateTime;
 
-        COMMIT;
-
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -165,8 +161,6 @@ BEGIN
         DELETE FROM sw.t_job_step_processing_log
         WHERE entered < _cutoffDateTime;
 
-        COMMIT;
-
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -212,8 +206,6 @@ BEGIN
         --
         DELETE FROM sw.t_log_entries
         WHERE Entered < _cutoffDateTime;
-
-        COMMIT;
 
     EXCEPTION
         WHEN OTHERS THEN

@@ -57,7 +57,7 @@ BEGIN
         SELECT DS.dataset_id, DS.dataset_state_id, PipelineQ.NewState
         FROM t_dataset DS
              INNER JOIN ( SELECT dataset_id, State AS NewState
-                          FROM S_V_Capture_Jobs_ActiveOrComplete
+                          FROM cap.V_Capture_Tasks_Active_Or_Complete
                           WHERE Script = 'DatasetCapture' AND
                                 State = 3 AND
                                 Finish < CURRENT_TIMESTAMP - INTERVAL '1 hour'

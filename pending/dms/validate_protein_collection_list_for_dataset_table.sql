@@ -37,7 +37,7 @@ AS $$
 **                           - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling ValidateAnalysisJobParameters
 **          07/30/2019 mem - Renamed from ValidateProteinCollectionListForDatasets to ValidateProteinCollectionListForDatasetTable
 **          07/31/2019 mem - Prevent _protCollNameList from containing both HumanContam and Tryp_Pig_Bov
-**          07/27/2022 mem - Switch from FileName to Collection_Name when querying S_V_Protein_Collections_by_Organism
+**          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -190,7 +190,7 @@ BEGIN
         SELECT COUNT(*), INTO _matchCount
             _collectionWithContaminants = MIN(PCLocal.Protein_Collection_Name)
         FROM Tmp_ProteinCollections PCLocal
-            INNER JOIN S_V_Protein_Collections_by_Organism PCMaster
+            INNER JOIN pc.V_Protein_Collections_by_Organism PCMaster
             ON PCLocal.Protein_Collection_Name = PCMaster.Collection_Name
         WHERE PCMaster.Includes_Contaminants > 0
 

@@ -42,7 +42,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- action for update mode
+    -- Action for update mode
     ---------------------------------------------------
     UPDATE pc.t_protein_collections
     SET collection_state_id = _stateID,

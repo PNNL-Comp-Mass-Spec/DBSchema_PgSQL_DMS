@@ -51,7 +51,7 @@ BEGIN
     -- datasets from experiments in package not already in package
     ---------------------------------------------------
 
-    IF _datasetsFromPackageExperiments = 1 Then
+    If _datasetsFromPackageExperiments = 1 Then
     --<a>
         INSERT INTO Tmp_DataPackageItems (OSM_Package_ID, Item_Type, Item)
         SELECT  DISTINCT _packageID, 'Datasets', TDS.Dataset
@@ -73,7 +73,7 @@ BEGIN
     -- datasets from requests in package not already in package (dispositioned?)
     ---------------------------------------------------
 
-    IF _datasetsFromPackageRequests = 1 Then
+    If _datasetsFromPackageRequests = 1 Then
     --<b>
         INSERT INTO Tmp_DataPackageItems (OSM_Package_ID, Item_Type, Item)
         SELECT  DISTINCT _packageID, 'Datasets', Dataset

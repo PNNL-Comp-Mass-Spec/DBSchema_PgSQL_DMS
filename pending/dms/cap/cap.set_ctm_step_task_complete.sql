@@ -185,11 +185,6 @@ BEGIN
             End If;
         End If;
 
-        ---------------------------------------------------
-        -- Set up transaction parameters
-        ---------------------------------------------------
-        --
-
         BEGIN
 
             ---------------------------------------------------
@@ -231,9 +226,29 @@ BEGIN
 
             End If;
 
-            COMMIT;
         END;
 
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+
+    END;
+
+    COMMIT;
+
+    BEGIN
         ---------------------------------------------------
         -- Check for reporter ion m/z validation warnings or errors
         ---------------------------------------------------
@@ -293,6 +308,7 @@ BEGIN
         End If;
 
     END;
+
 END
 $$;
 

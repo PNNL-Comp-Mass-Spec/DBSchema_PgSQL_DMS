@@ -193,7 +193,7 @@ BEGIN
     End If;
 
     If _debugMode Then
-        _message := 'Calling S_ValidateAnalysisJobProteinParameters: ' ||;
+        _message := 'Calling pc.validate_analysis_job_protein_parameters: ' ||;
                             Coalesce(_organismName, '??') || '; ' ||
                             Coalesce(_ownerUsername, '??') || '; ' ||
                             Coalesce(_organismDBName, '??') || '; ' ||

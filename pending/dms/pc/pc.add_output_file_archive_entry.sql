@@ -10,7 +10,6 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry
     _creationOptions text,
     _proteinCollectionString text,
     _collectionStringHash text,
-    OUT _archiveEntryID int,
     INOUT _archivedFilePath text default '',
     INOUT _message text default '',
     INOUT _returnCode text default ''
@@ -19,21 +18,30 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds a new entry to the T_Archived_Output_Files
+**  Desc:
+**    Adds a new entry to T_Archived_Output_Files
 **
-**  Return values: Archived_File_ID (nonzero) : success, otherwise, error code
+**  Arguments:
+**    _proteinCollectionID          Protein collection ID
+**    _crc32Authentication          CRC32 authentication hash
+**    _fileModificationDate         File modification time
+**    _fileSize                     File size (bytes)
+**    _proteinCount                 Protein count
+**    _archivedFileType             Archived file type
+**    _creationOptions              Creation options
+**    _proteinCollectionString      Protein collection list
+**    _collectionStringHash         SHA-1 hash of the protein collection list and creation options (separated by a forward slash)
 **
-**
+**  Returns:
+**    _returnCode will have the archived file ID of the file added to T_Archived_Output_Files if no errors
+**    _returnCode will be '0' if an error
 **
 **  Auth:   kja
 **  Date:   03/10/2006
 **          12/15/2023 mem - Ported to PostgreSQL
 **
-**
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
     _skipOutputTableAdd int;
     _archivedFileTypeID int;
     _outputSequenceTypeID int;
@@ -51,7 +59,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _archiveEntryID := 0;
+    _archiveFileID := 0;
 
     ---------------------------------------------------
     -- Validate input fields
@@ -65,19 +73,19 @@ BEGIN
         _message := 'Authentication hash must be 8 alphanumeric characters in length (0-9, A-F)';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := '0';
         RETURN;
     End If;
 
     -- Does this hash code already exist?
 
     SELECT Archived_File_ID
-    INTO _archiveEntryID
+    INTO _archiveFileID
     FROM V_Archived_Output_Files
     WHERE Authentication_Hash = _crc32Authentication;
 
     If Not FOUND Then
-        _archiveEntryID := 0;
+        _archiveFileID := 0;
     End If;
 
     -- Does the protein collection exist?
@@ -89,7 +97,7 @@ BEGIN
         _message := format('Protein collection ID not found in T_Protein_Collections: %s', _proteinCollectionID);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5202';
+        _returnCode := '0';
         RETURN;
     End If;
 
@@ -99,7 +107,7 @@ BEGIN
          _message := 'Argument _archivedFilePath is an empty string';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5203';
+        _returnCode := '0';
         RETURN;
     End If;
 
@@ -114,7 +122,7 @@ BEGIN
         _message := format('Invalid archived file type; %s not found in t_archived_file_types', _archivedFileType);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5204';
+        _returnCode := '0';
         RETURN;
     End If;
 
@@ -138,7 +146,7 @@ BEGIN
     -- Make the initial entry
     ---------------------------------------------------
 
-    If _archiveEntryID = 0 Then
+    If _archiveFileID = 0 Then
 
         INSERT INTO pc.t_archived_output_files (
             archived_file_type_id,
@@ -165,13 +173,13 @@ BEGIN
             _proteinCollectionString,
             _collectionStringHash)
         RETURNING archived_file_id
-        INTO _archiveEntryID;
+        INTO _archiveFileID;
 
         _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT('000000' || archived_file_id::text, 6));
 
         UPDATE pc.t_archived_output_files
         SET archived_file_path = _archivedFilePath
-        WHERE archived_file_id = _archiveEntryID;
+        WHERE archived_file_id = _archiveFileID;
 
         ---------------------------------------------------
         -- Parse and Store Creation Options
@@ -190,17 +198,21 @@ BEGIN
 
             If _equalsPosition = 0 Then
                 _message := format('Equals sign missing from creation option "%"', _optionItem);
+                RAISE WARNING '%', _message;
 
-                _returnCode := 'U5205';
                 ROLLBACK;
+
+                _returnCode = '0'
                 RETURN;
             End If;
 
              If _equalsPosition = 1 Or _equalsPosition = char_length(_optionItem) Then
                 _message := format('Equals sign at invalid location in creation option "%"', _optionItem);
+                RAISE WARNING '%', _message;
 
-                _returnCode := 'U5206';
                 ROLLBACK;
+
+                _returnCode = '0'
                 RETURN;
             End If;
 
@@ -214,9 +226,11 @@ BEGIN
 
             If Not FOUND Then
                 _message := format('Keyword: "%s" not found in t_creation_option_keywords', _optionKeyword);
+                RAISE WARNING '%', _message;
 
-                _returnCode := 'U5207';
                 ROLLBACK;
+
+                _returnCode = '0'
                 RETURN;
             End If;
 
@@ -236,7 +250,7 @@ BEGIN
                 ) VALUES (
                     _optionKeywordID,
                     _optionValueID,
-                    _archiveEntryID)
+                    _archiveFileID);
 
             End If;
 
@@ -246,11 +260,12 @@ BEGIN
             archived_file_id,
             protein_collection_id
         ) VALUES (
-            _archiveEntryID,
-            _proteinCollectionID)
+            _archiveFileID,
+            _proteinCollectionID);
 
     End If;
 
+    _returnCode := _archiveFileID::text;
 END
 $$;
 

@@ -37,13 +37,11 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _itemCountChanged int := 0;
     _authorized int := 0;
     _logUsage bool := false;
     _logMessage text;
     _xml xml;
-    _msgForLog text := ERROR_MESSAGE();
 BEGIN
     _message := '';
     _returnCode := '';
@@ -121,7 +119,7 @@ BEGIN
         Call format_error_message _message output, _myError output
 
         -- rollback any open transactions
-        IF (XACT_STATE()) <> 0 Then
+        If (XACT_STATE()) <> 0 Then
             ROLLBACK TRANSACTION;
         End If;
 

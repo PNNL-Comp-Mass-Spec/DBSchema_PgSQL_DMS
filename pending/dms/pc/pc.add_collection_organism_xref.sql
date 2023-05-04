@@ -10,10 +10,16 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds an entry to T_Collection_Organism_Xref
+**  Desc:
+**      Adds an entry to T_Collection_Organism_Xref
 **
-**  Returns the ID value for the mapping in T_Collection_Organism_Xref
-**  Returns 0 or a negative number if unable to update T_Collection_Organism_Xref
+**  Arguments:
+**    _proteinCollectionID      Protein collection ID
+**    _organismID               Organism ID
+**
+**  Returns:
+**    If a row already exists matching _proteinCollectionID and _organismID, _returnCode will have the member_id of that row
+**    Otherwise, _returnCode will have the member_id of the row added to T_Collection_Organism_Xref
 **
 **  Auth:   kja
 **  Date:   06/01/2006
@@ -22,53 +28,33 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
     _memberID int;
-    _transName text;
 BEGIN
     ---------------------------------------------------
     -- Does entry already exist?
     ---------------------------------------------------
 
-    --execute _authid = GetNamingAuthorityID _name
+    SELECT id
+    INTO _memberID
+    FROM pc.t_collection_organism_xref
+    WHERE protein_collection_id = _proteinCollectionID AND
+          organism_id = _organismID;
 
-    SELECT id FROM pc.t_collection_organism_xref INTO _memberID
-    WHERE (protein_collection_id = _proteinCollectionID AND
-           organism_id = _organismID)
-
-    if _memberID > 0 Then
-        return _memberID
+    If FOUND Then
+        _returnCode := _memberID::text;
+        RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Start transaction
+    -- Action for add mode
     ---------------------------------------------------
-
-    _transName := 'AddNamingAuthority';
-    begin transaction _transName
-
-    ---------------------------------------------------
-    -- action for add mode
-    ---------------------------------------------------
-    INSERT INTO pc.t_collection_organism_xref
-               (protein_collection_id, organism_id)
-    VALUES     (_proteinCollectionID, _organismID)
+    --
+    INSERT INTO pc.t_collection_organism_xref (protein_collection_id, organism_id)
+    VALUES (_proteinCollectionID, _organismID)
     RETURNING ID
     INTO _memberID
 
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    if _myError <> 0 Then
-        rollback transaction _transName
-        _msg := 'Insert operation failed for Protein Collection: "' || _proteinCollectionID || '"';
-        RAISERROR (_msg, 10, 1)
-        return -51007
-    End If;
-
-    commit transaction _transName
-
-    return _memberID
+    _returnCode := _memberID::text;
 END
 $$;
 

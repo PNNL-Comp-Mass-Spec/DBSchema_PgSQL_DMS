@@ -26,8 +26,6 @@ AS $$
 DECLARE
     _myRowCount int := 0;
     _authorized int := 0;
-    _transName text;
-    _msgForLog text := ERROR_MESSAGE();
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -53,26 +51,37 @@ BEGIN
     End If;
 
     BEGIN TRY
-        _transName := 'DeleteAllItemsFromDataPackage';
-        begin transaction _transName
 
         DELETE FROM dpkg.t_data_package_analysis_jobs
-        WHERE data_pkg_id  = _packageID
+        WHERE data_pkg_id  = _packageID;
 
         DELETE FROM dpkg.t_data_package_datasets
-        WHERE data_pkg_id  = _packageID
+        WHERE data_pkg_id  = _packageID;
 
         DELETE FROM dpkg.t_data_package_experiments
-        WHERE data_pkg_id  = _packageID
+        WHERE data_pkg_id  = _packageID;
 
         DELETE FROM dpkg.t_data_package_biomaterial
-        WHERE data_pkg_id = _packageID
+        WHERE data_pkg_id = _packageID;
 
         DELETE FROM dpkg.t_data_package_eus_proposals
-        WHERE data_pkg_id = _packageID
+        WHERE data_pkg_id = _packageID;
 
-        ---------------------------------------------------
-        commit transaction _transName
+    END TRY
+    BEGIN CATCH
+        Call format_error_message _message output, _myError output
+
+        -- rollback any open transactions
+        If (XACT_STATE()) <> 0 Then
+            ROLLBACK TRANSACTION;
+        End If;
+
+        Call post_log_entry 'Error', _msgForLog, 'DeleteAllItemsFromDataPackage'
+    END CATCH
+
+    COMMIT;
+
+    BEGIN TRY
 
         ---------------------------------------------------
         -- Update item counts
@@ -82,23 +91,21 @@ BEGIN
 
         UPDATE dpkg.t_data_package
         SET last_modified = CURRENT_TIMESTAMP
-        WHERE data_pkg_id = _packageID
+        WHERE data_pkg_id = _packageID;
 
-     ---------------------------------------------------
-     ---------------------------------------------------
     END TRY
     BEGIN CATCH
         Call format_error_message _message output, _myError output
 
         -- rollback any open transactions
-        IF (XACT_STATE()) <> 0 Then
+        If (XACT_STATE()) <> 0 Then
             ROLLBACK TRANSACTION;
         End If;
 
         Call post_log_entry 'Error', _msgForLog, 'DeleteAllItemsFromDataPackage'
     END CATCH
 
-     ---------------------------------------------------
+    ---------------------------------------------------
     -- Exit
     ---------------------------------------------------
     return _myError

@@ -13,9 +13,19 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds a new protein collection member
+**  Desc:
+**      Adds or updates a protein collection member
 **
+**  Arguments:
+**    _referenceID          Protein reference ID
+**    _proteinID            Protein ID
+**    _proteinCollectionID  Protein collection ID
+**    _sortingIndex         Sorting index
+**    _mode                 'add' to add a new collection member, 'update' to udpate the sorting index of an existing collection member
 **
+**  Returns:
+**    If _mode is 'add',    _returnCode will be the member_id of the row added to t_protein_collection_members
+**    If _mode is 'update', _returnCode will be an empty string
 **
 **  Auth:   kja
 **  Date:   10/06/2004
@@ -25,28 +35,14 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
     _memberID int;
 BEGIN
-    ---------------------------------------------------
-    -- Does entry already exist?
-    ---------------------------------------------------
+    _message := '';
+    _returnCode := '';
 
---    declare _iDCheck int
---    set _iDCheck = 0
---
---    SELECT _iDCheck = protein_id FROM pc.t_protein_collection_members
---    WHERE protein_collection_id = _proteinCollectionID
---
---    if _iDCheck > 0
---    begin
---        return 1  -- Entry already exists
---    end
-
-    if _mode = 'add' Then
+    If _mode = 'add' Then
         ---------------------------------------------------
-        -- action for add mode
+        -- Action for add mode
         ---------------------------------------------------
         --
         INSERT INTO pc.t_protein_collection_members (
@@ -60,35 +56,25 @@ BEGIN
             _proteinCollectionID,
             _sortingIndex
         )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            _msg := 'Insert operation failed for Protein_ID: "' || _proteinID::text || '"';
-            RAISERROR (_msg, 10, 1)
-            return 51007
-        End If;
+        RETURNING member_id
+        INTO _memberID;
+
+        _returnCode := _memberID::text;
+
     End If;
 
-    if _mode = 'update' Then
+    If _mode = 'update' Then
         ---------------------------------------------------
-        -- action for update mode
+        -- Action for update mode
         ---------------------------------------------------
         --
         UPDATE pc.t_protein_collection_members
         SET sorting_index = _sortingIndex
-        WHERE (protein_id = _proteinID and original_reference_id = _referenceID and protein_collection_id = _proteinCollectionID)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
-        if _myError <> 0 Then
-            _msg := 'Update operation failed for Protein_ID: "' || _proteinID::text || '"';
-            RAISERROR (_msg, 10, 1)
-            return 51008
-        End If;
+        WHERE protein_id = _proteinID And
+              original_reference_id = _referenceID And
+              protein_collection_id = _proteinCollectionID;
     End If;
 
-    return _memberID
 END
 $$;
 

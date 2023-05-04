@@ -150,7 +150,7 @@ BEGIN
         End If;
             LIMIT 1;
 
-        IF _maxCollectionsToUpdate > 0 Then
+        If _maxCollectionsToUpdate > 0 Then
             -- Too many candidate collections; delete the extras
             --
             DELETE Tmp_CurrentIDs

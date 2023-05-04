@@ -9,9 +9,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection
     _primaryAnnotationTypeId int,
     _numProteins int default 0,
     _numResidues int default 0,
-    _active int default 1,
     _mode text default 'add',
-    OUT _collectionID int default 0,
     INOUT _message text default '',
     INOUT _returnCode text default ''
 )
@@ -23,7 +21,19 @@ AS $$
 **      Adds a new protein collection entry
 **
 **  Arguments:
-**    _collectionName   Protein collection name (not the original .fasta file name)
+**    _collectionName           Protein collection name (not the original .fasta file name)
+**    _description              Protein collection description
+**    _collectionSource         Protein collection source
+**    _collectionType           Protein collection type
+**    _collectionState          Protein collection state (integer)
+**    _primaryAnnotationTypeId  Primary annotation ID
+**    _numProteins              Number of proteins
+**    _numResidues              Number of residues
+**    _mode                     'add' or 'update'
+**
+**  Returns:
+**    _returnCode will have the protein collection ID of the added or updated protein collection if no errors
+**    _returnCode will be '0' if _collectionName is blank or contains a space
 **
 **  Auth:   kja
 **  Date:   09/29/2004
@@ -38,7 +48,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _collectionID int
 BEGIN
     _message := '';
     _returnCode := '';
@@ -52,7 +62,8 @@ BEGIN
         _message := '_collectionName was blank';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5101'
+        -- The Organism Database Handler expects this procedure to return '0' if there is an error
+        _returnCode := '0'
         RETURN;
     End If;
 
@@ -63,7 +74,8 @@ BEGIN
         _message := format('Protein collection contains a space: "%s"', _collectionName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5102'
+        -- The Organism Database Handler expects this procedure to return '0' if there is an error
+        _returnCode := '0'
         RETURN;
     End If;
 
@@ -73,7 +85,7 @@ BEGIN
 
     _collectionSource := REPLACE(REPLACE(Coalesce(_collectionSource, ''), '<', '('), '>', ')');
 
-    _description := REPLACE(REPLACE(Coalesce(_description,      ''), '<', '('), '>', ')');
+    _description :=      REPLACE(REPLACE(Coalesce(_description,      ''), '<', '('), '>', ')');
 
     ---------------------------------------------------
     -- Does entry already exist?
@@ -94,13 +106,14 @@ BEGIN
     -- Uncomment to debug
     --
     -- _message := 'mode ' || _mode || ', collection '|| _collectionName
-    -- Call PostLogEntry ('Debug', _message, 'AddUpdateProteinCollection');
+    -- Call Post_Log_Entry ('Debug', _message, 'Add_Update_Protein_Collection');
     -- _message := ''
 
     ---------------------------------------------------
-    -- action for add mode
+    -- Action for add mode
     ---------------------------------------------------
-    if _mode = 'add' Then
+    --
+    If _mode = 'add' Then
 
         INSERT INTO pc.t_protein_collections (
             collection_name,
@@ -162,6 +175,7 @@ BEGIN
 
     End If;
 
+    _returnCode := _collectionID::text;
 END
 $$;
 

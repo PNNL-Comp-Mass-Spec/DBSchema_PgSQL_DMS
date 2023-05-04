@@ -301,7 +301,7 @@ BEGIN
             --
             INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
             SELECT DISTINCT Dataset
-            FROM S_V_Data_Package_Datasets_Export
+            FROM dpkg.V_Data_Package_Dataset_Export
             WHERE Data_Package_ID = _dataPackageID
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;

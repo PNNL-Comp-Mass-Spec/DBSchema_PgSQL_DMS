@@ -98,7 +98,6 @@ DECLARE
     _tool text := '';
     _msg text := '';
     _reset text := 'N';
-    _updateTran text := 'Update PipelineJob';
     _paramsUpdated int := 0;
     _transferFolderPath text := '';
     _logEntryID int;
@@ -256,8 +255,6 @@ BEGIN
         If _mode = 'update' Then
         --<update>
 
-            Begin Tran _updateTran
-
             _jobParamXML := _jobParam::XML;
 
             -- Update job and params
@@ -356,8 +353,6 @@ BEGIN
             Else
                 _message := 'Only updating priority, comment, and owner since job state is not New, Complete, or Failed';
             End If;
-
-            Commit Tran _updateTran
 
         End If; --</update>
 

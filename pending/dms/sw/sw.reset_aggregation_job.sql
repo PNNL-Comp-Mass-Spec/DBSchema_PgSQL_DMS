@@ -169,7 +169,6 @@ BEGIN
                 SET state = 1, results_folder_name = _resultsDirectoryName
                 WHERE job = _job AND state <> 1;
 
-                COMMIT;
             END;
 
         End If;
@@ -232,7 +231,6 @@ BEGIN
                 SET state = 2
                 WHERE job = _job AND state <> 2;
 
-                COMMIT;
             END;
         End If;
 

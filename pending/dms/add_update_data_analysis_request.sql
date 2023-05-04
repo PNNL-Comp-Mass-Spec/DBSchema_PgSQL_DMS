@@ -219,7 +219,7 @@ BEGIN
         End If;
 
         If _dataPackageID > 0 Then
-            If Not Exists (Select * From S_V_Data_Package_Export WHERE ID = _dataPackageID) Then
+            If Not Exists (Select * From dpkg.V_Data_Package_Export WHERE ID = _dataPackageID) Then
                 RAISE EXCEPTION 'Could not find entry in database for data package ID "%"', _dataPackageID;
             Else
                 _dataPackageDefined := 1;
@@ -355,7 +355,7 @@ BEGIN
         If _dataPackageDefined > 0 Then
             INSERT INTO Tmp_DatasetCountsByContainerType( ContainerType, ContainerID, SortWeight, DatasetCount )
             SELECT 'Data Package', _dataPackageID, 1 As SortWeight, COUNT(DISTINCT D.Dataset_ID) AS DatasetCount
-            FROM S_V_Data_Package_Datasets_Export DataPkgDatasets
+            FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
                  INNER JOIN t_dataset D
                    ON DataPkgDatasets.dataset_id = D.dataset_id
             WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
@@ -443,7 +443,7 @@ BEGIN
             INTO _campaign
             FROM ( SELECT C.campaign AS Campaign,
                           COUNT(*) AS Experiments
-                   FROM S_V_Data_Package_Datasets_Export DataPkgDatasets
+                   FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
                         INNER JOIN t_dataset D
                           ON DataPkgDatasets.dataset_id = D.dataset_id
                         INNER JOIN t_experiments E
@@ -459,7 +459,7 @@ BEGIN
             INTO _organism
             FROM ( SELECT Org.organism AS Organism,
                           COUNT(*) AS Organisms
-                   FROM S_V_Data_Package_Datasets_Export DataPkgDatasets
+                   FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
                         INNER JOIN t_dataset D
                           ON DataPkgDatasets.dataset_id = D.dataset_id
                         INNER JOIN t_experiments E
@@ -475,7 +475,7 @@ BEGIN
             INTO _eusProposalID
             FROM ( SELECT R.eus_proposal_id AS EUS_Proposal_ID,
                           COUNT(*) AS Requests
-                   FROM S_V_Data_Package_Datasets_Export DataPkgDatasets
+                   FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
                         INNER JOIN t_dataset D
                           ON DataPkgDatasets.dataset_id = D.dataset_id
                         INNER JOIN t_requested_run R

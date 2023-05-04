@@ -14,11 +14,20 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds a new protein reference entry to T_Protein_Names
+**  Desc:
+**      Adds a new protein reference entry to T_Protein_Names
 **
-**  Return values: The Reference ID for the protein name if success; otherwise, 0
+**  Arguments:
+**    _name                     Protein name
+**    _description              Protein description
+**    _authorityID              Authority ID
+**    _proteinID                Protein ID
+**    _nameDescHash             Name/description hash
+**    _maxProteinNameLength     Maximum protein name length (default is 32; allowed range is 25 to 125)
 **
-**
+**  Returns:
+**    _returnCode will have the reference ID of the protein reference added to T_Protein_Names
+**    _returnCode will be '0' if an error
 **
 **  Auth:   kja
 **  Date:   10/08/2004 kja - Initial version
@@ -31,8 +40,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
     _referenceID int;
 BEGIN
     _message := '';
@@ -51,38 +58,38 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Verify name does not contain a space and is not too long
+    -- Verify that protein name does not contain a space and is not too long
     ---------------------------------------------------
 
     If _name LIKE '% %' Then
-        _myError := 51000;
-        _message := 'Protein name contains a space: "' || _name || '"';
-        RAISERROR (_message, 10, 1)
+        _message := format('Protein name contains a space: %s', _name);
+        RAISE WARNING '%', _message;
+
+        _returnCode = '0'
+        RETURN;
     End If;
 
     If char_length(_name) > _maxProteinNameLength Then
-        _myError := 51001;
-        _message := 'Protein name is too long; max length is ' || _maxProteinNameLength::text || ' characters: "' || _name || '"';
-        RAISERROR (_message, 10, 1)
-    End If;
+        _message := 'Protein name is too long; max length is %s characters: _name', _maxProteinNameLength, _name);
+        RAISE WARNING '%', _message;
 
-    if _myError <> 0 Then
-        -- Return zero, since we did not add the protein
-        Return 0
+        _returnCode = '0'
+        RETURN;
     End If;
 
     ---------------------------------------------------
     -- Does entry already exist?
     ---------------------------------------------------
 
-    _referenceID := 0;
+    SELECT reference_id
+    INTO _referenceID
+    FROM pc.t_protein_names
+    WHERE reference_fingerprint = _nameDescHash;
 
-    execute _referenceID = GetProteinReferenceID _name, _nameDescHash
-
-    if _referenceID > 0 Then
-        -- Yes, already exists
-        -- Return the reference ID
-        return _referenceID
+    If FOUND Then
+        -- Already exists; return the reference ID
+        _returnCode := _referenceID::text;
+        RETURN;
     End If;
 
     INSERT INTO pc.t_protein_names (
@@ -99,16 +106,10 @@ BEGIN
         CURRENT_TIMESTAMP,
         _proteinID
     )
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    if _myError <> 0 Then
-        _msg := 'Insert operation failed!';
-        RAISERROR (_msg, 10, 1)
-        return 51007
-    End If;
+    RETURNING reference_id
+    INTO _referenceID;
 
-    return _referenceID
+    _returnCode := _referenceID::text;
 END
 $$;
 

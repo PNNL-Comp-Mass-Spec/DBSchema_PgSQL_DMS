@@ -166,7 +166,6 @@ BEGIN
                 _debugMode => _DebugMode);
 
         End if;
-        COMMIT;
 
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
@@ -186,6 +185,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part B: Import Processors and Sync Job Info
     BEGIN
@@ -266,8 +267,6 @@ BEGIN
             Call sw.sync_job_info _bypassDMS, _message => _message;
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -286,6 +285,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part C
     BEGIN
@@ -322,8 +323,6 @@ BEGIN
                     _debugMode => _debugMode
                     );
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -342,6 +341,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part D
     BEGIN
@@ -374,8 +375,6 @@ BEGIN
                   _loopingUpdateInterval => _LoopingUpdateInterval);
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -394,6 +393,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part E
     BEGIN
@@ -426,8 +427,6 @@ BEGIN
                         _loopingUpdateInterval => _loopingUpdateInterval,
                         _infoOnly => _infoOnly);
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -446,6 +445,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part F
     BEGIN
@@ -478,8 +479,6 @@ BEGIN
             Call sw.update_cpu_loading (_message => _message);
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -498,6 +497,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     -- Part G
     BEGIN
@@ -526,8 +527,6 @@ BEGIN
             Call sw.auto_fix_failed_jobs (_message => _message => _message, _infoOnly => _infoOnly);
         End If;
 
-        COMMIT;
-
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
         WHEN OTHERS THEN
@@ -546,6 +545,8 @@ BEGIN
         End If;
 
     END;
+
+    COMMIT;
 
     If _loggingEnabled Then
         _statusMessage := format('UpdateContext complete: %s seconds elapsed',

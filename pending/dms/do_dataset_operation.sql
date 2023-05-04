@@ -29,7 +29,7 @@ AS $$
 **          08/19/2010 grk - try-catch for error handling
 **          05/25/2011 mem - Fixed bug that reported 'mode was unrecognized' for valid modes
 **                         - Removed 'restore' mode
-**          01/12/2012 mem - Now preventing deletion if _mode is 'delete' and the dataset exists in S_V_Capture_Jobs_ActiveOrComplete
+**          01/12/2012 mem - Now preventing deletion if _mode is 'delete' and the dataset exists in cap.V_Capture_Tasks_Active_Or_Complete
 **          11/14/2013 mem - Now preventing reset if the first step of dataset capture succeeded
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          01/10/2017 mem - Add _mode 'createjobs' which adds the dataset to T_Predefined_Analysis_Scheduling_Queue so that default jobs will be created
@@ -190,12 +190,12 @@ BEGIN
             -- Verify that the dataset does not have an active or completed capture job
             ---------------------------------------------------
 
-            If Exists (SELECT * FROM S_V_Capture_Jobs_ActiveOrComplete WHERE Dataset_ID = _datasetID And State <= 2) Then
+            If Exists (SELECT * FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State <= 2) Then
                 _msg := format('Dataset "%s" is being processed by the DMS_Capture database; unable to delete', _datasetName);
                 RAISE EXCEPTION '%', _msg;
             End If;
 
-            If Exists (SELECT * FROM S_V_Capture_Jobs_ActiveOrComplete WHERE Dataset_ID = _datasetID And State > 2) Then
+            If Exists (SELECT * FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State > 2) Then
                 _msg := format('Dataset "%s" has been processed by the DMS_Capture database; unable to delete', _datasetName);
                 RAISE EXCEPTION '%', _msg;
             End If;
@@ -230,10 +230,10 @@ BEGIN
             End If;
 
             -- Do not allow a reset if the dataset succeeded the first step of capture
-            If Exists (SELECT * FROM S_V_Capture_Job_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State IN (1,2,4,5)) Then
+            If Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State IN (1,2,4,5)) Then
 
-                If Exists (SELECT * FROM S_V_Capture_Job_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetIntegrity' AND State = 6) AND Then
-                   Exists (SELECT * FROM S_V_Capture_Job_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State = 5);
+                If Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetIntegrity' AND State = 6) AND Then
+                   Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State = 5);
                 End If;
                 Begin
                     -- Do allow a reset if the DatasetIntegrity step failed and if we haven't already retried capture of this dataset once

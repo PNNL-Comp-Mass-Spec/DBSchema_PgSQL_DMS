@@ -52,7 +52,6 @@ DECLARE
     _badIDs text := '';
     _goodIDs text := '';
     _wikiLink text := '';
-    _msgForLog text := ERROR_MESSAGE();
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -115,7 +114,7 @@ BEGIN
         FROM Tmp_PrepRequestItems
         WHERE Not Valid;
 
-        IF _badIDs <> '' Then
+        If _badIDs <> '' Then
             _message := format('Sample prep request IDs "%s" do not exist', _badIDs);
             RAISERROR (_message, 11, 31)
         End If;
@@ -148,7 +147,7 @@ BEGIN
         _logErrors := 1;
 
         ---------------------------------------------------
-        -- action for add mode
+        -- Action for add mode
         ---------------------------------------------------
         if _mode = 'add' Then
 
@@ -194,7 +193,7 @@ BEGIN
         End If; -- add mode
 
         ---------------------------------------------------
-        -- action for update mode
+        -- Action for update mode
         ---------------------------------------------------
         --
         if _mode = 'update' Then
@@ -234,7 +233,7 @@ BEGIN
         Call format_error_message _message output, _myError output
 
         -- rollback any open transactions
-        IF (XACT_STATE()) <> 0 Then
+        If (XACT_STATE()) <> 0 Then
             ROLLBACK TRANSACTION;
         End If;
 

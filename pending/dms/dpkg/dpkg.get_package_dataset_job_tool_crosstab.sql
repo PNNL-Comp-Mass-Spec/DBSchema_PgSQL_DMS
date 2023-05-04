@@ -24,7 +24,6 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _msgForLog text;
     _colName text := '';
     _sql text;
 BEGIN
@@ -98,7 +97,7 @@ BEGIN
             FROM Tmp_Tools
             LIMIT 1;
 
-            IF Not FOUND Then
+            If Not FOUND Then
                 -- Break out of the while loop
                 EXIT;
             End If;

@@ -439,7 +439,7 @@ BEGIN
         ---------------------------------------------------
 
         If _infoLevel > 1 Then
-            RAISE INFO '%, RequestStepTask: Start transaction', public.timestamp_text_immutable(clock_timestamp());
+            RAISE INFO '%, RequestStepTask: look for available step', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
         BEGIN
@@ -486,9 +486,38 @@ BEGIN
                       Step = _step;
             End If; --<e>
 
-            COMMIT;
         END;
 
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+
+        DROP TABLE IF EXISTS Tmp_AvailableProcessorTools;
+        DROP TABLE IF EXISTS Tmp_InstrumentLoading;
+        DROP TABLE IF EXISTS Tmp_InstrumentProcessor;
+        DROP TABLE IF EXISTS Tmp_CandidateJobSteps;
+        DROP TABLE IF EXISTS Tmp_ParamTab;
+
+        RETURN;
+    END;
+
+    If _jobAssigned Then
+        COMMIT;
+    End If;
+
+    BEGIN
         ---------------------------------------------------
         -- Temp table to hold capture task job parameters
         ---------------------------------------------------
@@ -556,7 +585,6 @@ BEGIN
 
             If Exists (Select * From Tmp_CandidateJobSteps) Then
 
-
                 RAISE INFO '%', format('Candidate capture task job steps for %s', _processorName);
 
                 -- ToDo: Update this to use RAISE INFO
@@ -609,7 +637,7 @@ BEGIN
         DROP TABLE Tmp_CandidateJobSteps;
         DROP TABLE Tmp_ParamTab;
 
-    EXCEPTION
+ EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
                 _sqlState         = returned_sqlstate,
@@ -630,8 +658,8 @@ BEGIN
         DROP TABLE IF EXISTS Tmp_InstrumentProcessor;
         DROP TABLE IF EXISTS Tmp_CandidateJobSteps;
         DROP TABLE IF EXISTS Tmp_ParamTab;
-
     END;
+
 END
 $$;
 

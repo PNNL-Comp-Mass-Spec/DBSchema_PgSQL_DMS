@@ -303,7 +303,7 @@ BEGIN
         --
         COMMIT;
 
-        BEGIN;
+        BEGIN
 
             If Exists (SELECT * FROM Tmp_NewBatchParams WHERE Parameter = 'Run Order') Then
                 -- If all of the updated requests come from the same batch,

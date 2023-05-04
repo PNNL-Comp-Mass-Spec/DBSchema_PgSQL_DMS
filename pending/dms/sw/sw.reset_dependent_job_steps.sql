@@ -164,7 +164,6 @@ BEGIN
                 --
                 GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                COMMIT;
             END;
 
         End If;

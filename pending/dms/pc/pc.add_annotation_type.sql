@@ -12,9 +12,17 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds or changes an annotation naming authority
+**  Desc:   Adds an annotation type (for a naming authority) to t_annotation_types
 **
+**  Arguments:
+**    _name             Annotation type name
+**    _description      Description
+**    _example          Example annotation
+**    _authID           Naming authority ID
 **
+**  Returns:
+**    _returnCode will have the annotation type ID if a new row was added to t_annotation_types
+**    _returnCode will be the negative value of the annotation type ID if the annotation type already exists in t_annotation_types
 **
 **  Auth:   kja
 **  Date:   01/11/2006
@@ -22,52 +30,33 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
-    _memberID int;
     _annotationTypeID int;
-    _transName text;
 BEGIN
-    _annotationTypeID := 0;
 
     ---------------------------------------------------
     -- Does entry already exist?
     ---------------------------------------------------
 
-    execute _annotationTypeID = GetAnnotationTypeID _name, _authID
+    _annotationTypeID := get_annotation_type_id (_name, _authID)
 
     if _annotationTypeID > 0 Then
-        return -_annotationTypeID
+        _message := format('Annotation type "%s" already exists for naming authority ID %s', _name, _authId);
+        RAISE WARNING '%', _message;
+
+        -- The Organism Database Handler expects this procedure to return negative _annotationTypeID if the annotation type already exists for the naming authority
+        _returnCode := format('-%s', _annotationTypeID);
     End If;
 
     ---------------------------------------------------
-    -- Start transaction
+    -- Action for add mode
     ---------------------------------------------------
-
-    _transName := 'AddNamingAuthority';
-    begin transaction _transName
-
-    ---------------------------------------------------
-    -- action for add mode
-    ---------------------------------------------------
-    INSERT INTO pc.t_annotation_types
-               (type_name, description, example, Authority_ID)
-    VALUES     (_name, _description, _example, _authID)
-
-    SELECT @@Identity          INTO _annotationTypeID
-
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     --
-    if _myError <> 0 Then
-        rollback transaction _transName
-        _msg := 'Insert operation failed: "' || _name || '"';
-        RAISERROR (_msg, 10, 1)
-        return 51007
-    End If;
+    INSERT INTO pc.t_annotation_types (type_name, description, example, Authority_ID)
+    VALUES (_name, _description, _example, _authID)
+    RETURNING annotation_type_id
+    INTO _annotationTypeID;
 
-    commit transaction _transName
-
-    return _annotationTypeID
+    _returnCode := _annotationTypeID::text;
 END
 $$;
 

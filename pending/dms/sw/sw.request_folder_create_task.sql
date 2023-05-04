@@ -96,8 +96,6 @@ BEGIN
     --
     _taskNotAvailableErrorCode := 53000;
 
-
-    -- Start transaction
     BEGIN
 
         ---------------------------------------------------
@@ -131,9 +129,9 @@ BEGIN
 
         End If;
 
-        COMMIT;
-
     END;
+
+    COMMIT;
 
     If _taskAssigned Then
 

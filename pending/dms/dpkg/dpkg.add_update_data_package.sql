@@ -64,7 +64,6 @@ DECLARE
     _logErrors int := 0;
     _authorized int := 0;
     _rootPath int;
-    _msgForLog text := ERROR_MESSAGE();
 BEGIN
     _teamChangeWarning := '';
     _message := '';
@@ -179,7 +178,7 @@ BEGIN
     _logErrors := 1;
 
     ---------------------------------------------------
-    -- action for add mode
+    -- Action for add mode
     ---------------------------------------------------
     If _mode = 'add' Then
 
@@ -279,7 +278,7 @@ BEGIN
     End If; -- add mode
 
     ---------------------------------------------------
-    -- action for update mode
+    -- Action for update mode
     ---------------------------------------------------
     --
     if _mode = 'update'  Then
@@ -339,7 +338,7 @@ BEGIN
         Call format_error_message _message output, _myError output
 
         -- rollback any open transactions
-        IF (XACT_STATE()) <> 0 Then
+        If (XACT_STATE()) <> 0 Then
             ROLLBACK TRANSACTION;
         End If;
 

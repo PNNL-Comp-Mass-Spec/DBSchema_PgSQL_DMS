@@ -16,12 +16,22 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds a new protein sequence entry to T_Proteins
-**
-**
+**  Desc:
+**      Adds a new protein sequence entry to T_Proteins
 **
 **  Arguments:
-**    _mode   The only option is "add"
+**    _sequence             Protein sequence
+**    _length               Protein sequence length
+**    _molecularFormula     Empirical formula
+**    _monoisotopicMass     Monoisotopic mass
+**    _averageMass          Average mass
+**    _sha1Hash             SHA-1 hash of the protein sequence
+**    _isEncrypted          0 if not encrypted, 1 if encrypted
+**    _mode                 The only supported mode is 'add'
+**
+**  Returns:
+**    If t_proteins already has a protein with the given sequence length and SHA-1 hash, _returnCode will have the protein_id
+**    Otherwise, _returnCode will have the protein_id of the row added to t_proteins
 **
 **  Auth:   kja
 **  Date:   10/06/2004
@@ -30,25 +40,28 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
     _proteinID int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Does entry already exist?
     ---------------------------------------------------
 
-    _proteinID := 0;
+    SELECT protein_id
+    INTO _proteinID
+    FROM pc.t_proteins
+    WHERE length = _length AND sha1_hash = _sha1Hash;
 
-    execute _proteinID = GetProteinID _length, _sha1Hash
-
-    if _proteinID > 0 and _mode = 'add' Then
-        return _proteinID
+    If FOUND And _mode = 'add' Then
+        _returnCode := _proteinID::text;
+        RETURN;
     End If;
 
-    if _mode = 'add' Then
+    If _mode = 'add' Then
         ---------------------------------------------------
-        -- action for add mode
+        -- Action for add mode
         ---------------------------------------------------
         --
         INSERT INTO pc.t_proteins (
@@ -72,17 +85,12 @@ BEGIN
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP
         )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        if _myError <> 0 Then
-            _msg := 'Insert operation failed!';
-            RAISERROR (_msg, 10, 1)
-            return 51007
-        End If;
+        RETURNING protein_id
+        INTO _proteinID;
+
+        _returnCode := _proteinID::text;
     End If;
 
-    return _proteinID
 END
 $$;
 

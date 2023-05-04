@@ -110,7 +110,7 @@ BEGIN
     INSERT INTO Tmp_Batches(BatchID)
     SELECT J.batch_id
     FROM t_analysis_job J
-         INNER JOIN S_V_Pipeline_Job_Steps JS
+         INNER JOIN sw.V_Job_Steps JS
            ON J.job = JS.job
     WHERE JS.State = 4 AND
           J.priority = 3 AND

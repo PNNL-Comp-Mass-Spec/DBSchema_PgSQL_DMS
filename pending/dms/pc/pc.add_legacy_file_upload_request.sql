@@ -10,28 +10,25 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Desc:   Adds or changes the legacy fasta details in T_Legacy_File_Upload_Requests
-**
-**
+**  Desc:
+**      Adds or updates the legacy FASTA details in T_Legacy_File_Upload_Requests
 **
 **  Arguments:
-**    _authenticationHash   Sha1 hash for the file
+**    _legacyfileName       Legacy FASTA file name
+**    _authenticationHash   SHA-1 hash for the file
 **
 **  Auth:   kja
 **  Date:   01/11/2006
 **          02/11/2009 mem - Added parameter _authenticationHash
 **          09/03/2010 mem - Now updating the stored Authentication_Hash value if _authenticationHash differs from the stored value
+**          05/03/2023 mem - Return 0 if no errors (previously returned the ID of the newly added row, but the calling application does not use that value)
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _msg text;
-    _memberID int;
     _legacyFileID int;
     _authenticationHashStored text;
     _requestID int;
-    _transName text;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -45,43 +42,36 @@ BEGIN
     FROM pc.t_legacy_file_upload_requests
     WHERE legacy_filename = _legacyFileName
 
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    if _myRowCount > 0 Then
+    If FOUND Then
         -- Entry already exists; update the hash if different
-        if Coalesce(_authenticationHashStored, '') <> Coalesce(_authenticationHash, '') Then
-            UPDATE pc.t_legacy_file_upload_requests;
-        End If;
+        If _authenticationHashStored Is Distinct From _authenticationHash Then
+            UPDATE pc.t_legacy_file_upload_requests
             SET Authentication_Hash = _authenticationHash
-            WHERE Legacy_File_ID = _legacyFileID
+            WHERE Legacy_File_ID = _legacyFileID;
+        End If;
 
-        Return 0
+        RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Get File ID from DMS
+    -- Get File ID from t_organism_db_file
     ---------------------------------------------------
 
-    SELECT ID INTO _legacyFileID
+    SELECT ID
+    INTO _legacyFileID
     FROM V_Legacy_Static_File_Locations
-    WHERE Filename = _legacyFileName
+    WHERE file_name = _legacyFileName;
 
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    if _myRowCount = 0 Then
-        return 0
+    If Not Found Then
+        _message := format('Legacy FASTA file "%s" not found in V_Legacy_Static_File_Locations', _legacyFileName);
+        RAISE WARNING '%', _message;
+        RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Start transaction
+    -- Action for add mode
     ---------------------------------------------------
 
-    _transName := 'AddLegacyFileUploadRequest';
-    begin transaction _transName
-
-    ---------------------------------------------------
-    -- action for add mode
-    ---------------------------------------------------
     INSERT INTO pc.t_legacy_file_upload_requests (
         legacy_file_id,
         legacy_filename,
@@ -93,20 +83,12 @@ BEGIN
         CURRENT_TIMESTAMP,
         _authenticationHash)
     RETURNING upload_request_id
-    INTO _requestID
+    INTO _requestID;
 
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    if _myError <> 0 Then
-        rollback transaction _transName
-        _msg := 'Insert operation failed: "' || _legacyFileName || '"';
-        RAISERROR (_msg, 10, 1)
-        return 51007
-    End If;
+    _message := format('Added %s to t_legacy_file_upload_requests; assigned Upload Request ID: %', legacy_filename, _requestID);
 
-    commit transaction _transName
+    RAISE INFO '%', _message;
 
-    return _requestID
 END
 $$;
 

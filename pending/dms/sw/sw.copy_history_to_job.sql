@@ -116,10 +116,6 @@ BEGIN
 
     End If;
 
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-    --
     BEGIN
         _jobDateDescription := format('job %s and date %s', _job, _dateStamp);
 
@@ -398,8 +394,6 @@ BEGIN
                     enable_only = EXCLUDED.enable_only;
 
         End If;
-
-        COMMIT;
 
     EXCEPTION
         WHEN OTHERS THEN

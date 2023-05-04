@@ -163,10 +163,6 @@ BEGIN
         RETURN;
     End If;
 
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-    --
     BEGIN
         _jobDateDescription := format('%s %s', public.check_plural(_jobCount, 'job', 'jobs'), _jobList);
 
