@@ -27,7 +27,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- action for add mode
+    -- Action for add mode
     ---------------------------------------------------
 
     UPDATE pc.t_proteins
