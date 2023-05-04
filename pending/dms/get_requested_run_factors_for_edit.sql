@@ -3,10 +3,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_factors_for_edit
 (
     _itemList TEXT,
     _itemType text = 'Batch_ID',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
+    _infoOnly boolean = false)
 RETURNS TABLE (
     sel citext,
     batch_id int,
@@ -29,7 +26,6 @@ AS $$
 **    _itemList     Comma separated list of item IDs
 **    _itemType     Item type: Batch_ID, Requested_Run_ID, Dataset_Name, Dataset_ID, Experiment_Name, Experiment_ID, or Data_Package_ID
 **    _infoOnly     When true, show the SQL
-**    _message
 **
 **  Auth:   grk
 **  Date:   02/20/2010
@@ -45,6 +41,7 @@ DECLARE
     _factorNameList text;
     _colList text;
 BEGIN
+
     -----------------------------------------
     -- Temp tables to hold list of requests and factors
     --

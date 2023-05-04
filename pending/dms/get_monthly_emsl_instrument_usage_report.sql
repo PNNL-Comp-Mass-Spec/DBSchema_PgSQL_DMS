@@ -3,8 +3,6 @@ CREATE OR REPLACE FUNCTION public.get_monthly_emsl_instrument_usage_report
 (
     _year text,
     _month text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _infoOnly boolean = false,
     _getUsageReportData boolean = true
 )
@@ -49,6 +47,8 @@ DECLARE
     _myRowCount int := 0;
     _instrument text;
     _eusInstrumentId As int := -1;
+    _message text := '';
+    _returnCode text := '';
 
     _sqlState text;
     _exceptionMessage text;
@@ -60,8 +60,6 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

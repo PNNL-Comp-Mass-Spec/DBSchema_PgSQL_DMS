@@ -2,10 +2,7 @@
 CREATE OR REPLACE FUNCTION public.get_requested_run_parameters_and_factors
 (
     _itemList TEXT,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
+    _infoOnly boolean = false)
 RETURNS TABLE (
     x
     y
@@ -31,9 +28,8 @@ DECLARE
     _myRowCount int := 0;
     _colList text;
     _sql text;
-    _message text;
-    _returnCode text;
 BEGIN
+
     -----------------------------------------
     -- Temp tables to hold list of requests and factors
     --

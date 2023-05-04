@@ -3,9 +3,7 @@ CREATE OR REPLACE FUNCTION public.get_factor_crosstab_by_batch
 (
     _batchID int,
     _nameContains text = '',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
+    _infoOnly boolean = false
 )
 RETURNS TABLE (
     x,
