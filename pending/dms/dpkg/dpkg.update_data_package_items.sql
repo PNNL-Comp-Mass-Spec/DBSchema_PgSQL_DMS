@@ -49,6 +49,11 @@ DECLARE
     _logUsage bool := false;
     _usageMessage text;
     _msgForLog text := ERROR_MESSAGE();
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode := '';
