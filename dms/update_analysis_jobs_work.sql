@@ -1,37 +1,18 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work
-(
-    _state text = '[no change]',
-    _priority text = '[no change]',
-    _comment text = '[no change]',
-    _findText text = '[no change]',
-    _replaceText text = '[no change]',
-    _assignedProcessor text = '[no change]',
-    _associatedProcessorGroup text = '',
-    _propagationMode text = '[no change]',
-    --
-    _paramFileName text = '[no change]',
-    _settingsFileName text = '[no change]',
-    _organismName text = '[no change]',
-    _protCollNameList text = '[no change]',
-    _protCollOptionsList text = '[no change]',
-    --
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = '',
-    _disableRaiseError boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_analysis_jobs_work(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFAULT '[no change]'::text, IN _priority text DEFAULT '[no change]'::text, IN _comment text DEFAULT '[no change]'::text, IN _findtext text DEFAULT '[no change]'::text, IN _replacetext text DEFAULT '[no change]'::text, IN _assignedprocessor text DEFAULT '[no change]'::text, IN _associatedprocessorgroup text DEFAULT ''::text, IN _propagationmode text DEFAULT '[no change]'::text, IN _paramfilename text DEFAULT '[no change]'::text, IN _settingsfilename text DEFAULT '[no change]'::text, IN _organismname text DEFAULT '[no change]'::text, IN _protcollnamelist text DEFAULT '[no change]'::text, IN _protcolloptionslist text DEFAULT '[no change]'::text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _disableraiseerror boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates parameters to new values for jobs in temporary table Tmp_JobList
+**      Updates parameters to new values for jobs in temporary table Tmp_AnalysisJobs
 **
-**      The calling table must create table Tmp_JobList
+**      The calling table must create table Tmp_AnalysisJobs
 **
-**      CREATE TABLE Tmp_JobList (job int)
+**      CREATE TEMP TABLE Tmp_AnalysisJobs (job int)
 **
 **  Arguments:
 **    _comment                    Text to append to the comment
@@ -72,7 +53,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          06/30/2022 mem - Rename parameter file argument
-**          12/15/2023 mem - Ported to PostgreSQL
+**          05/05/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -96,9 +77,9 @@ DECLARE
     _newPriority int;
     _orgid int := 0;
     _result int;
-    _commaList as text;
-    _id as text;
-    _invalidJobList as text;
+    _commaList text;
+    _id text;
+    _invalidJobList text;
     _propMode int;
     _gid int;
 BEGIN
@@ -156,7 +137,7 @@ BEGIN
     _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, _noChangeText));
 
     _callingUser := Trim(Coalesce(_callingUser, ''));
-    _disableRaiseError := Coalesce(_disableRaiseError, 0);
+    _disableRaiseError := Coalesce(_disableRaiseError, false);
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
@@ -165,9 +146,9 @@ BEGIN
     ---------------------------------------------------
 
     If (_findText = _noChangeText and _replaceText <> _noChangeText) OR (_findText <> _noChangeText and _replaceText = _noChangeText) Then
-        _message := 'The Find In Comment and Replace In Comment enabled flags must both be enabled or disabled';
+        _message := format('The Find In Comment and Replace In Comment arguments must either both be defined, or both be "%s"', _noChangeText);
 
-        If _disableRaiseError = 0 Then
+        If Not _disableRaiseError Then
             RAISE WARNING '%', _message;
         End If;
 
@@ -181,8 +162,8 @@ BEGIN
     --
     SELECT string_agg(Job::text, ', ')
     INTO _list
-    FROM Tmp_JobList
-    WHERE NOT job IN (SELECT job FROM t_analysis_job)
+    FROM Tmp_AnalysisJobs
+    WHERE NOT job IN (SELECT job FROM t_analysis_job);
 
     If Coalesce(_list, '') <> '' Then
         _message := 'The following jobs were not in the database: "' || _list || '"';
@@ -196,7 +177,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO _jobCountToUpdate
-    FROM Tmp_JobList;
+    FROM Tmp_AnalysisJobs;
 
     ---------------------------------------------------
     -- Resolve state name
@@ -204,15 +185,15 @@ BEGIN
     --
     If _state <> _noChangeText Then
         --
-        SELECT state_id
+        SELECT job_state_id
         INTO _stateID
         FROM  t_analysis_job_state
-        WHERE state_name = _state;
+        WHERE job_state = _state;
 
         If Not FOUND Then
             _message := 'State name not found: "' || _state || '"';
 
-            If _disableRaiseError = 0 Then
+            If Not _disableRaiseError Then
                 RAISE WARNING '%', _message;
             End If;
 
@@ -225,17 +206,16 @@ BEGIN
     -- Resolve organism ID
     ---------------------------------------------------
     --
-    --
     If _organismName <> _noChangeText Then
         SELECT ID
         INTO _orgid
         FROM V_Organism_List_Report
-        WHERE (Name = _organismName)
+        WHERE Name = _organismName;
 
         If Not FOUND Then
             _message := 'Organism name not found: "' || _organismName || '"';
 
-            If _disableRaiseError = 0 Then
+            If Not _disableRaiseError Then
                 RAISE WARNING '%', _message;
             End If;
 
@@ -254,7 +234,7 @@ BEGIN
         SELECT param_file_id
         INTO _result
         FROM t_param_files
-        WHERE param_file_name = _paramFileName
+        WHERE param_file_name = _paramFileName;
 
         If Not FOUND Then
             _message := 'Parameter file could not be found' || ':"' || _paramFileName || '"';
@@ -269,9 +249,9 @@ BEGIN
     --
     If _paramFileName <> _noChangeText Then
 
-        SELECT string_agg(TD.job, ',' ORDER BY TD.job)
+        SELECT string_agg(TD.job::text, ',' ORDER BY TD.job)
         INTO _commaList
-        FROM Tmp_JobList TD
+        FROM Tmp_AnalysisJobs TD
         WHERE NOT EXISTS (
                 SELECT AJ.job
                 FROM t_param_files PF
@@ -296,13 +276,12 @@ BEGIN
     -- Validate settings file for tool
     ---------------------------------------------------
     --
-    If _settingsFileName <> _noChangeText Then
+    If _settingsFileName <> _noChangeText And _settingsFileName::citext <> 'na' Then
         -- Validate settings file for tool only
-        --
 
-        SELECT string_agg(TD.job, ',' ORDER BY TD.job)
+        SELECT string_agg(TD.job::text, ',' ORDER BY TD.job)
         INTO _invalidJobList
-        FROM Tmp_JobList TD
+        FROM Tmp_AnalysisJobs TD
         WHERE NOT EXISTS (
                 SELECT AJ.job
                 FROM t_settings_files SF
@@ -336,7 +315,8 @@ BEGIN
         If _state <> _noChangeText Then
             UPDATE t_analysis_job
             SET job_state_id = _stateID
-            WHERE (job in (SELECT job FROM Tmp_JobList)) And job_state_id <> _stateID
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  job_state_id <> _stateID;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
@@ -351,7 +331,8 @@ BEGIN
 
             UPDATE t_analysis_job
             SET priority = _newPriority
-            WHERE (job in (SELECT job FROM Tmp_JobList)) AND priority <> _newPriority
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  priority <> _newPriority;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -362,8 +343,9 @@ BEGIN
         -----------------------------------------------
         If _comment <> _noChangeText Then
             UPDATE t_analysis_job
-            SET comment = comment || ' ' || _comment
-            WHERE (job in (SELECT job FROM Tmp_JobList))
+            SET comment = public.append_to_text(comment, _comment, _delimiter => '; ')
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) And
+                  Not comment LIKE '%' || _comment;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -375,7 +357,7 @@ BEGIN
         If _findText <> _noChangeText and _replaceText <> _noChangeText Then
             UPDATE t_analysis_job
             SET comment = replace(comment, _findText, _replaceText)
-            WHERE (job in (SELECT job FROM Tmp_JobList))
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -387,7 +369,8 @@ BEGIN
         If _assignedProcessor <> _noChangeText Then
             UPDATE t_analysis_job
             SET assigned_processor_name =  _assignedProcessor
-            WHERE (job in (SELECT job FROM Tmp_JobList)) AND assigned_processor_name <> _assignedProcessor
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  assigned_processor_name <> _assignedProcessor;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -397,15 +380,16 @@ BEGIN
 
         -----------------------------------------------
         If _propagationMode <> _noChangeText Then
-            _propMode := CASE _propagationMode;
-                                WHEN 'Export' THEN 0
-                                WHEN 'No Export' THEN 1
+            _propMode := CASE Lower(_propagationMode)
+                                WHEN 'export' THEN 0
+                                WHEN 'no export' THEN 1
                                 ELSE 0
                          END;
 
             UPDATE t_analysis_job
             SET propagation_mode =  _propMode
-            WHERE (job in (SELECT job FROM Tmp_JobList)) AND propagation_mode <> _propMode
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  propagation_mode <> _propMode;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -417,7 +401,8 @@ BEGIN
         If _paramFileName <> _noChangeText Then
             UPDATE t_analysis_job
             SET param_file_name =  _paramFileName
-            WHERE (job in (SELECT job FROM Tmp_JobList)) AND param_file_name <> '_paramFileName'
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  param_file_name <> _paramFileName;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -429,8 +414,8 @@ BEGIN
         If _settingsFileName <> _noChangeText Then
             UPDATE t_analysis_job
             SET settings_file_name =  _settingsFileName
-            WHERE job in (SELECT job FROM Tmp_JobList) AND
-                  settings_file_name <> _settingsFileName
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  settings_file_name <> _settingsFileName;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -442,7 +427,8 @@ BEGIN
         If _organismName <> _noChangeText Then
             UPDATE t_analysis_job
             SET organism_id =  _orgid
-            WHERE (job in (SELECT job FROM Tmp_JobList)) AND organism_id <> _orgid
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  organism_id <> _orgid;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -454,7 +440,8 @@ BEGIN
         If _protCollNameList <> _noChangeText Then
             UPDATE t_analysis_job
             SET protein_collection_list = _protCollNameList
-            WHERE (job in (SELECT job FROM Tmp_JobList)) AND protein_collection_list <> _protCollNameList
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  protein_collection_list <> _protCollNameList;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -466,7 +453,8 @@ BEGIN
         If _protCollOptionsList <> _noChangeText Then
             UPDATE t_analysis_job
             SET protein_options_list =  _protCollOptionsList
-            WHERE (job in (SELECT job FROM Tmp_JobList)) AND protein_options_list <> _protCollOptionsList
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  protein_options_list <> _protCollOptionsList;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -501,7 +489,7 @@ BEGIN
             priority =  CASE WHEN _priority = _noChangeText                        THEN priority ELSE CAST(_priority AS int) END,
             comment = comment || CASE WHEN _comment = _noChangeText                THEN '' ELSE ' ' || _comment END,
             assigned_processor_name = CASE WHEN _assignedProcessor = _noChangeText THEN assigned_processor_name ELSE _assignedProcessor END
-        WHERE (job in (SELECT job FROM Tmp_JobList))
+        WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -543,9 +531,8 @@ BEGIN
         -----------------------------------------------
         If _findText <> _noChangeText and _replaceText <> _noChangeText Then
             UPDATE t_analysis_job
-            Set
-                comment = replace(comment, _findText, _replaceText)
-            WHERE (job in (SELECT job FROM Tmp_JobList))
+            SET comment = replace(comment, _findText, _replaceText)
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
 
             If _assignedProcessor <> _noChangeText Then
                 _action2 := _action2 || '; replaced text in comment';
@@ -571,18 +558,19 @@ BEGIN
         _gid := 0;
         --
         If _associatedProcessorGroup <> '' Then
-            SELECT group_id INTO _gid
+            SELECT group_id
+            INTO _gid
             FROM t_analysis_job_processor_group
-            WHERE (group_name = _associatedProcessorGroup)
+            WHERE group_name = _associatedProcessorGroup;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _gid = 0 Then
+            If Not FOUND Then
                 _msg := 'Processor group name not found: "' || _associatedProcessorGroup || '"';
 
                 ROLLBACK;
 
-                If _disableRaiseError = 0 Then
+                If Not _disableRaiseError Then
                     RAISE EXCEPTION '%', _msg;
                 Else
                     _message := _msg;
@@ -597,7 +585,7 @@ BEGIN
             -- Dissassociate given jobs from group
             --
             DELETE FROM t_analysis_job_processor_group_associations
-            WHERE (job in (SELECT job FROM Tmp_JobList))
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -610,10 +598,11 @@ BEGIN
             -- For jobs with existing association, change it
             --
             UPDATE t_analysis_job_processor_group_associations
-            Set    group_id = _gid,
+            SET group_id = _gid,
                 entered = CURRENT_TIMESTAMP,
                 entered_by = session_user
-            WHERE (job in (SELECT job FROM Tmp_JobList)) AND group_id <> _gid
+            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                  group_id <> _gid;
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -623,10 +612,9 @@ BEGIN
 
             -- For jobs without existing association, create it
             --
-            INSERT INTO t_analysis_job_processor_group_associations
-                                (job, group_id)
-            SELECT job, _gid FROM Tmp_JobList
-            WHERE NOT (job IN (SELECT job FROM t_analysis_job_processor_group_associations))
+            INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
+            SELECT job, _gid FROM Tmp_AnalysisJobs
+            WHERE NOT job IN (SELECT job FROM t_analysis_job_processor_group_associations);
             --
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
@@ -651,11 +639,11 @@ BEGIN
             TargetID int NOT NULL
         );
 
-        CREATE UNIQUE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);;
+        CREATE UNIQUE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 
         INSERT INTO Tmp_ID_Update_List (TargetID)
         SELECT DISTINCT Job
-        FROM Tmp_JobList;
+        FROM Tmp_AnalysisJobs;
 
         If _alterEventLogRequired Then
             -- Call public.alter_event_log_entry_user_multi_id
@@ -670,6 +658,8 @@ BEGIN
 
             Call alter_entered_by_user_multi_id ('t_analysis_job_processor_group_associations', 'job', _callingUser);
         End If;
+
+        DROP TABLE Tmp_ID_Update_List;
     End If;
 
     _message := 'Number of jobs to update: ' || _jobCountToUpdate::text;
@@ -686,8 +676,15 @@ BEGIN
         End If;
     End If;
 
-    DROP TABLE Tmp_ID_Update_List;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_analysis_jobs_work IS 'UpdateAnalysisJobsWork';
+
+ALTER PROCEDURE public.update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _disableraiseerror boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _disableraiseerror boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _disableraiseerror boolean) IS 'UpdateAnalysisJobsWork';
+

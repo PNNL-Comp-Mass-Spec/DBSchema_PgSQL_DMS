@@ -1,39 +1,31 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_analysis_jobs
-(
-    _jobList text,
-    _state text = '[no change]',
-    _priority text = '[no change]',
-    _comment text = '[no change]',
-    _findText text = '[no change]',
-    _replaceText text = '[no change]',
-    _assignedProcessor text = '[no change]',
-    _associatedProcessorGroup text = '',
-    _propagationMode text = '[no change]',
-    --
-    _paramFileName text = '[no change]',
-    _settingsFileName text = '[no change]',
-    _organismName text = '[no change]',
-    _protCollNameList text = '[no change]',
-    _protCollOptionsList text = '[no change]',
-    --
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_analysis_jobs(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _state text DEFAULT '[no change]'::text, IN _priority text DEFAULT '[no change]'::text, IN _comment text DEFAULT '[no change]'::text, IN _findtext text DEFAULT '[no change]'::text, IN _replacetext text DEFAULT '[no change]'::text, IN _assignedprocessor text DEFAULT '[no change]'::text, IN _associatedprocessorgroup text DEFAULT ''::text, IN _propagationmode text DEFAULT '[no change]'::text, IN _paramfilename text DEFAULT '[no change]'::text, IN _settingsfilename text DEFAULT '[no change]'::text, IN _organismname text DEFAULT '[no change]'::text, IN _protcollnamelist text DEFAULT '[no change]'::text, IN _protcolloptionslist text DEFAULT '[no change]'::text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Updates parameters to new values for jobs in list
 **
 **  Arguments:
-**    _comment       Text to append to the comment
-**    _findText      Text to find in the comment; ignored if '[no change]'
-**    _replaceText   The replacement text when _findText is not '[no change]'
-**    _mode          'update' or 'reset' to change data; otherwise, will simply validate parameters
+**    _jobList                  Comma separated list of job numbers
+**    _state                    Job state name
+**    _priority                 Processing priority (1, 2, 3, etc.)
+**    _comment                  Text to append to the comment
+**    _findText                 Text to find in the comment; ignored if '[no change]'
+**    _replaceText              The replacement text when _findText is not '[no change]'
+**    _assignedProcessor        Assigned processor name (obsolete)
+**    _associatedProcessorGroup Processor group; deprecated in May 2015
+**    _propagationMode          Propagation mode ('Export' or 'No Export')
+**    _paramFileName            Parameter file name
+**    _settingsFileName         Settings file name
+**    _organismName             Organism name
+**    _protCollNameList         Protein collection list
+**    _protCollOptionsList      Protein options list
+**    _mode                     'update' or 'reset' to change data; otherwise, will simply validate parameters
 **
 **  Auth:   grk
 **  Date:   04/06/2006
@@ -68,7 +60,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          06/30/2022 mem - Rename parameter file argument
-**          12/15/2023 mem - Ported to PostgreSQL
+**          05/05/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -76,9 +68,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _jobCount int := 0;
+    _dropTempTable boolean := false;
     _usageMessage text;
 
     _sqlState text;
@@ -126,27 +118,25 @@ BEGIN
         -- Create temporary table to hold list of jobs
         ---------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_JobList (
+        CREATE TEMP TABLE Tmp_AnalysisJobs (
             Job int
-        )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        );
+
+        _dropTempTable := true;
 
         ---------------------------------------------------
         -- Populate table from job list
         ---------------------------------------------------
 
-        INSERT INTO Tmp_JobList (Job)
+        INSERT INTO Tmp_AnalysisJobs (Job)
         SELECT Value
-        FROM public.parse_delimited_integer_list(_jobList)
+        FROM public.parse_delimited_integer_list(_jobList);
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        _jobCount := _myRowCount;
+        GET DIAGNOSTICS _jobCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Call UpdateAnalysisJobs to do the work
-        -- It uses Tmp_JobList to determine which jobs to update
+        -- It uses Tmp_AnalysisJobs to determine which jobs to update
         ---------------------------------------------------
 
         Call update_analysis_jobs_work (
@@ -193,11 +183,22 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := _jobCount::text || ' jobs updated';
-    Call post_usage_log_entry ('UpdateAnalysisJobs', _usageMessage);
+    _usageMessage := format('%s %s updated', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
 
-    DROP TABLE IF EXISTS Tmp_JobList;
+    Call post_usage_log_entry ('update_analysis_jobs', _usageMessage);
+
+    If _dropTempTable Then
+        DROP TABLE IF EXISTS Tmp_AnalysisJobs;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_analysis_jobs IS 'UpdateAnalysisJobs';
+
+ALTER PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_analysis_jobs(IN _joblist text, IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateAnalysisJobs';
+

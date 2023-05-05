@@ -1,16 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE public.manage_job_execution
-(
-    _parameters text = '',
-    INOUT _result text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: manage_job_execution(text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.manage_job_execution(IN _parameters text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates parameters to new values for jobs in list
-**      Meant to be called by job control dashboard program
+**      Uses update_analysis_jobs_work() to update values in table t_analysis_job for jobs in list
+**
+**      Meant to be called by the Job Control Dashboard program
 **
 **      Example contents of _parameters:
 **          <root>
@@ -29,7 +29,7 @@ AS $$
 **
 **  Arguments:
 **   _parameters    XML with jobs to update and new values
-**   _result        Output message
+**   _message       Output message
 **
 **  Auth:   grk
 **  Date:   07/09/2009 grk - Initial release
@@ -40,6 +40,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          06/30/2022 mem - Rename parameter file argument
+**          05/05/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -66,13 +67,10 @@ DECLARE
     _protCollNameList text;
     _protCollOptionsList text;
     _mode text;
-    _message text;
     _callingUser text;
 BEGIN
     _message := '';
     _returnCode := '';
-
-    _result := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -101,12 +99,20 @@ BEGIN
     _paramXML := public.try_cast(_parameters, null::xml);
 
     If _paramXML Is Null Then
-        RAISE EXCEPTION 'Unable to convert _parameters to XML';
+        _message := 'The _parameters argument does not have valid XML';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
     End If;
 
     ---------------------------------------------------
     -- Get action and value parameters
     ---------------------------------------------------
+
+    -- Using "/." in the xpath expression would return the XML node
+    -- Using "text()" means to return the text inside the <action></action> node
+    -- [1] is used to select the first match (there should only be one matching node, but xpath() returns an array)
 
     _action := Lower((xpath('//root/operation/action/text()', _paramXML))[1]::text);
 
@@ -149,8 +155,6 @@ BEGIN
     _protCollOptionsList      := _noChangeText;
 
     _mode := 'update';
-    _message := '';
-    _returnCode:= '';
     _callingUser := '';
 
     ---------------------------------------------------
@@ -164,7 +168,7 @@ BEGIN
             SELECT job_state
             INTO _state
             FROM t_analysis_job_state
-            WHERE (job_state_id = 8)
+            WHERE job_state_id = 8;
         End If;
 
         If _value::citext = 'Release'::citext Then
@@ -172,7 +176,7 @@ BEGIN
             SELECT job_state
             INTO _state
             FROM t_analysis_job_state
-            WHERE (job_state_id = 1)
+            WHERE job_state_id = 1;
         End If;
 
         If _value::citext = 'Reset'::citext Then
@@ -183,7 +187,7 @@ BEGIN
             SELECT job_state
             INTO _state
             FROM t_analysis_job_state
-            WHERE (job_state_id = 1)
+            WHERE job_state_id = 1;
         End If;
     End If;
 
@@ -196,7 +200,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Call UpdateAnalysisJobsWork function
+    -- Call update_analysis_jobs_work function
     -- It uses Tmp_AnalysisJobs to determine which jobs to update
     ---------------------------------------------------
     --
@@ -226,18 +230,16 @@ BEGIN
 
     If _returnCode <> '' Then
         If Coalesce(_message, '') <> '' Then
-            _result := format('Error: %s; %s', _message, _returnCode);
+            _message := format('Error: %s; %s', _message, _returnCode);
         Else
-            _result := format('Unknown error calling UpdateAnalysisJobsWork; %s', _returnCode);
+            _message := format('Unknown error calling UpdateAnalysisJobsWork; %s', _returnCode);
         End If;
     Else
-        _result := _message;
-
-        If Coalesce(_result, '') = '' Then
-            _result := 'Empty message returned by UpdateAnalysisJobsWork.  ';
-            _result := _result || 'The action was "' || _action || '".  ';
-            _result := _result || 'The value was "' || _value || '".  ';
-            _result := _result || 'There were ' || _jobCount::text || ' jobs in the list: ';
+        If Coalesce(_message, '') = '' Then
+            _message := 'Empty message returned by UpdateAnalysisJobsWork.  ';
+            _message := _message || 'The action was "' || _action || '".  ';
+            _message := _message || 'The value was "' || _value || '".  ';
+            _message := _message || 'There were ' || _jobCount::text || ' jobs in the list: ';
         End If;
     End If;
 
@@ -245,4 +247,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.manage_job_execution IS 'ManageJobExecution';
+
+ALTER PROCEDURE public.manage_job_execution(IN _parameters text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE manage_job_execution(IN _parameters text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.manage_job_execution(IN _parameters text, INOUT _message text, INOUT _returncode text) IS 'ManageJobExecution';
+

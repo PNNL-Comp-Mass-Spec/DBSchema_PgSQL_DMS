@@ -1,18 +1,37 @@
 --
-CREATE OR REPLACE PROCEDURE sw.manage_job_execution
-(
-    _parameters text = '',
-    INOUT _result text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: manage_job_execution(text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates parameters to new values for jobs in list
-**      Meant to be called by job control dashboard program
+**      Updates table sw.t_jobs for jobs in list
+**      Also calls public.manage_job_execution()
+**
+**      Meant to be called by the Job Control Dashboard program
+**
+**      Example contents of _parameters:
+**          <root>
+**            <operation>
+**              <action>priority</action>
+**              <value>5</value>
+**            </operation>
+**            <jobs>
+**              <job>1563493</job>
+**              <job>1563496</job>
+**              <job>1563499</job>
+**            </jobs>
+**          </root>
+**
+**     Allowed values for action: state, priority, group
+**     When the action is "state", the only allowed value is "Hold"
+**
+**  Arguments
+**    _parameters   XML parameters
+**    _message      Output: status or warning message
 **
 **  Auth:   grk
 **  Date:   05/08/2009 grk - Initial release
@@ -21,7 +40,7 @@ AS $$
 **          05/25/2011 mem - No longer updating priority in T_Job_Steps
 **          06/01/2015 mem - Removed support for option _action = 'group' because we have deprecated processor groups
 **          02/15/2016 mem - Added back support for _action = 'group'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          05/05/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -33,10 +52,10 @@ DECLARE
     _paramXML xml;
     _action citext;
     _value citext;
+    _warning text;
 BEGIN
     _message := '';
-    _returnCode:= '';
-    _result := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Extract parameters from XML input
@@ -48,8 +67,10 @@ BEGIN
     _paramXML := public.try_cast(_parameters, null::xml);
 
     If _paramXML Is Null Then
-        _result := 'The _parameters argument does not have valid XML';
-        RAISE WARNING '%', _result;
+        _message := 'The _parameters argument does not have valid XML';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -99,18 +120,19 @@ BEGIN
         ---------------------------------------------------
         -- Immediately update priorities for jobs
         ---------------------------------------------------
-        --
 
         _priority := _value;
         _newPriority := public.try_cast(_priority, null::int);
 
         If _newPriority Is Null Then
-            _result := format('The new priority value is not an integer: %s', _value);
-            RAISE WARNING '%', _result;
+            _message := format('The new priority value is not an integer: %s', _value);
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5202';
             RETURN;
         End If;
 
-        UPDATE sw.t_jobs
+        UPDATE sw.t_jobs J
         SET priority = _newPriority
         FROM Tmp_JobList JL
         WHERE J.Job = JL.Job AND
@@ -133,7 +155,7 @@ BEGIN
             ---------------------------------------------------
             -- Immediately remove all processor group associations for jobs in Tmp_JobList
             ---------------------------------------------------
-            --
+
             DELETE FROM sw.t_local_job_processors
             WHERE Job In (Select Job From Tmp_JobList);
             --
@@ -156,28 +178,43 @@ BEGIN
 
     If _action = 'state' Then
         If _value = 'Hold' Then
-
             ---------------------------------------------------
             -- Immediately hold the requested jobs
             ---------------------------------------------------
-            UPDATE sw.t_jobs
-            SET state = 8                            -- 8=Holding
-            FROM Tmp_JobList
-            WHERE J.job = JL.job AND State <> 8;
 
+            UPDATE sw.t_jobs J
+            SET state = 8                            -- 8=Holding
+            FROM Tmp_JobList JL
+            WHERE J.job = JL.job AND State <> 8;
+        Else
+            _warning := 'When the action is "state", the only allowed value is "Hold"';
+            RAISE WARNING '%', _warning;
         End If;
     End If;
 
     ---------------------------------------------------
-    -- Call manage_job_execution to update the primary DMS DB
+    -- Call manage_job_execution to update the public schema
     ---------------------------------------------------
 
     Call public.manage_job_execution (
                     _parameters,
-                    _result => _result);     -- Output
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
+
+    If Coalesce(_warning, '') <> '' Then
+        _message = public.append_to_text(_message, _warning, _delimiter => '; ');
+    End If;
 
     DROP TABLE Tmp_JobList;
 END
 $$;
 
-COMMENT ON PROCEDURE sw.manage_job_execution IS 'ManageJobExecution';
+
+ALTER PROCEDURE sw.manage_job_execution(IN _parameters text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE manage_job_execution(IN _parameters text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.manage_job_execution(IN _parameters text, INOUT _message text, INOUT _returncode text) IS 'ManageJobExecution';
+
