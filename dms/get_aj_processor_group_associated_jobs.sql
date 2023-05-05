@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_group_associated_jobs(_groupi
 **          02/23/2007 mem - Added parameter _jobStateFilter
 **          06/17/2022 mem - Ported to PostgreSQL
 **          07/06/2022 mem - Move Group By queries into subqueries
+**          05/05/2023 mem - Change table alias name
 **
 *****************************************************/
 DECLARE
@@ -33,24 +34,24 @@ BEGIN
         SELECT string_agg(CountQ.job_state || ': ' || CountQ.Jobs::text, ', ' ORDER BY CountQ.job_state_id)
         INTO _result
         FROM (
-            SELECT JS.job_state, J.job_state_id, COUNT(AJPGA.job) As Jobs
+            SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) As Jobs
             FROM t_analysis_job_processor_group_associations AJPGA INNER JOIN
                  t_analysis_job J ON AJPGA.job = J.job INNER JOIN
-                 t_analysis_job_state JS ON J.job_state_id = JS.job_state_id
+                 t_analysis_job_state AJS ON J.job_state_id = AJS.job_state_id
             WHERE AJPGA.group_id = _groupID AND J.job_state_id IN (1, 8, 10)
-            GROUP BY JS.job_state, J.job_state_id) CountQ;
+            GROUP BY AJS.job_state, J.job_state_id) CountQ;
     End If;
 
     If _jobStateFilter = 1 Then
         SELECT string_agg(CountQ.job_state || ': ' || CountQ.Jobs::text, ', ' ORDER BY CountQ.job_state_id)
         INTO _resultAppend
         FROM (
-            SELECT JS.job_state, J.job_state_id, COUNT(AJPGA.job) As Jobs
+            SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) As Jobs
             FROM t_analysis_job_processor_group_associations AJPGA INNER JOIN
                 t_analysis_job J ON AJPGA.job = J.job INNER JOIN
-                t_analysis_job_state JS ON J.job_state_id = JS.job_state_id
+                t_analysis_job_state AJS ON J.job_state_id = AJS.job_state_id
             WHERE AJPGA.group_id = _groupID AND J.job_state_id IN (1, 2, 3, 8, 9, 10, 11, 16, 17)
-            GROUP BY JS.job_state, J.job_state_id) CountQ;
+            GROUP BY AJS.job_state, J.job_state_id) CountQ;
 
         If Coalesce(_resultAppend, '') <> '' Then
             If _result <> '' THEN
@@ -67,12 +68,12 @@ BEGIN
         SELECT string_agg(CountQ.job_state || ': ' || CountQ.Jobs::text, ', ' ORDER BY CountQ.job_state_id)
         INTO _resultAppend
         FROM (
-            SELECT JS.job_state, J.job_state_id, COUNT(AJPGA.job) AS Jobs
+            SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) AS Jobs
             FROM t_analysis_job_processor_group_associations AJPGA INNER JOIN
                  t_analysis_job J ON AJPGA.job = J.job INNER JOIN
-                 t_analysis_job_state JS ON J.job_state_id = JS.job_state_id
+                 t_analysis_job_state AJS ON J.job_state_id = AJS.job_state_id
             WHERE AJPGA.group_id = _groupID
-            GROUP BY JS.job_state, J.job_state_id) CountQ;
+            GROUP BY AJS.job_state, J.job_state_id) CountQ;
 
         If Coalesce(_resultAppend, '') <> '' Then
             If _result <> '' THEN

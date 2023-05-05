@@ -76,7 +76,7 @@ BEGIN
 
     RETURN QUERY
     SELECT AJ.job AS Job,
-           ASN.job_state AS State,
+           AJS.job_state AS State,
            AJ.priority AS Priority,
            AJ.request_id AS Request,
            AJ.created AS Created,
@@ -87,8 +87,8 @@ BEGIN
     FROM t_analysis_job_request_existing_jobs AJR
          INNER JOIN t_analysis_job AJ
            ON AJR.job = AJ.job
-         INNER JOIN t_analysis_job_state ASN
-           ON AJ.job_state_id = ASN.job_state_id
+         INNER JOIN t_analysis_job_state AJS
+           ON AJ.job_state_id = AJS.job_state_id
          INNER JOIN t_dataset DS
            ON AJ.dataset_id = DS.dataset_id
     WHERE AJR.request_id = _requestID

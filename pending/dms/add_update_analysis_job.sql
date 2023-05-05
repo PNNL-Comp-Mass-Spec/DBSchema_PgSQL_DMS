@@ -227,14 +227,14 @@ BEGIN
             If Not _currentStateID IN (1,5,8,19) Then
                 -- Allow the job comment and Export Mode to be updated
 
-                SELECT ASN.job_state,
+                SELECT AJS.job_state,
                        Coalesce(J.comment, ''),
                        Coalesce(J.propagation_mode, 0)
                 INTO _currentStateName, _currentComment, _currentExportMode
                 FROM t_analysis_job J
-                     INNER JOIN t_analysis_job_state ASN
-                       ON J.job_state_id = ASN.job_state_id
-                WHERE J.job = _jobID
+                     INNER JOIN t_analysis_job_state AJS
+                       ON J.job_state_id = AJS.job_state_id
+                WHERE J.job = _jobID;
 
                 If _comment <> _currentComment Or
                    _propMode <> _currentExportMode Or
@@ -436,7 +436,7 @@ BEGIN
                     t_analysis_job AJ ON AJ.dataset_id = DS.dataset_id INNER JOIN
                     t_analysis_tool AJT ON AJ.analysis_tool_id = AJT.analysis_tool_id INNER JOIN
                     t_organisms Org ON AJ.organism_id = Org.organism_id  INNER JOIN
-                    t_analysis_job_state ASN ON AJ.job_state_id = ASN.job_state_id INNER JOIN
+                    -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
                     Tmp_DatasetInfo ON Tmp_DatasetInfo.dataset = DS.dataset
                 WHERE
                     ( _preventDuplicatesIgnoresNoExport     AND NOT AJ.job_state_id IN (5, 13, 14) OR
@@ -605,7 +605,7 @@ BEGIN
                 SELECT job_state_id
                 INTO _updateStateID
                 FROM t_analysis_job_state
-                WHERE (job_state = _stateName)
+                WHERE job_state = _stateName;
 
                 If _updateStateID = -1 Then
                     _msg := 'State name not recognized: ' || _stateName;

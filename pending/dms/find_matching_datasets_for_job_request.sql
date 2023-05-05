@@ -99,7 +99,7 @@ BEGIN
         t_analysis_job AJ ON AJ.dataset_id = DS.dataset_id INNER JOIN
         t_analysis_tool AJT ON AJ.analysis_tool_id = AJT.analysis_tool_id INNER JOIN
         t_organisms Org ON AJ.organism_id = Org.organism_id  INNER JOIN
-        t_analysis_job_state ASN ON AJ.job_state_id = ASN.job_state_id INNER JOIN
+        -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
         Tmp_RequestDatasets RD ON RD.dataset = DS.dataset
     WHERE
         AJT.analysis_tool = _jobRequestInfo.ToolName AND

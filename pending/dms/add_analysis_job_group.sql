@@ -416,7 +416,7 @@ BEGIN
                 t_analysis_job AJ ON AJ.dataset_id = DS.dataset_id INNER JOIN
                 t_analysis_tool AJT ON AJ.analysis_tool_id = AJT.analysis_tool_id INNER JOIN
                 t_organisms Org ON AJ.organism_id = Org.organism_id  INNER JOIN
-                t_analysis_job_state ASN ON AJ.job_state_id = ASN.job_state_id INNER JOIN
+                -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
                 Tmp_DatasetInfo ON Tmp_DatasetInfo.dataset = DS.dataset
             WHERE
                 (NOT (AJ.job_state_id IN (5))) AND
@@ -424,10 +424,11 @@ BEGIN
                 AJ.param_file_name = _paramFileName AND
                 (AJ.settings_file_name = _settingsFileName OR
                  AJ.settings_file_name = 'na' AND _settingsFileName = 'Decon2LS_DefSettings.xml') AND
-                ( (    _protCollNameList = 'na' AND AJ.organism_db_name = _organismDBName AND
+                ( ( _protCollNameList = 'na' AND
+                    AJ.organism_db_name = _organismDBName AND
                     Org.organism = Coalesce(_organismName, Org.organism)
                   ) OR
-                  (    _protCollNameList <> 'na' AND
+                  ( _protCollNameList <> 'na' AND
                     AJ.protein_collection_list = Coalesce(_protCollNameList, AJ.protein_collection_list) AND
                     AJ.protein_options_list = Coalesce(_protCollOptionsList, AJ.protein_options_list)
                   ) OR

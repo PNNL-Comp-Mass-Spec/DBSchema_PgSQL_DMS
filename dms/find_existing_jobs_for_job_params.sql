@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
 **          06/30/2022 mem - Rename parameter file argument
 **          11/28/2022 mem - Ported to PostgreSQL
+**          05/05/2023 mem - Change table alias name
 **
 *****************************************************/
 DECLARE
@@ -148,7 +149,7 @@ BEGIN
 
     RETURN QUERY
     SELECT AJ.job AS Job,
-           ASN.job_state AS State,
+           AJS.job_state AS State,
            DS.dataset AS Dataset,
            AJ.created AS Created,
            AJ.start AS Start,
@@ -162,8 +163,8 @@ BEGIN
            ON AJ.analysis_tool_id = AJT.analysis_tool_id
          INNER JOIN t_organisms Org
            ON AJ.organism_id = Org.organism_id
-         INNER JOIN t_analysis_job_state ASN
-           ON AJ.job_state_id = ASN.job_state_id
+         INNER JOIN t_analysis_job_state AJS
+           ON AJ.job_state_id = AJS.job_state_id
     WHERE AJT.analysis_tool = _toolName::citext AND
           AJ.param_file_name = _paramFileName::citext AND
           AJ.settings_file_name = _settingsFileName::citext AND
