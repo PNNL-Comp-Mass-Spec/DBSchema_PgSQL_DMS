@@ -113,7 +113,7 @@ BEGIN
             RETURN;
         End If;
 
-        RAISE INFO 'Match found, saved on %',  public.timestamp_text(_dateStamp);;
+        RAISE INFO 'Match found, saved on %',  public.timestamp_text(_dateStamp);
 
     End If;
 

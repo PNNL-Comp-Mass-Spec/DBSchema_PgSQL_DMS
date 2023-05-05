@@ -351,7 +351,7 @@ BEGIN
     --
 
     If _message <> '' Then
-        RAISE INFO '%', _message;;
+        RAISE INFO '%', _message;
     End If;
 
     DROP TABLE Tmp_Jobs;

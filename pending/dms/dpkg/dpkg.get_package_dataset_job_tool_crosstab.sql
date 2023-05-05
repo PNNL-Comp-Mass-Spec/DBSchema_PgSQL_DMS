@@ -34,7 +34,6 @@ BEGIN
     _message := '';
     _returnCode:= '';
 
-
     BEGIN
 
         ---------------------------------------------------
@@ -152,7 +151,7 @@ BEGIN
     END;
 
     DROP TABLE IF EXISTS Tmp_Tools;
-    DROP TABLE IF EXISTS Tmp_Scratch;;
+    DROP TABLE IF EXISTS Tmp_Scratch;
     DROP TABLE IF EXISTS Tmp_Datasets
 END
 $$;

@@ -249,7 +249,7 @@ BEGIN
             If Not _infoOnly Then
                 Call post_log_entry ('Error', _message, 'UpdateUsersFromWarehouse');
             Else
-                RAISE WARNING '%', _message;;
+                RAISE WARNING '%', _message;
             End If;
 
         End If;

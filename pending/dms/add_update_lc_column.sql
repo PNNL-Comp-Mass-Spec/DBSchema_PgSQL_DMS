@@ -115,7 +115,7 @@ BEGIN
         --
         If _columnID = -1 and _mode = 'update' Then
             _logErrors := false;
-            RAISE EXCEPTION 'Cannot update: Specified LC column is not in database';;
+            RAISE EXCEPTION 'Cannot update: Specified LC column is not in database';
         End If;
 
         ---------------------------------------------------

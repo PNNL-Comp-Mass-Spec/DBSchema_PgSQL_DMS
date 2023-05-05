@@ -111,7 +111,7 @@ BEGIN
             _message => _message);
 
     If _infoOnly And _message <> '' Then
-        RAISE INFO '%', _message;;
+        RAISE INFO '%', _message;
     End If;
 
     DROP TABLE Job_Parameters;

@@ -39,7 +39,7 @@ DECLARE
 
     _myRowCount int := 0;
     _logErrors boolean := true;
-    _xml XML;;
+    _xml XML;
     _autoPopulateUserListIfBlank boolean := true,
     _curID int;
     _eusUsageTypeID int,
