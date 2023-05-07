@@ -44,7 +44,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _instrument text;
     _eusInstrumentId As int := -1;
     _message text := '';

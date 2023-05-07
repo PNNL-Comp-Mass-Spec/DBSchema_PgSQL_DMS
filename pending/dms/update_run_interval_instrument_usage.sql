@@ -27,7 +27,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _instrumentName text;
     _logErrors boolean := false;
 
@@ -83,8 +82,6 @@ BEGIN
         SELECT instrument INTO _instrumentName
         FROM t_run_interval
         WHERE interval_id = _runIntervalId
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _returnCode <> '' OR Coalesce(_instrumentName, '') = '' Then
             _message := 'Run Interval ID ' || Cast(_runIntervalId As text) || ' does not exist; cannot determine the instrument';

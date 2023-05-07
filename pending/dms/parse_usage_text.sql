@@ -55,7 +55,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _logErrors boolean := true;
     _commentToSearch text;
     _index int;

@@ -38,7 +38,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _existingDatasetID int;
     _logMessage text;
     _experimentID int;
@@ -168,8 +167,6 @@ BEGIN
         SET dataset_id = _datasetID,
             state_name = _status
         WHERE request_id = _requestID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
         If char_length(_callingUser) > 0 Then

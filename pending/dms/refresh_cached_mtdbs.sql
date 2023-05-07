@@ -19,7 +19,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _countBeforeMerge int;
     _countAfterMerge int;
     _mergeCount int;

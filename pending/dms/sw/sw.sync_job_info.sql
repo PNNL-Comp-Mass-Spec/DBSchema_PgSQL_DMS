@@ -26,7 +26,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _jobUpdateCount int;
     _countBeforeMerge int;
     _countAfterMerge int;

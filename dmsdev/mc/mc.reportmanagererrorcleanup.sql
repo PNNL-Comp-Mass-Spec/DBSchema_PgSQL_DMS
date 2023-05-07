@@ -22,7 +22,6 @@ CREATE OR REPLACE PROCEDURE mc.reportmanagererrorcleanup(IN _managername text, I
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _mgrInfo record;
     _mgrID int;
     _paramID int;

@@ -20,7 +20,6 @@ AS $$
 *****************************************************/
 DECLARE
     _message text;
-    _myRowCount int := 0;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -68,8 +67,6 @@ BEGIN
            created AS Most_Recent_Activity,
            0, 0, 0, 0, 0, 0, 0, 0
     FROM t_campaign;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ----------------------------------------------------------
     -- Update sample submission statistics

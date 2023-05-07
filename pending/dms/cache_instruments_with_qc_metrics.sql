@@ -21,7 +21,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -40,8 +40,6 @@ BEGIN
     FROM t_dataset_qc DQC
          INNER JOIN t_dataset DS
            ON DQC.dataset_id = DS.dataset_id
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _infoOnly Then
         SELECT Inst.instrument, Inst.instrument_id

@@ -18,7 +18,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _mgrList text;
     _mgrCount int;
 BEGIN

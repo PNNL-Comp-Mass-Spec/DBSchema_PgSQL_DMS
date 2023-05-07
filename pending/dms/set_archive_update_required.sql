@@ -22,7 +22,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetID int;
     _updateState int;
     _archiveState int;
@@ -73,10 +72,8 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE t_dataset_archive
-    SET archive_update_state_id = 2,  archive_state_id = _archiveState
-    WHERE (dataset_id = _datasetID)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    SET archive_update_state_id = 2, archive_state_id = _archiveState
+    WHERE (dataset_id = _datasetID);
 
     If Not FOUND Then
         _returnCode := 'U5299';

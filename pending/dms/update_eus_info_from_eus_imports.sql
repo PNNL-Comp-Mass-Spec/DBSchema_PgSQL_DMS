@@ -27,7 +27,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _entryID int := 0;
     _statusMessage text := '';
     _usageMessage text := '';

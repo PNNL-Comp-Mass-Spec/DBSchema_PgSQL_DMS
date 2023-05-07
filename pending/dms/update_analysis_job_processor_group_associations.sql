@@ -32,7 +32,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _list text;
     _alterEnteredByRequired boolean := false;
     _gid int;
@@ -65,8 +64,6 @@ BEGIN
     SELECT group_id INTO _gid
     FROM t_analysis_job_processor_group
     WHERE (group_name = _processorGroupName)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     --
     If _gid = 0 Then
         _myError := 5;

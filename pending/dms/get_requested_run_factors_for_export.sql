@@ -21,7 +21,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _msg text;
     _sql text;
     _factorNameList text;

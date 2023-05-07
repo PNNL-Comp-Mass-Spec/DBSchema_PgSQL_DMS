@@ -19,7 +19,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
 BEGIN
     If Coalesce(_analysisJobResultsFolder, '') = '' Then
         -- Update the dataset and all existing jobs

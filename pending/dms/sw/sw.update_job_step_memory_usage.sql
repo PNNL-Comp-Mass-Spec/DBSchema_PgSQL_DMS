@@ -32,7 +32,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _currentID Int := 0;
     _stepTool text;
     _memoryRequiredMB text;

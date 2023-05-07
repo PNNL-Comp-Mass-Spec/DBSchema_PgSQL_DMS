@@ -59,7 +59,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _list text;
     _notReleasedCount int := 0;
     _hmsCount int := 0;

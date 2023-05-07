@@ -27,10 +27,10 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          01/31/2023 mem - Use new column names in tables
+**          05/07/2023 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _mgrInfo record;
     _mgrID int;
     _paramTypeID int;

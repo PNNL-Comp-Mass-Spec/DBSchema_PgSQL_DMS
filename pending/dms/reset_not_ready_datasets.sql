@@ -22,7 +22,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text;
     _stateNotReady int;
     _stateNew int;

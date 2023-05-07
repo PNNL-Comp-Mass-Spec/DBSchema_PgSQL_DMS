@@ -24,7 +24,6 @@ CREATE OR REPLACE PROCEDURE mc.updatesinglemgrtypecontrolparam(IN _paramname tex
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _sqlstate text;
     _exceptionMessage text;
     _exceptionContext text;

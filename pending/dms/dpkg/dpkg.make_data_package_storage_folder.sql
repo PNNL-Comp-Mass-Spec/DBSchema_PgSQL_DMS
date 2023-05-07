@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _pathLocalRoot text;
     _pathSharedRoot text;
     _pathFolder text;

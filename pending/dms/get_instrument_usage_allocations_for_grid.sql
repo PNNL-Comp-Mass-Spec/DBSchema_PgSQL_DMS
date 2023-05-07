@@ -25,7 +25,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
 BEGIN
     _fiscalYear := Coalesce(_fiscalYear, '');
     _itemList := Coalesce(_itemList, '');

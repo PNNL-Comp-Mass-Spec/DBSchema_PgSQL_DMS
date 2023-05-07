@@ -41,10 +41,10 @@ CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT 
 **          06/01/2015 mem - Removed support for option _action = 'group' because we have deprecated processor groups
 **          02/15/2016 mem - Added back support for _action = 'group'
 **          05/05/2023 mem - Ported to PostgreSQL
+**          05/07/2023 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _priority text;
     _newPriority int;
     _associatedProcessorGroup text;

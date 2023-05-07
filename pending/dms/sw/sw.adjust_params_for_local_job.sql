@@ -32,7 +32,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _paramsUpdated boolean := false;
     _sourceJob int := 0;
     _jobInfo record;

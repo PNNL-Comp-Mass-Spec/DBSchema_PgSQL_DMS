@@ -20,10 +20,10 @@ CREATE OR REPLACE PROCEDURE public.update_protein_collection_usage(INOUT _messag
 **          08/30/2018 mem - Tabs to spaces
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying S_V_Protein_Collections_by_Organism
 **          12/31/2022 mem - Ported to PostgreSQL
+**          05/07/2023 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
 
     _sqlState text;
     _exceptionMessage text;

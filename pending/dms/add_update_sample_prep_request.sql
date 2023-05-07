@@ -169,7 +169,6 @@ DECLARE
     _addingItem boolean := false;
     _allowNoneWP boolean := false;
     _separationGroupAlt text := '';
-    _tmp int := 0;
     _currentAssignedPersonnel text;
     _requestTypeExisting text;
     _activationState int := 10;
@@ -569,11 +568,10 @@ BEGIN
             --
             _currentStateID := 0;
 
-            SELECT prep_request_id,
-                   state_id,
+            SELECT state_id,
                    assigned_personnel,
                    request_type
-            into _tmp, _currentStateID, _currentAssignedPersonnel, _requestTypeExisting
+            INTO _currentStateID, _currentAssignedPersonnel, _requestTypeExisting
             FROM  t_sample_prep_request
             WHERE prep_request_id = _id;
 

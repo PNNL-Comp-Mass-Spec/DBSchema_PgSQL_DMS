@@ -39,7 +39,6 @@ CREATE OR REPLACE PROCEDURE public.altereventlogentryusermultiid(IN _eventlogsch
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _targetID int;
     _countUpdated int;
     _continue int;

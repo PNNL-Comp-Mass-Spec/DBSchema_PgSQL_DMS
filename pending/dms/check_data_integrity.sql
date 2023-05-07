@@ -20,7 +20,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _errMsg text;
     _datasetCount int;
     _firstDatasetID int;

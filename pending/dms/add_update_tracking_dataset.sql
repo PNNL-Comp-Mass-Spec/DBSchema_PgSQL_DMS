@@ -64,7 +64,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _folderName text;
     _addingDataset boolean := false;

@@ -75,7 +75,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _result Int;
     _daysInRange numeric;
     _stDate timestamp;

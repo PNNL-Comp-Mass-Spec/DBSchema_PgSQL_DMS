@@ -28,7 +28,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _result int;
     _stDate timestamp;
     _eDate timestamp;

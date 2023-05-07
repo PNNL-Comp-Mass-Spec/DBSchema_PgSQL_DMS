@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _callingProcName text;
     _currentLocation text := 'Start';
 
@@ -91,8 +90,6 @@ BEGIN
             last_refresh_minimum_id = _lastRefreshMinimumID,
             last_full_refresh = CASE WHEN _fullRefreshPerformed THEN CURRENT_TIMESTAMP ELSE last_full_refresh END
         WHERE table_name = _cachedDataTableName;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     EXCEPTION
         WHEN OTHERS THEN

@@ -56,7 +56,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _predefineInfo record;
     _s text;
     _sqlWhere text;

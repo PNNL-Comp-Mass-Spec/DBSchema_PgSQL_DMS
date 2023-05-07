@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _startDate timestamp;
     _endDateYear int;
     _endDateWeek int;

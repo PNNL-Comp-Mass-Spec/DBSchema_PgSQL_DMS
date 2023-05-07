@@ -23,7 +23,6 @@ CREATE OR REPLACE FUNCTION mc.duplicatemanagerparameters(_sourcemgrid integer, _
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text = '';
     _returnCode text = '';
     _sqlstate text;
@@ -121,8 +120,6 @@ BEGIN
            ON Source.type_id = ExistingParams.type_id
     WHERE Source.mgr_id = _sourceMgrID AND
           ExistingParams.type_id IS NULL;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     RETURN QUERY
         SELECT PV.type_id, PV.value, PV.mgr_id, PV.comment

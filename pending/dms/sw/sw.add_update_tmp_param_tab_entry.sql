@@ -34,7 +34,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
 BEGIN
     ---------------------------------------------------
     -- Use a Merge statement to add or update the value

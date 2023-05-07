@@ -99,8 +99,6 @@ BEGIN
                               special_instructions citext PATH '@Special')
          ) XmlQ INNER JOIN
          sw.t_step_tools ST ON XmlQ.tool = ST.step_tool;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Make set of step dependencies based on scriptXML

@@ -112,7 +112,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetList text;
     _paramFileTool text := '??NoMatch??';
     _settingsFileTool text;
@@ -306,8 +305,6 @@ BEGIN
                                  INNER JOIN t_analysis_tool_allowed_instrument_class AIC
                                    ON AnTool.analysis_tool_id = AIC.analysis_tool_id
                             WHERE AnTool.analysis_tool = _toolName )
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _datasetList <> '' Then
         _message := 'The instrument class for the following datasets is not compatible with the analysis tool: "' || _datasetList || '"';

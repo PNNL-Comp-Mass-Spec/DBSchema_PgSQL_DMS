@@ -23,7 +23,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -33,8 +33,6 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM t_storage_path_bkup
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Populate t_storage_path_bkup

@@ -19,7 +19,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text;
     _callingProcName text;
     _currentLocation text := 'Start';
@@ -56,8 +55,6 @@ BEGIN
         WHERE Entered < CURRENT_TIMESTAMP - make_interval(weeks => _infoHoldoffWeeks) AND
               (message SIMILAR TO 'Resuming "0-9"%job%' OR
                message LIKE 'Deleted job % from sw.t_jobs')
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         ----------------------------------------------------
         -- Move old log entries and event entries to DMSHistoricLogPipeline

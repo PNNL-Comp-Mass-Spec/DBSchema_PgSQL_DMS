@@ -55,7 +55,6 @@ DECLARE
     _taskTypeID Int;
     _labID Int;
     _logErrors boolean := false;
-    _tmp int := 0;
     _curStatus text := '';
     _curClosed timestamp := null;
 
@@ -141,12 +140,11 @@ BEGIN
             -- Cannot update a non-existent entry
             --
             --
-            SELECT task_id
-                   status,
+            SELECT status,
                    closed
-            INTO _tmp, _curStatus, _curClosed
+            INTO _curStatus, _curClosed
             FROM t_operations_tasks
-            WHERE task_id = _id
+            WHERE task_id = _id;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'No entry could be found in database for update';

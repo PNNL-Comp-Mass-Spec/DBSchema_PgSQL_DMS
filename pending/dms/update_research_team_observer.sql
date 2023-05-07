@@ -33,7 +33,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _observerRoleID int := 10;
     _username text;
     _campaignID int := 0;

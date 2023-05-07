@@ -41,8 +41,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-
-    _myRowCount int := 0;
     _datasetInfo record
     _datasetID int := 0;
     _requestedRunInfo record;

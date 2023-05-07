@@ -47,7 +47,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _entryID int;
     _dataset text := '';
     _charLoc int;

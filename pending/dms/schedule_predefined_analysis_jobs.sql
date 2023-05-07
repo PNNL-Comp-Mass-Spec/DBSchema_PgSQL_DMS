@@ -46,7 +46,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text := '';
     _state text := 'New';
     _datasetID int := 0;

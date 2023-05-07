@@ -52,7 +52,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _logMsg text;
     _datasetID int := 0;
@@ -163,8 +162,6 @@ BEGIN
 
             INSERT INTO t_predefined_analysis_scheduling_queue (dataset_id, calling_user)
             VALUES (_datasetID, _callingUser)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             _validMode := true;
 

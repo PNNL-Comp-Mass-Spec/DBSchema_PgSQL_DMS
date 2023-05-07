@@ -29,7 +29,6 @@ CREATE OR REPLACE PROCEDURE mc.getdefaultremoteinfoformanager(IN _managername te
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _managerID int := 0;
     _message text;
 BEGIN

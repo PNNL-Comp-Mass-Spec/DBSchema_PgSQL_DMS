@@ -26,7 +26,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _tempID int := 0;
     _jobCount int := 1;
 BEGIN
@@ -77,8 +76,6 @@ BEGIN
     INTO _jobCount
     FROM t_analysis_job
     WHERE request_id = _requestID;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _jobCount <> 0 Then
         _message := 'Cannot delete an analysis request that has jobs made from it';

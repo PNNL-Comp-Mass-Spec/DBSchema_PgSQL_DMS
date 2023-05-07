@@ -35,7 +35,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _result int;
     _orgDbReqd int;
     _organismMatch text := '';

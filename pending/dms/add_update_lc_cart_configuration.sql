@@ -61,7 +61,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _badCh text;
     _underscoreLoc int;
     _cartName text;
@@ -246,8 +245,6 @@ BEGIN
             INTO _conflictID
             FROM t_lc_cart_configuration
             WHERE cart_config_name = _configName
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If _conflictID > 0 Then
                 _message := format('Cannot rename config from %s to %s because the new name is already in use by ID %s',

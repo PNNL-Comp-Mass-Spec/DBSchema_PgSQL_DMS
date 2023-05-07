@@ -26,7 +26,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _numStepsSkipped int;
     _done boolean := false;
 BEGIN

@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _currentTime timestamp;
     _lastRefreshed timestamp;
     _lastFullRefresh timestamp;

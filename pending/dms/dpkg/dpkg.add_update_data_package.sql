@@ -57,7 +57,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _currentID int;
     _teamCurrent text;
     _teamChangeWarning text;
@@ -165,8 +164,6 @@ BEGIN
                    _teamCurrent = path_team
             FROM dpkg.t_data_package
             WHERE data_pkg_id = _id;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
             --
             If _myError <> 0 OR _currentID = 0 Then
                 _message := 'No entry could be found in database for update';

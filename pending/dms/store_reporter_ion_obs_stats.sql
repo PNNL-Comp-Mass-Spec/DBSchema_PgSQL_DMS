@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetID int := 0;
     _sqlInsert text := '';
     _sqlValues text := '';

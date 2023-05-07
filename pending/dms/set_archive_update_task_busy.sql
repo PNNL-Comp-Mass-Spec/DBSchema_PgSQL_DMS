@@ -20,7 +20,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _usageMessage text;
 BEGIN
     _message := '';
@@ -33,8 +32,6 @@ BEGIN
          INNER JOIN t_dataset
            ON t_dataset.dataset_id = t_dataset_archive.dataset_id
     WHERE t_dataset.dataset = _datasetName;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Log SP usage

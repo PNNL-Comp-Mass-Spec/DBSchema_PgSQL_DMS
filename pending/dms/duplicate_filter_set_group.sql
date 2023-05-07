@@ -22,7 +22,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _filterCriteriaGroupIDNext int;
 BEGIN
     _message := '';
@@ -96,8 +95,6 @@ BEGIN
         FROM t_filter_set_criteria
         WHERE filter_criteria_group_id = _filterCriteriaGroupID
         ORDER BY criterion_id
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     End If;
 

@@ -36,7 +36,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _logErrors boolean := false;
     _msg text;
     _experimentID int;

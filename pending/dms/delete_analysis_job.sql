@@ -38,7 +38,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _jobID int;
     _stateID int;
     _msg text;

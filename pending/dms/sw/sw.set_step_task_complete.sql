@@ -84,7 +84,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _stepToolsToSkip text[];
     _jobStepDescription text;
     _jobStepDescriptionCapital;
@@ -548,8 +547,6 @@ BEGIN
         UPDATE sw.t_jobs
         Set organism_db_name = _organismDBName
         WHERE job = _job
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     End If;
 
 END

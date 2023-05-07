@@ -36,7 +36,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetID int;
     _datasetName text;
     _existingComment text;

@@ -27,7 +27,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _targetMonth int;
     _targetYear int;
     _monthAndYear text;

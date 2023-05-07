@@ -28,7 +28,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _duplicateRowCount int := 0;
 BEGIN
     ---------------------------------------------------
@@ -80,8 +79,6 @@ BEGIN
                                  message,
                                  recipients )
     VALUES (_postedBy, CURRENT_TIMESTAMP, _type, _message, _recipients);
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _postMessageToLogEntries > 0 Then
         Call post_log_entry _type, _message, _postedBy, _duplicateEntryHoldoffHours

@@ -58,7 +58,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _fy int;
     _charIndex int;
     _msg2 text;

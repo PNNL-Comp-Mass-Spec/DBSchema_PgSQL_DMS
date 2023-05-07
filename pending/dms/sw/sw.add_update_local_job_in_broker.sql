@@ -91,7 +91,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _jobParamXML XML;
     _logErrors boolean := true;
     _result int := 0;

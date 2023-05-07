@@ -207,8 +207,6 @@ BEGIN
     UPDATE T_Biomaterial
     SET Cached_Organism_List = get_biomaterial_organism_list(_biomaterialID)
     WHERE Biomaterial_ID = _biomaterialID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Log SP usage

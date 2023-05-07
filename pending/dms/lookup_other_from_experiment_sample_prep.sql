@@ -25,7 +25,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _ovr text := '(lookup)';
     _prepRequestID int := 0;
     _newWorkPackage text;

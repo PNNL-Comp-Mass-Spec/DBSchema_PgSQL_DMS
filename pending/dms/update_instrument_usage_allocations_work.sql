@@ -37,7 +37,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _allocationInfo record;
     _targetEntryID int;
     _currentTime timestamp;

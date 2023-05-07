@@ -16,7 +16,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
 BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 

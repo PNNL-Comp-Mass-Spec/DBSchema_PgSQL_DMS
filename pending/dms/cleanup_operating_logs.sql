@@ -25,7 +25,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _callingProcName text;
     _currentLocation text := 'Start';
 

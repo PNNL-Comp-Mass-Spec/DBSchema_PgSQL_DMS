@@ -30,7 +30,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _prepRequestID int := 0;
     _usageTypeSamplePrep citext,
     _proposalIdSamplePrep citext,

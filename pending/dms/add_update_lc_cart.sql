@@ -35,7 +35,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _cartStateID int := 0;
     _currentName text := '';
 BEGIN

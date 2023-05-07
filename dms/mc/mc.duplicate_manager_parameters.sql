@@ -27,10 +27,10 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly and _mergeSourceWithTarget from integer to boolean
 **          02/01/2023 mem - Use new column name in view
+**          05/07/2023 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text = '';
     _returnCode text = '';
 
@@ -130,8 +130,6 @@ BEGIN
            ON Source.param_type_id = ExistingParams.param_type_id
     WHERE Source.mgr_id = _sourceMgrID AND
           ExistingParams.param_type_id IS NULL;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     RETURN QUERY
         SELECT PV.param_type_id, PV.value, PV.mgr_id, PV.comment

@@ -33,7 +33,6 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized boolean;
-    _myRowCount int := 0;
 
     _sqlState text;
     _exceptionMessage text;

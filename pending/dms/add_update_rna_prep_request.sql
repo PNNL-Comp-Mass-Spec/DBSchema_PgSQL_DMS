@@ -72,7 +72,6 @@ DECLARE
     _eusUsageTypeID int;
     _eusUsersList text := '';
     _allowNoneWP boolean := false;
-    _tmp int := 0;
     _requestTypeExisting text;
     _activationState int := 10;
     _activationStateName text;
@@ -294,10 +293,9 @@ BEGIN
             --
             _currentStateID := 0;
             --
-            SELECT prep_request_id,
-                   request_type,
+            SELECT request_type,
                    state_id
-            INTO _tmp, _requestTypeExisting, _currentStateID
+            INTO _requestTypeExisting, _currentStateID
             FROM  t_sample_prep_request
             WHERE prep_request_id = _id;
 

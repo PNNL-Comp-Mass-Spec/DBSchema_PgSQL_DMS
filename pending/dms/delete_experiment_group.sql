@@ -26,7 +26,6 @@ DECLARE
 
     _delim text := ',';
     _count int;
-    _myRowCount int := 0;
     _msg text;
 BEGIN
     _message := '';

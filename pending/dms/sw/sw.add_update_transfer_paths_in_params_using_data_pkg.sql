@@ -38,7 +38,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _value text;
     _dataPkgSharePath text := '';
     _dataPkgName text := '';

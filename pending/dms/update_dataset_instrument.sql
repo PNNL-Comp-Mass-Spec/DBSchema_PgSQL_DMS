@@ -27,7 +27,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _errMsg text;
     _datasetId int := 0;
     _state int := 0;

@@ -24,7 +24,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _managerList text := null;
 BEGIN
     _message := '';

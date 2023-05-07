@@ -31,7 +31,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _result int;
     _biomaterialID int;
     _stateID int;

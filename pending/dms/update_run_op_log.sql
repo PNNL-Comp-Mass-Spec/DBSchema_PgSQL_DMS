@@ -37,7 +37,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _logErrors boolean := true;
     _xml XML;
     _autoPopulateUserListIfBlank boolean := true,
@@ -172,8 +171,6 @@ BEGIN
             SET eus_proposal_id = _eusProposalID,
                 eus_usage_type_id = _eusUsageTypeID
             WHERE request_id = _curID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then

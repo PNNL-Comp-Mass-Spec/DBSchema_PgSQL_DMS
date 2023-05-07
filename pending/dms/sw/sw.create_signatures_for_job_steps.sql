@@ -40,7 +40,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _signature int;
     _shared int;
     _stepTool text;

@@ -53,7 +53,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _startOfMonth timestamp;
     _startOfNextMonth timestamp;
@@ -111,8 +110,6 @@ BEGIN
         SELECT instrument_id INTO _instrumentID
         FROM t_instrument_name
         WHERE instrument = _instrument
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _instrumentID = 0 Then
             RAISE EXCEPTION 'Instrument not found: "%"', _instrument;

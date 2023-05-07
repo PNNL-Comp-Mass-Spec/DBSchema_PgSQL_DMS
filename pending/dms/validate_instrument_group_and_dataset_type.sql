@@ -27,7 +27,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _allowedDatasetTypes text;
 BEGIN
     _message := '';

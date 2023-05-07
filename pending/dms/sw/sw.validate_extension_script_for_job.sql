@@ -19,7 +19,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _currentScript text;
     _currentScriptXML xml;
     _extensionScriptXML xml;

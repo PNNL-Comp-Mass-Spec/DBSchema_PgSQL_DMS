@@ -31,8 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _wells TABLE (;
     _index int;
     _count int;
     _hits int;

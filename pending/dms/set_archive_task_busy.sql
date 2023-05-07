@@ -21,7 +21,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _usageMessage text;
 BEGIN
     _message := '';

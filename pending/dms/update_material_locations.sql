@@ -41,7 +41,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg2 text;
     _xml AS xml;
     _usageMessage text;

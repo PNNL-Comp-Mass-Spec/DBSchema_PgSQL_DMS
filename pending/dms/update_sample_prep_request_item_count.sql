@@ -17,7 +17,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _biomaterialItemCount int := 0;
     _sampleSubmissionItemCount int := 0;
     _materialContainersItemCount int := 0;

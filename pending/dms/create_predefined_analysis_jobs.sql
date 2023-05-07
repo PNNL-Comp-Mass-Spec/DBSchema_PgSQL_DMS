@@ -55,7 +55,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _errorMessage text;
     _newMessage text;
     _logMessage text;

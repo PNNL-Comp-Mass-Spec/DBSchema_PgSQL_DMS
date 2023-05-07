@@ -33,7 +33,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _st table (;
     _x xml;
     _xp text;

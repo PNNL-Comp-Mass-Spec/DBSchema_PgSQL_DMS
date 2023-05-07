@@ -75,7 +75,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _logErrors boolean := false;
     _fso int;
     _hr int;

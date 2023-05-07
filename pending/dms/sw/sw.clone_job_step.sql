@@ -44,7 +44,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _step_to_clone int;
     _num_clones int;
     _clone_step_num_base int;

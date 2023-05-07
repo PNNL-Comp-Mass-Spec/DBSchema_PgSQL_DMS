@@ -78,7 +78,6 @@ DECLARE
     _containerID int;
     _preferredContainer text := '';
     _representativeBatchID int := null;
-    _tmp int := 0;
     _currentAssignedPersonnel text;
     _activationState int := 10;
     _activationStateName text;
@@ -571,10 +570,9 @@ BEGIN
             --
             _currentStateID := 0;
             --
-            SELECT request_id,
-                   state,
+            SELECT state,
                    assigned_personnel
-            INTO _tmp, _currentStateID, _currentAssignedPersonnel
+            INTO _currentStateID, _currentAssignedPersonnel
             FROM  t_data_analysis_request
             WHERE request_id = _id;
 

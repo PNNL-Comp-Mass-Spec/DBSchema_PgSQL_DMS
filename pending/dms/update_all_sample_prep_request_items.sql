@@ -27,7 +27,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _itemType text := '';
     _callingUser text := session_user;
     _currentId int := 0;

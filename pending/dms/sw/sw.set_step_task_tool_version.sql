@@ -28,7 +28,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _toolVersionID int := 0;
 BEGIN
     _message := '';

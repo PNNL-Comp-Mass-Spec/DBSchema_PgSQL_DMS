@@ -29,7 +29,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _countBeforeMerge int;
     _countAfterMerge int;
     _mergeCount int;
@@ -233,8 +232,6 @@ BEGIN
         WHERE t_eus_proposal_users.proposal_id = t_eus_proposals.proposal_id AND
               t_eus_proposal_users.state_id = 3 AND
               t_eus_proposals.state_id = 2;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _mergeInsertCount > 0 OR _mergeUpdateCount > 0 OR _setUnknownCount > 0 Then
             _message := 'Updated t_eus_proposal_users: ' || _mergeInsertCount::text || ' added; ' || _mergeUpdateCount::text || ' updated';

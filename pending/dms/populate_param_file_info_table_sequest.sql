@@ -21,7 +21,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _paramEntry record;
     _s text;
 BEGIN
@@ -37,8 +36,6 @@ BEGIN
         Enzyme text NULL DEFAULT ('') WITH VALUES,
         Max_Missed_Cleavages int NULL DEFAULT (4) WITH VALUES,
         Parent_Mass_Type text NULL DEFAULT ('Avg') WITH VALUES
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     _paramFileInfoColumnList := 'Fragment_Ion_Tolerance, Enzyme, Max_Missed_Cleavages, Parent_Mass_Type';
 

@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **                         - Rename _requestedInstrument to _requestedInstrumentGroup
 **          02/16/2023 mem - Ported to PostgreSQL
 **          03/30/2023 mem - Retrieve values from _message and _returnCode when calling update_cached_requested_run_batch_stats
+**          05/07/2023 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _logErrors boolean := false;
     _instrumentGroupToUse text;
     _userID int := 0;

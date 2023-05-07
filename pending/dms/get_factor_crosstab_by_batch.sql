@@ -32,7 +32,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _msg text;
     _sql text;
     _factorNameList text;
@@ -82,8 +81,6 @@ BEGIN
                     request_id = Request AND
                     request_name LIKE '%' || _nameContains || '%';
             )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     End If;
 
     -----------------------------------------

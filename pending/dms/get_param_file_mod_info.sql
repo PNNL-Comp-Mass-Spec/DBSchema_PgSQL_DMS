@@ -35,7 +35,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _ln int;
 BEGIN
     _message := '';

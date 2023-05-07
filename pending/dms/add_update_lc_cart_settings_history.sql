@@ -43,7 +43,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _cartID int;
     _tmp int := 0;
 BEGIN

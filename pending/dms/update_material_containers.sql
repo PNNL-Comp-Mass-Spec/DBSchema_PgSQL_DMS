@@ -38,7 +38,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _numContainers int;
     _containerName text := Null;
     _location text;

@@ -41,7 +41,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _maxNormalInterval int;
     _instrumentNameMatch text := '';
     _eusInstrumentId int := 0;

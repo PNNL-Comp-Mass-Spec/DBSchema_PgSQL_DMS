@@ -46,7 +46,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _paramFileInfoColumnList text;
     _s text;
     _massModFilterSql text;
@@ -125,8 +124,6 @@ BEGIN
     WHERE PFT.param_file_type = _parameterFileTypeName AND
           (PF.valid = 1 OR _showValidOnly = 0) AND
           PF.param_file_name LIKE _parameterFileFilter
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -----------------------------------------------------------
     -- Possibly append some additional columns to Tmp_ParamFileInfo,

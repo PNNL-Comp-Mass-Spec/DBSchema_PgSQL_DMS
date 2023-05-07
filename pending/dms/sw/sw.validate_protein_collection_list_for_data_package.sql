@@ -27,7 +27,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _dataPackageName text;
 BEGIN
     _message := Coalesce(_message, '');

@@ -51,7 +51,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _job int;
     _step int;
     _stepTool citext;

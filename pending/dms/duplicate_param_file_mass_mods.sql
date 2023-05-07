@@ -34,7 +34,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _s text;
 BEGIN
     _message := '';
@@ -160,8 +159,6 @@ BEGIN
             FROM t_param_entries
             WHERE (param_file_id = _sourceParamFileID)
             ORDER BY entry_sequence_order
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         End If;
 

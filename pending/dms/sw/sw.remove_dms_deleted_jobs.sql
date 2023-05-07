@@ -26,7 +26,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
 BEGIN
     _message := '';
     _returnCode:= '';

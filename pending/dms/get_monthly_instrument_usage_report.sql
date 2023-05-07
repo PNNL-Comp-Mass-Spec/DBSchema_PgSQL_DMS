@@ -63,7 +63,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _logErrors boolean := false;
     _monthValue Int;
     _yearValue Int;

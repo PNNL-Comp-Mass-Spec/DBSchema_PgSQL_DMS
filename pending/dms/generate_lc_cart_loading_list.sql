@@ -35,7 +35,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _col int;
     _numCols int;
     _maxSamples int;

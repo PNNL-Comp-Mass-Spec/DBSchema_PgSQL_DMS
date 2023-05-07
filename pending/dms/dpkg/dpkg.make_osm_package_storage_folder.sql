@@ -23,7 +23,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _packageID int;
     _pathLocalRoot text := '';
     _pathSharedRoot text := '';

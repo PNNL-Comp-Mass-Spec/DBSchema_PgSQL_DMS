@@ -44,7 +44,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _organismName text:= '[No Organism]';
     _newNCBITaxonomyID int;
     _message text;
@@ -107,8 +106,6 @@ BEGIN
              _orgStrain
         FROM t_organisms
         WHERE organism_id = _previewOrganismID;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If Not FOUND Then
             _message := format('Organism ID %s not found; nothing to preview', _previewResults);

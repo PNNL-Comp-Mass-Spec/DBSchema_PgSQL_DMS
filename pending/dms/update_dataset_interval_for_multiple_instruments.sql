@@ -51,7 +51,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _endDate timestamp;
     _instrumentUsageMonth timestamp;
     _currentInstrumentUsageMonth timestamp;
@@ -216,8 +215,6 @@ BEGIN
                    0
             FROM V_Instrument_Tracked
             ORDER BY Coalesce(EUS_Instrument_ID, 0), Name
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         End If;
 

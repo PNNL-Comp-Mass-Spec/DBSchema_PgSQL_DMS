@@ -31,10 +31,10 @@ CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managerna
 **                         - Use case insensitive matching of manager name
 **          04/16/2022 mem - Use new function name
 **          02/01/2023 mem - Rename columns in temporary table
+**          05/07/2023 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _managerID int := 0;
     _message text;
 BEGIN

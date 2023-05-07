@@ -41,7 +41,6 @@ AS $$
 *****************************************************/
 DECLARE
     _currentLocation text := 'Start';
-    _myRowCount int := 0;
     _sourceJobText text;
     _indexStart int;
     _indexEnd int;

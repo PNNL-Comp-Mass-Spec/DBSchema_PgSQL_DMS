@@ -25,7 +25,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _externalDTAFolderName text;
 BEGIN
     _message := '';

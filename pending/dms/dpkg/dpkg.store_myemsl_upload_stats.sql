@@ -30,7 +30,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _entryID int;
     _charLoc int;
     _subString text;
@@ -244,8 +243,6 @@ BEGIN
                 _statusNum,
                 _errorCode,
                 CURRENT_TIMESTAMP
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
         --
         if _myError <> 0 Then
             _message := 'Error adding new row to dpkg.t_myemsl_uploads for Data Package ' || _dataPackageID::text;

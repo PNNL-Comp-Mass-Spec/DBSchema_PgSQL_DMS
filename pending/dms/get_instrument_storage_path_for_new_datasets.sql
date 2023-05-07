@@ -33,7 +33,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _storagePathID int;
     _message text := '';
     _returnCode text := '';

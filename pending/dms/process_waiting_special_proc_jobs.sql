@@ -38,7 +38,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _continue boolean;
     _jobsProcessed int := 0;
     _jobInfo record;

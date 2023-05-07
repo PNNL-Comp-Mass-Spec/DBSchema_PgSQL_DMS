@@ -55,7 +55,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _xml AS XML;
     _batchID int := 0;
     _debugEnabled boolean := false;

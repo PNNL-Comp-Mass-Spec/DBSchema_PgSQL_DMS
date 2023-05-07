@@ -73,7 +73,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _stepCount int := 0;
     _stepCountNew int := 0;
     _maxJobsToAdd int;

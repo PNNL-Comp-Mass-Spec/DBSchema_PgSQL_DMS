@@ -25,7 +25,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _scriptFirst text;
     _scriptLast text;
     _job int;

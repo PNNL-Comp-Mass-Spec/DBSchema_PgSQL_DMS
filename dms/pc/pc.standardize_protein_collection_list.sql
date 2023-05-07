@@ -25,10 +25,10 @@ CREATE OR REPLACE FUNCTION pc.standardize_protein_collection_list(_protcollnamel
 **          06/24/2013 mem - Now removing duplicate protein collection names in _protCollNameList
 **          03/17/2023 mem - Ported to PostgreSQL
 **          03/28/2023 mem - Use a custom collation to sort underscores before letters
+**          05/07/2023 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _protCollNameListNew text := '';
     _textToAppend text;
 BEGIN

@@ -47,7 +47,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _statusMessage text;
     _startTime timestamp := CURRENT_TIMESTAMP;
     _result int;

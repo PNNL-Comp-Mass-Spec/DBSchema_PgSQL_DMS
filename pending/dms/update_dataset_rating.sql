@@ -32,7 +32,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _ratingID int;
     _datasetCount int := 0;
     _mode text := 'update';

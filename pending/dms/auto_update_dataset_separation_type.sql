@@ -26,7 +26,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
     _datasetInfo record;
     _datasetsProcessed int;
     _updateInfo record;

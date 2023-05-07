@@ -16,7 +16,6 @@ AS $$
 *****************************************************/
 DECLARE
     _message text;
-    _myRowCount int := 0;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -41,11 +40,8 @@ BEGIN
                                        Experiment_Count,
                                        Dataset_Count,
                                        Job_Count )
-    SELECT Biomaterial_ID,
-           0, 0, 0
-    FROM T_Biomaterial
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    SELECT Biomaterial_ID, 0, 0, 0
+    FROM T_Biomaterial;
 
     ----------------------------------------------------------
     -- Update experiment count statistics

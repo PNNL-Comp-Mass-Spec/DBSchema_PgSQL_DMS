@@ -28,7 +28,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetName text;
     _updateCodeExpected int;
 BEGIN

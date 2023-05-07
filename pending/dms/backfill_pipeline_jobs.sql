@@ -42,7 +42,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _jobInfo record;
     _jobsProcessed int := 0;
     _peptideAtlasStagingTask int := 0;
@@ -353,8 +352,6 @@ BEGIN
                     INTO _dataPackageName, _dataPackageFolder, _storagePathRelative
                     FROM dpkg.V_Data_Package_Export
                     WHERE ID = _jobInfo.DataPackageID;
-                    --
-                    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
                     If Not FOUND Or Coalesce(_dataPackageFolder, '') = '' Then
                         -- Data Package not found (or Package_File_Folder is not defined)

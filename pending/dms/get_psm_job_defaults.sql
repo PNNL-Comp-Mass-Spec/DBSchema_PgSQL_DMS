@@ -46,7 +46,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _msg text;
     _result int := 0;
     _list text;

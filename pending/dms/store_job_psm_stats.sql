@@ -73,7 +73,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+
 BEGIN
     _message := '';
     _returnCode := '';
@@ -258,8 +258,6 @@ BEGIN
         --
         DELETE FROM t_analysis_job_psm_stats_phospho
         WHERE job = _job;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     Else
         -----------------------------------------------
         -- Add/Update t_analysis_job_psm_stats_phospho using a MERGE statement

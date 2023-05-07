@@ -35,7 +35,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _startPos int := 1;
     _datasetReversed text;
     _datasetNameLength int;

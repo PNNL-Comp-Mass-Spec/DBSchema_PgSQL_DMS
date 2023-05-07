@@ -39,7 +39,6 @@ CREATE OR REPLACE PROCEDURE public.alterenteredbyusermultiid(IN _targettablesche
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _entryDateStart timestamp;
     _entryDateEnd timestamp;
     _entryIndex int;

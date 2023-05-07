@@ -36,7 +36,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _instrumentID int := 0;
     _usageTypeID int := 0;
     _newUsageTypeID int := 0;
@@ -64,8 +63,6 @@ BEGIN
         INTO _instrumentID
         FROM t_instrument_name
         WHERE instrument = _instrument;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _instrumentID = 0 Then
             RAISE EXCEPTION 'Instrument not found: "%"', _instrument;

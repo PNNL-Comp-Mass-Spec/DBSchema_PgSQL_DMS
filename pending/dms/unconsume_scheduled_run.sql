@@ -60,7 +60,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetID int := 0;
     _requestComment text := '';
     _requestID int := 0;

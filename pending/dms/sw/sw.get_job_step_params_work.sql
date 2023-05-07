@@ -45,7 +45,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _stepTool text := '';
     _inputFolderName text := '';
     _outputFolderName text := '';

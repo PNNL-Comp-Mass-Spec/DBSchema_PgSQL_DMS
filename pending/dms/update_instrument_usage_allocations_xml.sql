@@ -49,7 +49,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _fiscalYear text;
     _fy int;
     _msg2 text;
@@ -139,8 +138,6 @@ BEGIN
             (xpath('//r/@a', _xml))[1]::text AS Allocation,
             Coalesce((xpath('//r/@x', _xml))[1]::text, '') AS Comment,
             _fy AS FY;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -----------------------------------------------------------
         -- Call UpdateInstrumentUsageAllocationsWork to perform the work

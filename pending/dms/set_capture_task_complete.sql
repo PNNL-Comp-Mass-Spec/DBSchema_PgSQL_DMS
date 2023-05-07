@@ -37,7 +37,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _maxRetries int;
     _datasetID int;
     _datasetState int;
