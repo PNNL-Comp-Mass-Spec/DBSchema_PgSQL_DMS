@@ -34,6 +34,7 @@ AS $$
 DECLARE
     _datasetIDs text;
     _datasetNames text;
+    _datasetCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -98,7 +99,9 @@ BEGIN
                  INNER JOIN t_dataset_archive_state_name DASN
                    ON DA.archive_state_id = DASN.DASN_StateID;
 
-            _message := format('Would reset %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
+            _datasetCount = array_length(string_to_array(_datasetIDs, ','), 1);
+
+            _message := format('Would reset %s %s', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'));
 
             RAISE INFO '%', _message;
             RAISE INFO 'ID(s):    %', _datasetIDs;

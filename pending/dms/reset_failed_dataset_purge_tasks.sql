@@ -35,8 +35,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -102,7 +100,7 @@ BEGIN
             GET DIAGNOSTICS _resetCount = ROW_COUNT;
 
             If _resetCount > 0 Then
-                _message := format('Reset dataset archive state from "Purge Failed" to "Complete" for %s datasets', _myRowCount);
+                _message := format('Reset dataset archive state from "Purge Failed" to "Complete" for %s datasets', _resetCount);
             Else
                 _message := 'No candidate tasks were found to reset';
             End If;

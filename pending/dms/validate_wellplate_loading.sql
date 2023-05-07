@@ -117,6 +117,7 @@ BEGIN
 
     _wellList := '';
     _hits := 0;
+
     SELECT
         _hits = _hits + 1,
         _wellList = CASE WHEN _wellList = '' THEN well ELSE ', ' || well END
@@ -140,7 +141,7 @@ BEGIN
         RETURN;
     End If;
 
-
+    DROP TABLE Tmp_Wells;
 END
 $$;
 

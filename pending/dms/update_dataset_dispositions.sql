@@ -47,7 +47,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _list text;
     _datasetCount int := 0;
@@ -147,7 +146,7 @@ BEGIN
         WHERE NOT DatasetID IN (SELECT dataset_id FROM t_dataset)
 
         If _list <> '' Then
-            If _myRowCount = 1 Then
+            If Position(',' In _list) = 0 Then
                 _message := 'Dataset "' || _list || '" was not found in the database';
             Else
                 _message := 'The following datasets were not in the database: "' || _list || '"';

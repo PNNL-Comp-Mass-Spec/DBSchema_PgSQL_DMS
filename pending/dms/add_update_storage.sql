@@ -218,7 +218,7 @@ BEGIN
         If FOUND Then
             -- Do not add a duplicate row
             _storagePathID := _existingID;
-            _message := 'Storage path already exists; ID ' || cast(_existingID as text);
+            _message := format('Storage path already exists; ID %s', _existingID);
         Else
             BEGIN
 
