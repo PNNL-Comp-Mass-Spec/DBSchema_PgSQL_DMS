@@ -42,10 +42,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _existingRowCount int := 0;
     _id int;
     _backFill int;
-    _tmp int;
     _scriptIDNew int := 1;
 BEGIN
     _message := '';
@@ -109,18 +108,15 @@ BEGIN
     ---------------------------------------------------
     -- Is entry already in database?
     ---------------------------------------------------
-    _tmp := 0;
-    --
-    SELECT script_id
-    INTO _tmp
-    FROM  sw.t_scripts
-    WHERE script = _script
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    SELECT Count(*)
+    INTO _existingRowCount
+    FROM sw.t_scripts
+    WHERE script = _script;
 
     -- Cannot update a non-existent entry
     --
-    If _mode = 'update' And _myRowCount = 0 Then
+    If _mode = 'update' And _existingRowCount = 0 Then
         _message := 'Could not find "' || _script || '" in database';
         RAISE WARNING '%', _message;
 
@@ -130,7 +126,7 @@ BEGIN
 
     -- Cannot add an existing entry
     --
-    If _mode = 'add' And _myRowCount > 0 Then
+    If _mode = 'add' And _existingRowCount > 0 Then
         _message := 'Script "' || _script || '" already exists in database';
         RAISE WARNING '%', _message;
 
@@ -167,9 +163,7 @@ BEGIN
             _contents,
             _parameters,
             _fields
-        )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        );
 
         -- If _callingUser is defined, update entered_by in sw.t_scripts_history
         If char_length(_callingUser) > 0 Then
@@ -202,9 +196,7 @@ BEGIN
           contents = _contents,
           parameters = _parameters,
           fields = _fields
-        WHERE (script = _script)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE script = _script;
 
         -- If _callingUser is defined, update entered_by in sw.t_scripts_history
         If char_length(_callingUser) > 0 Then

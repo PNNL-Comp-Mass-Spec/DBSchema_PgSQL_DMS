@@ -44,9 +44,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _status text := 'Active';
-    _tmp int;
+    _nextContainerID int := 0;
     _matchCount int;
     _researcherUsername text;
     _userID Int;
@@ -109,12 +108,10 @@ BEGIN
         If _container = '(generate name)' OR _mode = 'add' Then
             --
             SELECT MAX(container_id) + 1
-            INTO _tmp
+            INTO _nextContainerID
             FROM  t_material_containers;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            _container := 'MC-' || cast(_tmp as text);
+            _container := format('MC-%s', _nextContainerID);
         End If;
 
         ---------------------------------------------------
@@ -196,8 +193,6 @@ BEGIN
         INTO _containerID, _curLocationID, _curType, _curStatus
         FROM  t_material_containers
         WHERE container = _container;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _mode = 'add' and _containerID <> 0 Then
             _message := 'Cannot add container with same name as existing container: ' || _container;
@@ -238,8 +233,6 @@ BEGIN
             INTO _cnt
             FROM t_material_containers
             WHERE location_id = _locationID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If _limit <= _cnt Then
                 _message := 'Destination location does not have room for another container (moving ' || _container || ' to ' || _location || ')';
@@ -273,9 +266,7 @@ BEGIN
                                                location_id,
                                                status,
                                                researcher )
-            VALUES (_container, _type, _comment, _barcode, _locationID, _status, _researcher)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            VALUES (_container, _type, _comment, _barcode, _locationID, _status, _researcher);
 
             -- Material movement logging
             --

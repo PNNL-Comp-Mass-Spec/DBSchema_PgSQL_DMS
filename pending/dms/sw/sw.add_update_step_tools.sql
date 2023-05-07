@@ -39,8 +39,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean := false;
 
-    _myRowCount int := 0;
-    _tmp int;
+    _existingRowCount int := 0;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -69,18 +68,16 @@ BEGIN
     -- Is entry already in database?
     ---------------------------------------------------
 
-    SELECT step_tool_id
-    INTO _tmp
+    SELECT COUNT(*)
+    INTO _existingRowCount
     FROM  sw.t_step_tools
     WHERE step_tool = _name::citext;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
     -- Cannot update a non-existent entry
     --
-    If _mode = 'update' And _myRowCount = 0 Then
+    If _mode = 'update' And _existingRowCount = 0 Then
         _message := 'Could not find step tool "' || _name || '" in the database';
         RAISE WARNING '%', _message;
 
@@ -90,7 +87,7 @@ BEGIN
 
     -- Cannot add an existing entry
     --
-    If _mode = 'add' And _myRowCount > 0 Then
+    If _mode = 'add' And _existingRowCount > 0 Then
         _message := '"' || _name || '" already exists in database';
         RAISE WARNING '%', _message;
 
@@ -124,9 +121,6 @@ BEGIN
             _parameterTemplate,
             _paramFileStoragePath
         )
-        /**/
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     End If; -- add mode
 
@@ -135,7 +129,6 @@ BEGIN
     ---------------------------------------------------
     --
     If _mode = 'update' Then
-        --
 
         UPDATE sw.t_step_tools
         SET type = _type,
@@ -146,9 +139,8 @@ BEGIN
             memory_usage_mb = _memoryUsageMB,
             parameter_template = _parameterTemplate,
             param_file_storage_path = _paramFileStoragePath
-        WHERE (step_tool = _name)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE step_tool = _name;
+
     End If; -- update mode
 
 END

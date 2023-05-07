@@ -34,7 +34,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _s text;
+    _sql text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -52,21 +52,21 @@ BEGIN
         RETURN;
     End If;
 
-    _s := '';
-    _s := _s || ' SELECT PFMM.*, R.residue_symbol,';
-    _s := _s ||        ' MCF.mass_correction_tag, MCF.monoisotopic_mass,';
-    _s := _s ||        ' SLS.local_symbol, R.description AS Residue_Desc';
-    _s := _s || ' FROM t_param_file_mass_mods PFMM';
-    _s := _s ||      ' INNER JOIN t_residues R';
-    _s := _s ||        ' ON PFMM.residue_id = R.residue_id';
-    _s := _s ||      ' INNER JOIN t_mass_correction_factors MCF';
-    _s := _s ||        ' ON PFMM.mass_correction_id = MCF.mass_correction_id';
-    _s := _s ||      ' INNER JOIN t_seq_local_symbols_list SLS';
-    _s := _s ||        ' ON PFMM.local_symbol_id = SLS.local_symbol_id';
-    _s := _s ||      ' WHERE (PFMM.param_file_id = ' || _destParamFileID::text || ')';
-    _s := _s || ' ORDER BY PFMM.param_file_id, PFMM.local_symbol_id, R.residue_symbol';
+    _sql := '';
+    _sql := _sql || ' SELECT PFMM.*, R.residue_symbol,';
+    _sql := _sql ||        ' MCF.mass_correction_tag, MCF.monoisotopic_mass,';
+    _sql := _sql ||        ' SLS.local_symbol, R.description AS Residue_Desc';
+    _sql := _sql || ' FROM t_param_file_mass_mods PFMM';
+    _sql := _sql ||      ' INNER JOIN t_residues R';
+    _sql := _sql ||        ' ON PFMM.residue_id = R.residue_id';
+    _sql := _sql ||      ' INNER JOIN t_mass_correction_factors MCF';
+    _sql := _sql ||        ' ON PFMM.mass_correction_id = MCF.mass_correction_id';
+    _sql := _sql ||      ' INNER JOIN t_seq_local_symbols_list SLS';
+    _sql := _sql ||        ' ON PFMM.local_symbol_id = SLS.local_symbol_id';
+    _sql := _sql ||      ' WHERE (PFMM.param_file_id = ' || _destParamFileID::text || ')';
+    _sql := _sql || ' ORDER BY PFMM.param_file_id, PFMM.local_symbol_id, R.residue_symbol';
 
-    RAISE INFO '%', _s;
+    RAISE INFO '%', _sql;
 
     -----------------------------------------
     -- Make sure the parameter file IDs are valid

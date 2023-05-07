@@ -31,7 +31,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _countDeleted int := 0;
     _saveTime timestamp := CURRENT_TIMESTAMP;
     _cutoffDateTimeForSuccess timestamp;
     _cutoffDateTimeForFail timestamp;
@@ -104,9 +104,11 @@ BEGIN
                           FROM cap.t_task_steps TS
                           WHERE NOT TS.State IN (4, 6, 7) AND
                                 TS.Job = Tmp_Selected_Jobs.Job);
+            --
+            GET DIAGNOSTICS _countDeleted = ROW_COUNT;
 
             If FOUND Then
-                RAISE INFO 'Warning: Removed % capture task job(s) with one or more steps that was not skipped or complete', _myRowCount;
+                RAISE INFO 'Warning: Removed % capture task job(s) with one or more steps that was not skipped or complete', _countDeleted;
             Else
                 RAISE INFO 'Successful capture task jobs have been confirmed to all have successful (or skipped) steps';
             End If;

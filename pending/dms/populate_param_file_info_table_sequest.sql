@@ -22,7 +22,7 @@ AS $$
 *****************************************************/
 DECLARE
     _paramEntry record;
-    _s text;
+    _sql text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -78,16 +78,16 @@ BEGIN
         ORDER BY UniqueID
     LOOP
 
-        _s := '';
-        _s := _s || ' UPDATE Tmp_ParamFileInfo';
-        _s := _s || ' SET ' || _paramEntry.TargetColumn || ' = PE.entry_value::' || _paramEntry.TargetDataType;
-        _s := _s || ' FROM t_param_entries PE INNER JOIN';
-        _s := _s ||      ' Tmp_ParamEntryInfo PEI ON PE.entry_type = PEI.entry_type AND';
-        _s := _s ||      ' PE.entry_specifier = PEI.entry_specifier INNER JOIN';
-        _s := _s ||      ' Tmp_ParamFileInfo PFI ON PE.param_file_id = PFI.param_file_id';
-        _s := _s || ' WHERE PEI.UniqueID = ' || _paramEntry.UniqueID::text;
+        _sql := '';
+        _sql := _sql || ' UPDATE Tmp_ParamFileInfo';
+        _sql := _sql || ' SET ' || _paramEntry.TargetColumn || ' = PE.entry_value::' || _paramEntry.TargetDataType;
+        _sql := _sql || ' FROM t_param_entries PE INNER JOIN';
+        _sql := _sql ||      ' Tmp_ParamEntryInfo PEI ON PE.entry_type = PEI.entry_type AND';
+        _sql := _sql ||      ' PE.entry_specifier = PEI.entry_specifier INNER JOIN';
+        _sql := _sql ||      ' Tmp_ParamFileInfo PFI ON PE.param_file_id = PFI.param_file_id';
+        _sql := _sql || ' WHERE PEI.UniqueID = ' || _paramEntry.UniqueID::text;
 
-        EXECUTE _s;
+        EXECUTE _sql;
 
     END LOOP;
 

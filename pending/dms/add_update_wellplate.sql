@@ -33,7 +33,7 @@ DECLARE
 
     _myRowCount int := 0;
     _idx int;
-    _tmp int;
+    _existingID int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -84,7 +84,7 @@ BEGIN
     ---------------------------------------------------
 
     SELECT wellplate_id
-    INTO _tmp
+    INTO _existingID
     FROM  t_wellplates
     WHERE(wellplate = _wellplateName)
     --
@@ -93,7 +93,7 @@ BEGIN
     ---------------------------------------------------
     -- In this mode, add new entry if it doesn't exist
     ---------------------------------------------------
-    If _mode = 'assure' And (_myRowCount = 0 Or _tmp = 0) Then
+    If _mode = 'assure' And (_myRowCount = 0 Or _existingID = 0) Then
         _mode := 'add';
     End If;
 
@@ -101,7 +101,7 @@ BEGIN
     -- Cannot update a non-existent entry
     ---------------------------------------------------
 
-    If _mode = 'update' And (_myRowCount = 0 Or _tmp = 0) Then
+    If _mode = 'update' And (_myRowCount = 0 Or _existingID = 0) Then
         _message := 'No entry could be found in database for update';
         RAISE WARNING '%', _message;
 
@@ -113,7 +113,7 @@ BEGIN
     -- Cannot add a matching entry
     ---------------------------------------------------
 
-    If _mode = 'add' And _tmp <> 0 Then
+    If _mode = 'add' And _existingID <> 0 Then
         _message := 'Cannot add duplicate wellplate name';
         RAISE WARNING '%', _message;
 

@@ -47,7 +47,7 @@ AS $$
 *****************************************************/
 DECLARE
     _paramFileInfoColumnList text;
-    _s text;
+    _sql text;
     _massModFilterSql text;
     _addWildcardChars int;
 BEGIN
@@ -56,7 +56,7 @@ BEGIN
 
     _paramFileInfoColumnList := '';
 
-    _s := '';
+    _sql := '';
     _massModFilterSql := '';
 
     _addWildcardChars := 1;
@@ -164,31 +164,31 @@ BEGIN
     -----------------------------------------------------------
     -- Return the results
     -----------------------------------------------------------
-    _s := '';
-    _s := _s || ' SELECT PF.Param_File_Name, PF.Param_File_Description, PF.Job_Usage_Count, ';
+    _sql := '';
+    _sql := _sql || ' SELECT PF.Param_File_Name, PF.Param_File_Description, PF.Job_Usage_Count, ';
 
     If char_length(Coalesce(_paramFileInfoColumnList, '')) > 0 Then
-        _s := _s +      _paramFileInfoColumnList || ', ';
+        _sql := _sql +      _paramFileInfoColumnList || ', ';
     End If;
 
-    _s := _s ||        ' PFMR.*,';
-    _s := _s ||        ' PF.date_created, PF.date_modified, PF.valid';
-    _s := _s || ' FROM Tmp_ParamFileInfo PFI INNER JOIN';
-    _s := _s ||    ' t_param_files PF ON PFI.param_file_id = PF.param_file_id LEFT OUTER JOIN';
-    _s := _s ||    ' Tmp_ParamFileModResults PFMR ON PFI.param_file_id = PFMR.param_file_id';
+    _sql := _sql ||        ' PFMR.*,';
+    _sql := _sql ||        ' PF.date_created, PF.date_modified, PF.valid';
+    _sql := _sql || ' FROM Tmp_ParamFileInfo PFI INNER JOIN';
+    _sql := _sql ||    ' t_param_files PF ON PFI.param_file_id = PF.param_file_id LEFT OUTER JOIN';
+    _sql := _sql ||    ' Tmp_ParamFileModResults PFMR ON PFI.param_file_id = PFMR.param_file_id';
 
     If char_length(_massModFilterSql) > 0 Then
-        _s := _s || ' WHERE ' || _massModFilterSql;
+        _sql := _sql || ' WHERE ' || _massModFilterSql;
     End If;
 
-    _s := _s || ' ORDER BY PF.Param_File_Name';
+    _sql := _sql || ' ORDER BY PF.Param_File_Name';
 
     -- ToDo: Return the query results using the RefCursor
 
     If _previewSql Then
-        RAISE INFO '%', _s;
+        RAISE INFO '%', _sql;
     Else
-        EXECUTE _s;
+        EXECUTE _sql;
     End If;
 
     -----------------------------------------------------------

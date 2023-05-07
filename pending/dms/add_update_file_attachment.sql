@@ -49,9 +49,9 @@ AS $$
 DECLARE
     _schemaName text;
     _nameWithSchema text;
-
     _authorized boolean;
-    _tmp int;
+
+    _attachmentID int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -92,7 +92,7 @@ BEGIN
         If _mode = 'update' Then
 
             SELECT attachment_id
-            INTO _tmp
+            INTO _attachmentID
             FROM  t_file_attachment
             WHERE (attachment_id = _id)
 
@@ -108,7 +108,7 @@ BEGIN
             -- If a user re-attaches a 'deleted' file to an entity, we need to use 'update' for the _mode
 
             SELECT attachment_id
-            INTO _tmp
+            INTO _attachmentID
             FROM t_file_attachment
             WHERE entity_type = _entityType AND
                   entity_id = _entityID AND
@@ -116,7 +116,7 @@ BEGIN
 
             If FOUND Then
                 _mode := 'update';
-                _id := _tmp;
+                _id := _attachmentID;
             End If;
         End If;
 
