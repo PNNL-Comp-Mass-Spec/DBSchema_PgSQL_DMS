@@ -47,8 +47,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
-    _existingID int := 0;
     _logErrors boolean := false;
     _usageXML XML;
     _cleanedComment text;
@@ -151,12 +149,7 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            SELECT interval_id
-            INTO _existingID
-            FROM t_run_interval
-            WHERE interval_id = _id;
-
-            If Not FOUND Then
+            If Not Exists (SELECT interval_id FROM t_run_interval WHERE interval_id = _id) Then
                 _message := format('Invalid ID: %s; cannot update', _id);
                 RAISE EXCEPTION '%', _message;
             End If;
@@ -178,8 +171,6 @@ BEGIN
                 last_affected = CURRENT_TIMESTAMP,
                 entered_by = _callingUser
             WHERE interval_id = _id
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         End If;
 

@@ -40,9 +40,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _processorGroupID int;
-    _tmp int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -104,12 +102,7 @@ BEGIN
     If _mode = 'update' Then
         -- Cannot update a non-existent entry
         --
-        SELECT rule_id
-        INTO _tmp
-        FROM  t_predefined_analysis_scheduling_rules
-        WHERE (rule_id = _id)
-
-        If Not FOUND Then
+        If Not Exists (SELECT rule_id FROM t_predefined_analysis_scheduling_rules WHERE rule_id = _id) Then
             _message := 'No entry could be found in database for update';
             RAISE WARNING '%', _message;
 

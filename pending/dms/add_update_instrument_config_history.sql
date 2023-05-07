@@ -40,7 +40,6 @@ DECLARE
     _authorized boolean;
 
     _validatedDate timestamp;
-    _tmp int := 0;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -92,13 +91,7 @@ BEGIN
     If _mode = 'update' Then
         -- Cannot update a non-existent entry
         --
-        --
-        SELECT entry_id
-        INTO _tmp
-        FROM  t_instrument_config_history
-        WHERE (entry_id = _id)
-
-        If Not FOUND Then
+        If Not Exists (SELECT entry_id FROM  t_instrument_config_history WHERE entry_id = _id) Then
             _message := 'No entry could be found in database for update';
             RAISE WARNING '%', _message;
 

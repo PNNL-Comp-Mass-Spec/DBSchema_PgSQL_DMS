@@ -45,7 +45,6 @@ DECLARE
     _authorized boolean;
 
     _datasetTypeID int;
-    _tmp text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -103,14 +102,7 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            _tmp := '';
-            --
-            SELECT instrument_group
-            INTO _tmp
-            FROM  t_instrument_group
-            WHERE (instrument_group = _instrumentGroup)
-
-            If Not FOUND Then
+            If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup) Then
                 RAISE EXCEPTION 'No entry could be found in database for update';
             End If;
         End If;

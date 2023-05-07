@@ -36,7 +36,6 @@ DECLARE
 
     _myRowCount int := 0;
     _datasetTypeID int;
-    _tmp text := '';
 
     _sqlState text;
     _exceptionMessage text;
@@ -86,13 +85,7 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            --
-            SELECT separation_group
-            INTO _tmp
-            FROM  t_separation_group
-            WHERE (separation_group = _separationGroup)
-
-            If Not FOUND Then
+            If Not Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup) Then
                 RAISE EXCEPTION 'No entry could be found in database for update';
             End If;
         End If;

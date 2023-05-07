@@ -72,7 +72,7 @@ DECLARE
 
     _logErrors boolean := false;
     _percentEMSLOwnedVal int;
-    _tmp int;
+    _nextContainerID int;
     _valTrackUsageWhenInactive int := dbo.BooleanTextToTinyint(@trackUsageWhenInactive);
     _valScanSourceDir int := dbo.BooleanTextToTinyint(@scanSourceDir);
     _valAutoDefineStoragePath int := dbo.BooleanTextToTinyint(@autoDefineStoragePath);
@@ -131,12 +131,7 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            SELECT instrument_id
-            INTO _tmp
-            FROM  t_instrument_name
-            WHERE (instrument = _instrumentName)
-
-            If Not FOUND Then
+            If Not Exists (SELECT instrument_id FROM t_instrument_name WHERE instrument = _instrumentName) Then
                 RAISE EXCEPTION 'No entry could be found in database for update' USING ERRCODE = 'U5202';
             End If;
         End If;

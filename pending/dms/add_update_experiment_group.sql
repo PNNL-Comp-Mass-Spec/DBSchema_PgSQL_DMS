@@ -46,7 +46,6 @@ DECLARE
 
     _logErrors boolean := false;
     _parentExpID int := 0;
-    _tmp int;
     _count int;
     _invalidExperiments text := '';
     _userID int;
@@ -115,12 +114,7 @@ BEGIN
     If _mode = 'update' Then
         -- Cannot update a non-existent entry
         --
-        SELECT group_id
-        INTO _tmp
-        FROM  t_experiment_groups
-        WHERE group_id = _id;
-
-        If Not FOUND Then
+        If Not Exists (SELECT group_id FROM t_experiment_groups WHERE group_id = _id) Then
             _message := 'Cannot update: GroupID does not exist in database: ' || _id::text;
             RAISE WARNING '%', _message;
 

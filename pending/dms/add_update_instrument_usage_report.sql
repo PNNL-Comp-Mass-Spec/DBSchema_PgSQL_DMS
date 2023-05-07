@@ -64,7 +64,6 @@ DECLARE
 
     _myRowCount int := 0;
     _usageTypeID int := 0;
-    _tmp int := 0;
 
     _sqlState text;
     _exceptionMessage text;
@@ -127,13 +126,7 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            --
-            SELECT dataset_id
-            INTO _tmp
-            FROM  t_emsl_instrument_usage_report
-            WHERE (seq = _seq)
-
-            If Not FOUND Then
+            If Not Exists (SELECT dataset_id FROM t_emsl_instrument_usage_report WHERE seq = _seq) Then
                 RAISE EXCEPTION 'No entry could be found in database for update';
             End If;
         End If;

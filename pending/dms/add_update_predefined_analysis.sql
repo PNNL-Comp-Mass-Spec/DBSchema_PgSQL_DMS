@@ -106,7 +106,6 @@ DECLARE
     _ownerUsername text;
     _userID int;
     _newUsername text;
-    _tmp int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -490,15 +489,9 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             -- Cannot update a non-existent entry
             --
-            SELECT predefine_id
-            INTO _tmp
-            FROM  t_predefined_analysis
-            WHERE (predefine_id = _id)
-
-            If Not FOUND Then
+            If Not Exists (SELECT predefine_id FROM t_predefined_analysis WHERE predefine_id = _id) Then
                 _msg := 'No entry could be found in database for update';
                 RAISE EXCEPTION '%', _msg;
             End If;

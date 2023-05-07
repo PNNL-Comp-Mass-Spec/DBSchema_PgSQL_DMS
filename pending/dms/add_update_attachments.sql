@@ -37,8 +37,6 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized boolean;
-
-    _tmp int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -72,12 +70,7 @@ BEGIN
     If _mode = 'update' Then
         -- Cannot update a non-existent entry
         --
-        SELECT attachment_id
-        INTO _tmp
-        FROM  t_attachments
-        WHERE attachment_id = _id;
-
-        If Not FOUND Then
+        If Not Exists SELECT attachment_id FROM t_attachments WHERE attachment_id = _id) Then
             _message := 'No entry could be found in database for update';
             RAISE EXCEPTION '%', _message;
         End If;

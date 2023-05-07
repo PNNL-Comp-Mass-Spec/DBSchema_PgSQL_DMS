@@ -58,11 +58,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _itemCount Int;
     _integerCount Int;
     _invalidIDs text;
-    _tmp int := 0;
 
     _sqlState text;
     _exceptionMessage text;
@@ -149,15 +147,8 @@ BEGIN
         -- Is entry already in database? (only applies to updates)
         ---------------------------------------------------
 
-        If _mode = 'update' Then
-            SELECT prep_run_id
-            INTO _tmp
-            FROM  t_prep_lc_run
-            WHERE prep_run_id = _id
-
-            If Not FOUND Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
-            End If;
+        If _mode = 'update' And Not Exists (SELECT prep_run_id FROM t_prep_lc_run WHERE prep_run_id = _id) Then
+            RAISE EXCEPTION 'No entry could be found in database for update';
         End If;
 
         ---------------------------------------------------
@@ -246,8 +237,6 @@ BEGIN
                 instrument_pressure = _instrumentPressure,
                 quality_control = _qualityControl
             WHERE prep_run_id = _id
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             -- Add new datasets
             INSERT INTO t_prep_lc_run_dataset

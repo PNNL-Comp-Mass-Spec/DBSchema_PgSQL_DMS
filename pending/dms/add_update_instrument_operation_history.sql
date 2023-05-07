@@ -42,7 +42,6 @@ DECLARE
     _userID int;
     _matchCount int;
     _newUsername text;
-    _tmp int := 0;
     _logMessage text;
 
     _sqlState text;
@@ -128,12 +127,7 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            SELECT entry_id
-            INTO _tmp
-            FROM  t_instrument_operation_history
-            WHERE (entry_id = _id)
-
-            If Not FOUND Then
+            If Not Exists (SELECT entry_id FROM t_instrument_operation_history WHERE entry_id = _id) Then
                 RAISE EXCEPTION 'No entry could be found in database for update';
             End If;
         End If;

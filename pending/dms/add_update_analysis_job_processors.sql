@@ -38,8 +38,6 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized boolean;
-
-    _tmp int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -117,12 +115,7 @@ BEGIN
     If _mode = 'update' Then
         -- Cannot update a non-existent entry
         --
-        SELECT processor_id
-        INTO _tmp
-        FROM  t_analysis_job_processors
-        WHERE processor_id = _id;
-
-        If Not FOUND Then
+        If Not Exists SELECT processor_id FROM t_analysis_job_processors WHERE processor_id = _id) Then
             _message := 'Cannot update processor ID ' || _id::text || '; existing entry not found in the database';
              RAISE WARNING '%', _message;
 

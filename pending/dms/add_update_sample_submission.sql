@@ -43,13 +43,11 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text := '';
     _logErrors boolean := false;
     _campaignID int;
     _researcher text;
     _receivedByUserID int;
-    _tmp int := 0;
     _cl text;
     _comment text;
 
@@ -146,13 +144,7 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            --
-            SELECT submission_id
-            INTO _tmp
-            FROM  t_sample_submission
-            WHERE (submission_id = _id)
-
-            If Not FOUND Then
+            If Not Exists (SELECT submission_id FROM t_sample_submission WHERE submission_id = _id) Then
                 RAISE EXCEPTION 'No entry could be found in database for update';
             End If;
         End If;

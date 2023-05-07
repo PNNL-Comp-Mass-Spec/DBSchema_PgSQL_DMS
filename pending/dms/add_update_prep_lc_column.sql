@@ -44,7 +44,6 @@ DECLARE
     _authorized boolean;
 
     _myRowCount int := 0;
-    _tmp int := 0;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -88,16 +87,10 @@ BEGIN
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)
     ---------------------------------------------------
-
-    --
-    SELECT prep_column_id
-    INTO _tmp
-    FROM  t_prep_lc_column
-    WHERE prep_column = _columnName
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _mode = 'update' And _myRowCount = 0 Then
+    If _mode = 'update' And Not Exists (SELECT prep_column_id FROM t_prep_lc_column WHERE prep_column = _columnName) Then
         _message := 'No entry could be found in database for update';
         RAISE WARNING '%', _message;
 
