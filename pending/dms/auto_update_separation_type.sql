@@ -83,7 +83,7 @@ BEGIN
         If Not Exists (SELECT * from t_secondary_sep WHERE separation_type = _optimalSeparationType) Then
             _message := 'Invalid separation type; ' || _optimalSeparationType || ' not found in t_secondary_sep';
 
-            Call post_log_entry ('Error', _message, 'AutoUpdateSeparationType', _duplicateEntryHoldoffHours => 1);
+            Call post_log_entry ('Error', _message, 'Auto_Update_Separation_Type', _duplicateEntryHoldoffHours => 1);
 
             _optimalSeparationType := '';
         End If;

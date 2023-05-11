@@ -174,7 +174,7 @@ BEGIN
                                 _lastDatasetOrExperiment);
         End If;
 
-        Call post_log_entry ('Normal', _logMessage, 'DeleteDataPackage');
+        Call public.post_log_entry ('Normal', _logMessage, 'Delete_Data_Package', 'dpkg');
 
         ---------------------------------------------------
         -- Display some messages

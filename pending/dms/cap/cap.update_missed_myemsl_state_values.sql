@@ -88,7 +88,7 @@ BEGIN
             WHERE AS_Dataset_ID IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
                   MyEMSLState < 1
 
-            Call public.post_log_entry('Warning', _message, 'UpdateMissedMyEMSLStateValues', 'cap');
+            Call public.post_log_entry('Warning', _message, 'Update_Missed_MyEMSL_State_Values', 'cap');
 
             -- Reset skipped ArchiveVerify steps for the affected datasets
             --
@@ -143,7 +143,7 @@ BEGIN
             WHERE AJ_JobID IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
                   AJ_MyEMSLState < 1
 
-            Call public.post_log_entry('Warning', _message, 'UpdateMissedMyEMSLStateValues', 'cap');
+            Call public.post_log_entry('Warning', _message, 'Update_Missed_MyEMSL_State_Values', 'cap');
         End If;
 
         -- Reset skipped ArchiveVerify steps for the datasets associated with the affected capture task jobs

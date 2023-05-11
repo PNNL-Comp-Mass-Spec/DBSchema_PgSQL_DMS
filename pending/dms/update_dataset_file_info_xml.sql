@@ -376,7 +376,7 @@ BEGIN
         _msg := 'Unrecognized file hash type: ' || _unrecognizedHashType || '; all rows in T_Dataset_File are assumed to be SHA1. ' ||;
                 'Will add the file info anyway, but this hashtype could be problematic elsewhere'
 
-        Call post_log_entry ('Error', _msg, 'UpdateDatasetFileInfoXML');
+        Call post_log_entry ('Error', _msg, 'Update_Dataset_File_Info_XML');
     End If;
 
     ---------------------------------------------------
@@ -464,7 +464,7 @@ BEGIN
             _msg := format('Allowing duplicate dataset to be added since Allow_Duplicates is true: DatasetID %s%s',
                             _datasetId, _duplicateDatasetInfoSuffix);
 
-            Call post_log_entry ('Warning', _msg, 'UpdateDatasetFileInfoXML');
+            Call post_log_entry ('Warning', _msg, 'Update_Dataset_File_Info_XML');
         End If;
     End If;
 
@@ -497,7 +497,7 @@ BEGIN
 
             If NOT Exists (SELECT * FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' And Entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') Then
                 _msg := format('Auto-updated separation type from %s to %s for dataset %s', _separationType, _optimalSeparationType, _datasetName);
-                Call post_log_entry ('Normal', _msg, 'UpdateDatasetFileInfoXML');
+                Call post_log_entry ('Normal', _msg, 'Update_Dataset_File_Info_XML');
             End If;
 
         End If;
@@ -570,7 +570,7 @@ BEGIN
             public.timestamp_text(_acqTimeEnd),
             public.timestamp_text(_acqTimeStart));
 
-        Call post_log_entry ('Error', _message, 'UpdateDatasetFileInfoXML');
+        Call post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
     End If;
 
     -----------------------------------------------
@@ -735,7 +735,7 @@ BEGIN
         _message := _message || '; error code = ' || _myError::text;
 
         If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'UpdateDatasetFileInfoXML');
+            Call post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
         End If;
     End If;
 
@@ -754,7 +754,7 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        Call post_usage_log_entry ('UpdateDatasetFileInfoXML', _usageMessage;);
+        Call post_usage_log_entry ('Update_Dataset_File_Info_XML', _usageMessage;);
     End If;
 
     DROP TABLE Tmp_DSInfoTable;

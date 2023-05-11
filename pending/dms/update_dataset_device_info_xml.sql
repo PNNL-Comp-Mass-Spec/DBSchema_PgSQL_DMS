@@ -312,7 +312,7 @@ BEGIN
         _message := _message || '; error code = ' || _myError::text;
 
         If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'UpdateDatasetDeviceInfoXML');
+            Call post_log_entry ('Error', _message, 'Update_Dataset_Device_Info_XML');
         End If;
     End If;
 

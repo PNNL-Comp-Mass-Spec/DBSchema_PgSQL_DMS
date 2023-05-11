@@ -180,7 +180,7 @@ BEGIN
 
         _message := format('%s; error code = %s', _message, _returnCode);
 
-        call public.post_log_entry('Error', _message, 'set_myemsl_upload_manually_verified', 'cap');
+        call public.post_log_entry('Error', _message, 'Set_MyEMSL_Upload_Manually_Verified', 'cap');
     End If;
 
 END

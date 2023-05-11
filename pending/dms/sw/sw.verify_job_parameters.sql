@@ -30,6 +30,7 @@ AS $$
 **          01/31/2022 mem - Add support for MSFragger
 **          04/11/2022 mem - Use varchar(4000) when populating temporary tables
 **          03/22/2023 mem - Add support for DiaNN
+**          05/10/2023 mem - Do not update _protCollOptionsList when using a legacy FASTA file
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -39,7 +40,8 @@ DECLARE
     _protCollNameList text := '';
     _protCollOptionsList text := '';
     _organismName text := '';
-    _organismDBName text := ''    -- Aka legacy FASTA file;
+    _organismDBName text := '';             -- Aka legacy FASTA file;
+    _usingLegacyFASTA boolean := false;
     _paramFileType text := '';
     _paramFileValid int;
     _collectionCountAdded int;
@@ -190,9 +192,17 @@ BEGIN
         FROM Tmp_JobParameters
         WHERE Name = 'LegacyFastaFileName'
 
-        _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
+        _protCollNameList    := Trim(Coalesce(_protCollNameList, ''));
+        _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, ''));
+        _organismDBName      := Trim(Coalesce(_organismDBName, ''));
 
-        If Coalesce(_protCollOptionsList, '') = '' Then
+        If _organismDBName <> '' And
+           public.validate_na_parameter(_protCollNameList) = 'na' And
+           public.validate_na_parameter(_protCollOptionsList) = 'na' Then
+            _usingLegacyFASTA := true;
+        End If;
+
+        If _protCollOptionsList = '' And Not _usingLegacyFASTA Then
             If _scriptBaseName In ('MaxQuant', 'DiaNN') Then
                 _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
             Else
@@ -200,7 +210,7 @@ BEGIN
             End If;
         End If;
 
-        If _scriptBaseName In ('MaxQuant', 'DiaNN') And _protCollOptionsList <> 'seq_direction=forward,filetype=fasta' Then
+        If _scriptBaseName In ('MaxQuant', 'DiaNN') And _protCollOptionsList <> 'seq_direction=forward,filetype=fasta' And Not _usingLegacyFASTA Then
             _message := 'The ProteinOptions parameter must be "seq_direction=forward,filetype=fasta" for ' || _scriptBaseName || ' jobs';
             RAISE INFO '%', _message;
 
@@ -209,7 +219,7 @@ BEGIN
             RETURN;
         End If;
 
-        If _scriptBaseName = 'MSFragger' And _protCollOptionsList <> 'seq_direction=decoy,filetype=fasta' Then
+        If _scriptBaseName = 'MSFragger' And _protCollOptionsList <> 'seq_direction=decoy,filetype=fasta' And Not _usingLegacyFASTA Then
             _message := 'The ProteinOptions parameter must be "seq_direction=decoy,filetype=fasta" for MSFragger jobs';
             RAISE INFO '%', _message;
 
@@ -221,11 +231,9 @@ BEGIN
         SELECT Valid
         INTO _paramFileValid
         FROM public.V_Param_File_Export
-        WHERE Param_File_Name = _parameterFileName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE Param_File_Name = _parameterFileName;
 
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             _message := 'Parameter file not found: ' || _parameterFileName;
             RAISE INFO '%', _message;
 

@@ -95,7 +95,7 @@ BEGIN
         _message := 'More than 1% of the uploads to MyEMSL had an error; error rate: ' || _uploadErrorRate*100::text::int || '% for ' || _uploadAttempts::text || ' upload attempts';
 
         If _logErrors Then
-            Call post_log_entry ('Error', _message, 'CheckForMyEMSLErrors');
+            Call public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'dpkg');
         Else
             RAISE INFO '%', _message;
         End If;
@@ -107,7 +107,7 @@ BEGIN
         _message := 'More than 5% of the uploads to MyEMSL involved uploading the same data package and subfolder 2 or more times; duplicate rate: ' || _duplicateRate*100::text::int || '% for ' || _dataPkgFolderUploads::text || ' DataPkg/folder combos';
 
         If _logErrors Then
-            Call post_log_entry ('Error', _message, 'CheckForMyEMSLErrors');
+            Call public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'dpkg');
         Else
             RAISE INFO '%', _message;
         End If;

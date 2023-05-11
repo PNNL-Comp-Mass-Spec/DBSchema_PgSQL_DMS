@@ -177,7 +177,7 @@ BEGIN
 
             If _myRowCount <> 1 Then
                 _logMessage := 'Logic error; did not find a single match for proposal ' || _proposalID || ' in Tmp_WPInfo';
-                Call post_log_entry ('Error', _logMessage , 'UpdateEUSRequestedRunWP');
+                Call post_log_entry ('Error', _logMessage , 'Update_EUS_Requested_Run_WP');
                 RETURN;
             End If;
 
@@ -221,7 +221,7 @@ BEGIN
                 WHERE target.request_id = Src.request_id AND
                       Src.Proposal_ID = _proposalID;
 
-                Call post_log_entry ('Normal', _logMessage, 'UpdateEUSRequestedRunWP');
+                Call post_log_entry ('Normal', _logMessage, 'Update_EUS_Requested_Run_WP');
             End If;
 
         END LOOP;

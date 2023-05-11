@@ -563,6 +563,7 @@ BEGIN
 
                 _statusMessage := format('... Updating parameters for resumed jobs: %s / %s', _jobsProcessed, _jobCountToResume);
                 Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+
                 _lastLogTime := clock_timestamp();
             End If;
 
@@ -599,7 +600,7 @@ BEGIN
 
         If _myRowCount > 0 Then
             _statusMessage := format('... Updated the job comment or special_processing data in sw.t_jobs for %s resumed %s',
-                                        _myRowCount, public.check_plural(_myRowCount, 'row', 'rows')
+                                        _myRowCount, public.check_plural(_myRowCount, 'row', 'rows'));
 
             Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;

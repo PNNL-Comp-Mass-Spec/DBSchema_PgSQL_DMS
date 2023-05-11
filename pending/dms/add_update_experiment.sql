@@ -728,7 +728,7 @@ BEGIN
                 _debugMsg := format('Warning: Inconsistent identity values when adding experiment %s: Found ID %s but INSERT query reported %s',
                                     _experimentName, _expIDConfirm, _experimentID);
 
-                Call post_log_entry ('Error', _debugMsg, 'AddUpdateExperiment');
+                Call post_log_entry ('Error', _debugMsg, 'Add_Update_Experiment');
 
                 _experimentID := _expIDConfirm;
             End If;

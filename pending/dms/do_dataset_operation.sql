@@ -244,7 +244,7 @@ BEGIN
                             _logMsg := _msg || '; user ' || _callingUser;
                         End If;
 
-                        Call post_log_entry ('Error', _logMsg, 'DoDatasetOperation');
+                        Call post_log_entry ('Error', _logMsg, 'Do_Dataset_Operation');
 
                         _msg := _msg || '; please contact a system administrator for further assistance';
                     Else
@@ -255,7 +255,7 @@ BEGIN
                             _msg := _msg || '; user ' || _callingUser;
                         End If;
 
-                        Call post_log_entry ('Warning', _msg, 'DoDatasetOperation');
+                        Call post_log_entry ('Warning', _msg, 'Do_Dataset_Operation');
                     End If;
 
                 Else

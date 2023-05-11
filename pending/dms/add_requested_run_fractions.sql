@@ -149,7 +149,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Validate input fields';
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         If Coalesce(_sourceRequestID, 0) = 0 Then
@@ -299,7 +299,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Call get_user_id for ' || _requesterUsername;
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         _userID := get_user_id (_requesterUsername);
@@ -366,7 +366,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'ValidateInstrumentGroupAndDatasetType for ' || _msType;
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         Call validate_instrument_group_and_dataset_type (
@@ -386,7 +386,7 @@ BEGIN
         --
         If _logDebugMessages Then
             _debugMsg := 'Examine fraction counts of source and target separation groups: ' || _sourceSeparationGroup || ' and ' || _separationGroup;
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         SELECT fraction_count
@@ -437,7 +437,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Lookup EUS info for: ' || _experimentName;
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         Call lookup_eus_from_experiment_sample_prep (
@@ -466,7 +466,7 @@ BEGIN
                 'proposal ' || Coalesce(_eusProposalID, '?Null?') || ', and ' ||
                 'user list ' || Coalesce(_eusUserID, '?Null?')
 
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         -- Note that if _eusUserID contains a list of names in the form "Baker, Erin (41136)",
@@ -521,7 +521,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Lookup misc fields for the experiment';
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         Call lookup_other_from_experiment_sample_prep
@@ -555,7 +555,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Validate the WP';
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         -- Value should be a 0 or a 1
@@ -602,12 +602,12 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Start a new transaction';
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
         If _logDebugMessages Then
             _debugMsg := 'Check for name conflicts';
-            Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
         ---------------------------------------------------
         -- Make sure none of the new requested runs will conflict with an existing requested run
@@ -644,7 +644,7 @@ BEGIN
         If _mode = 'preview' Then
             If _logDebugMessages Then
                 _debugMsg := 'Create preview message';
-                Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
             End If;
 
             SELECT Request_Name
@@ -673,7 +673,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Start a new transaction';
-                Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
             End If;
 
             If char_length(Coalesce(_fractionBasedInstrumentGroup, '')) > 0 Then
@@ -756,7 +756,7 @@ BEGIN
 
                 If _logDebugMessages Then
                     _debugMsg := 'Call AssignEUSUsersToRequestedRun';
-                    Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+                    Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
                 End If;
 
                 -- Assign users to the request
@@ -791,7 +791,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Fractions created';
-                Call post_log_entry ('Debug', _debugMsg, 'AddRequestedRunFractions');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
             End If;
 
             ---------------------------------------------------
@@ -829,7 +829,7 @@ BEGIN
             _msg := 'Created new requested runs based on source request ' || _sourceRequestID::text || ', creating: ' || _requestIdList;
             _message := public.append_to_text(_msg, _message, 0, '; ', 1024);
 
-            Call post_log_entry ('Normal', _message, 'AddRequestedRunFractions');
+            Call post_log_entry ('Normal', _message, 'Add_Requested_Run_Fractions');
 
         End If; -- </add>
 

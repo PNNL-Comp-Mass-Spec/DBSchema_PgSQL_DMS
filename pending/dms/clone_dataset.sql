@@ -322,7 +322,7 @@ BEGIN
     BEGIN
         _message := 'Created dataset ' || _datasetNew || ' by cloning ' || _dataset;
 
-        Call post_log_entry ('Normal', _message, 'CloneDataset');
+        Call post_log_entry ('Normal', _message, 'Clone_Dataset');
 
         -- Create a Capture job for the newly cloned dataset
 
@@ -514,7 +514,7 @@ BEGIN
             _jobMessage := format('Created capture task job %s for dataset %s by cloning job %s',
                                     _captureJobNew, _datasetNew, _captureJob
 
-            Call post_log_entry ('Normal', _jobMessage, 'CloneDataset');
+            Call post_log_entry ('Normal', _jobMessage, 'Clone_Dataset');
 
             _message := _message || '; ' || _jobMessage;
         End If;

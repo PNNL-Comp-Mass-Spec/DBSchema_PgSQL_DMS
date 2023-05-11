@@ -262,7 +262,7 @@ BEGIN
             If _myRowCount > 0 Then
                 _statusMsg := format('Inserted %s rows for %s', _myRowCount, _currentRange);
                 RAISE INFO '%', _statusMsg;
-                Call post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
+                Call public.post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
             End If;
 
             ---------------------------------------------------
@@ -288,7 +288,7 @@ BEGIN
             If _myRowCount > 0 Then
                 _statusMsg := format('Deleted %s extra rows from pc.t_protein_collection_members_cached fo %s', _myRowCount, _currentRange);
                 RAISE INFO '%', _statusMsg;
-                Call post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
+                Call public.post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
             End If;
 
             ---------------------------------------------------
@@ -373,7 +373,7 @@ BEGIN
 
                 RAISE INFO '%', _statusMsg;
 
-                Call post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc')
+                Call public.post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc')
             End If; -- </e>
 
         END LOOP; -- </d>

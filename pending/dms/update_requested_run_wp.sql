@@ -265,7 +265,7 @@ BEGIN
             _message := format('Updated work package for %s requested %s from %s to %s',
                                 _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);
 
-            Call post_log_entry ('Normal', _logMessage, 'UpdateRequestedRunWP');
+            Call post_log_entry ('Normal', _logMessage, 'Update_Requested_Run_WP');
 
         End If;
 

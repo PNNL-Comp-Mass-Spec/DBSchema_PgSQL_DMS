@@ -236,13 +236,13 @@ BEGIN
                             Call delete_analysis_job (_jobInfo.Job);
 
                             _message := _message || '; job deleted since dataset is bad';
-                            Call post_log_entry ('Warning', _message, 'ProcessWaitingSpecialProcJobs', _duplicateEntryHoldoffHours => 0);
+                            Call post_log_entry ('Warning', _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => 0);
                         Else
                             If _jobInfo.DatasetRating = -5 Then
                                 _message := 'Not released dataset: ' || _message;
                             End If;
 
-                            Call post_log_entry ('Error',   _message, 'ProcessWaitingSpecialProcJobs', _duplicateEntryHoldoffHours => _errorMessagePostingIntervalHours);
+                            Call post_log_entry ('Error',   _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => _errorMessagePostingIntervalHours);
                         End If;
                     End If;
 

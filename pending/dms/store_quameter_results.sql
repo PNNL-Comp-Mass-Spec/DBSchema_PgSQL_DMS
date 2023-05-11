@@ -410,7 +410,7 @@ BEGIN
         _message := _message || '; error code = ' || _myError::text;
 
         If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'StoreQuameterResults');
+            Call post_log_entry ('Error', _message, 'Store_Quameter_Results');
         End If;
     End If;
 
@@ -429,7 +429,7 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        Call post_usage_log_entry ('StoreQuameterResults', _usageMessage;);
+        Call post_usage_log_entry ('Store_Quameter_Results', _usageMessage;);
     End If;
 
     DROP TABLE Tmp_DatasetInfo;

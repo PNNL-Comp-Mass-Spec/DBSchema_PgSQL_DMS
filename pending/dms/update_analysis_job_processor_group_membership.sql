@@ -225,7 +225,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Processor group: ' || _pgid::text;
-    Call post_usage_log_entry ('UpdateAnalysisJobProcessorGroupMembership', _usageMessage);
+    Call post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Membership', _usageMessage);
 
     DROP TABLE Tmp_Processors;
     DROP TABLE Tmp_ID_Update_List;

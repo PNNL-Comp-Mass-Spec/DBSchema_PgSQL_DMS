@@ -137,7 +137,7 @@ BEGIN
 
     If Not FOUND Then
         _warningMessage := 'Could not find the cart named "unknown" in t_lc_cart; the Cart cart_id of the recycled requested run will be left unchanged';
-        Call post_log_entry ('Error', _warningMessage, 'UnconsumeScheduledRun');
+        Call post_log_entry ('Error', _warningMessage, 'Unconsume_Scheduled_Run');
     End If;
 
     ---------------------------------------------------
@@ -233,13 +233,13 @@ BEGIN
 
                             If _requestIDOriginal = _requestID Then
                                 _addnlText := 'Not recycling request ' || _requestID::text || ' for dataset ' || _datasetName || ' since it is already active';
-                                Call post_log_entry ('Warning', _addnlText, 'UnconsumeScheduledRun');
+                                Call post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
                                 _addnlText := 'Not recycling request ' || _requestID::text || ' since it is already active';
                                 _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
                             Else
                                 _addnlText := 'Not recycling request ' || _requestID::text || ' for dataset ' || _datasetName || ' since dataset already has an active request (' || _extracted || ')';
-                                Call post_log_entry ('Warning', _addnlText, 'UnconsumeScheduledRun');
+                                Call post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
                                 _addnlText := 'Not recycling request ' || _requestID::text || ' since dataset already has an active request (' || _extracted || ')';
                                 _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);

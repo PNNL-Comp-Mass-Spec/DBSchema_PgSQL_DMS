@@ -171,7 +171,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := _jobCount::text || ' jobs updated';
-    Call post_usage_log_entry ('UpdateAnalysisJobProcessorGroupAssociations', _usageMessage);
+    Call post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Associations', _usageMessage);
 
     DROP TABLE Tmp_JobList;
     DROP TABLE Tmp_ID_Update_List;

@@ -312,7 +312,7 @@ BEGIN
             If _mergeUpdateCount > 0 OR _mergeInsertCount > 0 Then
                 _message := 'Updated t_charge_code: ' || _mergeInsertCount::text || ' added; ' || _mergeUpdateCount::text || ' updated';
 
-                Call post_log_entry ('Normal', _message, 'UpdateChargeCodesFromWarehouse');
+                Call post_log_entry ('Normal', _message, 'Update_Charge_Codes_From_Warehouse');
                 _message := '';
             End If;
 

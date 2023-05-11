@@ -383,7 +383,7 @@ BEGIN
             --
             _message := _message || ' and t_analysis_job';
 
-            Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+            Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
             ALTER TABLE t_analysis_job Enable TRIGGER trig_ud_T_Analysis_Job
 
@@ -408,7 +408,7 @@ BEGIN
 
             If _myRowCount > 0 Then
                 _message := 'Deleted ' || _myRowCount::text || ' entries from t_analysis_job_batches since orphaned and older than ' || _deleteThreshold::text;
-                Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- _currentLocation := 'DROP Index IX_Tmp_T_Analysis_Job_Batch_ID_Include_Job';
@@ -430,7 +430,7 @@ BEGIN
 
             If _myRowCount > 0 Then
                 _message := 'Deleted ' || _myRowCount::text || ' entries from t_analysis_job_request since orphaned and older than ' || _deleteThreshold::text;
-                Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- Delete orphaned entries in t_analysis_job_id that are older than _logDeleteThreshold
@@ -446,7 +446,7 @@ BEGIN
 
             If _myRowCount > 0 Then
                 _message := 'Deleted ' || _myRowCount::text || ' entries from t_analysis_job_id since orphaned and older than ' || _logDeleteThreshold::text;
-                Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
         EXCEPTION
@@ -594,7 +594,7 @@ BEGIN
             --
             _message := _message || ' and t_dataset';
 
-            Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+            Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
             -- Delete orphaned entries in t_requested_run that are older than _deleteThreshold
             --
@@ -606,7 +606,7 @@ BEGIN
 
             If _myRowCount > 0 Then
                 _message := 'Deleted ' || _myRowCount::text || ' entries from t_requested_run since orphaned and older than ' || _deleteThreshold::text;
-                Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- Delete orphaned entries in t_requested_run_batches that are older than _deleteThreshold
@@ -619,7 +619,7 @@ BEGIN
 
             If _myRowCount > 0 Then
                 _message := 'Deleted ' || _myRowCount::text || ' entries from t_requested_run_batches since orphaned and older than ' || _deleteThreshold::text;
-                Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- Delete orphaned entries in t_dataset_scan_types
@@ -631,7 +631,7 @@ BEGIN
 
             If _myRowCount > 0 Then
                 _message := 'Deleted ' || _myRowCount::text || ' entries from t_dataset_scan_types since orphaned';
-                Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
         EXCEPTION
@@ -718,7 +718,7 @@ BEGIN
             --
             _message := _message || ' and t_experiments';
 
-            Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+            Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
             -- Delete orphaned entries in t_experiment_groups
             --
@@ -730,7 +730,7 @@ BEGIN
 
             If _myRowCount > 0 Then
                 _message := 'Deleted ' || _myRowCount::text || ' entries from t_experiment_groups since orphaned and older than ' || _deleteThreshold::text;
-                Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- Assure that member_count is accurate in t_experiment_groups
@@ -792,7 +792,7 @@ BEGIN
 
     If _myRowCount > 0 Then
         _message := 'Deleted ' || _myRowCount::text || ' experiment related entries from t_aux_info_value since orphaned';
-        Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+        Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
     End If;
 
     -- Biomaterial (Target_Type_ID = 501)
@@ -818,7 +818,7 @@ BEGIN
 
     If _myRowCount > 0 Then
         _message := 'Deleted ' || _myRowCount::text || ' biomaterial related entries from t_aux_info_value since orphaned';
-        Call post_log_entry ('Normal', _message, 'DeleteOldDataExperimentsJobsAndLogs');
+        Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
     End If;
 
     -- Datasets (Target_Type_ID = 502)

@@ -81,7 +81,7 @@ BEGIN
     VALUES (_postedBy, CURRENT_TIMESTAMP, _type, _message, _recipients);
 
     If _postMessageToLogEntries > 0 Then
-        Call post_log_entry _type, _message, _postedBy, _duplicateEntryHoldoffHours
+        Call post_log_entry (_type, _message, _postedBy, _duplicateEntryHoldoffHours);
     End If;
 
 END

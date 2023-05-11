@@ -262,7 +262,7 @@ BEGIN
 
                     _logMessage := _logMessage + _analysisToolName;
 
-                    Call post_log_entry ('Error', _logMessage, 'CreatePredefinedAnalysisJobs');
+                    Call post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
 
                 End If;
 

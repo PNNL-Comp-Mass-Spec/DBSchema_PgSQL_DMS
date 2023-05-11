@@ -704,7 +704,7 @@ BEGIN
 
                 If _returnCode <> '' Then
                     _msgForLog := format('Error code %s from sw.pipeline_add_update_local_job: %s', _returnCode, Coalesce(_message, '??'));
-                    Call post_log_entry ('Error', _msgForLog, 'AddAnalysisJobGroup');
+                    Call post_log_entry ('Error', _msgForLog, 'Add_Analysis_Job_Group');
                 End If;
 
                 If _pipelineJob > 0 Then
@@ -731,7 +731,7 @@ BEGIN
                         WHERE job = _pipelineJob;
                     Else
                         _msgForLog := format('Error code %s calling BackfillPipelineJobs: %s', _returnCode, Coalesce(_msgForLog, '??'));
-                        Call post_log_entry ('Error', _msgForLog, 'AddAnalysisJobGroup');
+                        Call post_log_entry ('Error', _msgForLog, 'Add_Analysis_Job_Group');
                     End If;
                 End If;
 

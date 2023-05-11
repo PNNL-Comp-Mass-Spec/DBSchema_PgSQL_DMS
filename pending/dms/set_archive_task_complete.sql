@@ -47,10 +47,10 @@ BEGIN
     _datasetID := 0;
     _archiveState := 0;
 
-    SELECT
-        _datasetID = Dataset_ID,
-        _archiveState = Archive_State,
-        _doPrep = Requires_Prep
+    SELECT Dataset_ID,
+           Archive_State,
+           Requires_Prep
+    INTO _datasetID, _archiveState, _doPrep
     FROM V_Dataset_Archive_Ex
     WHERE Dataset = _datasetName;
 
@@ -63,9 +63,10 @@ BEGIN
     ---------------------------------------------------
     -- Check dataset archive state for 'in progress'
     ---------------------------------------------------
+
     If _archiveState <> 2 Then
         _returnCode := 'U5250';
-        _message := 'Archive state for dataset "' || _datasetName || '" is not correct';
+        _message := format('Archive state for dataset "%s" is not correct (expecting 2 but actually %s)', _datasetName, _archiveState);
         RETURN;
     End If;
 
@@ -85,12 +86,11 @@ BEGIN
         Else
             _tmpState := 11;
         End If;
-        --
+
         -- Update the state
         --
         UPDATE t_dataset_archive
-        SET
-            archive_state_id = _tmpState,
+        SET archive_state_id = _tmpState,
             archive_update_state_id = 4,
             last_update = CURRENT_TIMESTAMP,
             last_verify = CURRENT_TIMESTAMP,
@@ -100,8 +100,6 @@ BEGIN
                     ELSE AS_Last_Successful_Archive
                     End If;
         WHERE dataset_id = _datasetID;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     Else
         -- Task completed unsuccessfully
@@ -109,15 +107,7 @@ BEGIN
         UPDATE t_dataset_archive
         SET    archive_state_id = 6
         WHERE  (dataset_id = _datasetID)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    End If;
-
-    If _myRowCount <> 1 Then
-        _message := 'Update operation failed';
-        _myError := 99;
-        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -125,7 +115,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Dataset: ' || _datasetName;
-    Call post_usage_log_entry ('SetArchiveTaskComplete', _usageMessage);
+    Call post_usage_log_entry ('Set_Archive_Task_Complete', _usageMessage);
 
 END
 $$;

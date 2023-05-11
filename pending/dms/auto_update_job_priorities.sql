@@ -273,7 +273,7 @@ BEGIN
 
             _message := format('Updated job priority for %s long running %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
 
-            Call post_log_entry ('Normal', _message, 'AutoUpdateJobPriorities');
+            Call post_log_entry ('Normal', _message, 'Auto_Update_Job_Priorities');
         End If;
 
         RAISE INFO '%', _message;

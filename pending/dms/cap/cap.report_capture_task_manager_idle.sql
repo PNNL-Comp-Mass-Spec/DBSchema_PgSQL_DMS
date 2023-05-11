@@ -169,7 +169,7 @@ BEGIN
             WHERE Processor = _managerName AND State = 4;
 
             _message := format('Reset capture task job step state back to 2 for job %s', _job);
-            Call public.post_log_entry('Warning', _message, 'ReportManagerIdle', 'cap');
+            Call public.post_log_entry('Warning', _message, 'Report_Manager_Idle', 'cap');
         End If;
 
         If _message <> '' Then

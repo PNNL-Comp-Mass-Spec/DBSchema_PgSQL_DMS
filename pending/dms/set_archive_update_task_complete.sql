@@ -110,7 +110,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Dataset: ' || _datasetName;
-    Call post_usage_log_entry ('SetArchiveUpdateTaskComplete', _usageMessage);
+    Call post_usage_log_entry ('Set_Archive_Update_Task_Complete', _usageMessage);
 
 END
 $$;

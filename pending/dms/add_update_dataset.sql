@@ -370,7 +370,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := format('_mode=%s, _dataset=%s, _requestID=%s, _callingUser=%s', _mode, _datasetName, _requestID, _callingUser);
-            Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
         ---------------------------------------------------
@@ -636,7 +636,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Call ValidateInstrumentGroupAndDatasetType with type = ' || _msType || ' and group = ' || _instrumentGroup;
-            Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
         Call validate_instrument_group_and_dataset_type (
@@ -650,7 +650,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Dataset type is not valid for this instrument group, however, _mode is ''add'', so auto-update _msType';
-                Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             -- Dataset type is not valid for this instrument group
@@ -730,7 +730,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Query get_user_id with _operatorUsername = ' || _operatorUsername;
-            Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
         _userID := public.get_user_id (_operatorUsername);
@@ -749,7 +749,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Call auto_resolve_name_to_username with _operatorUsername = ' || _operatorUsername;
-                Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             Call auto_resolve_name_to_username (_operatorUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
@@ -787,7 +787,7 @@ BEGIN
                 _eusUsersList := '';
 
                 If _logDebugMessages Then
-                    Call post_log_entry ('Debug', _warning, 'AddUpdateDataset');
+                    Call post_log_entry ('Debug', _warning, 'Add_Update_Dataset');
                 End If;
             End If;
 
@@ -838,7 +838,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Call FindActiveRequestedRunForDataset with _datasetName = ' || _datasetName;
-                Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             Call find_active_requested_run_for_dataset (
@@ -1016,7 +1016,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := format('Create trigger for dataset %s, instrument %s, request %s', _datasetName, _instrumentName, _requestID);
-                Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             Call create_xml_dataset_trigger_file (
@@ -1069,7 +1069,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Call GetInstrumentStoragePathForNewDatasets with _instrumentID = ' || _instrumentID::text;
-                Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             _storagePathID := get_instrument_storage_path_for_new_datasets (_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
@@ -1081,7 +1081,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := format('Add dataset %s, instrument ID %s, storage path ID %s', _datasetName, _instrumentID, _storagePathID);
-                Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             BEGIN
@@ -1158,7 +1158,7 @@ BEGIN
                         _datasetIDConfirm::text || ' but the INSERT INTO query reported ' ||
                         _datasetID::text;
 
-                    Call post_log_entry ('Error', _debugMsg, 'AddUpdateDataset');
+                    Call post_log_entry ('Error', _debugMsg, 'Add_Update_Dataset');
 
                     _datasetID := _datasetIDConfirm;
                 End If;
@@ -1305,7 +1305,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Call update_cached_dataset_instruments with _datasetId = ' || _datasetId::text
-                Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             -- Update t_cached_dataset_instruments
@@ -1322,7 +1322,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := format('Update dataset %s (Dataset ID %s)', _datasetName, _datasetID);
-                Call post_log_entry ('Debug', _debugMsg, 'AddUpdateDataset');
+                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             UPDATE t_dataset

@@ -391,7 +391,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := _datasetCount::text || ' datasets updated';
-    Call post_usage_log_entry ('UpdateDatasets', _usageMessage);
+    Call post_usage_log_entry ('Update_Datasets', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
     DROP TABLE IF EXISTS Tmp_DatasetSchedulePredefine;

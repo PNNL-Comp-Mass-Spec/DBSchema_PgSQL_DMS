@@ -303,7 +303,8 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Campaign: ' || _campaignName;
-    Call post_usage_log_entry ('UpdateResearchTeamForCampaign', _usageMessage);
+
+    Call post_usage_log_entry ('Update_Research_Team_For_Campaign', _usageMessage);
 
     RETURN _myError
     DROP TABLE Tmp_TeamMembers;

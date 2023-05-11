@@ -88,7 +88,7 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Source request not found in t_requested_run: %s', _requestID);
-        Call post_log_entry ('Error', _message, 'CopyRequestedRun');
+        Call post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
     End If;
 
@@ -108,7 +108,7 @@ BEGIN
         FROM t_requested_run_state_name
 
         _message := 'Invalid requested run state: ' || _status || '; valid states are ' || _stateNameList;
-        Call post_log_entry ('Error', _message, 'CopyRequestedRun');
+        Call post_log_entry ('Error', _message, 'Copy_Requested_Run');
 
         RETURN;
     End If;
@@ -276,7 +276,7 @@ BEGIN
             _message := format('Problem trying to renumber request in history; No rows added for RequestID %s', _requestID);
         End If;
 
-        Call post_log_entry ('Error', _message, 'CopyRequestedRun');
+        Call post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
     End If;
 
@@ -309,7 +309,7 @@ BEGIN
 
     If _returnCode <> '' Then
         _message := 'Problem copying factors to new request; _returnCode = ' || _returnCode;
-        Call post_log_entry ('Error', _message, 'CopyRequestedRun');
+        Call post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
     Else
         -- _message may contain the text 'Nothing to copy'

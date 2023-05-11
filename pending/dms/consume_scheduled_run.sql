@@ -80,7 +80,7 @@ BEGIN
 
     If _logDebugMessages Then
         _logMessage := format('Start transaction for creating a new auto-request for dataset ID %s', _existingDatasetID);
-        Call post_log_entry ('Debug', _logMessage, 'consume_scheduled_run');
+        Call post_log_entry ('Debug', _logMessage, 'Consume_Scheduled_Run');
     End If;
 
     BEGIN
@@ -129,7 +129,7 @@ BEGIN
                 _logMessage := format('Added new automatic requested run since re-using request %s; dataset "%s" is now associated with request %s',
                                         _requestID, _existingDatasetName, _newAutoRequestID);
 
-                Call post_log_entry ('Warning', _logMessage, 'consume_scheduled_run');
+                Call post_log_entry ('Warning', _logMessage, 'Consume_Scheduled_Run');
 
                 -- Copy batch and blocking information from the existing request to the new request
                 --
@@ -153,7 +153,7 @@ BEGIN
                                       'however, add_requested_run_to_existing_dataset was unable to auto-create a new Requested Run',
                                         _existingDatasetName, _requestID);
 
-                Call post_log_entry ('Error', _logMessage, 'consume_scheduled_run');
+                Call post_log_entry ('Error', _logMessage, 'Consume_Scheduled_Run');
 
             End If;
 
@@ -183,7 +183,7 @@ BEGIN
 
     If _logDebugMessages Then
         _logMessage := format('Call update_cached_requested_run_eus_users for %s', _requestID);
-        Call post_log_entry ('Debug', _logMessage, 'consume_scheduled_run');
+        Call post_log_entry ('Debug', _logMessage, 'Consume_Scheduled_Run');
     End If;
 
     ---------------------------------------------------

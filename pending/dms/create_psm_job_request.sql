@@ -408,7 +408,7 @@ BEGIN
 
         _usageMessage := _usageMessage || '; user ' || _callingUser;
 
-        Call post_usage_log_entry ('CreatePSMJobRequest', _usageMessage, _minimumUpdateInterval => 2);
+        Call post_usage_log_entry ('Create_PSM_Job_Request', _usageMessage, _minimumUpdateInterval => 2);
     End If;
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;

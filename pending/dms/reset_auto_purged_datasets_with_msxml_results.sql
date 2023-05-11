@@ -125,7 +125,7 @@ BEGIN
             End If;
 
             If _resetCount > 0 Then
-                Call post_log_entry ('Normal', _message, 'ResetAutoPurgedDatasetsWithMSXmlResults');
+                Call post_log_entry ('Normal', _message, 'Reset_Auto_Purged_Datasets_With_MSXml_Results');
             End If;
         End If;
 

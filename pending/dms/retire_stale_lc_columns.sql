@@ -142,7 +142,7 @@ BEGIN
             _message := format('Retired %s %s that have not been used in at last %s months',
                         _myRowCount, public.check_plural(_myRowCount, ' LC column', ' LC columns'), _usedThresholdMonths);
 
-            Call post_log_entry ('Normal', _message, 'RetireStaleLCColumns');
+            Call post_log_entry ('Normal', _message, 'Retire_Stale_LC_Columns');
         End If;
 
     End If;

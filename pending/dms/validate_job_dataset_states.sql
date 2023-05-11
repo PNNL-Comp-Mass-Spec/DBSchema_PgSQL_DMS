@@ -151,7 +151,7 @@ BEGIN
                                         CASE WHEN _itemList LIKE '%,%' THEN 'IDs' ELSE 'ID' END,
                                         _itemList);
 
-                Call post_log_entry ('Warning', _message, 'ValidateJobDatasetStates');
+                Call post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
             End If; -- </datasets>
 
             If Exists (Select * FROM Tmp_Jobs) Then
@@ -192,7 +192,7 @@ BEGIN
                                     CASE WHEN _itemList LIKE '%,%' THEN 'jobs' ELSE 'job' END,
                                     _itemList);
 
-                Call post_log_entry ('Warning', _message, 'ValidateJobDatasetStates');
+                Call post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
             End If; -- </jobs>
 
         End If; -- </ApplyChanges>

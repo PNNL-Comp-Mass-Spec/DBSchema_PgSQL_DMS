@@ -101,7 +101,7 @@ BEGIN
             Valid boolean not null
         );
 
-        -- populate table from sample prep request list
+        -- Populate table from sample prep request list
         INSERT INTO Tmp_PrepRequestItems ( Item, Valid)
         SELECT Item, false
         FROM public.parse_delimited_integer_list(_samplePrepRequestList);
@@ -111,7 +111,7 @@ BEGIN
         SET Valid = true
         WHERE Item in (SELECT prep_request_id FROM T_Sample_Prep_Request);
 
-        -- get list of any list items that weren't in the database
+        -- Get list of any list items that weren't in the database
         SELECT string_agg(item::text, ', ' ORDER BY item)
         INTO _badIDs
         FROM Tmp_PrepRequestItems
@@ -119,7 +119,7 @@ BEGIN
 
         If _badIDs <> '' Then
             _message := format('Sample prep request IDs "%s" do not exist', _badIDs);
-            RAISERROR (_message, 11, 31)
+            RAISE EXCEPTION '%', message;
         End If;
 
         SELECT string_agg(Item::text, ', ' ORDER BY item)
@@ -132,7 +132,7 @@ BEGIN
 
         If Not Exists (SELECT * FROM dpkg.t_osm_package_state WHERE state_name = _state) Then
             _message := 'Invalid state: ' || _state;
-            RAISERROR (_message, 11, 32)
+            RAISE EXCEPTION '%', message;
         End If;
 
         ---------------------------------------------------
@@ -143,7 +143,8 @@ BEGIN
             -- cannot update a non-existent entry
             --
             If Not Exists (SELECT osm_pkg_id FROM dpkg.t_osm_package WHERE osm_pkg_id = _id) Then
-                RAISERROR ('No entry could be found in database for update', 11, 16);
+                _message := format('OSM package ID %s does not exist; cannot update', _id);
+                RAISE EXCEPTION '%', _message;
             End If;
         End If;
 
@@ -152,12 +153,13 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode = 'add' Then
 
             -- Make sure the data package name doesn't already exist
             If Exists (SELECT * FROM dpkg.t_osm_package WHERE osm_package_name = _name) Then
-                _message := 'OSM package osm_package_name "' || _name || '" already exists; cannot create an identically named package';
-                RAISERROR (_message, 11, 1)
+                _message := format('OSM package "%s" already exists; cannot create an identically named package', _name);
+                RAISE EXCEPTION '%', _message;
             End If;
 
             -- create wiki page link
@@ -190,17 +192,17 @@ BEGIN
                 _goodIDs,
                 _userFolderPath
             )
-            RETURNING xyz
+            RETURNING osm_pkg_id
             INTO _id;
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
-            --
+
             UPDATE dpkg.t_osm_package
             SET
                 osm_package_name = _name,
@@ -215,11 +217,12 @@ BEGIN
                 user_folder_path = _userFolderPath
             WHERE osm_pkg_id = _id;
 
-        End If; -- update mode
+        End If;
 
         ---------------------------------------------------
         -- Create the OSM package folder when adding a new OSM package
         ---------------------------------------------------
+
         If _mode = 'add' Then
             Call Make_OSM_Package_Storage_Folder (
                         _id,
@@ -240,7 +243,7 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-            If Coalesce(_id, 0) > 0 Then
+            If Coalesce(_id, 0) > 0 And Position(format('ID %s', _id) IN _exceptionMessage) = 0 Then
                 _exceptionMessage := format('%s; OSM Package ID %s', _exceptionMessage, _id);
             End If;
 

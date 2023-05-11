@@ -88,15 +88,16 @@ BEGIN
                 ELSE ''
                END
         INTO _entityName;
-        --
+
         If Coalesce(_entityName, '') = '' Then
-            RAISERROR('Item type "%s" is unrecognized', 11, 14, _itemType);
+            _message := format('Item type "%s" is unrecognized', _itemType);
+            RAISE EXCEPTION '%', _message;
         End If;
 
         -- Set this to true to log a debug message
         If _logUsage Then
             _usageMessage := format('Updating %ss for data package %s', _entityName, _packageID);
-            Call post_log_entry ('Debug', _usageMessage, 'dpkg.update_data_package_items')
+            Call public.post_log_entry ('Debug', _usageMessage, 'Update_Data_Package_Items', 'dpkg')
         End If;
 
         _itemList := Trim(Coalesce(_itemList, ''));
@@ -128,8 +129,12 @@ BEGIN
                                     _returnCode => _returnCode,     -- Output
                                     _callingUser => _callingUser,
                                     _infoOnly => _infoOnly);
-        If _myError <> 0 Then
-            RAISERROR(_message, 11, 14);
+        If _returnCode <> '' Then
+            If Coalesce(_message, '') = '' Then
+                _message := format('Unknown error calling update_data_package_items_utility (return code %s)', _returnCode);
+            End If;
+
+            RAISE EXCEPTION '%', _message;
         End If;
 
         DROP TABLE Tmp_DataPackageItems;

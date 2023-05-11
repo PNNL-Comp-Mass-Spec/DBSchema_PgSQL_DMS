@@ -189,7 +189,7 @@ BEGIN
         Else
             _message := 'Updated the parameter file name and/or settings file name for ' || _myRowCount::text || ' job requests to match the actual jobs';
 
-            Call post_log_entry ('Normal', _message, 'SyncJobParamAndSettingsWithRequest');
+            Call post_log_entry ('Normal', _message, 'Sync_Job_Param_And_Settings_With_Request');
         End If;
 
     End If;

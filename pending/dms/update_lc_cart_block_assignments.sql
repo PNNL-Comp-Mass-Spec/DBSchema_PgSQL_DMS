@@ -161,7 +161,7 @@ BEGIN
 
     _usageMessage := format('Updated %s requsted %s', _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'));
 
-    Call post_usage_log_entry ('UpdateLCCartBlockAssignments', _usageMessage);
+    Call post_usage_log_entry ('Update_LC_Cart_Block_Assignments', _usageMessage);
 
     DROP TABLE Tmp_BlockingInfo;
     DROP TABLE Tmp_RequestsInBlock;

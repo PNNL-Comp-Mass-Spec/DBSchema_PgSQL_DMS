@@ -266,7 +266,7 @@ BEGIN
 
         _logMessage := 'Added machine ' || _sourceMachineNameToFind || ' to t_storage_path_hosts with host name ' || _hostName;
 
-        Call post_log_entry ('Normal', _logMessage, 'AddNewInstrument');
+        Call post_log_entry ('Normal', _logMessage, 'Add_New_Instrument');
     End If;
 
     If _valAutoDefineStoragePath Then

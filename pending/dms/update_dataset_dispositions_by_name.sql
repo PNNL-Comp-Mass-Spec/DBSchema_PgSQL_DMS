@@ -185,7 +185,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := _datasetCount::text || ' datasets updated';
-    Call post_usage_log_entry ('UpdateDatasetDispositionsByName', _usageMessage);
+    Call post_usage_log_entry ('Update_Dataset_Dispositions_By_Name', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetsToUpdate;
 END

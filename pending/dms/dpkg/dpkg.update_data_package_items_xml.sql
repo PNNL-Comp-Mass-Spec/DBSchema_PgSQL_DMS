@@ -82,7 +82,7 @@ BEGIN
                                 _removeParents,
                                 Coalesce(_paramListXML, 'Error: _paramListXML is null'));
 
-            Call post_log_entry ('Debug', _logMessage, 'dpkg.update_data_package_items_xml');
+            Call public.post_log_entry ('Debug', _logMessage, 'Update_Data_Package_Items_XML', 'dpkg');
         End If;
 
         ---------------------------------------------------
@@ -109,11 +109,16 @@ BEGIN
                                 _comment,
                                 _mode,
                                 _removeParents,
-                                _message output,
-                                _callingUser);
+                                _message => _message,           -- Output
+                                _returnCode => _returnCode,     -- Output
+                                _callingUser => _callingUser);
 
-        If _myError <> 0 Then
-            RAISERROR(_message, 11, 14);
+        If _returnCode <> '' Then
+            If Coalesce(_message, '') = '' Then
+                _message := format('Unknown error calling update_data_package_items_utility (return code %s)', _returnCode);
+            End If;
+
+            RAISE EXCEPTION '%', _message;
         End If;
 
         DROP TABLE Tmp_DataPackageItems;

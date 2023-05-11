@@ -127,7 +127,7 @@ BEGIN
 
         _message := format('%s unverified for over %s days; ErrorCode set to 101', _message, _staleUploadDays);
 
-        Call post_log_entry 'Error', _message, 'FindStaleMyEMSLUploads'
+        Call public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg');
 
         RAISE INFO '%', _message;
 
@@ -140,7 +140,7 @@ BEGIN
 
         _message := _message || '; error code = ' || _myError::text;
 
-        Call post_log_entry 'Error', _message, 'FindStaleMyEMSLUploads'
+        Call public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg');
     End If;
 
     Return _myError

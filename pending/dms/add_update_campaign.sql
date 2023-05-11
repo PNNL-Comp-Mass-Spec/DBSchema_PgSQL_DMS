@@ -392,7 +392,7 @@ BEGIN
                                 _idConfirm::text || ' but the INSERT INTO query reported ' ||
                                 _campaignID::text;
 
-                Call post_log_entry ('Error', _debugMsg, 'AddUpdateCampaign');
+                Call post_log_entry ('Error', _debugMsg, 'Add_Update_Campaign');
 
                 _campaignID := _idConfirm;
             End If;

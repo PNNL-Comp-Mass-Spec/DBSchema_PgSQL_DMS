@@ -166,7 +166,7 @@ BEGIN
             _logMessage := 'Material location status changed from ' || _oldStatus || ' to ' || _status ||
                               ' by ' || _callingUser || ' for material location ' || _locationTag
 
-            Call post_log_entry ('Normal', _logMessage, 'UpdateMaterialLocation');
+            Call post_log_entry ('Normal', _logMessage, 'Update_Material_Location');
 
             _message := 'Set status to ' || _status;
         End If;
@@ -190,7 +190,7 @@ BEGIN
                                             _oldComment, _comment, _callingUser, _locationTag);
                 End If;
 
-                Call post_log_entry ('Normal', _logMessage, 'UpdateMaterialLocation');
+                Call post_log_entry ('Normal', _logMessage, 'Update_Material_Location');
             End If;
 
         End If;

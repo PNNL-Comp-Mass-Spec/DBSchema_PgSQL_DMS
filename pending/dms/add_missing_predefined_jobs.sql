@@ -529,7 +529,7 @@ BEGIN
                         _message := 'Added ' || _jobCountAdded::text || ' missing predefined analysis job(s) for dataset ' || _datasetName ||
                                     ', but updated the comment for ' || _myRowCount::text || ' job(s); mismatch is unexpected';
 
-                        Call post_log_entry ('Error', _message, 'AddMissingPredefinedJobs');
+                        Call post_log_entry ('Error', _message, 'Add_Missing_Predefined_Jobs');
                     End If;
 
                     _message := 'Added ' || _jobCountAdded::text || ' missing predefined analysis job';
@@ -539,14 +539,14 @@ BEGIN
 
                     _message := _message || ' for dataset ' || _datasetName;
 
-                    Call post_log_entry ('Warning', _message, 'AddMissingPredefinedJobs');
+                    Call post_log_entry ('Warning', _message, 'Add_Missing_Predefined_Jobs');
 
                     _datasetsWithNewJobs := _datasetsWithNewJobs + 1;
                 End If;
 
             ElsIf Not _infoOnly Then
                 _message := 'Error calling schedule_predefined_analysis_jobs for dataset ' || _datasetName || '; return code ' || _returnCode;
-                Call post_log_entry ('Error', _message, 'AddMissingPredefinedJobs');
+                Call post_log_entry ('Error', _message, 'Add_Missing_Predefined_Jobs');
                 _message := '';
             End If;
 
@@ -591,7 +591,7 @@ BEGIN
         _message := _message || ')';
 
         If _datasetsWithNewJobs > 0 And Not _infoOnly Then
-            Call post_log_entry ('Normal', _message, 'AddMissingPredefinedJobs');
+            Call post_log_entry ('Normal', _message, 'Add_Missing_Predefined_Jobs');
         End If;
 
     End If;

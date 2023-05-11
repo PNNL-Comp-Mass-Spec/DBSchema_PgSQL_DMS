@@ -372,7 +372,7 @@ BEGIN
 
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := '... Updating dependent steps: ' || _rowsProcessed::text || ' / ' || _rowCountToProcess::text;
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_dependent_steps', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Dependent_Steps', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;

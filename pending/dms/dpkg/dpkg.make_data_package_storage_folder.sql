@@ -77,7 +77,7 @@ BEGIN
         _message := 'Called SendMessage for Data Package ID ' || _packageID::text || ': ' || _pathFolder;
     End If;
 
-    Call post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
+    Call public.post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
     */
 
 /*
@@ -118,7 +118,7 @@ BEGIN
     End If;
 
     _message := 'Calling SendMessage: ' || _creationParams;
-    Call post_log_entry 'Normal', _message, 'MakeDataPackageStorageFolder', _callingUser => _CallingUser
+    Call public.post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
 */
 
     ---------------------------------------------------

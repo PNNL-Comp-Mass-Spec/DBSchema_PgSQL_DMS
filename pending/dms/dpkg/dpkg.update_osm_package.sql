@@ -12,8 +12,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**  Update or delete given OSM Package
+**      Update or delete given OSM Package
+**      (only supports delete)
 **
+**  Arguments:
+**    _osmPackageID     OSM Package ID
+**    _mode             'delete'
 **
 **  Auth:   grk
 **  Date:   07/08/2013 grk - Initial release
@@ -58,8 +62,6 @@ BEGIN
     BEGIN
 
         If _mode = 'delete' Then
-        --<delete>
-
             ---------------------------------------------------
             -- 'delete' (mark as inactive) associated file attachments
             ---------------------------------------------------
@@ -70,17 +72,13 @@ BEGIN
                   Entity_ID = _osmPackageID;
 
             ---------------------------------------------------
-            -- remove OSM package from table
+            -- Remove OSM package from table
             ---------------------------------------------------
 
             DELETE FROM t_osm_package
             WHERE osm_pkg_id = _osmPackageID;
 
         End If; --<delete>
-
-        If _mode = 'test' Then
-            RAISERROR ('Test: %d', 11, 20, _osmPackageID)
-        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

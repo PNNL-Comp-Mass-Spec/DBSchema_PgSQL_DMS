@@ -371,10 +371,10 @@ BEGIN
         _currentLocation := 'Call update_step_states';
         If _result > 0 Then
             Call sw.update_step_states (
-                  _message => _message,
-                  _infoOnly => _infoOnly,
-                  _maxJobsToProcess => _maxJobsToProcess,
-                  _loopingUpdateInterval => _LoopingUpdateInterval);
+                    _message => _message,
+                    _infoOnly => _infoOnly,
+                    _maxJobsToProcess => _maxJobsToProcess,
+                    _loopingUpdateInterval => _LoopingUpdateInterval);
         End If;
 
     EXCEPTION
@@ -423,11 +423,11 @@ BEGIN
         _currentLocation := 'Call update_job_state';
         If _result > 0 Then
             Call sw.update_job_state (
-                        _bypassDMS,
-                        _message => _message,
-                        _maxJobsToProcess => _maxJobsToProcess,
-                        _loopingUpdateInterval => _loopingUpdateInterval,
-                        _infoOnly => _infoOnly);
+                    _bypassDMS,
+                    _message => _message,
+                    _maxJobsToProcess => _maxJobsToProcess,
+                    _loopingUpdateInterval => _loopingUpdateInterval,
+                    _infoOnly => _infoOnly);
 
     EXCEPTION
         -- Error caught; log the error, then continue at the next section

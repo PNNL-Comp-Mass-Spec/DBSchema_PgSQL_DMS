@@ -272,7 +272,7 @@ BEGIN
             _message := format('rem Renamed dataset "%s" to "%s"', _datasetNameOld, _datasetNameNew);
             RAISE INFO '%', _message;
 
-            Call post_log_entry ('Normal', _message, 'RenameDataset');
+            Call post_log_entry ('Normal', _message, 'Rename_Dataset');
         End If;
 
         -- Rename any files in t_dataset_files

@@ -86,7 +86,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Dataset: ' || _datasetName;
-    Call post_usage_log_entry ('SetArchiveUpdateRequired', _usageMessage);
+    Call post_usage_log_entry ('Set_Archive_Update_Required', _usageMessage);
 
 END
 $$;

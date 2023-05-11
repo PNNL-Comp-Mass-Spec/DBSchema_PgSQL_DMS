@@ -213,7 +213,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Biomaterial: ' || _biomaterialName;
-    Call post_usage_log_entry ('UpdateOrganismListForBiomaterial', _usageMessage);
+    Call post_usage_log_entry ('Update_Organism_List_For_Biomaterial', _usageMessage);
 
     DROP TABLE Tmp_BiomaterialOrganisms;
 END

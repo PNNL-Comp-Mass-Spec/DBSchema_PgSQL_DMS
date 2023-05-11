@@ -114,7 +114,7 @@ BEGIN
     _usageMessage := _jobCount::text || ' jobs updated';
 
     If Not _infoOnly Then
-        Call post_usage_log_entry ('UpdateAnalysisJobStateNameCached', _usageMessage;);
+        Call post_usage_log_entry ('Update_Analysis_Job_State_Name_Cached', _usageMessage;);
     End If;
 
     DROP TABLE Tmp_JobsToUpdate;

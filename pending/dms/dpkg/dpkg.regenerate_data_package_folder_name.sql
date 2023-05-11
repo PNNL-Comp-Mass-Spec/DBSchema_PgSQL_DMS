@@ -49,33 +49,30 @@ BEGIN
 
     If _dataPkgID Is Null Then
         _message := 'Data Package ID cannot be null; unable to continue';
-        RAISERROR (_message, 10, 1)
-        return 51005
+        RAISE WARNING '%', _message;
+        RETURN 'U5105';
     End If;
 
     ---------------------------------------------------
     -- Lookup the current name for this data package
     ---------------------------------------------------
     --
-    _currentDataPkgID := 0;
-    --
-    SELECT data_pkg_id, INTO _currentDataPkgID
-           _dataPackageName = "package_name",
-           _currentDataPackageFolder = package_directory,
-           _currentDataPackageWiki = wiki_page_link
+    SELECT data_pkg_id,
+           package_name,
+           package_directory,
+           wiki_page_link
+    INTO _currentDataPkgID, _dataPackageName, _currentDataPackageFolder, _currentDataPackageWiki
     FROM dpkg.t_data_package
-    WHERE (data_pkg_id = _dataPkgID)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    if _myError <> 0 OR _currentDataPkgID = 0 Then
+    WHERE data_pkg_id = _dataPkgID;
+
+    If Not FOUND Then
         _message := 'No entry could be found in database for data package: ' || _dataPkgID;
-        RAISERROR (_message, 10, 1)
-        return 51006
+        RAISE WARNING '%', _message;
+        RETURN 'U5106';
     End If;
 
     -- Generate the new data package folder name
-    _newDataPackageFolder := dbo.MakePackageFolderName(_dataPkgID, _dataPackageName);
+    _newDataPackageFolder := dpkg.make_package_folder_name(_dataPkgID, _dataPackageName);
 
     If _updateWikiLink = false Then
         _newDataPackageWiki := _currentDataPackageWiki;
@@ -86,26 +83,18 @@ BEGIN
     If _newDataPackageFolder = _currentDataPackageFolder Then
         _message := 'Data package folder name is already up-to-date: ' || _newDataPackageFolder;
         If _infoOnly Then
-            SELECT _message AS Message;
+            RAISE INFO '%', _message;
         End If;
     Else
         If _infoOnly Then
-            _message := 'Will change data package folder name from "' || _currentDataPackageFolder || '" to "' || _newDataPackageFolder || '"';
-            SELECT _message AS Message
+            _message := format('Will change data package folder name from "%s" to "%s"', _currentDataPackageFolder, _newDataPackageFolder);
+            RAISE INFO '%', _message;
         Else
             UPDATE dpkg.t_data_package
             SET package_directory = _newDataPackageFolder
-            WHERE data_pkg_id = _dataPkgID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
-            if _myError <> 0 Then
-                _message := 'Error updating data package folder to "' || _newDataPackageFolder || '" for data package: ' || _dataPkgID::text;
-                RAISERROR (_message, 10, 1)
-                return 51007
-            End If;
+            WHERE data_pkg_id = _dataPkgID;
 
-            _message := 'Changed data package folder name to "' || _newDataPackageFolder || '" for ID ' || _dataPkgID::text;
+            _message := format('Changed data package folder name to "%s" for ID %s', _newDataPackageFolder, _dataPkgID);
 
         End If;
     End If;
@@ -113,35 +102,22 @@ BEGIN
     If _newDataPackageWiki = _currentDataPackageWiki Then
         _message := 'Data package wiki link is already up-to-date: ' || _newDataPackageWiki;
         If _infoOnly Then
-            SELECT _message AS Message;
+            RAISE INFO '%', _message;
         End If;
     Else
         If _infoOnly Then
-            _message := 'Will change data package wiki link from "' || _currentDataPackageWiki || '" to "' || _newDataPackageWiki || '"';
-            SELECT _message AS Message
+            _message := format('Will change data package wiki link from "%s" to "%s"', _currentDataPackageWiki, _newDataPackageWiki);
+            RAISE INFO '%', _message;
         Else
             UPDATE dpkg.t_data_package
             SET wiki_page_link = _newDataPackageWiki
             WHERE data_pkg_id = _dataPkgID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
-            if _myError <> 0 Then
-                _message := 'Error updating data package wiki link to "' || _newDataPackageWiki || '" for data package: ' || _dataPkgID::text;
-                RAISERROR (_message, 10, 1)
-                return 51007
-            End If;
 
-            _message := 'Changed data package wiki link to "' || _newDataPackageWiki || '" for ID ' || _dataPkgID::text;
+            _message := format('Changed data package wiki link to "%s" for ID %s', _newDataPackageWiki, _dataPkgID);
 
         End If;
     End If;
 
-    ---------------------------------------------------
-    --
-    ---------------------------------------------------
-
-    return _myError
 END
 $$;
 

@@ -83,7 +83,7 @@ WITH EXECUTE AS OWNER
 
     If NOT EXISTS (SELECT * FROM t_sample_labelling_reporter_ions WHERE label = _reporterIon) Then
         _message := 'Unrecognized reporter ion name: ' || _reporterIon || '; for standard reporter ion names, see https://dms2.pnl.gov/sample_label_reporter_ions/report';
-        Call post_log_entry ('Error', _message, 'StoreReporterIonObsStats', _duplicateEntryHoldoffHours => 1);
+        Call post_log_entry ('Error', _message, 'Store_Reporter_Ion_Obs_Stats', _duplicateEntryHoldoffHours => 1);
         _returnCode := 'U5202';
         RETURN;
     End If;
@@ -285,7 +285,7 @@ WITH EXECUTE AS OWNER
         _message := _message || '; error code = ' ||  CAST(_myError AS text);
 
         If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'StoreReporterIonObsStats');
+            Call post_log_entry ('Error', _message, 'Store_Reporter_Ion_Obs_Stats');
         End If;
     End If;
 

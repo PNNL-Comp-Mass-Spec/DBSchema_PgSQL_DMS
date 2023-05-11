@@ -136,21 +136,21 @@ BEGIN
                 _intervalDescription := 'interval ' || Cast(_runIntervalId As text) || ' as Broken for instrument ' || _instrumentName || ' in ' || _monthAndYear;
 
                 If _infoOnly Then
-                    RAISE INFO '%', 'Preview: Call AddUpdateRunInterval to annotate ' || _intervalDescription;
+                    RAISE INFO '%', 'Preview: Call add_update_run_interval to annotate ' || _intervalDescription;
                 Else
                     Call add_update_run_interval (
                                 _runIntervalID,
                                 'Broken[100%]',
                                 'update',
                                 _message => _message,       -- Output
-                                _callingUser => 'PNL\msdadmin (AutoAnnotateBrokenInstrumentLongIntervals)');
+                                _callingUser => 'PNL\msdadmin (Auto_Annotate_Broken_Instrument_Long_Intervals)');
 
                     If _returnCode = '' Then
                         _message := 'Annotated ' || _intervalDescription;
-                        Call post_log_entry ('Normal', _message, 'AutoAnnotateBrokenInstrumentLongIntervals');
+                        Call post_log_entry ('Normal', _message, 'Auto_Annotate_Broken_Instrument_Long_Intervals');
                     Else
                         _message := 'Error annotating ' || _intervalDescription;
-                        Call post_log_entry ('Error', _message, 'AutoAnnotateBrokenInstrumentLongIntervals');
+                        Call post_log_entry ('Error', _message, 'Auto_Annotate_Broken_Instrument_Long_Intervals');
                     End If;
 
                 End If;

@@ -287,7 +287,7 @@ Code 6 (Purged all data except QC folder)
     ---------------------------------------------------
 
     _usageMessage := 'Dataset: ' || _datasetName;
-    Call post_usage_log_entry ('SetPurgeTaskComplete', _usageMessage);
+    Call post_usage_log_entry ('Set_Purge_Task_Complete', _usageMessage);
 
     If _message <> '' Then
         RAISE WARNING '%', _message;

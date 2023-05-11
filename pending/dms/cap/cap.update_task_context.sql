@@ -118,7 +118,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' make_new_automatic_tasks';
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_context', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call make_new_automatic_tasks';
@@ -144,7 +144,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' make_new_tasks_from_analysis_broker';
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_context', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call make_new_tasks_from_analysis_broker';
@@ -170,7 +170,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' make_new_tasks_from_dms';
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_context', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call make_new_tasks_from_dms';
@@ -204,7 +204,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' make_new_archive_tasks_from_dms';
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_context', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call make_new_archive_tasks_from_dms';
@@ -258,7 +258,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' create_task_steps';
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_context', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call create_task_steps';
@@ -315,7 +315,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' update_task_step_states';
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_context', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call update_task_step_states';
@@ -368,7 +368,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' update_task_state';
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_context', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call update_task_state';
@@ -417,7 +417,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' RetryCaptureForDMSResetJobs';
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_context', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call retry_capture_for_dms_reset_tasks';
@@ -466,7 +466,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' UpdateCPULoading';
-            Call cap.post_log_entry 'Progress', _statusMessage, 'update_task_context'
+            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call update_cpu_loading';
@@ -500,7 +500,7 @@ BEGIN
 
     If _loggingEnabled Then
         _statusMessage := 'Update context complete: ' || extract(epoch FROM CURRENT_TIMESTAMP - _startTime) || ' seconds elapsed';
-        Call public.post_log_entry('Normal', _statusMessage, 'update_task_context', 'cap');
+        Call public.post_log_entry('Normal', _statusMessage, 'Update_Task_Context', 'cap');
     End If;
 
 END

@@ -209,7 +209,7 @@ BEGIN
                 If _infoOnly Then
                     RAISE INFO '%', _message;
                 Else
-                    Call post_log_entry ('Error', _message, 'BackfillPipelineJobs');
+                    Call post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                 End If;
 
                 CONTINUE;
@@ -236,7 +236,7 @@ BEGIN
                 If _infoOnly Then
                     RAISE INFO '%', _message;
                 Else
-                    Call post_log_entry ('Error', _message, 'BackfillPipelineJobs');
+                    Call post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                 End If;
 
                 _organismID := 1;
@@ -260,7 +260,7 @@ BEGIN
                 If _infoOnly Then
                     RAISE INFO '%', _message;
                 Else
-                    Call post_log_entry ('Error', _message, 'BackfillPipelineJobs');
+                    Call post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                 End If;
 
                 _jobInfo.State := 4;
@@ -467,7 +467,7 @@ BEGIN
                         If _infoOnly Then
                             RAISE INFO '%', _message;
                         Else
-                            Call post_log_entry ('Error', _message, 'BackfillPipelineJobs');
+                            Call post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                         End If;
 
                         _datasetID := -1;
@@ -494,7 +494,7 @@ BEGIN
                                 _message := format('Error creating dataset %s for DMS Pipeline job %s; call to AddUpdateDataset succeeded but dataset not found in t_dataset',
                                                     _jobInfo.Dataset, _jobStr);
 
-                                Call post_log_entry ('Error', _message, 'BackfillPipelineJobs');
+                                Call post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
 
                                 _datasetID := -1;
                             End If;
@@ -590,7 +590,7 @@ BEGIN
 
                         If Not FOUND Then
                             _message := format('Error adding DMS Pipeline job %s to t_analysis_job', _jobStr);
-                            Call post_log_entry ('Error', _message, 'BackfillPipelineJobs');
+                            Call post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                         End If;
 
                     End If;

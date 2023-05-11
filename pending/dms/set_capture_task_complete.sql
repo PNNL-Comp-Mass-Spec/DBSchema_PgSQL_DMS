@@ -108,7 +108,7 @@ BEGIN
             _completionState := 5; -- capture failed
             _message := format('Number of capture retries exceeded limit of %s for dataset "%s"', _maxRetries, _datasetName);
 
-            Call post_log_entry ('Error', _message, 'SetCaptureTaskComplete');
+            Call post_log_entry ('Error', _message, 'Set_Capture_Task_Complete');
 
             _message := '';
         End If;
@@ -153,7 +153,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Dataset: ' || _datasetName;
-    Call post_usage_log_entry ('SetCaptureTaskComplete', _usageMessage);
+    Call post_usage_log_entry ('Set_Capture_Task_Complete', _usageMessage);
 
     If _message <> '' Then
         RAISE WARNING '%', _message;

@@ -125,7 +125,7 @@ BEGIN
 
             _message := 'Auto-set proposal_id_auto_supersede for ' || CAST(_myRowCount AS text) || ' proposal(s) in t_eus_proposals: ' || _proposalList;
 
-            Call post_log_entry ('Normal', _message, 'AutoDefineSupersededEUSProposals');
+            Call post_log_entry ('Normal', _message, 'Auto_Define_Superseded_EUS_Proposals');
         End If;
 
         RAISE INFO '%', _message;

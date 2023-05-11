@@ -146,7 +146,7 @@ BEGIN
 
     If _myRowCount > 0 And _dataPackageCount > 1 Then
         _message := 'Updated EUS_Person_ID for ' || Cast(_myRowCount as text) + public.check_plural(_myRowCount, ' data package', ' data packages');
-        Call post_log_entry 'Normal', _message, 'UpdateDataPackageEUSInfo'
+        Call public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
     End If;
 
     ---------------------------------------------------
@@ -339,7 +339,7 @@ BEGIN
 
     If _myRowCount > 0 And _dataPackageCount > 1 Then
         _message := 'Updated EUS_Proposal_ID, EUS_Instrument_ID, and/or Instrument name for ' || Cast(_myRowCount as text) + public.check_plural(_myRowCount, ' data package', ' data packages');
-        Call post_log_entry 'Normal', _message, 'UpdateDataPackageEUSInfo'
+        Call public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
     End If;
 
     Return _myError

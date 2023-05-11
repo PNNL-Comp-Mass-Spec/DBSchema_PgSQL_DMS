@@ -84,12 +84,12 @@ BEGIN
 
     If _debugEnabled Then
         _logMessage := _requestList::text;
-        Call post_log_entry ('Debug', _logMessage, 'UpdateRequestedRunAdmin');
+        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
 
         _argLength := char_length(_requestList);
 
         _logMessage := format('%s characters in _requestList', _argLength);
-        Call post_log_entry ('Debug', _logMessage, 'UpdateRequestedRunAdmin');
+        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
     End If;
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
@@ -128,7 +128,7 @@ BEGIN
 
     If _debugEnabled Then
         _logMessage := Cast(_myRowCount As text) || ' rows inserted into Tmp_Requests';
-        Call post_log_entry ('Debug', _logMessage, 'UpdateRequestedRunAdmin');
+        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
     End If;
 
     -----------------------------------------------------------
@@ -287,7 +287,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    Call post_usage_log_entry ('UpdateRequestedRunAdmin', _usageMessage);
+    Call post_usage_log_entry ('Update_Requested_Run_Admin', _usageMessage);
 
     DROP TABLE Tmp_Requests;
     DROP TABLE Tmp_ID_Update_List;

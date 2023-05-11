@@ -207,7 +207,7 @@ BEGIN
             _message := format('Reset dataset state from "Capture Failed" to "New" for %s %s'
                                 _resetCount, public.check_plural(_resetCount, 'Dataset', 'Datasets'));
 
-            Call post_log_entry ('Normal', _message, 'ResetFailedDatasetCaptureTasks');
+            Call post_log_entry ('Normal', _message, 'Reset_Failed_Dataset_Capture_Tasks');
 
             ------------------------------------------------
             -- Look for log entries in DMS_Capture to auto-update

@@ -29,7 +29,7 @@ AS $$
 **
 **  Arguments:
 **    _id     Data Package ID
-**    _mode   or 'update'
+**    _mode   'add' or 'update'
 **
 **  Auth:   grk
 **  Date:   05/21/2009 grk
@@ -53,17 +53,18 @@ AS $$
 **                         - Validate _state
 **          11/19/2020 mem - Add _dataDOI and _manuscriptDOI
 **          07/05/2022 mem - Include the data package ID when logging errors
+**          05/10/2023 mem - Update warning messages
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _currentID int;
-    _teamCurrent text;
+    _currentTeam text;
     _teamChangeWarning text;
     _pkgFileFolder text;
-    _logErrors int := 0;
+    _logErrors boolean := false;
     _authorized int := 0;
-    _rootPath int;
+    _storagePathID int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -108,47 +109,47 @@ BEGIN
 
         If _team = '' Then
             _message := 'Data package team cannot be blank';
-            RAISERROR (_message, 10, 1)
-            return 51005
+            _returnCode := 'U5105';
+            RETURN;
         End If;
 
         If _packageType = '' Then
             _message := 'Data package type cannot be blank';
-            RAISERROR (_message, 10, 1)
-            return 51006
+            _returnCode := 'U5106';
+            RETURN;
         End If;
 
         -- Make sure the team name is valid
         If Not Exists (SELECT * FROM dpkg.t_data_package_teams WHERE team_name = _team) Then
-            _message := 'Teams "' || _team || '" is not a valid data package team';
-            RAISERROR (_message, 10, 1)
-            return 51007
+            _message := format('Invalid data package team: %s',_team);
+            _returnCode := 'U5107';
+            RETURN;
         End If;
 
         -- Make sure the data package type is valid
         If Not Exists (SELECT * FROM dpkg.t_data_package_type WHERE package_type = _packageType) Then
-            _message := 'Type "' || _packageType || '" is not a valid data package type';
-            RAISERROR (_message, 10, 1)
-            return 51008
+            _message := ('Invalid data package type: %s', _packageType);
+            _returnCode := 'U5108';
+            RETURN;
         End If;
 
         ---------------------------------------------------
         -- Get active path
         ---------------------------------------------------
         --
-        --
         SELECT path_id
-        INTO _rootPath
+        INTO _storagePathID
         FROM dpkg.t_data_package_storage
-        WHERE state = 'Active'
+        WHERE state = 'Active';
 
         ---------------------------------------------------
         -- Validate the state
         ---------------------------------------------------
 
         If Not Exists (SELECT * FROM dpkg.t_data_package_state WHERE state_name = _state) Then
-            _message := 'Invalid state: ' || _state;
-            RAISERROR (_message, 11, 32)
+            _message := format('Invalid state: %s', _state);
+            _returnCode := 'U5109';
+            RETURN;
         End If;
 
         ---------------------------------------------------
@@ -156,35 +157,33 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- cannot update a non-existent entry
+            -- Cannot update a non-existent entry
             --
-            _currentID := 0;
-            --
-            SELECT data_pkg_id, INTO _currentID
-                   _teamCurrent = path_team
+            SELECT data_pkg_id,
+                   path_team
+            INTO _currentID, _currentTeam
             FROM dpkg.t_data_package
             WHERE data_pkg_id = _id;
-            --
-            If _myError <> 0 OR _currentID = 0 Then
-                _message := 'No entry could be found in database for update';
-                RAISERROR (_message, 10, 1)
-                return 51009
+
+            If Not FOUND Then
+                _message := format('Data package ID %s does not exist; cannot update', _id);
+                _returnCode := 'U5110';
+                RETURN;
             End If;
 
             -- Warn if the user is changing the team
-            If Coalesce(_teamCurrent, '') <> '' Then
-                If _teamCurrent <> _team Then
-                    _teamChangeWarning := 'Warning: Team changed from "' || _teamCurrent || '" to "' || _team || '"; the data package files will need to be moved from the old location to the new one';
-                End If;
+            If Coalesce(_currentTeam, '') <> '' And _currentTeam <> _team Then
+                _teamChangeWarning := format('Warning: Team changed from "%s" to "%s"; the data package files will need to be moved from the old location to the new one', _currentTeam, _team);
             End If;
 
-        End If; -- mode update
+        End If;
 
-        _logErrors := 1;
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode = 'add' Then
 
             If _name Like '%&%' Then
@@ -196,9 +195,9 @@ BEGIN
                     Else
                         _name := Replace(_name, '&', '_and_');
                     End If;
+                Else
+                    _name := Replace(_name, '&', 'and');
                 End If;
-
-                _name := Replace(_name, '&', 'and');
             End If;
 
             If _name Like '%;%' Then
@@ -208,9 +207,9 @@ BEGIN
 
             -- Make sure the data package name doesn't already exist
             If Exists (SELECT * FROM dpkg.t_data_package WHERE package_name = _name) Then
-                _message := 'Data package package_name "' || _name || '" already exists; cannot create an identically named data package';
-                RAISERROR (_message, 10, 1)
-                return 51010
+                _message := format('Data package "%s" already exists; cannot create an identically named data package', _name);
+                _returnCode := 'U5111';
+                RETURN;
             End If;
 
             INSERT INTO dpkg.t_data_package (
@@ -222,7 +221,7 @@ BEGIN
                 requester,
                 created,
                 state,
-                package_directory,
+                package_folder,
                 storage_path_id,
                 path_team,
                 mass_tag_database,
@@ -238,8 +237,8 @@ BEGIN
                 _requester,
                 CURRENT_TIMESTAMP,
                 _state,
-                Convert(text, NewID()),        -- package_directory cannot be null and must be unique; this guarantees both.  Also, we'll rename it below using dbo.MakePackageFolderName
-                _rootPath,
+                gen_random_uuid()::text,        -- package_folder cannot be null and must be unique; this guarantees both. Also, we'll rename it below using dpkg.Make_Package_Folder_Name
+                _storagePathID,
                 _team,
                 _massTagDatabase,
                 Coalesce(_prismWikiLink, ''),
@@ -250,26 +249,25 @@ BEGIN
             INTO _id;
 
             ---------------------------------------------------
-            -- data package folder and wiki page auto naming
+            -- Data package folder and wiki page auto naming
             ---------------------------------------------------
             --
-            _pkgFileFolder := dbo.MakePackageFolderName(_id, _name);
-            _prismWikiLink := dbo.MakePRISMWikiPageLink(_id, _name);
-            --
-            UPDATE dpkg.t_data_package
-            SET
-                package_directory = _pkgFileFolder,
-                wiki_page_link = _prismWikiLink
-            WHERE data_pkg_id = _id
+            _pkgFileFolder := dpkg.Make_Package_Folder_Name(_id, _name);
+            _prismWikiLink := dpkg.Make_PRISMWiki_Page_Link(_id, _name);
 
-        End If; -- add mode
+            UPDATE dpkg.t_data_package
+            SET package_directory = _pkgFileFolder,
+                wiki_page_link = _prismWikiLink
+            WHERE data_pkg_id = _id;
+
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update'  Then
-            --
+
             UPDATE dpkg.t_data_package
             SET
                 package_name = _name,
@@ -285,33 +283,36 @@ BEGIN
                 wiki_page_link = _prismWikiLink,
                 data_doi = _dataDOI,
                 manuscript_doi = _manuscriptDOI
-            WHERE data_pkg_id = _id
+            WHERE data_pkg_id = _id;
 
-        End If; -- update mode
+        End If;
 
         ---------------------------------------------------
         -- Create the data package folder when adding a new data package
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            Call MakeDataPackageStorageFolder (_id, _mode, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
+            Call dpkg.make_data_package_storage_folder (
+                _id,
+                _mode,
+                _message => _message,
+                _returnCode => _returnCode,
+                _callingUser => _callingUser);
         End If;
 
         If _teamChangeWarning <> '' Then
             If Coalesce(_message, '') <> '' Then
-                _message := _message || '; ';
+                _message := format('%s; %s', _message, _teamChangeWarning);
             Else
-                _message := ': ';
+                _message := _teamChangeWarning;
             End If;
-
-            _message := _message || _teamChangeWarning;
         End If;
 
         ---------------------------------------------------
         -- Update EUS_Person_ID and EUS_Proposal_ID
         ---------------------------------------------------
         --
-        Call update_data_package_eus_info (_id, _message => _message, _returnCode => _returnCode);
+        Call dpkg.update_data_package_eus_info (_id, _message => _message, _returnCode => _returnCode);
 
     EXCEPTION
         WHEN OTHERS THEN

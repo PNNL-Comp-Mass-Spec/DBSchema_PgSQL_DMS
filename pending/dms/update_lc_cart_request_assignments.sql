@@ -89,7 +89,7 @@ BEGIN
 
     If _debugMode Then
         _debugMsg := Cast(_cartAssignmentList As text);
-        Call post_log_entry ('Debug', _debugMsg, 'UpdateLCCartRequestAssignments');
+        Call post_log_entry ('Debug', _debugMsg, 'Update_LC_Cart_Request_Assignments');
     End If;
 
     -----------------------------------------------------------
@@ -240,7 +240,7 @@ BEGIN
             _debugMsg := format('Will update %s of %s requests', _requestCountInXML - _myRowCount, _requestCountInXML);
         End If;
 
-        Call post_log_entry ('Debug', _debugMsg, 'UpdateLCCartRequestAssignments');
+        Call post_log_entry ('Debug', _debugMsg, 'Update_LC_Cart_Request_Assignments');
 
     End If;
 
@@ -260,7 +260,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := _myRowCount::text || ' requested runs updated';
-    Call post_usage_log_entry ('UpdateLCCartRequestAssignments', _usageMessage);
+    Call post_usage_log_entry ('Update_LC_Cart_Request_Assignments', _usageMessage);
 
     DROP TABLE Tmp_BlockingInfo;
 END

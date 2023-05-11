@@ -101,7 +101,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _statusMessage := 'Entering make_new_tasks_from_dms';
-            Call public.post_log_entry('Progress', _statusMessage, 'MakeNewJobsFromDMS', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Make_New_Tasks_From_DMS', 'cap');
         End If;
 
         ---------------------------------------------------
@@ -111,7 +111,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _statusMessage := 'Querying DMS';
-            Call public.post_log_entry('Progress', _statusMessage, 'MakeNewJobsFromDMS', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Make_New_Tasks_From_DMS', 'cap');
         End If;
 
         If Not _infoOnly Then
@@ -182,7 +182,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _statusMessage := 'Exiting';
-            Call public.post_log_entry('Progress', _statusMessage, 'MakeNewJobsFromDMS', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Make_New_Tasks_From_DMS', 'cap');
         End If;
 
     EXCEPTION

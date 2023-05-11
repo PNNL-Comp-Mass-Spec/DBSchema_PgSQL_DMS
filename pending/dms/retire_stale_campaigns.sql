@@ -82,7 +82,7 @@ BEGIN
             _message := format('Retired %s %s that have not been used in at last 18 months and were created over 7 years ago',
                                 _myRowCount, public.check_plural(_myRowCount, ' campaigns', ' campaigns'));
 
-            Call post_log_entry ('Normal', _message, 'RetireStaleCampaigns');
+            Call post_log_entry ('Normal', _message, 'Retire_Stale_Campaigns');
         End If;
     End If;
 

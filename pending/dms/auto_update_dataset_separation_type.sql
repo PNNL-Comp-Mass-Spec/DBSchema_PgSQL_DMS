@@ -179,7 +179,7 @@ BEGIN
                                 _updateInfo.UpdateCount
                                 public.check_plural(_updateInfo.UpdateCount, 'dataset', 'datasets');
 
-            Call post_log_entry ('Normal', _message, 'AutoUpdateDatasetSeparationType');
+            Call post_log_entry ('Normal', _message, 'Auto_Update_Dataset_Separation_Type');
 
         END LOOP;
 

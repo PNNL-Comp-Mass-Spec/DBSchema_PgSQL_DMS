@@ -306,7 +306,7 @@ BEGIN
         _message := _message || '; error code = ' || _myError::text;
 
         If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'StoreJobPSMStats');
+            Call post_log_entry ('Error', _message, 'Store_Job_PSM_Stats');
         End If;
     End If;
 

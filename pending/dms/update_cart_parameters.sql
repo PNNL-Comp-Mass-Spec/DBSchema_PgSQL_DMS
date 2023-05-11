@@ -144,7 +144,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Request ' || _requestID::text;
-    Call post_usage_log_entry ('UpdateCartParameters', _usageMessage);
+    Call post_usage_log_entry ('Update_Cart_Parameters', _usageMessage);
 
     ---------------------------------------------------
     -- Report any errors

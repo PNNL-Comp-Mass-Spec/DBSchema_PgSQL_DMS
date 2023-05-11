@@ -88,7 +88,7 @@ BEGIN
 
     If _myRowCount > 0 Then
         _message := format('Ignoring %s dataset(s) in cap.t_dataset_info_xml because they do not exist in public.t_dataset', _myRowCount);
-        Call public.post_log_entry('Info', _message, 'UpdateMissedDMSFileInfo', 'cap');
+        Call public.post_log_entry('Info', _message, 'Update_Missed_DMS_File_Info', 'cap');
 
         --------------------------------------------
         -- Delete any entries in cap.t_dataset_info_xml that were cached over 7 days ago and do not exist in public.T_Dataset
@@ -165,7 +165,7 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO '%', _logMsg;
             Else
-                Call public.post_log_entry(_logMsgType, _logMsg, 'update_missed_dms_file_info', 'cap', _duplicateEntryHoldoffHours => 22);
+                Call public.post_log_entry(_logMsgType, _logMsg, 'Update_Missed_DMS_File_Info', 'cap', _duplicateEntryHoldoffHours => 22);
             End If;
 
         End If;

@@ -105,7 +105,7 @@ BEGIN
     -- Uncomment to debug
     --
     -- _message := 'mode ' || _mode || ', collection '|| _collectionName
-    -- Call Post_Log_Entry ('Debug', _message, 'Add_Update_Protein_Collection');
+    -- Call public.Post_Log_Entry ('Debug', _message, 'Add_Update_Protein_Collection', 'pc');
     -- _message := ''
 
     ---------------------------------------------------

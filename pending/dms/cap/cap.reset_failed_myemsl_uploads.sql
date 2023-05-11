@@ -173,7 +173,7 @@ BEGIN
                 _logMessage := _logMessage || ' since the upload has already failed 2 or more times';
 
                 If Not _infoOnly Then
-                    Call public.post_log_entry ('Error', _logMessage, 'reset_failed_myemsl_uploads', 'cap', _duplicateEntryHoldoffHours => 24);
+                    Call public.post_log_entry ('Error', _logMessage, 'Reset_Failed_MyEMSL_Uploads', 'cap', _duplicateEntryHoldoffHours => 24);
                 Else
                     RAISE INFO '%', _logMessage;
                 End If;
@@ -254,7 +254,7 @@ BEGIN
                                    public.check_plural(_jobCount, 'capture task job ', 'capture task jobs '),
                                    _jobList);
 
-                Call public.post_log_entry('Error', _message, 'ResetFailedMyEMSLUploads', 'cap');
+                Call public.post_log_entry('Error', _message, 'Reset_Failed_MyEMSL_Uploads', 'cap');
 
                 RAISE INFO '%', _message;
 

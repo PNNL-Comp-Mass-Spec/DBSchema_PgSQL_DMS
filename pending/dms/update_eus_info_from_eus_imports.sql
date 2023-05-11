@@ -101,7 +101,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    Call post_usage_log_entry ('UpdateEUSInfoFromEUSImports', _usageMessage);
+    Call post_usage_log_entry ('Update_EUS_Info_From_EUS_Imports', _usageMessage);
 
 END
 $$;

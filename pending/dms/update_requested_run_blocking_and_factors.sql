@@ -78,7 +78,7 @@ BEGIN
             _logMessage := '_blockingList: ' || _logMessage;
         End If;
 
-        Call post_log_entry ('Debug', _logMessage, 'UpdateRequestedRunBlockingAndFactors');
+        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
 
         _logMessage := Cast(_factorList as text);
         If Coalesce(_logMessage, '') = '' Then
@@ -87,7 +87,7 @@ BEGIN
             _logMessage := '_factorList: ' || _logMessage;
         End If;
 
-        Call post_log_entry ('Debug', _logMessage, 'UpdateRequestedRunBlockingAndFactors');
+        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
     End If;
 
     -----------------------------------------------------------
@@ -122,7 +122,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := '';
-    Call post_usage_log_entry ('UpdateRequestedRunBlockingAndFactors', _usageMessage);
+    Call post_usage_log_entry ('Update_Requested_Run_Blocking_And_Factors', _usageMessage);
 
 END
 $$;

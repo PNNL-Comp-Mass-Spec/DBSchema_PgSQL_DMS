@@ -183,11 +183,9 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Updated ' || _count::text || ' prep request';
-    If _count <> 0 Then
-        _usageMessage := _usageMessage || 's';
-    End If;
-    Call post_usage_log_entry ('UpdateSampleRequestAssignments', _usageMessage);
+    _usageMessage := 'Updated ' || _count::text || ' prep ' || public.check_plural(_count, 'request', 'requests');
+
+    Call post_usage_log_entry ('Update_Sample_Request_Assignments', _usageMessage);
 
     DROP TABLE Tmp_RequestsToProcess;
 

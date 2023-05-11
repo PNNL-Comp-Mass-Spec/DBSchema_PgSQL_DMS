@@ -436,7 +436,7 @@ BEGIN
                                                   _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
-                    Call public.post_log_entry('Error', _message, 'update_task_state', 'cap');
+                    Call public.post_log_entry('Error', _message, 'Update_Task_State', 'cap');
                 End If;
             End If;
 
@@ -456,7 +456,7 @@ BEGIN
                             _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
-                    Call public.post_log_entry('Error', _message, 'update_task_state', 'cap');
+                    Call public.post_log_entry('Error', _message, 'Update_Task_State', 'cap');
                 End If;
             End If;
         End If; -- </d>
@@ -480,7 +480,7 @@ BEGIN
 
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := format('... Updating capture task job state: %s / %s', _jobsProcessed, _jobCountToProcess);
-            Call public.post_log_entry('Progress', _statusMessage, 'update_task_state', 'cap');
+            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_State', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;

@@ -205,7 +205,7 @@ BEGIN
                 'Storage path ID changed from ' ||
                 Cast(_storagePathIdOld As text) || ' to ' || Cast(_storagePathIdNew As text)
 
-    Call post_log_entry ('Normal', _message, 'UpdateDatasetInstrument');
+    Call post_log_entry ('Normal', _message, 'Update_Dataset_Instrument');
 
     ---------------------------------------------------
     -- Done
