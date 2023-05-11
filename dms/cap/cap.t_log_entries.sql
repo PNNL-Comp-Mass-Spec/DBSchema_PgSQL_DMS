@@ -52,6 +52,7 @@ CREATE INDEX ix_t_log_entries_posted_by ON cap.t_log_entries USING btree (posted
 
 GRANT SELECT ON TABLE cap.t_log_entries TO readaccess;
 GRANT SELECT,INSERT ON TABLE cap.t_log_entries TO writeaccess;
+GRANT INSERT,UPDATE ON TABLE cap.t_log_entries TO dmswebuser;
 
 --
 -- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: cap; Owner: d3l243

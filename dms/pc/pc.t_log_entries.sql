@@ -46,6 +46,7 @@ CREATE TRIGGER trig_t_log_entries_after_update AFTER UPDATE ON pc.t_log_entries 
 
 GRANT SELECT ON TABLE pc.t_log_entries TO readaccess;
 GRANT SELECT,INSERT ON TABLE pc.t_log_entries TO writeaccess;
+GRANT INSERT,UPDATE ON TABLE pc.t_log_entries TO dmswebuser;
 
 --
 -- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: pc; Owner: d3l243

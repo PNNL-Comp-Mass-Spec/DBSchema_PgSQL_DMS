@@ -52,6 +52,7 @@ CREATE INDEX ix_t_log_entries_posted_by ON dpkg.t_log_entries USING btree (poste
 
 GRANT SELECT ON TABLE dpkg.t_log_entries TO readaccess;
 GRANT SELECT,INSERT ON TABLE dpkg.t_log_entries TO writeaccess;
+GRANT INSERT,UPDATE ON TABLE dpkg.t_log_entries TO dmswebuser;
 
 --
 -- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: dpkg; Owner: d3l243
