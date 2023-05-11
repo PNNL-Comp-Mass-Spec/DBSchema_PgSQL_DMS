@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_orphaned_tasks(IN _infoonly boolean DEFAU
 **          02/02/2023 mem - Update table aliases
 **          04/02/2023 mem - Rename procedure and functions
 **          04/27/2023 mem - Use boolean for data type name
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -185,7 +186,7 @@ BEGIN
             _logMessage := format('Deleted orphaned %s capture task job %s for dataset %s since no longer defined in DMS',
                                     _scriptName, _job, _dataset);
 
-            Call public.post_log_entry ('Normal', _logMessage, 'delete_orphaned_tasks', 'cap');
+            Call public.post_log_entry ('Normal', _logMessage, 'Delete_Orphaned_Tasks', 'cap');
 
             _jobsDeleted := _jobsDeleted + 1;
         END LOOP;

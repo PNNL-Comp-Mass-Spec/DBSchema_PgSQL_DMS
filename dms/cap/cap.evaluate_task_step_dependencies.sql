@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **          02/02/2023 mem - Update table aliases
 **          04/02/2023 mem - Rename procedure and functions
 **          04/27/2023 mem - Use boolean for data type name
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -320,7 +321,7 @@ BEGIN
 
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := format('... Evaluating step dependencies: %s / %s', _rowsProcessed, _rowCountToProcess);
-            Call public.post_log_entry ('Progress', _statusMessage, 'evaluate_task_step_dependencies', 'cap');
+            Call public.post_log_entry ('Progress', _statusMessage, 'Evaluate_Task_Step_Dependencies', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;

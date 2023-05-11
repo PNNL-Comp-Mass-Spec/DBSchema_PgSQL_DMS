@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          01/31/2023 mem - Use new column names in tables
 **          05/07/2023 mem - Remove unused variable
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -106,7 +107,7 @@ BEGIN
         End If;
     End If;
 
-    Call public.post_log_entry (_messageType, _message, 'ReportManagerErrorCleanup', 'mc');
+    Call public.post_log_entry (_messageType, _message, 'Report_Manager_Error_Cleanup', 'mc');
 
     ---------------------------------------------------
     -- Lookup the value of ManagerErrorCleanupMode in mc.t_param_value

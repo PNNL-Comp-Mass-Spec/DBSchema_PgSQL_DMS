@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 **          12/20/2021 bcg - Look up Purge_Priority and AS_purge_holdoff_date offset in T_Instrument_Name
 **          04/24/2023 mem - Ported to PostgreSQL
 **                         - Do not create an archive task if 'ArchiveDisabled' has a non-zero value in T_Misc_Options
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,8 @@ BEGIN
     If _datasetStateId = 14 Then
         _message := format('Cannot create a dataset archive task for Dataset ID %s; ' ||
                            'dataset state is 14 (Capture Failed, Duplicate Dataset Files)', _datasetID);
-        Call post_log_entry ('Error', _message, 'add_archive_dataset', _duplicateEntryHoldoffHours => 12);
+
+        Call post_log_entry ('Error', _message, 'Add_Archive_Dataset', _duplicateEntryHoldoffHours => 12);
 
         RAISE WARNING '%', _message;
 

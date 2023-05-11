@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE public.set_spectral_library_create_task_complete(IN 
 **
 **  Auth:   mem
 **  Date:   04/03/2023 mem - Initial Release
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
 
         If Not FOUND Then
             _message = format('Spectral library ID %s not found in T_Spectral_Library', _libraryId);
-            Call post_log_entry ('Error', _message, 'set_spectral_library_create_task_complete');
+            Call post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
 
             _returnCode := 'U5201';
             RETURN;
@@ -87,7 +88,7 @@ BEGIN
         If _libraryStateId <> 2 Then
             _message := format('Spectral library ID %s has state %s in T_Spectral_Library instead of state 2 (In Progress); leaving the state unchanged',
                                 _libraryId, _libraryStateId);
-            Call post_log_entry ('Error', _message, 'set_spectral_library_create_task_complete');
+            Call post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
 
             _returnCode := 'U5202';
             RETURN;
@@ -108,7 +109,7 @@ BEGIN
         If Not FOUND Then
             _message = format('Error setting the state for Spectral library ID %s to %s; no rows were updated',
                                 _libraryId, _newLibraryState);
-            Call post_log_entry ('Error', _message, 'set_spectral_library_create_task_complete');
+            Call post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
 
             _returnCode := 'U5203';
             RETURN;

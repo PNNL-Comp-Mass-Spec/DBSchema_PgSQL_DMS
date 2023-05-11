@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          01/13/2023 mem - Refactor instrument group validation code into validate_instrument_group_for_requested_runs
 **                         - Validate the instrument group for modes 'instrumentGroup' and 'assignedInstrument'
 **          01/16/2023 mem - Ported to PostgreSQL
+**          05/10/2023 mem - Capitalize procedure name sent to post_usage_log_entry
 **
 *****************************************************/
 DECLARE
@@ -474,7 +475,7 @@ BEGIN
     _usageMessage := format('Updated %s requested %s',
                             _requestCount, public.check_plural(_requestCount, 'run', 'runs'));
 
-    Call post_usage_log_entry ('UpdateRequestedRunAssignments', _usageMessage);
+    Call post_usage_log_entry ('Update_Requested_Run_Assignments', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_RequestIDs;
 

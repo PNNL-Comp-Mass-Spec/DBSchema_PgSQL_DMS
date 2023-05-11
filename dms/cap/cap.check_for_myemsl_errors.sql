@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
 **          10/07/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          05/04/2023 mem - Add _returnCode procedure argument
+**          05/10/2023 mem - Fix call to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ BEGIN
                             Round(_uploadErrorRate*100, 1), _uploadAttempts);
 
         If _logErrors Then
-            Call public.post_log_entry ('Error', _message, 'check_for_myemsl_errors', 'cap');
+            Call public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap');
         Else
             RAISE INFO '%', _message;
         End If;
@@ -103,7 +104,7 @@ BEGIN
                            Round(_duplicateRate * 100, 1), _datasetFolderUploads);
 
         If _logErrors Then
-            Call cap.post_log_entry ('Error', _message, 'check_for_myemsl_errors', 'cap');
+            Call public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap');
         Else
             RAISE INFO '%', _message;
         End If;

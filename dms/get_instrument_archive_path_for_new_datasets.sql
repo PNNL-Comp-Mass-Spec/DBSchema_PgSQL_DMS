@@ -39,6 +39,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_archive_path_for_new_datasets(_
 **          07/05/2016 mem - Archive path is now aurora.emsl.pnl.gov
 **          09/02/2016 mem - Archive path is now adms.emsl.pnl.gov
 **          04/24/2023 mem - Ported to PostgreSQL
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -107,7 +108,7 @@ BEGIN
             If _infoOnly Then
                 RAISE WARNING '%', _message;
             Else
-                Call post_log_entry ('Error', _message, 'get_instrument_archive_path_for_new_datasets');
+                Call post_log_entry ('Error', _message, 'Get_Instrument_Archive_Path_for_New_Datasets');
             End If;
 
             RETURN 0;

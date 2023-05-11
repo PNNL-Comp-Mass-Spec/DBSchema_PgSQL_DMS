@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          06/30/2022 mem - Rename parameter file argument
 **          05/05/2023 mem - Ported to PostgreSQL
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -185,7 +186,7 @@ BEGIN
 
     _usageMessage := format('%s %s updated', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
 
-    Call post_usage_log_entry ('update_analysis_jobs', _usageMessage);
+    Call post_usage_log_entry ('Update_Analysis_Jobs', _usageMessage);
 
     If _dropTempTable Then
         DROP TABLE IF EXISTS Tmp_AnalysisJobs;

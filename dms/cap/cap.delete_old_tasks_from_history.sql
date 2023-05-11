@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boole
 **  Date:   05/29/2022 mem - Initial version
 **          10/11/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -205,7 +206,7 @@ BEGIN
     _message := format('%s %s old capture task jobs from the history tables; job number range %s to %s', _message, _jobCountToDelete, _jobFirst, _jobLast);
 
     If Not _infoOnly And _jobCountToDelete > 0 Then
-        Call public.post_log_entry ('Normal', _message, 'delete_old_tasks_from_history', 'cap');
+        Call public.post_log_entry ('Normal', _message, 'Delete_Old_Tasks_From_History', 'cap');
     End If;
 
     If char_length(_message) > 0 Then

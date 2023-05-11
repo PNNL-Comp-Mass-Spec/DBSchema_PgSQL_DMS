@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **                         - When _fullRefresh is 0, use "last updated" times to limit the batch IDs to update
 **                         - Fix long-running merge queries by using temp tables to store stats
 **                         - Post a log entry if the runtime exceeds 30 seconds
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -364,7 +365,7 @@ BEGIN
 
         If _runtimeSeconds > 30 Then
             _message := format('Excessive runtime updating requested run batch stats; %s seconds elapsed overall; %s', _runtimeSeconds, _runtimeMessage);
-            Call post_log_entry ('Error', _message, 'update_cached_requested_run_batch_stats');
+            Call post_log_entry ('Error', _message, 'Update_Cached_Requested_Run_Batch_Stats');
         Else
             _message = format('Overall runtime: %s seconds; %s', Round(_runtimeSeconds, 2), Coalesce(_runtimeMessage, '??'));
         End If;

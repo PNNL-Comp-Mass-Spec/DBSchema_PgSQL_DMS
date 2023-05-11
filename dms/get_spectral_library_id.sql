@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          03/29/2023 mem - If the library state is 2 and _dmsSourceJob matches the Source_Job in T_Spectral_Library, assume the job failed and was re-started, and thus set _sourceJobShouldMakeLibrary to true
 **          04/16/2023 mem - Auto-update _proteinCollectionList and _organismDbFile to 'na' if an empty string
 **          05/03/2023 mem - Fix typo in format string
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -187,7 +188,7 @@ BEGIN
 
             If Not FOUND Then
                 _logMessage := 'Protein collection not found in V_Protein_Collections_by_Organism; cannot determine the organism for ' || _proteinCollection;
-                Call post_log_entry ('Warning', _logMessage, 'get_spectral_library_id');
+                Call post_log_entry ('Warning', _logMessage, 'Get_Spectral_Library_ID');
 
                 _organism := 'Undefined';
             End If;
@@ -222,7 +223,7 @@ BEGIN
 
             If Not FOUND Then
                 _logMessage := 'Legacy FASTA file not found in T_Organism_DB_File; cannot determine the organism for ' || _organismDbFile;
-                Call post_log_entry ('Warning', _logMessage, 'get_spectral_library_id');
+                Call post_log_entry ('Warning', _logMessage, 'Get_Spectral_Library_ID');
 
                 _organism := 'Undefined';
             End If;
@@ -265,7 +266,7 @@ BEGIN
 
         If Not FOUND Then
             _message := 'Function "Spectral_Library_Files" not found in table T_Misc_Paths';
-            Call post_log_entry ('Error', _message, 'get_spectral_library_id');
+            Call post_log_entry ('Error', _message, 'Get_Spectral_Library_ID');
 
             _returnCode := 'U5201';
             RETURN;

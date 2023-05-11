@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION cap.consolidate_log_messages(_messagetype text DEFAUL
 **  Auth:   mem
 **  Date:   01/14/2019 mem - Initial version
 **          10/08/2022 mem - Ported to PostgreSQL
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -183,7 +184,7 @@ BEGIN
         RAISE INFO '%', _message;
 
         If _duplicateMessageCount > 0 Or _deletedMessageCount > 0 Then
-            Call public.post_log_entry ('Normal', _message, 'consolidate_log_messages', 'cap');
+            Call public.post_log_entry ('Normal', _message, 'Consolidate_Log_Messages', 'cap');
         End If;
 
         If _deletedMessageCount > 0 And _changeErrorsToErrorIgnore Then

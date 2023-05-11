@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.update_eus_instruments_from_eus_imports(INOUT
 **          03/27/2012 grk - Added EUS_Active_Sw and EUS_Primary_Instrument
 **          05/12/2021 mem - Use new NEXUS-based views
 **          12/30/2022 mem - Ported to PostgreSQL
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -122,7 +123,7 @@ BEGIN
 
             _message := format('Updated t_emsl_instruments: %s added; %s updated', _mergeInsertCount, _mergeUpdateCount);
 
-            Call post_log_entry ('Normal', _message, 'UpdateEUSInstrumentsFromEUSImports');
+            Call post_log_entry ('Normal', _message, 'Update_EUS_Instruments_From_EUS_Imports');
 
             _message := '';
         End If;
@@ -153,7 +154,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    Call post_usage_log_entry ('UpdateEUSInstrumentsFromEUSImports', '');
+    Call post_usage_log_entry ('Update_EUS_Instruments_From_EUS_Imports', '');
 END
 $$;
 

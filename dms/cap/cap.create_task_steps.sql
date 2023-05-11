@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **                         - Use sw.show_tmp_job_steps_and_job_step_dependencies() and sw.show_tmp_jobs() to display the contents of the temporary tables
 **          12/09/2022 mem - Change _mode to lowercase
 **          04/02/2023 mem - Rename procedure and functions
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ BEGIN
 
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Entering';
-        Call public.post_log_entry ('Progress', _statusMessage, 'create_task_steps', 'cap');
+        Call public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
     End If;
 
     If _debugMode And _existingJob <> 0 Then
@@ -323,7 +324,7 @@ BEGIN
         If Not FOUND Then
             _message := format('Script ''%s'' not found in cap.t_scripts for capture task job %s', _jobInfo.Script, _jobInfo.Job);
 
-            Call public.post_log_entry ('Error', _message, 'create_task_steps', 'cap');
+            Call public.post_log_entry ('Error', _message, 'Create_Task_Steps', 'cap');
 
             CONTINUE;
         End If;
@@ -386,7 +387,7 @@ BEGIN
             _loggingEnabled := true;
 
             _statusMessage := format('... Creating capture task job steps: %s / %s', _jobsProcessed, _jobCountToProcess);
-            Call public.post_log_entry ('Progress', _statusMessage, 'create_task_steps', 'cap');
+            Call public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;
@@ -413,7 +414,7 @@ BEGIN
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Create task steps complete';
-        Call public.post_log_entry ('Progress', _statusMessage, 'create_task_steps', 'cap');
+        Call public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
     End If;
 
     ---------------------------------------------------
@@ -422,7 +423,7 @@ BEGIN
     --
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Exiting';
-        Call public.post_log_entry ('Progress', _statusMessage, 'create_task_steps', 'cap');
+        Call public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
     End If;
 
     If _debugMode Then

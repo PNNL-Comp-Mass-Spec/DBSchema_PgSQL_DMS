@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **          10/11/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          04/27/2023 mem - Use boolean for data type name
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -245,7 +246,7 @@ BEGIN
                                          _uploadInfo.ErrorCode,
                                          timestamp_text(_uploadInfo.Entered));
 
-                Call public.post_log_entry ('Error', _logMessage, 'find_stale_myemsl_uploads', 'cap');
+                Call public.post_log_entry ('Error', _logMessage, 'Find_Stale_MyEMSL_Uploads', 'cap');
 
                 _iteration := _iteration + 1;
 
@@ -286,7 +287,7 @@ BEGIN
 
         If _myRowCount > 0 Then
             _message := format('%s unverified for over %s days; error_code set to 101', _message, _staleUploadDays);
-            Call public.post_log_entry ('Error', _message, 'find_stale_myemsl_uploads', 'cap');
+            Call public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'cap');
 
             RAISE INFO '%', _message;
         End If;

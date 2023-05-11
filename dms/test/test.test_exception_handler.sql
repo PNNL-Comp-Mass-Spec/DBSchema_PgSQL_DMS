@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler(_divisor text, _useerrorh
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
 **          08/31/2022 mem - Add a linefeed before showing the context
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ EXCEPTION
         End If;
 
         -- Uncomment to log
-        -- Call public.post_log_entry ('Error', _message, 'test_exception_handler');
+        -- Call public.post_log_entry ('Error', _message, 'Test_Exception_Handler');
     End If;
 
     Return 0;

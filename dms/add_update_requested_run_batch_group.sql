@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **
 **  Auth:   mem
 **  Date:   02/15/2023 - initial version
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -260,7 +261,7 @@ BEGIN
                 _debugMsg := format('Warning: Inconsistent identity values when adding batch group%s: Found ID %s but the INSERT INTO query reported %s',
                                     _name, _batchGroupIDConfirm, _id);
 
-                Call post_log_entry ('Error', _debugMsg, 'add_update_requested_run_batch');
+                Call post_log_entry ('Error', _debugMsg, 'Add_Update_Requested_Run_Batch');
 
                 _id := _batchIDConfirm;
             End If;

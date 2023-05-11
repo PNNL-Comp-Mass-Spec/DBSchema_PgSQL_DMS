@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          02/16/2023 mem - Ported to PostgreSQL
 **          03/30/2023 mem - Retrieve values from _message and _returnCode when calling update_cached_requested_run_batch_stats
 **          05/07/2023 mem - Remove unused variable
+**          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -285,7 +286,7 @@ BEGIN
                 _debugMsg := format('Warning: Inconsistent identity values when adding batch %s: Found ID %s but the INSERT INTO query reported %s',
                                     _name, _batchIDConfirm, _id);
 
-                Call post_log_entry ('Error', _debugMsg, 'add_update_requested_run_batch');
+                Call post_log_entry ('Error', _debugMsg, 'Add_Update_Requested_Run_Batch');
 
                 _id := _batchIDConfirm;
             End If;
