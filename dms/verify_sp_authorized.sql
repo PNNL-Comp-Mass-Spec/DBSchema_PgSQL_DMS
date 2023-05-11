@@ -51,6 +51,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          08/24/2022 mem - Use function local_error_handler() to display the formatted error message
 **          08/26/2022 mem - Change _logError and _infoOnly to booleans
 **          02/14/2023 mem - Use case-insensitive comparisons with procedure_name and login_name
+**          05/10/2023 mem - Simplify call to post_log_entry()
 **
 *****************************************************/
 DECLARE
@@ -181,8 +182,8 @@ BEGIN
                 ' from host IP ' || Coalesce(_clientHostIP::text, 'null');
 
     If _logError Then
-        -- Passing true to _ignoreErrors when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
-        Call public.post_log_entry ('Error', _message, 'verify_sp_authorized', 'public', _ignoreErrors => true);
+        -- Set _ignoreErrors to true when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
+        Call post_log_entry ('Error', _message, 'Verify_SP_Authorized', _ignoreErrors => true);
     End If;
 
     RETURN QUERY
