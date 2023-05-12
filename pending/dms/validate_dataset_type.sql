@@ -94,7 +94,7 @@ BEGIN
 
     If _myRowCount = 0 Then
         _message := 'dataset ID not found in t_dataset: ' || _datasetID::text;
-        _returnCode := 'U5101';
+        _returnCode := 'U5201';
         RETURN;
     End If;
 

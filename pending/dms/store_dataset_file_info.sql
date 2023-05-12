@@ -186,7 +186,7 @@ BEGIN
 
     If Not Exists (SELECT * FROM Tmp_FileData) Then
         _message := 'Nothing returned when splitting the Dataset File List on CR or LF';
-        _myError := 53004;
+        _returnCode := 'U5201';
         RETURN;
     End If;
 

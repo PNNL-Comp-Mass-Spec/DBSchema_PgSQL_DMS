@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          06/30/2022 mem - Rename parameter file argument
 **          05/05/2023 mem - Ported to PostgreSQL
+**          05/11/2023 mem - Update return codes
 **
 *****************************************************/
 DECLARE
@@ -152,7 +153,7 @@ BEGIN
             RAISE WARNING '%', _message;
         End If;
 
-        _returnCode := 'U5101';
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -167,7 +168,7 @@ BEGIN
 
     If Coalesce(_list, '') <> '' Then
         _message := 'The following jobs were not in the database: "' || _list || '"';
-        _returnCode := 'U5107';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -197,7 +198,7 @@ BEGIN
                 RAISE WARNING '%', _message;
             End If;
 
-            _returnCode := 'U5108';
+            _returnCode := 'U5203';
             RETURN;
         End If;
     End If;
@@ -219,7 +220,7 @@ BEGIN
                 RAISE WARNING '%', _message;
             End If;
 
-            _returnCode := 'U5109';
+            _returnCode := 'U5204';
             RETURN;
         End If;
     End If;
@@ -238,7 +239,7 @@ BEGIN
 
         If Not FOUND Then
             _message := 'Parameter file could not be found' || ':"' || _paramFileName || '"';
-            _returnCode := 'U5110';
+            _returnCode := 'U5205';
             RETURN;
         End If;
     End If;
@@ -267,7 +268,7 @@ BEGIN
         If _commaList <> '' Then
             _message := 'Based on the parameter file entered, the following Analysis Job(s) were not compatible with the the tool type' || ':"' || _commaList || '"';
 
-            _returnCode := 'U5117';
+            _returnCode := 'U5206';
             RETURN;
         End If;
     End If;
@@ -296,7 +297,7 @@ BEGIN
         If _invalidJobList <> '' Then
             _message := 'Based on the settings file entered, the following Analysis Job(s) were not compatible with the the tool type' || ':"' || _invalidJobList || '"';
 
-            _returnCode := 'U5119';
+            _returnCode := 'U5207';
             RETURN;
         End If;
 
@@ -576,7 +577,7 @@ BEGIN
                     _message := _msg;
                 End If;
 
-                _returnCode := 'U5204';
+                _returnCode := 'U5208';
                 RETURN;
             End If;
         End If;

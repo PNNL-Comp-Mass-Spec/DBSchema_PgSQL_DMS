@@ -71,7 +71,7 @@ BEGIN
     ---------------------------------------------------
     --
     If _callingUser = '' Then
-        _returnCode := 'U5101';
+        _returnCode := 'U5201';
         _message := 'User ID is missing';
         RETURN;
     End If;
@@ -91,7 +91,7 @@ BEGIN
 
     --
     If _campaignID = 0 Then
-        _returnCode := 'U5102';
+        _returnCode := 'U5202';
         _message := 'Campaign "' || _campaignName || '" is not valid';
         RETURN;
     End If;
@@ -107,7 +107,7 @@ BEGIN
     WHERE username = _username;
 
     If Not FOUND Then
-        _returnCode := 'U5103';
+        _returnCode := 'U5203';
         _message := 'User "' || _username || '" is not valid';
         RETURN;
     End If;

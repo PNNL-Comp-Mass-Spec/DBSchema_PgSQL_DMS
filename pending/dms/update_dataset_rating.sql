@@ -82,7 +82,7 @@ BEGIN
 
     If _datasetCount = 0 Then
         _message := '_datasets cannot be empty';
-        _myError := 10;
+        _returnCode := 'U5201';
         RETURN;
     End If;
 

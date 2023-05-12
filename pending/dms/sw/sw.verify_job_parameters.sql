@@ -69,7 +69,7 @@ BEGIN
 
     If Not FOUND Then
         _message := 'script not found in sw.t_scripts: ' || Coalesce(_scriptName, '??');
-        _returnCode := 'U5101';
+        _returnCode := 'U5201';
 
         RAISE INFO '%', _message;
         RETURN;
@@ -133,7 +133,7 @@ BEGIN
         _message := 'Missing required parameters: ' || _missingParameters;
         RAISE INFO '%', _message;
 
-        _returnCode := 'U5101';
+        _returnCode := 'U5202';
         DROP TABLE Tmp_ParamDefinition;
         RETURN;
     End If;
@@ -164,7 +164,7 @@ BEGIN
             _message := 'Unrecognized script name: ' || _scriptName;
             RAISE INFO '%', _message;
 
-            _returnCode := 'U5102';
+            _returnCode := 'U5203';
             DROP TABLE Tmp_ParamDefinition;
             RETURN;
         End
@@ -214,7 +214,7 @@ BEGIN
             _message := 'The ProteinOptions parameter must be "seq_direction=forward,filetype=fasta" for ' || _scriptBaseName || ' jobs';
             RAISE INFO '%', _message;
 
-            _returnCode := 'U5103';
+            _returnCode := 'U5204';
             DROP TABLE Tmp_ParamDefinition;
             RETURN;
         End If;
@@ -223,7 +223,7 @@ BEGIN
             _message := 'The ProteinOptions parameter must be "seq_direction=decoy,filetype=fasta" for MSFragger jobs';
             RAISE INFO '%', _message;
 
-            _returnCode := 'U5104';
+            _returnCode := 'U5205';
             DROP TABLE Tmp_ParamDefinition;
             RETURN;
         End If;
@@ -237,7 +237,7 @@ BEGIN
             _message := 'Parameter file not found: ' || _parameterFileName;
             RAISE INFO '%', _message;
 
-            _returnCode := 'U5105';
+            _returnCode := 'U5206';
             DROP TABLE Tmp_ParamDefinition;
             RETURN;
         End If;
@@ -246,7 +246,7 @@ BEGIN
             _message := 'Parameter file is not active: ' || _parameterFileName;
             RAISE INFO '%', _message;
 
-            _returnCode := 'U5106';
+            _returnCode := 'U5207';
             DROP TABLE Tmp_ParamDefinition;
             RETURN;
         End If;
@@ -255,7 +255,7 @@ BEGIN
             _message := 'Parameter file is for ' || _paramFileType || ', and not ' || _scriptBaseName || ': ' || _parameterFileName;
             RAISE INFO '%', _message;
 
-            _returnCode := 'U5107';
+            _returnCode := 'U5208';
             DROP TABLE Tmp_ParamDefinition;
             RETURN;
         End If;

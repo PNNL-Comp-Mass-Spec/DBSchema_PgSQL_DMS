@@ -258,7 +258,7 @@ BEGIN
 
     If _list <> '' Then
         _message := 'Could not resolve following usernames (or last names) to user ID: ' || _list;
-        _returnCode := 'U5101';
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -270,7 +270,7 @@ BEGIN
 
     If _list <> '' Then
         _message := 'Unknown role names: ' || _list;
-        _returnCode := 'U5103';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 

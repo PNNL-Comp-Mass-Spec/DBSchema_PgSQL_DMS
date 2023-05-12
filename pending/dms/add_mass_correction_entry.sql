@@ -38,7 +38,7 @@ BEGIN
         _message := 'modName was blank';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5100';
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -46,7 +46,7 @@ BEGIN
         _message := 'modDescription was blank';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5101';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -62,7 +62,7 @@ BEGIN
         _msg := 'Cannot Add: Mass Correction "' || _modMasschange || '" already exists';
         RAISE WARNING '%', _msg;
 
-        _returnCode := 'U5103';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -76,7 +76,7 @@ BEGIN
         _msg := 'Cannot Add: Mass Correction "' || _modName || '" already exists';
         RAISE WARNING '%', _msg;
 
-        _returnCode := 'U5104';
+        _returnCode := 'U5204';
         RETURN;
     End If;
 

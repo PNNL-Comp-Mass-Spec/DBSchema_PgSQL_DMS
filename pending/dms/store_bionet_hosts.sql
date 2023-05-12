@@ -60,8 +60,8 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _hostList = '' Then
-        _message := '_hostList cannot be empty; unable to continue';
-        _myError := 53000;
+        _message := '_hostList is empty; unable to continue';
+        _returnCode := 'U5201'
         RETURN;
     End If;
 
@@ -111,7 +111,11 @@ BEGIN
 
     If Not Exists (SELECT * FROM Tmp_HostData) Then
         _message := 'Nothing returned when splitting the Host List on CR or LF';
-        _myError := 53004;
+        returnCode := 'U5202'
+
+        DROP TABLE Tmp_HostData;
+        DROP TABLE Tmp_Hosts;
+        DROP TABLE Tmp_DataColumns;
         RETURN;
     End If;
 

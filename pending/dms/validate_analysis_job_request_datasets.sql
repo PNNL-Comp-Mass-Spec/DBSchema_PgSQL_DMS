@@ -144,7 +144,7 @@ BEGIN
                 RAISE INFO '%', _message;
             End If;
 
-            _returnCode := 'U5101';
+            _returnCode := 'U5201';
             RETURN;
         Else
             _message := format('Skipped %s "Not Released" %s: %s', _notReleasedCount, public.check_plural(_notReleasedCount, 'dataset', 'datasets'), _list);
@@ -177,7 +177,7 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        _returnCode := 'U5107';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -199,7 +199,7 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        _returnCode := 'U5108';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -218,7 +218,7 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        _returnCode := 'U5109';
+        _returnCode := 'U5204';
         RETURN;
     End If;
 
@@ -248,7 +248,7 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        _returnCode := 'U5110';
+        _returnCode := 'U5205';
         RETURN;
     End If;
 

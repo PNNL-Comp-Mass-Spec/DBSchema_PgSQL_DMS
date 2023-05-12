@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **                         - Validate the instrument group for modes 'instrumentGroup' and 'assignedInstrument'
 **          01/16/2023 mem - Ported to PostgreSQL
 **          05/10/2023 mem - Capitalize procedure name sent to post_usage_log_entry
+**          05/11/2023 mem - Update return codes
 **
 *****************************************************/
 DECLARE
@@ -138,7 +139,7 @@ BEGIN
         GET DIAGNOSTICS _requestCount = ROW_COUNT;
 
         If Not FOUND Then
-            _returnCode := 'U5101';
+            _returnCode := 'U5201';
             RAISE EXCEPTION 'Request ID list was empty; nothing to do';
         End If;
 
@@ -176,7 +177,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _returnCode := 'U5102';
+                _returnCode := 'U5202';
                 RAISE EXCEPTION 'Could not find entry in database for instrument group (or instrument) "%"', _newValue;
             End If;
 
@@ -191,7 +192,6 @@ BEGIN
 
                 If _returnCode <> '' Then
                     _logErrors := false;
-                    _returnCode := 'U5102';
                     RAISE EXCEPTION '%', _message;
                 End If;
 
@@ -214,7 +214,7 @@ BEGIN
 
                 If Not FOUND Then
                     _logErrors := false;
-                    _returnCode := 'U5103';
+                    _returnCode := 'U5203';
                     RAISE EXCEPTION 'Could not find entry in database for instrument "%"', _newValue;
                 End If;
 
@@ -265,7 +265,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _returnCode := 'U5105';
+                _returnCode := 'U5204';
                 RAISE EXCEPTION 'Could not find entry in database for separation group "%"', _newValue;
             End If;
 
@@ -293,7 +293,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _returnCode := 'U5106';
+                _returnCode := 'U5205';
 
                 RAISE EXCEPTION 'Could not find entry in database for dataset type "%"', _newValue;
             End If;

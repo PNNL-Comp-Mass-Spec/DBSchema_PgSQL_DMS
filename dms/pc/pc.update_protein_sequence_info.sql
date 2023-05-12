@@ -13,6 +13,7 @@ CREATE OR REPLACE PROCEDURE pc.update_protein_sequence_info(IN _proteinid intege
 **  Auth:   kja
 **  Date:   10/06/2004
 **          05/01/2023 mem - Ported to PostgreSQL
+**          05/11/2023 mem - Update return code
 **
 *****************************************************/
 DECLARE
@@ -33,7 +34,7 @@ BEGIN
     If Not FOUND Then
         _message := format('Protein ID %s not found', _proteinID);
         RAISE WARNING '%', _message;
-        _returnCode := 'U5001';
+        _returnCode := 'U5201';
         RETURN;
     End If;
 

@@ -147,7 +147,7 @@ BEGIN
             End If;
 
             If _returnCode = '' Then
-                _returnCode := 'U5003'
+                _returnCode := 'U5203'
             End If;
 
             RETURN;

@@ -210,7 +210,7 @@ BEGIN
             _message := format('Cannot change requests in locked batches; locked requests include %s and %s', _firstLocked, _lastLocked);
         End If;
 
-        _returnCode := 'U51012';
+        _returnCode := 'U5201';
         DROP TABLE Tmp_BlockingInfo;
 
         RETURN;

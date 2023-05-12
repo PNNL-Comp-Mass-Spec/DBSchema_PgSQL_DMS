@@ -156,7 +156,7 @@ BEGIN
         End If;
         --
         If char_length(_biomaterialType) < 1 Then
-            _returnCode := 'U5101';
+            _returnCode := 'U5201';
             RAISE EXCEPTION 'Biomaterial Type must be defined';
         End If;
         --

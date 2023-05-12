@@ -66,9 +66,9 @@ BEGIN
     WHERE (group_name = _processorGroupName)
     --
     If _gid = 0 Then
-        _myError := 5;
         _message := 'Processor group could not be found';
-        return _myError
+        _returnCode := 'U5202';
+        RETURN;
     End If;
 */
     ---------------------------------------------------

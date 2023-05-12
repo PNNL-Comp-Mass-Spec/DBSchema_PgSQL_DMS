@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **          08/01/2017 mem - Use THROW if not authorized
 **          05/16/2022 mem - Change RAISERROR severity to 11 (required so that the web page shows the error message)
 **          04/24/2023 mem - Ported to PostgreSQL
+**          05/11/2023 mem - Update return code
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
     If _instrumentName = '' Then
-        _returnCode := 'U5100';
+        _returnCode := 'U5201';
         RAISE EXCEPTION 'Instrument Name was blank';
     End If;
 

@@ -111,7 +111,7 @@ BEGIN
 
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5101';
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
