@@ -65,7 +65,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _datasetName text;
     _datasetIDCheck int;
     _msg text;
@@ -176,107 +175,25 @@ BEGIN
     WHERE Not XmlQ.Device_Type IS NULL;
 
     -- Populate the Device_Number column
-    Update _datasetDevicesTable
-    Set Device_Number = public.try_cast(Device_Number_Text, null::int);
+    UPDATE Tmp_DatasetDevicesTable
+    SET Device_Number = public.try_cast(Device_Number_Text, null::int);
 
     ---------------------------------------------------
     -- Look for matching devices in t_dataset_device
     ---------------------------------------------------
 
-    UPDATE _datasetDevicesTable
+    UPDATE Tmp_DatasetDevicesTable DD
     SET Device_ID = DD.Device_ID
-    FROM _datasetDevicesTable Src
+    FROM t_dataset_device DD
+    WHERE DD.device_type = Src.device_type AND
+          DD.device_name = Src.device_name AND
+          DD.device_model = Src.device_model AND
+          DD.serial_number = Src.Device_Serial_Number AND
+          DD.software_version = Src.Device_Software_Version;
 
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE _datasetDevicesTable
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = _datasetDevicesTable.id;
-    ********************************************************************************/
+    If _infoOnly Then
+        -- ToDo: Show this using Raise Info
 
-                           ToDo: Fix this query
-
-         INNER JOIN t_dataset_device DD
-           ON DD.device_type = Src.device_type AND
-              DD.device_name = Src.device_name AND
-              DD.device_model = Src.device_model AND
-              DD.serial_number = Src.Device_Serial_Number AND
-              DD.software_version = Src.Device_Software_Version
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    If Not _infoOnly Then
-        ---------------------------------------------------
-        -- Add new devices
-        ---------------------------------------------------
-        --
-        INSERT INTO t_dataset_device(
-            device_type, device_number,
-            device_name, device_model,
-            serial_number, software_version,
-            device_description )
-        SELECT Src.device_type,
-               Src.device_number,
-               Src.device_name,
-               Src.device_model,
-               Src.Device_Serial_Number,
-               Src.Device_Software_Version,
-               Src.device_description
-        FROM _datasetDevicesTable Src
-        WHERE Src.device_id IS NULL
-        ORDER BY Src.device_type DESC, Src.device_number
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        ---------------------------------------------------
-        -- Look, again for matching devices in t_dataset_device
-        ---------------------------------------------------
-
-        UPDATE _datasetDevicesTable
-        SET Device_ID = DD.Device_ID
-        FROM _datasetDevicesTable Src
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE _datasetDevicesTable
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = _datasetDevicesTable.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN t_dataset_device DD
-               ON DD.device_type = Src.device_type AND
-                  DD.device_name = Src.device_name AND
-                  DD.device_model = Src.device_model AND
-                  DD.serial_number = Src.Device_Serial_Number AND
-                  DD.software_version = Src.Device_Software_Version
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        ---------------------------------------------------
-        -- Add/update t_dataset_device_map
-        ---------------------------------------------------
-
-        -- Remove any existing froms from t_dataset_device_map
-        DELETE FROM t_dataset_device_map
-        WHERE dataset_id = _datasetID;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        INSERT INTO t_dataset_device_map( dataset_id, device_id )
-        SELECT DISTINCT _datasetID,
-                        Src.device_id
-        FROM _datasetDevicesTable Src
-        WHERE NOT Src.device_id IS NULL
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    Else
         -- Preview new devices
         SELECT 'New device' As Info_Message,
                Src.device_type,
@@ -286,7 +203,7 @@ BEGIN
                Src.Device_Serial_Number,
                Src.Device_Software_Version,
                Src.device_description
-        FROM _datasetDevicesTable Src
+        FROM Tmp_DatasetDevicesTable Src
         WHERE Src.device_id IS NULL
         Union
         SELECT 'Existing device, ID ' || Cast(DD.device_id AS text) AS Info_Message,
@@ -297,30 +214,63 @@ BEGIN
                DD.serial_number,
                DD.software_version,
                DD.device_description
-        FROM _datasetDevicesTable Src
+        FROM Tmp_DatasetDevicesTable Src
              INNER JOIN t_dataset_device DD
                ON Src.device_id = DD.device_id
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+        RETURN;
     End If;
 
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in update_dataset_device_info_xml';
-        End If;
+    ---------------------------------------------------
+    -- Add new devices
+    ---------------------------------------------------
+    --
+    INSERT INTO t_dataset_device (
+        device_type, device_number,
+        device_name, device_model,
+        serial_number, software_version,
+        device_description )
+    SELECT Src.device_type,
+           Src.device_number,
+           Src.device_name,
+           Src.device_model,
+           Src.Device_Serial_Number,
+           Src.Device_Software_Version,
+           Src.device_description
+    FROM Tmp_DatasetDevicesTable Src
+    WHERE Src.device_id IS NULL
+    ORDER BY Src.device_type DESC, Src.device_number;
 
-        _message := _message || '; error code = ' || _myError::text;
+    ---------------------------------------------------
+    -- Look, again for matching devices in t_dataset_device
+    ---------------------------------------------------
 
-        If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Update_Dataset_Device_Info_XML');
-        End If;
-    End If;
+    UPDATE Tmp_DatasetDevicesTable Target
+    SET Device_ID = DD.Device_ID
+    FROM t_dataset_device DD
+    WHERE DD.device_type = Target.device_type AND
+          DD.device_name = Target.device_name AND
+          DD.device_model = Target.device_model AND
+          DD.serial_number = Target.Device_Serial_Number AND
+          DD.software_version = Target.Device_Software_Version;
+
+    ---------------------------------------------------
+    -- Add/update t_dataset_device_map
+    ---------------------------------------------------
+
+    -- Remove any existing froms from t_dataset_device_map
+    DELETE FROM t_dataset_device_map
+    WHERE dataset_id = _datasetID;
+
+    INSERT INTO t_dataset_device_map( dataset_id, device_id )
+    SELECT DISTINCT _datasetID,
+                    Src.device_id
+    FROM Tmp_DatasetDevicesTable Src
+    WHERE NOT Src.device_id IS NULL;
 
     If char_length(_message) > 0 AND _infoOnly Then
         RAISE INFO '%', _message;
     End If;
-
-    Return _myError
 
 END
 $$;

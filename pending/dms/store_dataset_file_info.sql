@@ -162,8 +162,6 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
     _updateExisting := Coalesce(_updateExisting, '');
 
@@ -179,10 +177,8 @@ BEGIN
     End If;
 
     INSERT INTO Tmp_FileData (Value)
-    Select Value
+    SELECT Value
     FROM public.parse_delimited_list(_datasetFileInfo, _delimiter)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If Not Exists (SELECT * FROM Tmp_FileData) Then
         _message := 'Nothing returned when splitting the Dataset File List on CR or LF';
@@ -499,48 +495,21 @@ BEGIN
     -- Update the File_Size_Rank column for the datasets
     -----------------------------------------------
     --
-    UPDATE t_dataset_files
+    UPDATE t_dataset_files Target
     SET file_size_rank = SrcQ.Size_Rank
-    FROM t_dataset_files Target
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE t_dataset_files
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = t_dataset_files.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT dataset_id,
-                             file_path,
-                             file_size_bytes,
-                             file_hash,
-                             dataset_file_id,
-                             Row_Number() OVER (
-                                PARTITION BY dataset_id
-                                ORDER BY deleted ASC, file_size_bytes DESC
-                                ) AS Size_Rank
-                      FROM t_dataset_files
-
-                      /********************************************************************************
-                      ** This UPDATE query includes the target table name in the FROM clause
-                      ** The WHERE clause needs to have a self join to the target table, for example:
-                      **   UPDATE t_dataset_files
-                      **   SET ...
-                      **   FROM source
-                      **   WHERE source.id = t_dataset_files.id;
-                      ********************************************************************************/
-
-                                             ToDo: Fix this query
-
-                      WHERE Dataset_ID In (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
-                    ) SrcQ
-           ON Target.Dataset_File_ID = SrcQ.Dataset_File_ID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    FROM ( SELECT dataset_id,
+                  file_path,
+                  file_size_bytes,
+                  file_hash,
+                  dataset_file_id,
+                  Row_Number() OVER (
+                     PARTITION BY dataset_id
+                     ORDER BY deleted ASC, file_size_bytes DESC
+                     ) AS Size_Rank
+           FROM t_dataset_files
+           WHERE Dataset_ID In (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
+         ) SrcQ
+    WHERE Target.Dataset_File_ID = SrcQ.Dataset_File_ID;
 
     _message := 'Dataset info update successful';
 
@@ -548,6 +517,9 @@ BEGIN
     -- Show the updated files
     -----------------------------------------------
     If Exists (SELECT Dataset_ID FROM Tmp_UpdatedDatasets) Then
+
+        -- ToDo: Show this using RAISE INFO
+
         SELECT *
         FROM V_Dataset_Files_List_Report
         WHERE Dataset_ID In (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
@@ -555,17 +527,11 @@ BEGIN
     End If;
 
     If Exists (Select * From Tmp_Warnings) Then
+
+        -- ToDo: Show this using RAISE INFO
         Select Warning, RowText
         From Tmp_Warnings
         Order By EntryID
-    End If;
-
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in store_dataset_file_info';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
     End If;
 
     ---------------------------------------------------

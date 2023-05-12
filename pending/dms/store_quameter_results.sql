@@ -44,7 +44,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetName text;
     _datasetIDCheck int;
     _usageMessage text;
@@ -157,8 +156,6 @@ BEGIN
     SELECT _datasetID AS DatasetID,
            _datasetName AS Dataset,
            public.try_cast((xpath('//Quameter_Results/Job/text()', _resultsXML))[1]::text, 0) AS Job;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Now extract out the Quameter Measurement information
@@ -182,27 +179,12 @@ BEGIN
     ---------------------------------------------------
     --
     If _datasetID = 0 Then
-        UPDATE Tmp_DatasetInfo
+        UPDATE Tmp_DatasetInfo Target
         SET Dataset_ID = DS.Dataset_ID
-        FROM Tmp_DatasetInfo Target
+        FROM t_dataset DS
+        WHERE Target.Dataset_Name = DS.dataset;
 
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE Tmp_DatasetInfo
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = Tmp_DatasetInfo.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN t_dataset DS
-               ON Target.Dataset_Name = DS.dataset
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             _message := 'Warning: dataset not found in table t_dataset: ' || _datasetName;
             RAISE WARNING '%', _message;
 
@@ -238,7 +220,6 @@ BEGIN
 
             _returnCode := 'U5203';
             RETURN;
-
         End If;
     End If;
 
@@ -401,18 +382,6 @@ BEGIN
                 CURRENT_TIMESTAMP);
 
     _message := 'Quameter measurement storage successful';
-
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in StoreQuameterResults';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Store_Quameter_Results');
-        End If;
-    End If;
 
     If char_length(_message) > 0 AND _infoOnly Then
         RAISE INFO '%', _message;

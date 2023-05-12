@@ -58,7 +58,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _datasetName text;
     _datasetIDCheck int;
     _usageMessage text;
@@ -147,8 +147,6 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
@@ -187,8 +185,6 @@ BEGIN
            _datasetName AS Dataset,
            public.try_cast((xpath('//SMAQC_Results/Job/text()', _resultsXML))[1]::text, 0) AS Job,
            public.try_cast((xpath('//SMAQC_Results/PSM_Source_Job/text()', _resultsXML))[1]::text, 0) AS PSM_Source_Job;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Now extract out the SMAQC Measurement information
@@ -213,27 +209,14 @@ BEGIN
     ---------------------------------------------------
     --
     If _datasetID = 0 Then
-        UPDATE Tmp_DatasetInfo
+        UPDATE Tmp_DatasetInfo Target
         SET Dataset_ID = DS.Dataset_ID
-        FROM Tmp_DatasetInfo Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE Tmp_DatasetInfo
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = Tmp_DatasetInfo.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN t_dataset DS
-               ON Target.Dataset_Name = DS.dataset
+        FROM t_dataset DS
+        WHERE Target.Dataset_Name = DS.dataset;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS __updateCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If __updateCount = 0 Then
             _message := 'Warning: dataset not found in table t_dataset: ' || _datasetName;
             RAISE WARNING '%', _message;
 
@@ -246,21 +229,24 @@ BEGIN
         End If;
 
         -- Update _datasetID
-        SELECT Dataset_ID INTO _datasetID
-        FROM Tmp_DatasetInfo
+        SELECT Dataset_ID
+        INTO _datasetID
+        FROM Tmp_DatasetInfo;
 
     Else
 
         -- _datasetID was non-zero
         -- Validate the dataset name in Tmp_DatasetInfo against t_dataset
 
-        SELECT DS.dataset_id INTO _datasetIDCheck
+        SELECT DS.dataset_id
+        INTO _datasetIDCheck
         FROM Tmp_DatasetInfo Target
              INNER JOIN t_dataset DS
-             ON Target.Dataset_Name = DS.dataset
+               ON Target.Dataset_Name = DS.dataset;
 
         If _datasetIDCheck <> _datasetID Then
-            _message := 'Error: dataset ID values for ' || _datasetName || ' do not match; expecting ' || _datasetIDCheck::text || ' but procedure argument _datasetID is ' || _datasetID::text;
+            _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
+                                _datasetName, _datasetIDCheck, _datasetID);
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -430,18 +416,6 @@ BEGIN
                 CURRENT_TIMESTAMP);
 
     _message := 'SMAQC measurement storage successful';
-
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in StoreSMAQCResults';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Store_SMAQC_Results');
-        End If;
-    End If;
 
     If char_length(_message) > 0 AND _infoOnly Then
         RAISE INFO '%', _message;

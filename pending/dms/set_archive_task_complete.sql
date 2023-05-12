@@ -15,8 +15,8 @@ AS $$
 **      (according to value of input argument)
 **
 **  Arguments:
-**    _datasetName                dataset for which archive task is being completed
-**    _completionCode            0->success, 1->failure, anything else ->no intermediate files
+**    _datasetName          Dataset for archive task
+**    _completionCode       0->success, 1->failure, anything else ->no intermediate files
 **
 **  Auth:   grk
 **  Date:   09/26/2002

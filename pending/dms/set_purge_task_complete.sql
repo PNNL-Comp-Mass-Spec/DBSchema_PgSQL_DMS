@@ -44,7 +44,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetID int;
     _storageServerName text;
     _datasetState int;
@@ -71,28 +70,32 @@ BEGIN
          LEFT OUTER JOIN t_storage_path SPath
            ON DS.storage_path_id = SPath.storage_path_id
     WHERE DS.dataset = _datasetName;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+    If Not FOUND Then
+        _message := format('Dataset %s not found in t_dataset', _datasetName);
+        _returnCode := 'U5201';
+        RETURN;
+    End If;
 
     ---------------------------------------------------
     -- Determine current 'Archive' state and current 'ArchiveUpdate' state
     ---------------------------------------------------
 
-    _currentState := 0;
-    --
-    _currentUpdateState := 0;
-    --
     SELECT archive_state_id,
            archive_update_state_id
     INTO _currentState, _currentUpdateState
     FROM t_dataset_archive
-    WHERE (dataset_id = _datasetID)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE dataset_id = _datasetID;
+
+    If Not FOUND Then
+        _message := format('Dataset ID %s not found in t_dataset_archive for dataset %s', _datasetID, _datasetName);
+        _returnCode := 'U5202';
+        RETURN;
+    End If;
 
     If _currentState <> 7 Then
-        _myError := 1;
-        _message := 'Current archive state incorrect for dataset ' || _datasetName;
+        _message := format('Current archive state is incorrect for dataset %s; expecting 7 but actually %s', _datasetName, _currentState);
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -223,8 +226,7 @@ Code 6 (Purged all data except QC folder)
     End If;
 
     UPDATE t_dataset_archive
-    SET
-        archive_state_id = _completionState,
+    SET archive_state_id = _completionState,
         archive_update_state_id = _currentUpdateState,
         purge_holdoff_date = CASE WHEN _currentUpdateState = 2   THEN CURRENT_TIMESTAMP + INTERVAL '24 hours'
                                   WHEN _completionCode IN (2,3)  THEN CURRENT_TIMESTAMP + INTERVAL '90 minutes'
@@ -236,12 +238,6 @@ Code 6 (Purged all data except QC folder)
                                  ELSE AS_StageMD5_Required
                             END
     WHERE dataset_id = _datasetID;
-
-    If Not FOUND Then
-        _message := 'Update operation failed';
-        _myError := 99;
-        RETURN;
-    End If;
 
     If _completionState in (4, 14) Then
         -- Dataset was purged; update AS_instrument_data_purged to be 1
@@ -255,9 +251,7 @@ Code 6 (Purged all data except QC folder)
         UPDATE t_dataset_archive
         SET instrument_data_purged = 1
         WHERE dataset_id = _datasetID AND
-              Coalesce(instrument_data_purged, 0) = 0
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              Coalesce(instrument_data_purged, 0) = 0;
     End If;
 
     If _completionState in (4) Then
@@ -267,18 +261,14 @@ Code 6 (Purged all data except QC folder)
         UPDATE t_dataset_archive
         SET qc_data_purged = 1
         WHERE dataset_id = _datasetID AND
-              Coalesce(qc_data_purged, 0) = 0
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              Coalesce(qc_data_purged, 0) = 0;
     End If;
 
     If _completionState IN (4, 15) Then
         -- Update purged in t_analysis_job for all jobs associated with this dataset
         UPDATE t_analysis_job
         SET purged = 1
-        WHERE dataset_id = _datasetID AND purged = 0
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE dataset_id = _datasetID AND purged = 0;
 
     End If;
 

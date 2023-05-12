@@ -40,7 +40,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetName text;
     _datasetIDCheck int;
     _usageMessage text;
@@ -111,8 +110,6 @@ BEGIN
     SELECT _datasetID AS DatasetID,
            _datasetName AS Dataset,
            (xpath('//DTARef_MassErrorStats/PSM_Source_Job/text()', _resultsXML))[1]::text AS PSM_Source_Job;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Now extract out the Measurement information
@@ -136,14 +133,12 @@ BEGIN
     ---------------------------------------------------
     --
     If _datasetID = 0 Then
-        UPDATE Tmp_DatasetInfo
+        UPDATE Tmp_DatasetInfo target
         SET Dataset_ID = DS.Dataset_ID
         FROM t_dataset DS
-        WHERE Dataset_Name = DS.dataset
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE target.Dataset_Name = DS.dataset;
 
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             _message := 'Warning: dataset not found in table t_dataset: ' || _datasetName;
             RAISE WARNING '%', _message;
 
@@ -282,18 +277,6 @@ BEGIN
                 Source.mass_error_ppm_refined);
 
     _message := 'DTARefinery Mass Error stats successfully stored';
-
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in StoreDTARefMassErrorStats';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Store_DTARef_Mass_Error_Stats');
-        End If;
-    End If;
 
     If char_length(_message) > 0 AND _infoOnly Then
         RAISE INFO '%', _message;

@@ -41,10 +41,10 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _datasetID int := 0;
     _datasetName text := '';
-    _toolName text := '';
+    _toolName citext := '';
     _updateCodeExpected int;
 BEGIN
     _message := '';
@@ -82,12 +82,12 @@ BEGIN
     End If;
 
     -- Uncomment to debug
-    -- Declare _debugMsg text = 'Updating job state for ' || _job::text +
-    --          ', NewDMSJobState = ' || _newDMSJobState::text +
-    --          ', NewBrokerJobState = ' || _newBrokerJobState::text +
-    --          ', JobCommentAddnl = ' || Coalesce(_jobCommentAddnl, '')
+    -- _debugMsg := 'Updating job state for ' || _job::text +
+    --              ', NewDMSJobState = ' || _newDMSJobState::text +
+    --              ', NewBrokerJobState = ' || _newBrokerJobState::text +
+    --              ', JobCommentAddnl = ' || Coalesce(_jobCommentAddnl, '');
     --
-    -- call PostLogEntry ('Debug', _debugMsg, UpdateAnalysisJobProcessingStats);
+    -- call PostLogEntry ('Debug', _debugMsg, update_analysis_job_processing_stats);
 
     ---------------------------------------------------
     -- Perform (or preview) the update
@@ -125,9 +125,7 @@ BEGIN
                ELSE Processing_Time_Minutes
                END AS Processing_Time_Minutes_New
         FROM t_analysis_job
-        WHERE job = _job
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE job = _job;
 
     Else
 
@@ -179,19 +177,17 @@ BEGIN
                ON J.analysis_tool_id = T.analysis_tool_id
         WHERE J.job = _job
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
+        If _updateCount > 0 Then
             -- Schedule an archive update
-            Call set_archive_update_required _datasetName, _message => _message
+            Call set_archive_update_required (_datasetName, _message => _message);
 
             If _toolName LIKE 'Masic%' Then
                 -- Update the cached MASIC Directory Name
                 UPDATE t_cached_dataset_links
-                Set masic_directory_name= _resultsDirectoryName
-                WHERE dataset_id = _datasetID
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                Set masic_directory_name = _resultsDirectoryName
+                WHERE dataset_id = _datasetID;
             End If;
         End If;
     End If;

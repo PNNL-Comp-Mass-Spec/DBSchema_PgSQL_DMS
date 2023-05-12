@@ -31,7 +31,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_CandidateJobStepDetails (
-      Seq int IDENTITY(1, 1) NOT NULL,
+      Seq int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
       Job int,
       Step int,
       Job_Priority int,

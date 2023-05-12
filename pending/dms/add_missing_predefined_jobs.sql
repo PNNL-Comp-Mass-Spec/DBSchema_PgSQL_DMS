@@ -198,6 +198,9 @@ BEGIN
     ORDER BY DS.dataset_id
 
     If _infoOnly And _showDebug AND EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
+
+        -- ToDo: Show this using RAISE INFO
+
         SELECT 'Debug_Output #1' AS Status,
                InstName.instrument,
                DS.dataset_id,
@@ -220,32 +223,22 @@ BEGIN
     -- Now exclude any datasets that have analysis jobs in t_analysis_job
     -- Filter on _analysisToolNameFilter if not empty
     --
-    UPDATE Tmp_DatasetsToProcess
+    UPDATE Tmp_DatasetsToProcess DTP
     Set Process_Dataset = false
-    FROM Tmp_DatasetsToProcess DTP
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_DatasetsToProcess
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_DatasetsToProcess.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT AJ.dataset_id AS Dataset_ID
-                      FROM t_analysis_job AJ
-                           INNER JOIN t_analysis_tool Tool
-                             ON AJ.analysis_tool_id = Tool.analysis_tool_id
-                      WHERE (_analysisToolNameFilter = '' OR Tool.analysis_tool LIKE _analysisToolNameFilter) AND
-                            (Not _ignoreJobsCreatedBeforeDisposition OR AJ.dataset_unreviewed = 0 )
-                     ) JL
-           ON DTP.dataset_id = JL.dataset_id
-    WHERE DTP.Process_Dataset;
+    FROM ( SELECT AJ.dataset_id AS Dataset_ID
+           FROM t_analysis_job AJ
+                INNER JOIN t_analysis_tool Tool
+                  ON AJ.analysis_tool_id = Tool.analysis_tool_id
+           WHERE (_analysisToolNameFilter = '' OR Tool.analysis_tool LIKE _analysisToolNameFilter) AND
+                 (Not _ignoreJobsCreatedBeforeDisposition OR AJ.dataset_unreviewed = 0 )
+          ) JL
+    WHERE DTP.dataset_id = JL.dataset_id AND
+          DTP.Process_Dataset;
 
     If _infoOnly And _showDebug And EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
+
+        -- ToDo: Show this using RAISE INFO
+
         SELECT 'Debug_Output #2' AS Status,
                InstName.instrument,
                DS.dataset_id,
@@ -268,27 +261,18 @@ BEGIN
     -- Next, exclude any datasets that have been processed by schedule_predefined_analysis_jobs
     -- This check also compares the dataset's current rating to the rating it had when previously processed
     --
-    UPDATE Tmp_DatasetsToProcess
+    UPDATE Tmp_DatasetsToProcess DTP
     Set Process_Dataset = false
-    FROM Tmp_DatasetsToProcess DTP INNER JOIN
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_DatasetsToProcess
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_DatasetsToProcess.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         t_dataset DS ON DTP.dataset_id =DS.dataset_id INNER JOIN
+    FROM t_dataset DS INNER JOIN
          t_predefined_analysis_scheduling_queue_history QH
          ON DS.dataset_id = QH.dataset_id AND DS.dataset_rating_id = QH.dataset_rating_id
-    WHERE DTP.Process_Dataset;
+    WHERE DTP.dataset_id =DS.dataset_id AND
+          DTP.Process_Dataset;
 
     If _infoOnly And _showDebug And EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
+
+        -- ToDo: Show this using RAISE INFO
+
         SELECT 'Debug_Output #3' AS Status,
                InstName.instrument,
                DS.dataset_id,
@@ -381,6 +365,9 @@ BEGIN
         ORDER BY InstName.instrument, DS.dataset_id;
 
         If _infoOnly And _showDebug Then
+
+            -- ToDo: Show this using RAISE INFO
+
             SELECT 'Ignored' AS Status,
                    InstName.instrument,
                    DS.dataset_id,

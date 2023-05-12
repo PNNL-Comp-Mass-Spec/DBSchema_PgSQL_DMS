@@ -298,18 +298,6 @@ BEGIN
 
     _message := 'PSM stats storage successful';
 
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in StoreJobPSMStats';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Store_Job_PSM_Stats');
-        End If;
-    End If;
-
     If char_length(_message) > 0 AND _infoOnly Then
         RAISE INFO '%', _message;
     End If;

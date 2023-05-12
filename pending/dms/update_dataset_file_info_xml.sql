@@ -106,7 +106,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _datasetName text;
     _datasetIDCheck int;
     _startTime text;
@@ -151,8 +150,6 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _message := '';
-    _returnCode:= '';
     _infoOnly := Coalesce(_infoOnly, false);
     _validateDatasetType := Coalesce(_validateDatasetType, true);
 
@@ -199,13 +196,13 @@ BEGIN
         Profile_Scan_Count_MSn int NULL,
         Centroid_Scan_Count_MS int NULL,
         Centroid_Scan_Count_MSn int NULL
-    )
+    );
 
     CREATE TEMP TABLE Tmp_ScanTypes (
         ScanType text NOT NULL,
         ScanCount int NULL,
         ScanFilter text NULL
-    )
+    );
 
     CREATE TEMP TABLE Tmp_InstrumentFiles (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -214,13 +211,13 @@ BEGIN
         InstFileHashType text NULL,     -- Should always be SHA1
         InstFileSize bigint NULL,
         FileSizeRank int NULL      -- File size rank, across all instrument files for this dataset
-    )
+    );
 
     CREATE TEMP TABLE Tmp_DuplicateDatasets (
         Dataset_ID int NOT NULL,
         MatchingFileCount int NOT NULL,
         Allow_Duplicates boolean NOT NULL
-    )
+    );
 
     ---------------------------------------------------
     -- Parse the contents of _datasetInfoXML to populate Tmp_DSInfoTable
@@ -330,7 +327,7 @@ BEGIN
                               ScanCount text PATH '@ScanCount',
                               ScanFilter text PATH '@ScanFilterText')
          ) XmlQ
-    WHERE Not XmlQ.ScanType IS NULL
+    WHERE Not XmlQ.ScanType IS NULL;
 
     ---------------------------------------------------
     -- Now extract out the instrument files
@@ -366,7 +363,6 @@ BEGIN
     -- Validate the hash type
     ---------------------------------------------------
     --
-
     SELECT InstFileHashType
     INTO _unrecognizedHashType
     FROM Tmp_InstrumentFiles
@@ -399,9 +395,7 @@ BEGIN
              INNER JOIN Tmp_InstrumentFiles NewDSFiles
                ON DSFiles.file_hash = NewDSFiles.InstFileHash
         WHERE DSFiles.dataset_id <> _datasetID And DSFiles.deleted = 0 And DSFiles.file_size_bytes > 0
-        GROUP BY DSFiles.dataset_id
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GROUP BY DSFiles.dataset_id;
 
         If Exists (SELECT * FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount) Then
             UPDATE Tmp_DuplicateDatasets
@@ -418,18 +412,15 @@ BEGIN
             WHERE MatchingFileCount >= _instrumentFileCount And Not Allow_Duplicates
             ORDER BY Dataset_ID Desc
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             -- Duplicate dataset found: DatasetID 693058 has the same instrument file as DatasetID 692115; see table t_dataset_files
-            _duplicateDatasetInfoSuffix := format(' has the same instrument file as DatasetID %s; ' ||
-                                                  'to allow this duplicate, set allow_duplicates to true for DatasetID %s in table t_dataset_files',
+            _duplicateDatasetInfoSuffix := format('has the same instrument file as Dataset ID %s; to allow this duplicate, set allow_duplicates to true for DatasetID %s in table t_dataset_files',
                                                     _duplicateDatasetID, _duplicateDatasetID);
 
             -- The message 'Duplicate dataset found' is used by a SQL Server Agent job that notifies admins hourly if a duplicate dataset is uploaded
-            _message := format('Duplicate dataset found: DatasetID %s%s', _datasetId, _duplicateDatasetInfoSuffix);
+            _message := format('Duplicate dataset found: Dataset ID %s %s', _datasetId, _duplicateDatasetInfoSuffix);
 
-            Call post_email_alert 'Error', _message, 'UpdateDatasetFileInfoXML', _recipients => 'admins', _postMessageToLogEntries => 1, _duplicateEntryHoldoffHours => 6
+            Call post_email_alert ('Error', _message, 'update_dataset_file_info_xml', _recipients => 'admins', _postMessageToLogEntries => 1, _duplicateEntryHoldoffHours => 6);
 
             -- Error code 'U5360' is used by several procedures in the capture scema (previously used 53600), including:
             --   handle_dataset_capture_validation_failure
@@ -455,13 +446,10 @@ BEGIN
             WHERE MatchingFileCount >= _instrumentFileCount And Allow_Duplicates
             ORDER BY Dataset_ID Desc
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            _duplicateDatasetInfoSuffix := ' has the same instrument file as DatasetID ' ||;
-                                              Cast(_duplicateDatasetID As text) || '; see table t_dataset_files'
+            _duplicateDatasetInfoSuffix := ('has the same instrument file as Dataset ID %s; see table t_dataset_files', _duplicateDatasetID);
 
-            _msg := format('Allowing duplicate dataset to be added since Allow_Duplicates is true: DatasetID %s%s',
+            _msg := format('Allowing duplicate dataset to be added since Allow_Duplicates is true: Dataset ID %s %s',
                             _datasetId, _duplicateDatasetInfoSuffix);
 
             Call post_log_entry ('Warning', _msg, 'Update_Dataset_File_Info_XML');
@@ -472,11 +460,10 @@ BEGIN
     -- Possibly update the separation type for the dataset
     -----------------------------------------------
 
-    SELECT separation_type INTO _separationType
+    SELECT separation_type
+    INTO _separationType
     FROM t_dataset
-    WHERE dataset_id = _datasetID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE dataset_id = _datasetID;
 
     SELECT Acq_Time_Minutes
     INTO _acqLengthMinutes
@@ -493,7 +480,7 @@ BEGIN
         If _optimalSeparationType <> _separationType AND Not _infoOnly Then
             UPDATE t_dataset
             SET separation_type = _optimalSeparationType
-            WHERE dataset_id = _datasetID
+            WHERE dataset_id = _datasetID;
 
             If NOT Exists (SELECT * FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' And Entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') Then
                 _msg := format('Auto-updated separation type from %s to %s for dataset %s', _separationType, _optimalSeparationType, _datasetName);
@@ -507,6 +494,8 @@ BEGIN
         -----------------------------------------------
         -- Preview the data, then exit
         -----------------------------------------------
+
+        -- ToDo: show this using RAISE INFO
 
         SELECT *, _separationType As Separation_Type, _optimalSeparationType as Optimal_Separation_Type
         FROM Tmp_DSInfoTable
@@ -535,17 +524,13 @@ BEGIN
     --
     UPDATE Tmp_DSInfoTable
     SET Acq_Time_Start = Acq_Time_End
-    WHERE Acq_Time_Start IS NULL AND NOT Acq_Time_End IS NULL
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE Acq_Time_Start IS NULL AND NOT Acq_Time_End IS NULL;
 
     -- Now look for the reverse case
     --
     UPDATE Tmp_DSInfoTable
     SET Acq_Time_End = Acq_Time_Start
-    WHERE Acq_Time_End IS NULL AND NOT Acq_Time_Start IS NULL
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE Acq_Time_End IS NULL AND NOT Acq_Time_Start IS NULL;
 
     -----------------------------------------------
     -- Check for Acq_Time_End being more than 7 days after Acq_Time_Start
@@ -558,13 +543,12 @@ BEGIN
     FROM Tmp_DSInfoTable;
 
     If _acqLengthMinutes > 10080 Then
-        Update Tmp_DSInfoTable
-        Set Acq_Time_End = Acq_Time_Start + Interval '1 hour';
+        UPDATE Tmp_DSInfoTable
+        SET Acq_Time_End = Acq_Time_Start + Interval '1 hour';
 
         _message := format(
             'Acquisition length for dataset %s is over 7 days; ' ||
-            'the Acq_Time_End value (%s) is likely invalid, ' ||
-            'relative to Acq_Time_Start (%s); ' ||
+            'the Acq_Time_End value (%s) is likely invalid, relative to Acq_Time_Start (%s); ' ||
             'setting Acq_Time_End to be 60 minutes after Acq_Time_Start',
             _datasetName,
             public.timestamp_text(_acqTimeEnd),
@@ -582,18 +566,18 @@ BEGIN
     -----------------------------------------------
 
     UPDATE t_dataset
-    SET acq_time_start= CASE WHEN Coalesce(NewInfo.acq_time_start, make_date(1900, 1, 1)) <= make_date(1900, 1, 1)
-                        THEN DS.created
-                        ELSE NewInfo.Acq_Time_Start END,
-        Acq_Time_End =  CASE WHEN Coalesce(NewInfo.Acq_Time_Start, make_date(1900, 1, 1)) <= make_date(1900, 1, 1)
-                        THEN DS.Created
-                        ELSE NewInfo.Acq_Time_End END,
+    SET acq_time_start = CASE WHEN Coalesce(NewInfo.acq_time_start, make_date(1900, 1, 1)) <= make_date(1900, 1, 1)
+                         THEN DS.created
+                         ELSE NewInfo.Acq_Time_Start END,
+        acq_time_end   = CASE WHEN Coalesce(NewInfo.Acq_Time_Start, make_date(1900, 1, 1)) <= make_date(1900, 1, 1)
+                         THEN DS.Created
+                         ELSE NewInfo.Acq_Time_End END,
         scan_count = NewInfo.Scan_Count,
         file_size_bytes = NewInfo.File_Size_Bytes,
         file_info_last_modified = CURRENT_TIMESTAMP
-    FROM Tmp_DSInfoTable NewInfo INNER JOIN
-         t_dataset DS ON
-          NewInfo.Dataset_Name = DS.dataset;
+    FROM Tmp_DSInfoTable NewInfo
+         INNER JOIN t_dataset DS
+           ON NewInfo.Dataset_Name = DS.dataset;
 
     -----------------------------------------------
     -- Add/Update t_dataset_info using a MERGE statement
@@ -660,8 +644,6 @@ BEGIN
     --
     DELETE FROM t_dataset_scan_types
     WHERE dataset_id = _datasetID;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     INSERT INTO t_dataset_scan_types ( dataset_id, scan_type, scan_count, ScanFilter )
     SELECT _datasetID AS Dataset_ID, ScanType, ScanCount, ScanFilter
@@ -722,17 +704,23 @@ BEGIN
     -- Add/update t_dataset_device_map
     -----------------------------------------------
     --
-    Call update_dataset_device_info_xml (_datasetID => _datasetID, _datasetInfoXML => _datasetInfoXML, _infoOnly => false, _skipValidation => true);
+    Call update_dataset_device_info_xml (
+            _datasetID => _datasetID,
+            _datasetInfoXML => _datasetInfoXML,
+            _message => _message,                   -- Output
+            _returnCode => _returnCode,             -- Output
+            _infoOnly => false,
+            _skipValidation => true);
 
     _message := 'Dataset info update successful';
 
     -- Note: ignore error code 'U5360' (previously 53600); a log message has already been made
     If Not _returnCode In ('', 'U5360') Then
         If _message = '' Then
-            _message := 'Error in UpdateDatasetFileInfoXML';
+            _message := 'Error in Update_Dataset_File_Info_XML';
         End If;
 
-        _message := _message || '; error code = ' || _myError::text;
+        _message := format('%s; return code = %s', _message, _returnCode);
 
         If Not _infoOnly Then
             Call post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
@@ -750,7 +738,7 @@ BEGIN
     If Coalesce(_datasetName, '') = '' Then
         _usageMessage := format('Dataset ID: %s', _datasetId);
     Else
-        _usageMessage := 'Dataset: ' || _datasetName;
+        _usageMessage := format('Dataset: %s', _datasetName);
     End If;
 
     If Not _infoOnly Then

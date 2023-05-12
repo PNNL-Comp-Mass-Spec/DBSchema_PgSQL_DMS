@@ -72,7 +72,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_HostData (
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Value text null
-    )
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_Hosts_EntryID ON Tmp_HostData (EntryID);
 
@@ -81,14 +81,14 @@ BEGIN
         NameOrIP text not null,
         IsAlias int not null,
         Instruments text null
-    )
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_Hosts ON Tmp_Hosts (Host);
 
     CREATE TEMP TABLE Tmp_DataColumns (
         EntryID int not null,
         Value text null
-    )
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_DataColumns_EntryID ON Tmp_DataColumns (EntryID);
 
@@ -106,8 +106,6 @@ BEGIN
     INSERT INTO Tmp_HostData (Value)
     SELECT Item
     FROM public.parse_delimited_list ( _hostList, _delimiter )
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If Not Exists (SELECT * FROM Tmp_HostData) Then
         _message := 'Nothing returned when splitting the Host List on CR or LF';
@@ -144,8 +142,6 @@ BEGIN
         WHERE EntryID > _entryID
         ORDER BY EntryID
         LIMIT 1;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- _row should now be empty, or contain something like the following:
         -- 12tfticr64    Host (A)    192.168.30.54
@@ -260,55 +256,25 @@ BEGIN
 
         -- Remove out-of-date aliases
         --
-        UPDATE t_bionet_hosts
+        UPDATE t_bionet_hosts Target
         SET alias = Null
-        FROM t_bionet_hosts Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_bionet_hosts
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = t_bionet_hosts.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             LEFT OUTER JOIN ( SELECT Host AS Alias,
-                                      NameOrIP AS TargetHost
-                               FROM Tmp_Hosts
-                               WHERE IsAlias = 1 ) Src
-               ON Target.Host = Src.TargetHost AND
-                  Target.Alias = Src.Alias
-        WHERE Coalesce(Target.Alias, '') <> '' AND Src.Alias IS NULL
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE NOT EXISTS (SELECT Src.Host AS Alias,
+                                 Src.NameOrIP AS TargetHost
+                          FROM Tmp_Hosts Src
+                          WHERE Src.IsAlias = 1 And
+                                Target.Host = Src.TargetHost AND
+                                Target.Alias = Src.Alias)
+              AND Not target.Alias Is Null;
 
         -- Add/update aliases
         --
-        UPDATE t_bionet_hosts
+        UPDATE t_bionet_hosts Target
         SET alias = Src.alias
-        FROM t_bionet_hosts Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_bionet_hosts
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = t_bionet_hosts.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN ( SELECT Host AS Alias,
-                                 NameOrIP AS TargetHost
-                          FROM Tmp_Hosts
-                          WHERE IsAlias = 1 ) Src
-               ON Target.Host = Src.TargetHost
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        FROM ( SELECT Host AS Alias,
+                      NameOrIP AS TargetHost
+               FROM Tmp_Hosts
+               WHERE IsAlias = 1 ) Src
+        WHERE Target.Host = Src.TargetHost;
 
     End If;
 

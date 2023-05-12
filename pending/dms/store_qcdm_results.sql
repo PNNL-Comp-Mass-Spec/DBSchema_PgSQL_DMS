@@ -40,7 +40,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetName text;
     _datasetIDCheck int;
     _usageMessage text;
@@ -114,9 +113,6 @@ BEGIN
            public.try_cast((xpath('//QCDM_Results/SMAQC_Job/text()', _resultsXML))[1]::text, 0) AS SMAQC_Job,
            public.try_cast((xpath('//QCDM_Results/Quameter_Job/text()', _resultsXML))[1]::text, 0) AS Quameter_Job;
 
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
     ---------------------------------------------------
     -- Now extract out the Measurement information
     ---------------------------------------------------
@@ -143,10 +139,8 @@ BEGIN
         SET Dataset_ID = DS.Dataset_ID
         FROM t_dataset DS
         WHERE Target.Dataset_Name = DS.dataset
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             _message := 'Warning: dataset not found in table t_dataset: ' || _datasetName;
             RAISE WARNING '%', _message;
 
@@ -280,18 +274,6 @@ BEGIN
     _message := 'QCDM measurement storage successful';
 
     _message := 'QCDM measurement storage skipped (not yet coded)';
-
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in StoreQCDMResults';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Store_QCDM_Results');
-        End If;
-    End If;
 
     If char_length(_message) > 0 AND _infoOnly Then
         RAISE INFO '%', _message;

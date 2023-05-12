@@ -39,7 +39,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _datasetName text;
     _datasetIDCheck int;
     _usageMessage text;
@@ -110,9 +109,6 @@ BEGIN
            _datasetName AS Dataset,
            public.try_cast((xpath('//QCART_Results/MASIC_Job/text()', _resultsXML))[1]::text, 0) AS MASIC_Job;
 
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
     ---------------------------------------------------
     -- Now extract out the Measurement information
     ---------------------------------------------------
@@ -129,8 +125,6 @@ BEGIN
                               name text PATH '@Name')
          ) XmlQ
     WHERE NOT XmlQ.ValueText IS NULL;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Update or Validate Dataset_ID in Tmp_DatasetInfo
@@ -154,10 +148,8 @@ BEGIN
 
              INNER JOIN t_dataset DS
                ON Target.Dataset_Name = DS.dataset
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If not FOUND Then
             _message := 'Warning: dataset not found in table t_dataset: ' || _datasetName;
             RAISE WARNING '%', _message;
 
@@ -285,18 +277,6 @@ BEGIN
         VALUES (Source.Dataset_ID, Source.QCART);
 
     _message := 'QCART measurement storage successful';
-
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in StoreQCARTResults';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Store_QCART_Results');
-        End If;
-    End If;
 
     If char_length(_message) > 0 AND _infoOnly Then
         RAISE INFO '%', _message;

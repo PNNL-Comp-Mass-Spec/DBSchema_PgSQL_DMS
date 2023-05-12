@@ -173,7 +173,6 @@ WITH EXECUTE AS OWNER
 
                 _returnCode := 'U5204';
                 RETURN;
-
             End If;
 
             -- Verify that observation rates are numeric
@@ -189,7 +188,6 @@ WITH EXECUTE AS OWNER
 
                 _returnCode := 'U5205';
                 RETURN;
-
             End If;
 
             If _medianIntensity is Null Then
@@ -276,18 +274,6 @@ WITH EXECUTE AS OWNER
     END;
 
     _message := 'Reporter Ion Observation Rates stored';
-
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in StoreReporterIonObsStats';
-        End If;
-
-        _message := _message || '; error code = ' ||  CAST(_myError AS text);
-
-        If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Store_Reporter_Ion_Obs_Stats');
-        End If;
-    End If;
 
     If char_length(_message) > 0 AND _infoOnly Then
         RAISE INFO '%', _message;
