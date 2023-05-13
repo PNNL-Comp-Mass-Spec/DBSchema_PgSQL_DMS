@@ -30,11 +30,15 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 **          04/03/2022 mem - Ported to PostgreSQL
 **          04/04/2022 mem - Update the merge query to support parent_term_type being null
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
     _sourceSchema citext := '';
-    _myRowCount int := 0;
+    _matchCount int;
+    _deleteCount int;
+    _updateCount int;
+    _insertCount int;
     _additionalRows int := 0;
     _s text := '';
     _deleteObsolete1 text := '';
@@ -170,9 +174,9 @@ BEGIN
     _s := _s ||   ' ) LookupQ';
 
     EXECUTE format(_s, _sourceSchema, _sourceTable, _sourceSchema, _sourceTable)
-    INTO _myRowCount;
+    INTO _matchCount;
 
-    If _myRowCount > 0 Then
+    If _matchCount > 0 Then
         ---------------------------------------------------
         -- Obsolete items found
         -- Construct SQL to delete them
@@ -212,14 +216,14 @@ BEGIN
             --
             EXECUTE format(_deleteObsolete1, _sourceSchema, _sourceTable);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
             EXECUTE format(_deleteObsolete2, _sourceSchema, _sourceTable);
             --
             GET DIAGNOSTICS _additionalRows = ROW_COUNT;
 
-            _myRowCount := _myRowCount + _additionalRows;
-            RAISE INFO 'Deleted % obsolete rows in ont.t_cv_ms based on entries in %', Cast(_myRowCount as varchar(9)), _sourceTable;
+            _deleteCount := _deleteCount + _additionalRows;
+            RAISE INFO 'Deleted % obsolete rows in ont.t_cv_ms based on entries in %', _deleteCount, _sourceTable;
         End If;
 
 
@@ -258,9 +262,9 @@ BEGIN
                           NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null
               );
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        RAISE INFO 'Updated % rows in ont.t_cv_ms using %', Cast(_myRowCount as varchar(9)), _sourceTable;
+        RAISE INFO 'Updated % rows in ont.t_cv_ms using %', _updateCount, _sourceTable;
 
         ---------------------------------------------------
         -- Add new rows
@@ -275,9 +279,9 @@ BEGIN
         FROM Tmp_SourceData s
         WHERE s.matches_existing = 0;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        RAISE INFO 'Added % new rows to ont.t_cv_ms using %', Cast(_myRowCount as varchar(9)), _sourceTable;
+        RAISE INFO 'Added % new rows to ont.t_cv_ms using %', _insertCount, _sourceTable;
 
     Else
         -- _infoOnly is true

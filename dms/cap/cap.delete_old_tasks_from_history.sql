@@ -17,10 +17,11 @@ CREATE OR REPLACE PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boole
 **          10/11/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
+    _deleteCount int;
     _dateThreshold timestamp;
     _jobHistoryMinimumCount int := 250000;
     _currentJobCount int;
@@ -96,9 +97,9 @@ BEGIN
                        ORDER BY Job DESC
                        LIMIT _tempTableJobsToRemove );
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        _message := format('Removed %s rows from Tmp_JobsToDelete to assure that %s rows remain in t_tasks_history', _myRowCount, _jobHistoryMinimumCount);
+        _message := format('Removed %s rows from Tmp_JobsToDelete to assure that %s rows remain in t_tasks_history', _deleteCount, _jobHistoryMinimumCount);
         RAISE INFO '%', _message;
 
         If Not Exists (Select * From Tmp_JobsToDelete) Then

@@ -33,10 +33,13 @@ CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infolevel 
 **          07/31/2022 mem - Remove duplicate entries (same object, command, and entry time)
 **          12/23/2022 mem - Rename parameter to _infoLevel
 **          04/27/2023 mem - Use boolean for data type name
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _duplicateCount int;
+    _updateCount int;
+    _deleteCount int;
     _message text;
 BEGIN
 
@@ -103,20 +106,20 @@ BEGIN
 
         -- Look for duplicate entries (see below for more info)
         SELECT COUNT(*)
-        INTO _myRowCount
+        INTO _duplicateCount
         FROM ( SELECT RankQ.schema_change_log_id,
                       row_number() OVER ( PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
                                           ORDER BY RankQ.schema_change_log_id ) AS DupeRank
                FROM t_schema_change_log RankQ) FilterQ
         WHERE FilterQ.DupeRank > 1;
 
-        If _myRowCount > 0 Then
+        If _duplicateCount > 0 Then
             -- This will append a row to the result set
             RETURN QUERY
             SELECT 0 As schema_change_log_id,
                    LocalTimestamp As entered,
                    'Note'::citext As schema_name,
-                   ('Condensed ' || _myRowCount::text || ' duplicate row(s), having the same object name, object type, and entry time')::citext As object_name,
+                   ('Condensed ' || _duplicateCount::text || ' duplicate row(s), having the same object name, object type, and entry time')::citext As object_name,
                    1 As version_rank,
                    ''::citext As function_name,
                    ''::citext As function_source,
@@ -130,10 +133,10 @@ BEGIN
         WHERE RankQ.trim_data = true AND
               target.schema_change_log_id = RankQ.schema_change_log_id;
 
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        _message = 'Trimmed function_source for ' || _myRowCount::text || ' row(s)';
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+        _message = 'Trimmed function_source for ' || _updateCount::text || ' row(s)';
 
-        If _myRowCount > 0 Then
+        If _updateCount > 0 Then
             RAISE INFO '%', _message;
 
             RETURN QUERY
@@ -185,17 +188,17 @@ BEGIN
                        FROM t_schema_change_log RankQ) FilterQ
                 WHERE FilterQ.DupeRank > 1 );
 
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _message = _message || 'Condensed ' || _myRowCount::text || ' duplicate row(s), having the same object name, object type, and entry time';
+        If _deleteCount > 0 Then
+            _message = _message || 'Condensed ' || _deleteCount::text || ' duplicate row(s), having the same object name, object type, and entry time';
 
             -- This will append a row to the result set
             RETURN QUERY
             SELECT 0 As schema_change_log_id,
                    LocalTimestamp As entered,
                    'Note'::citext As schema_name,
-                   ('Condensed ' || _myRowCount::text || ' duplicate row(s), having the same object name, object type, and entry time')::citext As object_name,
+                   ('Condensed ' || _deleteCount::text || ' duplicate row(s), having the same object name, object type, and entry time')::citext As object_name,
                    1 As version_rank,
                    ''::citext As function_name,
                    ''::citext As function_source,

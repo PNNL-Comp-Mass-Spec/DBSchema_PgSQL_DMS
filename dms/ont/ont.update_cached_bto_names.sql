@@ -14,10 +14,12 @@ CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly boolean DEFAULT
 **          04/07/2022 mem - Ported to PostgreSQL
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          04/04/2023 mem - Use char_length() to determine string length
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
+    _deleteCount int;
     _message text := '';
     _message2 text := '';
     _rowsUpdated int := 0;
@@ -42,11 +44,11 @@ BEGIN
         WHERE t.identifier IS NULL
         ORDER BY s.identifier;
 
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _rowsUpdated := _rowsUpdated + _myRowCount;
-            _message := format('Added %s rows to ont.t_cv_bto_cached_names using ont.t_cv_bto', Cast(_myRowCount as varchar(9)));
+        If _insertCount > 0 Then
+            _rowsUpdated := _rowsUpdated + _insertCount;
+            _message := format('Added %s rows to ont.t_cv_bto_cached_names using ont.t_cv_bto', _insertCount);
         End If;
 
         DELETE FROM ont.t_cv_bto_cached_names
@@ -60,11 +62,11 @@ BEGIN
                                       t.term_name = s.term_name
                             WHERE s.identifier IS NULL );
 
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _rowsUpdated := _rowsUpdated + _myRowCount;
-            _message2 := format('Deleted %s extra rows from ont.t_cv_bto_cached_names', Cast(_myRowCount as varchar(9)));
+        If _deleteCount > 0 Then
+            _rowsUpdated := _rowsUpdated + _deleteCount;
+            _message2 := format('Deleted %s extra rows from ont.t_cv_bto_cached_names', _deleteCount);
 
             If char_length(_message) > 0 Then
                 _message := _message || '; ' || _message2;

@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN 
 **          10/22/2022 mem - Raise a warning if an invalid operation
 **          12/09/2022 mem - Change _mode to lowercase
 **          04/27/2023 mem - Use boolean for data type name
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ DECLARE
     _authorized boolean;
 
     _stepToolId int;
-    _myRowCount int;
+    _existingCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -70,13 +71,13 @@ BEGIN
         FROM  cap.t_step_tools
         WHERE step_tool = _name;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         -- Cannot update a non-existent entry
         --
-        If _mode = 'update' And _myRowCount = 0 Then
+        If _mode = 'update' And _existingCount = 0 Then
             _message := 'Could not find "' || _name || '" in database';
             RAISE WARNING '%', _message;
             _returnCode := 'U5201';
@@ -85,7 +86,7 @@ BEGIN
 
         -- Cannot add an existing entry
         --
-        If _mode = 'add' And _myRowCount > 0 Then
+        If _mode = 'add' And _existingCount > 0 Then
             _message := '"' || _name || '" already exists in database';
             RAISE WARNING '%', _message;
             _returnCode := 'U5202';

@@ -28,11 +28,13 @@ CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFA
 **  Date:   08/24/2017 mem - Initial Version
 **          04/01/2022 mem - Ported to PostgreSQL
 **          10/04/2022 mem - Change _infoOnly and _previewDeleteExtras from integer to boolean
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
     _sourceSchema citext := '';
-    _myRowCount int := 0;
+    _updateCount int;
+    _deleteCount int;
     _s text := '';
     _invalidTerm record;
 BEGIN
@@ -170,9 +172,9 @@ BEGIN
                           NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null
               );
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        RAISE INFO 'Updated % rows in ont.t_cv_bto using %', Cast(_myRowCount as varchar(9)), _sourceTable;
+        RAISE INFO 'Updated % rows in ont.t_cv_bto using %', _updateCount, _sourceTable;
 
         ---------------------------------------------------
         -- Add new rows
@@ -187,9 +189,9 @@ BEGIN
         FROM Tmp_SourceData s
         WHERE s.matches_existing = 0;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        RAISE INFO 'Added % new rows to ont.t_cv_bto using %', Cast(_myRowCount as varchar(9)), _sourceTable;
+        RAISE INFO 'Added % new rows to ont.t_cv_bto using %', _updateCount, _sourceTable;
 
         ---------------------------------------------------
         -- Look for identifiers with invalid term names
@@ -224,10 +226,10 @@ BEGIN
                                              HAVING (COUNT(*) > 1) ) AND
               UniqueQSource.identifier IS NULL;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         If Found Then
-            RAISE INFO 'Added % rows to Tmp_InvalidTermNames', Cast(_myRowCount as varchar(9));
+            RAISE INFO 'Added % rows to Tmp_InvalidTermNames', _updateCount;
         Else
             RAISE INFO 'No invalid term names were found';
         End If;
@@ -293,9 +295,9 @@ BEGIN
                         WHERE t.identifier = _invalidTerm.Identifier AND
                               t.term_name = _invalidTerm.term_name;
                         --
-                        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-                        RAISE INFO 'Deleted % row(s) for ID % and term %', Cast(_myRowCount as varchar(9)), _invalidTerm.identifier, _invalidTerm.term_name;
+                        RAISE INFO 'Deleted % row(s) for ID % and term %', _deleteCount, _invalidTerm.identifier, _invalidTerm.term_name;
                     Else
                         -- Not safe to delete
                         RETURN QUERY

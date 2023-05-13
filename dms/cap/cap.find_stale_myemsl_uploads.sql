@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **          10/22/2022 mem - Directly pass value to function argument
 **          04/27/2023 mem - Use boolean for data type name
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ DECLARE
     _entryIDList text;
     _jobList text;
     _iteration int := 0;
-    _myRowCount int;
+    _updateCount int;
     _entryCountToLog int := 5;
     _uploadInfo record;
     _logMessage text;
@@ -183,11 +184,11 @@ BEGIN
             WHERE Uploads.Entry_ID = Stale.Entry_ID AND
                   Stale.RetrySucceeded;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
+            If _updateCount > 0 Then
                 _message := format('Set error_code to 101 for %s %s in t_myemsl_uploads',
-                                    _myRowCount, public.check_plural(_myRowCount, 'row', 'rows'));
+                                    _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
                 RAISE INFO '%', _message;
             End If;
@@ -260,9 +261,9 @@ BEGIN
         FROM Tmp_StaleUploads Stale
         WHERE Uploads.Entry_ID = Stale.Entry_ID;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount = 1 Then
+        If _updateCount = 1 Then
             SELECT Entry_ID, Job
             INTO _entryID, _job
             FROM Tmp_StaleUploads;
@@ -271,7 +272,7 @@ BEGIN
             _message := format('MyEMSL upload task %s for job %s has been', _entryID, _job);
         End If;
 
-        If _myRowCount > 1 Then
+        If _updateCount > 1 Then
 
             SELECT string_agg(Entry_ID::text, ','),
                    string_agg(Job::text,      ',')
@@ -285,7 +286,7 @@ BEGIN
             _message := format('MyEMSL upload tasks %s for capture task jobs %s have been',_entryIDList, _jobList);
         End If;
 
-        If _myRowCount > 0 Then
+        If _updateCount > 0 Then
             _message := format('%s unverified for over %s days; error_code set to 101', _message, _staleUploadDays);
             Call public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'cap');
 

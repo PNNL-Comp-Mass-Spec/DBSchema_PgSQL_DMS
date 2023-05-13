@@ -21,10 +21,11 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool 
 **          09/01/2017 mem - Implement functionality of _infoOnly
 **          10/11/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
+    _updateCount int;
     _updatedRows int := 0;
     _message text;
 BEGIN
@@ -49,17 +50,17 @@ BEGIN
             SET enabled = 1
             WHERE T.tool_name = _tool AND T.enabled < 0 AND T.processor_name <> 'Monroe_CTM';
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _updatedRows := _updatedRows + _myRowCount;
+            _updatedRows := _updatedRows + _updateCount;
 
             UPDATE cap.t_processor_tool T
             SET enabled = 0
             WHERE T.tool_name = _tool AND T.enabled <> 0 AND T.processor_name = 'Monroe_CTM';
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _updatedRows := _updatedRows + _myRowCount;
+            _updatedRows := _updatedRows + _updateCount;
 
             If _updatedRows = 0 Then
                 _message := 'Debug mode is already disabled for ' || _tool;
@@ -102,17 +103,17 @@ BEGIN
             SET enabled = -1
             WHERE T.tool_name = _tool AND T.enabled > 0 AND T.processor_name <> 'Monroe_CTM';
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _updatedRows := _updatedRows + _myRowCount;
+            _updatedRows := _updatedRows + _updateCount;
 
             UPDATE cap.t_processor_tool t
             SET enabled = 1
             WHERE T.tool_name = _tool AND T.enabled <> 1 AND T.processor_name = 'Monroe_CTM';
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _updatedRows := _updatedRows + _myRowCount;
+            _updatedRows := _updatedRows + _updateCount;
 
             If _updatedRows = 0 Then
                 _message := 'Debug mode is already enabled for ' || _tool;

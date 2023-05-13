@@ -35,10 +35,11 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          10/04/2022 mem - Change _showTable and _infoOnly from integer to boolean
 **          01/30/2023 mem - Use new column name in view
 **          01/31/2023 mem - Use new column names in tables
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int := 0;
     _mgrID int;
     _paramTypeID int;
     _cleanupModeString text;
@@ -148,11 +149,11 @@ BEGIN
            ON A.mgr_id = B.mgr_id
     WHERE B.mgr_id IS NULL;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    If _myRowCount <> 0 Then
-        _message := 'Added entry for "ManagerErrorCleanupMode" to mc.t_param_value for ' || _myRowCount::text || ' manager';
-        If _myRowCount > 1 Then
+    If _insertCount <> 0 Then
+        _message := 'Added entry for "ManagerErrorCleanupMode" to mc.t_param_value for ' || _insertCount::text || ' manager';
+        If _insertCount > 1 Then
             _message := _message || 's';
         End If;
 
@@ -228,11 +229,11 @@ BEGIN
         WHERE PV.param_type_id = _paramTypeID AND
             PV.value <> _cleanupModeString);
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := 'Set "ManagerErrorCleanupMode" to ' || _cleanupModeString || ' for ' || _myRowCount::text || ' manager';
-        If _myRowCount > 1 Then
+    If _insertCount > 0 Then
+        _message := 'Set "ManagerErrorCleanupMode" to ' || _cleanupModeString || ' for ' || _insertCount::text || ' manager';
+        If _insertCount > 1 Then
             _message := _message || 's';
         End If;
 

@@ -24,12 +24,14 @@ CREATE OR REPLACE PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays
 **          02/15/2023 mem - Add commit statements
 **          04/02/2023 mem - Rename procedure and functions
 **          04/12/2023 mem - Use new table names
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
     _cutoffDateTime timestamp;
     _dateThreshold text;
-    _myRowCount int;
+    _matchCount int;
+    _deleteCount int;
 BEGIN
 
     ----------------------------------------------------------
@@ -51,12 +53,12 @@ BEGIN
     BEGIN
         If _infoOnly Then
             SELECT COUNT(*)
-            INTO _myRowCount
+            INTO _matchCount
             FROM cap.t_task_events
             WHERE entered < _cutoffDateTime;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Would move % rows from cap.t_task_events to logcap.t_task_events since entered before %', _myRowCount, _dateThreshold;
+            If _matchCount > 0 Then
+                RAISE INFO 'Would move % rows from cap.t_task_events to logcap.t_task_events since entered before %', _matchCount, _dateThreshold;
             Else
                 RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_events', 26, ' '), _dateThreshold;
             End If;
@@ -91,9 +93,9 @@ BEGIN
             DELETE FROM cap.t_task_events
             WHERE entered < _cutoffDateTime;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
+            If _deleteCount > 0 Then
                 RAISE INFO 'Deleted % rows from cap.t_task_parameters_history since saved before %', _myRowCount, _dateThreshold;
             End If;
         End If;
@@ -108,12 +110,12 @@ BEGIN
     BEGIN
         If _infoOnly Then
             SELECT COUNT(*)
-            INTO _myRowCount
+            INTO _matchCount
             FROM cap.t_task_step_events
             WHERE entered < _cutoffDateTime;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Would move % rows from cap.t_task_step_events to logcap.t_task_step_events since entered before %', _myRowCount, _dateThreshold;
+            If _matchCount > 0 Then
+                RAISE INFO 'Would move % rows from cap.t_task_step_events to logcap.t_task_step_events since entered before %', _matchCount, _dateThreshold;
             Else
                 RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_step_events', 26, ' '), _dateThreshold;
             End If;
@@ -151,10 +153,10 @@ BEGIN
             DELETE FROM cap.t_task_step_events
             WHERE entered < _cutoffDateTime;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Deleted % rows from cap.t_task_step_events since saved before %', _myRowCount, _dateThreshold;
+            If _deleteCount > 0 Then
+                RAISE INFO 'Deleted % rows from cap.t_task_step_events since saved before %', _deleteCount, _dateThreshold;
             End If;
         End If;
 
@@ -168,12 +170,12 @@ BEGIN
     BEGIN
         If _infoOnly Then
             SELECT COUNT(*)
-            INTO _myRowCount
+            INTO _matchCount
             FROM cap.t_task_step_processing_log
             WHERE entered < _cutoffDateTime;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Would move % rows from cap.t_task_step_processing_log to logcap.t_task_step_processing_log since entered before %', _myRowCount, _dateThreshold;
+            If _matchCount > 0 Then
+                RAISE INFO 'Would move % rows from cap.t_task_step_processing_log to logcap.t_task_step_processing_log since entered before %', _matchCount, _dateThreshold;
             Else
                 RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_step_processing_log', 26, ' '), _dateThreshold;
             End If;
@@ -208,10 +210,10 @@ BEGIN
             DELETE FROM cap.t_task_step_processing_log
             WHERE entered < _cutoffDateTime;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Deleted % rows from cap.t_task_step_processing_log since saved before %', _myRowCount, _dateThreshold;
+            If _deleteCount > 0 Then
+                RAISE INFO 'Deleted % rows from cap.t_task_step_processing_log since saved before %', _deleteCount, _dateThreshold;
             End If;
         End If;
 
@@ -226,12 +228,12 @@ BEGIN
     BEGIN
         If _infoOnly Then
             SELECT COUNT(*)
-            INTO _myRowCount
+            INTO _matchCount
             FROM cap.t_log_entries
             WHERE entered < _cutoffDateTime;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Would move % rows from cap.t_log_entries to logcap.t_log_entries since entered before %', _myRowCount, _dateThreshold;
+            If _matchCount > 0 Then
+                RAISE INFO 'Would move % rows from cap.t_log_entries to logcap.t_log_entries since entered before %', _matchCount, _dateThreshold;
             Else
                 RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_log_entries', 26, ' '), _dateThreshold;
             End If;
@@ -266,10 +268,10 @@ BEGIN
             DELETE FROM cap.t_log_entries
             WHERE entered < _cutoffDateTime;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Deleted % rows from cap.t_log_entries since saved before %', _myRowCount, _dateThreshold;
+            If _deleteCount > 0 Then
+                RAISE INFO 'Deleted % rows from cap.t_log_entries since saved before %', _deleteCount, _dateThreshold;
             End If;
         End If;
 
@@ -285,12 +287,12 @@ BEGIN
     --
     If _infoOnly Then
             SELECT COUNT(*)
-            INTO _myRowCount
+            INTO _matchCount
             FROM cap.t_task_parameters_history
             WHERE Saved < _cutoffDateTime;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Would delete % rows from cap.t_task_parameters_history since saved before %', _myRowCount, _dateThreshold;
+            If _matchCount > 0 Then
+                RAISE INFO 'Would delete % rows from cap.t_task_parameters_history since saved before %', _matchCount, _dateThreshold;
             Else
                 RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_parameters_history', 26, ' '), _dateThreshold;
             End If;
@@ -299,10 +301,10 @@ BEGIN
         DELETE FROM cap.t_task_parameters_history
         WHERE Saved < _cutoffDateTime;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            RAISE INFO 'Deleted % rows from cap.t_task_parameters_history since saved before %', _myRowCount, _dateThreshold;
+        If _deleteCount > 0 Then
+            RAISE INFO 'Deleted % rows from cap.t_task_parameters_history since saved before %', _deleteCount, _dateThreshold;
         End If;
     End If;
 

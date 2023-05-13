@@ -34,12 +34,15 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **          03/28/2022 mem - Use new table names
 **          04/05/2022 mem - Ported to PostgreSQL
 **          10/04/2022 mem - Change _infoOnly and _previewRelationshipUpdates from integer to boolean
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
     _sourceSchema citext;
     _sourceTableWithSchema citext;
-    _myRowCount int := 0;
+    _updateCount int;
+    _insertCount int;
+    _deleteCount int;
     _s text := '';
     _ontologyID int := 0;
     _autoNumberStartID int := 0;
@@ -139,8 +142,6 @@ BEGIN
     SET matches_existing = 1
     FROM ont.t_term s
     WHERE s.term_pk = Tmp_SourceData.term_pk;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Determine the ontology_id
@@ -177,9 +178,9 @@ BEGIN
                 t.is_leaf <> s.is_leaf
               );
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        RAISE INFO 'Updated % rows in ont.t_term using %', Cast(_myRowCount as varchar(9)), _sourceTable;
+        RAISE INFO 'Updated % rows in ont.t_term using %', _updateCount, _sourceTable;
 
         ---------------------------------------------------
         -- Add new rows
@@ -191,9 +192,9 @@ BEGIN
         WHERE s.matches_existing = 0
         GROUP BY s.term_pk, s.term_name, s.identifier;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        RAISE INFO 'Added % new rows to ont.t_term using %', Cast(_myRowCount as varchar(9)), _sourceTable;
+        RAISE INFO 'Added % new rows to ont.t_term using %', _insertCount, _sourceTable;
 
         ---------------------------------------------------
         -- Add/update parent/child relationships
@@ -261,9 +262,9 @@ BEGIN
             FROM Tmp_RelationshipsToAdd
             ORDER BY Entry_ID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-            RAISE INFO 'Inserted % new parent/child relationships into table ont.t_term_relationship', Cast(_myRowCount as varchar(9));
+            RAISE INFO 'Inserted % new parent/child relationships into table ont.t_term_relationship', _insertCount;
         End If;
 
         -- Find extra relationships
@@ -299,9 +300,9 @@ BEGIN
             DELETE FROM ont.t_term_relationship
             WHERE term_relationship_id IN (Select Relationship_ID FROM Tmp_RelationshipsToDelete);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            RAISE INFO 'Deleted % parent/child relationships from table ont.t_term_relationship', Cast(_myRowCount as varchar(9));
+            RAISE INFO 'Deleted % parent/child relationships from table ont.t_term_relationship', _deleteCount;
         End If;
 
         DROP TABLE Tmp_RelationshipsToAdd;

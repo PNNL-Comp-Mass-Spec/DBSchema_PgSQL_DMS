@@ -41,10 +41,10 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 **                         - Use case insensitive matching of manager name
 **          04/16/2022 mem - Use new function name
 **          02/01/2023 mem - Rename column in temp table
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _iterations int := 0;
 BEGIN
     _message := '';
@@ -92,8 +92,6 @@ BEGIN
            mgr_name
     FROM mc.v_param_value
     WHERE (mgr_name IN (Select value::citext From public.parse_delimited_list(_managerNameList, ',')));
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -----------------------------------------------
     -- Append parameters for parent groups, which are
@@ -161,8 +159,6 @@ BEGIN
                ON Target.mgr_name = ValuesToAppend.mgr_name AND
                   Target.param_type_id = ValuesToAppend.param_type_id
         WHERE (Target.param_type_id IS NULL Or ValuesToAppend.param_type_id = 162);
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- This is a safety check in case a manager has a Default_AnalysisMgr_Params value pointing to itself
         _iterations := _iterations + 1;

@@ -36,11 +36,13 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          12/09/2022 mem - Change _mode to lowercase
 **          04/02/2023 mem - Rename procedure and functions
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/12/2023 mem - Rename variables and fix bug with misplaced "And"
 **
 *****************************************************/
 DECLARE
     _maxJobsToAdd int;
-    _myRowCount int;
+    _insertCount int;
+    _matchCount int;
     _infoMessage text = '';
 
     _startTime timestamp;
@@ -224,21 +226,21 @@ BEGIN
             WHERE TJ.State = 0
             LIMIT _maxJobsToAdd;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-            If _infoOnly And Then
-                If _myRowCount = 0 Then
+            If _infoOnly Then
+                If _insertCount = 0 Then
                     If Exists (SELECT * FROM cap.t_tasks WHERE State = 0) Then
                         SELECT COUNT(*)
-                        INTO _myRowCount
+                        INTO _matchCount
                         FROM cap.t_tasks
                         WHERE State = 0 And Dataset_ID > 0;
 
                         _infoMessage := format('%s capture task %s in cap.t_tasks %s State = 0, but the Dataset_ID %s not found in view cap.V_DMS_Get_Dataset_Definition',
-                                                _myRowCount,
-                                                public.check_plural(_myRowCount, 'job', 'jobs'),
-                                                public.check_plural(_myRowCount, 'has', 'have'),
-                                                public.check_plural(_myRowCount, 'value was', 'values were'));
+                                                _matchCount,
+                                                public.check_plural(_matchCount, 'job', 'jobs'),
+                                                public.check_plural(_matchCount, 'has', 'have'),
+                                                public.check_plural(_matchCount, 'value was', 'values were'));
 
                         RAISE WARNING '%', _infoMessage;
                     Else
@@ -247,7 +249,7 @@ BEGIN
                     End If;
                 Else
                     _infoMessage := format('Found %s capture task %s in cap.t_tasks with State = 0',
-                                            _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
+                                            _insertCount, public.check_plural(_insertCount, 'job', 'jobs'));
                     RAISE INFO '%', _infoMessage;
                 End If;
             End If;

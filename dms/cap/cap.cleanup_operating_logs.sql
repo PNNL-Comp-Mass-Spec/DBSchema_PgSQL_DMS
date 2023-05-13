@@ -24,13 +24,15 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **          10/22/2022 mem - Directly pass value to function argument
 **          02/15/2023 mem - Add Commit statement
 **          04/02/2023 mem - Rename procedure and functions
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
     _currentLocation text := 'Start';
     _infoCutoffDateTime timestamp;
     _dateThreshold text;
-    _myRowCount int;
+    _matchCount int;
+    _deleteCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -68,14 +70,14 @@ BEGIN
 
         If _infoOnly Then
             SELECT COUNT(*)
-            INTO _myRowCount
+            INTO _matchCount
             FROM cap.t_log_entries
             WHERE (entered < _infoCutoffDateTime) AND
                   (type = 'info' OR
                   (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Would delete % rows from cap.t_log_entries since Info or Warn messages older than %', _myRowCount, _dateThreshold;
+            If _matchCount > 0 Then
+                RAISE INFO 'Would delete % rows from cap.t_log_entries since Info or Warn messages older than %', _matchCount, _dateThreshold;
             Else
                 RAISE INFO 'All Info entries in cap.% are newer than %', RPAD('t_log_entries', 26, ' '), _dateThreshold;
             End If;
@@ -87,10 +89,10 @@ BEGIN
                   (type = 'info' OR
                   (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                RAISE INFO 'Deleted % rows from cap.t_log_entries since Info or Warn messages older than %', _myRowCount, _dateThreshold;
+            If _deleteCount > 0 Then
+                RAISE INFO 'Deleted % rows from cap.t_log_entries since Info or Warn messages older than %', _deleteCount, _dateThreshold;
             End If;
         End If;
 

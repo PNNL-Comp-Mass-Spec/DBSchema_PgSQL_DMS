@@ -26,11 +26,12 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          10/05/2022 mem - When querying ont.v_newt_terms, cast Identifier to citext
 **          10/06/2022 mem - Add exception handler and instructions for updating the backing sequence for the entry_id field in ont.t_cv_newt
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
     _errorMessage text := '';
-    _myRowCount int := 0;
+    _insertCount int;
     _sourceTable text;
     _targetSchema text := '';
     _targetTable text := '';
@@ -207,10 +208,10 @@ BEGIN
                 -- Add new terms
                 Execute  _insertSql || _s;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    RAISE INFO 'Added % new rows to % for ontology % using %', _myRowCount, _targetTableWithSchema, upper(_ontologyName), _sourceTable;
+                If _insertCount > 0 Then
+                    RAISE INFO 'Added % new rows to % for ontology % using %', _insertCount, _targetTableWithSchema, upper(_ontologyName), _sourceTable;
                 Else
                     RAISE INFO 'All rows for ontology % are already in %', upper(_ontologyName), _targetTableWithSchema;
                 End If;

@@ -32,10 +32,11 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          04/16/2022 mem - Rename procedure
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **          01/24/2023 mem - Update whitespace
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
+    _updateCount int;
     _entryDateStart timestamp;
     _entryDateEnd timestamp;
     _entryDescription text := '';
@@ -152,9 +153,9 @@ BEGIN
         _targetIdMatched := _lookupResults.target_id;
     End If;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If Not _previewSql AND (_myRowCount = 0 Or _targetIdMatched <> _targetID) Then
+    If Not _previewSql AND (_updateCount = 0 Or _targetIdMatched <> _targetID) Then
         _message := 'Match not found for ' || _entryDescription;
         Return;
     End If;

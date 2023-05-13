@@ -45,10 +45,10 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text;
 
     _sqlState text;
@@ -235,8 +235,6 @@ BEGIN
       LEFT OUTER JOIN mc.t_old_managers Target
            ON Src.mgr_id = Target.mgr_id
     WHERE Target.mgr_id IS NULL;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     RAISE Info 'Insert into t_param_value_old_managers';
 
@@ -273,8 +271,6 @@ BEGIN
         comment = EXCLUDED.comment,
         last_affected = EXCLUDED.last_affected,
         entered_by = EXCLUDED.entered_by;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     RAISE Info 'Delete from mc.t_param_value';
 

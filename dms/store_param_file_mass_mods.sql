@@ -124,10 +124,11 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          02/28/2023 mem - Use renamed parameter file type, 'MSGFPlus'
 **          03/27/2023 mem - Remove dash from DiaNN tool name
 **                         - Cast _paramFileType to citext
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int := 0;
     _msgAddon text;
     _paramFileName text;
     _validateOnly boolean := false;
@@ -370,8 +371,6 @@ BEGIN
         SELECT EntryID, ModType || '=' || ModName
         FROM Tmp_MaxQuant_Mods
         ORDER BY EntryID;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     Else
         If Position(chr(10) In _mods) > 0 Then
             _delimiter := chr(10);
@@ -382,8 +381,6 @@ BEGIN
         INSERT INTO Tmp_Mods (EntryID, Value)
         SELECT Entry_ID, Value
         FROM public.parse_delimited_list_ordered(_mods, _delimiter, 0);
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If Not Exists (SELECT * FROM Tmp_Mods) Then
             _message := 'Nothing returned when splitting the Mods on CR or LF';
@@ -882,9 +879,9 @@ BEGIN
             WHERE original_source_name = _modName AND
                   (original_source = 'UniMod' OR _modName IN ('Heme_615','Dyn2DZ','DeoxyHex', 'Pentose') Or Not _validateUnimod);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If (_myRowCount = 0 Or _massCorrectionID = 0) And Not _validateUnimod Then
+            If (_matchCount = 0 Or _massCorrectionID = 0) And Not _validateUnimod Then
                 -- No match, try matching the DMS name (Mass_Correction_Tag)
                 --
                 SELECT mass_correction_id
@@ -892,10 +889,10 @@ BEGIN
                 FROM t_mass_correction_factors
                 WHERE mass_correction_tag = _modName;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _matchCount = ROW_COUNT;
             End If;
 
-            If _myRowCount = 0 Or Coalesce(_massCorrectionID, 0) = 0 Then
+            If _matchCount = 0 Or Coalesce(_massCorrectionID, 0) = 0 Then
                 If _validateUnimod Then
                     _message := 'UniMod modification not found in t_mass_correction_factors.original_source_name for mod "' || _modName || '"; see row: ' || _row;
                 Else
@@ -1050,10 +1047,8 @@ BEGIN
             WHERE Abs(monoisotopic_mass - _modMassToFind) < 0.25
             Order By Abs(monoisotopic_mass - _modMassToFind)
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount < 1 Or Coalesce(_massCorrectionID, 0) = 0 Then
+            If Not FOUND Or Coalesce(_massCorrectionID, 0) = 0 Then
                 _message := format('Matching modification not found for mass %s in t_mass_correction_factors; see row: %s', _modMassToFind, _row);
 
                 _returnCode := 'U5323';
@@ -1118,10 +1113,8 @@ BEGIN
             INTO _maxQuantModID, _location, _massCorrectionID, _isobaricModIonNumber
             FROM t_maxquant_mods
             WHERE mod_title = _field;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
+            If Not FOUND Then
                 _message := 'MaxQuant modification not found in t_maxquant_mods: ' || _field;
                 _returnCode := 'U5324';
 
@@ -1154,8 +1147,6 @@ BEGIN
             FROM t_mass_correction_factors
             WHERE mass_correction_id = _massCorrectionID
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             -- Lookup the affected residues
 
@@ -1165,8 +1156,6 @@ BEGIN
                  INNER JOIN t_residues R
                    ON M.residue_id = R.residue_id
             WHERE mod_id = _maxQuantModID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If _location = 'proteinNterm' Then
                 _terminalMod := true;

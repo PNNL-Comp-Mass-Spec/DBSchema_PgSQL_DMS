@@ -16,10 +16,11 @@ CREATE OR REPLACE PROCEDURE public.reconcile_inst_name_table_to_storage_assignme
 **  Auth:   grk
 **  Date:   01/26/2001
 **          11/16/2022 mem - Ported to PostgreSQL
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
+    _updateCount int;
 BEGIN
 
     ---------------------------------------------------
@@ -38,11 +39,11 @@ BEGIN
           RankQ.RowNum = 1 AND
           source_path_id <> RankQ.storage_path_id;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
+    If _updateCount > 0 Then
         RAISE INFO 'Updated source_path_id  for % % based on "inbox" rows in t_storage_path',
-                    _myRowCount, public.check_plural(_myRowCount, 'instrument', 'instruments');
+                    _updateCount, public.check_plural(_updateCount, 'instrument', 'instruments');
     Else
         RAISE INFO 'Source_path_id values are already up-to-date in t_instrument_name';
     End If;
@@ -63,11 +64,11 @@ BEGIN
           RankQ.RowNum = 1 AND
           t_instrument_name.storage_path_ID <> RankQ.storage_path_id;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
+    If _updateCount > 0 Then
         RAISE INFO 'Updated storage_path_ID for % % based on "raw-storage" rows in t_storage_path',
-                    _myRowCount, public.check_plural(_myRowCount, 'instrument', 'instruments');
+                    _updateCount, public.check_plural(_updateCount, 'instrument', 'instruments');
     Else
         RAISE INFO 'storage_path_ID values are already up-to-date in t_instrument_name';
     End If;

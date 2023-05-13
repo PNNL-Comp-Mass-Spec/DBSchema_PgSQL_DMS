@@ -16,10 +16,12 @@ CREATE OR REPLACE PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoo
 **          09/30/2022 mem - Fixed bug that used the wrong state_id for completed tasks
 **                         - Ported to PostgreSQL
 **          02/02/2023 mem - Update table aliases
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
+    _insertCount int;
+    _updateCount int;
     _formatSpecifier text := '%-10s %-10s %-20s %-20s %-20s %-20s';
     _infoHead text;
     _infoHeadSeparator text;
@@ -64,9 +66,9 @@ BEGIN
           T.Start > TS.Start
     GROUP BY T.Job;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    If _myRowCount = 0 Then
+    If _insertCount = 0 Then
         If _completedJobsOnly Then
             _message := 'All completed';
         Else
@@ -83,8 +85,8 @@ BEGIN
         RETURN;
     Else
         _message := format('%s %s Start and/or Finish times times updated in cap.t_tasks',
-                           _myRowCount,
-                           public.check_plural(_myRowCount, 'capture task job needs to have its', 'capture task jobs need to have their'));
+                           _insertCount,
+                           public.check_plural(_insertCount, 'capture task job needs to have its', 'capture task jobs need to have their'));
     End If;
 
     UPDATE Tmp_JobsToUpdate
@@ -162,11 +164,11 @@ BEGIN
         FROM Tmp_JobsToUpdate JTU
         WHERE Target.Job = JTU.Job;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         _message := format('Updated Start and/or Finish times in cap.t_tasks for %s capture task %s',
-                           _myRowCount,
-                           public.check_plural(_myRowCount, 'job', 'jobs'));
+                           _updateCount,
+                           public.check_plural(_updateCount, 'job', 'jobs'));
     End If;
 
     DROP TABLE Tmp_JobsToUpdate;

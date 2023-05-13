@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          01/16/2023 mem - Ported to PostgreSQL
 **          05/10/2023 mem - Capitalize procedure name sent to post_usage_log_entry
 **          05/11/2023 mem - Update return codes
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -63,7 +64,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _updateCount int;
+    _inactiveCount int;
     _requestCount int := 0;
     _msg text;
     _requestID int;
@@ -318,10 +320,10 @@ BEGIN
             FROM Tmp_RequestIDs
             WHERE RR.request_id = Tmp_RequestIDs.RequestID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             _message := format('Set the priority to %s for %s requested %s',
-                                _pri, _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'));
+                                _pri, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
         End If;
 
@@ -333,10 +335,10 @@ BEGIN
             FROM Tmp_RequestIDs
             WHERE RR.request_id = Tmp_RequestIDs.RequestID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             _message := format('Changed the instrument group to %s for %s requested %s',
-                                _newInstrumentGroup, _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'));
+                                _newInstrumentGroup, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
         End If;
 
@@ -352,23 +354,23 @@ BEGIN
             WHERE RR.request_id = Tmp_RequestIDs.RequestID AND
                   RR.state_name = 'Active';
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
+            If _updateCount = 0 Then
                 _message := 'Can only update the assigned instrument for Active requested runs; all of the selected items are Completed or Inactive';
             Else
                 _message := format('Changed the assigned instrument to %s for %s requested ',
-                                    _newValue, _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'));
+                                    _newValue, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
                 SELECT COUNT(*)
-                INTO _myRowCount
+                INTO _inactiveCount
                 FROM t_requested_run RR INNER JOIN
                      Tmp_RequestIDs ON RR.request_id = Tmp_RequestIDs.RequestID
                 WHERE RR.state_name <> 'Active';
 
-                If _myRowCount > 0 Then
+                If _inactiveCount > 0 Then
                     _message := format('%s; skipped %s %s since not Active',
-                                        _message, _myRowCount, public.check_plural(_myRowCount, 'request', 'requests'));
+                                        _message, _inactiveCount, public.check_plural(_inactiveCount, 'request', 'requests'));
                 End If;
             End If;
         End If;
@@ -381,10 +383,10 @@ BEGIN
             FROM Tmp_RequestIDs
             WHERE RR.request_id = Tmp_RequestIDs.RequestID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             _message := format('Changed the separation group to %s for %s requested %s',
-                                _newSeparationGroup, _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'));
+                                _newSeparationGroup, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
         End If;
 
         -------------------------------------------------
@@ -395,10 +397,10 @@ BEGIN
             FROM Tmp_RequestIDs
             WHERE RR.request_id = Tmp_RequestIDs.RequestID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             _message := format('Changed the dataset type to %s for %s requested %s',
-                                _newDatasetType, _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'));
+                                _newDatasetType, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
         End If;
 
         -------------------------------------------------

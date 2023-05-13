@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          08/26/2022 mem - Use new column name in t_log_entries
 **          12/12/2022 mem - Whitespace update
 **          04/27/2023 mem - Use boolean for data type name
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -42,7 +43,7 @@ DECLARE
     _minimumPostingTime timestamp;
     _duplicateRowCount int := 0;
     _s text;
-    _myRowCount int;
+    _insertCount int;
     _sqlState text;
     _exceptionMessage text;
     _exceptionContext text;
@@ -113,9 +114,9 @@ BEGIN
     EXECUTE _s
     USING _postedBy, _type, _message;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    If _myRowCount = 0 Then
+    If _insertCount = 0 Then
         _message := 'Warning: log message not added to ' || _targetTableWithSchema;
         RAISE WARNING '%', _message;
     End If;

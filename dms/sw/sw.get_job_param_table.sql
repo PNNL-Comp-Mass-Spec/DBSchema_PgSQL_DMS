@@ -50,6 +50,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **                         - Remove check for DataImportFolder in the Special_Processing field
 **          10/14/2022 mem - Ported to PostgreSQL
 **          03/22/2023 mem - Rename dataset name parameter to DatasetName
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -60,7 +61,7 @@ DECLARE
     _analysisToolNameMappedTool text;
     _settingsFileFound boolean;
     _extDTA text := '';
-    _myRowCount int;
+    _insertCount int;
 BEGIN
     ---------------------------------------------------
     -- Temp table to hold job parameters
@@ -288,10 +289,10 @@ BEGIN
                                   )
              ) XmlQ;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
-            RAISE INFO 'Added % new entries using settings file %', _myRowCount, _settingsFileName;
+            RAISE INFO 'Added % new entries using settings file %', _insertCount, _settingsFileName;
         End If;
     End If;
 

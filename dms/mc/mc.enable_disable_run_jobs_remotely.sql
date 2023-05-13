@@ -36,10 +36,11 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _enable and _infoOnly and false from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _newValue text;
     _activeStateDescription text;
     _countToUpdate int;
@@ -213,8 +214,6 @@ BEGIN
     WHERE PT.param_name = 'RunJobsRemotely' AND
           PV.value <> _newValue AND
           MT.mgr_type_active > 0;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -- Count the number of managers already in the target state
     --
@@ -232,8 +231,6 @@ BEGIN
     WHERE PT.param_name = 'RunJobsRemotely' AND
           PV.value = _newValue AND
           MT.mgr_type_active > 0;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     _countToUpdate  := COALESCE(_countToUpdate, 0);
     _countUnchanged := COALESCE(_countUnchanged, 0);
@@ -324,14 +321,14 @@ BEGIN
           PV.value <> _newValue AND
           MT.mgr_type_active > 0;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     If _myRowCount = 1 And _countUnchanged = 0 Then
         _message := 'Configured the manager to ' || _activeStateDescription;
     Else
         _message := format('Configured %s %s to %s',
-                        _myRowCount,
-                        public.check_plural(_myRowCount, 'manager', 'managers'),
+                        _updateCount,
+                        public.check_plural(_updateCount, 'manager', 'managers'),
                         _activeStateDescription);
 
         If _countUnchanged <> 0 Then

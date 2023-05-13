@@ -14,10 +14,11 @@ CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly boolean DEFAULT false)
 **          04/05/2022 mem - Ported to PostgreSQL
 **          04/07/2022 mem - Use the query results to report status messages
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _rowDescription text;
     _message text := '';
     _message2 text := '';
@@ -67,15 +68,15 @@ BEGIN
               (ont.t_cv_bto.Usage_Last_12_Months <> s.Usage_Last_12_Months Or
                ont.t_cv_bto.Usage_All_Time <> s.Usage_All_Time);
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _rowsUpdated := _rowsUpdated + _myRowCount;
+        If _updateCount > 0 Then
+            _rowsUpdated := _rowsUpdated + _updateCount;
 
-            SELECT * FROM public.check_plural(_myRowCount, 'row', 'rows')
+            SELECT * FROM public.check_plural(_updateCount, 'row', 'rows')
             INTO _rowDescription;
 
-            _message := 'Updated ' || Cast(_myRowCount As text) || ' ' || _rowDescription || ' in ont.t_cv_bto';
+            _message := 'Updated ' || Cast(_updateCount As text) || ' ' || _rowDescription || ' in ont.t_cv_bto';
         End If;
 
         UPDATE ont.t_cv_bto
@@ -84,15 +85,15 @@ BEGIN
         WHERE NOT ont.t_cv_bto.Identifier in (SELECT s.Tissue_ID FROM Tmp_UsageStats s) AND
                   (ont.t_cv_bto.Usage_Last_12_Months > 0 Or ont.t_cv_bto.Usage_All_Time > 0);
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _rowsUpdated := _rowsUpdated + _myRowCount;
+        If _updateCount > 0 Then
+            _rowsUpdated := _rowsUpdated + _updateCount;
 
-            SELECT * FROM public.check_plural(_myRowCount, 'row', 'rows')
+            SELECT * FROM public.check_plural(_updateCount, 'row', 'rows')
             INTO _rowDescription;
 
-            _message2 := 'Set usage stats to 0 for ' || Cast(_myRowCount As text) || ' ' || _rowDescription || ' in ont.t_cv_bto';
+            _message2 := 'Set usage stats to 0 for ' || _updateCount::text || ' ' || _rowDescription || ' in ont.t_cv_bto';
 
             If _message = '' Then
                 _message := _message2;

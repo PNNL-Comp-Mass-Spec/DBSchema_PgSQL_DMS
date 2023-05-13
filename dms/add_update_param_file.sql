@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          02/23/2023 mem - Add mode 'previewadd'
 **                         - If the mode is 'previewadd', set _infoOnly to true when calling StoreParamFileMassMods
 **          02/23/2023 mem - Ported to PostgreSQL
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _existingCount int := 0;
     _msg text;
     _updateMassMods boolean := false;
     _validateMods boolean := false;
@@ -166,18 +167,18 @@ BEGIN
         FROM t_param_files
         WHERE param_file_name = _paramFileName::citext;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         -- Check for a name conflict when adding
         --
-        If _mode Like '%add%' And _myRowCount > 0 Then
+        If _mode Like '%add%' And _existingCount > 0 Then
             _msg := 'Cannot add: Param File "' || _paramFileName || '" already exists';
             RAISE EXCEPTION '%', _msg;
         End If;
 
         -- Check for a name conflict when renaming
         --
-        If _mode Like '%update%' And _myRowCount > 0 And _existingParamFileID <> _paramFileID Then
+        If _mode Like '%update%' And _existingCount > 0 And _existingParamFileID <> _paramFileID Then
             _msg := 'Cannot rename: Param File "' || _paramFileName || '" already exists';
             RAISE EXCEPTION '%', _msg;
         End If;
@@ -193,8 +194,6 @@ BEGIN
             INTO _currentName, _currentTypeID
             FROM t_param_files
             WHERE param_file_id = _paramFileID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If _paramFileName <> _currentName Or _paramFileTypeID <> _currentTypeID Then
 
@@ -324,8 +323,6 @@ BEGIN
                 valid = _paramFileValid,
                 date_modified = CURRENT_TIMESTAMP
             WHERE param_file_id = _paramFileID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             _updateMassMods := true;
 
@@ -365,8 +362,6 @@ BEGIN
             Update t_param_files
             Set mod_list = public.get_param_file_mass_mod_code_list(param_file_id, 0)
             Where param_file_id = _paramFileID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         End If;
 

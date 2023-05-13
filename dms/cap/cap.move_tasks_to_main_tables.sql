@@ -25,10 +25,12 @@ CREATE OR REPLACE PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, I
 **          10/11/2022 mem - Ported to PostgreSQL
 **          03/07/2023 mem - Rename column in temporary table
 **          04/02/2023 mem - Rename procedure and functions
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
+    _updateCount int;
+    _insertCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -72,11 +74,11 @@ BEGIN
         FROM Tmp_Jobs J
         WHERE target.Job = J.Job;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         If _debugMode Then
             RAISE INFO 'Copied metadata from Tmp_Jobs to cap.t_tasks for % capture task %',
-                        _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs');
+                        _updateCount, public.check_plural(_updateCount, 'job', 'jobs');
         End If;
 
         INSERT INTO cap.t_task_steps (
@@ -106,11 +108,11 @@ BEGIN
             Retry_Count
         FROM Tmp_Job_Steps;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
             RAISE INFO 'Added % % to cap.t_task_steps',
-                        _myRowCount, public.check_plural(_myRowCount, 'row', 'rows');
+                        _insertCount, public.check_plural(_insertCount, 'row', 'rows');
         End If;
 
         INSERT INTO cap.t_task_step_dependencies (
@@ -130,11 +132,11 @@ BEGIN
             Enable_Only
         FROM Tmp_Job_Step_Dependencies;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
             RAISE INFO 'Added % % to cap.t_task_step_dependencies',
-                        _myRowCount, public.check_plural(_myRowCount, 'row', 'rows');
+                        _insertCount, public.check_plural(_insertCount, 'row', 'rows');
         End If;
 
         INSERT INTO cap.t_task_parameters (
@@ -146,11 +148,11 @@ BEGIN
             Parameters
         FROM Tmp_Job_Parameters;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
             RAISE INFO 'Added % % to cap.t_task_parameters',
-                        _myRowCount, public.check_plural(_myRowCount, 'row', 'rows');
+                        _insertCount, public.check_plural(_insertCount, 'row', 'rows');
         End If;
 
     EXCEPTION

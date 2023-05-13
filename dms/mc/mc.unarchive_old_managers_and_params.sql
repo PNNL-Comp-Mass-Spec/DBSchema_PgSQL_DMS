@@ -39,10 +39,10 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly and _enableControlFromWebsite from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text;
     _newSeqValue int;
 
@@ -233,8 +233,6 @@ BEGIN
     FROM mc.t_old_managers M
          INNER JOIN Tmp_ManagerList Src
            ON M.mgr_id = Src.mgr_id;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -- Set the manager ID sequence's current value to the maximum manager ID
     --
@@ -270,8 +268,6 @@ BEGIN
                                   ON PV.mgr_id = Src.mgr_id
                            GROUP BY PV.mgr_id, PV.param_type_id
                          );
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -- Set the entry_id sequence's current value to the maximum entry_id
     --

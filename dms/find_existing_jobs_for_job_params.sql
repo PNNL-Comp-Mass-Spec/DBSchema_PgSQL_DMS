@@ -28,10 +28,11 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **          06/30/2022 mem - Rename parameter file argument
 **          11/28/2022 mem - Ported to PostgreSQL
 **          05/05/2023 mem - Change table alias name
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _unknownCount int := 0;
     _datasetName text;
     _organismID int;
     _analysisToolID int;
@@ -84,12 +85,12 @@ BEGIN
     ---------------------------------------------------
 
     SELECT COUNT(*)
-    INTO _myRowCount
+    INTO _unknownCount
     FROM Tmp_Datasets
     WHERE ID Is Null;
 
-    If _myRowCount > 0 Then
-        If _myRowCount = 1 Then
+    If _unknownCount > 0 Then
+        If _unknownCount = 1 Then
             SELECT DS.Dataset
             INTO _datasetName
             FROM Tmp_Datasets DS
@@ -97,7 +98,7 @@ BEGIN
 
             _message := format('Error: "%s" is not a known dataset', _datasetName);
         Else
-            _message := format('Error: %s dataset names are invalid', _myRowCount);
+            _message := format('Error: %s dataset names are invalid', _unknownCount);
         End If;
 
         RAISE WARNING '%', _message;

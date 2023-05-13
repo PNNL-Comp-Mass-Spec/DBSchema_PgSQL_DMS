@@ -21,13 +21,14 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 **          12/11/2015 mem - Clearing comments that start with 'Disabled' when _enable = 1
 **          12/18/2017 mem - Avoid adding _disableComment to the comment field multiple times
 **          10/11/2022 mem - Ported to PostgreSQL
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
     _newState int;
     _oldState int;
     _task text;
-    _myRowCount int;
+    _updateCount int;
 BEGIN
 
     -----------------------------------------------
@@ -90,14 +91,14 @@ BEGIN
     WHERE ProcTool.Tool_Name = FilterQ.Tool_Name AND
           ProcTool.Enabled = _oldState;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount = 0 Then
+    If _updateCount = 0 Then
         RAISE INFO '%', format('Did not find any rows in cap.t_processor_tool with Enabled = %s and Tool_Name = %s',
                                 _oldState, 'DatasetArchive, ArchiveUpdate, ArchiveVerify, or ArchiveStatusCheck');
     Else
         RAISE INFO '%', format('Changed Enabled from %s to %s for %s %s in cap.t_processor_tool',
-                                _oldState, _newState, _myRowCount, public.check_plural(_myRowCount, 'row', 'rows'));
+                                _oldState, _newState, _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
     End If;
 
     If _disableComment <> '' Then

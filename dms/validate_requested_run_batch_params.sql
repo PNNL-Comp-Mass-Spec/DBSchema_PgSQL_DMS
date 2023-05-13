@@ -33,10 +33,10 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **                         - Update error message
 **          02/16/2023 mem - Add _batchGroupID and _batchGroupOrder
 **          02/16/2023 mem - Ported to PostgreSQL
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _locked text;
     _matchCount int;
     _newUsername text;
@@ -120,10 +120,8 @@ BEGIN
             SELECT locked INTO _locked
             FROM  t_requested_run_batches
             WHERE  batch_id = _batchID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
+            If Not FOUND Then
                 _message := 'Cannot update: entry does not exist in database';
                 _returnCode := 'U5205';
                 RETURN;

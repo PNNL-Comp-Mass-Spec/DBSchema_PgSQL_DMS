@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 **          10/10/2022 mem - Ported to PostgreSQL
 **          03/07/2023 mem - Use new column name
 **          04/02/2023 mem - Rename procedure and functions
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -39,7 +40,7 @@ DECLARE
     _jobDateDescription text;
     _similarJob int;
     _jobList text;
-    _myRowCount int;
+    _insertCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -226,10 +227,10 @@ BEGIN
             Job = _job AND
             Saved = _dateStamp;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
-            RAISE INFO 'Inserted % steps into cap.t_task_steps for %', _myRowCount, _jobDateDescription;
+            RAISE INFO 'Inserted % steps into cap.t_task_steps for %', _insertCount, _jobDateDescription;
         End If;
 
         -- Change any waiting or enabled steps to state 7 (holding)
@@ -259,10 +260,10 @@ BEGIN
             Job = _job AND
             Saved = _dateStamp;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
-            RAISE INFO 'Inserted % row into cap.t_task_parameters for %', _myRowCount, _jobDateDescription;
+            RAISE INFO 'Inserted % row into cap.t_task_parameters for %', _insertCount, _jobDateDescription;
         End If;
 
         ---------------------------------------------------
@@ -323,10 +324,10 @@ BEGIN
                 FROM cap.t_task_step_dependencies_history H
                 WHERE Job = _similarJob;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
                 If _debugMode Then
-                    RAISE INFO 'Added % rows to cap.t_task_step_dependencies for % using model capture task job %', _myRowCount, _jobDateDescription, _similarJob;
+                    RAISE INFO 'Added % rows to cap.t_task_step_dependencies for % using model capture task job %', _insertCount, _jobDateDescription, _similarJob;
                 End If;
 
             Else
@@ -348,10 +349,10 @@ BEGIN
                 WHERE Job = _newJob AND
                       Step > 1;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
                 If _debugMode Then
-                    RAISE INFO 'Added % rows to cap.t_task_step_dependencies for %', _myRowCount, _jobDateDescription;
+                    RAISE INFO 'Added % rows to cap.t_task_step_dependencies for %', _insertCount, _jobDateDescription;
                 End If;
             End If;
 

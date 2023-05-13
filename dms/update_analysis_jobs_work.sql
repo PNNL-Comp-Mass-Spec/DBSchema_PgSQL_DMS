@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          06/30/2022 mem - Rename parameter file argument
 **          05/05/2023 mem - Ported to PostgreSQL
 **          05/11/2023 mem - Update return codes
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -62,7 +63,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _noChangeText text := '[no change]';
     _msg text;
     _list text;
@@ -335,9 +335,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   priority <> _newPriority;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Update priority to ' || _newPriority::text;
         End If;
 
@@ -348,9 +347,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) And
                   Not comment LIKE '%' || _comment;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Append comment text';
         End If;
 
@@ -360,9 +358,8 @@ BEGIN
             SET comment = replace(comment, _findText, _replaceText)
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Replace comment text';
         End If;
 
@@ -373,9 +370,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   assigned_processor_name <> _assignedProcessor;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Update assigned processor to ' || _assignedProcessor;
         End If;
 
@@ -392,9 +388,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   propagation_mode <> _propMode;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Update propagation mode to ' || _propagationMode;
         End If;
 
@@ -405,9 +400,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   param_file_name <> _paramFileName;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Update parameter file to ' || _paramFileName;
         End If;
 
@@ -418,9 +412,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   settings_file_name <> _settingsFileName;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Update settings file to ' || _settingsFileName;
         End If;
 
@@ -431,9 +424,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   organism_id <> _orgid;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Change organism to ' || _organismName;
         End If;
 
@@ -444,9 +436,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   protein_collection_list <> _protCollNameList;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Change protein collection list to ' || _protCollNameList;
         End If;
 
@@ -457,9 +448,8 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   protein_options_list <> _protCollOptionsList;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _jobCountUpdated := _myRowCount;
             _action := 'Change protein options list to ' || _protCollOptionsList;
         End If;
 
@@ -492,9 +482,8 @@ BEGIN
             assigned_processor_name = CASE WHEN _assignedProcessor = _noChangeText THEN assigned_processor_name ELSE _assignedProcessor END
         WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-        _jobCountUpdated := _myRowCount;
         _action := 'Reset job state';
 
         If _paramFileName <> _noChangeText Then
@@ -563,8 +552,6 @@ BEGIN
             INTO _gid
             FROM t_analysis_job_processor_group
             WHERE group_name = _associatedProcessorGroup;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If Not FOUND Then
                 _msg := 'Processor group name not found: "' || _associatedProcessorGroup || '"';
@@ -588,10 +575,10 @@ BEGIN
             DELETE FROM t_analysis_job_processor_group_associations
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
             If _jobCountUpdated = 0 Then
-                _jobCountUpdated := _myRowCount;
+                _jobCountUpdated := _deleteCount;
             End If;
 
             _action2 := _action2 || '; remove jobs from processor group';
@@ -605,9 +592,9 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
                   group_id <> _gid;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount <> 0 Then
+            If _updateCount <> 0 Then
                 _processorGroupAssociationsUpdated := 1;
             End If;
 
@@ -617,13 +604,13 @@ BEGIN
             SELECT job, _gid FROM Tmp_AnalysisJobs
             WHERE NOT job IN (SELECT job FROM t_analysis_job_processor_group_associations);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
             If _jobCountUpdated = 0 Then
-                _jobCountUpdated := _myRowCount;
+                _jobCountUpdated := _insertCount;
             End If;
 
-            If _myRowCount <> 0 OR _processorGroupAssociationsUpdated <> 0 Then
+            If _insertCount <> 0 OR _processorGroupAssociationsUpdated <> 0 Then
                 _action2 := _action2 || '; associate jobs with processor group ' || _associatedProcessorGroup;
             End If;
 

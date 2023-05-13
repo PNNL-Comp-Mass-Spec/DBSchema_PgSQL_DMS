@@ -34,10 +34,12 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly and _showTable from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
+    _updateCount int;
     _mgrID int;
     _paramTypeID int;
     _countToUpdate int;
@@ -137,12 +139,12 @@ BEGIN
            ON A.mgr_id = B.mgr_id
     WHERE B.mgr_id IS NULL;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    If _myRowCount <> 0 Then
+    If _insertCount <> 0 Then
         _message := format('Added entry for ManagerUpdateRequired to mc.t_param_value for %s %s',
-                        _myRowCount,
-                        public.check_plural(_myRowCount, 'manager', 'managers'));
+                        _insertCount,
+                        public.check_plural(_insertCount, 'manager', 'managers'));
 
         RAISE INFO '%', _message;
     End If;
@@ -213,12 +215,12 @@ BEGIN
         WHERE PV.param_type_id = _paramTypeID AND
             PV.value <> 'True');
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
+    If _updateCount > 0 Then
         _message := format('Set ManagerUpdateRequired to True for %s %s',
-                        _myRowCount,
-                        public.check_plural(_myRowCount, 'manager', 'managers'));
+                        _updateCount,
+                        public.check_plural(_updateCount, 'manager', 'managers'));
 
         RAISE INFO '%', _message;
     ELSE

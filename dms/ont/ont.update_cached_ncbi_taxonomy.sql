@@ -14,10 +14,13 @@ CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean
 **          01/06/2022 mem - Implement support for _infoOnly
 **          04/07/2022 mem - Ported to PostgreSQL
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
+    _deleteCount int;
+    _updateCount int;
     _countUpdated int := 0;
     _countAdded int := 0;
     _message text := '';
@@ -97,9 +100,9 @@ BEGIN
            ON Nodes.tax_id = SynonymStats.tax_id
     WHERE (NodeNames.name_class = 'scientific name');
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    RAISE INFO 'Populated Tmp_SourceData with % tax_id rows', Cast(_myRowCount as varchar(9));
+    RAISE INFO 'Populated Tmp_SourceData with % tax_id rows', _insertCount;
 
     ---------------------------------------------------
     -- Update existing rows
@@ -159,10 +162,10 @@ BEGIN
                                  ON s.tax_id = t.tax_id
                           WHERE s.tax_id IS NULL );
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            RAISE INFO 'Deleted % extra taxonomy IDs', Cast(_myRowCount as varchar(9));
+        If _deleteCount > 0 Then
+            RAISE INFO 'Deleted % extra taxonomy IDs', _deleteCount;
         Else
             RAISE INFO 'Did not need to find any extra taxonomy IDs to delete';
         End If;
@@ -183,10 +186,10 @@ BEGIN
           Coalesce( NULLIF(t.synonym_list, s.synonym_list),
                     NULLIF(s.synonym_list, t.synonym_list)) IS NOT NULL;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        RAISE INFO 'Update synonyms for % taxonomy IDs', Cast(_myRowCount as varchar(9));
+    If _updateCount > 0 Then
+        RAISE INFO 'Update synonyms for % taxonomy IDs', _updateCount;
     Else
         RAISE INFO 'Did not need to update any synonym lists';
     End If;
@@ -199,10 +202,10 @@ BEGIN
     Set synonym_list = ''
     WHERE synonyms = 0 And Coalesce(synonym_list, '') <> '';
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        RAISE INFO 'Cleared the synonyms for % taxonomy IDs', Cast(_myRowCount as varchar(9));
+    If _updateCount > 0 Then
+        RAISE INFO 'Cleared the synonyms for % taxonomy IDs', _updateCount;
     Else
         RAISE INFO 'Did not need to clear any synonym lists';
     End If;

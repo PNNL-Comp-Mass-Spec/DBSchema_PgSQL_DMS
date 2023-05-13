@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          10/27/2020 mem - Add parameter _urlDomain and update SP_URL_Domain
 **          06/24/2021 mem - Add support for re-using an existing storage path when _mode is 'add'
 **          05/08/2023 mem - Ported to PostgreSQL
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -62,7 +63,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _machineName text;
     _num int := 0;
     _tmpID int := 0;
@@ -276,10 +277,10 @@ BEGIN
                     WHERE storage_path_function = 'raw-storage' AND
                           instrument = _instrumentName;
                     --
-                    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
                     _message := format('%s %s changed from raw-storage to old-storage (%s)',
-                                        _myRowCount, public.check_plural(_myRowCount, 'path was', 'paths were'), _pathIDs);
+                                        _updateCount, public.check_plural(_updateCount, 'path was', 'paths were'), _pathIDs);
 
                 End If;
 
@@ -419,10 +420,10 @@ BEGIN
                 SET storage_path_id = _tmpID
                 WHERE instrument = _instrumentName;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
                 _message := format('%s %s changed from raw-storage to old-storage (%s)',
-                            _myRowCount, public.check_plural(_myRowCount, 'path was', 'paths were'), _pathIDs);
+                            _updateCount, public.check_plural(_updateCount, 'path was', 'paths were'), _pathIDs);
 
             End If;
 

@@ -33,10 +33,11 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          04/16/2022 mem - Rename procedure
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **          12/12/2022 mem - Whitespace update
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
+    _updateCount int;
     _entryDateStart timestamp;
     _entryDateEnd timestamp;
     _entryDescription text := '';
@@ -138,9 +139,9 @@ BEGIN
         _targetIDMatch := _lookupResults.target_id_match;
     End If;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If Not _previewSql AND (_myRowCount = 0 Or _targetIDMatch <> _targetID) Then
+    If Not _previewSql AND (_updateCount = 0 Or _targetIDMatch <> _targetID) Then
         _message := 'Match not found for ' || _entryDescription;
         Return;
     End If;

@@ -56,10 +56,12 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _enable, _infoOnly and _includeDisabled from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _deleteCount int;
+    _updateCount int;
     _newValue text;
     _managerTypeName text;
     _activeStateDescription text;
@@ -155,10 +157,10 @@ BEGIN
                                                ON M.mgr_name = U.manager_name AND
                                                   M.mgr_type_id = _managerTypeID );
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := 'Found ' || _myRowCount || ' entries in _managerNameList that are not ' || _managerTypeName || ' managers';
+            If _deleteCount > 0 Then
+                _message := 'Found ' || _deleteCount || ' entries in _managerNameList that are not ' || _managerTypeName || ' managers';
                 RAISE INFO '%', _message;
                 _message := '';
             End If;
@@ -181,8 +183,6 @@ BEGIN
         FROM mc.t_mgrs
         WHERE mgr_type_id = _managerTypeID And
               (control_from_website > 0 Or _includeDisabled);
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     End If;
 
     -- Set _newValue based on _enable
@@ -210,8 +210,6 @@ BEGIN
     WHERE PT.param_name = 'mgractive' AND
           PV.value <> _newValue AND
           MT.mgr_type_active > 0;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -- Count the number of managers already in the target state
     --
@@ -229,8 +227,6 @@ BEGIN
     WHERE PT.param_name = 'mgractive' AND
           PV.value = _newValue AND
           MT.mgr_type_active > 0;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     _countToUpdate  := COALESCE(_countToUpdate, 0);
     _countUnchanged := COALESCE(_countUnchanged, 0);
@@ -378,15 +374,15 @@ BEGIN
           PV.value <> _newValue AND
           MT.mgr_type_active > 0;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount = 1 And _countUnchanged = 0 Then
+    If _updateCount = 1 And _countUnchanged = 0 Then
         _message := 'The manager is now ' || _activeStateDescription;
     Else
         If _managerTypeID = 0 Then
-            _message := 'Set ' || _myRowCount || ' managers to state ' || _activeStateDescription;
+            _message := 'Set ' || _updateCount || ' managers to state ' || _activeStateDescription;
         Else
-            _message := 'Set ' || _myRowCount || ' ' || _managerTypeName || ' managers to state ' || _activeStateDescription;
+            _message := 'Set ' || _updateCount || ' ' || _managerTypeName || ' managers to state ' || _activeStateDescription;
         End If;
 
         If _countUnchanged <> 0 Then

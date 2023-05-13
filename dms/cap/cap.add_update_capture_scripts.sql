@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          10/22/2022 mem - Raise a warning if an invalid operation
 **          12/09/2022 mem - Change _mode to lowercase
 **          04/27/2023 mem - Use boolean for data type name
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -39,7 +40,7 @@ DECLARE
 
     _scriptId int;
     _scriptXML xml;
-    _myRowCount int;
+    _existingCount int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -114,11 +115,11 @@ BEGIN
         FROM cap.t_scripts
         WHERE script = _script;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         -- Cannot update a non-existent entry
         --
-        If _mode = 'update' And _myRowCount = 0 Then
+        If _mode = 'update' And _existingCount = 0 Then
             _message := 'Could not find script "' || _script || '" in database; cannot update';
             RAISE WARNING '%', _message;
             _returnCode := 'U5204';
@@ -127,7 +128,7 @@ BEGIN
 
         -- Cannot add an existing entry
         --
-        If _mode = 'add' And _myRowCount > 0 Then
+        If _mode = 'add' And _existingCount > 0 Then
             _message := 'Script "' || _script || '" already exists in database; cannot add';
             RAISE WARNING '%', _message;
             _returnCode := 'U5205';

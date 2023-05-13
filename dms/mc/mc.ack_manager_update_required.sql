@@ -32,10 +32,11 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          01/31/2023 mem - Use new column names in tables
+**          05/12/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _myRowCount int;
+    _updateCount int;
     _mgrID int;
     _paramTypeID int;
 
@@ -46,8 +47,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    _myRowCount := 0;
 
     _managerName := Trim(Coalesce(_managerName, ''));
     If (char_length(_managerName) = 0) Then
@@ -81,9 +80,9 @@ BEGIN
           PV.mgr_id = _mgrID AND
           PV.value <> 'False';
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
+    If _updateCount > 0 Then
         _message := 'Acknowledged that update is required';
     Else
         -- No rows were updated; may need to make a new entry for 'ManagerUpdateRequired' in the t_param_value table
