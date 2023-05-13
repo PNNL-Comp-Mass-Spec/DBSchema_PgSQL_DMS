@@ -71,6 +71,7 @@ AS $$
 **          11/25/2022 mem - Rename parameter to _wellplate
 **          02/27/2023 mem - Look for '..\' at the start of _captureSubfolder
 **                         - Use new XML element names
+**          05/12/2023 bcg - Fix extra double quote bug on the XML 'Capture Share Name' line
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -180,7 +181,7 @@ BEGIN
     _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Dataset Name" Value="' ||          xml_quote_check(_datasetName) || '" />' || _newLine;
     _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Experiment Name" Value="' ||       xml_quote_check(_experimentName) || '" />' || _newLine;
     _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Instrument Name" Value="' ||       xml_quote_check(_instrumentName) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Capture Share Name" Value=""' ||   xml_quote_check(_captureShareName) || '" />' || _newLine;
+    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Capture Share Name" Value="' ||    xml_quote_check(_captureShareName) || '" />' || _newLine;
     _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Capture Subdirectory" Value="'||   xml_quote_check(_captureSubdirectory) || '" />' || _newLine;
     _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Separation Type" Value="' ||       xml_quote_check(_separationType) || '" />' || _newLine;
     _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="LC Cart Name" Value="' ||          xml_quote_check(_lcCartName) || '" />' || _newLine;
