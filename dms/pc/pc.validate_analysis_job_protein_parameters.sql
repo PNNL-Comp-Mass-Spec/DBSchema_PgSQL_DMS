@@ -317,8 +317,8 @@ BEGIN
         WHERE keyword = _optionKeyword;
 
         If Not FOUND Then
-            _message := format('"%s" is not a valid keyword; see item %s in the protein options list: %s',
-                            Coalesce(_optionKeyword, '??'), _entryID, _protCollOptionsList);
+            _message := format('"%s" is not a valid keyword; protein options list: %s',
+                            Coalesce(_optionKeyword, '??'), _protCollOptionsList);
             _returnCode := 'U5209';
             RAISE WARNING '%', _message;
 
