@@ -48,7 +48,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _matchCount int := 0;
     _msg text;
     _logErrors boolean := true;
     _tempEUSPropID text := '0';
@@ -136,11 +136,11 @@ BEGIN
         FROM t_eus_proposals
         WHERE proposal_id = _eusPropID;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
         -- Cannot create an entry that already exists
         --
-        If _mode = 'add' And _myRowCount > 0 Then
+        If _mode = 'add' And _matchCount > 0 Then
             _logErrors := false;
             _msg := format('Cannot add: EUS Proposal ID "%s" is already in the database', _eusPropID);
             RAISE EXCEPTION '%', _msg;
@@ -148,7 +148,7 @@ BEGIN
 
         -- Cannot update a non-existent entry
         --
-        If _mode = 'update' And _myRowCount = 0 Then
+        If _mode = 'update' And _matchCount = 0 Then
             _logErrors := false;
             _msg := format('Cannot update: EUS Proposal ID "%s" is not in the database', _eusPropID);
             RAISE EXCEPTION '%', _msg;

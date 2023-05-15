@@ -27,7 +27,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
     _groupID int;
     _criterionID int;
     _groupsProcessed int;
@@ -85,7 +85,7 @@ BEGIN
             LOOP
 
                 SELECT COUNT(*)
-                INTO _myRowCount
+                INTO _matchCount
                 FROM t_filter_set_criteria FSC INNER JOIN
                      t_filter_set_criteria_groups FSCG ON
                      FSC.filter_criteria_group_id = FSCG.filter_criteria_group_id
@@ -93,7 +93,7 @@ BEGIN
                        FSC.filter_criteria_group_id = _groupID AND
                        FSC.criterion_id = _criterionID;
 
-                If _myRowCount > 0 Then
+                If _matchCount > 0 Then
                     CONTINUE;
                 End If;
 

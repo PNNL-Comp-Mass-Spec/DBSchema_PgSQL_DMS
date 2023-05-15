@@ -98,7 +98,13 @@ BEGIN
     -- Call procedure UpdateDatasets
     ---------------------------------------------------
 
-    Call update_datasets (_datasets, _rating => _rating, _mode => _mode, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser)
+    Call update_datasets (
+        _datasets,
+        _rating => _rating,
+        _mode => _mode,
+        _message => _message,
+        _returnCode => _returnCode,
+        _callingUser => _callingUser);
 
     If _returnCode = '' And Not _infoOnly Then
         If _datasetCount = 1 Then

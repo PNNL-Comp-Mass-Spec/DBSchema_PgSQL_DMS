@@ -59,7 +59,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _insertCount int := 0;
     _msg text;
     _currentStateID int;
     _requestType text := 'Default';
@@ -194,9 +194,9 @@ BEGIN
             FROM public.parse_delimited_integer_list ( _batchIDs, ',' )
             WHERE Value <> 0;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
+            If _insertCount = 0 Then
                 If _batchIDs = '0' Then
                     RAISE EXCEPTION 'Invalid requested run batch ID; must be a positive integer, not zero';
                 Else
@@ -204,7 +204,7 @@ BEGIN
                 End If;
             End If;
 
-            If _myRowCount = 1 Then
+            If _insertCount = 1 Then
                 _batchDescription := 'batch ' || _batchIDs;
             Else
                 _batchDescription := 'batches ' || _batchIDs;
@@ -300,10 +300,8 @@ BEGIN
                    GROUP BY work_package ) StatsQ
             ORDER BY Requests DESC
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount > 0 And _mode Like 'preview%' Then
+            If FOUND And _mode Like 'preview%' Then
                 RAISE INFO '%', 'Set Work Package to ' || _workPackage || ' based on requests in ' || _batchDescription;
             End If;
         End If;

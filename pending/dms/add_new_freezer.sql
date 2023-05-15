@@ -24,7 +24,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int := 0;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -163,9 +163,9 @@ BEGIN
         FROM Tmp_T_Material_Locations
         ORDER BY shelf, rack, row, Col
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _message := 'Added ' || _myRowCount::text || ' rows to t_material_locations by copying freezer_tag ' || _sourceFreezerTag;
+        _message := 'Added ' || _insertCount::text || ' rows to t_material_locations by copying freezer_tag ' || _sourceFreezerTag;
 
         Call post_log_entry ('Normal', _message, 'Add_New_Freezer');
     End If;

@@ -40,7 +40,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _xml AS xml;
     _debugMode boolean := false;
     _debugMsg text;
@@ -49,6 +48,8 @@ DECLARE
     _invalidCartConfig text := '';
     _firstLocked int;
     _lastLocked int;
+    _deleteCount int;
+    _updateRowCount int;
     _usageMessage text;
 BEGIN
     _message := '';
@@ -120,9 +121,7 @@ BEGIN
                               cart_column citext PATH '@co')
          ) XmlQ;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    _requestCountInXML := _myRowCount
+    GET DIAGNOSTICS _requestCountInXML = ROW_COUNT;
 
     UPDATE Tmp_BlockingInfo
     SET cart_config_name = ''
@@ -151,9 +150,9 @@ BEGIN
             _message := 'Invalid cart name: ' || _invalidCart;
         End If;
 
-        _returnCode := 'U51027';
-        DROP TABLE Tmp_BlockingInfo;
+        _returnCode := 'U5201';
 
+        DROP TABLE Tmp_BlockingInfo;
         RETURN;
     End If;
 
@@ -175,9 +174,9 @@ BEGIN
         LIMIT 1;
 
         _message := 'Invalid cart config name: ' || _invalidCartConfig;
-        _returnCode := 'U51028';
-        DROP TABLE Tmp_BlockingInfo;
+        _returnCode := 'U5202';
 
+        DROP TABLE Tmp_BlockingInfo;
         RETURN;
     End If;
 
@@ -210,9 +209,9 @@ BEGIN
             _message := format('Cannot change requests in locked batches; locked requests include %s and %s', _firstLocked, _lastLocked);
         End If;
 
-        _returnCode := 'U5201';
-        DROP TABLE Tmp_BlockingInfo;
+        _returnCode := 'U5203';
 
+        DROP TABLE Tmp_BlockingInfo;
         RETURN;
     End If;
 
@@ -229,15 +228,15 @@ BEGIN
                                  Coalesce(Tmp_BlockingInfo.cart_config_id, 0) = Coalesce(RR.cart_config_id, 0) AND
                                  public.try_cast(Tmp_BlockingInfo.cart_column, 0) = Coalesce(RR.cart_column, 0) );
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
     If _debugMode Then
-        If _requestCountInXML = _myRowCount Then
+        If _requestCountInXML = _deleteCount Then
             _debugMsg := format('All %s requests were unchanged; nothing to do', _requestCountInXML);
-        ElsIf _myRowCount = 0
+        ElsIf _deleteCount = 0
             _debugMsg := format('Will update all %s requests', _requestCountInXML);
         Else
-            _debugMsg := format('Will update %s of %s requests', _requestCountInXML - _myRowCount, _requestCountInXML);
+            _debugMsg := format('Will update %s of %s requests', _requestCountInXML - _deleteCount, _requestCountInXML);
         End If;
 
         Call post_log_entry ('Debug', _debugMsg, 'Update_LC_Cart_Request_Assignments');
@@ -254,12 +253,14 @@ BEGIN
         cart_column = Tmp_BlockingInfo.cart_column
     FROM Tmp_BlockingInfo
     WHERE Tmp_BlockingInfo.request_id = t_requested_run.request_id;
+    --
+    GET DIAGNOSTICS _updateRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := _myRowCount::text || ' requested runs updated';
+    _usageMessage := _updateRowCount::text || ' requested runs updated';
     Call post_usage_log_entry ('Update_LC_Cart_Request_Assignments', _usageMessage);
 
     DROP TABLE Tmp_BlockingInfo;

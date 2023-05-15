@@ -121,7 +121,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _deleteCount int;
     _msg text;
     _list text;
     _jobID int;
@@ -448,9 +448,9 @@ BEGIN
                 DELETE FROM Tmp_DatasetInfo
                 WHERE Dataset_Name IN (SELECT Dataset FROM _matchingJobDatasets)
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-                _jobCountToBeCreated := _jobCountToBeCreated - _myRowCount;
+                _jobCountToBeCreated := _jobCountToBeCreated - _deleteCount;
 
                 -- Construct message of removed dataset(s)
                 --
@@ -935,7 +935,7 @@ BEGIN
             If _gid <> 0 Then
                 -- if single job was created, get its identity directly
                 --
-                If _batchID = 0 AND _myRowCount = 1 Then
+                If _batchID = 0 AND _jobCountToBeCreated = 1 Then
                     INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
                     VALUES (_jobID, _gid);
                 End If;
@@ -943,7 +943,7 @@ BEGIN
                 -- if multiple jobs were created, get job identities
                 -- from all jobs using new batch ID
                 --
-                If _batchID <> 0 AND _myRowCount >= 1 Then
+                If _batchID <> 0 AND _jobCountToBeCreated >= 1 Then
                     INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
                     SELECT job, _gid
                     FROM t_analysis_job

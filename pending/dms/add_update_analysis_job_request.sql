@@ -124,11 +124,11 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _datasetCount int := 0;
     _autoSupersedeName text := '';
     _msgToAppend text;
     _logErrors boolean := false;
-    _datasetMin text := null;
+    _datasetMin text := NULL;
     _datasetMax text := NULL;
     _tmtProDatasets int := 0;
     _datasetCount int := 0;
@@ -338,10 +338,10 @@ BEGIN
         ---------------------------------------------------
         --
         SELECT COUNT(*)
-        INTO _myRowCount
+        INTO _datasetCount
         FROM Tmp_DatasetInfo
 
-        If _myRowCount = 1 Then
+        If _datasetCount = 1 Then
             SELECT MIN(Dataset_Name)
             INTO _datasetMin
             FROM Tmp_DatasetInfo;

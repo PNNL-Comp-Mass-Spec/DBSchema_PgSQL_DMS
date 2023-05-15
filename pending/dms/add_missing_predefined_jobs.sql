@@ -65,7 +65,7 @@ AS $$
 *****************************************************/
 DECLARE
     _showRules boolean := false;
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _datasetsProcessed int;
     _datasetsWithNewJobs int;
     _entryID int;
@@ -329,22 +329,9 @@ BEGIN
     If _datasetNameIgnoreExistingJobs <> '' Then
         UPDATE Tmp_DatasetsToProcess
         SET Process_Dataset = true
-        FROM Tmp_DatasetsToProcess Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE Tmp_DatasetsToProcess
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = Tmp_DatasetsToProcess.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN t_dataset DS
-          ON Target.dataset_id = DS.dataset_id
-        WHERE DS.dataset = _datasetNameIgnoreExistingJobs;
+        FROM t_dataset DS
+        WHERE Target.dataset_id = DS.dataset_id AND
+              DS.dataset = _datasetNameIgnoreExistingJobs;
     End If;
 
     If _infoOnly Then
@@ -387,13 +374,9 @@ BEGIN
         End If;
     End If;
 
-    -- Count the number of entries with Process_Dataset = true in Tmp_DatasetsToProcess
-    SELECT COUNT(*)
-    INTO _myRowCount
-    FROM Tmp_DatasetsToProcess
-    WHERE Process_Dataset;
+    -- Look for datasets with Process_Dataset = true in Tmp_DatasetsToProcess
 
-    If _myRowCount = 0 Then
+    If Not Exists (SELECT COUNT(*) FROM Tmp_DatasetsToProcess WHERE Process_Dataset) Then
         _message := 'All recent (valid) datasets with potential predefined jobs already have existing analysis jobs';
         If _infoOnly Then
             RAISE INFO '%', _message;
@@ -510,11 +493,11 @@ BEGIN
                     WHERE dataset_id = _datasetID AND
                           created >= _startDate;
                     --
-                    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                    If _myRowCount <> _jobCountAdded Then
+                    If _updateCount <> _jobCountAdded Then
                         _message := 'Added ' || _jobCountAdded::text || ' missing predefined analysis job(s) for dataset ' || _datasetName ||
-                                    ', but updated the comment for ' || _myRowCount::text || ' job(s); mismatch is unexpected';
+                                    ', but updated the comment for ' || _updateCount::text || ' job(s); mismatch is unexpected';
 
                         Call post_log_entry ('Error', _message, 'Add_Missing_Predefined_Jobs');
                     End If;

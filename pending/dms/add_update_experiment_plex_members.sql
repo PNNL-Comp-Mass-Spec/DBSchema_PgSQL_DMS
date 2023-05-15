@@ -147,7 +147,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _matchCount int := 0;
     _msg text;
     _logErrors boolean := false;
     _plexExperimentId int;
@@ -155,7 +155,6 @@ DECLARE
     _expectedChannelCount int := 0;
     _actualChannelCount int := 0;
     _entryID int;
-    _continue boolean;
     _parseColData false;
     _value text;
     _charIndex int;
@@ -314,7 +313,6 @@ BEGIN
             FROM public.parse_delimited_list_ordered(_plexMembers, chr(10), 0);
 
             _entryID := 0;
-            _continue := true;
 
             FOR _value IN
                 SELECT Value
@@ -637,9 +635,9 @@ BEGIN
                                 FROM t_experiments
                                 WHERE experiment = _experimentIdOrName
                                 --
-                                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                                GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-                                If _myRowCount = 0 Then
+                                If _matchCount = 0 Then
                                     _message := 'Experiment not found for channel ' || Cast(_channelNum As text) || ': ' || _experimentIdOrName;
                                     RAISE EXCEPTION '%', _message;
                                 End If;
@@ -774,8 +772,6 @@ BEGIN
                        ON EG.parent_exp_id = E.exp_id
                 WHERE EG.parent_exp_id = _plexExperimentId AND
                       E.experiment <> 'Placeholder';
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
             End If;
 
             ---------------------------------------------------
@@ -786,9 +782,8 @@ BEGIN
             ---------------------------------------------------
 
             _currentPlexExperimentId := 0;
-            _continue := true;
 
-            WHILE _continue
+            WHILE true
             LOOP
 
                 -- This While loop can probably be converted to a For loop; for example:
@@ -806,78 +801,77 @@ BEGIN
                 WHERE plexExperimentId > _currentPlexExperimentId
                 ORDER BY plexExperimentId
                 LIMIT 1;
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                If _myRowCount = 0 Then
-                    _continue := false;
+                If Not FOUND Then
+                    -- Break out of the While
+                    EXIT;
+                End If;
+
+                If _expIdList = '' Then
+                    _expIdList := Cast(_currentPlexExperimentId As text);
                 Else
-                    If _expIdList = '' Then
-                        _expIdList := Cast(_currentPlexExperimentId As text);
+                    _expIdList := _expIdList || ', ' || Cast(_currentPlexExperimentId As text);
+                End If;
+
+                If _mode = 'preview' Then
+                -- <PreviewAddUpdate>
+                    _updatedRows := 0;
+
+                    SELECT COUNT(*)
+                    INTO _updatedRows
+                    FROM t_experiment_plex_members t
+                         INNER JOIN Tmp_Experiment_Plex_Members s
+                           ON t.channel = s.channel
+                    WHERE t.plex_exp_id = _currentPlexExperimentId
+
+                    If _updatedRows = _actualChannelCount Then
+                        _actionMessage := 'Would update ' || Cast(_updatedRows As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
+                    ElsIf _updatedRows = 0
+                        _actionMessage := 'Would add ' || Cast(_actualChannelCount As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
                     Else
-                        _expIdList := _expIdList || ', ' || Cast(_currentPlexExperimentId As text);
+                        _actionMessage := 'Would add/update ' || Cast(_actualChannelCount As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
                     End If;
 
-                    If _mode = 'preview' Then
-                    -- <PreviewAddUpdate>
-                        _updatedRows := 0;
+                    Insert Into Tmp_DatabaseUpdates (Message) Values (_actionMessage)
 
-                        SELECT COUNT(*)
-                        INTO _updatedRows
-                        FROM t_experiment_plex_members t
-                             INNER JOIN Tmp_Experiment_Plex_Members s
-                               ON t.channel = s.channel
-                        WHERE t.plex_exp_id = _currentPlexExperimentId
+                Else
+                -- <AddUpdatePlexInfo>
+                    MERGE INTO t_experiment_plex_members AS t
+                    USING ( SELECT channel, exp_id, channel_type_id, Comment
+                            FROM Tmp_Experiment_Plex_Members
+                          ) AS s
+                    ON (t.channel = s.channel AND t.plex_exp_id = _currentPlexExperimentId)
+                    WHEN MATCHED AND
+                         (t.exp_id <> s.exp_id OR
+                          t.channel_type_id <> s.channel_type_id OR
+                          t.comment IS DISTINCT FROM s.comment) THEN
+                        UPDATE SET
+                            exp_id = s.exp_id,
+                            channel_type_id = s.channel_type_id,
+                            comment = s.comment
+                    WHEN NOT MATCHED THEN
+                        INSERT (plex_exp_id,
+                                channel,
+                                exp_id,
+                                Channel_Type_ID,
+                                Comment)
+                        VALUES (_currentPlexExperimentId,
+                                s.channel,
+                                s.exp_id,
+                                s.channel_type_id,
+                                s.Comment);
 
-                        If _updatedRows = _actualChannelCount Then
-                            _actionMessage := 'Would update ' || Cast(_updatedRows As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
-                        ElsIf _updatedRows = 0
-                            _actionMessage := 'Would add ' || Cast(_actualChannelCount As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
-                        Else
-                            _actionMessage := 'Would add/update ' || Cast(_actualChannelCount As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
-                        End If;
+                    -- Delete rows in the target table that aren't in the source table
+                    DELETE FROM t_experiment_plex_members
+                    WHERE t.plex_exp_id = _currentPlexExperimentId AND
+                          NOT t.channel IN (SELECT channel FROM Tmp_Experiment_Plex_Members);
 
-                        Insert Into Tmp_DatabaseUpdates (Message) Values (_actionMessage)
-
-                    Else
-                    -- <AddUpdatePlexInfo>
-                        MERGE INTO t_experiment_plex_members AS t
-                        USING ( SELECT channel, exp_id, channel_type_id, Comment
-                                FROM Tmp_Experiment_Plex_Members
-                              ) AS s
-                        ON (t.channel = s.channel AND t.plex_exp_id = _currentPlexExperimentId)
-                        WHEN MATCHED AND
-                             (t.exp_id <> s.exp_id OR
-                              t.channel_type_id <> s.channel_type_id OR
-                              t.comment IS DISTINCT FROM s.comment) THEN
-                            UPDATE SET
-                                exp_id = s.exp_id,
-                                channel_type_id = s.channel_type_id,
-                                comment = s.comment
-                        WHEN NOT MATCHED THEN
-                            INSERT (plex_exp_id,
-                                    channel,
-                                    exp_id,
-                                    Channel_Type_ID,
-                                    Comment)
-                            VALUES (_currentPlexExperimentId,
-                                    s.channel,
-                                    s.exp_id,
-                                    s.channel_type_id,
-                                    s.Comment);
-
-                        -- Delete rows in the target table that aren't in the source table
-                        DELETE FROM t_experiment_plex_members
-                        WHERE t.plex_exp_id = _currentPlexExperimentId AND
-                              NOT t.channel IN (SELECT channel FROM Tmp_Experiment_Plex_Members);
-
-                        If char_length(_callingUser) > 0 Then
-                            -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
-                            --
-                            Call alter_entered_by_user ('t_experiment_plex_members_history', 'plex_exp_id', _currentPlexExperimentId, _callingUser);
-                        End If;
-                    End If;  -- </AddUpdatePlexInfo>
-                End If;
+                    If char_length(_callingUser) > 0 Then
+                        -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
+                        --
+                        Call alter_entered_by_user ('t_experiment_plex_members_history', 'plex_exp_id', _currentPlexExperimentId, _callingUser);
+                    End If;
+                End If;  -- </AddUpdatePlexInfo>
 
             END LOOP; -- </WhileLoop>
 

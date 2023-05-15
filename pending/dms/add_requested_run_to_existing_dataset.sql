@@ -57,7 +57,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
     _showDebugStatements boolean := false;
     _existingDatasetID int;
     _existingDatasetName text;
@@ -118,19 +118,19 @@ BEGIN
         FROM t_dataset
         WHERE dataset_id = _datasetID;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        If _myRowCount = 0 And _datasetName <> '' Then
+        If _matchCount = 0 And _datasetName <> '' Then
             SELECT dataset_id
                    dataset
             INTO _existingDatasetID, _existingDatasetName
             FROM t_dataset
             WHERE dataset = _datasetName;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
         End If;
 
-        If _myRowCount = 0 Then
+        If _matchCount = 0 Then
             RAISE EXCEPTION 'Could not find datasetID "%" or dataset "%"', _datasetID, _datasetName;
         End If;
 
