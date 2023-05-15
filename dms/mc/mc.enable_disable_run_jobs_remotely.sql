@@ -36,7 +36,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _enable and _infoOnly and false from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
-**          05/12/2023 mem - Rename variables
+**          05/13/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -323,7 +323,7 @@ BEGIN
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount = 1 And _countUnchanged = 0 Then
+    If _updateCount = 1 And _countUnchanged = 0 Then
         _message := 'Configured the manager to ' || _activeStateDescription;
     Else
         _message := format('Configured %s %s to %s',

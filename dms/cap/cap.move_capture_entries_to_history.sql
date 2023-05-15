@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays
 **          02/15/2023 mem - Add commit statements
 **          04/02/2023 mem - Rename procedure and functions
 **          04/12/2023 mem - Use new table names
-**          05/12/2023 mem - Rename variables
+**          05/13/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
@@ -96,7 +96,7 @@ BEGIN
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
             If _deleteCount > 0 Then
-                RAISE INFO 'Deleted % rows from cap.t_task_parameters_history since saved before %', _myRowCount, _dateThreshold;
+                RAISE INFO 'Deleted % rows from cap.t_task_parameters_history since saved before %', _deleteCount, _dateThreshold;
             End If;
         End If;
 
