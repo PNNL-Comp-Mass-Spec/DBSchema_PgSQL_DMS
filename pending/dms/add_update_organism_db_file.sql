@@ -31,7 +31,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _organismID int := 0;
     _existingEntry boolean := false;
 BEGIN
@@ -85,11 +84,9 @@ BEGIN
     SELECT organism_id
     INTO _organismID
     FROM t_organisms
-    WHERE organism = _organismName
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE organism = _organismName;
 
-    If _myRowCount = 0 Or Coalesce(_organismID, 0) <= 0 Then
+    If Not FOUND Or Coalesce(_organismID, 0) <= 0 Then
         _message := 'Could not find organism in t_organisms: ' || _organismName;
         _returnCode := 'U6202';
         RETURN;

@@ -61,7 +61,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _logErrors boolean := false;
     _compoundIdAndName text;
@@ -216,11 +215,9 @@ BEGIN
         SELECT compound_type_id
         INTO _compoundTypeID
         FROM t_reference_compound_type_name
-        WHERE compound_type_name = _compoundTypeName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE compound_type_name = _compoundTypeName;
 
-        If _compoundTypeID = 0 Then
+        If Not FOUND Then
             RAISE EXCEPTION 'Invalid compound type name';
         End If;
 
@@ -249,9 +246,7 @@ BEGIN
             SELECT container_id
             INTO _curContainerID
             FROM t_reference_compound
-            WHERE compound_id = _compoundID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE compound_id = _compoundID;
 
         End If;
 
@@ -279,20 +274,15 @@ BEGIN
         INTO _containerID
         FROM t_material_containers
         WHERE container = _containerName;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Resolve current container id to name
         ---------------------------------------------------
-
         --
         SELECT container
         INTO _curContainerName
         FROM t_material_containers
-        WHERE container_id = _curContainerID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE container_id = _curContainerID;
 
         ---------------------------------------------------
         -- Resolve usernames to user IDs

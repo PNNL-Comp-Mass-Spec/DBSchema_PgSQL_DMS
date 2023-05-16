@@ -69,14 +69,14 @@ BEGIN
     -- Populate a temporary table with the data package IDs to update
     ---------------------------------------------------
 
-    CREATE TABLE dbo.[TmpDataPackagesToUpdate] (
+    CREATE Temp TABLE TmpDataPackagesToUpdate (
         ID int not NULL,
         Best_EUS_Proposal_ID text NULL,
         Best_Instrument_Name text NULL,
         Best_EUS_Instrument_ID int NULL
     )
 
-    CREATE CLUSTERED INDEX [IX_TmpDataPackagesToUpdate] ON [dbo].[TmpDataPackagesToUpdate]
+    CREATE INDEX IX_TmpDataPackagesToUpdate ON TmpDataPackagesToUpdate
     (
         ID ASC
     )

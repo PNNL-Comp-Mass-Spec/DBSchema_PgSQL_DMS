@@ -107,7 +107,7 @@ BEGIN
             SELECT
                 TPKG.Dataset,
                 SUM(CASE WHEN TPKG.Tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
-                SUM(CASE WHEN TPKG.Tool = 'MASIC_Finnigan' AND TD.[Param File] LIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
+                SUM(CASE WHEN TPKG.Tool = 'MASIC_Finnigan' AND TD.Param_File LIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
                 SUM(CASE WHEN TPKG.Tool LIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
                 SUM(CASE WHEN TPKG.Tool LIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
             FROM    dpkg.T_Data_Package_Analysis_Jobs AS TPKG

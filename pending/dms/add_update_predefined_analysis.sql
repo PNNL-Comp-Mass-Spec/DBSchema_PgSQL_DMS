@@ -87,16 +87,13 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _allowedDatasetTypes text;
     _allowedDSTypesForTool text;
     _allowedInstClassesForTool text;
-    _uniqueID int;
-    _continue boolean;
+
     _matchCount int;
-    _instrumentName text;
-    _instrumentID int;
-    _instrumentClass text;
+
+    _instrument record;
     _analysisToolID int;
     _msg text := '';
     _propMode int;
@@ -222,10 +219,8 @@ BEGIN
         INTO _analysisToolID
         FROM t_analysis_tool
         WHERE (analysis_tool = _analysisToolName)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             _msg := 'Analysis tool "' || _analysisToolName || '" not found in t_analysis_tool';
             RAISE EXCEPTION '%', _msg;
         End If;
@@ -292,13 +287,12 @@ BEGIN
                   (InstName.instrument LIKE _instrumentNameCriteria OR _instrumentNameCriteria = '') AND
                   (NOT (InstName.instrument LIKE _instrumentExclCriteria) OR _instrumentExclCriteria = '')
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
-            -- <b1>
+            If _matchCount = 0 Then
                 _msg := 'Did not match any instruments using the instrument name and class criteria; update not allowed';
                 RAISE EXCEPTION '%', _msg;
-            End If; -- </b1>
+            End If;
 
             ---------------------------------------------------
             -- Step through Tmp_MatchingInstruments and make sure
@@ -308,93 +302,66 @@ BEGIN
             -- Also validate each instrument class with t_analysis_tool_allowed_instrument_class
             ---------------------------------------------------
 
-            _uniqueID := 0;
-            _continue := true;
-
-            WHILE _continue
-            LOOP
-                -- This While loop can probably be converted to a For loop; for example:
-                --    FOR _itemName IN
-                --        SELECT item_name
-                --        FROM TmpSourceTable
-                --        ORDER BY entry_id
-                --    LOOP
-                --        ...
-                --    END LOOP
-
+            FOR _instrument IN
                 SELECT UniqueID,
                        InstrumentName,
                        InstrumentID,
                        InstrumentClass
-                INTO _uniqueID, _instrumentName, _instrumentID, _instrumentClass
                 FROM Tmp_MatchingInstruments
-                WHERE UniqueID > _uniqueID
-                ORDER BY UniqueID
-                LIMIT 1;
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                ORDER BY UniqueID;
+            LOOP
+                If Not Exists (
+                    SELECT *
+                    FROM t_instrument_name InstName
+                         INNER JOIN t_instrument_group_allowed_ds_type IGADT
+                           ON InstName.instrument_group = IGADT.instrument_group
+                         INNER JOIN ( SELECT ADT.dataset_type
+                                      FROM t_analysis_tool_allowed_dataset_type ADT
+                                           INNER JOIN t_analysis_tool Tool
+                                             ON ADT.analysis_tool_id = Tool.analysis_tool_id
+                                      WHERE (Tool.analysis_tool = _analysisToolName)
+                                    ) ToolQ
+                           ON IGADT.dataset_type = ToolQ.dataset_type
+                    WHERE (InstName.instrument = _instrument.InstrumentName)
+                    ) Then
 
-                If _myRowCount = 0 Then
-                    _continue := false;
-                Else
-                -- <c>
+                    -- Example criteria that will result in this message: Instrument Criteria=Agilent_TOF%, Tool=AgilentSequest
 
-                    If Not Exists ( Then
-                        SELECT *;
-                    End If;
-                        FROM t_instrument_name InstName
-                             INNER JOIN t_instrument_group_allowed_ds_type IGADT
-                               ON InstName.instrument_group = IGADT.instrument_group
-                             INNER JOIN ( SELECT ADT.dataset_type
-                                          FROM t_analysis_tool_allowed_dataset_type ADT
-                                               INNER JOIN t_analysis_tool Tool
-                                                 ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                                          WHERE (Tool.analysis_tool = _analysisToolName)
-                                        ) ToolQ
-                               ON IGADT.dataset_type = ToolQ.dataset_type
-                        WHERE (InstName.instrument = _instrumentName)
-                        )
-                    Begin -- <d1>
-                        -- Example criteria that will result in this message: Instrument Criteria=Agilent_TOF%, Tool=AgilentSequest
+                    _allowedDatasetTypes := public.get_instrument_dataset_type_list(_instrument.InstrumentID);
 
-                        _allowedDatasetTypes := dbo.GetInstrumentDatasetTypeList(_instrumentID);
+                    SELECT AllowedDatasetTypes
+                    INTO _allowedDSTypesForTool
+                    FROM public.get_analysis_tool_allowed_dataset_type_list(_analysisToolID);
 
-                        _allowedDSTypesForTool := '';
-                        SELECT AllowedDatasetTypes
-                        INTO _allowedDSTypesForTool
-                        FROM dbo.GetAnalysisToolAllowedDSTypeList(_analysisToolID)
+                    _msg := format('Criteria matched instrument "%s" with allowed dataset types of "%s"; however, analysis tool %s allows these dataset types: "%s"',
+                                    _instrument.InstrumentName, _allowedDatasetTypes, _analysisToolName, _allowedDSTypesForTool);
 
-                        _msg := format('Criteria matched instrument "%s" with allowed dataset types of "%s"; however, analysis tool %s allows these dataset types: "%s"',
-                                        _instrumentName, _allowedDatasetTypes, _analysisToolName, _allowedDSTypesForTool);
+                    RAISE EXCEPTION '%', _msg;
+                End If;
 
-                        RAISE EXCEPTION '%', _msg;
-                    End If;     -- </d1>
+                If Not Exists (
+                    SELECT AIC.Instrument_Class
+                    FROM t_analysis_tool_allowed_instrument_class AIC
+                        INNER JOIN t_analysis_tool Tool
+                        ON AIC.analysis_tool_id = Tool.analysis_tool_id
+                    WHERE Tool.analysis_tool = _analysisToolName AND
+                        AIC.instrument_class = _instrument.InstrumentClass
+                    ) Then
 
-                    If Not Exists (
-                        SELECT AIC.Instrument_Class;
-                        FROM t_analysis_tool_allowed_instrument_class AIC
-                            INNER JOIN t_analysis_tool Tool
-                            ON AIC.analysis_tool_id = Tool.analysis_tool_id
-                        WHERE Tool.analysis_tool = _analysisToolName AND
-                            AIC.instrument_class = _instrumentClass
-                        ) Then
-                    Begin -- <d2>
-                        -- Example criteria that will result in this message: Instrument Class=BRUKERFTMS, Tool=XTandem
-                        -- 2nd example: Instrument Criteria=Agilent_TOF%, Tool=Decon2LS
+                    -- Example criteria that will result in this message: Instrument Class=BRUKERFTMS, Tool=XTandem
+                    -- 2nd example: Instrument Criteria=Agilent_TOF%, Tool=Decon2LS
 
+                    SELECT AllowedInstrumentClasses
+                    INTO _allowedInstClassesForTool
+                    FROM public.get_analysis_tool_allowed_instrument_class_list (_analysisToolID);
 
-                        SELECT AllowedInstrumentClasses
-                        INTO _allowedInstClassesForTool
-                        FROM dbo.GetAnalysisToolAllowedInstClassList (_analysisToolID)
+                    _msg := format('Criteria matched instrument "%s" which is Instrument Class "%s"; however, analysis tool %s allows these instrument classes: "%s"'
+                                    _instrument.InstrumentName, _instrument.InstrumentClass, _analysisToolName, _allowedInstClassesForTool);
 
-                        _msg := format('Criteria matched instrument "%s" which is Instrument Class "%s"; however, analysis tool %s allows these instrument classes: "%s"'
-                                        _instrumentName, _instrumentClass, _analysisToolName, _allowedInstClassesForTool);
+                    RAISE EXCEPTION '%', _msg;
+                END If;
 
-                        RAISE EXCEPTION '%', _msg;
-                    END LOOP;     -- </d2>
-
-                END IF; -- </c>
-            END LOOP; -- </b2>
+            END LOOP;
 
         End If; -- </a>
 

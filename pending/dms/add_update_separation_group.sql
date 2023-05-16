@@ -34,7 +34,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _datasetTypeID int;
 
     _sqlState text;
@@ -102,27 +101,23 @@ BEGIN
                                             sample_prep_visible,
                                             fraction_count)
             VALUES (_separationGroup, _comment, _active, _samplePrepVisible, _fractionCount)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
         --
         If _mode = 'update' Then
-            --
+
             UPDATE t_separation_group
             SET comment = _comment,
                 active = _active,
                 sample_prep_visible = _samplePrepVisible,
                 fraction_count = _fractionCount
             WHERE separation_group = _separationGroup
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

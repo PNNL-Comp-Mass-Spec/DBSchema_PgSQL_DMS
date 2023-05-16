@@ -84,7 +84,7 @@ BEGIN
 
             If _myRowCount > 0 Then
                 _message := format('Updated work_dir_admin_share for %s %s in sw.t_local_processors',
-                                    _myRowCount, public.check_plural(_myRowCount, ' manager', ' managers'));
+                                    _myRowCount, public.check_plural(_myRowCount, 'manager', 'managers'));
 
                 Call public.post_log_entry ('Normal', _message, 'Update_Cached_Manager_Work_Dirs', 'sw');
             End If;

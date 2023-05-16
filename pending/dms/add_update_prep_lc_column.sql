@@ -43,7 +43,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _existingCount int;
+    _existingID int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -88,9 +89,14 @@ BEGIN
     -- Is entry already in database? (only applies to updates)
     ---------------------------------------------------
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    SELECT prep_column_id
+    INTO _existingID
+    FROM  t_prep_lc_column
+    WHERE prep_column = _columnName;
 
-    If _mode = 'update' And Not Exists (SELECT prep_column_id FROM t_prep_lc_column WHERE prep_column = _columnName) Then
+    GET DIAGNOSTICS _existingCount = ROW_COUNT;
+
+    If _mode = 'update' And _existingCount = 0 Then
         _message := 'No entry could be found in database for update';
         RAISE WARNING '%', _message;
 
@@ -98,7 +104,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _mode = 'add' And _myRowCount > 0 Then
+    If _mode = 'add' And _existingCount > 0 Then
         _message := 'Cannot add a duplicate entry';
         RAISE WARNING '%', _message;
 
@@ -142,10 +148,8 @@ BEGIN
             _operatorUsername,
             _comment
         )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    End If; -- add mode
+    End If;
 
     ---------------------------------------------------
     -- Action for update mode
@@ -168,8 +172,7 @@ BEGIN
             state = _state,
             operator_username = _operatorUsername,
             comment = _comment
-        WHERE
-            prep_column = _columnName
+        WHERE prep_column = _columnName;
 
     End If;
 

@@ -159,7 +159,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _instrumentMatch text;
     _separationGroup text;
@@ -281,10 +280,10 @@ BEGIN
         _requestIDForUpdate := Coalesce(_requestIDForUpdate, 0);
 
         -- Assure that _comment is not null and assure that it doesn't have &quot; or &#34; or &amp;
-        _comment := dbo.ReplaceCharacterCodes(_comment);
+        _comment := public.Replace_Character_Codes(_comment);
 
         -- Replace instances of CRLF (or LF) with semicolons
-        _comment := dbo.RemoveCrLf(_comment);
+        _comment := public.remove_cr_lf(_comment);
 
         If _comment like '%experiment_group/show/0000%' Then
             RAISE EXCEPTION 'Please reference a valid experiment group ID, not 0000';
@@ -458,10 +457,8 @@ BEGIN
         INTO _experimentID, _wellplateName, _wellNumber
         FROM t_experiments
         WHERE experiment = _experimentName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        If _experimentID = 0 Then
+
+        If Not FOUND Then
             RAISE EXCEPTION 'Could not find entry in database for experiment "%"', _experimentName;
         End If;
 
@@ -508,13 +505,15 @@ BEGIN
             Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        Call lookup_instrument_run_info_from_experiment_sample_prep
+        Call lookup_instrument_run_info_from_experiment_sample_prep (
                             _experimentName,
-                            _instrumentGroup output,
-                            _msType output,
-                            _instrumentSettings output,
-                            _separationGroup output,
-                            _msg output
+                            _instrumentGroup => _instrumentGroup,       -- Output
+                            _msType => _msType,                         -- Output
+                            _instrumentSettings => _instrumentSettings, -- Output
+                            _separationGroup => _separationGroup,       -- Output
+                            _message => _message,                       -- Output
+                            _returnCode => _returnCode);                -- Output
+
         If _returnCode <> '' Then
             RAISE EXCEPTION 'LookupInstrumentRunInfoFromExperimentSamplePrep: %', _msg;
         End If;
@@ -567,7 +566,7 @@ BEGIN
         FROM t_separation_group
         WHERE separation_group = _separationGroup
 
-        If Coalesce(_matchedSeparationGroup, '') <> '' Then
+        If FOUND Then
             _separationGroup := _matchedSeparationGroup;
         Else
             -- Match not found; try t_secondary_sep
@@ -576,10 +575,8 @@ BEGIN
             INTO _matchedSeparationGroup
             FROM t_secondary_sep
             WHERE separation_type = _separationGroup
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
-            If _sepID = 0 Then
+
+            If Not FOUND Then
                 RAISE EXCEPTION 'Separation group not recognized';
             End If;
 
@@ -595,13 +592,13 @@ BEGIN
         --
         --
         _mrmAttachment := Coalesce(_mrmAttachment, '');
+
         If _mrmAttachment <> '' Then
             SELECT attachment_id
             INTO _mrmAttachmentID
             FROM t_attachments
             WHERE attachment_name = _mrmAttachment
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        End If;
 
         ---------------------------------------------------
         -- Lookup EUS field (only effective for experiments that have associated sample prep requests)
@@ -612,13 +609,14 @@ BEGIN
             _debugMsg := 'Lookup EUS info for: ' || _experimentName;
             Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
-        --
-        Call lookup_eus_from_experiment_sample_prep
+
+        Call lookup_eus_from_experiment_sample_prep (
                             _experimentName,
-                            _eusUsageType output,
-                            _eusProposalID output,
-                            _eusUsersList output,
-                            _msg output
+                            _eusUsageType => _eusUsageType,     -- Output
+                            _eusProposalID => _eusProposalID,   -- Output
+                            _eusUsersList => _eusUsersList,     -- Output
+                            _message => _message,               -- Output
+                            _returnCode => _returnCode);        -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'LookupEUSFromExperimentSamplePrep: %', _msg;
@@ -702,8 +700,9 @@ BEGIN
 
         Call lookup_other_from_experiment_sample_prep
                             _experimentName,
-                            _workPackage output,
-                            _msg output
+                            _workPackage => _workPackage,       -- Output
+                            _message => _message,               -- Output
+                            _returnCode => _returnCode);        -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'LookupOtherFromExperimentSamplePrep: %', _msg;
@@ -718,10 +717,8 @@ BEGIN
             INTO _locationID
             FROM t_material_locations
             WHERE location = _stagingLocation;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
-            If Coalesce(_locationID, 0) = 0 Then
+
+            If Not FOUND Then
                 RAISE EXCEPTION 'Staging location not recognized';
             End If;
         End If;
@@ -872,11 +869,13 @@ BEGIN
 
             -- Assign users to the request
             --
-            Call assign_eus_users_to_requested_run
+            Call assign_eus_users_to_requested_run (
                                     _request,
                                     _eusProposalID,
                                     _eusUsersList,
-                                    _msg output
+                                    _message => _message,               -- Output
+                                    _returnCode => _returnCode);        -- Output
+
             --
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Assign_EUS_Users_To_Requested_Run: %', _msg;
@@ -911,8 +910,7 @@ BEGIN
             BEGIN
 
                 UPDATE t_requested_run
-                SET
-                    request_name = CASE WHEN _requestIDForUpdate > 0 THEN _requestName ELSE request_name END,
+                SET request_name = CASE WHEN _requestIDForUpdate > 0 THEN _requestName ELSE request_name END,
                     requester_username = _requesterUsername,
                     comment = _comment,
                     instrument_group = _instrumentGroup,
@@ -935,9 +933,7 @@ BEGIN
                     vialing_conc = _vialingConc,
                     vialing_vol = _vialingVol,
                     location_id = _locationId
-                WHERE request_id = _requestID
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE request_id = _requestID;
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
@@ -946,11 +942,12 @@ BEGIN
 
                 -- Assign users to the request
                 --
-                Call assign_eus_users_to_requested_run
+                Call assign_eus_users_to_requested_run (
                                         _requestID,
                                         _eusProposalID,
                                         _eusUsersList,
-                                        _msg output
+                                        _message => _message,
+                                        _returnCode => _returnCode);
                 --
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'AssignEUSUsersToRequestedRun: %', _msg;

@@ -248,7 +248,7 @@ BEGIN
         RETURNING settings_file_id
         INTO _settingsFileID;
 
-    End If; -- add mode
+    End If;
 
     ---------------------------------------------------
     -- Action for update mode
@@ -268,7 +268,7 @@ BEGIN
         WHERE settings_file_id = _settingsFileID
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    End If; -- update mode
+    End If;
 
 END
 $$;

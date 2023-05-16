@@ -239,8 +239,8 @@ BEGIN
 
         If Coalesce(_settingsFile, '') = '' Then
             _msg := 'Tool ' || _toolName || ' with job type ' || _jobTypeName || ' does not have a default settings file defined for ' ||;
-                       'Stat Cys Alk ' || dbo.TinyintToEnabledDisabled(_statCysAlkEnabled) || ' and ' ||
-                       'Dyn STY Phos ' || dbo.TinyintToEnabledDisabled(_dynSTYPhosEnabled)
+                       'Stat Cys Alk ' || public.tinyint_to_enabled_disabled(_statCysAlkEnabled) || ' and ' ||
+                       'Dyn STY Phos ' || public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled)
 
             RAISE EXCEPTION '%', _msg;
         End If;
@@ -266,7 +266,7 @@ BEGIN
 
         If _qExactiveDSCount > 0 Or _profileModeMSnDatasets > 0 Then
             -- Auto-update the settings file since we have one or more Q Exactive datasets or one or more datasets with profile-mode MS/MS spectra
-            _settingsFile := dbo.AutoUpdateSettingsFileToCentroid(_settingsFile, _toolName);
+            _settingsFile := public.auto_update_settings_file_to_centroid(_settingsFile, _toolName);
         End If;
 
         -- Next determine the parameter file
@@ -313,9 +313,9 @@ BEGIN
 
         If Coalesce(_paramFile, '') = '' Then
             _msg := 'Tool ' || _toolName || ' with job type ' || _jobTypeName || ' does not have a default parameter file defined for ' ||;
-                        'Dyn Met Ox ' ||   dbo.TinyintToEnabledDisabled(_dynMetOxEnabled) || ', ' ||
-                        'Stat Cys Alk ' || dbo.TinyintToEnabledDisabled(_statCysAlkEnabled) || ', and ' ||
-                        'Dyn STY Phos ' || dbo.TinyintToEnabledDisabled(_dynSTYPhosEnabled)
+                        'Dyn Met Ox ' ||   public.tinyint_to_enabled_disabled(_dynMetOxEnabled) || ', ' ||
+                        'Stat Cys Alk ' || public.tinyint_to_enabled_disabled(_statCysAlkEnabled) || ', and ' ||
+                        'Dyn STY Phos ' || public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled)
 
             RAISE EXCEPTION '%', _msg;
         End If;

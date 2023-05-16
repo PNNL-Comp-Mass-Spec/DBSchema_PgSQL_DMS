@@ -30,7 +30,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _debugMsg text := '';
     _nextID Int;
     _stateInt integer := 0;
@@ -116,11 +115,9 @@ BEGIN
     SELECT sample_type_id
     INTO _sampleTypeID
     FROM t_secondary_sep_sample_type
-    WHERE name = _sampleType
+    WHERE name = _sampleType;
 
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    If _myRowCount = 0 Then
+    If Not FOUND Then
         _message := 'No matching sample type could be found in the database';
         RAISE WARNING '%', _message;
 
@@ -155,11 +152,9 @@ BEGIN
             SELECT separation_type_id
             INTO _conflictID
             FROM t_secondary_sep
-            WHERE separation_type = _sepTypeName
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE separation_type = _sepTypeName;
 
-            If _conflictID > 0 Then
+            If FOUND Then
                 _message := format('Cannot rename separation type from %s to %s because the new name is already in use by ID %s',
                                     _existingName, _sepTypeName, _conflictID);
                 RAISE WARNING '%', _message;
@@ -195,9 +190,7 @@ BEGIN
             If _stateInt <> _oldState Then
                 UPDATE t_secondary_sep
                 SET active = _stateInt
-                WHERE separation_type_id = _id
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE separation_type_id = _id;
 
                 _message := 'Updated state to ' || _state || '; any other changes were ignored because this separation type is associated with ' || _datasetDescription;
 
@@ -256,14 +249,14 @@ BEGIN
             CURRENT_TIMESTAMP
         )
 
-    End If; -- add mode
+    End If;
 
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
     --
     If _mode = 'update' Then
-        --
+
         UPDATE t_secondary_sep
         SET separation_type = _sepTypeName,
             separation_group = _sepGroupName,
@@ -271,10 +264,8 @@ BEGIN
             sample_type_id = _sampleTypeID,
             active = _stateInt
         WHERE separation_type_id = _id
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    End If; -- update mode
+    End If;
 
 END
 $$;

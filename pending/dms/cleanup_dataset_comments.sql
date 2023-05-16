@@ -190,7 +190,7 @@ BEGIN
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _myRowCount > 0 Then
-            _message := format('Removed error messages from the comment field of %s %s', _myRowCount, public.check_plural(_myRowCount, ' dataset', ' datasets'));
+            _message := format('Removed error messages from the comment field of %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
             RAISE INFO '%', _message;
         End If;
     End If;

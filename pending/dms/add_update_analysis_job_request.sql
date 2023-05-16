@@ -522,7 +522,7 @@ BEGIN
 
         If _profileModeMSnDatasets > 0 Then
             -- Auto-update the settings file since we have one or more Q Exactive datasets or one or more datasets with profile-mode MS/MS spectra
-            _autoSupersedeName := dbo.AutoUpdateSettingsFileToCentroid(_settingsFileName, _toolName);
+            _autoSupersedeName := public.auto_update_settings_file_to_centroid(_settingsFileName, _toolName);
 
             If Coalesce(_autoSupersedeName, '') <> _settingsFileName Then
                 _settingsFileName := _autoSupersedeName;

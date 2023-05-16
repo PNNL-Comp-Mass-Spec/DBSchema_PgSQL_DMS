@@ -30,11 +30,9 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _tmpUserIDs TABLE (ID int);
+    _unknownUserCount int := 0;
     _unknownUsers text := '';
     _msg text;
-    _userText text;
     _logType text := 'Error';
     _validateEUSData int := 1;
 BEGIN
@@ -59,12 +57,13 @@ BEGIN
     -- Populate a temporary table with the user IDs in _eusUsersList
     ---------------------------------------------------
     --
+    CREATE TEMP TABLE Tmp_UserIDs (
+        ID int
+    );
 
-    INSERT INTO _tmpUserIDs (ID)
-    SELECT Value
-    FROM public.parse_delimited_integer_list(_eusUsersList, ',')
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    INSERT INTO Tmp_UserIDs (ID)
+    SELECT DISTINCT Value
+    FROM public.parse_delimited_integer_list(_eusUsersList, ',');
 
     ---------------------------------------------------
     -- Look for unknown EUS users
@@ -74,29 +73,24 @@ BEGIN
 
     SELECT string_agg(ID:int, ',')
     INTO _unknownUsers
-    FROM _tmpUserIDs NewUsers LEFT OUTER JOIN t_eus_users U ON NewUsers.ID = U.person_id
+    FROM Tmp_UserIDs NewUsers LEFT OUTER JOIN t_eus_users U ON NewUsers.ID = U.person_id
     WHERE U.person_id IS Null;
 
     If Coalesce(_unknownUsers, '') <> '' Then
 
-        SELECT COUNT(*)
-        INTO _myRowCount
-        FROM _tmpUserIDs NewUsers LEFT OUTER JOIN t_eus_users U ON NewUsers.ID = U.person_id
-        WHERE U.person_id IS Null;
-
-        _userText := public.check_plural(_myRowCount, 'user', 'users');
+        _unknownUserCount := array_length(string_to_array(_unknownUsers, ','), 1);
 
         _msg := format('Trying to associate %s unknown EUS %s with request %s; ignoring unknown %s %s',
-                        _myRowCount, _userText, _request, _userText, _unknownUsers);
+                        _unknownUserCount, _userText, _request,
+                        public.check_plural(_unknownUserCount, 'user', 'users'),
+                        _unknownUsers);
 
         SELECT value
         INTO _validateEUSData
         FROM t_misc_options
-        WHERE (name = 'ValidateEUSData')
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE name = 'ValidateEUSData';
 
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             _validateEUSData := 1;
         End If;
 
@@ -118,7 +112,7 @@ BEGIN
                                            request_id )
     SELECT NewUsers.ID AS EUS_Person_ID,
            _request AS Request_ID
-    FROM _tmpUserIDs NewUsers
+    FROM Tmp_UserIDs NewUsers
          INNER JOIN t_eus_users U
            ON NewUsers.ID = U.person_id
     WHERE NewUsers.ID NOT IN ( SELECT eus_person_id
@@ -133,7 +127,7 @@ BEGIN
     DELETE FROM t_requested_run_eus_users
     WHERE request_id = _request AND
           eus_person_id NOT IN ( SELECT ID
-                                 FROM _tmpUserIDs );
+                                 FROM Tmp_UserIDs );
 
 END
 $$;

@@ -37,7 +37,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _existingCount int := 0;
     _localSymbolID int;
     _typeSymbol text;
     _affectedResidue text;
@@ -236,16 +236,16 @@ BEGIN
           entry_specifier = _entrySpecifier::citext AND
           entry_sequence_order = _entrySeqOrder;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
-    If _mode = 'add' And _myRowCount > 0 Then
+    If _mode = 'add' And _existingCount > 0 Then
         -- Auto-switch the mode
         _mode := 'update';
     End If;
 
     -- Cannot update a non-existent entry
     --
-    If _mode = 'update' And _myRowCount = 0 Then
+    If _mode = 'update' And _existingCount = 0 Then
         _message := 'Cannot update: Param entry matching the specified parameters is not in the database';
         RAISE WARNING '%', _message;
 

@@ -31,9 +31,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _idx int;
     _existingID int;
+    _existingCount int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -66,15 +66,13 @@ BEGIN
         --
         SELECT MAX(wellplate_id) + 1
         INTO _idx
-        FROM  t_wellplates
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        FROM  t_wellplates;
 
-        If _idx < 1000 Then
+        If Coalesce(_idx, 0) < 1000 Then
             _idx := 1000;
         End If;
 
-        _wellplateName := 'WP-' || cast(_idx as text);
+        _wellplateName := format('WP-%s', _idx);
     End If;
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
@@ -86,14 +84,14 @@ BEGIN
     SELECT wellplate_id
     INTO _existingID
     FROM  t_wellplates
-    WHERE(wellplate = _wellplateName)
+    WHERE wellplate = _wellplateName;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- In this mode, add new entry if it doesn't exist
     ---------------------------------------------------
-    If _mode = 'assure' And (_myRowCount = 0 Or _existingID = 0) Then
+    If _mode = 'assure' And (_existingCount = 0 Or _existingID = 0) Then
         _mode := 'add';
     End If;
 
@@ -101,7 +99,7 @@ BEGIN
     -- Cannot update a non-existent entry
     ---------------------------------------------------
 
-    If _mode = 'update' And (_myRowCount = 0 Or _existingID = 0) Then
+    If _mode = 'update' And (_existingCount = 0 Or _existingID = 0) Then
         _message := 'No entry could be found in database for update';
         RAISE WARNING '%', _message;
 
@@ -133,8 +131,6 @@ BEGIN
             _wellplateName,
             _description
         )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     End If;
 

@@ -59,7 +59,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _currentStateID int;
     _requestType text := 'RNA';
@@ -315,20 +314,15 @@ BEGIN
         End If;
 
         If _mode = 'add' Then
+
             -- Name must be unique
             --
-            SELECT COUNT(*)
-            INTO _myRowCount
-            FROM t_sample_prep_request
-            WHERE request_name = _requestName;
-
-            If FOUND Then
+            If Exists (SELECT * FROM t_sample_prep_request WHERE request_name = _requestName) Then
                 RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
             End If;
 
             -- Make sure the work package number is not inactive
             --
-
             SELECT CCAS.activation_state,
                    CCAS.activation_state_name
             INTO _activationState, _activationStateName
@@ -403,7 +397,7 @@ BEGIN
                                             _entryDateColumnName => 'Date_of_Change', _enteredByColumnName => 'System_Account');
             End If;
 
-        End If; -- Add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -435,8 +429,6 @@ BEGIN
                 instrument_name = _instrumentName,
                 dataset_type = _datasetType
             WHERE (prep_request_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
             If char_length(_callingUser) > 0 Then
@@ -444,7 +436,7 @@ BEGIN
                                         _entryDateColumnName => 'Date_of_Change', _enteredByColumnName => 'System_Account');
             End If;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

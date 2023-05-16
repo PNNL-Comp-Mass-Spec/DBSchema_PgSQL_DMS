@@ -217,7 +217,7 @@ BEGIN
             -- Add/update data for protein collections in Tmp_CurrentIDs
             ---------------------------------------------------
 
-            MERGE "dbo"."pc.t_protein_collection_members_cached" AS t
+            MERGE pc.t_protein_collection_members_cached AS t
             USING (
                 SELECT PCM.protein_collection_id,
                        ProtName.reference_id,

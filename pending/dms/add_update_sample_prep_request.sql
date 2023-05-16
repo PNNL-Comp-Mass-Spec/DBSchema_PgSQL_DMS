@@ -151,7 +151,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _currentStateID int;
     _requestType text := 'Default';
@@ -159,7 +158,7 @@ DECLARE
     _allowUpdateEstimatedPrepTime boolean := false;
     _datasetTypeID int;
     _campaignID int := 0;
-    _cnt int := -1;
+    _missingCount int;
     _organismID int;
     _tissueIdentifier text;
     _tissueName text;
@@ -372,30 +371,24 @@ BEGIN
         CREATE TEMP TABLE Tmp_MaterialContainers (
             name text not null
         )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- Get names of material containers from list argument into table
         --
         INSERT INTO Tmp_MaterialContainers (name)
         SELECT item FROM public.parse_delimited_list(_materialContainerList)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- Verify that material containers exist
         --
 
         SELECT COUNT(*)
-        INTO _cnt
+        INTO _missingCount
         FROM Tmp_MaterialContainers
         WHERE name Not In (
             SELECT container
             FROM t_material_containers
         );
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        If _cnt <> 0 Then
+
+        If _missingCount > 0 Then
             RAISE EXCEPTION 'One or more material containers was not in database';
         End If;
 
@@ -711,7 +704,7 @@ BEGIN
                                             _entryDateColumnName => 'Date_of_Change', _enteredByColumnName => 'System_Account');
             End If;
 
-        End If; -- Add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -761,8 +754,6 @@ BEGIN
                 block_and_randomize_runs = _blockAndRandomizeRuns,
                 reason_for_high_priority = _reasonForHighPriority
             WHERE prep_request_id = _id
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
             If char_length(_callingUser) > 0 Then
@@ -775,7 +766,7 @@ BEGIN
                 _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
             End If;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

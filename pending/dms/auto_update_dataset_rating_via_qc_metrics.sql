@@ -28,7 +28,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _thresholdP_2A int := 250;
     _thresholdP_2C int := 100;
 BEGIN
@@ -81,12 +81,15 @@ BEGIN
           DTN.Dataset_Type LIKE '%msn%' AND
           DS.created >= _datasetCreatedMinimum AND
           C.campaign LIKE _campaignName AND
-          NOT E.experiment LIKE _experimentExclusion
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+          NOT E.experiment LIKE _experimentExclusion;
 
     If _infoOnly Then
         -- Preview the datasets that would be updated
+
+        _updateCount := 0;
+
+        -- ToDo: Show this info using RAISE INFO
+        --       Increment _updateCount for each dataset shown
 
         SELECT C.campaign AS Campaign,
                InstName.instrument AS Instrument,
@@ -110,13 +113,9 @@ BEGIN
              INNER JOIN t_dataset_rating_name DTN
                ON DS.dataset_type_ID = DTN.DST_Type_ID
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := 'Found ' || _myRowCount::text || ' dataset';
-        If _myRowCount <> 1 Then
-            _message := _message || 's';
-        End If;
-        _message := _message || ' with';
+        _message := Format('Found %s %s with', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
 
     Else
         -- Update the rating
@@ -132,17 +131,13 @@ BEGIN
              INNER JOIN t_dataset_qc DQC
                ON DS.dataset_id = DQC.dataset_id
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := 'Changed ' || _myRowCount::text || ' dataset';
-        If _myRowCount <> 1 Then
-            _message := _message || 's';
-        End If;
-        _message := _message || ' to Not Released since';
+        _message := format('Changed %s %s to Not Released since', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
 
     End If;
 
-    _message := _message || ' P_2A below ' || _thresholdP_2A::text || ' and P_2C below ' || _thresholdP_2C::text;
+    _message := format('%s P_2A below %s and P_2C below %s', _message, _thresholdP_2A, _thresholdP_2C);
 
     If _infoOnly Then
         RAISE INFO '%', _message;

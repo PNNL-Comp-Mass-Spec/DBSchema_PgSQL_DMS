@@ -223,10 +223,10 @@ BEGIN
         End If;
 
         -- Assure that _comment is not null and assure that it doesn't have &quot; or &#34; or &amp;
-        _comment := dbo.ReplaceCharacterCodes(_comment);
+        _comment := public.replace_character_codes(_comment);
 
         -- Replace instances of CRLF (or LF) with semicolons
-        _comment := dbo.RemoveCrLf(_comment);
+        _comment := public.remove_cr_lf(_comment);
 
         -- Auto change empty internal standards to 'none' since now rarely used
         If _internalStandard = '' Then

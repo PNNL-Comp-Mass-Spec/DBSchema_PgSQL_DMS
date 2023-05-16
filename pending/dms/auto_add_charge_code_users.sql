@@ -25,7 +25,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int := 0;
     _operationID int := 0;
 
     _sqlState text;
@@ -94,11 +94,11 @@ BEGIN
                 FROM Tmp_NewUsers
                 ORDER BY Network_ID;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
+                If _insertCount > 0 Then
                     _message := format('Auto added %s %s to t_users since they are associated with charge codes used by DMS',
-                                        _myRowCount, public.check_plural(_myRowCount, ' user', ' users');
+                                        _insertCount, public.check_plural(_insertCount, 'user', 'users');
 
                     Call post_log_entry ('Normal', _message, 'Auto_Add_Charge_Code_Users');
                 End If;

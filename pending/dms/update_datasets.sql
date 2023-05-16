@@ -367,7 +367,7 @@ BEGIN
                 End If;
             End If;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

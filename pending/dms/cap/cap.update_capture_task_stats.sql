@@ -39,7 +39,7 @@ BEGIN
         Instrument text NOT NULL,
         Year       int NOT NULL,
         Jobs       int NOT NULL,
-        PRIMARY KEY ( Script, Instrument, [Year] )
+        PRIMARY KEY ( Script, Instrument, Year )
     )
 
     ---------------------------------------------------

@@ -59,7 +59,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _logErrors boolean := false;
     _charIndex int := 0;
@@ -195,22 +194,20 @@ BEGIN
 
         If _mode = 'update' Then
             If _userStatus = 'Inactive' Then
-                --
-                update t_users
-                SET
-                    name = _lastNameFirstName,
+
+                UPDATE t_users
+                SET name = _lastNameFirstName,
                     hid = _hanfordIdNum,
                     email = _email,
                     status = _userStatus,
                     active = 'N',
                     update = 'N',
                     comment = _comment
-                WHERE (username = _username)
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE username = _username;
+
             Else
-                --
-                update t_users
+
+                UPDATE t_users
                 SET
                     name = _lastNameFirstName,
                     hid = _hanfordIdNum,
@@ -218,9 +215,8 @@ BEGIN
                     status = _userStatus,
                     update = _userUpdate,
                     comment = _comment
-                WHERE (username = _username)
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE username = _username;
+
             End If;
         End If;
 

@@ -50,7 +50,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _closed timestamp := null;
     _taskTypeID Int;
     _labID Int;
@@ -109,11 +108,9 @@ BEGIN
         SELECT task_type_id
         INTO _taskTypeID
         FROM t_operations_task_type
-        WHERE task_type_name = _taskType
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE task_type_name = _taskType;
 
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             RAISE EXCEPTION 'Unrecognized task type name';
         End If;
 
@@ -124,11 +121,9 @@ BEGIN
         SELECT lab_id
         INTO _labID
         FROM t_lab_locations
-        WHERE lab_name = _labName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE lab_name = _labName;
 
-        If _myRowCount = 0 Then
+        If Not FOUND Then
             RAISE EXCEPTION 'Unrecognized lab name';
         End If;
 
@@ -215,8 +210,6 @@ BEGIN
                 work_package = _workPackage,
                 closed = _closed
             WHERE task_id = _id;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         End If;
 

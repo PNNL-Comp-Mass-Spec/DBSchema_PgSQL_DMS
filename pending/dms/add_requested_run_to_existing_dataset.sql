@@ -57,7 +57,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _matchCount int;
+    _existingCount int;
     _showDebugStatements boolean := false;
     _existingDatasetID int;
     _existingDatasetName text;
@@ -118,19 +118,19 @@ BEGIN
         FROM t_dataset
         WHERE dataset_id = _datasetID;
         --
-        GET DIAGNOSTICS _matchCount = ROW_COUNT;
+        GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
-        If _matchCount = 0 And _datasetName <> '' Then
+        If _existingCount = 0 And _datasetName <> '' Then
             SELECT dataset_id
                    dataset
             INTO _existingDatasetID, _existingDatasetName
             FROM t_dataset
             WHERE dataset = _datasetName;
             --
-            GET DIAGNOSTICS _matchCount = ROW_COUNT;
+            GET DIAGNOSTICS _existingCount = ROW_COUNT;
         End If;
 
-        If _matchCount = 0 Then
+        If _existingCount = 0 Then
             RAISE EXCEPTION 'Could not find datasetID "%" or dataset "%"', _datasetID, _datasetName;
         End If;
 
@@ -295,7 +295,7 @@ BEGIN
             RAISE INFO '%', 'Calling AddUpdateRequestedRun with mode ' || _addUpdateMode;
         End If;
 
-        Call dbo.add_update_requested_run (
+        Call public.add_update_requested_run (
                                 _requestName => _requestName,
                                 _experimentName => _experimentName,
                                 _requesterUsername => _requesterUsername,

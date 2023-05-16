@@ -46,10 +46,10 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _logErrors boolean := true;
+    _existingCount int;
     _columnID int := -1;
-    _stateID int := -1;
+    _stateID int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -102,18 +102,18 @@ BEGIN
         FROM t_lc_column
         WHERE (lc_column = _columnNumber)
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         -- Cannot create an entry that already exists
         --
-        If _columnID <> -1 and _mode = 'add' Then
+        If _existingCount > 0 And _mode = 'add' Then
             _logErrors := false;
             RAISE EXCEPTION 'Cannot add: Specified LC column already in database';
         End If;
 
         -- Cannot update a non-existent entry
         --
-        If _columnID = -1 and _mode = 'update' Then
+        If _existingCount = 0 And _mode = 'update' Then
             _logErrors := false;
             RAISE EXCEPTION 'Cannot update: Specified LC column is not in database';
         End If;
@@ -127,10 +127,8 @@ BEGIN
         INTO _stateID
         FROM t_lc_column_state_name
         WHERE column_state = _state
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _stateID = -1 Then
+        If Not FOUND Then
             _logErrors := false;
             RAISE EXCEPTION 'Invalid column state: %', _state;
         End If;
@@ -167,17 +165,15 @@ BEGIN
                 _operatorUsername,
                 _comment,
                 CURRENT_TIMESTAMP
-            )
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        End If; -- add mode
+            );
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            --
+
             UPDATE t_lc_column
             Set
                 lc_column = _columnNumber,
@@ -191,10 +187,9 @@ BEGIN
                 column_state_id = _stateID,
                 operator_username = _operatorUsername,
                 comment = _comment
-            WHERE (lc_column_id = _columnID)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        End If; -- update mode
+            WHERE lc_column_id = _columnID;
+
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

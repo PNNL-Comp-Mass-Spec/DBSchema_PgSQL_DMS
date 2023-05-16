@@ -371,7 +371,13 @@ BEGIN
         ---------------------------------------------------
         --
         If _dataPackageID > 0 Then
-            Call sw.update_job_param_org_db_info_using_data_pkg _job, _dataPackageID, _deleteIfInvalid => 0, _message => _message output, _callingUser => _callingUser
+            Call sw.update_job_param_org_db_info_using_data_pkg (
+                        _job,
+                        _dataPackageID,
+                        _deleteIfInvalid => false,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _callingUser => _callingUser);
         End If;
     End If;
 

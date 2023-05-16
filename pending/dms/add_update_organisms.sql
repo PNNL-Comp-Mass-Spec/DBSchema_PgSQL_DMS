@@ -89,7 +89,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _msg text;
     _duplicateTaxologyMsg text;
     _matchCount int;
@@ -334,10 +333,8 @@ BEGIN
             INTO _existingOrgName
             FROM  t_organisms
             WHERE (organism_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
-            If _existingOrganismID = 0 Then
+
+            If Not FOUND Then
                 _msg := 'Cannot update: Organism "' || _orgName || '" is not in database ';
                 RAISE EXCEPTION '%', _msg;
             End If;
@@ -379,13 +376,13 @@ BEGIN
 
             If _mode = 'add' Then
                 -- Make sure that an existing entry doesn't exist with the same values for Genus, Species, and Strain
-                _matchCount := 0;
+
                 SELECT COUNT(*)
                 INTO _matchCount
                 FROM t_organisms
-                WHERE Coalesce(genus, '') = _orgGenus AND
-                      Coalesce(species, '') = _orgSpecies AND
-                      Coalesce(strain, '') = _orgStrain
+                WHERE Coalesce(genus, '') = _orgGenus::citext AND
+                      Coalesce(species, '') = _orgSpecies::citext AND
+                      Coalesce(strain, '') = _orgStrain::citext;
 
                 If _matchCount <> 0 AND Not _orgSpecies LIKE '%metagenome' Then
                     _msg := 'Cannot add: ' || _duplicateTaxologyMsg;
@@ -395,14 +392,14 @@ BEGIN
 
             If _mode = 'update' Then
                 -- Make sure that an existing entry doesn't exist with the same values for Genus, Species, and Strain (ignoring Organism_ID = _id)
-                _matchCount := 0;
+
                 SELECT COUNT(*)
                 INTO _matchCount
                 FROM t_organisms
-                WHERE Coalesce(genus, '') = _orgGenus AND
-                      Coalesce(species, '') = _orgSpecies AND
-                      Coalesce(strain, '') = _orgStrain AND
-                      organism_id <> _id
+                WHERE Coalesce(genus, '') = _orgGenus::citext AND
+                      Coalesce(species, '') = _orgSpecies::citext AND
+                      Coalesce(strain, '') = _orgStrain::citext AND
+                      organism_id <> _id;
 
                 If _matchCount <> 0 AND Not _orgSpecies LIKE '%metagenome' Then
                     _msg := 'Cannot update: ' || _duplicateTaxologyMsg;
@@ -513,9 +510,7 @@ BEGIN
                 newt_id_list = _newtIDList,
                 ncbi_taxonomy_id = _ncbiTaxonomyID,
                 auto_define_taxonomy = _autoDefineTaxonomyFlag
-            WHERE (organism_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE organism_id = _id;
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
             If char_length(_callingUser) > 0 Then

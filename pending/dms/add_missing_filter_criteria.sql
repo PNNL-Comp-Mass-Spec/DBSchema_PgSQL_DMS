@@ -89,7 +89,7 @@ BEGIN
                 FROM t_filter_set_criteria FSC INNER JOIN
                      t_filter_set_criteria_groups FSCG ON
                      FSC.filter_criteria_group_id = FSCG.filter_criteria_group_id
-                WHERE (FSCG.filter_set_id = _filterSetID) AND
+                WHERE FSCG.filter_set_id = _filterSetID AND
                        FSC.filter_criteria_group_id = _groupID AND
                        FSC.criterion_id = _criterionID;
 

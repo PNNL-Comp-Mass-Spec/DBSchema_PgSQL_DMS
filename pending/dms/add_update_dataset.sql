@@ -318,10 +318,10 @@ BEGIN
         End If;
 
         -- Assure that _comment is not null and assure that it doesn't have &quot; or &#34; or &amp;
-        _comment := dbo.ReplaceCharacterCodes(_comment);
+        _comment := public.replace_character_codes(_comment);
 
         -- Replace instances of CRLF (or LF) with semicolons
-        _comment := dbo.RemoveCrLf(_comment);
+        _comment := public.remove_cr_lf(_comment);
 
         If Coalesce(_rating, '') = '' Then
             _msg := 'Rating was blank';
@@ -871,7 +871,7 @@ BEGIN
             WHERE request_id = _requestID;
 
             -- Assure that _reqRunComment doesn't have &quot; or &#34; or &amp;
-            _reqRunComment := dbo.ReplaceCharacterCodes(_reqRunComment);
+            _reqRunComment := public.replace_character_codes(_reqRunComment);
 
             If char_length(_reqRunComment) > 0 And (_comment = _reqRunComment Or _comment LIKE _reqRunComment + '%') Then
                 If char_length(_comment) = char_length(_reqRunComment) Then

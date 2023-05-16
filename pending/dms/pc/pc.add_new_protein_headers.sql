@@ -57,8 +57,9 @@ BEGIN
         If Coalesce(_proteinIDStart, 0) = 0 Then
             -- Lookup the Maximum protein_id value in pc.t_protein_headers
             -- We'll set _proteinIDStart to that value plus 1
-            SELECT Max(protein_id) + 1 INTO _proteinIDStart
-            FROM pc.t_protein_headers
+            SELECT Max(protein_id) + 1
+            INTO _proteinIDStart
+            FROM pc.t_protein_headers;
 
             _proteinIDStart := Coalesce(_proteinIDStart, 0);
         End If;
@@ -95,7 +96,7 @@ BEGIN
                     INSERT INTO pc.t_protein_headers (protein_id, sequence_head)
                     SELECT protein_id, Substring("sequence", 1, 50) AS Sequence_Head
                     FROM pc.t_proteins
-                    WHERE protein_id >= _proteinIDStart AND protein_id <= _proteinIDEnd
+                    WHERE protein_id >= _proteinIDStart AND protein_id <= _proteinIDEnd;
                     --
                     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 

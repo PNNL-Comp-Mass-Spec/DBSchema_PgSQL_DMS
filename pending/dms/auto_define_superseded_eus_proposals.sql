@@ -17,7 +17,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _message text;
     _proposalList text;
 BEGIN
@@ -103,27 +103,14 @@ BEGIN
             -- Populate Proposal_ID_AutoSupersede
             ---------------------------------------------------
             --
-            UPDATE t_eus_proposals
+            UPDATE t_eus_proposals EUP
             SET proposal_id_auto_supersede = UpdatesQ.Newest_Proposal_ID
-            FROM t_eus_proposals EUP
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_eus_proposals
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_eus_proposals.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_ProposalsToUpdate UpdatesQ
-                   ON EUP.Proposal_ID = UpdatesQ.Proposal_ID
+            FROM Tmp_ProposalsToUpdate UpdatesQ
+            WHERE EUP.Proposal_ID = UpdatesQ.Proposal_ID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _message := 'Auto-set proposal_id_auto_supersede for ' || CAST(_myRowCount AS text) || ' proposal(s) in t_eus_proposals: ' || _proposalList;
+            _message := format('Auto-set proposal_id_auto_supersede for %s proposal(s) in t_eus_proposals: %s', _updateCount, _proposalList);
 
             Call post_log_entry ('Normal', _message, 'Auto_Define_Superseded_EUS_Proposals');
         End If;

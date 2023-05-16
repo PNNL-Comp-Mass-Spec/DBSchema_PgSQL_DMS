@@ -175,10 +175,10 @@ BEGIN
         End If;
 
         -- Assure that _comment is not null and assure that it doesn't have &quot; or &#34; or &amp;
-        _comment := dbo.ReplaceCharacterCodes(_comment);
+        _comment := public.replace_character_codes(_comment);
 
         -- Replace instances of CRLF (or LF) with semicolons
-        _comment := dbo.RemoveCrLf(_comment);
+        _comment := public.remove_cr_lf(_comment);
 
         If Coalesce(_wellplateName, '')::citext IN ('', 'na') Then
             _wellplateName := null;
@@ -524,10 +524,11 @@ BEGIN
             Call post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
-        Call lookup_other_from_experiment_sample_prep
+        Call lookup_other_from_experiment_sample_prep (
                             _experimentName,
-                            _workPackage output,
-                            _msg output
+                            _workPackage => _workPackage,   -- Output
+                            _message => _message,           -- Output
+                            _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'LookupOtherFromExperimentSamplePrep: %', _msg;
@@ -761,12 +762,13 @@ BEGIN
 
                 -- Assign users to the request
                 --
-                Call assign_eus_users_to_requested_run
+                Call assign_eus_users_to_requested_run (
                                         _requestID,
                                         _eusProposalID,
                                         _eusUserID,
-                                        _msg output
-                --
+                                        _message => _message,           -- Output
+                                        _returnCode => _returnCode);    -- Output
+
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'AssignEUSUsersToRequestedRun: %', _msg;
                 End If;

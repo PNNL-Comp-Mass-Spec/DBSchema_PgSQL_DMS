@@ -1,9 +1,9 @@
 --
 CREATE OR REPLACE PROCEDURE pc.promote_protein_collection_state
 (
-    _addNewProteinHeaders int = 1,
+    _addNewProteinHeaders boolean = true,
     _mostRecentMonths int = 12,
-    _infoOnly int = 0,
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default ''
 )
@@ -12,14 +12,15 @@ AS $$
 /****************************************************
 **
 **  Desc:   Examines protein collections with a state of 1
-**          Looks in MT_Main.dbo.T_DMS_Analysis_Job_Info_Cached
+**          Looks in public.T_Analysis_Job
 **          for any analysis jobs that refer to the given
 **          protein collection.  If any are found, the state
 **          for the given protein collection is changed to 3
 **
 **
 **  Arguments:
-**    _mostRecentMonths   Used to filter protein collections that we will examine
+**    _addNewProteinHeaders     When true, call add_new_protein_headers to add new proteins to pc.T_Protein_Headers
+**    _mostRecentMonths         Used to filter protein collections that we will examine
 **
 **  Auth:   mem
 **  Date:   09/13/2007
@@ -53,7 +54,7 @@ BEGIN
     -- Validate the inputs
     --------------------------------------------------------------
 
-    _addNewProteinHeaders := Coalesce(_addNewProteinHeaders, 1);
+    _addNewProteinHeaders := Coalesce(_addNewProteinHeaders, true);
 
     _mostRecentMonths := Coalesce(_mostRecentMonths, 12);
     If _mostRecentMonths <= 0 Then
@@ -102,12 +103,10 @@ BEGIN
 
                 _nameFilter := '%' || _proteinCollectionName || '%';
 
-                _jobCount := 0;
-                SELECT COUNT(*) INTO _jobCount
-                FROM MT_Main.dbo.T_DMS_Analysis_Job_Info_Cached
-                WHERE (ProteinCollectionList LIKE _nameFilter)
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                SELECT COUNT(*)
+                INTO _jobCount
+                FROM public.T_Analysis_Job
+                WHERE Protein_Collection_List ILIKE _nameFilter;
 
                 If _jobCount > 0 Then
                     _message := 'Updated state for Protein Collection "' || _proteinCollectionName || '" from 1 to 3 since ' || _jobCount::text || ' jobs are defined in DMS with this protein collection';
@@ -150,8 +149,8 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        If _addNewProteinHeaders <> 0 Then
-            Exec AddNewProteinHeaders _infoOnly = _infoOnly;
+        If _addNewProteinHeaders Then
+            call Add_New_Protein_Headers (_infoOnly = _infoOnly);
         End If;
 
     EXCEPTION

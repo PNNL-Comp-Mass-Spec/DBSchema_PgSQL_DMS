@@ -27,8 +27,6 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized boolean;
-
-    _myRowCount int := 0;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -59,9 +57,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_UserOperations (
         User_Operation text
-    )
-
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    );
 
     ---------------------------------------------------
     -- When populating Tmp_UserOperations, ignore any user operations that
@@ -69,12 +65,9 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_UserOperations( User_Operation )
-    SELECT CAST(Item AS text) AS DMS_User_Operation
+    SELECT Item
     FROM public.parse_delimited_list ( _operationsList )
-    WHERE CAST(Item AS text) IN ( SELECT Operation
-                                  FROM t_user_operations )
-
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE Item::citext IN ( SELECT Operation FROM t_user_operations );
 
     ---------------------------------------------------
     -- Add missing associations between operations and user
@@ -88,10 +81,7 @@ BEGIN
          LEFT OUTER JOIN t_user_operations_permissions UOP
            ON UOP.user_id = _userID AND
               UO.operation_id = UOP.operation_id
-    WHERE UOP.user_id IS NULL
-
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE UOP.user_id IS NULL;
 
     ---------------------------------------------------
     -- Remove extra associations
@@ -104,9 +94,6 @@ BEGIN
                             INNER JOIN t_user_operations UO
                               ON NewOps.User_Operation = UO.operation
                        WHERE t_user_operations_permissions.operation_id = UO.operation_id);
-
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     DROP TABLE Tmp_UserOperations;
 END

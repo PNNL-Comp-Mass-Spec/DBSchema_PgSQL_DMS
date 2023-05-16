@@ -62,8 +62,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
-    _usageTypeID int := 0;
+    _matchCount int;
+    _usageTypeID int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -107,9 +107,9 @@ BEGIN
         FROM t_emsl_instrument_usage_type
         WHERE usage_type = _usage;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        If _myRowCount = 0 Or Coalesce(_usageTypeID, 0) = 0 Then
+        If _matchCount = 0 Or Coalesce(_usageTypeID, 0) = 0 Then
             RAISE EXCEPTION 'Invalid usage %', _usage;
         End If;
 

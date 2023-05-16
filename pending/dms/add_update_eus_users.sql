@@ -37,7 +37,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _matchCount int := 0;
+    _existingCount int := 0;
     _msg text;
     _tempEUSPersonID int;
 BEGIN
@@ -99,11 +99,11 @@ BEGIN
     FROM t_eus_users
     WHERE person_id = _eusPersonID;
     --
-    GET DIAGNOSTICS _matchCount = ROW_COUNT;
+    GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
     -- Cannot create an entry that already exists
     --
-    If _mode = 'add' And _matchCount > 0 Then
+    If _mode = 'add' And _existingCount > 0 Then
         _msg := 'Cannot add: EUS Person ID "' || _eusPersonID || '" is already in the database ';
         RAISE EXCEPTION '%', _msg;
 
@@ -116,7 +116,7 @@ BEGIN
 
     -- Cannot update a non-existent entry
     --
-    If _mode = 'update' And _matchCount = 0 Then
+    If _mode = 'update' And _existingCount = 0 Then
         _msg := 'Cannot update: EUS Person ID "' || _eusPersonID || '" is not in the database ';
         RAISE EXCEPTION '%', _msg;
 

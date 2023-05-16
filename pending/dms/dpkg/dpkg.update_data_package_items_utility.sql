@@ -737,9 +737,7 @@ BEGIN
 
                 If _myRowCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Added %s %s', _myRowCount, public.check_plural(_myRowCount, 'experiment', 'experiments'));
-
-                    _actionMsg := 'Updated the comment for ' || Cast(_myRowCount as text) + public.check_plural(_myRowCount, ' experiment', ' experiments');
+                    _actionMsg := format('Updated the comment for %s %s', _myRowCount, public.check_plural(_myRowCount, 'experiment', 'experiments'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;

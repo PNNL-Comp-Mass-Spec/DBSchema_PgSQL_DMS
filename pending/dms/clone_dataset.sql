@@ -234,7 +234,7 @@ BEGIN
         -- Create a requested run for the dataset
         -- (code is from AddUpdateDataset)
 
-        Call dbo.add_update_requested_run (
+        Call public.add_update_requested_run (
                                 _requestName => _requestNameNew,
                                 _experimentName => _datasetInfo.ExperimentName,
                                 _requesterUsername =>_datasetInfo.OperatorUsername,

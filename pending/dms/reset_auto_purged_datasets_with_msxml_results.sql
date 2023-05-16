@@ -99,7 +99,7 @@ BEGIN
                  INNER JOIN t_dataset_archive_state_name DASN
                    ON DA.archive_state_id = DASN.DASN_StateID;
 
-            _datasetCount = array_length(string_to_array(_datasetIDs, ','), 1);
+            _datasetCount := array_length(string_to_array(_datasetIDs, ','), 1);
 
             _message := format('Would reset %s %s', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'));
 

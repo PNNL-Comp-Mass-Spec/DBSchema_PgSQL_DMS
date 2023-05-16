@@ -200,7 +200,7 @@ BEGIN
     End If;
 
     If char_length(_paramFileNameFilter) > 0 Then
-        _s := _s || ' AND (' || dbo.CreateLikeClauseFromSeparatedString(_paramFileNameFilter, 'Param_File_Name', ',') || ')';
+        _s := _s || ' AND (' || public.create_like_clause_from_separated_string(_paramFileNameFilter, 'Param_File_Name', ',') || ')';
     End If;
 
     _s := _s || ' ORDER BY Param_File_Type, Param_File_ID';
