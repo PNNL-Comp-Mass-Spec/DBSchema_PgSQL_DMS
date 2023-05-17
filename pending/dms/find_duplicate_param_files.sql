@@ -33,11 +33,11 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _sStart text;
     _s text;
     _filesProcessed int;
     _paramFileInfo record;
+    _updateCount int;
     _modCount int;
     _entryCount int;
     _entryInfo record;
@@ -73,8 +73,8 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_ParamFileTypeFilter (
         Param_File_Type text,
-        Valid int
-    )
+        Valid boolean
+    );
 
     CREATE TEMP TABLE Tmp_ParamFiles (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -82,8 +82,9 @@ BEGIN
         Param_File_Name text,
         Param_File_Type_ID int,
         Param_File_Type text
-    )
-    CREATE INDEX IX_Tmp_ParamFiles ON Tmp_ParamFiles (Entry_ID)
+    );
+
+    CREATE INDEX IX_Tmp_ParamFiles ON Tmp_ParamFiles (Entry_ID);
 
     CREATE TEMP TABLE Tmp_ParamEntries (
         Param_File_ID int,
@@ -91,7 +92,7 @@ BEGIN
         Entry_Specifier text,
         Entry_Value text,
         Compare boolean Default true
-    )
+    );
 
     CREATE INDEX IX_Tmp_ParamEntries_Param_File_ID ON Tmp_ParamEntries (Param_File_ID);
     CREATE INDEX IX_Tmp_ParamEntries_Entry_Type_Entry_Specifier ON Tmp_ParamEntries (Entry_Type, Entry_Specifier, Param_File_ID);
@@ -110,22 +111,22 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_MassModDuplicates (
         Param_File_ID int
-    )
+    );
 
     CREATE TEMP TABLE Tmp_ParamEntryDuplicates (
         Param_File_ID int
-    )
+    );
 
     CREATE TEMP TABLE Tmp_SimilarParamFiles (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Param_File_ID_Master int,
         Param_File_ID_Dup int
-    )
+    );
 
     CREATE TEMP TABLE Tmp_MassModCounts (
         Param_File_ID int,
         ModCount int
-    )
+    );
 
     CREATE INDEX IX_Tmp_MassModCounts_ModCount ON Tmp_MassModCounts (ModCount);
     CREATE UNIQUE INDEX IX_Tmp_MassModCounts_ModCountParamFileID ON Tmp_MassModCounts (ModCount, Param_File_ID);
@@ -135,44 +136,31 @@ BEGIN
     -----------------------------------------
 
     INSERT INTO Tmp_ParamFileTypeFilter (Param_File_Type, Valid)
-    SELECT DISTINCT Item, 1
-    FROM public.parse_delimited_list(_paramFileTypeList, ',')
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    SELECT DISTINCT Value, true
+    FROM public.parse_delimited_list(_paramFileTypeList, ',');
 
     UPDATE Tmp_ParamFileTypeFilter
-    SET Valid = 0
-    FROM Tmp_ParamFileTypeFilter PFTF
+    SET Valid = false
+    WHERE NOT EXISTS (SELECT PFT.param_file_type FROM t_param_file_types PFT WHERE Tmp_ParamFileTypeFilter.param_file_type = PFT.param_file_type);
 
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_ParamFileTypeFilter
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_ParamFileTypeFilter.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-        LEFT OUTER JOIN t_param_file_types PFT
-        ON PFTF.param_file_type = PFT.param_file_type
-    WHERE PFT.param_file_type IS NULL
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    If _myRowCount > 0 Then
-        _message := 'Warning: one or more items in _paramFileTypeList were not valid parameter file types';
-        RAISE INFO '%', _message;
-
-        SELECT _message, *
+    If FOUND Then
+        SELECT string_agg(param_file_type, ', ')
+        INTO _message
         FROM Tmp_ParamFileTypeFilter
+        WHERE Not Valid;
+
+        If Position(', ' In _message) > 0 Then
+            _message := format('Warning: _paramFileTypeList has the following invalid parameter file types: %s', _message);
+        Else
+            _message := format('Warning: invalid parameter file type found in _paramFileTypeList: %s', _message);
+        End If;
+
+        RAISE WARNING '%', _message;
 
         _message := '';
 
         DELETE FROM Tmp_ParamFileTypeFilter
-        WHERE Valid = 0
-
+        WHERE Not Valid;
     End If;
 
     -----------------------------------------
@@ -262,9 +250,7 @@ BEGIN
             PE.entry_value,
             true AS Compare
         FROM t_param_entries PE
-        ORDER BY param_file_id, entry_type, entry_specifier
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        ORDER BY param_file_id, entry_type, entry_specifier;
 
         If _checkValidOnly Then
             DELETE Tmp_ParamEntries
@@ -359,8 +345,6 @@ BEGIN
         WHERE Entry_Type = 'AdvancedParam' AND
               Entry_Specifier = 'FragmentIonTolerance' AND
               Entry_Value = '0';
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -----------------------------------------
         -- Change Compare to false for entries in Tmp_ParamEntries that correspond to
@@ -376,10 +360,12 @@ BEGIN
               PE.Entry_Specifier = LookupQ.Entry_Specifier AND
               Compare = true;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _message := 'Note: Updated ' || _myRowCount::text || ' rows in Tmp_ParamEntries to have Compare = false, since they correspond to entries in Tmp_DefaultSequestParamEntries that have Compare = false';
+        If _updateCount > 0 Then
+            _message := format('Note: Changed Compare to false for %s rows in Tmp_ParamEntries, since they correspond to entries in Tmp_DefaultSequestParamEntries that have Compare = false',
+                             _updateCount);
+
             RAISE INFO '%', _message;
             _message := '';
         End If;
@@ -586,13 +572,13 @@ BEGIN
                                                              FROM Tmp_ParamEntries
                                                              WHERE Compare
                                                              GROUP BY param_file_id
-                                                             HAVING (COUNT(*) = _entryCount) ))
+                                                             HAVING COUNT(*) = _entryCount ))
                             ) B
                     ON A.Entry_Type = B.Entry_Type AND
                        A.Entry_Specifier = B.Entry_Specifier AND
                        A.Entry_Value = B.Entry_Value
                 GROUP BY B.param_file_id
-                HAVING (COUNT(*) = _entryCount)
+                HAVING COUNT(*) = _entryCount;
 
             End If; -- </d2>
 

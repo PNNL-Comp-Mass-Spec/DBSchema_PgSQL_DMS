@@ -98,6 +98,9 @@ BEGIN
     End If;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         -- Preview the running tasks
         --
         SELECT *

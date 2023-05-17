@@ -20,7 +20,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _usedThresholdMonths int := 9;
     _unusedThresholdMonths int := 24;
 BEGIN
@@ -104,11 +104,13 @@ BEGIN
                             WHERE (lc_column IN ('unknown', 'No_Column', 'DI', 'Infuse')) )
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         -----------------------------------------------------------
         -- Preview the columns that would be retired
         -----------------------------------------------------------
         --
-        -- ToDo: Show this data using RAISE INFO
         SELECT LCCol.lc_column_id,
                LCCol.lc_column,
                Src.Last_Used,
@@ -136,11 +138,11 @@ BEGIN
         WHERE lc_column_id IN ( SELECT lc_column_id
                                 FROM Tmp_LCColumns Filter );
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
+        If _updateCount > 0 Then
             _message := format('Retired %s %s that have not been used in at last %s months',
-                        _myRowCount, public.check_plural(_myRowCount, 'LC column', 'LC columns'), _usedThresholdMonths);
+                        _updateCount, public.check_plural(_updateCount, 'LC column', 'LC columns'), _usedThresholdMonths);
 
             Call post_log_entry ('Normal', _message, 'Retire_Stale_LC_Columns');
         End If;

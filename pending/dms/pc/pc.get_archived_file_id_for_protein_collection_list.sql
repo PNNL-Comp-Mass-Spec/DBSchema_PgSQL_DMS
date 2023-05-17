@@ -27,7 +27,6 @@ DECLARE
     _myRowCount int := 0;
     _proteinCollectionName text;
     _uniqueID int;
-    _continue int;
     _proteinCollectionListClean text := '';
 BEGIN
     _message := '';
@@ -156,8 +155,8 @@ BEGIN
     _uniqueID := 0;
     _proteinCollectionCount := 0;
 
-    _continue := 1;
-    While _continue = 1 Loop
+    WHILE true
+    LOOP
         -- This While loop can probably be converted to a For loop; for example:
         --    For _itemName In
         --        SELECT item_name
@@ -176,40 +175,40 @@ BEGIN
         --
         GET DIAGNOSTICS _myRowcount = ROW_COUNT;
 
-        If _myRowcount < 1 Then
-            _continue := 0;
+        If Not FOUND Then
+            -- Break out of the while loop
+                EXIT;
+        End If;
+
+        UPDATE Tmp_Archived_Output_File_IDs
+        SET Valid_Member_Count = Valid_Member_Count + 1
+        FROM Tmp_Archived_Output_File_IDs AOF INNER JOIN
+
+        /********************************************************************************
+        ** This UPDATE query includes the target table name in the FROM clause
+        ** The WHERE clause needs to have a self join to the target table, for example:
+        **   UPDATE #Tmp_Archived_Output_File_IDs
+        **   SET ...
+        **   FROM source
+        **   WHERE source.id = #Tmp_Archived_Output_File_IDs.id;
+        ********************************************************************************/
+
+                               ToDo: Fix this query
+
+             pc.t_archived_output_file_collections_xref AOFC ON AOF.archived_file_id = AOFC.archived_file_id INNER JOIN
+             pc.t_protein_collections PC ON AOFC.protein_collection_id = PC.protein_collection_id
+        WHERE PC.collection_name = _proteinCollectionName;
+        --
+        GET DIAGNOSTICS _myRowcount = ROW_COUNT;
+
+        _proteinCollectionCount := _proteinCollectionCount + 1;
+
+        If _proteinCollectionCount = 1 Then
+            _proteinCollectionListClean := _proteinCollectionName;
         Else
-        -- <c>
-            UPDATE Tmp_Archived_Output_File_IDs
-            SET Valid_Member_Count = Valid_Member_Count + 1
-            FROM Tmp_Archived_Output_File_IDs AOF INNER JOIN
+            _proteinCollectionListClean := _proteinCollectionListClean || ',' || _proteinCollectionName;
+        End If;
 
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE #Tmp_Archived_Output_File_IDs
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = #Tmp_Archived_Output_File_IDs.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 pc.t_archived_output_file_collections_xref AOFC ON AOF.archived_file_id = AOFC.archived_file_id INNER JOIN
-                 pc.t_protein_collections PC ON AOFC.protein_collection_id = PC.protein_collection_id
-            WHERE PC.collection_name = _proteinCollectionName;
-            --
-            GET DIAGNOSTICS _myRowcount = ROW_COUNT;
-
-            _proteinCollectionCount := _proteinCollectionCount + 1;
-
-            If _proteinCollectionCount = 1 Then
-                _proteinCollectionListClean := _proteinCollectionName;
-            Else
-                _proteinCollectionListClean := _proteinCollectionListClean || ',' || _proteinCollectionName;
-            End If;
-
-        End If; -- </c>
     END LOOP; -- </b>
 
     -----------------------------------------------------

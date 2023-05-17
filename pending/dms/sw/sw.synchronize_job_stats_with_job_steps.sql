@@ -107,7 +107,8 @@ BEGIN
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _infoOnly Then
-        -- ToDo: Use Raise Info
+
+        -- ToDo: Update this to use RAISE INFO
 
         SELECT J.Job,
                J.state,

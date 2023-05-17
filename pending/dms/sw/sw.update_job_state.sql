@@ -551,13 +551,13 @@ BEGIN
     END LOOP;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         ---------------------------------------------------
         -- Preview changes that would be made via the above while loop
         ---------------------------------------------------
         --
-
-        -- ToDo: Update this to use RAISE INFO
-
         SELECT *
         FROM Tmp_JobStatePreview
         ORDER BY Job

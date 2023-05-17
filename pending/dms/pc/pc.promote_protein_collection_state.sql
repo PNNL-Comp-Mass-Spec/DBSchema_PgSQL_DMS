@@ -32,7 +32,6 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _continue int;
     _proteinCollectionID int;
     _proteinCollectionName text;
     _nameFilter text;
@@ -75,9 +74,9 @@ BEGIN
     BEGIN
 
         _proteinCollectionID := 0;
-        _continue := 1;
 
-        While _continue = 1 Loop
+        WHILE true
+        LOOP
             _currentLocation := 'Find the next Protein collection with state 1';
 
             SELECT protein_collection_id,
@@ -89,47 +88,46 @@ BEGIN
                   date_created >= DATEADD(month, -_mostRecentMonths, CURRENT_TIMESTAMP)
             ORDER BY protein_collection_id
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount <> 1 Then
-                _continue := 0;
-            Else
-                _currentLocation := 'Look for jobs in V_DMS_Analysis_Job_Info that used ' || _proteinCollectionName;
+            If Not FOUND Then
+                -- Break out of the while loop
+                EXIT;
+            End If;
 
-                If _infoOnly > 0 Then
-                    RAISE INFO '%', _currentLocation;
+            _currentLocation := 'Look for jobs in V_DMS_Analysis_Job_Info that used ' || _proteinCollectionName;
+
+            If _infoOnly Then
+                RAISE INFO '%', _currentLocation;
+            End If;
+
+            _nameFilter := '%' || _proteinCollectionName || '%';
+
+            SELECT COUNT(*)
+            INTO _jobCount
+            FROM public.T_Analysis_Job
+            WHERE Protein_Collection_List ILIKE _nameFilter;
+
+            If _jobCount > 0 Then
+                _message := 'Updated state for Protein Collection "' || _proteinCollectionName || '" from 1 to 3 since ' || _jobCount::text || ' jobs are defined in DMS with this protein collection';
+
+                If Not _infoOnly Then
+                    _currentLocation := 'Update state for CollectionID ' || _proteinCollectionID::text;
+
+                    UPDATE pc.t_protein_collections
+                    SET collection_state_id = 3
+                    WHERE protein_collection_id = _proteinCollectionID AND collection_state_id = 1
+
+                    Call public.post_log_entry ('Normal', _message, 'Promote_Protein_Collection_State', 'pc');
+                Else
+                    RAISE INFO '%', _message;
                 End If;
 
-                _nameFilter := '%' || _proteinCollectionName || '%';
-
-                SELECT COUNT(*)
-                INTO _jobCount
-                FROM public.T_Analysis_Job
-                WHERE Protein_Collection_List ILIKE _nameFilter;
-
-                If _jobCount > 0 Then
-                    _message := 'Updated state for Protein Collection "' || _proteinCollectionName || '" from 1 to 3 since ' || _jobCount::text || ' jobs are defined in DMS with this protein collection';
-
-                    If _infoOnly = 0 Then
-                        _currentLocation := 'Update state for CollectionID ' || _proteinCollectionID::text;
-
-                        UPDATE pc.t_protein_collections
-                        SET collection_state_id = 3
-                        WHERE protein_collection_id = _proteinCollectionID AND collection_state_id = 1
-
-                        Call public.post_log_entry ('Normal', _message, 'Promote_Protein_Collection_State', 'pc');
-                    Else
-                        RAISE INFO '%', _message;
-                    End If;
-
-                    If char_length(_proteinCollectionsUpdated) > 0 Then
-                        _proteinCollectionsUpdated := _proteinCollectionsUpdated || ', ';
-                    End If;
-
-                    _proteinCollectionsUpdated := _proteinCollectionsUpdated + _proteinCollectionName;
-                    _proteinCollectionCountUpdated := _proteinCollectionCountUpdated + 1;
+                If char_length(_proteinCollectionsUpdated) > 0 Then
+                    _proteinCollectionsUpdated := _proteinCollectionsUpdated || ', ';
                 End If;
+
+                _proteinCollectionsUpdated := _proteinCollectionsUpdated + _proteinCollectionName;
+                _proteinCollectionCountUpdated := _proteinCollectionCountUpdated + 1;
             End If;
         END LOOP;
 
@@ -145,7 +143,7 @@ BEGIN
 
         End If;
 
-        If _infoOnly > 0 Then
+        If _infoOnly Then
             RAISE INFO '%', _message;
         End If;
 

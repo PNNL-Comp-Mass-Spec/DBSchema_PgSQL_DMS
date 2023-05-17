@@ -23,7 +23,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _jobCount int := 0;
     _usageMessage text;
 BEGIN
@@ -51,13 +50,17 @@ BEGIN
     --
     INSERT INTO Tmp_JobsToUpdate (job)
     SELECT AJ.job
-    FROM t_analysis_job AJ INNER JOIN
-            V_Analysis_Job_and_Dataset_Archive_State AJDAS ON AJ.job = AJDAS.job
-    WHERE (AJ.job >= _jobStart) AND
-            (AJ.job <= _jobFinish) AND
-            Coalesce(state_name_cached, '') <> Coalesce(AJDAS.Job_State, '')
+    FROM t_analysis_job AJ
+         INNER JOIN V_Analysis_Job_and_Dataset_Archive_State AJDAS
+           ON AJ.job = AJDAS.job
+    WHERE AJ.job >= _jobStart AND
+          AJ.job <= _jobFinish AND
+          AJ.state_name_cached Is Distinct From AJDAS.Job_State;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         ---------------------------------------------------
         -- Preview the jobs
         ---------------------------------------------------
@@ -69,12 +72,13 @@ BEGIN
              V_Analysis_Job_and_Dataset_Archive_State AJDAS ON AJ.job = AJDAS.job
         WHERE AJ.job IN (Select job From Tmp_JobsToUpdate);
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _jobCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If _jobCount = 0 Then
             _message := 'All jobs have up-to-date cached job state names';
         Else
-            _message := 'Found ' || _myRowCount::text || ' jobs to update';
+            _message := format('Found %s %s to update',
+                                _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
         End If;
 
         RAISE INFO '%', _message;
@@ -90,22 +94,17 @@ BEGIN
             FROM V_Analysis_Job_and_Dataset_Archive_State AJDAS
             WHERE AJ.job = AJDAS.Job AND AJ.job IN (Select Job From Tmp_JobsToUpdate)
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            _jobCount := _myRowCount;
+            GET DIAGNOSTICS _jobCount = ROW_COUNT;
 
             If _jobCount = 0 Then
                 _message := '';
             Else
-                _message := ' Updated the cached job state name for ' || _jobCount::text || ' jobs';
+                _message := format('Updated the cached job state name for %s %s',
+                                    _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
             End If;
         End If;
 
     End If;
-
-    ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
 
     ---------------------------------------------------
     -- Log SP usage

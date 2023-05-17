@@ -53,7 +53,11 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _jobCount int;
+    _deleteCount int;
+    _datasetCount int;
+    _warningCount int;
+    _msg text;
     _callingProcName text;
     _currentLocation text := 'Start';
     _deleteThreshold timestamp;
@@ -223,8 +227,6 @@ BEGIN
                 E.created
         ORDER BY E.created
         LIMIT _maxItemsToProcess;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
     End If;
 
     ---------------------------------------------------
@@ -241,8 +243,6 @@ BEGIN
             ON DS.dataset_id = J.dataset_id
         ORDER BY J.job
         LIMIT _maxItemsToProcess;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Append jobs that finished prior to _deleteThreshold
@@ -250,10 +250,10 @@ BEGIN
 
         If _maxItemsToProcess > 0 Then
             SELECT COUNT(*)
-            INTO _myRowCount
+            INTO _jobCount
             FROM Tmp_JobsToDelete;
 
-            _maxItemsToAppend := _maxItemsToProcess - _myRowCount;
+            _maxItemsToAppend := _maxItemsToProcess - _jobCount;
         Else
             _maxItemsToAppend := 1000000;
         End If;
@@ -272,7 +272,8 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        -- ToDo: convert the following SELECT queries to use RAISE INFO
+
+        -- ToDo: Update this to use RAISE INFO
 
         -- Preview all of the datasets and experiments that would be deleted
         SELECT Dataset_ID, Dataset as Dataset_to_Delete, Created
@@ -305,6 +306,8 @@ BEGIN
         -- Count old log messages
         ---------------------------------------------------
 
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT 't_log_entries' AS Log_Table_Name, COUNT(*) AS Rows_to_Delete
         FROM t_log_entries
         WHERE entered < _logDeleteThreshold
@@ -333,12 +336,12 @@ BEGIN
     ---------------------------------------------------
 
     SELECT COUNT(*)
-    INTO _myRowCount
+    INTO _jobCount
     FROM Tmp_JobsToDelete;
 
-    If _myRowCount > 0 And _deleteJobs Then
+    If _jobCount > 0 And _deleteJobs Then
     -- <a>
-        _message := 'Deleted ' || _myRowCount::text || ' jobs from: ';
+        _message := format('Deleted %s %s from: ', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
 
         BEGIN
 
@@ -393,7 +396,7 @@ BEGIN
             --
             -- If Not Exists (SELECT * FROM sys.indexes WHERE NAME = 'IX_Tmp_T_Analysis_Job_Batch_ID_Include_Job') Then
             --     _currentLocation := 'CREATE Index IX_Tmp_T_Analysis_Job_Batch_ID_Include_Job';
-            --     CREATE NONCLUSTERED INDEX IX_Tmp_T_Analysis_Job_Batch_ID_Include_Job
+            --     CREATE INDEX IX_Tmp_T_Analysis_Job_Batch_ID_Include_Job
             --     ON t_analysis_job (batch_id)
             --     INCLUDE (job)
             -- End If;
@@ -404,10 +407,12 @@ BEGIN
             WHERE AJB.Batch_Created < _deleteThreshold AND
                   NOT EXISTS (SELECT AJ.job FROM t_analysis_job AJ WHERE AJB.batch_id = AJ.batch_id);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := 'Deleted ' || _myRowCount::text || ' entries from t_analysis_job_batches since orphaned and older than ' || _deleteThreshold::text;
+            If _deleteCount > 0 Then
+                _message := format('Deleted %s %s from t_analysis_job_batches since orphaned and older than %s',
+                                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
+
                 Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
@@ -426,10 +431,12 @@ BEGIN
                                   WHERE AJ.request_id IS NULL AND AJR.created < _deleteThreshold
                                 );
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := 'Deleted ' || _myRowCount::text || ' entries from t_analysis_job_request since orphaned and older than ' || _deleteThreshold::text;
+            If _deleteCount > 0 Then
+                 _message := format('Deleted %s %s from t_analysis_job_request since orphaned and older than %s',
+                                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
+
                 Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
@@ -442,10 +449,12 @@ BEGIN
                   target.created < _logDeleteThreshold AND
                   NOT EXISTS (SELECT J.job FROM t_analysis_job J WHERE target.job = J.job);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := 'Deleted ' || _myRowCount::text || ' entries from t_analysis_job_id since orphaned and older than ' || _logDeleteThreshold::text;
+            If _deleteCount > 0 Then
+                _message := format('Deleted %s %s from t_analysis_job_id since orphaned and older than %s',
+                                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
+
                 Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
@@ -483,12 +492,12 @@ BEGIN
     ---------------------------------------------------
 
     SELECT COUNT(*)
-    INTO _myRowCount
+    INTO _deleteCount
     FROM Tmp_DatasetsToDelete;
 
-    If _myRowCount > 0 And _deleteDatasets Then
+    If _deleteCount > 0 And _deleteDatasets Then
     -- <b>
-        _message := 'Deleted ' || _myRowCount::text || ' datasets from: ';
+        _message := 'Deleted ' || _deleteCount::text || ' datasets from: ';
 
         BEGIN
 
@@ -497,7 +506,7 @@ BEGIN
             If Exists (SELECT * FROM t_analysis_job J INNER JOIN Tmp_DatasetsToDelete D ON J.dataset_id = D.dataset_id) Then
                 _message := 'Cannot delete dataset since job exists';
 
-                _myRowCount := 0;
+                _warningCount := 0;
 
                 FOR _dataset, _job IN
                     SELECT d.dataset,
@@ -509,22 +518,29 @@ BEGIN
                 LOOP
                     RAISE WARNING 'Cannot delete dataset % since job % exists', _dataset, _job;
 
-                    _myRowCount := _myRowCount + 1;
-                    If _myRowCount > 10 Then
+                    _warningCount := _warningCount + 1;
+
+                    If _warningCount > 10 Then
                         -- Break out of the for loop
                         EXIT;
                     End If;
 
                 END LOOP;
 
-                If _myRowCount > 10 Then
+                If _warningCount > 10 Then
+
                     SELECT Count(Distinct d.dataset)
-                    INTO _myRowCount
+                    INTO _datasetCount
                     FROM t_analysis_job J
                          INNER JOIN Tmp_DatasetsToDelete D
                            ON J.dataset_id = D.dataset_id;
 
-                    RAISE WARNING '% total datasets have jobs and thus cannot be deleted', _myRowCount;
+                    If _datasetCount > 1 Then
+                        _msg := format('%s datasets have jobs and thus cannot be deleted', _deleteCount);
+                        RAISE WARNING '%', _msg;
+
+                        _message := _message || '; ' || _msg;
+                    End If
                 End If;
 
                 DROP TABLE IF EXISTS Tmp_DatasetsToDelete;
@@ -602,10 +618,12 @@ BEGIN
             WHERE target.Created < _deleteThreshold AND
                   target.DatasetID IS NULL;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := 'Deleted ' || _myRowCount::text || ' entries from t_requested_run since orphaned and older than ' || _deleteThreshold::text;
+            If _deleteCount > 0 Then
+                _message := format('Deleted %s %s from t_requested_run since orphaned and older than %s',
+                                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
+
                 Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
@@ -615,10 +633,12 @@ BEGIN
             WHERE target.created < _deleteThreshold AND
                   NOT EXISTS (SELECT RR.batch_ID FROM t_requested_run RR WHERE target.batch_id = RR.batch_id);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := 'Deleted ' || _myRowCount::text || ' entries from t_requested_run_batches since orphaned and older than ' || _deleteThreshold::text;
+            If _deleteCount > 0 Then
+                _message := format('Deleted %s %s from t_requested_run_batches since orphaned and older than %s',
+                                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
+
                 Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
@@ -627,10 +647,12 @@ BEGIN
             DELETE FROM t_dataset_scan_types target
             WHERE NOT EXISTS (SELECT DS.dataset_ID FROM t_dataset DS WHERE target.dataset_id = DS.dataset_id);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := 'Deleted ' || _myRowCount::text || ' entries from t_dataset_scan_types since orphaned';
+            If _deleteCount > 0 Then
+                _message := format('Deleted %s %s from t_dataset_scan_types since orphaned',
+                                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'));
+
                 Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
@@ -668,12 +690,12 @@ BEGIN
     ---------------------------------------------------
 
     SELECT COUNT(*)
-    INTO _myRowCount
+    INTO _deleteCount
     FROM Tmp_ExperimentsToDelete;
 
-    If _myRowCount > 0 And _deleteDatasets And _deleteExperiments Then
+    If _deleteCount > 0 And _deleteDatasets And _deleteExperiments Then
     -- <c>
-        _message := 'Deleted ' || _myRowCount::text || ' experiments from: ';
+        _message := 'Deleted ' || _deleteCount::text || ' experiments from: ';
 
         BEGIN
 
@@ -726,10 +748,12 @@ BEGIN
             WHERE target.EG_Created < _deleteThreshold AND
                   NOT EXISTS (SELECT EGM.group_id FROM t_experiment_group_members EGM WHERE target.group_id = EGM.group_id)
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := 'Deleted ' || _myRowCount::text || ' entries from t_experiment_groups since orphaned and older than ' || _deleteThreshold::text;
+            If _deleteCount > 0 Then
+                _message := format('Deleted %s %s from t_experiment_groups since orphaned and older than %s',
+                                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
+
                 Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
@@ -788,10 +812,12 @@ BEGIN
               (AIVal.target_id > 0)
         );
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := 'Deleted ' || _myRowCount::text || ' experiment related entries from t_aux_info_value since orphaned';
+    If _deleteCount > 0 Then
+        _message := format('Deleted %s experiment related %s from t_aux_info_value since orphaned',
+                            _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'));
+
         Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
     End If;
 
@@ -814,10 +840,12 @@ BEGIN
               (T_Biomaterial.Biomaterial_ID IS NULL)
         );
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := 'Deleted ' || _myRowCount::text || ' biomaterial related entries from t_aux_info_value since orphaned';
+    If _deleteCount > 0 Then
+        _message := format('Deleted %s biomaterial related %s from t_aux_info_value since orphaned',
+                            _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'));
+
         Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
     End If;
 

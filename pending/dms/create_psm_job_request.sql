@@ -58,7 +58,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _result int;
     _settingsFile text;
     _paramFile text;
@@ -179,9 +178,7 @@ BEGIN
             Archive_State_ID int NULL,
             Dataset_Type text NULL,
             Dataset_rating int NULL
-        )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        );
 
         CREATE INDEX IX_TD_DatasetID ON Tmp_DatasetInfo (Dataset_ID)
 
@@ -194,9 +191,7 @@ BEGIN
         SELECT DISTINCT Item
         FROM public.parse_delimited_list ( _datasets )
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        _datasetCount := _myRowCount;
+        GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Validate the datasets in Tmp_DatasetInfo
@@ -217,10 +212,9 @@ BEGIN
         -- Regenerate the dataset list, sorting by dataset name
         ---------------------------------------------------
 
-        SELECT string_agg(Dataset_Name, ', ')
+        SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
         INTO _datasets
-        FROM Tmp_DatasetInfo
-        ORDER BY Dataset_Name
+        FROM Tmp_DatasetInfo;
 
         ---------------------------------------------------
         -- Determine the appropriate parameter file and settings file given _toolName and _jobTypeName

@@ -38,7 +38,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _countBeforeMerge int;
     _countAfterMerge int;
     _mergeCount int;
@@ -217,8 +216,6 @@ BEGIN
                     (_updateAll AND CC.CHARGE_CD IN (SELECT charge_code FROM t_charge_code));
 
         End If;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If Not _infoOnly Then
 
@@ -310,9 +307,10 @@ BEGIN
             End If;
 
             If _mergeUpdateCount > 0 OR _mergeInsertCount > 0 Then
-                _message := 'Updated t_charge_code: ' || _mergeInsertCount::text || ' added; ' || _mergeUpdateCount::text || ' updated';
+                _message := format('Updated t_charge_code: %s added, %s updated', _mergeInsertCount, _mergeUpdateCount);
 
                 Call post_log_entry ('Normal', _message, 'Update_Charge_Codes_From_Warehouse');
+
                 _message := '';
             End If;
 
@@ -331,52 +329,24 @@ BEGIN
             --
             _currentLocation := 'Update Inactive_Date_Most_Recent using Inactive_Date and SubAccount_Inactive_Date';
 
-            UPDATE t_charge_code
+            UPDATE t_charge_code Target
             SET inactive_date_most_recent = OuterQ.inactive_date_most_recent
-            FROM t_charge_code target
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_charge_code
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_charge_code.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN ( SELECT Charge_Code,
-                                     Inactive1,
-                                     Inactive2,
-                                     CASE
-                                         WHEN Inactive1 >= Coalesce(Inactive2, Inactive1) THEN Inactive1
-                                         ELSE Inactive2
-                                     END AS Inactive_Date_Most_Recent
-                              FROM ( SELECT charge_code,
-                                            COALESCE(inactive_date, sub_account_inactive_date, inactive_date_most_recent) AS Inactive1,
-                                            COALESCE(sub_account_inactive_date, inactive_date, inactive_date_most_recent) AS Inactive2
-                             FROM t_charge_code
-
-                             /********************************************************************************
-                             ** This UPDATE query includes the target table name in the FROM clause
-                             ** The WHERE clause needs to have a self join to the target table, for example:
-                             **   UPDATE t_charge_code
-                             **   SET ...
-                             **   FROM source
-                             **   WHERE source.id = t_charge_code.id;
-                             ********************************************************************************/
-
-                                                    ToDo: Fix this query
-
-                                    ) InnerQ
-                          ) OuterQ
-                   ON target.Charge_Code = OuterQ.Charge_Code AND
-                      NOT OuterQ.Inactive_Date_Most_Recent IS NULL
-            WHERE target.Inactive_Date_Most_Recent <> OuterQ.Inactive_Date_Most_Recent OR
-                target.Inactive_Date_Most_Recent IS NULL
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            FROM  ( SELECT Charge_Code,
+                           Inactive1,
+                           Inactive2,
+                           CASE
+                               WHEN Inactive1 >= Coalesce(Inactive2, Inactive1) THEN Inactive1
+                               ELSE Inactive2
+                           END AS Inactive_Date_Most_Recent
+                    FROM ( SELECT charge_code,
+                                  COALESCE(inactive_date, sub_account_inactive_date, inactive_date_most_recent) AS Inactive1,
+                                  COALESCE(sub_account_inactive_date, inactive_date, inactive_date_most_recent) AS Inactive2
+                           FROM t_charge_code
+                         ) InnerQ
+                  ) OuterQ
+            WHERE target.Charge_Code = OuterQ.Charge_Code AND
+                  NOT OuterQ.Inactive_Date_Most_Recent IS NULL AND
+                  target.Inactive_Date_Most_Recent Is Distinct From OuterQ.Inactive_Date_Most_Recent;
 
             ----------------------------------------------------------
             -- Update Inactive_Date_Most_Recent
@@ -387,18 +357,14 @@ BEGIN
 
             UPDATE t_charge_code
             SET inactive_date_most_recent = CURRENT_TIMESTAMP
-            WHERE deactivated = 'Y' AND inactive_date_most_recent IS NULL
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE deactivated = 'Y' AND inactive_date_most_recent IS NULL;
 
             -- Set the state to 0 for deactivated work packages
             --
             UPDATE t_charge_code
             SET charge_code_state = 0
             WHERE charge_code_state <> 0 AND
-                  deactivated = 'Y'
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                  deactivated = 'Y';
 
             -- Look for work packages that have a state of 0 but are no longer deactivated
             -- If created within the last 2 years, or if Inactive_Date_Most_Recent is within the last two years,
@@ -410,9 +376,7 @@ BEGIN
                   deactivated = 'N' AND
                   (setup_date > CURRENT_TIMESTAMP - INTERVAL '2 years'
                     -- Or SubAccount_Inactive_Date > CURRENT_TIMESTAMP - INTERVAL '2 years'
-                  )
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                  );
 
             ----------------------------------------------------------
             -- Auto-mark active charge codes that are currently in state 1 = 'Interest Unknown'
@@ -425,9 +389,7 @@ BEGIN
             SET charge_code_state = 2
             WHERE charge_code_state = 1 AND
                   (usage_sample_prep > 0 OR
-                   usage_requested_run > 0)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                   usage_requested_run > 0);
 
             ----------------------------------------------------------
             -- Find WPs used within the last 3 years
@@ -457,9 +419,7 @@ BEGIN
                           ON A.charge_code = B.charge_code
                   ) UsageQ
             WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '3 years'
-            GROUP BY charge_code
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GROUP BY charge_code;
 
             ----------------------------------------------------------
             -- Auto-mark Inactive charge codes that have usage counts of 0 and became inactive at least 6 months ago
@@ -471,9 +431,7 @@ BEGIN
             WHERE charge_code_state IN (1, 2) AND
                   inactive_date_most_recent < CURRENT_TIMESTAMP - INTERVAL '6 months' AND
                   Coalesce(usage_sample_prep, 0) = 0 AND
-                  Coalesce(usage_requested_run, 0) = 0
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                  Coalesce(usage_requested_run, 0) = 0;
 
             ----------------------------------------------------------
             -- Auto-mark Inactive charge codes that became inactive at least 12 months ago
@@ -486,9 +444,7 @@ BEGIN
                   inactive_date_most_recent < CURRENT_TIMESTAMP - INTERVAL '1 year' AND
                   charge_code NOT IN ( SELECT charge_code
                                        FROM Tmp_WPsInUseLast3Years
-                                       WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '1 year' )
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                                       WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '1 year' );
 
             ----------------------------------------------------------
             -- Auto-mark Inactive charge codes that were created at least 3 years ago
@@ -501,9 +457,7 @@ BEGIN
             WHERE charge_code_state IN (1, 2) AND
                   setup_date < CURRENT_TIMESTAMP - INTERVAL '3 years' AND
                   charge_code NOT IN ( SELECT charge_code
-                                       FROM Tmp_WPsInUseLast3Years )
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                                       FROM Tmp_WPsInUseLast3Years );
 
             ----------------------------------------------------------
             -- Add new users as DMS_Guest users

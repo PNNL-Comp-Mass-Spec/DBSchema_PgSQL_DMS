@@ -27,7 +27,6 @@ AS $$
 *****************************************************/
 DECLARE
     _myRowCount int := 0;
-    _continue int;
     _proteinIDEnd int;
     _proteinsProcessed int := 0;
     _batchSize int := 100000;
@@ -70,47 +69,46 @@ BEGIN
         --
         _currentLocation := 'Iterate through the proteins';
 
-        _continue := 1;
+        WHILE true
+        LOOP
 
-        While _continue = 1 Loop
-
-            _proteinIDEnd := 0;
-            SELECT Max(protein_id) INTO _proteinIDEnd
+            SELECT Max(protein_id)
+            INTO _proteinIDEnd
             FROM ( SELECT TOP ( _batchSize ) protein_id
                 FROM pc.t_proteins
                 WHERE protein_id >= _proteinIDStart
                 ORDER BY protein_id
                  ) LookupQ
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If Coalesce(_proteinIDEnd, -1) < 0 Then
-                _continue := 0;
-            Else
+                -- Break out of the while loop
+                EXIT;
+            End If;
+
             -- <b>
-                If _infoOnly <> 0 Then
-                    RAISE INFO '%', _proteinIDStart::text || ' to ' || _proteinIDEnd::text;
-                    _proteinsProcessed := _proteinsProcessed + _batchSize;
-                Else
+            If _infoOnly <> 0 Then
+                RAISE INFO '%', _proteinIDStart::text || ' to ' || _proteinIDEnd::text;
+                _proteinsProcessed := _proteinsProcessed + _batchSize;
+            Else
 
-                    INSERT INTO pc.t_protein_headers (protein_id, sequence_head)
-                    SELECT protein_id, Substring("sequence", 1, 50) AS Sequence_Head
-                    FROM pc.t_proteins
-                    WHERE protein_id >= _proteinIDStart AND protein_id <= _proteinIDEnd;
-                    --
-                    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                INSERT INTO pc.t_protein_headers (protein_id, sequence_head)
+                SELECT protein_id, Substring("sequence", 1, 50) AS Sequence_Head
+                FROM pc.t_proteins
+                WHERE protein_id >= _proteinIDStart AND protein_id <= _proteinIDEnd;
+                --
+                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                    _proteinsProcessed := _proteinsProcessed + _myRowCount;
+                _proteinsProcessed := _proteinsProcessed + _myRowCount;
 
-                End If;
+            End If;
 
-                _proteinIDStart := _proteinIDEnd + 1;
+            _proteinIDStart := _proteinIDEnd + 1;
 
-                If _maxProteinsToProcess > 0 AND _proteinsProcessed >= _maxProteinsToProcess Then
-                    _continue := 0;
-                End If;
+            If _maxProteinsToProcess > 0 AND _proteinsProcessed >= _maxProteinsToProcess Then
+                -- Break out of the while loop
+                EXIT;
+            End If;
 
-            End If; -- </b>
         END LOOP; -- </a>
 
         _currentLocation := 'Done iterating';

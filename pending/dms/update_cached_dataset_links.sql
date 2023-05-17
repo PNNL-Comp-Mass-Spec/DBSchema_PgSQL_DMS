@@ -28,7 +28,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
+    _updateCount int;
     _rowCountUpdated int := 0;
     _minimumDatasetID int := 0;
     _datasetIdStart int;
@@ -36,7 +37,6 @@ DECLARE
     _datasetIdMax int;
     _datasetBatchSize int;
     _addon text;
-    _continue boolean;
     _datasetID int;
     _masicDirectoryName text;
 BEGIN
@@ -79,18 +79,17 @@ BEGIN
     WHERE DS.dataset_id >= _minimumDatasetID AND
           DL.dataset_id IS NULL
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := format('Added %s new %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
+    If _matchCount > 0 Then
+        _message := format('Added %s new %s', _matchCount, public.check_plural(_matchCount, 'dataset', 'datasets'));
     End If;
 
-    SELECT MAX(dataset_id) INTO _datasetIdMax
-    FROM t_cached_dataset_links
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    SELECT MAX(dataset_id)
+    INTO _datasetIdMax
+    FROM t_cached_dataset_links;
 
-    If _myRowCount = 0 Then
+    If _datasetIdMax Is Null Then
         _datasetIdMax := 2147483647;
     End If;
 
@@ -129,13 +128,13 @@ BEGIN
               (DL.dataset_row_version <> DFP.dataset_row_version OR
                DL.storage_path_row_version <> DFP.storage_path_row_version);
         --
-        GET DIAGNOSTICS _rowCountUpdated = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _addon := format('%s %s on dataset_row_version or storage_path_row_version', _myRowCount, public.check_plural(_myRowCount, 'dataset differs', 'datasets differ'));
+        If _updateCount > 0 Then
+            _addon := format('%s %s on dataset_row_version or storage_path_row_version', _updateCount, public.check_plural(_updateCount, 'dataset differs', 'datasets differ'));
             _message := public.append_to_text(_message, _addon, 0, '; ', 512);
 
-            _rowCountUpdated := _rowCountUpdated + _myRowCount;
+            _rowCountUpdated := _rowCountUpdated + _updateCount;
         End If;
 
     End If;
@@ -154,9 +153,8 @@ BEGIN
         ------------------------------------------------
 
         _datasetID := 0;
-        _continue := true;
 
-        WHILE _continue
+        WHILE true
         LOOP
 
             -- This While loop can probably be converted to a For loop; for example:
@@ -174,10 +172,8 @@ BEGIN
             WHERE update_required > 0 AND dataset_id > _datasetID
             ORDER BY dataset_id
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
+            If Not FOUND Then
                 -- Break out of the while loop
                 EXIT;
             End If;
@@ -208,14 +204,14 @@ BEGIN
                  ) RankQ
             WHERE JobRank = 1
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount > 0 And char_length(_masicDirectoryName) > 0 Then
+            If _updateCount > 0 And char_length(_masicDirectoryName) > 0 Then
                 UPDATE t_cached_dataset_links
                 SET masic_directory_name = _masicDirectoryName
                 WHERE dataset_id = _datasetID;
 
-                _rowCountUpdated := _rowCountUpdated + _myRowCount;
+                _rowCountUpdated := _rowCountUpdated + _updateCount;
             End If;
 
         END LOOP;
@@ -243,9 +239,7 @@ BEGIN
             _datasetIdEnd := _datasetIdMax;
         End If;
 
-        _continue := true;
-
-        WHILE _continue
+        WHILE true
         LOOP
             ------------------------------------------------
             -- Make sure that entries with UpdateRequired > 0 have an up-to-date MASIC_Directory_Name
@@ -298,20 +292,21 @@ BEGIN
                    _processingMode >= 3) AND
                   Coalesce(Target.MASIC_Directory_Name, '') <> JobDirectoryQ.MasicDirectoryName
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+            _rowCountUpdated := _rowCountUpdated + _updateCount;
 
             If _datasetBatchSize <= 0 Then
                 -- Break out of the while loop
                 EXIT;
             End If;
 
-            _rowCountUpdated := _rowCountUpdated + _myRowCount;
-
             _datasetIdStart := _datasetIdStart + _datasetBatchSize;
             _datasetIdEnd := _datasetIdEnd + _datasetBatchSize;
 
             If _datasetIdStart > _datasetIdMax Then
-                _continue := false;
+                -- Break out of the while loop
+                EXIT;
             End If;
 
         END LOOP;
@@ -377,9 +372,9 @@ BEGIN
                ON DS.dataset_id = DA.dataset_id
         WHERE DL.update_required = 1
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _rowCountUpdated := _rowCountUpdated + _myRowCount;
+        _rowCountUpdated := _rowCountUpdated + _updateCount;
     Else
 
         -- _processingMode is 3
@@ -399,9 +394,7 @@ BEGIN
             _datasetIdEnd := _datasetIdMax;
         End If;
 
-        _continue := true;
-
-        WHILE _continue
+        WHILE true
         LOOP
             If _showDebug Then
                 RAISE INFO '%', 'Updating Dataset IDs ' || Cast(_datasetIdStart As text) || ' to ' || Cast(_datasetIdEnd As text);
@@ -485,20 +478,21 @@ BEGIN
                     last_affected = CURRENT_TIMESTAMP
             ;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+            _rowCountUpdated := _rowCountUpdated + _updateCount;
 
             If _datasetBatchSize <= 0 Then
                 -- Break out of the while loop
                 EXIT;
             End If;
 
-            _rowCountUpdated := _rowCountUpdated + _myRowCount;
-
             _datasetIdStart := _datasetIdStart + _datasetBatchSize;
             _datasetIdEnd := _datasetIdEnd + _datasetBatchSize;
 
             If _datasetIdStart > _datasetIdMax Then
-                _continue := false;
+                -- Break out of the while loop
+                EXIT;
             End If;
 
         END LOOP;

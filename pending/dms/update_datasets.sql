@@ -38,18 +38,16 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _msg text;
     _list text;
-    _datasetStateUpdated int;
-    _datasetRatingUpdated int;
+    _datasetStateUpdated boolean;
+    _datasetRatingUpdated boolean;
     _datasetCount int := 0;
     _authorized boolean;
     _stateID int;
     _ratingID int;
     _entryID int := 0;
     _currentDataset text;
-    _continueUpdate boolean;
     _usageMessage text;
 
     _sqlState text;
@@ -60,31 +58,31 @@ BEGIN
     _message := '';
     _returnCode:= '';
 
-    _datasetStateUpdated := 0;
-    _datasetRatingUpdated := 0;
+    _datasetStateUpdated := false;
+    _datasetRatingUpdated := false;
 
     _state := Coalesce(_state, '');
-    If _state = '' Then
+    If _state::citext IN ('', '[no change]') Then
         _state := '[no change]';
     End If;
 
     _rating := Coalesce(_rating, '');
-    If _rating = '' Then
+    If _rating::citext IN ('', '[no change]') Then
         _rating := '[no change]';
     End If;
 
     _comment := Coalesce(_comment, '');
-    If _comment = '' Then
+    If _comment::citext IN ('', '[no change]') Then
         _comment := '[no change]';
     End If;
 
     _findText := Coalesce(_findText, '');
-    If _findText = '' Then
+    If _findText::citext IN ('', '[no change]') Then
         _findText := '[no change]';
     End If;
 
     _replaceText := Coalesce(_replaceText, '');
-    If _replaceText = '' Then
+    If _replaceText::citext IN ('', '[no change]') Then
         _replaceText := '[no change]';
     End If;
 
@@ -134,14 +132,12 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_DatasetInfo (
             Dataset_Name text NOT NULL
-        )
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        );
 
         CREATE TEMP TABLE Tmp_DatasetSchedulePredefine (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Dataset_Name text NOT NULL
-        )
+        );
 
         ---------------------------------------------------
         -- Populate table from dataset list
@@ -149,9 +145,7 @@ BEGIN
 
         INSERT INTO Tmp_DatasetInfo (Dataset_Name)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_list(_datasetList, ',')
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        FROM public.parse_delimited_list(_datasetList, ',');
 
         ---------------------------------------------------
         -- Verify that all datasets exist
@@ -180,15 +174,13 @@ BEGIN
         --
         If _state <> '[no change]' Then
             --
-            SELECT Dataset_state_ID INTO _stateID
+            SELECT Dataset_state_ID
+            INTO _stateID
             FROM  t_dataset_rating_name
-            WHERE (DSS_name = _state)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
-            If _stateID = 0 Then
-                _msg := 'Could not find state';
-                RAISE INFO '%', _msg;
+            WHERE dataset_rating = _state;
+
+            If Not FOUND Then
+                _msg := format('Could not find state %s in t_dataset_rating_name', _state);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -203,20 +195,17 @@ BEGIN
             SELECT dataset_rating_id
             INTO _ratingID
             FROM  t_dataset_rating_name
-            WHERE (dataset_rating = _rating)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
-            If _ratingID = 0 Then
-                _msg := 'Could not find rating';
-                RAISE INFO '%', _msg;
+            WHERE dataset_rating = _rating::citext;
+
+            If Not FOUND Then
+                _msg := format('Could not find rating %s in t_dataset_rating_name', _rating);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
 
         If _mode = 'preview' Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT Dataset_ID,
                    Dataset_Name,
@@ -241,7 +230,7 @@ BEGIN
                        ELSE DS_Comment
                    END AS Comment_via_Replace
             FROM t_dataset
-            WHERE (dataset IN ( SELECT Dataset_Name FROM Tmp_DatasetInfo ))
+            WHERE dataset IN ( SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
         End If;
 
@@ -255,16 +244,14 @@ BEGIN
             If _state <> '[no change]' Then
                 UPDATE t_dataset
                 SET dataset_state_id = _stateID
-                WHERE (dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo))
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo)
 
-                _datasetStateUpdated := 1;
+                _datasetStateUpdated := true;
             End If;
 
             -----------------------------------------------
             If _rating <> '[no change]' Then
-            -- <UpdateRating>
+
                 -- Find the datasets that have an existing rating of -5, -6, or -7
                 INSERT INTO Tmp_DatasetSchedulePredefine (Dataset_Name)
                 SELECT DS.dataset
@@ -274,24 +261,19 @@ BEGIN
                           J.dataset_unreviewed = 0
                 WHERE DS.dataset IN ( SELECT Dataset_Name FROM Tmp_DatasetInfo ) AND
                       DS.dataset_rating_id IN (-5, -6, -7) AND
-                      J.job IS NULL
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                      J.job IS NULL;
 
                 UPDATE t_dataset
                 SET dataset_rating_id = _ratingID
-                WHERE (dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo))
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
-                _datasetRatingUpdated := 1;
+                _datasetRatingUpdated := true;
 
                 If Exists (Select * From Tmp_DatasetSchedulePredefine) And _ratingID >= 2 Then
-                -- <SchedulePredefines>
 
-                    _continueUpdate := true;
-
-                    WHILE _continueUpdate
+                    -- Schedule Predefines
+                    --
+                    WHILE true
                     LOOP
                         -- This While loop can probably be converted to a For loop; for example:
                         --    FOR _itemName IN
@@ -308,40 +290,35 @@ BEGIN
                         WHERE Entry_ID > _entryID
                         ORDER BY Entry_ID
                         LIMIT 1;
-                        --
-                        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                        If _myRowCount = 0 Then
-                            _continueUpdate := false;
-                        Else
-                            Call schedule_predefined_analysis_jobs (_currentDataset);
+                        If Not FOUND Then
+                            -- Break out of the While Loop
+                            EXIT;
                         End If;
 
-                    END LOOP; -- </ForEach>
+                        Call schedule_predefined_analysis_jobs (_currentDataset);
 
-                End If; -- </SchedulePredefines>
+                    END LOOP;
 
-            End If; -- </UpdateRating>
+                End If;
+
+            End If;
 
             -----------------------------------------------
             If _comment <> '[no change]' Then
                 UPDATE t_dataset
                 SET comment = comment || ' ' || _comment
-                WHERE (dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo))
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo)
             End If;
 
             -----------------------------------------------
             If _findText <> '[no change]' and _replaceText <> '[no change]' Then
                 UPDATE t_dataset
                 SET comment = Replace(comment, _findText, _replaceText)
-                WHERE (dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo))
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                WHERE dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo)
             End If;
 
-            If char_length(_callingUser) > 0 And (_datasetStateUpdated <> 0 Or _datasetRatingUpdated <> 0) Then
+            If char_length(_callingUser) > 0 And (_datasetStateUpdated Or _datasetRatingUpdated) Then
                 -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
                 --
@@ -349,22 +326,24 @@ BEGIN
                 -- Populate a temporary table with the list of Dataset IDs just updated
                 CREATE TEMP TABLE Tmp_ID_Update_List (
                     TargetID int NOT NULL
-                )
+                );
 
                 CREATE UNIQUE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 
                 INSERT INTO Tmp_ID_Update_List (TargetID)
                 SELECT DISTINCT dataset_id
                 FROM t_dataset
-                WHERE (dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo))
+                WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
-                If _datasetStateUpdated <> 0 Then
+                If _datasetStateUpdated Then
                     Call alter_event_log_entry_user_multi_id (4, _stateID, _callingUser);
                 End If;
 
-                If _datasetRatingUpdated <> 0 Then
+                If _datasetRatingUpdated Then
                     Call alter_event_log_entry_user_multi_id (8, _ratingID, _callingUser);
                 End If;
+
+                DROP TABLE Tmp_ID_Update_List;
             End If;
 
         End If;
@@ -384,6 +363,8 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
+
+        DROP TABLE IF EXISTS Tmp_ID_Update_List;
     END;
 
     ---------------------------------------------------
@@ -395,7 +376,6 @@ BEGIN
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
     DROP TABLE IF EXISTS Tmp_DatasetSchedulePredefine;
-    DROP TABLE IF EXISTS Tmp_ID_Update_List;
 END
 $$;
 

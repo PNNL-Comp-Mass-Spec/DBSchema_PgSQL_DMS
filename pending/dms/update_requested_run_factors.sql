@@ -87,9 +87,10 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
-    _msg2 text;
+    _requestCount int := 0;
     _invalidCount int;
+    _invalidIDs text;
+    _matchCount int;
     _xml AS xml;
     _idType citext;
     _idTypeOriginal text;
@@ -238,18 +239,13 @@ BEGIN
             _message := 'Unable to resolve Dataset ID to Request ID for one or more entries (Dataset ID not found in requested run table)';
 
             -- Construct a list of Dataset IDs that are not present in t_requested_run
-            _msg2 := '';
 
-            SELECT string_agg(Tmp_FactorInfo.DatasetID::text, ', ')
-            INTO _msg2
-            FROM Tmp
-            WHERE Identifier Is Null
-            ORDER BY Tmp_FactorInfo.DatasetID;
+            SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
+            INTO _invalidIDs
+            FROM Tmp_FactorInfo
+            WHERE Identifier Is Null;
 
-            If Coalesce(_msg2, '') <> '' Then
-                -- Append _msg2 to _message
-                _message := _message || '; error with: ' || _msg2;
-            End If;
+            _message := format('%s; error with: %s', _message, Coalesce(_invalidIDs, '??'));
 
             If _infoOnly Then
                 -- Show the contents of Tmp_FactorInfo
@@ -269,7 +265,8 @@ BEGIN
     -----------------------------------------------------------
 
     If Not _idType IN ('RequestID', 'DatasetID', 'Job', 'Dataset') Then
-        _message := 'Identifier type "' || _idTypeOriginal || '" was not recognized in the header row; should be Request, RequestID, DatasetID, Job, or Dataset (i.e. Dataset Name)';
+        _message := format('Identifier type "%s" was not recognized in the header row; should be Request, RequestID, DatasetID, Job, or Dataset (i.e. Dataset Name)',
+                            _idTypeOriginal);
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
@@ -289,13 +286,14 @@ BEGIN
     If _idType IN ('RequestID', 'DatasetID', 'Job') Then
 
         SELECT string_agg(Coalesce(Identifier, '<NULL>'), ',')
-        INTO _msg2
+        INTO _invalidIDs
         FROM Tmp_FactorInfo
         WHERE public.try_cast(Identifier, null::int) Is Null;
 
-        If Coalesce(_msg2, '') <> '' Then
+        If Coalesce(_invalidIDs, '') <> '' Then
             -- One or more entries is non-numeric
-            _message := 'Identifier keys must all be integers when Identifier column contains ' || _idTypeOriginal || '; error with: ' || _msg2;
+            _message := format('Identifier keys must all be integers when Identifier column contains %s; error with: ',
+                                _idTypeOriginal, Coalesce(_invalidIDs, '??'));
 
             If _infoOnly Then
                 -- Show the contents of Tmp_FactorInfo
@@ -359,21 +357,20 @@ BEGIN
     -- Check for unresolved requests
     -----------------------------------------------------------
     --
-    _myRowCount := 0;
-    _invalidCount := 0;
-
     SELECT COUNT(*)
-           Sum(CASE WHEN RequestID IS NULL THEN 1 ELSE 0 END)
-    INTO _myRowCount, _invalidCount
+           SUM(CASE WHEN RequestID IS NULL THEN 1 ELSE 0 END)
+    INTO _matchCount, _invalidCount
     FROM ( SELECT DISTINCT Identifier,
                            RequestID
            FROM Tmp_FactorInfo ) InnerQ;
 
     If _invalidCount > 0 Then
-        If _invalidCount = _myRowCount Then
-            _message := 'Unable to determine RequestID for all ' || _myRowCount::text || ' items';
+        If _invalidCount = _matchCount And _matchCount = 1 Then
+            _message := format('Unable to determine RequestID for the factor');
+        ElsIf _invalidCount = _matchCount Then
+            _message := format('Unable to determine RequestID for all %s factors', _matchCount);
         Else
-            _message := 'Unable to determine RequestID for ' || _invalidCount::text || ' of ' || _myRowCount::text || ' items';
+            _message := 'Unable to determine RequestID for %s of %s name', _invalidCount, _matchCount);
         End If;
 
         _message := _message || '; treating the Identifier column as ' || _idType;
@@ -393,14 +390,13 @@ BEGIN
     -- Validate factor names
     -----------------------------------------------------------
     --
-    SELECT string_agg(Factor, ', ')
+    SELECT string_agg(Factor, ', ' ORDER BY Factor)
     INTO _badFactorNames
     FROM ( SELECT DISTINCT Factor
            FROM Tmp_FactorInfo
            WHERE Not Factor::citext In ('Dataset ID')      -- Note that factors named 'Dataset ID' and 'Dataset_ID' are removed later in this procedure
           ) LookupQ
-    WHERE PATINDEX('%[^0-9A-Za-z_.]%', Factor) > 0
-    ORDER BY Factor;
+    WHERE PATINDEX('%[^0-9A-Za-z_.]%', Factor) > 0;
 
     If Coalesce(_badFactorNames, '') <> '' Then
         If char_length(_badFactorNames) < 256 Then
@@ -430,12 +426,13 @@ BEGIN
     -----------------------------------------------------------
 
     UPDATE Tmp_FactorInfo
-    Set UpdateSkipCode = 2
-    WHERE Factor::citext IN ('Batch_ID', 'BatchID', 'Experiment', 'Dataset', 'Status', 'Request', 'Name')
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    SET UpdateSkipCode = 2
+    WHERE Factor::citext IN ('Batch_ID', 'BatchID', 'Experiment', 'Dataset', 'Status', 'Request', 'Name');
 
-    If _myRowCount > 0 And _infoOnly Then
+    If FOUND And _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT *, Case When UpdateSkipCode = 2 Then 'Yes' Else 'No' End As AutoSkip_Invalid_Factor
         FROM Tmp_FactorInfo
 
@@ -487,7 +484,6 @@ BEGIN
     -- Check for invalid Request IDs in the factors table
     -----------------------------------------------------------
     --
-    --
     SELECT string_agg(RequestID, ', ')
     INTO _invalidRequestIDs
     FROM Tmp_FactorInfo
@@ -525,7 +521,9 @@ BEGIN
                          Tmp_FactorInfo.value = t_factor.value )
 
     If _infoOnly Then
-        -- ToDo: Show this info using RAISE INFO
+
+        -- ToDo: Update this to use RAISE INFO
+
         -- Preview the contents of the Temp table
         SELECT *
         FROM Tmp_FactorInfo
@@ -543,9 +541,7 @@ BEGIN
                    WHERE UpdateSkipCode = 0 AND
                          Tmp_FactorInfo.RequestID = t_factor.target_id AND
                          Tmp_FactorInfo.Factor = t_factor.name AND
-                         Trim(Tmp_FactorInfo.value) = '' )
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                         Trim(Tmp_FactorInfo.value) = '' );
 
     -----------------------------------------------------------
     -- Update existing items in factors tables
@@ -559,9 +555,7 @@ BEGIN
           Src.Factor = Target.Name AND
           Target.Type = 'Run_Request' AND
           Src.UpdateSkipCode = 0 AND
-          Src.Value <> Target.Value
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+          Src.Value <> Target.Value;
 
     -----------------------------------------------------------
     -- Add new factors
@@ -584,9 +578,7 @@ BEGIN
                        FROM t_factor
                        WHERE Tmp_FactorInfo.RequestID = t_factor.target_id AND
                              Tmp_FactorInfo.Factor = t_factor.name AND
-                             t_factor.type = 'Run_Request' )
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                             t_factor.type = 'Run_Request' );
 
     -----------------------------------------------------------
     -- Convert changed items to XML for logging

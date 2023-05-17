@@ -56,7 +56,6 @@ DECLARE
     _startTime timestamp := CURRENT_TIMESTAMP;
     _candidateStepCount int;
     _rowCountToProcess int;
-    _continue boolean;
     _rowsProcessed int := 0;
     _lastLogTime timestamp := CURRENT_TIMESTAMP;
     _stepInfo record;
@@ -222,7 +221,9 @@ BEGIN
     WHERE TargetQ.EntryID = LookupQ.EntryID;
 
     If _infoOnly Then
-        -- To Do: Display contents of temp table using RAISE INFO
+
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT *
         FROM Tmp_Steplist
         ORDER BY ProcessingOrder;
@@ -240,9 +241,7 @@ BEGIN
 
     _rowCountToProcess := Coalesce(_rowCountToProcess, 0);
 
-    _continue := true;
-
-    WHILE _continue
+    WHILE true
     LOOP
         ---------------------------------------------------
         -- Get next step in scratch list
@@ -506,7 +505,8 @@ BEGIN
             WHERE ProcessingOrder <= _processingOrder;
 
             If Coalesce(_myRowCount, 0) >= _maxJobsToProcess Then
-                _continue := false;
+                -- Break out of the While Loop
+                EXIT;
             End If;
         End If;
 

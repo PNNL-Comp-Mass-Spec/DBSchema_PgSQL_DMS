@@ -24,7 +24,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount;
+    _updateCount;
     _addon text;
 BEGIN
     _message := '';
@@ -69,11 +70,12 @@ BEGIN
     If _processingMode = 0 Or _infoOnly Then
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             ------------------------------------------------
             -- Preview the addition of new datasets
             ------------------------------------------------
-
-            -- ToDo: Show this data using RAISE INFO
 
             SELECT DS.dataset_id,
                    DS.instrument_id,
@@ -108,10 +110,10 @@ BEGIN
                    ON DS.dataset_id = CachedInst.dataset_id
             WHERE CachedInst.dataset_id IS NULL;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := format('Added %s new %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
+            If _matchCount > 0 Then
+                _message := format('Added %s new %s', _matchCount, public.check_plural(_matchCount, 'dataset', 'datasets'));
             End If;
         End If;
 
@@ -120,11 +122,12 @@ BEGIN
     If _processingMode > 0 Then
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             ------------------------------------------------
             -- Preview the update of cached info
             ------------------------------------------------
-
-            -- ToDo: Show this data using RAISE INFO
 
             SELECT t.dataset_id,
                    t.instrument_id,
@@ -173,10 +176,10 @@ BEGIN
                 INSERT(dataset_id, instrument_id, instrument)
                 VALUES(s.dataset_id, s.instrument_id, s.instrument);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _addon := format('%s %s via a merge', _myRowCount, public.check_plural(_myRowCount, 'dataset was updated', 'datasets were updated'));
+            If _updateCount > 0 Then
+                _addon := format('%s %s via a merge', _updateCount, public.check_plural(_updateCount, 'dataset was updated', 'datasets were updated'));
                 _message := public.append_to_text(_message, _addon, 0, '; ', 512)
         End If;
 

@@ -75,10 +75,12 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _msg text;
     _addon text;
 
+    _conflictCount int;
+    _updateCount int;
+    _missingCount int;
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -130,9 +132,7 @@ BEGIN
         FROM t_users U
              INNER JOIN pnnldata."VW_PUB_BMI_EMPLOYEE" Src
                ON U.hid = 'H' || Src.HANFORD_ID
-        WHERE U.update = 'Y'
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE U.update = 'Y';
 
         ----------------------------------------------------------
         -- Obtain info for associates
@@ -162,9 +162,7 @@ BEGIN
              LEFT OUTER JOIN Tmp_UserInfo Target
                ON U.user_id = Target.user_id
         WHERE U.update = 'Y' AND
-              Target.user_id IS NULL
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              Target.user_id IS NULL;
 
         ----------------------------------------------------------
         -- Look for users that need to be updated
@@ -179,9 +177,7 @@ BEGIN
               Coalesce(U.email, '') <> Coalesce(Src.email, Coalesce(U.email, '')) OR
               Coalesce(U.domain, '') <> Coalesce(Src.domain, Coalesce(U.domain, '')) OR
               Coalesce(U.payroll, '') <> Coalesce(Src.PNNL_Payroll, Coalesce(U.payroll, '')) OR
-              Coalesce(U.active, '') <> Coalesce(Src.active, Coalesce(U.active, ''))
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              Coalesce(U.active, '') <> Coalesce(Src.active, Coalesce(U.active, ''));
 
         ----------------------------------------------------------
         -- Look for updates that would result in a name conflict
@@ -206,17 +202,13 @@ BEGIN
                 INNER JOIN Tmp_UserInfo Src
                 ON U.user_id = Src.user_id
         WHERE Src.UpdateRequired;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- Append the remaining users
         --
         INSERT INTO Tmp_NamesAfterUpdate (user_id, OldName, NewName, Conflict)
         SELECT user_id, name, name, false
         FROM t_users
-        WHERE NOT user_id IN (SELECT user_id FROM Tmp_NamesAfterUpdate)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE NOT user_id IN (SELECT user_id FROM Tmp_NamesAfterUpdate);
 
         -- Look for conflicts
         --
@@ -226,23 +218,20 @@ BEGIN
                            FROM Tmp_NamesAfterUpdate DupeCheck
                            GROUP BY DupeCheck.NewName
                            HAVING COUNT(*) > 1 );
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         SELECT COUNT(*)
-        INTO _myRowCount
+        INTO _conflictCount
         FROM Tmp_NamesAfterUpdate
         WHERE Conflict;
 
-        If _myRowCount > 0 Then
+        If _conflictCount > 0 Then
 
-            _message := format('User update would result in %s', public.check_plural(_myRowCount, 'a duplicate name', 'duplicate names'));
+            _message := format('User update would result in %s', public.check_plural(_conflictCount, 'a duplicate name', 'duplicate names'));
 
-            SELECT string_agg(Coalesce(OldName, '??? Undefined ???') || ' --> ' | Coalesce(NewName, '??? Undefined ???'), ', ')
+            SELECT string_agg(Coalesce(OldName, '??? Undefined ???') || ' --> ' | Coalesce(NewName, '??? Undefined ???'), ', ' ORDER BY NewName, OldName)
             INTO _addon
             FROM Tmp_NamesAfterUpdate
-            WHERE Conflict
-            ORDER BY NewName, OldName;
+            WHERE Conflict;
 
             _message := format('%s: %s', _message, _addon);
 
@@ -259,7 +248,7 @@ BEGIN
             -- Perform the update, skip entries with a potential name conflict
             ----------------------------------------------------------
             --
-            UPDATE t_users
+            UPDATE t_users U
             SET name = CASE WHEN Coalesce(NameConflicts.Conflict, false)
                               THEN U.name
                               ELSE Coalesce(Src.U_Name, U.U_Name) End,
@@ -268,35 +257,24 @@ BEGIN
                 payroll = Coalesce(Src.PNNL_Payroll, U.payroll),
                 active = Src.active,
                 last_affected = CURRENT_TIMESTAMP
-            FROM t_users U
-
-            /********************************************************************************
-            ** This update query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   update t_users
-            **   SET ...
-            **   FROM source
-            **   WHERE source.user_id = t_users.user_id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_UserInfo Src
-                   ON U.ID = Src.ID
+            FROM Tmp_UserInfo Src
                  LEFT OUTER JOIN Tmp_NamesAfterUpdate NameConflicts
                    ON U.ID = NameConflicts.ID
-            WHERE UpdateRequired
+              WHERE U.ID = Src.ID AND U.UpdateRequired;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := format('Updated %s %s using the PNNL Data Warehouse', _myRowCount, public.check_plural(_myRowCount, 'user', 'users');
+            If _updateCount > 0 Then
+                _message := format('Updated %s %s using the PNNL Data Warehouse', _updateCount, public.check_plural(_updateCount, 'user', 'users');
                 RAISE INFO '%', _message;
 
                 Call post_log_entry ('Normal', _message, 'Update_Users_From_Warehouse');
             End If;
 
         Else
+
+            -- ToDo: Update this to use RAISE INFO
+
             ----------------------------------------------------------
             -- Preview the updates
             ----------------------------------------------------------
@@ -311,8 +289,7 @@ BEGIN
                  INNER JOIN Tmp_UserInfo Src
                    ON U.user_id = Src.user_id
             WHERE UpdateRequired
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
         End If;
 
         CREATE TEMP TABLE Tmp_UserProblems (
@@ -335,23 +312,22 @@ BEGIN
         WHERE U.update = 'Y' AND
               Src.user_id IS NULL
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _missingCount = ROW_COUNT;
 
-        If Not _infoOnly And _myRowCount > 0 Then
-            _message := format('%s not found in the Data Warehouse', public.check_plural(_myRowCount, 'User', 'Users');
+        If Not _infoOnly And _missingCount > 0 Then
+            _message := format('%s not found in the Data Warehouse', public.check_plural(_missingCount, 'User', 'Users');
 
-            SELECT string_agg(Coalesce(U.hid, '??? Undefined hid for user_id=' || U.user_id::text || ' ???'), ', ')
+            SELECT string_agg(Coalesce(U.hid, '??? Undefined hid for user_id=' || U.user_id::text || ' ???'), ', ' ORDER BY U.user_id)
             INTO _addon
             FROM t_users U
-                    INNER JOIN Tmp_UserProblems M
-                    ON U.user_id = M.user_id
-            ORDER BY U.user_id
+                 INNER JOIN Tmp_UserProblems M
+                    ON U.user_id = M.user_id;
 
             _message format('%s: %s', _message, _addon);
 
             Call post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
 
-            DELETE FROM Tmp_UserProblems
+            DELETE FROM Tmp_UserProblems;
         End If;
 
         ----------------------------------------------------------
@@ -368,41 +344,46 @@ BEGIN
               U.username <> Src.NetworkLogin AND
               Coalesce(Src.NetworkLogin, '') <> ''
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _missingCount = ROW_COUNT;
 
-        If Not _infoOnly And _myRowCount > 0 Then
-            _message := format('%s with mismatch between username in DMS and NetworkLogin in Warehouse', public.check_plural(_myRowCount, 'User', 'Users'));
+        If Not _infoOnly And _missingCount > 0 Then
+            _message := format('%s with mismatch between username in DMS and NetworkLogin in Warehouse', public.check_plural(_missingCount, 'User', 'Users'));
 
-            SELECT string_agg(Coalesce(U.username, '??? Undefined username for user_id=' || U.user_id::text || ' ??? <> ' || Coalesce(M.NetworkLogin, '??'), ', '
+            SELECT string_agg(string.Format('%s <> %s',
+                                            Coalesce(U.username, '??? Undefined username for user_id=' || U.user_id::text || ' ???'),
+                                            Coalesce(M.NetworkLogin, '??')),
+                              ', ' ORDER BY U.user_id)
             INTO _addon
             FROM t_users U
                  INNER JOIN Tmp_UserProblems M
-                   ON U.user_id = M.user_id
-            ORDER BY U.user_id
+                   ON U.user_id = M.user_id;
 
             _message := format('%s: %s', _message, _addon);
 
             Call post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
 
-            DELETE FROM Tmp_UserProblems
+            DELETE FROM Tmp_UserProblems;
         End If;
 
         If _infoOnly And Exists (SELECT * from Tmp_UserProblems) Then
-                SELECT M.Warning,
-                       U.user_id,
-                       Coalesce(U.hid, '??? Undefined hid for user_id=' || Convert(text, U.user_id) || ' ???') AS U_HID,
-                       name,
-                       username,
-                       status,
-                       email,
-                       domain,
-                       M.NetworkLogin,
-                       active,
-                       created
-                FROM t_users U
-                     INNER JOIN Tmp_UserProblems M
-                       ON U.user_id = M.user_id
-                ORDER BY U.user_id
+
+            -- ToDo: Update this to use RAISE INFO
+
+            SELECT M.Warning,
+                   U.user_id,
+                   Coalesce(U.hid, '??? Undefined hid for user_id=' || Convert(text, U.user_id) || ' ???') AS U_HID,
+                   name,
+                   username,
+                   status,
+                   email,
+                   domain,
+                   M.NetworkLogin,
+                   active,
+                   created
+            FROM t_users U
+                 INNER JOIN Tmp_UserProblems M
+                   ON U.user_id = M.user_id
+            ORDER BY U.user_id
         End If;
 
     EXCEPTION

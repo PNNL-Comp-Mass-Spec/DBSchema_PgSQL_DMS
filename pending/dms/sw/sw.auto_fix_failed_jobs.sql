@@ -52,13 +52,12 @@ BEGIN
     WHERE tool = 'Bruker_DA_Export' AND
           state IN (6, 16) AND
           completion_message = 'No spectra were exported'
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-    -- <a1>
-
+    If FOUND Then
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT JS.*
             FROM V_Job_Steps JS
                  INNER JOIN Tmp_JobsToFix F
@@ -71,28 +70,13 @@ BEGIN
 
             -- Change the step state to 3 (Skipped) for all of the steps in this job
             --
-            UPDATE sw.t_job_steps
+            UPDATE sw.t_job_steps Target
             SET state = 3
-            FROM sw.t_job_steps Target
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE sw.t_job_steps
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = sw.t_job_steps.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_JobsToFix F
-                   ON Target.Job = F.Job
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            FROM Tmp_JobsToFix F
+            WHERE Target.Job = F.Job
 
         End If;
-    End If; -- </a1>
+    End If;
 
     ---------------------------------------------------
     -- Look for Formularity or NOMSI jobs that failed with error 'No peaks found'
@@ -107,13 +91,12 @@ BEGIN
     WHERE tool In ('Formularity', 'NOMSI') AND
           state IN (6, 16) AND
           completion_message = 'No peaks found'
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-    -- <a2>
-
+    If FOUND Then
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT JS.*
             FROM V_Job_Steps JS
                  INNER JOIN Tmp_JobsToFix F
@@ -164,12 +147,12 @@ BEGIN
           state IN (6, 16) AND
           (completion_message LIKE '%Cannot run BuildSA since less than % MB of free memory%' OR
            completion_message LIKE '%Timeout expired%')
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-
+    If FOUND Then
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT JS.*
             FROM V_Job_Steps JS
                  INNER JOIN Tmp_JobsToFix F

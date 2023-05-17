@@ -18,7 +18,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+
 BEGIN
     -----------------------------------------
     -- Validate the input parameters
@@ -59,11 +59,12 @@ BEGIN
           (SPath.storage_path_function LIKE '%inbox%') AND
           (NOT (DS.created IS NULL)) AND
           DS.dataset_type_ID <> 100          -- Exclude tracking datasets
-    GROUP BY BionetHosts.host, Inst.instrument
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GROUP BY BionetHosts.host, Inst.instrument;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         -- Preview the new info
         --
         SELECT Target.Host,
@@ -78,39 +79,22 @@ BEGIN
                                  MAX(MostRecentDataset) AS MostRecentDataset
                           FROM Tmp_Hosts
                           GROUP BY host ) Src
-               ON Target.host = Src.host
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+               ON Target.host = Src.host;
 
     Else
 
         -- Update Last_Online
         --
-        UPDATE t_bionet_hosts
+        UPDATE t_bionet_hosts Target
         SET last_online = CASE WHEN Src.MostRecentDataset > Coalesce(Target.last_online, make_date(1970, 1, 1))
                           THEN Src.MostRecentDataset
                           ELSE Target.Last_Online
                           END
-        FROM t_bionet_hosts Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_bionet_hosts
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = t_bionet_hosts.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN ( SELECT Host,
-                                 MAX(MostRecentDataset) AS MostRecentDataset
-                          FROM Tmp_Hosts
-                          GROUP BY Host ) Src
-               ON Target.Host = Src.Host
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        FROM ( SELECT Host,
+                      MAX(MostRecentDataset) AS MostRecentDataset
+               FROM Tmp_Hosts
+               GROUP BY Host ) Src
+        WHERE Target.Host = Src.Host;
 
     End If;
 

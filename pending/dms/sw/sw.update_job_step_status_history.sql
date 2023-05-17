@@ -129,6 +129,9 @@ BEGIN
 
         If _updateTable Then
             If _infoOnly Then
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT Posting_Time, Step_Tool, State, Step_Count;
                 FROM Tmp_JobStepStatusHistory
                 ORDER BY Step_Tool, State

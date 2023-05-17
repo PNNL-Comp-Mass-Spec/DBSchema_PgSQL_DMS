@@ -42,7 +42,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
     _msg text;
     _collectionInfo record;
     _matchCount int;
@@ -98,8 +98,6 @@ BEGIN
     INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
     SELECT Value, 0 AS Collection_Appended
     FROM public.parse_delimited_list(_protCollNameList, ',');
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     --------------------------------------------------------------
     -- Look for duplicates in Tmp_ProteinCollections
@@ -165,9 +163,7 @@ BEGIN
                     ON E.enzyme_id = Enz.enzyme_id
             GROUP BY Coalesce(Enz.protein_collection_name, '')
             ) LookupQ
-    WHERE protein_collection_name <> ''
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE protein_collection_name <> '';
 
     If Not Exists (SELECT * FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection > 0) Then
         --------------------------------------------------------------
@@ -266,9 +262,7 @@ BEGIN
            ON DSIntStd.parent_mix_id = ISPM.parent_mix_id
     WHERE char_length(Coalesce(ISPM.protein_collection_name, '')) > 0
     GROUP BY DSIntStd.internal_standard_id, ISPM.protein_collection_name
-    ORDER BY DSIntStd.internal_standard_id
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    ORDER BY DSIntStd.internal_standard_id;
 
     If _showDebug Then
 
@@ -313,9 +307,9 @@ BEGIN
     --------------------------------------------------------------
     --
     INSERT INTO Tmp_ProteinCollectionsToAdd( Protein_Collection_Name,
-                                          Dataset_Count,
-                                          Experiment_Count,
-                                          Enzyme_Contaminant_Collection )
+                                             Dataset_Count,
+                                             Experiment_Count,
+                                             Enzyme_Contaminant_Collection )
     SELECT I.Protein_Collection_Name,
            SUM(I.Dataset_Count),
            SUM(I.Experiment_Count),
@@ -325,21 +319,20 @@ BEGIN
            ON I.Protein_Collection_Name = PC.Protein_Collection_Name
     WHERE PC.Protein_Collection_Name IS NULL
     GROUP BY I.Protein_Collection_Name
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _showDebug Then
+
         -- ToDo: Show this info using RAISE INFO
 
         If Exists (Select * From Tmp_ProteinCollectionsToAdd) Then
             SELECT 'Tmp_ProteinCollectionsToAdd' as Table_Name, *
             FROM Tmp_ProteinCollectionsToAdd
         Else
-            SELECT 'Tmp_ProteinCollectionsToAdd is empty ' As Comment
+            RAISE INFO 'Tmp_ProteinCollectionsToAdd is empty';
         End If;
     End If;
 
-    If _myRowCount = 0 Then
+    If Not Exists (SELECT * FROM Tmp_ProteinCollectionsToAdd) Then
         DROP TABLE Tmp_IntStds;
         DROP TABLE ProteinCollections;
         DROP TABLE ProteinCollectionsToAdd;
@@ -357,40 +350,36 @@ BEGIN
     GROUP BY Enzyme_Contaminant_Collection, Protein_Collection_Name
     ORDER BY Enzyme_Contaminant_Collection, Protein_Collection_Name
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    _collectionCountAdded := _myRowCount;
+    GET DIAGNOSTICS _collectionCountAdded = ROW_COUNT;
 
     -- Check for the presence of both Tryp_Pig_Bov and Tryp_Pig in Tmp_ProteinCollections
     --
-    _myRowCount := 0;
-
-    SELECT COUNT(*) INTO _myRowCount
+    SELECT COUNT(*)
+    INTO _matchCount
     FROM Tmp_ProteinCollections
     WHERE Protein_Collection_Name IN ('Tryp_Pig_Bov', 'Tryp_Pig')
 
-    If _myRowCount = 2 Then
+    If _matchCount = 2 Then
         -- The list has two overlapping contaminant collections; remove one of them
         --
         DELETE FROM Tmp_ProteinCollections
-        WHERE Protein_Collection_Name = 'Tryp_Pig'
+        WHERE Protein_Collection_Name = 'Tryp_Pig';
 
         _collectionCountAdded := _collectionCountAdded - 1;
     End If;
 
     -- Check for the presence of both Tryp_Pig_Bov and Human_Contam in Tmp_ProteinCollections
     --
-    _myRowCount := 0;
-
-    SELECT COUNT(*) INTO _myRowCount
+    SELECT COUNT(*)
+    INTO _matchCount
     FROM Tmp_ProteinCollections
     WHERE Protein_Collection_Name IN ('Tryp_Pig_Bov', 'HumanContam')
 
-    If _myRowCount = 2 Then
+    If _matchCount = 2 Then
         -- The list has two overlapping contaminant collections; remove one of them
         --
         DELETE FROM Tmp_ProteinCollections
-        WHERE Protein_Collection_Name = 'HumanContam'
+        WHERE Protein_Collection_Name = 'HumanContam';
 
         _collectionCountAdded := _collectionCountAdded - 1;
     End If;
@@ -411,12 +400,9 @@ BEGIN
     --   Internal Standards, Normal Protein Collections, Contaminant collections
     --------------------------------------------------------------
 
-    _protCollNameList := '';
-
-    SELECT string_agg(Protein_Collection_Name, ',')
+    SELECT string_agg(Protein_Collection_Name, ',' ORDER BY Collection_Appended Asc, RowNumberID Asc)
     INTO _protCollNameList
-    FROM Tmp_ProteinCollections
-    ORDER BY Collection_Appended Asc, RowNumberID Asc
+    FROM Tmp_ProteinCollections;
 
     -- Count the total number of datasets and experiments in Tmp_DatasetList
     SELECT COUNT(*)

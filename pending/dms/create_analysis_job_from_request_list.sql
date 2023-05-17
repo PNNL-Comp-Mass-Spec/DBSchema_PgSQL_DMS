@@ -40,7 +40,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _requestInfo record;
     _existingJobMsg text;
     _existingJobCount int;
@@ -123,10 +122,8 @@ BEGIN
     FROM Tmp_AnalysisJobRequests INNER JOIN
          t_analysis_job_request AJR ON Tmp_AnalysisJobRequests.requestID = AJR.request_id
     WHERE AJR.request_state_id <> 1
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
+    If FOUND Then
         -- One or more requests do not have State = 1
         -- Remove the invalid rows from Tmp_AnalysisJobRequests
         DELETE Tmp_AnalysisJobRequests

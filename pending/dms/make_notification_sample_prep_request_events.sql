@@ -18,7 +18,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _eventCount int := 0;
     _window timestamp;
     _now timestamp;
     _eventInfo record;
@@ -63,10 +63,10 @@ BEGIN
     If _infoOnly Then
 
         SELECT COUNT(*)
-        INTO _myRowCount
-        FROM Tmp_AnalysisJobRequests;
+        INTO _eventCount
+        FROM Tmp_NewEvents;
 
-        RAISE INFO 'Would add % % to t_notification_event', _myRowCount, public.check_plural(_myRowCount, 'row', 'rows');
+        RAISE INFO 'Would add % % to t_notification_event', _eventCount, public.check_plural(_eventCount, 'row', 'rows');
 
         If _showDebug Then
             RAISE INFO '%',

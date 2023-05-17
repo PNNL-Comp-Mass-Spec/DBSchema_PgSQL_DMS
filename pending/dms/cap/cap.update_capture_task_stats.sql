@@ -65,6 +65,9 @@ BEGIN
     End If;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         FOR _statItem IN
             SELECT Script,
                    Instrument,

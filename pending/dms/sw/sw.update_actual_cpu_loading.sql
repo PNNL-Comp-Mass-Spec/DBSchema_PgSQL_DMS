@@ -64,13 +64,15 @@ BEGIN
     WHERE New_CPU_Load > 255
 
     If Exists (Select * From _pendingUpdates) Then
-    -- <a>
 
         ---------------------------------------------------
         -- Preview the results or update sw.t_job_steps
         ---------------------------------------------------
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT JS.Job,
                    JS.Dataset,
                    JS.Step,

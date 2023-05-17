@@ -25,9 +25,9 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _activeStepThreshold int := 25;
     _longRunningThreshold int := 10;
+    _updateCount int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -87,9 +87,7 @@ BEGIN
           organism_db_name = 'na' AND
           NOT protein_collection_list IS NULL
     GROUP BY param_file_name, settings_file_name, protein_collection_list
-    HAVING COUNT(*) > _activeStepThreshold
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    HAVING COUNT(*) > _activeStepThreshold;
 
     -- Active jobs with similar settings (using organism DBs)
     --
@@ -104,9 +102,7 @@ BEGIN
           organism_db_name <> 'na' AND
           NOT organism_db_name IS NULL
     GROUP BY param_file_name, settings_file_name, organism_db_name
-    HAVING COUNT(*) > _activeStepThreshold
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    HAVING COUNT(*) > _activeStepThreshold;
 
     -- Batches with active, long-running jobs
     --
@@ -120,9 +116,7 @@ BEGIN
           JS.RunTime_Minutes > 180 AND
           batch_id > 0
     GROUP BY J.batch_id
-    HAVING (COUNT(*) > _longRunningThreshold)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    HAVING COUNT(*) > _longRunningThreshold;
 
     ----------------------------------------------
     -- Add candidate jobs to Tmp_JobsToUpdate
@@ -153,9 +147,7 @@ BEGIN
                 INNER JOIN Tmp_Batches Src
                 ON J.batch_id = Src.BatchID
         ) UnionQ
-    GROUP BY job
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GROUP BY job;
 
     -- Update the old/new priority columns
     --
@@ -180,25 +172,10 @@ BEGIN
 
     -- Ignore any jobs that are already in t_analysis_job_priority_updates
     --
-    UPDATE Tmp_JobsToUpdate
+    UPDATE Tmp_JobsToUpdate Target
     SET Ignored = 1
-    FROM Tmp_JobsToUpdate J
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_JobsToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_JobsToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN t_analysis_job_priority_updates JPU
-           ON J.job = JPU.job
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    FROM t_analysis_job_priority_updates JPU
+    WHERE Target.job = JPU.job;
 
     If _infoOnly Then
         ----------------------------------------------
@@ -209,6 +186,9 @@ BEGIN
             _message := 'No candidate jobs (or ignored jobs) were found';
             RAISE INFO '%', _message;
         Else
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT DS.dataset AS Dataset,
                    J.job AS Job,
                    J.request_id AS RequestID,
@@ -227,58 +207,48 @@ BEGIN
                    ON J.dataset_id = DS.dataset_id
             ORDER BY J.batch_id, J.job
         End If;
-    Else
-        ----------------------------------------------
-        -- Update job priorities
-        ----------------------------------------------
 
-        If Not Exists (SELECT * FROM Tmp_JobsToUpdate WHERE Ignored = 0) Then
-            _message := 'No candidate jobs were found';
-        Else
-            INSERT INTO t_analysis_job_priority_updates( job,
-                                                         old_priority,
-                                                         new_priority,
-                                                         comment,
-                                                         entered )
-            SELECT U.job,
-                   U.old_priority,
-                   U.new_priority,
-                   U.Source,
-                   CURRENT_TIMESTAMP
-            FROM Tmp_JobsToUpdate U
-            WHERE U.Ignored = 0
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            UPDATE t_analysis_job
-            SET priority = U.New_Priority
-            FROM t_analysis_job J
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_analysis_job
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_analysis_job.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                INNER JOIN Tmp_JobsToUpdate U
-                ON J.job = U.Job
-            WHERE U.Ignored = 0
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            _message := format('Updated job priority for %s long running %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
-
-            Call post_log_entry ('Normal', _message, 'Auto_Update_Job_Priorities');
-        End If;
-
-        RAISE INFO '%', _message;
-
+        DROP TABLE Tmp_ProteinCollectionJobs;
+        DROP TABLE Tmp_LegacyOrgDBJobs;
+        DROP TABLE Tmp_Batches;
+        DROP TABLE Tmp_JobsToUpdate;
+        RETURN;
     End If;
+
+    ----------------------------------------------
+    -- Update job priorities
+    ----------------------------------------------
+
+    If Not Exists (SELECT * FROM Tmp_JobsToUpdate WHERE Ignored = 0) Then
+        _message := 'No candidate jobs were found';
+    Else
+        INSERT INTO t_analysis_job_priority_updates( job,
+                                                     old_priority,
+                                                     new_priority,
+                                                     comment,
+                                                     entered )
+        SELECT U.job,
+               U.old_priority,
+               U.new_priority,
+               U.Source,
+               CURRENT_TIMESTAMP
+        FROM Tmp_JobsToUpdate U
+        WHERE U.Ignored = 0
+
+        UPDATE t_analysis_job J
+        SET priority = U.New_Priority
+        FROM Tmp_JobsToUpdate U
+        WHERE J.job = U.Job AND
+              U.Ignored = 0;
+        --
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+        _message := format('Updated job priority for %s long running %s', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
+
+        Call post_log_entry ('Normal', _message, 'Auto_Update_Job_Priorities');
+    End If;
+
+    RAISE INFO '%', _message;
 
     DROP TABLE Tmp_ProteinCollectionJobs;
     DROP TABLE Tmp_LegacyOrgDBJobs;

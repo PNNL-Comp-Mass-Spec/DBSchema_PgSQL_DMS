@@ -17,7 +17,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _itemList text;
     _message text;
     _callingProcName text;
@@ -64,8 +64,6 @@ BEGIN
                         ) PipelineQ
                ON DS.dataset_id = PipelineQ.dataset_id
         WHERE DS.dataset_state_id IN (1, 2)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Look for analysis jobs with an incorrect state
@@ -86,11 +84,11 @@ BEGIN
                         ) PipelineQ
                ON J.job = PipelineQ.job
         WHERE (J.job_state_id IN (1, 2, 8))
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _infoOnly Then
-        -- <Preview>
+
+            -- ToDo: Update this to use RAISE INFO
+
             _currentLocation := 'Preview the updates';
 
             SELECT Src.*,
@@ -110,92 +108,64 @@ BEGIN
                  INNER JOIN t_dataset DS
                    ON J.dataset_id = DS.dataset_id
 
-        Else
-        -- <ApplyChanges>
-            -- Update items
-            If Exists (Select * FROM Tmp_Datasets) Then
-            -- <datasets>
-                _currentLocation := 'Update datasets';
+            DROP TABLE Tmp_Datasets;
+            DROP TABLE Tmp_Jobs;
+            RETURN;
+        End If;
 
-                UPDATE t_dataset
-                SET dataset_state_id = Src.State_New
-                FROM t_dataset Target
+        ---------------------------------------------------
+        -- Update tables
+        ---------------------------------------------------
 
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE t_dataset
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = t_dataset.id;
-                ********************************************************************************/
+        If Exists (Select * FROM Tmp_Datasets) Then
 
-                                       ToDo: Fix this query
+            _currentLocation := 'Update datasets';
 
-                     INNER JOIN Tmp_Datasets Src
-                       ON Src.Dataset_ID = Target.Dataset_ID
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            UPDATE t_dataset Target
+            SET dataset_state_id = Src.State_New
+            FROM Tmp_Datasets Src
+            WHERE Src.Dataset_ID = Target.Dataset_ID;
+            --
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                -- Log the update
-                --
-                _itemList := '';
+            -- Log the update
+            --
+            SELECT string_agg(Dataset_ID::text, ',' ORDER BY Dataset_ID)
+            INTO _itemList
+            FROM Tmp_Datasets;
 
-                SELECT string_agg(Dataset_ID::text, ',')
-                INTO _itemList
-                FROM Tmp_Datasets
-                ORDER BY Dataset_ID
-
-                _message := format('Updated dataset state for %s dataset %s due to mismatch with DMS_Capture: %s',
-                                        _myRowCount,
-                                        CASE WHEN _itemList LIKE '%,%' THEN 'IDs' ELSE 'ID' END,
-                                        _itemList);
-
-                Call post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
-            End If; -- </datasets>
-
-            If Exists (Select * FROM Tmp_Jobs) Then
-            -- <jobs>
-                _currentLocation := 'Update analysis jobs';
-
-                UPDATE t_analysis_job
-                SET job_state_id = Src.State_New
-                FROM t_analysis_job Target
-
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE t_analysis_job
-                **   SET ...
-                **   FROM source
-                **   WHERE source.id = t_analysis_job.id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
-                     INNER JOIN Tmp_Jobs Src
-                       ON Src.Job = Target.job
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-                -- Log the update
-                --
-                _itemList := '';
-
-                SELECT string_agg(Job::int, ',')
-                INTO _itemList
-                FROM Tmp_Jobs
-                ORDER BY Job
-
-                _message := format('Updated job state for %s %s due to mismatch with DMS_Pipeline: %s',
-                                    _myRowCount,
-                                    CASE WHEN _itemList LIKE '%,%' THEN 'jobs' ELSE 'job' END,
+            _message := format('Updated dataset state for %s dataset %s due to mismatch with DMS_Capture: %s',
+                                    _updateCount,
+                                    public.check_plural(_updateCount, 'ID', 'IDs'),
                                     _itemList);
 
-                Call post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
-            End If; -- </jobs>
+            Call post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
+        End If;
 
-        End If; -- </ApplyChanges>
+        If Exists (Select * FROM Tmp_Jobs) Then
+
+            _currentLocation := 'Update analysis jobs';
+
+            UPDATE t_analysis_job Target
+            SET job_state_id = Src.State_New
+            FROM Tmp_Jobs Src
+            WHERE Src.Job = Target.job;
+            --
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+            -- Log the update
+            --
+            SELECT string_agg(Job::int, ',' ORDER BY Job)
+            INTO _itemList
+            FROM Tmp_Jobs;
+
+            _message := format('Updated job state for %s %s due to mismatch with DMS_Pipeline: %s',
+                                _updateCount,
+                                public.check_plural(_updateCount, 'job', 'jobs'),
+                                _itemList);
+
+            Call post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

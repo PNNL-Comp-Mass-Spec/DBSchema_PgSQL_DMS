@@ -19,7 +19,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _holdMessage text;
 BEGIN
     _message := '';
@@ -50,6 +50,7 @@ BEGIN
     End If;
 
     If _infoOnly Then
+
         -- ToDo: Update this to use RAISE INFO
 
         SELECT AJ.job AS Job,
@@ -77,10 +78,14 @@ BEGIN
         WHERE JTU.Job = AJ.job AND
                AJ.job_state_id = 1
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _message := 'Placed ' || _myRowCount::text || ' jobs on hold since their associated dataset is purged';
+        If _updateCount > 0 Then
+            _message := format('Placed %s %s on hold since %s associated dataset %s purged',
+                                _updateCount,
+                                public.check_plural(_updateCount, 'job', 'jobs'),
+                                public.check_plural(_updateCount, 'its', 'their'),
+                                public.check_plural(_updateCount, 'is',  'are'));
         End If;
     End If;
 

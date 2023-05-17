@@ -22,7 +22,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _memberCount int := 0;
 BEGIN
     _message := '';
@@ -36,31 +36,18 @@ BEGIN
 
     If _groupID <= 0 Then
 
-        UPDATE t_experiment_groups
+        UPDATE t_experiment_groups EG
         SET member_count = LookupQ.member_count
-        FROM t_experiment_groups EG
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_experiment_groups
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = t_experiment_groups.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN ( SELECT group_id, COUNT(*) AS MemberCount
-                          FROM t_experiment_group_members
-                          GROUP BY group_id) LookupQ
-               ON EG.group_id = LookupQ.group_id
-        WHERE EG.MemberCount <> LookupQ.MemberCount
+        FROM ( SELECT group_id, COUNT(*) AS MemberCount
+               FROM t_experiment_group_members
+               GROUP BY group_id) LookupQ
+        WHERE EG.group_id = LookupQ.group_id AND
+              EG.MemberCount <> LookupQ.MemberCount;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _message := 'Updated member counts for ' || Cast(_myRowCount As text) || ' groups in t_experiment_groups';
+        If _updateCount > 0 Then
+            _message := format('Updated member counts for %s %s in t_experiment_groups', _updateCount, public.check_plural(_updateCount, 'group', 'groups'));
             RAISE INFO '%', _message;
         Else
             _message := 'Member counts were already up-to-date for all groups in t_experiment_groups';
@@ -71,15 +58,15 @@ BEGIN
         INTO _memberCount
         FROM t_experiment_group_members
         WHERE group_id = _groupID
-        GROUP BY group_id
+        GROUP BY group_id;
 
         UPDATE t_experiment_groups
         SET member_count = Coalesce(_memberCount, 0)
-        WHERE group_id = _groupID
+        WHERE group_id = _groupID;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := 'Experiment group ' || Cast(_groupID As text) || ' now has ' || Cast(_myRowCount As text) || ' members';
+        _message := format('Experiment group %s now has %s %s', _groupID, _updateCount, public.check_plural(_updateCount, 'member', 'members'));
     End If;
 END
 $$;

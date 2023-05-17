@@ -26,11 +26,10 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int := 0;
     _biomaterialList text := null;
     _refCompoundList text := null;
     _currentExpID int;
-    _continue boolean;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -54,18 +53,14 @@ BEGIN
         FROM T_Experiment_Biomaterial ECC
              INNER JOIN T_Biomaterial CC
                ON ECC.Biomaterial_ID = CC.Biomaterial_ID
-        WHERE ECC.Exp_ID = _expID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE ECC.Exp_ID = _expID;
 
         SELECT string_agg(RC.id_name, '; ')
         INTO _refCompoundList
         FROM t_experiment_reference_compounds ERC
              INNER JOIN t_reference_compound RC
                ON ERC.compound_id = RC.compound_id
-        WHERE ERC.exp_id = _expID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE ERC.exp_id = _expID;
 
         If _infoOnly Then
             RAISE INFO 'Experiment ID: %', _expID;
@@ -163,9 +158,8 @@ BEGIN
         HAVING COUNT(*) > 1;
 
         _currentExpID := 0;
-        _continue := true;
 
-        WHILE _continue
+        WHILE true
         LOOP
             -- This While loop can probably be converted to a For loop; for example:
             --    FOR _itemName IN
@@ -182,27 +176,25 @@ BEGIN
             WHERE Exp_ID > _currentExpID
             ORDER BY Exp_ID
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
-                _continue := false;
-            Else
-                _biomaterialList := null;
-
-                SELECT string_agg(CC.Biomaterial_Name, '; ')
-                INTO _biomaterialList
-                FROM T_Experiment_Biomaterial ECC
-                    INNER JOIN T_Biomaterial CC
-                    ON ECC.Biomaterial_ID = CC.Biomaterial_ID
-                WHERE ECC.Exp_ID = _currentExpID
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-                INSERT INTO Tmp_ExperimentBiomaterial (Exp_ID, Biomaterial_List, Items)
-                SELECT _currentExpID, _biomaterialList, _myRowCount;
-
+            If Not FOUND Then
+                -- Break out of the While Loop
+                EXIT;
             End If;
+
+            _biomaterialList := null;
+
+            SELECT string_agg(CC.Biomaterial_Name, '; ')
+            INTO _biomaterialList
+            FROM T_Experiment_Biomaterial ECC
+                INNER JOIN T_Biomaterial CC
+                ON ECC.Biomaterial_ID = CC.Biomaterial_ID
+            WHERE ECC.Exp_ID = _currentExpID
+            --
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
+
+            INSERT INTO Tmp_ExperimentBiomaterial (Exp_ID, Biomaterial_List, Items)
+            SELECT _currentExpID, _biomaterialList, _matchCount;
 
         END LOOP;
 
@@ -217,9 +209,8 @@ BEGIN
         HAVING COUNT(*) > 1;
 
         _currentExpID := 0;
-        _continue := true;
 
-        WHILE _continue
+        WHILE true
         LOOP
             -- This While loop can probably be converted to a For loop; for example:
             --    FOR _itemName IN
@@ -236,37 +227,36 @@ BEGIN
             WHERE Exp_ID > _currentExpID
             ORDER BY Exp_ID
             LIMIT 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
-                _continue := false;
-            Else
-                _refCompoundList := null;
-
-                SELECT string_agg(RC.id_name, '; ')
-                INTO _refCompoundList
-                FROM t_experiment_reference_compounds ERC
-                     INNER JOIN t_reference_compound RC
-                       ON ERC.compound_id = RC.compound_id
-                WHERE ERC.exp_id = _currentExpID;
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-                INSERT INTO Tmp_ExperimentRefCompounds (Exp_ID, Reference_Compound_List, Items)
-                SELECT _currentExpID, _refCompoundList, _myRowCount
-
+            If Not FOUND Then
+                -- Break out of the While Loop
+                EXIT;
             End If;
+
+            _refCompoundList := null;
+
+            SELECT string_agg(RC.id_name, '; ')
+            INTO _refCompoundList
+            FROM t_experiment_reference_compounds ERC
+                 INNER JOIN t_reference_compound RC
+                   ON ERC.compound_id = RC.compound_id
+            WHERE ERC.exp_id = _currentExpID;
+            --
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
+
+            INSERT INTO Tmp_ExperimentRefCompounds (Exp_ID, Reference_Compound_List, Items)
+            SELECT _currentExpID, _refCompoundList, _matchCount;
+
         END LOOP;
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             ------------------------------------------------
             -- Preview the data that would be merged into t_cached_experiment_components
             ------------------------------------------------
             --
-
-            -- ToDo: Show this data using RAISE INFO
-
             SELECT ECC.Exp_ID,
                    ECC.Biomaterial_List,
                    ECC.Items AS CellCulture_Items,

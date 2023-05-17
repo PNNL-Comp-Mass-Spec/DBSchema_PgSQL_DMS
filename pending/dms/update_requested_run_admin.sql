@@ -48,7 +48,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _matchCount int := 0;
+    _updateCount int := 0;
     _xml AS xml;
     _usageMessage text := '';
     _stateID int := 0;
@@ -124,10 +125,10 @@ BEGIN
     INSERT INTO Tmp_Requests ( Item )
     SELECT unnest(xpath('//root/r/@i', _xml));
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
     If _debugEnabled Then
-        _logMessage := Cast(_myRowCount As text) || ' rows inserted into Tmp_Requests';
+        _logMessage := format('%s %s inserted into Tmp_Requests', _matchCount, public.check_plural(_matchCount, 'row', 'rows'));
         Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
     End If;
 
@@ -203,9 +204,9 @@ BEGIN
         WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND
               state_name <> 'Completed'
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _usageMessage := format('Updated %s %s', _myRowCount, public.check_plural(_myRowCount, 'request', 'requests'));
+        _usageMessage := format('Updated %s %s', _updateCount, public.check_plural(_updateCount, 'request', 'requests'));
 
         If char_length(_callingUser) > 0 Then
             -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
@@ -243,9 +244,9 @@ BEGIN
         WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND
               state_name <> 'Completed';
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        _usageMessage := format('Deleted %s %s', _myRowCount, public.check_plural(_myRowCount, 'request', 'requests'));
+        _usageMessage := format('Deleted %s %s', _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
 
         If char_length(_callingUser) > 0 Then
             -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
@@ -270,6 +271,7 @@ BEGIN
     -----------------------------------------------------------
     --
     If _mode::citext = 'UnassignInstrument' Then
+
         UPDATE t_requested_run
         SET queue_state = 1,
             queue_instrument_id = Null
@@ -277,9 +279,9 @@ BEGIN
               state_name <> 'Completed' AND
               (queue_state = 2 OR Not queue_instrument_id Is NULL);
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _usageMessage := format('Unassigned %s %s from the queued instrument', _myRowCount, public.check_plural(_myRowCount, 'request', 'requests'));
+        _usageMessage := format('Unassigned %s %s from the queued instrument', _updateCount, public.check_plural(_updateCount, 'request', 'requests'));
 
     End If;
 

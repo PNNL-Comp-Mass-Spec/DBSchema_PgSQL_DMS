@@ -36,7 +36,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _columnCount int := 0;
     _delimiter text;
     _entryID int := 0;
     _entryIDEnd int := 0;
@@ -162,65 +162,64 @@ BEGIN
             SELECT Entry_ID, Value
             FROM public.parse_delimited_list_ordered(_row, _delimiter, 0)
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _columnCount = ROW_COUNT;
 
-            If _myRowCount < 3 Then
+            If _columnCount < 3 Then
                 RAISE INFO '%', 'Skipping row since less than 3 columns: ' || _row;
+                CONTINUE;
+            End If;
+
+            _hostName := '';
+            _hostType := '';
+            _hostData := '';
+            _instruments := '';
+            _isAlias := 0;
+
+            SELECT Value
+            INTO _hostName
+            FROM Tmp_DataColumns
+            WHERE EntryID = 1;
+
+            SELECT Value
+            INTO _hostType
+            FROM Tmp_DataColumns
+            WHERE EntryID = 2;
+
+            SELECT Value
+            INTO _hostData
+            FROM Tmp_DataColumns
+            WHERE EntryID = 3;
+
+
+            If _hostName = '' or _hostType = '' Or _hostData = '' Then
+                RAISE INFO '%', 'Skipping row since 1 or more columns are blank: ' || _row;
             Else
-                _hostName := '';
-                _hostType := '';
-                _hostData := '';
-                _instruments := '';
-                _isAlias := 0;
+                If _hostName <> '(same as parent folder)' And Not (_hostName = 'Name' And _hostType = 'Type') Then
+                    If _hostType Like 'Alias%' Then
+                        _isAlias := 1;
 
-                SELECT Value
-                INTO _hostName
-                FROM Tmp_DataColumns
-                WHERE EntryID = 1;
-
-                SELECT Value
-                INTO _hostType
-                FROM Tmp_DataColumns
-                WHERE EntryID = 2;
-
-                SELECT Value
-                INTO _hostData
-                FROM Tmp_DataColumns
-                WHERE EntryID = 3;
-
-
-                If _hostName = '' or _hostType = '' Or _hostData = '' Then
-                    RAISE INFO '%', 'Skipping row since 1 or more columns are blank: ' || _row;
-                Else
-                    If _hostName <> '(same as parent folder)' And Not (_hostName = 'Name' And _hostType = 'Type') Then
-                        If _hostType Like 'Alias%' Then
-                            _isAlias := 1;
-
-                            If _hostData Like '%.' Then
-                                _hostData := SubString(_hostData, 1, char_length(_hostData)-1);
-                            End If;
+                        If _hostData Like '%.' Then
+                            _hostData := SubString(_hostData, 1, char_length(_hostData)-1);
                         End If;
-
-                        -- Look for instruments that have an inbox on this host
-                        --
-                        SELECT string_agg(Inst.instrument, ', ')
-                        INTO _instruments
-                        FROM t_storage_path SPath
-                             INNER JOIN t_instrument_name Inst
-                               ON SPath.storage_path_id = Inst.source_path_id
-                        WHERE (SPath.machine_name = _hostName OR
-                               SPath.machine_name = _hostName || '.bionet') AND
-                              (SPath.storage_path_function LIKE '%inbox%')
-                        ORDER BY Inst.instrument
-
-                        If char_length(_instruments) > 0 Then
-                            _instruments := Substring(_instruments, 3, char_length(_instruments));
-                        End If;
-
-                        INSERT INTO Tmp_Hosts (Host, NameOrIP, IsAlias, Instruments)
-                        VALUES (_hostName, _hostData, _isAlias, _instruments)
-
                     End If;
+
+                    -- Look for instruments that have an inbox on this host
+                    --
+                    SELECT string_agg(Inst.instrument, ', ', Inst.instrument)
+                    INTO _instruments
+                    FROM t_storage_path SPath
+                         INNER JOIN t_instrument_name Inst
+                           ON SPath.storage_path_id = Inst.source_path_id
+                    WHERE (SPath.machine_name = _hostName OR SPath.machine_name = _hostName || '.bionet') AND
+                          (SPath.storage_path_function LIKE '%inbox%');
+
+                    If char_length(_instruments) > 0 Then
+                        _instruments := Substring(_instruments, 3, char_length(_instruments));
+                    End If;
+
+                    INSERT INTO Tmp_Hosts (Host, NameOrIP, IsAlias, Instruments)
+                    VALUES (_hostName, _hostData, _isAlias, _instruments);
+
                 End If;
             End If;
 
@@ -229,7 +228,7 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Show this data using RAISE INFO
+        -- ToDo: Update this to use RAISE INFO
 
         -- Preview the new info
         SELECT *

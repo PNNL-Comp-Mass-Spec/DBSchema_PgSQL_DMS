@@ -20,8 +20,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _continue boolean;
+    _updateCount int;
     _validFactorEntries int := 0;
     _eventID int;
     _eventIDEnd int;
@@ -86,18 +85,12 @@ BEGIN
                         public.timestamp_text(_dateFilterStart),
                         date_trunc('day', _dateFilterEnd) + Interval '86399.999 seconds');
 
-        If _infoOnly Then
-            Select _message as Filter_Message
-        Else
-            RAISE INFO '%', _message;
-        End If;
+        RAISE INFO '%', _message;
 
         SELECT MIN(event_id) - 1
         INTO _eventID
         FROM t_factor_log
         WHERE changed_on BETWEEN _dateFilterStart AND _dateFilterEnd + INTERVAL '1 day';
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         SELECT MAX(event_id)
         INTO _eventIDEnd
@@ -111,9 +104,7 @@ BEGIN
     -- Step through the rows in t_factor_log
     -----------------------------------------------------------
 
-    _continue := true;
-
-    WHILE _continue
+    WHILE true
     LOOP
         -- Find the next row entry for a requested run factor update
         --
@@ -129,83 +120,81 @@ BEGIN
         SELECT changes
         INTO _factorChanges
         FROM t_factor_log
-        WHERE event_id > _eventID AND changes like '<r i%'
+        WHERE event_id > _eventID AND changes LIKE '<r i%'
         ORDER BY event_id
         LIMIT 1;
+
+        If Not FOUND Or _eventID > _eventIDEnd Then
+            -- Break out of the While loop
+            EXIT;
+        End If;
+
+        -- Uncomment to preview the raw XML
+        -- RAISE INFO '%', _factorChanges;
+
+        -- Example XML:
+        -- <r i="141475" f="Virus" v="HPAI" /><r i="141476" f="Virus" v="HPAI" /><r i="141477" f="Virus" v="HPAI" /><r i="138219" f="Virus" v="HPAI" />
+
+        _xml := _factorChanges::xml;
+
+        TRUNCATE TABLE Tmp_FactorUpdates
+
+        INSERT INTO Tmp_FactorUpdates(RequestID, FactorType, FactorName, FactorValue, ValidFactor)
+        SELECT XmlQ.RequestID, XmlQ.FactorType, XmlQ.FactorName, XmlQ.FactorValue, false AS ValidFactor
+        FROM (
+            SELECT xmltable.*
+            FROM ( SELECT ('<factors>' || _xml || '</factors>')::xml as rooted_xml
+                 ) Src,
+                 XMLTABLE('//factors/r'
+                          PASSING Src.rooted_xml
+                          COLUMNS RequestID int PATH '@i',
+                                  FactorType text PATH '@t',
+                                  FactorName text PATH '@f',
+                                  FactorValue text PATH '@v')
+             ) XmlQ;
+
+        -- Look for valid factor update data
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        UPDATE Tmp_FactorUpdates
+        SET ValidFactor = true
+        WHERE Not Coalesce(FactorType, '')::citext IN ('Block', 'Run Order') AND
+              Not FactorName Is Null;
 
-        If _myRowCount = 0 Or _eventID > _eventIDEnd Then
-            _continue := false;
-        Else
-        -- <b>
+        If FOUND Then
 
-            -- Uncomment to preview the raw XML
-            -- RAISE INFO '%', _factorChanges;
+            _validFactorEntries := _validFactorEntries + 1;
 
-            -- Example XML:
-            -- <r i="141475" f="Virus" v="HPAI" /><r i="141476" f="Virus" v="HPAI" /><r i="141477" f="Virus" v="HPAI" /><r i="138219" f="Virus" v="HPAI" />
+            /*
+             * Uncomment to debug
+            If _infoOnly AND _validFactorEntries <= 3 Then
+                SELECT RequestID, FactorName
+                FROM Tmp_FactorUpdates
+                WHERE ValidFactor
+                ORDER BY RequestID, FactorName
+            End If;
+            */
 
-            _xml := _factorChanges::xml;
-
-            TRUNCATE TABLE Tmp_FactorUpdates
-
-            INSERT INTO Tmp_FactorUpdates(RequestID, FactorType, FactorName, FactorValue, ValidFactor)
-            SELECT XmlQ.RequestID, XmlQ.FactorType, XmlQ.FactorName, XmlQ.FactorValue, false AS ValidFactor
-            FROM (
-                SELECT xmltable.*
-                FROM ( SELECT ('<factors>' || _xml || '</factors>')::xml as rooted_xml
-                     ) Src,
-                     XMLTABLE('//factors/r'
-                              PASSING Src.rooted_xml
-                              COLUMNS RequestID int PATH '@i',
-                                      FactorType text PATH '@t',
-                                      FactorName text PATH '@f',
-                                      FactorValue text PATH '@v')
-                 ) XmlQ;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            -- Look for valid factor update data
-            --
-            UPDATE Tmp_FactorUpdates
-            SET ValidFactor = true
-            WHERE Not Coalesce(FactorType, '')::citext IN ('Block', 'Run Order') AND
-                  Not FactorName Is Null;
-
-            If FOUND Then
-
-                _validFactorEntries := _validFactorEntries + 1;
-
-                /*
-                 * Uncomment to debug
-                If _infoOnly AND _validFactorEntries <= 3 Then
-                    SELECT RequestID, FactorName
+            -- Merge the changes into Tmp_FactorLastUpdated
+            MERGE INTO Tmp_FactorLastUpdated AS t
+            USING ( SELECT RequestID, FactorName
                     FROM Tmp_FactorUpdates
                     WHERE ValidFactor
-                    ORDER BY RequestID, FactorName
-                End If;
-                */
+                  ) AS s
+            ON (t.RequestID = s.RequestID And t.FactorName = s.FactorName)
+            WHEN MATCHED THEN
+                UPDATE SET Last_Updated = _changeDate
+            WHEN NOT MATCHED THEN
+                INSERT (RequestID, FactorName, Last_Updated)
+                VALUES (s.RequestID, s.FactorName, _changeDate);
 
-                -- Merge the changes into Tmp_FactorLastUpdated
-                MERGE INTO Tmp_FactorLastUpdated AS t
-                USING ( SELECT RequestID, FactorName
-                        FROM Tmp_FactorUpdates
-                        WHERE ValidFactor
-                      ) AS s
-                ON (t.RequestID = s.RequestID And t.FactorName = s.FactorName)
-                WHEN MATCHED THEN
-                    UPDATE SET Last_Updated = _changeDate
-                WHEN NOT MATCHED THEN
-                    INSERT (RequestID, FactorName, Last_Updated)
-                    VALUES (s.RequestID, s.FactorName, _changeDate);
+        End If;
 
-            End If;
-
-        End If; -- </b>
     END LOOP; -- </a>
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT Target.*,
                Src.last_updated AS Last_Updated_New
         FROM t_factor Target
@@ -215,8 +204,6 @@ BEGIN
                   Target.name = Src.FactorName
         WHERE Src.last_updated <> Target.last_updated
         ORDER BY Target.target_id, Target.name
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     Else
         UPDATE t_factor
@@ -240,9 +227,9 @@ BEGIN
                   Target.Name = Src.FactorName
         WHERE Src.Last_Updated <> Target.Last_Updated
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := 'Updated last_updated for ' || Cast(_myRowCount as text) || ' rows in t_factor';
+        _message := format('Updated last_updated for %s %s in t_factor', _updateCount, public.check_plural(_updateCount, 'row', 'rows');
         RAISE INFO '%', _message;
     End If;
 

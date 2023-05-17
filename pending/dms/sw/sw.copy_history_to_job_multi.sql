@@ -148,10 +148,9 @@ BEGIN
         RAISE INFO 'Deleted % job(s) from _jobList because they do not exist in sw.t_jobs_history with state 4', _myRowCount;
     End If;
 
-    SELECT string_agg(job, ', ')
+    SELECT string_agg(job, ', ' ORDER BY Job)
     INTO _jobList
-    FROM Tmp_JobsToCopy
-    ORDER BY Job;
+    FROM Tmp_JobsToCopy;
 
     SELECT COUNT(*)
     INTO _jobCount

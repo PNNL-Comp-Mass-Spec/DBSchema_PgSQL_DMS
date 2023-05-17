@@ -36,7 +36,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _invalidCount int := 0;
     _msg text;
     _sql text;
     _matchVal int;
@@ -115,12 +115,12 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_TargetEntities (
         EntityID int,
-        Valid int Default 0
+        Valid boolean
     );
 
     INSERT INTO Tmp_TargetEntities( EntityID,
                                     Valid )
-    SELECT LookupQ.value, 0 as Valid
+    SELECT LookupQ.value, false As Valid
     FROM ( SELECT DISTINCT public.try_cast(value, null::int) as value
            FROM public.parse_delimited_list ( _targetEntityIDList )
          ) LookupQ
@@ -131,19 +131,19 @@ BEGIN
     ---------------------------------------------------
 
     _sql := ' UPDATE Tmp_TargetEntities' ||
-            ' SET Valid = 1' ||
+            ' SET Valid = true' ||
             ' FROM Tmp_TargetEntities TE INNER JOIN ' ||
             quote_ident(_tgtTableName) || ' T ON TE.EntityID = T.' || quote_ident(_tgtTableIDCol);
 
     EXECUTE _sql;
 
-    -- Create a list of Entitites that have Valid = 0 in Tmp_TargetEntities
+    -- Create a list of Entitites that have Valid = false in Tmp_TargetEntities
     _idListMaxLength := 200;
 
     SELECT string_agg(EntityID::text, ', ')
     INTO _idList
     FROM Tmp_TargetEntities
-    WHERE Valid = 0;
+    WHERE Not Valid;
 
     If Coalesce(_idList, '') <> '' Then
         -- Unknown entries found; inform the caller
@@ -154,19 +154,21 @@ BEGIN
         End If;
 
         SELECT COUNT(*)
-        INTO _myRowCount
+        INTO _invalidCount
         FROM Tmp_TargetEntities
-        WHERE Valid = 0;
+        WHERE Not Valid;
 
-        If _myRowCount = 1 Then
+        If _invalidCount = 1 Then
             _message := format('Error: Target ID %s is not defined in %s; unable to continue', _idList, _tgtTableName);
         Else
-            _message := format('Error: found %s invalid target IDs not defined in %s: %s', _myRowCount, _tgtTableName, _idList);
+            _message := format('Error: found %s invalid target IDs not defined in %s: %s', _invalidCount, _tgtTableName, _idList);
         End If;
 
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5204';
+
+        DROP TABLE Tmp_TargetEntities;
         RETURN;
     End If;
 
@@ -174,10 +176,9 @@ BEGIN
     -- Generate a list of the IDs in Tmp_TargetEntities
     ---------------------------------------------------
 
-    SELECT string_agg(EntityID::text, ', ')
+    SELECT string_agg(EntityID::text, ', ' ORDER BY EntityID)
     INTO _idList
-    FROM Tmp_TargetEntities
-    ORDER BY EntityID;
+    FROM Tmp_TargetEntities;
 
     If Coalesce(_idList, '') <> '' Then
 
@@ -192,6 +193,8 @@ BEGIN
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5205';
+
+        DROP TABLE Tmp_TargetEntities;
         RETURN;
     End If;
 

@@ -35,7 +35,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _existingCount int := 0;
     _cachedCount int := 0;
     _misMatchCount int := 0;
 BEGIN
@@ -48,7 +48,7 @@ BEGIN
     SELECT Job
     FROM public.get_existing_jobs_matching_job_request ( _requestID );
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
     -- See if t_analysis_job_request_existing_jobs needs to be updated
     SELECT COUNT(*)
@@ -56,7 +56,7 @@ BEGIN
     FROM t_analysis_job_request_existing_jobs
     WHERE request_id = _requestID;
 
-    If _cachedCount <> _myRowCount Then
+    If _cachedCount <> _existingCount Then
         RAISE INFO '%', 'Calling update_cached_job_request_existing_jobs due to differing count';
         Call update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
     Else

@@ -47,7 +47,7 @@ BEGIN
 
     If _myRowCount = 0 Then
         If _infoOnly Then
-            SELECT 'Remote info not found in sw.t_remote_info' As Status, Null As Remote_Info_ID, _remoteInfo As Remote_Info
+            RAISE INFO 'Remote info not found in sw.t_remote_info: %', _remoteInfo;
         Else
             ---------------------------------------------------
             -- Add a new entry to sw.t_remote_info
@@ -71,6 +71,9 @@ BEGIN
         End If;
     Else
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT 'Existing item found' As Status, *
             FROM sw.t_remote_info
             WHERE remote_info_id = _remoteInfoID

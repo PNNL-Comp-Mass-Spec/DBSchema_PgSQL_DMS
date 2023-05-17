@@ -20,7 +20,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _jobCount int := 0;
     _usageMessage text;
 BEGIN
@@ -30,6 +29,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
+
     _jobStart := Coalesce(_jobStart, 0);
     _jobFinish := Coalesce(_jobFinish, 0);
     _infoOnly := Coalesce(_infoOnly, false);
@@ -38,45 +38,50 @@ BEGIN
         _jobFinish := 2147483647;
     End If;
 
-    ---------------------------------------------------
-    -- Update the specified jobs
-    ---------------------------------------------------
     If _infoOnly Then
-        SELECT  AJ.job AS Job,
-                AJ.analysis_tool_cached AS Tool_Name_Cached,
-                AnalysisTool.analysis_tool AS New_Tool_Name_Cached
-        FROM t_analysis_job AJ INNER JOIN
-             t_analysis_tool AnalysisTool ON AJ.analysis_tool_id = AnalysisTool.analysis_tool_id
-        WHERE (AJ.job >= _jobStart) AND
-              (AJ.job <= _jobFinish) AND
-              Coalesce(AJ.analysis_tool_cached, '') <> Coalesce(AnalysisTool.analysis_tool, '')
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        -- ToDo: Update this to use RAISE INFO
+
+        SELECT AJ.job AS Job,
+               AJ.analysis_tool_cached AS Tool_Name_Cached,
+               AnalysisTool.analysis_tool AS New_Tool_Name_Cached
+        FROM t_analysis_job AJ
+             INNER JOIN t_analysis_tool AnalysisTool
+               ON AJ.analysis_tool_id = AnalysisTool.analysis_tool_id
+        WHERE AJ.job >= _jobStart AND
+              AJ.job <= _jobFinish AND
+              AJ.analysis_tool_cached Is Distinct From AnalysisTool.analysis_tool;
+        --
+        GET DIAGNOSTICS _jobCount = ROW_COUNT;
+
+        If _jobCount = 0 Then
             _message := 'All jobs have up-to-date cached analysis tool names';
         Else
-            _message := 'Found ' || _myRowCount::text || ' jobs to update';
+            _message := format('Found %s %s to update',
+                                _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
         End If;
 
         RAISE INFO '%', _message;
     Else
+        ---------------------------------------------------
+        -- Update the specified jobs
+        ---------------------------------------------------
+
         UPDATE t_analysis_job
         SET analysis_tool_cached = Coalesce(AnalysisTool.analysis_tool, '')
         FROM t_analysis_job AJ INNER JOIN
              t_analysis_tool AnalysisTool ON AJ.analysis_tool_id = AnalysisTool.analysis_tool_id
-        WHERE (AJ.job >= _jobStart) AND
-              (AJ.job <= _jobFinish) AND
+        WHERE AJ.job >= _jobStart AND
+              AJ.job <= _jobFinish AND
               Coalesce(analysis_tool_cached, '') <> Coalesce(AnalysisTool.analysis_tool, '')
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        _jobCount := _myRowCount;
+        GET DIAGNOSTICS _jobCount = ROW_COUNT;
 
         If _jobCount = 0 Then
             _message := '';
         Else
-            _message := ' Updated the cached analysis tool name for ' || _jobCount::text || ' jobs';
+            _message := format('Updated the cached analysis tool name for %s %s'
+                                _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
         End If;
     End If;
 

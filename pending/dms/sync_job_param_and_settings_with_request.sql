@@ -31,7 +31,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -63,7 +63,7 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        Select _requestMinimum as MinimumRequestID;
+        RAISE INFO 'Minimum Request ID: %', _requestMinimum;
     End If;
 
     -----------------------------------------------------------
@@ -107,9 +107,7 @@ BEGIN
             GROUP BY request_id
         ) B
             ON A.request_id = B.request_id
-    WHERE A.Jobs = B.Jobs
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE A.Jobs = B.Jobs;
 
     -----------------------------------------------------------
     -- Cache the param file and settings file for the requests
@@ -123,11 +121,11 @@ BEGIN
          INNER JOIN Tmp_RequestIDs FilterQ
            ON J.request_id = FilterQ.RequestID
     GROUP BY J.request_id, J.param_file_name, J.settings_file_name
-    ORDER BY J.request_id
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    ORDER BY J.request_id;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
 
         -----------------------------------------------------------
         -- Preview the requests that would be updated
@@ -145,12 +143,13 @@ BEGIN
               (Target.param_file_name <> R.ParamFileName OR
                Target.settings_file_name <> R.SettingsFileName)
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If _matchCount = 0 Then
             _message := 'All requests are up-to-date';
         Else
-            _message := 'Need to update the parameter file name and/or settings file name for ' || _myRowCount::text || ' job requests, based on the actual jobs';
+            _message := format('Need to update the parameter file name and/or settings file name for %s job %s, based on the actual jobs',
+                                _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
         End If;
 
         RAISE INFO '%', _message;
@@ -160,34 +159,22 @@ BEGIN
         -- Update the requests
         -----------------------------------------------------------
         --
-        UPDATE t_analysis_job_request
+        UPDATE t_analysis_job_request Target
         SET param_file_name = R.ParamFileName,
             settings_file_name = R.SettingsFileName
-        FROM t_analysis_job_request Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_analysis_job_request
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = t_analysis_job_request.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN Tmp_Request_Params R
-               ON Target.AJR_RequestID = R.RequestID
-        WHERE Target.AJR_State > 1 AND
-              (Target.AJR_parmFileName <> R.ParamFileName OR
-               Target.AJR_settingsFileName <> R.SettingsFileName)
+        FROM Tmp_Request_Params R
+        WHERE Target.request_id = R.RequestID AND
+              Target.request_state_id > 1 AND
+              (Target.param_file_name <> R.ParamFileName OR
+               Target.settings_file_name <> R.SettingsFileName)
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If _updateCount = 0 Then
             _message := 'All requests are up-to-date';
         Else
-            _message := 'Updated the parameter file name and/or settings file name for ' || _myRowCount::text || ' job requests to match the actual jobs';
+            _message := format('Updated the parameter file name and/or settings file name for %s job %s to match the actual jobs',
+                                _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
 
             Call post_log_entry ('Normal', _message, 'Sync_Job_Param_And_Settings_With_Request');
         End If;

@@ -30,7 +30,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _invalidDatasetIDs text;
     _instrument text;
     _datasetInfo record;
     _storagePathIDNew int;
@@ -82,13 +82,14 @@ BEGIN
             RETURN;
         End If;
 
-        DELETE FROM Tmp_Datasets
+        SELECT string_agg(DatasetID, ', ' ORDER BY DatasetID)
+        INTO _invalidDatasetIDs
+        FROM Tmp_Datasets
         WHERE NOT EXISTS (SELECT DS.dataset_id FROM t_dataset DS WHERE Tmp_Datasets.DatasetID = DS.dataset_id);
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _message := 'Removed ' || _myRowCount::text || ' entries from _datasetIDList since not present in t_dataset';
+        If _invalidDatasetIDs <> ''
+            _message := format('Invalid dataset ID(s); aborting: %s', _invalidDatasetIDs);
+
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5202';
@@ -107,7 +108,7 @@ BEGIN
         WHERE Tmp_Datasets.DatasetID = t_dataset.dataset_id;
 
         If Not FOUND Then
-            _message := 'Tmp_Datasets is now empty; unable to continue';
+            _message := 'No rows in Tmp_Datasets matched t_dataset; unable to continue';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5203';
@@ -181,9 +182,7 @@ BEGIN
                      ( SELECT '\\' || machine_name || '\' || SUBSTRING(vol_name_server, 1, 1) || '$\' || storage_path || _datasetInfo.Dataset AS Path
                        FROM t_storage_path
                        WHERE (storage_path_id = _storagePathIDNew)
-                     ) NewStorage
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                     ) NewStorage;
 
                 If Not _infoOnly Then
                 -- <d1>

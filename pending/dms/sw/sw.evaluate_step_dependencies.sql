@@ -47,7 +47,6 @@ DECLARE
     _triggered boolean;
     _actualValue int;
     _enableOnly int;
-    _continue boolean;
     _rowsProcessed int := 0;
     _lastLogTime timestamp := CURRENT_TIMESTAMP;
     _outputFolderName text := '';
@@ -125,9 +124,10 @@ BEGIN
     -- Nothing found, nothing to process
     If _myRowCount = 0 Then
         If _infoOnly Then
-            SELECT 'Did not find any job steps to process' AS Message;
+            RAISE INFO 'Did not find any job steps to process';
         End If;
 
+        DROP TABLE Tmp_DepTable;
         RETURN;
     End If;
 
@@ -141,7 +141,9 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        -- ToDo: Preview using RAISE INFO
+
+            -- ToDo: Update this to use RAISE INFO
+
         -- Preview the steps to process
         SELECT *
         FROM Tmp_DepTable
@@ -158,10 +160,9 @@ BEGIN
 
     _rowCountToProcess := Coalesce(_rowCountToProcess, 0);
 
-    _continue := true;
     _sortOrder := -1;
 
-    WHILE _continue
+    WHILE true
     LOOP
         ---------------------------------------------------
         -- Get next step dependency
@@ -182,7 +183,7 @@ BEGIN
         ORDER BY SortOrder
         LIMIT 1;
 
-        If Not Found Then
+        If Not FOUND Then
             -- Break out of the while loop
             EXIT;
         End If;

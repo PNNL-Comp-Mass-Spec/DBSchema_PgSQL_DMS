@@ -84,7 +84,7 @@ AS $$
 **          03/05/2013 mem - Added parameter _autoRemoveNotReleasedDatasets, which is passed to ValidateAnalysisJobParameters
 **          03/26/2013 mem - Added parameter _callingUser
 **          04/09/2013 mem - Now automatically updating the settings file to the MSConvert equivalent if processing QExactive data
-**          05/22/2013 mem - Now preventing an update of analysis job requests only if they have existing analysis jobs (previously would examine AJR_state in T_Analysis_Job_Request)
+**          05/22/2013 mem - Now preventing an update of analysis job requests only if they have existing analysis jobs (previously would examine request_state_id in T_Analysis_Job_Request)
 **          06/10/2013 mem - Now filtering on Analysis_Tool when checking whether an HMS_AutoSupersede file exists for the given settings file
 **          03/28/2014 mem - Auto-changing _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' if the tool is MODa and the options start with 'seq_direction=forward'
 **          03/30/2015 mem - Now passing _toolName to AutoUpdateSettingsFileToCentroid
@@ -104,7 +104,7 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to AppendToText
 **          04/17/2019 mem - Auto-change _protCollOptionsList to 'seq_direction=forward,filetype=fasta' when running TopPIC
 **          04/23/2019 mem - Auto-change _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' when running MSFragger
-**          07/30/2019 mem - Store dataset info in T_Analysis_Job_Request_Datasets instead of AJR_datasets
+**          07/30/2019 mem - Store dataset info in table T_Analysis_Job_Request_Datasets instead of the Datasets column in T_Analysis_Job_Request
 **                         - Call UpdateCachedJobRequestExistingJobs after creating / updating an analysis job request
 **          05/28/2020 mem - Auto-update the settings file if the samples used TMTpro
 **          03/10/2021 mem - Add _dataPackageID and remove _adminReviewReqd

@@ -427,13 +427,18 @@ BEGIN
 
         If _infoOnly Then
             If Not _mode::citext In ('add', 'comment', 'delete') Then
-                SELECT '_mode should be add, comment, or delete; ' || _mode || ' is invalid' As Warning
+                RAISE WARNING '_mode should be add, comment, or delete; % is invalid', _mode;
             End If;
 
-            -- ToDo: use RAISE INFO to show this info
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT *
             FROM Tmp_DataPackageItems
-            ORDER BY DataPackageID, ItemType, Identifier
+            ORDER BY DataPackageID, ItemType, Identifier;
+
+            DROP TABLE Tmp_DatasetIDsToAdd;
+            DROP TABLE Tmp_JobsToAddOrDelete;
+            RETURN;
         End If;
 
         ---------------------------------------------------
@@ -443,7 +448,9 @@ BEGIN
         If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
         -- <delete biomaterial>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'biomaterial to delete' AS Biomaterial_Msg, Target.*
                 FROM dpkg.t_data_package_biomaterial Target
                      INNER JOIN Tmp_DataPackageItems
@@ -471,7 +478,9 @@ BEGIN
         If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
         -- <comment biomaterial>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'Update biomaterial comment' AS Item_Type,
                        _comment AS New_Comment, *
                 FROM dpkg.t_data_package_biomaterial Target
@@ -515,7 +524,9 @@ BEGIN
                 );
 
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
                                 'New Biomaterial' AS Item_Type,
                                 TX.ID,
@@ -572,7 +583,9 @@ BEGIN
         If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
         -- <delete EUS Proposals>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'EUS Proposal to delete' AS EUS_Proposal_Msg, Target.*
                 FROM dpkg.t_data_package_eus_proposals Target
                      INNER JOIN Tmp_DataPackageItems
@@ -600,7 +613,9 @@ BEGIN
         If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
         -- <comment EUS Proposals>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'Update EUS Proposal comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
@@ -645,7 +660,9 @@ BEGIN
                 );
 
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
                                 'New EUS Proposal' AS Item_Type,
                                 TX.ID,
@@ -686,7 +703,9 @@ BEGIN
         If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
         -- <delete experiments>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'Experiment to delete' AS Experiment_Msg, Target.*
                 FROM dpkg.t_data_package_experiments Target
                      INNER JOIN Tmp_DataPackageItems
@@ -715,7 +734,9 @@ BEGIN
         If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
         -- <comment experiments>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'Update experiment comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
@@ -761,7 +782,9 @@ BEGIN
                 );
 
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT DISTINCT
                     Tmp_DataPackageItems.DataPackageID,
                     'New Experiment ID' as Item_Type,
@@ -812,7 +835,9 @@ BEGIN
         If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
         -- <delete datasets>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'Dataset to delete' AS Dataset_Msg, Target.*
                 FROM dpkg.t_data_package_datasets Target
                      INNER JOIN Tmp_DataPackageItems
@@ -841,7 +866,9 @@ BEGIN
         If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
         -- <comment datasets>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'Update dataset comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
@@ -887,7 +914,9 @@ BEGIN
                 );
 
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
                                 'New Dataset ID' AS Item_Type,
                                 TX.ID,
@@ -939,7 +968,9 @@ BEGIN
         If _mode = 'delete' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
         -- <delete analysis_jobs>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'job to delete' AS Job_Msg, *
                 FROM dpkg.t_data_package_analysis_jobs Target
                      INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
@@ -965,7 +996,9 @@ BEGIN
         If _mode = 'comment' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
         -- <comment analysis_jobs>
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'Update job comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
@@ -1007,7 +1040,9 @@ BEGIN
                 );
 
             If _infoOnly Then
-                -- ToDo: Use RAISE INFO to show this info
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT DISTINCT ItemsQ.DataPackageID,
                                 'New Job' AS Item_Type,
                                 TX.Job,

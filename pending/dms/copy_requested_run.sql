@@ -46,13 +46,11 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _stateID int := 0;
     _newRequestID int;
     _oldRequestName text;
     _newRequestName text;
     _stateNameList text := NULL;
-    _continue boolean;
     _iteration int;
     _callingUserUnconsume text;
     _batchID int;
@@ -125,21 +123,25 @@ BEGIN
         _newRequestName := _requestNameOverride;
     End If;
 
-    _continue := true;
     _iteration := 1;
 
-    WHILE _continue
+    WHILE true
     LOOP
         If Not Exists (SELECT * FROM t_requested_run WHERE request_name = _newRequestName) Then
-            _continue := false;
-        Else
-            _iteration := _iteration + 1;
-            _newRequestName := format('%s%s%s', _oldRequestName, _requestNameAppendText, _iteration);
+            -- Break out of the while loop
+            EXIT;
         End If;
+
+        _iteration := _iteration + 1;
+        _newRequestName := format('%s%s%s', _oldRequestName, _requestNameAppendText, _iteration);
 
     END LOOP;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
+
         SELECT
             request_id As Source_Request_ID,
             request_name As Source_Request_Name,
@@ -262,14 +264,8 @@ BEGIN
     WHERE request_id = _requestID
     RETURNING request_id
     INTO _newRequestID;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    --
-    -- ToDo: Confirm that RETURNING returns the request_id of the inserted row
-    --
-
-    If _myRowCount = 0 Then
+    If Not FOUND Then
         If Not Exists (Select * from t_requested_run Where request_id = _requestID) Then
             _message := format('Problem trying to renumber request in history; RequestID not found: %s', _requestID);
         Else

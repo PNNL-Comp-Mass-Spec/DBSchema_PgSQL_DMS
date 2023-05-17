@@ -23,7 +23,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _changeSummary text;
     _usageMessage text := '';
 BEGIN
@@ -40,14 +39,13 @@ BEGIN
         Request int,
         Factor text,
         Value text
-    )
+    );
 
     -----------------------------------------------------------
     -- Populate temp table
     -----------------------------------------------------------
     --
-    INSERT INTO Tmp_Factors
-    ( Request, Factor, value )
+    INSERT INTO Tmp_Factors ( Request, Factor, value )
     SELECT target_id AS Request,
            name AS Factor,
            value
@@ -55,24 +53,20 @@ BEGIN
     WHERE t_factor.Type = 'Run_Request' AND
           target_id = _srcRequestID AND
           Trim(T_Factor.Name) <> '';
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -----------------------------------------------------------
     -- Clean out old factors for _destRequest
     -----------------------------------------------------------
     --
     DELETE FROM t_factor
-    WHERE t_factor.type = 'Run_Request' AND target_id = _destRequestID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE t_factor.type = 'Run_Request' AND target_id = _destRequestID;
 
     -----------------------------------------------------------
     -- Get rid of any blank entries from temp table
     -- (shouldn't be any, but let's be cautious)
     -----------------------------------------------------------
     --
-    DELETE FROM Tmp_Factors WHERE Coalesce(Value, '') = ''
+    DELETE FROM Tmp_Factors WHERE Coalesce(Value, '') = '';
 
     -----------------------------------------------------------
     -- Anything to copy?
@@ -87,11 +81,10 @@ BEGIN
     -- Copy from temp table to factors table for _destRequest
     -----------------------------------------------------------
     --
-    INSERT INTO t_factor
-        ( type, target_id, name, Value )
+    INSERT INTO t_factor ( type, target_id, name, Value )
     SELECT
         'Run_Request' AS Type, _destRequestID AS TargetID, Factor AS Name, Value
-    FROM Tmp_Factors
+    FROM Tmp_Factors;
 
     -----------------------------------------------------------
     -- Convert changed items to XML for logging

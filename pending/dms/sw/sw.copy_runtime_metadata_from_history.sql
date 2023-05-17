@@ -270,16 +270,21 @@ BEGIN
                ON JS.job = JSH.job AND
                   JS.step = JSH.step AND
                   JSH.most_recent_entry = 1
-        WHERE Not J.Invalid
+        WHERE Not J.Invalid;
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _myRowCount = 0 Then
             _message := 'No job steps were updated; this indicates a bug.  Examine the temp table contents';
 
-            SELECT 'Tmp_Jobs' AS TheTable, * FROM Tmp_Jobs
+            -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Tmp_JobStepsToUpdate' AS TheTable, * FROM Tmp_JobStepsToUpdate
+            SELECT 'Tmp_Jobs' AS TheTable, *
+            FROM Tmp_Jobs;
+
+            SELECT 'Tmp_JobStepsToUpdate' AS TheTable, *
+            FROM Tmp_JobStepsToUpdate;
+
         End If;
 
         If _myRowCount = 1 Then

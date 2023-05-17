@@ -42,7 +42,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _result int;
     _newJobIdStart int;
     _jobCount int;
@@ -113,7 +112,7 @@ BEGIN
             Valid int NOT NULL,
             StateID int NOT NULL,
             RowNum int NOT NULL
-        )
+        );
 
         CREATE TEMP TABLE Tmp_NewJobInfo(
             JobId_Old int NOT NULL,
@@ -132,7 +131,7 @@ BEGIN
             AJ_proteinOptionsList text NOT NULL,
             AJ_requestID int NOT NULL,
             AJ_propagationMode int NOT NULL
-        )
+        );
 
         CREATE UNIQUE INDEX IX_Tmp_NewJobInfo ON Tmp_NewJobInfo (JobId_New);
 
@@ -143,8 +142,6 @@ BEGIN
         INSERT INTO Tmp_SourceJobs (JobId, Valid, StateID, RowNum)
         SELECT Value, 0 as Valid, 0 AS StateID, Row_Number() Over (Order By Value) as RowNum
         FROM public.parse_delimited_integer_list(_sourceJobs, ',')
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If Not Exists (SELECT * FROM Tmp_SourceJobs) Then
             _message := '_sourceJobs did not have any valid Job IDs: ' || _sourceJobs;
@@ -213,8 +210,6 @@ BEGIN
                GROUP BY J.param_file_name ) StatsQ
         ORDER BY NumJobs DESC
         LIMIT 1;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _jobCountCompare < _jobCount Then
             _message := 'The source jobs must all have the same parameter file';
@@ -255,8 +250,6 @@ BEGIN
                GROUP BY J.settings_file_name ) StatsQ
         ORDER BY NumJobs DESC
         LIMIT 1;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _jobCountCompare < _jobCount Then
             _message := 'The source jobs must all have the same settings file';
@@ -413,11 +406,10 @@ BEGIN
         FROM t_analysis_job J
              INNER JOIN Tmp_SourceJobs SrcJobs
                ON J.job = SrcJobs.JobId
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _infoOnly Then
-            -- ToDo: Use RAISE INFO to display this info
+
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT *
             FROM Tmp_NewJobInfo
@@ -442,9 +434,7 @@ BEGIN
             organism_id, dataset_id, comment, AJ_owner, 1 AS job_state_id, AJ_proteinCollectionList, AJ_proteinOptionsList,
             request_id, propagation_mode
         FROM Tmp_NewJobInfo
-        ORDER BY JobId_New
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        ORDER BY JobId_New;
 
         If _supersedeOldJob Or _updateOldJobComment Then
 

@@ -99,8 +99,9 @@ BEGIN
          ) XmlQ;
 
     If _infoOnly Then
+
         -- ToDo: Update this to use RAISE INFO
-        --
+
         SELECT 'Before update' AS Note, *
         FROM Tmp_Job_Parameters
         ORDER BY Section
@@ -139,14 +140,13 @@ BEGIN
     End If;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         ---------------------------------------------------
         -- Preview the parameters
         ---------------------------------------------------
         --
-
-        -- ToDo: Update this to use RAISE INFO
-        --
-
         SELECT 'After update' AS Note, *
         FROM Tmp_Job_Parameters
         ORDER BY Section

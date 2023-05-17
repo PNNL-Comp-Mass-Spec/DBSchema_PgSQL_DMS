@@ -36,7 +36,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _matchCount int;
     _dmsInstrumentID Int;
     _startDate timestamp;
     _endDate timestamp;
@@ -154,11 +154,11 @@ BEGIN
             GROUP BY dms_inst_id, type, start
             ORDER BY dms_inst_id, type, start
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
             If _infoOnly Then
-                RAISE INFO 'Processing % start times for instrument % in t_emsl_instrument_usage_report (no date filter)',
-                            _myRowCount, _instrument;
+                RAISE INFO 'Processing % %s for instrument % in t_emsl_instrument_usage_report (no date filter)',
+                            _matchCount, public.check_plural(_matchCount, 'start time', 'start times'), _instrument;
             End If;
         Else
             If _month <= 0 Then
@@ -184,11 +184,11 @@ BEGIN
             GROUP BY dms_inst_id, type, start
             ORDER BY dms_inst_id, type, start
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
             If _infoOnly Then
-                RAISE INFO 'Processing % start times for instrument % in t_emsl_instrument_usage_report',
-                            _myRowCount, _instrument;
+                RAISE INFO 'Processing % %s for instrument % in t_emsl_instrument_usage_report',
+                            _matchCount, public.check_plural(_matchCount, 'start time', 'start times'), _instrument;
 
                 RAISE INFO 'Filtering for start between % and %',
                             to_char(_startDate, 'yyyy-mm-dd'),
@@ -216,7 +216,7 @@ BEGIN
 
         If _infoOnly And _showStartTimes Then
 
-            -- ToDo: Show the data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             Select *
             From Tmp_DatasetStartTimes
@@ -318,14 +318,14 @@ BEGIN
 
             If _showPendingUpdates Then
 
-                -- ToDo: Show data using RAISE INFO
+                -- ToDo: Update this to use RAISE INFO
 
                 SELECT U.*
                 FROM Tmp_UpdatesToApply U
                 ORDER BY ID
             End If;
 
-            -- ToDo: Show data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT U.ID,
                    U.dms_inst_id,

@@ -75,7 +75,9 @@ BEGIN
     ---------------------------------------------------
     --
     If _infoOnly Then
-        -- ToDo: Use RAISE INFO to preview the data
+
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT sw.t_jobs.job,
                Target.start AS Start,
                sw.t_jobs.start AS StartNew,

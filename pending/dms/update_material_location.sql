@@ -29,7 +29,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _errorMessage text;
     _logErrors boolean := false;
     _logMessage text;
@@ -136,8 +135,6 @@ BEGIN
                    ON ML.ID = MC.Location_ID
             WHERE ML.location_id = _locationId AND
                   MC.status = 'Active';
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If _activeContainers > 0 Then
                 _errorMessage := format('Location cannot be set to inactive because it has %s active %s',
@@ -154,31 +151,27 @@ BEGIN
         -- Enable error logging if an exception is caught
         _logErrors := true;
 
-        If _status <> _oldStatus Then
+        If _status Is Distinct From _oldStatus Then
             -- Update the status
 
-            Update t_material_locations
-            Set status = _status
-            Where location_id = _locationId;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            UPDATE t_material_locations
+            SET status = _status
+            WHERE location_id = _locationId;
 
-            _logMessage := 'Material location status changed from ' || _oldStatus || ' to ' || _status ||
-                              ' by ' || _callingUser || ' for material location ' || _locationTag
+            _logMessage := format('Material location status changed from %s to %s by %s for material location %s',
+                                    _oldStatus, _status, _callingUser, _locationTag);
 
             Call post_log_entry ('Normal', _logMessage, 'Update_Material_Location');
 
             _message := 'Set status to ' || _status;
         End If;
 
-        If _oldComment <> _comment Then
+        If _oldComment Is Distinct From _comment Then
             -- Update the comment
 
-            Update t_material_locations
-            Set comment = _comment
-            Where location_id = _locationId;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            UPDATE t_material_locations
+            SET comment = _comment
+            WHERE location_id = _locationId;
 
             If _oldComment <> '' Then
                 If _comment = '' Then

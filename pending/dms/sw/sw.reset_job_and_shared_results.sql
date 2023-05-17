@@ -123,7 +123,7 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Update these queries to use RAISE INFO
+                -- ToDo: Update this to use RAISE INFO
 
                 SELECT 'Delete from sw.t_shared_results' as Message, *
                 FROM sw.t_shared_results
@@ -224,7 +224,9 @@ BEGIN
 
         If _resetJob <> 0 Then
             If _infoOnly Then
-                -- Show dependencies
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT *,
                        CASE
                            WHEN Evaluated <> 0 OR

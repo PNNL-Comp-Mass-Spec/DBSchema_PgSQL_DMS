@@ -963,14 +963,14 @@ BEGIN
                               SUM(CASE WHEN AJ.job IS NULL
                                        THEN 0
                                        ELSE 1
-                                  End If;) AS JobCount
+                                  END) AS JobCount
                        FROM t_analysis_job_request AJR
                            INNER JOIN t_users U
                                ON AJR.user_id = U.user_id
                            INNER JOIN t_analysis_job_request_state AJRS
-                               ON AJR.AJR_state = AJRS.user_id
+                               ON AJR.request_state_id = AJRS.request_state_id
                            INNER JOIN t_organisms Org
-                               ON AJR.AJR_organism_ID = Org.organism_id
+                               ON AJR.organism_id = Org.organism_id
                            LEFT OUTER JOIN t_analysis_job AJ
                                ON AJR.request_id = AJ.request_id
                        WHERE AJR.request_id = _requestID
@@ -992,7 +992,7 @@ BEGIN
                     -- Populate a temporary table with the list of Job IDs just created
                     CREATE TEMP TABLE Tmp_ID_Update_List (
                         TargetID int NOT NULL
-                    )
+                    );
 
                     CREATE UNIQUE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 
@@ -1002,6 +1002,8 @@ BEGIN
                     WHERE batch_id = _batchID
 
                     Call alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser, _entryTimeWindowSeconds => 45);
+
+                    DROP TABLE Tmp_ID_Update_List;
                 End If;
             End If;
 
@@ -1057,12 +1059,12 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_ID_Update_List;
     END;
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
     DROP TABLE IF EXISTS Tmp_SettingsFile_Values_DataPkgJob;
     DROP TABLE IF EXISTS Tmp_NewJobIDs;
-    DROP TABLE IF EXISTS Tmp_ID_Update_List;
 END
 $$;
 

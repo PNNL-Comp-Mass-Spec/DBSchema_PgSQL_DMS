@@ -36,7 +36,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _jobInfo record;
     _oldJobInfo text;
     _propagationMode text;
@@ -88,11 +87,9 @@ BEGIN
            ON J.dataset_id = DS.dataset_id
          INNER JOIN t_analysis_tool
            ON J.analysis_tool_id = t_analysis_tool.analysis_tool_id
-    WHERE J.job = _job
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE J.job = _job;
 
-    If _myRowCount = 0 Then
+    If Not FOUND Then
         _message := 'Job not found: ' || Cast(_job as text);
         RAISE ERROR '%', _message;
 

@@ -67,7 +67,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _invalidCount int;
     _userCount int;
     _personID int;
@@ -263,11 +262,10 @@ BEGIN
             _autoSupersedeProposalID := '';
             _iterations := _iterations + 1;
 
-            SELECT proposal_id_auto_supersede INTO _autoSupersedeProposalID
+            SELECT proposal_id_auto_supersede
+            INTO _autoSupersedeProposalID
             FROM t_eus_proposals
-            WHERE proposal_id = _eusProposalID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE proposal_id = _eusProposalID;
 
             If Coalesce(_autoSupersedeProposalID, '') = '' Then
                 _checkSuperseded := 0;
@@ -314,8 +312,8 @@ BEGIN
                                 RAISE INFO 'Circular reference found; choosing the one with the highest ID';
                             End If;
 
-                            -- Moved to bottom of query: TOP 1
-                            SELECT Proposal_ID INTO _eusProposalID
+                            SELECT Proposal_ID
+                            INTO _eusProposalID
                             FROM Tmp_Proposal_Stack
                             ORDER BY Numeric_ID Desc, Proposal_ID Desc
                             LIMIT 1;
@@ -344,6 +342,9 @@ BEGIN
         END LOOP; -- </b>
 
         If _infoOnly AND EXISTS (SELECT * from Tmp_Proposal_Stack) Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT *
             FROM Tmp_Proposal_Stack
             ORDER BY Entry_ID
@@ -562,23 +563,21 @@ BEGIN
     -- <a2>
 
         If _campaignID > 0 Then
-            SELECT EUT.eus_usage_type INTO _eusUsageTypeCampaign
+            SELECT EUT.eus_usage_type
+            INTO _eusUsageTypeCampaign
             FROM t_campaign C
                  INNER JOIN t_eus_usage_type EUT
                    ON C.eus_usage_type_id = EUT.eus_usage_type_id
             WHERE C.campaign_id = _campaignID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
         Else
-            SELECT EUT.eus_usage_type INTO _eusUsageTypeCampaign
+            SELECT EUT.eus_usage_type
+            INTO _eusUsageTypeCampaign
             FROM t_experiments E
                  INNER JOIN t_campaign C
                    ON E.campaign_id = C.campaign_id
                  INNER JOIN t_eus_usage_type EUT
                    ON C.eus_usage_type_id = EUT.eus_usage_type_id
             WHERE E.exp_id = _experimentID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
         End If;
 
         If _eusUsageTypeCampaign::citext = 'USER_REMOTE' And _eusUsageType::citext In ('USER_ONSITE', 'USER') And _proposalType::citext <> 'Resource Owner' Then

@@ -37,9 +37,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _dt timestamp;
-    _count int := 0;
+    _updateCount int := 0;
     _id int := 0;
     _requestIDNum text;
     _tblRequestsToProcess Table;
@@ -90,18 +89,16 @@ BEGIN
         ORDER BY RequestID
     LOOP
 
-        _count := _count + 1;
+        _updateCount := _updateCount + 1;
         _requestIDNum := _id::text;
 
         -------------------------------------------------
         If _mode = 'est_completion' Then
             _dt := _newValue::timestamp;
-            --
+
             UPDATE t_sample_prep_request
-            SET    estimated_completion = _dt
-            WHERE (prep_request_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            SET estimated_completion = _dt
+            WHERE prep_request_id = _id;
         End If;
 
         -------------------------------------------------
@@ -115,34 +112,28 @@ BEGIN
             -- Set priority
             --
             UPDATE t_sample_prep_request
-            SET    priority = _pri
-            WHERE (prep_request_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            SET priority = _pri
+            WHERE prep_request_id = _id;
         End If;
 
         -------------------------------------------------
         -- This mode is used for web page option 'Assign selected requests to preparer(s)'
         If _mode = 'assignment' Then
             UPDATE t_sample_prep_request
-            SET    assigned_personnel = _newValue,
+            SET assigned_personnel = _newValue,
                 state_changed = CURRENT_TIMESTAMP,
                 state_id = 2    -- 'open'
-            WHERE (prep_request_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE prep_request_id = _id;
         End If;
 
         -------------------------------------------------
         -- This mode is used for web page option "Assign selected requests to requested personnel"
         If _mode = 'req_assignment' Then
             UPDATE t_sample_prep_request
-            SET    assigned_personnel = requested_personnel,
+            SET assigned_personnel = requested_personnel,
                 state_changed = CURRENT_TIMESTAMP,
                 state_id = 2    -- 'open'
-            WHERE (prep_request_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE prep_request_id = _id;
         End If;
 
         -------------------------------------------------
@@ -153,23 +144,18 @@ BEGIN
             INTO _stID
             FROM t_sample_prep_request_state_name
             WHERE (state_name = _newValue)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-            --
+
             UPDATE t_sample_prep_request
             SET state_id = _stID,
                 state_changed = CURRENT_TIMESTAMP
-            WHERE (prep_request_id = _id)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE prep_request_id = _id;
+
         End If;
 
         -------------------------------------------------
         If _mode = 'delete' Then
             -- Deletes are ignored by this procedure
             -- Use DeleteSamplePrepRequest instead
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
         End If;
 
         -------------------------------------------------
@@ -183,7 +169,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Updated ' || _count::text || ' prep ' || public.check_plural(_count, 'request', 'requests');
+    _usageMessage := format('Updated %s prep %s', _updateCount, public.check_plural(_updateCount, 'request', 'requests'));
 
     Call post_usage_log_entry ('Update_Sample_Request_Assignments', _usageMessage);
 

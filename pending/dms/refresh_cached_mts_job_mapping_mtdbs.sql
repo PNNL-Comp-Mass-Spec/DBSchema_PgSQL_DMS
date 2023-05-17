@@ -24,7 +24,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _deleteCount int;
     _maxInt int;
     _countBeforeMerge int;
     _countAfterMerge int;
@@ -72,13 +72,12 @@ BEGIN
                   J.ResultType = DupQ.ResultType AND
                   J.CachedInfo_ID <> DupQ.MinID
         );
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := 'Deleted ' || _myRowCount::text || ' duplicate ' ||
-                    public.check_plural(_myRowCount, 'entry', 'entries') ||
-                    ' from t_mts_mt_db_jobs_cached; this is unexpected';
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
+
+    If _deleteCount > 0 Then
+        _message := 'Deleted %s duplicate %s from t_mts_mt_db_jobs_cached; this is unexpected',
+                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries');
 
         call PostLogEntry ('Error', _message, 'RefreshCachedMTSJobMappingMTDBs');
 

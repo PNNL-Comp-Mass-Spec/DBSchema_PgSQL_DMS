@@ -20,7 +20,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _unknownIDs text := null;
     _idsWrongState text := null;
     _datasetID int;
@@ -28,6 +27,7 @@ DECLARE
     _matchIndex int;
     _messageID int;
     _messageText text;
+    _updateCount int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -93,9 +93,7 @@ BEGIN
            NewComment = DS.comment
     FROM public.parse_delimited_integer_list ( _datasetIDs, ',' ) Src
          LEFT OUTER JOIN t_dataset DS
-           ON Src.Value = DS.dataset_id
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+           ON Src.Value = DS.dataset_id;
 
     If Not FOUND Then
         _message := 'No valid integers were found: ' || _datasetIDs;
@@ -174,6 +172,9 @@ BEGIN
                          END;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT *
         FROM Tmp_DatasetsToUpdate
         ORDER BY DatasetID;
@@ -187,10 +188,10 @@ BEGIN
               InvalidID = 0 AND
               StateID IN (3, 4);
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _message := format('Removed error messages from the comment field of %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
+        If _updateCount > 0 Then
+            _message := format('Removed error messages from the comment field of %s %s', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
             RAISE INFO '%', _message;
         End If;
     End If;

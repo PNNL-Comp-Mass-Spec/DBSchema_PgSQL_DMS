@@ -29,7 +29,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int := 0;
     _countBeforeMerge int;
     _countAfterMerge int;
     _mergeCount int;
@@ -121,10 +121,10 @@ BEGIN
         GET DIAGNOSTICS _setInactiveCount = ROW_COUNT;
 
         If _mergeInsertCount > 0 OR _mergeUpdateCount > 0 Then
-            _message := 'Updated t_eus_proposals: ' || _mergeInsertCount::text || ' added; ' || _mergeUpdateCount::text || ' updated';
+            _message := format('Updated t_eus_proposals: %s added, %s updated', _mergeInsertCount, _mergeUpdateCount);
 
             If _setInactiveCount > 0 Then
-                _message := _message || '; ' || _setInactiveCount::text || ' set to inactive';
+                _message := format('%s; %s set to inactive', _message, _setInactiveCount);
             End If;
 
             Call post_log_entry ('Normal', _message, 'Update_EUS_Proposals_From_EUS_Imports');
@@ -147,10 +147,10 @@ BEGIN
         WHERE NOT EUP.proposal_type IS NULL AND
               EPT.proposal_type_name IS NULL
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _message := format('Added %s new proposal %s to t_eus_proposal_type', _myRowCount, public.check_plural(_myRowCount, 'type', 'types'));
+        If _matchCount > 0 Then
+            _message := format('Added %s new proposal %s to t_eus_proposal_type', _matchCount, public.check_plural(_matchCount, 'type', 'types'));
 
             Call post_log_entry ('Normal', _message, 'Update_EUS_Proposals_From_EUS_Imports');
             _message := '';

@@ -24,7 +24,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text := '';
     _entryID int := 0;
     _proposalID text;
@@ -32,6 +31,7 @@ DECLARE
     _newWP text;
     _valueList text;
     _logMessage text;
+    _matchCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -113,7 +113,9 @@ BEGIN
                ) LookupQ;
 
         If _infoOnly Then
-            -- ToDo: Show the data using RAISE INFO
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT *
             FROM Tmp_WPInfo
             ORDER BY Proposal_ID, usage_rank Desc
@@ -172,11 +174,9 @@ BEGIN
             INTO _newWP
             FROM Tmp_WPInfo
             WHERE Proposal_ID = _proposalID AND usage_rank = 1;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            If _myRowCount <> 1 Then
-                _logMessage := 'Logic error; did not find a single match for proposal ' || _proposalID || ' in Tmp_WPInfo';
+            If Not FOUND Then
+                _logMessage := format('Logic error; did not find a match for proposal %s and usage_rank 1 in Tmp_WPInfo', _proposalID);
                 Call post_log_entry ('Error', _logMessage , 'Update_EUS_Requested_Run_WP');
                 RETURN;
             End If;
@@ -189,24 +189,24 @@ BEGIN
             WHERE Proposal_ID = _proposalID
             ORDER BY request_id;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
             If _infoOnly Then
-                _logMessage := 'Updating WP to ' || _newWP || ' for requested';
+                _logMessage := format('Updating WP to %s for requested', _newWP);
             Else
-                _logMessage := 'Updated WP to ' || _newWP || ' for requested';
+                _logMessage := format('Updated WP to %s for requested', _newWP);
             End If;
 
-            If _myRowCount = 1 Then
-                _logMessage := _logMessage || ' run ' || Cast(_rRStart as text);
+            If _matchCount = 1 Then
+                _logMessage := format('%s run %s', _logMessage, _rrStart);
             Else
 
                 SELECT ValueList
                 INTO _valueList
-                FROM condense_integer_list_to_ranges(_debugMode => false);
+                FROM public.condense_integer_list_to_ranges(_debugMode => false);
                 LIMIT 1;
 
-                _logMessage := _logMessage || ' runs ' || _valueList;
+                _logMessage := format('%s runs %s', _logMessage, _valueList);
             End If;
 
             UPDATE Tmp_ReqRunsToUpdate
@@ -227,19 +227,22 @@ BEGIN
         END LOOP;
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             ----------------------------------------------------------
             -- Preview what would be updated
             ----------------------------------------------------------
             --
             If Exists (Select * from Tmp_ReqRunsToUpdate) Then
 
-                -- ToDo: Show this data using RAISE INFO
+                -- ToDo: Update this to use RAISE INFO
 
                 SELECT Src.*
                 FROM Tmp_ReqRunsToUpdate Src
                 ORDER BY Src.Proposal_ID, Src.ID;
             Else
-                SELECT 'No candidate requested runs were found to update' AS Message
+                RAISE INFO 'No candidate requested runs were found to update';
             End If;
 
         End If;

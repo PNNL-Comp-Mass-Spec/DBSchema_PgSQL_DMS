@@ -43,11 +43,11 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _requestCountToUpdate int := 0;
     _rrCount int;
     _logMessage text;
     _valueList text;
+    _updateCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -151,12 +151,10 @@ BEGIN
                    ON RR.request_id = Filter.request_id
             WHERE RR.work_package = _oldWorkPackage;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            _requestCountToUpdate := _myRowcount;
+            GET DIAGNOSTICS _requestCountToUpdate = ROW_COUNT;
 
             If _requestCountToUpdate = 0 Then
-                _message := 'None of the ' || _rRCount::text || ' specified requested run IDs uses work package ' || _oldWorkPackage;
+                _message := format('None of the %s specified requested run IDs uses work package %s', _rrCount, _oldWorkPackage);
 
                 If _infoOnly Then
                     RAISE INFO '%', _message;
@@ -181,9 +179,7 @@ BEGIN
             WHERE state_name = 'active' AND
                   work_package = _oldWorkPackage;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            _requestCountToUpdate := _myRowcount;
+            GET DIAGNOSTICS _requestCountToUpdate = ROW_COUNT;
 
             If _requestCountToUpdate = 0 Then
                 _message := 'Did not find any active requested runs with work package ' || _oldWorkPackage;
@@ -207,12 +203,12 @@ BEGIN
         CREATE TEMP TABLE Tmp_ValuesByCategory (
             Category text,
             Value int
-        )
+        );
 
         INSERT INTO Tmp_ValuesByCategory (Category, Value)
         SELECT 'RR', request_id
         FROM Tmp_ReqRunsToUpdate
-        ORDER BY ID
+        ORDER BY ID;
 
         SELECT ValueList
         INTO _valueList
@@ -225,19 +221,24 @@ BEGIN
             _logMessage := 'Will update';
         End If;
 
-        _logMessage := format('%s work package for %s requested %s', _logMessage, _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'));
-        _logMessage := _logMessage || ' from ' || _oldWorkPackage || ' to ' || _newWorkPackage;
-
-        _logMessage := _logMessage || '; user ' || _callingUser || '; IDs ' || Coalesce(_valueList, '??');
+        _logMessage := format('%s work package for %s requested %s from %s to %s; user %; IDs %',
+                                _logMessage,
+                                _requestCountToUpdate,
+                                public.check_plural(_requestCountToUpdate, 'run', 'runs'),
+                                _oldWorkPackage,
+                                _newWorkPackage,
+                                _callingUser,
+                                Coalesce(_valueList, '??'));
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             ----------------------------------------------------------
             -- Preview what would be updated
             ----------------------------------------------------------
             --
             RAISE INFO '%', _logMessage;
-
-            -- ToDo: Show this data using RAISE INFO
 
             SELECT request_id,
                    Request_Name,
@@ -247,23 +248,22 @@ BEGIN
             ORDER BY ID;
 
             _message := format('Will update work package for %s requested %s from %s to %s',
-                                _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);
+                                _previewCount, public.check_plural(_requestCountToUpdate, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);
 
         Else
             ----------------------------------------------------------
             -- Perform the update
             ----------------------------------------------------------
             --
-
             UPDATE t_requested_run target
             Set work_package = _newWorkPackage
             FROM Tmp_ReqRunsToUpdate src
             WHERE Target.request_id = Src.request_id;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             _message := format('Updated work package for %s requested %s from %s to %s',
-                                _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);
+                                _updateCount, public.check_plural(_updateCount, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);
 
             Call post_log_entry ('Normal', _logMessage, 'Update_Requested_Run_WP');
 

@@ -29,40 +29,30 @@ BEGIN
     -- Look for _uriPath in dpkg.t_uri_paths
     ------------------------------------------------
     --
-    _uriPathID := 0;
-
-    SELECT uri_path_id INTO _uriPathID
+    SELECT uri_path_id
+    INTO _uriPathID
     FROM dpkg.t_uri_paths
-    WHERE uri_path = _uriPath
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE uri_path = _uriPath;
 
-    If _myRowCount = 0 Or _uriPathID = 0 Then
+    If Not FOUND And Not _infoOnly Then
         ------------------------------------------------
         -- Match not found
         -- Add a new entry (use a Merge in case two separate calls are simultaneously made for the same _uriPath)
         ------------------------------------------------
 
-        If _infoOnly = false Then
+        MERGE dpkg.t_uri_paths AS Target
+        USING ( SELECT _uriPath
+              ) AS Source (URI_Path)
+            ON Source.uri_path = Target.uri_path
+        WHEN NOT MATCHED BY TARGET THEN
+            INSERT ( uri_path )
+            VALUES ( Source.uri_path )
+        ;
 
-            MERGE dpkg.t_uri_paths AS Target
-            USING (
-                    SELECT _uriPath
-                   ) AS Source (URI_Path)
-                ON Source.uri_path = Target.uri_path
-            WHEN NOT MATCHED BY TARGET THEN
-                INSERT ( uri_path )
-                VALUES  ( Source.uri_path )
-            ;
-
-            -- Now that the merge is complete a match should be found
-            SELECT uri_path_id INTO _uriPathID
-            FROM dpkg.t_uri_paths
-            WHERE uri_path = _uriPath
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        End If;
+        -- Now that the merge is complete a match should be found
+        SELECT uri_path_id INTO _uriPathID
+        FROM dpkg.t_uri_paths
+        WHERE uri_path = _uriPath
 
     End If;
 

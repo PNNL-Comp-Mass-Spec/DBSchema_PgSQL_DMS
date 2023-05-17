@@ -30,13 +30,14 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
+    _updateCount int := 0;
+    _mergeCount int;
     _minimumDatasetID int := 0;
     _datasetIdStart int;
     _datasetIdEnd int;
     _datasetIdMax int;
     _datasetBatchSize int;
-    _continue boolean;
     _addon text;
 BEGIN
     _message := '';
@@ -80,18 +81,17 @@ BEGIN
     WHERE DS.dataset_id >= _minimumDatasetID AND
           DFP.dataset_id IS NULL
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := format('Added %s new %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
+    If _matchCount > 0 Then
+        _message := format('Added %s new %s', _matchCount, public.check_plural(_matchCount, 'dataset', 'datasets'));
     End If;
 
-    SELECT MAX(dataset_id) INTO _datasetIdMax
-    FROM t_cached_dataset_links
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    SELECT MAX(dataset_id)
+    INTO _datasetIdMax
+    FROM t_cached_dataset_links;
 
-    If _myRowCount = 0 Then
+    If _datasetIdMax Is Null Then
         _datasetIdMax := 2147483647;
     End If;
 
@@ -128,10 +128,10 @@ BEGIN
         WHERE DS.dataset_id >= _minimumDatasetID AND
               SPath.storage_path_row_version <> DFP.storage_path_row_version;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _addon := format('%s %s on storage_path_row_version', _myRowCount, public.check_plural(_myRowCount, 'dataset differs', 'datasets differ'));
+        If _matchCount > 0 Then
+            _addon := format('%s %s on storage_path_row_version', _matchCount, public.check_plural(_matchCount, 'dataset differs', 'datasets differ'));
             _message := public.append_to_text(_message, _addon, 0, '; ', 512)
 
         End If;
@@ -148,12 +148,13 @@ BEGIN
         WHERE DS.dataset_id >= _minimumDatasetID AND
               DS.dataset_row_version <> DFP.dataset_row_version
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _addon := format('%s %s on dataset_row_version', _myRowCount, public.check_plural(_myRowCount, 'dataset differs', 'datasets differ'));
+        If _matchCount > 0 Then
+            _addon := format('%s %s on dataset_row_version', _matchCount, public.check_plural(_matchCount, 'dataset differs', 'datasets differ'));
             _message := public.append_to_text(_message, _addon, 0, '; ', 512)
         End If;
+    End If;
 
     If _processingMode < 3 Then
         If _showDebug Then
@@ -200,7 +201,7 @@ BEGIN
                ON DS.dataset_id = DA.dataset_id
         WHERE DFP.update_required = 1
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     Else
 
@@ -222,9 +223,9 @@ BEGIN
             _datasetIdEnd := _datasetIdMax;
         End If;
 
-        _continue := true;
+        _updateCount := 0;
 
-        WHILE _continue
+        WHILE true
         LOOP
             If _showDebug Then
                 RAISE INFO '%', 'Updating Dataset IDs ' || Cast(_datasetIdStart As text) || ' to ' || Cast(_datasetIdEnd As text);
@@ -288,24 +289,28 @@ BEGIN
                     update_required = 0,
                     last_affected = CURRENT_TIMESTAMP
             ;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
+            GET DIAGNOSTICS _mergeCount = ROW_COUNT;
+
+            _updateCount := _updateCount + _mergeCount
 
             If _datasetBatchSize <= 0 Then
-                _continue := false;
-            Else
-                _datasetIdStart := _datasetIdStart + _datasetBatchSize;
-                _datasetIdEnd := _datasetIdEnd + _datasetBatchSize;
+                -- Break out of the While Loop
+                EXIT;
+            End If;
 
-                If _datasetIdStart > _datasetIdMax Then
-                    _continue := false;
-                End If;
+            _datasetIdStart := _datasetIdStart + _datasetBatchSize;
+            _datasetIdEnd := _datasetIdEnd + _datasetBatchSize;
+
+            If _datasetIdStart > _datasetIdMax Then
+                -- Break out of the While Loop
+                EXIT;
             End If;
         End If;
     End If;
 
-    If _myRowCount > 0 Then
-        _addon := format('Updated %s %s in t_cached_dataset_folder_paths', _myRowCount, public.check_plural(_myRowCount, 'row', 'rows'));
+    If _updateCount > 0 Then
+        _addon := format('Updated %s %s in t_cached_dataset_folder_paths', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
         _message := public.append_to_text(_message, _addon, 0, '; ', 512)
 
         -- call PostLogEntry ('Debug', _message, 'UpdateCachedDatasetFolderPaths');

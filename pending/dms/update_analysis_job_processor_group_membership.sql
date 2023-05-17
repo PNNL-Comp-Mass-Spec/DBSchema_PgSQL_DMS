@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _list text;
     _alterEnteredByRequired boolean := false;
     _pgid int;
@@ -124,72 +123,56 @@ BEGIN
         --
         UPDATE t_analysis_job_processor_group_membership
         SET membership_enabled = _localMembership
-        WHERE (group_id = _pgid) AND (processor_id IN (SELECT ID FROM Tmp_Processors))
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE group_id = _pgid AND processor_id IN (SELECT ID FROM Tmp_Processors);
 
         If _nonLocalMembership <> '' Then
             -- Set membership enabled value in groups other than this group
             --
-            UPDATE
-                t_analysis_job_processor_group_membership
-            SET
-                membership_enabled = _nonLocalMembership
-            WHERE
-                (group_id <> _pgid) AND (processor_id IN (SELECT ID FROM Tmp_Processors))
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            UPDATE t_analysis_job_processor_group_membership
+            SET membership_enabled = _nonLocalMembership
+            WHERE group_id <> _pgid AND processor_id IN (SELECT ID FROM Tmp_Processors);
+
         End If;
 
         _alterEnteredByRequired := true;
     End If;
 
 /*
-    ---------------------------------------------------
-    --
-    ---------------------------------------------------
     -- If mode = 'set_membership_enabled', set Membership_Enabled
     -- column for member processors in _processorNameList
     -- the the value of _newValue
     If _mode = 'set_membership_enabled' Then
-        UPDATE
-            t_analysis_job_processor_group_membership
-        SET
-            membership_enabled = _newValue
-        WHERE
-            (group_id = _pgid) AND (processor_id IN (SELECT ID FROM Tmp_Processors))
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        UPDATE t_analysis_job_processor_group_membership
+        SET membership_enabled = _newValue
+        WHERE group_id = _pgid AND processor_id IN (SELECT ID FROM Tmp_Processors)
+
     End If;
 */
     ---------------------------------------------------
     --
+    -- If mode = 'add_processors', add processors in _processorNameList
+    -- to existing membership of group (be careful not to make duplicates)
     ---------------------------------------------------
-    -- If mode = 'add_processors', add processors in
-    -- _processorNameList to existing membership of
-    -- group (be careful not to make duplicates)
     --
     If _mode = 'add_processors' Then
         INSERT INTO t_analysis_job_processor_group_membership
             (processor_id, group_id)
         SELECT ID, _pgid
         FROM Tmp_Processors
-        WHERE NOT (Tmp_Processors.ID IN
-                    (
+        WHERE NOT Tmp_Processors.ID IN (
                         SELECT processor_id
                         FROM  t_analysis_job_processor_group_membership
                         WHERE group_id = _pgid
-                    )
-                  );
+                    );
 
         _alterEnteredByRequired := true;
     End If;
 
     ---------------------------------------------------
-    --
+    -- If mode = 'remove_processors', remove processors in _processorNameList
+    -- from existing membership of group
     ---------------------------------------------------
-    -- If mode = 'remove_processors', remove processors in
-    -- _processorNameList from existing membership of group
+    --
     If _mode = 'remove_processors' Then
         DELETE FROM t_analysis_job_processor_group_membership
         WHERE
@@ -198,6 +181,7 @@ BEGIN
     End If;
 
     -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
+    --
     If char_length(_callingUser) > 0 And _alterEnteredByRequired Then
         -- Call public.alter_entered_by_user for each processor ID in Tmp_Processors
 
@@ -207,17 +191,18 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_ID_Update_List (
             TargetID int NOT NULL
-        )
+        );
 
         CREATE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 
         INSERT INTO Tmp_ID_Update_List (TargetID)
         SELECT ID
-        FROM Tmp_Processors
+        FROM Tmp_Processors;
 
         Call alter_entered_by_user_multi_id ('t_analysis_job_processor_group_membership', 'processor_id', _callingUser,
                                              _entryTimeWindowSeconds => 5, _entryDateColumnName => 'last_affected');
 
+        DROP TABLE Tmp_ID_Update_List;
     End If;
 
     ---------------------------------------------------
@@ -228,7 +213,6 @@ BEGIN
     Call post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Membership', _usageMessage);
 
     DROP TABLE Tmp_Processors;
-    DROP TABLE Tmp_ID_Update_List;
 END
 $$;
 

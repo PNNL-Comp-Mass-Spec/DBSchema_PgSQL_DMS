@@ -60,6 +60,9 @@ BEGIN
     End If;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         -- ToDo: Show the contents of Tmp_SJL using RAISE INFO
         SELECT * FROM Tmp_SJL;
         RETURN;

@@ -18,7 +18,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -56,10 +56,11 @@ BEGIN
     FROM V_Campaign_List_Stale
     WHERE State = 'Active'
     ORDER BY Campaign_ID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         -----------------------------------------------------------
         -- Preview the campaigns that would be retired
         -----------------------------------------------------------
@@ -76,11 +77,11 @@ BEGIN
         SET state = 'Inactive'
         WHERE campaign_id IN ( SELECT campaign_id FROM Tmp_Campaigns )
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
+        If _updateCount > 0 Then
             _message := format('Retired %s %s that have not been used in at last 18 months and were created over 7 years ago',
-                                _myRowCount, public.check_plural(_myRowCount, 'campaigns', 'campaigns'));
+                                _updateCount, public.check_plural(_updateCount, 'campaigns', 'campaigns'));
 
             Call post_log_entry ('Normal', _message, 'Retire_Stale_Campaigns');
         End If;

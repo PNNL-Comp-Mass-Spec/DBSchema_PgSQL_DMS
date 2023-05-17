@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _dateThreshold timestamp;
 BEGIN
     -----------------------------------------
@@ -101,9 +100,7 @@ BEGIN
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = -1,
         ETA_Minutes = Null
-    WHERE State = 5
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE State = 5;
 
     -----------------------------------------
     -- Update progress and ETA for new, holding, inactive, or Special Proc. Waiting jobs
@@ -113,9 +110,7 @@ BEGIN
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = 0,
         ETA_Minutes = Null
-    WHERE State In (1, 8, 13, 19)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE State In (1, 8, 13, 19);
 
     -----------------------------------------
     -- Update progress and ETA for completed jobs
@@ -125,95 +120,54 @@ BEGIN
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = 100,
         ETA_Minutes = 0
-    WHERE State In (4, 7, 14)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE State In (4, 7, 14);
 
     -----------------------------------------
     -- Determine the incremental progress for running jobs
     -----------------------------------------
     --
-    UPDATE Tmp_JobsToUpdate
+    UPDATE Tmp_JobsToUpdate Target
     SET Progress_New = Source.Progress_Overall,
         Steps = Source.Steps,
         StepsCompleted = Source.StepsCompleted,
         CurrentRuntime_Minutes = Source.TotalRuntime_Minutes
-    FROM Tmp_JobsToUpdate Target
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_JobsToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_JobsToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT ProgressQ.Job,
-                             ProgressQ.Steps,
-                             ProgressQ.StepsCompleted,
-                             ProgressQ.WeightedProgressSum / WeightSumQ.WeightSum AS Progress_Overall,
-                             ProgressQ.TotalRuntime_Minutes
-                      FROM ( SELECT JS.Job,
-                                    COUNT(*) AS Steps,
-                                    SUM(CASE WHEN JS.State IN (3, 5) THEN 1 ELSE 0 END) AS StepsCompleted,
-                                    SUM(CASE WHEN JS.State = 3 THEN 0
-                                             ELSE JS.Job_Progress * Tools.AvgRuntime_Minutes
-                                        END) AS WeightedProgressSum,
-                                    SUM(RunTime_Minutes) AS TotalRuntime_Minutes
+    FROM ( SELECT ProgressQ.Job,
+                  ProgressQ.Steps,
+                  ProgressQ.StepsCompleted,
+                  ProgressQ.WeightedProgressSum / WeightSumQ.WeightSum AS Progress_Overall,
+                  ProgressQ.TotalRuntime_Minutes
+           FROM ( SELECT JS.Job,
+                         COUNT(*) AS Steps,
+                         SUM(CASE WHEN JS.State IN (3, 5) THEN 1 ELSE 0 END) AS StepsCompleted,
+                         SUM(CASE WHEN JS.State = 3 THEN 0
+                                  ELSE JS.Job_Progress * Tools.AvgRuntime_Minutes
+                             END) AS WeightedProgressSum,
+                         SUM(RunTime_Minutes) AS TotalRuntime_Minutes
+                  FROM sw.V_Job_Steps JS
+                       INNER JOIN S_T_Pipeline_Step_Tools Tools
+                         ON JS.Tool = Tools.Name
+                       INNER JOIN ( SELECT Job
+                                    FROM Tmp_JobsToUpdate
+                                    WHERE State = 2
+                                  ) JTU ON JS.Job = JTU.Job
+                  GROUP BY JS.Job
+                ) ProgressQ
+                INNER JOIN ( SELECT JS.Job,
+                                    SUM(Tools.AvgRuntime_Minutes) AS WeightSum
                              FROM sw.V_Job_Steps JS
                                   INNER JOIN S_T_Pipeline_Step_Tools Tools
                                     ON JS.Tool = Tools.Name
                                   INNER JOIN ( SELECT Job
                                                FROM Tmp_JobsToUpdate
-
-                                               /********************************************************************************
-                                               ** This UPDATE query includes the target table name in the FROM clause
-                                               ** The WHERE clause needs to have a self join to the target table, for example:
-                                               **   UPDATE Tmp_JobsToUpdate
-                                               **   SET ...
-                                               **   FROM source
-                                               **   WHERE source.id = Tmp_JobsToUpdate.id;
-                                               ********************************************************************************/
-
-                                                                      ToDo: Fix this query
-
                                                WHERE State = 2
                                              ) JTU ON JS.Job = JTU.Job
+                             WHERE JS.State <> 3
                              GROUP BY JS.Job
-                           ) ProgressQ
-                           INNER JOIN ( SELECT JS.Job,
-                                               SUM(Tools.AvgRuntime_Minutes) AS WeightSum
-                                        FROM sw.V_Job_Steps JS
-                                             INNER JOIN S_T_Pipeline_Step_Tools Tools
-                                               ON JS.Tool = Tools.Name
-                                             INNER JOIN ( SELECT Job
-                                                          FROM Tmp_JobsToUpdate
-
-                                                          /********************************************************************************
-                                                          ** This UPDATE query includes the target table name in the FROM clause
-                                                          ** The WHERE clause needs to have a self join to the target table, for example:
-                                                          **   UPDATE Tmp_JobsToUpdate
-                                                          **   SET ...
-                                                          **   FROM source
-                                                          **   WHERE source.id = Tmp_JobsToUpdate.id;
-                                                          ********************************************************************************/
-
-                                                                                 ToDo: Fix this query
-
-                                                          WHERE State = 2
-                                                        ) JTU ON JS.Job = JTU.Job
-                                        WHERE JS.State <> 3
-                                        GROUP BY JS.Job
-                                      ) WeightSumQ
-                             ON ProgressQ.Job = WeightSumQ.Job AND
-                                WeightSumQ.WeightSum > 0
-                           ) Source
-           ON Source.Job = Target.Job
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                           ) WeightSumQ
+                  ON ProgressQ.Job = WeightSumQ.Job AND
+                     WeightSumQ.WeightSum > 0
+                ) Source
+    WHERE Source.Job = Target.Job;
 
     -----------------------------------------
     -- Compute Runtime_Predicted_Minutes
@@ -222,9 +176,7 @@ BEGIN
     UPDATE Tmp_JobsToUpdate
     SET Runtime_Predicted_Minutes = CurrentRuntime_Minutes / (Progress_New / 100.0)
     WHERE Progress_New > 0 AND
-          CurrentRuntime_Minutes > 0
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+          CurrentRuntime_Minutes > 0;
 
     -----------------------------------------
     -- Look for jobs with an active job step that has been running for over 30 minutes
@@ -237,52 +189,25 @@ BEGIN
     -- and compute a new overall job progress
     -----------------------------------------
     --
-    UPDATE Tmp_JobsToUpdate
+    UPDATE Tmp_JobsToUpdate Target
     SET Runtime_Predicted_Minutes = RunningStepsQ.RunTime_Predicted_Minutes,
         Progress_New = CASE WHEN RunningStepsQ.Runtime_Predicted_Minutes > 0
                             THEN CurrentRuntime_Minutes * 100.0 / RunningStepsQ.Runtime_Predicted_Minutes
                             ELSE Progress_New
                        END
-    FROM Tmp_JobsToUpdate Target
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_JobsToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_JobsToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT JS.Job,
-                             MAX(JS.RunTime_Predicted_Hours * 60) AS RunTime_Predicted_Minutes
-                      FROM sw.V_Job_Steps JS
-                           INNER JOIN ( SELECT Job
-                                        FROM Tmp_JobsToUpdate
-
-                                        /********************************************************************************
-                                        ** This UPDATE query includes the target table name in the FROM clause
-                                        ** The WHERE clause needs to have a self join to the target table, for example:
-                                        **   UPDATE Tmp_JobsToUpdate
-                                        **   SET ...
-                                        **   FROM source
-                                        **   WHERE source.id = Tmp_JobsToUpdate.id;
-                                        ********************************************************************************/
-
-                                                               ToDo: Fix this query
-
-                                        WHERE State = 2 ) JTU
-                             ON JS.Job = JTU.Job
-                      WHERE JS.RunTime_Minutes > 30 AND
-                            JS.State IN (4, 9)        -- Running or Running_Remote
-                      GROUP BY JS.Job
-                    ) RunningStepsQ
-           ON Target.Job = RunningStepsQ.Job
-    WHERE RunningStepsQ.RunTime_Predicted_Minutes > Target.Runtime_Predicted_Minutes
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    FROM ( SELECT JS.Job,
+                  MAX(JS.RunTime_Predicted_Hours * 60) AS RunTime_Predicted_Minutes
+           FROM sw.V_Job_Steps JS
+                INNER JOIN ( SELECT Job
+                             FROM Tmp_JobsToUpdate
+                             WHERE State = 2 ) JTU
+                  ON JS.Job = JTU.Job
+           WHERE JS.RunTime_Minutes > 30 AND
+                 JS.State IN (4, 9)        -- Running or Running_Remote
+           GROUP BY JS.Job
+         ) RunningStepsQ
+    WHERE Target.Job = RunningStepsQ.Job AND
+          RunningStepsQ.RunTime_Predicted_Minutes > Target.Runtime_Predicted_Minutes;
 
     -----------------------------------------
     -- Compute the approximate time remaining for the job to finish
@@ -291,33 +216,19 @@ BEGIN
     --
     UPDATE Tmp_JobsToUpdate
     SET ETA_Minutes = Runtime_Predicted_Minutes - CurrentRuntime_Minutes + (Steps - StepsCompleted) * 0.5
-    FROM Tmp_JobsToUpdate Target
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_JobsToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_JobsToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-    WHERE Progress_New > 0
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE Progress_New > 0;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         -----------------------------------------
         -- Preview updated progress
         -----------------------------------------
 
         If Not _verbose Then
             -- Summarize the changes
-
-            -- ToDo: Show this data using RAISE INFO
-
+            --
             SELECT State,
                    COUNT(*) AS Jobs,
                    Sum(CASE
@@ -328,7 +239,7 @@ BEGIN
                    MAX(Progress_New) AS Max_NewProgress
             FROM Tmp_JobsToUpdate
             GROUP BY State
-            ORDER BY State
+            ORDER BY State;
         Else
             -- Show all rows in Tmp_JobsToUpdate
             --
@@ -338,39 +249,27 @@ BEGIN
                        ELSE 0
                    END AS Progress_Changed
             FROM Tmp_JobsToUpdate
-            ORDER BY Job
+            ORDER BY Job;
 
         End If;
 
-    Else
-
-        -----------------------------------------
-        -- Update the progress
-        -----------------------------------------
-        --
-        UPDATE t_analysis_job
-        SET progress = Src.Progress_New,
-            eta_minutes = Src.eta_minutes
-        FROM t_analysis_job Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_analysis_job
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = t_analysis_job.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN Tmp_JobsToUpdate Src
-               ON Target.job = Src.Job
-        WHERE Target.Progress IS NULL AND NOT Src.Progress_New IS NULL OR
-              Coalesce(Target.Progress, 0) <> Coalesce(Src.Progress_New, 0) OR
-              Target.job_state_id IN (4,7,14) AND (Target.Progress IS NULL Or Target.ETA_Minutes IS NULL)
-
+        DROP TABLE Tmp_JobsToUpdate;
+        RETURN;
     End If;
+
+    -----------------------------------------
+    -- Update the progress
+    -----------------------------------------
+    --
+    UPDATE t_analysis_job Target
+    SET progress = Src.Progress_New,
+        eta_minutes = Src.eta_minutes
+    FROM Tmp_JobsToUpdate Src
+
+    WHERE Target.job = Src.Job AND
+          (Target.Progress IS NULL AND NOT Src.Progress_New IS NULL OR
+           Coalesce(Target.Progress, 0) <> Coalesce(Src.Progress_New, 0) OR
+           Target.job_state_id IN (4,7,14) AND (Target.Progress IS NULL Or Target.ETA_Minutes IS NULL));
 
     DROP TABLE Tmp_JobsToUpdate;
 END

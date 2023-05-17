@@ -45,7 +45,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _xmlContents xml;
     _analysisToolForAutoSupersede text := '';
     _analysisToolForAutoCentroid text := '';
@@ -186,11 +185,9 @@ BEGIN
         SELECT settings_file_id
         INTO _settingsFileID
         FROM t_settings_files
-        WHERE file_name = _fileName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE file_name = _fileName;
 
-        If _myRowCount > 0 Then
+        If FOUND Then
             _message := 'Settings file ID ' || Cast(_settingsFileID As text)|| ' is named "' || _fileName || '"; cannot create a new, duplicate settings file';
             RAISE WARNING '%', _message;
 
@@ -266,8 +263,7 @@ BEGIN
             msgfplus_auto_centroid = _msgfPlusAutoCentroid,
             last_updated = CURRENT_TIMESTAMP
         WHERE settings_file_id = _settingsFileID
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
     End If;
 
 END

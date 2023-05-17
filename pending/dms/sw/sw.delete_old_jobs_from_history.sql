@@ -124,19 +124,22 @@ BEGIN
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         -- Show the first 10 jobs
-        SELECT Top 10 Job, Saved, 'Preview delete' As Comment
+        SELECT Job, Saved, 'Preview delete' As Comment
         From Tmp_JobsToDelete
         ORDER By Job
         LIMIT 10;
 
         -- Show the last 10 jobs
-        SELECT TOP 10 Job, Saved, 'Preview delete' AS Comment
-        FROM ( SELECT TOP 10 Job, Saved
+        SELECT Job, Saved, 'Preview delete' AS Comment
+        FROM ( SELECT Job, Saved
                FROM Tmp_JobsToDelete
-               ORDER BY Job DESC ) FilterQ
-        ORDER BY Job
-        LIMIT 10;
+               ORDER BY Job DESC
+               LIMIT 10) FilterQ
+        ORDER BY Job;
 
         SELECT H.entry_id,
                H.posting_time,

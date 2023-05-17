@@ -28,7 +28,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
+    _updateCount int;
     _currentRequestId int := 0;
     _jobRequestsAdded int := 0;
     _jobRequestsUpdated int := 0;
@@ -55,9 +56,9 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
-            SELECT DISTINCT AJR.AJR_requestID AS Request_ID,
+            SELECT DISTINCT AJR.request_id AS Request_ID,
                    CASE
                        WHEN CachedJobs.request_id IS NULL
                        THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
@@ -141,13 +142,13 @@ BEGIN
         ORDER BY AJR.request_id, AJ.job
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             ------------------------------------------------
             -- Preview the update of cached info
             ------------------------------------------------
             --
-
-            -- ToDo: Show this data using RAISE INFO
-
             SELECT DISTINCT RJ.request_id AS Request_ID,
                    CASE
                        WHEN CachedJobs.request_id IS NULL
@@ -171,8 +172,6 @@ BEGIN
                  LEFT OUTER JOIN t_analysis_job_request_existing_jobs AJRJ
                    ON Src.request_id = AJRJ.request_id
             WHERE AJRJ.request_id IS NULL;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             ------------------------------------------------
             -- Use a merge statement to add/remove rows from t_analysis_job_request_existing_jobs
@@ -234,6 +233,9 @@ BEGIN
         ------------------------------------------------
         --
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             ------------------------------------------------
             -- Preview the addition of new analysis job requests
             ------------------------------------------------
@@ -247,10 +249,10 @@ BEGIN
                   CachedJobs.request_id IS NULL
             ORDER BY AJR.request_id
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
-                Select 'No analysis job requests need to be added to t_analysis_job_request_existing_jobs' As Status
+            If _matchCount = 0 Then
+                RAISE INFO 'No analysis job requests need to be added to t_analysis_job_request_existing_jobs';
             End If;
         Else
             ------------------------------------------------
@@ -274,10 +276,10 @@ BEGIN
                  CROSS APPLY get_existing_jobs_matching_job_request ( LookupQ.request_id )
             ORDER BY LookupQ.request_id, job
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := format('Added %s new analysis job %s', _myRowCount, public.check_plural(_myRowCount, 'request', 'requests'));
+            If _matchCount > 0 Then
+                _message := format('Added %s new analysis job %s', _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
             End If;
         End If;
 
@@ -288,11 +290,14 @@ BEGIN
         ------------------------------------------------
         --
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             ------------------------------------------------
             -- Preview the update of cached info
             ------------------------------------------------
             --
-            SELECT DISTINCT AJR.AJR_requestID AS Request_ID,
+            SELECT DISTINCT AJR.request_id AS Request_ID,
               CASE
                   WHEN CachedJobs.request_id IS NULL
                   THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
@@ -303,10 +308,10 @@ BEGIN
                    ON AJR.request_id = CachedJobs.request_id
             ORDER BY AJR.request_id
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
-                Select 'No data in t_analysis_job_request_existing_jobs needs to be updated' As Status;
+            If _matchCount = 0 Then
+                RAISE INFO 'No data in t_analysis_job_request_existing_jobs needs to be updated';
             End If;
 
         Else
@@ -325,10 +330,10 @@ BEGIN
                 INSERT (request_id, job)
                 VALUES (source.request_id, source.job);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _message := format('%s %s via a merge', _myRowCount, public.check_plural(_myRowCount, 'job request was updated', 'job requests were updated'));
+            If _updateCount > 0 Then
+                _message := format('%s %s via a merge', _updateCount, public.check_plural(_updateCount, 'job request was updated', 'job requests were updated'));
             End If;
 
             -- Delete rows in t_analysis_job_request_existing_jobs that are not in

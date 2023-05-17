@@ -26,7 +26,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _datasetCount int;
     _instrumentID int;
 BEGIN
     _message := '';
@@ -74,12 +74,12 @@ BEGIN
     ---------------------------------------------------
 
     SELECT COUNT(*)
-    INTO _myRowCount
+    INTO _existingCount
     FROM t_dataset
     WHERE instrument_id = _instrumentID;
 
-    If _myRowCount > 0 Then
-        _message := 'Instrument ' || _instrumentName || ' has ' || _myRowCount::text || ' datasets in t_dataset; deletion is not allowed';
+    If _datasetCount > 0 Then
+        _message := format('Instrument %s has %s %s in t_dataset; deletion is not allowed', _instrumentName, _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'));
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';

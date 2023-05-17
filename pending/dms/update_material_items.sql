@@ -38,14 +38,13 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _container text := 'na';
     _contID int;
     _contStatus text;
     _mixedMaterialCount int;
     _experimentCount int;
     _retiredExperiment text := '';
-    _moveType text := '??';
+    _moveType text;
 BEGIN
     _message = '';
     _returnCode = '';
@@ -91,11 +90,7 @@ BEGIN
     End If;
 
     If _mode = 'move_material' Then
-    --<a>
-        --
-        _container := _newValue;
-        _contID := 0;
-        --
+
         SELECT
             _contID = container_id,
             _contStatus = status
@@ -120,7 +115,7 @@ BEGIN
             _returnCode := 'U5204';
             RETURN;
         End If;
-    End If; --<a>
+    End If;
 
     ---------------------------------------------------
     -- Temporary table to hold material items
@@ -130,10 +125,10 @@ BEGIN
         itemType text,            -- B for Biomaterial, E for Experiment, R for RefCompound
         itemName text NULL,
         itemContainer text NULL
-    )
+    );
 
-    If _itemType::citext = 'mixed_material'::citext Then
-    --<mm>
+    If _itemType::citext = 'mixed_material' Then
+
         ---------------------------------------------------
         -- Populate temporary table from type-tagged list
         -- of material items, if applicable
@@ -150,10 +145,7 @@ BEGIN
             Upper(Substring(Value, 1, 1)) AS itemType        -- B for Biomaterial, E for Experiment, R for RefCompound
         FROM public.parse_delimited_list(_itemList)
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        -- Cache the count of items in temporary table Tmp_Material_Items
-        _mixedMaterialCount := _myRowCount;
+        GET DIAGNOSTICS _mixedMaterialCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Update temporary table with information from
@@ -222,16 +214,15 @@ BEGIN
             End If;
         End If;
 
-    End If; --<mm>
+    End If;
 
-    If _itemType::citext = 'containers'::citext Then
-    --<cn>
+    If _itemType::citext = 'containers' Then
+
         ---------------------------------------------------
         -- Populate material item list with items contained
         -- by containers given in input list, if applicable
         ---------------------------------------------------
         --
-
         INSERT INTO Tmp_Material_Items
             (container_id, itemType, itemName, itemContainer)
         SELECT
@@ -262,7 +253,7 @@ BEGIN
             ) AS T ON T.container_id = t_material_containers.container_id
         WHERE T.container_id in (SELECT public.try_cast(Item, null::int) FROM public.parse_delimited_list(_itemList));
 
-    End If; --<cn>
+    End If;
 
     ---------------------------------------------------
     -- Update container reference to destination container
@@ -279,9 +270,7 @@ BEGIN
                           WHEN _mode = 'retire_items' THEN 'Inactive'
                           ELSE Material_Active
                           END
-    WHERE Biomaterial_ID IN ( SELECT ID FROM Tmp_Material_Items WHERE itemType = 'B' )
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE Biomaterial_ID IN ( SELECT ID FROM Tmp_Material_Items WHERE itemType = 'B' );
 
     ---------------------------------------------------
     -- Update container reference to destination container
@@ -291,17 +280,14 @@ BEGIN
     --
     UPDATE t_experiments
     SET container_id = CASE
-                          WHEN _mode = 'move_material' THEN _contID
-                          ELSE EX_Container_ID
+                       WHEN _mode = 'move_material' THEN _contID
+                       ELSE container_id
                        END,
-        Ex_Material_Active = CASE
-                                 WHEN _mode = 'retire_items' THEN 'Inactive'
-                                 ELSE Ex_Material_Active
-                             END
-
+        material_active = CASE
+                          WHEN _mode = 'retire_items' THEN 'Inactive'
+                          ELSE material_active
+                          END
     WHERE Exp_ID IN (SELECT ID FROM Tmp_Material_Items WHERE itemType = 'E')
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Update container reference to destination container
@@ -310,16 +296,14 @@ BEGIN
     --
     UPDATE t_reference_compound
     SET container_id = CASE
-                           WHEN _mode = 'move_material' THEN _contID
-                           ELSE Container_ID
+                       WHEN _mode = 'move_material' THEN _contID
+                       ELSE Container_ID
                        END,
         Active = CASE
-                     WHEN _mode = 'retire_items' THEN 0
-                     ELSE Active
+                 WHEN _mode = 'retire_items' THEN 0
+                 ELSE Active
                  END
     WHERE Compound_ID IN (SELECT ID FROM Tmp_Material_Items WHERE itemType = 'R')
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Set up appropriate label for log
@@ -329,6 +313,8 @@ BEGIN
         _moveType := 'Material Retirement';
     ElsIf _mode = 'move_material' Then
         _moveType := 'Material Move';
+    Else
+        _moveType := '??';
     End If;
 
     ---------------------------------------------------

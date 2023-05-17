@@ -67,9 +67,11 @@ BEGIN
     If Not Exists (SELECT * FROM Tmp_StaleUploads) Then
         _message := 'Nothing to do';
         If _infoOnly Then
-            Select 'No stale uploads were found' As Message
+            RAISE INFO 'No stale uploads were found';
         End If;
-        Return;
+
+        DROP TABLE Tmp_StaleUploads;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -77,6 +79,9 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT 'Stale: ' || Cast(DateDiff(Day, Stale.Entered, CURRENT_TIMESTAMP) As text) || ' days old' As Message,
                Uploads.*
         FROM V_MyEMSL_Uploads Uploads
@@ -85,37 +90,22 @@ BEGIN
         ORDER BY Entry_ID
     Else
 
-        UPDATE dpkg.t_myemsl_uploads
+        UPDATE dpkg.t_myemsl_uploads Uploads
         SET error_code = 101
-        FROM dpkg.t_myemsl_uploads Uploads
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE dpkg.t_myemsl_uploads
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = dpkg.t_myemsl_uploads.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN Tmp_StaleUploads Stale
-               ON Uploads.Entry_ID = Stale.Entry_ID
+        FROM Tmp_StaleUploads Stale
+        WHERE Uploads.Entry_ID = Stale.Entry_ID;
         --
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _myRowCount = 1 Then
-            SELECT Entry_ID, INTO _entryID
-                   _dataPackageID = Data_Package_ID
+            SELECT Entry_ID,
+                   Data_Package_ID
+            INTO _entryID, _dataPackageID
             FROM Tmp_StaleUploads
 
             -- MyEMSL upload task 3944 for data package 2967 has been unverified for over 45 days; ErrorCode set to 101
             _message := format('MyEMSL upload task %s for data package %s has been', _entryID, _dataPackageID);
         Else
-            _entryIDList := '';
-            _dataPackageList := '';
-
             SELECT string_agg(Entry_ID::text, ',' ORDER BY Entry_ID),
                    string_agg(Data_Package_ID::text, ',' ORDER BY Data_Package_ID),
             INTO _entryIDList, _dataPackageList
@@ -133,19 +123,7 @@ BEGIN
 
     End If;
 
-    If _myError <> 0 Then
-        If _message = '' Then
-            _message := 'Error in FindStaleMyEMSLUploads';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        Call public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg');
-    End If;
-
-    Return _myError
-
-    DROP TABLE Tmp_StaleUploads
+    DROP TABLE Tmp_StaleUploads;
 END
 $$;
 

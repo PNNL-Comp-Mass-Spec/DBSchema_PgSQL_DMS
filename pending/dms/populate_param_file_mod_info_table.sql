@@ -35,7 +35,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _currentColumn citext;
     _columnHeaderRowID int;
     _continueAppendDescriptions boolean;
@@ -138,8 +138,6 @@ BEGIN
     _s := _s ||      ' t_seq_local_symbols_list LSL ON PFMM.local_symbol_id = LSL.local_symbol_id';
 
     EXECUTE _s;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -----------------------------------------------------------
     -- Populate Tmp_ParamFileModResults with the Param File IDs
@@ -151,8 +149,6 @@ BEGIN
     SELECT Param_File_ID
     FROM Tmp_ParamFileInfo
     GROUP BY Param_File_ID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -----------------------------------------------------------
     -- Generate a list of the unique mod types in Tmp_ParamFileModInfo
@@ -181,15 +177,12 @@ BEGIN
     _s := '';
     _s := _s || ' ALTER TABLE Tmp_ParamFileModResults ADD ';
 
-    SELECT string_agg('[' || ModType || '] text DEFAULT ('''') WITH VALUES ', ', ')
+    SELECT string_agg('[' || ModType || '] text DEFAULT ('''') WITH VALUES ', ', ' ORDER BY UniqueRowID)
     INTO _s
-    FROM Tmp_ColumnHeaders
-    ORDER BY UniqueRowID
+    FROM Tmp_ColumnHeaders;
 
     -- Execute the Sql to alter the table
     EXECUTE _s;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -----------------------------------------------------------
     -- Populate Tmp_ParamFileModResults by looping through
@@ -233,9 +226,9 @@ BEGIN
             --
             EXECUTE format(_s, _currentColumn, _currentColumn, _currentColumn);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
+            If _updateCount = 0 Then
                 _continueAppendDescriptions := false;
             Else
                 _s := '';

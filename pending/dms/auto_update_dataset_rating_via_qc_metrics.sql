@@ -141,7 +141,7 @@ BEGIN
 
     If _infoOnly Then
         RAISE INFO '%', _message;
-    ElsIf _myRowCount > 0 Then
+    ElsIf _updateCount > 0 Then
         Call post_log_entry ('Normal', _message, 'Auto_Update_Dataset_Rating_Via_QC_Metrics');
     End If;
 

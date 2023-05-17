@@ -33,7 +33,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _msg text;
     _dt timestamp;
     _tmp int;
@@ -76,7 +75,7 @@ BEGIN
         WHERE cart_name = _newValue;
 
         If Not FOUND Then
-            _message := 'Invalid LC Cart name "' || _newValue || '"';
+            _message := 'Invalid LC Cart name: '|| _newValue;
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5202';
@@ -84,23 +83,16 @@ BEGIN
             -- Note: Only update the value if Cart_ID has changed
             --
             UPDATE t_requested_run
-            SET    cart_id = _cartID
-            WHERE (request_id = _requestID AND cart_id <> _cartID)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-            If _myRowCount < 1 Then
-                _myRowCount := 1;
-            End If;
+            SET cart_id = _cartID
+            WHERE request_id = _requestID AND
+                  cart_id <> _cartID;
         End If;
     End If;
 
     If _mode::citext = 'RunStatus' Then
         UPDATE t_requested_run
-        SET    note = _newValue
-        WHERE (request_id = _requestID)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        SET note = _newValue
+        WHERE request_id = _requestID;
     End If;
 
     If _mode::citext = 'RunStart' Then
@@ -111,10 +103,8 @@ BEGIN
         End If;
 
         UPDATE t_requested_run
-        SET    request_run_start = _dt
-        WHERE (request_id = _requestID)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        SET request_run_start = _dt
+        WHERE request_id = _requestID;
     End If;
 
     If _mode::citext = 'RunFinish' Then
@@ -125,38 +115,23 @@ BEGIN
         End If;
 
         UPDATE t_requested_run
-        SET     request_run_finish = _dt
-        WHERE (request_id = _requestID)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        SET request_run_finish = _dt
+        WHERE request_id = _requestID;
     End If;
 
     If _mode::citext = 'InternalStandard' Then
         UPDATE t_requested_run
-        SET    request_internal_standard = _newValue
-        WHERE (request_id = _requestID)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        SET request_internal_standard = _newValue
+        WHERE request_id = _requestID;
     End If;
 
     ---------------------------------------------------
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Request ' || _requestID::text;
+    _usageMessage := format('Request %s', _requestID);
+
     Call post_usage_log_entry ('Update_Cart_Parameters', _usageMessage);
-
-    ---------------------------------------------------
-    -- Report any errors
-    ---------------------------------------------------
-    If _myRowCount = 0 Then
-        _message := 'operation failed for mode ' || _mode;
-        RAISE WARNING '%', _message;
-
-        If _returnCode = '' Then
-            _returnCode := 'U5210';
-        End If;
-    End If;
 
 END
 $$;

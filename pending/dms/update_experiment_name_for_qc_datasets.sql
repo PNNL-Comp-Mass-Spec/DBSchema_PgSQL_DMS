@@ -18,9 +18,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
     _dateStamp text;
-    _continue boolean;
     _currentExpID int := 0;
     _experiment text;
     _msg text;
@@ -73,8 +72,6 @@ BEGIN
            experiment SIMILAR TO 'QC[_]Mam%' OR
            experiment SIMILAR TO 'QC[_]PP[_]MCF-7%'
               ) AND created >= make_date(2018, 1, 1)
-
-    _continue := true;
 
     FOR _experiment IN
         SELECT Experiment
@@ -134,13 +131,13 @@ BEGIN
     End If;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         ---------------------------------------------------
         -- Preview the updates
         ---------------------------------------------------
         --
-
-        -- ToDo: Convert this to RAISE INFO
-
         SELECT DS.dataset_id,
                DS.dataset AS Dataset,
                DTU.OldExperiment,
@@ -182,9 +179,9 @@ BEGIN
         FROM Tmp_DatasetsToUpdate DTU
         WHERE t_dataset.Dataset_ID = DTU.Dataset_ID;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _msg := format('Updated the experiment name for %s %s', _myRowCount, public.check_plural(_myRowcount, 'QC dataset', 'QC datasets'));
+        _msg := format('Updated the experiment name for %s %s', _updateCount, public.check_plural(_updateCount, 'QC dataset', 'QC datasets'));
         Call post_log_entry ('Normal', _msg, 'Update_Experiment_Name_For_QC_Datasets');
 
     End If;

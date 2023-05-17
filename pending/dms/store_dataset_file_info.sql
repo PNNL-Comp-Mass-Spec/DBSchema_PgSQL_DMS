@@ -69,7 +69,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _updateCount int;
     _datasetName text := '';
     _datasetID int := 0;
     _msg text;
@@ -423,32 +423,39 @@ BEGIN
 
         If Exists (Select * From Tmp_HashUpdates) Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT *
             FROM Tmp_HashUpdates;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _itemsToUpdate := _itemsToUpdate + _myRowCount;
+            _itemsToUpdate := _itemsToUpdate + _updateCount;
         End If;
 
         If Exists (Select * From Tmp_SizeUpdates) Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT *
             FROM Tmp_SizeUpdates;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _itemsToUpdate := _itemsToUpdate + _myRowCount;
+            _itemsToUpdate := _itemsToUpdate + _updateCount;
         End If;
 
         If _itemsToUpdate = 0 Then
             RAISE WARNING 'No valid data was found in _datasetFileInfo';
         End If;
 
+
+        DROP TABLE Tmp_FileData;
+        DROP TABLE Tmp_DataColumns;
+        DROP TABLE Tmp_HashUpdates;
+        DROP TABLE Tmp_SizeUpdates;
+        DROP TABLE Tmp_Warnings;
+        DROP TABLE Tmp_UpdatedDatasets;
         RETURN;
     End If;
 

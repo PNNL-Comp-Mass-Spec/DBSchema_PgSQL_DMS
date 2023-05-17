@@ -51,9 +51,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _entryID int;
-    _continue boolean;
     _matchCount int;
     _unknownUsername text;
     _newUsername text;
@@ -146,38 +144,26 @@ BEGIN
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Item AS Username, 'Project Mgr' AS Role
     FROM public.parse_delimited_list(_progmgrUsername) AS member
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
+
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Item AS Username, 'PI' AS Role
     FROM public.parse_delimited_list(_piUsername) AS member
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
+
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Item AS Username, 'Technical Lead' AS Role
     FROM public.parse_delimited_list(_technicalLead) AS member
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
+
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Item AS Username, 'Sample Preparation' AS Role
     FROM public.parse_delimited_list(_samplePreparationStaff) AS member
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
+
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Item AS Username, 'Dataset Acquisition' AS Role
     FROM public.parse_delimited_list(_datasetAcquisitionStaff) AS member
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
+
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Item AS Username, 'Informatics' AS Role
     FROM public.parse_delimited_list(_informaticsStaff) AS member
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Resolve user username and role to respective IDs
@@ -204,9 +190,8 @@ BEGIN
     ---------------------------------------------------
 
     _entryID := 0;
-    _continue := true;
 
-    WHILE _continue
+    WHILE true
     LOOP
         -- This While loop can probably be converted to a For loop; for example:
         --    FOR _itemName IN
@@ -224,24 +209,23 @@ BEGIN
         WHERE EntryID > _entryID AND USER_ID IS NULL
         ORDER BY EntryID
         LIMIT 1;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
-            _continue := false;
-        Else
-            _matchCount := 0;
+        If Not FOUND Then
+            -- Break out of the while loop
+            EXIT;
+        End If;
 
-            Call auto_resolve_name_to_username (_unknownUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+        _matchCount := 0;
 
-            If _matchCount = 1 Then
-                -- Single match was found; update Username in Tmp_TeamMembers
-                UPDATE Tmp_TeamMembers
-                SET Username = _newUsername,
-                    User_ID = _newUserID
-                WHERE EntryID = _entryID
+        Call auto_resolve_name_to_username (_unknownUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
-            End If;
+        If _matchCount = 1 Then
+            -- Single match was found; update Username in Tmp_TeamMembers
+            UPDATE Tmp_TeamMembers
+            SET Username = _newUsername,
+                User_ID = _newUserID
+            WHERE EntryID = _entryID
+
         End If;
 
     END LOOP;
@@ -280,9 +264,7 @@ BEGIN
     --
     DELETE FROM t_research_team_membership
     WHERE team_id = _researchTeamID AND
-          role_id BETWEEN 1 AND 6 -- restrict to roles that are editable via campaign
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+          role_id BETWEEN 1 AND 6;       -- Restrict to roles that are editable via campaign
 
     ---------------------------------------------------
     -- Replace with new membership
@@ -294,9 +276,7 @@ BEGIN
     SELECT DISTINCT _researchTeamID,
            role_id,
            user_id
-    FROM Tmp_TeamMembers
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    FROM Tmp_TeamMembers;
 
     ---------------------------------------------------
     -- Log SP usage

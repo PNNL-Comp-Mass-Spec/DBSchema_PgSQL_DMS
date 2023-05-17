@@ -49,8 +49,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
-    _msg text;
     _datasetID int;
     _state int;
     _datasetDirectoryPath text := Null;
@@ -87,10 +85,7 @@ BEGIN
     _datasetName := Coalesce(_datasetName, '');
 
     If _datasetName = '' Then
-        _msg := '_datasetName parameter is blank; nothing to delete';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := '_datasetName parameter is blank; nothing to delete';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -110,13 +105,10 @@ BEGIN
     WHERE dataset = _datasetName
 
     If Not FOUND Then
-        _msg := 'Dataset does not exist "' || _datasetName || '"';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := 'Dataset does not exist: ' || _datasetName;
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -131,18 +123,16 @@ BEGIN
     WHERE Dataset_ID = _datasetID;
 
     If Exists (SELECT * FROM t_analysis_job WHERE dataset_id = _datasetID) Then
-        _msg := 'Cannot delete a dataset with existing analysis jobs';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := 'Cannot delete a dataset with existing analysis jobs';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
     If _infoOnly Then
-        -- ToDo: convert to RAISE INFO
+
+        -- ToDo: Update this to use RAISE INFO
 
         SELECT 'To be deleted' AS Action, *
         FROM t_dataset_archive
@@ -215,15 +205,9 @@ BEGIN
     Call delete_aux_info 'Dataset', _datasetName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
-        ROLLBACK;
+        _message := 'Delete auxiliary information was unsuccessful for dataset: ' || _message;
+        RAISE EXCEPTION '%', _message;
 
-        _msg := 'Delete auxiliary information was unsuccessful for dataset: ' || _message;
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
-        RAISE WARNING '%', _message;
-
-        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -240,15 +224,9 @@ BEGIN
     Call unconsume_scheduled_run (_datasetName, _retainHistory => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
 
     If _returnCode <> '' Then
-        ROLLBACK;
+        _message := 'Unconsume operation was unsuccessful for dataset: ' || _message;
+        RAISE EXCEPTION '%', _message;
 
-        _msg := 'Unconsume operation was unsuccessful for dataset: ' || _message;
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
-        RAISE WARNING '%', _message;
-
-        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -257,6 +235,7 @@ BEGIN
         FROM t_requested_run
         WHERE request_id = _requestID
     End If;
+
     ---------------------------------------------------
     -- Delete any entries in t_dataset_info
     ---------------------------------------------------
@@ -284,9 +263,7 @@ BEGIN
     --
     UPDATE t_dataset_files
     SET deleted = 1
-    WHERE dataset_id = _datasetID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Delete rows in t_cached_dataset_instruments
@@ -312,55 +289,25 @@ BEGIN
           message LIKE '%' || _datasetName || '%';
 
     ---------------------------------------------------
-    -- Remove jobs from T_Jobs in DMS_Capture
+    -- Remove jobs from cap.t_tasks
     ---------------------------------------------------
     --
-    DELETE cap.t_tasks
-    FROM cap.t_tasks Jobs
-
-    /********************************************************************************
-    ** This DELETE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE cap.t_tasks
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = cap.t_tasks.id;
-    **
-    ** Delete queries must also include the USING keyword
-    ** Alternatively, the more standard approach is to rearrange the query to be similar to
-    **   DELETE FROM cap.t_tasks WHERE id in (SELECT id from ...)
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN cap.t_tasks_History History
-           ON Jobs.Job = History.Job
+    DELETE cap.t_tasks Tasks
+    FROM cap.t_tasks_History History
     WHERE Jobs.Dataset_ID = _datasetID AND
-          NOT History.Job IS NULL
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+          Jobs.Job = History.Job;
 
     ---------------------------------------------------
     -- Delete entry from dataset table
     ---------------------------------------------------
     --
     DELETE FROM t_dataset
-    WHERE dataset_id = _datasetID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    If _myRowCount <> 1 Then
-        ROLLBACK;
-
-        RAISE EXCEPTION 'Delete from dataset table was unsuccessful for dataset (RowCount <> 1)';
-    End If;
+    WHERE dataset_id = _datasetID;
 
     -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
     If char_length(_callingUser) > 0 Then
         Call alter_event_log_entry_user (4, _datasetID, _stateID, _callingUser);
     End If;
-
-    COMMIT;
 
     RAISE INFO 'Deleted dataset ID %', _datasetID;
 

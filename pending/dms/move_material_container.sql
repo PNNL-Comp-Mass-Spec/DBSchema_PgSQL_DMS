@@ -37,23 +37,15 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
-    _callingUser text := session_user;
+    _callingUser text;
     _slashLoc int;
     _containerInfo record;
-    /*
-    _containerID int := 0;
-    _curLocation text := '';
-    _containerType text := '';
-    _containerComment text;
-    _barcode text;
-    _researcher text;
-    */
     _mode text;
 BEGIN
     _message := '';
     _returnCode := '';
 
+    _callingUser := session_user;
     _slashLoc := Position('\' In _callingUser);
 
     If _slashLoc > 0 Then
@@ -130,10 +122,8 @@ BEGIN
          INNER JOIN t_material_locations AS ML
            ON MC.location_id = ML.container_id
     WHERE MC.container = _container;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount <> 1 Then
+    If Not FOUND Then
         _message := 'Container not found: ' || _container;
         RAISE WARNING '%', _message;
 

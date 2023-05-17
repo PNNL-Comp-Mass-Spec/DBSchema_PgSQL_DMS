@@ -23,7 +23,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int := 0;
     _timeIntervalLastUpdateHours real;
     _updateTable int;
     _s text;
@@ -75,9 +75,9 @@ BEGIN
         GROUP BY state_id, origin
         ORDER BY state_id, origin
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _message := format('Appended %s rows to the Requested Run Status History table', _myRowCount);
+        _message := format('Appended %s rows to the Requested Run Status History table', _insertCount);
     Else
         _message := format('Update skipped since last update was %s hours ago', Round(_timeIntervalLastUpdateHours, 1));
     End If;

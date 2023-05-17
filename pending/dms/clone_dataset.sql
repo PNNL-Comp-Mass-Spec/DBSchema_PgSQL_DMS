@@ -37,7 +37,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _callingProcName text;
     _tranClone text := 'Clone';
     _requestID int := 0;
@@ -88,11 +87,9 @@ BEGIN
     FROM t_requested_run RR
          INNER JOIN t_dataset DS
            ON RR.dataset_id = DS.dataset_id
-    WHERE DS.dataset = _dataset
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE DS.dataset = _dataset;
 
-    If _myRowCount = 0 Or Coalesce(_requestID, 0) = 0 Then
+    If Not FOUND Then
         _message := 'Source dataset not found: ' || _dataset;
         RAISE INFO '%', _message;
         RETURN;
@@ -114,11 +111,10 @@ BEGIN
 
         -- Lookup the EUS Users for the request associated with the dataset we are cloning
         --
-        SELECT string_agg(eus_person_id::text, ',')
+        SELECT string_agg(eus_person_id::text, ',' ORDER BY eus_person_id)
         INTO _eusUsersList
         FROM t_requested_run_eus_users
-        WHERE request_id = _requestID
-        ORDER BY eus_person_id;
+        WHERE request_id = _requestID;
 
         _eusUsersList := Coalesce(_eusUsersList, '');
 
@@ -160,6 +156,7 @@ BEGIN
             ---------------------------------------------------
 
             -- ToDo: Use RAISE INFO to show this info
+
             SELECT _datasetNew AS Dataset_Name_New, *
             FROM t_dataset
             WHERE (dataset = _dataset);
@@ -169,6 +166,7 @@ BEGIN
             ---------------------------------------------------
 
             -- ToDo: Use RAISE INFO to show this info
+
             SELECT _requestNameNew AS Request_Name_New,
                    _datasetInfo.ExperimentName AS Experiment,
                    _datasetInfo.InstrumentName AS Instrument,
@@ -228,8 +226,6 @@ BEGIN
         WHERE dataset = _dataset
         RETURNING dataset_id
         INTO _datasetIDNew;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- Create a requested run for the dataset
         -- (code is from AddUpdateDataset)
@@ -329,10 +325,10 @@ BEGIN
         SELECT MAX(Job)
         INTO _captureJob
         FROM cap.t_tasks
-        WHERE Dataset = _dataset AND Script LIKE '%capture%'
+        WHERE Dataset = _dataset AND Script LIKE '%capture%';
 
         If Coalesce(_captureJob, 0) = 0 Then
-        -- <c1>
+
             -- Job not found; examine T_Jobs_History
             SELECT Job, Saved
             INTO _captureJob, _dateStamp
@@ -364,15 +360,8 @@ BEGIN
                   Saved = _dateStamp
             RETURNING cap.t_tasks.Job
             INTO _captureJobNew;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            --
-            -- ToDo: Verify that RETURNING returns the job number of the inserted row
-            --
-
-            If FOUND And _captureJobNew > 0 Then
-            -- <d1>
+            If FOUND Then
 
                 INSERT INTO cap.T_Job_Steps( Job,
                                              Step_Number,
@@ -412,10 +401,10 @@ BEGIN
                 WHERE Job = _captureJob AND
                       Saved = _dateStamp;
 
-            End If; -- </d1>
+            End If;
 
         Else
-        -- <c2>
+
             INSERT INTO cap.t_tasks (Priority, Script, State,
                                      Dataset, Dataset_ID, Storage_Server, Instrument, Instrument_Class,
                                      Max_Simultaneous_Captures,
@@ -442,12 +431,7 @@ BEGIN
             RETURNING cap.t_tasks.Job
             INTO _captureJobNew;
 
-            --
-            -- ToDo: Verify that RETURNING returns the job number of the inserted row
-            --
-
-            If _captureJobNew > 0 Then
-            -- <d2>
+            If FOUND Then
 
                 INSERT INTO cap.T_Job_Steps( Job,
                                              Step_Number,
@@ -504,9 +488,9 @@ BEGIN
                 FROM cap.T_Job_Step_Dependencies
                 WHERE Job = _captureJob;
 
-            End If; -- </d2>
+            End If;
 
-        End If; -- </c2>
+        End If;
 
         If Coalesce(_captureJobNew, 0) > 0 Then
             Call cap.update_parameters_for_job (_captureJobNew)

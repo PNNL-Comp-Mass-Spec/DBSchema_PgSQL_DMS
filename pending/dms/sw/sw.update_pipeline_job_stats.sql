@@ -61,15 +61,22 @@ BEGIN
            ON DS.instrument_name_ID = InstName.Instrument_ID
     WHERE NOT JH.start IS NULL
     GROUP BY JH.script, Coalesce(InstName.IN_Group, ''), Extract(year from JH.start)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount = 0 Then
+    If Not FOUND Then
         _message := 'No rows were added to Tmp_Pipeline_Job_Stats; exiting';
+
+        If _infoOnly Then
+            RAISE INFO '%', _message;
+        End If;
+
+        DROP TABLE Tmp_Pipeline_Job_Stats;
         RETURN;
     End If;
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT Script,
                Instrument_Group,
                Year,
@@ -77,6 +84,7 @@ BEGIN
         FROM Tmp_Pipeline_Job_Stats
         ORDER BY Script, Instrument_Group, Year
 
+        DROP TABLE Tmp_Pipeline_Job_Stats;
         RETURN;
     End If;
 

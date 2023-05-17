@@ -64,6 +64,9 @@ BEGIN
         GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT Target.*, Src.MgrWorkDir AS MgrWorkDir_New
             FROM Tmp_MgrWorkDirs Src
                  INNER JOIN sw.t_local_processors Target

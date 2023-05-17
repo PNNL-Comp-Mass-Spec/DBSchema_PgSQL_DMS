@@ -65,6 +65,9 @@ BEGIN
     ORDER BY EUP.proposal_id
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         ---------------------------------------------------
         -- Preview the updates
         ---------------------------------------------------

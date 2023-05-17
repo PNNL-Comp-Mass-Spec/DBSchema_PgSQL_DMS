@@ -29,7 +29,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _datasetID int;
     _updateState int;
     _usageMessage text;
@@ -49,8 +49,6 @@ BEGIN
         _updateState = Update_State
     FROM V_Dataset_Archive_Ex
     WHERE Dataset = _datasetName;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If Not FOUND Then
         _returnCode := 'U5220';
@@ -78,30 +76,31 @@ BEGIN
         UPDATE t_dataset_archive
         SET archive_update_state_id = 4,
             archive_state_id = CASE
-                              WHEN archive_state_id = 14 THEN 3
-                              ELSE archive_state_id
-                          End If;,
+                               WHEN archive_state_id = 14 THEN 3
+                               ELSE archive_state_id
+                               END,
             last_update = CURRENT_TIMESTAMP
         WHERE dataset_id = _datasetID;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     Else
         -- Error
         UPDATE t_dataset_archive
         SET archive_update_state_id = 5,
             archive_state_id = CASE
-                              WHEN archive_state_id = 14 THEN 3
-                              ELSE archive_state_id
-                          END
+                               WHEN archive_state_id = 14 THEN 3
+                               ELSE archive_state_id
+                               END
         WHERE dataset_id = _datasetID;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
     End If;
 
-    If _myRowCount <> 1 Then
+    If _updateCount <> 1 Then
         _returnCode := 'U5299';
-        _message := 'Update operation failed';
+        _message := format('Update operation failed (_updateCount is %s instead of 1)', _updateCount);
         RETURN;
     End If;
 

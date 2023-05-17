@@ -41,7 +41,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _updateCount int;
     _xml AS xml;
     _usageMessage text;
 BEGIN
@@ -154,12 +154,14 @@ BEGIN
         cart_column = BI.col
     FROM Tmp_RequestsInBlock BI
     WHERE t_requested_run.request_id = BI.request_id;
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := format('Updated %s requsted %s', _myRowCount, public.check_plural(_myRowCount, 'run', 'runs'));
+    _usageMessage := format('Updated %s requsted %s', _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
     Call post_usage_log_entry ('Update_LC_Cart_Block_Assignments', _usageMessage);
 

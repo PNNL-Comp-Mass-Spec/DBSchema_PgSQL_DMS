@@ -60,7 +60,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _outputFormat text := 'report';
     _maxNormalInterval int;
     _callingUser text;
@@ -71,6 +70,8 @@ DECLARE
     _seq int;
     _cleanedComment text;
     _xml xml;
+    _previewCount int;
+    _deleteCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -120,9 +121,7 @@ BEGIN
         INSERT INTO Tmp_DebugReports (Debug_ID)
         SELECT Value
         FROM public.parse_delimited_integer_list(_message, ',')
-        ORDER BY Value
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        ORDER BY Value;
 
         If Not Exists (Select * from Tmp_DebugReports) Then
             _message := 'To see debug reports, _message must have a comma separated list of integers';
@@ -261,7 +260,7 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 1) Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT 'Initial data' as State, *
             FROM Tmp_Staging;
@@ -279,7 +278,7 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 2) Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT 'Mark set to 1' as State, *
             FROM Tmp_Staging WHERE Mark = 1;
@@ -317,7 +316,7 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 3) Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT 'Mark set to 0' as State, * FROM Tmp_Staging WHERE Mark = 0
         End If;
@@ -372,7 +371,7 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 4) Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT 'Comments cleaned' as State, *
             FROM Tmp_Staging WHERE Mark = 0;
@@ -388,7 +387,7 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 5) Then
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT 'Intervals' as State, *
             FROM Tmp_Staging WHERE Type = 'Interval';
@@ -398,7 +397,7 @@ BEGIN
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 6) Then
         -- <preview>
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT Tmp_Staging.start AS Start,
                    CASE WHEN Coalesce(InstUsage.proposal, '') = '' THEN Tmp_Staging.proposal ELSE InstUsage.proposal END AS Proposal,
@@ -418,7 +417,7 @@ BEGIN
             WHERE Tmp_Staging.Mark = 1
             ORDER BY Tmp_Staging.start
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT EMSL_Inst_ID,
                    DMS_Inst_ID,
@@ -445,7 +444,7 @@ BEGIN
             -- in the main interval table
             ---------------------------------------------------
 
-            -- ToDo: Show this data using RAISE INFO
+            -- ToDo: Update this to use RAISE INFO
 
             SELECT InstUsage.emsl_inst_id,
                    InstName.instrument AS Instrument,
@@ -496,11 +495,13 @@ BEGIN
                      INNER JOIN Tmp_Staging
                        ON InstUsage.dataset_id = Tmp_Staging.dataset_id AND
                           InstUsage.type = Tmp_Staging.type
-                WHERE Tmp_Staging.MARK = 1
+                WHERE Tmp_Staging.MARK = 1;
 
             Else
 
-                -- ToDo: Show this data using RAISE INFO
+                -- ToDo: Update this to use RAISE INFO
+
+                _previewCount := 0;
 
                 SELECT 'Update Row' as Action,
                         Tmp_Staging.minutes,
@@ -519,12 +520,10 @@ BEGIN
                         ON InstUsage.dataset_id = Tmp_Staging.dataset_id AND
                             InstUsage.type = Tmp_Staging.type
                 WHERE Tmp_Staging.MARK = 1
-                ORDER BY Tmp_Staging.start
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                ORDER BY Tmp_Staging.start;
 
-                If _myRowCount > 0 Then
-                    RAISE INFO 'Would update % rows in t_emsl_instrument_usage_report', _myRowCount;
+                If _previewCount > 0 Then
+                    RAISE INFO 'Would update % rows in t_emsl_instrument_usage_report', _previewCount;
                 End If;
             End If;
 
@@ -536,10 +535,10 @@ BEGIN
             WHERE Type = 'Interval' AND
                   Minutes < _maxNormalInterval;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _infoOnly And _myRowCount > 0 Then
-                RAISE INFO 'Deleted % short "long intervals" from Tmp_Staging', _myRowCount;
+            If _infoOnly And _deleteCount > 0 Then
+                RAISE INFO 'Deleted % short "long intervals" from Tmp_Staging', _deleteCount;
             End If;
 
             ---------------------------------------------------
@@ -558,11 +557,12 @@ BEGIN
                 FROM Tmp_Staging
                 WHERE Mark = 0
                 ORDER BY start
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
             Else
 
-                -- ToDo: Show this data using RAISE INFO
+                -- ToDo: Update this to use RAISE INFO
+
+                _previewCount := 0;
 
                 SELECT 'Insert Row' As Action,
                        EMSL_Inst_ID, DMS_Inst_ID, Type,
@@ -571,12 +571,10 @@ BEGIN
                        Dataset_ID, _callingUser As UpdatedBy, Seq
                 FROM Tmp_Staging
                 WHERE Mark = 0
-                ORDER BY Start
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                ORDER BY Start;
 
-                If _myRowCount > 0 Then
-                    RAISE INFO 'Would insert % rows into t_emsl_instrument_usage_report', _myRowCount);
+                If _previewCount > 0 Then
+                    RAISE INFO 'Would insert % rows into t_emsl_instrument_usage_report', _previewCount);
                 End If;
             End If;
 
@@ -593,7 +591,9 @@ BEGIN
 
             Else
 
-                -- ToDo: Show this data using RAISE INFO
+                -- ToDo: Update this to use RAISE INFO
+
+                _previewCount := 0;
 
                 SELECT 'Delete short "long interval"' AS Action, *
                 FROM t_emsl_instrument_usage_report
@@ -601,11 +601,9 @@ BEGIN
                                       FROM Tmp_Staging ) AND
                       type = 'Interval' AND
                       minutes < _maxNormalInterval
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    RAISE INFO 'Would delete % shorter "long intervals" from t_emsl_instrument_usage_report', _myRowCount);
+                 If _previewCount > 0 Then
+                    RAISE INFO 'Would delete % shorter "long intervals" from t_emsl_instrument_usage_report', _previewCount);
                 End If;
             End If;
 
@@ -625,7 +623,9 @@ BEGIN
 
             Else
 
-                -- ToDo: Show this data using RAISE INFO
+                -- ToDo: Update this to use RAISE INFO
+
+                _previewCount := 0;
 
                 SELECT 'Delete long "long interval"' AS Action,
                        InstUsage.*
@@ -636,12 +636,10 @@ BEGIN
                       InstUsage.Year = _year AND
                       InstUsage.Month = _month AND
                       InstName.instrument = _instrument AND
-                      NOT InstUsage.Dataset_ID IN ( SELECT interval_id FROM t_run_interval )
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                      NOT InstUsage.Dataset_ID IN ( SELECT interval_id FROM t_run_interval );
 
-                If _myRowCount > 0 Then
-                    RAISE INFO 'Would delete % longer "long intervals" from t_emsl_instrument_usage_report', _myRowCount);
+                If _previewCount > 0 Then
+                    RAISE INFO 'Would delete % longer "long intervals" from t_emsl_instrument_usage_report', _previewCount);
                 End If;
             End If;
 
@@ -651,6 +649,7 @@ BEGIN
             ---------------------------------------------------
 
             If Not _infoOnly Then
+
                 UPDATE t_emsl_instrument_usage_report InstUsage
                 SET comment = get_nearest_preceding_log_entry(InstUsage.seq, 0)
                 FROM t_emsl_instrument_usage_type InstUsageType
@@ -660,12 +659,11 @@ BEGIN
                       (InstUsage.usage_type_id = InstUsageType.usage_type_id AND NOT InstUsageType.usage_type IN ('MAINTENANCE', 'ONSITE') OR
                        InstUsage.usage_type_id IS NULL
                       ) AND
-                      Coalesce(InstUsage.Comment, '') = ''
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                      Coalesce(InstUsage.Comment, '') = '';
+
             Else
 
-                -- ToDo: Show this data using RAISE INFO
+                -- ToDo: Update this to use RAISE INFO
 
                 SELECT 'Add log reference to comment' as Action,
                        InstUsage.seq,
@@ -681,9 +679,8 @@ BEGIN
                       InstUsage.Month = _month AND
                       InstUsage.Type = 'Dataset' AND
                       Coalesce(InstUsageType.usage_type, '') NOT IN ('MAINTENANCE', 'ONSITE') AND
-                      Coalesce(InstUsage.Comment, '') = ''
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                      Coalesce(InstUsage.Comment, '') = '';
+
             End If;
 
             ---------------------------------------------------
@@ -691,6 +688,7 @@ BEGIN
             ---------------------------------------------------
 
             If Not _infoOnly Then
+
                 UPDATE t_emsl_instrument_usage_report InstUsage
                 SET comment = ''
                 FROM t_emsl_instrument_usage_type InstUsageType
@@ -702,9 +700,11 @@ BEGIN
                       InstUsage.Year = _year AND
                       InstUsage.Month = _month AND
                       (Comment IS NULL OR Coalesce(Comment, '') <> '')
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+
             Else
+
+                -- ToDo: Update this to use RAISE INFO
+
                 SELECT 'Clear maintenance and onsite comments' AS Action,
                        InstUsage.seq,
                        InstName.IN_Name AS Instrument,
@@ -719,9 +719,8 @@ BEGIN
                       InstName.instrument = _instrument AND
                       InstUsage.Year = _year AND
                       InstUsage.Month = _month AND
-                      (Comment IS NULL OR Coalesce(Comment, '') <> '')
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                      (Comment IS NULL OR Coalesce(Comment, '') <> '');
+
             End If;
 
             ---------------------------------------------------

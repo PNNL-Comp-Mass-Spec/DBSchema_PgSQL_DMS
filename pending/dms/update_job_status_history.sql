@@ -25,7 +25,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int := 0;
     _timeIntervalLastUpdateHours real;
     _updateTable boolean;
     _s text;
@@ -60,9 +60,9 @@ BEGIN
                   ) LookupQ
         ORDER BY tool_id, state_id;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        _message := format('Appended %s rows to the Job Status History table', _myRowCount);
+        _message := format('Appended %s %s to the Job Status History table', _matchCount, public.check_plural(_matchCount, 'row', 'rows'));
     Else
         _message := format('Update skipped since last update was %s hours ago', Round(_timeIntervalLastUpdateHours, 1));
     End If;

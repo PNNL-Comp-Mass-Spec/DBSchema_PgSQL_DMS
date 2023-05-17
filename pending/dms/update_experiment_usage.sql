@@ -20,7 +20,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int := 0;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -32,6 +32,9 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
 
     If _infoOnly Then
+
+        -- ToDo: Update this to use RAISE INFO
+
         ---------------------------------------------------
         -- Preview the updates
         ---------------------------------------------------
@@ -67,88 +70,37 @@ BEGIN
     -- Update based on the most recent Requested Run
     ---------------------------------------------------
     --
-    UPDATE t_experiments
-    SET last_used = MostRecentUse
-    FROM t_experiments E
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE t_experiments
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = t_experiments.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT E.exp_id,
-                             MAX(CAST(RR.Created AS date)) AS MostRecentUse
-                      FROM t_experiments E
-
-                      /********************************************************************************
-                      ** This UPDATE query includes the target table name in the FROM clause
-                      ** The WHERE clause needs to have a self join to the target table, for example:
-                      **   UPDATE t_experiments
-                      **   SET ...
-                      **   FROM source
-                      **   WHERE source.id = t_experiments.id;
-                      ********************************************************************************/
-
-                                             ToDo: Fix this query
-
-                           INNER JOIN t_requested_run RR
-                             ON E.exp_id = RR.exp_id
-                      GROUP BY E.exp_id
-                    ) LookupQ
-           ON E.exp_id = LookupQ.exp_id
-    WHERE LookupQ.MostRecentUse > E.Last_Used;
+    UPDATE t_experiments Target
+    SET last_used = LookupQ.MostRecentUse
+    FROM ( SELECT E.exp_id,
+                  MAX(CAST(RR.Created AS date)) AS MostRecentUse
+           FROM t_experiments E
+                INNER JOIN t_requested_run RR
+                  ON E.exp_id = RR.exp_id
+           GROUP BY E.exp_id
+         ) LookupQ
+    WHERE Target.exp_id = LookupQ.exp_id AND
+          LookupQ.MostRecentUse > Target.Last_Used;
 
     ---------------------------------------------------
     -- Update based on the most recent Dataset
     ---------------------------------------------------
     --
-    UPDATE t_experiments
-    SET last_used = MostRecentUse
-    FROM t_experiments E
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE t_experiments
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = t_experiments.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT E.exp_id,
-                             MAX(CAST(DS.Created AS date)) AS MostRecentUse
-                      FROM t_experiments E
-
-                      /********************************************************************************
-                      ** This UPDATE query includes the target table name in the FROM clause
-                      ** The WHERE clause needs to have a self join to the target table, for example:
-                      **   UPDATE t_experiments
-                      **   SET ...
-                      **   FROM source
-                      **   WHERE source.id = t_experiments.id;
-                      ********************************************************************************/
-
-                                             ToDo: Fix this query
-
-                           INNER JOIN t_dataset DS
-                             ON E.exp_id = DS.exp_id
-                      GROUP BY E.exp_id
-
-                      ) LookupQ
-           ON E.Exp_ID = LookupQ.Exp_ID
-    WHERE LookupQ.MostRecentUse > E.Last_Used
+    UPDATE t_experiments Target
+    SET last_used = LookupQ.MostRecentUse
+    FROM ( SELECT E.exp_id,
+                  MAX(CAST(DS.Created AS date)) AS MostRecentUse
+           FROM t_experiments E
+                INNER JOIN t_dataset DS
+                  ON E.exp_id = DS.exp_id
+           GROUP BY E.exp_id
+           ) LookupQ
+    WHERE Target.Exp_ID = LookupQ.Exp_ID AND
+          LookupQ.MostRecentUse > Target.Last_Used;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    RAISE INFO 'Updated Last_Used date for % %', _myRowCount, public.check_plural(_myRowcount, 'experiment',  'experiments');
+    RAISE INFO 'Updated Last_Used date for % %', _updateCount, public.check_plural(_updateCount, 'experiment',  'experiments');
 
 END
 $$;

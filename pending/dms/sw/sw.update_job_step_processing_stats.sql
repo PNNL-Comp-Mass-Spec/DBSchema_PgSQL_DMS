@@ -25,7 +25,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int := 0;
     _timeIntervalLastUpdateMinutes real;
     _timeIntervalIdenticalStatsMinutes real;
     _mostRecentPostingTime timestamp;
@@ -105,10 +105,11 @@ BEGIN
                Actual_CPU_Load
         FROM V_Job_Steps
         WHERE (State = 4)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If _infoOnly Then
+
+            -- ToDo: Update this to use RAISE INFO
+
             SELECT *
             FROM Tmp_JobStepProcessingStats
             ORDER BY Job, Step
@@ -135,7 +136,7 @@ BEGIN
                    actual_cpu_load
             FROM Tmp_JobStepProcessingStats
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
             _message := format('Appended %s rows to the Job Step Processing Stats table', _myRowCount);
         End If;

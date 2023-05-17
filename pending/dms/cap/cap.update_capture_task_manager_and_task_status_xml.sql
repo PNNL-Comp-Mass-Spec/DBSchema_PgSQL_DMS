@@ -453,10 +453,9 @@ BEGIN
 
         If _logProcessorNames Then
 
-            SELECT string_agg(Processor_Name, ', ')
+            SELECT string_agg(Processor_Name, ', ' ORDER BY Processor_Name)
             INTO _updatedProcessors
-            FROM Tmp_Processor_Status_Info
-            ORDER BY Processor_Name;
+            FROM Tmp_Processor_Status_Info;
 
             _logMessage := format('%s, processors %s', _statusMessageInfo, _updatedProcessors);
 
