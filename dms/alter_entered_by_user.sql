@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **          12/12/2022 mem - Whitespace update
 **          05/12/2023 mem - Rename variables
+**          05/18/2023 mem - Remove implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -79,11 +80,12 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    _entryDescription := 'ID ' || _targetID::text || ' in table ' || _targetTableName || ' (column ' || _targetIDColumnName || ')';
+    _entryDescription := format('ID %s in table %s (column %s)',
+                                _targetID, _targetTableName, _targetIDColumnName);
 
     _s := format(
-            'SELECT %I as target_id_match, %I as entered_by '
-            'FROM %I.%I '
+            'SELECT %I as target_id_match, %I as entered_by ' ||
+            'FROM %I.%I ' ||
             'WHERE %I = $1',
             _targetIDColumnName, _enteredByColumnName,
             _targetTableSchema, _targetTableName,
@@ -159,9 +161,12 @@ BEGIN
     _matchIndex := position(';' in _enteredBy);
 
     If _matchIndex > 0 Then
-        _enteredByNew := _newUser || ' (via ' || SubString(_enteredBy, 1, _matchIndex-1) || ')' || SubString(_enteredBy, _matchIndex, char_length(_enteredBy));
+        _enteredByNew := format('%s (via %s)%s',
+                                _newUser,
+                                SubString(_enteredBy, 1, _matchIndex-1),
+                                SubString(_enteredBy, _matchIndex, char_length(_enteredBy)));
     Else
-        _enteredByNew := _newUser || ' (via ' || _enteredBy || ')';
+        _enteredByNew := format('%s (via %s)', _newUser, _enteredBy);
     End If;
 
     If char_length(Coalesce(_enteredByNew, '')) = 0 Then
@@ -171,8 +176,8 @@ BEGIN
     If Not _infoOnly Then
 
         _s := format(
-                'UPDATE %I.%I '
-                'SET %I = $4 '
+                'UPDATE %I.%I ' ||
+                'SET %I = $4 '  ||
                 'WHERE %I = $1',
                 _targetTableSchema, _targetTableName,
                 _enteredByColumnName,
@@ -207,9 +212,10 @@ BEGIN
 
     Else
         _s := format(
-                'SELECT *, ''' || _enteredByNew || ''' AS Entered_By_New '
-                'FROM %I.%I '
+                'SELECT *, ''%s'' AS Entered_By_New ' ||
+                'FROM %I.%I '                         ||
                 'WHERE %I = $1',
+                _enteredByNew,
                 _targetTableSchema, _targetTableName,
                 _targetIDColumnName);
 
@@ -230,7 +236,7 @@ BEGIN
             USING _targetID, _entryDateStart, _entryDateEnd;
         End If;
 
-        _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
+        _message := format('Would update %s to indicate "%s"', _entryDescription, _enteredByNew);
     End If;
 
 END

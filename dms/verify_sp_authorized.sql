@@ -53,6 +53,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          02/14/2023 mem - Use case-insensitive comparisons with procedure_name and login_name
 **          05/10/2023 mem - Simplify call to post_log_entry()
 **          05/17/2023 mem - Change _authorized from int to boolean
+**          05/18/2023 mem - Remove implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -129,10 +130,10 @@ BEGIN
     _targetTableWithSchema := format('%I.%I', _targetSchema, 't_sp_authorization');
 
     _s := format(
-            'SELECT COUNT(*) '
-            'FROM %s auth '
-            'WHERE auth.procedure_name = $1::citext AND '
-            '      auth.login_name = $2::citext AND '
+            'SELECT COUNT(*) '                            ||
+            'FROM %s auth '                               ||
+            'WHERE auth.procedure_name = $1::citext AND ' ||
+            '      auth.login_name = $2::citext AND '     ||
             '      (auth.host_ip = $3::text Or auth.host_ip = ''*'')',
             _targetTableWithSchema);
 
@@ -144,10 +145,10 @@ BEGIN
         _authorized := true;
     Else
         _s := format(
-                'SELECT COUNT(*) '
-                'FROM %s auth '
-                'WHERE auth.procedure_name = ''*'' AND '
-                '      auth.login_name = $1::citext AND '
+                'SELECT COUNT(*) '                        ||
+                'FROM %s auth '                           ||
+                'WHERE auth.procedure_name = ''*'' AND '  ||
+                '      auth.login_name = $1::citext AND ' ||
                 '      (auth.host_ip = $2::text Or auth.host_ip = ''*'')',
                 _targetTableWithSchema);
 
@@ -170,7 +171,8 @@ BEGIN
     End if;
 
     If _infoOnly Then
-        _message := 'Access denied to ' || _procedureNameWithSchema || ' for current user (' || SESSION_USER || ' on host IP ' || Coalesce(_clientHostIP::text, 'null') || ')';
+        _message := format('Access denied to %s for current user (%s on host IP %s)',
+                            _procedureNameWithSchema, SESSION_USER, Coalesce(_clientHostIP::text, 'null'));
 
         RETURN QUERY
         SELECT false, _procedureName, _userName, host(_clientHostIP), _message as message;
@@ -178,9 +180,10 @@ BEGIN
         return;
     End If;
 
-    _message := 'User ' || Coalesce(_userName, '??') ||
-                ' cannot call procedure ' || Coalesce(_procedureNameWithSchema, _procedureName) ||
-                ' from host IP ' || Coalesce(_clientHostIP::text, 'null');
+    _message := format('User %s cannot call procedure %s from host IP %s',
+                Coalesce(_userName, '??'),
+                Coalesce(_procedureNameWithSchema, _procedureName),
+                Coalesce(_clientHostIP::text, 'null'));
 
     If _logError Then
         -- Set _ignoreErrors to true when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries

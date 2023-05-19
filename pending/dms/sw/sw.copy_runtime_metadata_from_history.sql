@@ -208,7 +208,7 @@ BEGIN
     ---------------------------------------------------
     --
     UPDATE Tmp_Jobs
-    SET Comment = format('Results_Transfer step in sw.t_job_steps has a different start/finish value vs. sw.t_job_steps_history; '
+    SET Comment = format('Results_Transfer step in sw.t_job_steps has a different start/finish value vs. sw.t_job_steps_history; ' ||
                          'step %s; start %s vs. %s; finish %s vs. %s',
                            InvalidQ.step,
                            public.timestamp_text(InvalidQ.start),  public.timestamp_text(InvalidQ.start_history),

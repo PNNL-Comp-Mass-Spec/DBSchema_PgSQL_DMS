@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **          01/24/2023 mem - Update whitespace
 **          05/12/2023 mem - Rename variables
+**          05/18/2023 mem - Remove implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -82,7 +83,8 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    _entryDescription := 'ID ' || _targetID::text || ' (type ' || _targetType::text || ') with state ' || _targetState::text;
+    _entryDescription := format('ID %s (type %s) with state %s',
+                                _targetID, _targetType, _targetState);
 
     If _applyTimeFilter And Coalesce(_entryTimeWindowSeconds, 0) >= 1 Then
         ------------------------------------------------
@@ -120,14 +122,14 @@ BEGIN
     End If;
 
     _s := format(
-            'SELECT EL.event_id, EL.entered_by, EL.target_id '
-            'FROM %1$I.t_event_log EL INNER JOIN '
-                   ' (SELECT MAX(event_id) AS event_id '
-                   '  FROM %1$I.t_event_log '
-                   '  WHERE target_type = $1 AND '
-                   '        target_id = $2 AND '
-                   '        target_state = $3'
-                   '        %s'
+            'SELECT EL.event_id, EL.entered_by, EL.target_id ' ||
+            'FROM %1$I.t_event_log EL INNER JOIN '             ||
+                   ' (SELECT MAX(event_id) AS event_id '       ||
+                   '  FROM %1$I.t_event_log '                  ||
+                   '  WHERE target_type = $1 AND '             ||
+                   '        target_id = $2 AND '               ||
+                   '        target_state = $3'                 ||
+                   '        %s'                                ||
                    ' ) LookupQ ON EL.event_id = LookupQ.event_id',
             _eventLogSchema,
             _dateFilterSql);
@@ -157,7 +159,7 @@ BEGIN
 
     If Not _previewSql AND (_updateCount = 0 Or _targetIdMatched <> _targetID) Then
         _message := 'Match not found for ' || _entryDescription;
-        Return;
+        RETURN;
     End If;
 
     -- Confirm that _enteredBy doesn't already contain _newUser
@@ -165,8 +167,9 @@ BEGIN
 
     _matchIndex := position(_newUser in _enteredBy);
     If _matchIndex > 0 Then
-        _message := 'Entry ' || _entryDescription || ' is already attributed to ' || _newUser || ': "' || _enteredBy || '"';
-        Return;
+        _message := format('Entry %s is already attributed to %s: "%s"',
+                            _entryDescription, _newUser, _enteredBy);
+        RETURN;
     End If;
 
     -- Look for a semicolon in _enteredBy
@@ -174,9 +177,12 @@ BEGIN
     _matchIndex := position(';' in _enteredBy);
 
     If _matchIndex > 0 Then
-        _enteredByNew := _newUser || ' (via ' || SubString(_enteredBy, 1, _matchIndex-1) || ')' || SubString(_enteredBy, _matchIndex, char_length(_enteredBy));
+        _enteredByNew := format('%s (via %s)%s',
+                                _newUser,
+                                SubString(_enteredBy, 1, _matchIndex-1) || ')',
+                                SubString(_enteredBy, _matchIndex, char_length(_enteredBy)));
     Else
-        _enteredByNew := _newUser || ' (via ' || _enteredBy || ')';
+        _enteredByNew := format('%s (via %s)', _newUser, _enteredBy);
     End If;
 
     If char_length(Coalesce(_enteredByNew, '')) = 0 Then
@@ -185,12 +191,11 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        _s := format(
-                        'UPDATE %I.t_event_log '
-                        'SET entered_by = $2 '
-                        'WHERE event_id = $1',
-                        _eventLogSchema,
-                        _enteredByNew);
+        _s := format( 'UPDATE %I.t_event_log ' ||
+                      'SET entered_by = $2 '   ||
+                      'WHERE event_id = $1',
+                      _eventLogSchema,
+                      _enteredByNew);
 
         If _previewSql Then
              -- Show the SQL both with the dollar signs, and with values
@@ -211,11 +216,11 @@ BEGIN
     End If;
 
     _s := format(
-            'SELECT event_id, target_type, target_id, target_state,'
-            '       prev_target_state, entered,'
-            '       entered_by AS Entered_By_Old,'
-            '       $2 AS Entered_By_New '
-            'FROM %I.t_event_log '
+            'SELECT event_id, target_type, target_id, target_state,' ||
+            '       prev_target_state, entered,'                     ||
+            '       entered_by AS Entered_By_Old,'                   ||
+            '       $2 AS Entered_By_New '                           ||
+            'FROM %I.t_event_log '                                   ||
             'WHERE event_id = $1',
             _eventLogSchema);
 
@@ -248,7 +253,7 @@ BEGIN
     RAISE INFO '%', _infoHead;
     RAISE INFO '%', _infoData;
 
-    _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
+    _message := format('Would update %s to indicate "%s"', _entryDescription, _enteredByNew);
 
 END
 $_$;

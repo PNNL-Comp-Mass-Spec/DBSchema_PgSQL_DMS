@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          12/12/2022 mem - Whitespace update
 **          04/27/2023 mem - Use boolean for data type name
 **          05/12/2023 mem - Rename variables
+**          05/18/2023 mem - Remove implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -88,10 +89,10 @@ BEGIN
 
     If Coalesce(_duplicateEntryHoldoffHours, 0) > 0 Then
         _s := format(
-                'SELECT COUNT(*) '
-                'FROM %s '
-                'WHERE message = $1 AND '
-                     ' type = $2 AND '
+                'SELECT COUNT(*) '         ||
+                'FROM %s '                 ||
+                'WHERE message = $1 AND '  ||
+                     ' type = $2 AND '     ||
                      ' entered >= $3',
                 _targetTableWithSchema);
 
@@ -107,7 +108,7 @@ BEGIN
     End If;
 
     _s := format(
-            'INSERT INTO %s (posted_by, entered, type, message) '
+            'INSERT INTO %s (posted_by, entered, type, message) ' ||
             'VALUES ( $1, CURRENT_TIMESTAMP, $2, $3)',
             _targetTableWithSchema);
 
