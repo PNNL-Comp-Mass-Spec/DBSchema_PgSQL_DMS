@@ -56,7 +56,8 @@ AS $$
 **          05/18/2022 mem - Use new EUS Proposal column name
 **          06/08/2022 mem - Rename package comment field to Package_Comment
 **          07/08/2022 mem - Use new synonym name for experiment biomaterial view
-**          04/04/2023 mem - Do not add data package placeholder datasets (e.g. dataset DataPackage_3442_TestData)
+**          04/04/2023 mem - When adding datasets, do not add data package placeholder datasets (e.g. dataset DataPackage_3442_TestData)
+**          05/19/2023 mem - When adding analysis jobs, do not add data package placeholder datasets
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -223,7 +224,8 @@ BEGIN
                     SELECT *
                     FROM Tmp_DataPackageItems
                     WHERE Tmp_DataPackageItems.ItemType = 'Dataset' AND Tmp_DataPackageItems.Identifier = TX.Dataset AND Tmp_DataPackageItems.DataPackageID = J.DataPackageID
-                )
+                ) AND
+                NOT TX.Dataset SIMILAR TO 'DataPackage[_][0-9][0-9]%';
 
             -- Add experiments to list that are parents of datasets in the list
             -- (and are not already in the list)
