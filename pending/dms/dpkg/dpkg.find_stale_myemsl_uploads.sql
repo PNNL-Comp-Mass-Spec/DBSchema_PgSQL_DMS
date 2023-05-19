@@ -20,7 +20,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _entryID Int;
     _dataPackageID Int;
     _entryIDList text;
@@ -60,9 +60,7 @@ BEGIN
     FROM dpkg.t_myemsl_uploads
     WHERE error_code = 0 AND
           verified = 0 AND
-          entered < DateAdd(DAY, - _staleUploadDays, CURRENT_TIMESTAMP)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+          entered < DateAdd(DAY, - _staleUploadDays, CURRENT_TIMESTAMP);
 
     If Not Exists (SELECT * FROM Tmp_StaleUploads) Then
         _message := 'Nothing to do';
@@ -95,9 +93,9 @@ BEGIN
         FROM Tmp_StaleUploads Stale
         WHERE Uploads.Entry_ID = Stale.Entry_ID;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount = 1 Then
+        If _updateCount = 1 Then
             SELECT Entry_ID,
                    Data_Package_ID
             INTO _entryID, _dataPackageID

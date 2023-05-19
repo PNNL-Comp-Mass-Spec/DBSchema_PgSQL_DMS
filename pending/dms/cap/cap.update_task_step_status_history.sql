@@ -25,7 +25,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int := 0;
     _timeIntervalLastUpdateMinutes numeric := 0;
     _timeIntervalIdenticalStatsMinutes numeric := 0;
     _newStatCount int;
@@ -170,9 +170,9 @@ BEGIN
                 FROM Tmp_TaskStepStatusHistory
                 ORDER BY Step_Tool, State;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                _message := format('Appended %s rows to the Task Step Status History table', _myRowCount);
+                _message := format('Appended %s rows to the Task Step Status History table', _insertCount);
             End If;
         Else
             _message := format('Update skipped since last update was %s minutes ago and the stats are still identical', Round(_timeIntervalIdenticalStatsMinutes, 1));

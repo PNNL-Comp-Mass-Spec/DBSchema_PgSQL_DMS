@@ -65,7 +65,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
+    _deleteCount int;
+    _updateCount int;
+    _insertCount int;
     _itemCountChanged int := 0;
     _createdDataPackageDatasetsTable boolean := false;
 
@@ -124,10 +126,10 @@ BEGIN
             DELETE Tmp_DataPackageItems
             WHERE Coalesce(Identifier, '') = '' OR try_cast(Identifier, null::int) Is Null;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _infoOnly And _myRowCount > 0 Then
-                RAISE INFO '%', 'Warning: deleted ' || Cast(_myRowCount as text) || ' job(s) that were not numeric';
+            If _infoOnly And _deleteCount > 0 Then
+                RAISE INFO 'Warning: deleted % job(s) that were not numeric', _deleteCount;
             End If;
 
             INSERT INTO Tmp_JobsToAddOrDelete( DataPackageID, Job )
@@ -465,11 +467,11 @@ BEGIN
                           Tmp_DataPackageItems.Identifier = Target.biomaterial AND
                           Tmp_DataPackageItems.type = 'biomaterial'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Deleted %s biomaterial %s', _myRowCount, public.check_plural(_myRowCount, 'item', 'items'));
+                If _deleteCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _deleteCount;
+                    _actionMsg := format('Deleted %s biomaterial %s', _deleteCount, public.check_plural(_deleteCount, 'item', 'items'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -496,11 +498,11 @@ BEGIN
                       Src.Identifier = dpkg.t_data_package_biomaterial.Name AND
                       Src.ItemType = 'Biomaterial'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Updated the comment for %s biomaterial %s', _myRowCount, public.check_plural(_myRowCount, 'item', 'items'));
+                If _updateCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _updateCount;
+                    _actionMsg := format('Updated the comment for %s biomaterial %s', _updateCount, public.check_plural(_updateCount, 'item', 'items'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -566,11 +568,11 @@ BEGIN
                     ON Tmp_DataPackageItems.Identifier = TX.name
                 WHERE Tmp_DataPackageItems.type = 'biomaterial'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Added %s biomaterial %s', _myRowCount, public.check_plural(_myRowCount, 'item', 'items'));
+                If _insertCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _insertCount;
+                    _actionMsg := format('Added %s biomaterial %s', _insertCount, public.check_plural(_insertCount, 'item', 'items'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -600,11 +602,11 @@ BEGIN
                           Tmp_DataPackageItems.Identifier = Target.proposal_id AND
                           Tmp_DataPackageItems.type = 'EUSProposal'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := 'Deleted %s EUS %s', _myRowCount, public.check_plural(_myRowCount, 'proposal', 'proposals'));
+                If _deleteCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _deleteCount;
+                    _actionMsg := format('Deleted %s EUS %s', _deleteCount, public.check_plural(_deleteCount, 'proposal', 'proposals'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -632,11 +634,11 @@ BEGIN
                       Tmp_DataPackageItems.Identifier = dpkg.t_data_package_eus_proposals.Proposal_ID AND
                       Tmp_DataPackageItems.ItemType = 'EUSProposal';
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := 'Updated the comment for %s EUS %s', _myRowCount, public.check_plural(_myRowCount, 'proposal', 'proposals'));
+                If _updateCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _updateCount;
+                    _actionMsg := format('Updated the comment for %s EUS %s', _updateCount, public.check_plural(_updateCount, 'proposal', 'proposals'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -686,11 +688,11 @@ BEGIN
                 WHERE Tmp_DataPackageItems.type = 'EUSProposal'
 
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Added %s EUS %s', _myRowCount, public.check_plural(_myRowCount, 'proposal', 'proposals'));
+                If _insertCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _insertCount;
+                    _actionMsg := format('Added %s EUS %s', _insertCount, public.check_plural(_insertCount, 'proposal', 'proposals'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -721,11 +723,11 @@ BEGIN
                   Tmp_DataPackageItems.Identifier = Target.experiment AND
                           Tmp_DataPackageItems.type = 'experiment'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := 'Deleted %s %s', _myRowCount, public.check_plural(_myRowCount, 'experiment', 'experiments');
+                If _deleteCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _deleteCount;
+                    _actionMsg := format('Deleted %s %s', _deleteCount, public.check_plural(_deleteCount, 'experiment', 'experiments');
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -754,11 +756,11 @@ BEGIN
                       Tmp_DataPackageItems.Identifier = dpkg.t_data_package_experiments.Experiment AND
                       Tmp_DataPackageItems.ItemType = 'Experiment'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Updated the comment for %s %s', _myRowCount, public.check_plural(_myRowCount, 'experiment', 'experiments'));
+                If _updateCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _updateCount;
+                    _actionMsg := format('Updated the comment for %s %s', _updateCount, public.check_plural(_updateCount, 'experiment', 'experiments'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -818,11 +820,11 @@ BEGIN
                     ON Tmp_DataPackageItems.Identifier = TX.experiment
                 WHERE Tmp_DataPackageItems.type = 'experiment'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Added %s %s', _myRowCount, public.check_plural(_myRowCount, 'experiment', 'experiments'));
+                If _insertCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _insertCount;
+                    _actionMsg := format('Added %s %s', _insertCount, public.check_plural(_insertCount, 'experiment', 'experiments'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -853,11 +855,11 @@ BEGIN
                           Tmp_DataPackageItems.Identifier = Target.dataset AND
                           Tmp_DataPackageItems.type = 'dataset'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Deleted %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
+                If _deleteCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _deleteCount;
+                    _actionMsg := format('Deleted %s %s', _deleteCount, public.check_plural(_deleteCount, 'dataset', 'datasets'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -886,11 +888,11 @@ BEGIN
                       Tmp_DataPackageItems.Identifier = dpkg.t_data_package_datasets.Dataset AND
                       Tmp_DataPackageItems.ItemType = 'Dataset'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Updated the comment for %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
+                If _updateCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _updateCount;
+                    _actionMsg := format('Updated the comment for %s %s', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -951,11 +953,11 @@ BEGIN
                        ON Tmp_DataPackageItems.Identifier = TX.dataset
                 WHERE Tmp_DataPackageItems.type = 'dataset'
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Added %s %s', _myRowCount, public.check_plural(_myRowCount, 'dataset', 'datasets'));
+                If _insertCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _insertCount;
+                    _actionMsg := format('Added %s %s', _insertCount, public.check_plural(_insertCount, 'dataset', 'datasets'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -983,11 +985,11 @@ BEGIN
                        ON Target.data_pkg_id = ItemsQ.DataPackageID AND
                           Target.job = ItemsQ.job
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Deleted %s analysis %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
+                If _deleteCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _deleteCount;
+                    _actionMsg := format('Deleted %s analysis %s', _deleteCount, public.check_plural(_deleteCount, 'job', 'jobs'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -1014,11 +1016,11 @@ BEGIN
                        ON Target.data_pkg_id = ItemsQ.DataPackageID AND
                           Target.job = ItemsQ.job
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Updated the comment for %s analysis %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
+                If _updateCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _updateCount;
+                    _actionMsg := format('Updated the comment for %s analysis %s', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;
@@ -1074,11 +1076,11 @@ BEGIN
                      INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
                        ON TX.job = ItemsQ.job
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                If _myRowCount > 0 Then
-                    _itemCountChanged := _itemCountChanged + _myRowCount;
-                    _actionMsg := format('Added %s analysis %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
+                If _insertCount > 0 Then
+                    _itemCountChanged := _itemCountChanged + _insertCount;
+                    _actionMsg := format('Added %s analysis %s', _insertCount, public.check_plural(_insertCount, 'job', 'jobs'));
                     _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
                 End If;
             End If;

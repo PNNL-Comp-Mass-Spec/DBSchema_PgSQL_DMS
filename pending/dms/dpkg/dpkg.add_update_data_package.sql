@@ -63,7 +63,7 @@ DECLARE
     _teamChangeWarning text;
     _pkgFileFolder text;
     _logErrors boolean := false;
-    _authorized int := 0;
+    _authorized boolean := false;
     _storagePathID int;
 
     _sqlState text;
@@ -128,7 +128,7 @@ BEGIN
 
         -- Make sure the data package type is valid
         If Not Exists (SELECT * FROM dpkg.t_data_package_type WHERE package_type = _packageType) Then
-            _message := ('Invalid data package type: %s', _packageType);
+            _message := format('Invalid data package type: %s', _packageType);
             _returnCode := 'U5108';
             RETURN;
         End If;

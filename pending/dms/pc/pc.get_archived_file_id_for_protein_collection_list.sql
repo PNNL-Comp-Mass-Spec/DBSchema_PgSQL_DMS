@@ -76,8 +76,6 @@ BEGIN
     SELECT MIN(ProteinCollectionName), COUNT(*)
     INTO _proteinCollectionName, _proteinCollectionCount
     FROM Tmp_ProteinCollectionList
-    --
-    GET DIAGNOSTICS _myRowcount = ROW_COUNT;
 
     If _proteinCollectionCount < 1 Then
         _message := 'Could not find any entries in Tmp_ProteinCollectionList; this is unexpected';
@@ -98,11 +96,11 @@ BEGIN
     FROM pc.t_archived_output_file_collections_xref AOFC INNER JOIN
          pc.t_archived_output_files AOF ON AOFC.archived_file_id = AOF.archived_file_id
     WHERE (AOF.archived_file_id IN
-            (    SELECT AOF.archived_file_id
-                FROM pc.t_archived_output_file_collections_xref AOFC INNER JOIN
-                     pc.t_archived_output_files AOF ON AOFC.archived_file_id = AOF.archived_file_id INNER JOIN
-                     pc.t_protein_collections PC ON AOFC.protein_collection_id = PC.protein_collection_id
-                WHERE PC.collection_name = _proteinCollectionName AND AOF.creation_options = _creationOptions)
+            ( SELECT AOF.archived_file_id
+              FROM pc.t_archived_output_file_collections_xref AOFC INNER JOIN
+                   pc.t_archived_output_files AOF ON AOFC.archived_file_id = AOF.archived_file_id INNER JOIN
+                   pc.t_protein_collections PC ON AOFC.protein_collection_id = PC.protein_collection_id
+              WHERE PC.collection_name = _proteinCollectionName AND AOF.creation_options = _creationOptions)
             )
     GROUP BY AOF.archived_file_id
     HAVING COUNT(*) = _proteinCollectionCount
@@ -158,13 +156,13 @@ BEGIN
     WHILE true
     LOOP
         -- This While loop can probably be converted to a For loop; for example:
-        --    For _itemName In
+        --    FOR _itemName IN
         --        SELECT item_name
         --        FROM TmpSourceTable
         --        ORDER BY entry_id
-        --    Loop
+        --    LOOP
         --        ...
-        --    End Loop
+        --    END LOOP;
 
         SELECT ProteinCollectionName, Unique_ID
         INTO _proteinCollectionName, _uniqueID
@@ -172,34 +170,19 @@ BEGIN
         WHERE Unique_ID > _uniqueID
         ORDER BY Unique_ID
         LIMIT 1;
-        --
-        GET DIAGNOSTICS _myRowcount = ROW_COUNT;
 
         If Not FOUND Then
             -- Break out of the while loop
                 EXIT;
         End If;
 
-        UPDATE Tmp_Archived_Output_File_IDs
+        UPDATE Tmp_Archived_Output_File_IDs AOF
         SET Valid_Member_Count = Valid_Member_Count + 1
-        FROM Tmp_Archived_Output_File_IDs AOF INNER JOIN
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE #Tmp_Archived_Output_File_IDs
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = #Tmp_Archived_Output_File_IDs.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             pc.t_archived_output_file_collections_xref AOFC ON AOF.archived_file_id = AOFC.archived_file_id INNER JOIN
-             pc.t_protein_collections PC ON AOFC.protein_collection_id = PC.protein_collection_id
-        WHERE PC.collection_name = _proteinCollectionName;
-        --
-        GET DIAGNOSTICS _myRowcount = ROW_COUNT;
+        FROM pc.t_archived_output_file_collections_xref AOFC
+             INNER JOIN pc.t_protein_collections PC
+               ON AOFC.protein_collection_id = PC.protein_collection_id
+        WHERE PC.collection_name = _proteinCollectionName AND
+              AOF.archived_file_id = AOFC.archived_file_id ;
 
         _proteinCollectionCount := _proteinCollectionCount + 1;
 
@@ -209,7 +192,7 @@ BEGIN
             _proteinCollectionListClean := _proteinCollectionListClean || ',' || _proteinCollectionName;
         End If;
 
-    END LOOP; -- </b>
+    END LOOP;
 
     -----------------------------------------------------
     -- Grab the last entry in Tmp_Archived_Output_File_IDs with

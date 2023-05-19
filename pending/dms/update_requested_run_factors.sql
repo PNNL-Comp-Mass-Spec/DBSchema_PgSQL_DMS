@@ -370,7 +370,7 @@ BEGIN
         ElsIf _invalidCount = _matchCount Then
             _message := format('Unable to determine RequestID for all %s factors', _matchCount);
         Else
-            _message := 'Unable to determine RequestID for %s of %s name', _invalidCount, _matchCount);
+            _message := format('Unable to determine RequestID for %s of %s factors', _invalidCount, _matchCount);
         End If;
 
         _message := _message || '; treating the Identifier column as ' || _idType;
@@ -584,8 +584,7 @@ BEGIN
     -- Convert changed items to XML for logging
     -----------------------------------------------------------
     --
-    --
-    SELECT string_agg(string.Format('<r i="%s" f="%s" v="%s" />', RequestID, Factor, Value))
+    SELECT string_agg(format('<r i="%s" f="%s" v="%s" />', RequestID, Factor, Value))
     INTO _changeSummary
     FROM Tmp_FactorInfo
     WHERE UpdateSkipCode = 0;

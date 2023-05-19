@@ -24,7 +24,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _uploadAttempts int;
     _uploadErrors int;
     _uploadErrorRate float8 := 0;
@@ -55,25 +54,23 @@ BEGIN
     -----------------------------------------------
     --
 
-    SELECT COUNT(*) INTO _uploadErrors
+    SELECT COUNT(*)
+    INTO _uploadErrors
     FROM dpkg.t_myemsl_uploads
     WHERE entered BETWEEN _startDate AND _endDate AND
           bytes > 0 AND
-          error_code <> 0
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+          error_code <> 0;
 
-    SELECT COUNT(*) INTO _uploadAttempts
+    SELECT COUNT(*)
+    INTO _uploadAttempts
     FROM dpkg.t_myemsl_uploads
-    WHERE entered BETWEEN _startDate AND _endDate
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE entered BETWEEN _startDate AND _endDate;
 
-    SELECT COUNT(*), INTO _dataPkgFolderUploads
-           _duplicateUploads = Sum(CASE
-                                       WHEN UploadAttempts > 1 THEN 1
-                                       ELSE 0
-                                   END)
+    SELECT COUNT(*),
+           SUM(CASE WHEN UploadAttempts > 1 THEN 1
+                    ELSE 0
+               END)
+    INTO _dataPkgFolderUploads, _duplicateUploads
     FROM ( SELECT data_pkg_id,
                   subfolder,
                   COUNT(*) AS UploadAttempts

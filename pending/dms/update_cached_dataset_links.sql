@@ -164,7 +164,7 @@ BEGIN
             --        ORDER BY entry_id
             --    LOOP
             --        ...
-            --    END LOOP
+            --    END LOOP;
 
 
             SELECT dataset_id INTO _datasetID

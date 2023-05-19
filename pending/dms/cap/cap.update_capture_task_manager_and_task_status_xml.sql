@@ -42,7 +42,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int;
+    _statusInfoCount int;
+    _updateCount int;
+    _insertCount int;
     _statusMessageInfo text := '';
     _statusXML xml;
     _updatedProcessors text;
@@ -239,9 +241,9 @@ BEGIN
                    ManagerInfoQ.Status_Date = TaskDetailQ.Status_Date
         ORDER BY ManagerInfoQ.Processor_Name, ManagerInfoQ.Status_Date;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _statusInfoCount = ROW_COUNT;
 
-        _statusMessageInfo := 'Status info count: ' || _myRowCount::text;
+        _statusMessageInfo := 'Status info count: ' || _statusInfoCount::text;
 
         If _infoLevel > 0 Then
 
@@ -388,9 +390,9 @@ BEGIN
         FROM Tmp_Processor_Status_Info Src
         WHERE Src.Processor_Name = Target.Processor_Name;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _statusMessageInfo := format('%s, Preserved: %s', _statusMessageInfo, _myRowCount);
+        _statusMessageInfo := format('%s, Preserved: %s', _statusMessageInfo, _updateCount);
 
         ---------------------------------------------------
         -- Add missing processors to cap.t_processor_status
@@ -447,9 +449,9 @@ BEGIN
                ON Src.processor_name = Target.processor_name
         WHERE Target.processor_name IS NULL;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _statusMessageInfo := format('%s, Inserted: %s', _statusMessageInfo, _myRowCount);
+        _statusMessageInfo := format('%s, Inserted: %s', _statusMessageInfo, _insertCount);
 
         If _logProcessorNames Then
 

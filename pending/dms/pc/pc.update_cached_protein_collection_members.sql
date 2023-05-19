@@ -22,16 +22,16 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _mergeCount int;
+    _deleteCount int;
+    _collectionCount int;
     _statusMsg text;
     _collectionCountUpdated int := 0;
     _currentRangeStart int;
     _currentRangeEnd int;
     _currentRangeCount int;
     _currentRange text := '';
-    _proteinCollectionID int := -1;
-    _numProteinsOld int;
-    _numProteinsNew int;
+    _countInfo record;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -52,22 +52,22 @@ BEGIN
         Protein_Collection_ID int NOT NULL,
         NumProteins int NOT NULL,
         Processed int NOT NULL
-    )
+    );
 
-    CREATE INDEX IX_Tmp_ProteinCollections ON Tmp_ProteinCollections ( Protein_Collection_ID )
-    CREATE INDEX IX_Tmp_ProteinCollections_Processed ON Tmp_ProteinCollections ( Processed ) INCLUDE (Protein_Collection_ID)
+    CREATE INDEX IX_Tmp_ProteinCollections ON Tmp_ProteinCollections ( Protein_Collection_ID );
+    CREATE INDEX IX_Tmp_ProteinCollections_Processed ON Tmp_ProteinCollections ( Processed ) INCLUDE (Protein_Collection_ID);
 
     CREATE TEMP TABLE Tmp_CurrentIDs (
         Protein_Collection_ID int NOT NULL
-    )
+    );
 
-    CREATE INDEX IX_Tmp_CurrentIDs ON Tmp_CurrentIDs ( Protein_Collection_ID )
+    CREATE INDEX IX_Tmp_CurrentIDs ON Tmp_CurrentIDs ( Protein_Collection_ID );
 
     CREATE TEMP TABLE Tmp_ProteinCountErrors (
         Protein_Collection_ID int NOT NULL,
         NumProteinsOld int NOT NULL,
         NumProteinsNew int NOT NULL
-    )
+    );
 
     ---------------------------------------------------
     -- Find protein collections to process
@@ -78,9 +78,7 @@ BEGIN
         --
         INSERT INTO Tmp_ProteinCollections (protein_collection_id, num_proteins, Processed)
         SELECT protein_collection_id, num_proteins, 0
-        FROM pc.t_protein_collections
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        FROM pc.t_protein_collections;
 
     Else
         -- Only add new protein collections
@@ -98,17 +96,13 @@ BEGIN
                                GROUP BY protein_collection_id ) CacheQ
                ON PC.protein_collection_id = CacheQ.protein_collection_id
         WHERE CacheQ.protein_collection_id IS NULL OR
-              PC.num_proteins <> CachedProteinCount
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              PC.num_proteins <> CachedProteinCount;
 
     End If;
 
     If _collectionIdFilter <> 0 Then
         DELETE FROM Tmp_ProteinCollections
-        WHERE Protein_Collection_ID <> _collectionIdFilter
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE Protein_Collection_ID <> _collectionIdFilter;
     End If;
 
     If Not Exists (Select * FROM Tmp_ProteinCollections) Then
@@ -135,9 +129,7 @@ BEGIN
             WHERE Processed = 0) SumQ ON SumQ.Protein_Collection_ID <= PC.Protein_Collection_ID
         WHERE Processed = 0
         GROUP BY PC.Protein_Collection_ID
-        HAVING SUM(SumQ.NumProteins) < 500000
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        HAVING SUM(SumQ.NumProteins) < 500000;
 
         If Not Exists (Select * From Tmp_CurrentIDs) Then
             -- The next available protein collection has over 500,000 proteins
@@ -257,11 +249,11 @@ BEGIN
             INSERT("protein_collection_id", "reference_id", "protein_name", "Description", "Residue_Count", "Monoisotopic_Mass", "Protein_ID")
             VALUES(s."protein_collection_id", s."reference_id", s."protein_name", s."Description", s."Residue_Count", s."Monoisotopic_Mass", s."Protein_ID")
         ;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _statusMsg := format('Inserted %s rows for %s', _myRowCount, _currentRange);
+        GET DIAGNOSTICS _mergeCount = ROW_COUNT;
+
+        If _mergeCount > 0 Then
+            _statusMsg := format('Added/updated %s rows for %s', _mergeCount, _currentRange);
             RAISE INFO '%', _statusMsg;
             Call public.post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
         End If;
@@ -284,10 +276,10 @@ BEGIN
                   Target.reference_id = FilterQ.original_reference_id
         WHERE FilterQ.protein_collection_id IS NULL
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _statusMsg := format('Deleted %s extra rows from pc.t_protein_collection_members_cached fo %s', _myRowCount, _currentRange);
+        If _deleteCount > 0 Then
+            _statusMsg := format('Deleted %s extra rows from pc.t_protein_collection_members_cached fo %s', _deleteCount, _currentRange);
             RAISE INFO '%', _statusMsg;
             Call public.post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
         End If;
@@ -296,10 +288,11 @@ BEGIN
         -- Update _collectionCountUpdated
         ---------------------------------------------------
 
-        SELECT Count(*) INTO _myRowCount
+        SELECT Count(*)
+        INTO _collectionCount
         FROM Tmp_CurrentIDs
 
-        _collectionCountUpdated := _collectionCountUpdated + _myRowCount;
+        _collectionCountUpdated := _collectionCountUpdated + _collectionCount;
 
         If _maxCollectionsToUpdate > 0 And _collectionCountUpdated >= _maxCollectionsToUpdate Then
             -- Break out of the While Loop
@@ -313,8 +306,8 @@ BEGIN
     ---------------------------------------------------
     --
     INSERT INTO Tmp_ProteinCountErrors( protein_collection_id,
-                                         NumProteinsOld,
-                                         NumProteinsNew)
+                                        NumProteinsOld,
+                                        NumProteinsNew )
     SELECT PC.protein_collection_id,
            PC.num_proteins,
            StatsQ.NumProteinsNew
@@ -325,63 +318,42 @@ BEGIN
                       GROUP BY protein_collection_id
                     ) StatsQ
            ON PC.protein_collection_id = StatsQ.protein_collection_id
-    WHERE PC.num_proteins <> StatsQ.NumProteinsNew
+    WHERE PC.num_proteins <> StatsQ.NumProteinsNew;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _collectionCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-    -- <c>
-        SELECT *
+    If _collectionCount = 0 Then
+        DROP TABLE Tmp_ProteinCollections;
+        DROP TABLE Tmp_CurrentIDs;
+        DROP TABLE Tmp_ProteinCountErrors;
+        RETURN;
+    End If;
+
+    RAISE WARNING 'Protein counts changed for % protein %', _collectionCount, public.check_plural(_collectionCount, 'collection', 'collections');
+
+    FOR _countInfo IN
+        SELECT protein_collection_id AS CollectionID,
+               NumProteinsOld,
+               NumProteinsNew
         FROM Tmp_ProteinCountErrors
         ORDER BY Protein_Collection_ID
+    LOOP
 
-        WHILE true
-        LOOP
-            -- This While loop can probably be converted to a For loop; for example:
-            --    For _itemName In
-            --        SELECT item_name
-            --        FROM TmpSourceTable
-            --        ORDER BY entry_id
-            --    Loop
-            --        ...
-            --    End Loop
+        UPDATE pc.t_protein_collections
+        SET num_proteins = _countInfo.NumProteinsNew
+        WHERE protein_collection_id = _countInfo.CollectionID;
 
-            -- Moved to bottom of query: TOP 1
-            SELECT Protein_Collection_ID, INTO _proteinCollectionID
-                         _numProteinsOld = NumProteinsOld,
-                         _numProteinsNew = NumProteinsNew
-            FROM Tmp_ProteinCountErrors
-            WHERE Protein_Collection_ID > _proteinCollectionID
-            ORDER BY Protein_Collection_ID
-            LIMIT 1;
+        _statusMsg := format('Changed number of proteins from %s to %s for protein collection %s in pc.t_protein_collections',
+                                _countInfo.NumProteinsOld, _countInfo.NumProteinsNew, _countInfo.CollectionID);
 
-            If Not FOUND Then
-                -- Break out of the While Loop
-                EXIT;
-            End If;
+        RAISE INFO '%', _statusMsg;
 
-            UPDATE pc.t_protein_collections
-            SET num_proteins = _numProteinsNew
-            WHERE protein_collection_id = _proteinCollectionID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        Call public.post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc')
+    END LOOP;
 
-            _statusMsg := format('Changed number of proteins from %s to %s for protein collection %s in pc.t_protein_collections',
-                            _numProteinsOld, _numProteinsNew, _proteinCollectionID);
-
-            RAISE INFO '%', _statusMsg;
-
-            Call public.post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc')
-
-        END LOOP; -- </d>
-
-    End If; -- </c>
-
-Done:
-    return _myError
-    DROP TABLE Tmp_ProteinCollections
-    DROP TABLE Tmp_CurrentIDs
-    DROP TABLE Tmp_ProteinCountErrors
+    DROP TABLE Tmp_ProteinCollections;
+    DROP TABLE Tmp_CurrentIDs;
+    DROP TABLE Tmp_ProteinCountErrors;
 END
 $$;
 

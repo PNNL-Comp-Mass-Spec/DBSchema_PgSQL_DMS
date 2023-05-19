@@ -76,8 +76,8 @@ BEGIN
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
     If _deleteCount > 0 Then
-        _message := 'Deleted %s duplicate %s from t_mts_mt_db_jobs_cached; this is unexpected',
-                    _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries');
+        _message := format('Deleted %s duplicate %s from t_mts_mt_db_jobs_cached; this is unexpected',
+                            _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries');
 
         call PostLogEntry ('Error', _message, 'RefreshCachedMTSJobMappingMTDBs');
 

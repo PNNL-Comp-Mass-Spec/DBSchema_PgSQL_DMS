@@ -349,9 +349,9 @@ BEGIN
         If Not _infoOnly And _missingCount > 0 Then
             _message := format('%s with mismatch between username in DMS and NetworkLogin in Warehouse', public.check_plural(_missingCount, 'User', 'Users'));
 
-            SELECT string_agg(string.Format('%s <> %s',
-                                            Coalesce(U.username, '??? Undefined username for user_id=' || U.user_id::text || ' ???'),
-                                            Coalesce(M.NetworkLogin, '??')),
+            SELECT string_agg(format('%s <> %s',
+                                        Coalesce(U.username, '??? Undefined username for user_id=' || U.user_id::text || ' ???'),
+                                        Coalesce(M.NetworkLogin, '??')),
                               ', ' ORDER BY U.user_id)
             INTO _addon
             FROM t_users U

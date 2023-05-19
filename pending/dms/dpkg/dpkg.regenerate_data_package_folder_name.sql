@@ -28,7 +28,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _dataPackageName text;
     _currentDataPkgID int;
     _currentDataPackageFolder text;

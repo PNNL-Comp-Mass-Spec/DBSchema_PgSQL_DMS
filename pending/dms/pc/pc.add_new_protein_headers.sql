@@ -26,7 +26,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
     _proteinIDEnd int;
     _proteinsProcessed int := 0;
     _batchSize int := 100000;
@@ -96,9 +96,9 @@ BEGIN
                 FROM pc.t_proteins
                 WHERE protein_id >= _proteinIDStart AND protein_id <= _proteinIDEnd;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                _proteinsProcessed := _proteinsProcessed + _myRowCount;
+                _proteinsProcessed := _proteinsProcessed + _insertCount;
 
             End If;
 
@@ -109,7 +109,7 @@ BEGIN
                 EXIT;
             End If;
 
-        END LOOP; -- </a>
+        END LOOP;
 
         _currentLocation := 'Done iterating';
 

@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _proteinCollectionID int;
     _proteinCollectionName text;
     _nameFilter text;

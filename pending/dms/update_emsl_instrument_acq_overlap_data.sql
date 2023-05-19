@@ -157,7 +157,7 @@ BEGIN
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
             If _infoOnly Then
-                RAISE INFO 'Processing % %s for instrument % in t_emsl_instrument_usage_report (no date filter)',
+                RAISE INFO 'Processing % % for instrument % in t_emsl_instrument_usage_report (no date filter)',
                             _matchCount, public.check_plural(_matchCount, 'start time', 'start times'), _instrument;
             End If;
         Else
@@ -187,7 +187,7 @@ BEGIN
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
             If _infoOnly Then
-                RAISE INFO 'Processing % %s for instrument % in t_emsl_instrument_usage_report',
+                RAISE INFO 'Processing % % for instrument % in t_emsl_instrument_usage_report',
                             _matchCount, public.check_plural(_matchCount, 'start time', 'start times'), _instrument;
 
                 RAISE INFO 'Filtering for start between % and %',

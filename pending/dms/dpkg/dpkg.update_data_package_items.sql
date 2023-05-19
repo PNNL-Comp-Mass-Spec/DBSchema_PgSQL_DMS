@@ -44,7 +44,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _authorized int := 0;
+    _authorized boolean := false;
     _entityName text;
     _logUsage bool := false;
     _usageMessage text;

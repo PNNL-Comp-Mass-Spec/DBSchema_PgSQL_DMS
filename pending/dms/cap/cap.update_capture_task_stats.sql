@@ -19,7 +19,8 @@ AS $$
 *****************************************************/
 DECLARE
     _statItem record;
-    _myRowCount int;
+    _updateCount int;
+    _insertCount int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -100,9 +101,9 @@ BEGIN
         WHERE t.instrument = s.instrument AND t.script = s.script AND t.year = s.year AND
               t.jobs < s.jobs;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := format('Updated %s rows in cap.t_capture_task_stats', _myRowCount);
+        _message := format('Updated %s rows in cap.t_capture_task_stats', _updateCount);
 
     Else
         INSERT INTO cap.t_capture_task_stats (script, instrument, year, jobs)
@@ -113,9 +114,9 @@ BEGIN
           jobs = Tmp_Capture_Task_Stats.jobs
           WHERE jobs < Tmp_Capture_Task_Stats.jobs;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _message := format('Added %s rows in cap.t_capture_task_stats', _myRowCount);
+        _message := format('Added %s rows in cap.t_capture_task_stats', _insertCount);
 
     End If;
 

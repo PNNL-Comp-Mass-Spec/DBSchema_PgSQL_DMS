@@ -115,7 +115,7 @@ BEGIN
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := Format('Found %s %s with', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
+        _message := format('Found %s %s with', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
 
     Else
         -- Update the rating

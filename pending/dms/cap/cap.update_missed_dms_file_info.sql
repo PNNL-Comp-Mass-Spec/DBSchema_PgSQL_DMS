@@ -29,7 +29,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int := 0;
     _datasetID int;
     _logMsg text;
     _logMsgType text;
@@ -84,10 +84,12 @@ BEGIN
     DELETE FROM Tmp_DatasetsToProcess
     WHERE NOT EXISTS (SELECT Dataset_ID FROM public.t_dataset WHERE Dataset_ID = Tmp_DatasetsToProcess.Dataset_ID);
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := format('Ignoring %s dataset(s) in cap.t_dataset_info_xml because they do not exist in public.t_dataset', _myRowCount);
+    If _matchCount > 0 Then
+        _message := format('Ignoring %s %s in cap.t_dataset_info_xml because they do not exist in public.t_dataset',
+                            _matchCount, public.check_plural(_matchCount, 'dataset', 'datasets'));
+
         Call public.post_log_entry('Info', _message, 'Update_Missed_DMS_File_Info', 'cap');
 
         --------------------------------------------

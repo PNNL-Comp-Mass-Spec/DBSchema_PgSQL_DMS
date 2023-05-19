@@ -63,7 +63,8 @@ BEGIN
     -- Lookup the most recent posting time
     -----------------------------------------------------
     --
-    SELECT MAX(entered) INTO _mostRecentPostingTime
+    SELECT MAX(entered)
+    INTO _mostRecentPostingTime
     FROM sw.t_job_step_processing_stats
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
@@ -112,7 +113,7 @@ BEGIN
 
             SELECT *
             FROM Tmp_JobStepProcessingStats
-            ORDER BY Job, Step
+            ORDER BY Job, Step;
         Else
             INSERT INTO sw.t_job_step_processing_stats( entered,
                                                      job,
@@ -138,11 +139,11 @@ BEGIN
             --
             GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-            _message := format('Appended %s rows to the Job Step Processing Stats table', _myRowCount);
+            _message := format('Appended %s rows to the Job Step Processing Stats table', _insertCount);
         End If;
 
     Else
-        _message := ('Update skipped since last update was %s minutes ago', round(_timeIntervalLastUpdateMinutes, 1));
+        _message := format('Update skipped since last update was %s minutes ago', round(_timeIntervalLastUpdateMinutes, 1));
     End If;
 
     DROP TABLE Tmp_JobStepProcessingStats;

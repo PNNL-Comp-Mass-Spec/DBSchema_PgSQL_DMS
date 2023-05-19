@@ -115,7 +115,7 @@ BEGIN
         --        ORDER BY entry_id
         --    LOOP
         --        ...
-        --    END LOOP
+        --    END LOOP;
 
         SELECT changes
         INTO _factorChanges

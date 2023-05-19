@@ -96,7 +96,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
+    _updateCount int;
     _job int;
     _jobsProcessed int;
     _jobCountToResume int;
@@ -282,7 +283,8 @@ BEGIN
         GET DIAGNOSTICS _jobCountToReset = ROW_COUNT;
 
         If _jobCountToReset > 0 Then
-            _statusMessage := 'Resetting %s completed %s', _jobCountToReset, public.check_plural(_jobCountToReset, 'job', 'jobs');
+            _statusMessage := format('Resetting %s completed %s',
+                                        _jobCountToReset, public.check_plural(_jobCountToReset, 'job', 'jobs');
 
             Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
@@ -310,17 +312,16 @@ BEGIN
               (NOT T.script IN ('LTQ_FTPek','ICR2LS')) AND
               (LookupQ.job IS NULL)                       -- Assure there are no running or finished steps
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            _jobCountToReset := _jobCountToReset + _myRowCount;
+        If _matchCount > 0 Then
+            _jobCountToReset := _jobCountToReset + _matchCount;
 
-            _statusMessage := 'Resetting ' || _myRowCount::text || ' job';
-            If _myRowCount <> 1 Then
-                _statusMessage := _statusMessage || 's that are In Progress, Failed, or Holding and have no completed or running job steps';
-            Else
-                _statusMessage := _statusMessage || ' that is In Progress, Failed, or Holding and has no completed or running job steps';
-            End If;
+            _statusMessage := format('Resetting %s %s that %s In Progress, Failed, or Holding and % no completed or running job steps',
+                                        _matchCount,
+                                        public.check_plural(_matchCount, 'job', 'jobs'),
+                                        public.check_plural(_matchCount, 'is',  'are'),
+                                        public.check_plural(_matchCount, 'has', 'have'));
 
             Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
@@ -331,7 +332,7 @@ BEGIN
                 VALUES ('No Jobs to Reset', 0);
             End If;
         Else
-        --<Reset>
+            -- Reset jobs
 
             If _maxJobsToProcess > 0 Then
                 -- Limit the number of jobs to reset
@@ -348,7 +349,6 @@ BEGIN
                      INNER JOIN sw.t_jobs T ON J.job = T.job
                 ORDER BY job
             Else
-            -- <ResetDeletes>
 
                 ---------------------------------------------------
                 -- Set up and populate temp table and call sproc
@@ -367,11 +367,12 @@ BEGIN
                         _message => _message,
                         _logDeletions => false);
 
-            End If; -- </ResetDeletes>
-        End If; --</Reset>
+            End If;
+        End If;
 
         If Not _infoOnly Or _infoOnly And _infoLevel = 2 Then
-            -- <ImportNewJobs>
+
+            -- Import new jobs
 
             If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
                 _loggingEnabled := true;
@@ -399,9 +400,8 @@ BEGIN
                   S.enabled = 'Y' AND
                   S.backfill_to_dms = 0
             ORDER BY job
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        End If; -- </ImportNewJobs>
+
+        End If;
 
         ---------------------------------------------------
         -- Find jobs to Resume or Reset
@@ -437,7 +437,7 @@ BEGIN
                 VALUES ('No Jobs to Resume', 0);
             End If;
         Else
-        --<ResumeOrReset>
+            -- Resume or reset jobs
 
             If _debugMode Then
                 INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, PipelineState)
@@ -451,7 +451,7 @@ BEGIN
             Else
                 _resumeUpdatesRequired := true;
             End If;
-        End If; -- </ResumeOrReset>
+        End If;
 
         If _debugMode Then
             INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, PipelineState)
@@ -468,7 +468,6 @@ BEGIN
                 VALUES ('No Jobs to Suspend', 0);
             End If;
         Else
-        -- <SuspendUpdates>
 
             ---------------------------------------------------
             -- Find jobs to suspend
@@ -490,24 +489,19 @@ BEGIN
                                    FROM Tmp_DMSJobs
                                    WHERE state = 8 ))
                --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                _statusMessage := 'Suspended ' || _myRowCount::text || ' job';
-                If _myRowCount <> 1 Then
-                    _statusMessage := _statusMessage || 's';
-                End If;
+            If _updateCount > 0 Then
+                _statusMessage := format('Suspended %s %s', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
                 Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
             End If;
-        End If; -- </SuspendUpdates>
-
+        End If;
     END;
 
     -- Commit changes
     COMMIT;
 
     If _resumeUpdatesRequired Then
-    -- <ResumeUpdates>
 
         ---------------------------------------------------
         -- Process the jobs that need to be resumed
@@ -657,7 +651,7 @@ BEGIN
         -- Commit changes
         COMMIT;
 
-    End If; -- </ResumeUpdates>
+    End If;
 
     If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
         _loggingEnabled := true;
@@ -675,12 +669,6 @@ BEGIN
         FROM Tmp_JobDebugMessages
         ORDER BY EntryID;
     End If;
-
-                DROP TABLE Tmp_DMSJobs;
-                DROP TABLE Tmp_ResetJobs;
-                DROP TABLE Tmp_JobsToResumeOrReset;
-                DROP TABLE Tmp_JobDebugMessages;
-
 
     DROP TABLE Tmp_DMSJobs;
     DROP TABLE Tmp_ResetJobs;

@@ -215,7 +215,11 @@ BEGIN
         FOR _previewInfo IN
             EXECUTE _s;
         LOOP
-            RAISE INFO '%', format('Rule %s, %s datasets, date range %s to %s', _previewInfo.RuleID, _previewInfo.DatasetCount, _previewInfo.Dataset_Date_Min, _previewInfo.Dataset_Date_Max);
+            RAISE INFO '%', format('Rule %s, %s datasets, date range %s to %s',
+                                    _previewInfo.RuleID,
+                                    _previewInfo.DatasetCount,
+                                    _previewInfo.Dataset_Date_Min,
+                                    _previewInfo.Dataset_Date_Max);
 
             -- ToDo: Show the other info stored in _predefineInfo
         END LOOP;

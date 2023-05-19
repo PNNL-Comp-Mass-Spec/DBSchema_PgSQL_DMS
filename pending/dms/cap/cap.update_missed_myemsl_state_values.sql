@@ -28,7 +28,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int;
+    _idList text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -70,14 +71,20 @@ BEGIN
                      ) LookupQ
            ON DA.Dataset_ID = LookupQ.dataset_id
     WHERE MyEMSL_State < 1;
+    --
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    If FOUND Then
-        _message := 'Found ' || _myRowCount::text || public.check_plural(_myRowCount, ' dataset that needs', ' datasets that need') || ' MyEMSLState set to 1: ';
+    If _matchCount > 0 Then
 
-        -- Append the dataset IDs
-        SELECT string_agg(EntityID), ', ' ORDER BY EntityID)
-        INTO _message
+        -- Construct the list of dataset IDs
+        SELECT string_agg(EntityID, ', ' ORDER BY EntityID)
+        INTO _idList
         FROM Tmp_IDsToUpdate;
+
+        _message := format('Found %s %s MyEMSLState set to 1: %s',
+                            _matchCount,
+                            public.check_plural(_matchCount, 'dataset that needs', 'datasets that need'),
+                            _idList);
 
         If _infoOnly Then
             RAISE INFO '%', _message;
@@ -86,7 +93,7 @@ BEGIN
             UPDATE public.T_Dataset_Archive
             SET MyEMSLState = 1
             WHERE AS_Dataset_ID IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
-                  MyEMSLState < 1
+                  MyEMSLState < 1;
 
             Call public.post_log_entry('Warning', _message, 'Update_Missed_MyEMSL_State_Values', 'cap');
 
@@ -100,7 +107,7 @@ BEGIN
                                   ON M.dataset_id = U.EntityID
                            WHERE M.error_code = 0 ) AND
                   State = 3 AND
-                  Tool IN ('ArchiveVerify', 'ArchiveStatusCheck')
+                  Tool IN ('ArchiveVerify', 'ArchiveStatusCheck');
 
         End If;
     End If;
@@ -124,15 +131,21 @@ BEGIN
                      ) LookupQ
            ON T.dataset_id = LookupQ.dataset_id AND
               T.results_folder_name = LookupQ.subfolder
-    WHERE T.AJ_MyEMSLState < 1
+    WHERE T.AJ_MyEMSLState < 1;
+     --
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    If FOUND Then
-        _message := 'Found ' || _myRowCount::text || public.check_plural(_myRowCount, ' capture task job that needs', ' capture task jobs that need') || ' MyEMSLState set to 1: ';
+    If _matchCount > 0 Then
 
-        -- Append the capture task job IDs
-        SELECT string_agg(EntityID), ', ' ORDER BY EntityID)
-        INTO _message
+        -- Construct the list of capture task job IDs
+        SELECT string_agg(EntityID, ', ' ORDER BY EntityID)
+        INTO _idList
         FROM Tmp_IDsToUpdate;
+
+        _message := format('Found %s %s MyEMSLState set to 1: %s',
+                            _matchCount,
+                            public.check_plural(_matchCount, 'capture task job that needs', 'capture task jobs that need'),
+                            _idList);
 
         If _infoOnly Then
             RAISE INFO '%', _message;

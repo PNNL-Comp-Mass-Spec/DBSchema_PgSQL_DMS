@@ -27,7 +27,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _nameValidationIteration int := 1;
     _userFieldName text := '';
     _cleanNameList text;
@@ -62,22 +61,18 @@ BEGIN
     WHILE _nameValidationIteration <= 2
     LOOP
 
-        DELETE FROM Tmp_UserInfo
+        DELETE FROM Tmp_UserInfo;
 
         If _nameValidationIteration = 1 Then
             INSERT INTO Tmp_UserInfo ( Name_and_Username )
             SELECT Value
-            FROM public.parse_delimited_list(_requestedPersonnel, ';')
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            FROM public.parse_delimited_list(_requestedPersonnel, ';');
 
             _userFieldName := 'requested personnel';
         Else
             INSERT INTO Tmp_UserInfo ( Name_and_Username )
             SELECT Value
-            FROM public.parse_delimited_list(_assignedPersonnel, ';')
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            FROM public.parse_delimited_list(_assignedPersonnel, ';');
 
             _userFieldName := 'assigned personnel';
         End If;

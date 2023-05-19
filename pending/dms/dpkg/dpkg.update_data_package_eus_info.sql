@@ -29,9 +29,9 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _dataPackageCount int := 0;
-    _authorized int := 0;
+    _updateCount int
+    _authorized boolean;
     _firstID int;
 BEGIN
     _message := '';
@@ -69,47 +69,48 @@ BEGIN
     -- Populate a temporary table with the data package IDs to update
     ---------------------------------------------------
 
-    CREATE Temp TABLE TmpDataPackagesToUpdate (
+    CREATE TEMP TABLE Tmp_DataPackagesToUpdate (
         ID int not NULL,
         Best_EUS_Proposal_ID text NULL,
         Best_Instrument_Name text NULL,
         Best_EUS_Instrument_ID int NULL
-    )
+    );
 
-    CREATE INDEX IX_TmpDataPackagesToUpdate ON TmpDataPackagesToUpdate
+    CREATE INDEX IX_Tmp_DataPackagesToUpdate ON Tmp_DataPackagesToUpdate
     (
         ID ASC
-    )
+    );
 
     If _dataPackageList = '' Or _dataPackageList = '0' or _dataPackageList = ',' Then
-        INSERT INTO TmpDataPackagesToUpdate (data_pkg_id)
+        INSERT INTO Tmp_DataPackagesToUpdate (data_pkg_id)
         SELECT data_pkg_id
-        FROM dpkg.t_data_package
+        FROM dpkg.t_data_package;
     Else
-        INSERT INTO TmpDataPackagesToUpdate (data_pkg_id)
+        INSERT INTO Tmp_DataPackagesToUpdate (data_pkg_id)
         SELECT data_pkg_id
         FROM dpkg.t_data_package
-        WHERE data_pkg_id IN ( SELECT "Value"
-                      FROM public.parse_delimited_integer_list ( _dataPackageList, ',' ) )
+        WHERE data_pkg_id IN (
+                SELECT Value
+                FROM public.parse_delimited_integer_list ( _dataPackageList, ',' ) );
     End If;
 
-    _myRowCount := 0;
-    SELECT COUNT(*) INTO _myRowCount
-    FROM TmpDataPackagesToUpdate
-
-    _dataPackageCount := Coalesce(_myRowCount, 0);
+    SELECT COUNT(*)
+    INTO _dataPackageCount
+    FROM Tmp_DataPackagesToUpdate;
 
     If _dataPackageCount = 0 Then
         _message := 'No valid data packages were found in the list: ' || _dataPackageList;
         RAISE INFO '%', _message;
-        Return;
+
+        DROP TABLE Tmp_DataPackagesToUpdate;
+        RETURN;
     Else
         If _dataPackageCount > 1 Then
             _message := 'Updating ' || Cast(_dataPackageCount as text) || ' data packages';
         Else
 
             SELECT ID INTO _firstID
-            FROM TmpDataPackagesToUpdate
+            FROM Tmp_DataPackagesToUpdate
 
             _message := 'Updating data package ' || Cast(_firstID as text);
         End If;
@@ -121,31 +122,20 @@ BEGIN
     -- Update the EUS Person ID of the data package owner
     ---------------------------------------------------
 
-    UPDATE dpkg.t_data_package
+    UPDATE dpkg.t_data_package DP
     SET eus_person_id = EUSUser.eus_person_id
-    FROM dpkg.t_data_package DP
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table package_name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE dpkg.t_data_package
-    **   SET ...
-    **   FROM source
-    **   WHERE source.data_pkg_id = dpkg.t_data_package.data_pkg_id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN TmpDataPackagesToUpdate Src
-           ON DP.ID = Src.ID
+    FROM Tmp_DataPackagesToUpdate Src
          INNER JOIN V_EUS_User_ID_Lookup EUSUser
            ON DP.Owner = EUSUser.Username
-    WHERE Coalesce(DP.EUS_Person_ID, '') <> Coalesce(EUSUser.EUS_Person_ID, '')
+    WHERE DP.ID = Src.ID AND
+          Coalesce(DP.EUS_Person_ID, '') <> Coalesce(EUSUser.EUS_Person_ID, '');
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 And _dataPackageCount > 1 Then
-        _message := 'Updated EUS_Person_ID for ' || Cast(_myRowCount as text) + public.check_plural(_myRowCount, ' data package', ' data packages');
+    If _updateCount > 0 And _dataPackageCount > 1 Then
+        _message := format('Updated EUS_Person_ID for %s %s',
+                            _updateCount, public.check_plural(_updateCount, 'data package', 'data packages'));
+
         Call public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
     End If;
 
@@ -154,61 +144,46 @@ BEGIN
     -- Exclude proposals that start with EPR since those are not official EUS proposals
     ---------------------------------------------------
     --
-    UPDATE TmpDataPackagesToUpdate
+    UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_EUS_Proposal_ID = FilterQ.EUS_Proposal_ID
-    FROM TmpDataPackagesToUpdate Target
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE #TmpDataPackagesToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = #TmpDataPackagesToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT RankQ.data_pkg_id,
-                             RankQ.EUS_Proposal_ID
-                      FROM ( SELECT data_pkg_id,
-                                    EUS_Proposal_ID,
-                                    ProposalCount,
-                                    Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By ProposalCount DESC ) AS CountRank
-                             FROM ( SELECT DPD.data_pkg_id,
-                                           DR.Proposal AS EUS_Proposal_ID,
-                                           COUNT(*) AS ProposalCount
-                                    FROM dpkg.t_data_package_datasets DPD
-                                         INNER JOIN TmpDataPackagesToUpdate Src
-                                           ON DPD.data_pkg_id = Src.ID
-                                         INNER JOIN V_Dataset_List_Report_2 DR
-                                           ON DPD.dataset_id = DR.ID
-                                    WHERE NOT DR.Proposal IS NULL AND NOT DR.Proposal LIKE 'EPR%'
-                                    GROUP BY DPD.data_pkg_id, DR.Proposal
-                                  ) SourceQ
-                           ) RankQ
-                      WHERE RankQ.CountRank = 1
-                     ) FilterQ
-           ON Target.ID = FilterQ.data_pkg_id
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    FROM ( SELECT RankQ.data_pkg_id,
+                  RankQ.EUS_Proposal_ID
+           FROM ( SELECT data_pkg_id,
+                         EUS_Proposal_ID,
+                         ProposalCount,
+                         Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By ProposalCount DESC ) AS CountRank
+                  FROM ( SELECT DPD.data_pkg_id,
+                                DR.Proposal AS EUS_Proposal_ID,
+                                COUNT(*) AS ProposalCount
+                         FROM dpkg.t_data_package_datasets DPD
+                              INNER JOIN Tmp_DataPackagesToUpdate Src
+                                ON DPD.data_pkg_id = Src.ID
+                              INNER JOIN V_Dataset_List_Report_2 DR
+                                ON DPD.dataset_id = DR.ID
+                         WHERE NOT DR.Proposal IS NULL AND NOT DR.Proposal LIKE 'EPR%'
+                         GROUP BY DPD.data_pkg_id, DR.Proposal
+                       ) SourceQ
+                ) RankQ
+           WHERE RankQ.CountRank = 1
+          ) FilterQ
+    WHERE Target.ID = FilterQ.data_pkg_id;
 
     ---------------------------------------------------
-    -- Look for any data packages that have a null Best_EUS_Proposal_ID in TmpDataPackagesToUpdate
+    -- Look for any data packages that have a null Best_EUS_Proposal_ID in Tmp_DataPackagesToUpdate
     -- yet have entries defined in dpkg.t_data_package_eus_proposals
     ---------------------------------------------------
     --
-    UPDATE TmpDataPackagesToUpdate
+    UPDATE Tmp_DataPackagesToUpdate
     SET Best_EUS_Proposal_ID = FilterQ.Proposal_ID
-    FROM TmpDataPackagesToUpdate Target
+    FROM Tmp_DataPackagesToUpdate Target
 
     /********************************************************************************
     ** This UPDATE query includes the target table name in the FROM clause
     ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE #TmpDataPackagesToUpdate
+    **   UPDATE #Tmp_DataPackagesToUpdate
     **   SET ...
     **   FROM source
-    **   WHERE source.id = #TmpDataPackagesToUpdate.id;
+    **   WHERE source.id = #Tmp_DataPackagesToUpdate.id;
     ********************************************************************************/
 
                            ToDo: Fix this query
@@ -221,15 +196,15 @@ BEGIN
                                     Row_Number() OVER ( Partition By data_pkg_id Order By item_added DESC ) AS IdRank
                              FROM dpkg.t_data_package_eus_proposals
                              WHERE (data_pkg_id IN ( SELECT ID
-                                                         FROM TmpDataPackagesToUpdate
+                                                         FROM Tmp_DataPackagesToUpdate
 
                                                          /********************************************************************************
                                                          ** This UPDATE query includes the target table name in the FROM clause
                                                          ** The WHERE clause needs to have a self join to the target table, for example:
-                                                         **   UPDATE #TmpDataPackagesToUpdate
+                                                         **   UPDATE #Tmp_DataPackagesToUpdate
                                                          **   SET ...
                                                          **   FROM source
-                                                         **   WHERE source.id = #TmpDataPackagesToUpdate.id;
+                                                         **   WHERE source.id = #Tmp_DataPackagesToUpdate.id;
                                                          ********************************************************************************/
 
                                                                                 ToDo: Fix this query
@@ -238,25 +213,23 @@ BEGIN
                            ) RankQ
                       WHERE RankQ.IdRank = 1
                     ) FilterQ
-           ON Target.ID = FilterQ.Data_Package_ID
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+           ON Target.ID = FilterQ.Data_Package_ID;
 
     ---------------------------------------------------
     -- Find the most common Instrument used by the datasets associated with each data package
     ---------------------------------------------------
     --
-    UPDATE TmpDataPackagesToUpdate
+    UPDATE Tmp_DataPackagesToUpdate
     SET Best_Instrument_Name = FilterQ.Instrument
-    FROM TmpDataPackagesToUpdate Target
+    FROM Tmp_DataPackagesToUpdate Target
 
     /********************************************************************************
     ** This UPDATE query includes the target table name in the FROM clause
     ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE #TmpDataPackagesToUpdate
+    **   UPDATE #Tmp_DataPackagesToUpdate
     **   SET ...
     **   FROM source
-    **   WHERE source.id = #TmpDataPackagesToUpdate.id;
+    **   WHERE source.id = #Tmp_DataPackagesToUpdate.id;
     ********************************************************************************/
 
                            ToDo: Fix this query
@@ -271,7 +244,7 @@ BEGIN
                                            DPD.instrument,
                                            COUNT(*) AS InstrumentCount
          FROM dpkg.t_data_package_datasets DPD
-                                         INNER JOIN TmpDataPackagesToUpdate Src
+                                         INNER JOIN Tmp_DataPackagesToUpdate Src
                                            ON DPD.data_pkg_id = Src.ID
                                     WHERE NOT DPD.instrument Is Null
                                     GROUP BY DPD.data_pkg_id, DPD.instrument
@@ -279,33 +252,29 @@ BEGIN
                            ) RankQ
                       WHERE RankQ.CountRank = 1
                      ) FilterQ
-           ON Target.ID = FilterQ.data_pkg_id
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+           ON Target.ID = FilterQ.data_pkg_id;
 
     ---------------------------------------------------
-    -- Update EUS_Instrument_ID in TmpDataPackagesToUpdate
+    -- Update EUS_Instrument_ID in Tmp_DataPackagesToUpdate
     ---------------------------------------------------
     --
-    UPDATE TmpDataPackagesToUpdate
+    UPDATE Tmp_DataPackagesToUpdate
     SET Best_EUS_Instrument_ID = EUSInst.EUS_Instrument_ID
-    FROM TmpDataPackagesToUpdate Target
+    FROM Tmp_DataPackagesToUpdate Target
 
     /********************************************************************************
     ** This UPDATE query includes the target table name in the FROM clause
     ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE #TmpDataPackagesToUpdate
+    **   UPDATE #Tmp_DataPackagesToUpdate
     **   SET ...
     **   FROM source
-    **   WHERE source.id = #TmpDataPackagesToUpdate.id;
+    **   WHERE source.id = #Tmp_DataPackagesToUpdate.id;
     ********************************************************************************/
 
                            ToDo: Fix this query
 
          INNER JOIN V_EUS_Instrument_ID_Lookup EUSInst
-           ON Target.Best_Instrument_Name = EUSInst.Instrument_Name
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+           ON Target.Best_Instrument_Name = EUSInst.Instrument_Name;
 
     ---------------------------------------------------
     -- Update EUS Proposal data_pkg_id, eus_instrument_id, and Instrument_ID as necessary
@@ -329,16 +298,18 @@ BEGIN
 
                            ToDo: Fix this query
 
-         INNER JOIN TmpDataPackagesToUpdate Src
+         INNER JOIN Tmp_DataPackagesToUpdate Src
            ON DP.ID = Src.ID
     WHERE Coalesce(DP.EUS_Proposal_ID, '') <> Src.Best_EUS_Proposal_ID OR
           Coalesce(DP.EUS_Instrument_ID, '') <> Src.Best_EUS_Instrument_ID OR
           Coalesce(DP.Instrument, '') <> Src.Best_Instrument_Name
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 And _dataPackageCount > 1 Then
-        _message := 'Updated EUS_Proposal_ID, EUS_Instrument_ID, and/or Instrument name for ' || Cast(_myRowCount as text) + public.check_plural(_myRowCount, ' data package', ' data packages');
+    If _updateCount > 0 And _dataPackageCount > 1 Then
+        _message := format('Updated EUS_Proposal_ID, EUS_Instrument_ID, and/or Instrument name for %s %s',
+                            _updateCount, public.check_plural(_updateCount, 'data package', 'data packages'));
+
         Call public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
     End If;
 

@@ -33,7 +33,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _matchCount int := 0;
     _newState int;
 
     _stepInfo record;
@@ -138,9 +138,9 @@ BEGIN
              T.Priority, TS.Tool, TS.Output_Folder_Name
     HAVING TS.Dependencies = SUM(TSD.Evaluated)
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    _candidateStepCount := _myRowCount;
+    _candidateStepCount := _matchCount;
 
     ---------------------------------------------------
     -- Add waiting steps that have no dependencies
@@ -162,9 +162,9 @@ BEGIN
     WHERE TS.State = 1 AND
           TS.Dependencies = 0
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    _candidateStepCount := _candidateStepCount + _myRowCount;
+    _candidateStepCount := _candidateStepCount + _matchCount;
 
     If _candidateStepCount = 0 Then
         -- Nothing to do
@@ -379,11 +379,11 @@ BEGIN
 
         If _maxJobsToProcess > 0 Then
             SELECT COUNT(DISTINCT Job)
-            INTO _myRowCount
+            INTO _matchCount
             FROM T_Tmp_Steplist
             WHERE ProcessingOrder <= _stepInfo.ProcessingOrder;
 
-            If Coalesce(_myRowCount, 0) >= _maxJobsToProcess Then
+            If Coalesce(_matchCount, 0) >= _maxJobsToProcess Then
                 -- Break out of the For loop
                 EXIT;
             End If;

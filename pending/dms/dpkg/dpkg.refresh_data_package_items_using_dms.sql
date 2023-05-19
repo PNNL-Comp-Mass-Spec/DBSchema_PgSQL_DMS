@@ -18,7 +18,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _message text;
 BEGIN
     _message := '';
@@ -35,10 +35,11 @@ BEGIN
     WHERE Target.Data_Package_ID = _packageID And
           Target.Dataset_ID = DS.Dataset_ID;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := 'Updated the experiment name for ' || _myRowCount::text || ' datasets associated with data package ' || _packageID::text;
+    If _updateCount > 0 Then
+        _message := format('Updated the experiment name for %s %s associated with data package %s',
+                            _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'), _packageID);
 
         Call public.post_log_entry ('Info', _message, 'Refresh_Data_Package_Items_Using_DMS', 'dpkg');
     End If;
@@ -53,17 +54,15 @@ BEGIN
         public.T_Cell_Culture CC ON C.Campaign_ID = CC.CC_Campaign_ID INNER JOIN
         dpkg.t_data_package_biomaterial Target ON CC.CC_ID = Target.biomaterial_id AND C.Campaign_Num <> Target.campaign
     WHERE (Target.data_pkg_id = _packageID)
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        _message := 'Updated the campaign name for ' || _myRowCount::text || ' biomaterial entries associated with data package ' || _packageID::text;
+    If _updateCount > 0 Then
+        _message := format('Updated the campaign name for %s biomaterial %s associated with data package %s',
+                             _updateCount, public.check_plural(_updateCount, 'item', 'items'), _packageID);
 
         Call public.post_log_entry ('Info', _message, 'Refresh_Data_Package_Items_Using_DMS', 'dpkg');
     End If;
-
-     ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-    return _myError
 
 END
 $$;

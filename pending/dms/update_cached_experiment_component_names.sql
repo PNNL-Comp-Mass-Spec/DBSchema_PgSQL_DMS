@@ -168,7 +168,7 @@ BEGIN
             --        ORDER BY entry_id
             --    LOOP
             --        ...
-            --    END LOOP
+            --    END LOOP;
 
 
             SELECT Exp_ID INTO _currentExpID
@@ -219,7 +219,7 @@ BEGIN
             --        ORDER BY entry_id
             --    LOOP
             --        ...
-            --    END LOOP
+            --    END LOOP;
 
 
             SELECT Exp_ID INTO _currentExpID

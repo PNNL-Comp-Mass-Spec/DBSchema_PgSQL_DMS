@@ -46,7 +46,7 @@ AS $$
 *****************************************************/
 DECLARE
     _logErrors int := 0;
-    _authorized int := 0;
+    _authorized boolean := false;
     _rootPath int;
     _badIDs text := '';
     _goodIDs text := '';

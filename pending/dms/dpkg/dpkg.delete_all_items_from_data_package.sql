@@ -24,7 +24,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _authorized int := 0;
+    _authorized boolean := false;
 
     _sqlState text;
     _exceptionMessage text;

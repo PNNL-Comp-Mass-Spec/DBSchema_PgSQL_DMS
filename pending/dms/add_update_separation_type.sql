@@ -192,13 +192,13 @@ BEGIN
                 SET active = _stateInt
                 WHERE separation_type_id = _id;
 
-                _message := 'Updated state to ' || _state || '; any other changes were ignored because this separation type is associated with ' || _datasetDescription;
+                _message := format('Updated state to %s; any other changes were ignored because this separation type is associated with %s', _state, _datasetDescription);
 
                 RETURN;
             End If;
 
-            _message := 'Separation Type ID ' || _id::text || ' is associated with ' || _datasetDescription ||
-                        ', most recently ' || _datasetName || '; contact a DMS admin to update the configuration'
+            _message := format('Separation Type ID %s is associated with %s, most recently %s; contact a DMS admin to update the configuration',
+                                _id, _datasetDescription, _datasetName);
 
             RAISE WARNING '%', _message;
 

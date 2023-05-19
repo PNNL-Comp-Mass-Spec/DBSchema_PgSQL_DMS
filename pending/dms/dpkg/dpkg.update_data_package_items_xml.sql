@@ -38,7 +38,7 @@ AS $$
 *****************************************************/
 DECLARE
     _itemCountChanged int := 0;
-    _authorized int := 0;
+    _authorized boolean := false;
     _logUsage bool := false;
     _logMessage text;
     _xml xml;

@@ -29,7 +29,7 @@ AS $$
 *****************************************************/
 DECLARE
     _debugMode int := 0;
-    _authorized int := 0;
+    _authorized boolean := false;
 
     _sqlState text;
     _exceptionMessage text;

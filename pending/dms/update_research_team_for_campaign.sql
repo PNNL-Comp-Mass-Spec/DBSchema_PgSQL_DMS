@@ -200,7 +200,7 @@ BEGIN
         --        ORDER BY entry_id
         --    LOOP
         --        ...
-        --    END LOOP
+        --    END LOOP;
 
         SELECT EntryID,
                Username

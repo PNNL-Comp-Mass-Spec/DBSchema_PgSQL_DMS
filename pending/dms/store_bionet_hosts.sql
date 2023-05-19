@@ -134,7 +134,7 @@ BEGIN
         --        ORDER BY entry_id
         --    LOOP
         --        ...
-        --    END LOOP
+        --    END LOOP;
 
         SELECT Value
         INTO _row

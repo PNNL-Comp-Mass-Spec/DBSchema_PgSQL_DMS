@@ -91,19 +91,6 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
-
---   _candidateJobStepsToRetrieve int := 25;
---   _excludeCaptureTasks int := 0;
---   _authorized int := 0;
-
---   _machine text;
---   _num_tools int := 0;
---   _processorIsAssigned int := 0;
---   _processorLockedToInstrument int := 0;
-
---   _step int := 0;
---   _stepTool text;
---   _machineLockedStepTools text := null;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -585,7 +572,7 @@ BEGIN
 
             If Exists (Select * From Tmp_CandidateJobSteps) Then
 
-                RAISE INFO '%', format('Candidate capture task job steps for %s', _processorName);
+                RAISE INFO 'Candidate capture task job steps for %', _processorName;
 
                 -- ToDo: Update this to use RAISE INFO
 
@@ -599,7 +586,7 @@ BEGIN
 
             Else
 
-                RAISE INFO '%', format('No candidate capture task job steps found for %s (capture task jobs with step tools %s only assigned if dataset stored on %s)',
+                RAISE INFO 'No candidate capture task job steps found for % (capture task jobs with step tools % only assigned if dataset stored on %)',
                                 _processorName, _machineLockedStepTools, _machine);
 
                 If _processorLockedToInstrument > 0 THEN

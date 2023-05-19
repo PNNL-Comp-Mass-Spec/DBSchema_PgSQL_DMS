@@ -69,8 +69,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _returnCode text;
+    _matchCount int := 0;
     _curJob int := 0;
     _done boolean;
     _jobInfo record;
@@ -199,9 +198,9 @@ BEGIN
     ) UpdateQ
     WHERE UpdateQ.OldState <> UpdateQ.NewState
     --
-    GET DIAGNOSTICS _jobCountToProcess = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
     --
-    _jobCountToProcess := _myRowCount;
+    _jobCountToProcess := _matchCount;
 
     ---------------------------------------------------
     -- Find DatasetArchive and ArchiveUpdate tasks that are
@@ -236,9 +235,9 @@ BEGIN
           ( (T.Script = 'DatasetArchive' AND T.State = 2 AND DAS.AS_state_ID = 6) OR
             (T.Script = 'ArchiveUpdate'  AND T.State = 2 AND DAS.AS_update_state_ID = 5) )
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
     --
-    _jobCountToProcess := _jobCountToProcess + _myRowCount;
+    _jobCountToProcess := _jobCountToProcess + _matchCount;
 
     ---------------------------------------------------
     -- Find failed capture task jobs that do not have any failed steps
@@ -268,9 +267,9 @@ BEGIN
           NOT Job IN (SELECT Job FROM cap.t_task_steps where state = 6) AND
           NOT Job In (SELECT Job FROM Tmp_ChangedJobs)
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
     --
-    _jobCountToProcess := _jobCountToProcess + _myRowCount;
+    _jobCountToProcess := _jobCountToProcess + _matchCount;
 
     ---------------------------------------------------
     -- Loop through capture task jobs whose state has changed
