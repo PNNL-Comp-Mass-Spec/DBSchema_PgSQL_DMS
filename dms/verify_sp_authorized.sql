@@ -52,6 +52,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          08/26/2022 mem - Change _logError and _infoOnly to booleans
 **          02/14/2023 mem - Use case-insensitive comparisons with procedure_name and login_name
 **          05/10/2023 mem - Simplify call to post_log_entry()
+**          05/17/2023 mem - Change _authorized from int to boolean
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,7 @@ DECLARE
     _procedureNameWithSchema text;
     _s text;
     _result int;
-    _authorized int := 0;
+    _authorized boolean := false;
     _message text;
 
     _sqlState text;
@@ -140,7 +141,7 @@ BEGIN
     USING _procedureName, _userName, host(_clientHostIP);
 
     If _result > 0 Then
-        _authorized := 1;
+        _authorized := true;
     Else
         _s := format(
                 'SELECT COUNT(*) '
@@ -155,13 +156,13 @@ BEGIN
         USING _userName, host(_clientHostIP);
 
         If _result > 0 Then
-            _authorized := 1;
+            _authorized := true;
         End If;
     End If;
 
     _procedureNameWithSchema := format('%I.%I', _targetSchema, _procedureName);
 
-    If _authorized > 0 Then
+    If _authorized Then
         RETURN QUERY
         SELECT true, _procedureName, _userName, host(_clientHostIP), '' as message;
 
