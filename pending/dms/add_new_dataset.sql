@@ -325,7 +325,7 @@ BEGIN
     If _experimentName = '' Then
         If _datasetName Like 'Blank%' Then
             _experimentName := 'Blank';
-        ElsIf _datasetName Like 'QC_Shew[_-][0-9][0-9][_-][0-9][0-9]%' Then
+        ElsIf _datasetName Similar To 'QC_Shew[_-][0-9][0-9][_-][0-9][0-9]%' Then
             _experimentName := Substring(_datasetName, 1, 13);
         End If;
     End If;
@@ -356,7 +356,7 @@ BEGIN
         _comment := Substring(_comment, 1, char_length(_comment) - 8);
     End If;
 
-    If _captureSubdirectory SIMILAR TO '[A-Z]:\%' OR _captureSubdirectory LIKE '\\%' Then
+    If _captureSubdirectory Similar To '[A-Z]:\%' OR _captureSubdirectory LIKE '\\%' Then
         _message := 'Capture subfolder is not a relative path for dataset ' || _datasetName || '; ignoring ' || _captureSubdirectory;
 
         Call post_log_entry ('Error', _message, 'Add_New_Dataset');

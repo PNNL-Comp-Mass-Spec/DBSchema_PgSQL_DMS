@@ -221,7 +221,7 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If _datasetName SIMILAR TO '%[.]raw' Or _datasetName Like '%[.]wiff' Or _datasetName Like '%[.]d' Then
+        If _datasetName Similar To '%[.]raw' Or _datasetName Similar To '%[.]wiff' Or _datasetName Like '%[.]d' Then
             _msg := 'Dataset name may not end in .raw, .wiff, or .d';
             RAISE EXCEPTION '%', _msg;
         End If;

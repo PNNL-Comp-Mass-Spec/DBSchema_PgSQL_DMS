@@ -115,8 +115,8 @@ BEGIN
            SUM(CASE WHEN ScanType LIKE '%EThcD-MSn'  Then 1 Else 0 End) AS ActualCountETh
            SUM(CASE WHEN ScanType LIKE '%EThcD-HMSn' Then 1 Else 0 End) AS ActualCountETh
 
-           SUM(CASE WHEN ScanType SIMILAR TO '%SRM' or ScanType LIKE '%MRM' OR ScanType LIKE 'Q[1-3]MS' Then 1 Else 0 End) AS ActualCountMRM
-           SUM(CASE WHEN ScanType LIKE '%PQD%' Then 1 Else 0 End)                                                          AS ActualCountPQD
+           SUM(CASE WHEN ScanType SIMILAR TO '%SRM' Or ScanType LIKE '%MRM' OR ScanType SIMILAR TO 'Q[1-3]MS' Then 1 Else 0 End) AS ActualCountMRM
+           SUM(CASE WHEN ScanType LIKE '%PQD%' Then 1 Else 0 End)                                                                AS ActualCountPQD
     INTO _scanCounts
     FROM t_dataset_scan_types
     WHERE dataset_id = _datasetID

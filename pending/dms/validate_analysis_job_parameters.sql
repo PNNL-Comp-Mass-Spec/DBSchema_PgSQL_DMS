@@ -384,7 +384,7 @@ BEGIN
     _result := 0;
     --
     If _paramFileName <> 'na' Then
-        If _paramFileName SIMILAR TO 'MSGFDB[_]%' Then
+        If _paramFileName Similar To 'MSGFDB[_]%' Then
             _paramFileName := 'MSGFPlus_' || Substring(_paramFileName, 8, 500);
         End If;
 
@@ -692,14 +692,13 @@ BEGIN
                     'Shew_MR1_GOs_Meso_2009-02-11.fasta',
                     'Switchgrass_Rhiz_MG-RAST_metagenome_DecoyWithContams_2013-10-10.fasta')
             Begin
-                If Not Then
-                ( _paramFileName Like '%PartTryp_NoMods%' Or;
-                End If;
+                If Not
+                  ( _paramFileName Like '%PartTryp_NoMods%' Or
                     _paramFileName Like '%PartTryp_StatCysAlk.txt' Or
-                    _paramFileName SIMILAR TO '%PartTryp_StatCysAlk_[0-9]%ppm%' Or
-                    _paramFileName SIMILAR TO '%[_]Tryp[_]%'
-                )
-                Begin
+                    _paramFileName Similar To '%PartTryp_StatCysAlk_[0-9]%ppm%' Or
+                    _paramFileName Similar To '%[_]Tryp[_]%'
+                  )
+                Then
                     _message := 'Legacy fasta file "' || _organismDBName || '" is very large (' || _sizeDescription || '); you must choose a parameter file that is fully tryptic (MSGFPlus_Tryp_) or is partially tryptic but has no dynamic mods (MSGFPlus_PartTryp_NoMods)';
                     _returnCode := 'U5350';
 

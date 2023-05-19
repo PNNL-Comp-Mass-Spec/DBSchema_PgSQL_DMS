@@ -125,6 +125,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          03/27/2023 mem - Remove dash from DiaNN tool name
 **                         - Cast _paramFileType to citext
 **          05/12/2023 mem - Rename variables
+**          05/19/2023 mem - Use Similar To when using square brackets to match text
 **
 *****************************************************/
 DECLARE
@@ -479,7 +480,7 @@ BEGIN
         If _paramFileType::citext = 'MSFragger' Then
             _rowParsed := true;
 
-            If _row SIMILAR TO 'variable[_]mod%' Then
+            If _row Similar To 'variable[_]mod%' Then
                 _charIndex := Position('=' In _row);
                 If _charIndex > 0 Then
                     _rowValue := Trim(Substring(_row, _charIndex+1, char_length(_row)));
@@ -488,13 +489,13 @@ BEGIN
                     SELECT Entry_ID, Value
                     FROM public.parse_delimited_list_ordered(_rowValue, ' ', 0);
 
-                    Update Tmp_ModDef
-                    Set Value = 'DynamicMod=' || Value
-                    Where EntryID = 1;
+                    UPDATE Tmp_ModDef
+                    SET Value = 'DynamicMod=' || Value
+                    WHERE EntryID = 1;
                 End If;
             End If;
 
-            If _row SIMILAR TO 'add[_]%' Then
+            If _row Similar To 'add[_]%' Then
                 _charIndex := Position('=' In _row);
                 If _charIndex > 0 Then
                     _rowKey := Trim(Substring(_row, 1, _charIndex-1));
@@ -504,35 +505,35 @@ BEGIN
                     SELECT Entry_ID, Value
                     FROM public.parse_delimited_list_ordered(_rowValue, ' ', 0);
 
-                    Update Tmp_ModDef
-                    Set Value = 'StaticMod=' || Value
-                    Where EntryID = 1;
+                    UPDATE Tmp_ModDef
+                    SET Value = 'StaticMod=' || Value
+                    WHERE EntryID = 1;
 
-                    -- _rowKey is similar to add_C_cysteine or add_Cterm_peptide
+                    -- _rowKey is Similar To add_C_cysteine or add_Cterm_peptide
                     -- Remove "add_"
                     _rowKey := Substring(_rowKey, 5, 100);
 
                     -- Add the affected mod symbol as the second column
-                    If _rowKey SIMILAR TO 'Nterm[_]peptide%' Then
+                    If _rowKey Similar To 'Nterm[_]peptide%' Then
                         _residueSymbol := '<';
-                    ElsIf _rowKey Like 'Cterm[_]peptide%' Then
+                    ElsIf _rowKey Similar To 'Cterm[_]peptide%' Then
                         _residueSymbol := '>';
-                    ElsIf _rowKey Like 'Nterm[_]protein%' Then
+                    ElsIf _rowKey Similar To 'Nterm[_]protein%' Then
                         _residueSymbol := '[';
-                    ElsIf _rowKey Like 'Cterm[_]protein%' Then
+                    ElsIf _rowKey Similar To 'Cterm[_]protein%' Then
                         _residueSymbol := ']';
                     Else
-                        -- _rowKey is similar to C_cysteine
+                        -- _rowKey is Similar To C_cysteine
                         _residueSymbol := Substring(_rowKey, 1, 1);
                     End If;
 
                     If Exists (Select * From Tmp_ModDef Where EntryID = 2) Then
-                        Update Tmp_ModDef
-                        Set Value = _residueSymbol
-                        Where EntryID = 2;
+                        UPDATE Tmp_ModDef
+                        SET Value = _residueSymbol
+                        WHERE EntryID = 2;
                     Else
-                        Insert Into Tmp_ModDef (EntryID, Value)
-                        Values (2, _residueSymbol);
+                        INSERT INTO Tmp_ModDef (EntryID, Value)
+                        VALUES (2, _residueSymbol);
                     End If;
                 End If;
             End If;
@@ -794,7 +795,7 @@ BEGIN
                 _lookupUniModID := true;
                 _staticCysCarbamidomethyl := false;
 
-                If Not _field SIMILAR TO 'UniMod:[0-9]%' Then
+                If Not _field Similar To 'UniMod:[0-9]%' Then
                     If _field = 'StaticCysCarbamidomethyl' Then
                         _field := 'UniMod:4';
                         _staticCysCarbamidomethyl := true;
@@ -1171,7 +1172,7 @@ BEGIN
 
             If _location in ('anyNterm', 'notNterm') Then
                 _terminalMod := true;
-                If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues SIMILAR TO '[A-Z]' Then
+                If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues Similar To '[A-Z]' Then
                     _affectedResidues := '<';
                 End If;
 
@@ -1180,7 +1181,7 @@ BEGIN
 
             If _location in ('anyCterm', 'notCterm') Then
                 _terminalMod := true;
-                If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues SIMILAR TO '[A-Z]' Then
+                If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues Similar To '[A-Z]' Then
                     _affectedResidues := '>';
                 End If;
 

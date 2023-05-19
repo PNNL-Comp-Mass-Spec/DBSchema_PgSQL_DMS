@@ -345,7 +345,7 @@ BEGIN
         _aggregationJobDataset := Coalesce(_aggregationJobDataset, false);
         _captureSubfolder := Trim(Coalesce(_captureSubfolder, ''));
 
-        If _captureSubfolder SIMILAR TO '\\%' OR _captureSubfolder::citext LIKE '[A-Z]:\%'::citext Then
+        If _captureSubfolder Similar To '\\%' OR _captureSubfolder::citext Similar To '[A-Z]:\%'::citext Then
          _msg := 'Capture subfolder should be a subdirectory name below the source share for this instrument; it is currently a full path';
             RAISE EXCEPTION '%', _msg;
         End If;
@@ -391,7 +391,7 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Not _aggregationJobDataset And (_datasetName::citext SIMILAR TO '%[.]raw'::citext Or _datasetName::citext Like '%[.]wiff'::citext Or _datasetName::citext Like '%[.]d'::citext) Then
+        If Not _aggregationJobDataset And (_datasetName::citext Similar To '%[.]raw'::citext Or _datasetName::citext Similar To '%[.]wiff'::citext Or _datasetName::citext Similar To '%[.]d'::citext) Then
             _msg := 'Dataset name may not end in .raw, .wiff, or .d';
             RAISE EXCEPTION '%', _msg;
         End If;
@@ -551,7 +551,7 @@ BEGIN
 
         _experimentID := get_experiment_id(_experimentName);
 
-        If _experimentID = 0 And _experimentName::citext SIMILAR TO 'QC_Shew_[0-9][0-9]_[0-9][0-9]' And _experimentName LIKE '%-%' Then
+        If _experimentID = 0 And _experimentName::citext Similar To 'QC_Shew_[0-9][0-9]_[0-9][0-9]' And _experimentName LIKE '%-%' Then
 
             _newExperiment := Replace(_experimentName, '-', '_');
             _experimentID := get_experiment_id(_newExperiment);
@@ -818,14 +818,13 @@ BEGIN
         --
         If _requestID = 0 AND _addingDataset Then
             -- If the EUS information is not defined, auto-define the EUS usage type as 'MAINTENANCE'
-            If (_datasetName::citext Like 'Blank%' Or Then
-                _datasetName ::citextLike '%[_]Tune[_]%' Or;
-            End If;
-                _datasetName ::citextLike '%TuneMix%'
+            If (_datasetName::citext Similar To 'Blank%' Or
+                _datasetName::citext Similar To '%[_]Tune[_]%' Or
+                _datasetName::citext Similar To '%TuneMix%'
                ) And
                _eusProposalID = '' And
                _eusUsageType = ''
-            Begin
+            Then
                 _eusUsageType := 'MAINTENANCE';
             End If;
         End If;

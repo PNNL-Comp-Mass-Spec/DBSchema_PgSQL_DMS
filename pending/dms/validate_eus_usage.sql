@@ -395,7 +395,7 @@ BEGIN
         If _eusUsersList <> '' Then
         -- <e>
 
-            If _eusUsersList SIMILAR TO '%[A-Z]%' And _eusUsersList Like '%([0-9]%' And _eusUsersList Like '%[0-9])%' Then
+            If _eusUsersList Similar To '%[A-Z]%' And _eusUsersList Similar To '%([0-9]%' And _eusUsersList Similar To '%[0-9])%' Then
                 If _infoOnly Then
                     RAISE INFO '%', 'Parsing ' || _eusUsersList;
                 End If;
@@ -410,7 +410,7 @@ BEGIN
                 LOOP
                     _currentChar := Substring(_eusUsersList, _charNum, 1);
 
-                    If _currentChar = ',' Or _currentChar SIMILAR TO '[0-9]' Then
+                    If _currentChar = ',' Or _currentChar Similar To '[0-9]' Then
                         _integerList := _integerList || _currentChar;
                     End If;
 

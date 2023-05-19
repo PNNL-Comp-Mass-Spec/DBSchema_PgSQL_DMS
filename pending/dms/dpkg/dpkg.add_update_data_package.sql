@@ -189,7 +189,7 @@ BEGIN
             If _name Like '%&%' Then
                 -- Replace & with 'and'
 
-                If _name SIMILAR TO '%[a-z0-9]&[a-z0-9]%' Then
+                If _name Similar To '%[a-z0-9]&[a-z0-9]%' Then
                     If _name Like '% %' Then
                         _name := Replace(_name, '&', ' and ');
                     Else

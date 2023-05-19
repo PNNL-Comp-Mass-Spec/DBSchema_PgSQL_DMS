@@ -185,15 +185,15 @@ BEGIN
 
             End If;
 
-            If Exists (SELECT * FROM Tmp_DataPackageItems WHERE ItemType = 'Dataset' And Identifier Like 'DataPackage[_][0-9][0-9]%') Then
+            If Exists (SELECT * FROM Tmp_DataPackageItems WHERE ItemType = 'Dataset' And Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%') Then
 
                 SELECT string_agg(Identifier, ', ' ORDER BY Identifier)
                 INTO _datasetsRemoved
                 FROM Tmp_DataPackageItems
-                WHERE ItemType = 'Dataset' And Identifier Like 'DataPackage[_][0-9][0-9]%';
+                WHERE ItemType = 'Dataset' And Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%';
 
                 DELETE FROM Tmp_DataPackageItems
-                WHERE ItemType = 'Dataset' And Identifier Like 'DataPackage[_][0-9][0-9]%'
+                WHERE ItemType = 'Dataset' And Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%'
 
                 _actionMsg := format('Data packages cannot include placeholder data package datasets; removed "%s"', _datasetsRemoved);
                 _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
