@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managerna
 **          04/16/2022 mem - Use new function name
 **          02/01/2023 mem - Rename columns in temporary table
 **          05/07/2023 mem - Remove unused variable
+**          05/19/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -94,45 +95,45 @@ BEGIN
     --
     _remoteInfoXML := '';
 
-    SELECT _remoteInfoXML ||
-         '<host>' || value || '</host>' INTO _remoteInfoXML
+    SELECT format('%s<host>%s</host>', _remoteInfoXML, value)
+    INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE (param_name = 'RemoteHostName' And mgr_name::citext = _managerName::citext);
+    WHERE param_name = 'RemoteHostName' And mgr_name::citext = _managerName::citext;
 
-    SELECT _remoteInfoXML ||
-         '<user>' || value || '</user>' INTO _remoteInfoXML
+    SELECT format('%s<user>%s</user>', _remoteInfoXML, value)
+    INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE (param_name = 'RemoteHostUser' And mgr_name::citext = _managerName::citext);
+    WHERE param_name = 'RemoteHostUser' And mgr_name::citext = _managerName::citext;
 
-    SELECT _remoteInfoXML ||
-         '<dmsPrograms>' || value || '</dmsPrograms>' INTO _remoteInfoXML
+    SELECT format('%s<dmsPrograms>%s</dmsPrograms>', _remoteInfoXML, value)
+    INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE (param_name = 'RemoteHostDMSProgramsPath' And mgr_name::citext = _managerName::citext);
+    WHERE param_name = 'RemoteHostDMSProgramsPath' And mgr_name::citext = _managerName::citext;
 
-    SELECT _remoteInfoXML ||
-         '<taskQueue>' || value || '</taskQueue>' INTO _remoteInfoXML
+    SELECT format('%s<taskQueue>%s</taskQueue>', _remoteInfoXML, value)
+    INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE (param_name = 'RemoteTaskQueuePath' And mgr_name::citext = _managerName::citext);
+    WHERE param_name = 'RemoteTaskQueuePath' And mgr_name::citext = _managerName::citext;
 
-    SELECT _remoteInfoXML ||
-         '<workDir>' || value || '</workDir>' INTO _remoteInfoXML
+    SELECT format('%s<workDir>%s</workDir>', _remoteInfoXML, value)
+    INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE (param_name = 'RemoteWorkDirPath' And mgr_name::citext = _managerName::citext);
+    WHERE param_name = 'RemoteWorkDirPath' And mgr_name::citext = _managerName::citext;
 
-    SELECT _remoteInfoXML ||
-         '<orgDB>' || value || '</orgDB>' INTO _remoteInfoXML
+    SELECT format('%s<orgDB>%s</orgDB>', _remoteInfoXML, value)
+    INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE (param_name = 'RemoteOrgDBPath' And mgr_name::citext = _managerName::citext);
+    WHERE param_name = 'RemoteOrgDBPath' And mgr_name::citext = _managerName::citext;
 
-    SELECT _remoteInfoXML ||
-         '<privateKey>' || public.get_filename(value) || '</privateKey>' INTO _remoteInfoXML
+    SELECT format('%s<privateKey>%s</privateKey>', _remoteInfoXML, value)
+    INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE (param_name = 'RemoteHostPrivateKeyFile' And mgr_name::citext = _managerName::citext);
+    WHERE param_name = 'RemoteHostPrivateKeyFile' And mgr_name::citext = _managerName::citext;
 
-    SELECT _remoteInfoXML ||
-         '<passphrase>' || public.get_filename(value) || '</passphrase>' INTO _remoteInfoXML
+    SELECT format('%s<passphrase>%s</passphrase>', _remoteInfoXML, value)
+    INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE (param_name = 'RemoteHostPassphraseFile' And mgr_name::citext = _managerName::citext);
+    WHERE param_name = 'RemoteHostPassphraseFile' And mgr_name::citext = _managerName::citext;
 
     DROP TABLE Tmp_Mgr_Params;
 

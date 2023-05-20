@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          05/10/2023 mem - Capitalize procedure name sent to post_usage_log_entry
 **          05/11/2023 mem - Update return codes
 **          05/12/2023 mem - Rename variables
+**                         - Use format() to combine strings
 **
 *****************************************************/
 DECLARE
@@ -115,7 +116,8 @@ BEGIN
 
         -- Uncomment to log the values of the procedure arguments in T_Log_Entries
         --
-        -- _msg := 'Procedure called with _mode=' || Coalesce(_mode, '??') || ', _newValue=' || Coalesce(_newValue, '??') || ', _reqRunIDList=' || Coalesce(_reqRunIDList, '??');
+        -- _msg := format('Procedure called with _mode=%s, _newValue=%s, _reqRunIDList=%s',
+        --                 Coalesce(_mode, '??'), Coalesce(_newValue, '??'), Coalesce(_reqRunIDList, '??'));
         -- Call PostLogEntry ('Debug', _msg, 'UpdateRequestedRunAssignments');
 
         ---------------------------------------------------
@@ -449,12 +451,12 @@ BEGIN
 
         If _logErrors Then
 
-            _logMessage = _exceptionMessage || '; Requests ';
+            _logMessage = ;
 
             If char_length(_reqRunIDList) < 128 Then
-                _logMessage := _logMessage || _reqRunIDList;
+                _logMessage := format('%s; Requests %s', _exceptionMessage, _reqRunIDList);
             Else
-                _logMessage := _logMessage || Substring(_reqRunIDList, 1, 128) || ' ...';
+                _logMessage := format('%s; Requests %s ...', _exceptionMessage, Substring(_reqRunIDList, 1, 128));
             End If;
 
             _message := local_error_handler (

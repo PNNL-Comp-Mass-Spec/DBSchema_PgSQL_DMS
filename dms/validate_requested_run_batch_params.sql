@@ -107,7 +107,7 @@ BEGIN
 
         If _mode In ('add', Lower('PreviewAdd')) Then
             If Exists (SELECT * FROM t_requested_run_batches WHERE batch = _name) Then
-                _message := 'Cannot add batch: "' || _name || '" already exists in database';
+                _message := format('Cannot add batch: "%s" already exists in database', _name);
                 _returnCode := 'U5204';
                 RETURN;
             End If;
@@ -158,7 +158,7 @@ BEGIN
                 -- Single match found; update _ownerUsername
                 _ownerUsername := _newUsername;
             Else
-                _message := 'Could not find entry in database for username "' || _ownerUsername || '"';
+                _message := format('Could not find entry in database for username "%s"', _ownerUsername);
                 _returnCode := 'U5207';
                 RETURN;
             End If;
