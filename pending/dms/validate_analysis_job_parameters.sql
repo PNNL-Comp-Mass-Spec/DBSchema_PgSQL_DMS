@@ -420,7 +420,7 @@ BEGIN
         Else
             -- Parameter file either does not exist or is inactive
             --
-            If Exists (SELECT * FROM t_param_files WHERE (param_file_name = _paramFileName) AND (valid = 0)) Then
+            If Exists (SELECT * FROM t_param_files WHERE param_file_name = _paramFileName AND valid = 0) Then
                 _message := 'Parameter file is inactive and cannot be used' || ':"' || _paramFileName || '"';
             Else
                 _message := 'Parameter file could not be found' || ':"' || _paramFileName || '"';
@@ -440,10 +440,10 @@ BEGIN
     ---------------------------------------------------
 
     If _settingsFileName <> 'na' Then
-        If Not Exists (SELECT * FROM t_settings_files WHERE (file_name = _settingsFileName) AND (active <> 0)) Then
+        If Not Exists (SELECT * FROM t_settings_files WHERE file_name = _settingsFileName AND active <> 0) Then
             -- Settings file either does not exist or is inactive
             --
-            If Exists (SELECT * FROM t_settings_files WHERE (file_name = _settingsFileName) AND (active = 0)) Then
+            If Exists (SELECT * FROM t_settings_files WHERE file_name = _settingsFileName AND active = 0) Then
                 _message := 'Settings file is inactive and cannot be used' || ':"' || _settingsFileName || '"';
             Else
                 _message := 'Settings file could not be found' || ':"' || _settingsFileName || '"';

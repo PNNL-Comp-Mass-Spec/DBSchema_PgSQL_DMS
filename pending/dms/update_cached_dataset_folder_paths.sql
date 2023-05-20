@@ -23,7 +23,7 @@ AS $$
 **  Date:   11/14/2013 mem - Initial version
 **          11/15/2013 mem - Added parameter
 **          11/19/2013 mem - Tweaked logging
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          02/27/2019 mem - Use T_Storage_Path_Hosts instead of SP_URL
 **          09/06/2022 mem - When _processingMode is 3, update datasets in batches (to decrease the likelihood of deadlock issues)
 **          12/15/2023 mem - Ported to PostgreSQL

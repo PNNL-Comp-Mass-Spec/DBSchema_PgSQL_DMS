@@ -321,10 +321,11 @@ BEGIN
         -- so we are instead populating _startMin and _finishMax separately
 
         /*
-        SELECT MIN(Start), INTO _startMin
-               _finishMax = MAX(Finish)
+        SELECT MIN(Start),
+               MAX(Finish)
+        INTO _startMin, _finishMax
         FROM cap.t_task_steps
-        WHERE (Job = _job)
+        WHERE Job = _job;
         */
 
         -- Update _startMin
@@ -332,14 +333,14 @@ BEGIN
         SELECT MIN(Start)
         INTO _startMin
         FROM cap.t_task_steps
-        WHERE (Job = _jobInfo.Job) AND Not Start Is Null
+        WHERE Job = _jobInfo.Job AND Not Start Is Null;
 
         -- Update _finishMax
         -- Note that If no steps have finished yet, _finishMax will be Null
         SELECT MAX(Finish)
         INTO _finishMax
         FROM cap.t_task_steps
-        WHERE (Job = _jobInfo.Job) AND Not Finish Is Null
+        WHERE Job = _jobInfo.Job AND Not Finish Is Null;
 
         ---------------------------------------------------
         -- Deprecated:
@@ -350,7 +351,8 @@ BEGIN
         --   DATEDIFF(SECOND, Start, xx) when Start and Finish are widely different
         ---------------------------------------------------
         /*
-        SELECT SUM(SecondsElapsedMax) / 60.0 INTO _processingTimeMinutes
+        SELECT SUM(SecondsElapsedMax) / 60.0
+        INTO _processingTimeMinutes
         FROM ( SELECT Tool,
                       MAX(Coalesce(SecondsElapsed1, 0) + Coalesce(SecondsElapsed2, 0)) AS SecondsElapsedMax
                FROM ( SELECT Tool,
@@ -368,7 +370,7 @@ BEGIN
                                  ELSE NULL
                              END AS SecondsElapsed2
                       FROM cap.t_task_steps
-                      WHERE (Job = _jobInfo.Job)
+                      WHERE Job = _jobInfo.Job
                       ) StatsQ
                GROUP BY Tool
                ) StepToolQ;

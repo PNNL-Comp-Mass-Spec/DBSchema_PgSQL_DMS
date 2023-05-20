@@ -19,7 +19,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _callingProcName text;
     _currentLocation text := 'Start';
 
@@ -59,9 +59,7 @@ BEGIN
                Replace(MgrWorkDirs.work_dir_admin_share, '\\ServerName\', '\\' || machine || '\') AS MgrWorkDir
         FROM mc.V_Mgr_Work_Dir MgrWorkDirs
              INNER JOIN sw.t_local_processors LP
-               ON MgrWorkDirs.Mgr_Name = LP.processor_name
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+               ON MgrWorkDirs.Mgr_Name = LP.processor_name;
 
         If _infoOnly Then
 
@@ -83,11 +81,11 @@ BEGIN
             WHERE Target.work_dir_admin_share <> Src.MgrWorkDir OR
                   Target.work_dir_admin_share IS NULL AND NOT Src.MgrWorkDir IS NULL
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
+            If _updateCount > 0 Then
                 _message := format('Updated work_dir_admin_share for %s %s in sw.t_local_processors',
-                                    _myRowCount, public.check_plural(_myRowCount, 'manager', 'managers'));
+                                    _updateCount, public.check_plural(_updateCount, 'manager', 'managers'));
 
                 Call public.post_log_entry ('Normal', _message, 'Update_Cached_Manager_Work_Dirs', 'sw');
             End If;

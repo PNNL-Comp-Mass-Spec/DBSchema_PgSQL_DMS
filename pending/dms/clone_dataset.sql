@@ -159,7 +159,7 @@ BEGIN
 
             SELECT _datasetNew AS Dataset_Name_New, *
             FROM t_dataset
-            WHERE (dataset = _dataset);
+            WHERE dataset = _dataset;
 
             ---------------------------------------------------
             -- Preview the new requested run

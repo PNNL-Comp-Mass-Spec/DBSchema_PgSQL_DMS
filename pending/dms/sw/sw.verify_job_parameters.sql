@@ -35,7 +35,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _parameterFileName text;
     _protCollNameList text := '';
     _protCollOptionsList text := '';
@@ -170,25 +169,28 @@ BEGIN
         End
 
 
-        SELECT Value INTO _parameterFileName
+        SELECT Value
+        INTO _parameterFileName
         FROM Tmp_JobParameters
         WHERE Name = 'ParamFileName'
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-        SELECT Value INTO _protCollNameList
+        SELECT Value
+        INTO _protCollNameList
         FROM Tmp_JobParameters
         WHERE Name = 'ProteinCollectionList'
 
-        SELECT Value INTO _protCollOptionsList
+        SELECT Value
+        INTO _protCollOptionsList
         FROM Tmp_JobParameters
         WHERE Name = 'ProteinOptions'
 
-        SELECT Value INTO _organismName
+        SELECT Value
+        INTO _organismName
         FROM Tmp_JobParameters
         WHERE Name = 'OrganismName'
 
-        SELECT Value INTO _organismDBName
+        SELECT Value
+        INTO _organismDBName
         FROM Tmp_JobParameters
         WHERE Name = 'LegacyFastaFileName'
 

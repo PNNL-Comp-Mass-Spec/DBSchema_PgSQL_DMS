@@ -111,8 +111,6 @@ BEGIN
 
     End If;
 
-    return _myError
-
 END
 $$;
 

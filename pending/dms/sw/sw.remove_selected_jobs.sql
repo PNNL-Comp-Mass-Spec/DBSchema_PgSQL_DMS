@@ -36,7 +36,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _deleteCount int;
     _job int;
     _numJobs int;
 BEGIN
@@ -101,12 +101,12 @@ BEGIN
     ---------------------------------------------------
     --
     DELETE FROM sw.t_job_step_dependencies
-    WHERE (job IN (SELECT job FROM Tmp_SJL));
+    WHERE job IN (SELECT job FROM Tmp_SJL);
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
     If _logDeletions Then
-        RAISE INFO '%', 'Deleted ' || _myRowCount::text || ' rows from sw.t_job_step_dependencies';
+        RAISE INFO 'Deleted % % from sw.t_job_step_dependencies', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
     End If;
 
     ---------------------------------------------------
@@ -114,30 +114,30 @@ BEGIN
     ---------------------------------------------------
     --
     DELETE FROM sw.t_job_parameters
-    WHERE job IN (SELECT job FROM Tmp_SJL)
+    WHERE job IN (SELECT job FROM Tmp_SJL);
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
     If _logDeletions Then
-        RAISE INFO '%', 'Deleted ' || _myRowCount::text || ' rows from sw.t_job_parameters';
+        RAISE INFO 'Deleted % % from sw.t_job_parameters', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
     End If;
 
-    disable trigger trig_ud_T_Job_Steps on sw.t_job_steps;
+    ALTER TABLE sw.t_job_steps DISABLE TRIGGER trig_t_job_steps_after_delete;
 
     ---------------------------------------------------
     -- Delete job steps
     ---------------------------------------------------
     --
     DELETE FROM sw.t_job_steps
-    WHERE job IN (SELECT job FROM Tmp_SJL)
+    WHERE job IN (SELECT job FROM Tmp_SJL);
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
     If _logDeletions Then
-        RAISE INFO '%', 'Deleted ' || _myRowCount::text || ' rows from sw.t_job_steps';
+        RAISE INFO 'Deleted % % from sw.t_job_steps', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
     End If;
 
-    enable trigger trig_ud_T_Job_Steps on sw.t_job_steps;
+    ALTER TABLE sw.t_job_steps ENABLE TRIGGER trig_t_job_steps_after_delete;
 
     ---------------------------------------------------
     -- Delete entries in sw.t_jobs
@@ -169,18 +169,18 @@ BEGIN
         -- Delete in bulk
         ---------------------------------------------------
 
-        Disable Trigger trig_ud_T_Jobs ON sw.t_jobs;
+        ALTER TABLE sw.t_jobs DISABLE TRIGGER trig_t_jobs_after_delete;
 
         DELETE FROM sw.t_jobs
-        WHERE job IN (SELECT job FROM Tmp_SJL)
+        WHERE job IN (SELECT job FROM Tmp_SJL);
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
         If _logDeletions Then
-            RAISE INFO '%', 'Deleted ' || _myRowCount::text || ' rows from sw.t_jobs';
+            RAISE INFO 'Deleted % % from sw.t_jobs', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
         End If;
 
-        Enable Trigger trig_ud_T_Jobs ON sw.t_jobs;
+        ALTER TABLE sw.t_jobs ENABLE TRIGGER trig_t_jobs_after_delete;
 
     End If;
 

@@ -38,7 +38,7 @@ AS $$
 **                         - Thus, use 'anderson%gordon' to match the 'anderson, gordon' entry in T_Users
 **          09/02/2011 mem - Now calling PostUsageLogEntry
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/22/2017 mem - Validate _campaignName
 **          08/20/2021 mem - Use Select Distinct to avoid duplicates
@@ -286,7 +286,6 @@ BEGIN
 
     Call post_usage_log_entry ('Update_Research_Team_For_Campaign', _usageMessage);
 
-    RETURN _myError
     DROP TABLE Tmp_TeamMembers;
 END
 $$;

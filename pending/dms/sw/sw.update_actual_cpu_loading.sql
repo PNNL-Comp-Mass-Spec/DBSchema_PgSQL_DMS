@@ -19,27 +19,27 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _pendingUpdates AS Table (;
+
 BEGIN
     ---------------------------------------------------
     -- Look for actively running Progrunner tasks in sw.t_processor_status
     ---------------------------------------------------
 
+    CREATE TEMP TABLE Tmp_PendingUpdates (
         Processor_Name text not null,
         Job int not null,
         Step int not null,
         New_CPU_Load int not null
-    )
+    );
 
     ---------------------------------------------------
     -- Find managers with an active job step and valid values for ProgRunner_ProcessID and ProgRunner_CoreUsage
     ---------------------------------------------------
     --
-    INSERT INTO _pendingUpdates( processor_name,
-                                 job,
-                                 step,
-                                 New_CPU_Load )
+    INSERT INTO Tmp_PendingUpdates( Processor_Name,
+                                    Job,
+                                    Step,
+                                    New_CPU_Load )
     SELECT PS.processor_name,
            JS.job,
            JS.step,
@@ -52,18 +52,15 @@ BEGIN
     WHERE JS.state = 4 AND
           Coalesce(JS.remote_info_id, 0) <= 1 AND
           Coalesce(PS.prog_runner_process_id, 0) > 0 AND
-          NOT (PS.prog_runner_core_usage IS NULL)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+          NOT (PS.prog_runner_core_usage IS NULL);
 
-    --
     -- Make sure New_CPU_Load is <= 255
     --
-    UPDATE _pendingUpdates
+    UPDATE Tmp_PendingUpdates
     SET New_CPU_Load = 255
-    WHERE New_CPU_Load > 255
+    WHERE New_CPU_Load > 255;
 
-    If Exists (Select * From _pendingUpdates) Then
+    If Exists (Select * From Tmp_PendingUpdates) Then
 
         ---------------------------------------------------
         -- Preview the results or update sw.t_job_steps
@@ -83,27 +80,23 @@ BEGIN
                    JS.CPU_Load,
                    JS.Actual_CPU_Load,
                    U.New_CPU_Load
-            FROM _pendingUpdates U
+            FROM Tmp_PendingUpdates U
                  INNER JOIN V_Job_Steps JS
                    ON U.Job = JS.Job AND
                       U.Step = JS.Step AND
                       U.Processor_Name = JS.Processor
-            ORDER BY JS.Tool, JS.Job
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            ORDER BY JS.Tool, JS.Job;
 
         Else
             UPDATE sw.t_job_steps
             SET actual_cpu_load = U.New_CPU_Load
-            FROM _pendingUpdates U
+            FROM Tmp_PendingUpdates U
                  INNER JOIN sw.t_job_steps JS
                    ON U.job = JS.job AND
                       U.step = JS.step AND
                       U.Processor_Name = JS.processor
             WHERE JS.actual_cpu_load <> U.New_CPU_Load OR
-                  JS.actual_cpu_load IS NULL
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                  JS.actual_cpu_load IS NULL;
 
         End If;
 

@@ -32,7 +32,7 @@ AS $$
 **          03/30/2015 mem - Added parameters _hmsAutoSupersede and _msgfPlusAutoCentroid
 **          03/21/2016 mem - Update column Last_Updated
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/10/2018 mem - Rename parameters and make _settingsFileID an output parameter
 **          04/11/2022 mem - Check for existing settings file (by name) when _mode is 'add'

@@ -23,7 +23,7 @@ AS $$
 **  Date:   07/08/2013 grk - Initial release
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/18/2016 mem - Log errors to T_Log_Entries
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

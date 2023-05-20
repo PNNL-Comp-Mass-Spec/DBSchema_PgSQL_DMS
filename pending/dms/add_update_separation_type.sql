@@ -39,8 +39,8 @@ DECLARE
     _oldState integer := 0;
     _ignoreDatasetChecks int := 0;
     _conflictID int := 0;
-    _datasetCount int := 0;
-    _maxDatasetID int := 0;
+    _datasetCount int;
+    _maxDatasetID int;
     _datasetDescription text;
     _datasetName text;
 BEGIN

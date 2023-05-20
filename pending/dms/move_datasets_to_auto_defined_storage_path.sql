@@ -176,12 +176,12 @@ BEGIN
                 INTO _moveCmd
                 FROM ( SELECT '\\' || machine_name || '\' || SUBSTRING(vol_name_server, 1, 1) || '$\' || storage_path || _datasetInfo.Dataset AS Path
                        FROM t_storage_path
-                       WHERE (storage_path_id = _datasetInfo.StoragePathID)
+                       WHERE storage_path_id = _datasetInfo.StoragePathID
                      ) OldStorage
                      CROSS JOIN
                      ( SELECT '\\' || machine_name || '\' || SUBSTRING(vol_name_server, 1, 1) || '$\' || storage_path || _datasetInfo.Dataset AS Path
                        FROM t_storage_path
-                       WHERE (storage_path_id = _storagePathIDNew)
+                       WHERE storage_path_id = _storagePathIDNew
                      ) NewStorage;
 
                 If Not _infoOnly Then
@@ -208,7 +208,7 @@ BEGIN
             SELECT storage_path_id
             INTO _archivePathID
             FROM t_dataset_archive
-            WHERE (dataset_id = _datasetInfo.DatasetID)
+            WHERE dataset_id = _datasetInfo.DatasetID;
 
             If _archivePathID >= 0 Then
             -- <c2>
@@ -227,12 +227,12 @@ BEGIN
                     INTO _moveCmd
                     FROM ( SELECT REPLACE(network_share_path || '\' || _datasetInfo.Dataset, '\dmsarch\', '\dmsarch\') AS Path
                            FROM t_archive_path
-                           WHERE (archive_path_id = _archivePathID)
+                           WHERE archive_path_id = _archivePathID
                          ) OldArchive
                          CROSS JOIN
                          ( SELECT REPLACE(network_share_path || '\' || _datasetInfo.Dataset, '\dmsarch\', '\dmsarch\') AS Path
                            FROM t_archive_path
-                           WHERE (archive_path_id = _archivePathIDNew)
+                           WHERE archive_path_id = _archivePathIDNew
                          ) NewArchive;
 
                     If Not _infoOnly Then

@@ -97,11 +97,11 @@ AS $$
 **          11/23/2016 mem - Include the request name when calling PostLogEntry from within the catch block
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/06/2017 mem - Set _allowNewDatasets to true when calling ValidateAnalysisJobParameters
 **          05/23/2018 mem - Do not allow _requestorPRN to be the autouser (login H09090911)
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          04/17/2019 mem - Auto-change _protCollOptionsList to 'seq_direction=forward,filetype=fasta' when running TopPIC
 **          04/23/2019 mem - Auto-change _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' when running MSFragger
 **          07/30/2019 mem - Store dataset info in table T_Analysis_Job_Request_Datasets instead of the Datasets column in T_Analysis_Job_Request
@@ -225,7 +225,7 @@ BEGIN
                    request_state_id
             INTO _hit, _curState
             FROM t_analysis_job_request
-            WHERE (request_id = _requestID)
+            WHERE request_id = _requestID;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Cannot update: entry is not in database';
@@ -238,13 +238,13 @@ BEGIN
                        comment
                 INTO _currentName, _currentComment
                 FROM t_analysis_job_request
-                WHERE (request_id = _requestID)
+                WHERE request_id = _requestID;
 
                 If _currentName <> _requestName OR _currentComment <> _comment Then
                     UPDATE t_analysis_job_request
                     SET request_name = _requestName,
                         comment = _comment
-                    WHERE (request_id = _requestID)
+                    WHERE request_id = _requestID;
 
                     If _currentName <> _requestName AND _currentComment <> _comment Then
                         _message := 'Updated the request name and comment';
@@ -583,7 +583,7 @@ BEGIN
             SELECT request_state
             INTO _state
             FROM t_analysis_job_request_state
-            WHERE (request_state_id = 1)
+            WHERE request_state_id = 1;
         End If;
 
         ---------------------------------------------------
@@ -702,7 +702,7 @@ BEGIN
                     dataset_min = _datasetMin,
                     dataset_max = _datasetMax,
                     data_package_id = Case When _dataPackageId > 0 Then _dataPackageId Else Null End
-                WHERE (request_id = _requestID);
+                WHERE request_id = _requestID;
 
                 MERGE INTO t_analysis_job_request_datasets AS t
                 USING ( SELECT _requestID As Request_ID, Dataset_ID

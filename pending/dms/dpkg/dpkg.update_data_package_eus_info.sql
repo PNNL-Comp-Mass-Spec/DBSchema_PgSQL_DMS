@@ -20,7 +20,7 @@ AS $$
 **  Date:   10/18/2016 mem - Initial version
 **          10/19/2016 mem - Replace parameter _dataPackageID with _dataPackageList
 **          11/04/2016 mem - Exclude proposals that start with EPR
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          07/07/2017 mem - Now updating Instrument and EUS_Instrument_ID
 **          03/07/2018 mem - Properly handle null values for Best_EUS_Proposal_ID, Best_EUS_Instrument_ID, and Best_Instrument_Name
 **          05/18/2022 mem - Use new EUS Proposal column name
@@ -29,7 +29,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _dataPackageCount int := 0;
+    _dataPackageCount int;
     _updateCount int
     _authorized boolean;
     _firstID int;
@@ -109,7 +109,8 @@ BEGIN
             _message := 'Updating ' || Cast(_dataPackageCount as text) || ' data packages';
         Else
 
-            SELECT ID INTO _firstID
+            SELECT ID
+            INTO _firstID
             FROM Tmp_DataPackagesToUpdate
 
             _message := 'Updating data package ' || Cast(_firstID as text);
@@ -173,68 +174,30 @@ BEGIN
     -- yet have entries defined in dpkg.t_data_package_eus_proposals
     ---------------------------------------------------
     --
-    UPDATE Tmp_DataPackagesToUpdate
+    UPDATE Tmp_DataPackagesToUpdateTarget
     SET Best_EUS_Proposal_ID = FilterQ.Proposal_ID
-    FROM Tmp_DataPackagesToUpdate Target
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE #Tmp_DataPackagesToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = #Tmp_DataPackagesToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT data_pkg_id,
-                             proposal_id
-                      FROM ( SELECT data_pkg_id,
-                                    proposal_id,
-                                    item_added,
-                                    Row_Number() OVER ( Partition By data_pkg_id Order By item_added DESC ) AS IdRank
-                             FROM dpkg.t_data_package_eus_proposals
-                             WHERE (data_pkg_id IN ( SELECT ID
-                                                         FROM Tmp_DataPackagesToUpdate
-
-                                                         /********************************************************************************
-                                                         ** This UPDATE query includes the target table name in the FROM clause
-                                                         ** The WHERE clause needs to have a self join to the target table, for example:
-                                                         **   UPDATE #Tmp_DataPackagesToUpdate
-                                                         **   SET ...
-                                                         **   FROM source
-                                                         **   WHERE source.id = #Tmp_DataPackagesToUpdate.id;
-                                                         ********************************************************************************/
-
-                                                                                ToDo: Fix this query
-
-                                                         WHERE Best_EUS_Proposal_ID IS NULL ))
-                           ) RankQ
-                      WHERE RankQ.IdRank = 1
-                    ) FilterQ
-           ON Target.ID = FilterQ.Data_Package_ID;
+    FROM ( SELECT data_pkg_id,
+                  proposal_id
+           FROM ( SELECT data_pkg_id,
+                         proposal_id,
+                         item_added,
+                         Row_Number() OVER ( Partition By data_pkg_id Order By item_added DESC ) AS IdRank
+                  FROM dpkg.t_data_package_eus_proposals
+                  WHERE (data_pkg_id IN ( SELECT ID
+                                          FROM
+                                          WHERE Best_EUS_Proposal_ID IS NULL ))
+                ) RankQ
+           WHERE RankQ.IdRank = 1
+         ) FilterQ
+    WHERE Target.ID = FilterQ.Data_Package_ID;
 
     ---------------------------------------------------
     -- Find the most common Instrument used by the datasets associated with each data package
     ---------------------------------------------------
     --
-    UPDATE Tmp_DataPackagesToUpdate
+    UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_Instrument_Name = FilterQ.Instrument
-    FROM Tmp_DataPackagesToUpdate Target
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE #Tmp_DataPackagesToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = #Tmp_DataPackagesToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT RankQ.data_pkg_id,
+    FROM ( SELECT RankQ.data_pkg_id,
                              RankQ.instrument
                       FROM ( SELECT data_pkg_id,
                                     instrument,
@@ -252,57 +215,32 @@ BEGIN
                            ) RankQ
                       WHERE RankQ.CountRank = 1
                      ) FilterQ
-           ON Target.ID = FilterQ.data_pkg_id;
+    WHERE Target.ID = FilterQ.data_pkg_id;
 
     ---------------------------------------------------
     -- Update EUS_Instrument_ID in Tmp_DataPackagesToUpdate
     ---------------------------------------------------
     --
-    UPDATE Tmp_DataPackagesToUpdate
+    UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_EUS_Instrument_ID = EUSInst.EUS_Instrument_ID
-    FROM Tmp_DataPackagesToUpdate Target
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE #Tmp_DataPackagesToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = #Tmp_DataPackagesToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN V_EUS_Instrument_ID_Lookup EUSInst
-           ON Target.Best_Instrument_Name = EUSInst.Instrument_Name;
+    FROM V_EUS_Instrument_ID_Lookup EUSInst
+    WHERE Target.Best_Instrument_Name = EUSInst.Instrument_Name;
 
     ---------------------------------------------------
     -- Update EUS Proposal data_pkg_id, eus_instrument_id, and Instrument_ID as necessary
     -- Do not change existing values in dpkg.t_data_package to null values
     ---------------------------------------------------
     --
-    UPDATE dpkg.t_data_package
+    UPDATE dpkg.t_data_package DP
     SET eus_proposal_id = Coalesce(Best_EUS_Proposal_ID, eus_proposal_id),
         eus_instrument_id = Coalesce(Best_EUS_Instrument_ID, eus_instrument_id),
         instrument = Coalesce(Best_Instrument_Name, instrument)
-    FROM dpkg.t_data_package DP
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table package_name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE dpkg.t_data_package
-    **   SET ...
-    **   FROM source
-    **   WHERE source.data_pkg_id = dpkg.t_data_package.data_pkg_id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN Tmp_DataPackagesToUpdate Src
-           ON DP.ID = Src.ID
-    WHERE Coalesce(DP.EUS_Proposal_ID, '') <> Src.Best_EUS_Proposal_ID OR
-          Coalesce(DP.EUS_Instrument_ID, '') <> Src.Best_EUS_Instrument_ID OR
-          Coalesce(DP.Instrument, '') <> Src.Best_Instrument_Name
+    FROM Tmp_DataPackagesToUpdate Src
+    WHERE DP.ID = Src.ID AND
+          ( Coalesce(DP.EUS_Proposal_ID, '') <> Src.Best_EUS_Proposal_ID OR
+            Coalesce(DP.EUS_Instrument_ID, '') <> Src.Best_EUS_Instrument_ID OR
+            Coalesce(DP.Instrument, '') <> Src.Best_Instrument_Name
+          );
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -312,8 +250,6 @@ BEGIN
 
         Call public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
     End If;
-
-    Return _myError
 
 END
 $$;

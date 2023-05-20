@@ -109,13 +109,13 @@ AS $$
 **          01/19/2018 mem - Populate column Runtime_Minutes in T_Jobs
 **                         - Use column ProcTimeMinutes_CompletedSteps in V_Job_Processing_Time
 **          05/10/2018 mem - Append to the job comment, rather than replacing it (provided the job completed successfully)
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          03/12/2021 mem - Expand _comment to varchar(1024)
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
     _previousJob int;
     _jobInfo record;
     _jobCountToProcess int;
@@ -245,7 +245,7 @@ BEGIN
             FROM sw.t_job_steps JS
                  INNER JOIN sw.t_jobs J
                    ON JS.job = J.job
-            WHERE (J.state IN (1,2,5,20))    -- job state (not step state!): new, in progress, failed, or resuming state
+            WHERE J.state IN (1,2,5,20)    -- job state (not step state!): new, in progress, failed, or resuming state
             GROUP BY JS.job, J.state
            ) AS JS_Stats
            INNER JOIN sw.t_jobs AS J
@@ -253,9 +253,7 @@ BEGIN
         ) UpdateQ
     WHERE UpdateQ.state <> UpdateQ.NewState
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    _jobCountToProcess := _myRowCount;
+    GET DIAGNOSTICS _jobCountToProcess = ROW_COUNT;
 
     ---------------------------------------------------
     -- Loop through jobs whose state has changed
@@ -640,7 +638,7 @@ BEGIN
         SELECT MIN(start)
         INTO _startMin
         FROM sw.t_job_steps
-        WHERE (job = _jobInfo.Job) AND Not start Is Null;
+        WHERE job = _jobInfo.Job AND Not start Is Null;
 
         Call public.update_failed_job_now_in_progress (
                 _job => _jobInfo.Job,

@@ -44,7 +44,7 @@ AS $$
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          07/11/2017 mem - Require _hanfordIdNum to be at least 2 characters long
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/16/2018 mem - Remove any text before a backslash in _username (e.g., change from PNL\D3L243 to D3L243)

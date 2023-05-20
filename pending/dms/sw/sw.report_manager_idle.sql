@@ -28,7 +28,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _job int := 0;
     _remoteInfoId int := 0;
     _newJobState int;
@@ -82,17 +81,14 @@ BEGIN
     -- There should, under normal circumstances, only be one active job step (if any) for this manager
     -- If there are multiple job steps, _job will only track one of the jobs
     --
-    -- Moved to bottom of query: TOP 1
-    SELECT TOP 1
-           _job = job,
-           _remoteInfoId = Coalesce(remote_info_id, 0)
+    SELECT job,
+           Coalesce(remote_info_id, 0)
+    INTO _job, _remoteInfoId
     FROM sw.t_job_steps
     WHERE processor = _managerName AND state = 4
     LIMIT 1;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount = 0 Then
+    If Not FOUND Then
         _message := 'No active job steps are associated with manager ' || _managerName;
         RETURN;
     End If;
@@ -118,9 +114,7 @@ BEGIN
 
         UPDATE sw.t_job_steps
         SET state = _newJobState
-        WHERE processor = _managerName AND state = 4
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE processor = _managerName AND state = 4;
 
         _message := format('Reset step task state back to %s for job %s', _newJobState, _job);
 

@@ -43,7 +43,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _deleteCount int;
     _saveTime timestamp := CURRENT_TIMESTAMP;
     _cutoffDateTimeForSuccess timestamp;
     _cutoffDateTimeForFail timestamp;
@@ -103,7 +103,7 @@ BEGIN
     ---------------------------------------------------
     --
     If _intervalDaysForSuccess > 0 Then
-    -- <a>
+
         _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForSuccess);
 
         INSERT INTO Tmp_SJL (job, state)
@@ -111,50 +111,34 @@ BEGIN
         FROM sw.t_jobs
         WHERE state IN (4, 7) AND        -- 4=Complete, 7=No Intermediate Files Created
               Coalesce(finish, start) < _cutoffDateTimeForSuccess
-        ORDER BY finish
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        ORDER BY finish;
 
         If _validateJobStepSuccess Then
             -- Remove any jobs that have failed, in progress, or holding job steps
             DELETE Tmp_SJL
-            FROM Tmp_SJL INNER JOIN
-
-            /********************************************************************************
-            ** This DELETE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE Tmp_SJL
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = Tmp_SJL.id;
-            **
-            ** Delete queries must also include the USING keyword
-            ** Alternatively, the more standard approach is to rearrange the query to be similar to
-            **   DELETE FROM Tmp_SJL WHERE id in (SELECT id from ...)
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 sw.t_job_steps JS ON Tmp_SJL.job = JS.job
-            WHERE NOT JS.state IN (3, 5)
+            FROM sw.t_job_steps JS
+            WHERE Tmp_SJL.job = JS.job AND
+                  NOT JS.state IN (3, 5);
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount > 0 Then
-                RAISE INFO '%', 'Warning: Removed ' || _myRowCount::text || ' job(s) with one or more steps that was not skipped or complete';
+            If _deleteCount > 0 Then
+                _message := format('Warning: Removed %s %s with one or more steps that was not skipped or complete',
+                                    _deleteCount, public.check_plural(_deleteCount, 'job', 'jobs'));
+                RAISE WARNING '%', _message;
             Else
-                RAISE INFO '%', 'Successful jobs have been confirmed to all have successful (or skipped) steps';
+                RAISE INFO 'Successful jobs have been confirmed to all have successful (or skipped) steps';
             End If;
         End If;
 
-    End If; -- </a>
+    End If;
 
     ---------------------------------------------------
     -- Add old failed jobs to be removed to list
     ---------------------------------------------------
     --
     If _intervalDaysForFail > 0 Then
-    -- <b>
+
         _cutoffDateTimeForFail := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForFail);
 
         INSERT INTO Tmp_SJL (job, state)
@@ -162,10 +146,9 @@ BEGIN
                state
         FROM sw.t_jobs
         WHERE state IN (5, 14) AND            -- 5=Failed, 14=No Export
-              Coalesce(finish, start) < _cutoffDateTimeForFail
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    End If; -- </b>
+              Coalesce(finish, start) < _cutoffDateTimeForFail;
+
+    End If;
 
     ---------------------------------------------------
     -- Add any jobs defined in _jobListOverride
@@ -191,9 +174,7 @@ BEGIN
     FROM Tmp_SJL
          LEFT OUTER JOIN sw.t_jobs_history JH
            ON Tmp_SJL.job = JH.job
-    WHERE JH.job IS NULL
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE JH.job IS NULL;
 
     If Exists (Select * from Tmp_JobsNotInHistory) Then
 

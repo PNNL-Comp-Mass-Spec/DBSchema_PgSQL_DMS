@@ -19,7 +19,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   03/17/2011 mem - Initial version
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -29,7 +29,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _processor text;
     _state int;
     _stepState int;
@@ -69,26 +68,23 @@ BEGIN
         _state = state,
         _processor = processor
     FROM sw.t_data_folder_create_queue
-    WHERE (entry_id = _taskID)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-    --
-    If _state <> 2 Then
-        _myError := 67;
-        _message := 'Task ' || _taskID::text;
+    WHERE entry_id = _taskID;
 
-        If _myRowCount = 0 Then
-            _message := _message || ' was not found in sw.t_data_folder_create_queue';
-        Else
-            _message := _message || ' is not in correct state to be completed; expecting State=2 but actually ' || _state::text;
-        End If;
+    If Not FOUND Then
+        _returnCode := 'U5267';
+        _message := format('Task %s was not found in sw.t_data_folder_create_queue', _taskID);
+        RETURN;
+    End If;
+
+    If _state <> 2 Then
+        _returnCode := 'U5268';
+        _message := format('Task %s is not in correct state to be completed; expecting State=2 but actually %s', _taskID, _state);
         RETURN;
     End If;
 
     ---------------------------------------------------
     -- Determine completion state
     ---------------------------------------------------
-    --
 
     If _completionCode = 0 Then
         _stepState := 3;
@@ -104,7 +100,7 @@ BEGIN
     SET    state = _stepState,
            finish = CURRENT_TIMESTAMP,
            completion_code = _completionCode
-    WHERE  (entry_id = _taskID);
+    WHERE entry_id = _taskID;
 
 END
 $$;

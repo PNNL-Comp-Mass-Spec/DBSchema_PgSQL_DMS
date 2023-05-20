@@ -26,7 +26,7 @@ AS $$
 **          02/20/2012 mem - Now using a temporary table to track the requests to update
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
 **          06/18/2014 mem - Now passing default to udfParseDelimitedIntegerList
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/02/2022 mem - Fix bug that treated priority as an integer; instead, should be Normal or High
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -38,7 +38,7 @@ DECLARE
     _authorized boolean;
 
     _dt timestamp;
-    _updateCount int := 0;
+    _updateCount int;
     _id int := 0;
     _requestIDNum text;
     _tblRequestsToProcess Table;
@@ -80,6 +80,8 @@ BEGIN
     SELECT Value
     FROM public.parse_delimited_integer_list(_reqIDList, default)
     ORDER BY Value;
+
+    _updateCount := 0;
 
     -- Process each request in Tmp_RequestsToProcess
     --
@@ -143,7 +145,7 @@ BEGIN
             SELECT state_id
             INTO _stID
             FROM t_sample_prep_request_state_name
-            WHERE (state_name = _newValue)
+            WHERE state_name = _newValue;
 
             UPDATE t_sample_prep_request
             SET state_id = _stID,

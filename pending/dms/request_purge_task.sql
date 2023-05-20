@@ -231,15 +231,15 @@ BEGIN
             _s := _s ||        ' ServerVol,';
             _s := _s ||        ' Purge_Priority';
             _s := _s || ' FROM ' || _purgeViewName;
-            _s := _s || ' WHERE     (StorageServerName = ''' || _storageServerName || ''')';
-            _s := _s ||       ' AND (ServerVol = ''' || _serverDisk || ''')';
+            _s := _s || ' WHERE     StorageServerName = ''' || _storageServerName || '''';
+            _s := _s ||       ' AND ServerVol = ''' || _serverDisk || '''';
 
             If _excludeStageMD5RequiredDatasets Then
-                _s := _s ||   ' AND (StageMD5_Required = 0) ';
+                _s := _s ||   ' AND StageMD5_Required = 0 ';
             End If;
 
             If _holdoffDays >= 0 Then
-                _s := _s ||   ' AND (round(extract(epoch FROM CURRENT_TIMESTAMP - ' || _orderByCol || ') / 86400) > ' || _holdoffDays::text || ')';
+                _s := _s ||   ' AND round(extract(epoch FROM CURRENT_TIMESTAMP - ' || _orderByCol || ') / 86400) > ' || _holdoffDays::text;
             End If;
 
             _s := _s || ' ORDER BY Purge_Priority, ' || _orderByCol || ', Dataset_ID';

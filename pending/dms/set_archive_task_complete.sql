@@ -105,7 +105,7 @@ BEGIN
 
         UPDATE t_dataset_archive
         SET    archive_state_id = 6
-        WHERE  (dataset_id = _datasetID)
+        WHERE dataset_id = _datasetID;
 
     End If;
 

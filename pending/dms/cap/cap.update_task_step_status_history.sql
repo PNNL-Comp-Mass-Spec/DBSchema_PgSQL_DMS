@@ -25,7 +25,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _insertCount int := 0;
+    _insertCount int;
     _timeIntervalLastUpdateMinutes numeric := 0;
     _timeIntervalIdenticalStatsMinutes numeric := 0;
     _newStatCount int;

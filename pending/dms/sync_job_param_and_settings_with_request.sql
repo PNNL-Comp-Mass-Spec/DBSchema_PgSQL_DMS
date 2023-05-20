@@ -49,7 +49,8 @@ BEGIN
     End If;
 
     If _recentRequestDays > 0 Then
-        SELECT MIN(request_id) INTO _requestMinimum
+        SELECT MIN(request_id)
+        INTO _requestMinimum
         FROM t_analysis_job_request
         WHERE created >= CURRENT_TIMESTAMP - make_interval(days => _recentRequestDays) AND
               request_id > 1;

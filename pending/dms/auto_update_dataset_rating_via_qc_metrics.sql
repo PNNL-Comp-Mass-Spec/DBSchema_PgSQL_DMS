@@ -28,7 +28,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _updateCount int := 0;
+    _updateCount int;
     _thresholdP_2A int := 250;
     _thresholdP_2C int := 100;
 BEGIN

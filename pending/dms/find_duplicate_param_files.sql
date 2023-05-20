@@ -182,9 +182,9 @@ BEGIN
     _s := _s ||      ' Tmp_ParamFileTypeFilter PFTF ON PFT.param_file_type = PFTF.param_file_type ';
 
     If _checkValidOnly Then
-        _s := _s || ' WHERE (PF.Valid <> 0)';
+        _s := _s || ' WHERE PF.Valid <> 0';
     Else
-        _s := _s || ' WHERE (PF.Valid = PF.Valid)';
+        _s := _s || ' WHERE PF.Valid = PF.Valid';
     End If;
 
     If char_length(_paramFileNameFilter) > 0 Then
@@ -267,7 +267,7 @@ BEGIN
         SELECT param_file_id
         INTO _paramFileID
         FROM t_param_files
-        WHERE (param_file_name = 'sequest_N14_NE.params')
+        WHERE param_file_name = 'sequest_N14_NE.params';
 
         If Not Exists (SELECT * FROM Tmp_ParamEntries WHERE Param_File_ID = _paramFileID) Then
             INSERT INTO Tmp_ParamEntries ( Param_File_ID,
@@ -329,10 +329,10 @@ BEGIN
             INSERT INTO Tmp_ParamEntries (Param_File_ID, Entry_Type, Entry_Specifier, Entry_Value, Compare)
             SELECT DISTINCT Param_File_ID, _entryInfo.Type, _entryInfo.Specifier, _entryInfo.Value, Coalesce(_entryInfo.Compare, true)
             FROM Tmp_ParamEntries
-            WHERE (NOT (Param_File_ID IN ( SELECT Param_File_ID
-                                           FROM Tmp_ParamEntries
-                                           WHERE (Entry_Type = _entryType) AND
-                                                 (Entry_Specifier = _entrySpecifier) )));
+            WHERE NOT Param_File_ID IN ( SELECT Param_File_ID
+                                         FROM Tmp_ParamEntries
+                                         WHERE Entry_Type = _entryType AND
+                                               Entry_Specifier = _entrySpecifier );
 
         END LOOP;
 
@@ -455,10 +455,10 @@ BEGIN
             FROM t_param_files PF
                  INNER JOIN Tmp_MassModCounts PFMM
                    ON PF.param_file_id = PFMM.param_file_id
-            WHERE (PFMM.ModCount = 0) AND
-                  (PF.param_file_id <> _paramFileInfo.ParamFileID) AND
-                  (PF.param_file_type_id = _paramFileInfo.ParamFileTypeID) AND
-                  (Not _checkValidOnly OR PF.valid <> 0);
+            WHERE PFMM.ModCount = 0 AND
+                  PF.param_file_id <> _paramFileInfo.ParamFileID AND
+                  PF.param_file_type_id = _paramFileInfo.ParamFileTypeID AND
+                  Not _checkValidOnly OR PF.valid <> 0;
 
         Else
 
@@ -528,12 +528,12 @@ BEGIN
                 _s := _s || ' FROM t_param_files PF LEFT OUTER JOIN';
                 _s := _s ||      ' Tmp_ParamEntries PE ON ';
                 _s := _s ||      ' PF.param_file_id = PE.param_file_id AND PE.Compare';
-                _s := _s || ' WHERE (PE.param_file_id IS NULL) AND ';
-                _s := _s ||       ' (PF.param_file_id <> $1) AND';
-                _s := _s ||       ' (PF.param_file_type_id = $2)';
+                _s := _s || ' WHERE PE.param_file_id IS NULL AND ';
+                _s := _s ||       ' PF.param_file_id <> $1 AND';
+                _s := _s ||       ' PF.param_file_type_id = $2';
 
                 If _checkValidOnly Then
-                    _s := _s || ' AND (PF.Valid <> 0)';
+                    _s := _s || ' AND PF.Valid <> 0';
                 End If;
 
                 If _previewSql Then
@@ -565,14 +565,14 @@ BEGIN
                                 FROM Tmp_ParamEntries PE
                                     INNER JOIN t_param_files PF
                                         ON PE.param_file_id = PF.param_file_id
-                                WHERE (PE.Compare) AND
-                                      (PE.param_file_id <> _paramFileInfo.ParamFileID) AND
-                                      (PF.param_file_type_id = _paramFileInfo.ParamFileTypeID) AND
-                                      (PE.param_file_id IN ( SELECT param_file_id
-                                                             FROM Tmp_ParamEntries
-                                                             WHERE Compare
-                                                             GROUP BY param_file_id
-                                                             HAVING COUNT(*) = _entryCount ))
+                                WHERE PE.Compare AND
+                                      PE.param_file_id <> _paramFileInfo.ParamFileID AND
+                                      PF.param_file_type_id = _paramFileInfo.ParamFileTypeID AND
+                                      PE.param_file_id IN ( SELECT param_file_id
+                                                            FROM Tmp_ParamEntries
+                                                            WHERE Compare
+                                                            GROUP BY param_file_id
+                                                            HAVING COUNT(*) = _entryCount )
                             ) B
                     ON A.Entry_Type = B.Entry_Type AND
                        A.Entry_Specifier = B.Entry_Specifier AND

@@ -16,7 +16,7 @@ AS $$
 **  Auth:   mem
 **  Date:   02/12/2010
 **          08/28/2010 mem - No longer deleting entries in the Instrument_Allowed_Dataset_Type table
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/15/2023 mem - Ported to PostgreSQL
 **

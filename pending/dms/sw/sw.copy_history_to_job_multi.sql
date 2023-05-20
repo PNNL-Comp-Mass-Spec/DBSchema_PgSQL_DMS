@@ -36,7 +36,8 @@ DECLARE
     _currentLocation text := 'Start';
     _jobCount int;
     _jobDateDescription text;
-    _myRowCount int := 0;
+    _deleteCount int;
+    _insertCount int;
 
     _job int := 0;
     _jobsCopied int := 0;
@@ -142,10 +143,10 @@ BEGIN
     DELETE FROM Tmp_JobsToCopy
     WHERE DateStamp Is Null;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-    If _myRowCount > 0 Then
-        RAISE INFO 'Deleted % job(s) from _jobList because they do not exist in sw.t_jobs_history with state 4', _myRowCount;
+    If _deleteCount > 0 Then
+        RAISE INFO 'Deleted % % from _jobList because they do not exist in sw.t_jobs_history with state 4', _deleteCount, public.check_plural(_deleteCount, 'job', 'jobs');
     End If;
 
     SELECT string_agg(job, ', ' ORDER BY Job)
@@ -207,9 +208,9 @@ BEGIN
                ON JH.job = Src.job AND
                   JH.saved = Src.DateStamp;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If _insertCount = 0 Then
             _message := 'No rows were added to sw.t_jobs from sw.t_jobs_history for ' || _jobDateDescription;
             RAISE WARNING '%', _message;
 
@@ -217,7 +218,7 @@ BEGIN
             RETURN;
         End If;
 
-        RAISE INFO 'Added % job(s) to sw.t_jobs', _myRowCount;
+        RAISE INFO 'Added % % to sw.t_jobs', _insertCount, public.check_plural(_insertCount, 'job', 'jobs');
 
         ---------------------------------------------------
         -- Copy Steps
@@ -276,10 +277,10 @@ BEGIN
                ON H.job = Src.job AND
                   H.saved = Src.DateStamp;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
-            RAISE INFO 'Inserted % steps into sw.t_job_steps for %', _myRowCount, _jobDateDescription;
+            RAISE INFO 'Inserted % % into sw.t_job_steps for %', _insertCount, public.check_plural(_insertCount, 'step', 'steps'), _jobDateDescription;
         End If;
 
         -- Change any waiting, enabled, or running steps to state 7 (holding)
@@ -305,10 +306,10 @@ BEGIN
                ON JPH.job = Src.job AND
                   JPH.saved = Src.DateStamp;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
-            RAISE INFO 'Inserted % row(s) into sw.t_job_parameters for %', _myRowCount, _jobDateDescription;
+            RAISE INFO 'Inserted % % into sw.t_job_parameters for %', _insertCount, public.check_plural(_insertCount, 'row', 'rows'), _jobDateDescription;
         End If;
 
         ---------------------------------------------------

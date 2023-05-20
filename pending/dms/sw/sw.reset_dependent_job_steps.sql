@@ -33,7 +33,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _jobResetTran text := 'DependentJobStepReset';
 
     _sqlState text;
@@ -83,9 +82,7 @@ BEGIN
         INSERT INTO Tmp_Jobs (Job)
         SELECT Value
         FROM public.parse_delimited_integer_list(_jobs, ',')
-        ORDER BY Value
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        ORDER BY Value;
 
         -----------------------------------------------------------
         -- Find steps for the given jobs that need to be reset
@@ -107,9 +104,7 @@ BEGIN
               JS.job IN ( SELECT job
                           FROM Tmp_Jobs ) AND
               (JS_Target.state IN (0, 1, 2, 4, 9) OR
-               JS_Target.start > JS.finish)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+               JS_Target.start > JS.finish);
 
         If _infoOnly Then
             -- Preview steps that would be updated

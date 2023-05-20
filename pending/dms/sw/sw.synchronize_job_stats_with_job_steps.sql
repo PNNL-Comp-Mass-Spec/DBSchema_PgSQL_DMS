@@ -21,7 +21,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -60,51 +60,21 @@ BEGIN
            ON J.job = JS.job
     WHERE (J.state = 4 And _completedJobsOnly OR Not _completedJobsOnly) AND
           J.start > JS.start
-    GROUP BY J.job
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GROUP BY J.job;
 
     UPDATE Tmp_JobsToUpdate
     SET StartNew = SourceQ.Step_Start,
         FinishNew = SourceQ.Step_Finish
-    FROM Tmp_JobsToUpdate
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_JobsToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_JobsToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT J.job,
-                             MIN(JS.start) AS Step_Start,
-                             MAX(JS.finish) AS Step_Finish
-                      FROM sw.t_jobs J
-                           INNER JOIN sw.t_job_steps JS
-                             ON J.job = JS.job
-                      WHERE J.job IN ( SELECT job
-                                       FROM Tmp_JobsToUpdate )
-
-                                       /********************************************************************************
-                                       ** This UPDATE query includes the target table name in the FROM clause
-                                       ** The WHERE clause needs to have a self join to the target table, for example:
-                                       **   UPDATE Tmp_JobsToUpdate
-                                       **   SET ...
-                                       **   FROM source
-                                       **   WHERE source.id = Tmp_JobsToUpdate.id;
-                                       ********************************************************************************/
-
-                                                              ToDo: Fix this query
-
-                      GROUP BY J.Job
-                    ) SourceQ
-           ON Tmp_JobsToUpdate.Job = SourceQ.Job
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    FROM ( SELECT J.job,
+                  MIN(JS.start) AS Step_Start,
+                  MAX(JS.finish) AS Step_Finish
+           FROM sw.t_jobs J
+                INNER JOIN sw.t_job_steps JS
+                  ON J.job = JS.job
+           WHERE J.job IN ( SELECT job FROM Tmp_JobsToUpdate )
+           GROUP BY J.Job
+         ) SourceQ
+    WHERE Tmp_JobsToUpdate.Job = SourceQ.Job
 
     If _infoOnly Then
 

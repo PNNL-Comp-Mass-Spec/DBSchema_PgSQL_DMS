@@ -117,11 +117,11 @@ AS $$
 **          06/13/2017 mem - Validate _priority
 **                         - Check for name collisions when _mode is update
 **                         - Use SCOPE_IDENTITY
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/25/2017 mem - Add parameter _tissue (tissue name, e.g. hypodermis)
 **          09/01/2017 mem - Allow _tissue to be a BTO ID (e.g. BTO:0000131)
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          08/22/2018 mem - Change the EUS User parameter from a varchar(1024) to an integer
 **          08/29/2018 mem - Remove call to DoSamplePrepMaterialOperation since we stopped associating biomaterial (cell cultures) with Sample Prep Requests in June 2017
 **          11/30/2018 mem - Make _reason an input/output parameter
@@ -457,7 +457,7 @@ BEGIN
         SELECT state_id
         INTO _stateID
         FROM  t_sample_prep_request_state_name
-        WHERE (state_name = _state)
+        WHERE state_name = _state;
 
         If Not FOUND Then
             RAISE EXCEPTION 'No entry could be found in database for state "%"', _state;

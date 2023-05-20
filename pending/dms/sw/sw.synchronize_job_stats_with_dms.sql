@@ -23,7 +23,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
+    _updateCount int;
     _defaultDate datetime;
 BEGIN
     _message := '';
@@ -51,11 +52,10 @@ BEGIN
     ---------------------------------------------------
     --
     If _jobListToProcess = '' Then
-        INSERT INTO Tmp_JobsToProcess (Job);
-    End If;
+        INSERT INTO Tmp_JobsToProcess (Job)
         SELECT sw.t_jobs.job
         FROM sw.t_jobs
-        WHERE sw.t_jobs.state IN (4,5)
+        WHERE sw.t_jobs.state IN (4,5);
     Else
         INSERT INTO Tmp_JobsToProcess (job)
         SELECT sw.t_jobs.job
@@ -64,11 +64,12 @@ BEGIN
                         FROM public.parse_delimited_integer_list ( _jobListToProcess, ',' )
                         ) ValueQ
             ON sw.t_jobs.job = ValueQ.job
-        WHERE sw.t_jobs.state IN (4,5)
+        WHERE sw.t_jobs.state IN (4,5);
+    End If;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    _message := format('Validating start/finish times for %s %s', _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
+    _message := format('Validating start/finish times for %s %s', _insertCount, public.check_plural(_insertCount, 'job', 'jobs'));
 
     ---------------------------------------------------
     -- Update jobs where the start or finish time differ
@@ -117,9 +118,9 @@ BEGIN
               Abs( extract(epoch FROM (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1
               Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.ProcessingTimeMinutes)  > 0.1
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := format('%s; Updated %s %s', _message, _myRowCount, public.check_plural(_myRowCount, 'job', 'jobs'));
+        _message := format('%s; Updated %s %s', _message, _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
     End If;
 
     RAISE INFO '%', _message;

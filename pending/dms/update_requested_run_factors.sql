@@ -71,7 +71,7 @@ AS $$
 **                         - Expand the warning message for unrecognized _idType
 **          11/08/2016 mem - Use GetUserLoginWithoutDomain to obtain the user's network login
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          02/12/2022 mem - Trim leading and trailing whitespace when storing factors
@@ -87,7 +87,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _requestCount int := 0;
     _invalidCount int;
     _invalidIDs text;
     _matchCount int;

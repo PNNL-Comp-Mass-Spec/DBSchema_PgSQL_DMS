@@ -314,7 +314,7 @@ BEGIN
             SELECT dataset_rating
             INTO _interestRating
             FROM T_Dataset_Rating_Name
-            WHERE (dataset_rating_id = 5);
+            WHERE dataset_rating_id = 5;
         End If;
     End If;
 

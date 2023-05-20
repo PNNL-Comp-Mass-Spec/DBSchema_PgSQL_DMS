@@ -24,7 +24,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _proteinCollectionName text;
     _uniqueID int;
     _proteinCollectionListClean text := '';
@@ -95,12 +94,12 @@ BEGIN
     SELECT AOF.archived_file_id
     FROM pc.t_archived_output_file_collections_xref AOFC INNER JOIN
          pc.t_archived_output_files AOF ON AOFC.archived_file_id = AOF.archived_file_id
-    WHERE (AOF.archived_file_id IN
+    WHERE AOF.archived_file_id IN
             ( SELECT AOF.archived_file_id
               FROM pc.t_archived_output_file_collections_xref AOFC INNER JOIN
                    pc.t_archived_output_files AOF ON AOFC.archived_file_id = AOF.archived_file_id INNER JOIN
                    pc.t_protein_collections PC ON AOFC.protein_collection_id = PC.protein_collection_id
-              WHERE PC.collection_name = _proteinCollectionName AND AOF.creation_options = _creationOptions)
+              WHERE PC.collection_name = _proteinCollectionName AND AOF.creation_options = _creationOptions
             )
     GROUP BY AOF.archived_file_id
     HAVING COUNT(*) = _proteinCollectionCount

@@ -66,7 +66,7 @@ AS $$
 *****************************************************/
 DECLARE
     _message text;
-    _myRowCount int := 0;
+    _updateCount int;
     _job int;
     _jobStep int;
 BEGIN
@@ -149,7 +149,7 @@ BEGIN
            ON Tmp_Jobs.job = JS.job
          INNER JOIN ( SELECT job, step, start, input_folder_name
                       FROM sw.t_job_steps
-                      WHERE (tool In ('Results_Transfer', 'Results_Cleanup'))
+                      WHERE tool In ('Results_Transfer', 'Results_Cleanup')
                     ) FilterQ
            ON JS.job = FilterQ.job AND
               JS.output_folder_name = FilterQ.input_folder_name AND
@@ -168,7 +168,7 @@ BEGIN
            ON Tmp_Jobs.job = JS.job
          INNER JOIN ( SELECT job, step, start, input_folder_name
                       FROM sw.t_job_steps
-                      WHERE (tool In ('Results_Transfer', 'Results_Cleanup'))
+                      WHERE tool In ('Results_Transfer', 'Results_Cleanup')
                     ) FilterQ
            ON JS.job = FilterQ.job AND
               JS.output_folder_name = FilterQ.input_folder_name AND
@@ -272,9 +272,9 @@ BEGIN
                   JSH.most_recent_entry = 1
         WHERE Not J.Invalid;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount = 0 Then
+        If _updateCount = 0 Then
             _message := 'No job steps were updated; this indicates a bug.  Examine the temp table contents';
 
             -- ToDo: Update this to use RAISE INFO
@@ -287,7 +287,7 @@ BEGIN
 
         End If;
 
-        If _myRowCount = 1 Then
+        If _updateCount = 1 Then
             SELECT JSU.Job,
                    JSU.Step
             INTO _job, _jobStep
@@ -299,8 +299,8 @@ BEGIN
             _message := format('Updated step %s for job %s in sw.t_job_steps, copying metadata from sw.t_job_steps_history', _jobStep, _job);
         End If;
 
-        If _myRowCount > 1 Then
-            _message := format('Updated %s job steps in sw.t_job_steps, copying metadata from sw.t_job_steps_history', _myRowCount);
+        If _updateCount > 1 Then
+            _message := format('Updated %s job steps in sw.t_job_steps, copying metadata from sw.t_job_steps_history', _updateCount);
         End If;
 
         UPDATE Tmp_Jobs

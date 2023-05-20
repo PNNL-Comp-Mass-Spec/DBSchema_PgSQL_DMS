@@ -31,7 +31,7 @@ AS $$
 **  Date:   02/15/2010
 **          09/02/2011 mem - Now calling PostUsageLogEntry
 **          11/07/2016 mem - Add optional logging via PostLogEntry
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/15/2023 mem - Ported to PostgreSQL
 **

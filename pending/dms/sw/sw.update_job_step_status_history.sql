@@ -26,7 +26,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
     _timeIntervalLastUpdateMinutes real;
     _timeIntervalIdenticalStatsMinutes real;
     _newStatCount int;
@@ -63,10 +63,9 @@ BEGIN
     -- Lookup the most recent posting time
     -----------------------------------------------------
     --
-    SELECT MAX(posting_time) INTO _mostRecentPostingTime
+    SELECT MAX(posting_time)
+    INTO _mostRecentPostingTime
     FROM sw.t_job_step_status_history
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If Coalesce(_minimumTimeIntervalMinutes, 0) = 0 Or _mostRecentPostingTime Is Null Then
         _updateTable := true;
@@ -87,18 +86,16 @@ BEGIN
         INSERT INTO Tmp_JobStepStatusHistory  (Posting_Time, step_tool, state, Step_Count)
         SELECT CURRENT_TIMESTAMP as Posting_Time, Tool, State, COUNT(*) AS Step_Count
         FROM sw.t_job_steps
-        GROUP BY Tool, state
+        GROUP BY Tool, state;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-        _newStatCount := _myRowCount;
+        GET DIAGNOSTICS _newStatCount = ROW_COUNT;
 
         -----------------------------------------------------
         -- See if the stats match the most recent stats entered in the table
         -----------------------------------------------------
 
-        _identicalStatCount := 0;
-        SELECT COUNT(*) INTO _identicalStatCount
+        SELECT COUNT(*)
+        INTO _identicalStatCount
         FROM Tmp_JobStepStatusHistory NewStats
              INNER JOIN ( SELECT step_tool,
                                  state,
@@ -108,9 +105,7 @@ BEGIN
                         ) RecentStats
                ON NewStats.step_tool = RecentStats.step_tool AND
                   NewStats.state = RecentStats.state AND
-                  NewStats.step_count = RecentStats.step_count
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                  NewStats.step_count = RecentStats.step_count;
 
         If _identicalStatCount = _newStatCount Then
             -----------------------------------------------------
@@ -141,9 +136,9 @@ BEGIN
                 FROM Tmp_JobStepStatusHistory
                 ORDER BY step_tool, state
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-                _message := format('Appended %s rows to the Job Step Status History table', _myRowCount);
+                _message := format('Appended %s %s to the Job Step Status History table', _insertCount, public.check_plural(_insertCount, 'row', 'rows'));
             End If;
         Else
             _message := format('Update skipped since last update was %s minutes ago and the stats are still identical', Round(_timeIntervalIdenticalStatsMinutes, 1));

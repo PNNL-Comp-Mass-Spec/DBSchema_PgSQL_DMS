@@ -25,7 +25,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _deleteCount int;
     _dateThreshold timestamp;
     _jobHistoryMinimumCount int := 250000;
     _currentJobCount int;
@@ -66,11 +66,9 @@ BEGIN
     INSERT INTO Tmp_JobsToDelete( job, saved )
     SELECT job, saved
     FROM sw.t_jobs_history
-    WHERE saved < _dateThreshold
+    WHERE saved < _dateThreshold;
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
-    _jobCountToDelete := _myRowcount;
+    GET DIAGNOSTICS _jobCountToDelete = ROW_COUNT;
 
     If _jobCountToDelete = 0 Then
         _message := 'No old jobs were found; exiting';
@@ -95,11 +93,10 @@ BEGIN
                        ORDER BY Job DESC
                        LIMIT _tempTableJobsToRemove)
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        _message := 'Removed ' || Cast(_myRowCount As text) ||
-                       ' rows from Tmp_JobsToDelete to assure that ' ||
-                       Cast(_jobHistoryMinimumCount As text) || ' rows remain in sw.t_jobs_history'
+        _message := format('Removed %s %s from Tmp_JobsToDelete to assure that %s rows remain in sw.t_jobs_history',
+                           _deleteCount, public.check_plural(_deleteCount, 'row', 'rows'), _jobHistoryMinimumCount);
 
         RAISE INFO '%', _message;
 
@@ -113,15 +110,11 @@ BEGIN
            MIN(Job),
            MAX(Job)
     INTO _jobCountToDelete, _jobFirst, _jobLast
-    FROM Tmp_JobsToDelete
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    FROM Tmp_JobsToDelete;
 
     ---------------------------------------------------
     -- Delete the old jobs (preview if _infoOnly is true)
     ---------------------------------------------------
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     If _infoOnly Then
 

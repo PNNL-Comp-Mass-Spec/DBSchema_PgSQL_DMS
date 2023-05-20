@@ -25,7 +25,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _deleteCount int;
     _saveTime timestamp;
 BEGIN
     _message := '';
@@ -62,9 +62,7 @@ BEGIN
     INSERT INTO Tmp_SJL
     SELECT job, state
     FROM sw.t_jobs
-    WHERE job = _job
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE job = _job;
 
     If _validateJobStepSuccess Then
         -- Remove any jobs that have failed, in progress, or holding job steps
@@ -73,12 +71,14 @@ BEGIN
         WHERE Tmp_SJL.job = JS.job AND
               NOT (JS.state IN (3, 5));
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
-            RAISE INFO '%', 'Warning: Removed ' || _myRowCount::text || ' job(s) with one or more steps that was not skipped or complete';
+        If _deleteCount > 0 Then
+            _message := format('Warning: Removed %s %s with one or more steps that was not skipped or complete',
+                                _deleteCount, public.check_plural(_deleteCount, 'job', 'jobs'));
+            RAISE WARNING '%', _message;
         Else
-            RAISE INFO '%', 'Successful jobs have been confirmed to all have successful (or skipped) steps';
+            RAISE INFO 'Successful jobs have been confirmed to all have successful (or skipped) steps';
         End If;
     End If;
 

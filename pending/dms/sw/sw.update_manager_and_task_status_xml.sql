@@ -34,7 +34,7 @@ AS $$
 **          05/23/2017 mem - Update fewer status fields if Remote_Manager is not empty
 **                         - Change _debugMode to recognize various values
 **          06/15/2017 mem - Use Cast and Try_Cast
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          07/06/2017 mem - Allow Status_Date and Last_Start_Time to be UTC-based
 **                           Use Try_Cast to convert from varchar to numbers
 **          08/01/2017 mem - Use THROW if not authorized
@@ -47,7 +47,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int;
+    _matchCount int;
+    _updateCount int;
     _statusMessageInfo text := '';
     _statusXML xml;
     _updatedProcessors text;
@@ -251,9 +252,9 @@ BEGIN
                    ManagerInfoQ.Status_Date = TaskDetailQ.Status_Date
         ORDER BY ManagerInfoQ.Processor_Name, ManagerInfoQ.Status_Date;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        _statusMessageInfo := 'Status info count: ' || _myRowCount::text;
+        _statusMessageInfo := 'Status info count: ' || _matchCount::text;
 
         -- Make sure Remote_Manager is defined
         --
@@ -268,9 +269,9 @@ BEGIN
         FROM sw.t_processor_status PS
         WHERE PS.processor_name = Tmp_Processor_Status_Info.processor_name;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _statusMessageInfo := format('Messages: %s', _myRowCount);
+        _statusMessageInfo := format('Messages: %s', _updateCount);
 
         If _infoLevel > 0 Then
 
@@ -422,9 +423,9 @@ BEGIN
         FROM Tmp_Processor_Status_Info Src
         WHERE Src.Processor_Name = Target.Processor_Name AND Src.Remote_Manager <> '';
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _statusMessageInfo := format('%s, PreservedA: %s', _statusMessageInfo, _myRowCount);
+        _statusMessageInfo := format('%s, PreservedA: %s', _statusMessageInfo, _updateCount);
 
         -- Next update managers where Remote_Manager is empty
         --
@@ -463,9 +464,9 @@ BEGIN
         FROM Tmp_Processor_Status_Info Src
         WHERE Src.Processor_Name = Target.Processor_Name And Src.Remote_Manager = '';
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _statusMessageInfo := format('%s, PreservedB: %s', _statusMessageInfo, _myRowCount);
+        _statusMessageInfo := format('%s, PreservedB: %s', _statusMessageInfo, _updateCount);
 
         ---------------------------------------------------
         -- Add missing processors to sw.t_processor_status
@@ -506,9 +507,9 @@ BEGIN
                 ON Src.processor_name = Target.processor_name
         WHERE Src.IsNew AND Src.remote_manager <> '' AND Target.processor_name IS NULL;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _statusMessageInfo := format('%s, InsertedA: %s', _statusMessageInfo, _myRowCount);
+        _statusMessageInfo := format('%s, InsertedA: %s', _statusMessageInfo, _updateCount);
 
         -- Add managers where Remote_Manager is empty
         --
@@ -567,9 +568,9 @@ BEGIN
             ON Src.processor_name = Target.processor_name
         WHERE Src.IsNew AND Src.remote_manager = '' AND Target.processor_name IS NULL;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _statusMessageInfo := format('%s, InsertedB: %s', _statusMessageInfo, _myRowCount);
+        _statusMessageInfo := format('%s, InsertedB: %s', _statusMessageInfo, _updateCount);
 
         If _logProcessorNames Then
 

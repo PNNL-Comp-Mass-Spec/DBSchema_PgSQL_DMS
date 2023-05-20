@@ -29,7 +29,7 @@ AS $$
 **          08/25/2016 mem - Do not change the dataset type from EI-HMS to HMS
 **                         - Do not update the dataset comment when auto-changing an HMS dataset
 **          04/28/2017 mem - Do not update the dataset comment when auto-changing an IMS dataset
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          06/03/2019 mem - Check for 'IMS' in ScanFilter
 **          10/10/2020 mem - No longer update the comment when auto switching the dataset type
 **          10/13/2020 mem - Add support for datasets that only have MS2 spectra (they will be assigned dataset type HMS or MS, despite the fact that they have no MS1 spectra; this is by design)
@@ -590,9 +590,10 @@ BEGIN
     If _newDatasetType <> '' Then
         _newDSTypeID := 0;
 
-        SELECT DST_Type_ID INTO _newDSTypeID
+        SELECT DST_Type_ID
+        INTO _newDSTypeID
         FROM t_dataset_rating_name
-        WHERE (Dataset_Type = _newDatasetType)
+        WHERE Dataset_Type = _newDatasetType;
 
         If _newDSTypeID <> 0 Then
 

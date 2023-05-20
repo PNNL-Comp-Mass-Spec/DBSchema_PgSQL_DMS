@@ -83,7 +83,7 @@ BEGIN
                                 Finish < CURRENT_TIMESTAMP - INTERVAL '1 hour'
                         ) PipelineQ
                ON J.job = PipelineQ.job
-        WHERE (J.job_state_id IN (1, 2, 8))
+        WHERE J.job_state_id IN (1, 2, 8);
 
         If _infoOnly Then
 

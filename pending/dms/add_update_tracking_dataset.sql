@@ -44,7 +44,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling AddUpdateRequestedRun
 **                         - Use SCOPE_IDENTITY()
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          02/25/2021 mem - Use ReplaceCharacterCodes to replace character codes with punctuation marks

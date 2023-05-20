@@ -47,7 +47,7 @@ DECLARE
     _jobDateDescription text;
     _similarJob int;
     _jobList text;
-    _myRowCount int;
+    _insertCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -225,10 +225,10 @@ BEGIN
         WHERE H.job = _job AND
               H.saved = _dateStamp;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
-            RAISE INFO 'Inserted % steps into sw.t_job_steps for %', _myRowCount, _jobDateDescription;
+            RAISE INFO 'Inserted % steps into sw.t_job_steps for %', _insertCount, _jobDateDescription;
         End If;
 
         -- Change any waiting, enabled, or running steps to state 7 (holding)
@@ -252,10 +252,10 @@ BEGIN
         WHERE job = _job AND
               saved = _dateStamp;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
-            RAISE INFO 'Inserted % row into sw.t_job_parameters for %', _myRowCount, _jobDateDescription;
+            RAISE INFO 'Inserted % row into sw.t_job_parameters for %', _insertCount, _jobDateDescription;
         End If;
 
         ---------------------------------------------------
@@ -330,10 +330,10 @@ BEGIN
                 FROM sw.t_job_step_dependencies_history H
                 WHERE job = _similarJob;
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
                 If _debugMode Then
-                    RAISE INFO 'Added % rows to sw.t_job_step_dependencies_history for % using model job %', _myRowCount, _jobDateDescription, _similarJob;
+                    RAISE INFO 'Added % rows to sw.t_job_step_dependencies_history for % using model job %', _insertCount, _jobDateDescription, _similarJob;
                 End If;
 
             Else
@@ -360,10 +360,10 @@ BEGIN
                 WHERE job = _job AND
                       step > 1
                 --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
                 If _debugMode Then
-                    RAISE INFO 'Added % rows to sw.t_job_step_dependencies for %', _myRowCount, _jobDateDescription;
+                    RAISE INFO 'Added % rows to sw.t_job_step_dependencies for %', _insertCount, _jobDateDescription;
                 End If;
             End If;
 

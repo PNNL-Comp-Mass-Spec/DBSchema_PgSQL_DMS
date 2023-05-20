@@ -32,7 +32,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -162,7 +162,8 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        SELECT COUNT(*) INTO _datasetCount
+        SELECT COUNT(*)
+        INTO _datasetCount
         FROM Tmp_DatasetInfo
 
         _message := 'Number of affected datasets: ' || cast(_datasetCount as text);

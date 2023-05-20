@@ -302,7 +302,8 @@ BEGIN
                             Values (_eusProposalID, Coalesce(_numericID, 0))
                         End If;
 
-                        SELECT numeric_id INTO _numericID
+                        SELECT numeric_id
+                        INTO _numericID
                         FROM t_eus_proposals
                         WHERE proposal_id = _autoSupersedeProposalID
 
@@ -351,7 +352,8 @@ BEGIN
         End If;
 
         If _eusProposalID <> _originalProposalID Then
-            SELECT proposal_type INTO _proposalType
+            SELECT proposal_type
+            INTO _proposalType
             FROM t_eus_proposals
             WHERE proposal_id = _eusProposalID
         End If;
@@ -372,11 +374,12 @@ BEGIN
             --
             _personID := 0;
 
-            SELECT MIN(EUSU.person_id) INTO _personID
+            SELECT MIN(EUSU.person_id)
+            INTO _personID
             FROM t_eus_proposals EUSP
                 INNER JOIN t_eus_proposal_users EUSU
                 ON EUSP.proposal_id = EUSU.proposal_id
-            WHERE EUSP.proposal_id = _eusProposalID
+            WHERE EUSP.proposal_id = _eusProposalID;
 
             If Coalesce(_personID, 0) > 0 Then
                 _eusUsersList := _personID::text;
@@ -538,11 +541,12 @@ BEGIN
                     -- Auto-populate _eusUsersList with the first user associated with the given user proposal
                     _personID := 0;
 
-                    SELECT MIN(EUSU.person_id) INTO _personID
+                    SELECT MIN(EUSU.person_id)
+                    INTO _personID
                     FROM t_eus_proposals EUSP
                         INNER JOIN t_eus_proposal_users EUSU
                         ON EUSP.proposal_id = EUSU.proposal_id
-                    WHERE EUSP.proposal_id = _eusProposalID
+                    WHERE EUSP.proposal_id = _eusProposalID;
 
                     If Coalesce(_personID, 0) > 0 Then
                         _newUserList := _personID::text;

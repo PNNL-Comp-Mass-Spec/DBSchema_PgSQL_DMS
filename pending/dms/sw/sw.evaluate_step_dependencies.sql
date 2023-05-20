@@ -31,7 +31,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _startTime timestamp;
     _statusMessage text;
     _rowCountToProcess int;
@@ -115,14 +114,13 @@ BEGIN
          INNER JOIN sw.t_job_steps AS JS_B
            ON JSD.job = JS_B.job AND
               JSD.step = JS_B.step
-    WHERE (JSD.evaluated = 0) AND
-          (JS.state IN (3, 5)) AND
-          (JS_B.state = 1);
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE JSD.evaluated = 0 AND
+          JS.state IN (3, 5) AND
+          JS_B.state = 1;
 
-    -- Nothing found, nothing to process
-    If _myRowCount = 0 Then
+    If Not FOUND Then
+        -- Nothing found, nothing to process
+
         If _infoOnly Then
             RAISE INFO 'Did not find any job steps to process';
         End If;

@@ -24,7 +24,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _remoteInfoId int;
 BEGIN
     _remoteInfo := Coalesce(_remoteInfo, '');
@@ -41,11 +40,9 @@ BEGIN
     SELECT remote_info_id
     INTO _remoteInfoID
     FROM sw.t_remote_info
-    WHERE remote_info = _remoteInfo
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE remote_info = _remoteInfo;
 
-    If _myRowCount = 0 Then
+    If Not FOUND Then
         If _infoOnly Then
             RAISE INFO 'Remote info not found in sw.t_remote_info: %', _remoteInfo;
         Else
@@ -61,8 +58,6 @@ BEGIN
             WHEN NOT MATCHED THEN
                 INSERT (remote_info, entered)
                 VALUES (source.remote_info, CURRENT_TIMESTAMP);
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             SELECT remote_info_id
             INTO _remoteInfoID

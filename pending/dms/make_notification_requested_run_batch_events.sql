@@ -97,8 +97,8 @@ BEGIN
            ON TH.batch_id = TB.Batch_ID
          LEFT OUTER JOIN t_dataset AS TD
            ON TD.Dataset_ID = TH.DatasetID
-    WHERE (TB.batch_id <> 0) AND
-          (TB.created > _threshold)
+    WHERE TB.batch_id <> 0 AND
+          TB.created > _threshold
     GROUP BY TB.batch_id;
 
     If _showDebug Then

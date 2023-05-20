@@ -24,9 +24,9 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _candidateSteps int := 0;
-    _jobsToRelease int := 0;
+    _updateCount int;
+    _candidateSteps int;
+    _jobsToRelease int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -72,21 +72,21 @@ BEGIN
                                  ON JS_MSGF.job = ExtractQ.job
                                     AND
                                     ExtractQ.tool = 'DataExtractor'
-                          WHERE (JS_MSGF.state = 7) AND
-                                (JS_MSGF.tool = _stepTool) AND
-                                (ExtractQ.state = 5) AND
-                                (ExtractQ.tool_version_id >= 82)
+                          WHERE JS_MSGF.state = 7 AND
+                                JS_MSGF.tool = _stepTool AND
+                                ExtractQ.state = 5 AND
+                                ExtractQ.tool_version_id >= 82
                           ORDER BY job DESC
                           LIMIT _jobsToRelease ) ReleaseQ
                ON sw.t_job_steps.job = ReleaseQ.job AND
                   sw.t_job_steps.step = ReleaseQ.step
         WHERE sw.t_job_steps.state = 7
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := 'Enabled ' || _myRowCount::text || ' jobs for processing';
+        _message := format('Enabled %s %s for processing', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
     Else
-        _message := 'Already have ' || _candidateSteps::text || ' candidate jobs; nothing to do';
+        _message := format('Already have %s candidate %s; nothing to do', _candidateSteps, public.check_plural(_candidateSteps, 'job', 'jobs'));
     End If;
 
 END

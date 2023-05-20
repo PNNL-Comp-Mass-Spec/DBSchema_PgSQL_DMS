@@ -64,7 +64,7 @@ BEGIN
     SELECT t_dataset.dataset_id,
            _eventTypeID
     FROM t_dataset
-    WHERE (t_dataset.dataset_rating_id BETWEEN - 9 AND 1) AND
+    WHERE t_dataset.dataset_rating_id BETWEEN -9 AND 1 AND
           t_dataset.created BETWEEN _window AND _now AND
           NOT EXISTS ( SELECT *
                        FROM t_notification_event AS TNE
@@ -82,7 +82,7 @@ BEGIN
     SELECT t_dataset.dataset_id,
            _eventTypeID
     FROM t_dataset
-    WHERE (t_dataset.dataset_rating_id >= 2) AND
+    WHERE t_dataset.dataset_rating_id >= 2 AND
           t_dataset.created BETWEEN _window AND _now AND
           NOT EXISTS ( SELECT *
                        FROM t_notification_event AS TNE

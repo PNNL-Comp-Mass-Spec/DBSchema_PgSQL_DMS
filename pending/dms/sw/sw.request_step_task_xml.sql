@@ -111,7 +111,7 @@ AS $$
 **          05/23/2017 mem - Update Remote_Start, Remote_Finish, and Remote_Progress
 **          05/26/2017 mem - Treat state 9 (Running_Remote) as having a CPU_Load of 0
 **          06/08/2017 mem - Remove use of column MonitorRunningRemote in T_Machines since _remoteInfo replaces it
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/03/2017 mem - Use column Max_Job_Priority in table T_Processor_Tool_Group_Details
 **          02/17/2018 mem - When previewing job candidates, show jobs that would be excluded due to Next_Try
@@ -130,7 +130,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _myRowCount int := 0;
     _jobAssigned boolean := false;
     _candidateJobStepsToRetrieve int := 15;
     _holdoffWindowMinutes int;
@@ -253,7 +252,7 @@ BEGIN
         _returnCode := _jobNotAvailableErrorCode;
 
         INSERT INTO sw.t_sp_usage( posted_by, processor_id, calling_user )
-        VALUES('RequestStepTaskXML', null, session_user || ' Invalid processor: ' || _processorName)
+        VALUES('request_step_task_xml', null, session_user || ' Invalid processor: ' || _processorName)
 
         RETURN;
     End If;
@@ -268,16 +267,13 @@ BEGIN
         SET latest_request = CURRENT_TIMESTAMP,
             manager_version = _analysisManagerVersion
         WHERE processor_name = _processorName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         If Coalesce(_logSPUsage, 0) <> 0 Then
-            INSERT INTO sw.t_sp_usage (;
+            INSERT INTO sw.t_sp_usage ( Posted_By,
+                                        ProcessorID,
+                                        Calling_User )
+            VALUES('request_step_task_xml', _processorID, session_user)
         End If;
-                            Posted_By,
-                            ProcessorID,
-                            Calling_User )
-            VALUES('RequestStepTaskXML', _processorID, session_user)
 
     End If;
 
@@ -371,8 +367,6 @@ BEGIN
                ON PTGD.tool_name = ST.step_tool
         WHERE LP.processor_name = _processorName AND
               PTGD.enabled > 0
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
         -- Preview the tools for this processor (as defined in _availableProcessorTools, which we just populated)
         SELECT PT.Processor_Tool_Group,
@@ -423,16 +417,12 @@ BEGIN
             INTO _stepsRunningRemotely
             FROM sw.t_job_steps
             WHERE state IN (4, 9) AND remote_info_id = _remoteInfoID;
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
             If _stepsRunningRemotely > 0 Then
                 SELECT max_running_job_steps
                 INTO _maxSimultaneousRunningRemoteSteps
                 FROM sw.t_remote_info
                 WHERE remote_info_id = _remoteInfoID
-                --
-                GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
                 If _stepsRunningRemotely >= Coalesce(_maxSimultaneousRunningRemoteSteps, 1) Then
                     _runningRemoteLimitReached := 1;
@@ -584,11 +574,9 @@ BEGIN
             Association_Type,
             J.priority,        -- Job_Priority
             job,
-            step
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            step;
 
-        If _myRowCount = 0 And _infoLevel <> 0 Then
+        If Not FOUND And _infoLevel <> 0 Then
             -- Look for results transfer tasks that need to be handled by another storage server
             --
             INSERT INTO Tmp_CandidateJobSteps (
@@ -805,9 +793,8 @@ BEGIN
                  ELSE 0
             END DESC,
             Job,
-            Step
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            Step;
+
         -- </UseBigBang>
     Else
         -- <UseMultiStep>
@@ -831,9 +818,7 @@ BEGIN
             INNER JOIN sw.t_step_tools ST
                 ON PTGD.tool_name = ST.step_tool
         WHERE PTGD.enabled > 0 AND
-              LP.processor_name = _processorName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              LP.processor_name = _processorName;
 
         _processorGP := Coalesce(_processorGP, 0);
 
@@ -914,9 +899,7 @@ BEGIN
                     ELSE 0
                 End If; DESC,
                 Job,
-                Step
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                Step;
 
               -- </LimitedProcessingMachine>
         Else
@@ -1043,9 +1026,7 @@ BEGIN
                     ELSE 0
                 END DESC,
                 Job,
-                Step
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                Step;
 
         -- Comment this end statement out due to deprecating processor groups
         -- End If;     -- </GeneralProcessingMachine>
@@ -1114,13 +1095,11 @@ BEGIN
                                       JS.state = 4
                                 GROUP BY sw.t_jobs.storage_server
                             ) LookupQ
-                        WHERE (Running_Steps_Recently_Started >= _maxSimultaneousJobCount)
+                        WHERE Running_Steps_Recently_Started >= _maxSimultaneousJobCount
                         ) ServerQ
             ON ServerQ.storage_server = CJS.storage_server
         WHERE CJS.step <= _maxStepNumToThrottle AND
-              (NOT tool IN ('Sequest', 'Results_Transfer') OR _throttleAllStepTools > 0)
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              (NOT tool IN ('Sequest', 'Results_Transfer') OR _throttleAllStepTools > 0);
 
     End If;
 
@@ -1156,9 +1135,7 @@ BEGIN
                             JS.start >= CURRENT_TIMESTAMP - INTERVAL '10 minutes'
                      ) RecentStartQ
            ON CJS.dataset_id = RecentStartQ.dataset_id And
-              CJS.machine = RecentStartQ.machine
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              CJS.machine = RecentStartQ.machine;
 
     ---------------------------------------------------
     -- If _infoLevel = 0, remove candidates with non-viable association types
@@ -1170,15 +1147,11 @@ BEGIN
     --
     UPDATE Tmp_CandidateJobSteps
     SET Association_Type = 20
-    WHERE Association_Type < _associationTypeIgnoreThreshold And Next_Try > CURRENT_TIMESTAMP
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE Association_Type < _associationTypeIgnoreThreshold And Next_Try > CURRENT_TIMESTAMP;
 
     If _infoLevel = 0 Then
         DELETE FROM Tmp_CandidateJobSteps
-        WHERE Association_Type > _associationTypeIgnoreThreshold
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        WHERE Association_Type > _associationTypeIgnoreThreshold;
     Else
         -- See if any jobs have Association_Type 99
         -- They are assigned to specific processors, but not to this processor
@@ -1215,11 +1188,7 @@ BEGIN
             WHERE CJS.Association_Type = 99 AND
                   NOT EXISTS ( SELECT job
                                FROM sw.t_local_job_processors
-                               WHERE processor = _processorName )
-
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-
+                               WHERE processor = _processorName );
         End If;
 
     End If;
@@ -1334,7 +1303,7 @@ BEGIN
     End If;
 
     If _jobAssigned AND _infoLevel = 0 And _remoteInfoID <= 1 Then
-    --<f>
+
         ---------------------------------------------------
         -- Update CPU loading for this processor's machine
         ---------------------------------------------------
@@ -1373,13 +1342,11 @@ BEGIN
                                 JS.state = 4
                           GROUP BY LP.machine
                       ) CPUQ
-               ON CPUQ.machine = Target.machine
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+               ON CPUQ.machine = Target.machine;
 
         COMMIT;
 
-    End If; --<f>
+    End If;
 
     If _jobAssigned Then
 
@@ -1390,9 +1357,7 @@ BEGIN
             ---------------------------------------------------
 
             INSERT INTO sw.t_job_step_processing_log (job, step, processor, Remote_Info_ID)
-            VALUES (_job, _step, _processorName, _remoteInfoID)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            VALUES (_job, _step, _processorName, _remoteInfoID);
         End If;
 
         If _infoLevel > 1 Then
@@ -1416,7 +1381,7 @@ BEGIN
         End If;
     Else
         ---------------------------------------------------
-        -- No job step found; update _myError and _message
+        -- No job step found; update _returnCode and _message
         ---------------------------------------------------
         --
         _returnCode := _jobNotAvailableErrorCode;

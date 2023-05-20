@@ -30,7 +30,7 @@ AS $$
 **          08/31/2016 mem - Delete failed capture jobs for the dataset
 **          10/27/2016 mem - Update T_Log_Entries in DMS_Capture
 **          01/23/2017 mem - Delete jobs from cap.t_tasks
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/08/2018 mem - Update T_Dataset_Files
 **          09/27/2018 mem - Added parameter _infoOnly
@@ -285,7 +285,7 @@ BEGIN
     --
     UPDATE cap.t_log_entries
     SET type = 'ErrorAutoFixed'
-    WHERE (type = 'error') AND
+    WHERE type = 'error' AND
           message LIKE '%' || _datasetName || '%';
 
     ---------------------------------------------------

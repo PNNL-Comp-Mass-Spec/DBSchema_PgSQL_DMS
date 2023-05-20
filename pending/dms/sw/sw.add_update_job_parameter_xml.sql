@@ -27,7 +27,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   01/19/2012 mem - Initial Version (refactored from AddUpdateJobParameter)
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          04/11/2022 mem - Expand Section and Name to varchar(128)
 **                         - Expand _value to varchar(4000)
@@ -38,8 +38,6 @@ DECLARE
     _schemaName text;
     _nameWithSchema text;
     _authorized boolean;
-
-    _myRowCount int := 0;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -116,16 +114,12 @@ BEGIN
         UPDATE Tmp_Job_Parameters
         SET VALUE = _value
         WHERE Section = _section AND
-              Name = _paramName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
-        --
-        If _myRowCount = 0 Then
+              Name = _paramName;
+
+        If Not FOUND Then
             -- Match not found; Insert a new parameter
             INSERT INTO Tmp_Job_Parameters(Section, Name, Value)
-            VALUES (_section, _paramName, _value)
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            VALUES (_section, _paramName, _value);
         End If;
     Else
         ---------------------------------------------------
@@ -134,9 +128,7 @@ BEGIN
         --
         DELETE FROM Tmp_Job_Parameters
         WHERE Section = _section AND
-              Name = _paramName
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+              Name = _paramName;
     End If;
 
     If _infoOnly Then

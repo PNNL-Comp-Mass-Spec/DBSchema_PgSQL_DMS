@@ -23,7 +23,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   06/12/2017 mem - Initial version
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          03/15/2021 mem - Add _fractionCount
 **          12/15/2023 mem - Ported to PostgreSQL

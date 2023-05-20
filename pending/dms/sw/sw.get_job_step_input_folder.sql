@@ -34,7 +34,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _message text;
 BEGIN
     _message := '';
@@ -64,10 +63,8 @@ BEGIN
           JS.tool = _stepToolFilter)
     ORDER BY ST.primary_step_tool DESC, step DESC
     LIMIT 1;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-    If _myRowCount = 0 Then
+    If Not FOUND Then
         -- No match; try sw.t_job_steps_history
         SELECT JSH.input_folder_name,
                JSH.tool
@@ -83,8 +80,6 @@ BEGIN
               JSH.tool = _stepToolFilter)
         ORDER BY ST.primary_step_tool DESC, JSH.step DESC
         LIMIT 1;
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     End If;
 

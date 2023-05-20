@@ -210,7 +210,7 @@ BEGIN
             _mmd := '';
             _mmd := _mmd || ' SELECT Param_File_ID, MIN(Mod_Description) AS Mod_Description';
             _mmd := _mmd || ' FROM Tmp_ParamFileModInfo';
-            _mmd := _mmd || ' WHERE (Used = 0) AND ' || _modTypeFilter;
+            _mmd := _mmd || ' WHERE Used = 0 AND ' || _modTypeFilter;
             _mmd := _mmd || ' GROUP BY Param_File_ID';
 
             _s := '';

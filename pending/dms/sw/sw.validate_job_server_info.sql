@@ -27,7 +27,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
     _transferFolderPath text;
     _storageServerName text;
     _dataset text;
@@ -73,30 +73,29 @@ BEGIN
         WHERE Name = 'DatasetFolderName';
 
         If _debugMode Then
-            Select _job as Job, _transferFolderPath as TransferFolder, _dataset as Dataset, _datasetFolderName as Dataset_Folder_Path, 'sw.t_job_parameters' as Source;
+            RAISE INFO 'Job: %, TransferFolder: %, Dataset: %, Dataset Folder: %, Source: sw.t_job_parameters',
+                        _job, _transferFolderPath, _dataset, _datasetFolderName, _updateCount;
         End If;
     End If;
 
     If Coalesce(_transferFolderPath, '') = '' Then
         ---------------------------------------------------
         -- Info not found in sw.t_job_parameters (or _useJobParameters is false)
-        -- Directly query DMS
+        --
+        -- Get the settings from public.t_analysis_job (and related tables) using sw.get_job_param_table,
+        -- which references public.v_get_pipeline_job_parameters
         ---------------------------------------------------
         --
         CREATE TEMP TABLE Tmp_Job_Parameters (
             Job int,
-            Step_Number int,
             Section text,
             Name text,
             Value text
         );
 
-        -- ToDo: Switch to Select ... From sw.Get_Job_Param_Table
-        INSERT INTO Tmp_Job_Parameters
-            (Job, Step_Number, Section, Name, Value)
-        execute GetJobParamTable _job, _settingsFileOverride='', _debugMode => _DebugMode
-        --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        INSERT INTO Tmp_Job_Parameters (Job, Section, Name, Value)
+        SELECT job, section, name, value
+        FROM sw.get_job_param_table(_job);
 
         SELECT Value
         INTO _transferFolderPath
@@ -116,7 +115,8 @@ BEGIN
         WHERE Name = 'DatasetFolderName';
 
         If _debugMode Then
-            Select _job as Job, _transferFolderPath as TransferFolder, _dataset as Dataset, _datasetFolderName as Dataset_Folder_Path, 'DMS5' as Source;
+            RAISE INFO 'Job: %, TransferFolder: %, Dataset: %, Dataset Folder: %, Source: sw.t_job_parameters',
+                        _job, _transferFolderPath, _dataset, _datasetFolderName, _updateCount;
         End If;
 
     End If;
@@ -147,19 +147,21 @@ BEGIN
                 (Coalesce(Transfer_Folder_Path, '') <> _transferFolderPath OR
                  Coalesce(Storage_Server, '') <> _storageServerName)
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         If _debugMode Then
-            Select _job as Job, _transferFolderPath as TransferFolder, _dataset as Dataset, _storageServerName as Storage_Server, _myRowCount as RowCountUpdated;
+            RAISE INFO 'Job: %, TransferFolder: %, Dataset: %, Storage Server: %',
+                            _job, _transferFolderPath, _dataset, _storageServerName, _updateCount;
         End If;
 
     Else
         _message := 'Unable to determine TransferFolderPath and/or Dataset name for job ' || _job::text;
         Call public.post_log_entry ('Error', _message, 'Validate_Job_Server_Info', 'sw');
-        _myError := 52005;
+
+        _returnCode := 'U5205';
 
         If _debugMode Then
-            Select 'Error' as Messsage_Type, _message as Message;
+            RAISE ERROR '%', _message;
         End If;
     End If;
 

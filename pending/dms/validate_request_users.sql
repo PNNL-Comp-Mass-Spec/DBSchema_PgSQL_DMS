@@ -115,7 +115,6 @@ BEGIN
 
         If Exists (SELECT * FROM Tmp_UserInfo WHERE User_ID Is Null) Then
 
-            -- Moved to bottom of query: TOP 1
             SELECT Name_and_Username
             INTO _firstInvalidUser
             FROM Tmp_UserInfo

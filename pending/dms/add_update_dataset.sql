@@ -123,10 +123,10 @@ AS $$
 **          03/06/2017 mem - Decreased maximum dataset name length from 90 characters to 80 characters
 **          04/28/2017 mem - Disable logging certain messages to T_Log_Entries
 **          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling AddUpdateRequestedRun
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/29/2017 mem - Allow updating EUS info for existing datasets (calls AddUpdateRequestedRun)
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **                         - Expand _warning to varchar(512)
 **          04/15/2019 mem - Add call to UpdateCachedDatasetInstruments
 **          07/19/2019 mem - Change _eusUsageType to 'maintenance' if empty for _Tune_ or TuneMix datasets

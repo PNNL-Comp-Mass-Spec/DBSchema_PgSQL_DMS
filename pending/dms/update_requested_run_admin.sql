@@ -33,7 +33,7 @@ AS $$
 **          09/02/2011 mem - Now calling PostUsageLogEntry
 **          12/12/2011 mem - Now calling alter_event_log_entry_user_multi_id
 **          11/16/2016 mem - Call update_cached_requested_run_eus_users for updated Requested runs
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/01/2019 mem - Add additional debug logging
 **          10/20/2020 mem - Add mode 'UnassignInstrument'
@@ -213,9 +213,10 @@ BEGIN
             -- to alter the entered_by field in t_event_log
             -- This procedure uses Tmp_ID_Update_List
             --
-            SELECT state_id INTO _stateID
+            SELECT state_id
+            INTO _stateID
             FROM t_requested_run_state_name
-            WHERE (state_name = _mode)
+            WHERE state_name = _mode;
 
             Call alter_event_log_entry_user_multi_id (11, _stateID, _callingUser);
         End If;

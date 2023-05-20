@@ -171,7 +171,8 @@ BEGIN
             --    END LOOP;
 
 
-            SELECT Exp_ID INTO _currentExpID
+            SELECT Exp_ID
+            INTO _currentExpID
             FROM Tmp_AdditionalExperiments
             WHERE Exp_ID > _currentExpID
             ORDER BY Exp_ID
@@ -222,7 +223,8 @@ BEGIN
             --    END LOOP;
 
 
-            SELECT Exp_ID INTO _currentExpID
+            SELECT Exp_ID
+            INTO _currentExpID
             FROM Tmp_AdditionalExperiments
             WHERE Exp_ID > _currentExpID
             ORDER BY Exp_ID

@@ -30,8 +30,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _unknownUserCount int := 0;
-    _unknownUsers text := '';
+    _unknownUserCount int;
+    _unknownUsers text;
     _msg text;
     _logType text := 'Error';
     _validateEUSData int := 1;
@@ -48,7 +48,7 @@ BEGIN
 
     If _eusUsersList = '' Then
         DELETE FROM t_requested_run_eus_users
-        WHERE (request_id = _request)
+        WHERE request_id = _request;
 
         RETURN;
     End If;

@@ -49,7 +49,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
+    _jobCount int;
     _msg text;
     _statusMessage text;
     _stepSkipCount int := 0;
@@ -106,7 +107,7 @@ BEGIN
         Evaluation_Code int NULL,
         Evaluation_Message text NULL,
         ProcessingOrder int NULL                    -- We will populate this column after the Tmp_Steplist table gets populated
-    )
+    );
 
     CREATE INDEX IX_StepList_ProcessingOrder ON Tmp_Steplist (ProcessingOrder, Job);
 
@@ -164,11 +165,9 @@ BEGIN
              JS.evaluation_code, JS.evaluation_message
     HAVING JS.dependencies = SUM(JSD.evaluated)
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    _candidateStepCount := _myRowCount;
-
-    -- Select * From Tmp_Steplist
+    _candidateStepCount := _insertCount;
 
     ---------------------------------------------------
     -- Add waiting steps that have no dependencies
@@ -197,9 +196,9 @@ BEGIN
     WHERE JS.state = 1 AND
           JS.dependencies = 0
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-    _candidateStepCount := _candidateStepCount + _myRowCount;
+    _candidateStepCount := _candidateStepCount + _insertCount;
 
     If _candidateStepCount = 0 Then
         -- Nothing to do
@@ -475,9 +474,8 @@ BEGIN
                           Evaluation_Message = _newEvaluationMessage
                     WHERE Job = _stepInfo.job AND
                           Step = _stepInfo.step AND
-                          State = 1       -- Assure that we only update steps in state 1=waiting
-                    --
-                    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+                          State = 1;       -- Assure that we only update steps in state 1=waiting
+
                 End If;
 
                 _numStepsUpdated := _numStepsUpdated + 1;
@@ -500,11 +498,11 @@ BEGIN
 
         If _maxJobsToProcess > 0 Then
             SELECT COUNT(DISTINCT Job)
-            INTO _myRowCount
+            INTO _jobCount
             FROM Tmp_Steplist
             WHERE ProcessingOrder <= _processingOrder;
 
-            If Coalesce(_myRowCount, 0) >= _maxJobsToProcess Then
+            If Coalesce(_jobCount, 0) >= _maxJobsToProcess Then
                 -- Break out of the While Loop
                 EXIT;
             End If;
@@ -513,8 +511,8 @@ BEGIN
     END LOOP;
 
     If _infoOnly Then
-        RAISE INFO '%', 'Steps updated: ' || _numStepsUpdated::text;
-        RAISE INFO '%', 'Steps set to state 3 (skipped): ' || _numStepsSkipped::text;
+        RAISE INFO 'Steps updated: %', _numStepsUpdated;
+        RAISE INFO 'Steps set to state 3 (skipped): %', _numStepsSkipped;
     End If;
 
     DROP TABLE Tmp_Steplist;

@@ -39,7 +39,7 @@ AS $$
 **          10/28/2015 mem - Added T_Prep_LC_Run_Dataset and removed T_Analysis_Job_Annotations and T_Dataset_Annotations
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/04/2017 mem - Add T_Experiment_Reference_Compounds
 **          12/06/2018 mem - Call UpdateExperimentGroupMemberCount to update T_Experiment_Groups
@@ -187,16 +187,16 @@ BEGIN
             dataset,
             created
         FROM t_dataset
-        WHERE (created < _deleteThreshold) AND
-            NOT dataset SIMILAR TO 'DataPackage_[0-9]%' AND
-            NOT dataset IN ( SELECT Value
-                                FROM public.parse_delimited_list ( _datasetSkipList, ',')
-                                ) AND
-            NOT dataset IN ( SELECT DISTINCT DS.dataset
-                                FROM t_dataset DS INNER JOIN
-                                        t_analysis_job AJ ON DS.dataset_id = AJ.dataset_id
-                                WHERE created >= _jobKeepThreshold
-                                )
+        WHERE created < _deleteThreshold AND
+              NOT dataset SIMILAR TO 'DataPackage_[0-9]%' AND
+              NOT dataset IN ( SELECT Value
+                               FROM public.parse_delimited_list ( _datasetSkipList, ',')
+                             ) AND
+              NOT dataset IN ( SELECT DISTINCT DS.dataset
+                               FROM t_dataset DS INNER JOIN
+                                    t_analysis_job AJ ON DS.dataset_id = AJ.dataset_id
+                               WHERE created >= _jobKeepThreshold
+                             )
         ORDER BY created
         LIMIT _maxItemsToProcess;
 
@@ -377,7 +377,7 @@ BEGIN
             _message := _message || 't_analysis_job_psm_stats';
 
             -- Disable the trigger that prevents all rows from being deleted
-            ALTER TABLE t_analysis_job DISABLE TRIGGER trig_ud_T_Analysis_Job
+            ALTER TABLE t_analysis_job DISABLE TRIGGER trig_t_analysis_job_after_delete_all
 
             _currentLocation := 'DELETE t_analysis_job';
 
@@ -388,7 +388,7 @@ BEGIN
 
             Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
-            ALTER TABLE t_analysis_job Enable TRIGGER trig_ud_T_Analysis_Job
+            ALTER TABLE t_analysis_job ENABLE TRIGGER trig_t_analysis_job_after_delete_all
 
             -- Delete orphaned entries in t_analysis_job_batches that are older than _deleteThreshold
 
@@ -807,9 +807,9 @@ BEGIN
                ON Descrip.aux_description_id = AIVal.aux_description_id
              LEFT OUTER JOIN t_experiments E
                ON AIVal.target_id = E.exp_id
-        WHERE (AIC.target_type_id = 500) AND
-              (E.experiment IS NULL) AND
-              (AIVal.target_id > 0)
+        WHERE AIC.target_type_id = 500 AND
+              E.experiment IS NULL AND
+              AIVal.target_id > 0
         );
     --
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -835,9 +835,9 @@ BEGIN
                ON Descrip.aux_description_id = AIVal.aux_description_id
              LEFT OUTER JOIN T_Biomaterial
                ON AIVal.target_id = T_Biomaterial.Biomaterial_ID
-        WHERE (AIC.target_type_id = 501) AND
-              (AIVal.target_id > 0) AND
-              (T_Biomaterial.Biomaterial_ID IS NULL)
+        WHERE AIC.target_type_id = 501 AND
+              AIVal.target_id > 0 AND
+              T_Biomaterial.Biomaterial_ID IS NULL
         );
     --
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -866,9 +866,9 @@ BEGIN
     --            ON Descrip.aux_description_id = AIVal.aux_description_id
     --          LEFT OUTER JOIN t_dataset
     --            ON AIVal.target_id = t_dataset.dataset_id
-    --     WHERE (AIC.target_type_id = 502) AND
-    --           (AIVal.target_id > 0) AND
-    --           (t_dataset.dataset_id IS NULL)
+    --     WHERE AIC.target_type_id = 502 AND
+    --           AIVal.target_id > 0 AND
+    --           t_dataset.dataset_id IS NULL
     --     );
 
     ---------------------------------------------------
@@ -876,10 +876,10 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM t_predefined_analysis_scheduling_queue
-    WHERE (entered < _logDeleteThreshold);
+    WHERE entered < _logDeleteThreshold;
 
     DELETE FROM t_analysis_job_status_history
-    WHERE (posting_time < _logDeleteThreshold);
+    WHERE posting_time < _logDeleteThreshold;
 
     ---------------------------------------------------
     -- Delete old log messages

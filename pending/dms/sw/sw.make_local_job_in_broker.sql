@@ -52,7 +52,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _msg text := '';
     _xmlParameters xml;
     _scriptXML xml;
@@ -122,18 +121,15 @@ BEGIN
     ---------------------------------------------------
     -- Script
     ---------------------------------------------------
-    --
 
     -- Get contents of script and tag for results directory name
     --
     SELECT results_tag
     INTO _tag
     FROM sw.t_scripts
-    WHERE script = _scriptName
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    WHERE script = _scriptName;
 
-    If _myRowCount = 0 Then
+    If Not FOUND Then
         _msg := 'script not found in sw.t_scripts: ' || Coalesce(_scriptName, '??');
         _returnCode := 'U5213';
         RAISE EXCEPTION '%', _msg;
@@ -278,9 +274,7 @@ BEGIN
     -- except for the job specifc ones which need to be provided as initial content of _jobParamXML
     --
     INSERT INTO Tmp_Job_Parameters (Job, Parameters)
-    VALUES (_job, _jobParamXML)
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    VALUES (_job, _jobParamXML);
 
     ---------------------------------------------------
     -- Handle any step cloning
@@ -313,12 +307,10 @@ BEGIN
     FROM ( SELECT Step,
                  COUNT(*) AS dependencies
           FROM Tmp_Job_Step_Dependencies
-          WHERE (Job = _job)
+          WHERE Job = _job
           GROUP BY Step ) AS T
     WHERE T.Step = Tmp_Job_Steps.Step AND
           Tmp_Job_Steps.Job = _job;
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     ---------------------------------------------------
     -- Move temp tables to main tables

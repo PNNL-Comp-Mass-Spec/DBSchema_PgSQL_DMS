@@ -304,13 +304,13 @@ BEGIN
                                FROM sw.t_jobs J
                                     INNER JOIN sw.t_job_steps JS
                                       ON J.job = JS.job
-                               WHERE (J.state IN (2, 5, 8)) AND   -- Jobs that are running, failed, or holding
-                                     (JS.state IN (4, 5, 9))      -- Steps that are running or finished (but not failed or holding)
+                               WHERE J.state IN (2, 5, 8) AND   -- Jobs that are running, failed, or holding
+                                     JS.state IN (4, 5, 9))     -- Steps that are running or finished (but not failed or holding)
                               ) LookupQ
          ON sw.t_jobs.job = LookupQ.job
-        WHERE (sw.t_jobs.state IN (2, 5, 8)) AND
-              (NOT T.script IN ('LTQ_FTPek','ICR2LS')) AND
-              (LookupQ.job IS NULL)                       -- Assure there are no running or finished steps
+        WHERE sw.t_jobs.state IN (2, 5, 8) AND
+              NOT T.script IN ('LTQ_FTPek','ICR2LS') AND
+              LookupQ.job IS NULL;                       -- Assure there are no running or finished steps
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -426,8 +426,8 @@ BEGIN
                J.dataset,
                CASE WHEN J.state = 5 THEN 1 ELSE 0 END AS FailedJob
         FROM sw.t_jobs J
-        WHERE (J.state IN (5, 8)) AND                    -- 5=Failed, 8=Holding
-              (J.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 1))
+        WHERE J.state IN (5, 8) AND                    -- 5=Failed, 8=Holding
+              J.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 1);
         --
         GET DIAGNOSTICS _jobCountToResume = ROW_COUNT;
 
@@ -484,11 +484,11 @@ BEGIN
             --
             UPDATE sw.t_jobs
             SET state = 8                            -- 8=Holding
-            WHERE (sw.t_jobs.state <> 8) AND
-                  (sw.t_jobs.job IN ( SELECT job
-                                   FROM Tmp_DMSJobs
-                                   WHERE state = 8 ))
-               --
+            WHERE sw.t_jobs.state <> 8 AND
+                  sw.t_jobs.job IN ( SELECT job
+                                     FROM Tmp_DMSJobs
+                                     WHERE state = 8 );
+            --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             If _updateCount > 0 Then
@@ -590,11 +590,11 @@ BEGIN
                 Coalesce(J.Special_Processing, '') <> Coalesce(DJ.Special_Processing, '')
               );
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _myRowCount > 0 Then
+        If _updateCount > 0 Then
             _statusMessage := format('... Updated the job comment or special_processing data in sw.t_jobs for %s resumed %s',
-                                        _myRowCount, public.check_plural(_myRowCount, 'row', 'rows'));
+                                        _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
             Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;

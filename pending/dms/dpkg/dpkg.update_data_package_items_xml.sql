@@ -31,7 +31,7 @@ AS $$
 **          05/18/2016 mem - Log errors to T_Log_Entries
 **          10/19/2016 mem - Update Tmp_DataPackageItems to use an integer field for data package ID
 **          11/11/2016 mem - Add parameter _removeParents
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          04/25/2018 mem - Assure that _removeParents is not null
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -91,8 +91,8 @@ BEGIN
         --
         CREATE TEMP TABLE Tmp_DataPackageItems (
             DataPackageID int not null,   -- Data package ID
-            ItemType text null,           -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
-            Identifier text null          -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID
+            ItemType   citext null,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
+            Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID
         );
 
         _xml := _paramListXML;

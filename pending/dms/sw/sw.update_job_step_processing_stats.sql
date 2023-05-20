@@ -25,7 +25,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _insertCount int := 0;
+    _insertCount int;
     _timeIntervalLastUpdateMinutes real;
     _timeIntervalIdenticalStatsMinutes real;
     _mostRecentPostingTime timestamp;
@@ -65,9 +65,7 @@ BEGIN
     --
     SELECT MAX(entered)
     INTO _mostRecentPostingTime
-    FROM sw.t_job_step_processing_stats
-    --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    FROM sw.t_job_step_processing_stats;
 
     If Coalesce(_minimumTimeIntervalMinutes, 0) = 0 Or _mostRecentPostingTime Is Null Then
         _updateTable := true;
@@ -105,7 +103,7 @@ BEGIN
                CPU_Load,
                Actual_CPU_Load
         FROM V_Job_Steps
-        WHERE (State = 4)
+        WHERE State = 4;
 
         If _infoOnly Then
 

@@ -21,7 +21,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   07/25/2017 mem - Initial version
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          07/31/2020 mem - Update MASIC_Directory_Name
 **          09/06/2022 mem - When _processingMode is 3, update datasets in batches (to decrease the likelihood of deadlock issues)
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -167,7 +167,8 @@ BEGIN
             --    END LOOP;
 
 
-            SELECT dataset_id INTO _datasetID
+            SELECT dataset_id
+            INTO _datasetID
             FROM t_cached_dataset_links
             WHERE update_required > 0 AND dataset_id > _datasetID
             ORDER BY dataset_id
@@ -180,7 +181,8 @@ BEGIN
 
             _masicDirectoryName := '';
 
-            SELECT MasicDirectoryName INTO _masicDirectoryName
+            SELECT MasicDirectoryName
+            INTO _masicDirectoryName
             FROM ( SELECT OrderQ.DatasetID,
                           OrderQ.Job,
                           OrderQ.MasicDirectoryName,

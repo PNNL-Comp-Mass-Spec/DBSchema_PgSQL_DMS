@@ -18,7 +18,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _updateCount int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -106,16 +106,16 @@ BEGIN
         INSERT (script, instrument_group, year, Jobs)
         VALUES (s.script, s.instrument_group, s.year, s.Jobs);
     --
-    GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    _message := 'Updated ' || Cast(_myRowCount As text) || ' rows in sw.t_pipeline_job_stats';
+    _message := format('Updated %s %s in sw.t_pipeline_job_stats', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
     If _returnCode <> '' Then
         If _message = '' Then
             _message := 'Error in UpdatePipelineJobStats';
         End If;
 
-        _message := _message || '; error code = ' || _myError::text;
+        _message := format('%s; error code = %s', _message, _returnCode);
 
         If Not _infoOnly Then
             Call public.post_log_entry ('Error', _message, 'Update_Pipeline_Job_Stats', 'sw');

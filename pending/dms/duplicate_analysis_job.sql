@@ -29,7 +29,7 @@ AS $$
 **  Auth:   mem
 **  Date:   01/20/2016 mem - Initial version
 **          01/28/2016 mem - Added parameter _newSettingsFile
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          06/30/2022 mem - Rename parameter file argument
 **          07/01/2022 mem - Rename parameter file column when previewing the new job
 **          12/15/2023 mem - Ported to PostgreSQL

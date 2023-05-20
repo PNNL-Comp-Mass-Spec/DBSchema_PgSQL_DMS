@@ -40,7 +40,7 @@ AS $$
 **                         - Add parameter _infoOnly
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **                         - Set _validateTotal to 0 when calling ParseUsageText
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/02/2017 mem - Trim whitespace from the cleaned comment returned by ParseUsageText
 **          01/05/2017 mem - Remove LF and CR from dataset comments

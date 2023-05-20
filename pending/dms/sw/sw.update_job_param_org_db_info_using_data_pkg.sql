@@ -34,7 +34,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
     _messageAddon text;
     _scriptName text := '';
     _organismName text := '';
@@ -132,13 +132,13 @@ BEGIN
         GROUP BY Organism, OrganismDBName, ProteinCollectionList, ProteinOptionsList
         ORDER BY COUNT(*) DESC;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Check for invalid data
         ---------------------------------------------------
         --
-        If _myRowCount = 0 Then
+        If _insertCount = 0 Then
             If _scriptName Not In ('Global_Label-Free_AMT_Tag', 'MultiAlign', 'MultiAlign_Aggregator') Then
                 _message := 'Note: Data package ' || _dataPackageID::text || ' either has no jobs or has no jobs with a protein collection or legacy fasta file; pipeline job parameters will not contain organism, fasta file, or protein collection';
             End If;
@@ -146,16 +146,16 @@ BEGIN
             _dataPackageID := -1;
         Else
 
-            If _myRowCount > 1 Then
+            If _insertCount > 1 Then
                 -- Mix of protein collections / fasta files defined
 
                 _organismName := 'InvalidData';
                 _legacyFastaFileName := 'na';
-                _proteinCollectionList := 'MixOfOrgDBs_DataPkg_' || _dataPackageID::text || '_UniqueComboCount_' || _myRowCount::text;
+                _proteinCollectionList := format('MixOfOrgDBs_DataPkg_%s_UniqueComboCount_%s', _dataPackageID, _insertCount);
                 _proteinOptions := 'seq_direction=forward,filetype=fasta';
 
             Else
-                -- _myRowCount is 1
+                -- _insertCount is 1
 
                 SELECT OrganismName,
                        LegacyFastaFileName,

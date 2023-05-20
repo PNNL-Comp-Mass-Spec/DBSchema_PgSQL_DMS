@@ -64,10 +64,10 @@ BEGIN
     INSERT INTO Tmp_DatasetsToProcess (dataset_id)
     SELECT DI.dataset_id
     FROM cap.t_dataset_info_xml DI
-         LEFT OUTER JOIN public.T_Dataset
-           ON DI.dataset_id = public.T_Dataset.dataset_id
-    WHERE (public.T_Dataset.File_Info_Last_Modified IS NULL Or _replaceExistingData) And
-          DI.ignore = 0
+         LEFT OUTER JOIN public.T_Dataset DS
+           ON DI.dataset_id = DS.dataset_id
+    WHERE (DS.File_Info_Last_Modified IS NULL Or _replaceExistingData) And
+          DI.ignore = 0;
 
     --------------------------------------------
     -- Possibly filter on _datasetIDs
@@ -82,7 +82,9 @@ BEGIN
     --------------------------------------------
     --
     DELETE FROM Tmp_DatasetsToProcess
-    WHERE NOT EXISTS (SELECT Dataset_ID FROM public.t_dataset WHERE Dataset_ID = Tmp_DatasetsToProcess.Dataset_ID);
+    WHERE NOT EXISTS (SELECT DS.Dataset_ID
+                      FROM public.t_dataset DS
+                      WHERE DS.Dataset_ID = Tmp_DatasetsToProcess.Dataset_ID);
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -98,7 +100,9 @@ BEGIN
         --
         DELETE FROM cap.t_dataset_info_xml
         WHERE Cache_Date < CURRENT_TIMESTAMP - Interval '7 days' AND
-              NOT EXISTS (SELECT Dataset_ID FROM public.t_dataset WHERE Dataset_ID = cap.t_dataset_info_xml.Dataset_ID);
+              NOT EXISTS (SELECT DS.Dataset_ID
+                          FROM public.t_dataset DS
+                          WHERE DS.Dataset_ID = cap.t_dataset_info_xml.Dataset_ID);
 
     End If;
 
@@ -123,15 +127,15 @@ BEGIN
                   ds_info_xml.query('/DatasetInfo/AcquisitionInfo/FileSizeBytes').value('(/FileSizeBytes)[1]', 'bigint') AS FileSizeBytesNew
             FROM ( SELECT DI.dataset_id,
                           DI.cache_date,
-                          public.T_Dataset.File_Info_Last_Modified,
+                          DS.File_Info_Last_Modified,
                           Dataset_Num,
                           DI.ds_info_xml,
-                          public.T_Dataset.Scan_Count AS Scan_Count_Old,
-                          public.T_Dataset.File_Size_Bytes AS File_Size_Bytes_Old
+                          DS.Scan_Count AS Scan_Count_Old,
+                          DS.File_Size_Bytes AS File_Size_Bytes_Old
                   FROM cap.t_dataset_info_xml DI
-                       INNER JOIN public.T_Dataset
-                         ON DI.dataset_id = public.T_Dataset.dataset_id AND
-                            DI.cache_date > public.T_Dataset.File_Info_Last_Modified
+                       INNER JOIN public.T_Dataset DS
+                         ON DI.dataset_id = DS.dataset_id AND
+                            DI.cache_date > DS.File_Info_Last_Modified
                   WHERE DI.ignore = 0
                   ) InnerQ
          ) FilterQ

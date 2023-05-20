@@ -53,7 +53,7 @@ BEGIN
     SELECT prep_request_id,
            state_id + 10
     FROM t_sample_prep_request
-    WHERE (state_changed > _window) AND
+    WHERE state_changed > _window AND
           NOT EXISTS ( SELECT *
                        FROM t_notification_event AS TNE
                        WHERE TNE.target_id = t_sample_prep_request.prep_request_id

@@ -44,7 +44,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/13/2017 mem - Update grammar
 **                         - Exclude logging some try/catch errors
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/06/2017 mem - Set _allowNewDatasets to true when calling ValidateAnalysisJobRequestDatasets
 **          03/19/2021 mem - Remove obsolete parameter from call to AddUpdateAnalysisJobRequest
@@ -247,7 +247,7 @@ BEGIN
              INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset = DS.dataset
              INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id
              INNER JOIN t_instrument_group InstGroup ON InstName.instrument_group = InstGroup.instrument_group
-        WHERE (InstGroup.instrument_group = 'QExactive');
+        WHERE InstGroup.instrument_group = 'QExactive';
 
         -- Count the number of datasets with profile mode MS/MS
         --
@@ -395,12 +395,8 @@ BEGIN
     ---------------------------------------------------
 
     If _requestID > 0 Then
-        _usageMessage := 'Created job request ' || _requestID::text || ' for ' || _datasetCount::text || ' dataset';
-        If _datasetCount <> 1 Then
-            _usageMessage := _usageMessage || 's';
-        End If;
-
-        _usageMessage := _usageMessage || '; user ' || _callingUser;
+        _usageMessage := format('Created job request %s for %s %s; user %s',
+                                _requestID, _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'), _callingUser);
 
         Call post_usage_log_entry ('Create_PSM_Job_Request', _usageMessage, _minimumUpdateInterval => 2);
     End If;

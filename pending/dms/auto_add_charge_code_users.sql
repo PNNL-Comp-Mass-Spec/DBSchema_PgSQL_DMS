@@ -21,6 +21,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          02/17/2022 mem - Tabs to spaces
+**          05/19/2023 mem - Add missing Else
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -52,7 +53,7 @@ BEGIN
         LastName_FirstName text,
         Network_ID text NULL,
         DMS_ID int NULL
-    )
+    );
 
     BEGIN
 
@@ -65,7 +66,7 @@ BEGIN
               CC.charge_code_state > 0 AND
               (CC.usage_sample_prep > 0 OR
                CC.usage_requested_run > 0)
-        GROUP BY CC.resp_username
+        GROUP BY CC.resp_username;
 
         UPDATE Tmp_NewUsers
         SET Network_ID = W.Network_ID,
@@ -120,11 +121,10 @@ BEGIN
                 If Coalesce(_operationID, 0) = 0 Then
                     _message := 'User operation DMS_Guest not found in t_user_operations';
                     Call post_log_entry ('Error', _message, 'Auto_Add_Charge_Code_Users');
-                End If;
-                Begin
+                Else
                     INSERT INTO t_user_operations_permissions (user_id, operation_id)
                     SELECT DMS_ID, _operationID
-                    FROM Tmp_NewUsers
+                    FROM Tmp_NewUsers;
                 End If;
 
             End If;

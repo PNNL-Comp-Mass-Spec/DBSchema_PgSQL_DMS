@@ -26,9 +26,10 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _groupID int;
+    _updateCount int;
     _updatedRows int := 0;
+    _matchCount int;
+    _groupID int;
 BEGIN
     ---------------------------------------------------
     -- Validate the inputs
@@ -65,19 +66,19 @@ BEGIN
         If Not _infoOnly Then
             UPDATE sw.t_processor_tool_group_details
             SET enabled = 1
-            WHERE (tool_name = _tool) and enabled < 0 AND group_id <> _groupID
+            WHERE tool_name = _tool AND enabled < 0 AND group_id <> _groupID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _updatedRows := _updatedRows + _myRowCount;
+            _updatedRows := _updatedRows + _updateCount;
 
             UPDATE sw.t_processor_tool_group_details
             SET enabled = 0
-            WHERE (tool_name = _tool) and enabled <> 0 AND group_id = _groupID
+            WHERE tool_name = _tool AND enabled <> 0 AND group_id = _groupID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _updatedRows := _updatedRows + _myRowCount;
+            _updatedRows := _updatedRows + _updateCount;
 
             If _updatedRows = 0 Then
                 RAISE INFO 'Debug mode is already disabled for %', _tool;
@@ -87,20 +88,20 @@ BEGIN
         Else
             -- ToDo: Convert this to use RAISE INFO
 
+            _matchCount := 0;
+
             SELECT 'Set enabled to 1' as Action, *
             FROM sw.t_processor_tool_group_details
-            WHERE (tool_name = _tool) and enabled < 0 AND group_id <> _groupID
+            WHERE tool_name = _tool AND enabled < 0 AND group_id <> _groupID
             UNION
             SELECT 'Set enabled to 0' as Action, *
             FROM sw.t_processor_tool_group_details
-            WHERE (tool_name = _tool) and enabled <> 0 AND group_id = _groupID
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            WHERE tool_name = _tool AND enabled <> 0 AND group_id = _groupID;
 
-            If _myRowCount = 0 Then
+            If _matchCount = 0 Then
                 SELECT 'Debug mode is already disabled' AS Comment, *
                 FROM sw.t_processor_tool_group_details
-                WHERE (tool_name = _tool) and enabled > 0
+                WHERE tool_name = _tool AND enabled > 0;
             End If;
         End If;
 
@@ -111,19 +112,19 @@ BEGIN
         If Not _infoOnly Then
             UPDATE sw.t_processor_tool_group_details
             SET enabled = -1
-            WHERE (tool_name = _tool) and enabled > 0 AND group_id <> _groupID
+            WHERE tool_name = _tool AND enabled > 0 AND group_id <> _groupID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _updatedRows := _updatedRows + _myRowCount;
+            _updatedRows := _updatedRows + _updateCount;
 
             UPDATE sw.t_processor_tool_group_details
             SET enabled = 1
-            WHERE (tool_name = _tool) and enabled <> 1 AND group_id = _groupID
+            WHERE tool_name = _tool AND enabled <> 1 AND group_id = _groupID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _updatedRows := _updatedRows + _myRowCount;
+            _updatedRows := _updatedRows + _updateCount;
 
             If _updatedRows = 0 Then
                 RAISE INFO 'Debug mode is already enabled for %', _tool;
@@ -135,18 +136,18 @@ BEGIN
 
             SELECT 'Set enabled to -1' as Action, *
             FROM sw.t_processor_tool_group_details
-            WHERE (tool_name = _tool) and enabled > 0 AND group_id <> _groupID
+            WHERE tool_name = _tool AND enabled > 0 AND group_id <> _groupID
             UNION
             SELECT 'Set enabled to 1' as Action, *
             FROM sw.t_processor_tool_group_details
-            WHERE (tool_name = _tool) and enabled <> 1 AND group_id = _groupID
+            WHERE tool_name = _tool AND enabled <> 1 AND group_id = _groupID;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If _myRowCount = 0 Then
+            If _matchCount = 0 Then
                 SELECT 'Debug mode is already enabled' AS Comment, *
                 FROM sw.t_processor_tool_group_details
-                WHERE (tool_name = _tool) and enabled > 0
+                WHERE tool_name = _tool AND enabled > 0;
             End If;
         End If;
 

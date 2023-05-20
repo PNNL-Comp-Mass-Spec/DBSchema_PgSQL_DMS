@@ -47,8 +47,8 @@ AS $$
 **                         - Now only calling MakeDataPackageStorageFolder when _mode = 'add'
 **          08/31/2015 mem - Now replacing the symbol & with 'and' in the name when _mode = 'add'
 **          02/19/2016 mem - Now replacing a semicolon with a comma when _mode = 'add'
-**          10/18/2016 mem - Call UpdateDataPackageEUSInfo
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          10/18/2016 mem - Call update_data_package_eus_info
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          06/19/2017 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **                         - Validate _state
 **          11/19/2020 mem - Add _dataDOI and _manuscriptDOI

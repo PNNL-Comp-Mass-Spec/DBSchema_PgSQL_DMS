@@ -197,7 +197,8 @@ BEGIN
         End If;
 
         -- Update _datasetID
-        SELECT Dataset_ID INTO _datasetID
+        SELECT Dataset_ID
+        INTO _datasetID
         FROM Tmp_DatasetInfo
 
     Else
@@ -205,7 +206,8 @@ BEGIN
         -- _datasetID was non-zero
         -- Validate the dataset name in Tmp_DatasetInfo against t_dataset
 
-        SELECT DS.dataset_id INTO _datasetIDCheck
+        SELECT DS.dataset_id
+        INTO _datasetIDCheck
         FROM Tmp_DatasetInfo Target
              INNER JOIN t_dataset DS
              ON Target.Dataset_Name = DS.dataset

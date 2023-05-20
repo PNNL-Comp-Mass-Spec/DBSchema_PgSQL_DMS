@@ -19,8 +19,8 @@ AS $$
 **
 **      CREATE TEMP TABLE Tmp_DataPackageItems (
 **          DataPackageID int not null,   -- Data package ID
-**          ItemType text null,           -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
-**          Identifier text null          -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID
+**          ItemType   citext null,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
+**          Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID
 **      )
 **
 **  Arguments:
@@ -42,12 +42,12 @@ AS $$
 **          05/18/2016 mem - Fix bug removing duplicate analysis jobs
 **                         - Add parameter _infoOnly
 **          10/19/2016 mem - Update Tmp_DataPackageItems to use an integer field for data package ID
-**                         - Call UpdateDataPackageEUSInfo
+**                         - Call update_data_package_eus_info
 **                         - Prevent addition of Biomaterial '(none)'
 **          11/14/2016 mem - Add parameter _removeParents
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          04/25/2018 mem - Populate column Dataset_ID in T_Data_Package_Analysis_Jobs
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          07/17/2019 mem - Remove .raw and .d from the end of dataset names
 **          07/02/2021 mem - Update the package comment for any existing items when _mode is 'add' and _comment is not an empty string
 **          07/02/2021 mem - Change the default value for _mode from undefined mode 'update' to 'add'
@@ -244,7 +244,7 @@ BEGIN
                     SELECT *
                     FROM Tmp_DataPackageItems
                     WHERE Tmp_DataPackageItems.ItemType = 'Experiment' AND Tmp_DataPackageItems.Identifier = TX.Experiment AND Tmp_DataPackageItems.DataPackageID = TP.DataPackageID
-                )
+                );
 
             -- Add EUS Proposals to list that are parents of datasets in the list
             -- (and are not already in the list)
@@ -455,19 +455,19 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
-                SELECT 'biomaterial to delete' AS Biomaterial_Msg, Target.*
+                SELECT 'Biomaterial to delete' AS Biomaterial_Msg, Target.*
                 FROM dpkg.t_data_package_biomaterial Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems.type = 'biomaterial'
+                          Tmp_DataPackageItems.ItemType = 'Biomaterial'
             Else
                 DELETE Target
                 FROM dpkg.t_data_package_biomaterial Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems.type = 'biomaterial'
+                          Tmp_DataPackageItems.ItemType = 'Biomaterial'
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -491,7 +491,7 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems.type = 'biomaterial'
+                          Tmp_DataPackageItems.ItemType = 'Biomaterial'
             Else
                 UPDATE dpkg.t_data_package_biomaterial
                 SET package_comment = _comment
@@ -568,7 +568,7 @@ BEGIN
                     Tmp_DataPackageItems
                     INNER JOIN V_Biomaterial_List_Report_2 TX
                     ON Tmp_DataPackageItems.Identifier = TX.name
-                WHERE Tmp_DataPackageItems.type = 'biomaterial'
+                WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial'
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -595,14 +595,14 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.proposal_id AND
-                          Tmp_DataPackageItems.type = 'EUSProposal'
+                          Tmp_DataPackageItems.ItemType = 'EUSProposal'
             Else
                 DELETE Target
                 FROM dpkg.t_data_package_eus_proposals Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.proposal_id AND
-                          Tmp_DataPackageItems.type = 'EUSProposal'
+                          Tmp_DataPackageItems.ItemType = 'EUSProposal'
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -627,7 +627,7 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
                           Tmp_DataPackageItems.Identifier = Target.Proposal_ID AND
-                          Tmp_DataPackageItems.type = 'EUSProposal'
+                          Tmp_DataPackageItems.ItemType = 'EUSProposal'
             Else
                 UPDATE dpkg.t_data_package_eus_proposals
                 SET package_comment = _comment
@@ -687,7 +687,7 @@ BEGIN
                 FROM Tmp_DataPackageItems
                      INNER JOIN V_EUS_Proposals_List_Report TX
                        ON Tmp_DataPackageItems.Identifier = TX.ID
-                WHERE Tmp_DataPackageItems.type = 'EUSProposal'
+                WHERE Tmp_DataPackageItems.ItemType = 'EUSProposal'
 
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
@@ -715,7 +715,7 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.experiment AND
-                          Tmp_DataPackageItems.type = 'experiment'
+                          Tmp_DataPackageItems.ItemType = 'Experiment'
 
             Else
                 DELETE Target
@@ -723,7 +723,7 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                   Tmp_DataPackageItems.Identifier = Target.experiment AND
-                          Tmp_DataPackageItems.type = 'experiment'
+                          Tmp_DataPackageItems.ItemType = 'Experiment'
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -748,7 +748,7 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.experiment AND
-                          Tmp_DataPackageItems.type = 'experiment'
+                          Tmp_DataPackageItems.ItemType = 'Experiment'
 
             Else
                 UPDATE dpkg.t_data_package_experiments
@@ -820,7 +820,7 @@ BEGIN
                     Tmp_DataPackageItems
                     INNER JOIN V_Experiment_Detail_Report_Ex TX
                     ON Tmp_DataPackageItems.Identifier = TX.experiment
-                WHERE Tmp_DataPackageItems.type = 'experiment'
+                WHERE Tmp_DataPackageItems.ItemType = 'Experiment'
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -847,7 +847,7 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.dataset AND
-                          Tmp_DataPackageItems.type = 'dataset'
+                          Tmp_DataPackageItems.ItemType = 'Dataset'
 
             Else
                 DELETE Target
@@ -855,7 +855,7 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.dataset AND
-                          Tmp_DataPackageItems.type = 'dataset'
+                          Tmp_DataPackageItems.ItemType = 'Dataset'
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -880,7 +880,7 @@ BEGIN
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.dataset AND
-                          Tmp_DataPackageItems.type = 'dataset'
+                          Tmp_DataPackageItems.ItemType = 'Dataset'
 
             Else
                 UPDATE dpkg.t_data_package_datasets
@@ -953,7 +953,7 @@ BEGIN
                 FROM Tmp_DataPackageItems
                      INNER JOIN V_Dataset_List_Report_2 TX
                        ON Tmp_DataPackageItems.Identifier = TX.dataset
-                WHERE Tmp_DataPackageItems.type = 'dataset'
+                WHERE Tmp_DataPackageItems.ItemType = 'Dataset'
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -1032,15 +1032,15 @@ BEGIN
         -- <add analysis_jobs>
 
             -- Delete extras
-            DELETE FROM Tmp_JobsToAddOrDelete target
+            DELETE FROM Tmp_JobsToAddOrDelete Target
             WHERE EXISTS
                 ( SELECT 1
                   FROM Tmp_JobsToAddOrDelete PkgJobs
                        INNER JOIN dpkg.t_data_package_analysis_jobs TX
                          ON PkgJobs.DataPackageID = TX.data_pkg_id AND
                             PkgJobs.job = TX.job
-                  WHERE target.DataPackageID = PkgJobs.DataPackageID AND
-                        target.job = PkgJobs.job
+                  WHERE Target.DataPackageID = PkgJobs.DataPackageID AND
+                        Target.job = PkgJobs.job
                 );
 
             If _infoOnly Then

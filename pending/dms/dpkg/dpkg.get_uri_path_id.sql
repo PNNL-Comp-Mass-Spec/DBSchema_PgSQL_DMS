@@ -49,7 +49,8 @@ BEGIN
         ;
 
         -- Now that the merge is complete a match should be found
-        SELECT uri_path_id INTO _uriPathID
+        SELECT uri_path_id
+        INTO _uriPathID
         FROM dpkg.t_uri_paths
         WHERE uri_path = _uriPath
 

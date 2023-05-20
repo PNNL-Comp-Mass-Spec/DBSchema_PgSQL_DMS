@@ -23,7 +23,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _insertCount int := 0;
+    _insertCount int;
     _timeIntervalLastUpdateHours real;
     _updateTable int;
     _s text;

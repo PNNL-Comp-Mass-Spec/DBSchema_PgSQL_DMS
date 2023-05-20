@@ -37,7 +37,9 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _deleteCount int;
+    _updateCount int;
+    _matchCount int;
     _entryID int;
     _outputFolder text;
     _removeJobsMessage text;
@@ -95,19 +97,19 @@ BEGIN
             INSERT INTO Tmp_SharedResultFolders( Output_Folder )
             SELECT DISTINCT output_folder_name
             FROM sw.t_job_steps
-            WHERE (job = _job) AND
-                (Coalesce(signature, 0) > 0) AND
-                 NOT output_folder_name IS NULL
+            WHERE job = _job AND
+                  Coalesce(signature, 0) > 0 AND
+                  NOT output_folder_name IS NULL
             UNION
             SELECT DISTINCT output_folder_name
             FROM sw.t_job_steps_history
-            WHERE (job = _job) AND
-                (Coalesce(signature, 0) > 0) AND
-                 NOT output_folder_name IS NULL;
+            WHERE job = _job AND
+                  Coalesce(signature, 0) > 0 AND
+                  NOT output_folder_name IS NULL;
 
         Else
             INSERT INTO Tmp_SharedResultFolders( Output_Folder )
-            VALUES (_sharedResultFolderName)
+            VALUES (_sharedResultFolderName);
         End If;
 
         -----------------------------------------------------------
@@ -127,7 +129,7 @@ BEGIN
 
                 SELECT 'Delete from sw.t_shared_results' as Message, *
                 FROM sw.t_shared_results
-                WHERE (results_name = _outputFolder)
+                WHERE results_name = _outputFolder;
 
                 SELECT 'Remove job from sw.t_jobs, but leave in sw.t_jobs_history' as Message,
                        V_Job_Steps.job AS JobToRemoveFromTJobs,
@@ -135,26 +137,25 @@ BEGIN
                 FROM V_Job_Steps
                      INNER JOIN sw.t_jobs
                        ON V_Job_Steps.job = sw.t_jobs.job
-                WHERE (V_Job_Steps.Output_Folder = _outputFolder) AND
-                      (V_Job_Steps.state = 5) AND
-                      (sw.t_jobs.state = 4)
+                WHERE V_Job_Steps.Output_Folder = _outputFolder AND
+                      V_Job_Steps.state = 5 AND
+                      sw.t_jobs.state = 4;
 
                 SELECT 'Update sw.t_job_steps_history' as Message, Output_Folder_Name, Output_Folder_Name || '_BAD' as Output_Folder_Name_New
                 FROM sw.t_job_steps_history
-                WHERE (output_folder_name = _outputFolder) AND state = 5;
+                WHERE output_folder_name = _outputFolder AND state = 5;
 
                 CONTINUE;
             End If;
 
-
             -- Remove from sw.t_shared_results
             DELETE FROM sw.t_shared_results
-            WHERE (results_name = _outputFolder)
+            WHERE results_name = _outputFolder;
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-            If _myRowCount <> 0 Then
-                _message := 'Removed ' || _myRowCount::text || ' row(s) from sw.t_shared_results';
+            If _deleteCount > 0 Then
+                _message := format('Removed %s %s from sw.t_shared_results', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows'));
             Else
                 _message := 'Match not found in sw.t_shared_results';
             End If;
@@ -167,8 +168,9 @@ BEGIN
             SELECT V_Job_Steps.job AS JobToDelete, sw.t_jobs.State
             FROM V_Job_Steps INNER JOIN
                 sw.t_jobs ON V_Job_Steps.job = sw.t_jobs.job
-            WHERE (V_Job_Steps.Output_Folder = _outputFolder)
-                AND (V_Job_Steps.state = 5) AND (sw.t_jobs.state = 4);
+            WHERE V_Job_Steps.Output_Folder = _outputFolder AND
+                  V_Job_Steps.state = 5 AND
+                  sw.t_jobs.state = 4;
 
             If Exists (SELECT * FROM Tmp_SJL) Then
                 Call sw.remove_selected_jobs (
@@ -183,40 +185,40 @@ BEGIN
             -- Rename Output Folder in sw.t_job_steps_history for any completed job steps
             UPDATE sw.t_job_steps_history
             SET output_folder_name = output_folder_name || '_BAD'
-            WHERE (output_folder_name = _outputFolder) AND state = 5
+            WHERE output_folder_name = _outputFolder AND state = 5
             --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            If _myRowCount <> 0 Then
-                _message := _message || '; Updated ' || _myRowCount::text || ' row(s) in sw.t_job_steps_history';
+            If _updateCount <> 0 Then
+                _message := format('%s; Updated %s %s in sw.t_job_steps_history', _message, _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
             Else
-                _message := _message || '; Match not found in sw.t_job_steps_history';
+                _message := format('%s; Match not found in sw.t_job_steps_history', _message);
             End If;
 
             -- Look for any jobs that remain in sw.t_job_steps and have completed steps with Output_Folder = _outputFolder
 
             SELECT COUNT(Distinct Job)
-            INTO _myRowCount
+            INTO _matchCount
             FROM V_Job_Steps
-            WHERE (Output_Folder = _outputFolder) AND
-                  (State = 5);
+            WHERE Output_Folder = _outputFolder AND State = 5;
 
-            If _myRowCount > 0 Then
+            If _matchCount > 0 Then
 
                 SELECT Job, 'This job likely needs to have it''s Output_Folder field renamed to not be ' || _outputFolder as Message
                 FROM V_Job_Steps
-                WHERE (Output_Folder = _outputFolder) AND
-                    (State = 5)
+                WHERE Output_Folder = _outputFolder AND State = 5;
 
-                If _myRowCount = 1 Then
+                If _matchCount = 1 Then
                     SELECT Job
                     INTO _jobMatch
                     FROM V_Job_Steps
-                    WHERE (Output_Folder = _outputFolder) AND (State = 5)
+                    WHERE Output_Folder = _outputFolder AND State = 5;
 
-                    _message := _message || '; job ' || _job::text || ' in sw.t_job_steps likely needs to have it''s Output_Folder field renamed to not be ' || _outputFolder;
+                    _message := format('%s; job %s in sw.t_job_steps likely needs to have it''s Output_Folder field renamed to not be %s',
+                                        _message, _job, _outputFolder);
                 Else
-                    _message := _message || '; ' || _myRowCount::text || ' jobs in sw.t_job_steps likely need to have their Output_Folder field renamed to not be ' || _outputFolder;
+                    _message := format('%s; %s jobs in sw.t_job_steps likely need to have their Output_Folder field renamed to not be %s',
+                                        _message, _matchCount, _outputFolder);
                 End If;
             End If;
 
@@ -234,7 +236,7 @@ BEGIN
                            ELSE ''
                        END AS Message
                 FROM sw.t_job_step_dependencies
-                WHERE (job = _job)
+                WHERE job = _job;
 
             Else
                 -- Reset the job (but don't delete it from the tables, and don't use RemoveSelectedJobs since it would update sw.t_shared_results)
@@ -242,7 +244,7 @@ BEGIN
                 -- Reset dependencies
                 UPDATE sw.t_job_step_dependencies
                 SET evaluated = 0, triggered = 0
-                WHERE (job = _job)
+                WHERE job = _job;
 
                 UPDATE sw.t_job_steps
                 SET state = 1,                    -- 1=waiting

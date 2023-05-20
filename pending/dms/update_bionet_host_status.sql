@@ -57,7 +57,7 @@ BEGIN
     WHERE (SPath.machine_name = BionetHosts.host OR
            SPath.machine_name = BionetHosts.host || '.bionet') AND
           (SPath.storage_path_function LIKE '%inbox%') AND
-          (NOT (DS.created IS NULL)) AND
+          NOT (DS.created IS NULL) AND
           DS.dataset_type_ID <> 100          -- Exclude tracking datasets
     GROUP BY BionetHosts.host, Inst.instrument;
 

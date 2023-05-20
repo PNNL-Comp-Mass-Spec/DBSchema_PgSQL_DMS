@@ -133,7 +133,7 @@ BEGIN
               TSD.Step = TS.Step
          INNER JOIN cap.t_tasks T
            ON TS.Job = T.Job
-    WHERE (TS.State = 1)
+    WHERE TS.State = 1
     GROUP BY TSD.Job, TSD.Step, TS.Dependencies,
              T.Priority, TS.Tool, TS.Output_Folder_Name
     HAVING TS.Dependencies = SUM(TSD.Evaluated)

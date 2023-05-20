@@ -17,7 +17,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _updateCount int := 0;
+    _updateCount int;
     _message text;
     _proposalList text;
 BEGIN
@@ -36,7 +36,7 @@ BEGIN
     (
         Proposal_ID text NOT NULL,
         Newest_Proposal_ID text NOT NULL
-    )
+    );
 
     ---------------------------------------------------
     -- Find proposals that need to be updated
@@ -87,7 +87,7 @@ BEGIN
                ON EUP.proposal_id = UpdatesQ.proposal_id
              INNER JOIN t_eus_proposals EUP_Newest
                ON UpdatesQ.Newest_Proposal_ID = EUP_Newest.proposal_id
-        ORDER BY EUP.title
+        ORDER BY EUP.title;
     Else
         If NOT Exists (SELECT * FROM Tmp_ProposalsToUpdate) Then
             _message := 'No superseded proposals were found; nothing to do';

@@ -26,7 +26,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
+    _insertCount int;
     _timeIntervalLastUpdateHours real;
     _updateTable boolean;
 BEGIN
@@ -80,9 +80,9 @@ BEGIN
         GROUP BY M.machine
         ORDER BY M.machine
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _message := format('Appended %s rows to the Machine Status History table', _myRowCount);
+        _message := format('Appended %s rows to the Machine Status History table', _insertCount);
     Else
         _message := format('Update skipped since last update was %s hours ago', Round(_timeIntervalLastUpdateHours, 1));
     End If;

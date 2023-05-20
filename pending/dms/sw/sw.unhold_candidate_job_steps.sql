@@ -24,10 +24,10 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
-    _candidateSteps int := 0;
-    _candidatesPlusRunning int := 0;
-    _jobsToRelease int := 0;
+    _updateCount int;
+    _candidateSteps int;
+    _candidatesPlusRunning int;
+    _jobsToRelease int;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -60,6 +60,7 @@ BEGIN
     -----------------------------------------------------------
 
     _jobsToRelease := _maxCandidatesPlusJobs - _candidatesPlusRunning;
+
     If _jobsToRelease > _targetCandidates Then
         _jobsToRelease := _targetCandidates;
     End If;
@@ -82,15 +83,18 @@ BEGIN
                           LIMIT _jobsToRelease ) ReleaseQ
                ON sw.t_job_steps.job = ReleaseQ.job AND
                   sw.t_job_steps.step = ReleaseQ.step
-        WHERE sw.t_job_steps.state = 7
+        WHERE sw.t_job_steps.state = 7;
         --
-        GET DIAGNOSTICS _myRowCount = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := 'Enabled ' || _myRowCount::text || ' jobs for processing';
+        _message := format('Enabled %s %s for processing', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
 
     Else
+        _runningJobs := _candidatesPlusRunning - _candidateSteps;
 
-        _message := 'Already have ' || _candidateSteps::text || ' candidate jobs and ' || Convert(text, _candidatesPlusRunning - _candidateSteps) || ' running jobs; nothing to do';
+        _message := format('Already have %s candidate %s and %s running %s; nothing to do',
+                            _candidateSteps, public.check_plural(_updateCount, 'job', 'jobs'),
+                            _runningJobs,    public.check_plural(_runningJobs, 'job', 'jobs'));
     End If;
 
 END

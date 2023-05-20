@@ -167,7 +167,8 @@ BEGIN
             -- Count the new number of job requests that are not yet in Tmp_RequestsAndExistingJobs
             ------------------------------------------------
             --
-            SELECT COUNT(DISTINCT Src.request_id) INTO _jobRequestsAdded
+            SELECT COUNT(DISTINCT Src.request_id)
+            INTO _jobRequestsAdded
             FROM Tmp_RequestsAndExistingJobs Src
                  LEFT OUTER JOIN t_analysis_job_request_existing_jobs AJRJ
                    ON Src.request_id = AJRJ.request_id

@@ -87,11 +87,11 @@ AS $$
 **          05/18/2016 mem - Include the Request ID in error messages
 **          07/12/2016 mem - Pass _priority to ValidateAnalysisJobParameters
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/06/2017 mem - Set _allowNewDatasets to false when calling ValidateAnalysisJobParameters
 **          05/11/2018 mem - When the settings file is Decon2LS_DefSettings.xml, also match jobs with a settings file of 'na'
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          07/30/2019 mem - Call UpdateCachedJobRequestExistingJobs after creating new jobs
 **          03/10/2021 mem - Add _dataPackageID
 **          03/11/2021 mem - Associate new pipeline-based jobs with their analysis job request
@@ -139,7 +139,6 @@ DECLARE
     _datasetCountToRemove int := 0;
     _removedDatasetsMsg text := '';
     _removedDatasets text := '';
-    _matchingJobDatasets Table (;
     _threshold int := 5;
     _propMode int;
     _userID int;
@@ -185,6 +184,8 @@ DECLARE
     _scriptName text := 'Undefined_Script';
     _batchID int := 0;
     _numDatasets int := 0;
+    _createdSettingsFileValuesTable boolean := false;
+    _createdNewJobIDsTable boolean := false;
 
     _sqlState text;
     _exceptionMessage text;
@@ -260,7 +261,7 @@ BEGIN
             SELECT group_id
             INTO _gid
             FROM t_analysis_job_processor_group
-            WHERE (group_name = _associatedProcessorGroup)
+            WHERE group_name = _associatedProcessorGroup;
 
             If _gid = 0 Then
                 RAISE EXCEPTION 'Processor group name not found for request %', _requestID;
@@ -282,9 +283,9 @@ BEGIN
             Dataset_rating int NULL,
             Job int NULL,
             Dataset_Unreviewed int NULL
-        )
+        );
 
-        CREATE INDEX IX_Tmp_DatasetInfo_Dataset_Name ON Tmp_DatasetInfo (Dataset_Name)
+        CREATE INDEX IX_Tmp_DatasetInfo_Dataset_Name ON Tmp_DatasetInfo (Dataset_Name);
 
         If _dataPackageID > 0 Then
             If Not _toolName::citext In ('MaxQuant', 'MSFragger', 'DiaNN') Then
@@ -402,51 +403,48 @@ BEGIN
         ---------------------------------------------------
         --
 
-        --
         If _dataPackageID = 0 And _removeDatasetsWithJobs <> 'N' Then
-        --<remove>
+
+            CREATE TEMP TABLE Tmp_MatchingJobDatasets (
                 Dataset text
-            )
-            --
-            INSERT INTO _matchingJobDatasets(dataset)
-            SELECT
-                DS.dataset AS Dataset
-            FROM
-                t_dataset DS INNER JOIN
-                t_analysis_job AJ ON AJ.dataset_id = DS.dataset_id INNER JOIN
-                t_analysis_tool AJT ON AJ.analysis_tool_id = AJT.analysis_tool_id INNER JOIN
-                t_organisms Org ON AJ.organism_id = Org.organism_id  INNER JOIN
-                -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
-                Tmp_DatasetInfo ON Tmp_DatasetInfo.dataset = DS.dataset
-            WHERE
-                (NOT (AJ.job_state_id IN (5))) AND
-                AJT.analysis_tool = _toolName AND
-                AJ.param_file_name = _paramFileName AND
-                (AJ.settings_file_name = _settingsFileName OR
-                 AJ.settings_file_name = 'na' AND _settingsFileName = 'Decon2LS_DefSettings.xml') AND
-                ( ( _protCollNameList = 'na' AND
+            );
+
+            INSERT INTO Tmp_MatchingJobDatasets (dataset)
+            SELECT DS.dataset AS Dataset
+            FROM t_dataset DS
+                 INNER JOIN t_analysis_job AJ
+                   ON AJ.dataset_id = DS.dataset_id
+                 INNER JOIN t_analysis_tool AJT
+                   ON AJ.analysis_tool_id = AJT.analysis_tool_id
+                 INNER JOIN t_organisms Org
+                   ON AJ.organism_id = Org.organism_id
+                 -- INNER JOIN t_analysis_job_state AJS
+                 --  ON AJ.job_state_id = AJS.job_state_id
+                 INNER JOIN Tmp_DatasetInfo
+                   ON Tmp_DatasetInfo.dataset = DS.dataset
+            WHERE (NOT (AJ.job_state_id IN (5))) AND
+                  AJT.analysis_tool = _toolName AND
+                  AJ.param_file_name = _paramFileName AND
+                  (AJ.settings_file_name = _settingsFileName OR
+                   AJ.settings_file_name = 'na' AND
+                   _settingsFileName = 'Decon2LS_DefSettings.xml') AND
+                  ((_protCollNameList = 'na' AND
                     AJ.organism_db_name = _organismDBName AND
-                    Org.organism = Coalesce(_organismName, Org.organism)
-                  ) OR
-                  ( _protCollNameList <> 'na' AND
+                    Org.organism = Coalesce(_organismName, Org.organism)) OR
+                   (_protCollNameList <> 'na' AND
                     AJ.protein_collection_list = Coalesce(_protCollNameList, AJ.protein_collection_list) AND
-                    AJ.protein_options_list = Coalesce(_protCollOptionsList, AJ.protein_options_list)
-                  ) OR
-                  (
-                    AJT.org_db_required = 0
-                  )
-                ) AND
-                Coalesce(AJ.special_processing, '') = Coalesce(_specialProcessing, '')
+                    AJ.protein_options_list = Coalesce(_protCollOptionsList, AJ.protein_options_list)) OR
+                   (AJT.org_db_required = 0)) AND
+                  Coalesce(AJ.special_processing, '') = Coalesce(_specialProcessing, '')
             GROUP BY DS.dataset
             --
             GET DIAGNOSTICS _datasetCountToRemove = ROW_COUNT;
 
             If _datasetCountToRemove > 0 Then
-            --<remove-a>
-                -- remove datasets from list that have existing jobs
+                -- Remove datasets from list that have existing jobs
                 --
                 DELETE FROM Tmp_DatasetInfo
-                WHERE Dataset_Name IN (SELECT Dataset FROM _matchingJobDatasets)
+                WHERE Dataset_Name IN (SELECT Dataset FROM Tmp_MatchingJobDatasets)
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -458,17 +456,19 @@ BEGIN
                                                 _datasetCountToRemove,
                                                 public.check_plural(_datasetCountToRemove, 'dataset that has', 'datasets that have'));
 
-                SELECT string_agg(Dataset, ', ')
+                SELECT string_agg(Dataset, ', ' ORDER BY Dataset)
                 INTO _removedDatasets
-                FROM _matchingJobDatasets;
+                FROM Tmp_MatchingJobDatasets;
 
                 _removedDatasetsMsg := format('%s: %s', _removedDatasetsMsg, Coalesce(_removedDatasets, ''));
 
                 If _datasetCountToRemove > _threshold Then
                     _removedDatasets := _removedDatasets || ' (more datasets not shown)';
                 End If;
-            End If; --<remove-a>
-        End If; --<remove>
+            End If;
+
+            DROP TABLE Tmp_MatchingJobDatasets;
+        End If;
 
         ---------------------------------------------------
         -- Resolve propagation mode
@@ -518,9 +518,9 @@ BEGIN
         -- New jobs typically have state 1
         -- Update _jobStateID to 19="Special Proc. Waiting" if necessary
         ---------------------------------------------------
-        --
+
         _jobStateID := 1;
-        --
+
         If Coalesce(_specialProcessing, '') <> '' AND
            Exists (SELECT * FROM t_analysis_tool WHERE analysis_tool = _toolName AND use_special_proc_waiting > 0) Then
 
@@ -577,6 +577,8 @@ BEGIN
                     KeyName text NULL,
                     Value text NULL
                 );
+
+                _createdSettingsFileValuesTable := true;
 
                 -- Populate the temporary Table by parsing the XML in the contents column of table t_settings_files
                 --
@@ -766,6 +768,12 @@ BEGIN
                 _message := format('%s %s datasets', _message, _jobCountToBeCreated);
             End If;
 
+            DROP TABLE Tmp_DatasetInfo;
+
+            If _createdSettingsFileValuesTable Then
+                DROP TABLE Tmp_SettingsFile_Values_DataPkgJob;
+            End If;
+
             RETURN;
         End If;
 
@@ -842,6 +850,8 @@ BEGIN
             ---------------------------------------------------
 
             CREATE TEMP TABLE Tmp_NewJobIDs (ID int);
+
+            _createdNewJobIDsTable := true;
 
             INSERT INTO Tmp_NewJobIDs (ID)
             SELECT Job
@@ -1060,11 +1070,18 @@ BEGIN
         End If;
 
         DROP TABLE IF EXISTS Tmp_ID_Update_List;
+        DROP TABLE IF EXISTS Tmp_MatchingJobDatasets;
     END;
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
-    DROP TABLE IF EXISTS Tmp_SettingsFile_Values_DataPkgJob;
-    DROP TABLE IF EXISTS Tmp_NewJobIDs;
+
+    If _createdSettingsFileValuesTable Then
+        DROP TABLE IF EXISTS Tmp_SettingsFile_Values_DataPkgJob;
+    End If;
+
+    If _createdNewJobIDsTable Then
+        DROP TABLE IF EXISTS Tmp_NewJobIDs;
+    End If;
 END
 $$;
 

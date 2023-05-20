@@ -135,8 +135,7 @@ BEGIN
             -- The next available protein collection has over 500,000 proteins
             --
             INSERT INTO Tmp_CurrentIDs (Protein_Collection_ID)
-            -- Moved to bottom of query: TOP 1
-            SELECT TOP 1 Protein_Collection_ID
+            SELECT Protein_Collection_ID
             FROM Tmp_ProteinCollections
             WHERE Processed = 0
             ORDER BY Protein_Collection_ID
@@ -147,25 +146,10 @@ BEGIN
             -- Too many candidate collections; delete the extras
             --
             DELETE Tmp_CurrentIDs
-            WHERE NOT Protein_Collection_ID IN ( SELECT TOP ( _maxCollectionsToUpdate ) Protein_Collection_ID
+            WHERE NOT Protein_Collection_ID IN ( SELECT Protein_Collection_ID
                                                  FROM Tmp_CurrentIDs
-
-                                                 /********************************************************************************
-                                                 ** This DELETE query includes the target table name in the FROM clause
-                                                 ** The WHERE clause needs to have a self join to the target table, for example:
-                                                 **   UPDATE #Tmp_CurrentIDs
-                                                 **   SET ...
-                                                 **   FROM source
-                                                 **   WHERE source.id = #Tmp_CurrentIDs.id;
-                                                 **
-                                                 ** Delete queries must also include the USING keyword
-                                                 ** Alternatively, the more standard approach is to rearrange the query to be similar to
-                                                 **   DELETE FROM #Tmp_CurrentIDs WHERE id in (SELECT id from ...)
-                                                 ********************************************************************************/
-
-                                                                        ToDo: Fix this query
-
-                                                 ORDER BY Protein_Collection_ID )
+                                                 ORDER BY Protein_Collection_ID
+                                                 LIMIT _maxCollectionsToUpdate)
         End If;
 
         -- Update the processed flag for the candidates

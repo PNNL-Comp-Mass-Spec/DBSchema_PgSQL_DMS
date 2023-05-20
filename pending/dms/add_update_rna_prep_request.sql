@@ -45,9 +45,9 @@ AS $$
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to append_to_text
 **          08/22/2018 mem - Change the EUS User parameter from a varchar(1024) to an integer
 **          08/29/2018 mem - Remove parameters _biomaterialList,  _projectNumber, and _numberOfBiomaterialRepsReceived
 **                         - Remove call to DoSamplePrepMaterialOperation
@@ -428,7 +428,7 @@ BEGIN
                 instrument_group = _instrumentGroup,
                 instrument_name = _instrumentName,
                 dataset_type = _datasetType
-            WHERE (prep_request_id = _id)
+            WHERE prep_request_id = _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
             If char_length(_callingUser) > 0 Then

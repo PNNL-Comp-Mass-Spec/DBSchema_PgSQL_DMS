@@ -34,7 +34,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _myRowCount int := 0;
     _xmlParameters xml;
     _existingParamsFound boolean := false;
 BEGIN
@@ -89,13 +88,9 @@ BEGIN
             UPDATE Tmp_Job_Parameters
             SET Parameters = _xmlParameters
             WHERE Job = _job
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
         Else
             INSERT INTO Tmp_Job_Parameters( Job, Parameters )
             SELECT _job, _xmlParameters
-            --
-            GET DIAGNOSTICS _myRowCount = ROW_COUNT;
         End If;
 
     End If;

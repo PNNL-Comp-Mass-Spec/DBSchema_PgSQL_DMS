@@ -101,7 +101,7 @@ BEGIN
     DELETE FROM Tmp_LCColumns
     WHERE lc_column_id IN ( SELECT lc_column_id
                             FROM t_lc_column
-                            WHERE (lc_column IN ('unknown', 'No_Column', 'DI', 'Infuse')) )
+                            WHERE lc_column IN ('unknown', 'No_Column', 'DI', 'Infuse') );
 
     If _infoOnly Then
 

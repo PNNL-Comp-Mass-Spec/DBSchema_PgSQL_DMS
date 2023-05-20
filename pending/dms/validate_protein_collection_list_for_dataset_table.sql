@@ -186,12 +186,13 @@ BEGIN
         _matchCount := 0;
         _collectionWithContaminants := '';
 
-        SELECT COUNT(*), INTO _matchCount
-            _collectionWithContaminants = MIN(PCLocal.Protein_Collection_Name)
+        SELECT COUNT(*),
+               MIN(PCLocal.Protein_Collection_Name)
+        INTO _matchCount, _collectionWithContaminants
         FROM Tmp_ProteinCollections PCLocal
             INNER JOIN pc.V_Protein_Collections_by_Organism PCMaster
             ON PCLocal.Protein_Collection_Name = PCMaster.Collection_Name
-        WHERE PCMaster.Includes_Contaminants > 0
+        WHERE PCMaster.Includes_Contaminants > 0;
 
         If _matchCount > 0 Then
             _msg := 'Not adding enzyme-associated protein collections (typically contaminant collections) since ' || _collectionWithContaminants || ' already includes contaminants';

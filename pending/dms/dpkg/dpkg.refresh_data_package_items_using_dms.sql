@@ -53,7 +53,7 @@ BEGIN
     FROM public.T_Campaign C INNER JOIN
         public.T_Cell_Culture CC ON C.Campaign_ID = CC.CC_Campaign_ID INNER JOIN
         dpkg.t_data_package_biomaterial Target ON CC.CC_ID = Target.biomaterial_id AND C.Campaign_Num <> Target.campaign
-    WHERE (Target.data_pkg_id = _packageID)
+    WHERE Target.data_pkg_id = _packageID;
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
