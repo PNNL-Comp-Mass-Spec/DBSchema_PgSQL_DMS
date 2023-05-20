@@ -14,14 +14,16 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_child_count(_taxonomyid integer) RETURN
 **  Auth:   mem
 **  Date:   03/02/2016 mem - Initial version
 **          03/29/2022 mem - Ported to PostgreSQL
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
     _count int;
 BEGIN
-    SELECT COUNT(*) INTO _count
+    SELECT COUNT(*)
+    INTO _count
     FROM ont.t_ncbi_taxonomy_nodes
-    WHERE (parent_tax_id = _taxonomyID);
+    WHERE parent_tax_id = _taxonomyID;
 
     Return _count;
 END

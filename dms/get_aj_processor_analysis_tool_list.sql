@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_analysis_tool_list(_processor
 **          03/15/2007 mem - Increased size of _result to varchar(4000); now ordering by tool name
 **          03/30/2009 mem - Now using Coalesce to generate the comma separated list
 **          06/17/2022 mem - Ported to PostgreSQL
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -27,7 +28,7 @@ BEGIN
     INTO _result
     FROM t_analysis_job_processor_tools AJPT INNER JOIN
           t_analysis_tool T ON AJPT.tool_id = T.analysis_tool_id
-    WHERE (AJPT.processor_id = _processorID);
+    WHERE AJPT.processor_id = _processorID;
 
     RETURN Coalesce(_result, '');
 END

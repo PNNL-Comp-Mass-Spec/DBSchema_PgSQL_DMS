@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly boolean DEFAULT
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          04/04/2023 mem - Use char_length() to determine string length
 **          05/12/2023 mem - Rename variables
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -106,7 +107,7 @@ BEGIN
                                GROUP BY cvbto.identifier ) source
                ON target.identifier = source.identifier AND
                   target.term_name = source.term_name
-        WHERE (source.identifier IS NULL)
+        WHERE source.identifier IS NULL
         UNION
         SELECT 'Add to cache'::citext AS Task,
                source.identifier,
@@ -118,7 +119,7 @@ BEGIN
                                 GROUP BY cvbto.identifier ) source
                ON target.identifier = source.identifier AND
                   target.term_name = source.term_name
-        WHERE (target.identifier IS NULL)
+        WHERE target.identifier IS NULL
         ORDER BY Task, identifier;
 
         If Not FOUND Then

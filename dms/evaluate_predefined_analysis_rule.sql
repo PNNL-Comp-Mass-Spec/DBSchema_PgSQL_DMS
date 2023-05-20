@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **          01/26/2023 mem - Store the Predefine ID in Tmp_PredefineJobsToCreate
 **          01/27/2023 mem - Track legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -133,7 +134,7 @@ BEGIN
             _minLevelNew := _predefineInfo.RuleNextLevel;
 
             If char_length(_ruleEvalNotes) > 0 Then
-                _ruleEvalNotes := format('%s; ', _ruleEvalNotes);
+                _ruleEvalNotes := _ruleEvalNotes || '; ';
             End If;
 
             _ruleEvalNotes := format('%sNext rule must have level >= %s', _ruleEvalNotes, _predefineInfo.RuleNextLevel);
@@ -165,9 +166,10 @@ BEGIN
 
             -- Obsolete
             -- If Coalesce(_tmpProcessorGroupID, 0) > 0 Then
-            --     SELECT group_name INTO _associatedProcessorGroup
+            --     SELECT group_name
+            --     INTO _associatedProcessorGroup
             --     FROM t_analysis_job_processor_group
-            --     WHERE (group_id = _tmpProcessorGroupID)
+            --     WHERE group_id = _tmpProcessorGroupID;
             --
             --     _associatedProcessorGroup := Coalesce(_associatedProcessorGroup, '');
             -- Else
@@ -180,7 +182,7 @@ BEGIN
 
             -- Obsolete:
             -- If char_length(_associatedProcessorGroup) > 0 Then
-            --     _ruleEvalNotes := _ruleEvalNotes || ' and processor group set to "' || _associatedProcessorGroup || '"';
+            --     _ruleEvalNotes := format('%sProcessor group set to %s;', _associatedProcessorGroup);
             -- End If;
 
             _ruleEvalNotes := format('%sPriority set to %s due to rule_id %s in t_predefined_analysis_scheduling_rules',

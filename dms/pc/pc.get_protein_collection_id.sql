@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION pc.get_protein_collection_id(_collectionname text) RE
 **  Date:   09/29/2004
 **          06/26/2019 mem - Add comments and convert tabs to spaces
 **          03/23/2023 mem - Ported to PostgreSQL
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -24,10 +25,10 @@ BEGIN
     SELECT protein_collection_id
     INTO _collectionID
     FROM pc.t_protein_collections
-    WHERE (collection_name = _collectionName::citext);
+    WHERE collection_name = _collectionName::citext;
 
     If FOUND Then
-        Return _collectionID;
+        RETURN _collectionID;
     End If;
 
     Return 0;

@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 **          04/16/2022 mem - Use new function name
 **          02/01/2023 mem - Rename column in temp table
 **          05/12/2023 mem - Rename variables
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -91,7 +92,7 @@ BEGIN
            End As parent_param_pointer_state,
            mgr_name
     FROM mc.v_param_value
-    WHERE (mgr_name IN (Select value::citext From public.parse_delimited_list(_managerNameList, ',')));
+    WHERE mgr_name IN (Select value::citext From public.parse_delimited_list(_managerNameList, ','));
 
     -----------------------------------------------
     -- Append parameters for parent groups, which are
@@ -158,7 +159,8 @@ BEGIN
                                        ON PV.mgr_name::citext = FilterQ.Group_Name::citext ) ValuesToAppend
                ON Target.mgr_name = ValuesToAppend.mgr_name AND
                   Target.param_type_id = ValuesToAppend.param_type_id
-        WHERE (Target.param_type_id IS NULL Or ValuesToAppend.param_type_id = 162);
+        WHERE Target.param_type_id IS NULL OR
+              ValuesToAppend.param_type_id = 162;
 
         -- This is a safety check in case a manager has a Default_AnalysisMgr_Params value pointing to itself
         _iterations := _iterations + 1;

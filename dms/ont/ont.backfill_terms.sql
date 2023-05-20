@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **          04/05/2022 mem - Ported to PostgreSQL
 **          10/04/2022 mem - Change _infoOnly and _previewRelationshipUpdates from integer to boolean
 **          05/12/2023 mem - Rename variables
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -278,13 +279,13 @@ BEGIN
                FROM ont.t_cv_bto SourceTable
                     INNER JOIN ont.t_term
                       ON SourceTable.parent_term_ID = ont.t_term.identifier
-               WHERE (ont.t_term.ontology_id = _ontologyID) ) ValidRelationships
+               WHERE ont.t_term.ontology_id = _ontologyID
+             ) ValidRelationships
              RIGHT OUTER JOIN ont.t_term_relationship
-               ON ValidRelationships.Child_PK = ont.t_term_relationship.subject_term_pk
-                  AND
+               ON ValidRelationships.Child_PK = ont.t_term_relationship.subject_term_pk AND
                   ValidRelationships.Parent_PK = ont.t_term_relationship.object_term_pk
-        WHERE (ValidRelationships.parent_term_id IS NULL) AND
-              (ont.t_term_relationship.ontology_id = _ontologyID);
+        WHERE ValidRelationships.parent_term_id IS NULL AND
+              ont.t_term_relationship.ontology_id = _ontologyID;
 
         If _previewRelationshipUpdates Then
             RETURN QUERY
@@ -359,14 +360,13 @@ BEGIN
              LEFT OUTER JOIN ont.t_term_relationship
                ON SourceTable.term_pk = ont.t_term_relationship.subject_term_pk AND
                   ont.t_term.term_pk = ont.t_term_relationship.object_term_pk
-        WHERE (ont.t_term.ontology_id = _ontologyID) AND
-              (ont.t_term_relationship.subject_term_pk IS NULL)
+        WHERE ont.t_term.ontology_id = _ontologyID AND
+              ont.t_term_relationship.subject_term_pk IS NULL
         ORDER BY SourceTable.identifier
         */
     End If;
 
     DROP TABLE Tmp_SourceData;
-
 END
 $$;
 

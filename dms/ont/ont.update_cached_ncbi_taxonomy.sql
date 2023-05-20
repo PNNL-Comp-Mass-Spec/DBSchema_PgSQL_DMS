@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean
 **          04/07/2022 mem - Ported to PostgreSQL
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          05/12/2023 mem - Rename variables
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -55,10 +56,12 @@ BEGIN
                                                 PrimaryName.name_class = 'scientific name'
                                            INNER JOIN ont.t_ncbi_taxonomy_name_class NameClass
                                              ON NameList.name_class = NameClass.name_class
-                                      WHERE (NameClass.sort_weight BETWEEN 2 AND 19)
-                                      GROUP BY PrimaryName.tax_id ) SynonymStats
+                                      WHERE NameClass.sort_weight BETWEEN 2 AND 19
+                                      GROUP BY PrimaryName.tax_id
+                                    ) SynonymStats
                       ON Nodes.tax_id = SynonymStats.tax_id
-               WHERE (NodeNames.name_class = 'scientific name') ) AS s
+               WHERE NodeNames.name_class = 'scientific name'
+             ) AS s
              LEFT OUTER JOIN ont.t_ncbi_taxonomy_cached t
                ON t.tax_id = s.tax_id;
 
@@ -95,10 +98,10 @@ BEGIN
                                      PrimaryName.name_class = 'scientific name'
                                 INNER JOIN ont.t_ncbi_taxonomy_name_class NameClass
                                   ON NameList.name_class = NameClass.name_class
-                           WHERE (NameClass.sort_weight BETWEEN 2 AND 19)
+                           WHERE NameClass.sort_weight BETWEEN 2 AND 19
                            GROUP BY PrimaryName.tax_id ) SynonymStats
            ON Nodes.tax_id = SynonymStats.tax_id
-    WHERE (NodeNames.name_class = 'scientific name');
+    WHERE NodeNames.name_class = 'scientific name';
     --
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 

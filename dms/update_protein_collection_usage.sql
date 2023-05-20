@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.update_protein_collection_usage(INOUT _messag
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying S_V_Protein_Collections_by_Organism
 **          12/31/2022 mem - Ported to PostgreSQL
 **          05/07/2023 mem - Remove unused variable
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -87,7 +88,7 @@ BEGIN
                FROM t_cached_protein_collection_list_map PCLMap
                     LEFT OUTER JOIN t_cached_protein_collection_list_members PCLMembers
                       ON PCLMap.protein_collection_list_id = PCLMembers.protein_collection_list_id
-               WHERE (PCLMembers.protein_collection_name IS NULL)
+               WHERE PCLMembers.protein_collection_name IS NULL
              ) SourceQ
              JOIN LATERAL (
                  SELECT value

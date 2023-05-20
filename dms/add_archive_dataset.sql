@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 **          04/24/2023 mem - Ported to PostgreSQL
 **                         - Do not create an archive task if 'ArchiveDisabled' has a non-zero value in T_Misc_Options
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/19/2023 mem - Remove redundant parentheses
 **
 *****************************************************/
 DECLARE
@@ -48,7 +49,7 @@ BEGIN
     -- Don't allow duplicate dataset IDs in table
     ---------------------------------------------------
     --
-    If Exists (SELECT * FROM t_dataset_archive WHERE (dataset_id = _datasetID)) Then
+    If Exists (SELECT * FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
         _message := format('Dataset ID %s is already in t_dataset_archive', _datasetID);
         RAISE WARNING '%', _message;
 
