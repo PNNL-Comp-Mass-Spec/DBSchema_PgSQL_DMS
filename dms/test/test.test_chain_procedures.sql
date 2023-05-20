@@ -26,7 +26,8 @@ Begin
 
             INSERT INTO t_log_entries (posted_by, type, message)
             VALUES ('Monroe', 'Test', 'Test log message')
-            RETURNING entry_id INTO _entryID;
+            RETURNING entry_id
+            INTO _entryID;
 
             RAISE Info 'Call alter_entered_by_user';
             CALL alter_entered_by_user('public', 't_log_entries', 'entry_id', _entryID, 'bob',

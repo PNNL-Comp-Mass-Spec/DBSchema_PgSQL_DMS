@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          05/10/2023 mem - Capitalize procedure name sent to post_usage_log_entry
 **          05/11/2023 mem - Update return codes
 **          05/12/2023 mem - Rename variables
+**          05/19/2023 mem - Move INTO to new line
 **                         - Use format() to combine strings
 **
 *****************************************************/
@@ -164,7 +165,8 @@ BEGIN
 
             If NOT EXISTS (SELECT * FROM t_instrument_group WHERE instrument_group = _newInstrumentGroup) Then
                 -- Try to update instrument group using t_instrument_name
-                SELECT instrument_group INTO _newInstrumentGroup
+                SELECT instrument_group
+                INTO _newInstrumentGroup
                 FROM t_instrument_name
                 WHERE instrument = _newValue::citext;
             End If;

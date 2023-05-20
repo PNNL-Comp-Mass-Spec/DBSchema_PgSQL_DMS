@@ -42,7 +42,8 @@ BEGIN
 
     _remoteInfoXML := '';
 
-    SELECT mgr_id INTO _managerID
+    SELECT mgr_id
+    INTO _managerID
     FROM mc.t_mgrs
     WHERE mgr_name = _managerName::citext;
 

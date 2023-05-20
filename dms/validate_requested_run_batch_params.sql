@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          02/16/2023 mem - Add _batchGroupID and _batchGroupOrder
 **          02/16/2023 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
+**          05/19/2023 mem - Move INTO to new line
 **
 *****************************************************/
 DECLARE
@@ -117,9 +118,10 @@ BEGIN
         --
         If _mode = 'update' Then
             --
-            SELECT locked INTO _locked
-            FROM  t_requested_run_batches
-            WHERE  batch_id = _batchID;
+            SELECT locked
+            INTO _locked
+            FROM t_requested_run_batches
+            WHERE batch_id = _batchID;
 
             If Not FOUND Then
                 _message := 'Cannot update: entry does not exist in database';
