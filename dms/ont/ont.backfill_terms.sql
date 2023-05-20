@@ -80,7 +80,7 @@ BEGIN
         FROM Tmp_CandidateTables t;
 
         DROP TABLE Tmp_CandidateTables;
-        Return;
+        RETURN;
     End If;
 
     -- Make sure the schema name and table name are properly capitalized

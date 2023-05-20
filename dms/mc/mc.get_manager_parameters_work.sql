@@ -167,7 +167,7 @@ BEGIN
 
     END LOOP;
 
-    Drop Table Tmp_Manager_Group_Info;
+    DROP TABLE Tmp_Manager_Group_Info;
 
 END
 $$;

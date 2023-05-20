@@ -25,7 +25,7 @@ BEGIN
     FROM ont.t_ncbi_taxonomy_nodes
     WHERE parent_tax_id = _taxonomyID;
 
-    Return _count;
+    RETURN _count;
 END
 $$;
 

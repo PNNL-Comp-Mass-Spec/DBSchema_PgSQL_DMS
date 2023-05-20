@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 **          04/04/2022 mem - Update the merge query to support parent_term_type being null
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          05/12/2023 mem - Rename variables
+**          05/19/2023 mem - Capitalize keyword
 **
 *****************************************************/
 DECLARE
@@ -80,7 +81,7 @@ BEGIN
         FROM Tmp_CandidateTables t;
 
         DROP TABLE Tmp_CandidateTables;
-        Return;
+        RETURN;
     End If;
 
     -- Make sure the schema name and table name are properly capitalized

@@ -31,7 +31,7 @@ BEGIN
         RETURN _collectionID;
     End If;
 
-    Return 0;
+    RETURN 0;
 END
 $$;
 

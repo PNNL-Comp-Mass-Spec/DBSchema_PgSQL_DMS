@@ -49,7 +49,7 @@ BEGIN
 
     If Not Found Then
         -- Manager not found; this is not an error
-        Return;
+        RETURN;
     End If;
 
     -----------------------------------------------
@@ -88,8 +88,8 @@ BEGIN
 
         RAISE Warning 'Manager % does not have RunJobsRemotely=True or does not have RemoteHostName defined', _managerName;
 
-        Drop Table Tmp_Mgr_Params;
-        Return;
+        DROP TABLE Tmp_Mgr_Params;
+        RETURN;
     End If;
 
     -- Concatenate together the parameters to build up the XML

@@ -65,7 +65,7 @@ BEGIN
              LEFT OUTER JOIN ont.t_ncbi_taxonomy_cached t
                ON t.tax_id = s.tax_id;
 
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------
