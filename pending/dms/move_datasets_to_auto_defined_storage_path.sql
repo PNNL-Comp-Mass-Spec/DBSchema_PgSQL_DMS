@@ -255,24 +255,12 @@ BEGIN
         END LOOP; -- </a>
 
         If Not _infoOnly Then
-            Update t_cached_dataset_folder_paths
-            Set update_required = 1
-            FROM t_cached_dataset_folder_paths Target Inner Join Tmp_Datasets Src
+            UPDATE t_cached_dataset_folder_paths Target
+            SET update_required = 1
+            FROM Tmp_Datasets Src
+            WHERE Target.Dataset_ID = Src.DatasetID;
 
-            /********************************************************************************
-            ** This Update query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_cached_dataset_folder_paths
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_cached_dataset_folder_paths.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-            On Target.Dataset_ID = Src.DatasetID
-
-            Call update_cached_dataset_folder_paths _processingMode => 0
+            CALL update_cached_dataset_folder_paths (_processingMode => 0);
 
         End If;
 

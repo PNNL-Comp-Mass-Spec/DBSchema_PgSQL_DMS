@@ -151,24 +151,11 @@ BEGIN
 
     -- Update the old/new priority columns
     --
-    UPDATE Tmp_JobsToUpdate
+    UPDATE Tmp_JobsToUpdate Target
     SET Old_Priority = Cast(J.AJ_Priority AS int),
         New_Priority = 4
-    FROM Tmp_JobsToUpdate U
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_JobsToUpdate
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_JobsToUpdate.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN t_analysis_job J
-           ON J.job = U.job
+    FROM t_analysis_job J
+    WHERE J.job = Target.job;
 
     -- Ignore any jobs that are already in t_analysis_job_priority_updates
     --
@@ -245,7 +232,7 @@ BEGIN
 
         _message := format('Updated job priority for %s long running %s', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
 
-        Call post_log_entry ('Normal', _message, 'Auto_Update_Job_Priorities');
+        CALL post_log_entry ('Normal', _message, 'Auto_Update_Job_Priorities');
     End If;
 
     RAISE INFO '%', _message;
