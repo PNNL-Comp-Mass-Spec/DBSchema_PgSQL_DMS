@@ -177,7 +177,7 @@ BEGIN
 
             If Not FOUND Then
                 _logMessage := format('Logic error; did not find a match for proposal %s and usage_rank 1 in Tmp_WPInfo', _proposalID);
-                Call post_log_entry ('Error', _logMessage , 'Update_EUS_Requested_Run_WP');
+                CALL post_log_entry ('Error', _logMessage , 'Update_EUS_Requested_Run_WP');
                 RETURN;
             End If;
 
@@ -221,7 +221,7 @@ BEGIN
                 WHERE target.request_id = Src.request_id AND
                       Src.Proposal_ID = _proposalID;
 
-                Call post_log_entry ('Normal', _logMessage, 'Update_EUS_Requested_Run_WP');
+                CALL post_log_entry ('Normal', _logMessage, 'Update_EUS_Requested_Run_WP');
             End If;
 
         END LOOP;

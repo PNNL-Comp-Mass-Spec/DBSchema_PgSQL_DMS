@@ -61,7 +61,7 @@ BEGIN
 
     _colList := 'request, name, status, batch, experiment, dataset, instrument, cart, lc_col, block, run_order';
 
-    Call make_factor_crosstab_sql (_itemList, _colList, _sql => _sql, _viewName => 'V_Requested_Run_Unified_List_Ex');
+    CALL make_factor_crosstab_sql (_itemList, _colList, _sql => _sql, _viewName => 'V_Requested_Run_Unified_List_Ex');
 
 
     -----------------------------------------

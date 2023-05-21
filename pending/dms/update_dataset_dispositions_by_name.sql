@@ -148,7 +148,7 @@ BEGIN
         -- Call sproc to update dataset disposition
         ---------------------------------------------------
 
-        Call update_dataset_dispositions (
+        CALL update_dataset_dispositions (
                             _datasetIDList,
                             _rating,
                             _comment,
@@ -185,7 +185,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := _datasetCount::text || ' datasets updated';
-    Call post_usage_log_entry ('Update_Dataset_Dispositions_By_Name', _usageMessage);
+    CALL post_usage_log_entry ('Update_Dataset_Dispositions_By_Name', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetsToUpdate;
 END

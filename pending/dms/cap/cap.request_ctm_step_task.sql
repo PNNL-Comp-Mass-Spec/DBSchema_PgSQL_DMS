@@ -539,7 +539,7 @@ BEGIN
             End If;
 
             -- Populate Tmp_ParamTab with step parameters
-            Call cap.get_task_step_params (_job, _step, _message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
+            CALL cap.get_task_step_params (_job, _step, _message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
 
             If _infoLevel <> 0 AND char_length(_message) = 0 Then
                 _message := format('Job %s, Step %s would be assigned to %s', _job, _step, _processorName;

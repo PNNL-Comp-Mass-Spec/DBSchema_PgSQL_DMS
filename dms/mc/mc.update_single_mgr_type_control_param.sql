@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **
 **  Example Usage:
 **
-**      Call mc.update_single_mgr_type_control_param('ManagerUpdateRequired', 'False', '11, 15')
+**      CALL mc.update_single_mgr_type_control_param('ManagerUpdateRequired', 'False', '11, 15')
 **
 **  Auth:   jds
 **  Date:   07/17/2007
@@ -87,7 +87,7 @@ BEGIN
     -- Note that it calls alter_entered_by_user_multi_id and alter_event_log_entry_user_multi_id for _callingUser
     ---------------------------------------------------
     --
-    Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+    CALL mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
     DROP TABLE Tmp_ParamValueEntriesToUpdate;
 

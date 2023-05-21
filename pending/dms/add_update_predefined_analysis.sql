@@ -404,7 +404,7 @@ BEGIN
 
         _ownerUsername := '';
 
-        Call validate_protein_collection_params (
+        CALL validate_protein_collection_params (
                     _analysisToolName,
                     _organismDBName      => _organismDBName,        -- Output
                     _organismName        => _organismName,
@@ -443,7 +443,7 @@ BEGIN
             -- try to auto-resolve using the name column in t_users
             ---------------------------------------------------
 
-            Call auto_resolve_name_to_username (_creator, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_creator, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match was found; update _creator

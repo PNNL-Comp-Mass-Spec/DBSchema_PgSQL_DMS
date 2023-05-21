@@ -140,7 +140,7 @@ BEGIN
         -- It uses Tmp_AnalysisJobs to determine which jobs to update
         ---------------------------------------------------
 
-        Call update_analysis_jobs_work (
+        CALL update_analysis_jobs_work (
                             _state,
                             _priority,
                             _comment,
@@ -186,7 +186,7 @@ BEGIN
 
     _usageMessage := format('%s %s updated', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
 
-    Call post_usage_log_entry ('Update_Analysis_Jobs', _usageMessage);
+    CALL post_usage_log_entry ('Update_Analysis_Jobs', _usageMessage);
 
     If _dropTempTable Then
         DROP TABLE IF EXISTS Tmp_AnalysisJobs;

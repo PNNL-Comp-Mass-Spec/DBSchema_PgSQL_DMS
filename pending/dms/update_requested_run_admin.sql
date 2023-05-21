@@ -85,12 +85,12 @@ BEGIN
 
     If _debugEnabled Then
         _logMessage := _requestList::text;
-        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
+        CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
 
         _argLength := char_length(_requestList);
 
         _logMessage := format('%s characters in _requestList', _argLength);
-        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
+        CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
     End If;
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
@@ -129,7 +129,7 @@ BEGIN
 
     If _debugEnabled Then
         _logMessage := format('%s %s inserted into Tmp_Requests', _matchCount, public.check_plural(_matchCount, 'row', 'rows'));
-        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
+        CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
     End If;
 
     -----------------------------------------------------------
@@ -218,7 +218,7 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE state_name = _mode;
 
-            Call alter_event_log_entry_user_multi_id (11, _stateID, _callingUser);
+            CALL alter_event_log_entry_user_multi_id (11, _stateID, _callingUser);
         End If;
 
         -- Call update_cached_requested_run_eus_users for each entry in Tmp_Requests
@@ -228,7 +228,7 @@ BEGIN
             FROM Tmp_Requests
             ORDER BY request_id
         LOOP
-            Call update_cached_requested_run_eus_users (
+            CALL update_cached_requested_run_eus_users (
                     _requestID,
                     _message => _message,           -- Output
                     _returnCode => _returnCode);    -- Output
@@ -256,7 +256,7 @@ BEGIN
             --
             _stateID := 0;
 
-            Call alter_event_log_entry_user_multi_id (11, _stateID, _callingUser);
+            CALL alter_event_log_entry_user_multi_id (11, _stateID, _callingUser);
         End If;
 
         -- Remove any cached EUS user lists
@@ -290,7 +290,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    Call post_usage_log_entry ('Update_Requested_Run_Admin', _usageMessage);
+    CALL post_usage_log_entry ('Update_Requested_Run_Admin', _usageMessage);
 
     DROP TABLE Tmp_Requests;
     DROP TABLE Tmp_ID_Update_List;

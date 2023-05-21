@@ -108,7 +108,7 @@ BEGIN
             _containerList := _tmpID;
             _logErrors := true;
 
-            Call update_material_containers (
+            CALL update_material_containers (
                     _iMode,
                     _containerList,
                     _newValue,

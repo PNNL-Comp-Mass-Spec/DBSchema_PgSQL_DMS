@@ -46,7 +46,7 @@ BEGIN
         WHERE State = 4;
 
         RAISE INFO 'Calling set_manager_update_required for % managers', _mgrCount;
-        Call mc.set_manager_update_required (_mgrList, _showTable => 1);
+        CALL mc.set_manager_update_required (_mgrList, _showTable => 1);
     End If;
 
 END

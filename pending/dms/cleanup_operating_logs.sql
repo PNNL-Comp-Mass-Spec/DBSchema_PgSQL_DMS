@@ -56,7 +56,7 @@ BEGIN
         --
         _currentLocation := 'Call MoveHistoricLogEntries';
 
-        Call move_historic_log_entries _logRetentionIntervalHours
+        CALL move_historic_log_entries _logRetentionIntervalHours
 
         ----------------------------------------------------
         -- Move old events from t_event_log to the historic log schema (logdms.t_event_log)
@@ -64,7 +64,7 @@ BEGIN
         --
         _currentLocation := 'Call MoveEventLogEntries';
 
-        Call move_event_log_entries _eventLogRetentionIntervalDays
+        CALL move_event_log_entries _eventLogRetentionIntervalDays
 
     EXCEPTION
         WHEN OTHERS THEN

@@ -295,7 +295,7 @@ BEGIN
             RAISE INFO '%', 'Calling AddUpdateRequestedRun with mode ' || _addUpdateMode;
         End If;
 
-        Call public.add_update_requested_run (
+        CALL public.add_update_requested_run (
                                 _requestName => _requestName,
                                 _experimentName => _experimentName,
                                 _requesterUsername => _requesterUsername,
@@ -342,7 +342,7 @@ BEGIN
                 RAISE INFO 'Calling consume_scheduled_run with DatasetID % and RequestID %', _datasetID, _requestID;
             End If;
 
-            Call consume_scheduled_run ( _datasetID,
+            CALL consume_scheduled_run ( _datasetID,
                                          _requestID,
                                          _message => _msg,              -- Output
                                          _returnCode => _returnCode,    -- Output

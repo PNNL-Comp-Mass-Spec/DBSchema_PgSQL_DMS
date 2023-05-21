@@ -296,7 +296,7 @@ BEGIN
             -- Could not find entry in database for username _operatorUsername
             -- Try to auto-resolve the name
 
-            Call auto_resolve_name_to_username (_operatorUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_operatorUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
@@ -374,9 +374,9 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser);
+                CALL alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser);
 
-                Call alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
+                CALL alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
             End If;
 
             ---------------------------------------------------
@@ -392,7 +392,7 @@ BEGIN
 
                 _requestName := 'AutoReq_' || _datasetName;
 
-                Call add_update_requested_run (
+                CALL add_update_requested_run (
                                         _requestName => _requestName,
                                         _experimentName => _experimentName,
                                         _requesterUsername => _operatorUsername,
@@ -439,7 +439,7 @@ BEGIN
                 _warning := _message;
             End If;
 
-            Call consume_scheduled_run (
+            CALL consume_scheduled_run (
                     _datasetID,
                     _requestID,
                     _message => _message,           -- Output
@@ -452,7 +452,7 @@ BEGIN
             End If;
 
             -- Update t_cached_dataset_instruments
-            Call public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+            CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
         End If;
 
@@ -475,7 +475,7 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 AND _ratingID <> Coalesce(_curDSRatingID, -1000) Then
-                Call alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
+                CALL alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
             End If;
 
             -- Call AddUpdateRequestedRun if the EUS info has changed
@@ -497,7 +497,7 @@ BEGIN
               Coalesce(_existingEusUsageType, '') <> _eusUsageType OR
               Coalesce(_existingEusUser, '') <> _eusUsersList) Then
 
-                Call add_update_requested_run (
+                CALL add_update_requested_run (
                                         _requestName => _requestName,
                                         _experimentName => _experimentName,
                                         _requesterUsername => _operatorUsername,
@@ -556,7 +556,7 @@ BEGIN
         _startDate := _refDate - INTERVAL '1 month';
         _endDate   := _refDate + INTERVAL '1 month';
 
-        Call update_dataset_interval (
+        CALL update_dataset_interval (
                 _instrumentName,
                 _startDate,
                 _endDate,

@@ -74,7 +74,7 @@ BEGIN
     -- Call RequestPurgeTask to obtain the data
     --------------------------------------------------
 
-    Call request_purge_task (
+    CALL request_purge_task (
                         _storageServerName => _storageServerName,
                         _serverDisk => _storageVol,
                         _excludeStageMD5RequiredDatasets => false,

@@ -23,13 +23,13 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **
 **  Example usage:
 **
-**      Call cap.add_update_local_task_in_broker(
+**      CALL cap.add_update_local_task_in_broker(
 **          5280268, 'DatasetArchive', 4,
 **          _jobParam => '',
 **          _comment => '',
 **          _mode => 'update');
 **
-**      Call cap.add_update_local_task_in_broker(
+**      CALL cap.add_update_local_task_in_broker(
 **          5280268, 'DatasetArchive', 4,
 **          '<Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" /><Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" /><Param Section="DatasetQC" Name="SaveLCMS2DPlots" Value="True" /><Param Section="JobParameters" Name="Dataset" Value="QC_Mam_19_01-run04_19July22_Remus_WBEH-22-05-07" /><Param Section="JobParameters" Name="Dataset_ID" Value="1060934" />',
 **          _comment => '',
@@ -162,7 +162,7 @@ BEGIN
             RAISE EXCEPTION 'Add mode is not implemented in this procedure for capture task jobs';
 
             /*
-            Call cap.make_local_task_in_broker (
+            CALL cap.make_local_task_in_broker (
                     _scriptName,
                     _priority,
                     _jobParamXML,

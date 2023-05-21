@@ -127,7 +127,7 @@ BEGIN
                 _message := format('%s; %s set to inactive', _message, _setInactiveCount);
             End If;
 
-            Call post_log_entry ('Normal', _message, 'Update_EUS_Proposals_From_EUS_Imports');
+            CALL post_log_entry ('Normal', _message, 'Update_EUS_Proposals_From_EUS_Imports');
             _message := '';
         End If;
 
@@ -152,7 +152,7 @@ BEGIN
         If _matchCount > 0 Then
             _message := format('Added %s new proposal %s to t_eus_proposal_type', _matchCount, public.check_plural(_matchCount, 'type', 'types'));
 
-            Call post_log_entry ('Normal', _message, 'Update_EUS_Proposals_From_EUS_Imports');
+            CALL post_log_entry ('Normal', _message, 'Update_EUS_Proposals_From_EUS_Imports');
             _message := '';
         End If;
 
@@ -177,7 +177,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    Call post_usage_log_entry ('Update_EUS_Proposals_From_EUS_Imports', _usageMessage);
+    CALL post_usage_log_entry ('Update_EUS_Proposals_From_EUS_Imports', _usageMessage);
 
 END
 $$;

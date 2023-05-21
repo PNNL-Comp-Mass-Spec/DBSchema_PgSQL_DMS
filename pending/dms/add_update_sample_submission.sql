@@ -165,7 +165,7 @@ BEGIN
 
             _cl := _containerList;
 
-            Call assure_material_containers_exist (
+            CALL assure_material_containers_exist (
                                 _containerList => _cl,          -- Input / Output
                                 _comment => '',
                                 _type => '',
@@ -225,7 +225,7 @@ BEGIN
                     _comment := _newContainerComment || ' (sample submission ' || _id::text || ')';
                 End If;
 
-                Call assure_material_containers_exist (
+                CALL assure_material_containers_exist (
                                 _containerList => _containerList,   -- Output
                                 _comment => _comment,
                                 _type => 'Box',

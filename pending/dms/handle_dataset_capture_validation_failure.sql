@@ -129,7 +129,7 @@ BEGIN
                 RAISE INFO '%', _message;
             Else
                 -- Also update t_dataset_archive
-                Call add_archive_dataset _datasetID
+                CALL add_archive_dataset _datasetID
 
                 _message := 'Marked dataset as bad: ' || _datasetName;
                 RAISE INFO '%', _message;

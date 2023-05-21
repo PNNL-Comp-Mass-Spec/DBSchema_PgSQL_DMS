@@ -108,7 +108,7 @@ BEGIN
         SELECT entry_id
         FROM Tmp_ParamValueEntriesToUpdate;
 
-        Call public.alter_entered_by_user_multi_id ('mc', 't_param_value', 'entry_id', _callingUser, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
+        CALL public.alter_entered_by_user_multi_id ('mc', 't_param_value', 'entry_id', _callingUser, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
 
         RAISE INFO '%', _alterEnteredByMessage;
 
@@ -133,7 +133,7 @@ BEGIN
             FROM mc.t_param_value PV
             WHERE PV.entry_id IN (SELECT entry_id FROM Tmp_ParamValueEntriesToUpdate);
 
-            Call public.alter_event_log_entry_user_multi_id ('mc', 1, _targetState, _callingUser, _message => _message);
+            CALL public.alter_event_log_entry_user_multi_id ('mc', 1, _targetState, _callingUser, _message => _message);
         End If;
 
         DROP TABLE Tmp_ID_Update_List;

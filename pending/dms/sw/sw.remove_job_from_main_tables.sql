@@ -86,7 +86,7 @@ BEGIN
     -- Do actual deletion
     ---------------------------------------------------
 
-    Call sw.remove_selected_jobs (
+    CALL sw.remove_selected_jobs (
             _infoOnly,
             _message => _message,
             _logDeletions => false);

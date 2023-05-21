@@ -251,7 +251,7 @@ BEGIN
         -- Names should be in the form 'Last Name, First Name (Username)'
         ---------------------------------------------------
 
-        Call validate_request_users (
+        CALL validate_request_users (
                 _requestName,
                 'add_update_data_analysis_request',
                 _requestedPersonnel => _requestedPersonnel,     -- Output
@@ -306,7 +306,7 @@ BEGIN
             End If;
         End If;
 
-        Call validate_wp ( _workPackageNumber,
+        CALL validate_wp ( _workPackageNumber,
                            _allowNoneWP,
                            _message => _msg,
                            _returnCode => _returnCode);
@@ -682,7 +682,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
             If char_length(_callingUser) > 0 Then
-                Call alter_entered_by_user ('t_data_analysis_request_updates', 'request_id', _id, _callingUser,
+                CALL alter_entered_by_user ('t_data_analysis_request_updates', 'request_id', _id, _callingUser,
                                             _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by');
             End If;
 
@@ -739,7 +739,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
             If char_length(_callingUser) > 0 Then
-                Call alter_entered_by_user ('t_data_analysis_request_updates', 'request_id', _id, _callingUser,
+                CALL alter_entered_by_user ('t_data_analysis_request_updates', 'request_id', _id, _callingUser,
                                             _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by');
             End If;
 

@@ -280,7 +280,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
             If char_length(_callingUser) > 0 Then
-                Call alter_entered_by_user ('t_param_entries', 'param_entry_id', _paramEntryID, _callingUser);
+                CALL alter_entered_by_user ('t_param_entries', 'param_entry_id', _paramEntryID, _callingUser);
             End If;
         End If;
     End If;
@@ -303,7 +303,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
             If char_length(_callingUser) > 0 Then
-                Call alter_entered_by_user ('t_param_entries', 'param_entry_id', _paramEntryID, _callingUser);
+                CALL alter_entered_by_user ('t_param_entries', 'param_entry_id', _paramEntryID, _callingUser);
             End If;
         End If;
 

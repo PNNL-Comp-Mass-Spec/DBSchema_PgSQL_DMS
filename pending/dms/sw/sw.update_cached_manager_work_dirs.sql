@@ -87,7 +87,7 @@ BEGIN
                 _message := format('Updated work_dir_admin_share for %s %s in sw.t_local_processors',
                                     _updateCount, public.check_plural(_updateCount, 'manager', 'managers'));
 
-                Call public.post_log_entry ('Normal', _message, 'Update_Cached_Manager_Work_Dirs', 'sw');
+                CALL public.post_log_entry ('Normal', _message, 'Update_Cached_Manager_Work_Dirs', 'sw');
             End If;
 
         End If;

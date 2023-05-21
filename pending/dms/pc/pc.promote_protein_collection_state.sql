@@ -116,7 +116,7 @@ BEGIN
                     SET collection_state_id = 3
                     WHERE protein_collection_id = _proteinCollectionID AND collection_state_id = 1
 
-                    Call public.post_log_entry ('Normal', _message, 'Promote_Protein_Collection_State', 'pc');
+                    CALL public.post_log_entry ('Normal', _message, 'Promote_Protein_Collection_State', 'pc');
                 Else
                     RAISE INFO '%', _message;
                 End If;
@@ -147,7 +147,7 @@ BEGIN
         End If;
 
         If _addNewProteinHeaders Then
-            call Add_New_Protein_Headers (_infoOnly = _infoOnly);
+            CALL Add_New_Protein_Headers (_infoOnly = _infoOnly);
         End If;
 
     EXCEPTION

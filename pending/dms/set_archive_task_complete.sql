@@ -114,7 +114,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Dataset: ' || _datasetName;
-    Call post_usage_log_entry ('Set_Archive_Task_Complete', _usageMessage);
+    CALL post_usage_log_entry ('Set_Archive_Task_Complete', _usageMessage);
 
 END
 $$;

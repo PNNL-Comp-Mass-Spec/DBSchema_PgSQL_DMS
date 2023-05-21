@@ -194,7 +194,7 @@ BEGIN
         If Not _infoOnly Then
             -- Update MemberCount
             --
-            Call update_experiment_group_member_count (_groupID => _groupID);
+            CALL update_experiment_group_member_count (_groupID => _groupID);
 
         End If;
     End If;
@@ -236,7 +236,7 @@ BEGIN
         -- Delete any auxiliary info associated with Experiment
         ---------------------------------------------------
 
-        Call delete_aux_info ('Experiment', _experimentName, _message => _message, _returnCode => _returnCode);
+        CALL delete_aux_info ('Experiment', _experimentName, _message => _message, _returnCode => _returnCode);
 
         If _returnCode <> '' Then
             ROLLBACK;
@@ -265,7 +265,7 @@ BEGIN
     -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
     If Not _infoOnly And char_length(_callingUser) > 0 Then
 
-        Call alter_event_log_entry_user (3, _experimentId, _stateID, _callingUser);
+        CALL alter_event_log_entry_user (3, _experimentId, _stateID, _callingUser);
     End If;
 
 END

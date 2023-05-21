@@ -123,7 +123,7 @@ BEGIN
 
             _message := format('Updated t_emsl_instruments: %s added; %s updated', _mergeInsertCount, _mergeUpdateCount);
 
-            Call post_log_entry ('Normal', _message, 'Update_EUS_Instruments_From_EUS_Imports');
+            CALL post_log_entry ('Normal', _message, 'Update_EUS_Instruments_From_EUS_Imports');
 
             _message := '';
         End If;
@@ -154,7 +154,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    Call post_usage_log_entry ('Update_EUS_Instruments_From_EUS_Imports', '');
+    CALL post_usage_log_entry ('Update_EUS_Instruments_From_EUS_Imports', '');
 END
 $$;
 

@@ -58,7 +58,7 @@ BEGIN
 
     If _cachedCount <> _existingCount Then
         RAISE INFO '%', 'Calling update_cached_job_request_existing_jobs due to differing count';
-        Call update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
+        CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
     Else
         SELECT COUNT(*)
         INTO _misMatchCount
@@ -70,7 +70,7 @@ BEGIN
 
         If _misMatchCount > 0 Then
             RAISE INFO '%', 'Calling update_cached_job_request_existing_jobs due to differing jobs';
-            Call update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
+            CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
         End If;
     End If;
 

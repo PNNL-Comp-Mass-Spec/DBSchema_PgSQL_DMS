@@ -178,7 +178,7 @@ BEGIN
                 -- When calling alter_entered_by_user, we must associate the _message argument with a local variable, otherwise the following error occurs:
                 -- 'procedure parameter "_message" is an output parameter but corresponding argument is not writable, state 42601'
                 --
-                Call public.alter_entered_by_user ('cap', 't_scripts_history', 'script_id', _scriptId, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_entered_by_user ('cap', 't_scripts_history', 'script_id', _scriptId, _callingUser, _message => _alterEnteredByMessage);
 
                 RAISE INFO '%', _alterEnteredByMessage;
             End If;

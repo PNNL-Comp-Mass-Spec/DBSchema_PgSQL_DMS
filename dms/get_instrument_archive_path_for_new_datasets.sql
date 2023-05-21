@@ -108,7 +108,7 @@ BEGIN
             If _infoOnly Then
                 RAISE WARNING '%', _message;
             Else
-                Call post_log_entry ('Error', _message, 'Get_Instrument_Archive_Path_for_New_Datasets');
+                CALL post_log_entry ('Error', _message, 'Get_Instrument_Archive_Path_for_New_Datasets');
             End If;
 
             RETURN 0;
@@ -185,7 +185,7 @@ BEGIN
 
         _archivePathIDText := _archivePathID::text;
 
-        Call public.add_update_archive_path (
+        CALL public.add_update_archive_path (
                           _archivePathID => _archivePathIDText,         -- Input/Output
                           _archivePath => _archivePathName,
                           _archiveServer => _instrumentInfo.AutoSPArchiveServerName,

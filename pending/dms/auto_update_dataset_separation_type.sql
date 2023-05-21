@@ -70,7 +70,7 @@ BEGIN
             RAISE INFO 'Processing separation type %, acq length % minutes, for dataset %', _datasetInfo.SeparationType, _datasetInfo.AcqLengthMinutes, _datasetInfo.DatasetName;
         End If;
 
-        Call auto_update_separation_type (_datasetInfo.SeparationType, _datasetInfo.AcqLengthMinutes, _optimalSeparationType => _optimalSeparationType);
+        CALL auto_update_separation_type (_datasetInfo.SeparationType, _datasetInfo.AcqLengthMinutes, _optimalSeparationType => _optimalSeparationType);
 
         If _datasetInfo.SeparationType <> _optimalSeparationType Then
             If _infoOnly Then
@@ -179,7 +179,7 @@ BEGIN
                                 _updateInfo.UpdateCount
                                 public.check_plural(_updateInfo.UpdateCount, 'dataset', 'datasets');
 
-            Call post_log_entry ('Normal', _message, 'Auto_Update_Dataset_Separation_Type');
+            CALL post_log_entry ('Normal', _message, 'Auto_Update_Dataset_Separation_Type');
 
         END LOOP;
 

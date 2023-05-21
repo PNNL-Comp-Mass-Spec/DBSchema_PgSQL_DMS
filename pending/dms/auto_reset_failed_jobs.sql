@@ -444,16 +444,16 @@ BEGIN
 
                         _logMessage := format('Auto-reset job %s; %s; %s', _job, _resetReason, _newComment);
 
-                        Call post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
+                        CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
                     End If;
 
                     If _setProcessorAutoRecover Then
                         If Not _infoOnly Then
                             _logMessage := format('%s reports "Stopped Error"; setting ManagerErrorCleanupMode to 1 in the Manager_Control DB', _processor);
 
-                            Call post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
+                            CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
 
-                            Call mc.set_manager_error_cleanup_mode ( _managerList => _processor, _cleanupMode => 1);
+                            CALL mc.set_manager_error_cleanup_mode ( _managerList => _processor, _cleanupMode => 1);
                         Else
                             RAISE INFO '%', 'Call mc.set_manager_error_cleanup_mode (_managerList = _processor, _cleanupMode = 1)';
                         End If;

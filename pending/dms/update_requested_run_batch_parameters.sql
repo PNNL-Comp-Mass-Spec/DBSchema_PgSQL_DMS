@@ -111,7 +111,7 @@ BEGIN
     If _debugEnabled Then
         _logMessage := Cast(_blockingList as text);
 
-        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Batch_Parameters');
+        CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Batch_Parameters');
     End If;
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
@@ -329,11 +329,11 @@ BEGIN
                         _logMessage := format('Requested runs do not all belong to the same batch: %s vs. %s; see requested runs %s',
                                             _minBatchID, _maxBatchID, _requestedRunList);
 
-                        Call post_log_entry ('Warning', _logMessage, 'Update_Requested_Run_Batch_Parameters');
+                        CALL post_log_entry ('Warning', _logMessage, 'Update_Requested_Run_Batch_Parameters');
                     End If;
 
                     -- Update cached data in T_Cached_Requested_Run_Batch_Stats
-                    Call update_cached_requested_run_batch_stats (
+                    CALL update_cached_requested_run_batch_stats (
                         _minBatchID,
                         _message => _msg,               -- Output
                         _returnCode => _returnCode);    -- Output
@@ -343,7 +343,7 @@ BEGIN
                     End If;
 
                     If _maxBatchID <> _minBatchID Then
-                        Call update_cached_requested_run_batch_stats (
+                        CALL update_cached_requested_run_batch_stats (
                             _maxBatchID,
                             _message => _msg,               -- Output
                             _returnCode => _returnCode);    -- Output
@@ -366,7 +366,7 @@ BEGIN
                     WHERE Parameter = 'Status'
                     ORDER BY request_id
                 LOOP
-                    Call update_cached_requested_run_eus_users (
+                    CALL update_cached_requested_run_eus_users (
                             _requestID,
                             _message => _message,           -- Output
                             _returnCode => _returnCode);    -- Output
@@ -409,7 +409,7 @@ BEGIN
                 End If;
             End If;
 
-            Call post_usage_log_entry ('Update_Requested_Run_Batch_Parameters', _usageMessage);
+            CALL post_usage_log_entry ('Update_Requested_Run_Batch_Parameters', _usageMessage);
 
         EXCEPTION
             WHEN OTHERS THEN

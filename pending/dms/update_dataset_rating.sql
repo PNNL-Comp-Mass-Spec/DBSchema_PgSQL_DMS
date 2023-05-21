@@ -98,7 +98,7 @@ BEGIN
     -- Call procedure UpdateDatasets
     ---------------------------------------------------
 
-    Call update_datasets (
+    CALL update_datasets (
         _datasets,
         _rating => _rating,
         _mode => _mode,

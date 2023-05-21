@@ -104,7 +104,7 @@ BEGIN
         _showResultsMode := 0;
     End If;
 
-    Call public.update_input_folder_using_special_processing_param (
+    CALL public.update_input_folder_using_special_processing_param (
             _jobList => _job,
             _infoOnly => _infoOnly,
             _showResultsMode => _showResultsMode,

@@ -92,7 +92,7 @@ BEGIN
         _message := format('Ignoring %s %s in cap.t_dataset_info_xml because they do not exist in public.t_dataset',
                             _matchCount, public.check_plural(_matchCount, 'dataset', 'datasets'));
 
-        Call public.post_log_entry('Info', _message, 'Update_Missed_DMS_File_Info', 'cap');
+        CALL public.post_log_entry('Info', _message, 'Update_Missed_DMS_File_Info', 'cap');
 
         --------------------------------------------
         -- Delete any entries in cap.t_dataset_info_xml that were cached over 7 days ago and do not exist in public.T_Dataset
@@ -151,7 +151,7 @@ BEGIN
         FROM Tmp_DatasetsToProcess
         ORDER BY Dataset_ID
     LOOP
-        Call cap.update_dms_file_info_xml (_datasetID, _deleteFromTableOnSuccess, _message => _message, _returnCode => _returnCode, _infoOnly => _infoOnly);
+        CALL cap.update_dms_file_info_xml (_datasetID, _deleteFromTableOnSuccess, _message => _message, _returnCode => _returnCode, _infoOnly => _infoOnly);
 
         If Coalesce(_returnCode, '') <> '' Then
             If _returnCode = 'U5360' Then
@@ -171,7 +171,7 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO '%', _logMsg;
             Else
-                Call public.post_log_entry(_logMsgType, _logMsg, 'Update_Missed_DMS_File_Info', 'cap', _duplicateEntryHoldoffHours => 22);
+                CALL public.post_log_entry(_logMsgType, _logMsg, 'Update_Missed_DMS_File_Info', 'cap', _duplicateEntryHoldoffHours => 22);
             End If;
 
         End If;

@@ -262,7 +262,7 @@ BEGIN
             RETURN;
         End If;
 
-        Call pc.validate_protein_collection_params (
+        CALL pc.validate_protein_collection_params (
                         _scriptBaseName,
                         _organismDBName,            -- Output
                         _organismName,
@@ -282,7 +282,7 @@ BEGIN
             -- if _protCollNameList is updated
             ---------------------------------------------------
             --
-            Call sw.validate_protein_collection_list_for_data_package (
+            CALL sw.validate_protein_collection_list_for_data_package (
                                 _dataPackageID,
                                 _protCollNameList => _protCollNameList,             -- Output
                                 _collectionCountAdded => _collectionCountAdded,     -- Output

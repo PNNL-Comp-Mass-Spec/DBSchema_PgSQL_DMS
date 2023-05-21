@@ -300,7 +300,7 @@ BEGIN
         -- Call UpdateInstrumentUsageAllocationsWork to perform the work
         -----------------------------------------------------------
         --
-        Call update_instrument_usage_allocations_work (_fy, _message => _message, _callingUser => _callingUser, _infoOnly => _infoOnly);
+        CALL update_instrument_usage_allocations_work (_fy, _message => _message, _callingUser => _callingUser, _infoOnly => _infoOnly);
 
     EXCEPTION
         WHEN OTHERS THEN

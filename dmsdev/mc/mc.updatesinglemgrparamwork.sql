@@ -102,7 +102,7 @@ BEGIN
         SELECT entry_id
         FROM TmpParamValueEntriesToUpdate;
 
-        Call public.AlterEnteredByUserMultiID ('mc', 't_param_value', 'entry_id', _callingUser, _entryDateColumnName => 'last_affected', _message => _message);
+        CALL public.AlterEnteredByUserMultiID ('mc', 't_param_value', 'entry_id', _callingUser, _entryDateColumnName => 'last_affected', _message => _message);
 
         If _paramName::citext = 'mgractive' or _paramTypeID = 17 Then
             -- Triggers trig_i_t_param_value and trig_u_t_param_value make an entry in
@@ -125,7 +125,7 @@ BEGIN
             FROM mc.t_param_value PV
             WHERE PV.entry_id IN (SELECT entry_id FROM TmpParamValueEntriesToUpdate);
 
-            Call public.AlterEventLogEntryUserMultiID ('mc', 1, _targetState, _callingUser, _message => _message);
+            CALL public.AlterEventLogEntryUserMultiID ('mc', 1, _targetState, _callingUser, _message => _message);
         End If;
 
     End If;

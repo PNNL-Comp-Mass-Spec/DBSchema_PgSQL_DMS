@@ -190,7 +190,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Instrument group: ' || _instrumentGroup;
-    Call post_usage_log_entry ('Update_Instrument_Group_Allowed_Dataset_Type', _usageMessage);
+    CALL post_usage_log_entry ('Update_Instrument_Group_Allowed_Dataset_Type', _usageMessage);
 
 END
 $$;

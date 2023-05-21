@@ -79,7 +79,7 @@ BEGIN
             _statCysAlkEnabled := CASE WHEN _modificationStatCysAlk = 'Yes' Then 1 ELSE 0 END;
             _dynSTYPhosEnabled := CASE WHEN _modificationDynSTYPhos = 'Yes' Then 1 ELSE 0 END;
 
-            Call create_psm_job_request (
+            CALL create_psm_job_request (
                                 _requestID => _requestID,           -- Output
                                 _requestName => _requestName,
                                 _datasets => _datasets,             -- Output

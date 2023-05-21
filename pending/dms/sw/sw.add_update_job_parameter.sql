@@ -95,7 +95,7 @@ BEGIN
     -- Call add_update_job_parameter_xml to perform the work
     ---------------------------------------------------
     --
-    Call sw.add_update_job_parameter_xml (
+    CALL sw.add_update_job_parameter_xml (
             _xmlParameters,                  -- Input/Output
             _section,
             _paramName,

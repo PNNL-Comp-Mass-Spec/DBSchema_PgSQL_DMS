@@ -84,7 +84,7 @@ BEGIN
         If _newProteinCollectionList <> '' Then
             -- Validate _newProteinCollectionList
 
-            Call sw.validate_analysis_job_protein_parameters (
+            CALL sw.validate_analysis_job_protein_parameters (
                                 _organismName => 'None',
                                 _ownerUsername => 'H09090911',
                                 _organismDBFileName => 'na',

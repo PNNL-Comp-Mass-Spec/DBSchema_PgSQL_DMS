@@ -485,7 +485,7 @@ BEGIN
         --
         _organismName := Trim(_organismName);
 
-        Call validate_analysis_job_parameters (
+        CALL validate_analysis_job_parameters (
                                 _toolName => _toolName,
                                 _paramFileName => _paramFileName,               -- Output
                                 _settingsFileName => _settingsFileName,         -- Output
@@ -688,7 +688,7 @@ BEGIN
                     _scriptName := 'DiaNN_DataPkg';
                 End If;
 
-                Call sw.add_update_local_job_in_broker (
+                CALL sw.add_update_local_job_in_broker (
                                     _job => _pipelineJob,                           -- Output
                                     _scriptName => _scriptName,
                                     _datasetName => 'Aggregation',
@@ -706,12 +706,12 @@ BEGIN
 
                 If _returnCode <> '' Then
                     _msgForLog := format('Error code %s from sw.pipeline_add_update_local_job: %s', _returnCode, Coalesce(_message, '??'));
-                    Call post_log_entry ('Error', _msgForLog, 'Add_Analysis_Job_Group');
+                    CALL post_log_entry ('Error', _msgForLog, 'Add_Analysis_Job_Group');
                 End If;
 
                 If _pipelineJob > 0 Then
                     -- Insert details for the job into t_analysis_job
-                    Call public.backfill_pipeline_jobs (
+                    CALL public.backfill_pipeline_jobs (
                                 _infoOnly => false,
                                 _jobsToProcess => 0,
                                 _startJob => _pipelineJob,
@@ -733,7 +733,7 @@ BEGIN
                         WHERE job = _pipelineJob;
                     Else
                         _msgForLog := format('Error code %s calling BackfillPipelineJobs: %s', _returnCode, Coalesce(_msgForLog, '??'));
-                        Call post_log_entry ('Error', _msgForLog, 'Add_Analysis_Job_Group');
+                        CALL post_log_entry ('Error', _msgForLog, 'Add_Analysis_Job_Group');
                     End If;
                 End If;
 
@@ -754,7 +754,7 @@ BEGIN
                     -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                     -- to alter the entered_by field in t_event_log
                     --
-                    Call alter_event_log_entry_user (12, _requestID, _requestStateID, _callingUser);
+                    CALL alter_event_log_entry_user (12, _requestID, _requestStateID, _callingUser);
                 End If;
 
                 _message := format(' Created aggregation job %s for ', _pipelineJob);
@@ -836,7 +836,7 @@ BEGIN
                         -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                         -- to alter the entered_by field in t_event_log
                         --
-                        Call alter_event_log_entry_user (12, _requestID, _requestStateID, _callingUser);
+                        CALL alter_event_log_entry_user (12, _requestID, _requestStateID, _callingUser);
                     End If;
                 Else
                     -- Request ID is non-zero and request is not in state 1 or state 5
@@ -988,7 +988,7 @@ BEGIN
                        ) StatQ
                 WHERE target.request_id = StatQ.request_id;
 
-                Call update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false)
+                CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false)
 
             End If;
 
@@ -997,7 +997,7 @@ BEGIN
                 -- to alter the entered_by field in t_event_log
                 --
                 If _batchID = 0 Then
-                    Call alter_event_log_entry_user (5, _jobID, _jobStateID, _callingUser);
+                    CALL alter_event_log_entry_user (5, _jobID, _jobStateID, _callingUser);
                 Else
                     -- Populate a temporary table with the list of Job IDs just created
                     CREATE TEMP TABLE Tmp_ID_Update_List (
@@ -1011,7 +1011,7 @@ BEGIN
                     FROM t_analysis_job
                     WHERE batch_id = _batchID
 
-                    Call alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser, _entryTimeWindowSeconds => 45);
+                    CALL alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser, _entryTimeWindowSeconds => 45);
 
                     DROP TABLE Tmp_ID_Update_List;
                 End If;

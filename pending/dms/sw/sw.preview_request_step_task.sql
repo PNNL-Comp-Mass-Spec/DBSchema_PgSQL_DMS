@@ -51,9 +51,9 @@ BEGIN
         _infoLevel := 1;
     End If;
 
-    Call sw.get_default_remote_info_for_manager (_processorName, _remoteInfoXML => _remoteInfo);
+    CALL sw.get_default_remote_info_for_manager (_processorName, _remoteInfoXML => _remoteInfo);
 
-    Call sw.request_step_task_xml (
+    CALL sw.request_step_task_xml (
             _processorName,
             _job => _job,                   -- Output
             _parameters => _parameters,     -- Output

@@ -128,12 +128,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' RemoveDMSDeletedJobs';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call remove_dms_deleted_jobs';
         If _result > 0 Then
-            Call sw.remove_dms_deleted_jobs _bypassDMS, _message => _message, _maxJobsToProcess => _maxJobsToProcess;
+            CALL sw.remove_dms_deleted_jobs _bypassDMS, _message => _message, _maxJobsToProcess => _maxJobsToProcess;
         End If;
 
         -- Step 2: Add new jobs, hold/resume/reset existing jobs
@@ -152,12 +152,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' AddNewJobs';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call add_new_jobs';
         If _result > 0 Then
-            Call sw.add_new_jobs (
+            CALL sw.add_new_jobs (
                 _bypassDMS,
                 _message => _message,
                 _maxJobsToProcess => _maxJobsToProcess,
@@ -209,12 +209,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' ImportProcessors';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call import_processors';
         If _result > 0 Then
-            Call sw.import_processors (_bypassDMS, _message => _message);
+            CALL sw.import_processors (_bypassDMS, _message => _message);
         End If;
 
         /*
@@ -236,12 +236,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' ImportJobProcessors';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call import_job_processors';
         If _result > 0 Then
-            Call sw.import_job_processors _bypassDMS, _message => _message;
+            CALL sw.import_job_processors _bypassDMS, _message => _message;
         End If;
         */
 
@@ -261,12 +261,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' SyncJobInfo';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call sync_job_info';
         If _result > 0 Then
-            Call sw.sync_job_info _bypassDMS, _message => _message;
+            CALL sw.sync_job_info _bypassDMS, _message => _message;
         End If;
 
     EXCEPTION
@@ -309,12 +309,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' CreateJobSteps';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call create_job_steps';
         If _result > 0 Then
-            Call sw.create_job_steps (
+            CALL sw.create_job_steps (
                     _message => _message,
                     _returnCode => _returnCode,
                     _maxJobsToProcess => _maxJobsToProcess,
@@ -365,12 +365,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' UpdateStepStates';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call update_step_states';
         If _result > 0 Then
-            Call sw.update_step_states (
+            CALL sw.update_step_states (
                     _message => _message,
                     _infoOnly => _infoOnly,
                     _maxJobsToProcess => _maxJobsToProcess,
@@ -417,12 +417,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' UpdateJobState';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call update_job_state';
         If _result > 0 Then
-            Call sw.update_job_state (
+            CALL sw.update_job_state (
                     _bypassDMS,
                     _message => _message,
                     _maxJobsToProcess => _maxJobsToProcess,
@@ -469,16 +469,16 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' UpdateCPULoading';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call update_cpu_loading';
         If _result > 0 Then
             -- First update actual_cpu_load in sw.t_job_steps
-            Call sw.update_actual_cpu_loading (_infoOnly => false);
+            CALL sw.update_actual_cpu_loading (_infoOnly => false);
 
             -- Now update cpus_available in sw.t_machines
-            Call sw.update_cpu_loading (_message => _message);
+            CALL sw.update_cpu_loading (_message => _message);
         End If;
 
     EXCEPTION
@@ -521,12 +521,12 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := _action || ' AutoFixFailedJobs';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call auto_fix_failed_jobs';
         If _result > 0 Then
-            Call sw.auto_fix_failed_jobs (_message => _message => _message, _infoOnly => _infoOnly);
+            CALL sw.auto_fix_failed_jobs (_message => _message => _message, _infoOnly => _infoOnly);
         End If;
 
     EXCEPTION
@@ -554,7 +554,7 @@ BEGIN
         _statusMessage := format('UpdateContext complete: %s seconds elapsed',
                                  extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold;
 
-        Call public.post_log_entry ('Normal', _statusMessage, 'Update_Context', 'sw');
+        CALL public.post_log_entry ('Normal', _statusMessage, 'Update_Context', 'sw');
     End If;
 
 END

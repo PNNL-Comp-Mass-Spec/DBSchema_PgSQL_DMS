@@ -292,7 +292,7 @@ BEGIN
             -- Existing values are preserved if matches are not found
             ---------------------------------------------------
 
-            Call get_taxonomy_value_by_taxonomy_id (
+            CALL get_taxonomy_value_by_taxonomy_id (
                     _ncbiTaxonomyID,
                     _orgDomain => _orgDomain,       -- Output
                     _orgKingdom => _orgKingdom,     -- Output
@@ -479,7 +479,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
             If char_length(_callingUser) > 0 Then
-                Call alter_entered_by_user ('t_organisms_change_history', 'organism_id', _id, _callingUser);
+                CALL alter_entered_by_user ('t_organisms_change_history', 'organism_id', _id, _callingUser);
             End If;
 
         End If; -- add mode
@@ -514,7 +514,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
             If char_length(_callingUser) > 0 Then
-                Call alter_entered_by_user ('t_organisms_change_history', 'organism_id', _id, _callingUser);
+                CALL alter_entered_by_user ('t_organisms_change_history', 'organism_id', _id, _callingUser);
             End If;
 
         End If; -- update mode
@@ -546,7 +546,7 @@ BEGIN
         -- Note that the table is auto-updated once per hour by a Sql Server Agent job running on ProteinSeqs
         -- This hourly update captures any changes manually made to table t_organisms
 
-        Call mts.mt_main_refresh_cached_organisms
+        CALL mts.mt_main_refresh_cached_organisms
 
     EXCEPTION
         WHEN OTHERS THEN

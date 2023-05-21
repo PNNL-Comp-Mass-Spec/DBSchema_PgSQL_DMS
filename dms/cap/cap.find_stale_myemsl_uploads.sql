@@ -247,7 +247,7 @@ BEGIN
                                          _uploadInfo.ErrorCode,
                                          timestamp_text(_uploadInfo.Entered));
 
-                Call public.post_log_entry ('Error', _logMessage, 'Find_Stale_MyEMSL_Uploads', 'cap');
+                CALL public.post_log_entry ('Error', _logMessage, 'Find_Stale_MyEMSL_Uploads', 'cap');
 
                 _iteration := _iteration + 1;
 
@@ -288,7 +288,7 @@ BEGIN
 
         If _updateCount > 0 Then
             _message := format('%s unverified for over %s days; error_code set to 101', _message, _staleUploadDays);
-            Call public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'cap');
+            CALL public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'cap');
 
             RAISE INFO '%', _message;
         End If;

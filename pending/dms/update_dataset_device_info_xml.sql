@@ -120,7 +120,7 @@ BEGIN
         -- Examine the XML to determine the dataset name and update or validate _datasetID
         ---------------------------------------------------
         --
-        Call get_dataset_details_from_dataset_info_xml (
+        CALL get_dataset_details_from_dataset_info_xml (
             _datasetInfoXML,
             _datasetID => _datasetID,       -- Input/Output
             _datasetName => _datasetName,   -- Output

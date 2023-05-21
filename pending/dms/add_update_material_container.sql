@@ -156,7 +156,7 @@ BEGIN
             RETURN;
         End If;
 
-        Call auto_resolve_name_to_username (_researcher, _matchCount => _matchCount, _matchingUsername => _researcherUsername, _matchingUserID => _userID);
+        CALL auto_resolve_name_to_username (_researcher, _matchCount => _matchCount, _matchingUsername => _researcherUsername, _matchingUserID => _userID);
 
         If _matchCount = 1 Then
             -- Single match found; update _researcher to be in the form 'Zink, Erika M (D3P704)'
@@ -270,7 +270,7 @@ BEGIN
 
             -- Material movement logging
             --
-            Call post_material_log_entry
+            CALL post_material_log_entry
                  'Container Creation',
                  _container,
                  'na',
@@ -298,7 +298,7 @@ BEGIN
             -- Material movement logging
             --
             If _curLocationName <> _location Then
-                Call post_material_log_entry
+                CALL post_material_log_entry
                      'Container Move',
                      _container,
                      _curLocationName,

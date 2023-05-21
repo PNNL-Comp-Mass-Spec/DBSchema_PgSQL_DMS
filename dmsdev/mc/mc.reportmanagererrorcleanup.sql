@@ -93,7 +93,7 @@ BEGIN
         End If;
     End If;
 
-    Call PostLogEntry (_messageType, _message, 'ReportManagerErrorCleanup', 'mc');
+    CALL PostLogEntry (_messageType, _message, 'ReportManagerErrorCleanup', 'mc');
 
     ---------------------------------------------------
     -- Lookup the value of ManagerErrorCleanupMode in mc.t_param_value
@@ -155,7 +155,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'ReportManagerErrorCleanup', 'mc');
+    CALL PostLogEntry ('Error', _message, 'ReportManagerErrorCleanup', 'mc');
 
 END
 $$;

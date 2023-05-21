@@ -127,7 +127,7 @@ BEGIN
                 _message := _message || '; ' || _mergeDeleteCount::text || ' deleted';
             End If;
 
-            Call post_log_entry ('Normal', _message, 'Update_EUS_Users_From_EUS_Imports');
+            CALL post_log_entry ('Normal', _message, 'Update_EUS_Users_From_EUS_Imports');
             _message := '';
         End If;
 
@@ -240,7 +240,7 @@ BEGIN
                 _message := _message || '; ' || _setUnknownCount::text || ' set to "unknown association"';
             End If;
 
-            Call post_log_entry ('Normal', _message, 'Update_EUS_Users_From_EUS_Imports');
+            CALL post_log_entry ('Normal', _message, 'Update_EUS_Users_From_EUS_Imports');
             _message := '';
         End If;
 
@@ -265,7 +265,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    Call post_usage_log_entry ('Update_EUS_Users_From_EUS_Imports', _usageMessage);
+    CALL post_usage_log_entry ('Update_EUS_Users_From_EUS_Imports', _usageMessage);
 
 END
 $$;

@@ -370,7 +370,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := format('_mode=%s, _dataset=%s, _requestID=%s, _callingUser=%s', _mode, _datasetName, _requestID, _callingUser);
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
         ---------------------------------------------------
@@ -635,11 +635,11 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'Call ValidateInstrumentGroupAndDatasetType with type = ' || _msType || ' and group = ' || _instrumentGroup;
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+            _debugMsg := 'CALL ValidateInstrumentGroupAndDatasetType with type = ' || _msType || ' and group = ' || _instrumentGroup;
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
-        Call validate_instrument_group_and_dataset_type (
+        CALL validate_instrument_group_and_dataset_type (
                         _datasetType => _msType,
                         _instrumentGroup => _instrumentGroup,           -- Output
                         _datasetTypeID => _datasetTypeID output,        -- Output
@@ -650,7 +650,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Dataset type is not valid for this instrument group, however, _mode is ''add'', so auto-update _msType';
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             -- Dataset type is not valid for this instrument group
@@ -694,7 +694,7 @@ BEGIN
 
             -- Validate the new dataset type name (in case the default dataset type is invalid for this instrument group, which would indicate invalid data in table t_instrument_group)
 
-            Call validate_instrument_group_and_dataset_type (
+            CALL validate_instrument_group_and_dataset_type (
                             _datasetType => _msType,
                             _instrumentGroup => _instrumentGroup,           -- Output
                             _datasetTypeID => _datasetTypeID output,        -- Output
@@ -730,7 +730,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Query get_user_id with _operatorUsername = ' || _operatorUsername;
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
         _userID := public.get_user_id (_operatorUsername);
@@ -749,10 +749,10 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Call auto_resolve_name_to_username with _operatorUsername = ' || _operatorUsername;
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            Call auto_resolve_name_to_username (_operatorUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_operatorUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
@@ -787,7 +787,7 @@ BEGIN
                 _eusUsersList := '';
 
                 If _logDebugMessages Then
-                    Call post_log_entry ('Debug', _warning, 'Add_Update_Dataset');
+                    CALL post_log_entry ('Debug', _warning, 'Add_Update_Dataset');
                 End If;
             End If;
 
@@ -837,10 +837,10 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Call FindActiveRequestedRunForDataset with _datasetName = ' || _datasetName;
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            Call find_active_requested_run_for_dataset (
+            CALL find_active_requested_run_for_dataset (
                         _datasetName,
                         _experimentID,
                         _requestID => _requestID,                   -- Output
@@ -944,7 +944,7 @@ BEGIN
                 -- This will update the data in _eusUsageType, _eusProposalID, or _eusUsersList if it is '(lookup)'
                 ---------------------------------------------------
 
-                Call lookup_eus_from_experiment_sample_prep (
+                CALL lookup_eus_from_experiment_sample_prep (
                                     _experimentName,
                                     _eusUsageType => _eusUsageType,     -- Input/output
                                     _eusProposalID => _eusProposalID,   -- Input/output
@@ -964,7 +964,7 @@ BEGIN
                 -- Validate EUS type, proposal, and user list
                 ---------------------------------------------------
 
-                Call validate_eus_usage (
+                CALL validate_eus_usage (
                                 _eusUsageType   => _eusUsageType,   -- Input/Output
                                 _eusProposalID  => _eusProposalID,  -- Input/Output
                                 _eusUsersList   => _eusUsersList,   -- Input/Output
@@ -1015,10 +1015,10 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := format('Create trigger for dataset %s, instrument %s, request %s', _datasetName, _instrumentName, _requestID);
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            Call create_xml_dataset_trigger_file (
+            CALL create_xml_dataset_trigger_file (
                             _datasetName,
                             _experimentName,
                             _instrumentName,
@@ -1068,7 +1068,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Call GetInstrumentStoragePathForNewDatasets with _instrumentID = ' || _instrumentID::text;
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             _storagePathID := get_instrument_storage_path_for_new_datasets (_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
@@ -1080,7 +1080,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := format('Add dataset %s, instrument ID %s, storage path ID %s', _datasetName, _instrumentID, _storagePathID);
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             BEGIN
@@ -1157,20 +1157,20 @@ BEGIN
                         _datasetIDConfirm::text || ' but the INSERT INTO query reported ' ||
                         _datasetID::text;
 
-                    Call post_log_entry ('Error', _debugMsg, 'Add_Update_Dataset');
+                    CALL post_log_entry ('Error', _debugMsg, 'Add_Update_Dataset');
 
                     _datasetID := _datasetIDConfirm;
                 End If;
 
-                -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+                -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
                     If _logDebugMessages Then
                         RAISE INFO '%', 'Call public.alter_event_log_entry_user';
                     End If;
 
-                    Call alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser);
+                    CALL alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser);
 
-                    Call alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
+                    CALL alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
                 End If;
 
                 ---------------------------------------------------
@@ -1200,7 +1200,7 @@ BEGIN
                         RAISE INFO '%', 'Call AddUpdateRequestedRun';
                     End If;
 
-                    Call add_update_requested_run (
+                    CALL add_update_requested_run (
                                             _requestName => _requestName,
                                             _experimentName => _experimentName,
                                             _requesterUsername => _operatorUsername,
@@ -1255,7 +1255,7 @@ BEGIN
                         RAISE INFO '%', 'Call update_cart_parameters';
                     End If;
 
-                    Call update_cart_parameters (
+                    CALL update_cart_parameters (
                                         'CartName',
                                         _requestID,
                                         _lcCartName,    -- Output
@@ -1287,7 +1287,7 @@ BEGIN
                     RAISE INFO 'Call consume_scheduled_run';
                 End If;
 
-                Call consume_scheduled_run (
+                CALL consume_scheduled_run (
                             _datasetID,
                             _requestID,
                             _message => _message,           -- Output
@@ -1304,11 +1304,11 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Call update_cached_dataset_instruments with _datasetId = ' || _datasetId::text
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             -- Update t_cached_dataset_instruments
-            Call public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+            CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
         End If; -- </AddMode>
 
@@ -1321,7 +1321,7 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := format('Update dataset %s (Dataset ID %s)', _datasetName, _datasetID);
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
             UPDATE t_dataset
@@ -1340,9 +1340,9 @@ BEGIN
                     cart_config_id = _cartConfigID
             WHERE dataset_id = _datasetID
 
-            -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+            -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 AND _ratingID <> Coalesce(_curDSRatingID, -1000) Then
-                Call alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
+                CALL alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
             End If;
 
             -- Lookup the Requested Run info for this dataset
@@ -1388,7 +1388,7 @@ BEGIN
                     _warning := public.append_to_text(_warning, _warningAddon, 0, '; ', 512);
                 Else
                     _warningAddon := '';
-                    Call update_cart_parameters (
+                    CALL update_cart_parameters (
                                         'CartName',
                                         _requestID,
                                         _lcCartName,                    -- Output
@@ -1417,7 +1417,7 @@ BEGIN
                 _block := Coalesce(_block, 0);
                 _runOrder := Coalesce(_runOrder, 0);
 
-                Call add_update_requested_run (
+                CALL add_update_requested_run (
                                     _requestName => _requestName,
                                     _experimentName => _experimentName,
                                     _requesterUsername => _operatorUsername,
@@ -1455,15 +1455,15 @@ BEGIN
 
             ---------------------------------------------------
             -- If rating changed from -5, -6, or -7 to 5, check if any jobs exist for this dataset
-            -- If no jobs are found, call schedule_predefined_analysis_jobs for this dataset
+            -- If no jobs are found, Call schedule_predefined_analysis_jobs for this dataset
             -- Skip jobs with AJ_DatasetUnreviewed=1 when looking for existing jobs (these jobs were created before the dataset was dispositioned)
             ---------------------------------------------------
             --
             If _ratingID >= 2 and Coalesce(_curDSRatingID, -1000) IN (-5, -6, -7) Then
                 If Not Exists (SELECT * FROM t_analysis_job WHERE dataset_id = _datasetID AND dataset_unreviewed = 0 ) Then
-                    Call schedule_predefined_analysis_jobs (_datasetName, _callingUser => _callingUser);
+                    CALL schedule_predefined_analysis_jobs (_datasetName, _callingUser => _callingUser);
 
-                    -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field
+                    -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field
                     -- in t_event_log for any newly created jobs for this dataset
 
                     If char_length(_callingUser) > 0 Then
@@ -1478,14 +1478,14 @@ BEGIN
                         FROM t_analysis_job
                         WHERE dataset_id = _datasetID;
 
-                        Call alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser);
+                        CALL alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser);
                     End If;
 
                 End If;
             End If;
 
             -- Update t_cached_dataset_instruments
-            Call public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+            CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
         End If; -- </UpdateMode>
 

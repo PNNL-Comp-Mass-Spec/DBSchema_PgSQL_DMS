@@ -79,7 +79,7 @@ BEGIN
         _message := format('Deleted %s duplicate %s from t_mts_mt_db_jobs_cached; this is unexpected',
                             _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries');
 
-        call PostLogEntry ('Error', _message, 'RefreshCachedMTSJobMappingMTDBs');
+        CALL PostLogEntry ('Error', _message, 'RefreshCachedMTSJobMappingMTDBs');
 
         _message := '';
     End If;
@@ -104,7 +104,7 @@ BEGIN
 
         _currentLocation := 'Update t_mts_cached_data_status';
         --
-        Call update_mts_cached_data_status (
+        CALL update_mts_cached_data_status (
                     't_mts_mt_db_jobs_cached',
                     _incrementRefreshCount => false,
                     _fullRefreshPerformed => _fullRefreshPerformed,
@@ -175,7 +175,7 @@ BEGIN
 
         _currentLocation := 'Update stats in t_mts_cached_data_status';
         --
-        Call update_mts_cached_data_status (
+        CALL update_mts_cached_data_status (
                     't_mts_mt_db_jobs_cached',
                     _incrementRefreshCount => true,
                     _insertCountNew => _mergeInsertCount,

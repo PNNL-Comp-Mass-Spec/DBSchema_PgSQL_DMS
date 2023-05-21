@@ -22,7 +22,7 @@ DECLARE
 BEGIN
 
     -- Enable Space managers (type 8)
-    Call mc.enable_disable_all_managers (
+    CALL mc.enable_disable_all_managers (
         _managerTypeIDList := '8',
         _managerNameList := 'All',
         _enable := true,

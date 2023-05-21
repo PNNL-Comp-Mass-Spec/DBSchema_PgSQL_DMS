@@ -294,7 +294,7 @@ BEGIN
             If _infoOnly And _previewProcedureCall Then
                 RAISE INFO 'Call update_dataset_interval %, %, %, _message => _message, _infoOnly => _infoOnly)', _instrumentInfo.Instrument, _startDate, _startOfNextMonth;
             Else
-                Call update_dataset_interval (_instrumentInfo.Instrument, _startDate, _startOfNextMonth, _message => _message, _infoOnly => _infoOnly);
+                CALL update_dataset_interval (_instrumentInfo.Instrument, _startDate, _startOfNextMonth, _message => _message, _infoOnly => _infoOnly);
             End If;
 
             If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EmslInstrument = 'Y'::citext OR _instrumentInfo.Tracked = 1)) Then
@@ -325,9 +325,9 @@ BEGIN
 
                 If Not _infoOnly Or _infoOnly And Not _previewProcedureCall Then
                     If _instrumentInfo.UseEUSid > 0 Then
-                        Call update_emsl_instrument_usage_report ('', _instrumentInfo.EusInstrumentId, _currentInstrumentUsageMonth, _message => _message, _infoOnly => _infoOnly);
+                        CALL update_emsl_instrument_usage_report ('', _instrumentInfo.EusInstrumentId, _currentInstrumentUsageMonth, _message => _message, _infoOnly => _infoOnly);
                     Else
-                        Call update_emsl_instrument_usage_report (_instrumentInfo.Instrument, 0, _currentInstrumentUsageMonth, _message => _message, _infoOnly => _infoOnly);
+                        CALL update_emsl_instrument_usage_report (_instrumentInfo.Instrument, 0, _currentInstrumentUsageMonth, _message => _message, _infoOnly => _infoOnly);
                     End If;
                 End If;
 

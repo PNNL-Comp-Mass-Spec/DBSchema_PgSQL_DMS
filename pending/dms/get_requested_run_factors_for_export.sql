@@ -82,7 +82,7 @@ BEGIN
 
     _colList := 'BatchID, Name,  Status,  Request,  Dataset_ID,  Dataset,  Experiment,  Experiment_ID,  Block,  [Run Order] ';
 
-    Call make_factor_crosstab_sql (_colList, _sql => _sql);
+    CALL make_factor_crosstab_sql (_colList, _sql => _sql);
 
     -----------------------------------------
     -- Return the output table

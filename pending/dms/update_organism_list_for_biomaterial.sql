@@ -143,7 +143,7 @@ BEGIN
     LOOP
         _matchCount := 0;
 
-        Call auto_resolve_organism_name (_unknownOrganism,
+        CALL auto_resolve_organism_name (_unknownOrganism,
                                          _matchCount => _matchCount,            -- Output
                                          _newOrganismName => _newOrganismName,  -- Output
                                          _newOrganismID => _newOrganismID);     -- Output
@@ -213,7 +213,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Biomaterial: ' || _biomaterialName;
-    Call post_usage_log_entry ('Update_Organism_List_For_Biomaterial', _usageMessage);
+    CALL post_usage_log_entry ('Update_Organism_List_For_Biomaterial', _usageMessage);
 
     DROP TABLE Tmp_BiomaterialOrganisms;
 END

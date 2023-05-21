@@ -49,7 +49,7 @@ BEGIN
     _returnCode:= '';
 
     -- Uncomment to log the XML for debugging purposes
-    -- call PostLogEntry ('Debug', _cartAssignmentList, 'UpdateLCCartBlockAssignments');
+    -- CALL PostLogEntry ('Debug', _cartAssignmentList, 'UpdateLCCartBlockAssignments');
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -163,7 +163,7 @@ BEGIN
 
     _usageMessage := format('Updated %s requsted %s', _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
-    Call post_usage_log_entry ('Update_LC_Cart_Block_Assignments', _usageMessage);
+    CALL post_usage_log_entry ('Update_LC_Cart_Block_Assignments', _usageMessage);
 
     DROP TABLE Tmp_BlockingInfo;
     DROP TABLE Tmp_RequestsInBlock;

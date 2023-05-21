@@ -504,7 +504,7 @@ BEGIN
         _addon := format('Updated %s %s in t_cached_dataset_links', _rowCountUpdated, public.check_plural(_rowCountUpdated, 'row', 'rows'));
         _message := public.append_to_text(_message, _addon, 0, '; ', 512);
 
-        -- call PostLogEntry ('Debug', _message, 'UpdateCachedDatasetLinks');
+        -- CALL PostLogEntry ('Debug', _message, 'UpdateCachedDatasetLinks');
     End If;
 
 END

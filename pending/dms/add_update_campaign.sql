@@ -323,7 +323,7 @@ BEGIN
             -- Create research team
             ---------------------------------------------------
             --
-            Call update_research_team_for_campaign
+            CALL update_research_team_for_campaign
                                 _campaignName,
                                 _progmgrUsername,
                                 _piUsername,
@@ -392,7 +392,7 @@ BEGIN
                                 _idConfirm::text || ' but the INSERT INTO query reported ' ||
                                 _campaignID::text;
 
-                Call post_log_entry ('Error', _debugMsg, 'Add_Update_Campaign');
+                CALL post_log_entry ('Error', _debugMsg, 'Add_Update_Campaign');
 
                 _campaignID := _idConfirm;
             End If;
@@ -402,9 +402,9 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (1, _campaignID, _stateID, _callingUser);
-                Call alter_event_log_entry_user (9, _campaignID, _percentEMSLFunded, _callingUser);
-                Call alter_event_log_entry_user (10, _campaignID, _dataReleaseRestrictionsID, _callingUser);
+                CALL alter_event_log_entry_user (1, _campaignID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (9, _campaignID, _percentEMSLFunded, _callingUser);
+                CALL alter_event_log_entry_user (10, _campaignID, _dataReleaseRestrictionsID, _callingUser);
             End If;
 
         End If; -- add mode
@@ -439,7 +439,7 @@ BEGIN
             -- Update research team membershipe
             ---------------------------------------------------
             --
-            Call update_research_team_for_campaign (
+            CALL update_research_team_for_campaign (
                                 _campaignName,
                                 _progmgrUsername,
                                 _piUsername,
@@ -460,8 +460,8 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (9, _campaignID, _percentEMSLFunded, _callingUser);
-                Call alter_event_log_entry_user (10, _campaignID, _dataReleaseRestrictionsID, _callingUser);
+                CALL alter_event_log_entry_user (9, _campaignID, _percentEMSLFunded, _callingUser);
+                CALL alter_event_log_entry_user (10, _campaignID, _dataReleaseRestrictionsID, _callingUser);
             End If;
         End If; -- update mode
 

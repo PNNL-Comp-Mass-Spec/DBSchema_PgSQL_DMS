@@ -99,7 +99,7 @@ BEGIN
             _logType := 'Warning';
         End If;
 
-        Call post_log_entry (_logType, _msg, 'Assign_EUS_Users_To_Requested_Run');
+        CALL post_log_entry (_logType, _msg, 'Assign_EUS_Users_To_Requested_Run');
 
     End If;
 

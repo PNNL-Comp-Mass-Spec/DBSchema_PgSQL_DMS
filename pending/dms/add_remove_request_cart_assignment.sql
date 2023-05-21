@@ -75,7 +75,7 @@ BEGIN
             If Not FOUND Then
                 _msg := format('Could not resolve cart config name "%s" to ID for Request(s) %s', _CartConfigName, _requestIDList);
 
-                Call post_log_entry ('Error', _msg, 'Add_Remove_Request_Cart_Assignment');
+                CALL post_log_entry ('Error', _msg, 'Add_Remove_Request_Cart_Assignment');
             End If;
         End If;
     Else

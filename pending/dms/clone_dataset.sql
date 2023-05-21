@@ -230,7 +230,7 @@ BEGIN
         -- Create a requested run for the dataset
         -- (code is from AddUpdateDataset)
 
-        Call public.add_update_requested_run (
+        CALL public.add_update_requested_run (
                                 _requestName => _requestNameNew,
                                 _experimentName => _datasetInfo.ExperimentName,
                                 _requesterUsername =>_datasetInfo.OperatorUsername,
@@ -276,7 +276,7 @@ BEGIN
     If _returnCode <> '' Then
         ROLLBACK;
 
-        Call post_log_entry ('Error', _message, 'Clone_Dataset');
+        CALL post_log_entry ('Error', _message, 'Clone_Dataset');
         RETURN;
     End If;
 
@@ -290,7 +290,7 @@ BEGIN
         -- Possibly create a Dataset Archive task
         --
         If _createDatasetArchiveTask Then
-            Call AddArchiveDataset (_datasetIDNew);
+            CALL AddArchiveDataset (_datasetIDNew);
         Else
             RAISE INFO '%', 'You should manually create a dataset archive task using: execute AddArchiveDataset ' || _datasetIDNew::text;
         End If;
@@ -318,7 +318,7 @@ BEGIN
     BEGIN
         _message := 'Created dataset ' || _datasetNew || ' by cloning ' || _dataset;
 
-        Call post_log_entry ('Normal', _message, 'Clone_Dataset');
+        CALL post_log_entry ('Normal', _message, 'Clone_Dataset');
 
         -- Create a Capture job for the newly cloned dataset
 
@@ -493,12 +493,12 @@ BEGIN
         End If;
 
         If Coalesce(_captureJobNew, 0) > 0 Then
-            Call cap.update_parameters_for_job (_captureJobNew)
+            CALL cap.update_parameters_for_job (_captureJobNew)
 
             _jobMessage := format('Created capture task job %s for dataset %s by cloning job %s',
                                     _captureJobNew, _datasetNew, _captureJob
 
-            Call post_log_entry ('Normal', _jobMessage, 'Clone_Dataset');
+            CALL post_log_entry ('Normal', _jobMessage, 'Clone_Dataset');
 
             _message := _message || '; ' || _jobMessage;
         End If;

@@ -188,7 +188,7 @@ BEGIN
 
             If Not FOUND Then
                 _logMessage := 'Protein collection not found in V_Protein_Collections_by_Organism; cannot determine the organism for ' || _proteinCollection;
-                Call post_log_entry ('Warning', _logMessage, 'Get_Spectral_Library_ID');
+                CALL post_log_entry ('Warning', _logMessage, 'Get_Spectral_Library_ID');
 
                 _organism := 'Undefined';
             End If;
@@ -223,7 +223,7 @@ BEGIN
 
             If Not FOUND Then
                 _logMessage := 'Legacy FASTA file not found in T_Organism_DB_File; cannot determine the organism for ' || _organismDbFile;
-                Call post_log_entry ('Warning', _logMessage, 'Get_Spectral_Library_ID');
+                CALL post_log_entry ('Warning', _logMessage, 'Get_Spectral_Library_ID');
 
                 _organism := 'Undefined';
             End If;
@@ -266,7 +266,7 @@ BEGIN
 
         If Not FOUND Then
             _message := 'Function "Spectral_Library_Files" not found in table T_Misc_Paths';
-            Call post_log_entry ('Error', _message, 'Get_Spectral_Library_ID');
+            CALL post_log_entry ('Error', _message, 'Get_Spectral_Library_ID');
 
             _returnCode := 'U5201';
             RETURN;

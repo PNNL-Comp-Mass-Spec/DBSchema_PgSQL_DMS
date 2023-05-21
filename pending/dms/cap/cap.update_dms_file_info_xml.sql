@@ -64,7 +64,7 @@ BEGIN
         -- Note that procedure public.update_dataset_file_info_xml will set _returnCode to 'U5360'
         -- if this dataset is a duplicate to another dataset (based on T_Dataset_Files)
 
-        Call public.update_dataset_file_info_xml (_datasetID, _datasetInfoXML, _message => _message, _returnCode => _returnCode, _infoOnly => _infoOnly);
+        CALL public.update_dataset_file_info_xml (_datasetID, _datasetInfoXML, _message => _message, _returnCode => _returnCode, _infoOnly => _infoOnly);
 
         If _returnCode = ''      And Not _infoOnly And _deleteFromTableOnSuccess Then
             DELETE FROM cap.t_dataset_info_xml

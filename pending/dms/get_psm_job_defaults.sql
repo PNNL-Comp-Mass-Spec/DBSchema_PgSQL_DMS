@@ -140,7 +140,7 @@ BEGIN
     -- Validate the datasets in Tmp_DatasetInfo
     ---------------------------------------------------
 
-    Call validate_analysis_job_request_datasets (
+    CALL validate_analysis_job_request_datasets (
                 _message => _message,                   -- Output
                 _autoRemoveNotReleasedDatasets => true,
                 _toolName => _toolName,
@@ -232,7 +232,7 @@ BEGIN
     If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList, 1) <> 'na' Then
 
         -- Append the default contaminant collections
-        Call validate_protein_collection_list_for_datasets (
+        CALL validate_protein_collection_list_for_datasets (
                             _datasets,
                             _protCollNameList => _protCollNameList,     -- Output
                             _showDebug => true);

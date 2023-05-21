@@ -91,7 +91,7 @@ BEGIN
     ---------------------------------------------------
     --
     If _updateCachedInfo Then
-        Call update_cached_experiment_component_names _expID
+        CALL update_cached_experiment_component_names _expID
     End If;
 
 END

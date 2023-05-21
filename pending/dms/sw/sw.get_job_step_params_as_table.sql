@@ -59,7 +59,7 @@ BEGIN
     -- Call get_job_step_params_work to populate the temporary table
     ---------------------------------------------------
 
-    Call sw.get_job_step_params_work (
+    CALL sw.get_job_step_params_work (
             _job,
             _step,
             _message => _message,           -- Output

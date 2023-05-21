@@ -133,11 +133,11 @@ BEGIN
 
     -- Call update_dms_file_info_xml to push the dataset info into public.t_dataset_info
     -- If a duplicate dataset is found, _returnCode will be 'U5360'
-    Call cap.update_dms_file_info_xml (_datasetID, _deleteFromTableOnSuccess => 1, _message => _message, _returnCode => _returnCode);
+    CALL cap.update_dms_file_info_xml (_datasetID, _deleteFromTableOnSuccess => 1, _message => _message, _returnCode => _returnCode);
 
     If _returnCode = 'U5360' Then
         -- Use special completion code of 101
-        Call public.set_capture_task_complete (_datasetName, 101, _message => _message, _failureMessage => _message);
+        CALL public.set_capture_task_complete (_datasetName, 101, _message => _message, _failureMessage => _message);
 
         -- Fail out the capture task job with state 14 (Failed, Ignore Job Step States)
         UPDATE cap.t_tasks
@@ -157,7 +157,7 @@ BEGIN
         RAISE INFO '%', _message;
     Else
         -- Mark the dataset as bad in public.t_dataset
-        Call public.handle_dataset_capture_validation_failure (_datasetID, _comment, _infoOnly, _message => _message, _returnCode => _returnCode);
+        CALL public.handle_dataset_capture_validation_failure (_datasetID, _comment, _infoOnly, _message => _message, _returnCode => _returnCode);
 
         _message := 'Marked dataset as bad: ' || _datasetName;
         RAISE INFO '%', _message;

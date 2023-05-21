@@ -199,7 +199,7 @@ BEGIN
         SELECT ID
         FROM Tmp_Processors;
 
-        Call alter_entered_by_user_multi_id ('t_analysis_job_processor_group_membership', 'processor_id', _callingUser,
+        CALL alter_entered_by_user_multi_id ('t_analysis_job_processor_group_membership', 'processor_id', _callingUser,
                                              _entryTimeWindowSeconds => 5, _entryDateColumnName => 'last_affected');
 
         DROP TABLE Tmp_ID_Update_List;
@@ -210,7 +210,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Processor group: ' || _pgid::text;
-    Call post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Membership', _usageMessage);
+    CALL post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Membership', _usageMessage);
 
     DROP TABLE Tmp_Processors;
 END

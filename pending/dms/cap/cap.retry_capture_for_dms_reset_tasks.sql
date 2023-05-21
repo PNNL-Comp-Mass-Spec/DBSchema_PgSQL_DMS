@@ -132,7 +132,7 @@ BEGIN
     End If;
 
     -- Update the parameters for each capture task job
-    Call cap.update_parameters_for_task (_jobList, _message => _message, _returnCode => _returnCode);
+    CALL cap.update_parameters_for_task (_jobList, _message => _message, _returnCode => _returnCode);
 
     ------------------------------------------------------------------
     -- Reset the capture task job steps using RetrySelectedJobs
@@ -164,7 +164,7 @@ BEGIN
               Target.State = 5;
 
         -- Next call retry_selected_tasks
-        Call cap.retry_selected_tasks (_message => _message);
+        CALL cap.retry_selected_tasks (_message => _message);
 
     End If;
 
@@ -175,7 +175,7 @@ BEGIN
         _message := 'Reset dataset capture for capture task job ' || _jobList;
     End If;
 
-    Call public.post_log_entry('Normal', _message, 'Retry_Capture_for_DMS_Reset_Tasks', 'cap');
+    CALL public.post_log_entry('Normal', _message, 'Retry_Capture_for_DMS_Reset_Tasks', 'cap');
 
     DROP TABLE Tmp_Selected_Jobs;
 END

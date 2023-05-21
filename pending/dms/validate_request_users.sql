@@ -101,7 +101,7 @@ BEGIN
         LOOP
             _matchCount := 0;
 
-            Call auto_resolve_name_to_username (_unknownUser, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_unknownUser, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match was found; update User_ID in Tmp_UserInfo

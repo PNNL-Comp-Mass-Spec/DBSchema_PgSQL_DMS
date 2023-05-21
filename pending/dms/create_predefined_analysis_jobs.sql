@@ -199,7 +199,7 @@ BEGIN
             ---------------------------------------------------
             -- Create the job
             ---------------------------------------------------
-            Call add_update_analysis_job (
+            CALL add_update_analysis_job (
                         _datasetName                      => _jobInfo.DatasetName,
                         _priority                         => _jobInfo.Priority,
                         _toolName                         => _jobInfo.AnalysisToolName,
@@ -262,7 +262,7 @@ BEGIN
 
                     _logMessage := _logMessage + _analysisToolName;
 
-                    Call post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
+                    CALL post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
 
                 End If;
 

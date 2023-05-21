@@ -88,7 +88,7 @@ BEGIN
             _message := _message || '; one or more alerts were skipped since already acknowledged';
         End If;
 
-        Call post_log_entry ('Normal', _message, 'Ack_Email_Alerts');
+        CALL post_log_entry ('Normal', _message, 'Ack_Email_Alerts');
 
     Else
         SELECT Alerts.*

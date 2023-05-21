@@ -204,7 +204,7 @@ BEGIN
     -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
     ---------------------------------------------------
     --
-    Call sw.create_steps_for_job (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
+    CALL sw.create_steps_for_job (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         _msg := 'Error returned by create_steps_for_job: ' || _returnCode;
@@ -226,7 +226,7 @@ BEGIN
     ---------------------------------------------------
     -- Do special needs for local jobs that target other jobs
     ---------------------------------------------------
-    Call sw.adjust_params_for_local_job
+    CALL sw.adjust_params_for_local_job
         _scriptName,
         _datasetName,
         _dataPackageID,
@@ -243,7 +243,7 @@ BEGIN
     -- Details are stored in Tmp_Job_Steps
     ---------------------------------------------------
     --
-    Call sw.create_signatures_for_job_steps (
+    CALL sw.create_signatures_for_job_steps (
             _job,
             _jobParamXML,
             _dataPackageID,
@@ -280,7 +280,7 @@ BEGIN
     -- Handle any step cloning
     ---------------------------------------------------
     --
-    Call sw.clone_job_step (_job, _jobParamXML, _message => _message, _returnCode => _returnCode);
+    CALL sw.clone_job_step (_job, _jobParamXML, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         _msg := 'Error returned by CloneJobStep: ' || _returnCode;
@@ -335,9 +335,9 @@ BEGIN
                _comment, NULL, _ownerUsername,
                Coalesce(_dataPackageID, 0))
 
-        Call sw.move_jobs_to_main_tables _message => _message
+        CALL sw.move_jobs_to_main_tables _message => _message
 
-        Call alter_entered_by_user ('sw.t_job_events', 'job', _job, _callingUser);
+        CALL alter_entered_by_user ('sw.t_job_events', 'job', _job, _callingUser);
     End If;
 
     If Not _debugMode Then
@@ -363,7 +363,7 @@ BEGIN
         ---------------------------------------------------
         --
         If _dataPackageID > 0 Then
-            Call sw.update_job_param_org_db_info_using_data_pkg (
+            CALL sw.update_job_param_org_db_info_using_data_pkg (
                         _job,
                         _dataPackageID,
                         _deleteIfInvalid => false,
@@ -378,7 +378,7 @@ BEGIN
         -----------------------------------------------
         -- Call update_job_param_org_db_info_using_data_pkg with debug mode enabled
         ---------------------------------------------------
-        Call sw.update_job_param_org_db_info_using_data_pkg (
+        CALL sw.update_job_param_org_db_info_using_data_pkg (
                 _job,
                 _dataPackageID,
                 _deleteIfInvalid => false,
@@ -408,7 +408,7 @@ BEGIN
         SELECT * FROM Tmp_Job_Parameters
 
         If _logDebugMessages Then
-            Call public.post_log_entry ('Debug', _jobParamXML::text, 'Make_Local_Job_In_Broker', 'sw');
+            CALL public.post_log_entry ('Debug', _jobParamXML::text, 'Make_Local_Job_In_Broker', 'sw');
         End If;
     End If;
 

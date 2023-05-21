@@ -64,7 +64,7 @@ BEGIN
     );
 
     -- Populate the temporary table with the manager parameters
-    Call mc.get_manager_parameters_work (_managerNameList, _sortMode, _maxRecursion, _message => _message);
+    CALL mc.get_manager_parameters_work (_managerNameList, _sortMode, _maxRecursion, _message => _message);
 
     -- Return the parameters as a result set
     --

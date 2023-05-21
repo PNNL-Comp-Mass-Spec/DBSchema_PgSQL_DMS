@@ -276,7 +276,7 @@ BEGIN
                                       'has proposal_id_auto_supersede set to itself; this is invalid'
 
                     If Not _infoOnly Then
-                        Call post_log_entry ('Error', _logMessage, 'Validate_EUS_Usage', _duplicateEntryHoldoffHours => 1);
+                        CALL post_log_entry ('Error', _logMessage, 'Validate_EUS_Usage', _duplicateEntryHoldoffHours => 1);
                     Else
                         RAISE INFO '%', _logMessage;
                     End If;
@@ -290,7 +290,7 @@ BEGIN
                                           'but that proposal does not exist in t_eus_proposals'
 
                         If Not _infoOnly Then
-                            Call post_log_entry ('Error', _logMessage, 'Validate_EUS_Usage', _duplicateEntryHoldoffHours => 1);
+                            CALL post_log_entry ('Error', _logMessage, 'Validate_EUS_Usage', _duplicateEntryHoldoffHours => 1);
                         Else
                             RAISE INFO '%', _logMessage;
                         End If;
@@ -620,7 +620,7 @@ BEGIN
 
         If Not FOUND Then
             _msg := _msg || '; Could not find usage type "' || _eusUsageType || '" in t_eus_usage_type; this is unexpected';
-            Call post_log_entry ('Error', _msg, 'Validate_EUS_Usage');
+            CALL post_log_entry ('Error', _msg, 'Validate_EUS_Usage');
 
             -- Only append _msg to _message if an error occurs
             _message := public.append_to_text(_message, _msg, 0, '; ', 1024);

@@ -135,7 +135,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     -- Uncomment to log the XML for debugging purposes
-    -- call PostLogEntry ('Debug', _factorList, 'UpdateRequestedRunFactors');
+    -- CALL PostLogEntry ('Debug', _factorList, 'UpdateRequestedRunFactors');
 
     -----------------------------------------------------------
     -- Temp table to hold factors
@@ -216,7 +216,7 @@ BEGIN
 
             If _infoOnly Then
                 -- Show the contents of Tmp_FactorInfo
-                Call public.show_tmp_factor_info();
+                CALL public.show_tmp_factor_info();
             End If;
 
             _returnCode := 'U5116';
@@ -248,7 +248,7 @@ BEGIN
 
             If _infoOnly Then
                 -- Show the contents of Tmp_FactorInfo
-                Call public.show_tmp_factor_info();
+                CALL public.show_tmp_factor_info();
             End If;
 
             _returnCode := 'U5117';
@@ -269,7 +269,7 @@ BEGIN
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
-            Call public.show_tmp_factor_info();
+            CALL public.show_tmp_factor_info();
         End If;
 
         _returnCode := 'U5118';
@@ -296,7 +296,7 @@ BEGIN
 
             If _infoOnly Then
                 -- Show the contents of Tmp_FactorInfo
-                Call public.show_tmp_factor_info();
+                CALL public.show_tmp_factor_info();
             End If;
 
             _returnCode := 'U5119';
@@ -376,7 +376,7 @@ BEGIN
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
-            Call public.show_tmp_factor_info();
+            CALL public.show_tmp_factor_info();
         End If;
 
         _returnCode := 'U5120';
@@ -406,7 +406,7 @@ BEGIN
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
-            Call public.show_tmp_factor_info();
+            CALL public.show_tmp_factor_info();
         End If;
 
         _returnCode := 'U5127';
@@ -463,7 +463,7 @@ BEGIN
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
-            Call public.show_tmp_factor_info();
+            CALL public.show_tmp_factor_info();
         End If;
 
         _returnCode := 'U5115';
@@ -496,7 +496,7 @@ BEGIN
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
-            Call public.show_tmp_factor_info();
+            CALL public.show_tmp_factor_info();
         End If;
 
         _returnCode := 'U5113';
@@ -602,7 +602,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := '';
-    Call post_usage_log_entry ('Update_Requested_Run_Factors', _usageMessage);
+    CALL post_usage_log_entry ('Update_Requested_Run_Factors', _usageMessage);
 
     DROP TABLE Tmp_FactorInfo;
 END

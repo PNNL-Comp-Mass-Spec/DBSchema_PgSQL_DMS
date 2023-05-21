@@ -173,7 +173,7 @@ BEGIN
 
     _usageMessage := format('Updated %s prep %s', _updateCount, public.check_plural(_updateCount, 'request', 'requests'));
 
-    Call post_usage_log_entry ('Update_Sample_Request_Assignments', _usageMessage);
+    CALL post_usage_log_entry ('Update_Sample_Request_Assignments', _usageMessage);
 
     DROP TABLE Tmp_RequestsToProcess;
 

@@ -150,7 +150,7 @@ BEGIN
             FROM Tmp_IntervalUpdates
             ORDER BY request
         LOOP
-            Call validate_eus_usage (
+            CALL validate_eus_usage (
                             _eusUsageType   => _eusUsageType,       -- Input/Output
                             _eusProposalID  => _eusProposalID,      -- Input/Output
                             _eusUsersList   => _eusUsersList,       -- Input/Output
@@ -174,12 +174,12 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (11, _curID, _statusID, _callingUser);
+                CALL alter_event_log_entry_user (11, _curID, _statusID, _callingUser);
             End If;
 
             -- Assign users to the request
             --
-            Call assign_eus_users_to_requested_run
+            CALL assign_eus_users_to_requested_run
                                     _curID,
                                     _eusProposalID,
                                     _eusUsersList,
@@ -201,7 +201,7 @@ BEGIN
             FROM Tmp_IntervalUpdates
             ORDER BY id
         LOOP
-            Call add_update_run_interval (
+            CALL add_update_run_interval (
                                         _curID,
                                         _comment,
                                         'update',

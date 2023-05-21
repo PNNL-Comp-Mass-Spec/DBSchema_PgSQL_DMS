@@ -260,7 +260,7 @@ BEGIN
         -- Resolve _tissue to BTO identifier
         ---------------------------------------------------
 
-        Call get_tissue_id (
+        CALL get_tissue_id (
                 _tissueNameOrID => _tissue,
                 _tissueIdentifier => _tissueIdentifier output,
                 _tissueName => _tissueName output,
@@ -368,7 +368,7 @@ BEGIN
             -- Could not find entry in database for username _researcherUsername
             -- Try to auto-resolve the name
 
-            Call auto_resolve_name_to_username (_researcherUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_researcherUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match found; update _researcherUsername
@@ -399,7 +399,7 @@ BEGIN
             _totalCount := 0;
         End If;
         --
-        Call validate_wellplate_loading (
+        CALL validate_wellplate_loading (
                                 _wellplateName => _wellplateName,   -- Output
                                 _wellNumber => _wellNumber,         -- Output
                                 _totalCount => _totalCount,
@@ -728,20 +728,20 @@ BEGIN
                 _debugMsg := format('Warning: Inconsistent identity values when adding experiment %s: Found ID %s but INSERT query reported %s',
                                     _experimentName, _expIDConfirm, _experimentID);
 
-                Call post_log_entry ('Error', _debugMsg, 'Add_Update_Experiment');
+                CALL post_log_entry ('Error', _debugMsg, 'Add_Update_Experiment');
 
                 _experimentID := _expIDConfirm;
             End If;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (3, _experimentID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (3, _experimentID, _stateID, _callingUser);
             End If;
 
             -- Add the experiment to biomaterial mapping
             -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
             --
-            Call add_experiment_biomaterial (
+            CALL add_experiment_biomaterial (
                                     _experimentID,
                                     _updateCachedInfo => false,
                                     _message => _msg,               -- Output
@@ -754,7 +754,7 @@ BEGIN
             -- Add the experiment to reference compound mapping
             -- The procedure uses table Tmp_ExpToRefCompoundMap
             --
-            Call add_experiment_reference_compound (
+            CALL add_experiment_reference_compound (
                                     _experimentID,
                                     _updateCachedInfo => true,
                                     _message => _msg,               -- Output
@@ -767,7 +767,7 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _contID Then
-                Call post_material_log_entry (
+                CALL post_material_log_entry (
                     'Experiment Move',
                     _experimentName,
                     'na',
@@ -819,7 +819,7 @@ BEGIN
             -- Update the experiment to biomaterial mapping
             -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
             --
-            Call add_experiment_biomaterial (
+            CALL add_experiment_biomaterial (
                                     _experimentID,
                                     _updateCachedInfo => false,
                                     _message => _msg,               -- Output
@@ -833,7 +833,7 @@ BEGIN
             -- Update the experiment to reference compound mapping
             -- The procedure uses table Tmp_ExpToRefCompoundMap
             --
-            Call add_experiment_reference_compound (
+            CALL add_experiment_reference_compound (
                                     _experimentID,
                                     _updateCachedInfo => true,
                                     _message => _msg,               -- Output
@@ -846,7 +846,7 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _contID Then
-                Call post_material_log_entry
+                CALL post_material_log_entry
                     'Experiment Move',
                     _experimentName,
                     _curContainerName,

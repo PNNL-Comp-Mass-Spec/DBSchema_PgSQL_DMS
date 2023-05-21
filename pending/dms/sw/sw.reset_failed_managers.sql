@@ -76,7 +76,7 @@ BEGIN
     -- Call the manager control procedure
     -----------------------------------------------------------
     --
-    Call mc.set_manager_error_cleanup_mode (
+    CALL mc.set_manager_error_cleanup_mode (
             _managerList,
             _cleanupMode => 1,
             _showTable => true,

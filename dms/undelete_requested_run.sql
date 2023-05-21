@@ -251,7 +251,7 @@ BEGIN
 
     If _batchID > 0 Then
 
-        Call update_cached_requested_run_batch_stats (
+        CALL update_cached_requested_run_batch_stats (
                 _batchID,
                 _fullrefresh => false,
                 _message => _message2,          -- Output

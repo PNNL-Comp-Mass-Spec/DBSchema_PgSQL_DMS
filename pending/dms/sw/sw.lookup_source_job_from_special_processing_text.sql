@@ -289,7 +289,7 @@ BEGIN
 
         If _whereClause <> '' Then
             _warningMessage := format('Query for SourceJob determination for job %s: %s', _job, _autoQuerySql);
-            Call public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Text', 'sw');
+            CALL public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Text', 'sw');
         End If;
 
         If _warningMessage = '' Then

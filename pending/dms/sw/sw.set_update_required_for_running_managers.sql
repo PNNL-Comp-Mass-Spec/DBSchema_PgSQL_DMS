@@ -69,7 +69,7 @@ BEGIN
         RAISE INFO 'Managers needing an update: %', _mgrList;
     Else
         RAISE INFO '%', 'Calling SetManagerUpdateRequired for ' || _mgrCount::text || ' managers';
-        Call mc.set_manager_update_required (_mgrList, _showtable => true);
+        CALL mc.set_manager_update_required (_mgrList, _showtable => true);
     End If;
 
 END

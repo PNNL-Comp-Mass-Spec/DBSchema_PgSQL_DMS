@@ -126,7 +126,7 @@ BEGIN
         If char_length(_callingUser) > 0 Then
             _stateID := 0;
 
-            Call alter_event_log_entry_user (5, _jobID, _stateID, _callingUser);
+            CALL alter_event_log_entry_user (5, _jobID, _stateID, _callingUser);
         End If;
 
         COMMIT;
@@ -137,7 +137,7 @@ BEGIN
     -- Ignore any jobs with running job steps (though if the step started over 48 hours ago, ignore that job step)
     -------------------------------------------------------
     --
-    Call sw.delete_job_if_new_or_failed (_jobID, _callingUser, _message => _msg, _infoOnly => _infoOnly);
+    CALL sw.delete_job_if_new_or_failed (_jobID, _callingUser, _message => _msg, _infoOnly => _infoOnly);
 
     If char_length(_msg) > 0 Then
         public.append_to_text(_message, _msg);

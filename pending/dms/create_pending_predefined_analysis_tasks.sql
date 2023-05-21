@@ -100,7 +100,7 @@ BEGIN
 
         Else
 
-            Call create_predefined_analysis_jobs (
+            CALL create_predefined_analysis_jobs (
                                             currentItem.DatasetName,
                                             currentItem.CallingUser,
                                             currentItem.AnalysisToolNameFilter,

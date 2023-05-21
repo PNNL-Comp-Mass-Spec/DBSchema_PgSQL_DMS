@@ -109,7 +109,7 @@ BEGIN
     -- Validate that the extension script is appropriate for the existing job script
     ---------------------------------------------------
     --
-    Call sw.validate_extension_script_for_job (
+    CALL sw.validate_extension_script_for_job (
             _job,
             _extensionScriptName,
             _message => _message,           -- Output
@@ -131,7 +131,7 @@ BEGIN
         ORDER BY JOb
     LOOP
 
-        Call sw.create_job_steps (
+        CALL sw.create_job_steps (
             _message => _message,
             _returnCode => _returnCode,
             _mode => 'ExtendExistingJob',

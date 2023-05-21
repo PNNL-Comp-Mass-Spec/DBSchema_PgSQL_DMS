@@ -207,7 +207,7 @@ BEGIN
     _message := format('%s %s old capture task jobs from the history tables; job number range %s to %s', _message, _jobCountToDelete, _jobFirst, _jobLast);
 
     If Not _infoOnly And _jobCountToDelete > 0 Then
-        Call public.post_log_entry ('Normal', _message, 'Delete_Old_Tasks_From_History', 'cap');
+        CALL public.post_log_entry ('Normal', _message, 'Delete_Old_Tasks_From_History', 'cap');
     End If;
 
     If char_length(_message) > 0 Then

@@ -58,7 +58,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    Call public.store_quameter_results (_datasetID => _datasetID, _resultsXML => _resultsXML, _message => _message, _infoOnly => _infoOnly);
+    CALL public.store_quameter_results (_datasetID => _datasetID, _resultsXML => _resultsXML, _message => _message, _infoOnly => _infoOnly);
 
 END
 $$;

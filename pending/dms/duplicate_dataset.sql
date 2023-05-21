@@ -187,7 +187,7 @@ BEGIN
             -- Could not find entry in database for username _newOperatorUsername
             -- Try to auto-resolve the name
 
-            Call auto_resolve_name_to_username (_newOperatorUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_newOperatorUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
@@ -296,7 +296,7 @@ BEGIN
     --
     _requestName := 'AutoReq_' || _newDataset;
 
-    Call add_update_requested_run (
+    CALL add_update_requested_run (
             _requestName => _requestName,
             _experimentName => _datasetInfo.ExperimentName,
             _requesterUsername => _datasetInfo.OperUsername,
@@ -336,7 +336,7 @@ BEGIN
     -- Consume the scheduled run
     ---------------------------------------------------
 
-    Call consume_scheduled_run _datasetID, _requestID, _message => _message
+    CALL consume_scheduled_run _datasetID, _requestID, _message => _message
     --
     If _returnCode <> '' Then
         ROLLBACK;
@@ -350,7 +350,7 @@ BEGIN
     COMMIT;
 
     -- Update t_cached_dataset_instruments
-    Call public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+    CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
     RAISE INFO 'Duplicated dataset %, creating %', _sourceDataset, _newDataset;
     RAISE INFO 'New Dataset ID: %, New Requested Run ID: %', _datasetID, _requestID;

@@ -223,7 +223,7 @@ BEGIN
 
             -- Reset the state of the dependent steps
             --
-            Call cap.reset_dependent_task_steps (_jobList, _infoOnly => false);
+            CALL cap.reset_dependent_task_steps (_jobList, _infoOnly => false);
 
             -- Reset the retry counts for the ArchiveVerify step
             --

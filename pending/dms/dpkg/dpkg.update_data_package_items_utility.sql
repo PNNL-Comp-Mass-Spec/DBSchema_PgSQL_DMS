@@ -1107,7 +1107,7 @@ BEGIN
                 FROM Tmp_DataPackageDatasets
                 ORDER BY ID
             LOOP
-                Call update_data_package_item_counts (_packageID);
+                CALL update_data_package_item_counts (_packageID);
             END LOOP;
 
         End If; -- </UpdateDataPackageItemCounts>
@@ -1123,7 +1123,7 @@ BEGIN
             FROM ( SELECT DISTINCT DataPackageID
                    FROM Tmp_DataPackageItems ) AS ListQ;
 
-            Call update_data_package_eus_info (_dataPackageList);
+            CALL update_data_package_eus_info (_dataPackageList);
         End If;
 
         ---------------------------------------------------

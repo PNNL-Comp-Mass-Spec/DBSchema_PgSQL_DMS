@@ -253,7 +253,7 @@ BEGIN
         End If; -- update mode
 
         -- Update the work package list
-        Call update_prep_lc_run_work_package_list (_id);
+        CALL update_prep_lc_run_work_package_list (_id);
 
     EXCEPTION
         WHEN OTHERS THEN

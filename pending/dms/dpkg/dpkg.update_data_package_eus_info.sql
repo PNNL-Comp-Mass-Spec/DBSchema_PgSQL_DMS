@@ -137,7 +137,7 @@ BEGIN
         _message := format('Updated EUS_Person_ID for %s %s',
                             _updateCount, public.check_plural(_updateCount, 'data package', 'data packages'));
 
-        Call public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
+        CALL public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
     End If;
 
     ---------------------------------------------------
@@ -248,7 +248,7 @@ BEGIN
         _message := format('Updated EUS_Proposal_ID, EUS_Instrument_ID, and/or Instrument name for %s %s',
                             _updateCount, public.check_plural(_updateCount, 'data package', 'data packages'));
 
-        Call public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
+        CALL public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
     End If;
 
 END

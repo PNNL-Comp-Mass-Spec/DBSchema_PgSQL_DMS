@@ -321,7 +321,7 @@ BEGIN
 
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := format('... Evaluating step dependencies: %s / %s', _rowsProcessed, _rowCountToProcess);
-            Call public.post_log_entry ('Progress', _statusMessage, 'Evaluate_Task_Step_Dependencies', 'cap');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Evaluate_Task_Step_Dependencies', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;

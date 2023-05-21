@@ -119,7 +119,7 @@ BEGIN
         --
         -- _msg := format('Procedure called with _mode=%s, _newValue=%s, _reqRunIDList=%s',
         --                 Coalesce(_mode, '??'), Coalesce(_newValue, '??'), Coalesce(_reqRunIDList, '??'));
-        -- Call PostLogEntry ('Debug', _msg, 'UpdateRequestedRunAssignments');
+        -- CALL PostLogEntry ('Debug', _msg, 'UpdateRequestedRunAssignments');
 
         ---------------------------------------------------
         -- Validate the inputs
@@ -194,7 +194,7 @@ BEGIN
                 -- is appropriate for instrument group _newInstrumentGroup
                 ---------------------------------------------------
 
-                Call validate_instrument_group_for_requested_runs (_reqRunIDList, _newInstrumentGroup, _message => _message, _returnCode => _returnCode);
+                CALL validate_instrument_group_for_requested_runs (_reqRunIDList, _newInstrumentGroup, _message => _message, _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
                     _logErrors := false;
@@ -231,7 +231,7 @@ BEGIN
                 -- is appropriate for instrument group _newInstrumentGroup
                 ---------------------------------------------------
 
-                Call validate_instrument_group_for_requested_runs (_reqRunIDList, _newInstrumentGroup, _message => _message, _returnCode => _returnCode);
+                CALL validate_instrument_group_for_requested_runs (_reqRunIDList, _newInstrumentGroup, _message => _message, _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
                     _logErrors := false;
@@ -418,7 +418,7 @@ BEGIN
                 ORDER BY RequestID
             LOOP
 
-                Call delete_requested_run (
+                CALL delete_requested_run (
                                     _requestID,
                                     _skipDatasetCheck => false,
                                     _message => _message,              -- Output
@@ -481,7 +481,7 @@ BEGIN
     _usageMessage := format('Updated %s requested %s',
                             _requestCount, public.check_plural(_requestCount, 'run', 'runs'));
 
-    Call post_usage_log_entry ('Update_Requested_Run_Assignments', _usageMessage);
+    CALL post_usage_log_entry ('Update_Requested_Run_Assignments', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_RequestIDs;
 

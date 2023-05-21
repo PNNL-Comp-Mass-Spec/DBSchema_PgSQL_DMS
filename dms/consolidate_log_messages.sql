@@ -184,7 +184,7 @@ BEGIN
         RAISE INFO '%', _message;
 
         If _duplicateMessageCount > 0 Or _deletedMessageCount > 0 Then
-            Call public.post_log_entry ('Normal', _message, 'Consolidate_Log_Messages', 'public');
+            CALL public.post_log_entry ('Normal', _message, 'Consolidate_Log_Messages', 'public');
         End If;
 
         If _deletedMessageCount > 0 And _changeErrorsToErrorIgnore Then

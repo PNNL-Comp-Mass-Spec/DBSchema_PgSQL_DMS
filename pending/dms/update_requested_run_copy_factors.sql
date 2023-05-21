@@ -106,7 +106,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Source: ' || _srcRequestID::text || '; Target: ' || _destRequestID::text;
-    Call post_usage_log_entry ('Update_Requested_Run_Copy_Factors', _usageMessage);
+    CALL post_usage_log_entry ('Update_Requested_Run_Copy_Factors', _usageMessage);
 
     DROP TABLE Tmp_Factors;
 END

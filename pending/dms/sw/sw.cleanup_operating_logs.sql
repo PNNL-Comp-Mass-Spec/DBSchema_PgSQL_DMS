@@ -62,7 +62,7 @@ BEGIN
         --
         _currentLocation := 'Call sw.move_entries_to_history';
 
-        Call sw.move_entries_to_history _logRetentionIntervalDays
+        CALL sw.move_entries_to_history _logRetentionIntervalDays
 
    EXCEPTION
         WHEN OTHERS THEN

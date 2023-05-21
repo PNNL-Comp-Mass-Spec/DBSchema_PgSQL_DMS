@@ -300,7 +300,7 @@ BEGIN
             -- Update item counts
             ---------------------------------------------------
 
-            Call update_sample_prep_request_item_count (_samplePrepRequestID);
+            CALL update_sample_prep_request_item_count (_samplePrepRequestID);
 
         End If; --<update>
 

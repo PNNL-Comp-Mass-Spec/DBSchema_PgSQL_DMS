@@ -117,7 +117,7 @@ BEGIN
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        Call validate_requested_run_batch_params (
+        CALL validate_requested_run_batch_params (
                     _batchID => _id,
                     _name => _name,
                     _description => _description,
@@ -286,7 +286,7 @@ BEGIN
                 _debugMsg := format('Warning: Inconsistent identity values when adding batch %s: Found ID %s but the INSERT INTO query reported %s',
                                     _name, _batchIDConfirm, _id);
 
-                Call post_log_entry ('Error', _debugMsg, 'Add_Update_Requested_Run_Batch');
+                CALL post_log_entry ('Error', _debugMsg, 'Add_Update_Requested_Run_Batch');
 
                 _id := _batchIDConfirm;
             End If;
@@ -394,7 +394,7 @@ BEGIN
         ---------------------------------------------------
 
         If _id > 0 Then
-            Call update_cached_requested_run_batch_stats (
+            CALL update_cached_requested_run_batch_stats (
                 _id,
                 _fullrefresh => false,
                 _message => _message,           -- Output

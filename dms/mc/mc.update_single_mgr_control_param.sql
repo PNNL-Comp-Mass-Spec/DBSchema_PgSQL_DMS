@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **
 **  Example usage:
 **
-**      Call mc.update_single_mgr_control_param('orgdbdir', 'G:\DMS_Temp_Org', '1277, 1317, 1318', _infoOnly => true);
+**      CALL mc.update_single_mgr_control_param('orgdbdir', 'G:\DMS_Temp_Org', '1277, 1317, 1318', _infoOnly => true);
 **
 **  Auth:   jds
 **  Date:   06/20/2007
@@ -307,7 +307,7 @@ BEGIN
     -- Note that it calls alter_entered_by_user_multi_id and alter_event_log_entry_user_multi_id for _callingUser
     ---------------------------------------------------
     --
-    Call mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+    CALL mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
     DROP TABLE Tmp_ParamValueEntriesToUpdate;
     DROP TABLE Tmp_MgrIDs;

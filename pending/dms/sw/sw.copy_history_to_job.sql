@@ -419,13 +419,13 @@ BEGIN
     -- Update the job parameters in case any parameters have changed (in particular, storage path)
     ---------------------------------------------------
     --
-    Call sw.update_job_parameters (_job, _infoOnly => false);
+    CALL sw.update_job_parameters (_job, _infoOnly => false);
 
     ---------------------------------------------------
     -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
     ---------------------------------------------------
     --
-    Call sw.validate_job_server_info (_job, _useJobParameters => true);
+    CALL sw.validate_job_server_info (_job, _useJobParameters => true);
 
     ---------------------------------------------------
     -- Make sure the dependencies column is up-to-date in sw.t_job_steps

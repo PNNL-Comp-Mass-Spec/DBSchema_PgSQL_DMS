@@ -42,7 +42,7 @@ BEGIN
 
     If _returnCode = '' Then
         -- Update EUS proposals
-        Call update_eus_proposals_from_eus_imports _message => _message
+        CALL update_eus_proposals_from_eus_imports _message => _message
 
         If _returnCode <> '' And _statusMessage = '' Then
             If _message = '' Then
@@ -55,7 +55,7 @@ BEGIN
 
     If _returnCode = '' Then
         -- Update EUS users
-        Call update_eus_users_from_eus_imports _updateUsersOnInactiveProposals, _message => _message
+        CALL update_eus_users_from_eus_imports _updateUsersOnInactiveProposals, _message => _message
 
         If _returnCode <> '' And _statusMessage = '' Then
             If _message = '' Then
@@ -68,7 +68,7 @@ BEGIN
 
     If _returnCode = '' Then
         -- Update EUS instruments
-        Call update_eus_instruments_from_eus_imports _message => _message
+        CALL update_eus_instruments_from_eus_imports _message => _message
 
         If _returnCode <> '' And _statusMessage = '' Then
             If _message = '' Then
@@ -101,7 +101,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    Call post_usage_log_entry ('Update_EUS_Info_From_EUS_Imports', _usageMessage);
+    CALL post_usage_log_entry ('Update_EUS_Info_From_EUS_Imports', _usageMessage);
 
 END
 $$;

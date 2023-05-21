@@ -115,7 +115,7 @@ BEGIN
 
             _message := format('Auto-set proposal_id_auto_supersede for %s proposal(s) in t_eus_proposals: %s', _updateCount, _proposalList);
 
-            Call post_log_entry ('Normal', _message, 'Auto_Define_Superseded_EUS_Proposals');
+            CALL post_log_entry ('Normal', _message, 'Auto_Define_Superseded_EUS_Proposals');
         End If;
 
         RAISE INFO '%', _message;

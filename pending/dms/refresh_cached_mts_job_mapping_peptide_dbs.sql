@@ -68,7 +68,7 @@ BEGIN
 
         _currentLocation := 'Update t_mts_cached_data_status';
         --
-        Call update_mts_cached_data_status (
+        CALL update_mts_cached_data_status (
                     't_mts_pt_db_jobs_cached',
                     _incrementRefreshCount => false,
                     _fullRefreshPerformed => _fullRefreshPerformed,
@@ -138,7 +138,7 @@ BEGIN
 
         _currentLocation := 'Update stats in t_mts_cached_data_status';
 
-        Call update_mts_cached_data_status (
+        CALL update_mts_cached_data_status (
                     't_mts_pt_db_jobs_cached',
                     _incrementRefreshCount => true,
                     _insertCountNew => _mergeInsertCount,

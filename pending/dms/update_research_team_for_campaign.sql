@@ -217,7 +217,7 @@ BEGIN
 
         _matchCount := 0;
 
-        Call auto_resolve_name_to_username (_unknownUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+        CALL auto_resolve_name_to_username (_unknownUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
         If _matchCount = 1 Then
             -- Single match was found; update Username in Tmp_TeamMembers
@@ -284,7 +284,7 @@ BEGIN
 
     _usageMessage := 'Campaign: ' || _campaignName;
 
-    Call post_usage_log_entry ('Update_Research_Team_For_Campaign', _usageMessage);
+    CALL post_usage_log_entry ('Update_Research_Team_For_Campaign', _usageMessage);
 
     DROP TABLE Tmp_TeamMembers;
 END

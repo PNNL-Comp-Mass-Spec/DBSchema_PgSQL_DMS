@@ -90,7 +90,7 @@ BEGIN
             -- Delete the job
             ---------------------------------------------------
 
-            Call DeleteNewAnalysisJob (
+            CALL DeleteNewAnalysisJob (
                     _job,
                     _message => _msg,               -- Output
                     _returnCode => _returnCode,     -- Output

@@ -193,7 +193,7 @@ BEGIN
         ---------------------------------------------------
 
         If _workPackage <> '(lookup)' Then
-            Call validate_wp ( _workPackageNumber,
+            CALL validate_wp ( _workPackageNumber,
                                _allowNoneWP,
                                _message => _msg,
                                _returnCode => _returnCode);
@@ -269,7 +269,7 @@ BEGIN
             -- Validate batch fields
             ---------------------------------------------------
 
-            Call validate_requested_run_batch_params (
+            CALL validate_requested_run_batch_params (
                     _batchID => 0,
                     _name => _batchName,
                     _description => _batchDescription,
@@ -321,7 +321,7 @@ BEGIN
                 _requestNameLast := _requestName;
             End If;
 
-            Call dbo.add_update_requested_run (
+            CALL dbo.add_update_requested_run (
                                     _requestName => _requestName,
                                     _experimentName => _experimentName,
                                     _requesterUsername => _operatorUsername,
@@ -390,7 +390,7 @@ BEGIN
             Else
 
                 -- Auto-create a batch for the new requests
-                Call add_update_requested_run_batch (
+                CALL add_update_requested_run_batch (
                                                _id => _batchID,             -- Output
                                                _name => _batchName,
                                                _description => _batchDescription,

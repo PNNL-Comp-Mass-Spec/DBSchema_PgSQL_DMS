@@ -199,7 +199,7 @@ BEGIN
         -- Could not find entry in database for username _researcher
         -- Try to auto-resolve the name
 
-        Call auto_resolve_name_to_username (_researcher, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+        CALL auto_resolve_name_to_username (_researcher, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
         If _matchCount = 1 Then
             -- Single match found; update _researcher
@@ -285,7 +285,7 @@ BEGIN
 
         -- Update MemberCount
         --
-        Call update_experiment_group_member_count (_groupID => _id)
+        CALL update_experiment_group_member_count (_groupID => _id)
 
     End If;
 

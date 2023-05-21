@@ -157,7 +157,7 @@ Code 6 (Purged all data except QC folder)
         --
         _completionState := 3   ; -- complete
         _currentUpdateState := 2; -- Update Required
-        Call cap.make_new_archive_update_job (_datasetName, _resultsDirectoryName => '', _allowBlankResultsDirectory => true, _pushDatasetToMyEMSL => false, _message => _message);
+        CALL cap.make_new_archive_update_job (_datasetName, _resultsDirectoryName => '', _allowBlankResultsDirectory => true, _pushDatasetToMyEMSL => false, _message => _message);
     End If;
 
     If _completionState < 0 And _completionCode = 3 Then
@@ -176,7 +176,7 @@ Code 6 (Purged all data except QC folder)
         -- Drive Missing
         --
         _message := 'Drive not found for dataset ' || _datasetName;
-        Call post_log_entry 'Error', _message, _postedBy
+        CALL post_log_entry 'Error', _message, _postedBy
         _message := '';
 
         _completionState := 3   ; -- complete
@@ -198,7 +198,7 @@ Code 6 (Purged all data except QC folder)
         -- Dataset folder missing in archive, either in MyEMSL or at \\adms.emsl.pnl.gov\dmsarch
         --
         _message := 'Dataset folder not found in archive or in MyEMSL; most likely a MyEMSL timeout, but could be a permissions error; dataset ' || _datasetName;
-        Call post_log_entry 'Error', _message, _postedBy
+        CALL post_log_entry 'Error', _message, _postedBy
         _message := '';
 
         _completionState := 3   ; -- complete
@@ -208,7 +208,7 @@ Code 6 (Purged all data except QC folder)
         -- Archive is offline (Aurora is offline): \\adms.emsl.pnl.gov\dmsarch
         --
         _message := 'Archive is offline; cannot purge dataset ' || _datasetName;
-        Call post_log_entry 'Error', _message, _postedBy
+        CALL post_log_entry 'Error', _message, _postedBy
         _message := '';
 
         _completionState := 3   ; -- complete
@@ -277,7 +277,7 @@ Code 6 (Purged all data except QC folder)
     ---------------------------------------------------
 
     _usageMessage := 'Dataset: ' || _datasetName;
-    Call post_usage_log_entry ('Set_Purge_Task_Complete', _usageMessage);
+    CALL post_usage_log_entry ('Set_Purge_Task_Complete', _usageMessage);
 
     If _message <> '' Then
         RAISE WARNING '%', _message;

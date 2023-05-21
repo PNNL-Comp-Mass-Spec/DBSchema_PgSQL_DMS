@@ -135,7 +135,7 @@ BEGIN
     -- RAISE Warning 'Context: %', _exceptionContext;
 
     If _logError Then
-        Call public.post_log_entry ('Error', _message, _callingProcName, _callingProcSchema, _duplicateEntryHoldoffHours, _ignoreErrors => true);
+        CALL public.post_log_entry ('Error', _message, _callingProcName, _callingProcSchema, _duplicateEntryHoldoffHours, _ignoreErrors => true);
     End If;
 
     Return _message;

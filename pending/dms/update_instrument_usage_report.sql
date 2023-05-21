@@ -384,14 +384,14 @@ BEGIN
                   _month = month AND
                   (_instrument = '' OR dms_inst_id = _instrumentID)
 
-            Call update_dataset_interval _instrument, _startOfMonth, _endOfMonth, _message => _message
+            CALL update_dataset_interval _instrument, _startOfMonth, _endOfMonth, _message => _message
 
             _operation := 'refresh';
         End If;
 
         If _operation::citext = 'refresh' Then
             If char_length(Coalesce(_instrument, '')) > 0 Then
-                Call update_emsl_instrument_usage_report (_instrument, 0, _endOfMonth, _message => _msg, _returnCode => _returnCode);
+                CALL update_emsl_instrument_usage_report (_instrument, 0, _endOfMonth, _message => _msg, _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION '%', _msg;
@@ -415,7 +415,7 @@ BEGIN
                         _continue := false;
                     Else
                     --<y>
-                        Call update_emsl_instrument_usage_report _inst, 0, _endOfMonth, _msg output
+                        CALL update_emsl_instrument_usage_report _inst, 0, _endOfMonth, _msg output
                     End If;  --<y>
                 END LOOP; --<x>
             End If; --<m>

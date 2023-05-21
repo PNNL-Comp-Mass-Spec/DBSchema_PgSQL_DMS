@@ -386,7 +386,7 @@ BEGIN
             --
             _message := _message || ' and t_analysis_job';
 
-            Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+            CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
             ALTER TABLE t_analysis_job ENABLE TRIGGER trig_t_analysis_job_after_delete_all
 
@@ -413,7 +413,7 @@ BEGIN
                 _message := format('Deleted %s %s from t_analysis_job_batches since orphaned and older than %s',
                                     _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
 
-                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+                CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- _currentLocation := 'DROP Index IX_Tmp_T_Analysis_Job_Batch_ID_Include_Job';
@@ -437,7 +437,7 @@ BEGIN
                  _message := format('Deleted %s %s from t_analysis_job_request since orphaned and older than %s',
                                     _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
 
-                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+                CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- Delete orphaned entries in t_analysis_job_id that are older than _logDeleteThreshold
@@ -455,7 +455,7 @@ BEGIN
                 _message := format('Deleted %s %s from t_analysis_job_id since orphaned and older than %s',
                                     _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
 
-                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+                CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
         EXCEPTION
@@ -610,7 +610,7 @@ BEGIN
             --
             _message := _message || ' and t_dataset';
 
-            Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+            CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
             -- Delete orphaned entries in t_requested_run that are older than _deleteThreshold
             --
@@ -624,7 +624,7 @@ BEGIN
                 _message := format('Deleted %s %s from t_requested_run since orphaned and older than %s',
                                     _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
 
-                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+                CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- Delete orphaned entries in t_requested_run_batches that are older than _deleteThreshold
@@ -639,7 +639,7 @@ BEGIN
                 _message := format('Deleted %s %s from t_requested_run_batches since orphaned and older than %s',
                                     _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
 
-                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+                CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- Delete orphaned entries in t_dataset_scan_types
@@ -653,7 +653,7 @@ BEGIN
                 _message := format('Deleted %s %s from t_dataset_scan_types since orphaned',
                                     _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'));
 
-                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+                CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
         EXCEPTION
@@ -740,7 +740,7 @@ BEGIN
             --
             _message := _message || ' and t_experiments';
 
-            Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+            CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
             -- Delete orphaned entries in t_experiment_groups
             --
@@ -754,11 +754,11 @@ BEGIN
                 _message := format('Deleted %s %s from t_experiment_groups since orphaned and older than %s',
                                     _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'), _deleteThreshold);
 
-                Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+                CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
             End If;
 
             -- Assure that member_count is accurate in t_experiment_groups
-            Call update_experiment_group_member_count (_groupID => 0);
+            CALL update_experiment_group_member_count (_groupID => 0);
 
         EXCEPTION
             WHEN OTHERS THEN
@@ -818,7 +818,7 @@ BEGIN
         _message := format('Deleted %s experiment related %s from t_aux_info_value since orphaned',
                             _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'));
 
-        Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+        CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
     End If;
 
     -- Biomaterial (Target_Type_ID = 501)
@@ -846,7 +846,7 @@ BEGIN
         _message := format('Deleted %s biomaterial related %s from t_aux_info_value since orphaned',
                             _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'));
 
-        Call post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
+        CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
     End If;
 
     -- Datasets (Target_Type_ID = 502)

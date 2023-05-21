@@ -70,7 +70,7 @@ BEGIN
     --   'DataPackagePath'
     ---------------------------------------------------
 
-    Call sw.add_update_transfer_paths_in_params_using_data_pkg (
+    CALL sw.add_update_transfer_paths_in_params_using_data_pkg (
             _dataPackageID,
             _paramsUpdated => _paramsUpdated,   -- Input / Output
             _message => _message,               -- Output

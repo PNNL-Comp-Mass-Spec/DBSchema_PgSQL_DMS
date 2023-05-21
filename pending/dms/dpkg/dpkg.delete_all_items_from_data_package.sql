@@ -100,7 +100,7 @@ BEGIN
         -- Update item counts
         ---------------------------------------------------
 
-        Call update_data_package_item_counts (_packageID);
+        CALL update_data_package_item_counts (_packageID);
 
         UPDATE dpkg.t_data_package
         SET last_modified = CURRENT_TIMESTAMP

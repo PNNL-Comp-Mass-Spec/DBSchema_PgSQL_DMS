@@ -57,7 +57,7 @@ BEGIN
         If Not _logErrors Then
             RAISE WARNING '%', _errMsg;
         Else
-            Call post_log_entry ('Error', _errMsg, 'Check_Data_Integrity');
+            CALL post_log_entry ('Error', _errMsg, 'Check_Data_Integrity');
             RAISE INFO '%', _errMsg;
         End If;
 

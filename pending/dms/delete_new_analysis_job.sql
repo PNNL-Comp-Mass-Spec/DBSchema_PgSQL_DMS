@@ -102,7 +102,7 @@ BEGIN
 
     -- Delete the analysis job
     --
-    Call delete_analysis_job (_jobID, _callingUser, _infoOnly, _message => _message)
+    CALL delete_analysis_job (_jobID, _callingUser, _infoOnly, _message => _message)
 
 END
 $$;

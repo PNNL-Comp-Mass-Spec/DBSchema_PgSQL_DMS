@@ -70,7 +70,7 @@ BEGIN
         RETURN;
     End If;
 
-    Call public.validate_protein_collection_list_for_dataset_table (
+    CALL public.validate_protein_collection_list_for_dataset_table (
                         _protCollNameList => _protCollNameList,             -- Output
                         _collectionCountAdded => _collectionCountAdded,     -- Output
                         _showMessages => _showMessages,

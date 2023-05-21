@@ -159,7 +159,7 @@ BEGIN
         -- Call AddMissingFilterCriteria to add any missing criteria
         -----------------------------------------
         --
-        Call add_missing_filter_criteria (_destFilterSetID);
+        CALL add_missing_filter_criteria (_destFilterSetID);
     End If;
 
     _message := 'Duplicated criteria from Filter Set ID ' || _sourceFilterSetID::text || ' to Filter Set ID ' || _destFilterSetID::text;

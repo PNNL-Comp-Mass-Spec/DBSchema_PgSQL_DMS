@@ -196,7 +196,7 @@ BEGIN
         -- exec PostLogEntry 'Debug', _jobParam, 'AddUpdateLocalJobInBroker'
         -- RETURN;
 
-        Call sw.verify_job_parameters (
+        CALL sw.verify_job_parameters (
                 _jobParam output,
                 _scriptName,
                 _dataPackageID,
@@ -228,7 +228,7 @@ BEGIN
             ---------------------------------------------------
 
             -- Validate scripts 'Isobaric_Labeling' and 'MAC_iTRAQ'
-            Call sw.validate_data_package_for_mac_job
+            CALL sw.validate_data_package_for_mac_job
                                     _dataPackageID,
                                     _scriptName,
                                     _tool,                          -- Output
@@ -293,7 +293,7 @@ BEGIN
                 --   'DataPackagePath'
                 ---------------------------------------------------
 
-                Call sw.add_update_transfer_paths_in_params_using_data_pkg (
+                CALL sw.add_update_transfer_paths_in_params_using_data_pkg (
                         _dataPackageID,
                         _paramsUpdated,         -- Output
                         _message => _message);  -- Output
@@ -337,13 +337,13 @@ BEGIN
                 ---------------------------------------------------
                 --
                 If _dataPackageID > 0 Then
-                    Call sw.update_job_param_org_db_info_using_data_pkg _job, _dataPackageID, _deleteIfInvalid => 0, _message => _message output, _callingUser => _callingUser
+                    CALL sw.update_job_param_org_db_info_using_data_pkg _job, _dataPackageID, _deleteIfInvalid => 0, _message => _message output, _callingUser => _callingUser
                 End If;
 
                 If _reset = 'Y' Then
                 --<reset>
 
-                    Call sw.reset_aggregation_job (
+                    CALL sw.reset_aggregation_job (
                             _job,
                             _infoOnly => false,
                             _message => _message);
@@ -369,11 +369,11 @@ BEGIN
                 RAISE INFO '%', 'JobParamXML: ' || _jobParamXML::text;
 
                 If _logDebugMessages Then
-                    Call public.post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_in_Broker', 'sw');
+                    CALL public.post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_in_Broker', 'sw');
                 End If;
             End If;
 
-            Call sw.make_local_job_in_broker (
+            CALL sw.make_local_job_in_broker (
                     _scriptName,
                     _datasetName,
                     _priority,
@@ -413,7 +413,7 @@ BEGIN
                       ABS( extract(epoch FROM (CURRENT_TIMESTAMP - Entered)) ) < 15;
 
                 If FOUND Then
-                    Call alter_entered_by_user ('sw.t_log_entries', 'entry_id', _logEntryID, _callingUser, _entryDateColumnName => 'Entered');
+                    CALL alter_entered_by_user ('sw.t_log_entries', 'entry_id', _logEntryID, _callingUser, _entryDateColumnName => 'Entered');
                 End If;
             End If;
 

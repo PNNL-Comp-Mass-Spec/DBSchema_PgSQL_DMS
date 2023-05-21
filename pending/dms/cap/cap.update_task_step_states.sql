@@ -48,7 +48,7 @@ BEGIN
         -- Get unevaluated dependencies for steps that are finished
         -- (skipped or completed)
         --
-        Call cap.evaluate_task_step_dependencies (
+        CALL cap.evaluate_task_step_dependencies (
                             _message => _message,
                             _maxJobsToProcess => _maxJobsToProcess,
                             _loopingUpdateInterval => _LoopingUpdateInterval,
@@ -57,7 +57,7 @@ BEGIN
         -- Examine all dependencies for steps in 'Waiting' state
         -- and set state of steps that have them all satisfied
         --
-        Call cap.update_task_dependent_steps (
+        CALL cap.update_task_dependent_steps (
                             _message => _message,
                             _numStepsSkipped => _numStepsSkipped,
                             _infoOnly => _infoOnly,

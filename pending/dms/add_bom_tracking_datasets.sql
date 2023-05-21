@@ -85,7 +85,7 @@ BEGIN
             End If;
 
             If _mode::citext In ('add', 'debug') Then
-                Call add_bom_tracking_dataset (
+                CALL add_bom_tracking_dataset (
                         _month,
                         _year,
                         _instrumentName => _instrumentName,

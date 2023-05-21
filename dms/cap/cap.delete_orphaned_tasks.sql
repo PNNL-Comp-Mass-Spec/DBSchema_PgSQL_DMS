@@ -186,7 +186,7 @@ BEGIN
             _logMessage := format('Deleted orphaned %s capture task job %s for dataset %s since no longer defined in DMS',
                                     _scriptName, _job, _dataset);
 
-            Call public.post_log_entry ('Normal', _logMessage, 'Delete_Orphaned_Tasks', 'cap');
+            CALL public.post_log_entry ('Normal', _logMessage, 'Delete_Orphaned_Tasks', 'cap');
 
             _jobsDeleted := _jobsDeleted + 1;
         END LOOP;

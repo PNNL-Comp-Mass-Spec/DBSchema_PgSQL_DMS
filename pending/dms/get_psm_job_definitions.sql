@@ -53,7 +53,7 @@ BEGIN
 
     BEGIN
 
-        Call get_psm_job_defaults (
+        CALL get_psm_job_defaults (
                 _datasets => _datasets,                         -- Output
                 _metadata => _metadata,                         -- Output
                 _toolName => _toolName,                         -- Output

@@ -173,7 +173,7 @@ BEGIN
                   sw.t_jobs.state = 4;
 
             If Exists (SELECT * FROM Tmp_SJL) Then
-                Call sw.remove_selected_jobs (
+                CALL sw.remove_selected_jobs (
                         _infoOnly => false,
                         _message => _removeJobsMessage,
                         _logDeletions => true,

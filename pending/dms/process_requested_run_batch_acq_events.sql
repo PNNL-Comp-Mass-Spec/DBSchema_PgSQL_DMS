@@ -66,7 +66,7 @@ BEGIN
         FROM Tmp_BatchIDs
         ORDER BY BatchID
     LOOP
-        Call make_automatic_requested_run_factors (
+        CALL make_automatic_requested_run_factors (
                 _batchID,
                 'actual_run_order',
                 _message => _message,

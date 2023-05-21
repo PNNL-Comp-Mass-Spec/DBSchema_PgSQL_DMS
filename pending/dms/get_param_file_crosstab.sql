@@ -131,7 +131,7 @@ BEGIN
     -----------------------------------------------------------
 
     If _parameterFileTypeName = 'Sequest' Then
-        Call populate_param_file_info_table_sequest (
+        CALL populate_param_file_info_table_sequest (
                                 _paramFileInfoColumnList => _paramFileInfoColumnList,   -- Output
                                 _message => _message,                                   -- Output
                                 _returnCode => _returnCode);                            -- Output
@@ -146,7 +146,7 @@ BEGIN
     -----------------------------------------------------------
     -- Populate Tmp_ParamFileModResults
     -----------------------------------------------------------
-    Call populate_param_file_mod_info_table (
+    CALL populate_param_file_mod_info_table (
                         _showModSymbol, _showModName, _showModMass,
                         _useModMassAlternativeName,
                         _massModFilterTextColumn,

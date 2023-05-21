@@ -90,7 +90,7 @@ BEGIN
 
     _colList := ' ''x'' as sel, batch_id, name, status, dataset_id, request, block, run_order';
 
-    Call make_factor_crosstab_sql (_colList, _sql => _sql);
+    CALL make_factor_crosstab_sql (_colList, _sql => _sql);
 
     -----------------------------------------
     -- Return the output table

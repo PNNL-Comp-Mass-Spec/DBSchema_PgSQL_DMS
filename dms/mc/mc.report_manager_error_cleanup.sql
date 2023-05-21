@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **
 **  Example Usage:
 **
-**      Call mc.report_manager_error_cleanup ('monroe_analysis', 2);
+**      CALL mc.report_manager_error_cleanup ('monroe_analysis', 2);
 **
 **  Auth:   mem
 **  Date:   09/10/2009 mem - Initial version
@@ -107,7 +107,7 @@ BEGIN
         End If;
     End If;
 
-    Call public.post_log_entry (_messageType, _message, 'Report_Manager_Error_Cleanup', 'mc');
+    CALL public.post_log_entry (_messageType, _message, 'Report_Manager_Error_Cleanup', 'mc');
 
     ---------------------------------------------------
     -- Lookup the value of ManagerErrorCleanupMode in mc.t_param_value

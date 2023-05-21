@@ -185,7 +185,7 @@ BEGIN
 
     End If;
 
-    -- call PostLogEntry ('Debug', _message, 'UpdateCachedDatasetInstruments');
+    -- CALL PostLogEntry ('Debug', _message, 'UpdateCachedDatasetInstruments');
 
 END
 $$;

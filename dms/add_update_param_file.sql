@@ -256,7 +256,7 @@ BEGIN
 
                 _validateMods := CASE WHEN _validateUnimod > 0 THEN true ELSE false END;
 
-                Call store_param_file_mass_mods (
+                CALL store_param_file_mass_mods (
                      _paramFileID      => 0,
                      _mods             => _paramfileMassMods,
                      _infoOnly         => CASE WHEN _mode Like 'preview%' THEN true ELSE false END,
@@ -339,7 +339,7 @@ BEGIN
 
                 _validateMods := CASE WHEN _validateUnimod > 0 THEN true ELSE false END;
 
-                Call store_param_file_mass_mods (
+                CALL store_param_file_mass_mods (
                     _paramFileID,
                     _mods => _paramfileMassMods,
                     _infoOnly => false,

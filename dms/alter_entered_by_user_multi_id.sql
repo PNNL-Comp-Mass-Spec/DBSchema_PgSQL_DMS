@@ -106,7 +106,7 @@ BEGIN
         FROM Tmp_ID_Update_List
         ORDER BY TargetID
     LOOP
-        Call public.alter_entered_by_user(
+        CALL public.alter_entered_by_user(
                             _targetTableSchema,
                             _targetTableName,
                             _targetIDColumnName,

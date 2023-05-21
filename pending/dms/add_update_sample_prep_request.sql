@@ -340,7 +340,7 @@ BEGIN
             -- Validate instrument group and dataset type
             ---------------------------------------------------
 
-            Call validate_instrument_group_and_dataset_type (
+            CALL validate_instrument_group_and_dataset_type (
                             _datasetType => _datasetType,
                             _instrumentGroup => _instrumentGroup,           -- Output
                             _datasetTypeID => _datasetTypeID output,        -- Output
@@ -406,7 +406,7 @@ BEGIN
         -- Resolve _tissue to BTO identifier
         ---------------------------------------------------
 
-        Call get_tissue_id (
+        CALL get_tissue_id (
                 _tissueNameOrID => _tissue,
                 _tissueIdentifier => _tissueIdentifier output,
                 _tissueName => _tissueName output,
@@ -432,7 +432,7 @@ BEGIN
         -- Names should be in the form 'Last Name, First Name (Username)'
         ---------------------------------------------------
 
-        Call validate_request_users (
+        CALL validate_request_users (
                 _requestName,
                 'add_update_sample_prep_request',
                 _requestedPersonnel => _requestedPersonnel,     -- Output
@@ -480,7 +480,7 @@ BEGIN
             _eusUserID := Null;
         End If;
 
-        Call validate_eus_usage (
+        CALL validate_eus_usage (
                         _eusUsageType   => _eusUsageType,       -- Input/Output
                         _eusProposalID  => _eusProposalID,      -- Input/Output
                         _eusUsersList   => _eusUsersList,       -- Input/Output
@@ -513,7 +513,7 @@ BEGIN
         -- Validate the work package
         ---------------------------------------------------
 
-        Call validate_wp ( _workPackageNumber,
+        CALL validate_wp ( _workPackageNumber,
                            _allowNoneWP,
                            _message => _msg,
                            _returnCode => _returnCode);
@@ -700,7 +700,7 @@ BEGIN
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
             If char_length(_callingUser) > 0 Then
-                Call alter_entered_by_user ('t_sample_prep_request_updates', 'request_id', _id, _callingUser,
+                CALL alter_entered_by_user ('t_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                             _entryDateColumnName => 'Date_of_Change', _enteredByColumnName => 'System_Account');
             End If;
 
@@ -757,7 +757,7 @@ BEGIN
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
             If char_length(_callingUser) > 0 Then
-                Call alter_entered_by_user ('t_sample_prep_request_updates', 'request_id', _id, _callingUser,
+                CALL alter_entered_by_user ('t_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                             _entryDateColumnName => 'Date_of_Change', _enteredByColumnName => 'System_Account');
             End If;
 

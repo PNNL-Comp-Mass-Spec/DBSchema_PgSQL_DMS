@@ -168,7 +168,7 @@ BEGIN
                     _warningMessage := '';
                     _readyToProcess := false;
 
-                    Call sw.lookup_source_job_from_special_processing_text (
+                    CALL sw.lookup_source_job_from_special_processing_text (
                                 _jobInfo.Job,
                                 _jobInfo.Dataset,
                                 _jobInfo.SpecialProcessingText,
@@ -233,16 +233,16 @@ BEGIN
                         _message := format('Job %s has been in state "Special Proc. Waiting" for over %s hours', _jobInfo.Job, _waitThresholdHours);
 
                         If _datasetIsBad Then
-                            Call delete_analysis_job (_jobInfo.Job);
+                            CALL delete_analysis_job (_jobInfo.Job);
 
                             _message := _message || '; job deleted since dataset is bad';
-                            Call post_log_entry ('Warning', _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => 0);
+                            CALL post_log_entry ('Warning', _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => 0);
                         Else
                             If _jobInfo.DatasetRating = -5 Then
                                 _message := 'Not released dataset: ' || _message;
                             End If;
 
-                            Call post_log_entry ('Error',   _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => _errorMessagePostingIntervalHours);
+                            CALL post_log_entry ('Error',   _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => _errorMessagePostingIntervalHours);
                         End If;
                     End If;
 

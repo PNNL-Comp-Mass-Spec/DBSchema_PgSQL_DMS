@@ -69,7 +69,7 @@ BEGIN
 
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Entering make_new_archive_tasks_from_dms';
-        Call public.post_log_entry('Progress', _statusMessage, 'Make_New_Archive_Tasks_From_DMS', 'cap');
+        CALL public.post_log_entry('Progress', _statusMessage, 'Make_New_Archive_Tasks_From_DMS', 'cap');
     End If;
 
     ---------------------------------------------------
@@ -79,7 +79,7 @@ BEGIN
 
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Querying DMS';
-        Call public.post_log_entry('Progress', _statusMessage, 'Make_New_Archive_Tasks_From_DMS', 'cap');
+        CALL public.post_log_entry('Progress', _statusMessage, 'Make_New_Archive_Tasks_From_DMS', 'cap');
     End If;
 
     If Not _infoOnly Then
@@ -151,7 +151,7 @@ BEGIN
 
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Exiting';
-        Call public.post_log_entry('Progress', _statusMessage, 'Make_New_Archive_Tasks_From_DMS', 'cap');
+        CALL public.post_log_entry('Progress', _statusMessage, 'Make_New_Archive_Tasks_From_DMS', 'cap');
     End If;
 
 END

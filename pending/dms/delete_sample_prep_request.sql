@@ -90,7 +90,7 @@ BEGIN
 
     -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
     If char_length(_callingUser) > 0 Then
-        Call alter_entered_by_user (
+        CALL alter_entered_by_user (
                 't_sample_prep_request_updates', 'request_id',
                 _requestID, _callingUser,
                 _entryDateColumnName => 'Date_of_Change',

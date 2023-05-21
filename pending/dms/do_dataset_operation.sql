@@ -201,7 +201,7 @@ BEGIN
             -- Delete the dataset
             ---------------------------------------------------
 
-            Call DeleteDataset (_datasetName, _infoOnly => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
+            CALL DeleteDataset (_datasetName, _infoOnly => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
             --
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not delete dataset "%"', _datasetName;
@@ -244,7 +244,7 @@ BEGIN
                             _logMsg := _msg || '; user ' || _callingUser;
                         End If;
 
-                        Call post_log_entry ('Error', _logMsg, 'Do_Dataset_Operation');
+                        CALL post_log_entry ('Error', _logMsg, 'Do_Dataset_Operation');
 
                         _msg := _msg || '; please contact a system administrator for further assistance';
                     Else
@@ -255,7 +255,7 @@ BEGIN
                             _msg := _msg || '; user ' || _callingUser;
                         End If;
 
-                        Call post_log_entry ('Warning', _msg, 'Do_Dataset_Operation');
+                        CALL post_log_entry ('Warning', _msg, 'Do_Dataset_Operation');
                     End If;
 
                 Else
@@ -284,7 +284,7 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (4, _datasetID, _newState, _callingUser);
+                CALL alter_event_log_entry_user (4, _datasetID, _newState, _callingUser);
             End If;
 
             _validMode := true;

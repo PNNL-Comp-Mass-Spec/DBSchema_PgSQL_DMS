@@ -140,7 +140,7 @@ BEGIN
         -- Delete the associated items
         ---------------------------------------------------
         --
-        Call dpkg.delete_all_items_from_data_package (
+        CALL dpkg.delete_all_items_from_data_package (
                         _packageID => _packageID,
                         _mode => 'delete',
                         _message => _message,           -- Output
@@ -174,7 +174,7 @@ BEGIN
                                 _lastDatasetOrExperiment);
         End If;
 
-        Call public.post_log_entry ('Normal', _logMessage, 'Delete_Data_Package', 'dpkg');
+        CALL public.post_log_entry ('Normal', _logMessage, 'Delete_Data_Package', 'dpkg');
 
         ---------------------------------------------------
         -- Display some messages

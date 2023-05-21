@@ -271,7 +271,7 @@ BEGIN
         If Coalesce(_logSPUsage, 0) <> 0 Then
             INSERT INTO sw.t_sp_usage ( Posted_By,
                                         ProcessorID,
-                                        Calling_User )
+                                        CALLing_User )
             VALUES('request_step_task_xml', _processorID, session_user)
         End If;
 
@@ -1257,7 +1257,7 @@ BEGIN
                                     END
                                     );
 
-                Call public.post_log_entry ('Debug', _debugMsg, 'Request_Step_Task_XML', 'sw');
+                CALL public.post_log_entry ('Debug', _debugMsg, 'Request_Step_Task_XML', 'sw');
             */
 
             UPDATE sw.t_job_steps
@@ -1368,7 +1368,7 @@ BEGIN
         -- Job was assigned; return parameters in XML
         ---------------------------------------------------
         --
-        Call sw.get_job_step_params_xml (
+        CALL sw.get_job_step_params_xml (
                                 _job,
                                 _step,
                                 _parameters output,

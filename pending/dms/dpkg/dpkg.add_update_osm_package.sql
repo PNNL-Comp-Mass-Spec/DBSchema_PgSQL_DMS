@@ -224,7 +224,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            Call Make_OSM_Package_Storage_Folder (
+            CALL Make_OSM_Package_Storage_Folder (
                         _id,
                         _mode,
                         _message => _message,           -- Output

@@ -239,7 +239,7 @@ BEGIN
         If _mergeCount > 0 Then
             _statusMsg := format('Added/updated %s rows for %s', _mergeCount, _currentRange);
             RAISE INFO '%', _statusMsg;
-            Call public.post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
+            CALL public.post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
         End If;
 
         ---------------------------------------------------
@@ -265,7 +265,7 @@ BEGIN
         If _deleteCount > 0 Then
             _statusMsg := format('Deleted %s extra rows from pc.t_protein_collection_members_cached fo %s', _deleteCount, _currentRange);
             RAISE INFO '%', _statusMsg;
-            Call public.post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
+            CALL public.post_log_entry ('Normal', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
         End If;
 
         ---------------------------------------------------
@@ -332,7 +332,7 @@ BEGIN
 
         RAISE INFO '%', _statusMsg;
 
-        Call public.post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc')
+        CALL public.post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc')
     END LOOP;
 
     DROP TABLE Tmp_ProteinCollections;

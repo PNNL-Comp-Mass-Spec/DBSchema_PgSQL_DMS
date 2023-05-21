@@ -101,7 +101,7 @@ BEGIN
                 RAISE INFO 'Add new row to t_predefined_analysis_scheduling_queue for %', _datasetName
             Else
                 INSERT INTO t_predefined_analysis_scheduling_queue( dataset_id,;
-                                                                    CallingUser,
+                                                                    CALLingUser,
                                                                     AnalysisToolNameFilter,
                                                                     ExcludeDatasetsNotReleased,
                                                                     PreventDuplicateJobs,

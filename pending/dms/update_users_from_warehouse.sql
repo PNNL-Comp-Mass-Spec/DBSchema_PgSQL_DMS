@@ -236,7 +236,7 @@ BEGIN
             _message := format('%s: %s', _message, _addon);
 
             If Not _infoOnly Then
-                Call post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
+                CALL post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
             Else
                 RAISE WARNING '%', _message;
             End If;
@@ -268,7 +268,7 @@ BEGIN
                 _message := format('Updated %s %s using the PNNL Data Warehouse', _updateCount, public.check_plural(_updateCount, 'user', 'users');
                 RAISE INFO '%', _message;
 
-                Call post_log_entry ('Normal', _message, 'Update_Users_From_Warehouse');
+                CALL post_log_entry ('Normal', _message, 'Update_Users_From_Warehouse');
             End If;
 
         Else
@@ -325,7 +325,7 @@ BEGIN
 
             _message format('%s: %s', _message, _addon);
 
-            Call post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
+            CALL post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
 
             DELETE FROM Tmp_UserProblems;
         End If;
@@ -360,7 +360,7 @@ BEGIN
 
             _message := format('%s: %s', _message, _addon);
 
-            Call post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
+            CALL post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
 
             DELETE FROM Tmp_UserProblems;
         End If;

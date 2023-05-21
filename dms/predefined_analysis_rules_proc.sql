@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetnam
 **  Use this to view the data returned by the _results cursor
 **
 **      BEGIN;
-**      CALL public.predefined_analysis_rules_proc (
+**          CALL public.predefined_analysis_rules_proc (
 **              _datasetName => 'QC_Mam_19_01_d_09Aug22_Pippin_WBEH-22-02-04-50u'
 **          );
 **          FETCH ALL FROM _results;

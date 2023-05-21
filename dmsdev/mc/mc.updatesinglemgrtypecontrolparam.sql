@@ -72,7 +72,7 @@ BEGIN
     -- AlterEnteredByUserMultiID and AlterEventLogEntryUserMultiID for _callingUser
     ---------------------------------------------------
     --
-    Call mc.UpdateSingleMgrParamWork (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+    CALL mc.UpdateSingleMgrParamWork (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -87,7 +87,7 @@ EXCEPTION
     RAISE Warning '%', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
+    CALL PostLogEntry ('Error', _message, 'UpdateSingleMgrTypeControlParam', 'public');
 END
 $$;
 

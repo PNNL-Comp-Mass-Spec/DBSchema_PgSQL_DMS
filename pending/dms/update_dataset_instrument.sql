@@ -189,7 +189,7 @@ BEGIN
             Instrument_Class = _instrumentClassNew
         WHERE Job = _captureJob And Dataset_ID = _datasetId
 
-        Call cap.update_parameters_for_job (_captureJob);
+        CALL cap.update_parameters_for_job (_captureJob);
     Else
         DELETE cap.t_tasks
         WHERE Job = _captureJob And Dataset_ID = _datasetId
@@ -205,7 +205,7 @@ BEGIN
                 'Storage path ID changed from ' ||
                 Cast(_storagePathIdOld As text) || ' to ' || Cast(_storagePathIdNew As text)
 
-    Call post_log_entry ('Normal', _message, 'Update_Dataset_Instrument');
+    CALL post_log_entry ('Normal', _message, 'Update_Dataset_Instrument');
 
     ---------------------------------------------------
     -- Done

@@ -162,7 +162,7 @@ BEGIN
         _allowNonReleasedDatasets := true;
     End If;
 
-    Call validate_analysis_job_request_datasets (
+    CALL validate_analysis_job_request_datasets (
                 _message => _message,                                                   -- Output
                 _returnCode => _returnCode,                                             -- Output
                 _autoRemoveNotReleasedDatasets => _autoRemoveNotReleasedDatasets,
@@ -202,7 +202,7 @@ BEGIN
         -- try to auto-resolve using the name column in t_users
         ---------------------------------------------------
 
-        Call auto_resolve_name_to_username (_ownerUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+        CALL auto_resolve_name_to_username (_ownerUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
         If _matchCount = 1 Then
             -- Single match was found; update _ownerUsername
@@ -609,7 +609,7 @@ BEGIN
     -- Check protein parameters
     ---------------------------------------------------
 
-    Call validate_protein_collection_params (
+    CALL validate_protein_collection_params (
                     _toolName,
                     _organismDBName      => _organismDBName,        -- Output
                     _organismName        => _organismName,

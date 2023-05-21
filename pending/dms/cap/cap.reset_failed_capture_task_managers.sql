@@ -69,7 +69,7 @@ BEGIN
         -- Call the manager control error cleanup procedure
         -----------------------------------------------------------
         --
-        Call mc.set_manager_error_cleanup_mode (_managerList, _cleanupMode => 1, _showTable => 1, _infoOnly => _infoOnly);
+        CALL mc.set_manager_error_cleanup_mode (_managerList, _cleanupMode => 1, _showTable => 1, _infoOnly => _infoOnly);
 
     End If;
 

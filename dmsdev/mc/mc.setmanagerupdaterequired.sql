@@ -54,7 +54,7 @@ BEGIN
         -- Populate TmpManagerList with the managers in _mgrList
         ---------------------------------------------------
         --
-        Call ParseManagerNameList (_mgrList, _removeUnknownManagers => 1, _message => _message);
+        CALL ParseManagerNameList (_mgrList, _removeUnknownManagers => 1, _message => _message);
 
         IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
             _message := 'No valid managers were found in _mgrList';
@@ -249,7 +249,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'SetManagerUpdateRequired', 'mc');
+    CALL PostLogEntry ('Error', _message, 'SetManagerUpdateRequired', 'mc');
 
 END
 $$;

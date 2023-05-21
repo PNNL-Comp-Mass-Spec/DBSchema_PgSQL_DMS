@@ -869,7 +869,7 @@ BEGIN
                     If char_length(_callingUser) > 0 Then
                         -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
                         --
-                        Call alter_entered_by_user ('t_experiment_plex_members_history', 'plex_exp_id', _currentPlexExperimentId, _callingUser);
+                        CALL alter_entered_by_user ('t_experiment_plex_members_history', 'plex_exp_id', _currentPlexExperimentId, _callingUser);
                     End If;
                 End If;  -- </AddUpdatePlexInfo>
 

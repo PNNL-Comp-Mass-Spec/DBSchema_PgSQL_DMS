@@ -580,7 +580,7 @@ BEGIN
 
             _logMessage := format('%s, processors %s', _statusMessageInfo, _updatedProcessors);
 
-            Call public.post_log_entry('Debug', _logMessage, 'Update_Manager_and_Task_Status_XML', 'sw');
+            CALL public.post_log_entry('Debug', _logMessage, 'Update_Manager_and_Task_Status_XML', 'sw');
         End If;
 
     EXCEPTION

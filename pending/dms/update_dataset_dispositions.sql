@@ -274,7 +274,7 @@ BEGIN
             --
             If _recycleRequest = 'yes' Then
                 BEGIN
-                    Call unconsume_scheduled_run (
+                    CALL unconsume_scheduled_run (
                             _curDatasetName,
                             _retainHistory => true,
                             _message => _message,           -- Output
@@ -315,7 +315,7 @@ BEGIN
             If _curRatingID = -10 and _ratingID = 5 AND _curDatasetState IN (3, 4) Then
                 -- schedule default analyses for this dataset
                 --
-                Call schedule_predefined_analysis_jobs (_curDatasetName, _callingUser, _returnCode => _returnCode);
+                CALL schedule_predefined_analysis_jobs (_curDatasetName, _callingUser, _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
                     ROLLBACK;
@@ -330,7 +330,7 @@ BEGIN
             BEGIN
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    Call alter_event_log_entry_user (8, _curDatasetID, _ratingID, _callingUser);
+                    CALL alter_event_log_entry_user (8, _curDatasetID, _ratingID, _callingUser);
                 End If;
             EXCEPTION
                 WHEN OTHERS THEN
@@ -362,7 +362,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := _datasetCount::text || ' datasets updated';
-    Call post_usage_log_entry ('Update_Dataset_Dispositions', _usageMessage);
+    CALL post_usage_log_entry ('Update_Dataset_Dispositions', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
 END

@@ -34,7 +34,7 @@ BEGIN
 
     _jobToPreview := Coalesce(_jobToPreview, 0);
 
-    Call sw.create_job_steps (
+    CALL sw.create_job_steps (
             _message => _message,           -- Output
             _returnCode => _returnCode,     -- Output
             _existingJob => _jobToPreview,

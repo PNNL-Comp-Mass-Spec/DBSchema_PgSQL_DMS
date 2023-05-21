@@ -126,7 +126,7 @@ BEGIN
             WHERE Job = _job;
 
             _message := format('Deleted job %s from t_tasks', _job);
-            Call public.post_log_entry('Normal', _message, 'Remove_Selected_Jobs', 'cap');
+            CALL public.post_log_entry('Normal', _message, 'Remove_Selected_Jobs', 'cap');
 
         END LOOP; -- </c>
 

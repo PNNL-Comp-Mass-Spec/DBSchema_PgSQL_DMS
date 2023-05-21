@@ -31,7 +31,7 @@ AS $$
 **                         - Now copying batch and blocking info from the existing request to the new auto-request created by AddRequestedRunToExistingDataset
 **          12/12/2011 mem - Updated log message when re-using an existing request
 **          12/14/2011 mem - Added parameter _callingUser, which is passed to AddRequestedRunToExistingDataset and alter_event_log_entry_user
-**          11/16/2016 mem - Call update_cached_requested_run_eus_users to update T_Active_Requested_Run_Cached_EUS_Users
+**          11/16/2016 mem - call update_cached_requested_run_eus_users to update T_Active_Requested_Run_Cached_EUS_Users
 **          11/21/2016 mem - Add parameter _logDebugMessages
 **          05/22/2017 mem - No longer abort the addition if a request already exists named AutoReq_DatasetName
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -80,7 +80,7 @@ BEGIN
 
     If _logDebugMessages Then
         _logMessage := format('Start transaction for creating a new auto-request for dataset ID %s', _existingDatasetID);
-        Call post_log_entry ('Debug', _logMessage, 'Consume_Scheduled_Run');
+        CALL post_log_entry ('Debug', _logMessage, 'Consume_Scheduled_Run');
     End If;
 
     BEGIN
@@ -108,7 +108,7 @@ BEGIN
             SET dataset_id = Null
             WHERE request_id = _requestID;
 
-            Call add_requested_run_to_existing_dataset (
+            CALL add_requested_run_to_existing_dataset (
                         _datasetID => _ExistingDatasetID,
                         _datasetName => '',
                         _templateRequestID => _requestID,
@@ -129,7 +129,7 @@ BEGIN
                 _logMessage := format('Added new automatic requested run since re-using request %s; dataset "%s" is now associated with request %s',
                                         _requestID, _existingDatasetName, _newAutoRequestID);
 
-                Call post_log_entry ('Warning', _logMessage, 'Consume_Scheduled_Run');
+                CALL post_log_entry ('Warning', _logMessage, 'Consume_Scheduled_Run');
 
                 -- Copy batch and blocking information from the existing request to the new request
                 --
@@ -153,7 +153,7 @@ BEGIN
                                       'however, add_requested_run_to_existing_dataset was unable to auto-create a new Requested Run',
                                         _existingDatasetName, _requestID);
 
-                Call post_log_entry ('Error', _logMessage, 'Consume_Scheduled_Run');
+                CALL post_log_entry ('Error', _logMessage, 'Consume_Scheduled_Run');
 
             End If;
 
@@ -176,14 +176,14 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE (state_name = _status)
 
-            Call alter_event_log_entry_user (11, _requestID, _statusID, _callingUser);
+            CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser);
         End If;
 
     END;
 
     If _logDebugMessages Then
         _logMessage := format('Call update_cached_requested_run_eus_users for %s', _requestID);
-        Call post_log_entry ('Debug', _logMessage, 'Consume_Scheduled_Run');
+        CALL post_log_entry ('Debug', _logMessage, 'Consume_Scheduled_Run');
     End If;
 
     ---------------------------------------------------
@@ -191,7 +191,7 @@ BEGIN
     -- This procedure will delete the cached EUS user list from t_active_requested_run_cached_eus_users for this request ID
     ---------------------------------------------------
     --
-    Call update_cached_requested_run_eus_users (
+    CALL update_cached_requested_run_eus_users (
             _requestID,
             _message => _message,           -- Output
             _returnCode => _returnCode);    -- Output

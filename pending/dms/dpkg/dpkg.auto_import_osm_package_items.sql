@@ -74,7 +74,7 @@ BEGIN
             _prevId := _currentId;
             -- SELECT '->' + CONVERT(text, _currentId)
 
-            Call Update_OSM_Package_Items (
+            CALL Update_OSM_Package_Items (
                     _currentId,
                     _itemType,
                     _itemList,

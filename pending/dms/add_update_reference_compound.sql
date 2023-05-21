@@ -304,7 +304,7 @@ BEGIN
             -- Could not find entry in database for username _contactUsername
             -- Try to auto-resolve the name
 
-            Call auto_resolve_name_to_username (_contactUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_contactUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match found; update _contactUsername
@@ -369,13 +369,13 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (13, _compoundID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (13, _compoundID, _stateID, _callingUser);
             End If;
 
             -- Material movement logging
             --
             If _curContainerID <> _containerID Then
-                Call post_material_log_entry
+                CALL post_material_log_entry
                     'Reference Compound Move',  -- Type
                     _compoundIdAndName,         -- Item
                     'na',                       -- Initial State (aka Old container)
@@ -424,7 +424,7 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _containerID Then
-                Call post_material_log_entry
+                CALL post_material_log_entry
                     'Reference Compound Move',  -- Type
                     _compoundIdAndName,         -- Item
                     _curContainerName,          -- Initial State (aka Old container)

@@ -293,7 +293,7 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        Call post_usage_log_entry ('Store_QCART_Results', _usageMessage;);
+        CALL post_usage_log_entry ('Store_QCART_Results', _usageMessage;);
     End If;
 
     DROP TABLE Tmp_DatasetInfo;

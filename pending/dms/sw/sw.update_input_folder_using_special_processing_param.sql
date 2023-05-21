@@ -153,7 +153,7 @@ BEGIN
 
     -- Lookup the SourceJob info for each job in Tmp_Source_Job_Folders
     -- This procedure examines the Special_Processing parameter for each job (in sw.t_job_parameters)
-    Call sw.lookup_source_job_from_special_processing_param (_message => _message output, _previewSql => _infoOnly)
+    CALL sw.lookup_source_job_from_special_processing_param (_message => _message output, _previewSql => _infoOnly)
 
     If Not _infoOnly Then
     -- <b2>
@@ -180,15 +180,15 @@ BEGIN
 
             If Coalesce(_jobInfo.SourceJob, 0) > 0 Then
                 _sourceJobText := _jobInfo.SourceJob::text;
-                Call sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob', _sourceJobText, _deleteParam => false, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob', _sourceJobText, _deleteParam => false, _infoOnly => false);
             End If;
 
             If Coalesce(_jobInfo.SourceJob2, 0) > 0 Then
                 _sourceJobText := _jobInfo.SourceJob2::text;
-                Call sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2', _sourceJobText, _deleteParam => false, _infoOnly => false);
-                Call sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2Dataset', _jobInfo.SourceJob2Dataset, _deleteParam => false, _infoOnly => false);
-                Call sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2FolderPath', _jobInfo.SourceJob2FolderPath, _deleteParam => false, _infoOnly => false);
-                Call sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2FolderPathArchive', _jobInfo.SourceJob2FolderPathArchive, _deleteParam => false, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2', _sourceJobText, _deleteParam => false, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2Dataset', _jobInfo.SourceJob2Dataset, _deleteParam => false, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2FolderPath', _jobInfo.SourceJob2FolderPath, _deleteParam => false, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2FolderPathArchive', _jobInfo.SourceJob2FolderPathArchive, _deleteParam => false, _infoOnly => false);
             End If;
 
         END LOOP; -- </c>

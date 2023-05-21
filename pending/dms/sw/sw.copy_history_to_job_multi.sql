@@ -444,7 +444,7 @@ BEGIN
         --
         _message := format('Copied %s jobs from the history tables to the main tables', _jobsCopied);
 
-        Call public.post_log_entry ('Normal', _message, 'Copy_History_To_Job_Multi', 'sw');
+        CALL public.post_log_entry ('Normal', _message, 'Copy_History_To_Job_Multi', 'sw');
 
         _currentLocation := 'Updating job parameters and storage server info';
 
@@ -459,7 +459,7 @@ BEGIN
             --
             _currentLocation := format('Call update_job_parameters for job ', _job);
             --
-            Call sw.update_job_parameters (_job, _infoOnly => false);
+            CALL sw.update_job_parameters (_job, _infoOnly => false);
 
             ---------------------------------------------------
             -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
@@ -467,14 +467,14 @@ BEGIN
             --
             _currentLocation := format('Call validate_job_server_info for job ', _job);
             --
-            Call sw.validate_job_server_info (_job, _useJobParameters => true);
+            CALL sw.validate_job_server_info (_job, _useJobParameters => true);
 
             _jobsRefreshed := _jobsRefreshed + 1;
 
             If extract(epoch FROM (clock_timestamp() - _lastStatusTime)) >= 60 Then
                 _lastStatusTime := clock_timestamp();
                 _progressMsg := format('Updating job parameters and storage info for copied jobs: %s / %s', _jobsRefreshed, _jobsCopied);
-                Call public.post_log_entry ('Progress', _progressMsg, 'Copy_History_To_Job_Multi', 'sw');
+                CALL public.post_log_entry ('Progress', _progressMsg, 'Copy_History_To_Job_Multi', 'sw');
             End If;
 
         END LOOP;

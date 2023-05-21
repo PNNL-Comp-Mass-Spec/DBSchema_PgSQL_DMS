@@ -425,9 +425,9 @@ BEGIN
         -- <c>
 
             If _infoOnly Then
-                RAISE INFO 'call update_dms_dataset_state Job=%, NewJobStater=%', _jobInfo.Job, _jobInfo.NewState;
+                RAISE INFO 'Call update_dms_dataset_state Job=%, NewJobStater=%', _jobInfo.Job, _jobInfo.NewState;
             Else
-                Call cap.update_dms_dataset_state(_jobInfo.Job,
+                CALL cap.update_dms_dataset_state(_jobInfo.Job,
                                                   _jobInfo.Dataset_Name,
                                                   _jobInfo.Dataset_ID,
                                                   _jobInfo.Script,
@@ -437,7 +437,7 @@ BEGIN
                                                   _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
-                    Call public.post_log_entry('Error', _message, 'Update_Task_State', 'cap');
+                    CALL public.post_log_entry('Error', _message, 'Update_Task_State', 'cap');
                 End If;
             End If;
 
@@ -449,7 +449,7 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO 'Call update_dms_prep_state Job=%, NewJobState=%', _jobInfo.Job, _jobInfo.NewState;
             Else
-                Call cap.update_dms_prep_state (
+                CALL cap.update_dms_prep_state (
                             _jobInfo.Job,
                             _jobInfo.Script,
                             _jobInfo.NewState,
@@ -457,7 +457,7 @@ BEGIN
                             _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
-                    Call public.post_log_entry('Error', _message, 'Update_Task_State', 'cap');
+                    CALL public.post_log_entry('Error', _message, 'Update_Task_State', 'cap');
                 End If;
             End If;
         End If; -- </d>
@@ -471,9 +471,9 @@ BEGIN
            Not (_jobInfo.OldState = 5 And _jobInfo.NewState = 2) THEN
 
             If _infoOnly Then
-                RAISE INFO 'call copy_task_to_history Job=%, NewState=%', _jobInfo.Job, _jobInfo.NewState;
+                RAISE INFO 'Call copy_task_to_history Job=%, NewState=%', _jobInfo.Job, _jobInfo.NewState;
             Else
-                Call cap.copy_task_to_history (_jobInfo.Job, _jobInfo.NewState, _message => _message);
+                CALL cap.copy_task_to_history (_jobInfo.Job, _jobInfo.NewState, _message => _message);
             End If;
         End If;
 
@@ -481,7 +481,7 @@ BEGIN
 
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := format('... Updating capture task job state: %s / %s', _jobsProcessed, _jobCountToProcess);
-            Call public.post_log_entry('Progress', _statusMessage, 'Update_Task_State', 'cap');
+            CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_State', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;

@@ -204,7 +204,7 @@ BEGIN
         _message := '';
     End If;
 
-    Call pc.validate_analysis_job_protein_parameters (
+    CALL pc.validate_analysis_job_protein_parameters (
             _organismName,
             _ownerUsername,
             _organismDBName,

@@ -86,7 +86,7 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Source request not found in t_requested_run: %s', _requestID);
-        Call post_log_entry ('Error', _message, 'Copy_Requested_Run');
+        CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
     End If;
 
@@ -106,7 +106,7 @@ BEGIN
         FROM t_requested_run_state_name
 
         _message := 'Invalid requested run state: ' || _status || '; valid states are ' || _stateNameList;
-        Call post_log_entry ('Error', _message, 'Copy_Requested_Run');
+        CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
 
         RETURN;
     End If;
@@ -272,12 +272,12 @@ BEGIN
             _message := format('Problem trying to renumber request in history; No rows added for RequestID %s', _requestID);
         End If;
 
-        Call post_log_entry ('Error', _message, 'Copy_Requested_Run');
+        CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
     End If;
 
     If char_length(_callingUser) > 0 Then
-        Call alter_event_log_entry_user (11, _newRequestID, _stateID, _callingUser);
+        CALL alter_event_log_entry_user (11, _newRequestID, _stateID, _callingUser);
     End If;
 
     ------------------------------------------------------------
@@ -296,7 +296,7 @@ BEGIN
 
     -- Now copy the factors
     --
-    Call update_requested_run_copy_factors (
+    CALL update_requested_run_copy_factors (
                         _requestID,
                         _newRequestID,
                         _message => _message,           -- Output
@@ -305,7 +305,7 @@ BEGIN
 
     If _returnCode <> '' Then
         _message := 'Problem copying factors to new request; _returnCode = ' || _returnCode;
-        Call post_log_entry ('Error', _message, 'Copy_Requested_Run');
+        CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
     Else
         -- _message may contain the text 'Nothing to copy'
@@ -328,7 +328,7 @@ BEGIN
     -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
     ---------------------------------------------------
 
-    Call update_cached_requested_run_eus_users (
+    CALL update_cached_requested_run_eus_users (
             _newRequestID,
             _message => _message,           -- Output
             _returnCode => _returnCode);    -- Output
@@ -343,7 +343,7 @@ BEGIN
     WHERE request_id = _requestID;
 
     If _batchID > 0 Then
-        Call update_cached_requested_run_batch_stats (
+        CALL update_cached_requested_run_batch_stats (
                     _batchID,
                     _message => _msg,               -- Output
                     _returnCode => _returnCode);    -- Output

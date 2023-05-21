@@ -102,7 +102,7 @@ BEGIN
 
         If _action::citext = 'UpdateParameters' AND _mode = 'update' Then
 
-            Call cap.update_parameters_for_task (_jobList, _message => _message, _returnCode => _returnCode);
+            CALL cap.update_parameters_for_task (_jobList, _message => _message, _returnCode => _returnCode);
 
             RETURN;
         End If;
@@ -140,7 +140,7 @@ BEGIN
 
         If _action::citext = 'Retry' AND _mode = 'update' Then
 
-            Call cap.retry_selected_tasks (_message => _message);
+            CALL cap.retry_selected_tasks (_message => _message);
 
             DROP TABLE Tmp_Selected_Jobs;
             RETURN;

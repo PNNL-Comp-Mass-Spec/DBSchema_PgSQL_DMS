@@ -72,7 +72,7 @@ BEGIN
         RETURN;
     End If;
 
-    Call delete_param_file_by_id (_paramFileID,
+    CALL delete_param_file_by_id (_paramFileID,
                                   _message => _message,     -- Output
                                   _returnCode => _returnCode);
 

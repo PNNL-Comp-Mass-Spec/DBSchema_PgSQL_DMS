@@ -75,7 +75,7 @@ BEGIN
             RETURN;
         End If;
 
-        Call delete_analysis_request (_requestID, _message => _message, _returnCode => _returnCode);
+        CALL delete_analysis_request (_requestID, _message => _message, _returnCode => _returnCode);
 
         If _returnCode <> '' Then
             RAISE WARNING '%', _message;

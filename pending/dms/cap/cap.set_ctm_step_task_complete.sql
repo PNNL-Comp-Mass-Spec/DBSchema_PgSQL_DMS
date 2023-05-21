@@ -256,14 +256,14 @@ BEGIN
         If _completionMessage Like '%Over%of the % spectra have a minimum m/z value larger than the required minimum%' Then
             _msg := 'Dataset ' || _stepInfo.DatasetName || ' (ID ' || _stepInfo.DatasetID::text || '): ' || _completionMessage;
 
-            Call public.post_email_alert ('Error', _msg, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
+            CALL public.post_email_alert ('Error', _msg, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
 
         ElsIf _completionMessage Like '%Some of the % spectra have a minimum m/z value larger than the required minimum%' Or
               _completionMessage Like '%reporter ion peaks likely could not be detected%' Then
 
             _msg := 'Dataset ' || _stepInfo.DatasetName || ' (ID ' || _stepInfo.DatasetID::text || '): ' || _completionMessage;
 
-            Call public.post_email_alert ('Warning', _msg, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
+            CALL public.post_email_alert ('Warning', _msg, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
         End If;
 
         ---------------------------------------------------
@@ -286,7 +286,7 @@ BEGIN
                     _myEMSLStateNew := 2;
                 End If;
 
-                Call public.update_myemsl_state (_stepInfo.DatasetID, _stepInfo.OutputFolderName, _myEMSLStateNew);
+                CALL public.update_myemsl_state (_stepInfo.DatasetID, _stepInfo.OutputFolderName, _myEMSLStateNew);
 
             End If;
         End If;

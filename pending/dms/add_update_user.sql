@@ -224,7 +224,7 @@ BEGIN
         -- Add/update operations defined for user
         ---------------------------------------------------
 
-        Call add_update_user_operations _userID, _operationsList, _message => _message
+        CALL add_update_user_operations _userID, _operationsList, _message => _message
 
     EXCEPTION
         WHEN OTHERS THEN

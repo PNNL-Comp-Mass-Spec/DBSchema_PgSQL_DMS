@@ -90,7 +90,7 @@ EXCEPTION
     RAISE Warning '%', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call post_log_entry ('Error', _message, 'post_usage_log_entry', 'public');
+    CALL post_log_entry ('Error', _message, 'post_usage_log_entry', 'public');
 
 END
 $$;

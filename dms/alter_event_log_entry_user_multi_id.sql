@@ -105,7 +105,7 @@ BEGIN
         FROM Tmp_ID_Update_List
         ORDER BY TargetID
     LOOP
-        Call public.alter_event_log_entry_user(
+        CALL public.alter_event_log_entry_user(
                             _eventlogschema,
                             _targetType,
                             _targetID,

@@ -101,7 +101,7 @@ BEGIN
                     _message := format('Auto added %s %s to t_users since they are associated with charge codes used by DMS',
                                         _insertCount, public.check_plural(_insertCount, 'user', 'users');
 
-                    Call post_log_entry ('Normal', _message, 'Auto_Add_Charge_Code_Users');
+                    CALL post_log_entry ('Normal', _message, 'Auto_Add_Charge_Code_Users');
                 End If;
 
                 UPDATE Tmp_NewUsers
@@ -120,7 +120,7 @@ BEGIN
 
                 If Coalesce(_operationID, 0) = 0 Then
                     _message := 'User operation DMS_Guest not found in t_user_operations';
-                    Call post_log_entry ('Error', _message, 'Auto_Add_Charge_Code_Users');
+                    CALL post_log_entry ('Error', _message, 'Auto_Add_Charge_Code_Users');
                 Else
                     INSERT INTO t_user_operations_permissions (user_id, operation_id)
                     SELECT DMS_ID, _operationID

@@ -39,7 +39,7 @@ BEGIN
     -- restore it from most recent successful historic job.
     ---------------------------------------------------
     --
-    Call sw.copy_history_to_job (_job, _message => _message, _returnCode => _returnCode);
+    CALL sw.copy_history_to_job (_job, _message => _message, _returnCode => _returnCode);
     --
     If _returnCode <> '' Then
         RETURN;

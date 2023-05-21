@@ -248,7 +248,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Validate input fields';
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
         If Coalesce(_requestName, '') = '' Then
@@ -468,7 +468,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Query get_user_id for ' || _requesterUsername;
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
         _userID := public.get_user_id (_requesterUsername);
@@ -485,7 +485,7 @@ BEGIN
             -- Could not find entry in database for username _requesterUsername
             -- Try to auto-resolve the name
 
-            Call auto_resolve_name_to_username (_requesterUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_requesterUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match found; update _requesterUsername
@@ -502,10 +502,10 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'LookupInstrumentRunInfoFromExperimentSamplePrep for ' || _experimentName;
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        Call lookup_instrument_run_info_from_experiment_sample_prep (
+        CALL lookup_instrument_run_info_from_experiment_sample_prep (
                             _experimentName,
                             _instrumentGroup => _instrumentGroup,       -- Output
                             _msType => _msType,                         -- Output
@@ -536,11 +536,11 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'ValidateInstrumentGroupAndDatasetType for ' || _msType;
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
 
-        Call validate_instrument_group_and_dataset_type (
+        CALL validate_instrument_group_and_dataset_type (
                         _datasetType => _msType,
                         _instrumentGroup => _instrumentGroup,           -- Output
                         _datasetTypeID => _datasetTypeID output,        -- Output
@@ -558,7 +558,7 @@ BEGIN
         --
         If _logDebugMessages Then
             _debugMsg := 'Resolve separation group: ' || _separationGroup;
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
         SELECT separation_group
@@ -607,10 +607,10 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Lookup EUS info for: ' || _experimentName;
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        Call lookup_eus_from_experiment_sample_prep (
+        CALL lookup_eus_from_experiment_sample_prep (
                             _experimentName,
                             _eusUsageType => _eusUsageType,     -- Output
                             _eusProposalID => _eusProposalID,   -- Output
@@ -636,7 +636,7 @@ BEGIN
                 'proposal ' || Coalesce(_eusProposalID, '?Null?') || ', and ' ||
                 'user list ' || Coalesce(_eusUsersList, '?Null?')
 
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
         -- Note that if _eusUsersList contains a list of names in the form 'Baker, Erin (41136)',
@@ -650,7 +650,7 @@ BEGIN
             _addingItem := true;
         End If;
 
-        Call validate_eus_usage (
+        CALL validate_eus_usage (
                         _eusUsageType   => _eusUsageType,       -- Input/Output
                         _eusProposalID  => _eusProposalID,      -- Input/Output
                         _eusUsersList   => _eusUsersList,       -- Input/Output
@@ -695,10 +695,10 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Lookup misc fields for the experiment';
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        Call lookup_other_from_experiment_sample_prep
+        CALL lookup_other_from_experiment_sample_prep
                             _experimentName,
                             _workPackage => _workPackage,       -- Output
                             _message => _message,               -- Output
@@ -743,7 +743,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Validate the WP';
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
         SELECT public.try_cast(Value::text, false)
@@ -759,7 +759,7 @@ BEGIN
             _allowNoneWP := true;
         End If;
 
-        Call validate_wp ( _workPackageNumber,
+        CALL validate_wp ( _workPackageNumber,
                            _allowNoneWP,
                            _message => _msg,
                            _returnCode => _returnCode);
@@ -790,7 +790,7 @@ BEGIN
 
         If _logDebugMessages Then
             _debugMsg := 'Start a new transaction';
-            Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+            CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
         ---------------------------------------------------
@@ -859,17 +859,17 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (11, _request, _statusID, _callingUser);
+                CALL alter_event_log_entry_user (11, _request, _statusID, _callingUser);
             End If;
 
             If _logDebugMessages Then
                 _debugMsg := 'Call assign_eus_users_to_requested_run';
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
             End If;
 
             -- Assign users to the request
             --
-            Call assign_eus_users_to_requested_run (
+            CALL assign_eus_users_to_requested_run (
                                     _request,
                                     _eusProposalID,
                                     _eusUsersList,
@@ -883,12 +883,12 @@ BEGIN
 
             If _logDebugMessages Then
                 _debugMsg := 'Called assign_eus_users_to_requested_run';
-                Call post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
+                CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
             End If;
 
             If _status = 'Active' Then
                 -- Add a new row to t_active_requested_run_cached_eus_users
-                Call update_cached_requested_run_eus_users (
+                CALL update_cached_requested_run_eus_users (
                         _request,
                         _message => _message,           -- Output
                         _returnCode => _returnCode);    -- Output
@@ -937,12 +937,12 @@ BEGIN
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    Call alter_event_log_entry_user (11, _requestID, _statusID, _callingUser);
+                    CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser);
                 End If;
 
                 -- Assign users to the request
                 --
-                Call assign_eus_users_to_requested_run (
+                CALL assign_eus_users_to_requested_run (
                                         _requestID,
                                         _eusProposalID,
                                         _eusUsersList,
@@ -956,7 +956,7 @@ BEGIN
             END;
 
             -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
-            Call update_cached_requested_run_eus_users (
+            CALL update_cached_requested_run_eus_users (
                     _request,
                     _message => _message,           -- Output
                     _returnCode => _returnCode);    -- Output
@@ -972,7 +972,7 @@ BEGIN
         ---------------------------------------------------
 
         If _batch > 0 Then
-            Call update_cached_requested_run_batch_stats (
+            vvvvvv update_cached_requested_run_batch_stats (
                     _batch,
                     _message => _msg,               -- Output
                     _returnCode => _returnCode);    -- Output
@@ -983,7 +983,7 @@ BEGIN
         End If;
 
         If _currentBatch > 0 Then
-            Call update_cached_requested_run_batch_stats (
+            CALL update_cached_requested_run_batch_stats (
                     _currentBatch,
                     _message => _msg,               -- Output
                     _returnCode => _returnCode);    -- Output

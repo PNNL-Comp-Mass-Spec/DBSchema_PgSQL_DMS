@@ -94,7 +94,7 @@ BEGIN
     FOREACH _mgrTypeID IN ARRAY _mgrTypeIDs
     LOOP
 
-        Call mc.enable_disable_managers (
+        CALL mc.enable_disable_managers (
             _enable := _enable,
             _managerTypeID := _mgrTypeID,
             _managerNameList := _managerNameList,

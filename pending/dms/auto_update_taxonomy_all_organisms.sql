@@ -97,7 +97,7 @@ BEGIN
         _orgSpecies := _organismInfo.OldSpecies;
         _orgStrain := _organismInfo.OldStrain;
 
-        Call get_taxonomy_value_by_taxonomy_id (
+        CALL get_taxonomy_value_by_taxonomy_id (
                 _ncbiTaxonomyID,
                 _orgDomain => _orgDomain,       -- Output
                 _orgKingdom => _orgKingdom,     -- Output

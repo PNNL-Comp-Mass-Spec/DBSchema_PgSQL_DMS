@@ -76,7 +76,7 @@ BEGIN
         FROM TmpManagerTypeIDs
     LOOP
 
-        Call EnableDisableManagers (
+        CALL EnableDisableManagers (
             _enable := _enable,
             _managerTypeID := _mgrTypeID,
             _managerNameList := _managerNameList,
@@ -99,7 +99,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'EnableDisableAllManagers', 'mc');
+    CALL PostLogEntry ('Error', _message, 'EnableDisableAllManagers', 'mc');
 END
 $$;
 

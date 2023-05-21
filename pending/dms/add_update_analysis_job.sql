@@ -361,7 +361,7 @@ BEGIN
         --
         _msg := '';
 
-        Call validate_analysis_job_parameters (
+        CALL validate_analysis_job_parameters (
                                 _toolName => _toolName,
                                 _paramFileName => _paramFileName,               -- Output
                                 _settingsFileName => _settingsFileName,         -- Output
@@ -573,7 +573,7 @@ BEGIN
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    Call alter_event_log_entry_user (5, _jobID, _newStateID, _callingUser);
+                    CALL alter_event_log_entry_user (5, _jobID, _newStateID, _callingUser);
                 End If;
 
                 ---------------------------------------------------
@@ -684,7 +684,7 @@ BEGIN
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    Call alter_event_log_entry_user (5, _jobID, _updateStateID, _callingUser);
+                    CALL alter_event_log_entry_user (5, _jobID, _updateStateID, _callingUser);
                 End If;
 
                 ---------------------------------------------------
@@ -727,7 +727,7 @@ BEGIN
                     -- Call public.alter_entered_by_user
                     -- to alter the entered_by field in t_analysis_job_processor_group_associations
 
-                    Call alter_entered_by_user ('t_analysis_job_processor_group_associations', 'job', _jobID, _callingUser);
+                    CALL alter_entered_by_user ('t_analysis_job_processor_group_associations', 'job', _jobID, _callingUser);
                 End If;
             End If;
 

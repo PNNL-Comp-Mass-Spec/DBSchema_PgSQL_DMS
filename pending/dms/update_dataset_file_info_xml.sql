@@ -157,7 +157,7 @@ BEGIN
     -- Examine the XML to determine the dataset name and update or validate _datasetID
     ---------------------------------------------------
     --
-    Call get_dataset_details_from_dataset_info_xml (
+    CALL get_dataset_details_from_dataset_info_xml (
         _datasetInfoXML,
         _datasetID => _datasetID,       -- Input/Output
         _datasetName => _datasetName,   -- Output
@@ -372,7 +372,7 @@ BEGIN
         _msg := 'Unrecognized file hash type: ' || _unrecognizedHashType || '; all rows in T_Dataset_File are assumed to be SHA1. ' ||;
                 'Will add the file info anyway, but this hashtype could be problematic elsewhere'
 
-        Call post_log_entry ('Error', _msg, 'Update_Dataset_File_Info_XML');
+        CALL post_log_entry ('Error', _msg, 'Update_Dataset_File_Info_XML');
     End If;
 
     ---------------------------------------------------
@@ -420,7 +420,7 @@ BEGIN
             -- The message 'Duplicate dataset found' is used by a SQL Server Agent job that notifies admins hourly if a duplicate dataset is uploaded
             _message := format('Duplicate dataset found: Dataset ID %s %s', _datasetId, _duplicateDatasetInfoSuffix);
 
-            Call post_email_alert ('Error', _message, 'update_dataset_file_info_xml', _recipients => 'admins', _postMessageToLogEntries => 1, _duplicateEntryHoldoffHours => 6);
+            CALL post_email_alert ('Error', _message, 'update_dataset_file_info_xml', _recipients => 'admins', _postMessageToLogEntries => 1, _duplicateEntryHoldoffHours => 6);
 
             -- Error code 'U5360' is used by several procedures in the capture scema (previously used 53600), including:
             --   handle_dataset_capture_validation_failure
@@ -452,7 +452,7 @@ BEGIN
             _msg := format('Allowing duplicate dataset to be added since Allow_Duplicates is true: Dataset ID %s %s',
                             _datasetId, _duplicateDatasetInfoSuffix);
 
-            Call post_log_entry ('Warning', _msg, 'Update_Dataset_File_Info_XML');
+            CALL post_log_entry ('Warning', _msg, 'Update_Dataset_File_Info_XML');
         End If;
     End If;
 
@@ -472,7 +472,7 @@ BEGIN
     If _acqLengthMinutes > 1 AND Coalesce(_separationType, '') <> '' Then
         -- Possibly update the separation type
         -- Note that the Analysis Manager will also call update_dataset_file_info_xml when the MSFileInfoScanner tool runs
-        Call auto_update_separation_type (
+        CALL auto_update_separation_type (
                 _separationType,
                 _acqLengthMinutes,
                 _optimalSeparationType => _optimalSeparationType);      -- Output
@@ -484,7 +484,7 @@ BEGIN
 
             If NOT Exists (SELECT * FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' And Entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') Then
                 _msg := format('Auto-updated separation type from %s to %s for dataset %s', _separationType, _optimalSeparationType, _datasetName);
-                Call post_log_entry ('Normal', _msg, 'Update_Dataset_File_Info_XML');
+                CALL post_log_entry ('Normal', _msg, 'Update_Dataset_File_Info_XML');
             End If;
 
         End If;
@@ -506,7 +506,7 @@ BEGIN
         SELECT *
         FROM Tmp_InstrumentFiles
 
-        Call update_dataset_device_info_xml (_datasetID => _datasetID, _datasetInfoXML => _datasetInfoXML, _infoOnly => true, _skipValidation => true);
+        CALL update_dataset_device_info_xml (_datasetID => _datasetID, _datasetInfoXML => _datasetInfoXML, _infoOnly => true, _skipValidation => true);
 
         DROP TABLE Tmp_DSInfoTable;
         DROP TABLE Tmp_ScanTypes;
@@ -554,7 +554,7 @@ BEGIN
             public.timestamp_text(_acqTimeEnd),
             public.timestamp_text(_acqTimeStart));
 
-        Call post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
+        CALL post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
     End If;
 
     -----------------------------------------------
@@ -697,14 +697,14 @@ BEGIN
     -----------------------------------------------
     --
     If _validateDatasetType Then
-        Call public.validate_dataset_type (_datasetID, _message => _message, _infoOnly => _infoOnly);
+        CALL public.validate_dataset_type (_datasetID, _message => _message, _infoOnly => _infoOnly);
     End If;
 
     -----------------------------------------------
     -- Add/update t_dataset_device_map
     -----------------------------------------------
     --
-    Call update_dataset_device_info_xml (
+    CALL update_dataset_device_info_xml (
             _datasetID => _datasetID,
             _datasetInfoXML => _datasetInfoXML,
             _message => _message,                   -- Output
@@ -723,7 +723,7 @@ BEGIN
         _message := format('%s; return code = %s', _message, _returnCode);
 
         If Not _infoOnly Then
-            Call post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
+            CALL post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
         End If;
     End If;
 
@@ -742,7 +742,7 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        Call post_usage_log_entry ('Update_Dataset_File_Info_XML', _usageMessage;);
+        CALL post_usage_log_entry ('Update_Dataset_File_Info_XML', _usageMessage;);
     End If;
 
     DROP TABLE Tmp_DSInfoTable;

@@ -137,7 +137,7 @@ BEGIN
 
     If Not FOUND Then
         _warningMessage := 'Could not find the cart named "unknown" in t_lc_cart; the Cart cart_id of the recycled requested run will be left unchanged';
-        Call post_log_entry ('Error', _warningMessage, 'Unconsume_Scheduled_Run');
+        CALL post_log_entry ('Error', _warningMessage, 'Unconsume_Scheduled_Run');
     End If;
 
     ---------------------------------------------------
@@ -168,7 +168,7 @@ BEGIN
         --
         If Not _retainHistory Then
         -- <b2>
-            Call delete_requested_run (
+            CALL delete_requested_run (
                                  _requestID,
                                  _skipDatasetCheck => true,
                                  _message => _message,              -- Output
@@ -233,13 +233,13 @@ BEGIN
 
                             If _requestIDOriginal = _requestID Then
                                 _addnlText := 'Not recycling request ' || _requestID::text || ' for dataset ' || _datasetName || ' since it is already active';
-                                Call post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
+                                CALL post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
                                 _addnlText := 'Not recycling request ' || _requestID::text || ' since it is already active';
                                 _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
                             Else
                                 _addnlText := 'Not recycling request ' || _requestID::text || ' for dataset ' || _datasetName || ' since dataset already has an active request (' || _extracted || ')';
-                                Call post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
+                                CALL post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
                                 _addnlText := 'Not recycling request ' || _requestID::text || ' since dataset already has an active request (' || _extracted || ')';
                                 _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
@@ -274,7 +274,7 @@ BEGIN
         _notation := format('Automatically created by recycling request %s from dataset %s on %s',
                             _requestIDOriginal, _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));
 
-        Call copy_requested_run (
+        CALL copy_requested_run (
                 _requestIDOriginal,
                 _datasetID,
                 'Completed',
@@ -334,14 +334,14 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE (state_name = _newStatus)
 
-            Call alter_event_log_entry_user (11, _requestIDOriginal, _stateID, _callingUser);
+            CALL alter_event_log_entry_user (11, _requestIDOriginal, _stateID, _callingUser);
         End If;
 
         ---------------------------------------------------
         -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
         ---------------------------------------------------
         --
-        Call update_cached_requested_run_eus_users (
+        CALL update_cached_requested_run_eus_users (
             _requestIDOriginal,
             _message => _message,           -- Output
             _returnCode => _returnCode);    -- Output

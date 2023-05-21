@@ -139,7 +139,7 @@ BEGIN
 
         _usageMessage := _usageMessage || '; user ' || Coalesce(_callingUser, '??');
 
-        Call post_usage_log_entry ('Do_Sample_Submission_Operation', _usageMessage, _minimumUpdateInterval => 2);
+        CALL post_usage_log_entry ('Do_Sample_Submission_Operation', _usageMessage, _minimumUpdateInterval => 2);
     End If;
 
 END

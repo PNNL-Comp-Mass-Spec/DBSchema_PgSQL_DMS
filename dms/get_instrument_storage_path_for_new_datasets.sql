@@ -71,7 +71,7 @@ BEGIN
             If _infoOnly Then
                 RAISE WARNING '%', _message;
             Else
-                Call post_log_entry ('Error', _message, 'Get_Instrument_Storage_Path_For_New_Datasets');
+                CALL post_log_entry ('Error', _message, 'Get_Instrument_Storage_Path_For_New_Datasets');
             End If;
 
             RETURN 0;
@@ -100,7 +100,7 @@ BEGIN
             If _infoOnly Then
                 RAISE WARNING '%', _message;
             Else
-                Call post_log_entry ('Error', _message, 'Get_Instrument_Storage_Path_For_New_Datasets');
+                CALL post_log_entry ('Error', _message, 'Get_Instrument_Storage_Path_For_New_Datasets');
             End If;
 
             RETURN 0;
@@ -163,7 +163,7 @@ BEGIN
 
         _id := _storagePathID::text;
 
-        Call add_update_storage (
+        CALL add_update_storage (
                     _storagePathName,
                     _volNameClient => _instrumentInfo.AutoSPVolNameClient,
                     _volNameServer => _instrumentInfo.AutoSPVolNameServer,

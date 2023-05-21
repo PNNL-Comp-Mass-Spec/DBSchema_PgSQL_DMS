@@ -75,7 +75,7 @@ BEGIN
 
     -- Populate TmpMangerList using ParseManagerNameList
     --
-    Call ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
+    CALL ParseManagerNameList (_managerNameList, _removeUnknownManagers => 1, _message => _message);
 
     IF NOT EXISTS (SELECT * FROM TmpManagerList) THEN
         _message := 'No valid managers were found in _managerNameList';
@@ -320,7 +320,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'EnableDisableRunJobsRemotely', 'mc');
+    CALL PostLogEntry ('Error', _message, 'EnableDisableRunJobsRemotely', 'mc');
 
 END
 $$;

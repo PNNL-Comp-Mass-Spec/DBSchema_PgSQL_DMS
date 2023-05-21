@@ -66,7 +66,7 @@ BEGIN
     -- Using _removeUnknownManagers so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
     --
-    Call ParseManagerNameList (_mgrList, _removeUnknownManagers => 0, _message => _message);
+    CALL ParseManagerNameList (_mgrList, _removeUnknownManagers => 0, _message => _message);
 
     If Not Exists (Select * from TmpManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
@@ -290,7 +290,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'UnarchiveOldManagersAndParams', 'mc');
+    CALL PostLogEntry ('Error', _message, 'UnarchiveOldManagersAndParams', 'mc');
 
     RETURN QUERY
     SELECT _message as Message,

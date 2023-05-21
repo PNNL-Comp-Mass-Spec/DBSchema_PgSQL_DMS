@@ -81,7 +81,7 @@ BEGIN
     -- Make sure the capture task job Start and Finish values are up-to-date
     ---------------------------------------------------
     --
-    Call cap.synchronize_task_stats_with_task_steps (_infoOnly => false);
+    CALL cap.synchronize_task_stats_with_task_steps (_infoOnly => false);
 
     ---------------------------------------------------
     -- Add old successful capture task jobs to be removed to list
@@ -160,7 +160,7 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO 'Call copy_task_to_history for capture task job % with date %', _jobInfo.JobToAdd, _jobInfo.SaveTimeOverride;
             Else
-                Call cap.copy_task_to_history (_jobInfo.JobToAdd,
+                CALL cap.copy_task_to_history (_jobInfo.JobToAdd,
                                                _jobInfo.State,
                                                _message => _message,
                                                _overrideSaveTime => true,
@@ -173,7 +173,7 @@ BEGIN
     -- Do actual deletion
     ---------------------------------------------------
 
-    Call cap.remove_selected_tasks (_infoOnly, _message => _message, _logDeletions => false);
+    CALL cap.remove_selected_tasks (_infoOnly, _message => _message, _logDeletions => false);
 
     DROP TABLE Tmp_Selected_Jobs;
     DROP TABLE Tmp_JobsNotInHistory;

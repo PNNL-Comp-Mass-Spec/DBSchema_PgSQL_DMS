@@ -118,7 +118,7 @@ BEGIN
 
         _message := format('Reset step task state back to %s for job %s', _newJobState, _job);
 
-        Call public.post_log_entry ('Warning', _message, 'Report_Manager_Idle', 'sw');
+        CALL public.post_log_entry ('Warning', _message, 'Report_Manager_Idle', 'sw');
     End If;
 
     ---------------------------------------------------

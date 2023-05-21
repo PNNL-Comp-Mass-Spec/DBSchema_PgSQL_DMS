@@ -202,7 +202,7 @@ BEGIN
     -- Delete any auxiliary info associated with dataset
     ---------------------------------------------------
     --
-    Call delete_aux_info 'Dataset', _datasetName, _message => _message, _returnCode => _returnCode);
+    CALL delete_aux_info 'Dataset', _datasetName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         _message := 'Delete auxiliary information was unsuccessful for dataset: ' || _message;
@@ -221,7 +221,7 @@ BEGIN
     FROM t_requested_run
     WHERE dataset_id = _datasetID;
 
-    Call unconsume_scheduled_run (_datasetName, _retainHistory => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
+    CALL unconsume_scheduled_run (_datasetName, _retainHistory => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
 
     If _returnCode <> '' Then
         _message := 'Unconsume operation was unsuccessful for dataset: ' || _message;
@@ -306,7 +306,7 @@ BEGIN
 
     -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
     If char_length(_callingUser) > 0 Then
-        Call alter_event_log_entry_user (4, _datasetID, _stateID, _callingUser);
+        CALL alter_event_log_entry_user (4, _datasetID, _stateID, _callingUser);
     End If;
 
     RAISE INFO 'Deleted dataset ID %', _datasetID;

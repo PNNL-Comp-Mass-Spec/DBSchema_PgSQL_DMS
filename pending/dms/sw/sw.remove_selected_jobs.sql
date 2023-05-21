@@ -159,7 +159,7 @@ BEGIN
             WHERE job = _job;
 
             _message := 'Deleted job ' || _job::text || ' from sw.t_jobs';
-            Call public.post_log_entry ('Normal', _message, 'Remove_Selected_Jobs', 'sw');
+            CALL public.post_log_entry ('Normal', _message, 'Remove_Selected_Jobs', 'sw');
 
         END LOOP;
 

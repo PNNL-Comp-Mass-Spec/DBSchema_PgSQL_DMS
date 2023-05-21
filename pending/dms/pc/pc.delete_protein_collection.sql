@@ -82,7 +82,7 @@ BEGIN
         -- Delete the collection members
         ---------------------------------------------------
 
-        Call delete_protein_collection_members (_collectionID, _message => _message, _returnCode => _returnCode);
+        CALL delete_protein_collection_members (_collectionID, _message => _message, _returnCode => _returnCode);
 
     EXCEPTION
         WHEN OTHERS THEN

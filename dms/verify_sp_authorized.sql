@@ -187,7 +187,7 @@ BEGIN
 
     If _logError Then
         -- Set _ignoreErrors to true when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
-        Call post_log_entry ('Error', _message, 'Verify_SP_Authorized', _ignoreErrors => true);
+        CALL post_log_entry ('Error', _message, 'Verify_SP_Authorized', _ignoreErrors => true);
     End If;
 
     RETURN QUERY

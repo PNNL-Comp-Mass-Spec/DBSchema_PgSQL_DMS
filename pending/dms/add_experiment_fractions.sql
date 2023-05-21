@@ -274,7 +274,7 @@ BEGIN
         -- Set up and validate wellplate values
         ---------------------------------------------------
         --
-        Call validate_wellplate_loading (
+        CALL validate_wellplate_loading (
                                 _wellplateName => _wellplateName,   -- Output
                                 _wellNumber => _wellNumber,         -- Output
                                 _totalCount => _totalCount,
@@ -300,7 +300,7 @@ BEGIN
                 _wellPlateMode := 'assure';
             End If;
             --
-            Call add_update_wellplate (
+            CALL add_update_wellplate (
                                 _wellplateName => _wellplateName,       -- Output
                                 _note => _note,
                                 _wellPlateMode => _wellPlateMode,
@@ -403,7 +403,7 @@ BEGIN
                 -- Could not find entry in database for _researcher
                 -- Try to auto-resolve the name
 
-                Call auto_resolve_name_to_username (_researcher, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+                CALL auto_resolve_name_to_username (_researcher, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
                 If _matchCount = 1 Then
                     -- Single match found; update _researcher
@@ -554,7 +554,7 @@ BEGIN
                 -- Add the experiment to biomaterial mapping
                 -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
                 --
-                Call add_experiment_biomaterial (
+                CALL add_experiment_biomaterial (
                                         _newExpID,
                                         _updateCachedInfo => false,
                                         _message => _message,
@@ -568,7 +568,7 @@ BEGIN
                 -- Add the experiment to reference compound mapping
                 -- The procedure uses table Tmp_ExpToRefCompoundMap
                 --
-                Call add_experiment_reference_compound (
+                CALL add_experiment_reference_compound (
                                         _newExpID,
                                         _updateCachedInfo => true,
                                         _message => _message,           -- Output
@@ -625,7 +625,7 @@ BEGIN
                     If char_length(_callingUser) > 0 Then
                         -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
                         --
-                        Call alter_entered_by_user ('t_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser);
+                        CALL alter_entered_by_user ('t_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser);
                     End If;
 
                 End If; -- </CopyPlexInfo>
@@ -637,7 +637,7 @@ BEGIN
                 -- Note that the count includes the parent experiment
                 ---------------------------------------------------
                 --
-                Call update_experiment_group_member_count (_groupID => _groupID);
+                CALL update_experiment_group_member_count (_groupID => _groupID);
             End If;
 
             ---------------------------------------------------
@@ -671,7 +671,7 @@ BEGIN
             -- Move new fraction experiments to container
             ---------------------------------------------------
             --
-            Call update_material_items (
+            CALL update_material_items (
                         'move_material',
                         _materialIDList,
                         'mixed_material',
@@ -690,7 +690,7 @@ BEGIN
             -- into the fractionated experiments
             ---------------------------------------------------
 
-            Call copy_aux_info_multi_id (
+            CALL copy_aux_info_multi_id (
                             _targetName => 'Experiment',
                             _targetEntityIDList => _experimentIDList,
                             _categoryName => '',

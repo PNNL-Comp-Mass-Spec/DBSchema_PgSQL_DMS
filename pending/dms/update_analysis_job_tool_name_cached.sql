@@ -92,7 +92,7 @@ BEGIN
     _usageMessage := _jobCount::text || ' jobs updated';
 
     If Not _infoOnly Then
-        Call post_usage_log_entry ('Update_Analysis_Job_Tool_Name_Cached', _usageMessage;);
+        CALL post_usage_log_entry ('Update_Analysis_Job_Tool_Name_Cached', _usageMessage;);
     End If;
 
 END

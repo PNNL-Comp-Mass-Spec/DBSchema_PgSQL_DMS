@@ -297,7 +297,7 @@ BEGIN
                             EXIT;
                         End If;
 
-                        Call schedule_predefined_analysis_jobs (_currentDataset);
+                        CALL schedule_predefined_analysis_jobs (_currentDataset);
 
                     END LOOP;
 
@@ -337,11 +337,11 @@ BEGIN
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
                 If _datasetStateUpdated Then
-                    Call alter_event_log_entry_user_multi_id (4, _stateID, _callingUser);
+                    CALL alter_event_log_entry_user_multi_id (4, _stateID, _callingUser);
                 End If;
 
                 If _datasetRatingUpdated Then
-                    Call alter_event_log_entry_user_multi_id (8, _ratingID, _callingUser);
+                    CALL alter_event_log_entry_user_multi_id (8, _ratingID, _callingUser);
                 End If;
 
                 DROP TABLE Tmp_ID_Update_List;
@@ -373,7 +373,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := _datasetCount::text || ' datasets updated';
-    Call post_usage_log_entry ('Update_Datasets', _usageMessage);
+    CALL post_usage_log_entry ('Update_Datasets', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
     DROP TABLE IF EXISTS Tmp_DatasetSchedulePredefine;

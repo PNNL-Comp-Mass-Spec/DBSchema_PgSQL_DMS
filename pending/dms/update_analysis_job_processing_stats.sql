@@ -181,7 +181,7 @@ BEGIN
 
         If _updateCount > 0 Then
             -- Schedule an archive update
-            Call set_archive_update_required (_datasetName, _message => _message);
+            CALL set_archive_update_required (_datasetName, _message => _message);
 
             If _toolName LIKE 'Masic%' Then
                 -- Update the cached MASIC Directory Name

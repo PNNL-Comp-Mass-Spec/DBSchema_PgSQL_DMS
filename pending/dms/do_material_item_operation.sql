@@ -146,7 +146,7 @@ BEGIN
             _newValue := '';
             _comment := '';
 
-            Call update_material_items
+            CALL update_material_items
                         _iMode,         -- 'retire_item'
                         _itemList,
                         _itemType,      -- 'mixed_material'

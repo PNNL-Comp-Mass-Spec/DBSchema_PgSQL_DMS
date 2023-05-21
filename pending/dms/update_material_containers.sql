@@ -246,7 +246,7 @@ BEGIN
 
     -- Retire the contents
     If _mode = 'retire_container_and_contents' AND _nonEmptyContainerCount > 0 Then
-        Call update_material_items (
+        CALL update_material_items (
                     'retire_items',
                     containerList,
                     'containers',

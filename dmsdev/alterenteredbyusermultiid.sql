@@ -107,7 +107,7 @@ BEGIN
         FROM TmpIDUpdateList
         ORDER BY TargetID
     LOOP
-        Call AlterEnteredByUser(
+        CALL AlterEnteredByUser(
                             _targetTableSchema,
                             _targetTableName,
                             _targetIDColumnName,

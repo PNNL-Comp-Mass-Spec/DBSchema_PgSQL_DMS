@@ -125,7 +125,7 @@ BEGIN
             Else
                 _container := '(generate name)';
 
-                Call add_update_material_container (
+                CALL add_update_material_container (
                                     _container => _container,       -- Output
                                     _type => _type,
                                     _location => _item,

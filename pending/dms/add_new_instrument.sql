@@ -183,7 +183,7 @@ BEGIN
         -- Validate the _autoSP parameteres
         ---------------------------------------------------
 
-        Call validate_auto_storage_path_params (_autoDefineStoragePathBool, _autoSPVolNameClient, _autoSPVolNameServer,
+        CALL validate_auto_storage_path_params (_autoDefineStoragePathBool, _autoSPVolNameClient, _autoSPVolNameServer,
                                                 _autoSPPathRoot, _autoSPArchiveServerName,
                                                 _autoSPArchivePathRoot, _autoSPArchiveSharePathRoot);
 
@@ -266,7 +266,7 @@ BEGIN
 
         _logMessage := 'Added machine ' || _sourceMachineNameToFind || ' to t_storage_path_hosts with host name ' || _hostName;
 
-        Call post_log_entry ('Normal', _logMessage, 'Add_New_Instrument');
+        CALL post_log_entry ('Normal', _logMessage, 'Add_New_Instrument');
     End If;
 
     If _valAutoDefineStoragePath Then
@@ -276,7 +276,7 @@ BEGIN
         -- Make new raw storage directory in storage table
         ---------------------------------------------------
         --
-        Call add_update_storage (
+        CALL add_update_storage (
                 _spPath,
                 _spVolClient,
                 _spVolServer,
@@ -301,7 +301,7 @@ BEGIN
     -- Make new source (inbox) directory in storage table
     ---------------------------------------------------
     --
-    Call add_update_storage (
+    CALL add_update_storage (
             _sourcePath,
             '(na)',
             _sourceMachineName,     -- Note that AddUpdateStorage will remove '\' characters from _sourceMachineName since _storFunction = 'inbox'

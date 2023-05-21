@@ -90,7 +90,7 @@ BEGIN
                             Round(_uploadErrorRate*100, 1), _uploadAttempts);
 
         If _logErrors Then
-            Call public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap');
+            CALL public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap');
         Else
             RAISE INFO '%', _message;
         End If;
@@ -104,7 +104,7 @@ BEGIN
                            Round(_duplicateRate * 100, 1), _datasetFolderUploads);
 
         If _logErrors Then
-            Call public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap');
+            CALL public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap');
         Else
             RAISE INFO '%', _message;
         End If;

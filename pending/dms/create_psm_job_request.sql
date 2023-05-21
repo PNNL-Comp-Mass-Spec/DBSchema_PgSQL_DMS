@@ -197,7 +197,7 @@ BEGIN
         -- Validate the datasets in Tmp_DatasetInfo
         ---------------------------------------------------
 
-        Call validate_analysis_job_request_datasets (
+        CALL validate_analysis_job_request_datasets (
                     _message => _message,                   -- Output
                     _autoRemoveNotReleasedDatasets => true,
                     _toolName => _toolName,
@@ -350,7 +350,7 @@ BEGIN
         -- Now create the analysis job request
         ---------------------------------------------------
         --
-        Call add_update_analysis_job_request (
+        CALL add_update_analysis_job_request (
                 _datasets => _datasets,
                 _requestName => _requestName,
                 _toolName => _toolName,
@@ -398,7 +398,7 @@ BEGIN
         _usageMessage := format('Created job request %s for %s %s; user %s',
                                 _requestID, _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'), _callingUser);
 
-        Call post_usage_log_entry ('Create_PSM_Job_Request', _usageMessage, _minimumUpdateInterval => 2);
+        CALL post_usage_log_entry ('Create_PSM_Job_Request', _usageMessage, _minimumUpdateInterval => 2);
     End If;
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;

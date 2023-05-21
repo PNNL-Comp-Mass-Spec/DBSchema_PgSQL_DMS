@@ -43,7 +43,7 @@ BEGIN
     --
     If _script = 'DatasetCapture' OR _script = 'IMSDatasetCapture' Then
         If _jobInfo.NewState in (2, 3, 5) Then -- always call in case capture task job completes too quickly for normal update cycle Then
-            Call public.set_capture_task_busy (_datasetName, '(broker)', _message => _message);
+            CALL public.set_capture_task_busy (_datasetName, '(broker)', _message => _message);
         End If;
 
         If _jobInfo.NewState = 3 Then
@@ -54,11 +54,11 @@ BEGIN
             -- If a duplicate dataset is found, _returnCode will be 'U5360'
             ---------------------------------------------------
 
-            Call cap.update_dms_file_info_xml (_datasetID, _deleteFromTableOnSuccess => 1, _message => _message, _returnCode => _returnCode);
+            CALL cap.update_dms_file_info_xml (_datasetID, _deleteFromTableOnSuccess => 1, _message => _message, _returnCode => _returnCode);
 
             If _returnCode = 'U5360' Then
                 -- Use special completion code of 101
-                Call public.set_capture_task_complete (_datasetName, 101, _message => _message, _failureMessage => _message);
+                CALL public.set_capture_task_complete (_datasetName, 101, _message => _message, _failureMessage => _message);
 
                 -- Fail out the capture task job with state 14 (Failed, Ignore Job Step States)
                 Update cap.t_tasks
@@ -66,7 +66,7 @@ BEGIN
                 Where Job = _job;
             Else
                 -- Use special completion code of 100
-                Call public.set_capture_task_complete (_datasetName, 100, _message => _message);
+                CALL public.set_capture_task_complete (_datasetName, 100, _message => _message);
             End If;
         End If;
 
@@ -102,7 +102,7 @@ BEGIN
                 End If;
             End If;
 
-            Call public.set_capture_task_complete (_datasetName, 1, _message => _message, _failureMessage => _failureMessage);
+            CALL public.set_capture_task_complete (_datasetName, 1, _message => _message, _failureMessage => _failureMessage);
         End If;
     End If;
 
@@ -112,15 +112,15 @@ BEGIN
     --
     If _script = 'DatasetArchive' Then
         If _jobInfo.NewState in (2, 3, 5) -- always call in case capture task job completes too quickly for normal update cycle Then
-            Call public.set_archive_task_busy (_datasetName, _storageServerName, _message => _message);
+            CALL public.set_archive_task_busy (_datasetName, _storageServerName, _message => _message);
         End If;
 
         If _jobInfo.NewState = 3 Then
-            Call public.set_archive_task_complete (_datasetName, 100, _message => _message); -- using special completion code of 100
+            CALL public.set_archive_task_complete (_datasetName, 100, _message => _message); -- using special completion code of 100
         End If;
 
         If _jobInfo.NewState = 5 Then
-            Call public.set_archive_task_complete (_datasetName, 1, _message => _message);
+            CALL public.set_archive_task_complete (_datasetName, 1, _message => _message);
         End If;
     End If;
 
@@ -130,15 +130,15 @@ BEGIN
     --
     If _script = 'ArchiveUpdate' Then
         If _jobInfo.NewState in (2, 3, 5) -- always call in case capture task job completes too quickly for normal update cycle Then
-            Call public.set_archive_update_task_busy (_datasetName, _storageServerName, _message => _message);
+            CALL public.set_archive_update_task_busy (_datasetName, _storageServerName, _message => _message);
         End If;
 
         If _jobInfo.NewState = 3 Then
-            Call public.set_archive_update_task_complete (_datasetName, 0, _message => _message);
+            CALL public.set_archive_update_task_complete (_datasetName, 0, _message => _message);
         End If;
 
         If _jobInfo.NewState = 5 Then
-            Call public.set_archive_update_task_complete (_datasetName, 1, _message => _message);
+            CALL public.set_archive_update_task_complete (_datasetName, 1, _message => _message);
         End If;
     End If;
 

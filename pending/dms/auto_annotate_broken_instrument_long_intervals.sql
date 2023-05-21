@@ -138,7 +138,7 @@ BEGIN
                 If _infoOnly Then
                     RAISE INFO '%', 'Preview: Call add_update_run_interval to annotate ' || _intervalDescription;
                 Else
-                    Call add_update_run_interval (
+                    CALL add_update_run_interval (
                                 _runIntervalID,
                                 'Broken[100%]',
                                 'update',
@@ -147,10 +147,10 @@ BEGIN
 
                     If _returnCode = '' Then
                         _message := 'Annotated ' || _intervalDescription;
-                        Call post_log_entry ('Normal', _message, 'Auto_Annotate_Broken_Instrument_Long_Intervals');
+                        CALL post_log_entry ('Normal', _message, 'Auto_Annotate_Broken_Instrument_Long_Intervals');
                     Else
                         _message := 'Error annotating ' || _intervalDescription;
-                        Call post_log_entry ('Error', _message, 'Auto_Annotate_Broken_Instrument_Long_Intervals');
+                        CALL post_log_entry ('Error', _message, 'Auto_Annotate_Broken_Instrument_Long_Intervals');
                     End If;
 
                 End If;

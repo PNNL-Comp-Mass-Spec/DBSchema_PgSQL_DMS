@@ -115,7 +115,7 @@ BEGIN
 
         _message := format('%s unverified for over %s days; ErrorCode set to 101', _message, _staleUploadDays);
 
-        Call public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg');
+        CALL public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg');
 
         RAISE INFO '%', _message;
 

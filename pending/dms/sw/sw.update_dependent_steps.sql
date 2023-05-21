@@ -385,7 +385,7 @@ BEGIN
                         If _infoOnly Then
                             RAISE INFO '%', _msg;
                         Else
-                            Call public.post_log_entry ('Warning', _msg, 'Update_Dependent_Steps', 'sw');
+                            CALL public.post_log_entry ('Warning', _msg, 'Update_Dependent_Steps', 'sw');
                         End If;
 
                         _newState := 2      ; -- 'Enabled'
@@ -492,7 +492,7 @@ BEGIN
 
         If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
             _statusMessage := '... Updating dependent steps: ' || _rowsProcessed::text || ' / ' || _rowCountToProcess::text;
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Dependent_Steps', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Dependent_Steps', 'sw');
             _lastLogTime := clock_timestamp();
         End If;
 

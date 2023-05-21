@@ -142,7 +142,7 @@ BEGIN
 
         If _jobUpdateCount > 0 Then
             _message := format('Job priorities changed: updated %s job(s) in sw.t_jobs', _jobUpdateCount);
-            Call public.post_log_entry ('Normal', _message, 'Manage_Job_Execution', 'sw');
+            CALL public.post_log_entry ('Normal', _message, 'Manage_Job_Execution', 'sw');
 
             _message := '';
         End If;
@@ -163,7 +163,7 @@ BEGIN
 
             If _jobUpdateCount > 0 Then
                 _message := format('Updated sw.t_local_job_processors; UpdateCount = 0; InsertCount = 0; DeleteCount = %s', _jobUpdateCount);
-                Call public.post_log_entry ('Normal', _message, 'Manage_Job_Execution', 'sw');
+                CALL public.post_log_entry ('Normal', _message, 'Manage_Job_Execution', 'sw');
 
                 _message := '';
             End If;
@@ -196,7 +196,7 @@ BEGIN
     -- Call manage_job_execution to update the public schema
     ---------------------------------------------------
 
-    Call public.manage_job_execution (
+    CALL public.manage_job_execution (
                     _parameters,
                     _message => _message,           -- Output
                     _returnCode => _returnCode);    -- Output

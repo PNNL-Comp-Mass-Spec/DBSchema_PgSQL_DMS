@@ -230,7 +230,7 @@ BEGIN
                        ON RR.request_id = U.RequestedRunID
                 WHERE U.EUSProposal = _eusProposal
 
-                Call post_log_entry ('Normal', _message, 'Auto_Define_WPs_For_EUS_Requested_Runs');
+                CALL post_log_entry ('Normal', _message, 'Auto_Define_WPs_For_EUS_Requested_Runs');
 
             End If;
 

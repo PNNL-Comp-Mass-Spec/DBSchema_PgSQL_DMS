@@ -272,7 +272,7 @@ BEGIN
             _message := format('rem Renamed dataset "%s" to "%s"', _datasetNameOld, _datasetNameNew);
             RAISE INFO '%', _message;
 
-            Call post_log_entry ('Normal', _message, 'Rename_Dataset');
+            CALL post_log_entry ('Normal', _message, 'Rename_Dataset');
         End If;
 
         -- Rename any files in t_dataset_files
@@ -435,8 +435,8 @@ BEGIN
             FROM Tmp_JobsToUpdate
             ORDER BY Job
         LOOP
-            Call cap.add_update_job_parameter (_job, 'JobParameters', 'Dataset',   _datasetNameNew, _infoOnly => false);
-            Call cap.add_update_job_parameter (_job, 'JobParameters', 'Directory', _datasetNameNew, _infoOnly => false);
+            CALL cap.add_update_job_parameter (_job, 'JobParameters', 'Dataset',   _datasetNameNew, _infoOnly => false);
+            CALL cap.add_update_job_parameter (_job, 'JobParameters', 'Directory', _datasetNameNew, _infoOnly => false);
 
             UPDATE cap.t_tasks
             Set Dataset = _datasetNameNew
@@ -475,8 +475,8 @@ BEGIN
             FROM Tmp_JobsToUpdate
             ORDER BY Job
         LOOP
-            Call sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetName',       _datasetNameNew, _infoOnly => false);
-            Call sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetFolderName', _datasetNameNew, _infoOnly => false);
+            CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetName',       _datasetNameNew, _infoOnly => false);
+            CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetFolderName', _datasetNameNew, _infoOnly => false);
 
             UPDATE sw.T_Jobs
             Set Dataset = _datasetNameNew

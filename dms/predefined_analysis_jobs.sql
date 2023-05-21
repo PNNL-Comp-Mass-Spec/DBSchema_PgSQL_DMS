@@ -386,7 +386,7 @@ BEGIN
         -- Evaluate the next rule in the holding table (Tmp_Criteria)
         ---------------------------------------------------
 
-        Call public.evaluate_predefined_analysis_rule(
+        CALL public.evaluate_predefined_analysis_rule(
                 _minLevel => _minLevel,
                 _datasetName => _datasetName,
                 _instrumentName => _instrumentName,

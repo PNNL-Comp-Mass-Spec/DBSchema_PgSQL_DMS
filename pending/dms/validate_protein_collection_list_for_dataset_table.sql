@@ -392,7 +392,7 @@ BEGIN
     -- internal standard collections and contaminant collections
     -- are listed first and that the original collection order is preserved
     --
-    -- Note that ValidateAnalysisJobParameters will call ValidateProteinCollectionParams,
+    -- Note that ValidateAnalysisJobParameters will Call ValidateProteinCollectionParams,
     -- which calls S_ValidateAnalysisJobProteinParameters in the Protein_Sequences database,
     -- and that procedure uses StandardizeProteinCollectionList to order the protein collections in a standard manner,
     -- so the order here is not critical

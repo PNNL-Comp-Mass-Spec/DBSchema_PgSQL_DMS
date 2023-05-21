@@ -500,7 +500,7 @@ BEGIN
                 _updateCode := (_jobInfo.Job % 125) + 11;
             End If;
 
-            Call public.update_analysis_job_processing_stats (
+            CALL public.update_analysis_job_processing_stats (
                     _job => _jobInfo.Job,
                     _newDMSJobState => _newDMSJobState,
                     _newBrokerJobState => _jobInfo.NewJobStateInBroker,
@@ -517,7 +517,7 @@ BEGIN
                     _returncode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                Call public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');
+                CALL public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');
             End If;
 
         End If; --</c1>
@@ -528,7 +528,7 @@ BEGIN
                 -- Save job history
                 ---------------------------------------------------
                 --
-                Call sw.copy_job_to_history (_jobInfo.Job, _jobInfo.NewJobStateInBroker, _message => _message);
+                CALL sw.copy_job_to_history (_jobInfo.Job, _jobInfo.NewJobStateInBroker, _message => _message);
             End If;
 
         End If;
@@ -537,7 +537,7 @@ BEGIN
 
         If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
             _statusMessage := '... Updating job state: ' || _jobsProcessed::text || ' / ' || _jobCountToProcess::text;
-            Call public.post_log_entry ('Progress', _statusMessage, 'Update_Job_State', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Job_State', 'sw');
             _lastLogTime := clock_timestamp();
         End If;
 
@@ -640,7 +640,7 @@ BEGIN
         FROM sw.t_job_steps
         WHERE job = _jobInfo.Job AND Not start Is Null;
 
-        Call public.update_failed_job_now_in_progress (
+        CALL public.update_failed_job_now_in_progress (
                 _job => _jobInfo.Job,
                 _newBrokerJobState => _jobInfo.NewJobStateInBroker,
                 _jobStart => _startMin,
@@ -650,7 +650,7 @@ BEGIN
                 _returncode => _returnCode);        -- Output
 
         If _returnCode <> '' Then
-            Call public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');
+            CALL public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');
         End If;
 
     END LOOP;

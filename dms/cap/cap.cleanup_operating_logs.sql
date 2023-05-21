@@ -105,7 +105,7 @@ BEGIN
     --
     _currentLocation := 'Call cap.move_capture_entries_to_history';
 
-    Call cap.move_capture_entries_to_history (_logRetentionIntervalDays, _infoOnly);
+    CALL cap.move_capture_entries_to_history (_logRetentionIntervalDays, _infoOnly);
 
     If _infoOnly Then
         _message := 'See the output window for status messages';

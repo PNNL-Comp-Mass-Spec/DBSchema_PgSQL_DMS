@@ -378,7 +378,7 @@ BEGIN
         _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
 
         If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList, 1) <> 'na' Then
-            Call validate_protein_collection_list_for_dataset_table (
+            CALL validate_protein_collection_list_for_dataset_table (
                                 _protCollNameList => _protCollNameList output,
                                 _collectionCountAdded => _collectionCountAdded output,
                                 _showMessages => true,
@@ -396,7 +396,7 @@ BEGIN
         -- and that ValidateAnalysisJobRequestDatasets populates Dataset_ID, etc. in Tmp_DatasetInfo
         ---------------------------------------------------
         --
-        Call validate_analysis_job_parameters (
+        CALL validate_analysis_job_parameters (
                                 _toolName => _toolName,
                                 _paramFileName => _paramFileName,               -- Output
                                 _settingsFileName => _settingsFileName,         -- Output
@@ -662,10 +662,10 @@ BEGIN
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
                 --
-                Call alter_event_log_entry_user (12, _requestID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (12, _requestID, _stateID, _callingUser);
             End If;
 
-            Call update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
+            CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
 
         End If; -- add mode
 
@@ -724,10 +724,10 @@ BEGIN
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
                 --
-                Call alter_event_log_entry_user (12, _requestID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (12, _requestID, _stateID, _callingUser);
             End If;
 
-            Call update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
+            CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
 
         End If; -- update mode
 

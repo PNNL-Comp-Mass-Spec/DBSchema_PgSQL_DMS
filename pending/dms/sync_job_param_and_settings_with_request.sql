@@ -177,7 +177,7 @@ BEGIN
             _message := format('Updated the parameter file name and/or settings file name for %s job %s to match the actual jobs',
                                 _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
 
-            Call post_log_entry ('Normal', _message, 'Sync_Job_Param_And_Settings_With_Request');
+            CALL post_log_entry ('Normal', _message, 'Sync_Job_Param_And_Settings_With_Request');
         End If;
 
     End If;

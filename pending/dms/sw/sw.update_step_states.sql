@@ -59,7 +59,7 @@ BEGIN
         -- Get unevaluated dependencies for steps that are finished
         -- (skipped or completed)
         --
-        Call sw.evaluate_step_dependencies ( _message => _message,         -- Output
+        CALL sw.evaluate_step_dependencies ( _message => _message,         -- Output
                                           _returnCode => _returnCode,   -- Output
                                           _maxJobsToProcess => _maxJobsToProcess,
                                           _loopingUpdateInterval => _LoopingUpdateInterval,
@@ -68,7 +68,7 @@ BEGIN
         -- Examine all dependencies for steps in 'Waiting' state
         -- and set state of steps that have them all satisfied
         --
-        Call sw.update_dependent_steps ( _message => _message,                      -- Output
+        CALL sw.update_dependent_steps ( _message => _message,                      -- Output
                                       _numStepsSkipped => _numStepsSkipped,      -- Output
                                       _infoOnly => _infoOnly,
                                       _maxJobsToProcess => _maxJobsToProcess,

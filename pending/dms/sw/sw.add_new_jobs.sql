@@ -233,7 +233,7 @@ BEGIN
     If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Finding jobs to reset';
-        Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
     End If;
 
     -- Additional temp tables
@@ -286,7 +286,7 @@ BEGIN
             _statusMessage := format('Resetting %s completed %s',
                                         _jobCountToReset, public.check_plural(_jobCountToReset, 'job', 'jobs');
 
-            Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
         -- Also look for jobs where the DMS state is 'New', the broker state is 2, 5, or 8 (In Progress, Failed, or Holding),
@@ -323,7 +323,7 @@ BEGIN
                                         public.check_plural(_matchCount, 'is',  'are'),
                                         public.check_plural(_matchCount, 'has', 'have'));
 
-            Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
         If _jobCountToReset = 0 Then
@@ -362,7 +362,7 @@ BEGIN
                 INSERT INTO SJL (Job)
                 SELECT Job FROM Tmp_ResetJobs
                 --
-                Call sw.remove_selected_jobs (
+                CALL sw.remove_selected_jobs (
                         _infoOnly,
                         _message => _message,
                         _logDeletions => false);
@@ -377,7 +377,7 @@ BEGIN
             If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
                 _loggingEnabled := true;
                 _statusMessage := 'Adding new jobs to sw.t_jobs';
-                Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+                CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
             End If;
 
             ---------------------------------------------------
@@ -417,7 +417,7 @@ BEGIN
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := 'Finding jobs to Resume';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
         INSERT INTO Tmp_JobsToResumeOrReset (job, dataset, FailedJob)
@@ -476,7 +476,7 @@ BEGIN
             If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
                 _loggingEnabled := true;
                 _statusMessage := 'Finding jobs to Suspend (Hold)';
-                Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+                CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
             End If;
 
             -- Set local job state to holding for jobs
@@ -493,7 +493,7 @@ BEGIN
 
             If _updateCount > 0 Then
                 _statusMessage := format('Suspended %s %s', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
-                Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+                CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
             End If;
         End If;
     END;
@@ -511,12 +511,12 @@ BEGIN
         If _jobCountToResume <> 1 Then
             _statusMessage := _statusMessage || 's';
         End If;
-        Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := 'Updating parameters for resumed jobs';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
         -- Update parameters for jobs being resumed or reset (jobs in Tmp_JobsToResumeOrReset)
@@ -529,7 +529,7 @@ BEGIN
             FROM Tmp_JobsToResumeOrReset
             ORDER BY Job
         LOOP
-            Call sw.update_job_parameters (
+            CALL sw.update_job_parameters (
                     _job,
                     _infoOnly => _infoOnly,
                     _message => _message,           -- Output
@@ -537,7 +537,7 @@ BEGIN
 
             If _returnCode <> '' Then
                 _message := 'Error updating parameters for job ' || _job::text;
-                Call public.post_log_entry ('Error', _message, 'Add_New_Jobs', 'sw');
+                CALL public.post_log_entry ('Error', _message, 'Add_New_Jobs', 'sw');
 
                 DROP TABLE Tmp_JobsToResumeOrReset;
                 RETURN;
@@ -547,7 +547,7 @@ BEGIN
             -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
             ---------------------------------------------------
             --
-            Call sw.validate_job_server_info (_job, _useJobParameters => true, _debugMode => _debugMode);
+            CALL sw.validate_job_server_info (_job, _useJobParameters => true, _debugMode => _debugMode);
 
             _jobsProcessed := _jobsProcessed + 1;
 
@@ -556,7 +556,7 @@ BEGIN
                 _loggingEnabled := true;
 
                 _statusMessage := format('... Updating parameters for resumed jobs: %s / %s', _jobsProcessed, _jobCountToResume);
-                Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+                CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
 
                 _lastLogTime := clock_timestamp();
             End If;
@@ -596,13 +596,13 @@ BEGIN
             _statusMessage := format('... Updated the job comment or special_processing data in sw.t_jobs for %s resumed %s',
                                         _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
-            Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := 'Updating sw.t_job_steps, sw.t_job_step_dependencies, and sw.t_jobs for resumed jobs';
-            Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
         BEGIN
@@ -656,7 +656,7 @@ BEGIN
     If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'AddNewJobs Complete';
-        Call public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
     End If;
 
     ---------------------------------------------------

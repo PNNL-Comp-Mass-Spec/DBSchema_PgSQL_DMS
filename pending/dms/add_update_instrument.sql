@@ -147,7 +147,7 @@ BEGIN
         -- Validate the _autoSP parameteres
         ---------------------------------------------------
 
-        Call validate_auto_storage_path_params (_valAutoDefineStoragePath, _autoSPVolNameClient, _autoSPVolNameServer,
+        CALL validate_auto_storage_path_params (_valAutoDefineStoragePath, _autoSPVolNameClient, _autoSPVolNameServer,
                                                 _autoSPPathRoot, _autoSPArchiveServerName,
                                                 _autoSPArchivePathRoot, _autoSPArchiveSharePathRoot,
                                                 _returnCode => _returnCode);

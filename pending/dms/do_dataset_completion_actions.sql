@@ -139,7 +139,7 @@ BEGIN
     -- However, if 'ArchiveDisabled" has a value of 1 in T_Misc_Options, the archive task will not be created
     ---------------------------------------------------
     --
-    Call AddArchiveDataset (_datasetID, _returnCode => _returnCode);
+    CALL AddArchiveDataset (_datasetID, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         ROLLBACK;
@@ -157,7 +157,7 @@ BEGIN
     -- Call schedule_predefined_analysis_jobs even if the rating is -10 = Unreviewed
     ---------------------------------------------------
     --
-    Call schedule_predefined_analysis_jobs (_datasetName, _returnCode => _returnCode);
+    CALL schedule_predefined_analysis_jobs (_datasetName, _returnCode => _returnCode);
 
     If _message <> '' Then
         RAISE WARNING '%', _message;

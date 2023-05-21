@@ -85,7 +85,7 @@ BEGIN
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
-    Call add_update_requested_run_batch (
+    CALL add_update_requested_run_batch (
                            _id => _id,                      -- Output
                            _name => _name,
                            _description => _description,

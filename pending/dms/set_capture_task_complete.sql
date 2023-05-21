@@ -108,7 +108,7 @@ BEGIN
             _completionState := 5; -- capture failed
             _message := format('Number of capture retries exceeded limit of %s for dataset "%s"', _maxRetries, _datasetName);
 
-            Call post_log_entry ('Error', _message, 'Set_Capture_Task_Complete');
+            CALL post_log_entry ('Error', _message, 'Set_Capture_Task_Complete');
 
             _message := '';
         End If;
@@ -118,7 +118,7 @@ BEGIN
     -- Perform the actions necessary when dataset is complete
     ---------------------------------------------------
     --
-    Call do_dataset_completion_actions (
+    CALL do_dataset_completion_actions (
             _datasetName,
             _completionState,
             _message => _message,           -- Output
@@ -134,7 +134,7 @@ BEGIN
         -- Dataset successfully captured
         -- Remove error messages of the form Error while copying \\15TFTICR64\data\ ...
 
-        Call cleanup_dataset_comments (_datasetID, _infoOnly => false);
+        CALL cleanup_dataset_comments (_datasetID, _infoOnly => false);
 
     End If;
 
@@ -153,7 +153,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := 'Dataset: ' || _datasetName;
-    Call post_usage_log_entry ('Set_Capture_Task_Complete', _usageMessage);
+    CALL post_usage_log_entry ('Set_Capture_Task_Complete', _usageMessage);
 
     If _message <> '' Then
         RAISE WARNING '%', _message;

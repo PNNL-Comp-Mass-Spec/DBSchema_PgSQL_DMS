@@ -46,11 +46,11 @@ BEGIN
             xmlNode.value('_name', 'text') = 'Storage_Path_ID';
 
         If _jobInfo.NewState = 3 Then
-            Call public.set_prep_lc_task_complete (_prepLCID, _storagePathID, 0, _message => _message);
+            CALL public.set_prep_lc_task_complete (_prepLCID, _storagePathID, 0, _message => _message);
         End If;
 
         If _jobInfo.NewState = 5 Then
-            Call public.set_prep_lc_task_complete (_prepLCID, 0, 1, _message => _message);
+            CALL public.set_prep_lc_task_complete (_prepLCID, 0, 1, _message => _message);
         End If;
 
     End If;

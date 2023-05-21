@@ -96,7 +96,7 @@ BEGIN
     -- Make sure the job Start and Finish values are up-to-date
     ---------------------------------------------------
     --
-    Call sw.synchronize_job_stats_with_job_steps (_infoOnly => false);
+    CALL sw.synchronize_job_stats_with_job_steps (_infoOnly => false);
 
     ---------------------------------------------------
     -- Add old successful jobs to be removed to list
@@ -194,7 +194,7 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO 'Call copy_job_to_history for job % with date %', _jobInfo.JobToAdd, public.timestamp_text(_jobInfo.SaveTimeOverride);
             Else
-                Call sw.copy_job_to_history (_jobInfo.JobToAdd, _jobInfo.State, _message => _message, _overrideSaveTime => true, _saveTimeOverride => _jobInfo.JobToAdd.SaveTimeOverride);
+                CALL sw.copy_job_to_history (_jobInfo.JobToAdd, _jobInfo.State, _message => _message, _overrideSaveTime => true, _saveTimeOverride => _jobInfo.JobToAdd.SaveTimeOverride);
             End If;
         END LOOP;
 
@@ -204,7 +204,7 @@ BEGIN
     -- Do actual deletion
     ---------------------------------------------------
 
-    Call sw.remove_selected_jobs (
+    CALL sw.remove_selected_jobs (
             _infoOnly,
             _message => _message,
             _logDeletions => _logDeletions,

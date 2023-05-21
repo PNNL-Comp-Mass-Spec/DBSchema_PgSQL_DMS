@@ -183,7 +183,7 @@ BEGIN
             -- Convert the analysis job request to analysis jobs
             -------------------------------------------------
 
-            Call add_analysis_job_group (
+            CALL add_analysis_job_group (
                     _datasetList => _requestInfo.DatasetList,
                     _priority => 3,
                     _toolName => _requestInfo.ToolName,

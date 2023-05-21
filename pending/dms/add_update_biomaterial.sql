@@ -260,7 +260,7 @@ BEGIN
             -- Could not find entry in database for Username _contactUsername
             -- Try to auto-resolve the name
 
-            Call auto_resolve_name_to_username (_contactUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_contactUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match found; update _contactUsername
@@ -290,7 +290,7 @@ BEGIN
             -- try to auto-resolve using the name column in t_users
             ---------------------------------------------------
 
-            Call auto_resolve_name_to_username (_piUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (_piUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
 
             If _matchCount = 1 Then
                 -- Single match was found; update _piUsername
@@ -353,20 +353,20 @@ BEGIN
                                 _idConfirm::text || ' but the INSERT INTO query reported ' ||
                                 _biomaterialID::text;
 
-                Call postlogentry 'Error', _debugMsg, 'AddUpdateBiomaterial'
+                CALL postlogentry 'Error', _debugMsg, 'AddUpdateBiomaterial'
 
                 _biomaterialID := _idConfirm;
             End If;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                Call alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser);
             End If;
 
             -- Material movement logging
             --
             If _curContainerID <> _contID Then
-                Call post_material_log_entry
+                CALL post_material_log_entry
                      'Biomaterial Move',
                      _biomaterialName,
                      'na',
@@ -377,7 +377,7 @@ BEGIN
 
             If Coalesce(_organismList, '') <> '' Then
                 -- Update the associated organism(s)
-                Call update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
+                CALL update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
             End If;
 
         End If; -- </add>
@@ -412,7 +412,7 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _contID Then
-                Call post_material_log_entry
+                CALL post_material_log_entry
                      'Biomaterial Move',
                      _biomaterialName,
                      _curContainerName,
@@ -423,7 +423,7 @@ BEGIN
 
             -- Update the associated organism(s)
             _organismList := Coalesce(_organismList, '');
-            Call update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
+            CALL update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
 
         End If; -- </update>
 

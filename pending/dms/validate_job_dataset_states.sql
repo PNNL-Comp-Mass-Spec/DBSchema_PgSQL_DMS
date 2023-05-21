@@ -139,7 +139,7 @@ BEGIN
                                     public.check_plural(_updateCount, 'ID', 'IDs'),
                                     _itemList);
 
-            Call post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
+            CALL post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
         End If;
 
         If Exists (Select * FROM Tmp_Jobs) Then
@@ -164,7 +164,7 @@ BEGIN
                                 public.check_plural(_updateCount, 'job', 'jobs'),
                                 _itemList);
 
-            Call post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
+            CALL post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
         End If;
 
     EXCEPTION

@@ -97,7 +97,7 @@ BEGIN
 
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Entering';
-        Call public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
     End If;
 
     If _debugMode And _existingJob <> 0 Then
@@ -326,7 +326,7 @@ BEGIN
         If Not FOUND Then
             _message := format('Script ''%s'' not found in cap.t_scripts for capture task job %s', _jobInfo.Script, _jobInfo.Job);
 
-            Call public.post_log_entry ('Error', _message, 'Create_Task_Steps', 'cap');
+            CALL public.post_log_entry ('Error', _message, 'Create_Task_Steps', 'cap');
 
             CONTINUE;
         End If;
@@ -355,7 +355,7 @@ BEGIN
 
         -- Create the basic capture task job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-        Call cap.create_steps_for_task (
+        CALL cap.create_steps_for_task (
                 _jobInfo.Job,
                 _scriptXML,
                 _jobInfo.ResultsDirectoryName,
@@ -377,7 +377,7 @@ BEGIN
         -- Perform a mixed bag of operations on the capture task jobs in the temporary tables to finalize them before
         -- copying to the main database tables
 
-        Call cap.finish_task_creation (
+        CALL cap.finish_task_creation (
                  _jobInfo.Job,
                  _message => _message,
                  _debugMode => _debugMode);
@@ -389,7 +389,7 @@ BEGIN
             _loggingEnabled := true;
 
             _statusMessage := format('... Creating capture task job steps: %s / %s', _jobsProcessed, _jobCountToProcess);
-            Call public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;
@@ -409,14 +409,14 @@ BEGIN
             --     Tmp_Job_Steps
             --     Tmp_Job_Step_Dependencies
             --     Tmp_Job_Parameters
-            Call cap.move_tasks_to_main_tables (_message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
+            CALL cap.move_tasks_to_main_tables (_message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
         End If;
     End If;
 
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Create task steps complete';
-        Call public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
     End If;
 
     ---------------------------------------------------
@@ -425,7 +425,7 @@ BEGIN
     --
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Exiting';
-        Call public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
     End If;
 
     If _debugMode Then

@@ -82,7 +82,7 @@ BEGIN
                                 _removeParents,
                                 Coalesce(_paramListXML, 'Error: _paramListXML is null'));
 
-            Call public.post_log_entry ('Debug', _logMessage, 'Update_Data_Package_Items_XML', 'dpkg');
+            CALL public.post_log_entry ('Debug', _logMessage, 'Update_Data_Package_Items_XML', 'dpkg');
         End If;
 
         ---------------------------------------------------
@@ -105,7 +105,7 @@ BEGIN
         FROM _xml.nodes('//item') AS R(xmlNode)
 
         ---------------------------------------------------
-        Call update_data_package_items_utility (
+        CALL update_data_package_items_utility (
                                 _comment,
                                 _mode,
                                 _removeParents,

@@ -41,7 +41,7 @@ BEGIN
         _message := format('Updated the experiment name for %s %s associated with data package %s',
                             _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'), _packageID);
 
-        Call public.post_log_entry ('Info', _message, 'Refresh_Data_Package_Items_Using_DMS', 'dpkg');
+        CALL public.post_log_entry ('Info', _message, 'Refresh_Data_Package_Items_Using_DMS', 'dpkg');
     End If;
 
     ---------------------------------------------------
@@ -61,7 +61,7 @@ BEGIN
         _message := format('Updated the campaign name for %s biomaterial %s associated with data package %s',
                              _updateCount, public.check_plural(_updateCount, 'item', 'items'), _packageID);
 
-        Call public.post_log_entry ('Info', _message, 'Refresh_Data_Package_Items_Using_DMS', 'dpkg');
+        CALL public.post_log_entry ('Info', _message, 'Refresh_Data_Package_Items_Using_DMS', 'dpkg');
     End If;
 
 END

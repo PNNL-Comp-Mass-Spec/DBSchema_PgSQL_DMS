@@ -43,7 +43,7 @@ BEGIN
     FROM    V_OSM_Package_Paths
     WHERE ID = _id
 
-    Call s_add_data_folder_create_task
+    CALL s_add_data_folder_create_task
                     _pathLocalRoot = _pathLocalRoot,
                     _pathSharedRoot = _pathSharedRoot,
                     _folderPath = _pathFolder,
@@ -59,13 +59,13 @@ BEGIN
     ---------------------------------------------------
     --
     /*
-    Call call_send_message _id, _mode, _message output
+    CALL call_send_message _id, _mode, _message output
 
     If Coalesce(_message, '') = '' Then
         _message := 'Called SendMessage for OSM Package ID ' || _packageID::text || ': ' || _pathFolder;
     End If;
 
-    Call post_log_entry ('Normal', _message, 'Make_OSM_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser)
+    CALL post_log_entry ('Normal', _message, 'Make_OSM_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser)
     */
 
     ---------------------------------------------------

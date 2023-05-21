@@ -165,7 +165,7 @@ BEGIN
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
         ---------------------------------------------------
         --
-        Call cap.create_steps_for_task (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
+        CALL cap.create_steps_for_task (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
 
         If _returnCode <> '' Then
             _msg := 'Error returned by create_steps_for_task: ' || _returnCode;
@@ -190,7 +190,7 @@ BEGIN
         -- copying to the main database tables
         ---------------------------------------------------
         --
-        Call cap.finish_task_creation (_job, _message => _message, _debugMode => _debugMode);
+        CALL cap.finish_task_creation (_job, _message => _message, _debugMode => _debugMode);
 
         ---------------------------------------------------
         -- Move temp tables to main tables
@@ -228,7 +228,7 @@ BEGIN
                 UPDATE Tmp_Job_Step_Dependencies  SET Job = _job
                 UPDATE Tmp_Job_Parameters  SET Job = _job
 
-                Call cap.move_tasks_to_main_tables (_message => _message, _returnCode => _returnCode);
+                CALL cap.move_tasks_to_main_tables (_message => _message, _returnCode => _returnCode);
 
             END;
 

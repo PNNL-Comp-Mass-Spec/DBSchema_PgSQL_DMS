@@ -309,7 +309,7 @@ BEGIN
             If _mergeUpdateCount > 0 OR _mergeInsertCount > 0 Then
                 _message := format('Updated t_charge_code: %s added, %s updated', _mergeInsertCount, _mergeUpdateCount);
 
-                Call post_log_entry ('Normal', _message, 'Update_Charge_Codes_From_Warehouse');
+                CALL post_log_entry ('Normal', _message, 'Update_Charge_Codes_From_Warehouse');
 
                 _message := '';
             End If;
@@ -320,7 +320,7 @@ BEGIN
             --
             _currentLocation := 'Update usage columns';
 
-            Call update_charge_code_usage (_infoOnly => false);
+            CALL update_charge_code_usage (_infoOnly => false);
 
             ----------------------------------------------------------
             -- Update Inactive_Date_Most_Recent
@@ -464,7 +464,7 @@ BEGIN
             -- We only add users associated with charge codes that have been used in DMS
             ----------------------------------------------------------
             --
-            Call auto_add_charge_code_users (_infoOnly => false);
+            CALL auto_add_charge_code_users (_infoOnly => false);
 
             DROP TABLE Tmp_WPsInUseLast3Years;
             DROP TABLE Tmp_WPsExplicit;

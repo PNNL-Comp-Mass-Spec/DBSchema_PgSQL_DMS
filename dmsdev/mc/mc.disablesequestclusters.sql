@@ -19,7 +19,7 @@ DECLARE
 
 BEGIN
 
-    Call EnableDisableAllManagers (
+    CALL EnableDisableAllManagers (
         _managerTypeIDList := '11',
         _managerNameList := '%SeqCluster%',
         _enable := 0,

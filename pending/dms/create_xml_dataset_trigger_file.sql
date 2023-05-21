@@ -112,18 +112,18 @@ BEGIN
     _filePath := public.combine_paths(_triggerFolderPath, 'man_' || _datasetName || '.xml');
 
     -- Create a filesystem object
-    Call _hr => sp_oacreate 'Scripting.FileSystemObject', _fso OUT
+    CALL _hr => sp_oacreate 'Scripting.FileSystemObject', _fso OUT
     If _hr <> 0 Then
-        Call sp_oaget_error_info _fso, _src OUT, _desc OUT
+        CALL sp_oaget_error_info _fso, _src OUT, _desc OUT
         SELECT hr=_hr::varbinary(4), Source=_src, Description=_desc
         _message := 'Error creating FileSystemObject, cannot create trigger file';
         RETURN;
     End If;
 
     -- Make sure _triggerFolderPath exists
-    Call _hr => sp_oamethod  _fso, 'FolderExists', _result OUT, _triggerFolderPath
+    CALL _hr => sp_oamethod  _fso, 'FolderExists', _result OUT, _triggerFolderPath
     If _hr <> 0 Then
-        Call load_get_oaerror_message _fso, _hr, _message OUT
+        CALL load_get_oaerror_message _fso, _hr, _message OUT
         _returnCode := 'U5202';
         If Coalesce(_message, '') = '' Then
             _message := 'Error verifying that the trigger folder exists at ' || Coalesce(_triggerFolderPath, '??');
@@ -211,9 +211,9 @@ BEGIN
 
     -- See if file already exists
     --
-    Call _hr => sp_oamethod  _fso, 'FileExists', _result OUT, _filePath
+    CALL _hr => sp_oamethod  _fso, 'FileExists', _result OUT, _filePath
     If _hr <> 0 Then
-        Call load_get_oaerror_message _fso, _hr, _message OUT
+        CALL load_get_oaerror_message _fso, _hr, _message OUT
         _returnCode := 'U5204';
         If Coalesce(_message, '') = '' Then
             _message := 'Error looking for an existing trigger file at ' || Coalesce(_filePath, '??');
@@ -229,9 +229,9 @@ BEGIN
     End If;
 
     -- Open the text file for appending (1- ForReading, 2 - ForWriting, 8 - ForAppending)
-    Call _hr => sp_oamethod _fso, 'OpenTextFile', _ts OUT, _filePath, 8, true
+    CALL _hr => sp_oamethod _fso, 'OpenTextFile', _ts OUT, _filePath, 8, true
     If _hr <> 0 Then
-        Call sp_oaget_error_info _fso, _src OUT, _desc OUT
+        CALL sp_oaget_error_info _fso, _src OUT, _desc OUT
         SELECT hr=_hr::varbinary(4), Source=_src, Description=_desc
         _returnCode := 'U5206';
         If Coalesce(_message, '') = '' Then
@@ -241,9 +241,9 @@ BEGIN
     End If;
 
     -- Call the write method of the text stream to write the trigger file
-    Call _hr => sp_oamethod _ts, 'WriteLine', NULL, _tmpXmlLine
+    CALL _hr => sp_oamethod _ts, 'WriteLine', NULL, _tmpXmlLine
     If _hr <> 0 Then
-        Call sp_oaget_error_info _fso, _src OUT, _desc OUT
+        CALL sp_oaget_error_info _fso, _src OUT, _desc OUT
         SELECT hr=_hr::varbinary(4), Source=_src, Description=_desc
         _returnCode := 'U5207';
         If Coalesce(_message, '') = '' Then
@@ -253,9 +253,9 @@ BEGIN
     End If;
 
     -- Close the text stream
-    Call _hr => sp_oamethod _ts, 'Close', NULL
+    CALL _hr => sp_oamethod _ts, 'Close', NULL
     If _hr <> 0 Then
-        Call sp_oaget_error_info _fso, _src OUT, _desc OUT
+        CALL sp_oaget_error_info _fso, _src OUT, _desc OUT
         SELECT hr=_hr::varbinary(4), Source=_src, Description=_desc
         _returnCode := 'U5208';
         If Coalesce(_message, '') = '' Then
@@ -273,9 +273,9 @@ BEGIN
 DestroyFSO:
     -- Destroy the FileSystemObject object.
     --
-    Call _hr => sp_oadestroy _fso
+    CALL _hr => sp_oadestroy _fso
     If _hr <> 0 Then
-        Call load_get_oaerror_message _fso, _hr, _message OUT
+        CALL load_get_oaerror_message _fso, _hr, _message OUT
         _returnCode := 'U5209';
         _message := 'Error destroying FileSystemObject';
         RETURN;
@@ -291,7 +291,7 @@ DestroyFSO:
         End If;
 
         If _logErrors Then
-            Call post_log_entry ('Error', _message, 'Create_Xml_Dataset_Trigger_File');
+            CALL post_log_entry ('Error', _message, 'Create_Xml_Dataset_Trigger_File');
         End If;
     End If;
 

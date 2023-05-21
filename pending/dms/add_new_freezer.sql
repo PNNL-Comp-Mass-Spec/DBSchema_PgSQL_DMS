@@ -167,7 +167,7 @@ BEGIN
 
         _message := 'Added ' || _insertCount::text || ' rows to t_material_locations by copying freezer_tag ' || _sourceFreezerTag;
 
-        Call post_log_entry ('Normal', _message, 'Add_New_Freezer');
+        CALL post_log_entry ('Normal', _message, 'Add_New_Freezer');
     End If;
 
     ---------------------------------------------------

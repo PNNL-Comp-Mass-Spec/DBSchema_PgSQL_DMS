@@ -359,7 +359,7 @@ BEGIN
     If _captureSubdirectory Similar To '[A-Z]:\%' OR _captureSubdirectory LIKE '\\%' Then
         _message := 'Capture subfolder is not a relative path for dataset ' || _datasetName || '; ignoring ' || _captureSubdirectory;
 
-        Call post_log_entry ('Error', _message, 'Add_New_Dataset');
+        CALL post_log_entry ('Error', _message, 'Add_New_Dataset');
 
         _captureSubdirectory := '';
     End If;
@@ -374,7 +374,7 @@ BEGIN
            WHERE message LIKE 'Capture subfolder is identical to the dataset name%' AND
                  Entered > CURRENT_TIMESTAMP - INTERVAL '3 days' ) Then
         Begin
-            Call post_log_entry ('Debug', _message, 'Add_New_Dataset');
+            CALL post_log_entry ('Debug', _message, 'Add_New_Dataset');
         End If;
 
         _captureSubdirectory := '';
@@ -383,7 +383,7 @@ BEGIN
     ---------------------------------------------------
     -- Create new dataset
     ---------------------------------------------------
-    Call add_update_dataset (
+    CALL add_update_dataset (
                         _datasetName,
                         _experimentName,
                         _operatorUsername,
@@ -416,7 +416,7 @@ BEGIN
         If _mode = 'add' Then
             _logMessage := 'Error adding new dataset: ' || _message || '; ' || _xmlDoc;
 
-            Call post_log_entry ( _type => 'Error',
+            CALL post_log_entry ( _type => 'Error',
                                   _message => _logMessage,
                                   _postedBy = 'Add_New_Dataset');
         End If;

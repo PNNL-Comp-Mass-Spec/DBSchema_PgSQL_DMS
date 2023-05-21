@@ -196,7 +196,7 @@ BEGIN
         If char_length(_callingUser) > 0 Then
             _stateID := 0;
 
-            Call alter_event_log_entry_user (11, _requestID, _stateID, _callingUser);
+            CALL alter_event_log_entry_user (11, _requestID, _stateID, _callingUser);
         End If;
 
         COMMIT;
@@ -208,7 +208,7 @@ BEGIN
 
     If _batchID > 0 Then
 
-        Call update_cached_requested_run_batch_stats (
+        CALL update_cached_requested_run_batch_stats (
                 _batchID,
                 _fullrefresh => false,
                 _message => _message2,          -- Output

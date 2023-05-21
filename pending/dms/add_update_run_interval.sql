@@ -117,7 +117,7 @@ BEGIN
             RAISE INFO '%', 'Calling ParseUsageText';
         End If;
 
-        Call parse_usage_text (_cleanedComment => _cleanedComment,      -- Input / Output
+        CALL parse_usage_text (_cleanedComment => _cleanedComment,      -- Input / Output
                                _usageXML => _usageXML,                  -- Output
                                _message => _message,                    -- Output
                                _returnCode => _returnCode,              -- Output

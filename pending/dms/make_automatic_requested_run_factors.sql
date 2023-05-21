@@ -78,7 +78,7 @@ BEGIN
         _callingUser := public.get_user_login_without_domain('');
     End If;
 
-    Call update_requested_run_factors (
+    CALL update_requested_run_factors (
                             _factorList,
                             _message => _message,           -- Output
                             _returnCode => _returnCode,     -- Output

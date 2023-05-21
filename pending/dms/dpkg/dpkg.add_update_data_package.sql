@@ -292,7 +292,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            Call dpkg.make_data_package_storage_folder (
+            CALL dpkg.make_data_package_storage_folder (
                 _id,
                 _mode,
                 _message => _message,
@@ -312,7 +312,7 @@ BEGIN
         -- Update EUS_Person_ID and EUS_Proposal_ID
         ---------------------------------------------------
         --
-        Call dpkg.update_data_package_eus_info (_id, _message => _message, _returnCode => _returnCode);
+        CALL dpkg.update_data_package_eus_info (_id, _message => _message, _returnCode => _returnCode);
 
     EXCEPTION
         WHEN OTHERS THEN

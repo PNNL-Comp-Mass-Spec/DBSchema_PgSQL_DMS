@@ -84,7 +84,7 @@ BEGIN
 
         _message := _message || '; error code = ' || _myError::text;
 
-        Call public.post_log_entry ('Error', _message, 'Set_MyEMSL_Upload_Status', 'dpkg');
+        CALL public.post_log_entry ('Error', _message, 'Set_MyEMSL_Upload_Status', 'dpkg');
     End If;
 
     Return _myError

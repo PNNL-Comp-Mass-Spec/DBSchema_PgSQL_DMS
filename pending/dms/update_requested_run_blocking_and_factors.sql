@@ -78,7 +78,7 @@ BEGIN
             _logMessage := '_blockingList: ' || _logMessage;
         End If;
 
-        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
+        CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
 
         _logMessage := Cast(_factorList as text);
         If Coalesce(_logMessage, '') = '' Then
@@ -87,7 +87,7 @@ BEGIN
             _logMessage := '_factorList: ' || _logMessage;
         End If;
 
-        Call post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
+        CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
     End If;
 
     -----------------------------------------------------------
@@ -95,7 +95,7 @@ BEGIN
     -----------------------------------------------------------
     --
     If char_length(_blockingList) > 0 Then
-        Call update_requested_run_batch_parameters (
+        CALL update_requested_run_batch_parameters (
                             _blockingList,
                             'update',
                             _message => _message,           -- Output
@@ -110,7 +110,7 @@ BEGIN
         -----------------------------------------------------------
         --
 
-        Call update_requested_run_factors (
+        CALL update_requested_run_factors (
                                 _factorList,
                                 _message => _message,           -- Output
                                 _returnCode => _returnCode,     -- Output
@@ -122,7 +122,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := '';
-    Call post_usage_log_entry ('Update_Requested_Run_Blocking_And_Factors', _usageMessage);
+    CALL post_usage_log_entry ('Update_Requested_Run_Blocking_And_Factors', _usageMessage);
 
 END
 $$;

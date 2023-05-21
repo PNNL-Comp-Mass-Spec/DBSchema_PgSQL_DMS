@@ -240,8 +240,8 @@ BEGIN
                 -- Save existing state of instrument and storage tables
                 ---------------------------------------------------
                 --
-                Call backup_storage_state (_message => _message, _returnCode => _returnCode);
-                --
+                CALL backup_storage_state (_message => _message, _returnCode => _returnCode);
+
                 If _returnCode <> '' Then
                     ROLLBACK;
 
@@ -375,7 +375,7 @@ BEGIN
             -- Save existing state of instrument and storage tables
             ---------------------------------------------------
             --
-            Call backup_storage_state (_message => _message, _returnCode => _returnCode);
+            CALL backup_storage_state (_message => _message, _returnCode => _returnCode);
 
             If _returnCode <> '' Then
                 ROLLBACK;

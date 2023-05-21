@@ -97,7 +97,7 @@ BEGIN
         _message := format('Cannot create a dataset archive task for Dataset ID %s; ' ||
                            'dataset state is 14 (Capture Failed, Duplicate Dataset Files)', _datasetID);
 
-        Call post_log_entry ('Error', _message, 'Add_Archive_Dataset', _duplicateEntryHoldoffHours => 12);
+        CALL post_log_entry ('Error', _message, 'Add_Archive_Dataset', _duplicateEntryHoldoffHours => 12);
 
         RAISE WARNING '%', _message;
 

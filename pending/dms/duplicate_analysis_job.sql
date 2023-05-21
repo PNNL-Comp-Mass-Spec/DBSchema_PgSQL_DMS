@@ -126,7 +126,7 @@ BEGIN
     End If;
 
     -- Call the procedure to create/preview the job creation
-    Call add_update_analysis_job (
+    CALL add_update_analysis_job (
         _jobInfo.Dataset,
         _jobInfo.Priority,
         _jobInfo.ToolName,

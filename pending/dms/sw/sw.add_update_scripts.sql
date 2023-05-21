@@ -174,7 +174,7 @@ BEGIN
             WHERE script = _script;
 
             If Not _id Is Null Then
-                Call alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
+                CALL alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
             End If;
         End If;
 
@@ -207,7 +207,7 @@ BEGIN
             WHERE script = _script;
 
             If Not _id Is Null Then
-                Call alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
+                CALL alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
             End If;
         End If;
 

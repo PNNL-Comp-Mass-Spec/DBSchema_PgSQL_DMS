@@ -93,14 +93,14 @@ BEGIN
             FROM Tmp_PrepRequestItems
             ORDER BY ID
         LOOP
-            Call update_sample_prep_request_items (
+            CALL update_sample_prep_request_items (
                     _currentId,
                     _mode => 'update',
                     _message => _message,           -- Output
                     _returnCode => _returncode,     -- Output
                     _callingUser) => _callingUser;
 /*
-            Call update_osm_package_items
+            CALL update_osm_package_items
                                 _currentId,
                                 _itemType,
                                 _itemList,

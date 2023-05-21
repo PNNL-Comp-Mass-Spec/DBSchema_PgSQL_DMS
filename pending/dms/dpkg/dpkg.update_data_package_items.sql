@@ -97,7 +97,7 @@ BEGIN
         -- Set this to true to log a debug message
         If _logUsage Then
             _usageMessage := format('Updating %ss for data package %s', _entityName, _packageID);
-            Call public.post_log_entry ('Debug', _usageMessage, 'Update_Data_Package_Items', 'dpkg')
+            CALL public.post_log_entry ('Debug', _usageMessage, 'Update_Data_Package_Items', 'dpkg')
         End If;
 
         _itemList := Trim(Coalesce(_itemList, ''));
@@ -121,7 +121,7 @@ BEGIN
         -- Apply the changes
         ---------------------------------------------------
         --
-        Call update_data_package_items_utility (
+        CALL update_data_package_items_utility (
                                     _comment,
                                     _mode,
                                     _removeParents,

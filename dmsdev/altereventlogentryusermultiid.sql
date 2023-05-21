@@ -104,7 +104,7 @@ BEGIN
         FROM TmpIDUpdateList
         ORDER BY TargetID
     Loop
-        Call AlterEventLogEntryUser(
+        CALL AlterEventLogEntryUser(
                             _eventlogschema,
                             _targetType,
                             _targetID,

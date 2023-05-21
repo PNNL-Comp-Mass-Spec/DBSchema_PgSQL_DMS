@@ -102,7 +102,7 @@ EXCEPTION
     RAISE Warning 'Error: %', _message;
     RAISE warning '%', _exceptionContext;
 
-    Call PostLogEntry ('Error', _message, 'AckManagerUpdateRequired', 'mc');
+    CALL PostLogEntry ('Error', _message, 'AckManagerUpdateRequired', 'mc');
 
 END
 $$;

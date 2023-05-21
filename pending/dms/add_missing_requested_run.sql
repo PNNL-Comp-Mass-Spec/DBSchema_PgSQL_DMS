@@ -116,7 +116,7 @@ BEGIN
         INTO _workPackage
         FROM public.get_wp_for_eus_proposal (_eusProposalID);
 
-        Call add_update_requested_run(
+        CALL add_update_requested_run(
                                 _requestName => _requestName,
                                 _experimentName =>_datasetInfo.Experiment,
                                 _requesterUsername => _datasetInfo.OperatorUsername,

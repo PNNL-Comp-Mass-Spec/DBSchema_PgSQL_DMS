@@ -68,7 +68,7 @@ BEGIN
     -- Create dataset archive entry in DMS
     ---------------------------------------------------
     --
-    Call public.add_archive_dataset (_taskInfo.DatasetID, _message => _message, _returnCode => _returnCode);
+    CALL public.add_archive_dataset (_taskInfo.DatasetID, _message => _message, _returnCode => _returnCode);
 
     If Coalesce(_returnCode, '') <> '' Then
         RETURN;

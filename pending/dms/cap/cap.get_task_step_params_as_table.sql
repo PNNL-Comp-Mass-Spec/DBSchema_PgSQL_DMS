@@ -47,7 +47,7 @@ BEGIN
     -- Call get_task_step_params to populate the temporary table
     ---------------------------------------------------
 
-    Call cap.get_task_step_params (_job, _step, _message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
+    CALL cap.get_task_step_params (_job, _step, _message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
 
     If _returnCode <> '' Then
         RETURN;

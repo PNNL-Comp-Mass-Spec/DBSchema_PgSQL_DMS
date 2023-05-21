@@ -182,7 +182,7 @@ BEGIN
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         _msg := format('Updated the experiment name for %s %s', _updateCount, public.check_plural(_updateCount, 'QC dataset', 'QC datasets'));
-        Call post_log_entry ('Normal', _msg, 'Update_Experiment_Name_For_QC_Datasets');
+        CALL post_log_entry ('Normal', _msg, 'Update_Experiment_Name_For_QC_Datasets');
 
     End If;
 

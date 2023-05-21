@@ -79,7 +79,7 @@ BEGIN
 
         If Not FOUND Then
             _message = format('Spectral library ID %s not found in T_Spectral_Library', _libraryId);
-            Call post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
+            CALL post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
 
             _returnCode := 'U5201';
             RETURN;
@@ -88,7 +88,7 @@ BEGIN
         If _libraryStateId <> 2 Then
             _message := format('Spectral library ID %s has state %s in T_Spectral_Library instead of state 2 (In Progress); leaving the state unchanged',
                                 _libraryId, _libraryStateId);
-            Call post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
+            CALL post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
 
             _returnCode := 'U5202';
             RETURN;
@@ -109,7 +109,7 @@ BEGIN
         If Not FOUND Then
             _message = format('Error setting the state for Spectral library ID %s to %s; no rows were updated',
                                 _libraryId, _newLibraryState);
-            Call post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
+            CALL post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
 
             _returnCode := 'U5203';
             RETURN;

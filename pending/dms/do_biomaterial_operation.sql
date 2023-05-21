@@ -105,7 +105,7 @@ BEGIN
         If char_length(_callingUser) > 0 Then
             _stateID := 0;
 
-            Call alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser);
+            CALL alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser);
         End If;
 
         RETURN;

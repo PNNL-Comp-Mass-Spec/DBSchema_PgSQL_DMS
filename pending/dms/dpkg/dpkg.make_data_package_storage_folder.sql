@@ -55,7 +55,7 @@ BEGIN
     FROM V_Data_Package_Folder_Creation_Parameters
     WHERE ID = _id;
 
-    Call sw.add_data_folder_create_task (
+    CALL sw.add_data_folder_create_task (
                     _pathLocalRoot => _pathLocalRoot,
                     _pathSharedRoot => _pathSharedRoot,
                     _folderPath => _pathFolder,
@@ -71,13 +71,13 @@ BEGIN
     ---------------------------------------------------
     --
     /*
-    Call call_send_message _id, _mode, _message output
+    CALL call_send_message _id, _mode, _message output
 
     If Coalesce(_message, '') = '' Then
         _message := 'Called SendMessage for Data Package ID ' || _packageID::text || ': ' || _pathFolder;
     End If;
 
-    Call public.post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
+    CALL public.post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
     */
 
 /*
@@ -108,17 +108,17 @@ BEGIN
     SELECT value FROM dpkg.t_properties WHERE property = 'MessageBroker2' INTO _server2
 
     _msg := ''    ;
-    Call send_message _creationParams, _queue, _server1, _port, _msg output
+    CALL send_message _creationParams, _queue, _server1, _port, _msg output
     if _myError <> 0 Then
         _msg := '';
-        Call send_message _creationParams, _queue, _server2, _port, _msg output
+        CALL send_message _creationParams, _queue, _server2, _port, _msg output
     End If;
     if _myError <> 0 Then
         _message := _msg;
     End If;
 
     _message := 'Calling SendMessage: ' || _creationParams;
-    Call public.post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
+    CALL public.post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
 */
 
     ---------------------------------------------------

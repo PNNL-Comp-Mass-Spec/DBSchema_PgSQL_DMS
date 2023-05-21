@@ -88,7 +88,7 @@ BEGIN
 
     If _jobUpdateCount > 0 Then
         _message := format('Job priorities changed: updated %s %s in sw.t_jobs', _jobUpdateCount, public.check_plural('job', 'jobs'));
-        Call public.post_log_entry ('Normal', _message, 'Sync_Job_Info', 'sw');
+        CALL public.post_log_entry ('Normal', _message, 'Sync_Job_Info', 'sw');
         _message := '';
     End If;
 

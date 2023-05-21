@@ -22,7 +22,7 @@ DECLARE
 
 BEGIN
 
-    Call mc.mc.enable_disable_all_managers (
+    CALL mc.mc.enable_disable_all_managers (
         _managerTypeIDList := '11',
         _managerNameList := '%SeqCluster%',
         _enable := false,

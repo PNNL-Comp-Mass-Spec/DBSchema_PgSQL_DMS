@@ -158,7 +158,7 @@ BEGIN
         SELECT Job
         FROM Tmp_JobList;
 
-        Call alter_entered_by_user_multi_id ('t_analysis_job_processor_group_associations', 'job', _callingUser);
+        CALL alter_entered_by_user_multi_id ('t_analysis_job_processor_group_associations', 'job', _callingUser);
 
         DROP TABLE Tmp_ID_Update_List;
     End If;
@@ -168,7 +168,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := _jobCount::text || ' jobs updated';
-    Call post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Associations', _usageMessage);
+    CALL post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Associations', _usageMessage);
 
     DROP TABLE Tmp_JobList;
 END

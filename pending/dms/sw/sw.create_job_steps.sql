@@ -27,7 +27,7 @@ AS $$
 **
 **        Declare _message text;
 **
-**        Call sw.create_job_steps (_message => _message, 'CreateFromImportedJobs', _existingJob => 555225, _infoOnly => true);
+**        CALL sw.create_job_steps (_message => _message, 'CreateFromImportedJobs', _existingJob => 555225, _infoOnly => true);
 **
 **        Raise Info '%', _message;
 **
@@ -163,7 +163,7 @@ BEGIN
 
         -- Make sure there are no conflicts in the step numbers in the extension script vs. the script used for the existing job
 
-        Call sw.validate_extension_script_for_job (
+        CALL sw.validate_extension_script_for_job (
                 _existingJob,
                 _extensionScriptName,
                 _message => _message,           -- Output
@@ -290,7 +290,7 @@ BEGIN
     If _mode::citext = 'ExtendExistingJob' Then
         -- Populate Tmp_Jobs with info from existing job
         -- If it only exists in history, restore it to main tables
-        Call sw.set_up_to_extend_existing_job _existingJob, _message
+        CALL sw.set_up_to_extend_existing_job _existingJob, _message
     End If;
 
     If _mode::citext = 'UpdateExistingJob' Then
@@ -422,7 +422,7 @@ BEGIN
         End If;
 
         If _returnCode <> '' Then
-            Call public.post_log_entry ('Error', _errorMessage, 'Create_Job_Steps', 'sw');
+            CALL public.post_log_entry ('Error', _errorMessage, 'Create_Job_Steps', 'sw');
 
             UPDATE Tmp_Jobs
             SET State = 5
@@ -485,7 +485,7 @@ BEGIN
 
             -- Create the basic job structure (steps and dependencies)
             -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-            Call sw.create_steps_for_job (
+            CALL sw.create_steps_for_job (
                     _job,
                     _scriptXML,
                     _resultsDirectoryName,
@@ -494,7 +494,7 @@ BEGIN
 
             -- Calculate signatures for steps that require them (and also handle shared results directories)
             -- Details are stored in Tmp_Job_Steps
-            Call sw.create_signatures_for_job_steps (
+            CALL sw.create_signatures_for_job_steps (
                     _job,
                     _xmlParameters,
                     _datasetOrDataPackageId,
@@ -503,7 +503,7 @@ BEGIN
 
             -- Update the memory usage for job steps that have JavaMemorySize entries defined in the parameters
             -- This updates Memory_Usage_MB in Tmp_Job_Steps
-            Call sw.update_job_step_memory_usage (
+            CALL sw.update_job_step_memory_usage (
                     _job,
                     _xmlParameters,
                     _message => _message);
@@ -534,7 +534,7 @@ BEGIN
             End If;
 
             -- Handle any step cloning
-            Call sw.clone_job_step (_job, _xmlParameters, _message => _message);
+            CALL sw.clone_job_step (_job, _xmlParameters, _message => _message);
 
             If _debugMode Then
                 SELECT COUNT(*)
@@ -551,11 +551,11 @@ BEGIN
 
             -- Handle external DTAs If any
             -- This updates DTA_Gen steps in Tmp_Job_Steps for which the job parameters contain parameter 'ExternalDTAFolderName' with value 'DTA_Manual'
-            Call sw.override_dta_gen_for_external_dta _job, _xmlParameters, _message => _message
+            CALL sw.override_dta_gen_for_external_dta _job, _xmlParameters, _message => _message
 
             -- Perform a mixed bag of operations on the jobs in the temporary tables to finalize them before
             -- copying to the main database tables
-            Call sw.finish_job_creation (
+            CALL sw.finish_job_creation (
                     _job,
                     _message => _message,
                     _debugMode => _debugMode);
@@ -563,7 +563,7 @@ BEGIN
             -- Do current job parameters conflict with existing job?
             If _mode::citext = 'ExtendExistingJob' or _mode::citext = 'UpdateExistingJob' Then
 
-                Call sw.cross_check_job_parameters (
+                CALL sw.cross_check_job_parameters (
                         _job,
                         _message => _message,               -- Output
                         _returnCode => _returnCode,         -- Output
@@ -602,7 +602,7 @@ BEGIN
             _loggingEnabled := true;
 
             _statusMessage := format('... Creating job steps: %s / %s', _jobsProcessed, _jobCountToProcess);
-            Call public.post_log_entry ('Progress', _statusMessage, 'Create_Job_Steps', 'sw');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Job_Steps', 'sw');
             _lastLogTime := clock_timestamp();
         End If;
 
@@ -615,13 +615,13 @@ BEGIN
     If Not _infoOnly Then
         If _mode::citext = 'CreateFromImportedJobs' Then
             -- Move temp tables to main tables
-            Call sw.move_jobs_to_main_tables (
+            CALL sw.move_jobs_to_main_tables (
                     _message => _message,
                     _debugMode => _debugMode);
 
             -- Possibly update the input folder using the
             -- Special_Processing param in the job parameters
-            Call sw.update_input_folder_using_special_processing_param (
+            CALL sw.update_input_folder_using_special_processing_param (
                     _jobList,
                     _infoOnly => false,
                     _showResultsMode => 0);
@@ -629,20 +629,20 @@ BEGIN
 
         If _mode::citext = 'ExtendExistingJob' Then
             -- Merge temp tables with existing job
-            Call sw.merge_jobs_to_main_tables (
+            CALL sw.merge_jobs_to_main_tables (
                     _message => _message,
                     _infoOnly => _infoOnly);
         End If;
 
         If _mode::citext = 'UpdateExistingJob' Then
             -- Merge temp tables with existing job
-            Call sw.update_job_in_main_tables (_message => _message);
+            CALL sw.update_job_in_main_tables (_message => _message);
         End If;
 
     Else
         If _mode::citext = 'ExtendExistingJob' Then
             -- Preview changes that would be made
-            Call sw.merge_jobs_to_main_tables (
+            CALL sw.merge_jobs_to_main_tables (
                     _message => _message,
                     _infoOnly => _infoOnly);
         End If;
@@ -651,7 +651,7 @@ BEGIN
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Create job steps complete';
-        Call public.post_log_entry ('Progress', _statusMessage, 'Create_Job_Steps', 'sw');
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Job_Steps', 'sw');
     End If;
 
     ---------------------------------------------------

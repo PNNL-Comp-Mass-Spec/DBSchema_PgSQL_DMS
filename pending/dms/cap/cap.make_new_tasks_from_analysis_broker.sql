@@ -70,7 +70,7 @@ BEGIN
     If Not Found Then
         _message := 'Table cap.t_default_sp_params does not have an entry for make_new_tasks_from_analysis_broker or MakeNewJobsFromAnalysisBroker';
 
-        Call public.post_log_entry('Error', _message, 'Make_New_Tasks_From_Analysis_Broker', 'cap');
+        CALL public.post_log_entry('Error', _message, 'Make_New_Tasks_From_Analysis_Broker', 'cap');
 
         DROP TABLE Tmp_Default_Params;
         RETURN;
@@ -314,7 +314,7 @@ BEGIN
     End If;
 
     If _loggingEnabled AND _returnCode <> '' AND _message <> '' Then
-        Call public.post_log_entry('Error', _message, 'Make_New_Tasks_From_Analysis_Broker', 'cap');
+        CALL public.post_log_entry('Error', _message, 'Make_New_Tasks_From_Analysis_Broker', 'cap');
     End If;
 
     DROP TABLE Tmp_Default_Params;

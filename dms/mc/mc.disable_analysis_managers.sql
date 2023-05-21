@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE mc.disable_analysis_managers(IN _infoonly boolean DE
 DECLARE
 
 BEGIN
-    Call mc.enable_disable_all_managers (
+    CALL mc.enable_disable_all_managers (
         _managerTypeIDList := '11',
         _managerNameList := '',
         _enable := false,

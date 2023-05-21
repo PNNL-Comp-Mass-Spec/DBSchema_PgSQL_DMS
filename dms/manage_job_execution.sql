@@ -204,7 +204,7 @@ BEGIN
     -- It uses Tmp_AnalysisJobs to determine which jobs to update
     ---------------------------------------------------
     --
-    Call update_analysis_jobs_work (
+    CALL update_analysis_jobs_work (
         _state,
         _priority,
         _comment,

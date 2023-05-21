@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE mc.disableanalysismanagers(IN _infoonly integer DEFA
 DECLARE
 
 BEGIN
-    Call EnableDisableAllManagers (
+    CALL EnableDisableAllManagers (
         _managerTypeIDList := '11',
         _managerNameList := '',
         _enable := 0,

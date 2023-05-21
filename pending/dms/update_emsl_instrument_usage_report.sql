@@ -352,7 +352,7 @@ BEGIN
                 -- If _cleanedComment only has 'User[100%], Proposal[49361], PropUser[50082]', _cleanedComment will be empty after the call to ParseUsageText
                 ---------------------------------------------------
 
-                Call public.parse_usage_text (
+                CALL public.parse_usage_text (
                                 _cleanedComment => _cleanedComment,     -- Input / Output
                                 _xml => _xml,                           -- Output
                                 _message => _message,                   -- Output
@@ -727,7 +727,7 @@ BEGIN
             -- Populate field Dataset_ID_Acq_Overlap, which is used to track datasets with identical acquisition start times
             ---------------------------------------------------
 
-            Call update_emsl_instrument_acq_overlap_data (_instrument, _year, _month, _message => _message, _infoOnly => _infoOnly);
+            CALL update_emsl_instrument_acq_overlap_data (_instrument, _year, _month, _message => _message, _infoOnly => _infoOnly);
 
         End If; -- </a>
 

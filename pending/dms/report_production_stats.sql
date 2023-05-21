@@ -116,7 +116,7 @@ BEGIN
 
         CREATE UNIQUE INDEX IX_Tmp_CampaignFilter ON Tmp_CampaignFilter (Campaign_ID);
 
-        Call populate_campaign_filter_table (_campaignIDFilterList, _message => _message, _returnCode => _returnCode);
+        CALL populate_campaign_filter_table (_campaignIDFilterList, _message => _message, _returnCode => _returnCode);
 
         If _returnCode <> '' Then
             If _showDebug Then
@@ -139,7 +139,7 @@ BEGIN
 
         CREATE UNIQUE INDEX IX_Tmp_InstrumentFilter ON Tmp_InstrumentFilter (Instrument_ID);
 
-        Call populate_instrument_filter_table (_instrumentFilterList, _message => _message, _returnCode => _returnCode);
+        CALL populate_instrument_filter_table (_instrumentFilterList, _message => _message, _returnCode => _returnCode);
 
         If _returnCode <> '' Then
             If _showDebug Then
@@ -223,7 +223,7 @@ BEGIN
         -- Determine the start and end dates
         --------------------------------------------------------------------
 
-        Call resolve_start_and_end_dates (
+        CALL resolve_start_and_end_dates (
             _startDate,
             _endDate,
             _stDate => _stDate,             -- Output
