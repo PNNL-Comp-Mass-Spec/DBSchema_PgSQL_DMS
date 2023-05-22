@@ -358,7 +358,7 @@ BEGIN
 
             -- Return storage path ID as text
             --
-            _id := _storagePathID::text;
+            _id := _storagePathID;
 
             RETURN;
         End If;

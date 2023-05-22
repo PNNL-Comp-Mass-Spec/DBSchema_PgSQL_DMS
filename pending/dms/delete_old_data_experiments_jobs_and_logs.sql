@@ -497,7 +497,7 @@ BEGIN
 
     If _deleteCount > 0 And _deleteDatasets Then
     -- <b>
-        _message := 'Deleted ' || _deleteCount::text || ' datasets from: ';
+        _message := format('Deleted %s datasets from:', _deleteCount);
 
         BEGIN
 
@@ -555,7 +555,7 @@ BEGIN
             DELETE FROM t_dataset_qc target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
             --
-            _message := _message || 't_dataset_qc, ';
+            _message := format('%s t_dataset_qc,', _message);
 
             /*
                 ---------------------------------------------------
@@ -573,42 +573,42 @@ BEGIN
             DELETE FROM t_dataset_archive target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
             --
-            _message := _message || 't_dataset_archive, ';
+            _message := format('%s t_dataset_archive,', _message);
 
             _currentLocation := 'DELETE t_dataset_info';
 
             DELETE FROM t_dataset_info target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
             --
-            _message := _message || 't_dataset_info, ';
+            _message := format('%s t_dataset_info,', _message);
 
             _currentLocation := 'DELETE t_dataset_storage_move_log';
 
             DELETE FROM t_dataset_storage_move_log target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
             --
-            _message := _message || 't_dataset_storage_move_log, ';
+            _message := format('%s t_dataset_storage_move_log,', _message);
 
             _currentLocation := 'DELETE t_requested_run';
 
             DELETE FROM t_requested_run target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
             --
-            _message := _message || 't_requested_run, ';
+            _message := format('%s t_requested_run,', _message);
 
             _currentLocation := 'DELETE t_prep_lc_run_dataset';
 
             DELETE FROM t_prep_lc_run_dataset target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
             --
-            _message := _message || 't_prep_lc_run_dataset, ';
+            _message := format('%s t_prep_lc_run_dataset,', _message);
 
             _currentLocation := 'DELETE t_dataset';
 
             DELETE FROM t_dataset target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
             --
-            _message := _message || ' and t_dataset';
+            _message := format('%s and t_dataset', _message);
 
             CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
@@ -695,7 +695,7 @@ BEGIN
 
     If _deleteCount > 0 And _deleteDatasets And _deleteExperiments Then
     -- <c>
-        _message := 'Deleted ' || _deleteCount::text || ' experiments from: ';
+        _message := format('Deleted %s experiments from:', _deleteCount);
 
         BEGIN
 
@@ -708,14 +708,14 @@ BEGIN
             DELETE FROM T_Experiment_Biomaterial target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id);
             --
-            _message := _message || 'T_Experiment_Biomaterial, ';
+            _message := format('%s t_experiment_biomaterial,', _message);
 
             _currentLocation := 'DELETE t_experiment_group_members';
 
             DELETE FROM t_experiment_group_members target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id);
             --
-            _message := _message || 't_experiment_group_members, ';
+            _message := format('%s t_experiment_group_members,', _message);
 
             _currentLocation := 'DELETE t_experiment_groups';
 
@@ -723,14 +723,14 @@ BEGIN
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.parent_exp_id = E.exp_id) AND
                   NOT EXISTS (SELECT EGM.group_id FROM t_experiment_group_members EGM WHERE target.group_id = EGM.group_id);
             --
-            _message := _message || 't_experiment_groups, ';
+            _message := format('%s t_experiment_groups,', _message);
 
             _currentLocation := 'DELETE t_experiment_reference_compounds';
 
             DELETE FROM t_experiment_reference_compounds target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id);
             --
-            _message := _message || 'T_Experiment_Biomaterial, ';
+            _message := format('%s t_experiment_biomaterial,', _message);
 
             _currentLocation := 'DELETE t_experiments';
 
@@ -738,7 +738,7 @@ BEGIN
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id) AND
                   NOT EXISTS (SELECT EG.parent_exp_id FROM t_experiment_groups EG WHERE target.exp_id = EG.parent_exp_id);
             --
-            _message := _message || ' and t_experiments';
+            _message := format('%s and t_experiments', _message);
 
             CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 

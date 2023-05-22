@@ -234,8 +234,8 @@ BEGIN
         _message => _message
 
     If _debugMode Then
-        RAISE INFO '%', '';
-        RAISE INFO '%', 'Job params after calling AdjustParamsForLocalJob: ' || Cast(_jobParamXML As text);
+        RAISE INFO '';
+        RAISE INFO 'Job params after calling AdjustParamsForLocalJob: %', _jobParamXML;
     End If;
 
     ---------------------------------------------------

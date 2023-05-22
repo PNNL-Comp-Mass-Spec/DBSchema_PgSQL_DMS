@@ -232,16 +232,23 @@ BEGIN
                             -- The original request is active, don't recycle anything
 
                             If _requestIDOriginal = _requestID Then
-                                _addnlText := 'Not recycling request ' || _requestID::text || ' for dataset ' || _datasetName || ' since it is already active';
+                                _addnlText := format('Not recycling request %s for dataset %s since it is already active',
+                                                        _requestID, _datasetName);
                                 CALL post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
-                                _addnlText := 'Not recycling request ' || _requestID::text || ' since it is already active';
+
+                                _addnlText := format('Not recycling request %s since it is already active', _requestID);
+
                                 _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
                             Else
-                                _addnlText := 'Not recycling request ' || _requestID::text || ' for dataset ' || _datasetName || ' since dataset already has an active request (' || _extracted || ')';
+                                _addnlText := format('Not recycling request %s for dataset %s since the dataset already has an active request (%s)';
+                                                        _requestID, _datasetName, _extracted);
+
                                 CALL post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
-                                _addnlText := 'Not recycling request ' || _requestID::text || ' since dataset already has an active request (' || _extracted || ')';
+                                _addnlText := format('Not recycling request %s since the dataset already has an active request (%s)',
+                                                        _requestID, _extracted);
+
                                 _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
                             End If;
 
@@ -254,7 +261,9 @@ BEGIN
                     End If; -- </e>
                 End If; -- </d>
             Else
-                _addnlText := 'Not recycling request ' || _requestID::text || ' for dataset ' || _datasetName || ' since AutoRequest';
+                _addnlText := format('Not recycling request %s for dataset %s since it is an AutoRequest',
+                                        _requestID, _datasetName);
+
                 _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
             End If;
 

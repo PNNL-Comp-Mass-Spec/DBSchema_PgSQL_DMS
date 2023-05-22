@@ -962,7 +962,7 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
             If _batch = 0 And _currentBatch <> 0 Then
-                _msg := 'Removed request ' || Cast(_request As text) || ' from batch ' || Cast(_currentBatch As text);
+                _msg := format('Removed request %s from batch %s', _request, _currentBatch);
                 _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
             End If;
         End If;

@@ -109,7 +109,7 @@ BEGIN
     -- Set to true to log the contents of _blockingList
 
     If _debugEnabled Then
-        _logMessage := Cast(_blockingList as text);
+        _logMessage := _blockingList;
 
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Batch_Parameters');
     End If;

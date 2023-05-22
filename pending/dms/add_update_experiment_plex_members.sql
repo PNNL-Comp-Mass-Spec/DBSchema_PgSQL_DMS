@@ -241,7 +241,7 @@ BEGIN
         End If;
 
         -- Assure that _plexExperimentIdOrName has Experiment ID
-        _plexExperimentIdOrName := Cast(_plexExperimentId As text);
+        _plexExperimentIdOrName := _plexExperimentId;
 
         _plexMembers := Coalesce(_plexMembers, '');
 
@@ -460,7 +460,8 @@ BEGIN
                         _channelNum := public.try_cast(_channelText, null::int);
 
                         If _channelNum Is Null Then
-                            _message := 'Could not convert channel number ' || _channelText || ' to an integer in row ' || Cast(_entryID As text) || ' of the Plex Members table';
+                            _message := format('Could not convert channel number %s to an integer in row %s of the Plex Members table',
+                                                _channelText, _entryID);
                             RAISE EXCEPTION '%', _message;
                         End If;
                     Else
@@ -535,9 +536,10 @@ BEGIN
 
                     If Coalesce(_channelNum, 0) > 0 And Coalesce(_experimentId, 0) > 0 Then
                         If Exists (SELECT * FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
-                            _message := 'Plex Members table has duplicate entries for channel ' || Cast(_channelNum As text);
+                            _message := format('Plex Members table has duplicate entries for channel %s', _channelNum);
+
                             If _tagName <> '' Then
-                                _message := _message || ' (tag ' || _tagName || ')';
+                                _message := format('%s (tag %s)', _message, _tagName);
                             End If;
 
                             RAISE EXCEPTION '%', _message;
@@ -619,7 +621,8 @@ BEGIN
                             _experimentId := public.try_cast(Substring(_experimentIdOrName, 1, _charIndex-1), null::int);
 
                             If _experimentId Is Null Then
-                                _message := 'Could not parse out the experiment ID from ' || Substring(_experimentIdOrName, 1, _charIndex-1) || ' for channel ' || Cast(_channelNum As text);
+                                _message := format('Could not parse out the experiment ID from %s for channel %s',
+                                                    Substring(_experimentIdOrName, 1, _charIndex-1), _channelNum);
                                 RAISE EXCEPTION '%', _message;
                             End If;
 
@@ -638,7 +641,7 @@ BEGIN
                                 GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
                                 If _matchCount = 0 Then
-                                    _message := 'Experiment not found for channel ' || Cast(_channelNum As text) || ': ' || _experimentIdOrName;
+                                    _message := format('Experiment not found for channel %s: %s', _channelNum, _experimentIdOrName);
                                     RAISE EXCEPTION '%', _message;
                                 End If;
                             End If;
@@ -654,7 +657,8 @@ BEGIN
                             WHERE channel_type_name = _channelTypeName;
 
                             If Not FOUND Then
-                                _message := 'Invalid channel type ' || _channelTypeName || ' for channel ' || Cast(_channelNum As text) || '; valid values: ';
+                                _message := format('Invalid channel type %s for channel %s; valid values: ',
+                                                 _channelTypeName, _channelNum);
 
                                 SELECT string_agg(channel_type_name, ', ' ORDER BY channel_type_name)
                                 INTO _validValues
@@ -704,7 +708,7 @@ BEGIN
 
         If Coalesce(_invalidExperimentCount, 0) > 0 Then
             If _invalidExperimentCount = 1 Then
-                SELECT 'Invalid Experiment ID: ' || Exp_ID::text
+                SELECT format('Invalid Experiment ID: %s', Exp_ID)
                 INTO _message
                 FROM Tmp_Experiment_Plex_Members
                 WHERE ValidExperiment = 0;
@@ -808,9 +812,9 @@ BEGIN
                 End If;
 
                 If _expIdList = '' Then
-                    _expIdList := Cast(_currentPlexExperimentId As text);
+                    _expIdList := _currentPlexExperimentId;
                 Else
-                    _expIdList := _expIdList || ', ' || Cast(_currentPlexExperimentId As text);
+                    _expIdList := format('%s, %s', _expIdList, _currentPlexExperimentId);
                 End If;
 
                 If _mode = 'preview' Then
@@ -825,17 +829,18 @@ BEGIN
                     WHERE t.plex_exp_id = _currentPlexExperimentId
 
                     If _updatedRows = _actualChannelCount Then
-                        _actionMessage := 'Would update ' || Cast(_updatedRows As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
+                        _actionMessage := format('Would update %s channels for Exp_ID %s', _updatedRows, _currentPlexExperimentId);
                     ElsIf _updatedRows = 0
-                        _actionMessage := 'Would add ' || Cast(_actualChannelCount As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
+                        _actionMessage := format('Would add %s channels for Exp_ID %s', _actualChannelCount, _currentPlexExperimentId);
                     Else
-                        _actionMessage := 'Would add/update ' || Cast(_actualChannelCount As text) || ' channels for Exp_ID ' || Cast(_currentPlexExperimentId As text);
+                        _actionMessage := format('Would add/update %s channels for Exp_ID %s', _actualChannelCount, _currentPlexExperimentId);
                     End If;
 
-                    Insert Into Tmp_DatabaseUpdates (Message) Values (_actionMessage)
+                    INSERT INTO Tmp_DatabaseUpdates (Message)
+                    VALUES (_actionMessage)
 
                 Else
-                -- <AddUpdatePlexInfo>
+
                     MERGE INTO t_experiment_plex_members AS t
                     USING ( SELECT channel, exp_id, channel_type_id, Comment
                             FROM Tmp_Experiment_Plex_Members
@@ -871,7 +876,7 @@ BEGIN
                         --
                         CALL alter_entered_by_user ('t_experiment_plex_members_history', 'plex_exp_id', _currentPlexExperimentId, _callingUser);
                     End If;
-                End If;  -- </AddUpdatePlexInfo>
+                End If;
 
             END LOOP; -- </WhileLoop>
 
@@ -906,10 +911,10 @@ BEGIN
 
                     If _targetAddCount = _targetPlexExperimentCount Then
                         -- Adding plex members for all of the target experiments
-                        _message := 'Would add ' || Cast(_actualChannelCount As text) || ' channels for Exp_IDs: ' || _expIdList;
+                        _message := format('Would add %s channels for Exp_IDs %s', _actualChannelCount,  _expIdList);
                     ElsIf _targetUpdateCount = _targetPlexExperimentCount
                         -- Updating plex members for all of the target experiments
-                        _message := 'Would update ' || Cast(_updatedRows As text) || ' channels for Exp_IDs: ' || _expIdList;
+                        _message := format('Would update %s channels for Exp_IDs %s', _updatedRows, _expIdList);
                     Else
                         -- Mix of adding and updating plex members
 

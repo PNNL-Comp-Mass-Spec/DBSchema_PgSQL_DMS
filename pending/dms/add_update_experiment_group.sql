@@ -115,7 +115,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If Not Exists (SELECT group_id FROM t_experiment_groups WHERE group_id = _id) Then
-            _message := 'Cannot update: GroupID does not exist in database: ' || _id::text;
+            _message := format('Cannot update: GroupID does not exist in database: %s', _id)
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5203';

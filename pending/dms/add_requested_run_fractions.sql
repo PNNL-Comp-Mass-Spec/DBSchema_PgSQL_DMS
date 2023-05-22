@@ -618,9 +618,9 @@ BEGIN
         WHILE _fractionNumber <= _fractionCount
         LOOP
             If _fractionNumber < 10 Then
-                _requestName := _sourceRequestName || '_f0' || _fractionNumber::text;
+                _requestName := format('%s_f0%s', _sourceRequestName, _fractionNumber);
             Else
-                _requestName := _sourceRequestName || '_f' ||  _fractionNumber::text;
+                _requestName := format('%s_f%s',  _sourceRequestName, _fractionNumber);
             End If;
 
             SELECT request_id
@@ -660,8 +660,9 @@ BEGIN
             ORDER BY Fraction_Number DESC
             LIMIT 1;
 
-            _msg := 'Would create ' || _fractionCount::text || ' requested runs named ' || _firstRequest || ' ... ' || _lastRequest ||
-                       ' with instrument group ' || _targetInstrumentGroup || ' and separation group ' || _separationGroup
+            _msg := format('Would create %s requested runs named %s ... %s with instrument group %s and separation group %s',
+                            _fractionCount, _firstRequest, _lastRequest, _targetInstrumentGroup, _separationGroup);
+
             _message := public.append_to_text(_msg, _message, 0, '; ', 1024);
         End If;
 
@@ -776,9 +777,9 @@ BEGIN
                 -- Append the new request ID to _requestIdList
                 --
                 If _requestIdList = '' Then
-                    _requestIdList := _requestID::text;
+                    _requestIdList := _requestID;
                 Else
-                    _requestIdList := _requestIdList || ', ' || _requestID::text;
+                    _requestIdList := format('%s, %s', _requestIdList, _requestID);
                 End If;
 
                 -- Increment the fraction
@@ -828,7 +829,7 @@ BEGIN
                 End If;
             End If;
 
-            _msg := 'Created new requested runs based on source request ' || _sourceRequestID::text || ', creating: ' || _requestIdList;
+            _msg := format('Created new requested runs based on source request %s creating: %s', _sourceRequestID, _requestIdList);
             _message := public.append_to_text(_msg, _message, 0, '; ', 1024);
 
             CALL post_log_entry ('Normal', _message, 'Add_Requested_Run_Fractions');

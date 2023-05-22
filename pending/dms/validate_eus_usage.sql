@@ -382,7 +382,7 @@ BEGIN
             WHERE EUSP.proposal_id = _eusProposalID;
 
             If Coalesce(_personID, 0) > 0 Then
-                _eusUsersList := _personID::text;
+                _eusUsersList := _personID;
                 _message := public.append_to_text(;
                                 _message,
                                 'Warning: EUS User list was empty; auto-selected user "' || _eusUsersList || '"',
@@ -473,7 +473,7 @@ BEGIN
                 If _invalidCount = 1 Then
                     _message := 'EMSL User ID is not numeric';
                 Else
-                    _message := Cast(_invalidCount as text) || ' EMSL User IDs are not numeric';
+                    _message := format('%s EMSL User IDs are not numeric', _invalidCount);
                 End If;
 
                 _returnCode := 'U5376';
@@ -549,7 +549,7 @@ BEGIN
                     WHERE EUSP.proposal_id = _eusProposalID;
 
                     If Coalesce(_personID, 0) > 0 Then
-                        _newUserList := _personID::text;
+                        _newUserList := _personID;
                     End If;
                 End If;
 

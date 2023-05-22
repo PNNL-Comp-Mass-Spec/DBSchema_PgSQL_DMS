@@ -656,7 +656,7 @@ BEGIN
 
             -- return ID of the newly created request
             --
-            _requestID := _newRequestNum::text;
+            _requestID := _newRequestNum;
 
             If char_length(_callingUser) > 0 Then
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id

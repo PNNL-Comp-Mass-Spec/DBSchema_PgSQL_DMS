@@ -1036,17 +1036,18 @@ BEGIN
                 _message := ' There would be ';
             End If;
 
-            _message := _message + _jobCountToBeCreated::text || ' jobs created.';
+            _message := format('%s %s %s created.',
+                                _message,  _jobCountToBeCreated, public.check_plural(_jobCountToBeCreated, 'job', 'jobs');
         End If;
 
         If _datasetCountToRemove > 0 Then
             If _mode = 'add' Then
-                _removedDatasets := ' Jobs were not made for ' || _removedDatasets;
+                _removedDatasets := format('Jobs were not made for %s', _removedDatasets);
             Else
-                _removedDatasets := ' Jobs would not be made for ' || _removedDatasets;
+                _removedDatasets := format('Jobs would not be made for %s', _removedDatasets);
             End If;
 
-            _message := _message + _removedDatasets;
+            _message := format('%s %s', _message, _removedDatasets);
         End If;
 
     EXCEPTION

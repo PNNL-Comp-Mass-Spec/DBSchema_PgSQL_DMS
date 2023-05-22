@@ -256,14 +256,15 @@ BEGIN
         ElsIf _toolName::citext In ('MSGFPlus_SplitFasta', 'MSGFPlus_DTARefinery_SplitFasta')
             _message := 'The MSGFPlus SplitFasta tool used concatenated _dta.txt files, which are PNNL-specific. Please use tool MSGFPlus_MzML instead (for example requests, see https://dms2.pnl.gov/analysis_job_request/report/-/-/-/-/StartsWith__MSGFPlus_MzML_SplitFasta/-/- )';
         ElsIf _mode = 'reset' And (_toolName LIKE 'MAC[_]%' Or _toolName = 'MaxQuant_DataPkg' Or _toolName = 'MSFragger_DataPkg' Or _toolName = 'DiaNN_DataPkg')
-            _message := _toolName || ' jobs must be reset by clicking Edit on the Pipeline Job Detail report';
+            _message := format('%s %s must be reset by clicking Edit on the Pipeline Job Detail report', _toolName, public.check_plural(_toolName, 'job', 'jobs');
+
             If Coalesce(_job, 0) > 0 Then
-                _message := _message || '; see https://dms2.pnl.gov/pipeline_jobs/show/' || _job::text;
+                _message := format('%s; see https://dms2.pnl.gov/pipeline_jobs/show/%s', _message, _job);
             Else
-                _message := _message || '; see https://dms2.pnl.gov/pipeline_jobs/report/-/-/~Aggregation';
+                _message := format('%s; see https://dms2.pnl.gov/pipeline_jobs/report/-/-/~Aggregation', _message);
             End If;
         Else
-            _message := 'Analysis tool "' || _toolName || '" is not active and thus cannot be used for this operation (ToolID ' || _analysisToolID::text || ')';
+            _message := format('Analysis tool "%s" is not active and thus cannot be used for this operation (ToolID %s)', _toolName, _analysisToolID);
         End If;
 
         If _showDebugMessages Then
@@ -501,8 +502,8 @@ BEGIN
             End If;
 
             If _showDebugMessages Then
-                RAISE INFO '%', '  _profileModeMSn=' || Cast(_profileModeMSn as text);
-                RAISE INFO '%', '  _toolName=' || _toolName;
+                RAISE INFO '_profileModeMSn=%', _profileModeMSn;
+                RAISE INFO '_toolName=%', _toolName;
             End If;
 
             If _profileModeMSn > 0 AND _toolName::citext IN ('MSGFPlus', 'MSGFPlus_DTARefinery', 'MSGFPlus_SplitFasta') Then
@@ -729,7 +730,8 @@ BEGIN
 
                 If Coalesce(_dynModCount, 0) > 1 Then
                     -- Parameter has more than one dynamic mod; this search will take too long
-                    _message := 'Legacy fasta file "' || _organismDBName || '" is very large (' || _sizeDescription || '); you cannot use a parameter file with ' || Cast(_dynModCount as text) || ' dynamic mods.  Preferably use a parameter file with no dynamic mods (though you _might_ get away with 1 dynamic mod).';
+                    _message := format('Legacy FASTA file %s is very large (%s); you cannot use a parameter file with %s dynamic mods. Preferably use a parameter file with no dynamic mods (though you _might_ get away with 1 dynamic mod).',
+                                         _organismDBName, _sizeDescription, _dynModCount);
                     _returnCode := 'U5351';
 
                     If _showDebugMessages Then
@@ -806,7 +808,6 @@ BEGIN
     -- ToDo: use xpath()
     --    SELECT (xpath('//item/@key', contents))[1]::text AS KeyName,
     --       (xpath('//item/@value', contents))[1]::text AS Value
-
 
         SELECT SettingValue
         INTO _numberOfClonedSteps

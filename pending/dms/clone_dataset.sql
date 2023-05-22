@@ -292,7 +292,7 @@ BEGIN
         If _createDatasetArchiveTask Then
             CALL AddArchiveDataset (_datasetIDNew);
         Else
-            RAISE INFO '%', 'You should manually create a dataset archive task using: execute AddArchiveDataset ' || _datasetIDNew::text;
+            RAISE INFO 'You should manually create a dataset archive task using: CALL Add_Archive_Dataset %', _datasetIDNew;
         End If;
     EXCEPTION
         WHEN OTHERS THEN

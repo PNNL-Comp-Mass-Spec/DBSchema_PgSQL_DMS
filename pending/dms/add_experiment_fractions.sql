@@ -143,7 +143,7 @@ BEGIN
         -- Don't allow too many child experiments to be created
         --
         If _totalCount > _maxCount Then
-            _message := 'Cannot create more than ' || _maxCount::text || ' child experments';
+            _message := format('Cannot create more than %s child experments', _maxCount);
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -473,10 +473,11 @@ BEGIN
             -- Build name for new experiment fraction
             --
             _fullFractionCount := _startingIndex + _fractionCount;
-            _fractionNumberText := _fullFractionCount::text;
 
             If  _fullFractionCount < 10 Then
-                _fractionNumberText := '0' || _fractionNumberText;
+                _fractionNumberText := format('0%s', _fullFractionCount);
+            Else
+                _fractionNumberText := format('%s',  _fullFractionCount);
             End If;
 
             _fractionCount := _fractionCount + _step;
@@ -592,16 +593,16 @@ BEGIN
                 ---------------------------------------------------
                 --
                 If char_length(_experimentIDList) > 0 Then
-                    _experimentIDList := _experimentIDList || ',';
+                    _experimentIDList := format('%s,%s', _experimentIDList, _newExpID);
+                Else
+                    _experimentIDList := format('%s', _newExpID);
                 End If;
-
-                _experimentIDList := _experimentIDList + _newExpID::text;
 
                 If char_length(_materialIDList) > 0 Then
-                    _materialIDList := _materialIDList || ',';
+                    _materialIDList := format('%s,E:%s', _materialIDList, _newExpID);
+                Else
+                    _materialIDList := format('E:%s', _newExpID);
                 End If;
-
-                _materialIDList := _materialIDList || 'E:' || _newExpID::text;
 
                 ---------------------------------------------------
                 -- Copy experiment plex info, if defined

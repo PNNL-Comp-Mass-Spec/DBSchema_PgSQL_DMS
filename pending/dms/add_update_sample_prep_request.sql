@@ -476,7 +476,7 @@ BEGIN
         End If;
 
         If Coalesce(_eusUserID, 0) > 0 Then
-            _eusUsersList := Cast(_eusUserID As text);
+            _eusUsersList := _eusUserID;
             _eusUserID := Null;
         End If;
 

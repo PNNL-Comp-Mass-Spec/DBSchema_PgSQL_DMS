@@ -84,7 +84,7 @@ BEGIN
     -- Set to true to log the contents of _requestList
 
     If _debugEnabled Then
-        _logMessage := _requestList::text;
+        _logMessage := _requestList;
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
 
         _argLength := char_length(_requestList);

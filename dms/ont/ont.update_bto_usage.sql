@@ -15,11 +15,11 @@ CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly boolean DEFAULT false)
 **          04/07/2022 mem - Use the query results to report status messages
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          05/12/2023 mem - Rename variables
+**          05/21/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
     _updateCount int;
-    _rowDescription text;
     _message text := '';
     _message2 text := '';
     _rowsUpdated int := 0;
@@ -73,10 +73,8 @@ BEGIN
         If _updateCount > 0 Then
             _rowsUpdated := _rowsUpdated + _updateCount;
 
-            SELECT * FROM public.check_plural(_updateCount, 'row', 'rows')
-            INTO _rowDescription;
-
-            _message := 'Updated ' || Cast(_updateCount As text) || ' ' || _rowDescription || ' in ont.t_cv_bto';
+            _message := format('Updated %s %s in ont.t_cv_bto',
+                                _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
         End If;
 
         UPDATE ont.t_cv_bto
@@ -90,10 +88,8 @@ BEGIN
         If _updateCount > 0 Then
             _rowsUpdated := _rowsUpdated + _updateCount;
 
-            SELECT * FROM public.check_plural(_updateCount, 'row', 'rows')
-            INTO _rowDescription;
-
-            _message2 := 'Set usage stats to 0 for ' || _updateCount::text || ' ' || _rowDescription || ' in ont.t_cv_bto';
+            _message2 := format('Set usage stats to 0 for %s %s in ont.t_cv_bto',
+                                _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
             If _message = '' Then
                 _message := _message2;
