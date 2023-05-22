@@ -90,7 +90,7 @@ EXCEPTION
         End If;
 
         -- Uncomment to log
-        -- Call public.post_log_entry ('Error', _message, 'Test_Exception_Handler');
+        -- CALL public.post_log_entry ('Error', _message, 'Test_Exception_Handler');
     End If;
 
     Return 0;

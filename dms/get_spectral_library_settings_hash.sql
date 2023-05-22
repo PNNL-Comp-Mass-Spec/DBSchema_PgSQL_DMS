@@ -64,23 +64,23 @@ BEGIN
             Return '';
         End If;
     Else
-        _proteinCollectionList := Coalesce(_proteinCollectionList, '');
-        _organismDBFile := Coalesce(_organismDBFile, '');
-        _fragmentIonMzMin := Coalesce(_fragmentIonMzMin, 0);
-        _fragmentIonMzMax := Coalesce(_fragmentIonMzMax, 0);
-        _trimNTerminalMet := Coalesce(_trimNTerminalMet, false);
-        _cleavageSpecificity := Coalesce(_cleavageSpecificity, '');
-        _missedCleavages := Coalesce(_missedCleavages, 0);
-        _peptideLengthMin := Coalesce(_peptideLengthMin, 0);
-        _peptideLengthMax := Coalesce(_peptideLengthMax, 0);
-        _precursorMzMin := Coalesce(_precursorMzMin, 0);
-        _precursorMzMax := Coalesce(_precursorMzMax, 0);
-        _precursorChargeMin := Coalesce(_precursorChargeMin, 0);
-        _precursorChargeMax := Coalesce(_precursorChargeMax, 0);
+        _proteinCollectionList    := Coalesce(_proteinCollectionList, '');
+        _organismDBFile           := Coalesce(_organismDBFile, '');
+        _fragmentIonMzMin         := Coalesce(_fragmentIonMzMin, 0);
+        _fragmentIonMzMax         := Coalesce(_fragmentIonMzMax, 0);
+        _trimNTerminalMet         := Coalesce(_trimNTerminalMet, false);
+        _cleavageSpecificity      := Coalesce(_cleavageSpecificity, '');
+        _missedCleavages          := Coalesce(_missedCleavages, 0);
+        _peptideLengthMin         := Coalesce(_peptideLengthMin, 0);
+        _peptideLengthMax         := Coalesce(_peptideLengthMax, 0);
+        _precursorMzMin           := Coalesce(_precursorMzMin, 0);
+        _precursorMzMax           := Coalesce(_precursorMzMax, 0);
+        _precursorChargeMin       := Coalesce(_precursorChargeMin, 0);
+        _precursorChargeMax       := Coalesce(_precursorChargeMax, 0);
         _staticCysCarbamidomethyl := Coalesce(_staticCysCarbamidomethyl, false);
-        _staticMods := Coalesce(_staticMods, '');
-        _dynamicMods := Coalesce(_dynamicMods, '');
-        _maxDynamicMods := Coalesce(_maxDynamicMods, 0);
+        _staticMods               := Coalesce(_staticMods, '');
+        _dynamicMods              := Coalesce(_dynamicMods, '');
+        _maxDynamicMods           := Coalesce(_maxDynamicMods, 0);
 
         If char_length(_proteinCollectionList) = 0 Then
             _proteinCollectionList := 'na';
@@ -113,21 +113,21 @@ BEGIN
     End If;
 
     _settings := _settings ||
-                Cast(_fragmentIonMzMin As text) || '_' ||
-                Cast(_fragmentIonMzMax As text) || '_' ||
+                Cast(_fragmentIonMzMin As text)    || '_' ||
+                Cast(_fragmentIonMzMax As text)    || '_' ||
                 CASE WHEN _trimNTerminalMet THEN 'true' ELSE 'false' END || '_' ||
                 Cast(_cleavageSpecificity As text) || '_' ||
-                Cast(_missedCleavages As text) || '_' ||
-                Cast(_peptideLengthMin As text) || '_' ||
-                Cast(_peptideLengthMax As text) || '_' ||
-                Cast(_precursorMzMin As text) || '_' ||
-                Cast(_precursorMzMax As text) || '_' ||
-                Cast(_precursorChargeMin As text) || '_' ||
-                Cast(_precursorChargeMax As text) || '_' ||
+                Cast(_missedCleavages As text)     || '_' ||
+                Cast(_peptideLengthMin As text)    || '_' ||
+                Cast(_peptideLengthMax As text)    || '_' ||
+                Cast(_precursorMzMin As text)      || '_' ||
+                Cast(_precursorMzMax As text)      || '_' ||
+                Cast(_precursorChargeMin As text)  || '_' ||
+                Cast(_precursorChargeMax As text)  || '_' ||
                 CASE WHEN _staticCysCarbamidomethyl THEN 'true' ELSE 'false' END || '_' ||
-                _staticMods || '_' ||
-                _dynamicMods || '_' ||
-                Cast(_maxDynamicMods As text) || '_';
+                _staticMods                        || '_' ||
+                _dynamicMods                       || '_' ||
+                Cast(_maxDynamicMods As text)      || '_';
 
     If _showDebug Then
         RAISE INFO '%', _settings;

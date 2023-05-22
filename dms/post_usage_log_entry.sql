@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 **
 **  Example usage:
 **
-**      Call post_usage_log_entry('store_dataset_file_info', 'Dataset: QC_Mam_19_01_1a_Samwise_19Aug22_WBEH-22-05-03');
+**      CALL post_usage_log_entry('store_dataset_file_info', 'Dataset: QC_Mam_19_01_1a_Samwise_19Aug22_WBEH-22-05-03');
 **      SELECT * FROM t_usage_stats WHERE posted_by LIKE 'store%dataset%file%info';
 **
 **  Auth:   mem

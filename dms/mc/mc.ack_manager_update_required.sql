@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **      Set Value = 'True'
 **      Where mgr_name = 'monroe_analysis' and param_name = 'ManagerUpdateRequired';
 **
-**      Call mc.ack_manager_update_required('monroe_analysis')
+**      CALL mc.ack_manager_update_required('monroe_analysis')
 **
 **  Auth:   mem
 **  Date:   01/16/2009 mem - Initial version

@@ -529,7 +529,7 @@ BEGIN
 
                 If _warningCount > 10 Then
 
-                    SELECT Count(Distinct d.dataset)
+                    SELECT COUNT(DISTINCT d.dataset)
                     INTO _datasetCount
                     FROM t_analysis_job J
                          INNER JOIN Tmp_DatasetsToDelete D

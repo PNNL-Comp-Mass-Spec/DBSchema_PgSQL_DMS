@@ -18,8 +18,8 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **
 **  Example usage:
 **
-**      Call mc.enable_disable_run_jobs_remotely(true, 'Pub-14-2,Pub-15-2', _infoOnly => true,  _addMgrParamsIfMissing => false);
-**      Call mc.enable_disable_run_jobs_remotely(true, 'Pub-14-2,Pub-15-2', _infoOnly => false, _addMgrParamsIfMissing => false);
+**      CALL mc.enable_disable_run_jobs_remotely(true, 'Pub-14-2,Pub-15-2', _infoOnly => true,  _addMgrParamsIfMissing => false);
+**      CALL mc.enable_disable_run_jobs_remotely(true, 'Pub-14-2,Pub-15-2', _infoOnly => false, _addMgrParamsIfMissing => false);
 **
 **  Auth:   mem
 **  Date:   03/28/2018 mem - Initial version

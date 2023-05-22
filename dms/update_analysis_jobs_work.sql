@@ -634,14 +634,14 @@ BEGIN
         FROM Tmp_AnalysisJobs;
 
         If _alterEventLogRequired Then
-            -- CALL public.alter_event_log_entry_user_multi_id
+            -- Call public.alter_event_log_entry_user_multi_id
             -- to alter the entered_by field in t_event_log
 
             CALL alter_event_log_entry_user_multi_id (5, _stateID, _callingUser);
         End If;
 
         If _alterEnteredByRequired Then
-            -- CALL public.alter_entered_by_user_multi_id
+            -- Call public.alter_entered_by_user_multi_id
             -- to alter the entered_by field in t_analysis_job_processor_group_associations
 
             CALL alter_entered_by_user_multi_id ('t_analysis_job_processor_group_associations', 'job', _callingUser);
