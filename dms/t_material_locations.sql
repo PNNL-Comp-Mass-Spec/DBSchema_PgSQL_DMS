@@ -15,7 +15,7 @@ CREATE TABLE public.t_material_locations (
     container_limit integer DEFAULT 1 NOT NULL,
     location public.citext GENERATED ALWAYS AS (
 CASE
-    WHEN (freezer_tag OPERATOR(public.=) ANY (ARRAY['QC_Staging'::public.citext, 'Phosphopep_Staging'::public.citext, '-80_Staging'::public.citext, '-20_Met_Staging'::public.citext, '-20_Staging_1206'::public.citext, '-20_Staging'::public.citext, 'None'::public.citext])) THEN (freezer_tag)::text
+    WHEN ((freezer_tag OPERATOR(public.~~) '%Staging%'::public.citext) OR (freezer_tag OPERATOR(public.=) 'None'::public.citext)) THEN (freezer_tag)::text
     ELSE (((((((((freezer_tag)::text || '.'::text) || (shelf)::text) || '.'::text) || (rack)::text) || '.'::text) || ("row")::text) || '.'::text) || (col)::text)
 END) STORED,
     CONSTRAINT ck_t_material_locations_status CHECK (((status OPERATOR(public.=) 'Inactive'::public.citext) OR (status OPERATOR(public.=) 'active'::public.citext)))
