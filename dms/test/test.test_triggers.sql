@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION test.test_triggers(_createitems integer DEFAULT 0, _u
 **  Date:   08/09/2022 mem - Initial version
 **          02/08/2023 mem - Switch from PRN to username
 **          04/27/2023 mem - Use boolean for data type name
+**          05/22/2023 mem - Update whitespace
 **
 *****************************************************/
 DECLARE
@@ -430,7 +431,10 @@ BEGIN
     ElsIf _createItems > 0 Then
 
         -- Obtain job numbers
-        FOR _datasetID IN SELECT dataset_id FROM T_Tmp_Jobs LOOP
+        FOR _datasetID IN
+            SELECT dataset_id
+            FROM T_Tmp_Jobs
+        LOOP
             INSERT INTO t_analysis_job_id (note)
             VALUES ('Job for unit test, dataset id ' || _datasetID::text)
             RETURNING job

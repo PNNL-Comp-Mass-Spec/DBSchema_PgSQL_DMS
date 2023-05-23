@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION public.get_call_stack(_pgcontext text) RETURNS TABLE(
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial release
 **          08/31/2022 mem - Update comments
+**          05/22/2023 mem - Update whitespace
 **
 ****************************************************/
 DECLARE
@@ -61,7 +62,8 @@ BEGIN
     _matches = ARRAY (SELECT regexp_matches(_pgContext, 'function .*? line \d+', 'g'));
     _matchCount = Coalesce(array_length(_matches, 1), 0);
 
-    FOR _iteration IN 1 .. _matchCount LOOP
+    FOR _iteration IN 1 .. _matchCount
+    LOOP
 
         -- Because we used .*? above to specify lazy matching, \d+ will only match the first number in the line number (because the RegEx as a whole is lazy, aka non-greedy)
 

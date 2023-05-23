@@ -172,7 +172,7 @@ BEGIN
 
         If Not FOUND Then
             -- Break out of the while loop
-                EXIT;
+            EXIT;
         End If;
 
         UPDATE Tmp_Archived_Output_File_IDs AOF

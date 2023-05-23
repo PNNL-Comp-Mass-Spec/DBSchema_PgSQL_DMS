@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_after_insert_or_update_v
 **          08/07/2022 mem - Use If Not Exists() when validating the settings file name
 **                         - Reference the NEW and OLD variables directly instead of using transition tables (which contain every new or updated row, not just the current row)
 **          04/27/2023 mem - Use boolean for data type name
+**          05/22/2023 mem - Update whitespace
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,8 @@ BEGIN
     End If;
 
     If _updateDeconToolsJob Then
-        For _iteration In 1..2 Loop
+        FOR _iteration IN 1..2
+        LOOP
 
             If _iteration = 1 Then
                 _datasetID := NEW.dataset_id;
@@ -101,7 +103,7 @@ BEGIN
                 -- RAISE NOTICE '% trigger, % %, DeconTools job not found for dataset associated with job %', TG_TABLE_NAME, TG_WHEN, TG_OP, inserted.job;
             End If;
 
-        End Loop;
+        END LOOP;
     End If;
 
     RETURN null;
