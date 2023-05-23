@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **                         - If the mode is 'previewadd', set _infoOnly to true when calling StoreParamFileMassMods
 **          02/23/2023 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Remove local variable use when raising exceptions
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,6 @@ DECLARE
     _authorized boolean;
 
     _existingCount int := 0;
-    _msg text;
     _updateMassMods boolean := false;
     _validateMods boolean := false;
     _paramFileTypeID int := 0;
@@ -154,8 +154,7 @@ BEGIN
 
         If _paramFileTypeID = 0 Then
             _returnCode := 'U5204';
-            _msg := 'ParamFileType is not valid: ' || _paramFileType;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'ParamFileType is not valid: %', _paramFileType;
         End If;
 
         ---------------------------------------------------
@@ -172,15 +171,13 @@ BEGIN
         -- Check for a name conflict when adding
         --
         If _mode Like '%add%' And _existingCount > 0 Then
-            _msg := 'Cannot add: Param File "' || _paramFileName || '" already exists';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot add: Param File "%" already exists', _paramFileName;
         End If;
 
         -- Check for a name conflict when renaming
         --
         If _mode Like '%update%' And _existingCount > 0 And _existingParamFileID <> _paramFileID Then
-            _msg := 'Cannot rename: Param File "' || _paramFileName || '" already exists';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot rename: Param File "%" already exists', _paramFileName;
         End If;
 
         ---------------------------------------------------
@@ -202,13 +199,11 @@ BEGIN
                 End If;
 
                 If Exists (SELECT * FROM t_analysis_job WHERE param_file_name = _currentName) Then
-                    _msg := 'Cannot ' || _action || ': Param File "' || _currentName || '" is used by an analysis job';
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Cannot %: Param File "%" is used by an analysis job', _action, _currentName;
                 End If;
 
                 If Exists (SELECT * FROM t_analysis_job_request WHERE param_file_name = _currentName) Then
-                    _msg := 'Cannot ' || _action || ': Param File "' || _currentName || '" is used by a job request';
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Cannot %: Param File "%" is used by a job request', _action, _currentName;
                 End If;
             End If;
         End If;
@@ -268,13 +263,13 @@ BEGIN
                      _returnCode       => _returnCode);       -- Output
 
                 If _returnCode <> '' Then
+
                     If Coalesce(_message, '') = '' Then
-                        _msg := format('StoreParamFileMassMods returned error code %s; unknown error', _returnCode);
+                        RAISE EXCEPTION 'store_param_file_mass_mods returned error code %; unknown error', _returnCode;
                     Else
-                        _msg := format('StoreParamFileMassMods: %s', _message);
+                        RAISE EXCEPTION 'store_param_file_mass_mods: %', _message;
                     End If;
 
-                    RAISE EXCEPTION '%', _msg;
                 End If;
 
             End If; -- </b>
@@ -350,8 +345,7 @@ BEGIN
                     _returnCode => _returnCode);                -- Output
 
                 If _returnCode <> '' Then
-                    _msg := 'StoreParamFileMassMods: "' || _message || '"';
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'StoreParamFileMassMods: "%"', _message;
                 End If;
             End If;
         End If;
