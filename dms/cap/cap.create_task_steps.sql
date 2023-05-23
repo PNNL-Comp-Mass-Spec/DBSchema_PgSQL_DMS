@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          04/02/2023 mem - Rename procedure and functions
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/12/2023 mem - Rename variables and fix bug with misplaced "And"
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -75,7 +76,7 @@ BEGIN
     End If;
 
     If Not _mode::citext In ('CreateFromImportedJobs') Then
-        _message := 'Unknown mode: ' || _mode;
+        _message := format('Unknown mode: %s', _mode);
         _returnCode := 'U5201';
 
         RAISE WARNING '%', _message;

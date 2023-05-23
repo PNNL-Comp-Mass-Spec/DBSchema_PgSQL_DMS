@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 **          04/02/2023 mem - Rename procedure and functions
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Remove redundant parentheses
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -122,7 +123,7 @@ BEGIN
 
         If Not _assignNewJobNumber Then
 
-            _currentLocation := 'Insert into cap.t_tasks from cap.t_tasks_history for ' || _jobDateDescription;
+            _currentLocation := format('Insert into cap.t_tasks from cap.t_tasks_history for %s', _jobDateDescription);
 
             If _debugMode Then
                 RAISE INFO '%', _currentLocation;
@@ -140,7 +141,7 @@ BEGIN
                   Saved = _dateStamp;
 
             If Not FOUND Then
-                _message := 'No rows were added to cap.t_tasks from cap.t_tasks_history for ' || _jobDateDescription;
+                _message := format('No rows were added to cap.t_tasks from cap.t_tasks_history for %s', _jobDateDescription);
                 RAISE WARNING '%', _message;
 
                 RETURN;
@@ -169,14 +170,14 @@ BEGIN
             INTO _newJob;
 
             If Not FOUND Then
-                _message := 'No rows were added to cap.t_tasks from cap.t_tasks_history for ' || _jobDateDescription;
+                _message := format('No rows were added to cap.t_tasks from cap.t_tasks_history for %s', _jobDateDescription);
                 RAISE WARNING '%', _message;
 
                 RETURN;
             End If;
 
             If _newJob is null Then
-                _message := 'Job value for inserted row is null for ' || _jobDateDescription;
+                _message := format('Job value for inserted row is null for %s', _jobDateDescription);
                 RAISE WARNING '%', _message;
 
                 RETURN;
@@ -189,7 +190,7 @@ BEGIN
         -- Copy steps
         ---------------------------------------------------
 
-        _currentLocation := 'Insert into cap.t_task_steps for ' || _jobDateDescription;
+        _currentLocation := format('Insert into cap.t_task_steps for %s', _jobDateDescription);
 
         INSERT INTO cap.t_task_steps (
             Job,
@@ -246,7 +247,7 @@ BEGIN
         -- Copy parameters
         ---------------------------------------------------
 
-        _currentLocation := 'Insert into cap.t_task_parameters for ' || _jobDateDescription;
+        _currentLocation := format('Insert into cap.t_task_parameters for %s', _jobDateDescription);
 
         INSERT INTO cap.t_task_parameters (
             Job,
@@ -271,7 +272,7 @@ BEGIN
         -- Copy capture task job step dependencies
         ---------------------------------------------------
 
-        _currentLocation := 'Insert into cap.t_task_step_dependencies for ' || _jobDateDescription;
+        _currentLocation := format('Insert into cap.t_task_step_dependencies for %s', _jobDateDescription);
 
         -- First delete any extra steps for this capture task job that are in t_task_step_dependencies
         --

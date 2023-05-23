@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION public.remove_from_string(_text text, _texttoremove t
 **  Date:   10/25/2016 mem - Initial version
 **          08/08/2017 mem - Add support for _textToRemove ending in %
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -34,11 +35,11 @@ DECLARE
     _matchFlag text;
 BEGIN
     If Coalesce(_text, '') = '' Then
-        Return '';
+        RETURN '';
     End If;
 
     If Coalesce(_textToRemove, '') = '' Then
-        Return _text;
+        RETURN _text;
     End If;
 
     If Right(_textToRemove, 1) = '%' Then
@@ -67,21 +68,22 @@ BEGIN
         End If;
 
     ElseIf Coalesce(_textToRemove, '') <> '' Then
-        While _iteration <= 4 Loop
+        WHILE _iteration <= 4
+        LOOP
             If _iteration = 0 Then
-                _textToFind := '; ' || _textToRemove;
+                _textToFind := format('; %s', _textToRemove);
             End If;
 
             If _iteration = 1 Then
-                _textToFind := ';' || _textToRemove;
+                _textToFind := format(';%s', _textToRemove);
             End If;
 
             If _iteration = 2 Then
-                _textToFind := ', ' || _textToRemove;
+                _textToFind := format(', %s', _textToRemove);
             End If;
 
             If _iteration = 3 Then
-                _textToFind := ',' || _textToRemove;
+                _textToFind := format(',%s', _textToRemove);
             End If;
 
             If _iteration = 4 Then
@@ -95,7 +97,7 @@ BEGIN
             End If;
 
             _iteration := _iteration + 1;
-        End Loop;
+        END LOOP;
     End If;
 
     -- Check for leading or trailing whitespace, comma, or semicolon
@@ -104,7 +106,7 @@ BEGIN
     _text := Trim(_text, ',');
     _text := Trim(_text, ';');
 
-    Return Trim(_text);
+    RETURN Trim(_text);
 END
 $$;
 

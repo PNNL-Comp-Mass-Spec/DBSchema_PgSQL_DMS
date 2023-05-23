@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          10/04/2022 mem - Change _enable, _infoOnly and _includeDisabled from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -255,7 +256,7 @@ BEGIN
             End If;
         Else
             If _countUnchanged = 1 Then
-                _message := 'The manager is already ' || _activeStateDescription;
+                _message := format('The manager is already %s', _activeStateDescription);
             Else
                 If _managerTypeID = 0 Then
                     _message := format('All %s managers are already %s', _countUnchanged, _activeStateDescription);
@@ -377,12 +378,12 @@ BEGIN
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     If _updateCount = 1 And _countUnchanged = 0 Then
-        _message := 'The manager is now ' || _activeStateDescription;
+        _message := format('The manager is now %s', _activeStateDescription);
     Else
         If _managerTypeID = 0 Then
-            _message := 'Set ' || _updateCount || ' managers to state ' || _activeStateDescription;
+            _message := format('Set ' || _updateCount || ' managers to state %s', _activeStateDescription);
         Else
-            _message := 'Set ' || _updateCount || ' ' || _managerTypeName || ' managers to state ' || _activeStateDescription;
+            _message := format('Set ' || _updateCount || ' ' || _managerTypeName || ' managers to state %s', _activeStateDescription);
         End If;
 
         If _countUnchanged <> 0 Then

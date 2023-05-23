@@ -50,9 +50,9 @@ BEGIN
     WHERE mgr_name = _managerName;
 
     If Not Found Then
-        _message := 'Could not find entry for manager: ' || _managerName;
+        _message := format('Could not find entry for manager: %s', _managerName);
         _returncode := 'U5202';
-        Return;
+        RETURN;
     End If;
 
     _mgrID       := _mgrInfo.mgr_id;
@@ -63,9 +63,9 @@ BEGIN
     ---------------------------------------------------
 
     If _state < 1 Or _state > 3 Then
-        _message := 'Invalid value for _state; should be 1, 2 or 3, not ' || _state;
+        _message := format('Invalid value for _state; should be 1, 2 or 3, not %s', _state);
         _returncode := 'U5203';
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -77,19 +77,19 @@ BEGIN
 
     If _state = 1 Then
         _messageType := 'Normal';
-        _message := 'Manager ' || _managerName || ' is attempting auto error cleanup';
+        _message := format('Manager %s is attempting auto error cleanup', _managerName);
     End If;
 
     If _state = 2 Then
         _messageType := 'Normal';
-        _message := 'Automated error cleanup succeeded for ' || _managerName;
+        _message := format('Automated error cleanup succeeded for %s', _managerName);
     End If;
 
     If _state = 3 Then
         _messageType := 'Normal';
-        _message := 'Automated error cleanup failed for ' || _managerName;
+        _message := format('Automated error cleanup failed for %s', _managerName);
         If _failureMsg <> '' Then
-            _message := _message || '; ' || _failureMsg;
+            _message := format('%s; %s', _message, _failureMsg);
         End If;
     End If;
 
@@ -113,7 +113,7 @@ BEGIN
         FROM mc.t_param_type
         WHERE param_name = 'ManagerErrorCleanupMode';
 
-        If Found Then
+        If FOUND Then
             INSERT INTO mc.t_param_value (mgr_id, type_id, value)
             VALUES (_mgrID, _paramID, '0');
 
@@ -136,9 +136,9 @@ BEGIN
                   PV.mgr_id = _mgrID);
 
         If Not Found Then
-            _message := _message || '; Entry not found in mc.t_param_value for ManagerErrorCleanupMode; this is unexpected';
+            _message := format('%s; Entry not found in mc.t_param_value for ManagerErrorCleanupMode; this is unexpected', _message);
         Else
-            _message := _message || '; Changed ManagerErrorCleanupMode to 0 in mc.t_param_value';
+            _message := format('%s; Changed ManagerErrorCleanupMode to 0 in mc.t_param_value', _message);
         End If;
     End If;
 
@@ -149,11 +149,11 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error updating ManagerErrorCleanupMode in mc.t_param_value: ' || _exceptionMessage;
+    _message := format('Error updating ManagerErrorCleanupMode in mc.t_param_value: %s', _exceptionMessage);
     _returnCode := _sqlstate;
 
-    RAISE Warning 'Error: %', _message;
-    RAISE warning '%', _exceptionContext;
+    RAISE WARNING 'Error: %', _message;
+    RAISE WARNING '%', _exceptionContext;
 
     CALL PostLogEntry ('Error', _message, 'ReportManagerErrorCleanup', 'mc');
 

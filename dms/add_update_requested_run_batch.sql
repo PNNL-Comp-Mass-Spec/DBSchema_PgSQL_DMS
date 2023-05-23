@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          03/30/2023 mem - Retrieve values from _message and _returnCode when calling update_cached_requested_run_batch_stats
 **          05/07/2023 mem - Remove unused variable
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -216,7 +217,7 @@ BEGIN
             WHERE NOT request_id IN ( SELECT request_id FROM t_requested_run);
 
             _logErrors := false;
-            _message := 'Requested run list contains requests that do not exist: ' || _invalidIDs;
+            _message := format('Requested run list contains requests that do not exist: %s', _invalidIDs);
 
             If _raiseExceptions Then
                 RAISE EXCEPTION '%', _message;

@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 **          10/04/2022 mem - Rename temporary tables
 **                         - Move temporary table drop to the end of the if block
 **          01/31/2023 mem - Use new column names in tables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -58,7 +59,7 @@ BEGIN
     WHERE param_name = _paramName::citext;
 
     If Not Found Then
-        _message := 'Unknown Parameter Name: ' || _paramName;
+        _message := format('Unknown Parameter Name: %s', _paramName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
@@ -141,9 +142,9 @@ BEGIN
 
     If _message = '' Then
         If _rowCountUpdated = 0 Then
-            _message := 'All ' || _rowCountUnchanged || ' row(s) in mc.t_param_value already have ' || _paramname || ' = ' || _newValue;
+            _message := format('All ' || _rowCountUnchanged || ' row(s) in mc.t_param_value already have ' || _paramname || ' = %s', _newValue);
         Else
-            _message := 'Updated ' || _rowCountUpdated || ' row(s) in mc.t_param_value to have ' || _paramname || ' = ' || _newValue;
+            _message := format('Updated ' || _rowCountUpdated || ' row(s) in mc.t_param_value to have ' || _paramname || ' = %s', _newValue);
         End If;
     End If;
 END

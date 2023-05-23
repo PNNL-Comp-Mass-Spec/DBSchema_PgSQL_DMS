@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_multiple_tasks(IN _joblist text, INOUT _m
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/11/2022 mem - Ported to PostgreSQL
 **          04/27/2023 mem - Use boolean for data type name
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -77,7 +78,7 @@ BEGIN
         GET DIAGNOSTICS _jobCount = ROW_COUNT;
 
         If _jobCount = 0 Then
-            _message := 'Job number(s) not found in _jobList: ' || _jobList;
+            _message := format('Job number(s) not found in _jobList: %s', _jobList);
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_Job_List;

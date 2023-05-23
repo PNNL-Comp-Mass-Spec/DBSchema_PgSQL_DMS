@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_param_file_mass_mods_table_code(_paramfile
 **  Auth:   mem
 **  Date:   12/05/2016 mem - Initial version
 **          06/22/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -31,11 +32,11 @@ BEGIN
     WHERE Param_File_ID = _paramFileId
     GROUP BY Table_Code_Header;
 
-    If Found Then
-        _result := _header || '<br>' || _list;
+    If FOUND Then
+        _result := format('%s<br>%s', _header, _list);
     End If;
 
-    Return Coalesce(_result, '');
+    RETURN Coalesce(_result, '');
 END
 $$;
 

@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          01/24/2023 mem - Update whitespace
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -158,7 +159,7 @@ BEGIN
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     If Not _previewSql AND (_updateCount = 0 Or _targetIdMatched <> _targetID) Then
-        _message := 'Match not found for ' || _entryDescription;
+        _message := format('Match not found for %s', _entryDescription);
         RETURN;
     End If;
 

@@ -45,6 +45,7 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **          06/18/2022 mem - Ported to PostgreSQL
 **          11/15/2022 mem - Use new column name
 **          04/27/2023 mem - Use boolean for data type name
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -67,14 +68,14 @@ BEGIN
         _includeAll = false;
     End If;
 
-    _result := '<data_package>'  || _newline;
+    _result := format('<data_package>%s', _newline);
 
     ---------------------------------------------------
     -- Data Package Parameters
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Parameters') in lower(_options)) > 0 Then
-        _result := _result || '<general>' || _newline;
+        _result := format('%s<general>%s', _result, _newline);
 
         -- Note: if LookupQ returns multiple rows, use XMLFOREST to wrap the <package></package> items in <packages></packages>
         -- SELECT XMLFOREST(LookupQ.xml_item AS packages)
@@ -104,9 +105,10 @@ BEGIN
                WHERE ID = _dataPackageID
             ) AS LookupQ;
 
-        _result := _result || Coalesce(_paramXML::text, '');
-
-        _result := _result || _newline || '</general>' || _newline;
+        _result := format('%s%s%s%s%s',
+                            _result,
+                            Coalesce(_paramXML::text, ''), _newline,
+                            '</general>', _newline);
     End If;
 
     ---------------------------------------------------
@@ -114,7 +116,7 @@ BEGIN
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Experiments') in lower(_options)) > 0 Then
-        _result := _result || _newline || '<experiments>' || _newline;
+        _result := format('%s<experiments>%s', _result, _newline);
 
         SELECT xml_item
         INTO _experimentXML
@@ -137,9 +139,10 @@ BEGIN
                WHERE TDPE.Data_Package_ID = _dataPackageID
             ) AS LookupQ;
 
-        _result := _result || Coalesce(_experimentXML::text, '');
-
-        _result := _result || _newline || '</experiments>' || _newline;
+        _result := format('%s%s%s%s%s',
+                            _result,
+                            Coalesce(_experimentXML::text, ''), _newline,
+                            '</experiments>', _newline);
     End If;
 
     ---------------------------------------------------
@@ -147,7 +150,7 @@ BEGIN
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Datasets') in lower(_options)) > 0 Then
-        _result := _result || _newline || '<datasets>' || _newline;
+        _result := format('%s<datasets>%s', _result, _newline);
 
         SELECT xml_item
         INTO _datasetXML
@@ -168,9 +171,10 @@ BEGIN
                WHERE DPD.data_package_id = _dataPackageID
             ) AS LookupQ;
 
-        _result := _result || Coalesce(_datasetXML::text, '');
-
-        _result := _result || _newline || '</datasets>' || _newline;
+        _result := format('%s%s%s%s%s',
+                            _result,
+                            Coalesce(_datasetXML::text, ''), _newline,
+                            '</datasets>', _newline);
     End If;
 
     ---------------------------------------------------
@@ -178,7 +182,7 @@ BEGIN
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Jobs') in lower(_options)) > 0 Then
-        _result := _result || _newline || '<jobs>' || _newline;
+        _result := format('%s<jobs>%s', _result, _newline);
 
         SELECT xml_item
         INTO _jobXML
@@ -202,9 +206,10 @@ BEGIN
                WHERE DPJ.Data_Package_ID = _dataPackageID
             ) AS LookupQ;
 
-        _result := _result || Coalesce(_jobXML::text, '');
-
-        _result := _result || _newline || '</jobs>' || _newline;
+        _result := format('%s%s%s%s%s',
+                            _result,
+                            Coalesce(_jobXML::text, ''), _newline,
+                            '</jobs>', _newline);
     End If;
 
     ---------------------------------------------------
@@ -212,7 +217,7 @@ BEGIN
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Paths') in lower(_options)) > 0 Then
-        _result := _result || _newline || '<paths>';
+        _result := format('%s<paths>%s', _result, _newline);
 
         ---------------------------------------------------
         -- Data package path
@@ -231,8 +236,7 @@ BEGIN
                WHERE ID = _dataPackageID
             ) AS LookupQ;
 
-        _result := _result || _newline;
-        _result := _result || Coalesce(_dpPathXML::text, '');
+        _result := format('%s%s%s', _result, Coalesce(_dpPathXML::text, ''), _newline);
 
         ---------------------------------------------------
         -- Dataset paths
@@ -256,8 +260,7 @@ BEGIN
                WHERE DPD.data_package_id = _dataPackageID
             ) AS LookupQ;
 
-        _result := _result || _newline || _newline;
-        _result := _result || Coalesce(_dsPathXML::text, '');
+        _result := format('%s%s%s', _result, Coalesce(_dsPathXML::text, ''), _newline);
 
         ---------------------------------------------------
         -- Job paths
@@ -282,13 +285,14 @@ BEGIN
                WHERE DPJ.Data_Package_ID = _dataPackageID
             ) AS LookupQ;
 
-        _result := _result || _newline || _newline;
-        _result := _result || Coalesce(_jobPathXML::text, '');
+        _result := format('%s%s%s%s%s',
+                            _result,
+                            Coalesce(_jobPathXML::text, ''), _newline,
+                            '</paths>', _newline);
 
-        _result := _result || _newline || '</paths>' || _newline;
     End If;
 
-    _result := _result || _newline || '</data_package>';
+    _result := format('%s</data_package>%s', _result, _newline);
 
     RETURN _result;
 END

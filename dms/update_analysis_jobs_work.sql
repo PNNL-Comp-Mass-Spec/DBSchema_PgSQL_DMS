@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          05/05/2023 mem - Ported to PostgreSQL
 **          05/11/2023 mem - Update return codes
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,6 @@ DECLARE
     _authorized boolean;
 
     _noChangeText text := '[no change]';
-    _msg text;
     _list text;
     _alterEventLogRequired boolean := false;
     _alterEnteredByRequired boolean := false;
@@ -372,7 +372,7 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := 'Update assigned processor to ' || _assignedProcessor;
+            _action := format('Update assigned processor to %s', _assignedProcessor);
         End If;
 
         -----------------------------------------------
@@ -390,7 +390,7 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := 'Update propagation mode to ' || _propagationMode;
+            _action := format('Update propagation mode to %s', _propagationMode);
         End If;
 
         -----------------------------------------------
@@ -402,7 +402,7 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := 'Update parameter file to ' || _paramFileName;
+            _action := format('Update parameter file to %s', _paramFileName);
         End If;
 
         -----------------------------------------------
@@ -414,7 +414,7 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := 'Update settings file to ' || _settingsFileName;
+            _action := format('Update settings file to %s', _settingsFileName);
         End If;
 
         -----------------------------------------------
@@ -426,7 +426,7 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := 'Change organism to ' || _organismName;
+            _action := format('Change organism to %s', _organismName);
         End If;
 
         -----------------------------------------------
@@ -438,7 +438,7 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := 'Change protein collection list to ' || _protCollNameList;
+            _action := format('Change protein collection list to %s', _protCollNameList);
         End If;
 
         -----------------------------------------------
@@ -450,7 +450,7 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := 'Change protein options list to ' || _protCollOptionsList;
+            _action := format('Change protein options list to %s', _protCollOptionsList);
         End If;
 
     End If;
@@ -554,7 +554,7 @@ BEGIN
             WHERE group_name = _associatedProcessorGroup;
 
             If Not FOUND Then
-                _msg := 'Processor group name not found: "' || _associatedProcessorGroup || '"';
+                _msg := format('Processor group name not found: "%s"', _associatedProcessorGroup);
 
                 ROLLBACK;
 

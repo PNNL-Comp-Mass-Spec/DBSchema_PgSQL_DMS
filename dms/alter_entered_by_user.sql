@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          12/12/2022 mem - Whitespace update
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -117,12 +118,12 @@ BEGIN
                              _entryDateColumnName);
 
         If _previewSql Then
-            _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
+            _s := format('%s AND %s', _s, _entryDateFilterSqlWithValues);
         Else
-            _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
+            _s := format('%s AND %s', _s, _entryDateFilterSqlWithVariables);
         End If;
 
-        _entryDescription := _entryDescription || ' with ' || _entryDateFilterSqlWithValues;
+        _entryDescription := format('%s with %s', _entryDescription, _entryDateFilterSqlWithValues);
     End If;
 
     If _previewSql Then
@@ -144,8 +145,8 @@ BEGIN
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     If Not _previewSql AND (_updateCount = 0 Or _targetIDMatch <> _targetID) Then
-        _message := 'Match not found for ' || _entryDescription;
-        Return;
+        _message := format('Match not found for %s', _entryDescription);
+        RETURN;
     End If;
 
     -- Confirm that _enteredBy doesn't already contain _newUser
@@ -153,8 +154,9 @@ BEGIN
 
     _matchIndex := position(_newUser in _enteredBy);
     If _matchIndex > 0 Then
-        _message := 'Entry ' || _entryDescription || ' is already attributed to ' || _newUser || ': "' || _enteredBy || '"';
-        Return;
+        _message := format('Entry %s is already attributed to %s: "%s"',
+                            _entryDescription, _newUser, _enteredBy);
+        RETURN;
     End If;
 
     -- Look for a semicolon in _enteredBy
@@ -185,9 +187,9 @@ BEGIN
 
         If char_length(_entryDateFilterSqlWithVariables) > 0 Then
             If _previewSql Then
-                _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
+                _s := format('%s AND %s', _s, _entryDateFilterSqlWithValues);
             Else
-                _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
+                _s := format('%s AND %s', _s, _entryDateFilterSqlWithVariables);
             End If;
         End If;
 
@@ -221,9 +223,9 @@ BEGIN
 
         If char_length(_entryDateFilterSqlWithVariables) > 0 Then
             If _previewSql Then
-                _s := _s || ' AND ' || _entryDateFilterSqlWithValues;
+                _s := format('%s AND %s', _s, _entryDateFilterSqlWithValues);
             Else
-                _s := _s || ' AND ' || _entryDateFilterSqlWithVariables;
+                _s := format('%s AND %s', _s, _entryDateFilterSqlWithVariables);
             End If;
         End If;
 

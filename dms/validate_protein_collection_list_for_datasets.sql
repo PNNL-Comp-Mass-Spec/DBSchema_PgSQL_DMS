@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **                         - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling ValidateAnalysisJobParameters
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          11/08/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -102,7 +103,7 @@ BEGIN
     HAVING COUNT(*) > 1;
 
     If Coalesce(_dups, '') <> '' Then
-        _msg := 'There were duplicate names in the protein collections list, will auto remove: ' || _dups;
+        _msg := format('There were duplicate names in the protein collections list, will auto remove: %s', _dups);
 
         If _showDebug Then
             RAISE INFO '%', _msg;

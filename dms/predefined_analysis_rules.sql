@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **                         - Rename columns in the query results
 **          02/08/2023 mem - Switch from PRN to username
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -58,7 +59,7 @@ BEGIN
     WHERE DS.Dataset = _datasetName::citext;
 
     If Not FOUND Then
-        _message := 'Dataset name not found in DMS: ' || _datasetName;
+        _message := format('Dataset name not found in DMS: %s', _datasetName);
 
         RAISE WARNING '%', _message;
         RETURN;

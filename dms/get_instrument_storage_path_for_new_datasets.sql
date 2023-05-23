@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_storage_path_for_new_datasets(_
 **          10/27/2020 mem - Pass Auto_SP_URL_Domain to AddUpdateStorage
 **          12/17/2020 mem - Rollback any open transactions before calling LocalErrorHandler
 **          05/08/2023 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -121,10 +122,10 @@ BEGIN
         _storagePathName := _instrumentInfo.AutoSPPathRoot;
 
         If Right(_storagePathName, 1) <> '\' Then
-            _storagePathName := _storagePathName || '\';
+            _storagePathName := format('%s\', _storagePathName);
         End If;
 
-        _storagePathName := _storagePathName || _suffix;
+        _storagePathName := format('%s%s', _storagePathName, _suffix);
 
         -----------------------------------------
         -- Look for existing entry in t_storage_path
@@ -141,7 +142,7 @@ BEGIN
 
         If FOUND Then
             If _infoOnly Then
-                RAISE INFO 'Auto-defined storage path "%" matched in t_storage_path; ID=%', _storagePathName, _storagePathID::text;
+                RAISE INFO 'Auto-defined storage path "%" matched in t_storage_path; ID=%', _storagePathName, _storagePathID;
             End If;
 
             RETURN _storagePathID;
@@ -149,11 +150,11 @@ BEGIN
 
         -- Path not found; add it if _infoOnly is false
         If _infoOnly Then
-            RAISE INFO '%', 'Auto-defined storage path "' || _storagePathName || '" not found t_storage_path; need to add it';
+            RAISE INFO 'Auto-defined storage path "%" not found t_storage_path; need to add it', _storagePathName;
             RETURN 0;
         End If;
 
-        _currentLocation := 'Call add_update_storage to add ' || _storagePathName;
+        _currentLocation := format('Call add_update_storage to add %s', _storagePathName);
 
         If _autoSwitchActiveStorage Then
             _storageFunction := 'raw-storage';

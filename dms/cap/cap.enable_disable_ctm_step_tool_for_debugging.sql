@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool 
 **          10/11/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -63,7 +64,7 @@ BEGIN
             _updatedRows := _updatedRows + _updateCount;
 
             If _updatedRows = 0 Then
-                _message := 'Debug mode is already disabled for ' || _tool;
+                _message := format('Debug mode is already disabled for %s', _tool);
             Else
                 _message := format('Debug mode disabled for %s; updated %s %s', _tool, _updatedRows, public.check_plural(_updatedRows, 'row', 'rows'));
             End If;
@@ -116,7 +117,7 @@ BEGIN
             _updatedRows := _updatedRows + _updateCount;
 
             If _updatedRows = 0 Then
-                _message := 'Debug mode is already enabled for ' || _tool;
+                _message := format('Debug mode is already enabled for %s', _tool);
             Else
                 _message := format('Debug mode enabled for %s; updated %s %s', _tool, _updatedRows, public.check_plural(_updatedRows, 'row', 'rows'));
             End If;

@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_maxquant_mass_mods_list(_paramfileid integ
 **  Auth:   mem
 **  Date:   03/05/2021 mem - Initial version
 **          06/22/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -53,7 +54,7 @@ BEGIN
     If Coalesce(_list ,'') = '' Then
         _result := '';
     Else
-        _result := '!Headers!Name:Mod_ID:Type:Residue:Mass|' || _list;
+        _result := format('!Headers!Name:Mod_ID:Type:Residue:Mass|%s', _list);
     End If;
 
     RETURN _result;

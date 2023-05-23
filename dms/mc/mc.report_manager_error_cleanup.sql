@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **          01/31/2023 mem - Use new column names in tables
 **          05/07/2023 mem - Remove unused variable
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -64,9 +65,9 @@ BEGIN
     WHERE mgr_name = _managerName::citext;
 
     If Not Found Then
-        _message := 'Could not find entry for manager: ' || _managerName;
+        _message := format('Could not find entry for manager: %s', _managerName);
         _returncode := 'U5202';
-        Return;
+        RETURN;
     End If;
 
     _mgrID       := _mgrInfo.mgr_id;
@@ -77,9 +78,9 @@ BEGIN
     ---------------------------------------------------
 
     If _state < 1 Or _state > 3 Then
-        _message := 'Invalid value for _state; should be 1, 2 or 3, not ' || _state;
+        _message := format('Invalid value for _state; should be 1, 2 or 3, not %s', _state);
         _returncode := 'U5203';
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -96,15 +97,17 @@ BEGIN
 
     If _state = 2 Then
         _messageType := 'Normal';
-        _message := 'Automated error cleanup succeeded for ' || _managerName;
+        _message := format('Automated error cleanup succeeded for %s', _managerName);
     End If;
 
     If _state = 3 Then
         _messageType := 'Normal';
-        _message := 'Automated error cleanup failed for ' || _managerName;
+        _message := format('Automated error cleanup failed for %s', _managerName);
+
         If _failureMsg <> '' Then
-            _message := _message || '; ' || _failureMsg;
+            _message := format('%s; %s', _message, _failureMsg);
         End If;
+
     End If;
 
     CALL public.post_log_entry (_messageType, _message, 'Report_Manager_Error_Cleanup', 'mc');
@@ -129,7 +132,7 @@ BEGIN
         FROM mc.t_param_type
         WHERE param_name = 'ManagerErrorCleanupMode';
 
-        If Found Then
+        If FOUND Then
             INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
             VALUES (_mgrID, _paramTypeID, '0');
 

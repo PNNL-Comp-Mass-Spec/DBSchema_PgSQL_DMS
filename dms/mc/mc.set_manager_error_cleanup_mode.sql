@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          01/30/2023 mem - Use new column name in view
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ BEGIN
             RAISE INFO '%', _message;
 
             DROP TABLE Tmp_ManagerList;
-            Return;
+            RETURN;
         END IF;
 
         UPDATE Tmp_ManagerList
@@ -126,7 +127,7 @@ BEGIN
         _returnCode := 'U5201';
 
         DROP TABLE Tmp_ManagerList;
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -216,7 +217,7 @@ BEGIN
                             _countToUpdate);
 
         DROP TABLE Tmp_ManagerList;
-        Return;
+        RETURN;
     End If;
 
     UPDATE mc.t_param_value
@@ -232,14 +233,12 @@ BEGIN
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
     If _insertCount > 0 Then
-        _message := 'Set "ManagerErrorCleanupMode" to ' || _cleanupModeString || ' for ' || _insertCount::text || ' manager';
-        If _insertCount > 1 Then
-            _message := _message || 's';
-        End If;
+        _message := format('Set "ManagerErrorCleanupMode" to %s for %s %s',
+                            _cleanupModeString, _insertCount, public.check_plural(_insertCount, 'manager', 'managers'));
 
         RAISE INFO '%', _message;
     ELSE
-        _message := 'All managers already have ManagerErrorCleanupMode set to ' || _cleanupModeString;
+        _message := format('All managers already have ManagerErrorCleanupMode set to %s', _cleanupModeString);
     End If;
 
     ---------------------------------------------------
@@ -285,7 +284,7 @@ BEGIN
 
         END LOOP;
 
-         _message := _message || '; see the Output window for details';
+         _message := format('%s; see the Output window for details', _message);
 
     End If;
 

@@ -57,7 +57,7 @@ EXCEPTION
             _exceptionMessage = message_text,
             _exceptionContext = pg_exception_context;
 
-    _message := 'Error calling parse_manager_name_list or updating data: ' || _exceptionMessage;
+    _message := format('Error calling parse_manager_name_list or updating data: %s', _exceptionMessage);
 
     RAISE Info '%', _message;
     RAISE Info 'Exception context; %', _exceptionContext;

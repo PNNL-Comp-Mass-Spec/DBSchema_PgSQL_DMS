@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_experiment_plex_members_for_entry(_plexexp
 **  Date:   11/09/2018 mem
 **          11/19/2018 mem - Update column name
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,7 @@ BEGIN
     If Coalesce(_list, '') = ''  Then
         _result := _headerRow;
     Else
-        _result := _headerRow || chr(10) || _list;
+        _result := format('%s%s%s', _headerRow, chr(10), _list);
     End If;
 
     RETURN _result;

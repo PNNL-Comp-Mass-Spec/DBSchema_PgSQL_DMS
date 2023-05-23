@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          02/16/2023 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Move INTO to new line
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
         If char_length(Coalesce(_requestedCompletionDate, '')) > 0 Then
             -- IsDate() equivalent
             If public.try_cast(_requestedCompletionDate, null::timestamp) Is Null Then
-                _message := 'Requested completion date is not a valid date: ' || _requestedCompletionDate;
+                _message := format('Requested completion date is not a valid date: %s', _requestedCompletionDate);
                 _returnCode := 'U5202';
                 RETURN;
             End If;

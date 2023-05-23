@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **
 **  Auth:   mem
 **  Date:   01/15/2023 mem - Initial version (code refactored code from UpdateRequestedRunAssignments)
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
         End If;
 
         If Not Exists (Select * From T_Instrument_Group Where instrument_group = _instrumentGroup::citext) Then
-            _message := 'Invalid instrument group name: ' || _instrumentGroup;
+            _message := format('Invalid instrument group name: %s', _instrumentGroup);
             _returnCode := 'U5202'
 
             RETURN;
@@ -90,7 +91,7 @@ BEGIN
         GROUP BY DST.Dataset_Type, DST.dataset_type_id;
 
         If Not FOUND Then
-            _message := 'Requested run IDs not found in T_Requested_Run: ' || _reqRunIDList;
+            _message := format('Requested run IDs not found in T_Requested_Run: %s', _reqRunIDList);
             _returnCode := 'U5203';
 
             DROP TABLE Tmp_DatasetTypeList;

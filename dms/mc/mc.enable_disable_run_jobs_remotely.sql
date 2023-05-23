@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          10/04/2022 mem - Change _enable and _infoOnly and false from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/13/2023 mem - Rename variables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -74,13 +75,13 @@ BEGIN
     If _enable Is Null Then
         _message := '_enable cannot be null';
         _returnCode := 'U5201';
-        Return;
+        RETURN;
     End If;
 
     If char_length(_managerNameList) = 0 Then
         _message := '_managerNameList cannot be blank';
         _returnCode := 'U5202';
-        Return;
+        RETURN;
     End If;
 
     -----------------------------------------------
@@ -102,7 +103,7 @@ BEGIN
         RAISE INFO '%', _message;
 
         DROP TABLE Tmp_ManagerList;
-        Return;
+        RETURN;
     END IF;
 
     -- Set _newValue based on _enable
@@ -127,7 +128,7 @@ BEGIN
             RAISE INFO '%', _message;
 
             DROP TABLE Tmp_ManagerList;
-            Return;
+            RETURN;
         End If;
     End If;
 
@@ -244,16 +245,17 @@ BEGIN
             End If;
         Else
             If _countUnchanged = 1 Then
-                _message := 'The manager is already set to ' || _activeStateDescription;
+                _message := format('The manager is already set to %s', _activeStateDescription);
             Else
-                _message := 'All ' || _countUnchanged::text || ' managers are already set to ' || _activeStateDescription;
+                _message := format('All %s managers are already set to %s',
+                                    _countUnchanged, _activeStateDescription);
             End If;
         End If;
 
         RAISE INFO '%', _message;
 
         DROP TABLE Tmp_ManagerList;
-        Return;
+        RETURN;
     End If;
 
     If _infoOnly Then
@@ -300,7 +302,7 @@ BEGIN
                             _newValue);
 
         DROP TABLE Tmp_ManagerList;
-        Return;
+        RETURN;
     End If;
 
     -- Update RunJobsRemotely for the managers in Tmp_ManagerList
@@ -324,7 +326,7 @@ BEGIN
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     If _updateCount = 1 And _countUnchanged = 0 Then
-        _message := 'Configured the manager to ' || _activeStateDescription;
+        _message := format('Configured the manager to %s', _activeStateDescription);
     Else
         _message := format('Configured %s %s to %s',
                         _updateCount,

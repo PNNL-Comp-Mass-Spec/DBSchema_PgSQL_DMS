@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -63,9 +64,9 @@ BEGIN
     WHERE mgr_name = _managerName::citext;
 
     IF NOT FOUND THEN
-        _message := 'Could not find entry for manager: ' || _managername;
+        _message := format('Could not find entry for manager: %s', _managername);
         _returnCode := 'U5202';
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------

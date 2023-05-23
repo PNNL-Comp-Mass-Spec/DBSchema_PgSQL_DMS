@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          12/09/2022 mem - Change _mode to lowercase
 **          04/27/2023 mem - Use boolean for data type name
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ BEGIN
         End If;
 
         If _mode <> 'add' and _mode <> 'update' Then
-            _message := 'Unknown Mode: ' || _mode;
+            _message := format('Unknown Mode: %s', _mode);
             _returnCode := 'U5202';
             RETURN;
         End If;
@@ -100,7 +101,7 @@ BEGIN
             _scriptXML := public.try_cast(_contents, null::xml);
 
             If _scriptXML Is Null Then
-                _message := 'Script contents is not valid XML: ' || _contents;
+                _message := format('Script contents is not valid XML: %s', _contents);
                 _returnCode := 'U5203';
                 RETURN;
             End If;

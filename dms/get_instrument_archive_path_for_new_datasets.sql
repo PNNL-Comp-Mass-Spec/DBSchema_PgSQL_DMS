@@ -40,6 +40,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_archive_path_for_new_datasets(_
 **          09/02/2016 mem - Archive path is now adms.emsl.pnl.gov
 **          04/24/2023 mem - Ported to PostgreSQL
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -137,18 +138,18 @@ BEGIN
         _archivePathName := _instrumentInfo.AutoSPArchivePathRoot;
 
         If Right(_archivePathName, 1) <> '/' Then
-                _archivePathName := _archivePathName || '/';
+            _archivePathName := format('%s/', _archivePathName);
         End If;
 
-        _archivePathName := _archivePathName || _suffix;
+        _archivePathName := format('%s%s', _archivePathName, _suffix);
 
         _networkSharePath := _instrumentInfo.AutoSPArchiveSharePathRoot;
 
         If Right(_networkSharePath, 1) <> '\' Then
-                _networkSharePath := _networkSharePath || '\';
+            _networkSharePath := format('%s\', _networkSharePath);
         End If;
 
-        _networkSharePath := _networkSharePath || _suffix;
+        _networkSharePath := format('%s%s', _networkSharePath, _suffix);
 
         -----------------------------------------
         -- Look for existing entry in t_archive_path
@@ -175,7 +176,7 @@ BEGIN
             RETURN 0;
         End If;
 
-        _currentLocation := 'Call add_update_archive_path to add ' || _archivePathName;
+        _currentLocation := format('Call add_update_archive_path to add %s', _archivePathName);
 
         If _autoSwitchActiveArchive Then
             _archiveFunction := 'Active';

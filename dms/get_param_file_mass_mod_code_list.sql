@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_param_file_mass_mod_code_list(_paramfileid
 **  Date:   11/04/2021 mem - Initial version
 **          06/22/2022 mem - Ported to PostgreSQL
 **          07/22/2022 mem - Change the delimiter to a comma
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
         WHERE Param_File_ID = _paramFileId;
     End If;
 
-    Return Coalesce(_result, '');
+    RETURN Coalesce(_result, '');
 END
 $$;
 

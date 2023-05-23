@@ -16,10 +16,10 @@ CREATE OR REPLACE FUNCTION public.get_well_position(_index integer) RETURNS text
 **  Auth:   grk
 **  Date:   07/15/2000
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
-    _wellPosition text;
     _wpRow int;
     _wpRowCharBase int;
     _numCols int;
@@ -30,7 +30,7 @@ BEGIN
     _index := Coalesce(_index, 0);
 
     If _index < 1 OR _index > 96 Then
-        Return '';
+        RETURN '';
     End If;
 
     _wpRowCharBase := ASCII('A');
@@ -51,9 +51,9 @@ BEGIN
 
     _row := chr(_wpRow + _wpRowCharBase);
     _col := to_char(_wpCol, 'fm00');
-    _wellPosition := _row || _col;
 
-    Return _wellPosition;
+    -- Return well position
+    RETURN format('%s%s', _row, _col);
 END
 $$;
 

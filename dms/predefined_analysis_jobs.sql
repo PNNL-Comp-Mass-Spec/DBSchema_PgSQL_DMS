@@ -58,6 +58,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
 **          02/23/2023 mem - Update procedure name in comments
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -101,7 +102,7 @@ BEGIN
     WHERE DS.Dataset = _datasetName::citext;
 
     If Not FOUND Then
-        _message := 'Dataset name not found in DMS: ' || _datasetName;
+        _message := format('Dataset name not found in DMS: %s', _datasetName);
 
         If _raiseErrorMessages Then
             RAISE WARNING '%', _message;

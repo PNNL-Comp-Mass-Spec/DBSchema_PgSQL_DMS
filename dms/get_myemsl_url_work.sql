@@ -13,12 +13,12 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_work(_keyname text, _value text
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/12/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
     _json text;
     _encodedText text;
-    _url text;
 BEGIN
     -- Valid key names are defined in https://my.emsl.pnl.gov/myemsl/api/1/elasticsearch/generic-finder.js
     -- They include:
@@ -31,13 +31,11 @@ BEGIN
     --   extended_metadata.gov_pnnl_emsl_instrument.name.untouched
     --   ext  (filename extension)
 
-    _json := '{ "pacifica-search-simple": { "v": 1, "facets_set": [{"key": "' || _keyName || '", "value":"' || _value || '"}] } }';
+    _json := format('{ "pacifica-search-simple": { "v": 1, "facets_set": [{"key": "%s", "value":"%s"}] } }', _keyName, _value);
 
     _encodedText = public.encode_base64(_json);
 
-    _url := 'https://my.emsl.pnl.gov/myemsl/search/simple/' || _encodedText;
-
-    return _url;
+    RETURN 'https://my.emsl.pnl.gov/myemsl/search/simple/' || _encodedText;
 END
 $$;
 

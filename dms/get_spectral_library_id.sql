@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          04/16/2023 mem - Auto-update _proteinCollectionList and _organismDbFile to 'na' if an empty string
 **          05/03/2023 mem - Fix typo in format string
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -187,7 +188,7 @@ BEGIN
             LIMIT 1;
 
             If Not FOUND Then
-                _logMessage := 'Protein collection not found in V_Protein_Collections_by_Organism; cannot determine the organism for ' || _proteinCollection;
+                _logMessage := format('Protein collection not found in V_Protein_Collections_by_Organism; cannot determine the organism for %s', _proteinCollection);
                 CALL post_log_entry ('Warning', _logMessage, 'Get_Spectral_Library_ID');
 
                 _organism := 'Undefined';
@@ -222,7 +223,7 @@ BEGIN
             WHERE OrgFile.FileName = _organismDbFile;
 
             If Not FOUND Then
-                _logMessage := 'Legacy FASTA file not found in T_Organism_DB_File; cannot determine the organism for ' || _organismDbFile;
+                _logMessage := format('Legacy FASTA file not found in T_Organism_DB_File; cannot determine the organism for %s', _organismDbFile);
                 CALL post_log_entry ('Warning', _logMessage, 'Get_Spectral_Library_ID');
 
                 _organism := 'Undefined';
@@ -466,13 +467,13 @@ BEGIN
         _libraryName := format('%s_%s.predicted.speclib', _defaultLibraryName, Substring(_hash, 1, 8));
 
         If Not _allowAddNew Then
-            _message := 'Spectral library not found, and _allowAddNew is false; not creating ' || _libraryName;
+            _message := format('Spectral library not found, and _allowAddNew is false; not creating %s', _libraryName);
             RAISE INFO '%', _message;
             RETURN;
         End If;
 
         If _infoOnly Then
-            _message := 'Would create a new spectral library named ' || _libraryName;
+            _message := format('Would create a new spectral library named %s', _libraryName);
             RAISE INFO '%', _message;
             RETURN;
         End If;

@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.validate_chars(_string text, _validch text DEF
 **          02/13/2008 mem - Updated to check for _string containing a space (Ticket #602)
 **          06/24/2022 mem - Ported to PostgreSQL
 **          04/27/2023 mem - Use boolean for data type name
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -40,7 +41,8 @@ BEGIN
     _position := 1;
     _stringLength := char_length(_string);
 
-    WHILE _position <= _stringLength Loop
+    WHILE _position <= _stringLength
+    LOOP
         _ch := SUBSTRING(_string, _position, 1);
 
         -- On SQL Server, _ch will have a length of 0 if it is a space
@@ -55,13 +57,13 @@ BEGIN
         End If;
 
         _position := _position + 1;
-    End Loop;
+    END LOOP;
 
     If _warnSpace Then
-        _badChars := '[space]' || _badChars;
+        _badChars := format('[space]%s', _badChars);
     End If;
 
-    Return _badChars;
+    RETURN _badChars;
 END
 $$;
 

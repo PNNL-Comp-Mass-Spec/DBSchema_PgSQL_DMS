@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **  Auth:   mem
 **  Date:   02/15/2023 - initial version
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -202,7 +203,7 @@ BEGIN
             WHERE NOT Batch_ID IN (SELECT Batch_ID FROM t_requested_run_batches);
 
             _logErrors := false;
-            _message := 'Batch ID list contains batches that do not exist: ' || _invalidIDs;
+            _message := format('Batch ID list contains batches that do not exist: %s', _invalidIDs);
 
             _returnCode := 'U5209';
             RAISE EXCEPTION '%', _message;

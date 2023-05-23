@@ -126,6 +126,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **                         - Cast _paramFileType to citext
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Use Similar To when using square brackets to match text
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -644,9 +645,9 @@ BEGIN
         If _paramFileType::citext In ('MSGFPlus', 'TopPIC') And _rowCount < 5 Then
             If Position(chr(9) In _row) > 0 Then
                 If Position(',' In _row) > 0 Then
-                    _message := 'Aborting since row has a mix of tabs and commas; should only be comma-separated: ' || _row;
+                    _message := format('Aborting since row has a mix of tabs and commas; should only be comma-separated: %s', _row);
                 Else
-                    _message := 'Aborting since row appears to be tab separated instead of comma-separated: ' || _row;
+                    _message := format('Aborting since row appears to be tab separated instead of comma-separated: %s', _row);
                 End If;
 
                 _returnCode := 'U5310';
@@ -720,7 +721,7 @@ BEGIN
             _modTypeSymbol := 'D';
 
             If _field <> 'opt' Then
-                _message := 'DynamicMod entries must have "opt" in the 3rd column; aborting; see row: ' || _row;
+                _message := format('DynamicMod entries must have "opt" in the 3rd column; aborting; see row: %s', _row);
                 _returnCode := 'U5312';
 
                 DROP TABLE Tmp_Mods;
@@ -738,7 +739,7 @@ BEGIN
             _modTypeSymbol := 'S';
 
             If _field <> 'fix' Then
-                _message := 'StaticMod entries must have "fix" in the 3rd column; aborting; see row: ' || _row;
+                _message := format('StaticMod entries must have "fix" in the 3rd column; aborting; see row: %s', _row);
                 _returnCode := 'U5313';
 
                 DROP TABLE Tmp_Mods;
@@ -895,9 +896,11 @@ BEGIN
 
             If _matchCount = 0 Or Coalesce(_massCorrectionID, 0) = 0 Then
                 If _validateUnimod Then
-                    _message := 'UniMod modification not found in t_mass_correction_factors.original_source_name for mod "' || _modName || '"; see row: ' || _row;
+                    _message := format('UniMod modification not found in t_mass_correction_factors.original_source_name for mod "%s"; see row: %s',
+                                        _modName, _row);
                 Else
-                    _message := 'Modification name not found in t_mass_correction_factors.original_source_name or t_mass_correction_factors.mass_correction_tag for mod "' || _modName || '"; see row: ' || _row;
+                    _message := format('Modification name not found in t_mass_correction_factors.original_source_name or t_mass_correction_factors.mass_correction_tag for mod "%s"; see row: %s',
+                                        _modName, _row);
                 End If;
 
                 _returnCode := 'U5318';
@@ -996,7 +999,7 @@ BEGIN
                   EntryID = 3 And _paramFileType::citext In ('DiaNN', 'TopPIC');
 
             If _field = 'any' Then
-                _message := 'Use * to match all residues, not the word "any"; see row: ' || _row;
+                _message := format('Use * to match all residues, not the word "any"; see row: %s', _row);
                 _returnCode := 'U5321';
 
                 DROP TABLE Tmp_Mods;
@@ -1024,7 +1027,7 @@ BEGIN
             _modMassToFind := public.try_cast(_field, null::real);
 
             If _modMassToFind Is Null Then
-                _message := 'Mod mass "' || _field || '" is not a number; see row: ' || _row;
+                _message := 'Mod mass "%s" is not a number; see row: %s', _field, _row;
                 _returnCode := 'U5322';
 
                 DROP TABLE Tmp_Mods;
@@ -1116,7 +1119,7 @@ BEGIN
             WHERE mod_title = _field;
 
             If Not FOUND Then
-                _message := 'MaxQuant modification not found in t_maxquant_mods: ' || _field;
+                _message := format('MaxQuant modification not found in t_maxquant_mods: %s', _field);
                 _returnCode := 'U5324';
 
                 DROP TABLE Tmp_Mods;
@@ -1219,7 +1222,7 @@ BEGIN
                     If ascii(_residueSymbol) In (110, 99) Then
                         -- Lowercase n or c indicates peptide N- or C-terminus
                         If _charIndex = char_length(_affectedResidues) Then
-                            _message := 'Lowercase n or c should be followed by a residue or *; see row: ' || _row;
+                            _message := format('Lowercase n or c should be followed by a residue or *; see row: %s', _row);
                             _returnCode := 'U5326';
 
                             DROP TABLE Tmp_Mods;
@@ -1285,7 +1288,14 @@ BEGIN
             FROM Tmp_Residues
             WHERE Residue_ID Is Null;
 
-            _message := 'Unrecognized residue symbol(s) "' || _msgAddon || '"; symbols not found in t_residues; see row: ' || _row;
+            _matchCount := array_length(string_to_array(_msgAddon, ','), 1);
+
+            _message := format('Unrecognized residue %s "%s"; %s not found in t_residues; see row: %s',
+                                public.check_plural(_msgAddon, 'symbol', 'symbols'),
+                                _msgAddon,
+                                public.check_plural(_msgAddon, 'symbol', 'symbols'),
+                                _row);
+
             _returnCode := 'U5327';
 
             DROP TABLE Tmp_Mods;

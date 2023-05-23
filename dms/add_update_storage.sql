@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          06/24/2021 mem - Add support for re-using an existing storage path when _mode is 'add'
 **          05/08/2023 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -245,7 +246,7 @@ BEGIN
                 If _returnCode <> '' Then
                     ROLLBACK;
 
-                    _message := 'Backup failed: ' || _message;
+                    _message := format('Backup failed: %s', _message);
                     RAISE WARNING '%', _message;
 
                     _returnCode := 'U5201';
@@ -380,7 +381,7 @@ BEGIN
             If _returnCode <> '' Then
                 ROLLBACK;
 
-                _message := 'Backup failed: ' || _message;
+                _message := format('Backup failed: %s', _message);
                 RAISE WARNING '%', _message;
 
                 _returnCode := 'U5201';
