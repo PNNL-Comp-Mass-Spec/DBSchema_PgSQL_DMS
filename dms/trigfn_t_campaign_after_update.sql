@@ -18,13 +18,14 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_campaign_after_update() RETURNS trigg
 **          03/23/2012 mem - Now updating t_file_attachment
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/07/2022 mem - Rename transition tables
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
     If Not Exists (Select * From inserted) Then
-        Return Null;
+        RETURN Null;
     End If;
 
     INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)

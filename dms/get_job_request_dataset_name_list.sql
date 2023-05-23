@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_job_request_dataset_name_list(_requestid i
 **  Auth:   mem
 **  Date:   07/30/2019 mem - Initial release
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -34,7 +35,7 @@ BEGIN
         _result := '(none)';
     End If;
 
-    Return _result;
+    RETURN _result;
 END
 $$;
 

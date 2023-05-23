@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          04/27/2023 mem - Use boolean for data type name
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -118,7 +119,7 @@ BEGIN
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
     If _insertCount = 0 Then
-        _message := 'Warning: log message not added to ' || _targetTableWithSchema;
+        _message := format('Warning: log message not added to %s', _targetTableWithSchema);
         RAISE WARNING '%', _message;
     End If;
 
@@ -132,13 +133,13 @@ EXCEPTION
     _message := format('Warning: log message not added to %s (%s); %s',
                 _targetTableWithSchema, _message, _exceptionMessage);
 
-    RAISE Warning '%', _message;
+    RAISE WARNING '%', _message;
 
     If _ignoreErrors Then
-        Return;
+        RETURN;
     End If;
 
-    RAISE Warning 'Context: %', _exceptionContext;
+    RAISE WARNING 'Context: %', _exceptionContext;
 
     -- Re-throw the original exception
     RAISE;

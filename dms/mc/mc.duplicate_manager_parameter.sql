@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -125,7 +126,7 @@ BEGIN
                    Coalesce(_commentOverride, '')::citext AS comment
             FROM mc.t_param_value PV
             WHERE PV.param_type_id = _sourceParamTypeID;
-            Return;
+            RETURN;
         End If;
 
         INSERT INTO mc.t_param_value( param_type_id, value, mgr_id, comment )
@@ -147,7 +148,7 @@ BEGIN
                    Coalesce(_commentOverride, '')::citext AS comment
             FROM mc.t_param_value PV
             WHERE PV.param_type_id = _sourceParamTypeID;
-            Return;
+            RETURN;
         End If;
 
         INSERT INTO mc.t_param_value( param_type_id, value, mgr_id, comment )

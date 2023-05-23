@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition public.citext) RE
 **  Auth:   grk
 **  Date:   07/15/2000
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ DECLARE
     _numCols int;
 BEGIN
     If char_length(Trim(Coalesce(_wellPosition, ''))) < 2 Then
-        Return 0;
+        RETURN 0;
     End If;
 
     _wpRowCharBase := ASCII('A');
@@ -48,7 +49,7 @@ BEGIN
         _index := 0;
     End If;
 
-    Return _index;
+    RETURN _index;
 END
 $$;
 

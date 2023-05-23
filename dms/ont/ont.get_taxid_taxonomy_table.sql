@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_taxonomy_table(_taxonomyid integer) RET
 **  Auth:   mem
 **  Date:   03/02/2016 mem - Initial version
 **          03/30/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -28,7 +29,8 @@ BEGIN
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     );
 
-    While _taxonomyID <> 1 Loop
+    WHILE _taxonomyID <> 1
+    LOOP
 
         SELECT T.parent_tax_id, T.name,T.Rank
         INTO _parentTaxID, _name, _rank
@@ -44,7 +46,7 @@ BEGIN
 
             _taxonomyID := _parentTaxID;
         End If;
-    End Loop;
+    END LOOP;
 
     RETURN QUERY
     SELECT T.Rank, T.Name, T.Tax_ID, T.Entry_ID

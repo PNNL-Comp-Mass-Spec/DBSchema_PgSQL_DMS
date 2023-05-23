@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION pc.get_annotation_type_id(_annotationname text, _auth
 **  Date:   01/11/2006 kja - Initial version
 **          05/01/2023 mem - Ported to PostgreSQL
 **                         - Ignore _authorityID if it is null
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -30,9 +31,9 @@ BEGIN
           (authority_id = _authorityID OR _authorityID Is Null);
 
     If Not Found Then
-        Return null;
+        RETURN null;
     Else
-        Return _annotationTypeID;
+        RETURN _annotationTypeID;
     End If;
 END
 $$;

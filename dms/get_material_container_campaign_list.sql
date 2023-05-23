@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_material_container_campaign_list(_containe
 **  Date:   08/24/2010 grk
 **          12/04/2017 mem - Use Coalesce instead of a Case statement
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -28,7 +29,7 @@ DECLARE
 BEGIN
 
     If Not _count Is Null And _count = 0 Then
-        Return '';
+        RETURN '';
     End If;
 
     If _containerID < 1000 Then

@@ -24,13 +24,14 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_after_update() RETURNS t
 **          09/13/2018 mem - When Started and Finished are non-null, use the larger of Started and Finished for last_affected
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/06/2022 mem - Convert to statement-level trigger
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
     If Not Exists (Select * From inserted) Then
-        Return Null;
+        RETURN Null;
     End If;
 
     INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)

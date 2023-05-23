@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.xml_quote_check(_text text) RETURNS text
 **          02/25/2011 mem - Now replacing < and > with &lt; and &gt;
 **          05/08/2013 mem - Now changing Null strings to ''
 **          06/24/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
@@ -29,7 +30,7 @@ BEGIN
     _text := Replace(_text, '<', '&lt;');
     _text := Replace(_text, '>', '&gt;');
 
-    Return _text;
+    RETURN _text;
 END
 $$;
 

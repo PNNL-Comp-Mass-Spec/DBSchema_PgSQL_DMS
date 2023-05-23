@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text
 **                         - Make several columns in the output table nullable
 **          06/23/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -42,7 +43,8 @@ DECLARE
     _lastRunEnd timestamp;
     _lastRunInterval int;
 BEGIN
-    Create Temp Table Tmp_TX (
+
+    CREATE TEMP TABLE Tmp_TX (
         seq int primary key,
         id int NULL,
         dataset text,
@@ -67,8 +69,8 @@ BEGIN
         SELECT *
         FROM Tmp_TX;
 
-        Drop Table Tmp_TX;
-        Return;
+        DROP TABLE Tmp_TX;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -87,8 +89,8 @@ BEGIN
         SELECT *
         FROM Tmp_TX;
 
-        Drop Table Tmp_TX;
-        Return;
+        DROP TABLE Tmp_TX;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -212,10 +214,9 @@ BEGIN
 
     -- Otherwise, if interval hangs over succeeding month, truncate it
     --
-    SELECT
-         Tmp_TX.time_start,
-         Tmp_TX.time_end,
-         Tmp_TX."interval"       -- Interval, in minutes
+    SELECT Tmp_TX.time_start,
+           Tmp_TX.time_end,
+           Tmp_TX."interval"       -- Interval, in minutes
     INTO _lastRunStart, _lastRunEnd, _lastRunInterval
     FROM Tmp_TX
     WHERE Tmp_TX.seq = _lastRunSeq;
@@ -252,7 +253,7 @@ BEGIN
     SELECT *
     FROM Tmp_TX;
 
-    Drop Table Tmp_TX;
+    DROP TABLE Tmp_TX;
 END
 $$;
 

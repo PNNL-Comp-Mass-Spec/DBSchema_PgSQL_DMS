@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -80,9 +81,10 @@ BEGIN
 
     If Not Found Then
         _message := 'Error: Parameter ''' || _paramName || ''' not found in mc.t_param_type';
-        Raise Warning '%', _message;
+        RAISE WARNING '%', _message;
+
         _returnCode := 'U5201';
-        Return;
+        RETURN;
     End If;
 
     RAISE Info 'Param type ID is %', _paramTypeID;
@@ -117,12 +119,12 @@ BEGIN
     IF NOT FOUND Then
         _message = 'Use Manager IDs, not manager names';
 
-        RAISE Warning '%', _message;
+        RAISE WARNING '%', _message;
 
         DROP TABLE Tmp_ParamValueEntriesToUpdate;
         DROP TABLE Tmp_MgrIDs;
 
-        Return;
+        RETURN;
     END IF;
 
     RAISE Info 'Inserted % manager IDs into Tmp_MgrIDs', _managerCount;
@@ -134,12 +136,12 @@ BEGIN
 
         _message = 'All of the managers have control_from_website = 0 in t_mgrs; parameters not updated';
 
-        RAISE Warning '%', _message;
+        RAISE WARNING '%', _message;
 
         DROP TABLE Tmp_ParamValueEntriesToUpdate;
         DROP TABLE Tmp_MgrIDs;
 
-        Return;
+        RETURN;
     END IF;
 
     If _infoOnly Then
@@ -225,7 +227,7 @@ BEGIN
         DROP TABLE Tmp_ParamValueEntriesToUpdate;
         DROP TABLE Tmp_MgrIDs;
 
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -285,7 +287,7 @@ BEGIN
                 _message = 'Manager '|| _managerIDList || ' does not have parameter ' || _paramName;
             END IF;
 
-            RAISE Warning '%', _message;
+            RAISE WARNING '%', _message;
         END IF;
 
         IF _managerCount > 1 THEN
@@ -299,7 +301,7 @@ BEGIN
         DROP TABLE Tmp_ParamValueEntriesToUpdate;
         DROP TABLE Tmp_MgrIDs;
 
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------

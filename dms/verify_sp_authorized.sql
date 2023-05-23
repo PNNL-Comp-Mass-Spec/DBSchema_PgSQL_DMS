@@ -54,6 +54,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          05/10/2023 mem - Simplify call to post_log_entry()
 **          05/17/2023 mem - Change _authorized from int to boolean
 **          05/18/2023 mem - Remove implicit string concatenation
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -111,7 +112,7 @@ BEGIN
             RETURN QUERY
             SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
 
-            return;
+            RETURN;
         Elsif Coalesce(_userName, '') = '' Then
             _message := 'Function get_active_connections returned a blank username for PID ' || pg_backend_pid()::text || '; ' ||
                         'will assume access denied for the current user (' || SESSION_USER || ')';
@@ -119,7 +120,7 @@ BEGIN
             RETURN QUERY
             SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
 
-            return;
+            RETURN;
         End If;
     */
 
@@ -167,7 +168,7 @@ BEGIN
         RETURN QUERY
         SELECT true, _procedureName, _userName, host(_clientHostIP), '' as message;
 
-        return;
+        RETURN;
     End if;
 
     If _infoOnly Then
@@ -177,7 +178,7 @@ BEGIN
         RETURN QUERY
         SELECT false, _procedureName, _userName, host(_clientHostIP), _message as message;
 
-        return;
+        RETURN;
     End If;
 
     _message := format('User %s cannot call procedure %s from host IP %s',

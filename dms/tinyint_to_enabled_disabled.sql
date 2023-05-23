@@ -13,13 +13,14 @@ CREATE OR REPLACE FUNCTION public.tinyint_to_enabled_disabled(_value integer) RE
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
-    Return Case When Coalesce(_value, 0) = 0
-                Then 'Disabled'
-                Else 'Enabled'
-                End;
+    RETURN CASE
+               WHEN Coalesce(_value, 0) = 0 THEN 'Disabled'
+               ELSE 'Enabled'
+           END;
 END
 $$;
 

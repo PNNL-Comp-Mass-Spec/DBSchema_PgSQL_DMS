@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_priority(_datasetname public.citex
 **          08/08/2018 mem - Added QC_Mam and QC_PP_MCF-7
 **          06/27/2019 mem - Renamed from DatasetPreference to GetDatasetPriority
 **          06/19/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,7 @@ BEGIN
         _result := 0;
     End If;
 
-    Return _result;
+    RETURN _result;
 END
 $$;
 

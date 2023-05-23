@@ -13,10 +13,11 @@ CREATE OR REPLACE FUNCTION public.number_to_string(_value double precision, _dig
 **
 **  Auth:   mem
 **  Date:   06/14/2022 mem - Initial version
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
-    Return number_to_string(_value::numeric, _digitsAfterDecimal);
+    RETURN number_to_string(_value::numeric, _digitsAfterDecimal);
 END
 $$;
 
@@ -42,6 +43,7 @@ CREATE OR REPLACE FUNCTION public.number_to_string(_value numeric, _digitsafterd
 **                         - Change '-0' to '0'
 **          06/14/2022 mem - Ported to PostgreSQL
 **          11/24/2022 mem - Change _continue to a boolean
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -97,7 +99,7 @@ BEGIN
         _valueText = replace(_valueText, '.e+', 'e+');
     End If;
 
-    Return _valueText;
+    RETURN _valueText;
 END
 $$;
 

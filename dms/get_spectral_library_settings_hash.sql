@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **          03/28/2023 mem - Change columns Trim_N_Terminal_Met and Static_Cys_Carbamidomethyl to boolean in T_Spectral_Library
 **          04/16/2023 mem - Auto-update _proteinCollectionList and _organismDbFile to 'na' if an empty string
 **          04/17/2023 mem - Use 'na' for _organismDBFile if _proteinCollectionList is not 'na' or an empty string
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,7 @@ BEGIN
 
         If Not FOUND Then
             RAISE WARNING 'Spectral library ID not found in T_Spectral_Library: %', _libraryId;
-            Return '';
+            RETURN '';
         End If;
     Else
         _proteinCollectionList    := Coalesce(_proteinCollectionList, '');

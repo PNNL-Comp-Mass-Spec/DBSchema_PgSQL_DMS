@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_job_parameters_history_after_delete() RET
 **  Auth:   mem
 **  Date:   01/25/2011
 **          07/31/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 BEGIN
@@ -20,7 +21,7 @@ BEGIN
 
     If Not Exists (Select * From deleted) Then
         -- RAISE NOTICE '  no affected rows; exiting';
-        Return Null;
+        RETURN Null;
     End If;
 
     UPDATE sw.t_job_parameters_history

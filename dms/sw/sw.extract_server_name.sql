@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION sw.extract_server_name(_path text) RETURNS text
 **  Auth:   mem
 **  Date:   03/03/2010
 **          06/26/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 ****************************************************/
 DECLARE
@@ -43,7 +44,7 @@ BEGIN
 
     End If;
 
-    Return _serverName;
+    RETURN _serverName;
 END
 $$;
 

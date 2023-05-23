@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_job_request_instrument_list(_requestid int
 **  Date:   11/01/2005 grk - Initial version
 **          07/30/2019 mem - Get Dataset IDs from T_Analysis_Job_Request_Datasets
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -37,7 +38,7 @@ BEGIN
         _result := '(none)';
     End If;
 
-    Return _result;
+    RETURN _result;
 END
 $$;
 

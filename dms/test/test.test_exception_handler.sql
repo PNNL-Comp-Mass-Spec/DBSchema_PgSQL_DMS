@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler(_divisor text, _useerrorh
 **  Date:   08/24/2022 mem - Initial version
 **          08/31/2022 mem - Add a linefeed before showing the context
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -58,7 +59,7 @@ BEGIN
 
     _result := 100 / _divisorValue;
 
-    Return _result;
+    RETURN _result;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -80,7 +81,7 @@ EXCEPTION
     Else
         _message := format_error_message(_sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext);
 
-        RAISE Warning '%', _message;
+        RAISE WARNING '%', _message;
         RAISE INFO E'Context: \n%', Coalesce(_exceptionContext, '');
 
         -- Rollback any open transactions
@@ -93,7 +94,7 @@ EXCEPTION
         -- CALL public.post_log_entry ('Error', _message, 'Test_Exception_Handler');
     End If;
 
-    Return 0;
+    RETURN 0;
 End
 $$;
 

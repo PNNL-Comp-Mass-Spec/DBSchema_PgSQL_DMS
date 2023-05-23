@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_job_request_existing_job_list(_requestid i
 **          03/27/2009 mem - Increased maximum size of the list to varchar(3500)
 **          07/30/2019 mem - Get jobs from T_Analysis_Job_Request_Existing_Jobs
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
         _result := '(none)';
     End If;
 
-    Return _result;
+    RETURN _result;
 END
 $$;
 

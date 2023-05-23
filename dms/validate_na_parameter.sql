@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.validate_na_parameter(_parameter text, _trimwh
 **  Date:   09/12/2008 mem - Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688
 **          01/14/2009 mem - Expanded _parameter length to 4000 characters (Ticket #714, http://prismtrac.pnl.gov/trac/ticket/714)
 **          06/24/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
@@ -33,7 +34,7 @@ BEGIN
         _parameter := 'na';
     End If;
 
-    Return(_parameter);
+    RETURN _parameter;
 END
 $$;
 

@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION dpkg.get_myemsl_url_data_package_name(_datapackagenam
 **  Auth:   mem
 **  Date:   09/24/2013
 **          06/12/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -22,7 +23,7 @@ DECLARE
 BEGIN
     _url := public.get_myemsl_url_work(_keyName, _dataPackageName);
 
-    Return _url;
+    RETURN _url;
 END
 $$;
 

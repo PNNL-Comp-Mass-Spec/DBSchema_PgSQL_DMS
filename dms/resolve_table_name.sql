@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.resolve_table_name(_tabletofind text) RETURNS 
 **
 **  Auth:   mem
 **  Date:   04/01/2022 mem - Initial Version
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -46,8 +47,8 @@ BEGIN
         FROM pg_tables
         WHERE schemaname::citext = _tableSchema And tablename::citext = _tableName;
 
-        If Found Then
-            Return;
+        If FOUND Then
+            RETURN;
         End If;
 
         RETURN QUERY

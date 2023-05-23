@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFA
 **          04/01/2022 mem - Ported to PostgreSQL
 **          10/04/2022 mem - Change _infoOnly and _previewDeleteExtras from integer to boolean
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -73,7 +74,7 @@ BEGIN
         FROM Tmp_CandidateTables t;
 
         DROP TABLE Tmp_CandidateTables;
-        Return;
+        RETURN;
     End If;
 
     -- Make sure the schema name and table name are properly capitalized
@@ -228,7 +229,7 @@ BEGIN
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If Found Then
+        If FOUND Then
             RAISE INFO 'Added % rows to Tmp_InvalidTermNames', _updateCount;
         Else
             RAISE INFO 'No invalid term names were found';

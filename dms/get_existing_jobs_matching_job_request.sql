@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.get_existing_jobs_matching_job_request(_reques
 **          07/30/2019 mem - Get dataset ID from T_Analysis_Job_Request_Datasets
 **          07/31/2019 mem - Remove unused table from query join list
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -51,11 +52,11 @@ BEGIN
            ON AJR.organism_id = Org.organism_id
     WHERE AJR.request_id = _requestID;
 
-    CREATE Temp Table Tmp_Jobs (
+    CREATE TEMP TABLE Tmp_Jobs (
         job int primary key not null
     );
 
-    If Found Then
+    If FOUND Then
         -- Lookup the ResultType for the analysis tool
         --
         SELECT result_type

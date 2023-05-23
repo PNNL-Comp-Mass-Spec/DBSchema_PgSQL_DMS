@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_user_login_without_domain(_callinguser tex
 **  Date:   11/08/2016 mem - Initial Version
 **          11/10/2016 mem - Add parameter _callingUser, which is used in place of DMSWebUser
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -42,7 +43,7 @@ BEGIN
         End If;
     End If;
 
-    Return _login;
+    RETURN _login;
 END
 $$;
 

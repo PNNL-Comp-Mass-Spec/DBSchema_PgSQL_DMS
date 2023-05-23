@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          01/31/2023 mem - Use new column names in tables
 **          05/07/2023 mem - Remove unused variable
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -79,7 +80,7 @@ BEGIN
         _returnCode := 'U5201';
 
         DROP TABLE Tmp_ParamValueEntriesToUpdate;
-        Return;
+        RETURN;
     END IF;
 
     ---------------------------------------------------

@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.trim_whitespace_and_punctuation(_text text) RE
 **  Auth:   mem
 **  Date:   09/11/2020 mem - Initial release (modelled after UDF ScrubWhitespace)
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -28,7 +29,8 @@ BEGIN
     _previousLength = 0;
     _currentLength := char_length(_newText);
 
-    While _currentLength > 0 And _currentLength <> _previousLength Loop
+    WHILE _currentLength > 0 And _currentLength <> _previousLength
+    LOOP
         _previousLength = _currentLength;
 
         _newText := Trim(_newText);
@@ -43,9 +45,9 @@ BEGIN
         _newText := Trim(_newText, '"');
 
         _currentLength := char_length(_newText);
-    End Loop;
+    END LOOP;
 
-    Return _newText;
+    RETURN _newText;
 END
 $$;
 

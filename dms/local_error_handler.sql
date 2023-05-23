@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **    _callingProcName              Calling procedure name; will auto-determine using _exceptionContext and get_call_stack() if '<Auto>', '<AutoDetermine>', or ''
 **    _callingProcSchema            Calling procedure schema; if the exception context does not include a schema name, this argument's value can be used to explicitly define the schema to use. Otherwise, will look for the calling procedure in the system catalog views
 **    _logError                     If true, log the error in the t_log_entries table that corresponds to the calling procedure's schema (or public.t_log_entries if the given schema does not have table t_log_entries)
-**    _displayError                 If true, show the formatted error message using RAISE Warning
+**    _displayError                 If true, show the formatted error message using RAISE WARNING
 **    _duplicateEntryHoldoffHours   Set this to a value greater than 0 to prevent duplicate entries being posted within the given number of hours
 **
 **  Example usage:
@@ -45,6 +45,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          08/24/2022 mem - Ported to PostgreSQL
 **          09/01/2022 mem - Use _callingProcSchema for the schema name if _callingProcName is <Auto> or <AutoDetermine> and get_call_stack() returns an empty schema name
 **          10/11/2022 mem - Remove transaction rollback
+**          05/22/2023 mem - Capitalize reserved words
 **
 ****************************************************/
 DECLARE
@@ -118,7 +119,7 @@ BEGIN
         End If;
     End If;
 
-    _message := 'Error caught in ' || _callingProcName;
+    _message := format('Error caught in %s', _callingProcName);
 
     If char_length(_callingProcLocation) > 0 Then
         _message := _message || ' at "' || _callingProcLocation || '"';
@@ -129,16 +130,16 @@ BEGIN
                         format_error_message(_sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext));
 
     If _displayError Then
-        RAISE Warning '%', _message;
+        RAISE WARNING '%', _message;
     End If;
 
-    -- RAISE Warning 'Context: %', _exceptionContext;
+    -- RAISE WARNING 'Context: %', _exceptionContext;
 
     If _logError Then
         CALL public.post_log_entry ('Error', _message, _callingProcName, _callingProcSchema, _duplicateEntryHoldoffHours, _ignoreErrors => true);
     End If;
 
-    Return _message;
+    RETURN _message;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -149,8 +150,8 @@ EXCEPTION
                         Coalesce(_innerExceptionMessage, '??'),
                         Coalesce(_exceptionMessage, '??'));
 
-    RAISE Warning '%', _message;
-    Return _message;
+    RAISE WARNING '%', _message;
+    RETURN _message;
 END
 $$;
 

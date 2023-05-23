@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.scrub_whitespace(_text text) RETURNS text
 **  Auth:   mem
 **  Date:   07/01/2014 mem - Initial release
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -27,7 +28,8 @@ BEGIN
     _previousLength = 0;
     _currentLength := char_length(_newText);
 
-    While _currentLength > 0 And _currentLength <> _previousLength Loop
+    WHILE _currentLength > 0 And _currentLength <> _previousLength
+    LOOP
         _previousLength = _currentLength;
 
         _newText := Trim(_newText);
@@ -36,9 +38,9 @@ BEGIN
         _newText := Trim(_newText, Chr(9));     -- Tab
 
         _currentLength := char_length(_newText);
-    End Loop;
+    END LOOP;
 
-    Return _newText;
+    RETURN _newText;
 END
 $$;
 

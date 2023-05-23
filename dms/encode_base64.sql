@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.encode_base64(_texttoencode text) RETURNS text
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/12/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -23,7 +24,7 @@ BEGIN
 
     _encodedText := encode(_textToEncode::bytea, 'base64');
 
-    return _encodedText;
+    RETURN _encodedText;
 END
 $$;
 

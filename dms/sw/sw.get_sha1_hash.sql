@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION sw.get_sha1_hash(_input text, _capitalize boolean DEF
 **
 **  Auth:   mem
 **  Date:   06/26/2022 mem - Initial version
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -30,9 +31,9 @@ BEGIN
     _hexString := encode(digest(_input, 'sha1'), 'hex');
 
     If _capitalize Then
-        Return Upper(_hexString);
+        RETURN Upper(_hexString);
     Else
-        Return _hexString;
+        RETURN _hexString;
     End If;
 END
 $$;

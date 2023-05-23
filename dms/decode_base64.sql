@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.decode_base64(_encodedtext text) RETURNS text
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/17/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -23,7 +24,7 @@ BEGIN
 
     _decodedText := decode(_encodedText, 'base64');
 
-    return convert_from(_decodedText, 'UTF8');
+    RETURN convert_from(_decodedText, 'UTF8');
 END
 $$;
 

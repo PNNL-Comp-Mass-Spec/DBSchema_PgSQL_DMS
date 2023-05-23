@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **          02/15/2012 mem - Now using T_Dataset.Acq_Length_Minutes
 **          06/21/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,7 @@ BEGIN
 
         DROP TABLE Tmp_TX;
 
-        return;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -103,7 +104,8 @@ BEGIN
 
     _index := 1;
 
-    WHILE _index < _maxSeq Loop
+    WHILE _index < _maxSeq
+    LOOP
         SELECT Tmp_TX.Time_Start
         INTO _startOfNext
         FROM Tmp_TX
@@ -125,7 +127,7 @@ BEGIN
         VALUES (_index + 1, 0, 'Interval', _endOfPrevious, _startOfNext, _interval, _instrument );
 
         _index := _index + 2;
-    End Loop;
+    END LOOP;
 
     ---------------------------------------------------
     -- overall time stats

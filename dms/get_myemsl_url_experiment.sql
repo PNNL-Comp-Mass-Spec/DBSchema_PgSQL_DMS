@@ -13,12 +13,13 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_experiment(_experimentname text
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
     _keyName text := 'extended_metadata.gov_pnnl_emsl_dms_experiment.name.untouched';
 BEGIN
-    Return get_myemsl_url_work(_keyName, @_experimentName);
+    RETURN get_myemsl_url_work(_keyName, @_experimentName);
 END
 $$;
 

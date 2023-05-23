@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_taxonomy_list(_taxonomyid integer, _ext
 **          03/03/2016 mem - Added _extendedInfo
 **          03/30/2022 mem - Ported to PostgreSQL
 **          06/16/2022 mem - Move Order by clause into the string_agg function
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -30,7 +31,7 @@ BEGIN
           T.Rank <> 'no rank' OR
           _extendedInfo > 0;
 
-    Return _list;
+    RETURN _list;
 END
 $$;
 

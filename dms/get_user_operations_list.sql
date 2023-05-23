@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_user_operations_list(_userid integer) RETU
 **  Auth:   jds
 **  Date:   12/13/2006
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
            ON O.operation_id = U.operation_id
     WHERE O.user_id = _userID;
 
-    Return Coalesce(_result, '');
+    RETURN Coalesce(_result, '');
 END
 $$;
 

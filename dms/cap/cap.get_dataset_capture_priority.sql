@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.
 **          06/24/2022 mem - Ported to PostgreSQL
 **          08/24/2022 mem - Fix ElsIf typo
 **          04/02/2023 mem - Rename procedure and functions
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,7 @@ BEGIN
         _priority := 4;
     End If;
 
-    Return _priority;
+    RETURN _priority;
 END
 $$;
 

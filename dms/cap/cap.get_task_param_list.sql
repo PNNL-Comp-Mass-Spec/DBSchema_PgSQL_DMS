@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          04/02/2023 mem - Rename procedure and functions
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -35,7 +36,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     If _job Is Null Then
-        Return '';
+        RETURN '';
     End If;
 
     -- The XMLTABLE function can convert XML into a table, however you must have a root node
@@ -64,7 +65,7 @@ BEGIN
                               value text PATH '@Value')
          ) XmlQ;
 
-    Return  '<pre>' || _result || '<br></pre>';
+    RETURN '<pre>' || _result || '<br></pre>';
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -92,7 +93,7 @@ EXCEPTION
     _result := REPLACE(_result, '<Param', '');
     _result := REPLACE(_result, '/>', '<br>');
 
-    Return _result;
+    RETURN _result;
 END
 $$;
 

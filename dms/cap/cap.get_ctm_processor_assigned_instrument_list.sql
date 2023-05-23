@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION cap.get_ctm_processor_assigned_instrument_list(_proce
 **  Date:   01/21/2010
 **          06/28/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
     FROM cap.t_processor_instrument
     WHERE processor_name = _processorName AND enabled > 0;
 
-    Return Coalesce(_result, '');
+    RETURN Coalesce(_result, '');
 END
 $$;
 

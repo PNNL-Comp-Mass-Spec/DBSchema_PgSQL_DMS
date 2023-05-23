@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          09/01/2022 mem - Send '<auto>' to get_current_function_info()
 **          04/27/2023 mem - Use boolean for data type name
 **          05/04/2023 mem - Add _returnCode procedure argument
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -101,7 +102,7 @@ BEGIN
             _message := format('Error: capture task job %s not found in t_task_parameters or t_tasks', _job);
 
             RAISE WARNING '%', _message;
-            Return;
+            RETURN;
         End If;
 
         _message := format('Warning: capture task job %s not found in t_task_parameters, but was found in t_tasks; will add a new row to t_task_parameters', _job);

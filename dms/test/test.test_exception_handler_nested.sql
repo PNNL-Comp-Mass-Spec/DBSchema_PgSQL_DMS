@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler_nested(_divisor text, _us
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 
@@ -29,7 +30,7 @@ DECLARE
     _result numeric;
 BEGIN
     _result := test.test_exception_handler(_divisor, _useerrorhandler);
-    Return _result;
+    RETURN _result;
 End
 $$;
 

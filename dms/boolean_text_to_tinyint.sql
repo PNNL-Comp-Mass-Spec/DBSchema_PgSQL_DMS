@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION public.boolean_text_to_tinyint(_booleantext public.ci
 **  Auth:   mem
 **  Date:   05/28/2019 mem - Initial version
 **          06/17/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
         _value := 1;
     End If;
 
-    Return _value;
+    RETURN _value;
 END
 $$;
 

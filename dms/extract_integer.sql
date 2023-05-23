@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.extract_integer(_in text) RETURNS integer
 **  Auth:   mem
 **  Date:   04/26/2016 mem - Initial release
 **          04/15/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -39,7 +40,7 @@ BEGIN
 
     -- Function regexp_match returns an array, or null if no MATCH
     -- Use [1] to select the first item in the array
-    Return (regexp_match(_in, '-?[0-9]+'))[1];
+    RETURN (regexp_match(_in, '-?[0-9]+'))[1];
 END
 $$;
 

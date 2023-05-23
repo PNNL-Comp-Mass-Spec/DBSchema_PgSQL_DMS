@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.replace_character_codes(_text text) RETURNS te
 **  Auth:   mem
 **  Date:   02/25/2021 mem - Initial version
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
@@ -44,7 +45,7 @@ BEGIN
         _text := Replace(_text, '&amp;', '&');
     End If;
 
-    Return _text;
+    RETURN _text;
 END
 $$;
 

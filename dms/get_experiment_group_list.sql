@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_experiment_group_list(_experimentid intege
 **  Auth:   mem
 **  Date:   12/16/2011 mem
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -30,7 +31,7 @@ BEGIN
         _result := '(none)';
     End If;
 
-    Return _result;
+    RETURN _result;
 END
 $$;
 

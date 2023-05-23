@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.charge_code_activation_state(_deactivated text
 **  Date:   06/07/2013 mem - Initial release
 **          11/19/2013 mem - Bug fix assigning ActivationState for Inactive, old work packages
 **          06/17/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,7 @@ BEGIN
           ELSE 5                                                                              -- Inactive, old
         END;
 
-    Return _activationState;
+    RETURN _activationState;
 END
 $$;
 

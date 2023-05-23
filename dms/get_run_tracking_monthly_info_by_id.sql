@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 **                         - Make several columns in the output table nullable
 **          06/23/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,8 @@ DECLARE
     _lastRunEnd timestamp;
     _lastRunInterval int;
 BEGIN
-    Create Temp Table Tmp_TX (
+
+    CREATE TEMP Table Tmp_TX (
         Seq int primary key,
         ID int NULL,
         Dataset text,
@@ -66,8 +68,8 @@ BEGIN
         SELECT *
         FROM Tmp_TX;
 
-        Drop Table Tmp_TX;
-        Return;
+        DROP TABLE Tmp_TX;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -90,8 +92,8 @@ BEGIN
         SELECT *
         FROM Tmp_TX;
 
-        Drop Table Tmp_TX;
-        Return;
+        DROP TABLE Tmp_TX;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -105,18 +107,16 @@ BEGIN
     -- Get datasets whose start time falls within month
     ---------------------------------------------------
 
-    INSERT INTO Tmp_TX
-    (
-        seq,
-        id,
-        dataset,
-        day,
-        time_Start,
-        time_end,
-        duration,
-        "interval",
-        instrument
-    )
+    INSERT INTO Tmp_TX ( seq,
+                         id,
+                         dataset,
+                         day,
+                         time_Start,
+                         time_end,
+                         duration,
+                         "interval",
+                         instrument
+                       )
     SELECT (_seqIncrement * ((ROW_NUMBER() OVER ( ORDER BY TD.acq_time_start ASC )) - 1) + 1) + _seqOffset AS seq,
            TD.dataset_id AS id,
            TD.dataset AS dataset,
@@ -259,7 +259,7 @@ BEGIN
     SELECT *
     FROM Tmp_TX;
 
-    Drop Table Tmp_TX;
+    DROP TABLE Tmp_TX;
 END
 $$;
 

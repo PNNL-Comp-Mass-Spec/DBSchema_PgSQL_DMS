@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.create_like_clause_from_separated_string(_inst
 **          07/26/2005 mem - Now trimming white space from beginning and end of text extracted from _inString
 **                         - Increased size of return variable from 2048 to 4096 characters
 **          06/17/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -22,22 +23,23 @@ DECLARE
     _result text;
     _i int;
 BEGIN
-    _inString := replace(_inString, '_', '[_]');
+    _inString := Replace(_inString, '_', '[_]');
     _result := ' ';
     _i := 1;
 
-    WHILE char_length(_inString) > 0 Loop
+    WHILE char_length(_inString) > 0
+    LOOP
         _sepPosition := position(_separator in _inString);
 
         If _sepPosition > 0 Then
             if _i = 1 Then
-                _result := '((' || _fieldName || ' ILike ''' || Trim(substring(_inString, 1, _sepPosition - 1)) || ''')';
+                _result := '((' || _fieldName || ' ILike ''' || Trim(Substring(_inString, 1, _sepPosition - 1)) || ''')';
             Else
-                _result := _result || ' OR ' || '(' || _fieldName || ' ILike ''' || Trim(substring(_inString, 1, _sepPosition - 1)) || ''')';
+                _result := _result || ' OR ' || '(' || _fieldName || ' ILike ''' || Trim(Substring(_inString, 1, _sepPosition - 1)) || ''')';
             End If;
 
             _i := _i + 1;
-            _inString := substring(_inString, _sepPosition + 1, char_length(_inString) - 1);
+            _inString := Substring(_inString, _sepPosition + 1, char_length(_inString) - 1);
 
             continue;
         Else
@@ -49,11 +51,9 @@ BEGIN
 
             exit;
         End If;
-    End Loop;
+    END LOOP;
 
-    _result := rtrim(_result);
-
-    return _result;
+    RETURN RTrim(_result);
 END
 $$;
 

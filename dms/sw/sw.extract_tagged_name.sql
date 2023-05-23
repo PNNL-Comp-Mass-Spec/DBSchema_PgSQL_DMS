@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION sw.extract_tagged_name(_tag text, _text text) RETURNS
 **                         - Added additional delimiters when searching for the end of the text to return after the tag
 **          08/23/2012 mem - Expanded _tag from varchar(12) to varchar(64)
 **          06/26/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -36,7 +37,7 @@ BEGIN
 
     If Coalesce(_startPosition, 0) = 0 Then
         -- Match not found
-        Return '';
+        RETURN '';
     End If;
 
     -- Extract the text from the end of the tag to the next delimiter
@@ -64,7 +65,7 @@ BEGIN
         _result := Trim(Substring(_result, 1, _matchPosition - 1 ));
     End If;
 
-    Return _result;
+    RETURN _result;
 END
 $$;
 

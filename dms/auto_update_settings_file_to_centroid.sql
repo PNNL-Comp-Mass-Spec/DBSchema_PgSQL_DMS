@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.auto_update_settings_file_to_centroid(_setting
 **                         - Now retrieving MSGF+ auto-centroid values from column MSGFPlus_AutoCentroid
 **                         - Renamed the procedure from AutoUpdateQExactiveSettingsFile
 **          06/17/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -57,7 +58,7 @@ BEGIN
         _settingsFile := _newSettingsFile;
     End If;
 
-    Return _settingsFile;
+    RETURN _settingsFile;
 
 END
 $$;

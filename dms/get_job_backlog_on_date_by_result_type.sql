@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_result_type(_target
 **          06/23/2022 mem - Ported to PostgreSQL
 **                         - Removed argument _processorNameFilter since all jobs are processed by the Job Broker
 **          07/12/2022 mem - Renamed function and added another usage example
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
                                 FROM t_analysis_tool
                                 WHERE result_type LIKE _resultType );
 
-    Return Coalesce(_backlog, 0);
+    RETURN Coalesce(_backlog, 0);
 END
 $$;
 

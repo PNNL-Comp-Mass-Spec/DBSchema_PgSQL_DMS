@@ -29,7 +29,7 @@ BEGIN
     _column := '';
 
     If _batchID IS NULL OR _block IS NULL THEN
-        Return '';
+        RETURN '';
     End If;
 
     SELECT string_agg(DistinctQ.Cart, '; ' ORDER BY DistinctQ.Cart),
@@ -45,15 +45,15 @@ BEGIN
 
     If Trim(Lower(_mode)) = 'cart' Then
         If Position ('; ' in _cart) > 0 Then
-            Return '(mixed)';
+            RETURN '(mixed)';
         Else
-            Return Coalesce(_cart, '');
+            RETURN Coalesce(_cart, '');
         End If;
     Else
         If Position ('; ' in _column) > 0 Then
-            Return '(mixed)';
+            RETURN '(mixed)';
         Else
-            Return Coalesce(_column, '');
+            RETURN Coalesce(_column, '');
         End If;
     End If;
 END

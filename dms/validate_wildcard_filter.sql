@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.validate_wildcard_filter(_wildcardfilter text)
 **  Auth:   mem
 **  Date:   06/10/2019 mem - Initial version
 **          06/24/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
@@ -29,7 +30,7 @@ BEGIN
         _wildcardFilter := '%' || _wildcardFilter || '%';
     End If;
 
-    Return _wildcardFilter;
+    RETURN _wildcardFilter;
 END
 $$;
 

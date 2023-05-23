@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          10/04/2022 mem - Change _infoOnly and _showTable from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -84,7 +85,7 @@ BEGIN
             RAISE INFO '%', _message;
 
             DROP TABLE Tmp_ManagerList;
-            Return;
+            RETURN;
         END IF;
 
         UPDATE Tmp_ManagerList
@@ -116,7 +117,7 @@ BEGIN
         _returnCode := 'U5201';
 
         DROP TABLE Tmp_ManagerList;
-        Return;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -202,7 +203,7 @@ BEGIN
                             public.check_plural(_countToUpdate, 'manager', 'managers'));
 
         DROP TABLE Tmp_ManagerList;
-        Return;
+        RETURN;
     End If;
 
     UPDATE mc.t_param_value

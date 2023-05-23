@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION dpkg.check_data_package_dataset_job_coverage(_package
 **  Date:   05/22/2010
 **          04/25/2018 mem - Now joining T_Data_Package_Datasets and T_Data_Package_Analysis_Jobs on Dataset_ID
 **          06/25/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
@@ -31,7 +32,7 @@ BEGIN
         SELECT format('Invalid mode "%s"; should be ''NoPackageJobs'', ''NoDMSJobs'', or ''PackageJobCount''', _mode)::citext,
                NULL::int;
 
-        Return;
+        RETURN;
     End If;
 
     -- Package datasets with no package jobs for given tool

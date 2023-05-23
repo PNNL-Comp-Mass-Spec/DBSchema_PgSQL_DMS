@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allows
 **  Date:   02/15/2011
 **          04/05/2022 mem - Ported to PostgreSQL
 **          02/24/2023 mem - Change _allowSpace argument to boolean
+**          05/22/2023 mem - Capitalize reserved words
 **
 ****************************************************/
 BEGIN
@@ -30,9 +31,9 @@ BEGIN
        Position(Chr(9) In _entityName) > 0 OR               -- Tab
        Not _allowspace And Position(' ' In _entityName) > 0 -- Space
     Then
-        Return True;
+        RETURN True;
     Else
-        Return False;
+        RETURN False;
     End If;
 
 END

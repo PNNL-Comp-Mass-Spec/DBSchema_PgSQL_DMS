@@ -20,13 +20,14 @@ CREATE OR REPLACE FUNCTION public.timestamp_text(_currenttime timestamp without 
 **      or
 **        SELECT timestamp_text(current_timestamp::timestamp);
 **
-**  Auth: mem
-**  Date: 01/09/2020
+**  Auth:   mem
+**  Date:   01/09/2020
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 
 BEGIN
-    Return to_char(_currentTime, 'YYYY-MM-DD HH24:MI:SS');
+    RETURN to_char(_currentTime, 'YYYY-MM-DD HH24:MI:SS');
 END
 $$;
 
@@ -61,13 +62,14 @@ CREATE OR REPLACE FUNCTION public.timestamp_text(_currenttime timestamp with tim
 **      or
 **        SELECT timestamp_text(current_timestamp);
 **
-**  Auth: mem
-**  Date: 01/14/2020
+**  Auth:   mem
+**  Date:   01/14/2020
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 
 BEGIN
-    Return to_char(_currentTime::timestamp, 'YYYY-MM-DD HH24:MI:SS');
+    RETURN to_char(_currentTime::timestamp, 'YYYY-MM-DD HH24:MI:SS');
 END
 $$;
 

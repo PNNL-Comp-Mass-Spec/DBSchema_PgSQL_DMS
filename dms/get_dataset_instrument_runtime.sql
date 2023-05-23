@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          12/09/2022 mem - Change data type of column Fraction_EMSL_Funded to numeric
 **          12/12/2022 mem - Use a single interval when computing _endIntervalEOD
 **          03/20/2023 mem - Treat proposal types 'Capacity' and 'Staff Time' as EMSL funded
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -104,7 +105,7 @@ BEGIN
     -- Create table to hold the intervals
     ---------------------------------------------------
 
-    Create Temp Table Tmp_TX (
+    CREATE TEMP TABLE Tmp_TX (
         Seq int primary key,
         ID int,
         Dataset citext,
@@ -145,12 +146,12 @@ BEGIN
             1, 0, 'Bad arguments: specify start and end date, plus instrument name', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '', 0
         );
 
-        RETURN Query
-        Select *
-        From Tmp_TX;
+        RETURN QUERY
+        SELECT *
+        FROM Tmp_TX;
 
-        Drop Table Tmp_TX;
-        Return;
+        DROP TABLE Tmp_TX;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -208,12 +209,11 @@ BEGIN
         t_dataset.acq_length_minutes,
         _instrument,
         0
-    FROM
-        t_dataset
-        INNER JOIN t_instrument_name ON t_dataset.instrument_id = t_instrument_name.instrument_id
-    WHERE
-        _startInterval <= t_dataset.acq_time_start AND t_dataset.acq_time_start <= _endIntervalEOD AND
-        t_instrument_name.instrument = _instrument;
+    FROM t_dataset
+         INNER JOIN t_instrument_name ON t_dataset.instrument_id = t_instrument_name.instrument_id
+    WHERE _startInterval <= t_dataset.acq_time_start AND
+          t_dataset.acq_time_start <= _endIntervalEOD AND
+          t_instrument_name.instrument = _instrument;
 
     ---------------------------------------------------
     -- Optionally set up anchor for end of month
@@ -250,7 +250,8 @@ BEGIN
 
     _index := 1;
 
-    WHILE _index < _maxSeq Loop
+    WHILE _index < _maxSeq
+    LOOP
         SELECT Tmp_TX.Time_Start
         INTO _startOfNext
         FROM Tmp_TX
@@ -275,7 +276,7 @@ BEGIN
         VALUES (_index + 1, 0, 'Interval', _endOfPrevious, _startOfNext, _interval, _instrument );
 
         _index := _index + _seqIncrement;
-    End Loop;
+    END LOOP;
 
     ---------------------------------------------------
     -- Remove extraneous entries caused by padded end date
@@ -395,11 +396,11 @@ BEGIN
         WHERE Tmp_TX.Dataset = 'Interval' AND Tmp_TX.Duration <= _maxNormalInterval;
     End If;
 
-    RETURN Query
-    Select *
-    From Tmp_TX;
+    RETURN QUERY
+    SELECT *
+    FROM Tmp_TX;
 
-    Drop Table Tmp_TX;
+    DROP TABLE Tmp_TX;
 END
 $$;
 

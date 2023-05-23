@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION public.remove_capture_errors_from_string(_comment pub
 **          08/16/2017 mem - Add "Error running OpenChrom"
 **          11/22/2017 mem - Add "Authentication failure: The user name or password is incorrect."
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,7 @@ BEGIN
         _updatedComment := remove_from_string(_updatedComment, _textToFind);
     END LOOP;
 
-    Return _updatedComment;
+    RETURN _updatedComment;
 END
 $$;
 

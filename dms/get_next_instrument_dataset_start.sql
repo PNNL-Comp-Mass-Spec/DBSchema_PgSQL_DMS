@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_next_instrument_dataset_start(_instrumenti
 **  Auth:   grk
 **  Date:   05/16/2011
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -27,10 +28,10 @@ BEGIN
     ORDER BY acq_time_start
     LIMIT 1;
 
-    If Found Then
-        Return _nextStartTime;
+    If FOUND Then
+        RETURN _nextStartTime;
     Else
-        Return _start;
+        RETURN _start;
     End If;
 END
 $$;

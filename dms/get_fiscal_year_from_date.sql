@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp w
 **  Date:   03/15/2012
 **          06/21/2022 mem - Ported to PostgreSQL
 **          12/15/2022 mem - Use extract(year from _variable) and extract(month from) to extract the year and month from timestamps
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
                         ELSE _rawDate
                    END;
 
-    Return extract(year from _fiscalYear);
+    RETURN extract(year from _fiscalYear);
 END
 $$;
 

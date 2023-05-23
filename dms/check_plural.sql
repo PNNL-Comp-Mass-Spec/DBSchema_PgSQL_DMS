@@ -13,13 +13,14 @@ CREATE OR REPLACE FUNCTION public.check_plural(_count integer DEFAULT 0, _textif
 **  Auth:   mem
 **  Date:   03/05/2013 mem - Initial release
 **          03/29/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 BEGIN
     If Coalesce(_count, 0) = 1 Then
-        Return _textIfOneItem;
+        RETURN _textIfOneItem;
     Else
-        Return _textIfZeroOrMultiple;
+        RETURN _textIfZeroOrMultiple;
     End If;
 END
 $$;

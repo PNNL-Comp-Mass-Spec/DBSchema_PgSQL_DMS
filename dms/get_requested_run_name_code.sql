@@ -28,10 +28,11 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text,
 **          06/22/2022 mem - Ported to PostgreSQL
 **          02/08/2023 mem - Switch from PRN to username
 **          02/21/2023 mem - Add parameter _batchGroupID
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
-    Return CASE WHEN Coalesce(_batchID, 0) = 0
+    RETURN CASE WHEN Coalesce(_batchID, 0) = 0
                 THEN
                     SUBSTRING(_requestName, 1, 3) || '_' ||
                     to_char(_requestCreated, 'yyyymmdd') || '_' ||

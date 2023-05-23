@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION cap.get_ctm_processor_step_tool_list(_processorname p
 **  Date:   03/30/2009
 **          06/28/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
     FROM cap.t_processor_tool
     WHERE processor_name = _processorName AND enabled > 0;
 
-    Return Coalesce(_result, '');
+    RETURN Coalesce(_result, '');
 END
 $$;
 

@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_start(_numberofrecentyears int
 **          02/10/2022 mem - Update to work properly when running between January 1 and September 30
 **          06/21/2022 mem - Ported to PostgreSQL
 **          12/15/2022 mem - Use extract(year from _variable) and extract(month from) to extract the year and month from timestamps
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,8 @@ BEGIN
     End If;
 
     _fiscalYearStart := make_date(_targetYear, 10, 1);
-    Return _fiscalYearStart;
+
+    RETURN _fiscalYearStart;
 END
 $$;
 

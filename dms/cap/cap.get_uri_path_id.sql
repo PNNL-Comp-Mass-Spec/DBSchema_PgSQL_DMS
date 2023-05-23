@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION cap.get_uri_path_id(_uripath text, _infoonly boolean 
 **  Auth:   mem
 **  Date:   04/02/2012 mem - Initial version
 **          09/27/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
 
     End If;
 
-    Return Coalesce(_uri_PathID, 1);
+    RETURN Coalesce(_uri_PathID, 1);
 END
 $$;
 

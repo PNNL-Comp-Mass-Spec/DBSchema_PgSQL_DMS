@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_nearest_preceding_log_entry(_seq integer, 
 **          04/11/2017 mem - Update for new fields DMS_Inst_ID and Usage_Type
 **          04/17/2020 mem - Updated field name in T_EMSL_Instrument_Usage_Report
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -70,7 +71,7 @@ BEGIN
                       End If;
     End If;
 
-    Return Coalesce(_message, '');
+    RETURN Coalesce(_message, '');
 END
 $$;
 

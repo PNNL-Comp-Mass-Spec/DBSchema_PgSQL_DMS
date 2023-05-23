@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid in
 **  Date:   09/12/2013
 **          06/12/2022 mem - Ported to PostgreSQL
 **          06/26/2022 mem - Changed _dataPackageID argument from text to int
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -23,7 +24,7 @@ DECLARE
 BEGIN
     _url := public.get_myemsl_url_work(_keyName, _dataPackageID::text);
 
-    Return _url;
+    RETURN _url;
 END
 $$;
 

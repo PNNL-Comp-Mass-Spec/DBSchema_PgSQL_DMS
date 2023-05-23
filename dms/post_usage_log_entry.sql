@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 **          06/24/2022 mem - Capitalize _sqlState
 **          08/18/2022 mem - Set _ignoreErrors to true when calling post_log_entry
 **          08/24/2022 mem - Use function local_error_handler() to log errors
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -72,10 +73,10 @@ BEGIN
         FROM t_usage_log
         WHERE posted_by = _postedBy AND calling_user = _callingUser;
 
-        If Found Then
+        If FOUND Then
             If CURRENT_TIMESTAMP <= _lastUpdated + _minimumUpdateInterval * INTERVAL '1 hour' Then
                 -- The last usage message was posted recently
-                Return;
+                RETURN;
             End If;
         End If;
     End If;

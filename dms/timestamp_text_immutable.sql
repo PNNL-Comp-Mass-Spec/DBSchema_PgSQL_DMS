@@ -25,11 +25,12 @@ CREATE OR REPLACE FUNCTION public.timestamp_text_immutable(_currenttime timestam
 **
 **  Auth:   mem
 **  Date:   05/31/2022
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 
 BEGIN
-    Return CASE
+    RETURN CASE
                WHEN _currentTime IS NULL THEN ''
                ELSE to_char(_currentTime, 'YYYY-MM-DD_HH24:MI:SS.MS')
            END;
@@ -66,11 +67,12 @@ CREATE OR REPLACE FUNCTION public.timestamp_text_immutable(_currenttime timestam
 **
 **  Auth:   mem
 **  Date:   05/31/2022
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 
 BEGIN
-    Return CASE
+    RETURN CASE
                WHEN _currentTime IS NULL THEN ''
                ELSE to_char(_currentTime::timestamp, 'YYYY-MM-DD_HH24:MI:SS.MS')
            END;

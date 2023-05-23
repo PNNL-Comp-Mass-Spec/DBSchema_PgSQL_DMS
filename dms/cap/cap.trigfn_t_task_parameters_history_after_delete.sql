@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_task_parameters_history_after_delete() R
 **  Auth:   mem
 **  Date:   01/25/2011
 **          07/30/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
@@ -20,7 +21,7 @@ BEGIN
 
     If Not Exists (Select * From deleted) Then
         -- RAISE NOTICE '  no affected rows; exiting';
-        Return Null;
+        RETURN Null;
     End If;
 
     UPDATE cap.t_task_parameters_history

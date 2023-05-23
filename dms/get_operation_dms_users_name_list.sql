@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_operation_dms_users_name_list(_operationid
 **                         - Also change parameter _operationID to an integer
 **          08/24/2018 mem - Tabs to spaces
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -47,7 +48,7 @@ BEGIN
               U.status = 'Active';
     End If;
 
-    Return Coalesce(_result, '');
+    RETURN Coalesce(_result, '');
 END
 $$;
 

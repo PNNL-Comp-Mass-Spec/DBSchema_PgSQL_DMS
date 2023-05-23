@@ -16,13 +16,14 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_insert() RETURNS trigge
 **          10/31/2007 mem - Added Set NoCount statement (Ticket #569)
 **          11/22/2013 mem - Now updating date_sort_key
 **          08/05/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
     If Not Exists (Select * From inserted) Then
-        Return Null;
+        RETURN Null;
     End If;
 
     INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)

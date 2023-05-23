@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION public.remove_cr_lf(_text text) RETURNS text
 **  Auth:   mem
 **  Date:   02/25/2021 mem - Initial version
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 BEGIN
@@ -31,7 +32,7 @@ BEGIN
     _text := Trim(_text, ',');
     _text := Trim(_text, ';');
 
-    Return _text;
+    RETURN _text;
 END
 $$;
 

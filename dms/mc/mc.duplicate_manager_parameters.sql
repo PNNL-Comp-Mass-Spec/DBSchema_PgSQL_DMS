@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 **          10/04/2022 mem - Change _infoOnly and _mergeSourceWithTarget from integer to boolean
 **          02/01/2023 mem - Use new column name in view
 **          05/07/2023 mem - Remove unused variable
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -115,7 +116,7 @@ BEGIN
                    ON Source.param_type_id = ExistingParams.param_type_id
             WHERE Source.mgr_id = _sourceMgrID AND
                   ExistingParams.param_type_id IS NULL;
-            Return;
+            RETURN;
     End If;
 
     INSERT INTO mc.t_param_value (param_type_id, value, mgr_id, comment)

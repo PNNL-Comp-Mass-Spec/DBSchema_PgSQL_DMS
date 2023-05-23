@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION test.test_get_call_stack(_recursiondepth integer DEFA
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
 **          08/31/2022 mem - Add a linefeed before showing the context
+**          05/22/2023 mem - Capitalize reserved words
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
         SELECT S.depth, S.schema_name, S.object_name, S.line_number
         FROM test.test_get_call_stack(_recursionDepth - 1) S;
 
-        Return;
+        RETURN;
     End If;
 
     GET DIAGNOSTICS _pgContext = PG_CONTEXT;

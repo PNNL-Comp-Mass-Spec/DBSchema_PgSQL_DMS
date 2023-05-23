@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _event
 **          11/09/2022 mem - Use new procedure name
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **                         - Remove unused variables and use clock_timestamp()
+**          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
 DECLARE
@@ -80,7 +81,7 @@ BEGIN
 
     If Not Exists (Select * From Tmp_ID_Update_List) Then
         _message := 'Tmp_ID_Update_List is empty; nothing to do';
-        Return;
+        RETURN;
     End If;
 
     ------------------------------------------------
