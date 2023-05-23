@@ -40,6 +40,7 @@ AS $$
 **          10/21/2020 mem - Set Queue_Instrument_ID to null when unassigning
 **          10/23/2020 mem - Allow updating 'fraction' based requests
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
+**          05/23/2023 mem - Allow deleting requests of type 'auto' or 'fraction'
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -170,7 +171,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (SELECT * FROM Tmp_Requests WHERE Not Origin::citext In ('user', 'fraction')) Then
+    If Exists (SELECT * FROM Tmp_Requests WHERE Not Origin::citext In ('user', 'fraction') And _mode::citext <> 'Delete') Then
         _message := 'Cannot change requests that were not entered by user';
         _returnCode := 'U5115';
 
