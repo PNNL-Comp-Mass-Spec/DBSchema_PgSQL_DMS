@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          04/02/2023 mem - Rename procedure and functions
 **          05/22/2023 mem - Capitalize reserved word
+**                         - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -65,7 +66,7 @@ BEGIN
                               value text PATH '@Value')
          ) XmlQ;
 
-    RETURN '<pre>' || _result || '<br></pre>';
+    RETURN format('<pre>%s<br></pre>', _result);
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -82,8 +83,7 @@ EXCEPTION
 
     -- Use text parsing to convert the XML job parameters
     --
-    SELECT
-        '<pre>' || parameters::text || '</pre>'
+    SELECT format('<pre>%s</pre>', parameters)
     INTO _result
     FROM cap.t_task_parameters
     WHERE job = _job;

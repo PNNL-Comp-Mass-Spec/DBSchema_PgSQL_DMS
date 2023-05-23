@@ -142,9 +142,9 @@ BEGIN
 
     If _message = '' Then
         If _rowCountUpdated = 0 Then
-            _message := format('All ' || _rowCountUnchanged || ' row(s) in mc.t_param_value already have ' || _paramname || ' = %s', _newValue);
+            _message := format('All %s row(s) in mc.t_param_value already have %s = %s', _rowCountUnchanged, _paramName, _newValue);
         Else
-            _message := format('Updated ' || _rowCountUpdated || ' row(s) in mc.t_param_value to have ' || _paramname || ' = %s', _newValue);
+            _message := format('Updated %s row(s) in mc.t_param_value to have %s = %s', _rowCountUpdated, _paramName, _newValue);
         End If;
     End If;
 END

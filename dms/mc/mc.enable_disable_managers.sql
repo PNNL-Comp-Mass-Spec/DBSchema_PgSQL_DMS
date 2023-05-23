@@ -381,17 +381,17 @@ BEGIN
         _message := format('The manager is now %s', _activeStateDescription);
     Else
         If _managerTypeID = 0 Then
-            _message := format('Set ' || _updateCount || ' managers to state %s', _activeStateDescription);
+            _message := format('Set %s managers to state %s', _updateCount, _activeStateDescription);
         Else
-            _message := format('Set ' || _updateCount || ' ' || _managerTypeName || ' managers to state %s', _activeStateDescription);
+            _message := format('Set %s %s managers to state %s', _updateCount, _managerTypeName, _activeStateDescription);
         End If;
 
         If _countUnchanged <> 0 Then
-            _message := _message || ' (' || _countUnchanged || ' managers were already ' || _activeStateDescription || ')';
+            _message := format('%s (%s managers were already %s)', _message, _countUnchanged, _activeStateDescription);
         End If;
     End If;
 
-    _message := _message || '; see also "FETCH ALL FROM _results"';
+    _message := format('%s; see also "FETCH ALL FROM _results"', _message);
 
     RAISE INFO '%', _message;
 
