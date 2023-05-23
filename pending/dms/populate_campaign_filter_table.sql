@@ -29,7 +29,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _msg text;
+    _invalidCampaignIDs text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -45,14 +45,14 @@ BEGIN
         -- Look for invalid Campaign ID values
 
         SELECT string_agg(CF.campaign_id, ',')
-        INTO _msg
+        INTO _invalidCampaignIDs
         FROM Tmp_CampaignFilter CF
              LEFT OUTER JOIN t_campaign C
                ON CF.campaign_id = C.campaign_id
         WHERE C.campaign_id IS NULL;
 
-        If Coalesce(_msg, '') <> '' Then
-            _message := 'Invalid Campaign ID(s): ' || _msg;
+        If Coalesce(_invalidCampaignIDs, '') <> '' Then
+            _message := format('Invalid Campaign ID(s): %s', _invalidCampaignIDs);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';

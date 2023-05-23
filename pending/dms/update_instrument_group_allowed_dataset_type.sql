@@ -36,9 +36,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _validMode boolean := false;
-    _exists text;
+    _itemExists text;
     _usageMessage text;
 
     _sqlState text;
@@ -97,75 +96,72 @@ BEGIN
         -- Does an entry already exist?
         ---------------------------------------------------
         --
-        SELECT instrument_group
-        INTO _exists
-        FROM t_instrument_group_allowed_ds_type
-        WHERE instrument_group = _instrumentGroup AND
-              dataset_type = _datasetType;
+        If Exists (SELECT instrument_group
+                  FROM t_instrument_group_allowed_ds_type
+                  WHERE instrument_group = _instrumentGroup AND
+                        dataset_type = _datasetType)
+        Then
+            _itemExists := true;
+        Else
+            _itemExists := false;
+        End If;
 
         ---------------------------------------------------
         -- Add mode
         ---------------------------------------------------
         --
         If _mode = 'add' Then
-        --<add>
-            If _exists <> '' Then
-                _msg := 'Cannot add: Entry "' || _datasetType || '" already exists for group ' || _instrumentGroup;
-                RAISE EXCEPTION '%', _msg;
+            If _itemExists Then
+                RAISE EXCEPTION 'Cannot add: Entry "%" already exists for group %', _datasetType, _instrumentGroup;
             End If;
 
             INSERT INTO t_instrument_group_allowed_ds_type ( instrument_group,
                                                              dataset_type,
                                                              comment)
-            VALUES(_instrumentGroup, _datasetType, _comment)
+            VALUES(_instrumentGroup, _datasetType, _comment);
 
             _validMode := true;
-        End If; --<add>
+        End If;
 
         ---------------------------------------------------
         -- Update mode
         ---------------------------------------------------
         --
         If _mode = 'update' Then
-        --<update>
-            If _exists = '' Then
-                _msg := 'Cannot Update: Entry "' || _datasetType || '" does not exist for group ' || _instrumentGroup;
-                RAISE EXCEPTION '%', _msg;
+            If Not _itemExists Then
+                RAISE EXCEPTION 'Cannot Update: Entry "%" does not exist for group %', _datasetType, _instrumentGroup;
             End If;
 
             UPDATE t_instrument_group_allowed_ds_type
             SET comment = _comment
-            WHERE (instrument_group = _instrumentGroup) AND
-                  (dataset_type = _datasetType)
+            WHERE instrument_group = _instrumentGroup AND
+                  dataset_type = _datasetType;
 
             _validMode := true;
-        End If; --<update>
+        End If;
 
         ---------------------------------------------------
         -- Delete mode
         ---------------------------------------------------
         --
         If _mode = 'delete' Then
-        --<delete>
-            If _exists = '' Then
-                _msg := 'Cannot Delete: Entry "' || _datasetType || '" does not exist for group ' || _instrumentGroup;
-                RAISE EXCEPTION '%', _msg;
+            If Not _itemExists Then
+                RAISE EXCEPTION 'Cannot Delete: Entry "%" does not exist for group %' _datasetType, _instrumentGroup;
             End If;
 
             DELETE FROM t_instrument_group_allowed_ds_type
-            WHERE (instrument_group = _instrumentGroup) AND
-                  (dataset_type = _datasetType)
+            WHERE instrument_group = _instrumentGroup AND
+                  dataset_type = _datasetType;
 
             _validMode := true;
-        End If; --<delete>
+        End If;
 
         If Not _validMode Then
             ---------------------------------------------------
             -- Unrecognized mode
             ---------------------------------------------------
 
-            _msg := 'Unrecognized Mode:' || _mode;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Unrecognized Mode: %', _mode;
         End If;
 
     EXCEPTION

@@ -70,7 +70,7 @@ AS $$
 **          11/15/2013 mem - Now scrubbing "Buzzard:" out of the comment if there is no other text
 **          06/20/2014 mem - Now removing "Buzzard:" from the end of the comment
 **          12/18/2014 mem - Replaced QC_Shew_1[0-9] with QC_Shew[_-][0-9][0-9]
-**          03/25/2015 mem - Now also checking the dataset's experiment name against dbo.GetDatasetPriority() to see if we should auto-release the dataset
+**          03/25/2015 mem - Now also checking the dataset's experiment name against Get_Dataset_Priority() to see if we should auto-release the dataset
 **          05/29/2015 mem - Added support for 'Capture Subfolder'
 **          06/22/2015 mem - Now ignoring 'Capture Subfolder' if it is an absolute path to a local drive (e.g. D:\ProteomicsData)
 **          11/21/2016 mem - Added parameter _logDebugMessages
@@ -301,9 +301,10 @@ BEGIN
     -- Check for QC or Blank datasets
     ---------------------------------------------------
 
-    If dbo.GetDatasetPriority(_datasetName) > 0 OR
-       dbo.GetDatasetPriority(_experimentName) > 0 OR
-       (_datasetName LIKE 'Blank%' AND Not _datasetName LIKE '%-bad') Then
+    If public.Get_Dataset_Priority(_datasetName) > 0 OR
+       public.Get_Dataset_Priority(_experimentName) > 0 OR
+       (_datasetName LIKE 'Blank%' AND Not _datasetName LIKE '%-bad')
+    Then
         If _interestRating Not In ('Not Released', 'No Interest') And _interestRating Not Like 'No Data%' Then
             -- Auto set interest rating to 5
             -- Initially set _interestRating to the text 'Released' but then query
@@ -357,7 +358,8 @@ BEGIN
     End If;
 
     If _captureSubdirectory Similar To '[A-Z]:\%' OR _captureSubdirectory LIKE '\\%' Then
-        _message := 'Capture subfolder is not a relative path for dataset ' || _datasetName || '; ignoring ' || _captureSubdirectory;
+        _message := format('Capture subfolder is not a relative path for dataset %s; ignoring %s',
+                            _datasetName, _captureSubdirectory);
 
         CALL post_log_entry ('Error', _message, 'Add_New_Dataset');
 
@@ -414,7 +416,7 @@ BEGIN
         --
         /*
         If _mode = 'add' Then
-            _logMessage := 'Error adding new dataset: ' || _message || '; ' || _xmlDoc;
+            _logMessage := format('Error adding new dataset: %s; %s', _message, _xmlDoc);
 
             CALL post_log_entry ( _type => 'Error',
                                   _message => _logMessage,

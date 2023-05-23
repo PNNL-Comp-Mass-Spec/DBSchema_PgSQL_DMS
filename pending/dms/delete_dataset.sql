@@ -105,7 +105,7 @@ BEGIN
     WHERE dataset = _datasetName
 
     If Not FOUND Then
-        _message := 'Dataset does not exist: ' || _datasetName;
+        _message := format('Dataset does not exist: %s', _datasetName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
@@ -205,7 +205,7 @@ BEGIN
     CALL delete_aux_info 'Dataset', _datasetName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
-        _message := 'Delete auxiliary information was unsuccessful for dataset: ' || _message;
+        _message := format('Delete auxiliary information was unsuccessful for dataset: %s', _message);
         RAISE EXCEPTION '%', _message;
 
         RETURN;
@@ -224,7 +224,7 @@ BEGIN
     CALL unconsume_scheduled_run (_datasetName, _retainHistory => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
 
     If _returnCode <> '' Then
-        _message := 'Unconsume operation was unsuccessful for dataset: ' || _message;
+        _message := format('Unconsume operation was unsuccessful for dataset: %s', _message);
         RAISE EXCEPTION '%', _message;
 
         RETURN;

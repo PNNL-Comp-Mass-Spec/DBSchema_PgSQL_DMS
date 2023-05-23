@@ -298,7 +298,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'CALL get_user_id for ' || _requesterUsername;
+            _debugMsg := format('CALL get_user_id for %s', _requesterUsername);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
@@ -365,7 +365,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'ValidateInstrumentGroupAndDatasetType for ' || _msType;
+            _debugMsg := format('ValidateInstrumentGroupAndDatasetType for %s', _msType);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
@@ -385,7 +385,7 @@ BEGIN
         ---------------------------------------------------
         --
         If _logDebugMessages Then
-            _debugMsg := 'Examine fraction counts of source and target separation groups: ' || _sourceSeparationGroup || ' and ' || _separationGroup;
+            _debugMsg := format('Examine fraction counts of source and target separation groups: %s and %s', _sourceSeparationGroup, _separationGroup);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
@@ -436,7 +436,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'Lookup EUS info for: ' || _experimentName;
+            _debugMsg := format('Lookup EUS info for: %s', _experimentName);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
@@ -494,7 +494,7 @@ BEGIN
                         _addingItem => _addingItem);
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateEUSUsage: %', _msg;
+            RAISE EXCEPTION 'validate_eus_usage: %', _msg;
         End If;
 
         If Coalesce(_msg, '') <> '' Then
@@ -504,7 +504,7 @@ BEGIN
         _commaPosition := Position(',' In _eusUserID);
 
         If _commaPosition > 1 Then
-            _msg := 'Requested runs can only have a single EUS user associated with them; current list: ' || _eusUserID;
+            _msg := format('Requested runs can only have a single EUS user associated with them; current list: %s', _eusUserID);
             _message := public.append_to_text(_msg, _message, 0, '; ', 1024);
 
             If _raiseErrorOnMultipleEUSUsers Then
@@ -527,11 +527,11 @@ BEGIN
         CALL lookup_other_from_experiment_sample_prep (
                             _experimentName,
                             _workPackage => _workPackage,   -- Output
-                            _message => _message,           -- Output
+                            _message => _msg,               -- Output
                             _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'LookupOtherFromExperimentSamplePrep: %', _msg;
+            RAISE EXCEPTION 'lookup_other_from_experiment_sample_prep: %', _msg;
         End If;
 
         ---------------------------------------------------
@@ -577,7 +577,7 @@ BEGIN
                            _returnCode => _returnCode);
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateWP: %', _message;
+            RAISE EXCEPTION 'validate_wp: %', _msg;
         End If;
 
 
@@ -757,7 +757,7 @@ BEGIN
                 End If;
 
                 If _logDebugMessages Then
-                    _debugMsg := 'CALL AssignEUSUsersToRequestedRun';
+                    _debugMsg := 'CALL assign_eus_users_to_requested_run';
                     CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
                 End If;
 
@@ -767,11 +767,11 @@ BEGIN
                                         _requestID,
                                         _eusProposalID,
                                         _eusUserID,
-                                        _message => _message,           -- Output
+                                        _message => _msg,               -- Output
                                         _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'AssignEUSUsersToRequestedRun: %', _msg;
+                    RAISE EXCEPTION 'assign_eus_users_to_requested_run: %', _msg;
                 End If;
 
                 -- Append the new request ID to _requestIdList

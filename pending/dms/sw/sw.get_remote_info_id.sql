@@ -30,7 +30,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     If Coalesce(_remoteInfo, '') = '' Then
-        Return 0;
+        RETURN 0;
     End If;
 
     ---------------------------------------------------

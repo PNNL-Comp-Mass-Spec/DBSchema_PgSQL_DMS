@@ -33,7 +33,6 @@ DECLARE
     _authorized boolean;
 
     _jobID int;
-    _msg text;
     _state int := 0;
     _result int;
 BEGIN

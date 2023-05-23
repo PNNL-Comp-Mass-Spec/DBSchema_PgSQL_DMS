@@ -53,7 +53,6 @@ DECLARE
     _authorized boolean;
 
     _msg text;
-    _logMsg text;
     _datasetID int := 0;
     _currentState int;
     _newState int;
@@ -65,7 +64,7 @@ DECLARE
     _datasetName text := '';
     _enteredMax timestamp;
     _elapsedHours numeric;
-    _allowReset int := 0;
+    _allowReset boolean := false;
     _logMessage text;
 
     _sqlState text;
@@ -179,8 +178,7 @@ BEGIN
 
             If _currentState <> 1 Then
                 _logErrors := false;
-                _msg := format('Dataset "%s" must be in "new" state to be deleted by user', _datasetName);
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Dataset "%" must be in "new" state to be deleted by user', _datasetName;
             End If;
 
             ---------------------------------------------------
@@ -188,13 +186,11 @@ BEGIN
             ---------------------------------------------------
 
             If Exists (SELECT * FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State <= 2) Then
-                _msg := format('Dataset "%s" is being processed by the DMS_Capture database; unable to delete', _datasetName);
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Dataset "%" is being processed by the DMS_Capture database; unable to delete', _datasetName;
             End If;
 
             If Exists (SELECT * FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State > 2) Then
-                _msg := format('Dataset "%s" has been processed by the DMS_Capture database; unable to delete', _datasetName);
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Dataset "%" has been processed by the DMS_Capture database; unable to delete', _datasetName;
             End If;
 
             ---------------------------------------------------
@@ -222,47 +218,46 @@ BEGIN
             --
             If _currentState not in (5, 9) -- 'Failed' or 'Not ready' Then
                 _logErrors := false;
-                _msg := 'Dataset "' || _datasetName || '" cannot be reset if capture not in failed or in not ready state ' || cast(_currentState as text);
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Dataset "%" cannot be reset if capture not in failed or in not ready state %', _datasetName, _currentState;
             End If;
 
             -- Do not allow a reset if the dataset succeeded the first step of capture
             If Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State IN (1,2,4,5)) Then
 
-                If Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetIntegrity' AND State = 6) AND Then
-                   Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State = 5);
-                End If;
-                Begin
+                If Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetIntegrity' AND State = 6) AND
+                   Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State = 5)
+                Then
                     -- Do allow a reset if the DatasetIntegrity step failed and if we haven't already retried capture of this dataset once
-                    _msg := 'Retrying capture of dataset ' || _datasetName || ' at user request (dataset was captured, but DatasetIntegrity failed)';
-                    If Exists (SELECT * FROM t_log_entries WHERE message LIKE _msg + '%') Then
-                        _msg := 'Dataset "' || _datasetName || '" cannot be reset because it has already been reset once';
+                    _msg := format('Retrying capture of dataset %s at user request (dataset was captured, but DatasetIntegrity failed)', _datasetName);
+
+                    If Exists (SELECT * FROM t_log_entries WHERE message LIKE _msg || '%') Then
+                        _msg := format('Dataset "%s" cannot be reset because it has already been reset once', _datasetName);
 
                         If _callingUser = '' Then
-                            _logMsg := _msg || '; user ' || session_user;
+                            _logMessage := format('%s; user %s', _msg, session_user);
                         Else
-                            _logMsg := _msg || '; user ' || _callingUser;
+                            _logMessage := format('%s; user %s', _msg, _callingUser);
                         End If;
 
-                        CALL post_log_entry ('Error', _logMsg, 'Do_Dataset_Operation');
+                        CALL post_log_entry ('Error', _logMessage, 'Do_Dataset_Operation');
 
-                        _msg := _msg || '; please contact a system administrator for further assistance';
+                        _msg := format('%s; please contact a system administrator for further assistance', _msg);
                     Else
-                        _allowReset := 1;
+                        _allowReset := true;
                         If _callingUser = '' Then
-                            _msg := _msg || '; user ' || session_user;
+                            _msg := format('%s; user %s', _msg, session_user);
                         Else
-                            _msg := _msg || '; user ' || _callingUser;
+                            _msg := format('%s; user %s', _msg, _callingUser);
                         End If;
 
                         CALL post_log_entry ('Warning', _msg, 'Do_Dataset_Operation');
                     End If;
 
                 Else
-                    _msg := 'Dataset "' || _datasetName || '" cannot be reset because it has already been successfully captured; please contact a system administrator for further assistance';
+                    _msg := format('Dataset "%s" cannot be reset because it has already been successfully captured; please contact a system administrator for further assistance', _datasetName);
                 End If;
 
-                If _allowReset = 0 Then
+                If Not _allowReset Then
                     _logErrors := false;
                     RAISE EXCEPTION '%', _msg;
                 End If;
@@ -270,16 +265,15 @@ BEGIN
 
             -- Update state of dataset to new
             --
-            _newState := 1        ; -- "new' state
+            _newState := 1;         -- "new' state
 
             UPDATE t_dataset
             SET dataset_state_id = _newState,
-                comment = dbo.RemoveCaptureErrorsFromString(comment)
+                comment = public.remove_capture_errors_from_string(comment)
             WHERE dataset_id = _datasetID
 
             If Not FOUND Then
-                _msg := 'Reset was unsuccessful for dataset "' || _datasetName || '"';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Reset was unsuccessful for dataset "%" (t_dataset was not updated)', _datasetName;
             End If;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
@@ -296,8 +290,7 @@ BEGIN
             -- Mode was unrecognized
             ---------------------------------------------------
 
-            _msg := 'Mode "' || _mode ||  '" was unrecognized';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Mode "%" was unrecognized', _mode;
         End If;
 
 

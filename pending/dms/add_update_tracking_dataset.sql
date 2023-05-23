@@ -64,7 +64,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _folderName text;
     _addingDataset boolean := false;
     _warning text;
@@ -152,35 +151,29 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If _mode = '' Then
-            _msg := '_mode was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION '_mode was blank';
         End If;
 
         If Coalesce(_datasetName, '') = '' Then
-            _msg := 'Dataset name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset name was blank';
         End If;
 
         _folderName := _datasetName;
 
         If Coalesce(_experimentName, '') = '' Then
-            _msg := 'Experiment name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Experiment name was blank';
         End If;
 
         If Coalesce(_folderName, '') = '' Then
-            _msg := 'Folder name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Folder name was blank';
         End If;
 
         If Coalesce(_operatorUsername, '') = '' Then
-            _msg := 'Operator username was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Operator username was blank';
         End If;
 
         If Coalesce(_instrumentName, '') = '' Then
-            _msg := 'Instrument name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Instrument name was blank';
         End If;
 
         -- Assure that _comment is not null and assure that it doesn't have &quot; or &#34; or &amp;
@@ -211,19 +204,17 @@ BEGIN
 
         If _badCh <> '' Then
             If _badCh = 'space' Then
-                _msg := 'Dataset name may not contain spaces';
+                RAISE EXCEPTION 'Dataset name may not contain spaces';
             ElsIf char_length(_badCh) = 1 Then
-                _msg := 'Dataset name may not contain the character ' || _badCh;
+                RAISE EXCEPTION 'Dataset name may not contain the character %', _badCh;
             Else
-                _msg := 'Dataset name may not contain the characters ' || _badCh;
+                RAISE EXCEPTION 'Dataset name may not contain the characters %', _badCh;
             End If;
 
-            RAISE EXCEPTION '%', _msg;
         End If;
 
         If _datasetName Similar To '%[.]raw' Or _datasetName Similar To '%[.]wiff' Or _datasetName Like '%[.]d' Then
-            _msg := 'Dataset name may not end in .raw, .wiff, or .d';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset name may not end in .raw, .wiff, or .d';
         End If;
 
         ---------------------------------------------------
@@ -238,21 +229,17 @@ BEGIN
         FROM t_dataset
         WHERE dataset = _datasetName;
 
-        _datasetID := Coalesce(_datasetID, 0);
-
-        If _datasetID = 0 Then
+        If Not FOUND Then
             -- Cannot update a non-existent entry
             --
             If _mode::citext In ('update', 'check_update') Then
-                _msg := 'Cannot update: Dataset ' || _datasetName || ' is not in database';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot update: Dataset % is not in database', _datasetName;
             End If;
         Else
             -- Cannot create an entry that already exists
             --
             If _addingDataset Then
-                _msg := 'Cannot add dataset ' || _datasetName || ' since already in database';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot add dataset % since already in database', _datasetName;
             End If;
         End If;
 
@@ -263,8 +250,7 @@ BEGIN
         _experimentID := get_experiment_id(_experimentName);
 
         If _experimentID = 0 Then
-            _msg := 'Could not find entry in database for experiment ' || _experimentName;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Could not find entry in database for experiment %', _experimentName;
         End If;
 
         ---------------------------------------------------
@@ -274,8 +260,7 @@ BEGIN
         _instrumentID := get_instrument_id(_instrumentName);
 
         If _instrumentID = 0 Then
-            _msg := 'Could not find entry in database for instrument ' || _instrumentName;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Could not find entry in database for instrument %', _instrumentName;
         End If;
 
         ---------------------------------------------------
@@ -301,9 +286,10 @@ BEGIN
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
                 _operatorUsername := _newUsername;
+            ElsIf _matchCount > 1 Then
+                RAISE EXCEPTION 'Operator username % matched more than one user', _operatorUsername;
             Else
-                _msg := 'Could not find entry in database for operator username ' || _operatorUsername;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Could not find entry in database for operator username %', _operatorUsername;
             End If;
         End If;
 
@@ -322,8 +308,7 @@ BEGIN
 
             If _storagePathID = 0 Then
                 _storagePathID := 2; -- index of 'none' in table
-                _msg := 'Valid storage path could not be found';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Valid storage path could not be found';
             End If;
 
             _newDSStateID := 3;
@@ -390,7 +375,7 @@ BEGIN
                     _warning := _message;
                 End If;
 
-                _requestName := 'AutoReq_' || _datasetName;
+                _requestName := format('AutoReq_%s', _datasetName);
 
                 CALL add_update_requested_run (
                                         _requestName => _requestName,
@@ -419,8 +404,8 @@ BEGIN
                                         _callingUser => _callingUser)
 
                 If _returnCode <> '' Then
-                    _msg := 'Create AutoReq run request failed: dataset ' || _datasetName || ' with EUS Proposal ID ' || _eusProposalID || ', Usage Type ' || _eusUsageType || ', and Users List ' || _eusUsersList || ' ->' || _message;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Create AutoReq run request failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
+                                    _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message);
                 End If;
             End If; -- </b3>
 
@@ -447,8 +432,7 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                _msg := 'Consume operation failed: dataset ' || _datasetName || ' -> ' || _message;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Consume operation failed: dataset % -> %', _datasetName, _message;
             End If;
 
             -- Update t_cached_dataset_instruments
@@ -524,8 +508,8 @@ BEGIN
                                         _callingUser => _callingUser);
 
                 If _returnCode <> '' Then
-                    _msg := 'Call to AddUpdateRequestedRun failed: dataset ' || _datasetName || ' with EUS Proposal ID ' || _eusProposalID || ', Usage Type ' || _eusUsageType || ', and Users List ' || _eusUsersList || ' ->' || _message;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Call to add_update_requested_run failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
+                                    _datasetName, _eusProposalID, _eusUsageType, , _eusUsersList_message;
                 End If;
             End If;
 
@@ -537,7 +521,7 @@ BEGIN
             If _warning like 'Warning:' Then
                 _warningWithPrefix := _warning;
             Else
-                _warningWithPrefix := 'Warning: ' || _warning;
+                _warningWithPrefix := format('Warning: %s', _warning);
             End If;
 
             If Coalesce(_message, '') = '' Then

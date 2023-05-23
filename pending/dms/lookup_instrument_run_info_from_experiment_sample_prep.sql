@@ -30,7 +30,7 @@ AS $$
 *****************************************************/
 DECLARE
     _instrumentInfo record;
-    _ovr text := '(lookup)';
+    _ovr citext := '(lookup)';
     _prepRequestID int;
 BEGIN
     _message := '';
@@ -49,22 +49,23 @@ BEGIN
     -- If there is no associated sample prep request, we are done
     ---------------------------------------------------
     If Not FOUND Then
-        If (_instrumentGroup = _ovr) Then
+        If _instrumentGroup::citext = _ovr Then
             _message := 'Instrument group is set to "' || _ovr || '"; the experiment (' || _experimentName || ') does not have a sample prep request, therefore we cannot auto-define the instrument group.';
             _returnCode := 'U5201';
             RETURN;
         End If;
-        If (_datasetType = _ovr) Then
+
+        If _datasetType::citext = _ovr Then
             _message := 'Run Type (Dataset Type) is set to "' || _ovr || '"; the experiment (' || _experimentName || ') does not have a sample prep request, therefore we cannot auto-define the run type.';
             _returnCode := 'U5202';
             RETURN;
         End If;
 
-        If (_instrumentSettings = _ovr) Then
+        If _instrumentSettings::citext = _ovr Then
             _instrumentSettings := 'na';
         End If;
 
-        return  0
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -84,10 +85,10 @@ BEGIN
     -- Handle overrides
     ---------------------------------------------------
 
-    _instrumentGroup := CASE WHEN _instrumentGroup = _ovr THEN _instrumentInfo.InstrumentGroup ELSE _instrumentGroup END;
-    _datasetType := CASE WHEN _datasetType = _ovr THEN _instrumentInfo.DatasetType ELSE _datasetType END;
-    _instrumentSettings := CASE WHEN _instrumentSettings = _ovr THEN _instrumentInfo.InstrumentSettings ELSE _instrumentSettings END;
-    _secSep := CASE WHEN _secSep = _ovr THEN _instrumentInfo.SeparationType ELSE _secSep END;
+    _instrumentGroup := CASE WHEN _instrumentGroup::citext = _ovr THEN _instrumentInfo.InstrumentGroup ELSE _instrumentGroup END;
+    _datasetType := CASE WHEN _datasetType::citext = _ovr THEN _instrumentInfo.DatasetType ELSE _datasetType END;
+    _instrumentSettings := CASE WHEN _instrumentSettings::citext = _ovr THEN _instrumentInfo.InstrumentSettings ELSE _instrumentSettings END;
+    _secSep := CASE WHEN _secSep::citext = _ovr THEN _instrumentInfo.SeparationType ELSE _secSep END;
 
 END
 $$;

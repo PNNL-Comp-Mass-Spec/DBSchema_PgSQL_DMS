@@ -61,7 +61,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _logErrors boolean := false;
     _compoundIdAndName text;
     _pubChemIdValue int;
@@ -239,8 +238,7 @@ BEGIN
             -- Confirm the compound exists
             --
             If Not Exists (SELECT * FROM t_reference_compound WHERE compound_id = _compoundID) Then
-                _msg := 'Cannot update: Reference compound ID ' || Cast(_compoundID as text) || ' is not in database ';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot update: Reference compound ID % is not in database ', _compoundID;
             End If;
 
             SELECT container_id
@@ -257,8 +255,7 @@ BEGIN
         _campaignID := get_campaign_id (_campaignName);
 
         If _campaignID = 0 Then
-            _msg := format('Could not resolve campaign name "%s" to ID"', _campaignName);
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Could not resolve campaign name "%" to ID', _campaignName;
         End If;
 
         ---------------------------------------------------
@@ -417,8 +414,7 @@ BEGIN
             WHERE compound_id = _compoundID
 
             If Not FOUND Then
-                _msg := 'Update operation failed, ID ' || _compoundIdAndName;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Update operation failed, ID %', _compoundIdAndName;
             End If;
 
             -- Material movement logging

@@ -39,7 +39,6 @@ DECLARE
     _server1 text;
     _server2 text;
     _port int;
-    _msg text;
 BEGIN
     _message := '';
     _returnCode:= '';
@@ -66,7 +65,7 @@ BEGIN
                     _command => 'add');
 
     ---------------------------------------------------
-    -- EXECUTE CallSendMessage, which will use xp_cmdshell to run C:\DMS_Programs\DBMessageSender\DBMessageSender.exe
+    -- Call call_send_message, which will use xp_cmdshell to run C:\DMS_Programs\DBMessageSender\DBMessageSender.exe
     -- We stopped doing this in February 2016 because login DMSWebUser no longer has EXECUTE privileges on xp_cmdshell
     ---------------------------------------------------
     --
@@ -74,7 +73,7 @@ BEGIN
     CALL call_send_message _id, _mode, _message output
 
     If Coalesce(_message, '') = '' Then
-        _message := 'Called SendMessage for Data Package ID ' || _packageID::text || ': ' || _pathFolder;
+        _message := format('Called SendMessage for Data Package ID %s: %s', _packageID, _pathFolder);
     End If;
 
     CALL public.post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
@@ -107,7 +106,7 @@ BEGIN
     SELECT value FROM dpkg.t_properties WHERE property = 'MessageBroker1' INTO _server1
     SELECT value FROM dpkg.t_properties WHERE property = 'MessageBroker2' INTO _server2
 
-    _msg := ''    ;
+    _msg := '';
     CALL send_message _creationParams, _queue, _server1, _port, _msg output
     if _myError <> 0 Then
         _msg := '';
@@ -117,15 +116,10 @@ BEGIN
         _message := _msg;
     End If;
 
-    _message := 'Calling SendMessage: ' || _creationParams;
+    _message := format('Calling SendMessage: %s', _creationParams);
     CALL public.post_log_entry ('Normal', _message, 'Make_Data_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser);
 */
 
-    ---------------------------------------------------
-    -- Done
-    ---------------------------------------------------
-
-    return _myError
 END
 $$;
 

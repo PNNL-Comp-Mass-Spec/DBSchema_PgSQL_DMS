@@ -64,7 +64,7 @@ BEGIN
               Script IN ('DatasetCapture', 'IMSDatasetCapture')
 
         If Not FOUND Then
-            _message := 'Dataset ID not found: ' || _datasetNameOrID;
+            _message := format('Dataset ID not found: %s', _datasetNameOrID);
             _returnCode := 'U5201';
 
             RAISE INFO '%', _message;
@@ -85,7 +85,7 @@ BEGIN
               Script IN ('DatasetCapture', 'IMSDatasetCapture');
 
         If Not FOUND Then
-            _message := 'Dataset not found: ' || _datasetNameOrID;
+            _message := format('Dataset not found: %s', _datasetNameOrID);
             _returnCode := 'U5202';
 
             RAISE INFO '%', _message;
@@ -159,7 +159,7 @@ BEGIN
         -- Mark the dataset as bad in public.t_dataset
         CALL public.handle_dataset_capture_validation_failure (_datasetID, _comment, _infoOnly, _message => _message, _returnCode => _returnCode);
 
-        _message := 'Marked dataset as bad: ' || _datasetName;
+        _message := format('Marked dataset as bad: %s', _datasetName);
         RAISE INFO '%', _message;
 
     End If;

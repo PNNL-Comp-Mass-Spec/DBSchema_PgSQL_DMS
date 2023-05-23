@@ -109,7 +109,7 @@ BEGIN
 
     If Not Exists (SELECT * FROM Tmp_HostData) Then
         _message := 'Nothing returned when splitting the Host List on CR or LF';
-        returnCode := 'U5202'
+        _returnCode := 'U5202'
 
         DROP TABLE Tmp_HostData;
         DROP TABLE Tmp_Hosts;

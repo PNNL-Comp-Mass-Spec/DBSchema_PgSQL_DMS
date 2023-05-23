@@ -46,14 +46,14 @@ BEGIN
 
     If _entryID <= 0 Then
         _message := '_entryID must be positive; unable to continue';
-        _myError := 60000;
-        Return;
+        _returnCode := 'U5201';
+        RETURN;
     End If;
 
     If _dataPackageID <= 0 Then
         _message := '_dataPackageID must be positive; unable to continue';
-        _myError := 60001;
-        Return;
+        _returnCode := 'U5202';
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -62,7 +62,7 @@ BEGIN
 
     If Not Exists (SELECT * FROM dpkg.t_myemsl_uploads WHERE entry_id = _entryID AND data_pkg_id = _dataPackageID) Then
         _message := 'Entry ' || _entryID::text || ' does not correspond to data package ' || _dataPackageID::text;
-        _myError := 60002;
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -75,20 +75,7 @@ BEGIN
         verified = _verified
     WHERE entry_id = _entryID AND
           (available <> _available OR
-           verified <> _verified)
-
-    If _myError <> 0 Then
-        If _message = '' Then
-            _message := 'Error in Set_MyEMSL_Upload_Status';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        CALL public.post_log_entry ('Error', _message, 'Set_MyEMSL_Upload_Status', 'dpkg');
-    End If;
-
-    Return _myError
-
+           verified <> _verified);
 END
 $$;
 

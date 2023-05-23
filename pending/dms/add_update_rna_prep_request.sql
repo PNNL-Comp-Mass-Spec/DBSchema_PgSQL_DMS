@@ -165,7 +165,7 @@ BEGIN
                             _returnCode => _returnCode);                    -- Output
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'ValidateInstrumentGroupAndDatasetType: %', _msg;
+                RAISE EXCEPTION 'validate_instrument_group_and_dataset_type: %', _msg;
             End If;
         End If;
 
@@ -246,7 +246,7 @@ BEGIN
 
         If _returnCode <> '' Then
             _logErrors := false;
-            RAISE EXCEPTION 'ValidateEUSUsage: %', _msg;
+            RAISE EXCEPTION 'validate_eus_usage: %', _msg;
         End If;
 
         If char_length(Coalesce(_eusUsersList, '')) > 0 Then
@@ -267,7 +267,7 @@ BEGIN
                            _returnCode => _returnCode);
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateWP: %', _message;
+            RAISE EXCEPTION 'validate_wp: %', _msg;
         End If;
 
         If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackageNumber And deactivated = 'Y') Then

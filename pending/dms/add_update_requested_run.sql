@@ -191,7 +191,6 @@ DECLARE
     _allowNoneWP boolean := _autoPopulateUserListIfBlank;
     _requireWP int := 1;
     _logMessage text;
-    _msg text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -423,8 +422,7 @@ BEGIN
         End If;
         --
         If _mode::citext In ('update', 'check_update') AND (_status::citext = 'Completed' AND _oldStatus::citext <> 'Completed' ) Then
-            _msg := 'Cannot set status of request to "Completed" when existing status is "' || _oldStatus || '"';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot set status of request to "Completed" when existing status is "%"', _oldStatus;
         End If;
         --
         If _mode::citext In ('update', 'check_update') AND (_oldStatus::citext = 'Completed' AND _status::citext <> 'Completed') Then
@@ -467,7 +465,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'Query get_user_id for ' || _requesterUsername;
+            _debugMsg := format('Query get_user_id for %s', _requesterUsername);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
@@ -501,7 +499,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'LookupInstrumentRunInfoFromExperimentSamplePrep for ' || _experimentName;
+            _debugMsg := format('LookupInstrumentRunInfoFromExperimentSamplePrep for %s', _experimentName);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
@@ -511,7 +509,7 @@ BEGIN
                             _msType => _msType,                         -- Output
                             _instrumentSettings => _instrumentSettings, -- Output
                             _separationGroup => _separationGroup,       -- Output
-                            _message => _message,                       -- Output
+                            _message => _msg,                           -- Output
                             _returnCode => _returnCode);                -- Output
 
         If _returnCode <> '' Then
@@ -535,7 +533,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'ValidateInstrumentGroupAndDatasetType for ' || _msType;
+            _debugMsg := format('validate_instrument_group_and_dataset_type for %s', _msType);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
@@ -548,7 +546,7 @@ BEGIN
                         _returnCode => _returnCode);                    -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateInstrumentGroupAndDatasetType: %', _msg;
+            RAISE EXCEPTION 'validate_instrument_group_and_dataset_type: %', _msg;
         End If;
 
         ---------------------------------------------------
@@ -557,7 +555,7 @@ BEGIN
         ---------------------------------------------------
         --
         If _logDebugMessages Then
-            _debugMsg := 'Resolve separation group: ' || _separationGroup;
+            _debugMsg := format('Resolve separation group: %s', _separationGroup);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
@@ -606,7 +604,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'Lookup EUS info for: ' || _experimentName;
+            _debugMsg := format('Lookup EUS info for: %s', _experimentName);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
@@ -615,11 +613,11 @@ BEGIN
                             _eusUsageType => _eusUsageType,     -- Output
                             _eusProposalID => _eusProposalID,   -- Output
                             _eusUsersList => _eusUsersList,     -- Output
-                            _message => _message,               -- Output
+                            _message => _msg,                   -- Output
                             _returnCode => _returnCode);        -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'LookupEUSFromExperimentSamplePrep: %', _msg;
+            RAISE EXCEPTION 'lookup_eus_from_experiment_sample_prep: %', _msg;
         End If;
 
         If Coalesce(_msg, '') <> '' Then
@@ -665,7 +663,7 @@ BEGIN
 
         If _returnCode <> '' Then
             _logErrors := false;
-            RAISE EXCEPTION 'ValidateEUSUsage: %', _msg;
+            RAISE EXCEPTION 'validate_eus_usage: %', _msg;
         End If;
 
         If _eusUsageTypeID = 1 Then
@@ -701,11 +699,11 @@ BEGIN
         CALL lookup_other_from_experiment_sample_prep
                             _experimentName,
                             _workPackage => _workPackage,       -- Output
-                            _message => _message,               -- Output
+                            _message => _msg,                   -- Output
                             _returnCode => _returnCode);        -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'LookupOtherFromExperimentSamplePrep: %', _msg;
+            RAISE EXCEPTION 'lookup_other_from_experiment_sample_prep: %', _msg;
         End If;
 
         ---------------------------------------------------
@@ -765,7 +763,7 @@ BEGIN
                            _returnCode => _returnCode);
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateWP: %', _message;
+            RAISE EXCEPTION 'validate_wp: %', _msg;
         End If;
 
         -- Make sure the Work Package is capitalized properly
@@ -783,7 +781,8 @@ BEGIN
             End If;
         End If;
 
-        _resolvedInstrumentInfo := 'instrument group ' || _instrumentGroup || ', run type ' || _msType || ', and separation group ' || _separationGroup;
+        _resolvedInstrumentInfo := format('instrument group %s, run type %s, and separation group %s',
+                                            _instrumentGroup, _msType, _separationGroup);
 
         -- Validation checks are complete; now enable _logErrors
         _logErrors := true;
@@ -873,7 +872,7 @@ BEGIN
                                     _request,
                                     _eusProposalID,
                                     _eusUsersList,
-                                    _message => _message,               -- Output
+                                    _message => _msg,                   -- Output
                                     _returnCode => _returnCode);        -- Output
 
             --
@@ -946,11 +945,11 @@ BEGIN
                                         _requestID,
                                         _eusProposalID,
                                         _eusUsersList,
-                                        _message => _message,
-                                        _returnCode => _returnCode);
+                                        _message => _msg,               -- Output
+                                        _returnCode => _returnCode);    -- Output
                 --
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'AssignEUSUsersToRequestedRun: %', _msg;
+                    RAISE EXCEPTION 'assign_eus_users_to_requested_run: %', _msg;
                 End If;
 
             END;
@@ -972,7 +971,7 @@ BEGIN
         ---------------------------------------------------
 
         If _batch > 0 Then
-            vvvvvv update_cached_requested_run_batch_stats (
+            CALL update_cached_requested_run_batch_stats (
                     _batch,
                     _message => _msg,               -- Output
                     _returnCode => _returnCode);    -- Output

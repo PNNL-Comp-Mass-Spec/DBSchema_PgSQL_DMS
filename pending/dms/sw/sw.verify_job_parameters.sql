@@ -129,7 +129,7 @@ BEGIN
           Coalesce(Tmp_JobParameters.Value, '') = '';
 
     If _missingParameters <> '' Then
-        _message := 'Missing required parameters: ' || _missingParameters;
+        _message := format('Missing required parameters: %s', _missingParameters);
         RAISE INFO '%', _message;
 
         _returnCode := 'U5202';
@@ -160,7 +160,7 @@ BEGIN
         End If;
 
         If _scriptBaseName = '' Then
-            _message := 'Unrecognized script name: ' || _scriptName;
+            _message := format('Unrecognized script name: %s', _scriptName);
             RAISE INFO '%', _message;
 
             _returnCode := 'U5203';
@@ -236,7 +236,7 @@ BEGIN
         WHERE Param_File_Name = _parameterFileName;
 
         If Not FOUND Then
-            _message := 'Parameter file not found: ' || _parameterFileName;
+            _message := format('Parameter file not found: %s', _parameterFileName);
             RAISE INFO '%', _message;
 
             _returnCode := 'U5206';
@@ -245,7 +245,7 @@ BEGIN
         End If;
 
         If _paramFileValid = 0 Then
-            _message := 'Parameter file is not active: ' || _parameterFileName;
+            _message := format('Parameter file is not active: %s', _parameterFileName);
             RAISE INFO '%', _message;
 
             _returnCode := 'U5207';
@@ -254,7 +254,9 @@ BEGIN
         End If;
 
         If _paramFileType <> _scriptBaseName Then
-            _message := 'Parameter file is for ' || _paramFileType || ', and not ' || _scriptBaseName || ': ' || _parameterFileName;
+            _message := format('Parameter file is for %s, and not %s: %s',
+                                _paramFileType, _scriptBaseName, _parameterFileName);
+
             RAISE INFO '%', _message;
 
             _returnCode := 'U5208';

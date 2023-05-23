@@ -200,10 +200,11 @@ BEGIN
             FROM t_analysis_job
             WHERE job = public.try_cast(_job, 0)
 
-            If _jobID = 0 Then
-                _msg := 'Cannot update: Analysis Job "' || _job || '" is not in database';
+            If Not FOUND Then
+                _msg := format('Cannot update: Analysis Job %s is not in database', _job);
+
                 If _infoOnly Then
-                    RAISE INFO '%', _msg;
+                    RAISE WARNING '%', _msg;
                 End If;
 
                 RAISE EXCEPTION '%', _msg;
@@ -214,11 +215,12 @@ BEGIN
         ---------------------------------------------------
         -- Resolve propagation mode
         ---------------------------------------------------
+
         _propMode := CASE _propagationMode;
-                            WHEN 'Export' THEN 0
-                            WHEN 'No Export' THEN 1
-                            ELSE 0
-                        End
+                         WHEN 'Export' THEN 0
+                         WHEN 'No Export' THEN 1
+                         ELSE 0
+                     END
 
         If _mode = 'update' Then
             -- Changes are typically only allowed to jobs in 'new', 'failed', or 'holding' state
@@ -269,7 +271,7 @@ BEGIN
 
                             _message := public.append_to_text(_message, 'set job state to "No export"', 0, '; ', 512);
                         Else
-                            _msg := 'job state cannot be changed from ' || _currentStateName || ' to ' || _stateName;
+                            _msg := format('job state cannot be changed from %s to %s', _currentStateName, _stateName);
                             _message := public.append_to_text(_message, _msg, 0, '; ', 512);
 
                             If _propagationMode = 'Export' And _stateName = 'No export' Then
@@ -280,15 +282,16 @@ BEGIN
                     End If;
 
                     If _infoOnly Then
-                        _message := 'Preview: ' || _message;
+                        _message := format('Preview: %s', _message);
                     End If;
 
                     RETURN;
                 End If;
 
-                _msg := 'Cannot update: Analysis Job "' || _job || '" is not in "new", "holding", or "failed" state';
+                _msg := format('Cannot update: Analysis Job %s is not in "new", "holding", or "failed" state', _job);
+
                 If _infoOnly Then
-                    RAISE INFO '%', _msg;
+                    RAISE WARNING '%', _msg;
                 End If;
 
                 RAISE EXCEPTION '%', _msg;
@@ -306,7 +309,6 @@ BEGIN
         -- Resolve processor group ID
         ---------------------------------------------------
         --
-        --
         If _associatedProcessorGroup <> '' Then
             SELECT group_id
             INTO _gid
@@ -314,8 +316,7 @@ BEGIN
             WHERE (group_name = _associatedProcessorGroup)
 
             If Not FOUND Then
-                _msg := 'Processor group name not found';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Processor group "%" not found', _associatedProcessorGroup;
             End If;
         End If;
 
@@ -359,7 +360,6 @@ BEGIN
         -- Validate job parameters
         ---------------------------------------------------
         --
-        _msg := '';
 
         CALL validate_analysis_job_parameters (
                                 _toolName => _toolName,
@@ -384,15 +384,15 @@ BEGIN
                                 _showDebugMessages => _infoOnly)
 
         If _returnCode <> '' Then
-            If Coalesce(_msg, '') = '' Then
-                _msg := 'Error code ' || _returnCode || ' returned by ValidateAnalysisJobParameters';
+            If Coalesce(_warning, '') = '' Then
+                _warning := 'Error code ' || _returnCode || ' returned by validate_analysis_job_parameters';
             End If;
 
             If _infoOnly Then
-                RAISE INFO '%', _msg;
+                RAISE WARNING '%', _warning;
             End If;
 
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION '%', _warning;
         End If;
 
         If Coalesce(_warning, '') <> '' Then
@@ -608,7 +608,7 @@ BEGIN
                 WHERE job_state = _stateName;
 
                 If _updateStateID = -1 Then
-                    _msg := 'State name not recognized: ' || _stateName;
+                    _msg := format('State name not recognized: %s', _stateName);
                     If _infoOnly Then
                         RAISE INFO '%', _msg;
                     End If;

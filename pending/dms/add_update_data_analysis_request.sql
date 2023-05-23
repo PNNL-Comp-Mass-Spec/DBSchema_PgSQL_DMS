@@ -205,9 +205,9 @@ BEGIN
             End If;
 
             If _insertCount = 1 Then
-                _batchDescription := 'batch ' || _batchIDs;
+                _batchDescription := format('batch %s', _batchIDs);
             Else
-                _batchDescription := 'batches ' || _batchIDs;
+                _batchDescription := format('batches %s', _batchIDs);
             End If;
 
             If Not Exists (Select * From t_requested_run_batches WHERE batch_id In (Select batch_id From Tmp_BatchIDs)) Then
@@ -312,7 +312,7 @@ BEGIN
                            _returnCode => _returnCode);
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateWP: %', _message;
+            RAISE EXCEPTION 'validate_wp: %', _msg;
         End If;
 
         If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then

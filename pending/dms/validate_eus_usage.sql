@@ -322,7 +322,7 @@ BEGIN
                             If _originalProposalID = _eusProposalID Then
                                 _message := '';
                             Else
-                                _message := 'Proposal ' || _originalProposalID || ' is superseded by ' || _eusProposalID;
+                                _message := format('Proposal %s is superseded by %s', _originalProposalID, _eusProposalID);
                             End If;
 
                             _checkSuperseded := 0;

@@ -153,7 +153,7 @@ BEGIN
 
             If _experimentGroupIDVal Is Null Then
                 _returnCode := 'U5132';
-                _message := 'Experiment Group ID must be a number: ' || _experimentGroupID;
+                _message := format('Experiment Group ID must be a number: %s', _experimentGroupID);
                 RAISE EXCEPTION '%', _message;
             End If;
         End If;
@@ -199,7 +199,7 @@ BEGIN
                                _returnCode => _returnCode);
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'ValidateWP: %', _message;
+                RAISE EXCEPTION 'validate_wp: %', _msg;
             End If;
         End If;
 
@@ -298,7 +298,7 @@ BEGIN
         ---------------------------------------------------
 
         If _suffix <> '' Then
-            _suffix := '_' || _suffix;
+            _suffix := format('_%s', _suffix);
         End If;
 
         If _mode::citext = 'PreviewAdd' Then
@@ -321,7 +321,7 @@ BEGIN
                 _requestNameLast := _requestName;
             End If;
 
-            CALL dbo.add_update_requested_run (
+            CALL public.add_update_requested_run (
                                     _requestName => _requestName,
                                     _experimentName => _experimentName,
                                     _requesterUsername => _operatorUsername,
@@ -349,7 +349,7 @@ BEGIN
                                     _stagingLocation => _stagingLocation,
                                     _resolvedInstrumentInfo => _resolvedInstrumentInfoCurrent);      -- Output
             --
-            _message := '[' || _experimentName || '] ' || _message;
+            _message := format('[%s] %s', _experimentName, _message);
 
             If _returnCode = '' And _mode = 'add' Then
                 UPDATE Tmp_ExperimentsToProcess
@@ -408,9 +408,9 @@ BEGIN
 
                 If _returnCode <> '' Then
                     If Coalesce(_msg, '') = '' Then
-                        _msg := 'add_update_requested_run_batch returned error code ' || _returnCode;
+                        _msg := format('add_update_requested_run_batch returned error code %s', _returnCode);
                     Else
-                        _msg := 'Error adding new batch, ' || _msg;
+                        _msg := format('Error adding new batch, %s', _msg);
                     End If;
                 Else
                     If _mode::citext = 'PreviewAdd' Then

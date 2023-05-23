@@ -441,7 +441,7 @@ BEGIN
 
             If _infoOnly And _showRules Then
 
-                _currentLocation := 'Querying predefined_analysis_jobs for ' || _datasetName;
+                _currentLocation := format('Querying predefined_analysis_jobs for %s', _datasetName);
 
                 INSERT INTO Tmp_JobsToCreate (
                         datasetName, priority, analysisToolName, paramFileName, settingsFileName,
@@ -467,7 +467,7 @@ BEGIN
 
             End If;
 
-            _currentLocation := 'Calling schedule_predefined_analysis_jobs for ' || _datasetName;
+            _currentLocation := format('Calling schedule_predefined_analysis_jobs for %s', _datasetName);
             _startDate := CURRENT_TIMESTAMP;
 
             CALL schedule_predefined_analysis_jobs (_datasetName,
@@ -515,8 +515,11 @@ BEGIN
                 End If;
 
             ElsIf Not _infoOnly Then
-                _message := 'Error calling schedule_predefined_analysis_jobs for dataset ' || _datasetName || '; return code ' || _returnCode;
+                _message := format('Error calling schedule_predefined_analysis_jobs for dataset %s; return code %s',
+                                    _datasetName, _returnCode);
+
                 CALL post_log_entry ('Error', _message, 'Add_Missing_Predefined_Jobs');
+
                 _message := '';
             End If;
 

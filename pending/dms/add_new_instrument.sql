@@ -264,7 +264,7 @@ BEGIN
         INSERT INTO t_storage_path_hosts ( sp_machine_name, host_name, dns_suffix, URL_Prefix)
         VALUES (_sourceMachineNameToFind, _hostName, _suffix, 'https://')
 
-        _logMessage := 'Added machine ' || _sourceMachineNameToFind || ' to t_storage_path_hosts with host name ' || _hostName;
+        _logMessage := format('Added machine %s to t_storage_path_hosts with host name %s', _sourceMachineNameToFind, _hostName);
 
         CALL post_log_entry ('Normal', _logMessage, 'Add_New_Instrument');
     End If;

@@ -26,7 +26,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _paramFileID int;
 BEGIN
     _message := '';
@@ -62,10 +61,7 @@ BEGIN
     WHERE param_file_name = _paramFileName;
 
     If Not FOUND Then
-        _msg := 'Param file not found in t_param_files: ' || _paramFileName;
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
+        _message := format('Param file not found in t_param_files: %s', _paramFileName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';

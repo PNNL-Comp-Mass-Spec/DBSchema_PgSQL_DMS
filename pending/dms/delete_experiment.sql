@@ -241,7 +241,7 @@ BEGIN
         If _returnCode <> '' Then
             ROLLBACK;
 
-            _message := 'Delete auxiliary information was unsuccessful for Experiment: ' || _message;
+            _message := format('Delete auxiliary information was unsuccessful for Experiment: %s', _message);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5205';

@@ -93,7 +93,7 @@ BEGIN
                 EXIT;
             End If;
 
-            _currentLocation := 'Look for jobs in V_DMS_Analysis_Job_Info that used ' || _proteinCollectionName;
+            _currentLocation := format('Look for jobs in V_DMS_Analysis_Job_Info that used %s', _proteinCollectionName);
 
             If _infoOnly Then
                 RAISE INFO '%', _currentLocation;
@@ -107,7 +107,8 @@ BEGIN
             WHERE Protein_Collection_List ILIKE _nameFilter;
 
             If _jobCount > 0 Then
-                _message := 'Updated state for Protein Collection "' || _proteinCollectionName || '" from 1 to 3 since ' || _jobCount::text || ' jobs are defined in DMS with this protein collection';
+                _message := format('Updated state for Protein Collection "%s" from 1 to 3 since %s defined in DMS with this protein collection',
+                                    _proteinCollectionName, _jobCount, public.check_plural(_jobCount, 'job is', 'jobs are'));
 
                 If Not _infoOnly Then
                     _currentLocation := 'Update state for CollectionID ' || _proteinCollectionID::text;
@@ -137,7 +138,10 @@ BEGIN
         Else
             -- If more than one collection was affected, update update _message with the overall stats
             If _proteinCollectionCountUpdated > 1 Then
-                _message := 'Updated the state for ' || _proteinCollectionCountUpdated::text || ' protein collections from 1 to 3 since existing jobs were found: ' || _proteinCollectionsUpdated;
+                _message := format('Updated the state for %s protein %s from 1 to 3 since existing jobs were found: %s',
+                                    _proteinCollectionCountUpdated,
+                                    public.check_plural(_proteinCollectionsUpdate, 'collection', 'collections'),
+                                    _proteinCollectionsUpdated);
             End If;
 
         End If;

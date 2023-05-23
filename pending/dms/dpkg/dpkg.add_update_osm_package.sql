@@ -131,7 +131,7 @@ BEGIN
         ---------------------------------------------------
 
         If Not Exists (SELECT * FROM dpkg.t_osm_package_state WHERE state_name = _state) Then
-            _message := 'Invalid state: ' || _state;
+            _message := format('Invalid state: %s', _state);
             RAISE EXCEPTION '%', message;
         End If;
 

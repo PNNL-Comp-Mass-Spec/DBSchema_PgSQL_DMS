@@ -73,7 +73,7 @@ BEGIN
     WHERE V.dataset = _dataset
 
     If Not FOUND Then
-        _message := 'Error, Dataset not found: ' || _dataset;
+        _message := format('Error, Dataset not found: %s', _dataset);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -110,7 +110,7 @@ BEGIN
     Else
         -- Create the request
 
-        _requestName := 'AutoReq_' || _dataset;
+        _requestName := format('AutoReq_%s', _dataset);
 
         SELECT work_package
         INTO _workPackage

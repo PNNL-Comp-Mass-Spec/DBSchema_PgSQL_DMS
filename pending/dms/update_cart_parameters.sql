@@ -33,7 +33,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _msg text;
     _dt timestamp;
     _tmp int;
     _cartID int;

@@ -96,7 +96,6 @@ DECLARE
     _fractionNumberText text;
     _fullFractionCount int;
     _newExpID int;
-    _msg text;
     _startingIndex int := 1      -- Initial index for automatic naming of new experiments;
     _step int := 1               -- Step interval in index;
     _fractionsCreated int := 0;
@@ -223,7 +222,7 @@ BEGIN
         WHERE experiment = _parentExperiment;
 
         If Not FOUND Then
-            _message := 'Could not find parent experiment named ' || _parentExperiment;
+            _message := format('Could not find parent experiment named %s', _parentExperiment);
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -327,7 +326,7 @@ BEGIN
 
             If _samplePrepRequest Is Null Then
                 _logErrors := false;
-                _message := 'Prep request ID is not an integer: ' || _requestOverride;
+                _message := format('Prep request ID is not an integer: %s', _requestOverride);
                 RAISE EXCEPTION '%', _message;
             End If;
 
@@ -338,7 +337,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _message := 'Could not find sample prep request: ' || _requestOverride;
+                _message := format('Could not find sample prep request: %s', _requestOverride);
                 RAISE EXCEPTION '%', _message;
             End If;
 
@@ -490,7 +489,7 @@ BEGIN
             _expId := get_experiment_id(_newExpName);
 
             If _expId <> 0 Then
-                _message := 'Failed to add new fraction experiment since existing experiment already exists named: ' || _newExpName;
+                _message := format('Failed to add new fraction experiment since existing experiment already exists named: %s', _newExpName);
                 _returnCode := 'U5102';
                 RAISE EXCEPTION '%', _message;
             End If;
@@ -562,8 +561,7 @@ BEGIN
                                         _returnCode => _returnCode);
                 --
                 If _returnCode <> '' Then
-                    _msg := 'Could not add experiment biomaterial to database for experiment: "' || _newExpName || '" ' || _message;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Could not add experiment biomaterial to database for experiment: "%", %', _newExpName, _message);
                 End If;
 
                 -- Add the experiment to reference compound mapping
@@ -576,8 +574,7 @@ BEGIN
                                         _returnCode => _returnCode);    -- Output
                 --
                 If _returnCode <> '' Then
-                    _msg := 'Could not add experiment reference compounds to database for experiment: "' || _newExpName || '" ' || _message;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Could not add experiment reference compounds to database for experiment: "%", %', _newExpName, _message
                 End If;
 
                 ---------------------------------------------------
@@ -653,7 +650,7 @@ BEGIN
         END LOOP; -- </AddFractions>
 
         If _mode LIKE '%Preview%' Then
-            _message := 'Preview of new fraction names: ' || _fractionNamePreviewList;
+            _message := format('Preview of new fraction names: %s', _fractionNamePreviewList);
         Else
         -- <AddToContainer>
 
@@ -702,12 +699,12 @@ BEGIN
                             _returnCode => _returnCode)     -- Output
 
             If _returnCode <> '' Then
-                _message := 'Error copying Aux Info from parent Experiment to fractionated experiments, code ' || _returnCode;
+                _message := format('Error copying Aux Info from parent Experiment to fractionated experiments, code %s', _returnCode);
                 RAISE EXCEPTION '%', _message;
             End If;
 
             If _message = '' Then
-                _message := 'New fraction names: ' || _fractionNamePreviewList;
+                _message := format('New fraction names: %s', _fractionNamePreviewList);
             End If;
 
         End If; -- </AddToContainer>

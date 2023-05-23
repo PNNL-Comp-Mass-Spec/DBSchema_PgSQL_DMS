@@ -89,7 +89,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _duplicateTaxologyMsg text;
     _matchCount int;
     _serverNameEndSlash int;
@@ -243,8 +242,7 @@ BEGIN
 
             -- Look for non-numeric values
             If Exists (SELECT * FROM Tmp_NEWT_IDs WHERE public.try_cast(NEWT_ID_Text, null::int) IS NULL) Then
-                _msg := 'Non-numeric NEWT ID values found in the NEWT_ID List: "' || _newtIDList::text || '"; see http://dms2.pnl.gov/ontology/report/NEWT';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Non-numeric NEWT ID values found in the NEWT_ID List: "%"; see http://dms2.pnl.gov/ontology/report/NEWT', _newtIDList;
             End If;
 
             -- Make sure all of the NEWT IDs are Valid
@@ -259,8 +257,7 @@ BEGIN
             WHERE S_V_CV_NEWT.identifier IS NULL
 
             If char_length(Coalesce(_invalidNEWTIDs, '')) > 0 Then
-                _msg := 'Invalid NEWT ID(s) "' || _invalidNEWTIDs || '"; see http://dms2.pnl.gov/ontology/report/NEWT';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Invalid NEWT ID(s) "%"; see http://dms2.pnl.gov/ontology/report/NEWT', _invalidNEWTIDs;
             End If;
 
         Else
@@ -275,8 +272,7 @@ BEGIN
         If Coalesce(_ncbiTaxonomyID, 0) = 0 Then
             _ncbiTaxonomyID := null;
         ElsIf Not Exists (Select * From ont.V_NCBI_Taxonomy_Cached Where Tax_ID = _ncbiTaxonomyID) Then
-            _msg := format('Invalid NCBI Taxonomy ID "%s"; see http://dms2.pnl.gov/ncbi_taxonomy/report', _ncbiTaxonomyID);
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Invalid NCBI Taxonomy ID "%"; see http://dms2.pnl.gov/ncbi_taxonomy/report', _ncbiTaxonomyID;
         End If;
 
         If _autoDefineTaxonomy Like 'Y%' Then
@@ -319,8 +315,7 @@ BEGIN
             _existingOrganismID := get_organism_id(_orgName);
 
             If _existingOrganismID <> 0 Then
-                _msg := 'Cannot add: Organism "' || _orgName || '" already in database ';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot add: Organism "%" already in database', _orgName;
             End If;
         End If;
 
@@ -335,13 +330,11 @@ BEGIN
             WHERE (organism_id = _id)
 
             If Not FOUND Then
-                _msg := 'Cannot update: Organism "' || _orgName || '" is not in database ';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot update: Organism "%" is not in database', _orgName;
             End If;
             --
             If _existingOrgName <> _orgName Then
-                _msg := 'Cannot update: Organism name may not be changed from "' || _existingOrgName || '"';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot update: Organism name may not be changed from "%"', _existingOrgName;
             End If;
         End If;
 
@@ -385,8 +378,7 @@ BEGIN
                       Coalesce(strain, '') = _orgStrain::citext;
 
                 If _matchCount <> 0 AND Not _orgSpecies LIKE '%metagenome' Then
-                    _msg := 'Cannot add: ' || _duplicateTaxologyMsg;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Cannot add: %', _duplicateTaxologyMsg;
                 End If;
             End If;
 
@@ -402,8 +394,7 @@ BEGIN
                       organism_id <> _id;
 
                 If _matchCount <> 0 AND Not _orgSpecies LIKE '%metagenome' Then
-                    _msg := 'Cannot update: ' || _duplicateTaxologyMsg;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Cannot update: %', _duplicateTaxologyMsg;
                 End If;
             End If;
         End If;
@@ -417,13 +408,13 @@ BEGIN
             -- In contrast, pc.V_Protein_Collections_by_Organism has all protein collections
 
             If Not Exists (SELECT * FROM pc.V_Collection_Picker WHERE Name = _orgDBName) Then
+
                 If Exists (SELECT * FROM pc.V_Protein_Collections_by_Organism WHERE Collection_Name = _orgDBName AND Collection_State_ID = 4) Then
-                    _msg := 'Default protein collection is invalid because it is inactive: ' || _orgDBName;
+                    RAISE EXCEPTION 'Default protein collection is invalid because it is inactive: ', _orgDBName;
                 Else
-                    _msg := 'Protein collection not found: ' || _orgDBName;
+                    RAISE EXCEPTION 'Protein collection not found: %', _orgDBName;
                 End If;
 
-                RAISE EXCEPTION '%', _msg;
             End If;
         End If;
 

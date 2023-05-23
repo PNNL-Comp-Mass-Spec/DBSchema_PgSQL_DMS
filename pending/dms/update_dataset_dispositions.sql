@@ -47,7 +47,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _list text;
     _datasetCount int := 0;
     _ratingID int;
@@ -95,8 +94,7 @@ BEGIN
         ---------------------------------------------------
 
         If _datasetIDList = '' Then
-            _msg := 'Dataset list is empty';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset list is empty';
         End If;
 
         _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
@@ -112,8 +110,7 @@ BEGIN
         WHERE (dataset_rating = _rating)
 
         If Not FOUND Then
-            _msg := 'Invalid rating: ' || _rating;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Invalid rating: %', _rating;
         End If;
 
         ---------------------------------------------------
@@ -229,8 +226,7 @@ BEGIN
                 If _curDatasetState = 5 Then
                     -- Do not allow update to rating of 2 or higher when the dataset state is 5 (Capture Failed)
                     If _ratingID >= 2 Then
-                        _msg := 'Cannot set dataset rating to ' || _rating || ' for dataset "' || _curDatasetName || '" since its state is ' || _curDatasetStateName;
-                        RAISE EXCEPTION '%', _msg;
+                        RAISE EXCEPTION 'Cannot set dataset rating to % for dataset "%" since its state is %', _rating, _curDatasetName, _curDatasetStateName;
                     End If;
                 End If;
             EXCEPTION

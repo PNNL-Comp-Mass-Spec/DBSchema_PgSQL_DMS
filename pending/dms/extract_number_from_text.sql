@@ -56,7 +56,7 @@ BEGIN
 
         -- Check for negative numbers
         If _loc > 1 And SubString(_searchText, _loc-1, 1) = '-' Then
-            _valueText := '-' || _valueText;
+            _valueText := format('-%s', _valueText);
         End If;
 
         WHILE _loc > 0 And _loc < _textLength
@@ -73,7 +73,7 @@ BEGIN
         _value := _valueText::int;
     End If;
 
-    Return _value
+    RETURN _value
 END
 
 END

@@ -167,7 +167,7 @@ BEGIN
     BEGIN
         _jobDateDescription := format('%s %s', public.check_plural(_jobCount, 'job', 'jobs'), _jobList);
 
-        _currentLocation := 'Insert into sw.t_jobs from sw.t_jobs_history for ' || _jobDateDescription;
+        _currentLocation := format('Insert into sw.t_jobs from sw.t_jobs_history for %s', _jobDateDescription);
 
         INSERT INTO sw.t_jobs( job,
                                priority,
@@ -211,7 +211,7 @@ BEGIN
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _insertCount = 0 Then
-            _message := 'No rows were added to sw.t_jobs from sw.t_jobs_history for ' || _jobDateDescription;
+            _message := format('No rows were added to sw.t_jobs from sw.t_jobs_history for %s', _jobDateDescription);
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_JobsToCopy;
@@ -296,7 +296,7 @@ BEGIN
         -- Copy parameters
         ---------------------------------------------------
 
-        _currentLocation := 'Insert into sw.t_job_parameters for ' || _jobDateDescription;
+        _currentLocation := format('Insert into sw.t_job_parameters for %s', _jobDateDescription);
 
         INSERT INTO sw.t_job_parameters( job, parameters )
         SELECT JPH.job,
@@ -316,7 +316,7 @@ BEGIN
         -- Copy job step dependencies
         ---------------------------------------------------
 
-        _currentLocation := 'Insert into sw.t_job_step_dependencies for ' || _jobDateDescription;
+        _currentLocation := format('Insert into sw.t_job_step_dependencies for %s', _jobDateDescription);
 
         -- First delete any extra steps that are in sw.t_job_step_dependencies
         --

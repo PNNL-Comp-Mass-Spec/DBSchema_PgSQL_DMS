@@ -28,7 +28,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _msg text;
     _invalidRefCompoundList text;
 BEGIN
     _message := '';
@@ -88,7 +87,7 @@ BEGIN
     WHERE Compound_ID IS NULL;
 
     If char_length(Coalesce(_invalidRefCompoundList, '')) > 0 Then
-        _message := 'Invalid reference compound name(s): ' || _invalidRefCompoundList;
+        _message := format('Invalid reference compound name(s): %s', _invalidRefCompoundList);
         _returnCode := 'U5163';
         RETURN;
     End If;
@@ -104,7 +103,7 @@ BEGIN
           RC.compound_id IS NULL;
 
     If char_length(Coalesce(_invalidRefCompoundList, '')) > 0 Then
-        _message := 'Invalid reference compound ID(s): ' || _invalidRefCompoundList;
+        _message := format('Invalid reference compound ID(s): %s', _invalidRefCompoundList);
         _returnCode := 'U5164';
         RETURN;
     End If;

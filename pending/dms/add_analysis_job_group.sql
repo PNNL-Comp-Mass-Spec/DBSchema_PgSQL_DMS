@@ -122,7 +122,6 @@ DECLARE
     _authorized boolean;
 
     _deleteCount int;
-    _msg text;
     _list text;
     _jobID int;
     _jobIDStart int;
@@ -498,7 +497,7 @@ BEGIN
                                 _userID => _userID,                             -- Output
                                 _analysisToolID => _analysisToolID,             -- Output
                                 _organismID => _organismID,                     -- Output
-                                _message => _msg,                               -- Output
+                                _message => _message,                           -- Output
                                 _returnCode => _returnCode,
                                 _autoRemoveNotReleasedDatasets => false,
                                 _autoUpdateSettingsFileToCentroided => true,
@@ -507,7 +506,7 @@ BEGIN
                                 _priority => _priority)          -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateAnalysisJobParameters: % for request % (code %)', _msg, _requestID, _returnCode;
+            RAISE EXCEPTION 'ValidateAnalysisJobParameters: % for request % (code %)', _message, _requestID, _returnCode;
         End If;
 
         If Coalesce(_warning, '') <> '' Then

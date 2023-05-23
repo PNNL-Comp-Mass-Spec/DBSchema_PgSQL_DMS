@@ -30,10 +30,10 @@ BEGIN
     ---------------------------------------------------
     --
 
-    MERGE MT_Main.dbo.T_DMS_Organism_DB_Info AS target
+    MERGE mts.T_DMS_Organism_DB_Info AS target
     USING (SELECT ID, FileName, Organism, Description, Active,
                 NumProteins, NumResidues, Organism_ID, OrgFile_RowVersion
-        FROM MT_Main.dbo.V_DMS_Organism_DB_File_Import
+        FROM mts.V_DMS_Organism_DB_File_Import
     ) AS Source ( ID, FileName, Organism, Description, Active,
                     NumProteins, NumResidues, Organism_ID, OrgFile_RowVersion)
     ON (target.ID = source.ID)
@@ -54,9 +54,6 @@ BEGIN
     VALUES ( Source.ID, Source.FileName, Source.Organism, Source.Description, Source.Active,
                 Source.NumProteins, Source.NumResidues, Source.Organism_ID, Source.OrgFile_RowVersion, CURRENT_TIMESTAMP)
     ;
-
-    _returnCode := Cast(_myError As text);
-    Return _myError
 
 END
 $$;

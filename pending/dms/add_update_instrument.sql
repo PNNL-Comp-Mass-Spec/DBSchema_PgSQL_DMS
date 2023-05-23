@@ -73,9 +73,9 @@ DECLARE
     _logErrors boolean := false;
     _percentEMSLOwnedVal int;
     _nextContainerID int;
-    _valTrackUsageWhenInactive int := dbo.BooleanTextToTinyint(@trackUsageWhenInactive);
-    _valScanSourceDir int := dbo.BooleanTextToTinyint(@scanSourceDir);
-    _valAutoDefineStoragePath int := dbo.BooleanTextToTinyint(@autoDefineStoragePath);
+    _valTrackUsageWhenInactive int;
+    _valScanSourceDir int;
+    _valAutoDefineStoragePath int;
     _logMessage text;
 
     _sqlState text;
@@ -142,6 +142,9 @@ BEGIN
         -- Resolve Yes/No parameters to 0 or 1
         ---------------------------------------------------
         --
+        _valTrackUsageWhenInactive := public.boolean_text_to_tinyint(_trackUsageWhenInactive);
+        _valScanSourceDir          := public.boolean_text_to_tinyint(_scanSourceDir);
+        _valAutoDefineStoragePath  := public.boolean_text_to_tinyint(_autoDefineStoragePath);
 
         ---------------------------------------------------
         -- Validate the _autoSP parameteres

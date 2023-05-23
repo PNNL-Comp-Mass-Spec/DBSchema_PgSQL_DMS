@@ -28,7 +28,7 @@ BEGIN
     _cutoffDateTime := DateAdd(week, -1 * _infoHoldoffWeeks, CURRENT_TIMESTAMP);
 
     -- Delete log entries that we do not want to move to the DMS Historic Log DB
-    DELETE FROM dbo.t_log_entries
+    DELETE FROM public.t_log_entries
     WHERE Entered < _cutoffDateTime AND
          ( type = 'Normal' AND message Like 'Updated EUS_Proposal_ID, EUS_Instrument_ID, and/or Instrument name for % data packages%' OR
            posted_by = 'RebuildFragmentedIndices' AND type = 'Normal' AND message LIKE 'Reindexed % due to Fragmentation%'

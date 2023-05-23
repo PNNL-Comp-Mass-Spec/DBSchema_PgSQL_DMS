@@ -47,6 +47,7 @@ DECLARE
     _datasetID int;
     _scriptXML xml;
     _tag text;
+    _msg text;
 
     _sqlState text;
     _exceptionMessage text;

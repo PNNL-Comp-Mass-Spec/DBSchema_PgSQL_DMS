@@ -205,7 +205,7 @@ BEGIN
                 _debugMode => _debugMode);
 
         If _returnCode <> '' Then
-            _message := 'Error from VerifyJobParameters';
+            _message := 'Error from verify_job_parameters';
 
             If _job > 0 Then
                 _message := format('%s (Job %s)', _message, _job);
@@ -228,7 +228,7 @@ BEGIN
             ---------------------------------------------------
 
             -- Validate scripts 'Isobaric_Labeling' and 'MAC_iTRAQ'
-            CALL sw.validate_data_package_for_mac_job
+            CALL sw.validate_data_package_for_mac_job (
                                     _dataPackageID,
                                     _scriptName,
                                     _tool,                          -- Output
@@ -366,7 +366,7 @@ BEGIN
 
             If _debugMode Then
                 RAISE INFO ' ';
-                RAISE INFO '%', 'JobParamXML: ' || _jobParamXML::text;
+                RAISE INFO 'JobParamXML: %', _jobParamXML;
 
                 If _logDebugMessages Then
                     CALL public.post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_in_Broker', 'sw');

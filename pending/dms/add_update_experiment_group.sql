@@ -173,7 +173,7 @@ BEGIN
         WHERE Exp_ID = 0
 
         _logErrors := false;
-        _message := 'Experiment run list contains experiments that do not exist: ' || _invalidExperiments;
+        _message := format('Experiment run list contains experiments that do not exist: %s', _invalidExperiments);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5204';

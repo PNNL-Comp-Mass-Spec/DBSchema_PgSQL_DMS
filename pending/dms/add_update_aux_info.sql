@@ -51,7 +51,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _targetID int := 0;
     _tgtTableName citext;
     _tgtTableNameCol citext;
@@ -105,8 +104,7 @@ BEGIN
         End If;
 
         If Not _mode::citext In ('add', 'update', 'check_only') Then
-            _msg := 'Invalid _mode: ' || _mode;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Invalid _mode: %', _mode;
         End If;
 
         ---------------------------------------------------
@@ -134,8 +132,7 @@ BEGIN
 
         If _targetName::citext = 'SamplePrepRequest' And _targetID Is Null Then
 
-            _msg := 'Cannot update aux info for the sample prep request since argument _targetEntityName is not an integer: ' || _targetEntityName;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot update aux info for the sample prep request since argument _targetEntityName is not an integer: %', _targetEntityName;
 
         ElsIf _targetID Is Null Then
 
@@ -151,8 +148,7 @@ BEGIN
             FROM public.get_aux_info_target_table_info(_targetName);
 
             If Not FOUND Then
-                _msg := format('Target type %s not found in t_aux_info_target', _targetName);
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Target type % not found in t_aux_info_target', _targetName;
             End If;
 
             If _mode <> 'check_only' Then
@@ -163,8 +159,7 @@ BEGIN
                 _targetID := public.get_aux_info_entity_id_by_name(_targetName, _tgtTableName, _tgtTableIDCol, _tgtTableNameCol, _targetEntityName);
 
                 If Coalesce(_targetID, 0) = 0 Then
-                    _msg := 'Could not resolve target name and entity name to entity ID: "' || _targetEntityName || '" ';
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Could not resolve target name and entity name to entity ID: "%"', _targetEntityName;
                 End If;
             End If;
 
@@ -242,8 +237,7 @@ BEGIN
                   Item = _inFld;
 
             If Not FOUND Then
-                _msg := 'Could not resolve item to ID: "' || _inFld || '" for category ' || _categoryName || ', subcategory ' || _subCategoryName;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Could not resolve item to ID: "%" for category %, subcategory %', _inFld, _categoryName, _subCategoryName;
             End If;
 
             If _mode <> 'check_only' Then

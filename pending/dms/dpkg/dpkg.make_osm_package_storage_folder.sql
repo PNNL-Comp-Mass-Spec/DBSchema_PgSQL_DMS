@@ -54,7 +54,7 @@ BEGIN
                     _command = 'add'
 
     ---------------------------------------------------
-    -- EXECUTE CallSendMessage, which will use xp_cmdshell to run C:\DMS_Programs\DBMessageSender\DBMessageSender.exe
+    -- Call call_send_message, which will use xp_cmdshell to run C:\DMS_Programs\DBMessageSender\DBMessageSender.exe
     -- We stopped doing this in May 2016 because login DMSWebUser no longer has EXECUTE privileges on xp_cmdshell
     ---------------------------------------------------
     --
@@ -62,17 +62,11 @@ BEGIN
     CALL call_send_message _id, _mode, _message output
 
     If Coalesce(_message, '') = '' Then
-        _message := 'Called SendMessage for OSM Package ID ' || _packageID::text || ': ' || _pathFolder;
+        _message := format('Called SendMessage for OSM Package ID %s: %s', _packageID, _pathFolder);
     End If;
 
     CALL post_log_entry ('Normal', _message, 'Make_OSM_Package_Storage_Folder', 'dpkg', _callingUser => _CallingUser)
     */
-
-    ---------------------------------------------------
-    -- Done
-    ---------------------------------------------------
-
-    return _myError
 
 END
 $$;

@@ -263,58 +263,48 @@ BEGIN
         End If;
 
         If Coalesce(_mode, '') = '' Then
-            _msg := '_mode was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION '_mode was blank';
         End If;
 
         If Coalesce(_secSep, '') = '' Then
-            _msg := 'Separation type was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Separation type was blank';
         End If;
-        --
+
         If Coalesce(_lcColumnNum, '') = '' Then
-            _msg := 'LC Column name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'LC Column name was blank';
         End If;
-        --
+
         If Coalesce(_datasetName, '') = '' Then
-            _msg := 'Dataset name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset name was blank';
         End If;
-        --
+
         _folderName := _datasetName;
-        --
+
         If Coalesce(_experimentName, '') = '' Then
-            _msg := 'Experiment name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Experiment name was blank';
         End If;
-        --
+
         If Coalesce(_folderName, '') = '' Then
-            _msg := 'Folder name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Folder name was blank';
         End If;
-        --
+
         If Coalesce(_operatorUsername, '') = '' Then
-            _msg := 'Operator payroll number/HID was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Operator payroll number/HID was blank';
         End If;
-        --
+
         If Coalesce(_instrumentName, '') = '' Then
-            _msg := 'Instrument name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Instrument name was blank';
         End If;
-        --
+
         _msType := Coalesce(_msType, '');
 
         -- Allow _msType to be blank if _mode is 'add' or 'bad' but not if check_add or add_trigger or update
         If _msType = '' And NOT _mode::citext In ('add', 'bad') Then
-            _msg := 'Dataset type was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset type was blank';
         End If;
-        --
+
         If Coalesce(_lcCartName, '') = '' Then
-            _msg := 'LC Cart name was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'LC Cart name was blank';
         End If;
 
         -- Assure that _comment is not null and assure that it doesn't have &quot; or &#34; or &amp;
@@ -324,8 +314,7 @@ BEGIN
         _comment := public.remove_cr_lf(_comment);
 
         If Coalesce(_rating, '') = '' Then
-            _msg := 'Rating was blank';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Rating was blank';
         End If;
 
         If Coalesce(_wellplateName, '')::citext IN ('', 'na') Then
@@ -346,8 +335,7 @@ BEGIN
         _captureSubfolder := Trim(Coalesce(_captureSubfolder, ''));
 
         If _captureSubfolder Similar To '\\%' OR _captureSubfolder::citext Similar To '[A-Z]:\%'::citext Then
-         _msg := 'Capture subfolder should be a subdirectory name below the source share for this instrument; it is currently a full path';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Capture subfolder should be a subdirectory name below the source share for this instrument; it is currently a full path';
         End If;
 
         _lcCartConfig := Trim(Coalesce(_lcCartConfig, ''));
@@ -383,27 +371,24 @@ BEGIN
             If _badCh = 'space' Then
                 _msg := 'Dataset name may not contain spaces';
             ElsIf char_length(_badCh) = 1 Then
-                _msg := 'Dataset name may not contain the character ' || _badCh;
+                _msg := format('Dataset name may not contain the character %s', _badCh);
             Else
-                _msg := 'Dataset name may not contain the characters ' || _badCh;
+                _msg := format('Dataset name may not contain the characters %s', _badCh);
             End If;
 
             RAISE EXCEPTION '%', _msg;
         End If;
 
         If Not _aggregationJobDataset And (_datasetName::citext Similar To '%[.]raw'::citext Or _datasetName::citext Similar To '%[.]wiff'::citext Or _datasetName::citext Similar To '%[.]d'::citext) Then
-            _msg := 'Dataset name may not end in .raw, .wiff, or .d';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset name may not end in .raw, .wiff, or .d';
         End If;
 
         If char_length(_datasetName) > 80 And Not _mode::citext In ('update', 'check_update') Then
-            _msg := format('Dataset name cannot be over 80 characters in length; currently %s characters', char_length(_datasetName));
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset name cannot be over 80 characters in length; currently % characters', char_length(_datasetName);
         End If;
 
         If char_length(_datasetName) < 6 Then
-            _msg := format('Dataset name must be at least 6 characters in length; currently %s characters', char_length(_datasetName));
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset name must be at least 6 characters in length; currently % characters', char_length(_datasetName);
         End If;
 
         If _datasetName::citext In (
@@ -411,8 +396,7 @@ BEGIN
            'High-pH', 'NotDispositioned', 'Yufeng', 'Uploaded', 'Sequence', 'Sequences',
            'Peptide', 'BadData') Then
 
-            _msg := 'Dataset name is too generic; be more specific';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Dataset name is too generic; be more specific';
 
         End If;
 
@@ -428,8 +412,7 @@ BEGIN
             _ratingID := get_dataset_rating_id (_rating);
 
             If _ratingID = 0 Then
-                _msg := 'Could not find entry in database for rating ' || _rating;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Could not find entry in database for rating %', _rating;
             End If;
         End If;
 
@@ -447,22 +430,19 @@ BEGIN
             -- Cannot update a non-existent entry
             --
             If _mode::citext In ('update', 'check_update') Then
-                _msg := 'Cannot update: Dataset ' || _datasetName || ' is not in database';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot update: Dataset % is not in database', _datasetName;
             End If;
         Else
             -- Cannot create an entry that already exists
             --
             If _addingDataset Then
-                _msg := 'Cannot add dataset ' || _datasetName || ' since already in database';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot add dataset % since already in database', _datasetName;
             End If;
 
             -- Do not allow a rating change from 'Unreviewed' to any other rating within this procedure
             --
             If _curDSRatingID = -10 And _rating::citext <> 'Unreviewed' Then
-                _msg := 'Cannot change dataset rating from Unreviewed with this mechanism; use the Dataset Disposition process instead ("https://dms2.pnl.gov/dataset_disposition/search" or SP UpdateDatasetDispositions)';
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot change dataset rating from Unreviewed with this mechanism; use the Dataset Disposition process instead ("https://dms2.pnl.gov/dataset_disposition/search" or SP UpdateDatasetDispositions)';
             End If;
         End If;
 
@@ -477,8 +457,7 @@ BEGIN
         WHERE lc_column::citext = _lcColumnNum::citext;
 
         If Not FOUND Then
-            _msg := 'Unknown LC column name: ' || _lcColumnNum;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Unknown LC column name: %', _lcColumnNum;
         End If;
 
         ---------------------------------------------------
@@ -496,8 +475,7 @@ BEGIN
             WHERE cart_config_name::citext = _lcCartConfig::citext;
 
             If Not FOUND Then
-                _msg := 'Unknown LC cart config: ' || _lcCartConfig;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Unknown LC cart config: %', _lcCartConfig;
             End If;
         End If;
 
@@ -512,8 +490,7 @@ BEGIN
         WHERE separation_type::citext = _secSep::citext
 
         If Not FOUND Then
-            _msg := 'Unknown separation type: ' || _secSep;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Unknown separation type: %', _secSep;
         End If;
 
         ---------------------------------------------------
@@ -527,8 +504,7 @@ BEGIN
         WHERE name::citext = _internalStandards::citext;
 
         If Not FOUND Then
-            _msg := 'Unknown internal standard name: ' || _internalStandards;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Unknown internal standard name: %', _internalStandards;
         End If;
 
         ---------------------------------------------------
@@ -565,8 +541,7 @@ BEGIN
         End If;
 
         If _experimentID = 0 Then
-            _msg := 'Could not find entry in database for experiment ' || _experimentName;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Could not find entry in database for experiment %', _experimentName;
         End If;
 
         ---------------------------------------------------
@@ -576,8 +551,7 @@ BEGIN
         _instrumentID := get_instrument_id(_instrumentName);
 
         If _instrumentID = 0 Then
-            _msg := 'Could not find entry in database for instrument ' || _instrumentName;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Could not find entry in database for instrument %', _instrumentName;
         End If;
 
         ---------------------------------------------------
@@ -590,8 +564,7 @@ BEGIN
         WHERE instrument_id::citext = _instrumentID::citext;
 
         If Not FOUND Then
-            _msg := 'Instrument group not defined for instrument ' || _instrumentName;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Instrument group not defined for instrument %', _instrumentName;
         End If;
 
         ---------------------------------------------------
@@ -625,8 +598,7 @@ BEGIN
                 FROM t_dataset_rating_name
                 WHERE DST_Type_ID = _datasetTypeID
             Else
-                _msg := 'Could not find entry in database for dataset type ' || _msType;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Could not find entry in database for dataset type %', _msType;
             End If;
         End If;
 
@@ -635,7 +607,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'CALL ValidateInstrumentGroupAndDatasetType with type = ' || _msType || ' and group = ' || _instrumentGroup;
+            _debugMsg := format('CALL ValidateInstrumentGroupAndDatasetType with type = %s and group = %s', _msType, _instrumentGroup);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
@@ -709,7 +681,7 @@ BEGIN
         If _returnCode <> '' Then
             -- _msg should already contain the details of the error
             If Coalesce(_msg, '') = '' Then
-                _msg := 'ValidateInstrumentGroupAndDatasetType returned non-zero result code: ' || _returnCode;
+                _msg := format('ValidateInstrumentGroupAndDatasetType returned non-zero result code: %s', _returnCode);
             End If;
 
             RAISE EXCEPTION '%', _msg;
@@ -720,8 +692,7 @@ BEGIN
         ---------------------------------------------------
         --
         If _mode::citext In ('update', 'check_update') and _instrumentID <> _curDSInstID and _curDSStateID <> 1 Then
-            _msg := 'Cannot change instrument if dataset not in "new" state';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot change instrument if dataset not in "new" state';
         End If;
 
         ---------------------------------------------------
@@ -729,7 +700,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'Query get_user_id with _operatorUsername = ' || _operatorUsername;
+            _debugMsg := format('Query get_user_id with _operatorUsername = %s', _operatorUsername);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
@@ -748,7 +719,7 @@ BEGIN
             -- Try to auto-resolve the name
 
             If _logDebugMessages Then
-                _debugMsg := 'Call auto_resolve_name_to_username with _operatorUsername = ' || _operatorUsername;
+                _debugMsg := format('Call auto_resolve_name_to_username with _operatorUsername = %s', _operatorUsername);
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
@@ -758,8 +729,7 @@ BEGIN
                 -- Single match found; update _operatorUsername
                 _operatorUsername := _newUsername;
             Else
-                _msg := 'Could not find entry in database for operator username ' || _operatorUsername;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Could not find entry in database for operator username %', _operatorUsername;
             End If;
         End If;
 
@@ -836,7 +806,7 @@ BEGIN
         If _requestID = 0 AND _addingDataset Then
 
             If _logDebugMessages Then
-                _debugMsg := 'Call FindActiveRequestedRunForDataset with _datasetName = ' || _datasetName;
+                _debugMsg := format('Call FindActiveRequestedRunForDataset with _datasetName = %s', _datasetName);
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
@@ -927,8 +897,7 @@ BEGIN
             WHERE cart_name = _lcCartName;
 
             If Not FOUND Then
-                _msg := 'Unknown LC Cart name: ' || _lcCartName;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Unknown LC Cart name: %', _lcCartName;
             End If;
 
             If _requestID = 0 Then
@@ -953,7 +922,7 @@ BEGIN
                                     _returnCode => _returnCode);        -- Output
 
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'LookupEUSFromExperimentSamplePrep: %', _msg;
+                    RAISE EXCEPTION 'lookup_eus_from_experiment_sample_prep: %', _msg;
                 End If;
 
                 If Coalesce(_msg, '') <> '' Then
@@ -979,7 +948,7 @@ BEGIN
 
                 If _returnCode <> '' Then
                     _logErrors := false;
-                    RAISE EXCEPTION 'ValidateEUSUsage: %', _msg;
+                    RAISE EXCEPTION 'validate_eus_usage: %', _msg;
                 End If;
 
                 If Coalesce(_msg, '') <> '' Then
@@ -994,8 +963,7 @@ BEGIN
                 ---------------------------------------------------
 
                 If NOT EXISTS (SELECT * FROM t_requested_run WHERE request_id = _requestID) Then
-                    _msg := 'Request request_id not found';
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Request request_id not found';
                 End If;
 
             End If; -- </b2>
@@ -1048,8 +1016,7 @@ BEGIN
                 -- CreateXmlDatasetTriggerFile should have already logged critical errors to t_log_entries
                 -- No need for this procedure to log the message again
                 _logErrors := false;
-                _msg := 'There was an error while creating the XML Trigger file: ' || _message;
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'There was an error while creating the XML Trigger file: %', _message;
             End If;
         End If; -- </AddTrigger>
 
@@ -1140,8 +1107,7 @@ BEGIN
                 INTO _datasetID;
 
                 If Not FOUND Then
-                    _msg := 'Insert operation failed for dataset ' || _datasetName;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Insert operation failed for dataset %', _datasetName;
                 End If;
 
                 -- As a precaution, query t_dataset using Dataset name to make sure we have the correct Dataset_ID
@@ -1194,7 +1160,7 @@ BEGIN
                         FROM public.get_wp_for_eus_proposal (_eusProposalID);
                     End If;
 
-                    _requestName := 'AutoReq_' || _datasetName;
+                    _requestName := format('AutoReq_%s', _datasetName);
 
                     If _logDebugMessages Then
                         RAISE INFO '%', 'Call AddUpdateRequestedRun';
@@ -1229,9 +1195,11 @@ BEGIN
 
                     If _returnCode <> '' Then
                         If _eusProposalID = '' And _eusUsageType = '' and _eusUsersList = '' Then
-                            _msg := 'Create AutoReq run request failed: dataset ' || _datasetName || '; EUS Proposal ID, Usage Type, and Users list cannot all be blank ->' || _message;
+                            _msg := format('Create AutoReq run request failed: dataset %s; EUS Proposal ID, Usage Type, and Users list cannot all be blank ->%s',
+                                            _msType, _message);
                         Else
-                            _msg := 'Create AutoReq run request failed: dataset ' || _datasetName || ' with EUS Proposal ID ' || _eusProposalID || ', Usage Type ' || _eusUsageType || ', and Users List ' || _eusUsersList || ' ->' || _message;
+                            _msg := format('Create AutoReq run request failed: dataset %s with EUS Proposal ID %s, Usage Type %s, and Users List %s ->%s',
+                                            _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message);
                         End If;
 
                         _logErrors := false;
@@ -1263,8 +1231,7 @@ BEGIN
                                         _returnCode);   -- Output
 
                     If _returnCode <> '' Then
-                        _msg := 'Update LC cart name failed: dataset ' || _datasetName || ' -> ' || _message;
-                        RAISE EXCEPTION '%', _msg;
+                        RAISE EXCEPTION 'Update LC cart name failed: dataset % -> %',_datasetName, _message);
                     End If;
                 End If;
 
@@ -1296,8 +1263,7 @@ BEGIN
                             _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
-                    _msg := 'Consume operation failed: dataset ' || _datasetName || ' -> ' || _message;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Consume operation failed: dataset % -> %', _datasetName, _message;
                 End If;
 
             END;
@@ -1396,7 +1362,7 @@ BEGIN
                                         _returnCode => _returnCode);    -- Output
 
                     If _returnCode <> '' Then
-                        _warningAddon := 'Update LC cart name failed: ' || _warningAddon;
+                        _warningAddon := format('Update LC cart name failed: %s', _warningAddon);
                         _warning := public.append_to_text(_warning, _warningAddon, 0, '; ', 512);
                     End If;
                 End If;
@@ -1448,8 +1414,8 @@ BEGIN
                                     _logDebugMessages => _logDebugMessages);
 
                 If _returnCode <> '' Then
-                    _msg := 'Requested run update error using Proposal ID ' || _eusProposalID || ', Usage Type ' || _eusUsageType || ', and Users List ' || _eusUsersList || ' ->' || _message;
-                    RAISE EXCEPTION '%', _msg;
+                    RAISE EXCEPTION 'Requested run update error using Proposal ID %, Usage Type %, and Users List % ->%',
+                                    _eusProposalID, _eusUsageType, _eusUsersList, _message;
                 End If;
             End If; -- </b4>
 

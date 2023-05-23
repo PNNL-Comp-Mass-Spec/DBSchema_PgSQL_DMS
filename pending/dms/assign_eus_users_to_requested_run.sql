@@ -32,7 +32,6 @@ AS $$
 DECLARE
     _unknownUserCount int;
     _unknownUsers text;
-    _msg text;
     _logType text := 'Error';
     _validateEUSData int := 1;
 BEGIN
@@ -80,10 +79,10 @@ BEGIN
 
         _unknownUserCount := array_length(string_to_array(_unknownUsers, ','), 1);
 
-        _msg := format('Trying to associate %s unknown EUS %s with request %s; ignoring unknown %s %s',
-                        _unknownUserCount, _userText, _request,
-                        public.check_plural(_unknownUserCount, 'user', 'users'),
-                        _unknownUsers);
+        _message := format('Trying to associate %s unknown EUS %s with request %s; ignoring unknown %s %s',
+                            _unknownUserCount, _userText, _request,
+                            public.check_plural(_unknownUserCount, 'user', 'users'),
+                            _unknownUsers);
 
         SELECT value
         INTO _validateEUSData
@@ -100,6 +99,8 @@ BEGIN
         End If;
 
         CALL post_log_entry (_logType, _msg, 'Assign_EUS_Users_To_Requested_Run');
+
+        _message := '';
 
     End If;
 

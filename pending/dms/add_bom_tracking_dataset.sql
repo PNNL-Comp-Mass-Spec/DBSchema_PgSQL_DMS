@@ -130,7 +130,7 @@ BEGIN
 
         If EXISTS (SELECT * FROM t_dataset WHERE dataset = _datasetName) Then
             If _mode = 'debug' Then
-                _message := 'Dataset already exists: ' || _datasetName;
+                _message := format('Dataset already exists: %s', _datasetName);
                 RAISE INFO '%', _message;
                 RETURN;
             Else

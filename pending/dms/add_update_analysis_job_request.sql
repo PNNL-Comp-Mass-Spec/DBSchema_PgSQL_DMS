@@ -526,7 +526,7 @@ BEGIN
 
             If Coalesce(_autoSupersedeName, '') <> _settingsFileName Then
                 _settingsFileName := _autoSupersedeName;
-                _msgToAppend := 'Note: Auto-updated the settings file to ' || _autoSupersedeName;
+                _msgToAppend := format('Note: Auto-updated the settings file to %s', _autoSupersedeName);
 
                 If _profileModeMSnDatasets > 0 Then
                     _msgToAppend := _msgToAppend || ' because one or more datasets in this job request has profile-mode MSn spectra';

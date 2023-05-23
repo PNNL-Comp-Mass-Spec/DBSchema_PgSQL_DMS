@@ -90,7 +90,7 @@ BEGIN
     WHERE DS.dataset = _dataset;
 
     If Not FOUND Then
-        _message := 'Source dataset not found: ' || _dataset;
+        _message := format('Source dataset not found: %s', _dataset);
         RAISE INFO '%', _message;
         RETURN;
     End If;
@@ -102,7 +102,7 @@ BEGIN
     _datasetNew := _Dataset || _suffix;
 
     If Exists (SELECT * FROM t_dataset WHERE dataset = _datasetNew) Then
-        _message := 'Target dataset already exists: ' || _datasetNew;
+        _message := format('Target dataset already exists: %s', _datasetNew);
         RAISE INFO '%', _message;
         RETURN;
     End If;
@@ -147,7 +147,7 @@ BEGIN
                ON RR.eus_usage_type_id = EUT.request_id
         WHERE DS.dataset = _dataset;
 
-        _requestNameNew := 'AutoReq_' || _DatasetNew;
+        _requestNameNew := format('AutoReq_%s', _DatasetNew);
 
         If _infoOnly Then
         -- <a>
@@ -316,7 +316,7 @@ BEGIN
     COMMIT;
 
     BEGIN
-        _message := 'Created dataset ' || _datasetNew || ' by cloning ' || _dataset;
+        _message := format('Created dataset %s by cloning %s', _datasetNew, _dataset);
 
         CALL post_log_entry ('Normal', _message, 'Clone_Dataset');
 

@@ -32,7 +32,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _msg text;
     _invalidBiomaterialList text := null;
 BEGIN
     _message := '';
@@ -70,7 +69,7 @@ BEGIN
     WHERE Biomaterial_ID IS NULL;
 
     If char_length(Coalesce(_invalidBiomaterialList, '')) > 0 Then
-        _message := 'Invalid biomaterial name(s): ' || _invalidBiomaterialList;
+        _message := format('Invalid biomaterial name(s): %s', _invalidBiomaterialList);
         _returnCode = 'U5063';
         RETURN;
     End If;

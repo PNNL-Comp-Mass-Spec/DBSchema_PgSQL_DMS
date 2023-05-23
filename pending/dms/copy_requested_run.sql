@@ -105,7 +105,7 @@ BEGIN
         INTO _stateNameList
         FROM t_requested_run_state_name
 
-        _message := 'Invalid requested run state: ' || _status || '; valid states are ' || _stateNameList;
+        _message := format('Invalid requested run state: %s; valid states are %s', _status, _stateNameList);
         CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
 
         RETURN;
@@ -304,7 +304,7 @@ BEGIN
                         _returnCode => _returnCode);    -- Output
 
     If _returnCode <> '' Then
-        _message := 'Problem copying factors to new request; _returnCode = ' || _returnCode;
+        _message := format('Problem copying factors to new request; _returnCode = %s', _returnCode);
         CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
     Else

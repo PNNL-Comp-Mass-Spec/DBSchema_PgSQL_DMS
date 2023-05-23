@@ -61,7 +61,9 @@ BEGIN
         If _infoOnly Then
             RAISE INFO '%', _message;
         End If;
-        return 50000
+
+        _returnCode := 'U5201';
+        RETURN;
     End If;
 
     -----------------------------------------------
@@ -80,130 +82,128 @@ BEGIN
     _statusURI_Path := '';
     _statusNum := null;
 
-    If _statusURI = '' and _fileCountNew = 0 And _fileCountUpdated = 0 Then
-        -- Nothing to do; leave _statusURI_PathID as 1
-        _statusURI_PathID := 1;
-    Else
-    -- <a1>
+    If _statusURI = '' And _fileCountNew = 0 And _fileCountUpdated = 0 Then
+        RAISE INFO '_statusURI is empty and file counts are 0; nothing to do'
+        RETURN;
+    End If;
 
-        -- Setup the log message in case we need it; also, set _invalidFormat to true for now
-        _logMsg := 'Unable to extract StatusNum from StatusURI for Data Package ' || _dataPackageID::text;
-        _invalidFormat := true;
+    -- Setup the log message in case we need it; also, set _invalidFormat to true for now
+    _logMsg := 'Unable to extract StatusNum from StatusURI for Data Package ' || _dataPackageID::text;
+    _invalidFormat := true;
 
-        _charLoc := position('/status/' in _statusURI);
+    _charLoc := position('/status/' in _statusURI);
+
+    If _charLoc = 0 Then
+
+        _charLoc := position(_getStateToken in _statusURI);
+
         If _charLoc = 0 Then
-        -- <b1>
-
-            _charLoc := position(_getStateToken in _statusURI);
-            If _charLoc = 0 Then
-                _logMsg := _logMsg || ': did not find either ' || _getStateToken || ' or /status/ in ' || _statusURI;
-            Else
-            -- <c>
-
-                -- Extract out the base path, examples:
-                -- https://ingestdmsdev.my.emsl.pnl.gov/get_state?job_id=
-                -- https://ingestdms.my.emsl.pnl.gov/get_state?job_id=
-                _statusURI_Path := SUBSTRING(_statusURI, 1, _charLoc + char_length(_getStateToken) - 1);
-
-                -- Extract out the number
-                _subString := SubString(_statusURI, _charLoc + char_length(_getStateToken), 255);
-
-                If char_length(Coalesce(_subString, '')) > 0 Then
-                    -- Find the first non-numeric character in _subString
-                    _charLoc := PATINDEX('%[^0-9]%', _subString);
-
-                    If _charLoc <= 0 Then
-                        -- Match not found; _subString is simply an integer
-                        _statusNum := try_cast(_subString, null::int);
-                        If Not _statusNum Is Null Then
-                            _invalidFormat := false;
-                        End If;
-                    End If;
-
-                    If _charLoc > 1 Then
-                        _statusNum := try_cast(SUBSTRING(_subString, 1, _charLoc-1), null::int);
-                        If Not _statusNum Is Null Then
-                            _invalidFormat := false;
-                        End If;
-                    End If;
-                End If;
-
-                If _invalidFormat Then
-                    _logMsg := _logMsg || ': number not found after ' || _getStateToken || ' in ' || _statusURI;
-                End If;
-
-            End If; -- </c>
-
+            _logMsg := _logMsg || ': did not find either ' || _getStateToken || ' or /status/ in ' || _statusURI;
         Else
-        -- <b2>
-            -- Extract out the base path, for example:
-            -- https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/status/
-            _statusURI_Path := SUBSTRING(_statusURI, 1, _charLoc + 7);
 
-            -- Extract out the text after /status/, for example:
-            -- 644749/xml
-            _subString := SubString(_statusURI, _charLoc + 8, 255);
+            -- Extract out the base path, examples:
+            -- https://ingestdmsdev.my.emsl.pnl.gov/get_state?job_id=
+            -- https://ingestdms.my.emsl.pnl.gov/get_state?job_id=
+            _statusURI_Path := SUBSTRING(_statusURI, 1, _charLoc + char_length(_getStateToken) - 1);
 
-            -- Find the first non-numeric character in _subString
-            _charLoc := PATINDEX('%[^0-9]%', _subString);
+            -- Extract out the number
+            _subString := SubString(_statusURI, _charLoc + char_length(_getStateToken), 255);
 
-            If _charLoc <= 0 Then
-                -- Match not found; _subString is simply an integer
-                _statusNum := try_cast(_subString, null::int);
-                If Coalesce(_subString, '') <> '' And Not _statusNum Is Null Then
-                    _invalidFormat := false;
-                Else
-                    _logMsg := _logMsg || ': number not found after /status/ in ' || _statusURI;
+            If char_length(Coalesce(_subString, '')) > 0 Then
+                -- Find the first non-numeric character in _subString
+                _charLoc := PATINDEX('%[^0-9]%', _subString);
+
+                If _charLoc <= 0 Then
+                    -- Match not found; _subString is simply an integer
+                    _statusNum := try_cast(_subString, null::int);
+                    If Not _statusNum Is Null Then
+                        _invalidFormat := false;
+                    End If;
+                End If;
+
+                If _charLoc > 1 Then
+                    _statusNum := try_cast(SUBSTRING(_subString, 1, _charLoc-1), null::int);
+                    If Not _statusNum Is Null Then
+                        _invalidFormat := false;
+                    End If;
                 End If;
             End If;
 
-            If _charLoc = 1 Then
+            If _invalidFormat Then
+                _logMsg := _logMsg || ': number not found after ' || _getStateToken || ' in ' || _statusURI;
+            End If;
+
+        End If;
+
+    Else
+        -- Extract out the base path, for example:
+        -- https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/status/
+        _statusURI_Path := SUBSTRING(_statusURI, 1, _charLoc + 7);
+
+        -- Extract out the text after /status/, for example:
+        -- 644749/xml
+        _subString := SubString(_statusURI, _charLoc + 8, 255);
+
+        -- Find the first non-numeric character in _subString
+        _charLoc := PATINDEX('%[^0-9]%', _subString);
+
+        If _charLoc <= 0 Then
+            -- Match not found; _subString is simply an integer
+            _statusNum := try_cast(_subString, null::int);
+            If Coalesce(_subString, '') <> '' And Not _statusNum Is Null Then
+                _invalidFormat := false;
+            Else
                 _logMsg := _logMsg || ': number not found after /status/ in ' || _statusURI;
             End If;
+        End If;
 
-            If _charLoc > 1 Then
-                _statusNum := try_cast(SUBSTRING(_subString, 1, _charLoc-1), null::int);
-                If Not _statusNum Is Null Then
-                    _invalidFormat := false;
-                End If;
+        If _charLoc = 1 Then
+            _logMsg := _logMsg || ': number not found after /status/ in ' || _statusURI;
+        End If;
+
+        If _charLoc > 1 Then
+            _statusNum := try_cast(SUBSTRING(_subString, 1, _charLoc-1), null::int);
+            If Not _statusNum Is Null Then
+                _invalidFormat := false;
             End If;
+        End If;
 
-        End If; -- </b2>
+    End If;
 
-        If _invalidFormat Then
+    If _invalidFormat Then
+        If _infoOnly = false Then
+            If _errorCode = 0 Then
+                CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'dpkg');
+            End If;
+        Else
+            RAISE INFO '%', _logMsg;
+        End If;
+    Else
+        -- Resolve _statusURI_Path to _statusURI_PathID
+
+        _status_uri_path_id := Get_URI_Path_ID (_statusURI_Path, _infoOnly => _infoOnly)
+
+        If _statusURI_PathID <= 1 Then
+            _logMsg := 'Unable to resolve StatusURI_Path to URI_PathID for Data Package ' || _dataPackageID::text || ': ' || _statusURI_Path;
+
             If _infoOnly = false Then
-                If _errorCode = 0 Then
-                    CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'dpkg');
-                End If;
+                CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'dpkg');
             Else
                 RAISE INFO '%', _logMsg;
             End If;
         Else
-        -- <b3>
-            -- Resolve _statusURI_Path to _statusURI_PathID
+            -- Blank out _statusURI since we have successfully resolved it into _statusURI_PathID and _statusNum
+            _statusURI := '';
+        End If;
 
-            _status_uri_path_id := Get_URI_Path_ID (_statusURI_Path, _infoOnly => _infoOnly)
-
-            If _statusURI_PathID <= 1 Then
-                _logMsg := 'Unable to resolve StatusURI_Path to URI_PathID for Data Package ' || _dataPackageID::text || ': ' || _statusURI_Path;
-
-                If _infoOnly = false Then
-                    CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'dpkg');
-                Else
-                    RAISE INFO '%', _logMsg;
-                End If;
-            Else
-                -- Blank out _statusURI since we have successfully resolved it into _statusURI_PathID and _statusNum
-                _statusURI := '';
-            End If;
-
-        End If; -- </b3>
-    End If; -- </a1>
+    End If;
 
     If _infoOnly Then
         -----------------------------------------------
         -- Preview the data, then exit
         -----------------------------------------------
+
+        -- ToDo: Use RAISE INFO to show this
 
         SELECT _dataPackageID AS DataPackageID,
                _subfolder AS Subfolder,
@@ -216,57 +216,33 @@ BEGIN
                _statusNum as StatusNum,
                _errorCode AS ErrorCode
 
-    Else
-    -- <a3>
-
-        -----------------------------------------------
-        -- Add a new row to dpkg.t_myemsl_uploads
-        -----------------------------------------------
-        --
-        INSERT INTO dpkg.t_myemsl_uploads(   data_pkg_id,
-                                        subfolder,
-                                        file_count_new,
-                                        file_count_updated,
-                                        bytes,
-                                        upload_time_seconds,
-                                        status_uri_path_id,
-                                        status_num,
-                                        error_code,
-                                        entered )
-        SELECT  _dataPackageID,
-                _subfolder,
-                _fileCountNew,
-                _fileCountUpdated,
-                _bytes,
-                _uploadTimeSeconds,
-                _statusURI_PathID,
-                _statusNum,
-                _errorCode,
-                CURRENT_TIMESTAMP
-        --
-        if _myError <> 0 Then
-            _message := 'Error adding new row to dpkg.t_myemsl_uploads for Data Package ' || _dataPackageID::text;
-        End If;
-
-    End If; -- </a3>
-
-    If _myError <> 0 Then
-        If _message = '' Then
-            _message := 'Error in StoreMyEMSLUploadStats';
-        End If;
-
-        _message := _message || '; error code = ' || _myError::text;
-
-        If _infoOnly = false Then
-            CALL public.post_log_entry ('Error', _message, 'Store_MyEMSL_Upload_Stats', 'dpkg');
-        End If;
+        RETURN;
     End If;
 
-    If char_length(_message) > 0 AND _infoOnly Then
-        RAISE INFO '%', _message;
-    End If;
-
-    Return _myError
+    -----------------------------------------------
+    -- Add a new row to dpkg.t_myemsl_uploads
+    -----------------------------------------------
+    --
+    INSERT INTO dpkg.t_myemsl_uploads( data_pkg_id,
+                                       subfolder,
+                                       file_count_new,
+                                       file_count_updated,
+                                       bytes,
+                                       upload_time_seconds,
+                                       status_uri_path_id,
+                                       status_num,
+                                       error_code,
+                                       entered )
+    SELECT _dataPackageID,
+           _subfolder,
+           _fileCountNew,
+           _fileCountUpdated,
+           _bytes,
+           _uploadTimeSeconds,
+           _statusURI_PathID,
+           _statusNum,
+           _errorCode,
+           CURRENT_TIMESTAMP;
 
 END
 $$;

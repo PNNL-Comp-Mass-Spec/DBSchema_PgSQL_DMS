@@ -235,7 +235,7 @@ BEGIN
             WHERE experiment = _plexExperimentIdOrName;
 
             If Not FOUND Then
-                _message := 'Invalid Experiment Name: ' || _plexExperimentIdOrName;
+                _message := format('Invalid Experiment Name: %s', _plexExperimentIdOrName);
                 RAISE EXCEPTION '%', _message;
             End If;
         End If;
@@ -261,12 +261,14 @@ BEGIN
         WHERE exp_id = _plexExperimentId
 
         If Not FOUND Then
-            _message := 'Invalid Plex Experiment ID ' || _plexExperimentIdOrName;
+            _message := format('Invalid Plex Experiment ID %s', _plexExperimentIdOrName);
             RAISE EXCEPTION '%', _message;
         End If;
 
         If _experimentLabel::citext In ('Unknown', 'None') Then
-            _message := 'Plex Experiment ID ' || _plexExperimentIdOrName || ' needs to have its isobaric label properly defined (as TMT10, TMT11, iTRAQ, etc.); it is currently ' || _experimentLabel;
+            _message := format('Plex Experiment ID %s needs to have its isobaric label properly defined (as TMT10, TMT11, iTRAQ, etc.); it is currently %s',
+                                _plexExperimentIdOrName, _experimentLabel);
+
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -720,7 +722,7 @@ BEGIN
                 FROM Tmp_Experiment_Plex_Members
                 WHERE ValidExperiment = 0;
 
-                _message := 'Invalid Experiment IDs: ' || _message;
+                _message := format('Invalid Experiment IDs: %s', _message);
             End If;
 
             RAISE EXCEPTION '%', _message;
@@ -787,30 +789,12 @@ BEGIN
 
             _currentPlexExperimentId := 0;
 
-            WHILE true
-            LOOP
-
-                -- This While loop can probably be converted to a For loop; for example:
-                --    FOR _itemName IN
-                --        SELECT item_name
-                --        FROM TmpSourceTable
-                --        ORDER BY entry_id
-                --    LOOP
-                --        ...
-                --    END LOOP
-
+            FOR _currentPlexExperimentId IN
                 SELECT plexExperimentId
-                INTO _currentPlexExperimentId
                 FROM Tmp_ExperimentsToUpdate
                 WHERE plexExperimentId > _currentPlexExperimentId
                 ORDER BY plexExperimentId
-                LIMIT 1;
-
-                If Not FOUND Then
-                    -- Break out of the While
-                    EXIT;
-                End If;
-
+            LOOP
                 If _expIdList = '' Then
                     _expIdList := _currentPlexExperimentId;
                 Else
@@ -878,13 +862,13 @@ BEGIN
                     End If;
                 End If;
 
-            END LOOP; -- </WhileLoop>
+            END LOOP;
 
             If _mode = 'add' Then
                 If _expIdList Like '%,%' Then
-                    _message := 'Defined experiment plex members for Exp_IDs: ' || _expIdList;
+                    _message := format('Defined experiment plex members for Exp_IDs: %s', _expIdList);
                 Else
-                    _message := 'Defined experiment plex members for Plex Exp ID ' || _plexExperimentIdOrName;
+                    _message := format('Defined experiment plex members for Plex Exp ID %s', _plexExperimentIdOrName);
                 End If;
             ElsIf _mode = 'preview'
                 SELECT COUNT(*)
@@ -928,7 +912,7 @@ BEGIN
                             FROM Tmp_DatabaseUpdates
                             WHERE ID = _entryID
 
-                            _message := _message || ', ' || Replace(_msg, 'Would', 'would');
+                            _message := format('%s, %s', _message, Replace(_msg, 'Would', 'would'));
 
                             _entryID := _entryID + 1;
                         END LOOP;
@@ -940,7 +924,7 @@ BEGIN
                             ORDER BY ID DESC
                             LIMIT 1;
 
-                            _message := _message || ' ... ' || Replace(_msg, 'Would', 'would');
+                            _message := format('%s ... %s', _message, Replace(_msg, 'Would', 'would'));
                         End If;
                     End If;
                 End If;

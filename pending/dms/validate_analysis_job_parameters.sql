@@ -476,7 +476,9 @@ BEGIN
             ORDER BY ToolList.analysis_tool_id
             LIMIT 1;
 
-            _message := 'Settings file "' || _settingsFileName || '" is for tool ' || _settingsFileTool || '; not ' || _toolName;
+            _message := format('Settings file "%s" is for tool %s; not %s',
+                                _settingsFileName, _settingsFileTool, _toolName);
+
             If _showDebugMessages Then
                 RAISE INFO '%', _message;
             End If;
@@ -770,7 +772,7 @@ BEGIN
         WHERE file_name = _settingsFileName;
 
         If Not FOUND Then
-            _message := 'Settings file not found: ' || _settingsFileName;
+            _message := format('Settings file not found: %s', _settingsFileName);
             _returnCode = 'U5333';
 
             If _showDebugMessages Then

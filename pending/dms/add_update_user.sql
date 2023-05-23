@@ -59,7 +59,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _logErrors boolean := false;
     _charIndex int := 0;
     _userID int := 0;
@@ -140,15 +139,13 @@ BEGIN
         -- Cannot create an entry that already exists
         --
         If _userID <> 0 and _mode = 'add' Then
-            _msg := 'Cannot add: User "' || _username || '" already in database ';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot add: User "%" already in database ', _username;
         End If;
 
         -- Cannot update a non-existent entry
         --
         If _userID = 0 and _mode = 'update' Then
-            _msg := 'Cannot update: User "' || _username || '" is not in database ';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot update: User "%s" is not in database ', _username;
         End If;
 
         ---------------------------------------------------

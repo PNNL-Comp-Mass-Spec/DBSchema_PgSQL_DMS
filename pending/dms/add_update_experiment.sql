@@ -141,6 +141,7 @@ DECLARE
     _expIDConfirm int := 0;
     _debugMsg text;
     _stateID int := 1;
+    _msg text;
     _logMessage text;
 
     _sqlState text;
@@ -252,8 +253,7 @@ BEGIN
         End If;
 
         If char_length(_experimentName) < 6 Then
-            _msg := ('Experiment name must be at least 6 characters in length; currently %s characters', char_length(_experimentName));
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Experiment name must be at least 6 characters in length; currently % characters', char_length(_experimentName);
         End If;
 
         ---------------------------------------------------
@@ -404,7 +404,7 @@ BEGIN
                                 _wellNumber => _wellNumber,         -- Output
                                 _totalCount => _totalCount,
                                 _wellIndex => _wellIndex,           -- Output
-                                _message => _message,               -- Output
+                                _message => _msg,                   -- Output
                                 _returnCode => _returnCode);        -- Output
 
         If _returnCode <> '' Then

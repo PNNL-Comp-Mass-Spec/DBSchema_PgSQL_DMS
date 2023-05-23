@@ -254,18 +254,18 @@ BEGIN
         ---------------------------------------------------
 
         If _completionMessage Like '%Over%of the % spectra have a minimum m/z value larger than the required minimum%' Then
-            _msg := format('Dataset %s (ID %s): %s',
-                            _stepInfo.DatasetName, _stepInfo.DatasetID, _completionMessage);
+            _message := format('Dataset %s (ID %s): %s',
+                                _stepInfo.DatasetName, _stepInfo.DatasetID, _completionMessage);
 
-            CALL public.post_email_alert ('Error', _msg, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
+            CALL public.post_email_alert ('Error', _message, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
 
         ElsIf _completionMessage Like '%Some of the % spectra have a minimum m/z value larger than the required minimum%' Or
               _completionMessage Like '%reporter ion peaks likely could not be detected%' Then
 
-            _msg := format('Dataset %s (ID %s): %s',
-                            _stepInfo.DatasetName, _stepInfo.DatasetID, _completionMessage);
+            _message := format('Dataset %s (ID %s): %s',
+                                _stepInfo.DatasetName, _stepInfo.DatasetID, _completionMessage);
 
-            CALL public.post_email_alert ('Warning', _msg, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
+            CALL public.post_email_alert ('Warning', _message, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
         End If;
 
         ---------------------------------------------------

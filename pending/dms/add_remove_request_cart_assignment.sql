@@ -33,13 +33,13 @@ AS $$
 DECLARE
     _cartID int := 0;
     _cartConfigID int := null;
-    _msg text;
     _list text := '';
 BEGIN
     _message := '';
     _returnCode := '';
 
     _requestIDList := Coalesce(_requestIDList, '');
+
     If _requestIDList = '' Then
         -- No Request IDs; nothing to do
         RETURN;
@@ -60,8 +60,8 @@ BEGIN
         WHERE cart_name = _cartName;
 
         If Not FOUND Then
-            _returnCode := 'U5217'
             _message := 'Could not resolve cart name to ID';
+            _returnCode := 'U5217'
             RETURN;
         End If;
 
@@ -73,9 +73,12 @@ BEGIN
             WHERE (cart_config_name = _cartConfigName);
 
             If Not FOUND Then
-                _msg := format('Could not resolve cart config name "%s" to ID for Request(s) %s', _CartConfigName, _requestIDList);
+                _message := format('Could not resolve cart config name "%s" to ID for Request(s) %s', _CartConfigName, _requestIDList);
 
-                CALL post_log_entry ('Error', _msg, 'Add_Remove_Request_Cart_Assignment');
+                CALL post_log_entry ('Error', _message, 'Add_Remove_Request_Cart_Assignment');
+
+                _returnCode := 'U5218'
+                RETURN;
             End If;
         End If;
     Else
@@ -108,7 +111,7 @@ BEGIN
     WHERE Not requestID IN (SELECT request_id FROM t_requested_run);
 
     If Coalesce(_list, '') <> '' Then
-        _message := 'The following request IDs are not valid:' || _list;
+        _message := format('The following request IDs are not valid: %s', _list);
         _returnCode := 'U5021';
 
         DROP TABLE Tmp_Requests;

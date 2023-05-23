@@ -25,7 +25,7 @@ BEGIN
     _message := '';
     _returnCode:= '';
 
-   ---------------------------------------------------
+    ---------------------------------------------------
     -- Get OSM package status and auto import settings
     ---------------------------------------------------
 
@@ -34,20 +34,19 @@ BEGIN
         _datasetsFromPackageExperiments int = 0,
         _datasetsFromPackageRequests int = 0
 
-    -- FUTURE: add auto import control fields to OSM package table
+     -- FUTURE: add auto import control fields to OSM package table
      SELECT
         _packageState = state,
         _datasetsFromPackageExperiments = CASE WHEN state = 'Active' THEN 1 ELSE 0 END,
         _datasetsFromPackageRequests = CASE WHEN state = 'Active' THEN 1 ELSE 0 END
-     FROM   dbo.t_osm_package
-     WHERE  dbo.t_osm_package.osm_pkg_id = _packageID
+     FROM ont.t_osm_package
+     WHERE ont.t_osm_package.osm_pkg_id = _packageID
 
-     ---------------------------------------------------
-    -- datasets from experiments in package not already in package
+    ---------------------------------------------------
+    -- Datasets from experiments in package not already in package
     ---------------------------------------------------
 
     If _datasetsFromPackageExperiments = 1 Then
-    --<a>
         INSERT INTO Tmp_DataPackageItems (OSM_Package_ID, Item_Type, Item)
         SELECT  DISTINCT _packageID, 'Datasets', TDS.Dataset
         FROM    public.V_Dataset_List_Report_2 AS TDS
@@ -63,13 +62,13 @@ BEGIN
                 AND NOT TDS.Dataset IN (
                     SELECT Item FROM Tmp_DataPackageItems
                 )
-    End If; --<a>
-     ---------------------------------------------------
-    -- datasets from requests in package not already in package (dispositioned?)
+    End If;
+
+    ---------------------------------------------------
+    -- Datasets from requests in package not already in package (dispositioned?)
     ---------------------------------------------------
 
     If _datasetsFromPackageRequests = 1 Then
-    --<b>
         INSERT INTO Tmp_DataPackageItems (OSM_Package_ID, Item_Type, Item)
         SELECT  DISTINCT _packageID, 'Datasets', Dataset
         FROM    public.V_Dataset_List_Report_2 AS TDS
@@ -85,12 +84,7 @@ BEGIN
                 AND NOT TDS.Dataset IN (
                     SELECT Item FROM Tmp_DataPackageItems
                 )
-    End If; --<b>
-
-     ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-    return _myError
+    End If;
 
 END
 $$;

@@ -52,12 +52,12 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _msg text := '';
     _xmlParameters xml;
     _scriptXML xml;
     _tag text := 'unk';
     _datasetID int := 0;
     _transferFolderPath text := '';
+    _msg text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -130,21 +130,18 @@ BEGIN
     WHERE script = _scriptName;
 
     If Not FOUND Then
-        _msg := 'script not found in sw.t_scripts: ' || Coalesce(_scriptName, '??');
         _returnCode := 'U5213';
-        RAISE EXCEPTION '%', _msg;
+        RAISE EXCEPTION 'Script not found in sw.t_scripts: %', Coalesce(_scriptName, '??');
     End If;
 
     If _scriptXML Is Null Then
-        _msg := 'script XML not defined in the contents field of sw.t_scripts for script ' || Coalesce(_scriptName, '??');
         _returnCode := 'U5214';
-        RAISE EXCEPTION '%', _msg;
+        RAISE EXCEPTION 'Script XML not defined in the contents field of sw.t_scripts for script %', Coalesce(_scriptName, '??');
     End If;
 
     If _scriptName IN ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
-        _msg := '"Data Package ID" must be positive when using script ' || _scriptName;
         _returnCode := 'U5215';
-        RAISE EXCEPTION '%', _msg;
+        RAISE EXCEPTION '"Data Package ID" must be positive when using script %', _scriptName
     End If;
 
     ---------------------------------------------------
@@ -155,9 +152,8 @@ BEGIN
         _job := public.get_new_job_id('Created in broker', false)
 
         If _job = 0 Then
-            _msg := 'Could not get a valid job number from DMS';
             _returnCode := 'U5210';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Could not get a valid job number using get_new_job_id()';
         End If;
     End If;
 
@@ -183,9 +179,8 @@ BEGIN
     _resultsDirectoryName := sw.get_results_directory_name (_job, _tag);
 
     If _resultsDirectoryName Is Null Then
-        _msg := 'GetResults_Directory_Name returned a null string';
 
-        RAISE WARNING '%', _msg;
+        RAISE WARNING 'Get_Results_Directory_Name returned a null string';
 
         DROP TABLE Tmp_Jobs;
         DROP TABLE Tmp_Job_Steps;
@@ -207,10 +202,10 @@ BEGIN
     CALL sw.create_steps_for_job (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
-        _msg := 'Error returned by create_steps_for_job: ' || _returnCode;
+        _msg := format('Error returned by create_steps_for_job: %s', _returnCode);
 
         If Coalesce(_message, '') <> '' Then
-            _msg := _msg || '; ' || _message;
+            _msg := format('%s; %s', _msg, _message);
         End If;
 
         RAISE WARNING '%', _msg;
@@ -235,7 +230,7 @@ BEGIN
 
     If _debugMode Then
         RAISE INFO '';
-        RAISE INFO 'Job params after calling AdjustParamsForLocalJob: %', _jobParamXML;
+        RAISE INFO 'Job params after calling adjust_params_for_local_job: %', _jobParamXML;
     End If;
 
     ---------------------------------------------------
@@ -252,9 +247,10 @@ BEGIN
             _debugMode => _debugMode);
 
     If _returnCode <> '' Then
-        _msg := 'Error returned by CreateSignaturesForJobSteps: ' || _returnCode;
+        _msg := format('Error returned by create_signatures_for_job_steps: %s', _returnCode);
+
         If Coalesce(_message, '') <> '' Then
-            _msg := _msg || '; ' || _message;
+            _msg := format('%s; %s', _msg, _message);
         End If;
 
         RAISE WARNING '%', _msg;
@@ -270,6 +266,7 @@ BEGIN
     ---------------------------------------------------
     -- Save job parameters as XML into temp table
     ---------------------------------------------------
+
     -- FUTURE: need to get set of parameters normally provided by GetJobParamTable,
     -- except for the job specifc ones which need to be provided as initial content of _jobParamXML
     --
@@ -283,9 +280,10 @@ BEGIN
     CALL sw.clone_job_step (_job, _jobParamXML, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
-        _msg := 'Error returned by CloneJobStep: ' || _returnCode;
+        _msg := format('Error returned by clone_job_step: %s', _returnCode);
+
         If Coalesce(_message, '') <> '' Then
-            _msg := _msg || '; ' || _message;
+            _msg := format('%s; %s', _msg, _message);
         End If;
 
         RAISE WARNING '%', _msg;
@@ -317,19 +315,19 @@ BEGIN
     ---------------------------------------------------
 
     If Not _debugMode Then
-        -- MoveJobsToMainTables sproc assumes that sw.t_jobs table entry is already there
+        -- move_jobs_to_main_tables procedure requires that the job already be in sw.t_jobs
         --
         INSERT INTO sw.t_jobs( job,
-                            priority,
-                            script,
-                            state,
-                            dataset,
-                            dataset_id,
-                            transfer_folder_path,
-                            comment,
-                            storage_server,
-                            owner_username,
-                            data_pkg_id )
+                               priority,
+                               script,
+                               state,
+                               dataset,
+                               dataset_id,
+                               transfer_folder_path,
+                               comment,
+                               storage_server,
+                               owner_username,
+                               data_pkg_id )
         VALUES(_job, _priority, _scriptName, 1,
                _datasetName, _datasetID, NULL,
                _comment, NULL, _ownerUsername,
@@ -390,17 +388,9 @@ BEGIN
 
     End If;
 
-    ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-    --
-    If _returnCode <> '' and _msg <> '' Then
-        RAISE EXCEPTION '%', _msg;
-    End If;
-
     If _debugMode Then
 
-        -- ToDo: Call a shared procedure to preview the contents of these tables
+        -- ToDo: Call a shared procedure to preview the contents of these tables using RAISE INFO
 
         SELECT * FROM Tmp_Jobs
         SELECT * FROM Tmp_Job_Steps

@@ -40,7 +40,7 @@ BEGIN
 
     If char_length(_proteinCollectionList) = 0 Then
         _message := 'Warning: Protein collection list is empty';
-        Return;
+        RETURN;
     End If;
 
     -----------------------------------------------------

@@ -57,7 +57,7 @@ DECLARE
     _deleteCount int;
     _datasetCount int;
     _warningCount int;
-    _msg text;
+    _warningMsg text;
     _callingProcName text;
     _currentLocation text := 'Start';
     _deleteThreshold timestamp;
@@ -474,7 +474,7 @@ BEGIN
                 _returnCode := _sqlState;
             End If;
 
-            _message := 'Exception deleting jobs: ' || _message;
+            _message := format('Exception deleting jobs: %s', _message);
             RAISE INFO '%', _message;
 
             DROP TABLE IF EXISTS Tmp_DatasetsToDelete;
@@ -536,10 +536,10 @@ BEGIN
                            ON J.dataset_id = D.dataset_id;
 
                     If _datasetCount > 1 Then
-                        _msg := format('%s datasets have jobs and thus cannot be deleted', _deleteCount);
-                        RAISE WARNING '%', _msg;
+                        _warningMsg := format('%s datasets have jobs and thus cannot be deleted', _deleteCount);
+                        RAISE WARNING '%', _warningMsg;
 
-                        _message := _message || '; ' || _msg;
+                        _message := _message || '; ' || _warningMsg;
                     End If
                 End If;
 
@@ -672,7 +672,7 @@ BEGIN
                 _returnCode := _sqlState;
             End If;
 
-            _message := 'Exception deleting datasets: ' || _message;
+            _message := format('Exception deleting datasets: %s', _message);
             RAISE INFO '%', _message;
 
             DROP TABLE IF EXISTS Tmp_DatasetsToDelete;
@@ -776,7 +776,7 @@ BEGIN
                 _returnCode := _sqlState;
             End If;
 
-            _message := 'Exception deleting experiments: ' || _message;
+            _message := format('Exception deleting experiments: %s', _message);
             RAISE INFO '%', _message;
 
             DROP TABLE IF EXISTS Tmp_DatasetsToDelete;

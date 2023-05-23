@@ -61,7 +61,6 @@ DECLARE
     _result int;
     _settingsFile text;
     _paramFile text;
-    _msg text;
     _datasetCount int := 0;
     _logErrors boolean := false;
     _qExactiveDSCount int := 0;
@@ -232,11 +231,10 @@ BEGIN
               enabled > 0;
 
         If Coalesce(_settingsFile, '') = '' Then
-            _msg := 'Tool ' || _toolName || ' with job type ' || _jobTypeName || ' does not have a default settings file defined for ' ||;
-                       'Stat Cys Alk ' || public.tinyint_to_enabled_disabled(_statCysAlkEnabled) || ' and ' ||
-                       'Dyn STY Phos ' || public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled)
-
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Tool % with job type % does not have a default settings file defined for Stat Cys Alk % and Dyn STY Phos %',
+                       _toolName, _jobTypeName,
+                       public.tinyint_to_enabled_disabled(_statCysAlkEnabled),
+                       public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled);
         End If;
 
         -- Count the number of QExactive datasets
@@ -306,12 +304,14 @@ BEGIN
         End If;
 
         If Coalesce(_paramFile, '') = '' Then
-            _msg := 'Tool ' || _toolName || ' with job type ' || _jobTypeName || ' does not have a default parameter file defined for ' ||;
-                        'Dyn Met Ox ' ||   public.tinyint_to_enabled_disabled(_dynMetOxEnabled) || ', ' ||
-                        'Stat Cys Alk ' || public.tinyint_to_enabled_disabled(_statCysAlkEnabled) || ', and ' ||
-                        'Dyn STY Phos ' || public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled)
+            RAISE EXCEPTION 'Tool % with job type % does not have a default parameter file defined for Dyn Met Ox %, Stat Cys Alk %, and Dyn STY Phos %',
+                        _toolName, _jobTypeName,
+                        public.tinyint_to_enabled_disabled(_dynMetOxEnabled),
+                        public.tinyint_to_enabled_disabled(_statCysAlkEnabled),
+                        public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled);
 
-            RAISE EXCEPTION '%', _msg;
+
+
         End If;
 
         ---------------------------------------------------

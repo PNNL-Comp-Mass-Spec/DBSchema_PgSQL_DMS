@@ -74,7 +74,7 @@ BEGIN
     End If;
 
     If Not Exists (SELECT * FROM t_material_locations WHERE freezer_tag = _sourceFreezerTag) Then
-        _message := 'Source freezer tag not found in t_material_locations: ' || _sourceFreezerTag;
+        _message := format('Source freezer tag not found in t_material_locations: %s', _sourceFreezerTag);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5206';
@@ -82,7 +82,7 @@ BEGIN
     End If;
 
     If Not Exists (SELECT * FROM t_material_freezers WHERE freezer_tag = _newFreezerTag) Then
-        _message := 'New freezer tag not found in t_material_freezers: ' || _newFreezerTag;
+        _message := format('New freezer tag not found in t_material_freezers: %s', _newFreezerTag);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5207';
@@ -165,7 +165,8 @@ BEGIN
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _message := 'Added ' || _insertCount::text || ' rows to t_material_locations by copying freezer_tag ' || _sourceFreezerTag;
+        _message := format('Added %s rows to t_material_locations by copying freezer_tag %s',
+                            _insertCount, _sourceFreezerTag);
 
         CALL post_log_entry ('Normal', _message, 'Add_New_Freezer');
     End If;

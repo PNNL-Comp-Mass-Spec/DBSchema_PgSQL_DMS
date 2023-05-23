@@ -72,7 +72,6 @@ DECLARE
     _updateCount int;
     _datasetName text := '';
     _datasetID int := 0;
-    _msg text;
     _delimiter text;
     _entryID int;
     _entryIDEnd int := 0;

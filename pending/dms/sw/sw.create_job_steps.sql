@@ -114,7 +114,7 @@ BEGIN
     End If;
 
     If Not _mode::citext In ('CreateFromImportedJobs', 'ExtendExistingJob', 'UpdateExistingJob') Then
-        _message := 'Unknown mode: ' || _mode;
+        _message := format('Unknown mode: %s', _mode);
         _returnCode := 'U5201';
 
         RAISE WARNING '%', _message;
@@ -458,7 +458,7 @@ BEGIN
             End If;
 
             If _debugMode Then
-                RAISE INFO 'Script XML: %', _scriptXML::text;
+                RAISE INFO 'Script XML: %', _scriptXML;
             End If;
 
             -- Construct the results directory name
@@ -573,7 +573,7 @@ BEGIN
                     If _mode::citext = 'UpdateExistingJob' Then
                         -- If None of the job steps has completed yet,  it's OK if there are parameter differences
                         If Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state = 5) Then
-                            _message := 'Conflicting parameters are not allowed when one or more job steps has completed: ' || _message;
+                            _message := format('Conflicting parameters are not allowed when one or more job steps has completed: %s', _message);
                             RETURN;
                         Else
                             _message := '';

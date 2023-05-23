@@ -56,7 +56,7 @@ BEGIN
 
     End If;
 
-    return _uriPathID
+    RETURN _uriPathID;
 
 END
 $$;

@@ -43,13 +43,13 @@ AS $$
 *****************************************************/
 DECLARE
     _matchCount int;
-    _msg text;
     _collectionInfo record;
     _matchCount int;
     _collectionWithContaminants text;
     _datasetCountTotal int;
     _experimentCountTotal int;
     _dups text := '';
+    _msg text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -114,9 +114,8 @@ BEGIN
         HAVING COUNT(*) > 1) CountQ;
 
     If Coalesce(_dups, '') <> '' Then
-        _msg := 'There were duplicate names in the protein collections list, will auto remove: ' || _dups;
 
-        RAISE INFO '%', _msg;
+        RAISE INFO 'There were duplicate names in the protein collections list, will auto remove: %', _dups;
 
         DELETE FROM Tmp_ProteinCollections
         WHERE NOT RowNumberID IN ( SELECT MIN(RowNumberID) AS IDToKeep
@@ -195,11 +194,10 @@ BEGIN
         WHERE PCMaster.Includes_Contaminants > 0;
 
         If _matchCount > 0 Then
-            _msg := 'Not adding enzyme-associated protein collections (typically contaminant collections) since ' || _collectionWithContaminants || ' already includes contaminants';
 
-            RAISE INFO '%', _msg;
+            RAISE INFO 'Not adding enzyme-associated protein collections (typically contaminant collections) since % already includes contaminants', _collectionWithContaminants;
 
-            _message := 'Did not add contaminants since ' || _collectionWithContaminants || ' already includes contaminant proteins';
+            _message := format('Did not add contaminants since %s already includes contaminant proteins', _collectionWithContaminants);
 
             -- Remove the contaminant collections
             --
@@ -436,11 +434,11 @@ BEGIN
     LOOP
 
         If _collectionInfo.EnzymeContaminantCollection <> 0 Then
-            _msg := 'Added enzyme contaminant collection ' || _collectionInfo.ProteinCollectionName;
+            _msg := format('Added enzyme contaminant collection %s', _collectionInfo.ProteinCollectionName);
 
         Else
 
-            _msg := 'Added protein collection ' || _collectionInfo.ProteinCollectionName || ' since it is present in ';
+            _msg := format('Added protein collection %s since it is present in', _collectionInfo.ProteinCollectionName);
 
             If _collectionInfo.DatasetCount > 0 Then
 
@@ -461,7 +459,7 @@ BEGIN
             Else
                 -- Both _collectionInfo.DatasetCount and _collectionInfo.ExperimentCount are 0
                 -- This code should not be reached
-                _msg := _msg || '? datasets and/or ? experiments (unexpected stats)';
+                _msg := format('%s ? datasets and/or ? experiments (unexpected stats)', _msg);
 
             End If;
 

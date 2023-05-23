@@ -37,7 +37,6 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
-    _msg text;
     _experimentID int;
     _tmpID int := 0;
     _typeTag text := '';
@@ -85,18 +84,15 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If _mode = '' Then
-            _msg := 'Material item operation mode not defined';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Material item operation mode not defined';
         End If;
 
         If Not _mode::citext In ('retire_biomaterial', 'retire_experiment') Then
-            _msg := 'Material item operation mode must be retire_biomaterial or retire_experiment, not ' || _mode;
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Material item operation mode must be retire_biomaterial or retire_experiment, not %', _mode;
         End If;
 
         If _name = '' Then
-            _msg := 'Material name not defined; cannot retire';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Material name not defined; cannot retire';
         End If;
 
         ---------------------------------------------------
@@ -130,8 +126,7 @@ BEGIN
         End If;
 
         If _tmpID = 0 Then
-            _msg := format('Could not find the material item for mode "%s", name "%s"', _mode, _name);
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Could not find the material item for mode "%", name "%"', _mode, _name;
         Else
 
             _logErrors := true;
@@ -157,7 +152,7 @@ BEGIN
                         _callingUser => _callingUser);
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION '%', _message;
             End If;
         End If;
 

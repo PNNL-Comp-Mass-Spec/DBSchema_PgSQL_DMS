@@ -31,7 +31,7 @@ DECLARE
     _result int;
     _stDate timestamp;
     _eDate timestamp;
-    _msg text;
+    _invalidOrganismIDs text;
     _nullDate timestamp := Null;
     _logErrors boolean := true;
 
@@ -110,22 +110,22 @@ BEGIN
             -- Look for invalid Organism ID values
 
             SELECT string_agg(OrgFilter.organism_id::text, ',')
-            INTO _msg
+            INTO _invalidOrganismIDs
             FROM Tmp_OrganismFilter OrgFilter
                  LEFT OUTER JOIN t_organisms Org
                    ON OrgFilter.organism_id = Org.organism_id
             WHERE Org.organism_id IS NULL
 
-            If Coalesce(_msg, '') <> '' Then
-
-                If _msg Like '%,%' Then
-                    _msg := 'Invalid Organism IDs: ' || _msg;
-                Else
-                    _msg := 'Invalid Organism ID: ' || _msg;
-                End If;
+            If Coalesce(_invalidOrganismIDs, '') <> '' Then
 
                 _logErrors := false;
-                RAISE EXCEPTION '%', _msg;
+
+                If _invalidOrganismIDs Like '%,%' Then
+                    RAISE EXCEPTION 'Invalid Organism IDs: %', _invalidOrganismIDs;
+                Else
+                    RAISE EXCEPTION 'Invalid Organism ID: %', _invalidOrganismIDs;
+                End If;
+
             End If;
         Else
             INSERT INTO Tmp_OrganismFilter (organism_id, Organism_Name)
