@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION pc.trigfn_t_log_entries_user_after_update() RETURNS t
 **
 **  Auth:   mem
 **  Date:   08/17/2006
-**          09/01/2006 mem - Updated to use dbo.udfTimeStampText
+**          09/01/2006 mem - Updated to use public.timestamp_text()
 **          08/01/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/

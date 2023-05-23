@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **          02/27/2009 mem - Expanded _comment to varchar(512)
 **          03/27/2009 mem - Updated Where clause logic for Peptide_Hit jobs to ignore organism name when using a Protein Collection List
 **                         - Expanded _datasetList to varchar(6000)
-**          09/18/2009 mem - Switched to using dbo.MakeTableFromList to populate Tmp_Datasets
+**          09/18/2009 mem - Switched to using public.make_table_from_list() to populate Tmp_Datasets
 **                         - Now checking for invalid dataset names
 **          09/18/2009 grk - Cleaned up unused parameters
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
