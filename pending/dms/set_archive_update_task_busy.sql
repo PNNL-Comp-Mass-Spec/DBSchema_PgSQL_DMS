@@ -37,7 +37,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Dataset: ' || _datasetName;
+    _usageMessage := format('Dataset: %s', _datasetName);
     CALL post_usage_log_entry ('Set_Archive_Update_Task_Busy', _usageMessage);
 
 END

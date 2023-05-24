@@ -93,7 +93,7 @@ BEGIN
         WHERE instrument = _instrumentName
 
         If Coalesce(_instrumentNameMatch, '') = '' Then
-            _message := 'Unknown instrument: ' || _instrumentName;
+            _message := format('Unknown instrument: %s', _instrumentName);
             If _infoOnly Then
                 RAISE INFO '%', _message;
             End If;

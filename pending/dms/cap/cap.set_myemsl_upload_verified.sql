@@ -158,7 +158,7 @@ BEGIN
         ---------------------------------------------------
 
         If Exists (SELECT * FROM Tmp_StatusNumListTable SL LEFT OUTER JOIN cap.t_myemsl_uploads MU ON MU.status_num = SL.status_num WHERE MU.entry_id IS NULL) Then
-            _message := 'One or more Status Nums in _statusNumList were not found in cap.t_myemsl_uploads: ' || _statusNumList;
+            _message := format('One or more Status Nums in _statusNumList were not found in cap.t_myemsl_uploads: %s', _statusNumList);
             _returnCode := 'U5207';
 
             DROP TABLE Tmp_StatusNumListTable;

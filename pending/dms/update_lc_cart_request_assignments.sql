@@ -147,7 +147,7 @@ BEGIN
         If Coalesce(_invalidCart, '') = '' Then
             _message := 'Cart names cannot be blank';
         Else
-            _message := 'Invalid cart name: ' || _invalidCart;
+            _message := format('Invalid cart name: %s', _invalidCart);
         End If;
 
         _returnCode := 'U5201';
@@ -173,7 +173,7 @@ BEGIN
         WHERE cart_config_name <> '' AND cart_config_id IS NULL
         LIMIT 1;
 
-        _message := 'Invalid cart config name: ' || _invalidCartConfig;
+        _message := format('Invalid cart config name: %s', _invalidCartConfig);
         _returnCode := 'U5202';
 
         DROP TABLE Tmp_BlockingInfo;

@@ -73,7 +73,7 @@ BEGIN
                                   _returnCode => _returnCode);
 
     If _returnCode = '' Then
-        _message := 'Deleted parameter file ' || _paramFileName;
+        _message := format('Deleted parameter file %s', _paramFileName);
         RAISE INFO '%', _message;
     End If;
 

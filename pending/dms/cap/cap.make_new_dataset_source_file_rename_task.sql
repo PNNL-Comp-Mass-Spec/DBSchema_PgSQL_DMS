@@ -53,7 +53,7 @@ BEGIN
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _message := 'Dataset not found: ' || _datasetName || '; unable to continue';
+        _message := format('Dataset not found: %s; unable to continue', _datasetName);
         _returnCode := 'U5202';
 
         RAISE WARNING '%', _message;

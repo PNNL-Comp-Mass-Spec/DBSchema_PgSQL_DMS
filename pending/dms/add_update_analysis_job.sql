@@ -385,7 +385,7 @@ BEGIN
 
         If _returnCode <> '' Then
             If Coalesce(_warning, '') = '' Then
-                _warning := 'Error code ' || _returnCode || ' returned by validate_analysis_job_parameters';
+                _warning := format('Error code %s returned by validate_analysis_job_parameters', _returnCode);
             End If;
 
             If _infoOnly Then
@@ -458,7 +458,7 @@ BEGIN
                     )
 
                 If _existingJobCount > 0 Then
-                    _message := 'Job not created since duplicate job exists: ' || _existingMatchingJob::text;
+                    _message := format('Job not created since duplicate job exists: %s', _existingMatchingJob);
 
                     If _infoOnly Then
                         RAISE INFO '%', _message;

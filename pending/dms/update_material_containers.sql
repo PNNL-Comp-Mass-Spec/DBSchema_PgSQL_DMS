@@ -114,9 +114,9 @@ BEGIN
 
     If _numContainers = 0 Then
         If Position(',' In _containerList) > 1 Then
-            _message := 'Invalid Container IDs: ' || _containerList;
+            _message := format('Invalid Container IDs: %s', _containerList);
         Else
-            _message := 'Invalid Container ID: ' || _containerList;
+            _message := format('Invalid Container ID: %s', _containerList);
         End If;
 
         _returnCode := 'U5110';
@@ -170,7 +170,7 @@ BEGIN
         WHERE Location = _location
 
         If Not FOUND Then
-            _message := 'Destination location "' || _location || '" could not be found in database';
+            _message := format('Destination location "%s" could not be found in database', _location);
             _returnCode := 'U5120';
             DROP TABLE Tmp_Material_Container_List;
 
@@ -215,7 +215,7 @@ BEGIN
     --
     If _mode = 'retire_container' AND _nonEmptyContainerCount > 0 Then
         If _numContainers = 1 Then
-            _message := 'Container ' || _containerList || ' is not empty; cannot retire it';
+            _message := format('Container %s is not empty; cannot retire it', _containerList);
         Else
             SELECT string_agg(Name, ', ')
             INTO _nonEmptyContainers
@@ -223,7 +223,7 @@ BEGIN
             WHERE ItemCount > 0
             ORDER BY Name;
 
-            _message := 'All containers must be empty in order to retire them; see ' || _nonEmptyContainers;
+            _message := format('All containers must be empty in order to retire them; see %s', _nonEmptyContainers);
         End If;
 
         _returnCode := 'U5124';
@@ -266,9 +266,9 @@ BEGIN
         -- Make sure the container(s) are all Inactive
         If Exists (SELECT * FROM Tmp_Material_Container_List WHERE Status <> 'Inactive') Then
             If _numContainers = 1 Then
-                _message := 'Container is already active; cannot unretire ' || _containerList;
+                _message := format('Container is already active; cannot unretire %s', _containerList);
             Else
-                _message := 'All containers must be Inactive in order to unretire them: ' || _containerList;
+                _message := format('All containers must be Inactive in order to unretire them: %s', _containerList);
             End If;
 
             _returnCode := 'U5125';

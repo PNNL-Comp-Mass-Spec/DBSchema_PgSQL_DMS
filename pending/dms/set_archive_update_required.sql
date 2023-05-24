@@ -55,7 +55,7 @@ BEGIN
     ---------------------------------------------------
     If not _updateState in (1, 2, 4, 5) Then
         _returnCode := 'U5250';
-        _message := 'Archive update state for dataset "' || _datasetName || '" is not correct';
+        _message := format('Archive update state for dataset "%s" is not correct', _datasetName);
         RETURN;
     End If;
 
@@ -85,7 +85,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Dataset: ' || _datasetName;
+    _usageMessage := format('Dataset: %s', _datasetName);
     CALL post_usage_log_entry ('Set_Archive_Update_Required', _usageMessage);
 
 END

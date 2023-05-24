@@ -80,13 +80,13 @@ BEGIN
     --------------------------------------------
     --
     If Not Exists (Select * From t_users Where username = _oldUserName) Then
-        _message := 'User ' || _oldUserName || ' does not exist in t_users; nothing to do';
+        _message := format('User %s does not exist in t_users; nothing to do', _oldUserName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If Exists (Select * From t_users Where username = _newUserName) Then
-        _message := 'Cannot rename ' || _oldUserName || ' to ' || _newUserName || ' because the new username already exists in t_users';
+        _message := format('Cannot rename %s to %s because the new username already exists in t_users', _oldUserName, _newUserName);
 
         If Substring(_oldUserName, 1, char_length(_newUserName)) = _newUserName Then
             _message := _message || '. Will check for required renames in other tables';

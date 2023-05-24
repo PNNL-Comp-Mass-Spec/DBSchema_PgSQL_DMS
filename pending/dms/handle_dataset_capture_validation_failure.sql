@@ -79,7 +79,7 @@ BEGIN
         WHERE dataset_id = _datasetID;
 
         If _datasetName = '' Then
-            _message := 'Dataset ID not found: ' || _datasetNameOrID;
+            _message := format('Dataset ID not found: %s', _datasetNameOrID);
             _returnCode := 'U5201';
             RAISE WARNING '%', _message;
             RETURN;
@@ -99,7 +99,7 @@ BEGIN
         WHERE (dataset = _datasetName)
 
         If _datasetName = '' Then
-            _message := 'Dataset not found: ' || _datasetName;
+            _message := format('Dataset not found: %s', _datasetName);
             _returnCode := 'U5202';
             RAISE WARNING '%', _message;
             RETURN;
@@ -124,14 +124,14 @@ BEGIN
             WHERE dataset_id = _datasetID
 
             If Not FOUND Then
-                _message := 'Unable to update dataset in t_dataset: ' || _datasetName;
+                _message := format('Unable to update dataset in t_dataset: %s', _datasetName);
                 _returnCode := 'U5203';
                 RAISE INFO '%', _message;
             Else
                 -- Also update t_dataset_archive
                 CALL add_archive_dataset _datasetID
 
-                _message := 'Marked dataset as bad: ' || _datasetName;
+                _message := format('Marked dataset as bad: %s', _datasetName);
                 RAISE INFO '%', _message;
 
             End If;

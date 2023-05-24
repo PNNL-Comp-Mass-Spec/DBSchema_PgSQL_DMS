@@ -217,7 +217,7 @@ BEGIN
         GET DIAGNOSTICS __updateCount = ROW_COUNT;
 
         If __updateCount = 0 Then
-            _message := 'Warning: dataset not found in table t_dataset: ' || _datasetName;
+            _message := format('Warning: dataset not found in table t_dataset: %s', _datasetName);
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -426,9 +426,9 @@ BEGIN
     ---------------------------------------------------
 
     If Coalesce(_datasetName, '') = '' Then
-        _usageMessage := 'Dataset ID: ' || _datasetID::text;
+        _usageMessage := format('Dataset ID: %s', _datasetID);
     Else
-        _usageMessage := 'Dataset: ' || _datasetName;
+        _usageMessage := format('Dataset: %s', _datasetName);
     End If;
 
     If Not _infoOnly Then

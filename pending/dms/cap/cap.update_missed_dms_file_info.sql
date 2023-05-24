@@ -165,7 +165,7 @@ BEGIN
             If Coalesce(_message, '') = '' Then
                 _logMsg := format('update_dms_file_info_xml returned error code %s for DatasetID %s', _returnCode, _datasetID)
             Else
-                _logMsg := 'update_dms_file_info_xml error: ' || _message;
+                _logMsg := format('update_dms_file_info_xml error: %s', _message);
             End If;
 
             If _infoOnly Then

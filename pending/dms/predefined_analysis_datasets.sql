@@ -255,7 +255,7 @@ BEGIN
     If _populateTempTable Then
         RAISE INFO 'Populating table T_Tmp_PredefinedAnalysisDatasets';
 
-        _s := 'CREATE TABLE T_Tmp_PredefinedAnalysisDatasets AS ' || _s;
+        _s := format('CREATE TABLE T_Tmp_PredefinedAnalysisDatasets AS %s', _s);
 
         EXECUTE _s;
 

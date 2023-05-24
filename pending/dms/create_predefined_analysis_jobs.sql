@@ -132,7 +132,7 @@ BEGIN
         WHERE _returnCode <> '';
 
         If FOUND Then
-            _errorMessage := 'predefined_analysis_jobs returned error code ' || _returnCode;
+            _errorMessage := format('predefined_analysis_jobs returned error code %s', _returnCode);
 
             If Not Coalesce(_message, '') = '' Then
                 _errorMessage := _errorMessage || '; ' || _message;

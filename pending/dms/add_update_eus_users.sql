@@ -104,7 +104,7 @@ BEGIN
     -- Cannot create an entry that already exists
     --
     If _mode = 'add' And _existingCount > 0 Then
-        _msg := 'Cannot add: EUS Person ID "' || _eusPersonID || '" is already in the database ';
+        _msg := format('Cannot add: EUS Person ID "%s" is already in the database ', _eusPersonID);
         RAISE EXCEPTION '%', _msg;
 
         _message := 'message';
@@ -117,7 +117,7 @@ BEGIN
     -- Cannot update a non-existent entry
     --
     If _mode = 'update' And _existingCount = 0 Then
-        _msg := 'Cannot update: EUS Person ID "' || _eusPersonID || '" is not in the database ';
+        _msg := format('Cannot update: EUS Person ID "%s" is not in the database ', _eusPersonID);
         RAISE EXCEPTION '%', _msg;
 
         _message := 'message';

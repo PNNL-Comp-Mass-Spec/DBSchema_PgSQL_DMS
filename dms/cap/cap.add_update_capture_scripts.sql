@@ -31,7 +31,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          12/09/2022 mem - Change _mode to lowercase
 **          04/27/2023 mem - Use boolean for data type name
 **          05/12/2023 mem - Rename variables
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -121,7 +121,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _mode = 'update' And _existingCount = 0 Then
-            _message := 'Could not find script "' || _script || '" in database; cannot update';
+            _message := format('Could not find script "%s" in database; cannot update', _script);
             RAISE WARNING '%', _message;
             _returnCode := 'U5204';
             RETURN;
@@ -130,7 +130,7 @@ BEGIN
         -- Cannot add an existing entry
         --
         If _mode = 'add' And _existingCount > 0 Then
-            _message := 'Script "' || _script || '" already exists in database; cannot add';
+            _message := format('Script "%s" already exists in database; cannot add', _script);
             RAISE WARNING '%', _message;
             _returnCode := 'U5205';
             RETURN;

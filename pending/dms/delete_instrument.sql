@@ -62,7 +62,7 @@ BEGIN
     WHERE instrument = _instrumentName;
 
     If Not FOUND Then
-        _message := 'instrument not found in t_instrument_name: ' || _instrumentName;
+        _message := format('instrument not found in t_instrument_name: %s', _instrumentName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -98,7 +98,7 @@ BEGIN
     DELETE FROM t_instrument_name
     WHERE instrument_id = _instrumentID;
 
-    _message := 'Deleted instrument: ' || _instrumentName;
+    _message := format('Deleted instrument: %s', _instrumentName);
     RAISE INFO '%', _message;
 
 END

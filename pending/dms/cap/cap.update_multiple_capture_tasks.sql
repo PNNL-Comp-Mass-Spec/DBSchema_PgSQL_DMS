@@ -195,7 +195,7 @@ BEGIN
         -- If we reach this point, action was not implemented
         ---------------------------------------------------
 
-        _message := 'The ACTION "' || _action || '" is not implemented.';
+        _message := format('The ACTION "%s" is not implemented.', _action);
         _returnCode := 'U5201;'
 
         DROP TABLE Tmp_Selected_Jobs;

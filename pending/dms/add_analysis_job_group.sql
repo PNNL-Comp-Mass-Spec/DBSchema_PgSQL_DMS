@@ -462,7 +462,7 @@ BEGIN
                 _removedDatasetsMsg := format('%s: %s', _removedDatasetsMsg, Coalesce(_removedDatasets, ''));
 
                 If _datasetCountToRemove > _threshold Then
-                    _removedDatasets := _removedDatasets || ' (more datasets not shown)';
+                    _removedDatasets := format('%s (more datasets not shown)', _removedDatasets);
                 End If;
             End If;
 
@@ -640,20 +640,20 @@ BEGIN
                  -- Note that the parameters defined here need to stay in sync with the parameters in the 'SELECT SectionName, KeyName, Value FROM Tmp_SettingsFile_Values_DataPkgJob' query below
                  --
                 _jobParam :=
-                   '<Param Section="JobParameters" Name="CreateMzMLFiles" Value="'            || _createMzMLFilesFlag || '" />' ||
-                   '<Param Section="JobParameters" Name="DatasetName" Value="Aggregation" />' ||
-                   '<Param Section="JobParameters" Name="CacheFolderRootPath" Value="'        || _cacheFolderRootPath || '" />' ||
-                   '<Param Section="JobParameters" Name="SettingsFileName" Value="'           || _settingsFileName || '" />' ||
-                   '<Param Section="MSXMLGenerator" Name="MSXMLGenerator" Value="'            || _msXmlGenerator || '" />' ||
-                   '<Param Section="MSXMLGenerator" Name="MSXMLOutputType" Value="'           || _msXMLOutputType || '" />' ||
-                   '<Param Section="MSXMLGenerator" Name="CentroidMSXML" Value="'             || _centroidMSXML || '" />' ||
-                   '<Param Section="MSXMLGenerator" Name="CentroidPeakCountToRetain" Value="' || _centroidPeakCountToRetain || '" />' ||
-                   '<Param Section="PeptideSearch" Name="ParamFileName" Value="'              || _paramFileName || ' " />' ||
-                   '<Param Section="PeptideSearch" Name="ParamFileStoragePath" Value="'       || _paramFileStoragePath || '" />' ||
-                   '<Param Section="PeptideSearch" Name="OrganismName" Value="'               || _organismName || ' " />' ||
-                   '<Param Section="PeptideSearch" Name="ProteinCollectionList" Value="'      || _protCollNameList || '" />' ||
-                   '<Param Section="PeptideSearch" Name="ProteinOptions" Value="'             ||  _protCollOptionsList || '" />' ||
-                   '<Param Section="PeptideSearch" Name="LegacyFastaFileName" Value="'        || _organismDBName || '" />';
+                   format('<Param Section="JobParameters" Name="CreateMzMLFiles" Value="%s" />',            _createMzMLFilesFlag)       ||
+                   format('<Param Section="JobParameters" Name="DatasetName" Value="Aggregation" />')                                   ||
+                   format('<Param Section="JobParameters" Name="CacheFolderRootPath" Value="%s" />',        _cacheFolderRootPath)       ||
+                   format('<Param Section="JobParameters" Name="SettingsFileName" Value="%s" />',           _settingsFileName)          ||
+                   format('<Param Section="MSXMLGenerator" Name="MSXMLGenerator" Value="%s" />',            _msXmlGenerator)            ||
+                   format('<Param Section="MSXMLGenerator" Name="MSXMLOutputType" Value="%s" />',           _msXMLOutputType)           ||
+                   format('<Param Section="MSXMLGenerator" Name="CentroidMSXML" Value="%s" />',             _centroidMSXML)             ||
+                   format('<Param Section="MSXMLGenerator" Name="CentroidPeakCountToRetain" Value="%s" />', _centroidPeakCountToRetain) ||
+                   format('<Param Section="PeptideSearch" Name="ParamFileName" Value="%s" />',              _paramFileName)             ||
+                   format('<Param Section="PeptideSearch" Name="ParamFileStoragePath" Value="%s" />',       _paramFileStoragePath)      ||
+                   format('<Param Section="PeptideSearch" Name="OrganismName" Value="%s" />',               _organismName)              ||
+                   format('<Param Section="PeptideSearch" Name="ProteinCollectionList" Value="%s" />',      _protCollNameList)          ||
+                   format('<Param Section="PeptideSearch" Name="ProteinOptions" Value="%s" />',             _protCollOptionsList)       ||
+                   format('<Param Section="PeptideSearch" Name="LegacyFastaFileName" Value="%s" />',        _organismDBName);
 
                 -- Append the additional settings defined in the settings file
 
@@ -667,7 +667,7 @@ BEGIN
                           NOT (SectionName = 'PeptideSearch'  AND KeyName IN ('ParamFileName', 'ParamFileStoragePath', 'OrganismName', 'ProteinCollectionList', 'ProteinOptions', 'LegacyFastaFileName'))
                     ORDER BY Entry_ID
                 LOOP
-                    _jobParam := format('%s<Param Section="%s" Name="%s" Value="' + @ + '" />',
+                    _jobParam := format('%s<Param Section="%s" Name="%s" Value="%s" />',
                                         _jobParam, _sectionName, _keyName, _value);
                 END LOOP;
 

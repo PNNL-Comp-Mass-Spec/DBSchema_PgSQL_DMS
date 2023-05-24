@@ -117,7 +117,7 @@ BEGIN
                 _updateIntervals := false;
 
                 If _infoOnly Then
-                    _message := 'No unannotated long intervals were found for instrument ' || _instrumentName || ' in ' || _monthAndYear;
+                    _message := format('No unannotated long intervals were found for instrument %s in %s', _instrumentName, _monthAndYear);
                     RAISE INFO '%', _message;
                 End If;
             Else
@@ -133,7 +133,8 @@ BEGIN
                 FROM Tmp_IntervalsToUpdate
                 ORDER BY IntervalID
             LOOP
-                _intervalDescription := 'interval ' || Cast(_runIntervalId As text) || ' as Broken for instrument ' || _instrumentName || ' in ' || _monthAndYear;
+                _intervalDescription := format('interval %s as Broken for instrument %s in %s',
+                                                _runIntervalId, _instrumentName, _monthAndYear);
 
                 If _infoOnly Then
                     RAISE INFO '%', 'Preview: Call add_update_run_interval to annotate ' || _intervalDescription;
@@ -146,10 +147,10 @@ BEGIN
                                 _callingUser => 'PNL\msdadmin (Auto_Annotate_Broken_Instrument_Long_Intervals)');
 
                     If _returnCode = '' Then
-                        _message := 'Annotated ' || _intervalDescription;
+                        _message := format('Annotated %s', _intervalDescription);
                         CALL post_log_entry ('Normal', _message, 'Auto_Annotate_Broken_Instrument_Long_Intervals');
                     Else
-                        _message := 'Error annotating ' || _intervalDescription;
+                        _message := format('Error annotating %s', _intervalDescription);
                         CALL post_log_entry ('Error', _message, 'Auto_Annotate_Broken_Instrument_Long_Intervals');
                     End If;
 

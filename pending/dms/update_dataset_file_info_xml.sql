@@ -369,8 +369,8 @@ BEGIN
     WHERE Not InstFileHashType In ('SHA1');
 
     If FOUND Then
-        _msg := 'Unrecognized file hash type: ' || _unrecognizedHashType || '; all rows in T_Dataset_File are assumed to be SHA1. ' ||;
-                'Will add the file info anyway, but this hashtype could be problematic elsewhere'
+        _msg := format('Unrecognized file hash type: %s; all rows in T_Dataset_File are assumed to be SHA1. Will add the file info anyway, but this hashtype could be problematic elsewhere',
+                        _unrecognizedHashType);
 
         CALL post_log_entry ('Error', _msg, 'Update_Dataset_File_Info_XML');
     End If;

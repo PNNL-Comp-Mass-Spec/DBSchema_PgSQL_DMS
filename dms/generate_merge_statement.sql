@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
 **          12/30/2022 mem - Remove _includeActionSummary and _includeCreateTableSQL since PostgreSQL does not support creating a change summary table
 **                         - Use a DELETE query instead of WHEN NOT MATCHED BY SOURCE THEN DELETE
 **          01/01/2023 mem - Update whitespace
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -245,7 +246,7 @@ BEGIN
           pg_class.relname = _tableName;                 -- Alternatively, use pg_class.oid = _tableName::regclass
 
     If Not Exists (Select * From Tmp_PrimaryKeyColumns) Then
-        _message := 'Cannot generate a merge statement for ' || _tableName || ' because it does not have a primary key';
+        _message := format('Cannot generate a merge statement for %s because it does not have a primary key', _tableName);
 
         DROP TABLE Tmp_PrimaryKeyColumns;
         DROP TABLE Tmp_UpdatableColumns;

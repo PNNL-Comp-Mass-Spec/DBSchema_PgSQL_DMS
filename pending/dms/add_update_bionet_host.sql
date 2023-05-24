@@ -113,13 +113,13 @@ BEGIN
         If _mode = 'add' And Exists (SELECT * FROM t_bionet_hosts WHERE host = _host) Then
             -- Cannot create an entry that already exists
             --
-            _msg := 'Cannot add: item "' || _host || '" is already in the database';
+            _msg := format('Cannot add: item "%s" is already in the database', _host);
             RAISE EXCEPTION '%', _msg;
         End If;
 
         If _mode = 'update' And Not Exists (SELECT * FROM t_bionet_hosts WHERE host = _host) Then
             -- Cannot update a non-existent entry
-            _msg := 'Cannot update: item "' || _host || '" is not in the database';
+            _msg := format('Cannot update: item "%s" is not in the database', _host);
             RAISE EXCEPTION '%', _msg;
         End If;
 

@@ -102,7 +102,7 @@ BEGIN
     FROM public.parse_delimited_integer_list(_jobList, ',');
 
     If Not Exists (SELECT * FROM Tmp_Jobs) Then
-        _message := 'No valid jobs were found: ' || _jobList;
+        _message := format('No valid jobs were found: %s', _jobList);
 
         RETURN QUERY
         SELECT     0 As job,

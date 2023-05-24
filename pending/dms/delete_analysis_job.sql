@@ -51,7 +51,7 @@ BEGIN
     _jobID := public.try_cast(_job, null::int);
 
     If _jobID is null Then
-        _message := 'Job number is not numeric: ' || _job;
+        _message := format('Job number is not numeric: %s', _job);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -83,7 +83,9 @@ BEGIN
     -------------------------------------------------------
     --
     If Not Exists (SELECT * FROM t_analysis_job WHERE job = _jobID) Then
-        _message := 'job not found; nothing to delete: ' || _job;
+
+        _message := format('job not found; nothing to delete: %s', _job);
+
         If _infoOnly Then
             RAISE INFO '%', _message;
         Else

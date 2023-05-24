@@ -92,7 +92,7 @@ BEGIN
     --
     If _campaignID = 0 Then
         _returnCode := 'U5202';
-        _message := 'Campaign "' || _campaignName || '" is not valid';
+        _message := format('Campaign "%s" is not valid', _campaignName);
         RETURN;
     End If;
 
@@ -108,7 +108,7 @@ BEGIN
 
     If Not FOUND Then
         _returnCode := 'U5203';
-        _message := 'User "' || _username || '" is not valid';
+        _message := format('User "%s" is not valid', _username);
         RETURN;
     End If;
 
@@ -145,7 +145,8 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Campaign: ' || _campaignName || '; user: ' || _username || '; mode: ' || _mode;
+    _usageMessage := format('Campaign: %s; user: %s; mode: %s',
+                            _campaignName, _username, _mode);
 
     CALL post_usage_log_entry ('Update_Research_Team_Observer', _usageMessage);
 

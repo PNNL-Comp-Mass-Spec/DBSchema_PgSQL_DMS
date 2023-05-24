@@ -367,7 +367,7 @@ BEGIN
     End If;
 
     If _captureSubdirectory = _datasetName Then
-        _message := 'Capture subfolder is identical to the dataset name for ' || _datasetName || '; changing to an empty string';
+        _message := format('Capture subfolder is identical to the dataset name for %s; changing to an empty string', _datasetName);
 
         -- Post this message to the log every 3 days
         If Not Exists (

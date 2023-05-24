@@ -158,7 +158,7 @@ BEGIN
             DELETE FROM sw.t_jobs
             WHERE job = _job;
 
-            _message := 'Deleted job ' || _job::text || ' from sw.t_jobs';
+            _message := format('Deleted job %s from sw.t_jobs', _job);
             CALL public.post_log_entry ('Normal', _message, 'Remove_Selected_Jobs', 'sw');
 
         END LOOP;

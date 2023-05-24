@@ -99,7 +99,7 @@ BEGIN
     WHERE ID is null;
 
     If _list <> '' Then
-        _message := 'The following processors were not in the database: "' || _list || '"';
+        _message := format('The following processors were not in the database: "%s"', _list);
         _returnCode := 'U5203';
         RETURN;
     End If;

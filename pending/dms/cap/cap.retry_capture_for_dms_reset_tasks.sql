@@ -170,9 +170,9 @@ BEGIN
 
     -- Post a log entry that the capture task job(s) have been reset
     If _jobList LIKE '%,%' Then
-        _message := 'Reset dataset capture for capture task jobs ' || _jobList;
+        _message := format('Reset dataset capture for capture task jobs %s', _jobList);
     Else
-        _message := 'Reset dataset capture for capture task job ' || _jobList;
+        _message := format('Reset dataset capture for capture task job %s', _jobList);
     End If;
 
     CALL public.post_log_entry('Normal', _message, 'Retry_Capture_for_DMS_Reset_Tasks', 'cap');

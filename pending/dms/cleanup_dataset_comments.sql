@@ -96,7 +96,7 @@ BEGIN
            ON Src.Value = DS.dataset_id;
 
     If Not FOUND Then
-        _message := 'No valid integers were found: ' || _datasetIDs;
+        _message := format('No valid integers were found: %s', _datasetIDs);
         RAISE WARNING '%', _message;
         _returnCode := 'U5201';
 
@@ -111,7 +111,7 @@ BEGIN
         FROM Tmp_DatasetsToUpdate
         WHERE InvalidID > 0;
 
-        _message := 'Ignoring unknown DatasetIDs: ' || _unknownIDs;
+        _message := format('Ignoring unknown DatasetIDs: %s', _unknownIDs);
         RAISE INFO '%', _message;
 
         _message := '';
@@ -123,7 +123,7 @@ BEGIN
         FROM Tmp_DatasetsToUpdate
         WHERE InvalidID = 0 AND NOT StateID IN (3,4);
 
-        _message := 'Ignoring Datasets not in state 3 or 4 (complete or inactive): ' || _idsWrongState;
+        _message := format('Ignoring Datasets not in state 3 or 4 (complete or inactive): %s', _idsWrongState);
         RAISE INFO '%', _message;
 
         _message := '';

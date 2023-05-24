@@ -156,7 +156,7 @@ BEGIN
             )
 
         If _infoOnly And char_length(_message) = 0 Then
-            _message := 'Task ' || _taskID::text || ' would be assigned to ' || _processorName;
+            _message := format('Task %s would be assigned to %s', _taskID, _processorName);
         End If;
     Else
         ---------------------------------------------------

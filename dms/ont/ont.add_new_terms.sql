@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          10/05/2022 mem - When querying ont.v_newt_terms, cast Identifier to citext
 **          10/06/2022 mem - Add exception handler and instructions for updating the backing sequence for the entry_id field in ont.t_cv_newt
 **          05/12/2023 mem - Rename variables
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -57,7 +58,7 @@ BEGIN
     ---------------------------------------------------
     --
     If Not Exists (select * from ont.v_term_lineage where ontology = _ontologyName) Then
-        _errorMessage := 'Invalid ontology name: ' || _ontologyName || '; not found in ont.v_term_lineage';
+        _errorMessage := format('Invalid ontology name: %s; not found in ont.v_term_lineage', _ontologyName);
     End If;
 
     ---------------------------------------------------
@@ -233,7 +234,7 @@ BEGIN
                     If _targetTable::citext = 't_cv_newt'::citext Then
                         _s := 'Use the following query to update the next value for the sequence behind the entry_id field in the target table: SELECT setval(''ont.t_cv_newt_entry_id_seq'', (SELECT MAX(entry_id) FROM ont.t_cv_newt));';
                     Else
-                        _s := 'Use the following query to look for a backing sequence behind an Identity column in the target table: SELECT * FROM pg_catalog.pg_sequences WHERE sequencename LIKE ''' || _targetTable || '%'';';
+                        _s := format('Use the following query to look for a backing sequence behind an Identity column in the target table: SELECT * FROM pg_catalog.pg_sequences WHERE sequencename LIKE ''%s%'';', _targetTable);
                     End If;
                 Else
                     _s := '';

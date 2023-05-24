@@ -167,15 +167,15 @@ BEGIN
 
                             End If; -- </h1>
 
-                            _whereClause := _part1 + _dataset + _part3;
-                            _whereClause := 'WHERE (' || _whereClause || ')';
+                            _whereClause := _part1 || _dataset || _part3;
+                            _whereClause := format('WHERE (%s)', _whereClause);
 
                         Else
                             _whereClause := Replace(_whereClause, '$ThisDataset', _dataset);
-                            _whereClause := 'WHERE (' || _whereClause || ')';
+                            _whereClause := format('WHERE (%s)', _whereClause);
                         End If;
                     Else
-                        _whereClause := 'WHERE (Dataset = ''' || _dataset || ''') AND (' || _whereClause || ')';
+                        _whereClause := format('WHERE (Dataset = ''%s'') AND (%s)', _dataset, _whereClause);
                     End If;
 
                     If _whereClause Like '%$Replace(%' Then
@@ -248,7 +248,7 @@ BEGIN
                     End If;
 
                     -- Note that public.V_Source_Analysis_Job uses V_Source_Analysis_Job in DMS
-                    _autoQuerySql := 'SELECT Job FROM public.V_Source_Analysis_Job ' || _whereClause || ' ' || _orderBy || ' LIMIT 1';
+                    _autoQuerySql := format('SELECT Job FROM public.V_Source_Analysis_Job %s %s LIMIT 1', _whereClause, _orderBy);
 
                     If _previewSql Then
                         RAISE INFO '%', _autoQuerySql;
@@ -258,7 +258,7 @@ BEGIN
                     INTO _sourceJob;
 
                     If _sourceJob = 0 Then
-                        _warningMessage := 'Unable to determine SourceJob for job ' || _job::text || ' using query ' || _autoQuerySql;
+                        _warningMessage := format('Unable to determine SourceJob for job %s using query %s', _job, _autoQuerySql);
                     End If;
 
                 End If; -- </f>

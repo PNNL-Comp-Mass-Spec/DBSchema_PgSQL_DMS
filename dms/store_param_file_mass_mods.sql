@@ -126,7 +126,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **                         - Cast _paramFileType to citext
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Use Similar To when using square brackets to match text
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -1132,7 +1132,7 @@ BEGIN
             End If;
 
             If Coalesce(_massCorrectionID, 0) = 0 Then
-                _message := 'Mass Correction ID not defined for MaxQuant modification "' || _field || '"; either update table t_maxquant_mods or delete this mod from the XML';
+                _message := format('Mass Correction ID not defined for MaxQuant modification "%s"; either update table t_maxquant_mods or delete this mod from the XML', _field);
                 _returnCode := 'U5325';
 
                 DROP TABLE Tmp_Mods;

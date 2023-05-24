@@ -153,7 +153,7 @@ BEGIN
         ---------------------------------------------------
 
         If _hanfordIdNum Similar To '[0-9]%' Then
-            _hanfordIdNum := 'H' || _hanfordIdNum;
+            _hanfordIdNum := format('H%s', _hanfordIdNum);
         End If;
 
         _logErrors := true;

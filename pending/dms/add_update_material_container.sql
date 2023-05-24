@@ -135,7 +135,7 @@ BEGIN
         End If;
 
         If Not _type::citext In ('Box', 'Bag', 'Wellplate') Then
-            _message := 'Container type must be Box, Bag, or Wellplate, not ' || _type;
+            _message := format('Container type must be Box, Bag, or Wellplate, not %s', _type);
             _returnCode := 'U5204';
             RETURN;
         End If;
@@ -195,13 +195,13 @@ BEGIN
         WHERE container = _container;
 
         If _mode = 'add' and _containerID <> 0 Then
-            _message := 'Cannot add container with same name as existing container: ' || _container;
+            _message := format('Cannot add container with same name as existing container: %s', _container);
             _returnCode := 'U5208';
             RETURN;
         End If;
 
         If _mode::citext In ('update', 'preview') and _containerID = 0 Then
-            _message := 'No entry could be found in database for updating ' || _container;
+            _message := format('No entry could be found in database for updating %s', _container);
             _returnCode := 'U5209';
             RETURN;
         End If;
@@ -218,7 +218,7 @@ BEGIN
         WHERE location = _location;
 
         If Not FOUND Then
-            _message := 'Invalid location: ' || _location || ' (for container ' || _container || ')';
+            _message := format('Invalid location: %s (for container %s)', _location, _container);
             _returnCode := 'U5210';
             RETURN;
         End If;
@@ -235,7 +235,8 @@ BEGIN
             WHERE location_id = _locationID;
 
             If _limit <= _cnt Then
-                _message := 'Destination location does not have room for another container (moving ' || _container || ' to ' || _location || ')';
+                _message := format('Destination location does not have room for another container (moving %s to %s)',
+                                    _container, _location);
                 _returnCode := 'U5211';
                 RETURN;
             End If;

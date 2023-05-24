@@ -34,7 +34,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          01/24/2023 mem - Update whitespace
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -205,12 +205,12 @@ BEGIN
             _s := regexp_replace(_s, '\$2', _enteredByNew);
             RAISE INFO '%;', _s;
 
-            _message := 'Would update ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
+            _message := format('Would update %s to indicate "%s"', _entryDescription, _enteredByNew);
         Else
             EXECUTE _s
             USING _eventID, _enteredByNew;
 
-            _message := 'Updated ' || _entryDescription || ' to indicate "' || _enteredByNew || '"';
+            _message := format('Updated %s to indicate "%s"', _entryDescription, _enteredByNew);
         End If;
 
         RETURN;

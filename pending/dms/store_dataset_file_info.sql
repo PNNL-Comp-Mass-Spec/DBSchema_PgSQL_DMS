@@ -547,7 +547,7 @@ BEGIN
     If Coalesce(_datasetName, '') = '' Then
         _usageMessage := format('Dataset ID: %s', _datasetId);
     Else
-        _usageMessage := 'Dataset: ' || _datasetName;
+        _usageMessage := format('Dataset: %s', _datasetName);
     End If;
 
     If Not _infoOnly Then

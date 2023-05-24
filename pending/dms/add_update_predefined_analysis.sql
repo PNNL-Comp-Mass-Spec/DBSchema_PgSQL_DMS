@@ -221,7 +221,7 @@ BEGIN
         WHERE (analysis_tool = _analysisToolName)
 
         If Not FOUND Then
-            _msg := 'Analysis tool "' || _analysisToolName || '" not found in t_analysis_tool';
+            _msg := format('Analysis tool "%s" not found in t_analysis_tool', _analysisToolName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -243,7 +243,7 @@ BEGIN
                 WHERE (Tool.analysis_tool = _analysisToolName)
                 )
             Begin
-                _msg := 'Analysis tool "' || _analysisToolName || '" does not have any allowed dataset types; unable to continue';
+                _msg := format('Analysis tool "%s" does not have any allowed dataset types; unable to continue', _analysisToolName);
                 RAISE EXCEPTION '%', _msg;
             End If;
 
@@ -254,7 +254,7 @@ BEGIN
                             WHERE (Tool.analysis_tool = _analysisToolName)
                           ) Then
 
-                _msg := 'Analysis tool "' || _analysisToolName || '" does not have any allowed instrument classes; unable to continue';
+                _msg := format('Analysis tool "%s" does not have any allowed instrument classes; unable to continue', _analysisToolName);
                 RAISE EXCEPTION '%', _msg;
 
             End If;
@@ -372,7 +372,7 @@ BEGIN
         _organismID := get_organism_id(_organismName);
 
         If _organismID = 0 Then
-            _msg := 'Could not find entry in database for organismName "' || _organismName || '"';
+            _msg := format('Could not find entry in database for organismName "%s"', _organismName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -382,7 +382,7 @@ BEGIN
         --
         If _paramFileName <> 'na' Then
             If Not Exists (SELECT * FROM t_param_files WHERE param_file_name = _paramFileName) Then
-                _msg := 'Could not find entry in database for parameter file "' || _paramFileName || '"';
+                _msg := format('Could not find entry in database for parameter file "%s"', _paramFileName);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -393,7 +393,7 @@ BEGIN
         --
         If _settingsFileName <> 'na' Then
             If Not Exists (SELECT * FROM t_settings_files WHERE file_name = _settingsFileName) Then
-                _msg := 'Could not find entry in database for settings file "' || _settingsFileName || '"';
+                _msg := format('Could not find entry in database for settings file "%s"', _settingsFileName);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;

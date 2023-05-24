@@ -70,7 +70,7 @@ BEGIN
     End If;
 
     If Not Exists (SELECT * FROM sw.t_local_processors WHERE processor_name = _managerName) Then
-        _message := 'Manager not found in sw.t_local_processors: ' || _managerName;
+        _message := format('Manager not found in sw.t_local_processors: %s', _managerName);
         RAISE EXCEPTION '%', _message;
     End If;
 
@@ -89,7 +89,7 @@ BEGIN
     LIMIT 1;
 
     If Not FOUND Then
-        _message := 'No active job steps are associated with manager ' || _managerName;
+        _message := format('No active job steps are associated with manager %s', _managerName);
         RETURN;
     End If;
 

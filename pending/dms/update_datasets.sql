@@ -157,7 +157,7 @@ BEGIN
         WHERE NOT Dataset_Name IN ( SELECT dataset FROM t_dataset )
 
         If Coalesce(_list, '') <> '' Then
-            _msg := 'The following datasets were not in the database: "' || _list || '"';
+            _msg := format('The following datasets were not in the database: "%s"', _list);
             RAISE INFO '%', _msg;
             RAISE EXCEPTION '%', _msg;
         End If;

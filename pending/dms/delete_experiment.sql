@@ -83,7 +83,7 @@ BEGIN
     WHERE experiment = _experimentName;
 
     If Not FOUND Then
-        _message := 'Could not get Id for Experiment "' || _experimentName || '"';
+        _message := format('Could not get Id for Experiment "%s"', _experimentName);
         RAISE EXCEPTION '%', _message;
     End If;
 
@@ -149,7 +149,7 @@ BEGIN
     WHERE (exp_id = _experimentId);
 
     If _plexMemberCount > 0 Then
-        _message := 'Cannot delete experiment that is mapped to a plex channel; see https://dms2.pnl.gov/experiment_plex_members_tsv/report/-/-/-/' || _experimentName || '/-/-/-';
+        _message := format('Cannot delete experiment that is mapped to a plex channel; see https://dms2.pnl.gov/experiment_plex_members_tsv/report/-/-/-/%s/-/-/-', _experimentName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5204';

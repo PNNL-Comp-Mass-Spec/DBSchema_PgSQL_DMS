@@ -98,7 +98,7 @@ BEGIN
     End If;
 
     If Not _mode::citext In ('add', 'update') Then
-        _message := 'Unknown Mode: ' || _mode;
+        _message := format('Unknown Mode: %s', _mode);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
@@ -117,7 +117,7 @@ BEGIN
     -- Cannot update a non-existent entry
     --
     If _mode = 'update' And _existingRowCount = 0 Then
-        _message := 'Could not find "' || _script || '" in database';
+        _message := format('Could not find "%s" in database', _script);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5203';
@@ -127,7 +127,7 @@ BEGIN
     -- Cannot add an existing entry
     --
     If _mode = 'add' And _existingRowCount > 0 Then
-        _message := 'Script "' || _script || '" already exists in database';
+        _message := format('Script "%s" already exists in database', _script);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5204';

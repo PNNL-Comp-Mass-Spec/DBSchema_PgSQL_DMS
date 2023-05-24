@@ -57,7 +57,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          10/04/2022 mem - Change _enable, _infoOnly and _includeDisabled from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -161,7 +161,7 @@ BEGIN
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
             If _deleteCount > 0 Then
-                _message := 'Found ' || _deleteCount || ' entries in _managerNameList that are not ' || _managerTypeName || ' managers';
+                _message := format('Found %s entries in _managerNameList that are not %s managers', _deleteCount, _managerTypeName);
                 RAISE INFO '%', _message;
                 _message := '';
             End If;

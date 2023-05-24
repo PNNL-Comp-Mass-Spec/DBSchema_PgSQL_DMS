@@ -243,7 +243,7 @@ BEGIN
         --
         GET DIAGNOSTICS _statusInfoCount = ROW_COUNT;
 
-        _statusMessageInfo := 'Status info count: ' || _statusInfoCount::text;
+        _statusMessageInfo := format('Status info count: %s', _statusInfoCount);
 
         If _infoLevel > 0 Then
 
@@ -485,7 +485,7 @@ BEGIN
     If _returnCode = '' Then
         _message := _statusMessageInfo;
     Else
-        _message := 'Error storing info, code ' || _returnCode;
+        _message := format('Error storing info, code %s', _returnCode);
     End If;
 
     DROP TABLE Tmp_Processor_Status_Info;

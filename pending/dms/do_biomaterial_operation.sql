@@ -68,7 +68,7 @@ BEGIN
     WHERE Biomaterial_Name = _biomaterialName;
 
     If Not FOUND Then
-        _message := 'Could not get ID for biomaterial "' || _biomaterialName || '"';
+        _message := format('Could not get ID for biomaterial "%s"', _biomaterialName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -115,7 +115,7 @@ BEGIN
     -- Mode was unrecognized
     ---------------------------------------------------
 
-    _message := 'Mode "' || _mode ||  '" was unrecognized';
+    _message := format('Mode "%s" was unrecognized', _mode);
     RAISE WARNING '%', _message;
 
     _returnCode := 'U5201';

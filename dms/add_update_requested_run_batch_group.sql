@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **  Auth:   mem
 **  Date:   02/15/2023 - initial version
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -133,7 +133,7 @@ BEGIN
                 _ownerUsername := _newUsername;
             Else
                 _logErrors := false;
-                _message := 'Could not find entry in database for username "' || _ownerUsername || '"';
+                _message := format('Could not find entry in database for username "%s"', _ownerUsername);
                 _returnCode := 'U5207';
                 RAISE EXCEPTION '%', _message;
             End If;

@@ -75,13 +75,13 @@ BEGIN
     WHERE DS.dataset_id = _datasetID;
 
     If Not FOUND Then
-        _message := 'Dataset ID not found in t_dataset: ' || _datasetID::text;
+        _message := format('Dataset ID not found in t_dataset: %s', _datasetID);
         _returnCode := 'U5201';
         RETURN;
     End If;
 
     If Not Exists (SELECT * FROM t_dataset_scan_types WHERE dataset_id = _datasetID) Then
-        _message := 'Warning: Scan type info not found in t_dataset_scan_types for dataset ' || _dataset;
+        _message := format('Warning: Scan type info not found in t_dataset_scan_types for dataset %s', _dataset);
         RETURN;
     End If;
 
@@ -176,7 +176,7 @@ BEGIN
         End If;
 
         If _hasIMS And _currentDatasetType Like 'HMS%' Then
-            _newDatasetType := 'IMS-' || _currentDatasetType;
+            _newDatasetType := format('IMS-%s', _currentDatasetType);
             _requiredAction := 'FixDSType';
         End If;
 
@@ -304,7 +304,7 @@ BEGIN
             End If;
 
         Else
-            _warnMessage := 'Warning: Dataset type is ' || _currentDatasetType || ' but no HCD scans are present';
+            _warnMessage := format('Warning: Dataset type is %s but no HCD scans are present', _currentDatasetType);
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -320,7 +320,7 @@ BEGIN
             End If;
 
         Else
-            _warnMessage := 'Warning: Dataset type is ' || _currentDatasetType || ' but no ETD scans are present';
+            _warnMessage := format('Warning: Dataset type is %s but no ETD scans are present', _currentDatasetType);
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -354,7 +354,7 @@ BEGIN
             End If;
 
         Else
-            _warnMessage := 'Warning: Dataset type is ' || _currentDatasetType || ' but no high res MSn scans are present';
+            _warnMessage := format('Warning: Dataset type is %s but no high res MSn scans are present', _currentDatasetType);
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -370,7 +370,7 @@ BEGIN
             End If;
 
         Else
-            _warnMessage := 'Warning: Dataset type is ' || _currentDatasetType || ' but no low res MSn scans are present';
+            _warnMessage := format('Warning: Dataset type is %s but no low res MSn scans are present', _currentDatasetType);
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -386,7 +386,7 @@ BEGIN
             End If;
 
         Else
-            _warnMessage := 'Warning: Dataset type is ' || _currentDatasetType || ' but no HMS scans are present';
+            _warnMessage := format('Warning: Dataset type is %s but no HMS scans are present', _currentDatasetType);
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -562,7 +562,7 @@ BEGIN
         Else
             If _newDatasetType = '' And _warnMessage = '' Then
                 If _datasetTypeAutoGen <> _currentDatasetType And _datasetTypeAutoGen <> '' Then
-                    _warnMessage := 'Warning: Dataset type is ' || _currentDatasetType || ' while auto-generated type is ' || _datasetTypeAutoGen;
+                    _warnMessage := format('Warning: Dataset type is ' || _currentDatasetType || ' while auto-generated type is %s', _datasetTypeAutoGen);
                 End If;
             End If;
         End If;
@@ -605,7 +605,7 @@ BEGIN
                 RETURN;
             End If;
 
-            _message := 'Auto-switched dataset type from ' || _currentDatasetType || ' to ' || _newDatasetType;
+            _message := format('Auto-switched dataset type from %s to %s', _currentDatasetType, _newDatasetType);
 
             If Not _infoOnly Then
                 UPDATE t_dataset
@@ -621,7 +621,7 @@ BEGIN
 
     If _infoOnly Then
         If Coalesce(_message, '') = '' Then
-            _message := 'Dataset type is valid: ' || _currentDatasetType;
+            _message := format('Dataset type is valid: %s', _currentDatasetType);
         End If;
 
         RAISE INFO '%', _message;

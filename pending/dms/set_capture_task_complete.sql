@@ -152,7 +152,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Dataset: ' || _datasetName;
+    _usageMessage := format('Dataset: %s', _datasetName);
     CALL post_usage_log_entry ('Set_Capture_Task_Complete', _usageMessage);
 
     If _message <> '' Then

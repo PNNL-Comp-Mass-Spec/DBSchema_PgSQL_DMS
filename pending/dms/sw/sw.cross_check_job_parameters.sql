@@ -60,7 +60,7 @@ BEGIN
           );
 
     If _message <> '' Then
-        _message := 'Parameter mismatch: ' || _message;
+        _message := format('Parameter mismatch: %s', _message);
         _returnCode := 'U5499';
     End If;
 

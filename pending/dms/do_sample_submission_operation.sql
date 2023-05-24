@@ -135,9 +135,8 @@ BEGIN
     ---------------------------------------------------
 
     If Coalesce(_id, 0) > 0 Then
-        _usageMessage := 'Performed submission operation for submission ID ' || Cast(_id as text) || '; mode ' || _mode;
-
-        _usageMessage := _usageMessage || '; user ' || Coalesce(_callingUser, '??');
+        _usageMessage := format('Performed submission operation for submission ID %s; mode %s; user %s',
+                                _id, _mode, Coalesce(_callingUser, '??'));
 
         CALL post_usage_log_entry ('Do_Sample_Submission_Operation', _usageMessage, _minimumUpdateInterval => 2);
     End If;

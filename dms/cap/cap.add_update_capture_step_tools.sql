@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN 
 **          12/09/2022 mem - Change _mode to lowercase
 **          04/27/2023 mem - Use boolean for data type name
 **          05/12/2023 mem - Rename variables
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _mode = 'update' And _existingCount = 0 Then
-            _message := 'Could not find "' || _name || '" in database';
+            _message := format('Could not find "%s" in database', _name);
             RAISE WARNING '%', _message;
             _returnCode := 'U5201';
             RETURN;
@@ -87,7 +88,7 @@ BEGIN
         -- Cannot add an existing entry
         --
         If _mode = 'add' And _existingCount > 0 Then
-            _message := '"' || _name || '" already exists in database';
+            _message := format('"%s" already exists in database', _name);
             RAISE WARNING '%', _message;
             _returnCode := 'U5202';
             RETURN;

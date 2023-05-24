@@ -185,7 +185,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Instrument group: ' || _instrumentGroup;
+    _usageMessage := format('Instrument group: %s', _instrumentGroup);
     CALL post_usage_log_entry ('Update_Instrument_Group_Allowed_Dataset_Type', _usageMessage);
 
 END

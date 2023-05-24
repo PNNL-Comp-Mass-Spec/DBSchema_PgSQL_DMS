@@ -77,7 +77,7 @@ BEGIN
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _message := 'Could not get dataset ID for dataset ' || _datasetName;
+        _message := format('Could not get dataset ID for dataset %s', _datasetName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
@@ -87,25 +87,25 @@ BEGIN
     ---------------------------------------------------
     --
     If Not _completionState in (3, 5, 6, 8, 9, 14) Then
-        _message := 'Completion state argument incorrect for ' || _datasetName;
+        _message := format('Completion state argument incorrect for %s', _datasetName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If Not _datasetState in (2, 7) Then
-        _message := 'Dataset in incorrect state: ' || _datasetName;
+        _message := format('Dataset in incorrect state: %s', _datasetName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If _datasetState = 2 and not _completionState in (3, 5, 6, 9, 14) Then
-        _message := 'Transition 1 not allowed: ' || _datasetName;
+        _message := format('Transition 1 not allowed: %s', _datasetName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If _datasetState = 7 and not _completionState in (3, 6, 8) Then
-        _message := 'Transition 2 not allowed: ' || _datasetName;
+        _message := format('Transition 2 not allowed: %s', _datasetName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
@@ -120,7 +120,7 @@ BEGIN
 
     If Not FOUND Then
         _returnCode := 'U5252';
-        _message := 'Update was unsuccessful for dataset ' || _datasetName;
+        _message := format('Update was unsuccessful for dataset %s', _datasetName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
@@ -144,7 +144,7 @@ BEGIN
     If _returnCode <> '' Then
         ROLLBACK;
 
-        _message := 'Update was unsuccessful for archive table ' || _datasetName;
+        _message := format('Update was unsuccessful for archive table %s', _datasetName);
         RAISE WARNING '%', _message;
 
         RETURN;

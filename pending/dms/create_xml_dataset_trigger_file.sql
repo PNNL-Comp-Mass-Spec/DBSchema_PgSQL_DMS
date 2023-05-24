@@ -168,42 +168,42 @@ BEGIN
     -- Create XML dataset trigger file lines
     -- Be sure to replace double quote characters with &quot; to avoid mal-formed XML
     -- In reality, only the comment should have double-quote characters, but we'll check all text fields just to be safe
-    -- Note that XMLQuoteCheck will also change Null values to empty strings
+    -- Note that xml_quote_check will also change Null values to empty strings
     ---------------------------------------------------
     --
 
     _newLine := chr(13) || chr(10);
 
     --XML Header
-    _tmpXmlLine := '<?xml version="1.0" ?>' || _newLine;
+    _tmpXmlLine := format('<?xml version="1.0" ?>%s', _newLine);
 
-    _tmpXmlLine := _tmpXmlLine || '<Dataset>' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Dataset Name" Value="' ||          xml_quote_check(_datasetName) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Experiment Name" Value="' ||       xml_quote_check(_experimentName) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Instrument Name" Value="' ||       xml_quote_check(_instrumentName) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Capture Share Name" Value="' ||    xml_quote_check(_captureShareName) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Capture Subdirectory" Value="'||   xml_quote_check(_captureSubdirectory) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Separation Type" Value="' ||       xml_quote_check(_separationType) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="LC Cart Name" Value="' ||          xml_quote_check(_lcCartName) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="LC Cart Config" Value="' ||        xml_quote_check(_lcCartConfig) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="LC Column" Value="' ||             xml_quote_check(_lcColumn) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Wellplate Name" Value="' ||        xml_quote_check(_wellplateName) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Well Number" Value="' ||           xml_quote_check(_wellNumber) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Dataset Type" Value="' ||          xml_quote_check(_datasetType) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Operator (Username)" Value="' ||   xml_quote_check(_operatorUsername) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="DS Creator (Username)" Value="' || xml_quote_check(_dsCreatorUsername) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Work Package" Value="' ||          xml_quote_check(_workPackage) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Comment" Value="' ||               xml_quote_check(_comment) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Interest Rating" Value="' ||       xml_quote_check(_interestRating) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Request" Value="' ||               _request::text || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="EMSL Proposal ID" Value="' ||      xml_quote_check(_emslProposalID) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="EMSL Usage Type" Value="' ||       xml_quote_check(_emslUsageType) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="EMSL Users List" Value="' ||       xml_quote_check(_emslUsersList) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Run Start" Value="' ||             xml_quote_check(_runStart) || '" />' || _newLine;
-    _tmpXmlLine := _tmpXmlLine || '  <Parameter Name="Run Finish" Value="' ||            xml_quote_check(_runFinish) || '" />' || _newLine;
+    _tmpXmlLine := format('%s<Dataset>%s', _tmpXmlLine, _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Dataset Name" Value="%s" />%s',          _tmpXmlLine, xml_quote_check(_datasetName),         _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Experiment Name" Value="%s" />%s',       _tmpXmlLine, xml_quote_check(_experimentName),      _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Instrument Name" Value="%s" />%s',       _tmpXmlLine, xml_quote_check(_instrumentName),      _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Capture Share Name" Value="%s" />%s',    _tmpXmlLine, xml_quote_check(_captureShareName),    _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Capture Subdirectory" Value="%s" />%s',  _tmpXmlLine, xml_quote_check(_captureSubdirectory), _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Separation Type" Value="%s" />%s',       _tmpXmlLine, xml_quote_check(_separationType),      _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="LC Cart Name" Value="%s" />%s',          _tmpXmlLine, xml_quote_check(_lcCartName),          _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="LC Cart Config" Value="%s" />%s',        _tmpXmlLine, xml_quote_check(_lcCartConfig),        _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="LC Column" Value="%s" />%s',             _tmpXmlLine, xml_quote_check(_lcColumn),            _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Wellplate Name" Value="%s" />%s',        _tmpXmlLine, xml_quote_check(_wellplateName),       _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Well Number" Value="%s" />%s',           _tmpXmlLine, xml_quote_check(_wellNumber),          _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Dataset Type" Value="%s" />%s',          _tmpXmlLine, xml_quote_check(_datasetType),         _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Operator (Username)" Value="%s" />%s',   _tmpXmlLine, xml_quote_check(_operatorUsername),    _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="DS Creator (Username)" Value="%s" />%s', _tmpXmlLine, xml_quote_check(_dsCreatorUsername),   _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Work Package" Value="%s" />%s',          _tmpXmlLine, xml_quote_check(_workPackage),         _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Comment" Value="%s" />%s',               _tmpXmlLine, xml_quote_check(_comment),             _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Interest Rating" Value="%s" />%s',       _tmpXmlLine, xml_quote_check(_interestRating),      _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Request" Value="%s" />%s',               _tmpXmlLine, _request,                              _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="EMSL Proposal ID" Value="%s" />%s',      _tmpXmlLine, xml_quote_check(_emslProposalID),      _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="EMSL Usage Type" Value="%s" />%s',       _tmpXmlLine, xml_quote_check(_emslUsageType),       _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="EMSL Users List" Value="%s" />%s',       _tmpXmlLine, xml_quote_check(_emslUsersList),       _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Run Start" Value="%s" />%s',             _tmpXmlLine, xml_quote_check(_runStart),            _newLine);
+    _tmpXmlLine := format('%s  <Parameter Name="Run Finish" Value="%s" />%s',            _tmpXmlLine, xml_quote_check(_runFinish),           _newLine);
 
     --Close XML file
-    _tmpXmlLine := _tmpXmlLine || '</Dataset>' || _newLine;
+    _tmpXmlLine := format('%s</Dataset>%s', _tmpXmlLine, _newLine);
 
     ---------------------------------------------------
     -- Write XML dataset trigger file
@@ -223,7 +223,7 @@ BEGIN
 
     If _result = 1 Then
         _logErrors := false;
-        _message := 'Trigger file already exists (' || _filePath || ').  Enter a different dataset name';
+        _message := format('Trigger file already exists (%s).  Enter a different dataset name', _filePath);
         _returnCode := 'U5205';
         goto DestroyFSO
     End If;

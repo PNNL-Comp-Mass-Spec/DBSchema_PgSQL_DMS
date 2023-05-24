@@ -154,7 +154,7 @@ BEGIN
         End If;
 
         If Not Exists (Select * from sw.t_scripts WHERE script = _extensionScriptName) Then
-            _message := 'Error: Extension script "' || _extensionScriptName || '" not found in sw.t_scripts';
+            _message := format('Error: Extension script "%s" not found in sw.t_scripts', _extensionScriptName);
             _returnCode := 'U5204';
 
             RAISE WARNING '%', _message;

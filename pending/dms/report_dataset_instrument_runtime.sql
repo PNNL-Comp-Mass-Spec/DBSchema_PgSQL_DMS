@@ -57,7 +57,7 @@ BEGIN
         Else
             -- IsDate() equivalent
             If public.try_cast(_endDate, null::timestamp) Is Null Then
-                _msg := 'End date "' || _endDate || '" is not a valid date';
+                _msg := format('End date "%s" is not a valid date', _endDate);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -89,7 +89,7 @@ BEGIN
             _stDate := public.try_cast(_startDate, null::timestamp);
 
             If _stDate Is Null Then
-                _msg := 'Start date "' || _startDate || '" is not a valid date';
+                _msg := format('Start date "%s" is not a valid date', _startDate);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;

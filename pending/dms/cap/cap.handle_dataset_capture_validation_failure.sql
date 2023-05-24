@@ -103,7 +103,7 @@ BEGIN
               State = 5;
 
         If Not FOUND Then
-            _message := 'DatasetCapture task for dataset ' || _datasetName || ' is not in State 5; unable to continue';
+            _message := format('DatasetCapture task for dataset %s is not in State 5; unable to continue', _datasetName);
             _returnCode := 'U5203';
 
             RAISE INFO '%', _message;

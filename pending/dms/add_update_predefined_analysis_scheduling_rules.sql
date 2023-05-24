@@ -85,7 +85,7 @@ BEGIN
         WHERE group_name = _processorGroup;
 
         If Not FOUND Then
-            _message := 'Processor group not found: ' || _processorGroup;
+            _message := format('Processor group not found: %s', _processorGroup);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';

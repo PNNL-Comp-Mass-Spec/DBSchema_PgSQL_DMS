@@ -135,7 +135,7 @@ BEGIN
 
         If Not _autoRemoveNotReleasedDatasets Then
             If _notReleasedCount = 1 Then
-                _message := 'Dataset is "Not Released": ' || _list;
+                _message := format('Dataset is "Not Released": %s', _list);
             Else
                 _message := format('%s datasets are "Not Released": %s', _notReleasedCount, _list);
             End If;
@@ -171,7 +171,7 @@ BEGIN
     WHERE Dataset_ID IS NULL;
 
     If Coalesce(_list, '') <> '' Then
-        _message := 'The following datasets were not in the database: ' || _list;
+        _message := format('The following datasets were not in the database: %s', _list);
 
         If _showDebugMessages Then
             RAISE INFO '%', _message;
@@ -194,7 +194,7 @@ BEGIN
           (    _allowNewDatasets AND dataset_state_id NOT IN (1,2,3));
 
     If Coalesce(_list, '') <> '' Then
-        _message := 'The following datasets were not in correct state: ' || _list;
+        _message := format('The following datasets were not in correct state: %s', _list);
         If _showDebugMessages Then
             RAISE INFO '%', _message;
         End If;
@@ -213,7 +213,7 @@ BEGIN
     WHERE dataset_rating_id IN (-1, -2);
 
     If Coalesce(_list, '') <> '' Then
-        _message := 'The following datasets have a rating of -1 (No Data) or -2 (Data Files Missing): ' || _list;
+        _message := format('The following datasets have a rating of -1 (No Data) or -2 (Data Files Missing): %s', _list);
         If _showDebugMessages Then
             RAISE INFO '%', _message;
         End If;

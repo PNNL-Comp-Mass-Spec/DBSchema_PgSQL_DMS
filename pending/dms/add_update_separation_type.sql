@@ -65,7 +65,7 @@ BEGIN
     ---------------------------------------------------
     --
     If Not _state::citext IN ('Active', 'Inactive') Then
-        _message := 'Separation type state must be Active or Inactive; ' || _state || ' is not allowed';
+        _message := format('Separation type state must be Active or Inactive; %s is not allowed', _state);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -92,7 +92,7 @@ BEGIN
         If _badCh = 'space' Then
             _message := 'Separation Type name may not contain spaces';
         Else
-            _message := 'Separation Type name may not contain the character(s) "' || _badCh || '"';
+            _message := format('Separation Type name may not contain the character(s) "%s"', _badCh);
         End If;
 
         RAISE WARNING '%', _message;
@@ -182,7 +182,7 @@ BEGIN
             WHERE dataset_id = _maxDatasetID
 
             If _datasetCount = 1 Then
-                _datasetDescription := 'dataset ' || _datasetName;
+                _datasetDescription := format('dataset %s', _datasetName);
             Else
                 _datasetDescription := _datasetCount::text || ' datasets';
             End If;
@@ -214,7 +214,7 @@ BEGIN
     --
     If _mode = 'add' Then
         If Exists (Select * FROM t_secondary_sep Where separation_type = _sepTypeName) Then
-            _message := 'Separation Type already exists; cannot add a new separation type named ' || _sepTypeName;
+            _message := format('Separation Type already exists; cannot add a new separation type named %s', _sepTypeName);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5208';

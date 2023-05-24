@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **          01/31/2023 mem - Use new column names in tables
 **          05/07/2023 mem - Remove unused variable
 **          05/22/2023 mem - Capitalize reserved word
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,7 @@ BEGIN
           M.control_from_website > 0;
 
     IF NOT FOUND THEN
-        _message := 'Did not find any managers of type ' || _managerTypeIDList || ' with parameter ' || _paramName || ' and control_from_website > 0';
+        _message := format('Did not find any managers of type %s with parameter %s and control_from_website > 0', _managerTypeIDList, _paramName);
         _returnCode := 'U5201';
 
         DROP TABLE Tmp_ParamValueEntriesToUpdate;

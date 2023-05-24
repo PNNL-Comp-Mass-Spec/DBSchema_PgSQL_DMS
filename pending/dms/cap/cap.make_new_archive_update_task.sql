@@ -110,7 +110,7 @@ BEGIN
         WHERE dataset = _datasetName;
 
         If Not FOUND Then
-            _message := 'Dataset not found: ' || _datasetName || '; unable to continue';
+            _message := format('Dataset not found: %s; unable to continue', _datasetName);
             _returnCode := 'U5203';
 
             RAISE WARNING '%', _message;
@@ -133,9 +133,11 @@ BEGIN
 
         If _jobID > 0 Then
             If _resultsDirectoryName = '' Then
-                _message := 'Existing pending capture task job already exists for ' || _datasetName || ' and subdirectory ' || _resultsDirectoryName || '; task ' || _jobID::text;
+                _message := format('Existing pending capture task job already exists for %s and subdirectory %s; task %s',
+                                    _datasetName, _resultsDirectoryName, _jobID);
             Else
-                _message := 'Existing pending capture task job already exists for ' || _datasetName || '; task ' || _jobID::text;
+                _message := format('Existing pending capture task job already exists for %s; task %s',
+                                    _datasetName, _jobID);
             End If;
 
             RAISE INFO '%', _message;
@@ -183,12 +185,12 @@ BEGIN
             RETURNING job
             INTO _jobID;
 
-            _message := 'Created capture task job ' || _jobID::text || ' for dataset ' || _datasetName;
+            _message := format('Created capture task job %s for dataset %s', _jobID, _datasetName);
 
             If _resultsDirectoryName = '' Then
-                _message := _message || ' and all subdirectories';
+                _message := format('%s and all subdirectories', _message);
             Else
-                _message := _message || ' and results directory ' || _resultsDirectoryName;
+                _message := format('%s and results directory %s', _message, _resultsDirectoryName);
             End If;
 
         End If;

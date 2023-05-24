@@ -144,9 +144,9 @@ BEGIN
 
         If _list <> '' Then
             If Position(',' In _list) = 0 Then
-                _message := 'Dataset "' || _list || '" was not found in the database';
+                _message := format('Dataset "%s" was not found in the database', _list);
             Else
-                _message := 'The following datasets were not in the database: "' || _list || '"';
+                _message := format('The following datasets were not in the database: "%s"', _list);
             End If;
 
             _returnCode := 'U5201';

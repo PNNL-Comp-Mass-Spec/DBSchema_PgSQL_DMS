@@ -65,7 +65,7 @@ BEGIN
     WHERE data_pkg_id = _dataPkgID;
 
     If Not FOUND Then
-        _message := 'No entry could be found in database for data package: ' || _dataPkgID;
+        _message := format('No entry could be found in database for data package: %s', _dataPkgID);
         RAISE WARNING '%', _message;
         RETURN 'U5106';
     End If;
@@ -80,7 +80,7 @@ BEGIN
     End If;
 
     If _newDataPackageFolder = _currentDataPackageFolder Then
-        _message := 'Data package folder name is already up-to-date: ' || _newDataPackageFolder;
+        _message := format('Data package folder name is already up-to-date: %s', _newDataPackageFolder);
         If _infoOnly Then
             RAISE INFO '%', _message;
         End If;
@@ -99,7 +99,7 @@ BEGIN
     End If;
 
     If _newDataPackageWiki = _currentDataPackageWiki Then
-        _message := 'Data package wiki link is already up-to-date: ' || _newDataPackageWiki;
+        _message := format('Data package wiki link is already up-to-date: %s', _newDataPackageWiki);
         If _infoOnly Then
             RAISE INFO '%', _message;
         End If;

@@ -213,7 +213,7 @@ BEGIN
         End If;
 
         If _scriptBaseName In ('MaxQuant', 'DiaNN') And _protCollOptionsList <> 'seq_direction=forward,filetype=fasta' And Not _usingLegacyFASTA Then
-            _message := 'The ProteinOptions parameter must be "seq_direction=forward,filetype=fasta" for ' || _scriptBaseName || ' jobs';
+            _message := format('The ProteinOptions parameter must be "seq_direction=forward,filetype=fasta" for %s jobs', _scriptBaseName);
             RAISE INFO '%', _message;
 
             _returnCode := 'U5204';

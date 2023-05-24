@@ -166,19 +166,20 @@ BEGIN
             -- Show debug info
             ---------------------------------------------------
 
-            RAISE INFO '%', 'Dataset:             ' || _datasetName;
-            RAISE INFO '%', 'Run Start:           ' || _runStart;
-            RAISE INFO '%', 'Experiment:          ' || _experimentName;
-            RAISE INFO '%', 'Operator Username:   ' || _operatorUsername;
-            RAISE INFO '%', 'Run Duration:        ' || _runDuration;
-            RAISE INFO '%', 'Comment:             ' || _comment;
-            RAISE INFO '%', 'EUS Proposal:        ' || _eusProposalID;
-            RAISE INFO '%', 'EUS Usage Type:      ' || _eusUsageType;
-            RAISE INFO '%', 'EUS Users:           ' || _eusUsersList;
-            RAISE INFO '%', 'mode:                ' || _mode;
+            RAISE INFO 'Dataset:             %', _datasetName;
+            RAISE INFO 'Run Start:           %', _runStart;
+            RAISE INFO 'Experiment:          %', _experimentName;
+            RAISE INFO 'Operator Username:   %', _operatorUsername;
+            RAISE INFO 'Run Duration:        %', _runDuration;
+            RAISE INFO 'Comment:             %', _comment;
+            RAISE INFO 'EUS Proposal:        %', _eusProposalID;
+            RAISE INFO 'EUS Usage Type:      %', _eusUsageType;
+            RAISE INFO 'EUS Users:           %', _eusUsersList;
+            RAISE INFO 'mode:                %', _mode;
 
             -- Note that AddUpdateTrackingDataset calls UpdateDatasetInterval after creating the dataset
-            _message := 'Would create dataset with run start ' || _runStart::text || ' and name ''' || _datasetName || ''', then call UpdateDatasetInterval to update t_run_interval';
+            _message := format('Would create dataset with run start %s and name ''%s'', then call UpdateDatasetInterval to update t_run_interval',
+                                _runStart, _datasetName);
         End If;
 
         If _mode = 'add' Then

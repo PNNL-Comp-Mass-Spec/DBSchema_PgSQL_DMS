@@ -169,7 +169,7 @@ BEGIN
         CALL cap.create_steps_for_task (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
 
         If _returnCode <> '' Then
-            _msg := 'Error returned by create_steps_for_task: ' || _returnCode;
+            _msg := format('Error returned by create_steps_for_task: %s', _returnCode);
 
             If Coalesce(_message, '') <> '' Then
                 _msg := _msg || '; ' || _message;

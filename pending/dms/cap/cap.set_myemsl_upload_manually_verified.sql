@@ -85,7 +85,7 @@ BEGIN
     End If;
 
     If NOT _state IN (2, 6) Then
-        _message := 'The ' || _tool || ' step for capture task job ' || _job::text || ' is in state ' || _state::text || '; to use this procedure the state must be 2 or 6';
+        _message := format('The %s step for capture task job %s is in state %s; to use this procedure the state must be 2 or 6', _tool, _job, _state);
         _returnCode := 'U5203';
         RETURN;
     End If;

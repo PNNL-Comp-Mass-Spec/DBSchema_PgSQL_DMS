@@ -95,7 +95,7 @@ BEGIN
 
             If _returnCode <> '' Then
                 If Coalesce(_message, '') = '' Then
-                    _message := 'Protein collection list validation error, result code ' || _returnCode;
+                    _message := format('Protein collection list validation error, result code %s', _returnCode);
                 End If;
 
                 RETURN;
@@ -144,7 +144,7 @@ BEGIN
         FROM public.parse_delimited_integer_list(_sourceJobs, ',')
 
         If Not Exists (SELECT * FROM Tmp_SourceJobs) Then
-            _message := '_sourceJobs did not have any valid Job IDs: ' || _sourceJobs;
+            _message := format('_sourceJobs did not have any valid Job IDs: %s', _sourceJobs);
 
             DROP TABLE Tmp_SourceJobs;
             DROP TABLE Tmp_NewJobInfo;
@@ -287,7 +287,7 @@ BEGIN
                                ON Tmp_SourceJobs.JobID = J.job
                         WHERE J.protein_collection_list = _newProteinCollectionList ) Then
 
-                _message := 'ProteinCollectionList was used by one or more of the existing jobs; not cloning the jobs: ' || _newProteinCollectionList;
+                _message := format('ProteinCollectionList was used by one or more of the existing jobs; not cloning the jobs: %s', _newProteinCollectionList);
                 RAISE WARNING '%', _message;
 
                 DROP TABLE Tmp_SourceJobs;
@@ -311,7 +311,7 @@ BEGIN
         Else
             If Not _allowDuplicateJob Then
                 If _newParamFileName <> '' And _mostCommonParamFile = _newParamFileName Then
-                    _message := 'The new parameter file name matches the old name; not cloning the jobs: ' || _newParamFileName;
+                    _message := format('The new parameter file name matches the old name; not cloning the jobs: %s', _newParamFileName);
                     RAISE WARNING '%', _message;
 
                     DROP TABLE Tmp_SourceJobs;
@@ -320,7 +320,7 @@ BEGIN
                 End If;
 
                 If _newSettingsFileName <> '' And _mostCommonSettingsFile = _newSettingsFileName Then
-                    _message := 'The new settings file name matches the old name; not cloning the jobs: ' || _newSettingsFileName;
+                    _message := format('The new settings file name matches the old name; not cloning the jobs: %s', _newSettingsFileName);
                     RAISE WARNING '%', _message;
 
                     DROP TABLE Tmp_SourceJobs;

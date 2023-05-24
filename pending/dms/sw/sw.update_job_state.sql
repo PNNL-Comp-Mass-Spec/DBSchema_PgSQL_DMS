@@ -536,7 +536,7 @@ BEGIN
         _jobsProcessed := _jobsProcessed + 1;
 
         If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
-            _statusMessage := '... Updating job state: ' || _jobsProcessed::text || ' / ' || _jobCountToProcess::text;
+            _statusMessage := format('... Updating job state: %s / %s', _jobsProcessed, _jobCountToProcess);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Job_State', 'sw');
             _lastLogTime := clock_timestamp();
         End If;

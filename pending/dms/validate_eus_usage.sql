@@ -180,7 +180,7 @@ BEGIN
     WHERE eus_usage_type = _eusUsageType;
 
     If Not FOUND Then
-        _message := 'Could not resolve EUS usage type: "' || _eusUsageType || '"';
+        _message := format('Could not resolve EUS usage type: "%s"', _eusUsageType);
         _returnCode := 'U5371';
         RETURN;
     End If;
@@ -190,7 +190,7 @@ BEGIN
             _message := 'Please choose usage type USER_ONSITE if processing a sample from an onsite user or a sample for a Resource Owner project; ' ||;
                            'choose USER_REMOTE if processing a sample for an EMSL user'
         Else
-            _message := 'EUS usage type: "' || _eusUsageType || '" is not allowed for Sample Prep Requests';
+            _message := format('EUS usage type: "%s" is not allowed for Sample Prep Requests', _eusUsageType);
         End If;
 
         _returnCode := 'U5372';
@@ -207,7 +207,7 @@ BEGIN
     If Not _eusUsageType::citext In ('USER', 'USER_ONSITE', 'USER_REMOTE') Then
         -- Make sure no proposal ID or users are specified
         If Coalesce(_eusProposalID, '') <> '' OR _eusUsersList <> '' Then
-            _message := 'Warning: Cleared proposal ID and/or users since usage type is "' || _eusUsageType || '"';
+            _message := format('Warning: Cleared proposal ID and/or users since usage type is "%s"', _eusUsageType);
         End If;
 
         _eusProposalID := NULL;
@@ -221,7 +221,7 @@ BEGIN
         -- Proposal and user list cannot be blank when the usage type is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
         ---------------------------------------------------
         If Coalesce(_eusProposalID, '') = '' Then
-            _message := 'A Proposal ID must be selected for usage type "' || _eusUsageType || '"';
+            _message := format('A Proposal ID must be selected for usage type "%s"', _eusUsageType);
             _returnCode := 'U5373';
             RETURN;
         End If;
@@ -236,7 +236,7 @@ BEGIN
         WHERE proposal_id = _eusProposalID
 
         If Not FOUND Then
-            _message := 'Unknown EUS proposal ID: "' || _eusProposalID || '"';
+            _message := format('Unknown EUS proposal ID: "%s"', _eusProposalID);
             _returnCode := 'U5374';
             RETURN;
         End If;
@@ -365,7 +365,7 @@ BEGIN
             -- Blank user list
             --
             If Not _autoPopulateUserListIfBlank Then
-                _message := 'Associated users must be selected for usage type "' || _eusUsageType || '"';
+                _message := format('Associated users must be selected for usage type "%s"', _eusUsageType);
                 _returnCode := 'U5375';
                 RETURN;
             End If;

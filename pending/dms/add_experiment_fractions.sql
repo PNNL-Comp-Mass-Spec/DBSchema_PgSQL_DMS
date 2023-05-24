@@ -237,9 +237,9 @@ BEGIN
         -- Append the suffix, if defined
         If char_length(_suffix) > 0 Then
             If Substring(_suffix, 1, 1) IN ('_', '-') Then
-                _baseFractionName := _baseFractionName + _suffix;
+                _baseFractionName := format('%s%s', _baseFractionName, _suffix);
             Else
-                _baseFractionName := _baseFractionName || '_' || _suffix;
+                _baseFractionName := format('%s_%s', _baseFractionName, _suffix);
             End If;
         End If;
 
@@ -358,7 +358,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _message := 'Could not find entry in database for internal standard "' || _internalStandard || '"';
+                _message := format('Could not find entry in database for internal standard "%s"', _internalStandard);
                 RAISE EXCEPTION '%', _message;
             End If;
             _internalStandardID := _tmpID;
@@ -377,7 +377,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _message := 'Could not find entry in database for postdigestion internal standard "' || _tmpID || '"';
+                _message := format('Could not find entry in database for postdigestion internal standard "%s"', _tmpID);
                 RAISE EXCEPTION '%', _message;
             End If;
             _postdigestIntStdID := _tmpID;
@@ -409,7 +409,7 @@ BEGIN
                     _researcher := _newUsername
                 Else
                     _logErrors := false;
-                    _message := 'Could not find entry in database for researcher username "' || _researcher || '"';
+                    _message := format('Could not find entry in database for researcher username "%s"', _researcher);
                     RAISE EXCEPTION '%', _message;
                 End If;
             End If;

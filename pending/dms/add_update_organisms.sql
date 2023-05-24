@@ -137,13 +137,14 @@ BEGIN
         ---------------------------------------------------
 
         _orgStorageLocation := Coalesce(_orgStorageLocation, '');
+
         If _orgStorageLocation <> '' Then
             If Not _orgStorageLocation LIKE '\\%' Then
                 RAISE EXCEPTION 'Org. Storage Path must start with \\';
             End If;
 
             -- Make sure _orgStorageLocation does not End in \FASTA or \FASTA\
-            -- That text gets auto-appended via computed column OG_organismDBPath
+            -- That text gets auto-appended via computed column organism_db_path
             If _orgStorageLocation Like '%\FASTA' Then
                 _orgStorageLocation := Substring(_orgStorageLocation, 1, char_length(_orgStorageLocation) - 6);
             End If;
@@ -156,15 +157,18 @@ BEGIN
                 _orgStorageLocation := _orgStorageLocation || '\';
             End If;
 
-            -- Auto-define _orgStorageURL
+            If char_length(_orgStorageLocation) > 3 Then
+                -- Auto-define _orgStorageURL
 
-            -- Find the next slash after the 3rd character
-            _serverNameEndSlash := Position('\', _orgStorageLocation In3);
+                -- Find the next slash after the 3rd character
+                _serverNameEndSlash := Position('\' In Substring(_orgStorageLocation, 3)) + 2;
 
-            If _serverNameEndSlash > 3 Then
-                _serverName := Substring(_orgStorageLocation, 3, _serverNameEndSlash - 3);
-                _pathForURL := Substring(_orgStorageLocation, _serverNameEndSlash + 1, char_length(_orgStorageLocation));
-                _orgStorageURL := 'http://' || _serverName || '/' || REPLACE(_pathForURL, '\', '/');
+                If _serverNameEndSlash > 3 Then
+                    _serverName := Substring(_orgStorageLocation, 3, _serverNameEndSlash - 3);
+                    _pathForURL := Substring(_orgStorageLocation, _serverNameEndSlash + 1, char_length(_orgStorageLocation));
+                    _orgStorageURL := format('https://%s/%s', _serverName, Replace(_pathForURL, '\', '/'));
+                End If;
+
             End If;
 
         End If;

@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Capitalize reserved word
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -89,19 +90,19 @@ BEGIN
     ---------------------------------------------------
 
     If _returnCode = '' And Not Exists (Select * From mc.t_param_value PV Where PV.param_type_id = _sourceParamTypeID) Then
-        _message := '_sourceParamTypeID ' || _sourceParamTypeID || ' not found in mc.t_param_value; unable to continue';
+        _message := format('_sourceParamTypeID %s not found in mc.t_param_value; unable to continue', _sourceParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5203';
     End If;
 
     If _returnCode = '' And Exists (Select * From mc.t_param_value PV Where PV.param_type_id = _newParamTypeID) Then
-        _message := '_newParamTypeID ' || _newParamTypeID || ' already exists in mc.t_param_value; unable to continue';
+        _message := format('_newParamTypeID %s already exists in mc.t_param_value; unable to continue', _newParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5204';
     End If;
 
     If _returnCode = '' And Not Exists (Select * From mc.t_param_type PT Where PT.param_type_id = _newParamTypeID) Then
-        _message := '_newParamTypeID ' || _newParamTypeID || ' not found in mc.t_param_type; unable to continue';
+        _message := format('_newParamTypeID %s not found in mc.t_param_type; unable to continue', _newParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5205';
     End If;

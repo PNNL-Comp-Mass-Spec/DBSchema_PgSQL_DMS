@@ -72,7 +72,7 @@ BEGIN
     WHERE dataset = _datasetName
 
     If Not FOUND Or Coalesce(_datasetId, 0) = 0 Then
-        _message := 'Dataset not found: ' || _datasetName;
+        _message := format('Dataset not found: %s', _datasetName);
         _returnCode := 'U5201';
         RETURN;
     End If;
@@ -120,7 +120,7 @@ BEGIN
     WHERE instrument = _newInstrument;
 
     If Not FOUND Or Coalesce(_instrumentIdNew, 0) = 0 Then
-        _message := 'New instrument not found: ' || _newInstrument;
+        _message := format('New instrument not found: %s', _newInstrument);
         _returnCode := 'U5205';
         RETURN;
     End If;
@@ -200,10 +200,8 @@ BEGIN
 
     End If;
 
-    _message := 'Changed instrument from ' || _instrumentNameOld || ' to ' || _instrumentNameNew || ' ' ||;
-                'for dataset ' || _datasetName || ', Dataset_ID ' || Cast(_datasetId As text) || '; ' ||
-                'Storage path ID changed from ' ||
-                Cast(_storagePathIdOld As text) || ' to ' || Cast(_storagePathIdNew As text)
+    _message := format('Changed instrument from %s to %s for dataset %s, Dataset_ID %s; Storage path ID changed from %s to %s';
+                        _instrumentNameOld, _instrumentNameNew, _datasetName, _datasetId, _storagePathIdOld, _storagePathIdNew);
 
     CALL post_log_entry ('Normal', _message, 'Update_Dataset_Instrument');
 

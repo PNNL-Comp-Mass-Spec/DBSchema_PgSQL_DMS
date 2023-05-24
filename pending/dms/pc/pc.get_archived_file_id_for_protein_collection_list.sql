@@ -211,8 +211,8 @@ BEGIN
     LIMIT 1;
 
     If Not FOUND Then
-        _message := 'Warning: Could not find any archived output files that contain "' || _proteinCollectionListClean || '"';
-        _message := _message || ' and have Creation_Options "' || _creationOptions || '"';
+        _message := format('Warning: Could not find any archived output files that contain "%s" and have Creation_Options "%s"',
+                            _proteinCollectionListClean, _creationOptions);
     End If;
 
     DROP TABLE Tmp_ProteinCollectionList;

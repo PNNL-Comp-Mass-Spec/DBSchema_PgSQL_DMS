@@ -57,7 +57,7 @@ BEGIN
     --
 
     If Exists (SELECT * FROM cap.t_tasks WHERE Dataset_ID = _datasetID AND Script = 'DatasetArchive') Then
-        _message := 'A DatasetArchive capture task job for dataset "' || _dataset || '" already exists';
+        _message := format('A DatasetArchive capture task job for dataset "%s" already exists', _dataset);
         _returnCode := 'U5202';
 
         RAISE WARNING '%', _message;

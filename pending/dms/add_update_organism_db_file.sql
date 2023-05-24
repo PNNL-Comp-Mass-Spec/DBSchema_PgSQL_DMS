@@ -87,7 +87,7 @@ BEGIN
     WHERE organism = _organismName;
 
     If Not FOUND Or Coalesce(_organismID, 0) <= 0 Then
-        _message := 'Could not find organism in t_organisms: ' || _organismName;
+        _message := format('Could not find organism in t_organisms: %s', _organismName);
         _returnCode := 'U6202';
         RETURN;
     End If;
@@ -140,9 +140,9 @@ BEGIN
                 source.Valid);
 
     If _existingEntry Then
-        _message := 'Updated ' || _fastaFileName || ' in t_organism_db_file';
+        _message := format('Updated %s in t_organism_db_file', _fastaFileName);
     Else
-        _message := 'Added ' || _fastaFileName || ' to t_organism_db_file';
+        _message := format('Added %s to t_organism_db_file', _fastaFileName);
     End If;
 
 END

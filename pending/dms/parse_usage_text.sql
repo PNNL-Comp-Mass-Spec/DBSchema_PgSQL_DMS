@@ -131,7 +131,7 @@ BEGIN
 
         _comment := REPLACE(_comment, ', ', ',');
         _comment := REPLACE(_comment, ' ,', ',');
-        _commentToSearch := ',' || _comment;
+        _commentToSearch := format(',%s', _comment);
 
         ---------------------------------------------------
         -- Set up temp table with keywords

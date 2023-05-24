@@ -123,15 +123,15 @@ BEGIN
                                  JS.start >= CURRENT_TIMESTAMP - Interval '48 hours' );
 
         If FOUND Then
-            _message := 'Deleted analysis ' || _jobText || ' from sw.t_jobs';
+            _message := format('Deleted analysis %s from sw.t_jobs', _jobText);
             RAISE INFO '%', _message;
         Else
             If _jobState IN (2,3,9) Then
-                RAISE INFO '%', 'Pipeline ' || _jobText || ' not deleted; job is in progress';
+                RAISE INFO 'Pipeline % not deleted; job is in progress', _jobText;
             ElsIf _jobState IN (4,7,14)
-                RAISE INFO '%', 'Pipeline ' || _jobText || ' not deleted; job completed successfully';
+                RAISE INFO 'Pipeline % not deleted; job completed successfully', _jobText;
             Else
-                RAISE INFO '%', 'Pipeline ' || _jobText || ' not deleted; job state is not New, Failed, or Holding';
+                RAISE INFO 'Pipeline % not deleted; job state is not New, Failed, or Holding', _jobText;
             End If;
         End If;
 

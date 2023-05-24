@@ -259,7 +259,7 @@ BEGIN
                 -- Append to the array that tracks step tools that should be skipped when a job step reports NO_DATA
                 _stepToolsToSkip := array_append(_stepToolsToSkip, 'LCMSFeatureFinder');
 
-                _message := 'Warning, ' || _jobStepDescription || ' has no results in the DeconTools _isos.csv file; either it is a bad dataset or analysis parameters are incorrect';
+                _message := format('Warning, %s has no results in the DeconTools _isos.csv file; either it is a bad dataset or analysis parameters are incorrect', _jobStepDescription);
                 CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
 
@@ -270,7 +270,7 @@ BEGIN
                 -- Append to the array that tracks step tools that should be skipped when a job step reports NO_DATA
                 _stepToolsToSkip := array_cat(_stepToolsToSkip, ARRAY ['MSGF', 'IDPicker', 'MSAlign_Quant']);
 
-                _message := 'Warning, ' || _jobStepDescription || ' has an empty synopsis file (no results above threshold); either it is a bad dataset or analysis parameters are incorrect';
+                _message := format('Warning, %s has an empty synopsis file (no results above threshold); either it is a bad dataset or analysis parameters are incorrect', _jobStepDescription);
                 CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
         End If;
@@ -434,9 +434,8 @@ BEGIN
                 _abortReset := true;
             Else
 
-                _message := 'Re-running step ' || Cast(_sharedResultStep as text) || ' for job ' || Cast(_job as text) ||
-                               ' because step ' || Cast(_step as text) +
-                               ' reported completion code ' || Cast(_completionCode as text) || ' (' || _completionCodeDescription || ')'
+                _message := format('Re-running step %s for job %s because step %s reported completion code %s (%s)',
+                                    _sharedResultStep, _job, _step, _completionCode, _completionCodeDescription
 
                 If Exists ( SELECT * Then
                             FROM sw.t_log_entries;
@@ -445,8 +444,8 @@ BEGIN
                                   Entered >= CURRENT_TIMESTAMP - INTERVAL '1 day'
                           ) Then
 
-                    _message := 'has already reported completion code ' || Cast(_completionCode as text) || ' (' || _completionCodeDescription || ')' ||;
-                                   ' within the last 24 hours'
+                    _message := format('has already reported completion code %s (%s) within the last 24 hours',
+                                        _completionCode, _completionCodeDescription);
 
                     UPDATE sw.t_job_steps
                     SET state = 7,        -- Holding

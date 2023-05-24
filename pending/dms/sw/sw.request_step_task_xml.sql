@@ -248,7 +248,7 @@ BEGIN
         -- _returnCode will be 'U5301'
         ---------------------------------------------------
 
-        _message := 'Processor not defined in sw.t_local_processors: ' || _processorName;
+        _message := format('Processor not defined in sw.t_local_processors: %s', _processorName);
         _returnCode := _jobNotAvailableErrorCode;
 
         INSERT INTO sw.t_sp_usage( posted_by, processor_id, calling_user )
@@ -281,7 +281,7 @@ BEGIN
     -- Abort if not enabled in sw.t_local_processors
     ---------------------------------------------------
     If _processorState <> 'E' Then
-        _message := 'Processor is not enabled in sw.t_local_processors: ' || _processorName;
+        _message := format('Processor is not enabled in sw.t_local_processors: %s', _processorName);
         _returnCode := _jobNotAvailableErrorCode;
         RETURN;
     End If;
@@ -290,7 +290,7 @@ BEGIN
     -- Make sure this processor's machine is in sw.t_machines
     ---------------------------------------------------
     If Not Exists (SELECT * FROM sw.t_machines Where machine = _machine) Then
-        _message := 'machine "' || _machine || '" is not present in sw.t_machines (but is defined in sw.t_local_processors for processor "' || _processorName || '")';
+        _message := format('machine "%s" is not present in sw.t_machines (but is defined in sw.t_local_processors for processor "%s")', _machine, _processorName);
         _returnCode := _jobNotAvailableErrorCode;
         RETURN;
     End If;
@@ -317,7 +317,7 @@ BEGIN
     End If
 
     If _enabled <= 0 Then
-        _message := 'Machine "' || _machine || '" is in a disabled tool group; no tasks will be assigned for processor ' || _processorName;
+        _message := format('Machine "%s" is in a disabled tool group; no tasks will be assigned for processor %s', _machine, _processorName);
         _returnCode := _jobNotAvailableErrorCode;
         RETURN;
     End If;
@@ -1377,7 +1377,8 @@ BEGIN
                                 _debugMode => CASE _infoLevel WHEN > 0 THEN true ELSE false END);
 
         If _infoLevel <> 0 And char_length(_message) = 0 Then
-            _message := 'Job ' || _job::text || ', Step ' || _step::text || ' would be assigned to ' || _processorName;
+            _message := format('Job %s, Step %s would be assigned to %s',
+                                _job, _step, _processorName);
         End If;
     Else
         ---------------------------------------------------

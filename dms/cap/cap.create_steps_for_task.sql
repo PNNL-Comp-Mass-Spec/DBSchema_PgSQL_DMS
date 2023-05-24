@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scrip
 **          03/07/2023 mem - Rename column in temporary table
 **          03/08/2023 mem - Switch back to t_step_tools.step_tool
 **          04/02/2023 mem - Rename procedure and functions
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -51,7 +52,7 @@ BEGIN
     WHERE NOT XmlQ.tool IN ( SELECT ST.step_tool FROM cap.t_step_tools ST );
 
     If _missingTools <> '' Then
-        _message := 'Step tool(s) ' || _missingTools || ' do not exist in cap.t_step_tools';
+        _message := format('Step tool(s) %s do not exist in cap.t_step_tools', _missingTools);
         _returnCode := 'U5301';
         RETURN;
     End If;

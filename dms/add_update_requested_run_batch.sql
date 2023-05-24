@@ -59,7 +59,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          03/30/2023 mem - Retrieve values from _message and _returnCode when calling update_cached_requested_run_batch_stats
 **          05/07/2023 mem - Remove unused variable
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -234,7 +234,7 @@ BEGIN
         ---------------------------------------------------
         --
         If _mode::citext = 'PreviewAdd' Then
-            _message := 'Would create batch "' || _name || '" with ' || Cast(_count As text) || ' requested runs';
+            _message := format('Would create batch "%s" with %s requested runs', _name, _count);
 
             DROP TABLE Tmp_RequestedRuns;
             RETURN;

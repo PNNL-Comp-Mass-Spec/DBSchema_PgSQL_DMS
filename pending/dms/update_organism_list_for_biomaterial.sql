@@ -74,14 +74,14 @@ BEGIN
     WHERE Biomaterial_Name = _biomaterialName;
 
     If Not FOUND Then
-        _message := 'Cannot update organisms for biomaterial: "' || _biomaterialName || '" does not exist';
+        _message := format('Cannot update organisms for biomaterial: "%s" does not exist', _biomaterialName);
         RAISE WARNING '%', _message;
         _returnCode := 'U5201';
         RETURN;
     End If;
 
     If _organismList Is Null Then
-        _message := 'Cannot update biomaterial "' || _biomaterialName || '": organism list cannot be null';
+        _message := format('Cannot update biomaterial "%s": organism list cannot be null', _biomaterialName);
         RAISE WARNING '%', _message;
         _returnCode := 'U5202';
         RETURN;
@@ -169,7 +169,7 @@ BEGIN
     WHERE Organism_ID IS NULL;
 
     If _list <> '' Then
-        _message := 'Could not resolve the following organism names: ' || _list;
+        _message := format('Could not resolve the following organism names: %s', _list);
         _returnCode := 'U5203';
         DROP TABLE Tmp_BiomaterialOrganisms;
 
@@ -212,7 +212,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Biomaterial: ' || _biomaterialName;
+    _usageMessage := format('Biomaterial: %s', _biomaterialName);
     CALL post_usage_log_entry ('Update_Organism_List_For_Biomaterial', _usageMessage);
 
     DROP TABLE Tmp_BiomaterialOrganisms;

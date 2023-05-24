@@ -466,9 +466,9 @@ BEGIN
         End If;
 
         If char_length(_message) > 0 Then
-            _message := _message || '; ' || _msg;
+            _message := format('%s; %s', _message, _msg);
         Else
-            _message := 'Note: ' || _msg;
+            _message := format('Note: %s', _msg);
         End If;
 
     END LOOP;

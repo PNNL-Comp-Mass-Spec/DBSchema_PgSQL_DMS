@@ -79,7 +79,7 @@ BEGIN
         End If;
 
         If Not Exists (SELECT * FROM cap.t_local_processors WHERE processor_name = _managerName) Then
-            _message := 'Manager not found in cap.t_local_processors: ' || _managerName;
+            _message := format('Manager not found in cap.t_local_processors: %s', _managerName);
             _returnCode := 'U5201';
             RETURN;
         End If;
@@ -98,7 +98,7 @@ BEGIN
         LIMIT 1;
 
         If Not FOUND Then
-            _message := 'No active capture task job steps are associated with manager ' || _managerName;
+            _message := format('No active capture task job steps are associated with manager %s', _managerName);
             RETURN;
         End If;
 

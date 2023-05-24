@@ -124,9 +124,9 @@ BEGIN
         If _badCh = 'space' Then
             _message := 'New dataset name may not contain spaces';
         ElsIf char_length(_badCh) = 1 Then
-            _message := 'New dataset name may not contain the character ' || _badCh;
+            _message := format('New dataset name may not contain the character %s', _badCh);
         Else
-            _message := 'New dataset name may not contain the characters ' || _badCh;
+            _message := format('New dataset name may not contain the characters %s', _badCh);
         End If;
 
         RETURN;
@@ -163,7 +163,7 @@ BEGIN
 
         -- Old dataset name found; make sure the new name is not already in use
         If Exists (SELECT * FROM t_dataset WHERE dataset = _datasetNameNew) Then
-            _message := 'New dataset name already exists; unable to rename ' || _datasetNameOld || ' to ' || _datasetNameNew;
+            _message := format('New dataset name already exists; unable to rename %s to %s', _datasetNameOld, _datasetNameNew);
             RETURN;
         End If;
 
@@ -175,7 +175,7 @@ BEGIN
     End If;
 
     If _datasetID = 0 Then
-        _message := 'Dataset not found using either the old name or the new name (' ||  _datasetNameOld || ' or ' || _datasetNameNew || ')';
+        _message := format('Dataset not found using either the old name or the new name (%s or %s)', _datasetNameOld, _datasetNameNew);
         RETURN;
     End If;
 

@@ -56,7 +56,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          05/05/2023 mem - Ported to PostgreSQL
 **          05/11/2023 mem - Update return codes
 **          05/12/2023 mem - Rename variables
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -167,7 +167,7 @@ BEGIN
     WHERE NOT job IN (SELECT job FROM t_analysis_job);
 
     If Coalesce(_list, '') <> '' Then
-        _message := 'The following jobs were not in the database: "' || _list || '"';
+        _message := format('The following jobs were not in the database: "%s"', _list);
         _returnCode := 'U5202';
         RETURN;
     End If;
@@ -192,7 +192,7 @@ BEGIN
         WHERE job_state = _state;
 
         If Not FOUND Then
-            _message := 'State name not found: "' || _state || '"';
+            _message := format('State name not found: "%s"', _state);
 
             If Not _disableRaiseError Then
                 RAISE WARNING '%', _message;
@@ -214,7 +214,7 @@ BEGIN
         WHERE Name = _organismName;
 
         If Not FOUND Then
-            _message := 'Organism name not found: "' || _organismName || '"';
+            _message := format('Organism name not found: "%s"', _organismName);
 
             If Not _disableRaiseError Then
                 RAISE WARNING '%', _message;
@@ -238,7 +238,7 @@ BEGIN
         WHERE param_file_name = _paramFileName;
 
         If Not FOUND Then
-            _message := 'Parameter file could not be found' || ':"' || _paramFileName || '"';
+            _message := format('Parameter file could not be found: "%s"', _paramFileName);
             _returnCode := 'U5205';
             RETURN;
         End If;
@@ -266,7 +266,7 @@ BEGIN
               );
 
         If _commaList <> '' Then
-            _message := 'Based on the parameter file entered, the following Analysis Job(s) were not compatible with the the tool type' || ':"' || _commaList || '"';
+            _message := format('Based on the parameter file entered, the following Analysis Job(s) were not compatible with the the tool type' || ':"%s"', _commaList);
 
             _returnCode := 'U5206';
             RETURN;
@@ -295,7 +295,7 @@ BEGIN
               );
 
         If _invalidJobList <> '' Then
-            _message := 'Based on the settings file entered, the following Analysis Job(s) were not compatible with the the tool type' || ':"' || _invalidJobList || '"';
+            _message := format('Based on the settings file entered, the following Analysis Job(s) were not compatible with the the tool type' || ':"%s"', _invalidJobList);
 
             _returnCode := 'U5207';
             RETURN;
@@ -655,12 +655,13 @@ BEGIN
     If Not _alterData Then
         If _jobCountUpdated = 0 Then
             If _action = '' Then
-                _message := 'No parameters were specified to be updated (' || _message || ')';
+                _message := format('No parameters were specified to be updated (%s)', _message);
             Else
-                _message := _message || '; all jobs were already up-to-date (' || _action || ')';
+                _message := format('%s; all jobs were already up-to-date (%s)', _message, _action);
             End If;
         Else
-            _message := _message || '; ' || _action || ' for ' ||  _jobCountUpdated::text || ' job(s)' || _action2;
+            _message := format('%s; %s for %s job(s)%s',
+                                _message, _action, _jobCountUpdated, _action2);
         End If;
     End If;
 

@@ -117,7 +117,7 @@ BEGIN
         End If;
 
         If Not Exists (SELECT * FROM t_settings_files WHERE file_name = _hmsAutoSupersede) Then
-            _message := 'hms_auto_supersede settings file not found in the database: ' || _hmsAutoSupersede;
+            _message := format('hms_auto_supersede settings file not found in the database: %s', _hmsAutoSupersede);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5204';
@@ -130,7 +130,8 @@ BEGIN
         WHERE file_name = _hmsAutoSupersede
 
         If _analysisToolForAutoSupersede <> _analysisTool Then
-            _message := 'The Analysis Tool for the HMS_AutoSupersede file ("' || _hmsAutoSupersede || '") must match the analysis tool for this settings file: ' || _analysisToolForAutoSupersede || ' vs. ' || _analysisTool;
+            _message := format('The Analysis Tool for the HMS_AutoSupersede file ("%s") must match the analysis tool for this settings file: %s vs. %s',
+                                _hmsAutoSupersede, _analysisToolForAutoSupersede, _analysisTool);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5205';
@@ -151,7 +152,7 @@ BEGIN
         End If;
 
         If Not Exists (SELECT * FROM t_settings_files WHERE file_name = _msgfPlusAutoCentroid) Then
-            _message := 'MSGFPlus AutoCentroid settings file not found in the database: ' || _msgfPlusAutoCentroid;
+            _message := format('MSGFPlus AutoCentroid settings file not found in the database: %s', _msgfPlusAutoCentroid);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5207';
@@ -164,7 +165,8 @@ BEGIN
         WHERE file_name = _msgfPlusAutoCentroid
 
         If _analysisToolForAutoCentroid <> _analysisTool Then
-            _message := 'The Analysis Tool for the MSGFPlus_AutoCentroid file ("' || _msgfPlusAutoCentroid || '") must match the analysis tool for this settings file: ' || _analysisToolForAutoCentroid || ' vs. ' || _analysisTool;
+            _message := format('The Analysis Tool for the MSGFPlus_AutoCentroid file ("%s") must match the analysis tool for this settings file: %s vs. %s',
+                                _msgfPlusAutoCentroid, _analysisToolForAutoCentroid, _analysisTool);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5208';
@@ -188,7 +190,9 @@ BEGIN
         WHERE file_name = _fileName;
 
         If FOUND Then
-            _message := 'Settings file ID ' || Cast(_settingsFileID As text)|| ' is named "' || _fileName || '"; cannot create a new, duplicate settings file';
+            _message := format('Settings file ID %s is named "%s"; cannot create a new, duplicate settings file',
+                                _settingsFileID, _fileName);
+
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5209';

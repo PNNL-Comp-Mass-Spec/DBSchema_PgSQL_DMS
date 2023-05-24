@@ -212,12 +212,12 @@ BEGIN
             End If;
 
             If _fractionEMSLFundedValue > 1 Then
-                _msg := 'Fraction EMSL Funded must be a number between 0 and 1 (' || _fractionEMSLFunded || ' is greater than 1)';
+                _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is greater than 1)', _fractionEMSLFunded);
                 RAISE EXCEPTION '%', _msg;
             End If;
 
             If _fractionEMSLFundedValue < 0 Then
-                _msg := 'Fraction EMSL Funded must be a number between 0 and 1 (' || _fractionEMSLFunded || ' is less than 0)';
+                _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is less than 0)', _fractionEMSLFunded);
                 RAISE EXCEPTION '%', _msg;
             End If;
 
@@ -298,12 +298,12 @@ BEGIN
         ---------------------------------------------------
         --
         If _fractionEMSLFundedToStore > 1 Then
-            _msg := 'Fraction EMSL Funded must be a number between 0 and 1 (' || _fractionEMSLFunded || ' is greater than 1)';
+            _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is greater than 1)', _fractionEMSLFunded);
             RAISE EXCEPTION '%', _msg;
         End If;
 
         If _fractionEMSLFundedToStore < 0 Then
-            _msg := 'Fraction EMSL Funded must be a number between 0 and 1 (' || _fractionEMSLFunded || ' is less than 0)';
+            _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is less than 0)', _fractionEMSLFunded);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -388,9 +388,8 @@ BEGIN
             WHERE campaign = _campaignName;
 
             If _campaignID <> Coalesce(_idConfirm, _campaignID) Then
-                _debugMsg := 'Warning: Inconsistent identity values when adding campaign ' || _campaignName || ': Found ID ' ||;
-                                _idConfirm::text || ' but the INSERT INTO query reported ' ||
-                                _campaignID::text;
+                _debugMsg := format('Warning: Inconsistent identity values when adding campaign %s: Found ID %s but the INSERT INTO query reported %s',
+                                    _campaignName, _idConfirm, _campaignID);
 
                 CALL post_log_entry ('Error', _debugMsg, 'Add_Update_Campaign');
 

@@ -175,7 +175,7 @@ Code 6 (Purged all data except QC folder)
     If _completionState < 0 And _completionCode = 4 Then
         -- Drive Missing
         --
-        _message := 'Drive not found for dataset ' || _datasetName;
+        _message := format('Drive not found for dataset %s', _datasetName);
         CALL post_log_entry 'Error', _message, _postedBy
         _message := '';
 
@@ -197,7 +197,7 @@ Code 6 (Purged all data except QC folder)
     If _completionState < 0 And _completionCode = 7 Then
         -- Dataset folder missing in archive, either in MyEMSL or at \\adms.emsl.pnl.gov\dmsarch
         --
-        _message := 'Dataset folder not found in archive or in MyEMSL; most likely a MyEMSL timeout, but could be a permissions error; dataset ' || _datasetName;
+        _message := format('Dataset folder not found in archive or in MyEMSL; most likely a MyEMSL timeout, but could be a permissions error; dataset %s', _datasetName);
         CALL post_log_entry 'Error', _message, _postedBy
         _message := '';
 
@@ -207,7 +207,7 @@ Code 6 (Purged all data except QC folder)
     If _completionState < 0 And _completionCode = 8 Then
         -- Archive is offline (Aurora is offline): \\adms.emsl.pnl.gov\dmsarch
         --
-        _message := 'Archive is offline; cannot purge dataset ' || _datasetName;
+        _message := format('Archive is offline; cannot purge dataset %s', _datasetName);
         CALL post_log_entry 'Error', _message, _postedBy
         _message := '';
 
@@ -276,7 +276,7 @@ Code 6 (Purged all data except QC folder)
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Dataset: ' || _datasetName;
+    _usageMessage := format('Dataset: %s', _datasetName);
     CALL post_usage_log_entry ('Set_Purge_Task_Complete', _usageMessage);
 
     If _message <> '' Then

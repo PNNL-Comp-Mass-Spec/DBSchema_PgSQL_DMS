@@ -202,7 +202,7 @@ BEGIN
                                 _jobMessage := 'Ready';
                             Else
                                 _readyToProcess := false;
-                                _jobMessage := 'Source job ' || _sourceJob::text || ' exists but has state = ' || _sourceJobState::text;
+                                _jobMessage := format('Source job %s exists but has state = %s', _sourceJob, _sourceJobState);
                             End If;
                         End If;
                     End If;
@@ -239,7 +239,7 @@ BEGIN
                             CALL post_log_entry ('Warning', _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => 0);
                         Else
                             If _jobInfo.DatasetRating = -5 Then
-                                _message := 'Not released dataset: ' || _message;
+                                _message := format('Not released dataset: %s', _message);
                             End If;
 
                             CALL post_log_entry ('Error',   _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => _errorMessagePostingIntervalHours);

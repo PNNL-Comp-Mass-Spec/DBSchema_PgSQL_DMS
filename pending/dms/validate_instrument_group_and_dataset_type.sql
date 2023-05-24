@@ -75,7 +75,7 @@ BEGIN
         WHERE instrument_group = _instrumentGroup
 
         If Not FOUND Then
-            _message := 'Invalid instrument group: ' || _instrumentGroup;
+            _message := format('Invalid instrument group: %s', _instrumentGroup);
             _returnCode := 'U5013';
             RETURN;
         End If;

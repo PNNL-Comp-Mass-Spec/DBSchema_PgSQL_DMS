@@ -57,7 +57,7 @@ BEGIN
     ---------------------------------------------------
 
     If NOT EXISTS (SELECT * FROM dpkg.t_data_package    WHERE data_pkg_id = _dataPackageID) Then
-        _message := 'Data Package data_pkg_id not found in dpkg.t_data_package: ' || _dataPackageID::text;
+        _message := format('Data Package data_pkg_id not found in dpkg.t_data_package: %s', _dataPackageID);
         If _infoOnly Then
             RAISE INFO '%', _message;
         End If;
@@ -88,7 +88,7 @@ BEGIN
     End If;
 
     -- Setup the log message in case we need it; also, set _invalidFormat to true for now
-    _logMsg := 'Unable to extract StatusNum from StatusURI for Data Package ' || _dataPackageID::text;
+    _logMsg := format('Unable to extract StatusNum from StatusURI for Data Package %s', _dataPackageID);
     _invalidFormat := true;
 
     _charLoc := position('/status/' in _statusURI);
@@ -184,7 +184,7 @@ BEGIN
         _status_uri_path_id := Get_URI_Path_ID (_statusURI_Path, _infoOnly => _infoOnly)
 
         If _statusURI_PathID <= 1 Then
-            _logMsg := 'Unable to resolve StatusURI_Path to URI_PathID for Data Package ' || _dataPackageID::text || ': ' || _statusURI_Path;
+            _logMsg := format('Unable to resolve StatusURI_Path to URI_PathID for Data Package %s: %s', _dataPackageID, _statusURI_Path);
 
             If _infoOnly = false Then
                 CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'dpkg');

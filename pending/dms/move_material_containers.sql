@@ -130,7 +130,8 @@ BEGIN
     ORDER BY ML.location;
 
     If Not Exists (SELECT * FROM Tmp_ContainersToProcess) Then
-        _message := 'No containers found in freezer ' || _freezerTagOld || ', shelf ' || CAST(_shelfOld AS text) || ', rack ' || CAST(_rackOld AS text);
+        _message := format('No containers found in freezer %s, shelf %s, rack %s',
+                            _freezerTagOld, _shelfOld, _rackOld);
         RETURN;
     End If;
 
@@ -181,7 +182,7 @@ BEGIN
         GROUP BY ml.location_id, ml.status, ml.container_limit;
 
         If Not FOUND Then
-            _message := 'Destination location "' || _locationTagNew || '" could not be found in database';
+            _message := format('Destination location "%s" could not be found in database', _locationTagNew);
             ROLLBACK;
 
             DROP TABLE Tmp_ContainersToProcess;

@@ -489,7 +489,7 @@ BEGIN
             If Coalesce(_autoSupersedeName, '') <> '' Then
                 _settingsFileName := _autoSupersedeName;
 
-                _msgToAppend := 'Note: Auto-updated the settings file to ' || _autoSupersedeName || ' because one or more HMS datasets are included in this job request';
+                _msgToAppend := format('Note: Auto-updated the settings file to %s because one or more HMS datasets are included in this job request', _autoSupersedeName);
                 _message := public.append_to_text(_message, _msgToAppend, 0, ';', 512);
             End If;
         End If;

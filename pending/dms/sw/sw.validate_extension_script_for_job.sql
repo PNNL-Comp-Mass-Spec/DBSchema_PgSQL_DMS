@@ -74,7 +74,7 @@ BEGIN
     WHERE script = _currentScript
 
     If Not FOUND Then
-        _message := 'Error: Current script (' || _currentScript || ') not found in sw.t_scripts';
+        _message := format('Error: Current script (%s) not found in sw.t_scripts', _currentScript);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U6201';
@@ -88,7 +88,7 @@ BEGIN
     WHERE script = _extensionScriptName;
 
     If Not FOUND Then
-        _message := 'Error: Extension script (' || _extensionScriptName || ') not found in sw.t_scripts';
+        _message := format('Error: Extension script (%s) not found in sw.t_scripts', _extensionScriptName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U6202';

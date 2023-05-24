@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 **          02/01/2023 mem - Use new column name in view
 **          05/07/2023 mem - Remove unused variable
 **          05/22/2023 mem - Capitalize reserved word
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -74,13 +75,13 @@ BEGIN
     ---------------------------------------------------
 
     If _returnCode = '' And Not Exists (Select * From mc.t_mgrs M Where M.mgr_id = _sourceMgrID) Then
-        _message := '_sourceMgrID ' || _sourceMgrID || ' not found in mc.t_mgrs; unable to continue';
+        _message := format('_sourceMgrID %s not found in mc.t_mgrs; unable to continue', _sourceMgrID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5203';
     End If;
 
     If _returnCode = '' And Not Exists (Select * From mc.t_mgrs M Where M.mgr_id = _targetMgrID) Then
-        _message := '_targetMgrID ' || _targetMgrID || ' not found in mc.t_mgrs; unable to continue';
+        _message := format('_targetMgrID %s not found in mc.t_mgrs; unable to continue', _targetMgrID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5204';
     End If;

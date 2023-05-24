@@ -119,7 +119,7 @@ BEGIN
         -- Mode was unrecognized
         ---------------------------------------------------
 
-        _msg := 'Mode "' || _mode ||  '" was unrecognized';
+        _msg := format('Mode "%s" was unrecognized', _mode);
         RAISE EXCEPTION '%', _msg;
 
     EXCEPTION

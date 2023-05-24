@@ -91,7 +91,7 @@ BEGIN
     -- Mode was unrecognized
     ---------------------------------------------------
 
-    _message := 'Mode "' || _mode ||  '" was unrecognized';
+    _message := format('Mode "%s" was unrecognized', _mode);
     RAISE WARNING '%', _message;
 
     _returnCode := 'U5202';

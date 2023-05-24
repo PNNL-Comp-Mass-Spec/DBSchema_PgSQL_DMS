@@ -50,7 +50,7 @@ BEGIN
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _message := 'Dataset not found: ' || _datasetName || '; unable to continue';
+        _message := format('Dataset not found: %s; unable to continue', _datasetName);
         _returnCode := 'U5202';
         RETURN;
     End If;
@@ -67,7 +67,7 @@ BEGIN
     WHERE (T.Dataset_ID = _datasetID) AND (TS.Tool = 'DatasetQuality') AND (TS.State IN (1, 2, 4))
 
     If _jobID > 0 Then
-        _message := 'Existing pending/running capture task job already exists for ' || _datasetName || '; job ' || _jobID::text;
+        _message := format('Existing pending/running capture task job already exists for %s; job %s', _datasetName, _jobID);
         RETURN;
     End If;
 

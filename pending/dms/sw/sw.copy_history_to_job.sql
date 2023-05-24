@@ -120,7 +120,7 @@ BEGIN
     BEGIN
         _jobDateDescription := format('job %s and date %s', _job, _dateStamp);
 
-        _currentLocation := 'Insert into sw.t_jobs from sw.t_jobs_history for ' || _jobDateDescription;
+        _currentLocation := format('Insert into sw.t_jobs from sw.t_jobs_history for %s', _jobDateDescription);
 
         INSERT INTO sw.t_jobs( job,
                                priority,
@@ -161,7 +161,7 @@ BEGIN
               saved = _dateStamp;
 
         If Not FOUND Then
-            _message := 'No rows were added to sw.t_jobs from sw.t_jobs_history for ' || _jobDateDescription;
+            _message := format('No rows were added to sw.t_jobs from sw.t_jobs_history for %s', _jobDateDescription);
             RAISE WARNING '%', _message;
 
             RETURN;
@@ -173,7 +173,7 @@ BEGIN
         -- Copy Steps
         ---------------------------------------------------
 
-        _currentLocation := 'Insert into sw.t_job_steps for ' || _jobDateDescription;
+        _currentLocation := format('Insert into sw.t_job_steps for %s', _jobDateDescription);
 
         INSERT INTO sw.t_job_steps( job,
                                     step,
@@ -243,7 +243,7 @@ BEGIN
         -- Copy parameters
         ---------------------------------------------------
 
-        _currentLocation := 'Insert into sw.t_job_parameters for ' || _jobDateDescription;
+        _currentLocation := format('Insert into sw.t_job_parameters for %s', _jobDateDescription);
 
         INSERT INTO sw.t_job_parameters( job, parameters )
         SELECT job,
@@ -262,7 +262,7 @@ BEGIN
         -- Copy job step dependencies
         ---------------------------------------------------
 
-        _currentLocation := 'Insert into sw.t_job_step_dependencies for ' || _jobDateDescription;
+        _currentLocation := format('Insert into sw.t_job_step_dependencies for %s', _jobDateDescription);
 
         -- First delete any extra steps for this job that are in sw.t_job_step_dependencies
         --

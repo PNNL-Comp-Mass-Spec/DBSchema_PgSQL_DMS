@@ -98,7 +98,7 @@ BEGIN
     WHERE instrument = _instrument;
 
     If Not FOUND Then
-        _message := 'Invalid DMS instrument name: ' || _instrument;
+        _message := format('Invalid DMS instrument name: %s', _instrument);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';

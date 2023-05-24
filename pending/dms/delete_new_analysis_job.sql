@@ -65,7 +65,7 @@ BEGIN
     _jobID := public.try_cast(_job, null::int);
 
     If _jobID is null Then
-        _message := 'Job number is not numeric: ' || _job;
+        _message := format('Job number is not numeric: %s', _job);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -83,7 +83,7 @@ BEGIN
     WHERE job = _jobID;
 
     If Not FOUND Then
-        _message := 'Job "' || _job || '" not in database';
+        _message := format('Job "%s" not in database', _job);
         If _infoOnly Then
             RAISE WARNING '%', _message;
         Else
@@ -94,7 +94,7 @@ BEGIN
 
     -- Verify that analysis job has state 'new', 'failed', or 'Special Proc. Waiting'
     If Not _state IN (0, 1, 5, 19) Then
-        _message := 'Job "' || _job || '" must be in "new" or "failed" state to be deleted by user';
+        _message := format('Job "%s" must be in "new" or "failed" state to be deleted by user', _job);
         _returnCode := 'U5202';
         RETURN;
     End If;

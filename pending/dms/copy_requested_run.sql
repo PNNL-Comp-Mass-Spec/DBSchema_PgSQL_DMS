@@ -289,7 +289,7 @@ BEGIN
     --
 
     If Coalesce(_callingUser, '') <> '' Then
-        _callingUserUnconsume := '(unconsume for ' || _callingUser || ')';
+        _callingUserUnconsume := format('(unconsume for %s)', _callingUser);
     Else
         _callingUserUnconsume := '(unconsume)';
     End If;

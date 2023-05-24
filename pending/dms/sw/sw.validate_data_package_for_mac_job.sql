@@ -261,7 +261,7 @@ BEGIN
         End If;
 
         If _errMsg <> '' Then
-            _errMsg := 'Data package ' || Cast(_dataPackageID as text) || ' is not configured correctly for this job: ' || _errMsg;
+            _errMsg := format('Data package %s is not configured correctly for this job: %s', _dataPackageID, _errMsg);
              RAISE EXCEPTION '%', _errMsg;
         End If;
 

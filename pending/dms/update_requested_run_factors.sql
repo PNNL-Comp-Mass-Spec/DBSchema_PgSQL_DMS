@@ -399,9 +399,9 @@ BEGIN
 
     If Coalesce(_badFactorNames, '') <> '' Then
         If char_length(_badFactorNames) < 256 Then
-            _message := 'Unacceptable characters in factor names "' || _badFactorNames || '"';
+            _message := format('Unacceptable characters in factor names "%s"', _badFactorNames);
         Else
-            _message := 'Unacceptable characters in factor names "' || LEFT(_badFactorNames, 256) || '..."';
+            _message := ('Unacceptable characters in factor names "%s ..."', LEFT(_badFactorNames, 256));
         End If;
 
         If _infoOnly Then
@@ -456,9 +456,9 @@ BEGIN
     If Coalesce(_badFactorNames, '') <> '' Then
 
         If _badFactorNames Like '%,%' Then
-            _message := 'Invalid factor names: ' || _badFactorNames;
+            _message := format('Invalid factor names: %s', _badFactorNames);
         Else
-            _message := 'Invalid factor name: ' || _badFactorNames;
+            _message := format('Invalid factor name: %s', _badFactorNames);
         End If;
 
         If _infoOnly Then
@@ -492,7 +492,7 @@ BEGIN
 
     If Coalesce(_invalidRequestIDs, '') <> '' Then
 
-        _message := 'Invalid Requested Run IDs: ' || _invalidRequestIDs;
+        _message := format('Invalid Requested Run IDs: %s', _invalidRequestIDs);
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo

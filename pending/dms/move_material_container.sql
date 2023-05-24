@@ -124,7 +124,7 @@ BEGIN
     WHERE MC.container = _container;
 
     If Not FOUND Then
-        _message := 'Container not found: ' || _container;
+        _message := format('Container not found: %s', _container);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5203';
@@ -132,7 +132,7 @@ BEGIN
     End If;
 
     If _newLocation = _curLocation And (char_length(_newResearcher) = 0 Or _researcher = _newResearcher) Then
-        _message := 'Container is already at ' || _newLocation || ' (and not changing the researcher name): ' || _container;
+        _message := format('Container is already at %s (and not changing the researcher name): %s', _newLocation, _container);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5204';
@@ -140,7 +140,8 @@ BEGIN
     End If;
 
     If char_length(_oldLocation) > 0 And _oldLocation <> _curLocation Then
-        _message := 'Current container location does not match the expected location: ' || _curLocation || ' vs. expected ' || _oldLocation || ' for ' || _container;
+        _message := format('Current container location does not match the expected location: %s vs. expected %s for %s',
+                            _curLocation, _oldLocation, _container);
         RAISE WARNING '%', _message;
         _returnCode := 'U5205';
         RETURN;

@@ -113,7 +113,7 @@ BEGIN
         ---------------------------------------------------
 
         If Exists (SELECT * FROM Tmp_StatusNumListTable SL LEFT OUTER JOIN cap.t_myemsl_uploads MU ON MU.status_num = SL.status_num WHERE MU.entry_id IS NULL) Then
-            _message := 'One or more StatusNums in _statusNumList were not found in cap.t_myemsl_uploads: ' || _statusNumList;
+            _message := format('One or more StatusNums in _statusNumList were not found in cap.t_myemsl_uploads: %s', _statusNumList);
             _returnCode := 'U5204';
 
             DROP TABLE Tmp_StatusNumListTable;
@@ -125,7 +125,8 @@ BEGIN
         ---------------------------------------------------
 
         If Exists (Select * FROM cap.t_myemsl_uploads WHERE status_num IN (Select status_num From Tmp_StatusNumListTable) And dataset_id <> _datasetID) Then
-            _message := 'One or more StatusNums in _statusNumList do not have dataset_id ' || _datasetID::text || ' in cap.t_myemsl_uploads: ' || _statusNumList;
+            _message := format('One or more StatusNums in _statusNumList do not have dataset_id %s in cap.t_myemsl_uploads: %s',
+                                _datasetID, _statusNumList);
             _returnCode := 'U5205';
 
             DROP TABLE Tmp_StatusNumListTable;

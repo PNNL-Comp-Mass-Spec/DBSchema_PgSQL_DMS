@@ -206,7 +206,7 @@ BEGIN
             _researcher := _newUsername;
         Else
             _logErrors := false;
-            _message := 'Could not find entry in database for researcher username "' || _researcher || '"';
+            _message := format('Could not find entry in database for researcher username "%s"', _researcher);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5205';

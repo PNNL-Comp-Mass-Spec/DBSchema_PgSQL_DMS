@@ -536,7 +536,7 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                _message := 'Error updating parameters for job ' || _job::text;
+                _message := format('Error updating parameters for job %s', _job);
                 CALL public.post_log_entry ('Error', _message, 'Add_New_Jobs', 'sw');
 
                 DROP TABLE Tmp_JobsToResumeOrReset;

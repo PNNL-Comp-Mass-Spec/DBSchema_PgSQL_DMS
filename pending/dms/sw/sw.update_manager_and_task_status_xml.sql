@@ -254,7 +254,7 @@ BEGIN
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        _statusMessageInfo := 'Status info count: ' || _matchCount::text;
+        _statusMessageInfo := format('Status info count: %s', _matchCount);
 
         -- Make sure Remote_Manager is defined
         --
@@ -604,7 +604,7 @@ BEGIN
     If _returnCode = '' Then
         _message := _statusMessageInfo;
     Else
-        _message := 'Error storing info, code ' || _returnCode;
+        _message := format('Error storing info, code %s', _returnCode);
     End If;
 
     DROP TABLE IF EXISTS Tmp_Processor_Status_Info;

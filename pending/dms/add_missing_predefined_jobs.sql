@@ -107,7 +107,7 @@ BEGIN
     End If;
 
     If _infoOnly And (Not _previewOutputType::citext IN ('Show Rules', 'Show Jobs')) Then
-        _message := 'Unknown value for _previewOutputType (' || _previewOutputType || '); should be "Show Rules" or "Show Jobs"';
+        _message := format('Unknown value for _previewOutputType (%s); should be "Show Rules" or "Show Jobs"', _previewOutputType);
 
         RAISE WARNING '%', _message;
 

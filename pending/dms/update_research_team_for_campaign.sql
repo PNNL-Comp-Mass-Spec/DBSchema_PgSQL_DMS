@@ -241,7 +241,7 @@ BEGIN
     WHERE USER_ID IS NULL
 
     If _list <> '' Then
-        _message := 'Could not resolve following usernames (or last names) to user ID: ' || _list;
+        _message := format('Could not resolve following usernames (or last names) to user ID: %s', _list);
         _returnCode := 'U5201';
         RETURN;
     End If;
@@ -253,7 +253,7 @@ BEGIN
            WHERE Role_ID IS NULL ) LookupQ;
 
     If _list <> '' Then
-        _message := 'Unknown role names: ' || _list;
+        _message := format('Unknown role names: %s', _list);
         _returnCode := 'U5202';
         RETURN;
     End If;
@@ -282,7 +282,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Campaign: ' || _campaignName;
+    _usageMessage := format('Campaign: %s', _campaignName);
 
     CALL post_usage_log_entry ('Update_Research_Team_For_Campaign', _usageMessage);
 

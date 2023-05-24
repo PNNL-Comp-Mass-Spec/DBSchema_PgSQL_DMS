@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/22/2023 mem - Capitalize reserved word
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -80,7 +81,7 @@ BEGIN
     WHERE param_name = _paramName;
 
     If Not Found Then
-        _message := 'Error: Parameter ''' || _paramName || ''' not found in mc.t_param_type';
+        _message := format('Error: Parameter "%s" not found in mc.t_param_type', _paramName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';

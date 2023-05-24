@@ -66,7 +66,7 @@ BEGIN
     ---------------------------------------------------
 
     If Exists (SELECT * FROM t_material_locations WHERE freezer_tag = _newFreezerTag) Then
-        _message := 'Cannot add ''' || _newFreezerTag || ''' because it already exists in t_material_locations';
+        _message := format('Cannot add ''%s'' because it already exists in t_material_locations', _newFreezerTag);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5205';

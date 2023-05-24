@@ -94,7 +94,7 @@ BEGIN
     WHERE dataset = _datasetName;
     --
     If _datasetID = 0 Then
-        _message := 'Dataset does not exist"' || _datasetName || '"';
+        _message := format('Dataset does not exist"%s"', _datasetName);
         _returnCode := 'U5141';
         RETURN;
     End If;

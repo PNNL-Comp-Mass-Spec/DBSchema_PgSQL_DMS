@@ -131,10 +131,11 @@ BEGIN
 
     If _hits > 0 Then
         _wellList := SUBSTRING(_wellList, 0, 256);
+
         If _hits = 1 Then
-            _message := 'Well ' || _wellList || ' on wellplate "' || _wellplateName || '" is currently filled';
+            _message := format('Well %s on wellplate "%s" is currently filled', _wellList, _wellplateName);
         Else
-            _message := 'Wells ' || _wellList || ' on wellplate "' || _wellplateName || '" are currently filled';
+            _message := format('Wells %s on wellplate "%s" are currently filled', _wellList, _wellplateName);
         End If;
 
         _returnCode := 'U5145';

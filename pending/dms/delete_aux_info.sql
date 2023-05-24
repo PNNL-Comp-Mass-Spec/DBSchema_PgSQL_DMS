@@ -70,11 +70,11 @@ BEGIN
     _targetID := public.get_aux_info_entity_id_by_name(_targetName, _tgtTableName, _tgtTableIDCol, _tgtTableNameCol, _targetEntityName);
 
     If Coalesce(_targetID, 0) = 0 Then
-        _message := 'Could not resolve target name and entity name to entity ID: "' || _targetEntityName || '" ';
+        _message := format('Could not resolve target name and entity name to entity ID: "%s" ', _targetEntityName);
         RAISE EXCEPTION '%', _msg;
 
     If _targetID = 0 Then
-        _message := 'Error resolving ID for ' || _targetName || ' "' || _targetEntityName || '"';
+        _message := format('Error resolving ID for %s "%s"', _targetName, _targetEntityName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';

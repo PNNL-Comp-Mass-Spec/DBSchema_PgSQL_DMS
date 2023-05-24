@@ -108,7 +108,7 @@ BEGIN
     ---------------------------------------------------
     --
     If Not _state::citext IN ('Active', 'Inactive', 'Invalid', 'Override') Then
-        _message := 'Cart config state must be Active, Inactive, or Invalid; ' || _state || ' is not allowed';
+        _message := format('Cart config state must be Active, Inactive, or Invalid; %s is not allowed', _state);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -122,7 +122,7 @@ BEGIN
     End If;
 
     If _state = 'Override' and _mode <> 'update' Then
-        _message := 'Cart config state must be Active, Inactive, or Invalid when _mode is ' || _mode || '; ' || _state || ' is not allowed';
+        _message := format('Cart config state must be Active, Inactive, or Invalid when _mode is %s; %s is not allowed', _mode, _state);
     End If;
 
     ---------------------------------------------------
@@ -136,7 +136,7 @@ BEGIN
         If _badCh = 'space' Then
             _message := 'LC Cart Configuration name may not contain spaces';
         Else
-            _message := 'LC Cart Configuration name may not contain the character(s) "' || _badCh || '"';
+            _message := format('LC Cart Configuration name may not contain the character(s) "%s"', _badCh);
         End If;
 
         RAISE WARNING '%', _message;
@@ -185,7 +185,7 @@ BEGIN
     WHERE cart_name = _cartName
 
     If Not FOUND Then
-        _message := 'Cart Config name must start with a valid LC cart name, followed by an underscore; unknown cart: ' || _cartName;
+        _message := format('Cart Config name must start with a valid LC cart name, followed by an underscore; unknown cart: %s', _cartName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5205';
@@ -231,7 +231,7 @@ BEGIN
                 _state := _oldState;
                 _ignoreDatasetChecks := 1;
             Else
-                _message := 'Cart config state must be Active, Inactive, or Invalid; ' || _state || ' is not allowed';
+                _message := format('Cart config state must be Active, Inactive, or Invalid; %s is not allowed', _state);
                 RAISE WARNING '%', _message;
 
                 _returnCode := 'U5207';
@@ -278,7 +278,7 @@ BEGIN
             WHERE dataset_id = _maxDatasetID
 
             If _datasetCount = 1 Then
-                _datasetDescription := 'dataset ' || _datasetName;
+                _datasetDescription := format('dataset %s', _datasetName);
             Else
                 _datasetDescription := format('%s datasets' _datasetCount);
             End If;
@@ -310,7 +310,7 @@ BEGIN
     --
     If _mode = 'add' Then
         If Exists (Select * FROM t_lc_cart_configuration Where cart_config_name = _configName) Then
-            _message := 'LC Cart Config already exists; cannot add a new config named ' || _configName;
+            _message := format('LC Cart Config already exists; cannot add a new config named %s', _configName);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5210';

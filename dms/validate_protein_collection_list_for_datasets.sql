@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **                         - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling ValidateAnalysisJobParameters
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          11/08/2022 mem - Ported to PostgreSQL
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -182,13 +182,13 @@ BEGIN
         WHERE PCMaster.Includes_Contaminants > 0;
 
         If _matchCount > 0 Then
-            _msg := 'Not adding enzyme-associated protein collections (typically contaminant collections) since ' || _collectionWithContaminants || ' already includes contaminants';
+            _msg := format('Not adding enzyme-associated protein collections (typically contaminant collections) since %s already includes contaminants', _collectionWithContaminants);
 
             If _showDebug Then
                 RAISE INFO '%', _msg;
             End If;
 
-            _message := 'Did not add contaminants since ' || _collectionWithContaminants || ' already includes contaminant proteins';
+            _message := format('Did not add contaminants since %s already includes contaminant proteins', _collectionWithContaminants);
 
             -- Remove the contaminant collections
             --

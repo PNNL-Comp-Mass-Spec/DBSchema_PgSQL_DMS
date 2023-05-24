@@ -61,7 +61,7 @@ BEGIN
     ---------------------------------------------------
 
     If Not Exists (SELECT * FROM dpkg.t_myemsl_uploads WHERE entry_id = _entryID AND data_pkg_id = _dataPackageID) Then
-        _message := 'Entry ' || _entryID::text || ' does not correspond to data package ' || _dataPackageID::text;
+        _message := format('Entry %s does not correspond to data package %s', _entryID, _dataPackageID);
         _returnCode := 'U5203';
         RETURN;
     End If;

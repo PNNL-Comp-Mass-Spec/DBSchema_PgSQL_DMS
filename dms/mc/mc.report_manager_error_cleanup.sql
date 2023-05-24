@@ -29,7 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **          01/31/2023 mem - Use new column names in tables
 **          05/07/2023 mem - Remove unused variable
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -92,7 +92,7 @@ BEGIN
 
     If _state = 1 Then
         _messageType := 'Normal';
-        _message := 'Manager ' || _managerName || ' is attempting auto error cleanup';
+        _message := format('Manager %s is attempting auto error cleanup', _managerName);
     End If;
 
     If _state = 2 Then

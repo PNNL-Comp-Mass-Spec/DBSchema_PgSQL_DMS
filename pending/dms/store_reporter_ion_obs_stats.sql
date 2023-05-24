@@ -82,7 +82,7 @@ WITH EXECUTE AS OWNER
     -----------------------------------------------
 
     If NOT EXISTS (SELECT * FROM t_sample_labelling_reporter_ions WHERE label = _reporterIon) Then
-        _message := 'Unrecognized reporter ion name: ' || _reporterIon || '; for standard reporter ion names, see https://dms2.pnl.gov/sample_label_reporter_ions/report';
+        _message := format('Unrecognized reporter ion name: %s; for standard reporter ion names, see https://dms2.pnl.gov/sample_label_reporter_ions/report', _reporterIon);
         CALL post_log_entry ('Error', _message, 'Store_Reporter_Ion_Obs_Stats', _duplicateEntryHoldoffHours => 1);
         _returnCode := 'U5202';
         RETURN;
@@ -180,7 +180,7 @@ WITH EXECUTE AS OWNER
             _medianIntensity := public.try_cast(_medianIntensityText, null::int);
 
             If _observationRateTopNPct is Null Then
-                _message := 'Observation rate ' || _observationRateTopNPctText || ' is not numeric (Tmp_RepIonObsStatsTopNPct); aborting';
+                _message := format('Observation rate %s is not numeric (Tmp_RepIonObsStatsTopNPct); aborting', _observationRateTopNPctText);
                 RAISE WARNING '%', _message;
 
                 DROP TABLE Tmp_RepIonObsStatsTopNPct;
@@ -191,7 +191,7 @@ WITH EXECUTE AS OWNER
             End If;
 
             If _medianIntensity is Null Then
-                _message := 'Intensity value ' || _medianIntensityText || ' is not an integer (Tmp_RepIonIntensities); aborting';
+                _message := format('Intensity value %s is not an integer (Tmp_RepIonIntensities); aborting', _medianIntensityText);
                 RAISE WARNING '%', _message;
 
                 DROP TABLE Tmp_RepIonObsStatsTopNPct;

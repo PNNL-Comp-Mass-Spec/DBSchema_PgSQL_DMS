@@ -74,7 +74,7 @@ BEGIN
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _msg := 'Could not get Id or archive state for dataset "' || _datasetName || '"';
+        _msg := format('Could not get Id or archive state for dataset "%s"', _datasetName);
         RAISE EXCEPTION '%', _msg;
 
         _message := 'message';
@@ -94,7 +94,7 @@ BEGIN
         -- if archive not in failed state, can't reset it
         --
         If _archiveStateID not in (6, 2) -- 'Operation Failed' or 'Archive In Progress' Then
-            _msg := 'Archive state for dataset "' || _datasetName || '" not in proper state to be reset';
+            _msg := format('Archive state for dataset "%s" not in proper state to be reset', _datasetName);
             RAISE EXCEPTION '%', _msg;
 
             _message := 'message';
@@ -147,7 +147,7 @@ BEGIN
     -- Mode was unrecognized
     ---------------------------------------------------
 
-    _message := 'Mode "' || _mode ||  '" was unrecognized';
+    _message := format('Mode "%s" was unrecognized', _mode);
     RAISE WARNING '%', _message;
 
     _returnCode := 'U5203';

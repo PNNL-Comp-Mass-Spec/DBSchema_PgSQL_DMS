@@ -173,7 +173,7 @@ BEGIN
 
     If _returnCode <> '' Then
         If Coalesce(_message, '') = '' Then
-            _message := 'Error code ' || _returnCode || ' returned by ValidateAnalysisJobRequestDatasets in ValidateAnalysisJobParameters';
+            _message := format('Error code %s returned by ValidateAnalysisJobRequestDatasets in ValidateAnalysisJobParameters', _returnCode);
             If _showDebugMessages Then
                 RAISE INFO '%', _message;
             End If;
@@ -208,7 +208,7 @@ BEGIN
             -- Single match was found; update _ownerUsername
             _ownerUsername := _newUsername;
         Else
-            _message := 'Could not find entry in database for owner username "' || _ownerUsername || '"';
+            _message := format('Could not find entry in database for owner username "%s"', _ownerUsername);
             If _showDebugMessages Then
                 RAISE INFO '%', _message;
             End If;
@@ -225,7 +225,7 @@ BEGIN
     _analysisToolID := get_analysis_tool_id (_toolName)
 
     If _analysisToolID = 0 Then
-        _message := 'Could not find entry in database for analysis tool "' || _toolName || '"';
+        _message := format('Could not find entry in database for analysis tool "%s"', _toolName);
 
         If _showDebugMessages Then
             RAISE INFO '%', _message;
@@ -282,7 +282,7 @@ BEGIN
     _organismID := get_organism_id(_organismName);
 
     If _organismID = 0 Then
-        _message := 'Could not find entry in database for organism "' || _organismName || '"';
+        _message := format('Could not find entry in database for organism "%s"', _organismName);
         If _showDebugMessages Then
             RAISE INFO '%', _message;
         End If;
@@ -308,7 +308,7 @@ BEGIN
                             WHERE AnTool.analysis_tool = _toolName )
 
     If _datasetList <> '' Then
-        _message := 'The instrument class for the following datasets is not compatible with the analysis tool: "' || _datasetList || '"';
+        _message := format('The instrument class for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
         If _showDebugMessages Then
             RAISE INFO '%', _message;
         End If;
@@ -334,7 +334,7 @@ BEGIN
                                 WHERE Tool.analysis_tool = _toolName );
 
     If _datasetList <> '' Then
-        _message := 'The dataset type for the following datasets is not compatible with the analysis tool: "' || _datasetList || '"';
+        _message := format('The dataset type for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
 
         If _showDebugMessages Then
             RAISE WARNING '%', _message;
@@ -357,7 +357,7 @@ BEGIN
     ---------------------------------------------------
 
     If _settingsFileRequired And _settingsFileName = 'na' Then
-        _message := 'A settings file is required for analysis tool "' || _toolName || '"';
+        _message := format('A settings file is required for analysis tool "%s"', _toolName);
 
         If _showDebugMessages Then
             RAISE INFO '%', _message;
@@ -368,7 +368,7 @@ BEGIN
     End If;
 
     If _paramFileRequired > 0 And _paramFileName = 'na' Then
-        _message := 'A parameter file is required for analysis tool "' || _toolName || '"';
+        _message := format('A parameter file is required for analysis tool "%s"', _toolName);
 
         If _showDebugMessages Then
             RAISE INFO '%', _message;
@@ -422,9 +422,9 @@ BEGIN
             -- Parameter file either does not exist or is inactive
             --
             If Exists (SELECT * FROM t_param_files WHERE param_file_name = _paramFileName AND valid = 0) Then
-                _message := 'Parameter file is inactive and cannot be used' || ':"' || _paramFileName || '"';
+                _message := format('Parameter file is inactive and cannot be used' || ':"%s"', _paramFileName);
             Else
-                _message := 'Parameter file could not be found' || ':"' || _paramFileName || '"';
+                _message := format('Parameter file could not be found' || ':"%s"', _paramFileName);
             End If;
 
             If _showDebugMessages Then
@@ -445,9 +445,9 @@ BEGIN
             -- Settings file either does not exist or is inactive
             --
             If Exists (SELECT * FROM t_settings_files WHERE file_name = _settingsFileName AND active = 0) Then
-                _message := 'Settings file is inactive and cannot be used' || ':"' || _settingsFileName || '"';
+                _message := format('Settings file is inactive and cannot be used' || ':"%s"', _settingsFileName);
             Else
-                _message := 'Settings file could not be found' || ':"' || _settingsFileName || '"';
+                _message := format('Settings file could not be found' || ':"%s"', _settingsFileName);
             End If;
 
             If _showDebugMessages Then
@@ -528,7 +528,7 @@ BEGIN
                 If Coalesce(_autoCentroidName, '') <> '' Then
                     _settingsFileName := _autoCentroidName;
 
-                    _warning := 'Note: Auto-updated the settings file to ' || _autoCentroidName || ' because this job has a profile-mode MSn dataset';
+                    _warning := format('Note: Auto-updated the settings file to %s because this job has a profile-mode MSn dataset', _autoCentroidName);
 
                     If _showDebugMessages Then
                         RAISE INFO '%', _warning;
@@ -563,7 +563,7 @@ BEGIN
                 WHERE KeyName = 'DtaGenerator'
 
                 If Coalesce(_dtaGenerator, '') = '' Then
-                    _message := 'Settings file "' || _settingsFileName || '" does not have DtaGenerator defined; unable to verify that centroiding is enabled';
+                    _message := format('Settings file "%s" does not have DtaGenerator defined; unable to verify that centroiding is enabled', _settingsFileName);
                     _returnCode = 'U5333';
 
                     If _showDebugMessages Then
@@ -594,9 +594,9 @@ BEGIN
 
                 If _centroidSetting <> 'True' Then
                     If Coalesce(_centroidSetting, '') = '' Then
-                        _message := 'MSGF+ requires that HMS-HMSn spectra be centroided; settings file "' || _settingsFileName || '" does not use MSConvert or DeconMSn for DTA Generation; unable to determine if centroiding is enabled';
+                        _message := format('MS-GF+ requires that HMS-HMSn spectra be centroided; settings file "%s" does not use MSConvert or DeconMSn for DTA Generation; unable to determine if centroiding is enabled', _settingsFileName);
                     Else
-                        _message := 'MSGF+ requires that HMS-HMSn spectra be centroided; settings file "' || _settingsFileName || '" does not appear to have centroiding enabled';
+                        _message := format('MS-GF+ requires that HMS-HMSn spectra be centroided; settings file "%s" does not appear to have centroiding enabled', _settingsFileName);
                     End If;
 
                     If _showDebugMessages Then
@@ -625,7 +625,7 @@ BEGIN
 
     If _returnCode <> '' Then
         If Coalesce(_message, '') = '' Then
-            _message := 'Error code ' || _returnCode || ' returned by ValidateProteinCollectionParams in ValidateAnalysisJobParameters';
+            _message := format('Error code %s returned by ValidateProteinCollectionParams in ValidateAnalysisJobParameters', _returnCode);
         End If;
 
         If _showDebugMessages Then
@@ -702,7 +702,8 @@ BEGIN
                     _paramFileName Similar To '%[_]Tryp[_]%'
                   )
                 Then
-                    _message := 'Legacy fasta file "' || _organismDBName || '" is very large (' || _sizeDescription || '); you must choose a parameter file that is fully tryptic (MSGFPlus_Tryp_) or is partially tryptic but has no dynamic mods (MSGFPlus_PartTryp_NoMods)';
+                    _message := format('Legacy fasta file "%s" is very large (%s); you must choose a parameter file that is fully tryptic (MSGFPlus_Tryp_) or is partially tryptic but has no dynamic mods (MSGFPlus_PartTryp_NoMods)',
+                                        _organismDBName, _sizeDescription);
                     _returnCode := 'U5350';
 
                     If _showDebugMessages Then
@@ -734,6 +735,7 @@ BEGIN
                     -- Parameter has more than one dynamic mod; this search will take too long
                     _message := format('Legacy FASTA file %s is very large (%s); you cannot use a parameter file with %s dynamic mods. Preferably use a parameter file with no dynamic mods (though you _might_ get away with 1 dynamic mod).',
                                          _organismDBName, _sizeDescription, _dynModCount);
+
                     _returnCode := 'U5351';
 
                     If _showDebugMessages Then
@@ -748,7 +750,9 @@ BEGIN
             -- If using MS-GF+ and the file is over 600 MB, you must use MSGFPlus_SplitFasta
             If Coalesce(_fileSizeKB, 0) > 600*1024 Then
                 If _toolName Like '%MSGF%' And Not _toolName Like '%SplitFasta%' Then
-                    _message := 'Legacy fasta file "' || _organismDBName || '" is very large (' || _sizeDescription || '); you must use analysis tool MSGFPlus_SplitFasta or MSGFPlus_MzML_SplitFasta';
+                    _message := format('Legacy fasta file "%s" is very large (%s); you must use analysis tool MSGFPlus_SplitFasta or MSGFPlus_MzML_SplitFasta',
+                                        _organismDBName, _sizeDescription);
+
                     _returnCode := 'U5352';
 
                     If _showDebugMessages Then
@@ -796,7 +800,7 @@ BEGIN
         WHERE SettingName = 'SplitFasta'
 
         If Not FOUND Or Coalesce(_splitFasta, 'False') <> 'True' Then
-            _message := 'Search tool ' || _toolName || ' requires a SplitFasta settings file';
+            _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
             _returnCode = 'U5335';
 
             If _showDebugMessages Then
@@ -820,7 +824,7 @@ BEGIN
         WHERE SettingName = 'NumberOfClonedSteps';
 
         If Not FOUND Or Coalesce(_numberOfClonedSteps, 0) < 1 Then
-            _message := 'Search tool ' || _toolName || ' requires a SplitFasta settings file';
+            _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
             _returnCode = 'U5336';
 
             If _showDebugMessages Then

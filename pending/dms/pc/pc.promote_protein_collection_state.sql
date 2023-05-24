@@ -111,7 +111,7 @@ BEGIN
                                     _proteinCollectionName, _jobCount, public.check_plural(_jobCount, 'job is', 'jobs are'));
 
                 If Not _infoOnly Then
-                    _currentLocation := 'Update state for CollectionID ' || _proteinCollectionID::text;
+                    _currentLocation := format('Update state for CollectionID %s', _proteinCollectionID);
 
                     UPDATE pc.t_protein_collections
                     SET collection_state_id = 3

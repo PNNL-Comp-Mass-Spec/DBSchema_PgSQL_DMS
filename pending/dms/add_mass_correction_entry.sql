@@ -59,7 +59,7 @@ BEGIN
     -- Cannot create an entry that already exists
 
     If _massCorrectionID <> 0 Then
-        _msg := 'Cannot Add: Mass Correction "' || _modMasschange || '" already exists';
+        _msg := format('Cannot Add: Mass Correction "%s" already exists', _modMasschange);
         RAISE WARNING '%', _msg;
 
         _returnCode := 'U5203';
@@ -73,7 +73,7 @@ BEGIN
     If Exists ( SELECT mass_correction_id
                 FROM t_mass_correction_factors
                 WHERE mass_correction_tag = _modName::citext) Then
-        _msg := 'Cannot Add: Mass Correction "' || _modName || '" already exists';
+        _msg := format('Cannot Add: Mass Correction "%s" already exists', _modName);
         RAISE WARNING '%', _msg;
 
         _returnCode := 'U5204';

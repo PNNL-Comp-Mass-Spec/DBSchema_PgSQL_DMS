@@ -77,7 +77,7 @@ BEGIN
 
     -- Make sure _parameterFileTypeName is of a known type
     If _parameterFileTypeName <> 'Sequest' and _parameterFileTypeName <> 'XTandem' Then
-        _message := 'Unknown parameter file type: ' || _parameterFileTypeName || '; should be Sequest or XTandem';
+        _message := format('Unknown parameter file type: %s; should be Sequest or XTandem', _parameterFileTypeName);
         _returnCode := 'U5201';
         RETURN;
     End If;

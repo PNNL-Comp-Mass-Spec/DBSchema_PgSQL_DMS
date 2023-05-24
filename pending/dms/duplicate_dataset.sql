@@ -81,14 +81,14 @@ BEGIN
     End If;
 
     If Not Exists (Select * From t_dataset Where dataset = _sourceDataset) Then
-        _message := 'Source dataset not found in t_dataset: ' || _sourceDataset;
+        _message := format('Source dataset not found in t_dataset: %s', _sourceDataset);
         RAISE ERROR '%', _message;
 
         RETURN;
     End If;
 
     If Exists (Select * From t_dataset Where dataset = _newDataset) Then
-        _message := 't_dataset already has dataset: ' || _newDataset;
+        _message := format('t_dataset already has dataset: %s', _newDataset);
         RAISE ERROR '%', _message;
 
         RETURN;
@@ -121,7 +121,7 @@ BEGIN
     WHERE D.dataset = _sourceDataset
 
     If Not FOUND Then
-        _message := 'Dataset not found: ' || _sourceDataset;
+        _message := format('Dataset not found: %s', _sourceDataset);
         RAISE ERROR '%', _message;
 
         RETURN;
@@ -193,7 +193,7 @@ BEGIN
                 -- Single match found; update _operatorUsername
                 _datasetInfo.OperUsername := _newUsername;
             Else
-                _message := 'Could not find entry in database for operator username ' || _newOperatorUsername;
+                _message := format('Could not find entry in database for operator username %s', _newOperatorUsername);
                 RAISE ERROR '%', _message;
                 RETURN;
             End If;
@@ -294,7 +294,7 @@ BEGIN
     -- Create a requested run
     ---------------------------------------------------
     --
-    _requestName := 'AutoReq_' || _newDataset;
+    _requestName := format('AutoReq_%s', _newDataset);
 
     CALL add_update_requested_run (
             _requestName => _requestName,
@@ -341,7 +341,7 @@ BEGIN
     If _returnCode <> '' Then
         ROLLBACK;
 
-        _message := 'Consume operation failed: dataset ' || _newDataset || ' -> ' || _message;
+        _message := format('Consume operation failed: dataset %s -> %s', _newDataset, _message);
         RAISE ERROR '%', _message;
 
         RETURN;

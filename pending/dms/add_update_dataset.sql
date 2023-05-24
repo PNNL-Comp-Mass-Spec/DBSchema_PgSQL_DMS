@@ -881,7 +881,7 @@ BEGIN
                 -- Validate that experiments match
                 --
                 If _experimentID <> _reqExperimentID Then
-                    _message := 'Experiment for dataset (' || _experimentName || ') does not match with the requested run''s experiment (Request ' || _requestID::text || ')';
+                    _message := format('Experiment for dataset (%s) does not match with the requested run''s experiment (Request %s)', _experimentName, _requestID);
                     RAISE EXCEPTION '%', _message;
                 End If;
             End If;
@@ -1034,7 +1034,7 @@ BEGIN
             _refDate := CURRENT_TIMESTAMP;
 
             If _logDebugMessages Then
-                _debugMsg := 'Call GetInstrumentStoragePathForNewDatasets with _instrumentID = ' || _instrumentID::text;
+                _debugMsg := format('Call GetInstrumentStoragePathForNewDatasets with _instrumentID = %s', _instrumentID);
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
@@ -1461,7 +1461,7 @@ BEGIN
             If _warning like 'Warning:' Then
                 _warningWithPrefix := _warning;
             Else
-                _warningWithPrefix := 'Warning: ' || _warning;
+                _warningWithPrefix := format('Warning: %s', _warning);
             End If;
 
             If Coalesce(_message, '') = '' Then

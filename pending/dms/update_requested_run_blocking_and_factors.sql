@@ -75,7 +75,7 @@ BEGIN
         If Coalesce(_logMessage, '') = '' Then
             _logMessage := '_blockingList is empty';
         Else
-            _logMessage := '_blockingList: ' || _logMessage;
+            _logMessage := format('_blockingList: %s', _logMessage);
         End If;
 
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
@@ -84,7 +84,7 @@ BEGIN
         If Coalesce(_logMessage, '') = '' Then
             _logMessage := '_factorList is empty';
         Else
-            _logMessage := '_factorList: ' || _logMessage;
+            _logMessage := format('_factorList: %s', _logMessage);
         End If;
 
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');

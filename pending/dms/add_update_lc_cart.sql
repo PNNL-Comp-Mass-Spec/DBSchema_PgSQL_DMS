@@ -104,7 +104,7 @@ BEGIN
         _id := 0;
 
         If Exists (SELECT * FROM t_lc_cart WHERE cart_name = _cartName) Then
-            _message := 'Cannot Add - Entry already exists for cart "' || _cartName || '"';
+            _message := format('Cannot Add - Entry already exists for cart "%s"', _cartName);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5202';
@@ -127,7 +127,7 @@ BEGIN
         WHERE cart_id = _id
 
         If _cartName <> _currentName And Exists (SELECT * FROM t_lc_cart WHERE cart_name = _cartName) Then
-            _message := 'Cannot rename - Entry already exists for cart "' || _cartName || '"';
+            _message := format('Cannot rename - Entry already exists for cart "%s"', _cartName);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5204';

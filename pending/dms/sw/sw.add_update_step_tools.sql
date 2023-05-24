@@ -78,7 +78,7 @@ BEGIN
     -- Cannot update a non-existent entry
     --
     If _mode = 'update' And _existingRowCount = 0 Then
-        _message := 'Could not find step tool "' || _name || '" in the database';
+        _message := format('Could not find step tool "%s" in the database', _name);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -88,7 +88,7 @@ BEGIN
     -- Cannot add an existing entry
     --
     If _mode = 'add' And _existingRowCount > 0 Then
-        _message := '"' || _name || '" already exists in database';
+        _message := format('"%s" already exists in database', _name);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';

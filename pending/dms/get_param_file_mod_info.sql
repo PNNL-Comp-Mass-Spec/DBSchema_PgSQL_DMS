@@ -58,7 +58,7 @@ BEGIN
         _paramFileFound := true;
     Else
         _paramFileFound := false;
-        _message := 'Unknown parameter file name: ' || _parameterFileName;
+        _message := format('Unknown parameter file name: %s', _parameterFileName);
         RETURN;
     End If;
 

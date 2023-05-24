@@ -118,7 +118,7 @@ BEGIN
         ---------------------------------------------------
 
         If _containerLimit >= 100 Then
-            _errorMessage := 'Cannot update the comment or active status of shared material location ' || _locationTag || '; contact a DMS admin for assistance';
+            _errorMessage := format('Cannot update the comment or active status of shared material location %s; contact a DMS admin for assistance', _locationTag);
             RAISE EXCEPTION '%', _errorMessage;
         End If;
 
@@ -163,7 +163,7 @@ BEGIN
 
             CALL post_log_entry ('Normal', _logMessage, 'Update_Material_Location');
 
-            _message := 'Set status to ' || _status;
+            _message := format('Set status to %s', _status);
         End If;
 
         If _oldComment Is Distinct From _comment Then

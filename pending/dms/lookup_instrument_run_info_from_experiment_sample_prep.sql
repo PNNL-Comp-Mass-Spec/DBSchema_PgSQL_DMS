@@ -50,13 +50,17 @@ BEGIN
     ---------------------------------------------------
     If Not FOUND Then
         If _instrumentGroup::citext = _ovr Then
-            _message := 'Instrument group is set to "' || _ovr || '"; the experiment (' || _experimentName || ') does not have a sample prep request, therefore we cannot auto-define the instrument group.';
+            _message := format('Instrument group is set to "%s"; the experiment (%s) does not have a sample prep request, therefore we cannot auto-define the instrument group.',
+                                _ovr, _experimentName);
+
             _returnCode := 'U5201';
             RETURN;
         End If;
 
         If _datasetType::citext = _ovr Then
-            _message := 'Run Type (Dataset Type) is set to "' || _ovr || '"; the experiment (' || _experimentName || ') does not have a sample prep request, therefore we cannot auto-define the run type.';
+            _message := format('Run Type (Dataset Type) is set to "%s"; the experiment (%s) does not have a sample prep request, therefore we cannot auto-define the run type.',
+                                _ovr, _experimentName);
+
             _returnCode := 'U5202';
             RETURN;
         End If;

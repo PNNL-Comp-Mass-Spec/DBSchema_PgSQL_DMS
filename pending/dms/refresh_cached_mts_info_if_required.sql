@@ -116,7 +116,7 @@ BEGIN
 
             If char_length(_cacheTable) > 0 Then
             -- <b>
-                _currentLocation := 'Check refresh time for ' || _cacheTable;
+                _currentLocation := format('Check refresh time for %s', _cacheTable);
                 --
                 _lastRefreshed := make_date(2000, 1, 1);
                 _lastFullRefresh := make_date(2000, 1, 1);
@@ -168,21 +168,17 @@ BEGIN
                             End If;
 
                             If _infoOnly Then
-                                RAISE INFO '%', 'Max ' || _idColumnName || ' in ' || _cacheTable || ' is ' || _maxID::text || '; will set minimum to ' || _idMinimum::text;
+                                RAISE INFO 'Max % in % is %; will set minimum to %', _idColumnName, _cacheTable, _maxID, _idMinimum;
                             End If;
                         End If;
                     End If;
 
-                    _sql := 'CALL ' || _procedure || ' (';
-
-                    If _idMinimum <> 0 Then
-                        _sql := _sql || _idMinimum::text || ')';
-                    Else
-                        _sql := _sql || ')';
-                    End If;
+                        _sql := format('CALL %s (%s)',
+                                        _procedure,
+                                        CASE WHEN _idMinimum > 0 THEN _idMinimum::text ELSE '' END);
 
                     If _infoOnly Then
-                        RAISE INFO '%', 'Need to call ' || _procedure || ' since last refreshed ' || _lastRefreshed::text || '; ' || _sql;
+                        RAISE INFO 'Need to call % since last refreshed %; %', _procedure, _lastRefreshed, _sql;
                     Else
                         EXECUTE _sql;
                     End If;

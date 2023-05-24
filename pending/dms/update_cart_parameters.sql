@@ -74,7 +74,7 @@ BEGIN
         WHERE cart_name = _newValue;
 
         If Not FOUND Then
-            _message := 'Invalid LC Cart name: '|| _newValue;
+            _message := format('Invalid LC Cart name: %s', _newValue);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5202';

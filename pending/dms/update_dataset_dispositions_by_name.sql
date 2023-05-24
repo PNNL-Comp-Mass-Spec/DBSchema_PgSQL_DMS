@@ -84,7 +84,7 @@ BEGIN
         _comment := Coalesce(_comment, '');
 
         If Not _recycleRequest::citext IN ('yes', 'no') Then
-            _message := 'RecycleRequest must be Yes or No (currently "' || _recycleRequest || '")';
+            _message := format('RecycleRequest must be Yes or No (currently "%s")', _recycleRequest);
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -126,7 +126,7 @@ BEGIN
         WHERE DatasetID IS NULL;
 
         If Coalesce(_datasetIDList, '') <> '' Then
-            _message := 'Datasets not found: ' || _datasetIDList;
+            _message := format('Datasets not found: %s', _datasetIDList);
             RAISE EXCEPTION '%', _message;
         End If;
 

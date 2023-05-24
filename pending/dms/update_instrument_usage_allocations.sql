@@ -145,7 +145,7 @@ BEGIN
             End If;
 
             If Exists (SELECT * FROM t_instrument_allocation WHERE proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
-                _msg2 := 'Existing entry already exists, cannot add: ' || _fiscalYear || '_' || _proposalID;
+                _msg2 := format('Existing entry already exists, cannot add: %s_%s', _fiscalYear, _proposalID);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
@@ -169,29 +169,30 @@ BEGIN
             _proposalID := Substring(_fYProposal, _charIndex+1, 128);
 
             If Not Exists (SELECT * FROM t_instrument_allocation WHERE fy_proposal = _fYProposal) Then
-                _msg2 := 'Entry not found, unable to update: ' || _fYProposal;
+                _msg2 := format('Entry not found, unable to update: %s', _fYProposal);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
             If Not Exists (SELECT * FROM t_instrument_allocation WHERE fy_proposal = _fYProposal AND proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
-                _msg2 := 'Mismatch between fy_proposal, FiscalYear, and ProposalID: ' || _fYProposal || ' vs. ' || _fiscalYear || ' vs. ' || _proposalID;
+                _msg2 := format('Mismatch between fy_proposal, FiscalYear, and ProposalID: %s vs. %s vs. %s',
+                                _fYProposal, _fiscalYear, _proposalID);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
             If Coalesce(_fiscalYearParam, '') <> '' And _fiscalYearParam <> _fiscalYear Then
-                _msg2 := 'Cannot change FiscalYear when updating: ' || _fiscalYear || ' vs. ' || _fiscalYearParam;
+                _msg2 := format('Cannot change FiscalYear when updating: %s vs. %s', _fiscalYear, _fiscalYearParam);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
             If Coalesce(_proposalIDParam, '') <> '' And _proposalIDParam <> _proposalID Then
-                _msg2 := 'Cannot change ProposalID when updating: ' || _proposalID || ' vs. ' || _proposalIDParam;
+                _msg2 := format('Cannot change ProposalID when updating: %s vs. %s', _proposalID, _proposalIDParam);
                 RAISE EXCEPTION '%', _msg2;
             End If;
         End If;
 
         -- Validate _proposalID
         If Not Exists (SELECT * FROM t_eus_proposals WHERE proposal_id = _proposalID) Then
-            _msg2 := 'Invalid EUS ProposalID: ' || _proposalID;
+            _msg2 := format('Invalid EUS ProposalID: %s', _proposalID);
             RAISE EXCEPTION '%', _msg2;
         End If;
 
@@ -211,7 +212,7 @@ BEGIN
 
         _fy := public.try_cast(_fiscalYear, null::int);
         If _fy Is Null Or _fy = 0 Then
-            _msg2 := 'Fiscal year is not numeric: ' || _fiscalYear;
+            _msg2 := format('Fiscal year is not numeric: %s', _fiscalYear);
             RAISE EXCEPTION '%', _msg2;
         End If;
 
@@ -219,7 +220,7 @@ BEGIN
             _ftHours := public.try_cast(_ft, null::real);
 
             If _ftHours Is Null Then
-                _msg2 := 'FT hours is not numeric: ' || _ft;
+                _msg2 := format('FT hours is not numeric: %s', _ft);
                 RAISE EXCEPTION '%', _msg2;
             Else
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY);
@@ -231,7 +232,7 @@ BEGIN
             _imsHours := public.try_cast(_ims, null::real);
 
             If _imsHours Is Null Then
-                _msg2 := 'IMS hours is not numeric: ' || _ims;
+                _msg2 := format('IMS hours is not numeric: %s', _ims);
                 RAISE EXCEPTION '%', _msg2;
             Else
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY);
@@ -243,7 +244,7 @@ BEGIN
             _orbHours := public.try_cast(_orb, null::real);
 
             If _orbHours Is Null Then
-                _msg2 := 'Orbitrap hours is not numeric: ' || _orb;
+                _msg2 := format('Orbitrap hours is not numeric: %s', _orb);
                 RAISE EXCEPTION '%', _msg2;
             Else
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY);
@@ -255,7 +256,7 @@ BEGIN
             _exaHours := public.try_cast(_exa, null::real);
 
             If _exaHours Is Null Then
-                _msg2 := 'Exactive hours is not numeric: ' || _exa;
+                _msg2 := format('Exactive hours is not numeric: %s', _exa);
                 RAISE EXCEPTION '%', _msg2;
             Else
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY);
@@ -267,7 +268,7 @@ BEGIN
             _ltqHours := public.try_cast(_ltq, null::real);
 
             If _ltqHours Is Null Then
-                _msg2 := 'LTQ hours is not numeric: ' || _ltq;
+                _msg2 := format('LTQ hours is not numeric: %s', _ltq);
                 RAISE EXCEPTION '%', _msg2;
             End If;
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
@@ -278,7 +279,7 @@ BEGIN
             _gcHours := public.try_cast(_gc, null::real);
 
             If _gcHours Is Null Then
-                _msg2 := 'GC hours is not numeric: ' || _gc;
+                _msg2 := format('GC hours is not numeric: %s', _gc);
                 RAISE EXCEPTION '%', _msg2;
             End If;
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
@@ -289,7 +290,7 @@ BEGIN
             _qqqHours := public.try_cast(_qqq, null::real);
 
             If _qqqHours Is Null Then
-                _msg2 := 'QQQ hours is not numeric: ' || _qqq;
+                _msg2 := format('QQQ hours is not numeric: %s', _qqq);
                 RAISE EXCEPTION '%', _msg2;
             End If;
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)

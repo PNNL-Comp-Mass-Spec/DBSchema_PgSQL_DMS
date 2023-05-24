@@ -55,7 +55,7 @@ BEGIN
     WHERE NOT XmlQ.tool IN ( SELECT StepTools.step_tool FROM sw.t_step_tools StepTools );
 
     If _missingTools <> '' Then
-        _message := 'Step tool(s) ' || _missingTools || ' do not exist in t_step_tools';
+        _message := format('Step tool(s) %s do not exist in t_step_tools', _missingTools);
         _returnCode := 'U5301';
         RETURN;
     End If;

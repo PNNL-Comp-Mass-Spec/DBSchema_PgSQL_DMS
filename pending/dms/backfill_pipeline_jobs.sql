@@ -178,7 +178,7 @@ BEGIN
 
         BEGIN
 
-            _currentLocation := 'Validate settings required to backfill job ' || _jobStr;
+            _currentLocation := format('Validate settings required to backfill job %s', _jobStr);
 
             ---------------------------------------------------
             -- Lookup AnalysisToolID for _jobInfo.Script
@@ -327,7 +327,7 @@ BEGIN
                 -- First lookup the data package ID associated with this job
                 ------------------------------------------------
 
-                _currentLocation := 'Auto-define the dataset to associate with job ' || _jobStr;
+                _currentLocation := format('Auto-define the dataset to associate with job %s', _jobStr);
 
                 If _jobInfo.DataPackageID <= 0 Then
                     ------------------------------------------------
@@ -358,7 +358,7 @@ BEGIN
                         _jobInfo.Dataset := 'DataPackage_' || _jobInfo.DataPackageID::text;
                     Else
                         -- Data Package found
-                        _jobInfo.Dataset := 'DataPackage_' || _dataPackageFolder;
+                        _jobInfo.Dataset := format('DataPackage_%s', _dataPackageFolder);
 
                         If _peptideAtlasStagingTask <> 0 Then
                             _jobInfo.Dataset := _jobInfo.Dataset || '_Staging';
@@ -537,7 +537,7 @@ BEGIN
                     -- Add a new row to Tmp_Job_Backfill_Details
                     ------------------------------------------------
 
-                    _currentLocation := 'Add job ' || _jobStr || ' to Tmp_Job_Backfill_Details';
+                    _currentLocation := format('Add job %s to Tmp_Job_Backfill_Details', _jobStr);
 
                     INSERT INTO Tmp_Job_Backfill_Details
                             (DataPackageID, Job, BatchID, Priority, Created, Start, Finish, AnalysisToolID,

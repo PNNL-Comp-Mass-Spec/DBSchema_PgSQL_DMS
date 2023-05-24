@@ -99,7 +99,7 @@ BEGIN
     FROM Tmp_DataPackagesToUpdate;
 
     If _dataPackageCount = 0 Then
-        _message := 'No valid data packages were found in the list: ' || _dataPackageList;
+        _message := format('No valid data packages were found in the list: %s', _dataPackageList);
         RAISE INFO '%', _message;
 
         DROP TABLE Tmp_DataPackagesToUpdate;

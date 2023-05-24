@@ -182,7 +182,7 @@ BEGIN
             GET DIAGNOSTICS _requestCountToUpdate = ROW_COUNT;
 
             If _requestCountToUpdate = 0 Then
-                _message := 'Did not find any active requested runs with work package ' || _oldWorkPackage;
+                _message := format('Did not find any active requested runs with work package %s', _oldWorkPackage);
 
                 If _infoOnly Then
                     RAISE INFO '%', _message;

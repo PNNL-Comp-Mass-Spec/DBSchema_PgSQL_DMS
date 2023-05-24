@@ -121,14 +121,14 @@ BEGIN
             WHERE USER_ID IS NULL
             LIMIT 1;
 
-            _message := 'Invalid username for ' || _userFieldName || ': "' || _firstInvalidUser || '"';
+            _message := format('Invalid username for %s: "%s"', _userFieldName, _firstInvalidUser);
             _returnCode := 'U5201';
             RETURN;
         End If;
 
         If _nameValidationIteration = 1 And _requireValidRequestedPersonnel And Not Exists (SELECT * FROM Tmp_UserInfo WHERE User_ID > 0) Then
             -- Requested personnel person must be a specific person (or list of people)
-            _message := 'The Requested Personnel person must be a specific DMS user; "' || _requestedPersonnel || '" is invalid';
+            _message := format('The Requested Personnel person must be a specific DMS user; "%s" is invalid', _requestedPersonnel);
             _returnCode := 'U5202';
             RETURN;
         End If;

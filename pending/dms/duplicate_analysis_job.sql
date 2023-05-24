@@ -154,7 +154,7 @@ BEGIN
             Raise Info '%', _message;
         Else
             If Coalesce(_message, '') = '' Then
-                _message := 'AddUpdateAnalysisjob returned error code = ' || _returnCode;
+                _message := format('AddUpdateAnalysisjob returned error code = %s', _returnCode);
             End If;
 
             RAISE WARNING '%', _message;

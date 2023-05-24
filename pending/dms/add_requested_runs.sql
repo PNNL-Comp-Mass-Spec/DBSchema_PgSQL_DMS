@@ -373,15 +373,19 @@ BEGIN
         END LOOP;
 
         If _mode::citext = 'PreviewAdd' Then
-            _message := 'Would create ' || _count::text || ' requested runs (' || _requestNameFirst || ' to ' || _requestNameLast || ')';
+            _message := format('Would create %s requested %s (%s to %s)',
+                                _count,
+                                public.check_plural(_count, 'run', 'runs'),
+                                _requestNameFirst, _requestNameLast);
 
             If _resolvedInstrumentInfo = '' Then
-                _message := _message || ' with instrument group ' || _instrumentGroupToUse || ', run type ' || _msType || ', and separation group ' || _separationGroup;
+                _message := format('%s with instrument group %s, run type %s, and separation group %s',
+                                    _message, _instrumentGroupToUse, _msType, _separationGroup);
             Else
-                _message := _message || ' with ' || _resolvedInstrumentInfo;
+                _message := format('%s with %s', _message, _resolvedInstrumentInfo);
             End If;
         Else
-            _message := 'Number of requested runs created: ' || _count::text;
+            _message := format('Number of requested runs created: %s', _count);
         End If;
 
         If char_length(_batchName) > 0 Then
@@ -414,9 +418,9 @@ BEGIN
                     End If;
                 Else
                     If _mode::citext = 'PreviewAdd' Then
-                        _msg := 'Would create a batch named "' || _batchName || '"';
+                        _msg := format('Would create a batch named "%s"', _batchName);
                     Else
-                        _msg := 'Created batch ' || _batchID::text;
+                        _msg := format('Created batch %s', _batchID);
                     End If;
                 End If;
 

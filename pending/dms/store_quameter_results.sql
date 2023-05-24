@@ -185,7 +185,7 @@ BEGIN
         WHERE Target.Dataset_Name = DS.dataset;
 
         If Not FOUND Then
-            _message := 'Warning: dataset not found in table t_dataset: ' || _datasetName;
+            _message := format('Warning: dataset not found in table t_dataset: %s', _datasetName);
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -213,7 +213,8 @@ BEGIN
              ON Target.Dataset_Name = DS.dataset
 
         If _datasetIDCheck <> _datasetID Then
-            _message := 'Error: dataset ID values for ' || _datasetName || ' do not match; expecting ' || _datasetIDCheck::text || ' but procedure argument _datasetID is ' || _datasetID::text;
+            _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
+                                _datasetName, _datasetIDCheck, _datasetID);
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -394,9 +395,9 @@ BEGIN
     ---------------------------------------------------
 
     If Coalesce(_datasetName, '') = '' Then
-        _usageMessage := 'Dataset ID: ' || _datasetID::text;
+        _usageMessage := format('Dataset ID: %s', _datasetID);
     Else
-        _usageMessage := 'Dataset: ' || _datasetName;
+        _usageMessage := format('Dataset: %s', _datasetName);
     End If;
 
     If Not _infoOnly Then

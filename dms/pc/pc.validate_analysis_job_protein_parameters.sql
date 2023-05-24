@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          09/25/2012 mem - Expanded _organismDBFileName to varchar(128)
 **          06/24/2013 mem - Now removing duplicate protein collection names in _protCollNameList
 **          05/11/2023 mem - Ported to PostgreSQL
+**          05/23/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -101,11 +102,11 @@ BEGIN
 
     SELECT ID
     INTO _organismID
-    FROM V_Organism_Picker
+    FROM pc.V_Organism_Picker
     WHERE Short_Name = _organismName::citext;
 
     If Not FOUND Then
-        _message := 'Organism "' || _organismName || '" does not exist (Protein_Sequences.V_Organism_Picker)';
+        _message := format('Organism "%s" does not exist (pc.V_Organism_Picker)', _organismName);
         _returnCode := 'U5203';
 
         RAISE WARNING '%', _message;
@@ -123,11 +124,11 @@ BEGIN
 
         SELECT ID
         INTO _legacyFileID
-        FROM V_Legacy_Static_File_Locations
+        FROM pc.V_Legacy_Static_File_Locations
         WHERE FileName = _organismDBFileName;
 
         If Not FOUND Then
-            _message := 'FASTA file "' || _organismDBFileName || '" does not exist (Protein_Sequences.V_Legacy_Static_File_Locations)';
+            _message := format('FASTA file "%s" does not exist (pc.V_Legacy_Static_File_Locations)', _organismDBFileName);
             _returnCode := 'U5204';
 
             RAISE WARNING '%', _message;
@@ -271,7 +272,7 @@ BEGIN
 
         If _equalsPosition = 0 Then
             If _optionString <> 'na' Then
-                _message := 'Keyword: "' || _optionString || '" not followed by an equals sign';
+                _message := format('Keyword: "%s" not followed by an equals sign', _optionString);
                 _returnCode := 'U5207';
                 RAISE WARNING '%', _message;
 

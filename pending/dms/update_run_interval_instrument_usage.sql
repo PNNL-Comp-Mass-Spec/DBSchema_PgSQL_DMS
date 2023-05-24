@@ -91,7 +91,9 @@ BEGIN
         _logErrors := true;
 
         If Not _infoOnly Then
-            _message := 'Calling update_dataset_interval_for_multiple_instruments for instrument ' || _instrumentName || ', calling user ' || _callingUser;
+            _message := format('Calling update_dataset_interval_for_multiple_instruments for instrument %s, calling user %s',
+                                _instrumentName, _callingUser);
+
             CALL post_log_entry ('Info', _message, 'Update_Run_Interval_Instrument_Usage');
         End If;
 

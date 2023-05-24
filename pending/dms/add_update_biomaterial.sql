@@ -183,14 +183,14 @@ BEGIN
         -- Cannot create an entry that already exists
         --
         If FOUND And (_mode = 'add' or _mode = 'check_add') Then
-            _msg := 'Cannot add: Biomaterial "' || _biomaterialName || '" already in database ';
+            _msg := format('Cannot add: Biomaterial "%s" already in database ', _biomaterialName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
         -- Cannot update a non-existent entry
         --
         If Not FOUND And (_mode = 'update' or _mode = 'check_update') Then
-            _msg := 'Cannot update: Biomaterial "' || _biomaterialName || '" is not in database ';
+            _msg := format('Cannot update: Biomaterial "%s" is not in database ', _biomaterialName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -296,7 +296,7 @@ BEGIN
                 -- Single match was found; update _piUsername
                 _piUsername := _newUsername;
             Else
-                _msg := 'Could not find entry in database for principal investigator username "' || _piUsername || '"';
+                _msg := format('Could not find entry in database for principal investigator username "%s"', _piUsername);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -349,9 +349,8 @@ BEGIN
             WHERE Biomaterial_Name = _biomaterialName;
 
             If _biomaterialID <> Coalesce(_idConfirm, _biomaterialID) Then
-                _debugMsg := 'Warning: Inconsistent identity values when adding biomaterial ' || _biomaterialName || ': Found ID ' ||;
-                                _idConfirm::text || ' but the INSERT INTO query reported ' ||
-                                _biomaterialID::text;
+                _debugMsg := format('Warning: Inconsistent identity values when adding biomaterial %s: Found ID %s but the INSERT INTO query reported %s',
+                                    _biomaterialName, _idConfirm, _biomaterialID);
 
                 CALL postlogentry 'Error', _debugMsg, 'AddUpdateBiomaterial'
 
@@ -405,7 +404,7 @@ BEGIN
             WHERE Biomaterial_Name = _biomaterialName
 
             If Not FOUND Then
-                _msg := 'Update operation failed: "' || _biomaterialName || '"';
+                _msg := format('Update operation failed: "%s"', _biomaterialName);
                 RAISE EXCEPTION '%', _msg;
             End If;
 

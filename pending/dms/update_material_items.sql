@@ -98,7 +98,7 @@ BEGIN
         WHERE container = _container;
 
         If Not FOUND Then
-            _message := 'Destination container "' || _container || '" could not be found in database';
+            _message := format('Destination container "%s" could not be found in database', _container);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5203';
@@ -204,7 +204,7 @@ BEGIN
             If Coalesce(_retiredExperiment, '') <> '' Then
                 -- Yes, the experiment is already retired
 
-                _message := 'Experiment is already retired (inactive and no container): ' || _retiredExperiment;
+                _message := format('Experiment is already retired (inactive and no container): %s', _retiredExperiment);
                 RAISE WARNING '%', _message;
 
                 _returnCode := 'U5205';
