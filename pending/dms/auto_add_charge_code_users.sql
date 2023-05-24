@@ -22,6 +22,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          02/17/2022 mem - Tabs to spaces
 **          05/19/2023 mem - Add missing Else
+**          05/24/2023 mem - When previewing new users, show charge codes associated with each new user
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -52,13 +53,15 @@ BEGIN
         HID text,
         LastName_FirstName text,
         Network_ID text NULL,
+        Charge_Code_First text NULL,
+        Charge_Code_Last text NULL,
         DMS_ID int NULL
     );
 
     BEGIN
 
-        INSERT INTO Tmp_NewUsers (Payroll, HID)
-        SELECT CC.resp_username, MAX(CC.resp_hid)
+        INSERT INTO Tmp_NewUsers (Payroll, HID, Charge_Code_First, Charge_Code_Last)
+        SELECT CC.resp_username, MAX(CC.resp_hid), Min(CC.Charge_Code) AS Charge_Code_First, Max(CC.Charge_Code) AS Charge_Code_Last
         FROM t_charge_code CC
              LEFT OUTER JOIN V_Charge_Code_Owner_DMS_User_Map UMap
                ON CC.charge_code = UMap.charge_code
