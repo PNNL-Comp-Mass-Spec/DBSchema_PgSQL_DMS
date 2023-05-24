@@ -36,6 +36,7 @@ AS $$
 **          12/19/2018 mem - Standardize the researcher name
 **          11/11/2019 mem - If _researcher is 'na' or 'none', store an empty string in the Researcher column of T_Material_Containers
 **          07/02/2021 mem - Require that the researcher is a valid DMS user
+**          05/23/2023 mem - Use a Like clause to prevent updating Staging containers
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -124,8 +125,8 @@ BEGIN
             RETURN;
         End If;
 
-        If _container::citext In ('na', 'Staging', '-80_Staging', 'Met_Staging') Then
-            _message := 'The "' || _container || '" container cannot be updated via the website; contact a DMS admin (see AddUpdateMaterialContainer)';
+        If _container::citext ='na' Or _container Like '%Staging%' Then
+            _message := format('The "%s" container cannot be updated via the website; contact a DMS admin (see AddUpdateMaterialContainer)', _container);
             _returnCode := 'U5203';
             RETURN;
         End If;
