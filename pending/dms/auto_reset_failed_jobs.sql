@@ -205,13 +205,16 @@ BEGIN
 
                 _matchIndexLast := 0;
                 _matchIndex := 999;
+
                 WHILE _matchIndex > 0
                 LOOP
-                    _matchIndex := Position('(retry', _comment In _matchIndexLast+1);
+                    _matchIndex := Position('(retry' In Substring(_comment, _matchIndexLast + 1));
+
                     If _matchIndex > 0 Then
-                        _matchIndexLast := _matchIndex;
+                        _matchIndexLast := _matchIndex + _matchIndexLast;
                     End If;
                 END LOOP;
+
                 _matchIndex := _matchIndexLast;
 
                 If _matchIndex = 0 Then

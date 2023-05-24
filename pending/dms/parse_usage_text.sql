@@ -168,8 +168,6 @@ BEGIN
             -- Get next keyword to look for
             ---------------------------------------------------
 
-            _kw := '';
-
             SELECT ',' || UsageKey || '[' As KeyWord
                 UsageValue,
                 UniqueID
@@ -178,66 +176,66 @@ BEGIN
             WHERE UniqueID > _nextID
             LIMIT 1;
 
+            If Not FOUND Then
+                -- Break out of the while loop
+                EXIT;
+            End If;
+
             _nextID := _uniqueID;
 
             ---------------------------------------------------
-            -- Done if no more keywords,
-            -- otherwise look for it in text
+            -- Look for the keyword in _commentToSearch
             ---------------------------------------------------
 
-            If _kw = '' Then
-                _continue := false;
-            Else
-            -- <b>
-                _index := Position(_kw In _commentToSearch);
+            _index := Position(_kw In _commentToSearch);
 
-                ---------------------------------------------------
-                -- If we found a keyword in the text
-                -- parse out its values and save that in the usage table
-                ---------------------------------------------------
+            ---------------------------------------------------
+            -- If we found a keyword in the text
+            -- parse out its values and save that in the usage table
+            ---------------------------------------------------
 
-                If _index = 0 Then
-                    If _showDebug Then
-                        RAISE INFO '  keyword not found: %', _kw;
-                    End If;
-                Else
-                -- <c>
-                    If _showDebug Then
-                        RAISE INFO 'Parse keyword % at index %', _kw, _index;
-                    End If;
+            If _index = 0 Then
+                If _showDebug Then
+                    RAISE INFO '  keyword not found: %', _kw;
+                End If;
 
-                    _keywordStartIndex := _index;
-                    _startOfValue := _index + char_length(_kw);
-                    _endOfValue := Position(']', _commentToSearch In _startOfValue);
+                CONTINUE;
+            End If;
 
-                    If _endOfValue = 0 Then
-                        _logErrors := false;
-                        _invalidUsage := 1;
-                        RAISE EXCEPTION 'Could not find closing bracket for "%"', _kw;
-                    End If;
+            If _showDebug Then
+                RAISE INFO 'Parse keyword % at index %', _kw, _index;
+            End If;
 
-                    INSERT INTO Tmp_UsageText ( UsageText )
-                    VALUES (SUBSTRING(_commentToSearch, _keywordStartIndex + 1, (_endOfValue - _keywordStartIndex) + 1))
+            _keywordStartIndex := _index;
 
-                    _val := '';
-                    _val := SUBSTRING(_commentToSearch, _startOfValue, _endOfValue - _startOfValue);
+            _startOfValue := _index + char_length(_kw);
+            _endOfValue := Position(']' In Substring(_commentToSearch, _startOfValue)) + _startOfValue - 1;
 
-                    _val := REPLACE(_val, '%', '');
-                    _val := REPLACE(_val, ',', '');
+            If _endOfValue = 0 Then
+                _logErrors := false;
+                _invalidUsage := 1;
+                RAISE EXCEPTION 'Could not find closing bracket for "%"', _kw;
+            End If;
 
-                    If public.try_cast(_val, null::int) Is Null Then
-                        _logErrors := false;
-                        _invalidUsage := 1;
-                        RAISE EXCEPTION 'Percentage value for usage "%" is not a valid integer; see ID %', _kw, _seq;
-                    End If;
+            INSERT INTO Tmp_UsageText ( UsageText )
+            VALUES (SUBSTRING(_commentToSearch, _keywordStartIndex + 1, (_endOfValue - _keywordStartIndex) + 1))
 
-                    UPDATE Tmp_UsageInfo
-                    SET UsageValue = _val
-                    WHERE UniqueID = _uniqueID
+            _val := SUBSTRING(_commentToSearch, _startOfValue, _endOfValue - _startOfValue);
 
-                End If; -- </c>
-            End If; -- </b>
-        END LOOP; -- </a>
+            _val := REPLACE(_val, '%', '');
+            _val := REPLACE(_val, ',', '');
+
+            If public.try_cast(_val, null::int) Is Null Then
+                _logErrors := false;
+                _invalidUsage := 1;
+                RAISE EXCEPTION 'Percentage value for usage "%" is not a valid integer; see ID %', _kw, _seq;
+            End If;
+
+            UPDATE Tmp_UsageInfo
+            SET UsageValue = _val
+            WHERE UniqueID = _uniqueID
+
+        END LOOP;
 
         ---------------------------------------------------
         -- Clear keywords not found from table
@@ -304,7 +302,7 @@ BEGIN
         INTO _s
         FROM Tmp_UsageInfo;
 
-        _usageXML := '<u ' || _s || ' />';
+        _usageXML := format('<u %s />', _s);
 
         ---------------------------------------------------
         -- Remove usage text from comment

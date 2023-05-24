@@ -95,7 +95,7 @@ BEGIN
                 --             "; To ignore this error, use call add_update_task_parameter"
                 --             "; To ignore this error, use call add_update_task_parameter"
                 -- from the completion message
-                _startPos := position('; To ignore this error, use' in _failureMessage);
+                _startPos := position('; To ignore this error, use' In _failureMessage);
 
                 If _startPos > 1 Then
                     _failureMessage := Substring(_failureMessage, 1, _startPos - 1);

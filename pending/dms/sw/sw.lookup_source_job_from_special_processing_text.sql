@@ -138,7 +138,7 @@ BEGIN
                             -- Parse out the $ThisDatasetTrimAfter command and the text inside the parentheses just after the command
 
                             _indexStart := Position('$ThisDatasetTrimAfter' In _whereClause);
-                            _indexEnd := Position(')' In _whereClause, _indexStart);
+                            _indexEnd   := Position(')' In Substring(_whereClause, _indexStart + 1)) + _indexStart;
 
                             If _indexStart > 0 And _indexEnd > _indexStart Then
                             -- <h1>
@@ -151,10 +151,9 @@ BEGIN
                                 -- Parse out the text between the parentheses
 
                                 _indexStart := Position('(' In _part2);
-                                _indexEnd := Position(')' In _part2, _indexStart);
+                                _indexEnd   := Position(')' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                                 If _indexStart > 0 And _indexEnd > _indexStart Then
-                                -- <i1>
                                     _textToFind := SUBSTRING(_part2, _indexStart+1, _indexEnd - _indexStart-1);
 
                                     _indexStart := Position(_textToFind In _dataset);
@@ -163,7 +162,7 @@ BEGIN
                                         _dataset := SUBSTRING(_dataset, 1, _indexStart+char_length(_textToFind)-1);
                                     End If;
 
-                                End If; -- <i1>
+                                End If;
 
                             End If; -- </h1>
 
@@ -184,7 +183,7 @@ BEGIN
                         -- First split up the where clause to obtain the text before and after the replacement directive
 
                         _indexStart := Position('$Replace' In _whereClause);
-                        _indexEnd := Position(')' In _whereClause, _indexStart);
+                        _indexEnd   := Position(')' In Substring(_whereClause, _indexStart + 1)) + _indexStart;
 
                         If _indexStart > 0 And _indexEnd > _indexStart Then
                         -- <h2>
@@ -197,7 +196,7 @@ BEGIN
                             -- Split this command at the ( and , characters to allow us to perform the replacment
 
                             _indexStart := Position('(' In _part2);
-                            _indexEnd := Position(',', _part2 In _indexStart);
+                            _indexEnd   := Position(',' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                             If _indexStart > 0 And _indexEnd > _indexStart Then
                             -- <i2>
@@ -206,7 +205,7 @@ BEGIN
                                 _textToSearch := SUBSTRING(_part2, _indexStart+1, _indexEnd - _indexStart-1);
 
                                 _indexStart := _indexEnd + 1;
-                                _indexEnd := Position(',', _part2 In _indexStart);
+                                _indexEnd   := Position(',' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                                 If _indexEnd > _indexStart Then
                                 -- <j>
@@ -214,7 +213,7 @@ BEGIN
                                     _textToFind := SUBSTRING(_part2, _indexStart, _indexEnd - _indexStart);
 
                                     _indexStart := _indexEnd + 1;
-                                    _indexEnd := Position(')' In _part2, _indexStart);
+                                    _indexEnd   := Position(')' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                                     If _indexEnd >= _indexStart Then
                                     -- <k>

@@ -74,17 +74,17 @@ BEGIN
     WHILE _startPos > 0
     LOOP
 
-        _underscorePos := Position('_', _datasetReversed In _startPos);
-        _dashPos := Position('-', _datasetReversed In _startPos);
+        _underscorePos := Position('_' IN Substring(_datasetReversed, _startPos));
+        _dashPos       := Position('-' IN Substring(_datasetReversed, _startPos));
 
         If _underscorePos > 0 Then
             If _dashPos > 0 AND _dashPos < _underscorePos Then
-                _startPos := _dashPos;
+                _startPos := _dashPos + _startPos;
             Else
-                _startPos := _underscorePos;
+                _startPos := _underscorePos + _startPos;
             End If;
         Else
-            _startPos := _dashPos;
+            _startPos := _dashPos + _startPos;
         End If;
 
         If _startPos <= 0 Then
@@ -92,10 +92,10 @@ BEGIN
             EXIT;
         End If;
 
-        _datasetPrefix := Substring(_datasetName, 1, _datasetNameLength - _startPos);
+        _datasetPrefix := Substring(_datasetName, 1, _datasetNameLength - _startPos + 1);
 
         If _showDebugMessages Then
-            RAISE INFO '%', Substring(_datasetName, 1, _datasetNameLength - _startPos);
+            RAISE INFO '%', _datasetPrefix;
         End If;
 
         If _experimentID <= 0 Then
