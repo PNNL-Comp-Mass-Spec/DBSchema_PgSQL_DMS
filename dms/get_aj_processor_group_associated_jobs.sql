@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_group_associated_jobs(_groupi
 **          06/17/2022 mem - Ported to PostgreSQL
 **          07/06/2022 mem - Move Group By queries into subqueries
 **          05/05/2023 mem - Change table alias name
+**          05/24/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -31,7 +32,7 @@ BEGIN
     _result := '';
 
     If _jobStateFilter = 0 Then
-        SELECT string_agg(CountQ.job_state || ': ' || CountQ.Jobs::text, ', ' ORDER BY CountQ.job_state_id)
+        SELECT string_agg(format('%s: %s', CountQ.job_state, CountQ.Jobs), ', ' ORDER BY CountQ.job_state_id)
         INTO _result
         FROM (
             SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) As Jobs
@@ -43,7 +44,7 @@ BEGIN
     End If;
 
     If _jobStateFilter = 1 Then
-        SELECT string_agg(CountQ.job_state || ': ' || CountQ.Jobs::text, ', ' ORDER BY CountQ.job_state_id)
+        SELECT string_agg(format('%s: %s', CountQ.job_state, CountQ.Jobs), ', ' ORDER BY CountQ.job_state_id)
         INTO _resultAppend
         FROM (
             SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) As Jobs
@@ -65,7 +66,7 @@ BEGIN
     If _jobStateFilter Not In (0, 1) Then
         _resultAppend := '';
 
-        SELECT string_agg(CountQ.job_state || ': ' || CountQ.Jobs::text, ', ' ORDER BY CountQ.job_state_id)
+        SELECT string_agg(format('%s: %s', CountQ.job_state, CountQ.Jobs), ', ' ORDER BY CountQ.job_state_id)
         INTO _resultAppend
         FROM (
             SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) AS Jobs

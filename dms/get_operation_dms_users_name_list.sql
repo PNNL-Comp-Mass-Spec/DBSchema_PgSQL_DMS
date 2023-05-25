@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_operation_dms_users_name_list(_operationid
 **          08/24/2018 mem - Tabs to spaces
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          05/24/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -31,18 +32,18 @@ BEGIN
     _formatAsTable := Coalesce(_formatAsTable, 0);
 
     If _formatAsTable = 1 Then
-        SELECT string_agg(U.name || ':' || U.username, '|' ORDER BY U.name)
+        SELECT string_agg(format('%s:%s', U.name, U.username), '|' ORDER BY U.name)
         INTO _result
-        FROM t_user_operations_permissions O
-             INNER JOIN t_users U
+        FROM T_User_Operations_Permissions O
+             INNER JOIN T_Users U
                ON O.user_id = U.user_id
         WHERE O.operation_id = _operationID AND
               U.status = 'Active';
     Else
         SELECT string_agg(U.name_with_username, '; ' ORDER BY U.name)
         INTO _result
-        FROM t_user_operations_permissions O
-             INNER JOIN t_users U
+        FROM T_User_Operations_Permissions O
+             INNER JOIN T_Users U
                ON O.user_id = U.user_id
         WHERE O.operation_id = _operationID AND
               U.status = 'Active';

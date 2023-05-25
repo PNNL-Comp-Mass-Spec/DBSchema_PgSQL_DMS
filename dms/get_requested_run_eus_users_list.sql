@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid in
 **          12/09/2022 mem - Assure that _mode is uppercase
 **          12/24/2022 mem - Use ::text
 **          04/04/2023 mem - Use char_length() to determine string length
+**          05/24/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -29,25 +30,25 @@ BEGIN
      _mode := Upper(_mode);
 
     If _mode = 'I' Then
-        SELECT string_agg(EUS_Person_ID::text, ', ' ORDER BY EUS_Person_ID)
+        SELECT string_agg(RRUsers.EUS_Person_ID::text, ', ' ORDER BY EUS_Person_ID)
         INTO _result
-        FROM t_requested_run_eus_users INNER JOIN
-             t_eus_users ON t_requested_run_eus_users.eus_person_id = t_eus_users.person_id
-        WHERE t_requested_run_eus_users.request_id = _requestID;
+        FROM t_requested_run_eus_users RRUsers INNER JOIN
+             t_eus_users U ON RRUsers.eus_person_id = U.person_id
+        WHERE RRUsers.request_id = _requestID;
 
     ElseIf _mode = 'N' Then
-        SELECT string_agg(NAME_FM, '; ' ORDER BY NAME_FM)
+        SELECT string_agg(U.NAME_FM, '; ' ORDER BY NAME_FM)
         INTO _result
-        FROM t_requested_run_eus_users INNER JOIN
-             t_eus_users ON t_requested_run_eus_users.eus_person_id = t_eus_users.person_id
-        WHERE t_requested_run_eus_users.request_id = _requestID;
+        FROM t_requested_run_eus_users RRUsers INNER JOIN
+             t_eus_users U ON RRUsers.eus_person_id = U.person_id
+        WHERE RRUsers.request_id = _requestID;
 
     ElseIf _mode = 'V' Then
-        SELECT string_agg(NAME_FM || ' (' || EUS_Person_ID::text || ')', '; ' ORDER BY NAME_FM)
+        SELECT string_agg(format('%s (%s)', U.NAME_FM, RRUsers.EUS_Person_ID), '; ' ORDER BY NAME_FM)
         INTO _result
-        FROM t_requested_run_eus_users INNER JOIN
-             t_eus_users ON t_requested_run_eus_users.eus_person_id = t_eus_users.person_id
-        WHERE t_requested_run_eus_users.request_id = _requestID;
+        FROM t_requested_run_eus_users RRUsers INNER JOIN
+             t_eus_users U ON RRUsers.eus_person_id = U.person_id
+        WHERE RRUsers.request_id = _requestID;
 
         If char_length(Coalesce(_result, '')) = 0 Then
             _result := '(none)';

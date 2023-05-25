@@ -65,7 +65,7 @@ BEGIN
     -- factor entries in Tmp_Factors
     -----------------------------------------
 
-    SELECT string_agg('"' || Src.name || '"', ',')
+    SELECT string_agg(format('"%s"', Src.name), ', ' ORDER BY Src.name)
     INTO _factorNameList
     FROM t_factor Src
         INNER JOIN Tmp_Factors I

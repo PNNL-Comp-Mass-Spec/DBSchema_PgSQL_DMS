@@ -177,7 +177,7 @@ BEGIN
     _s := '';
     _s := _s || ' ALTER TABLE Tmp_ParamFileModResults ADD ';
 
-    SELECT string_agg('[' || ModType || '] text DEFAULT ('''') WITH VALUES ', ', ' ORDER BY UniqueRowID)
+    SELECT string_agg(format('[%s] text DEFAULT ('''') WITH VALUES ', ModType), ', ' ORDER BY UniqueRowID)
     INTO _s
     FROM Tmp_ColumnHeaders;
 

@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.get_proposal_eus_users_list(_proposalid public
 **          06/13/2013 mem - Added mode 'L' (last names only)
 **          02/19/2018 mem - Added parameter _maxUsers
 **          06/22/2022 mem - Ported to PostgreSQL
+**          05/24/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -68,7 +69,7 @@ BEGIN
         LIMIT _maxUsers;
 
     ElseIf _mode = 'V' Then
-        SELECT string_agg(U.name_fm || ' (' || U.person_id::text || ')', '; ' ORDER BY U.name_fm)
+        SELECT string_agg(format('%s (%s)', U.name_fm, U.person_id), '; ' ORDER BY U.name_fm)
         INTO _result
         FROM t_eus_proposal_users P
              INNER JOIN t_eus_users U

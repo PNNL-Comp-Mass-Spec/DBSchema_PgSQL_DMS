@@ -65,7 +65,7 @@ BEGIN
         -----------------------------------------
         --
 
-        SELECT string_agg('"' || FactorName || '"', ', ')
+        SELECT string_agg(format('"%s"', FactorName), ', ' ORDER BY FactorName)
         INTO _factorNameList
         FROM ( SELECT Src.name AS FactorName
                FROM t_factor Src

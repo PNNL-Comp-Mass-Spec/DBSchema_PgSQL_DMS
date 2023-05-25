@@ -14,12 +14,13 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_transaction_id_urls(_datasetid inte
 **  Date:   02/28/2018 mem - Initial version
 **          06/13/2022 mem - Ported to PostgreSQL
 **          12/24/2022 mem - Use ::text
+**          05/24/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    SELECT string_agg('https://status.my.emsl.pnl.gov/view/' || transaction_id::text, ', ' ORDER BY transaction_id)
+    SELECT string_agg(format('https://status.my.emsl.pnl.gov/view/%s', transaction_id), ', ' ORDER BY transaction_id)
     INTO _result
     FROM cap.V_MyEMSL_DatasetID_TransactionID
     WHERE Dataset_ID = _datasetID AND
