@@ -521,8 +521,8 @@ BEGIN
                       SF.analysis_tool = _toolName;
 
                 If _showDebugMessages Then
-                    RAISE INFO '%', '  _settingsFileName=' || _settingsFileName;
-                    RAISE INFO '%', '  _autoCentroidName=' || Coalesce(_autoCentroidName, '<< Not Defined >>');
+                    RAISE INFO '  _settingsFileName=%', _settingsFileName;
+                    RAISE INFO '  _autoCentroidName=%', Coalesce(_autoCentroidName, '<< Not Defined >>');
                 End If;
 
                 If Coalesce(_autoCentroidName, '') <> '' Then

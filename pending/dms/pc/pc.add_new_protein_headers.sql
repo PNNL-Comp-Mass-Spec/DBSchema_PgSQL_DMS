@@ -87,7 +87,7 @@ BEGIN
 
             -- <b>
             If _infoOnly <> 0 Then
-                RAISE INFO '%', _proteinIDStart::text || ' to ' || _proteinIDEnd::text;
+                RAISE INFO '% to %', _proteinIDStart, _proteinIDEnd;
                 _proteinsProcessed := _proteinsProcessed + _batchSize;
             Else
 

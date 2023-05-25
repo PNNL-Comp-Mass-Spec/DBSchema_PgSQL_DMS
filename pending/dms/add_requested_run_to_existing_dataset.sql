@@ -159,7 +159,7 @@ BEGIN
         WHILE _checkForDuplicates > 0
         LOOP
             If _showDebugStatements Then
-                RAISE INFO '%', 'Looking for existing requested run named ' || _requestName;
+                RAISE INFO 'Looking for existing requested run named %', _requestName;
             End If;
 
             If Exists (SELECT * FROM t_requested_run WHERE request_name = _requestName) Then
@@ -266,33 +266,33 @@ BEGIN
         If _mode = 'preview' Then
             _addUpdateMode := 'check-add';
 
-            RAISE INFO '%', 'Request_Name: ' || _requestName;
-            RAISE INFO '%', 'Experiment: ' || _experimentName;
-            RAISE INFO '%', 'RequesterUsername: ' || _requesterUsername;
-            RAISE INFO '%', 'InstrumentName: ' || _instrumentName;
-            RAISE INFO '%', 'WorkPackage: ' || _workPackage;
-            RAISE INFO '%', 'MsType: ' || _msType;
-            RAISE INFO '%', 'InstrumentSettings: ' || 'na';
-            RAISE INFO '%', 'Wellplate: Null';
-            RAISE INFO '%', 'WellNum: Null';
-            RAISE INFO '%', 'InternalStandard: ' || 'na';
-            RAISE INFO '%', 'Comment: ' || _comment;
-            RAISE INFO '%', 'EusProposalID: ' || _eusProposalID;
-            RAISE INFO '%', 'EusUsageType: ' || _eusUsageType;
-            RAISE INFO '%', 'EusUsersList: ' || _eusUsersList;
-            RAISE INFO '%', 'Mode: ' || _addUpdateMode;
-            RAISE INFO '%', 'SecSep: ' || _secSep;
-            RAISE INFO '%', 'MRMAttachment: ' || '';
-            RAISE INFO '%', 'Status: ' || 'Completed';
-            RAISE INFO '%', 'SkipTransactionRollback: 1';
-            RAISE INFO '%', 'AutoPopulateUserListIfBlank: 1';
-            RAISE INFO '%', 'CallingUser: ' || _callingUser;
+            RAISE INFO 'Request_Name: %', requestName;
+            RAISE INFO 'Experiment: %', experimentName;
+            RAISE INFO 'RequesterUsername: %', requesterUsername;
+            RAISE INFO 'InstrumentName: %', instrumentName;
+            RAISE INFO 'WorkPackage: %', workPackage;
+            RAISE INFO 'MsType: %', msType;
+            RAISE INFO 'InstrumentSettings: na';
+            RAISE INFO 'Wellplate: Null';
+            RAISE INFO 'WellNum: Null';
+            RAISE INFO 'InternalStandard: na';
+            RAISE INFO 'Comment: %', comment;
+            RAISE INFO 'EusProposalID: %', eusProposalID;
+            RAISE INFO 'EusUsageType: %', eusUsageType;
+            RAISE INFO 'EusUsersList: %', eusUsersList;
+            RAISE INFO 'Mode: %', addUpdateMode;
+            RAISE INFO 'SecSep: %', secSep;
+            RAISE INFO 'MRMAttachment: ';
+            RAISE INFO 'Status: Completed';
+            RAISE INFO 'SkipTransactionRollback: 1';
+            RAISE INFO 'AutoPopulateUserListIfBlank: 1';
+            RAISE INFO 'CallingUser: %', callingUser;
         Else
             _addUpdateMode := 'add-auto';
         End If;
 
         If _showDebugStatements Then
-            RAISE INFO '%', 'Calling AddUpdateRequestedRun with mode ' || _addUpdateMode;
+            RAISE INFO 'Calling add_update_requested_run with mode %', _addUpdateMode;
         End If;
 
         CALL public.add_update_requested_run (

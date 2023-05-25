@@ -400,7 +400,7 @@ BEGIN
 
             If _eusUsersList Similar To '%[A-Z]%' And _eusUsersList Similar To '%([0-9]%' And _eusUsersList Similar To '%[0-9])%' Then
                 If _infoOnly Then
-                    RAISE INFO '%', 'Parsing ' || _eusUsersList;
+                    RAISE INFO 'Parsing %', _eusUsersList;
                 End If;
 
                 -- _eusUsersList has entries of the form 'Baker, Erin (41136)'
@@ -439,7 +439,7 @@ BEGIN
             );
 
             If _infoOnly Then
-                RAISE INFO '%', 'Splitting: "' || _eusUsersList || '"';
+                RAISE INFO 'Splitting: %', _eusUsersList;
             End If;
 
             -- Split items in _eusUsersList on commas

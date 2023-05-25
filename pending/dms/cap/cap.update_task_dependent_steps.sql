@@ -305,7 +305,7 @@ BEGIN
                     --
                     If _numCompleted > 0 Then
                         If _infoOnly Then
-                            RAISE INFO '%', 'Insert "' || _outputFolderName || '" into T_Shared_Results';
+                            RAISE INFO ', 'Insert "%" into T_Shared_Results', _outputFolderName;
                         Else
                             INSERT INTO T_Shared_Results;
                         End If;

@@ -299,7 +299,7 @@ BEGIN
 
             If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EmslInstrument = 'Y'::citext OR _instrumentInfo.Tracked = 1)) Then
                 If _infoOnly Then
-                    RAISE INFO '%', 'Skip call to UpdateEMSLInstrumentUsageReport for Instrument ' || _instrument;
+                    RAISE INFO 'Skip call to UpdateEMSLInstrumentUsageReport for Instrument %', _instrument;
                     RAISE INFO ' ';
                 End If;
 
@@ -332,7 +332,7 @@ BEGIN
                 End If;
 
                 If _infoOnly Then
-                    RAISE INFO '%', '';
+                    RAISE INFO '';
                 End If;
 
                 _currentInstrumentUsageMonth :=  _currentInstrumentUsageMonth - Interval '1 month';

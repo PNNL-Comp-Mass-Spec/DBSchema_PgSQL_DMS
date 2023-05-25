@@ -131,7 +131,7 @@ BEGIN
     End If;
 
     If _debugMode Then
-        RAISE INFO '%', '';
+        RAISE INFO '';
         RAISE INFO '%', 'AddUpdateLocalJobInBroker';
         RAISE INFO '%', _jobParam;
     End If;

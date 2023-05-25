@@ -453,7 +453,7 @@ BEGIN
 
         Else
             If _infoLevel > 0 Then
-                RAISE INFO '%', 'Could not resolve ' || _remoteInfo || ' to Remote_Info_ID';
+                RAISE INFO 'Could not resolve % to Remote_Info_ID', _remoteInfo;
             End If;
         End If;
 

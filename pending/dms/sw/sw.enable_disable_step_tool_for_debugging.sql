@@ -50,12 +50,12 @@ BEGIN
     WHERE group_name = _groupName;
 
     If Not FOUND Then
-        RAISE INFO '%', 'Group not found: "' || _groupName || '"; cannot continue';
+        RAISE INFO 'Group not found: "%"; cannot continue', _groupName;
         RETURN;
     End If;
 
     If Not Exists (SELECT * FROM sw.t_processor_tool_group_details WHERE tool_name = _tool) Then
-        RAISE INFO '%', 'Tool not found: "' || _tool || '"; cannot continue';
+        RAISE INFO 'Tool not found: "%"; cannot continue', _tool;
         RETURN;
     End If;
 

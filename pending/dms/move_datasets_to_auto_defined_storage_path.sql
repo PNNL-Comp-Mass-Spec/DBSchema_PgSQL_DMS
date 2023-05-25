@@ -157,7 +157,7 @@ BEGIN
             ORDER BY Tmp_Datasets.DatasetID
         LOOP
 
-            RAISE INFO '%', 'Processing ' || _datasetInfo.Dataset;
+            RAISE INFO 'Processing %', _datasetInfo.Dataset;
 
             -----------------------------------------
             -- Lookup the auto-defined storage path

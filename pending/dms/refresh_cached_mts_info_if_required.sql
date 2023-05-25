@@ -128,7 +128,7 @@ BEGIN
                 WHERE table_name = _cacheTable;
 
                 If _infoOnly Then
-                    RAISE INFO '%', 'Processing ' || _cacheTable;
+                    RAISE INFO 'Processing %', _cacheTable;
                 End If;
 
                 _hoursSinceLastRefresh := extract(epoch FROM _currentTime - Coalesce(_lastRefreshed, make_date(2000, 1, 1)) / 3600.0;
@@ -140,7 +140,7 @@ BEGIN
                 _hoursSinceLastFullRefresh := extract(epoch FROM _currentTime - Coalesce(_lastFullRefresh, make_date(2000, 1, 1)) / 3600.0
 
                 If _infoOnly Then
-                    RAISE INFO 'Hours since last full refresh: % %' || _hoursSinceLastFullRefresh, Case When _hoursSinceLastFullRefresh >= _updateIntervalAllItems Then '-> Full refresh required' Else '' End;
+                    RAISE INFO 'Hours since last full refresh: % %', _hoursSinceLastFullRefresh, Case When _hoursSinceLastFullRefresh >= _updateIntervalAllItems Then '-> Full refresh required' Else '' End;
                 End If;
 
                 If _hoursSinceLastRefresh >= _updateInterval OR _hoursSinceLastFullRefresh >= _updateIntervalAllItems Then
@@ -187,7 +187,7 @@ BEGIN
             End If; -- </b>
 
             If _infoOnly Then
-                RAISE INFO '%', '';
+                RAISE INFO '';
             End If;
 
             _iteration := _iteration + 1;

@@ -102,21 +102,21 @@ BEGIN
     WHERE predefine_id = _ruleID;
 
 /*
-    RAISE INFO '%', 'InstrumentClass: ' || _predefineInfo.InstrumentClassCriteria;
-    RAISE INFO '%', 'CampaignName: ' || _predefineInfo.CampaignNameCriteria;
-    RAISE INFO '%', 'Experiment: ' || _predefineInfo.ExperimentNameCriteria;
-    RAISE INFO '%', 'InstrumentName: ' || _predefineInfo.InstrumentNameCriteria;
-    RAISE INFO '%', 'InstrumentExcl: ' || _predefineInfo.InstrumentExclCriteria;
-    RAISE INFO '%', 'OrganismName: ' || _predefineInfo.OrganismNameCriteria;
-    RAISE INFO '%', 'LabellingIncl: ' || _predefineInfo.LabellingInclCriteria;
-    RAISE INFO '%', 'LabellingExcl: ' || _predefineInfo.LabellingExclCriteria;
-    RAISE INFO '%', 'DatasetName: ' || _predefineInfo.DatasetNameCriteria;
-    RAISE INFO '%', 'DatasetType: ' || _predefineInfo.DatasetTypeCriteria;
-    RAISE INFO '%', 'ExperimentComment: ' || _predefineInfo.ExpCommentCriteria;
-    RAISE INFO '%', 'SeparationType: ' || _predefineInfo.SeparationTypeCriteria;
-    RAISE INFO '%', 'CampaignExcl: ' || _predefineInfo.CampaignExclCriteria;
-    RAISE INFO '%', 'ExperimentExcl: ' || _predefineInfo.ExperimentExclCriteria;
-    RAISE INFO '%', 'DatasetExcl: ' || _predefineInfo.DatasetExclCriteria;
+    RAISE INFO 'InstrumentClass: %',    _predefineInfo.InstrumentClassCriteria;
+    RAISE INFO 'CampaignName: %',      _predefineInfo.CampaignNameCriteria;
+    RAISE INFO 'Experiment: %',        _predefineInfo.ExperimentNameCriteria;
+    RAISE INFO 'InstrumentName: %',    _predefineInfo.InstrumentNameCriteria;
+    RAISE INFO 'InstrumentExcl: %',    _predefineInfo.InstrumentExclCriteria;
+    RAISE INFO 'OrganismName: %',      _predefineInfo.OrganismNameCriteria;
+    RAISE INFO 'LabellingIncl: %',     _predefineInfo.LabellingInclCriteria;
+    RAISE INFO 'LabellingExcl: %',     _predefineInfo.LabellingExclCriteria;
+    RAISE INFO 'DatasetName: %',       _predefineInfo.DatasetNameCriteria;
+    RAISE INFO 'DatasetType: %',       _predefineInfo.DatasetTypeCriteria;
+    RAISE INFO 'ExperimentComment: %', _predefineInfo.ExpCommentCriteria;
+    RAISE INFO 'SeparationType: %',    _predefineInfo.SeparationTypeCriteria;
+    RAISE INFO 'CampaignExcl: %',      _predefineInfo.CampaignExclCriteria;
+    RAISE INFO 'ExperimentExcl: %',    _predefineInfo.ExperimentExclCriteria;
+    RAISE INFO 'DatasetExcl: %',       _predefineInfo.DatasetExclCriteria;
 */
 
     _sqlWhere := 'WHERE true';

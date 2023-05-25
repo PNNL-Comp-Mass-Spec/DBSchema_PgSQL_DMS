@@ -186,7 +186,7 @@ BEGIN
         FROM t_dataset
         WHERE dataset_id = _datasetID
 
-        RAISE INFO '%', 'Directory to remove: ' || _datasetDirectoryPath;
+        RAISE INFO 'Directory to remove: %', _datasetDirectoryPath;
 
         RETURN;
     End If;

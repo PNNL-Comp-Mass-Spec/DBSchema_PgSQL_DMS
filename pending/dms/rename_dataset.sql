@@ -490,10 +490,10 @@ BEGIN
     -- Show commands for renaming the dataset directory and .raw file
     --------------------------------------------
     --
-    RAISE INFO '%', 'pushd ' || _storageServerSharePath;
-    RAISE INFO '%', 'move '  || _datasetNameOld || ' ' || _datasetNameNew;
-    RAISE INFO '%', 'cd '    || _datasetNameNew;
-    RAISE INFO '%', 'move '  || _datasetNameOld || '.raw ' || _datasetNameNew || '.raw';
+    RAISE INFO 'pushd %', _storageServerSharePath;
+    RAISE INFO 'move % %', _datasetNameOld, _datasetNameNew;
+    RAISE INFO 'cd %', _datasetNameNew;
+    RAISE INFO 'move %.raw %.raw', _datasetNameOld, _datasetNameNew;
 
     --------------------------------------------
     -- Show example commands for renaming the job files
@@ -594,15 +594,18 @@ BEGIN
             RAISE INFO '%', 'rem Example commands for renaming job files';
         End If;
 
-        RAISE INFO '%', '';
-        RAISE INFO '%', 'cd ' || _resultsFolder;
+        RAISE INFO '';
+        RAISE INFO 'cd %', _resultsFolder;
 
         FOR _suffixID, _fileSuffix IN
             SELECT SuffixID, FileSuffix
             FROM Tmp_Extensions
             ORDER BY SuffixID
         LOOP
-            RAISE INFO '%', 'Move ' || _datasetNameOld || _fileSuffix || ' ' || _datasetNameNew || _fileSuffix;
+            RAISE INFO 'Move % %',
+                        _datasetNameOld || _fileSuffix,
+                        _datasetNameNew || _fileSuffix;
+
             _jobFileUpdateCount := _jobFileUpdateCount + 1;
 
         END LOOP;
@@ -610,25 +613,25 @@ BEGIN
         _datasetInfoFile := _datasetNameNew || '_DatasetInfo.xml'
 
         If _resultsFolder = 'QC' Then
-            RAISE INFO '%', '';
-            RAISE INFO '%', 'rem Use sed to change the dataset names in index.html';
-            RAISE INFO '%', 'cat index.html | sed -r "s/' || _datasetNameOld || '/' || _datasetNameNew || '/g" > index_new.html';
-            RAISE INFO '%', 'move index.html index_old.html';
-            RAISE INFO '%', 'move index_new.html index.html';
+            RAISE INFO '';
+            RAISE INFO 'rem Use sed to change the dataset names in index.html';
+            RAISE INFO 'cat index.html | sed -r "s/%/%/g" > index_new.html', _datasetNameOld, _datasetNameNew;
+            RAISE INFO 'move index.html index_old.html';
+            RAISE INFO 'move index_new.html index.html';
 
-            RAISE INFO '%', '';
-            RAISE INFO '%', 'rem Use sed to change the dataset names in DatasetName_DatasetInfo.xml';
-            RAISE INFO '%', 'cat ' || _datasetInfoFile || ' | sed -r "s/' || _datasetNameOld || '/' || _datasetNameNew || '/g" > DatasetInfo_new.xml';
-            RAISE INFO '%', 'move ' || _datasetInfoFile || ' DatasetInfo_old.xml';
-            RAISE INFO '%', 'move DatasetInfo_new.xml ' || _datasetInfoFile;
+            RAISE INFO '';
+            RAISE INFO 'rem Use sed to change the dataset names in DatasetName_DatasetInfo.xml';
+            RAISE INFO 'cat % | sed -r "s/%/%/g" > DatasetInfo_new.xml', _datasetInfoFile, _datasetNameOld, _datasetNameNew;
+            RAISE INFO 'move % DatasetInfo_old.xml', _datasetInfoFile;
+            RAISE INFO 'move DatasetInfo_new.xml %', _datasetInfoFile;
         End If;
 
         If _resultsFolder Like 'SIC%' Then
-            RAISE INFO '%', '';
-            RAISE INFO '%', 'rem Use sed to change the dataset names in index.html';
-            RAISE INFO '%', 'cat index.html | sed -r "s/' || _datasetNameOld || '/' || _datasetNameNew || '/g" > index_new.html';
-            RAISE INFO '%', 'move index.html index_old.html';
-            RAISE INFO '%', 'move index_new.html index.html';
+            RAISE INFO '';
+            RAISE INFO 'rem Use sed to change the dataset names in index.html';
+            RAISE INFO 'cat index.html | sed -r "s/%/%/g" > index_new.html', _datasetNameOld, _datasetNameNew;
+            RAISE INFO 'move index.html index_old.html';
+            RAISE INFO 'move index_new.html index.html';
         End If;
 
         RAISE INFO '%', 'cd ..';
@@ -644,30 +647,30 @@ BEGIN
               Step_Tool = 'Mz_Refinery';
 
         If Coalesce(_mzRefineryOutputFolder, '') <> '' Then
-            RAISE INFO '%', '';
-            RAISE INFO '%', 'cd ' || _mzRefineryOutputFolder;
-            RAISE INFO '%', 'move ' || _datasetNameOld || '_msgfplus.mzid.gz             ' || _datasetNameNew || '_msgfplus.mzid.gz';
-            RAISE INFO '%', 'move ' || _datasetNameOld || '_MZRefinery_Histograms.png    ' || _datasetNameNew || '_MZRefinery_Histograms.png';
-            RAISE INFO '%', 'move ' || _datasetNameOld || '_MZRefinery_MassErrors.png    ' || _datasetNameNew || '_MZRefinery_MassErrors.png';
-            RAISE INFO '%', 'move ' || _datasetNameOld || '_msgfplus.mzRefinement.tsv    ' || _datasetNameNew || '_msgfplus.mzRefinement.tsv';
-            RAISE INFO '%', 'move ' || _datasetNameOld || '.mzML.gz_CacheInfo.txt        ' || _datasetNameNew || '.mzML.gz_CacheInfo.txt';
-            RAISE INFO '%', '';
-            RAISE INFO '%', 'rem Use sed to change the dataset name in the _CacheInfo.txt file';
-            RAISE INFO '%', 'cat ' || _datasetNameNew || '.mzML.gz_CacheInfo.txt | sed -r "s/' || _datasetNameOld || '/' || _datasetNameNew || '/g" > _CacheInfo.txt.new';
-            RAISE INFO '%', 'move ' || _datasetNameNew || '.mzML.gz_CacheInfo.txt ' || _datasetNameNew || '.mzML.gz_OldCacheInfo.txt';
-            RAISE INFO '%', 'move _CacheInfo.txt.new ' || _datasetNameNew || '.mzML.gz_CacheInfo.txt';
+            RAISE INFO '';
+            RAISE INFO 'cd %', _mzRefineryOutputFolder;
+            RAISE INFO 'move %_msgfplus.mzid.gz             %_msgfplus.mzid.gz', _datasetNameOld, _datasetNameNew;
+            RAISE INFO 'move %_MZRefinery_Histograms.png    %_MZRefinery_Histograms.png', _datasetNameOld, _datasetNameNew;
+            RAISE INFO 'move %_MZRefinery_MassErrors.png    %_MZRefinery_MassErrors.png', _datasetNameOld, _datasetNameNew;
+            RAISE INFO 'move %_msgfplus.mzRefinement.tsv    %_msgfplus.mzRefinement.tsv', _datasetNameOld, _datasetNameNew;
+            RAISE INFO 'move %.mzML.gz_CacheInfo.txt        %.mzML.gz_CacheInfo.txt', _datasetNameOld, _datasetNameNew;
+            RAISE INFO '';
+            RAISE INFO 'rem Use sed to change the dataset name in the _CacheInfo.txt file';
+            RAISE INFO 'cat %.mzML.gz_CacheInfo.txt | sed -r "s/%/%/g" > _CacheInfo.txt.new', _datasetNameNew, _datasetNameOld, _datasetNameNew;;
+            RAISE INFO 'move %.mzML.gz_CacheInfo.txt %.mzML.gz_OldCacheInfo.txt', _datasetNameNew, _datasetNameNew;
+            RAISE INFO 'move _CacheInfo.txt.new %.mzML.gz_CacheInfo.txt', _datasetNameNew;
 
-            RAISE INFO '%', 'rem ToDo: rename or delete the .mzML.gz file at:';
-            RAISE INFO '%', 'cat ' || _datasetNameNew || '.mzML.gz_CacheInfo.txt';
-            RAISE INFO '%', 'cd ..';
+            RAISE INFO 'rem ToDo: rename or delete the .mzML.gz file at:';
+            RAISE INFO 'cat %.mzML.gz_CacheInfo.txt', _datasetNameNew;
+            RAISE INFO 'cd ..';
         End If;
 
     END LOOP; -- </jobLoop>
 
-    RAISE INFO '%', '';
+    RAISE INFO '';
     RAISE INFO '%', 'popd';
-    RAISE INFO '%', '';
-    RAISE INFO '%', '';
+    RAISE INFO '';
+    RAISE INFO '';
 
     If _jobFileUpdateCount > 0 Then
         RAISE INFO 'See the console output for % dataset/job file update commands', jobFileUpdateCount;

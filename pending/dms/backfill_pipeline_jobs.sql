@@ -425,7 +425,7 @@ BEGIN
 
                     If _infoOnly Then
                         _mode := 'check_add';
-                        RAISE INFO '%', 'Check_add dataset ' || _jobInfo.Dataset;
+                        RAISE INFO 'Check_add dataset %', _jobInfo.Dataset;
                     Else
                         _mode := 'add';
                     End If;

@@ -67,7 +67,7 @@ BEGIN
         Where Name Like _paramName
         ORDER BY [Section], [Name], [Value]
 
-        RAISE INFO '%', 'Only showing parameters match ' || _paramName;
+        RAISE INFO 'Only showing parameters match %', _paramName;
     End If;
 
     DROP TABLE ParamTab;

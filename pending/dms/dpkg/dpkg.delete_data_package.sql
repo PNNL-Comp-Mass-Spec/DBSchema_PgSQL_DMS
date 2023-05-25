@@ -181,8 +181,8 @@ BEGIN
         ---------------------------------------------------
         --
         RAISE INFO '%', _message;
-        RAISE INFO '%', '';
-        RAISE INFO '%', 'Be sure to delete directory ' || _sharePath;
+        RAISE INFO '';
+        RAISE INFO 'Be sure to delete directory %', _sharePath;
 
     EXCEPTION
         WHEN OTHERS THEN

@@ -137,7 +137,7 @@ BEGIN
                                                 _runIntervalId, _instrumentName, _monthAndYear);
 
                 If _infoOnly Then
-                    RAISE INFO '%', 'Preview: Call add_update_run_interval to annotate ' || _intervalDescription;
+                    RAISE INFO 'Preview: Call add_update_run_interval to annotate %', _intervalDescription;
                 Else
                     CALL add_update_run_interval (
                                 _runIntervalID,

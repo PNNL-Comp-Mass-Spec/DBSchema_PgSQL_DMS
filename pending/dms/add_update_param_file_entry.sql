@@ -91,7 +91,7 @@ BEGIN
     If (_entryType::citext IN ('DynamicModification', 'StaticModification', 'IsotopicModification', 'TermDynamicModification')) Then
 
         If _infoOnly Then
-            RAISE INFO '%', '_entryType=' || _entryType;
+            RAISE INFO '_entryType = %', _entryType;
         End If;
 
         If (_entryType = 'StaticModification') Then
@@ -139,7 +139,7 @@ BEGIN
         _massCorrectionID := GetMassCorrectionID(_entryValue);
 
         If _infoOnly Then
-            RAISE INFO '%', 'Mod "' || _entryValue || '" corresponds to _massCorrectionID ' || _massCorrectionID::text;
+            RAISE INFO 'Mod "%" corresponds to _massCorrectionID %', _entryValue, _massCorrectionID;
         End If;
 
         WHILE _counter < char_length(_entryspecifier)

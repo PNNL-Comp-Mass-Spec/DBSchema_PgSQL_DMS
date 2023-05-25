@@ -351,7 +351,7 @@ BEGIN
                     --
                     If _numCompleted > 0 Then
                         If _infoOnly Then
-                            RAISE INFO '%', 'Insert "' || _stepInfo.OutputFolderName || '" into sw.t_shared_results';
+                            RAISE INFO 'Insert "%" into sw.t_shared_results', _stepInfo.OutputFolderName;
                         Else
                             INSERT INTO sw.t_shared_results( results_name )
                             VALUES (_stepInfo.OutputFolderName)
@@ -422,7 +422,7 @@ BEGIN
                 ---------------------------------------------------
                 --
                 If _infoOnly Then
-                    RAISE INFO '%', 'Update state in sw.t_job_steps for job ' || _stepInfo.job::text || ', step ' || _stepInfo.step::text || ' from 1 to ' || _newState::text;
+                    RAISE INFO 'Update state in sw.t_job_steps for job %, step % from 1 to %',_stepInfo.job, _stepInfo.step, _newState;
                 Else
                     -- The update query below sets Completion_Code to 0 and clears Completion_Message
                     -- If the job step currently has a completion code and/or message, store it in the evaluation message

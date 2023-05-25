@@ -125,7 +125,7 @@ BEGIN
 
         END LOOP;
 
-        RAISE INFO '%', 'JobList: ' || _jobList;
+        RAISE INFO 'JobList: %', _jobList;
 
         DROP TABLE Tmp_Selected_Jobs;
         RETURN;

@@ -302,7 +302,7 @@ BEGIN
             LIMIT 1;
 
             If FOUND And _mode Like 'preview%' Then
-                RAISE INFO '%', 'Set Work Package to ' || _workPackage || ' based on requests in ' || _batchDescription;
+                RAISE INFO 'Set Work Package to % based on requests in %', _workPackage, _batchDescription;
             End If;
         End If;
 

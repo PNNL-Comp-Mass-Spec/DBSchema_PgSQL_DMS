@@ -67,8 +67,8 @@ BEGIN
         _storageVol := _storageVol || '\';
     End If;
 
-    RAISE INFO '%', 'Server: ' || _storageServerName;
-    RAISE INFO '%', 'Volume: ' || _storageVol;
+    RAISE INFO 'Server: %', _storageServerName;
+    RAISE INFO 'Volume: %', _storageVol;
 
     --------------------------------------------------
     -- Call RequestPurgeTask to obtain the data

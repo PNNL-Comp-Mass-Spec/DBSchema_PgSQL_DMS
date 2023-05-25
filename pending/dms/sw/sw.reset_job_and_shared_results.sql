@@ -121,7 +121,7 @@ BEGIN
             FROM Tmp_SharedResultFolders
             ORDER BY Entry_ID
         LOOP
-            RAISE INFO '%', 'Removing all records of output folder "' || _outputFolder || '"';
+            RAISE INFO 'Removing all records of output folder "%"', _outputFolder;
 
             If _infoOnly Then
 

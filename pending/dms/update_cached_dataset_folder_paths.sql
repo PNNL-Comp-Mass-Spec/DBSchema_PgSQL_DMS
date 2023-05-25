@@ -101,9 +101,9 @@ BEGIN
         _datasetBatchSize := 0;
     End If;
 
-    If _processingMode IN (1,2) Then
+    If _processingMode IN (1, 2) Then
         If _showDebug Then
-            RAISE INFO '%', 'Setting update_required to 1 in t_cached_dataset_folder_paths for datasets with dataset_id >= ' || Cast(_minimumDatasetID as text) || ' and differing row versions';
+            RAISE INFO 'Setting update_required to 1 in t_cached_dataset_folder_paths for datasets with dataset_id >= % and differing row versions', _minimumDatasetID;
         End If;
 
         ------------------------------------------------
@@ -209,9 +209,9 @@ BEGIN
 
         If _showDebug Then
             If _datasetBatchSize > 0 Then
-                RAISE INFO '%', 'Updating cached paths for all rows in t_cached_dataset_folder_paths, processing ' || Cast(_datasetBatchSize As text) || ' datasets at a time';
+                RAISE INFO 'Updating cached paths for all rows in t_cached_dataset_folder_paths, processing % datasets at a time', _datasetBatchSize;
             Else
-                RAISE INFO '%', 'Updating cached paths all rows in t_cached_dataset_folder_paths; note that batch size is 0, which should never be the case';
+                RAISE INFO 'Updating cached paths all rows in t_cached_dataset_folder_paths; note that batch size is 0, which should never be the case';
             End If;
         End If;
 
@@ -228,7 +228,7 @@ BEGIN
         WHILE true
         LOOP
             If _showDebug Then
-                RAISE INFO '%', 'Updating Dataset IDs ' || Cast(_datasetIdStart As text) || ' to ' || Cast(_datasetIdEnd As text);
+                RAISE INFO 'Updating Dataset IDs % to %', _datasetIdStart, _datasetIdEnd;
             End If;
 
             ------------------------------------------------

@@ -61,11 +61,11 @@ BEGIN
         _endDate := Coalesce(_endDate, CURRENT_TIMESTAMP);
 
         If _previewSql Then
-            RAISE INFO '%', 'Filtering on date range ' || Cast(_startDate As text) || ' to ' || Cast(_endDate As text);
+            RAISE INFO 'Filtering on date range % to %', _startDate, _endDate;
         End If;
     Else
         If _previewSql Then
-            RAISE INFO '%', 'Filtering on datasets acquired within the last ' || Cast(_mostRecentWeeks As text) || ' weeks';
+            RAISE INFO 'Filtering on datasets acquired within the last % weeks', _mostRecentWeeks;
         End If;
     End If;
 
@@ -84,15 +84,15 @@ BEGIN
     _instrumentBuilding := validate_wildcard_filter(_instrumentBuilding);
 
     If _previewSql And _campaignNameFilter <> '' Then
-        RAISE INFO '%', 'Filtering on campaign name matching ''' || _campaignNameFilter || '''';
+        RAISE INFO 'Filtering on campaign name matching ''%''', _campaignNameFilter;
     End If;
 
     If _previewSql And _campaignNameExclude <> '' Then
-        RAISE INFO '%', 'Excluding campaigns matching ''' || _campaignNameExclude || '''';
+        RAISE INFO 'Excluding campaigns matching ''%''', _campaignNameExclude;
     End If;
 
     If _previewSql And _instrumentBuilding <> '' Then
-        RAISE INFO '%', 'Filtering on building matching ''' || _instrumentBuilding || '''';
+        RAISE INFO 'Filtering on building matching ''%''', _instrumentBuilding;
     End If;
 
     -----------------------------------------

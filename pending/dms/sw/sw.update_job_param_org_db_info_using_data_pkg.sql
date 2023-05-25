@@ -60,8 +60,8 @@ BEGIN
     _debugMode := Coalesce(_debugMode, false);
 
     If _debugMode Then
-        RAISE INFO '%', '';
-        RAISE INFO '%', 'Examining parameters for job ' || Cast(_job As text) || ', script ' || _scriptNameForDebug;
+        RAISE INFO '';
+        RAISE INFO 'Examining parameters for job %, script %', _job, _scriptNameForDebug;
 
         _scriptName := _scriptNameForDebug;
     Else
@@ -87,7 +87,7 @@ BEGIN
         _dataPackageID := -1;
 
         If _debugMode Then
-            RAISE INFO '%', 'UpdateJobParamOrgDbInfoUsingDataPkg: ' || _message;
+            RAISE INFO 'UpdateJobParamOrgDbInfoUsingDataPkg: %', _message;
         End If;
     End If;
 
@@ -167,12 +167,12 @@ BEGIN
             End If;
 
             If _debugMode Then
-                RAISE INFO '%', '';
-                RAISE INFO '%', 'UpdateJobParamOrgDbInfoUsingDataPkg would update the following parameters for job ' || Cast (_job As text);
-                RAISE INFO '%', '  OrganismName=         ' || _organismName;
-                RAISE INFO '%', '  LegacyFastaFileName=  ' || _legacyFastaFileName;
-                RAISE INFO '%', '  ProteinCollectionList=' || _proteinCollectionList;
-                RAISE INFO '%', '  ProteinOptions=       ' || _proteinOptions;
+                RAISE INFO '';
+                RAISE INFO 'UpdateJobParamOrgDbInfoUsingDataPkg would update the following parameters for job %', _job;
+                RAISE INFO '  OrganismName=         %', _organismName;
+                RAISE INFO '  LegacyFastaFileName=  %', _legacyFastaFileName;
+                RAISE INFO '  ProteinCollectionList=%', _proteinCollectionList;
+                RAISE INFO '  ProteinOptions=       %', _proteinOptions;
             Else
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'OrganismName',          _value => _organismName,          _deleteParam => false);
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'LegacyFastaFileName',   _value => _legacyFastaFileName,   _deleteParam => false);
@@ -199,12 +199,12 @@ BEGIN
 
         If _deleteIfInvalid Then
             If _debugMode Then
-                RAISE INFO '%', '';
-                RAISE INFO '%', 'UpdateJobParamOrgDbInfoUsingDataPkg would delete following parameters for job ' || Cast (_job As text) || ' since the data package ID is 0';
-                RAISE INFO '%', '  OrganismName';
-                RAISE INFO '%', '  LegacyFastaFileName';
-                RAISE INFO '%', '  ProteinCollectionList';
-                RAISE INFO '%', '  ProteinOptions';
+                RAISE INFO '';
+                RAISE INFO 'UpdateJobParamOrgDbInfoUsingDataPkg would delete following parameters for job % since the data package ID is 0', _job;
+                RAISE INFO '  OrganismName';
+                RAISE INFO '  LegacyFastaFileName';
+                RAISE INFO '  ProteinCollectionList';
+                RAISE INFO '  ProteinOptions';
             Else
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'OrganismName',          _value => '',  _deleteParam => true);
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'LegacyFastaFileName',   _value => '',  _deleteParam => true);
