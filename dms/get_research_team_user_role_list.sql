@@ -13,20 +13,21 @@ CREATE OR REPLACE FUNCTION public.get_research_team_user_role_list(_researchteam
 **  Auth:   grk
 **  Date:   03/28/2010
 **          06/12/2022 mem - Ported to PostgreSQL
+**          05/24/2023 mem - Alias table names
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    SELECT string_agg(T_Research_Team_Roles.role, '|' ORDER BY T_Research_Team_Roles.role)
+    SELECT string_agg(R.role, '|' ORDER BY R.role)
     INTO _result
-    FROM T_Research_Team_Roles
-             INNER JOIN T_Research_Team_Membership
-               ON T_Research_Team_Roles.role_id = T_Research_Team_Membership.role_id
-             INNER JOIN T_Users
-               ON T_Research_Team_Membership.User_ID = T_Users.user_id
-        WHERE T_Research_Team_Membership.Team_ID = _researchTeamID AND
-              T_Research_Team_Membership.User_ID = _userID;
+    FROM T_Research_Team_Roles R
+             INNER JOIN T_Research_Team_Membership M
+               ON R.role_id = M.role_id
+             INNER JOIN T_Users U
+               ON M.User_ID = U.user_id
+        WHERE M.Team_ID = _researchTeamID AND
+              M.User_ID = _userID;
 
     RETURN _result;
 END

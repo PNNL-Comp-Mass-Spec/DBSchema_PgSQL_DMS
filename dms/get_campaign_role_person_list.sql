@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid inte
 **          07/07/2022 mem - Ported to PostgreSQL
 **          11/14/2022 mem - Allow mode to be either PRN or USERNAME
 **          02/09/2023 mem - Change default value for _mode to 'USERNAME'
+**          05/24/2023 mem - Alias table names
 **
 *****************************************************/
 DECLARE
@@ -33,18 +34,18 @@ BEGIN
         SELECT string_agg(LookupQ.Value, ', ' ORDER BY LookupQ.Value)
         INTO _result
         FROM (  SELECT CASE WHEN _mode IN ('PRN', 'USERNAME')
-                            THEN t_users.username
-                            ELSE t_users.name_with_username
+                            THEN U.username
+                            ELSE U.name_with_username
                        END as Value
-                FROM t_research_team_roles
-                     INNER JOIN t_research_team_membership
-                       ON t_research_team_roles.role_id = t_research_team_membership.role_id
-                     INNER JOIN t_users
-                       ON t_research_team_membership.user_id = t_users.user_id
-                     INNER JOIN t_campaign
-                       ON t_research_team_membership.team_id = t_campaign.research_team
-                WHERE t_campaign.campaign_id = _campaignID AND
-                      t_research_team_roles.role = _role
+                FROM T_Research_Team_Roles R
+                     INNER JOIN T_Research_Team_Membership M
+                       ON R.role_id = M.role_id
+                     INNER JOIN T_Users U
+                       ON M.user_id = U.user_id
+                     INNER JOIN T_Campaign C
+                       ON M.team_id = C.research_team
+                WHERE C.campaign_id = _campaignID AND
+                      R.role = _role
              ) LookupQ;
     End If;
 
