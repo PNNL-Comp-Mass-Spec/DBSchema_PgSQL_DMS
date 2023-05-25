@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Capitalize keyword
+**          05/25/2023 mem - Simplify call to RAISE INFO
 **
 *****************************************************/
 DECLARE
@@ -93,7 +94,7 @@ BEGIN
 
     DROP TABLE Tmp_CandidateTables;
 
-    RAISE info 'Importing from %.%', _sourceSchema, _sourceTable;
+    RAISE INFO 'Importing from %.%', _sourceSchema, _sourceTable;
 
     ---------------------------------------------------
     -- Populate a temporary table with the source data
@@ -224,6 +225,7 @@ BEGIN
             GET DIAGNOSTICS _additionalRows = ROW_COUNT;
 
             _deleteCount := _deleteCount + _additionalRows;
+
             RAISE INFO 'Deleted % obsolete rows in ont.t_cv_ms based on entries in %', _deleteCount, _sourceTable;
         End If;
 
@@ -288,7 +290,7 @@ BEGIN
         -- _infoOnly is true
 
         If _deleteObsolete1 <> '' OR _deleteObsolete2 <> '' Then
-            RAISE INFO '%', '-- Delete Obsolete rows';
+            RAISE INFO '-- Delete Obsolete rows';
             RAISE INFO '%', format(_deleteObsolete1, _sourceSchema, _sourceTable);
             RAISE INFO '%', format(_deleteObsolete2, _sourceSchema, _sourceTable);
 

@@ -127,6 +127,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Use Similar To when using square brackets to match text
 **          05/23/2023 mem - Use format() for string concatenation
+**          05/25/2023 mem - Simplify calls to RAISE INFO
 **
 *****************************************************/
 DECLARE
@@ -583,7 +584,7 @@ BEGIN
 
         If Not Exists (SELECT * FROM Tmp_ModDef) Then
             RAISE INFO '';
-            RAISE INFO '%', 'Skipping row since Tmp_ModDef is empty: ' || _row;
+            RAISE INFO 'Skipping row since Tmp_ModDef is empty: %', _row;
             CONTINUE;
         End If;
 
@@ -611,7 +612,7 @@ BEGIN
 
         If _charIndex <= 1 Then
             RAISE INFO '';
-            RAISE INFO '%', 'Skipping row since first column does not contain an equals sign: ' || _row;
+            RAISE INFO 'Skipping row since first column does not contain an equals sign: %', _row;
             CONTINUE;
         End If;
 
@@ -623,7 +624,7 @@ BEGIN
 
         If _modType Not In ('DynamicMod', 'StaticMod') Then
             RAISE INFO '';
-            RAISE INFO '%', 'Skipping row since setting is not a DynamicMod or StaticMod setting: ' || _row;
+            RAISE INFO 'Skipping row since setting is not a DynamicMod or StaticMod setting: %', _row;
             CONTINUE;
         End If;
 
@@ -688,13 +689,13 @@ BEGIN
 
         If _paramFileType::citext In ('DiaNN') And _rowCount < 3 Then
             RAISE INFO '';
-            RAISE INFO '%', 'Skipping row since not enough rows in Tmp_ModDef: ' || _row;
+            RAISE INFO 'Skipping row since not enough rows in Tmp_ModDef: %', _row;
             CONTINUE;
         End If;
 
         If _paramFileType::citext In ('MSFragger') And _rowCount < 2 Then
             RAISE INFO '';
-            RAISE INFO '%', 'Skipping row since not enough rows in Tmp_ModDef: ' || _row;
+            RAISE INFO 'Skipping row since not enough rows in Tmp_ModDef: %', _row;
             CONTINUE;
         End If;
 
@@ -1363,7 +1364,7 @@ BEGIN
 
                 -- Mod already stored; skip it
                 RAISE INFO '';
-                RAISE INFO '%', 'Skipping row since the isobaric mod has already been stored: ' || _row;
+                RAISE INFO 'Skipping row since the isobaric mod has already been stored: %', _row;
                 CONTINUE;
             End If;
         End If;

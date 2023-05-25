@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          01/31/2023 mem - Use new column names in tables
 **          05/13/2023 mem - Rename variables
 **          05/22/2023 mem - Use format() for string concatenation
+**          05/25/2023 mem - Simplify calls to RAISE INFO
 **
 *****************************************************/
 DECLARE
@@ -155,10 +156,10 @@ BEGIN
                 WHERE param_name = 'RunJobsRemotely';
 
                 If Coalesce(_paramTypeId, 0) = 0 Then
-                    RAISE WARNING '%', 'Error: could not find parameter "RunJobsRemotely" in mc.t_param_type';
+                    RAISE WARNING 'Error: could not find parameter "RunJobsRemotely" in mc.t_param_type';
                 Else
                     If _infoOnly Then
-                        RAISE INFO '%', 'Would create parameter RunJobsRemotely for Manager ' || _mgrName || ', value ' || _newValue;
+                        RAISE INFO 'Would create parameter RunJobsRemotely for Manager %, value %', _mgrName, _newValue;
 
                         -- Actually do go ahead and create the parameter, but use a value of False even if _newValue is True
                         -- We need to do this so the managers are included in the query below with PT.ParamName = 'RunJobsRemotely'
@@ -180,10 +181,10 @@ BEGIN
                 WHERE param_name = 'RemoteHostName';
 
                 If Coalesce(_paramTypeId, 0) = 0 Then
-                    RAISE WARNING '%', 'Error: could not find parameter "RemoteHostName" in mc.t_param_type';
+                    RAISE WARNING 'Error: could not find parameter "RemoteHostName" in mc.t_param_type';
                 Else
                     If _infoOnly Then
-                        RAISE INFO '%', 'Would create parameter RemoteHostName  for Manager ' || _mgrName || ', value PrismWeb2';
+                        RAISE INFO 'Would create parameter RemoteHostName for Manager %, value PrismWeb2', _mgrName;
                     Else
                         INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
                         VALUES (_mgrId, _paramTypeId, 'PrismWeb2');
@@ -194,7 +195,7 @@ BEGIN
         End Loop;
 
         If _infoOnly Then
-            RAISE INFO '%', '';
+            RAISE INFO '';
         End If;
 
     End If; -- </a>

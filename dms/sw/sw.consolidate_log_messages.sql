@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION sw.consolidate_log_messages(_messagetype text DEFAULT
 **  Date:   01/14/2019 mem - Initial version
 **          10/12/2022 mem - Ported to PostgreSQL
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          05/25/2023 mem - Simplify call to RAISE WARNING
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     If char_length(_messageType) = 0 Then
-        RAISE WARNING '%', '_messageType cannot be empty';
+        RAISE WARNING '_messageType cannot be empty';
         RETURN;
     End If;
 
