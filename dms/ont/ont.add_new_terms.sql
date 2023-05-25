@@ -28,10 +28,12 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          10/06/2022 mem - Add exception handler and instructions for updating the backing sequence for the entry_id field in ont.t_cv_newt
 **          05/12/2023 mem - Rename variables
 **          05/23/2023 mem - Use format() for string concatenation
+**          05/25/2023 mem - Show a custom message if _ontologyName is BTO, ENVO, or MS
+**                         - Reduce nesting
 **
 *****************************************************/
 DECLARE
-    _errorMessage text := '';
+    _warningMessage text := '';
     _insertCount int;
     _sourceTable text;
     _targetSchema text := '';
@@ -44,6 +46,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _errorMessage text := '';
 BEGIN
     ---------------------------------------------------
     -- Validate the inputs
@@ -54,26 +57,25 @@ BEGIN
     _previewsql := Coalesce(_previewSql, false);
 
     ---------------------------------------------------
-    -- Validate the ontology name
-    ---------------------------------------------------
-    --
-    If Not Exists (select * from ont.v_term_lineage where ontology = _ontologyName) Then
-        _errorMessage := format('Invalid ontology name: %s; not found in ont.v_term_lineage', _ontologyName);
-    End If;
-
-    ---------------------------------------------------
     -- Ontology PSI is superseded by PSI_MS
     -- Do not allow processing of the 'PSI' ontology
     ---------------------------------------------------
     --
     If _ontologyName = 'PSI' Then
-        _errorMessage := 'Ontology PSI is superseded by MS (aka PSI_MS); creation of table T_CV_PSI is not allowed';
+        _warningMessage := 'Ontology PSI is superseded by MS (aka PSI_MS); creation of table T_CV_PSI is not allowed';
+
+    ElsIf _ontologyName In ('BTO', 'ENVO', 'MS') Then
+        _warningMessage := format('Use function "ont.add_new_%s_terms" to add %s terms', Lower(_ontologyName), _ontologyName);
+
+    ElsIf Not Exists (SELECT * FROM ont.v_term_lineage WHERE ontology = _ontologyName) Then
+        _warningMessage := format('Invalid ontology name: %s; not found in ont.v_term_lineage', _ontologyName);
+
     End If;
 
-    If _errorMessage <> '' Then
+    If _warningMessage <> '' Then
         RETURN QUERY
         SELECT 'Warning'::citext As term_pk,
-               _errorMessage::citext As term_name,
+               _warningMessage::citext As term_name,
                ''::citext As identifier,
                '0'::citext As is_leaf,
                ''::citext As parent_term_name,
@@ -110,7 +112,7 @@ BEGIN
         _targetTableWithSchema := _targetSchema || '.' || _targetTable;
 
         _s := '';
-        _s := _s || ' CREATE TABLE %I.%I (';
+        _s := _s || 'CREATE TABLE %I.%I (';
         _s := _s ||     ' entry_id int NOT NULL GENERATED ALWAYS AS IDENTITY,';
         _s := _s ||     ' term_pk citext NOT NULL,';
         _s := _s ||     ' term_name citext NOT NULL,';
@@ -122,7 +124,7 @@ BEGIN
         _s := _s ||     ' grandparent_term_id citext,';
         _s := _s ||     ' entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,';
         _s := _s ||     ' CONSTRAINT pk_' || _targetTable || ' PRIMARY KEY (entry_id)';
-        _s := _s || ' )';
+        _s := _s || '); ';
 
         If _previewSql Then
             RAISE INFO '%', format(_s, _targetSchema, _targetTable);
@@ -131,10 +133,10 @@ BEGIN
         End If;
 
         _s := '';
-        _s := _s || ' CREATE INDEX ix_' || _targetTable || '_term_name ON ' || _targetTableWithSchema || ' USING btree (term_name); ';
-        _s := _s || ' CREATE INDEX ix_' || _targetTable || '_identifier ON ' || _targetTableWithSchema || ' USING btree (identifier) INCLUDE (term_name); ';
-        _s := _s || ' CREATE INDEX ix_' || _targetTable || '_parent_term_name ON ' || _targetTableWithSchema || ' USING btree (parent_term_name); ';
-        _s := _s || ' CREATE INDEX ix_' || _targetTable || '_grandparent_term_name ON ' || _targetTableWithSchema || ' USING btree (grandparent_term_name);';
+        _s := _s || 'CREATE INDEX ix_' || _targetTable || '_term_name ON ' || _targetTableWithSchema || ' USING btree (term_name); ';
+        _s := _s || 'CREATE INDEX ix_' || _targetTable || '_identifier ON ' || _targetTableWithSchema || ' USING btree (identifier) INCLUDE (term_name); ';
+        _s := _s || 'CREATE INDEX ix_' || _targetTable || '_parent_term_name ON ' || _targetTableWithSchema || ' USING btree (parent_term_name); ';
+        _s := _s || 'CREATE INDEX ix_' || _targetTable || '_grandparent_term_name ON ' || _targetTableWithSchema || ' USING btree (grandparent_term_name);';
 
         If _previewSql Then
             RAISE INFO '%', _s;
@@ -157,7 +159,7 @@ BEGIN
 
         _sourceTable := 'ont.v_newt_terms';
 
-        _insertSql := ' INSERT INTO ' || _targetTableWithSchema || ' ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id )';
+        _insertSql := 'INSERT INTO ' || _targetTableWithSchema || ' ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)';
 
         /*
          * Old
@@ -168,13 +170,13 @@ BEGIN
         */
 
         _s := '';
-        _s := _s || ' SELECT DISTINCT s.term_pk, s.term_name, s.identifier' || CASE WHEN _infoOnly Then '::citext,' Else '::int,' END;
+        _s := _s ||  'SELECT DISTINCT s.term_pk, s.term_name, s.identifier' || CASE WHEN _infoOnly Then '::citext, ' Else '::int, ' END;
         _s := _s ||                  's.is_leaf, s.parent_term_name, s.Parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier';
         _s := _s || ' FROM ' || _sourceTable || ' s';
         _s := _s || '      LEFT OUTER JOIN ' || _targetTableWithSchema || ' t';
         _s := _s || '        ON s.identifier::int = t.identifier';
         _s := _s || ' WHERE NOT s.parent_term_identifier Is Null AND';
-        _s := _s || '       t.identifier is null';
+        _s := _s || '       t.identifier Is Null';
 
     Else
         -- Other identifiers do start with the ontology name
@@ -182,17 +184,18 @@ BEGIN
 
         _sourceTable := 'ont.v_term_lineage';
 
-        _insertSql := ' INSERT INTO ' || _targetTableWithSchema || ' ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id )';
+        _insertSql := 'INSERT INTO ' || _targetTableWithSchema || ' ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id )';
+
         _s := '';
-        _s := _s || ' SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, ';
-        _s := _s ||                 ' s.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier';
+        _s := _s ||  'SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, ';
+        _s := _s ||                  's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier';
         _s := _s || ' FROM ( SELECT * FROM ' || _sourceTable || '';
         _s := _s ||        ' WHERE ontology = ''' || _ontologyName || ''' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL ) s';
         _s := _s ||      ' LEFT OUTER JOIN ( SELECT identifier, parent_term_id, grandparent_term_id FROM ' || _targetTableWithSchema || ' ) t';
         _s := _s ||          ' ON s.identifier = t.identifier AND';
         _s := _s ||             ' s.parent_term_identifier = t.parent_term_id AND ';
         _s := _s ||             ' Coalesce(s.grandparent_term_identifier, '''') = Coalesce(t.grandparent_term_id, '''')';
-        _s := _s || ' WHERE t.identifier is null;';
+        _s := _s || ' WHERE t.identifier Is Null;';
 
     End If;
 
@@ -200,71 +203,72 @@ BEGIN
     -- Add or preview new terms
     ---------------------------------------------------
     --
-    If Not _infoOnly Then
-        If _previewSql Then
-            RAISE INFO '%', _insertSql || _s;
-        Else
-
-           BEGIN
-                -- Add new terms
-                Execute  _insertSql || _s;
-                --
-                GET DIAGNOSTICS _insertCount = ROW_COUNT;
-
-                If _insertCount > 0 Then
-                    RAISE INFO 'Added % new rows to % for ontology % using %', _insertCount, _targetTableWithSchema, upper(_ontologyName), _sourceTable;
-                Else
-                    RAISE INFO 'All rows for ontology % are already in %', upper(_ontologyName), _targetTableWithSchema;
-                End If;
-
-            EXCEPTION
-                WHEN OTHERS THEN
-                    GET STACKED DIAGNOSTICS
-                        _sqlState         = returned_sqlstate,
-                        _exceptionMessage = message_text,
-                        _exceptionDetail  = pg_exception_detail,
-                        _exceptionContext = pg_exception_context;
-
-                _errorMessage := local_error_handler (
-                                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                                    format('Appending new rows to table %s', _targetTableWithSchema),
-                                    _logError => false);
-
-                If _errorMessage Like '%duplicate key value violates unique constraint%' Then
-                    If _targetTable::citext = 't_cv_newt'::citext Then
-                        _s := 'Use the following query to update the next value for the sequence behind the entry_id field in the target table: SELECT setval(''ont.t_cv_newt_entry_id_seq'', (SELECT MAX(entry_id) FROM ont.t_cv_newt));';
-                    Else
-                        _s := format('Use the following query to look for a backing sequence behind an Identity column in the target table: SELECT * FROM pg_catalog.pg_sequences WHERE sequencename LIKE ''%s%'';', _targetTable);
-                    End If;
-                Else
-                    _s := '';
-                End If;
-
-                RETURN QUERY
-                SELECT 'Exception'::citext As term_pk,
-                       _errorMessage::citext As term_name,
-                       _s::citext As identifier,
-                       '0'::citext As is_leaf,
-                       ''::citext As parent_term_name,
-                       ''::citext As parent_term_id,
-                       ''::citext As grandparent_term_name,
-                       ''::citext As grandparent_term_id;
-
-                RETURN;
-            END;
-
-        End If;
-    Else
+    If _infoOnly Then
         If _previewSql Then
             RAISE INFO '%', _s;
         Else
             -- Preview new terms
-            _s := replace(_s, 's.is_leaf', 's.is_leaf::citext');
+            _s := Replace(_s, 's.is_leaf', 's.is_leaf::citext');
 
             RETURN QUERY
             Execute _s;
         End If;
+
+        RETURN;
     End If;
+
+    If _previewSql Then
+        RAISE INFO '% %', _insertSql, _s;
+        RETURN;
+    End If;
+
+    BEGIN
+        -- Add new terms
+        Execute format('%s %s', _insertSql, _s);
+        --
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
+
+        If _insertCount > 0 Then
+            RAISE INFO 'Added % new rows to % for ontology % using %', _insertCount, _targetTableWithSchema, Upper(_ontologyName), _sourceTable;
+        Else
+            RAISE INFO 'All rows for ontology % are already in %', Upper(_ontologyName), _targetTableWithSchema;
+        End If;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _errorMessage := local_error_handler (
+                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                            format('Appending new rows to table %s', _targetTableWithSchema),
+                            _logError => false);
+
+        If _errorMessage Like '%duplicate key value violates unique constraint%' Then
+            If _targetTable::citext = 't_cv_newt'::citext Then
+                _s := 'Use the following query to update the next value for the sequence behind the entry_id field in the target table: SELECT setval(''ont.t_cv_newt_entry_id_seq'', (SELECT MAX(entry_id) FROM ont.t_cv_newt));';
+            Else
+                _s := format('Use the following query to look for a backing sequence behind an Identity column in the target table: SELECT * FROM pg_catalog.pg_sequences WHERE sequencename LIKE ''%s%'';', _targetTable);
+            End If;
+        Else
+            _s := '';
+        End If;
+
+        RETURN QUERY
+        SELECT 'Exception'::citext As term_pk,
+               _errorMessage::citext As term_name,
+               _s::citext As identifier,
+               '0'::citext As is_leaf,
+               ''::citext As parent_term_name,
+               ''::citext As parent_term_id,
+               ''::citext As grandparent_term_name,
+               ''::citext As grandparent_term_id;
+
+        RETURN;
+    END;
 
 END
 $$;
