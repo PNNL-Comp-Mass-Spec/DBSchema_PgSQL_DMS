@@ -146,40 +146,18 @@ BEGIN
         End If;
 
         ------------------------------------------------
-        -- Iterate over datasets with UpdateRequired > 0  (since there should not be many)
+        -- Iterate over datasets with update_required > 0  (since there should not be many)
         -- For each, make sure they have an up-to-date MASIC_Directory_Name
         --
         -- This query should be kept in sync with the bulk update query below
         ------------------------------------------------
 
-        _datasetID := 0;
-
-        WHILE true
-        LOOP
-
-            -- This While loop can probably be converted to a For loop; for example:
-            --    FOR _itemName IN
-            --        SELECT item_name
-            --        FROM TmpSourceTable
-            --        ORDER BY entry_id
-            --    LOOP
-            --        ...
-            --    END LOOP;
-
-
+        FOR _datasetID IN
             SELECT dataset_id
-            INTO _datasetID
             FROM t_cached_dataset_links
-            WHERE update_required > 0 AND dataset_id > _datasetID
+            WHERE update_required > 0
             ORDER BY dataset_id
-            LIMIT 1;
-
-            If Not FOUND Then
-                -- Break out of the while loop
-                EXIT;
-            End If;
-
-            _masicDirectoryName := '';
+        LOOP
 
             SELECT MasicDirectoryName
             INTO _masicDirectoryName
@@ -206,14 +184,14 @@ BEGIN
                  ) RankQ
             WHERE JobRank = 1
             --
-            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If _updateCount > 0 And char_length(_masicDirectoryName) > 0 Then
+            If _matchCount > 0 And char_length(_masicDirectoryName) > 0 Then
                 UPDATE t_cached_dataset_links
                 SET masic_directory_name = _masicDirectoryName
                 WHERE dataset_id = _datasetID;
 
-                _rowCountUpdated := _rowCountUpdated + _updateCount;
+                _rowCountUpdated := _rowCountUpdated + 1;
             End If;
 
         END LOOP;
@@ -249,50 +227,36 @@ BEGIN
             -- It should be kept in sync with the above query that includes Row_Number()
             ------------------------------------------------
             --
-            UPDATE t_cached_dataset_links
+            UPDATE t_cached_dataset_links Target
             SET masic_directory_name = JobDirectoryQ.MasicDirectoryName
-            FROM t_cached_dataset_links Target
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_cached_dataset_links
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_cached_dataset_links.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN ( SELECT DatasetID,
-                                     MasicDirectoryName
-                              FROM ( SELECT OrderQ.DatasetID,
-                                            OrderQ.Job,
-                                            OrderQ.MasicDirectoryName,
-                                            Row_Number() OVER ( PARTITION BY OrderQ.DatasetID
-                                                                ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC ) AS JobRank
-                                     FROM ( SELECT J.AJ_DatasetID AS DatasetID,
-                                                   J.job AS Job,
-                                                   J.Results_Folder_Name AS MasicDirectoryName,
-                                                   CASE
-                                                       WHEN J.job_state_id = 4 THEN 1
-                                                       WHEN J.job_state_id = 14 THEN 2
-                                                       ELSE 3
-                                                   END LOOP; AS JobStateRank
-                                            FROM t_analysis_job J
-                                                 INNER JOIN t_analysis_tool T
-                                                   ON J.analysis_tool_id = T.analysis_tool_id
-                                            WHERE T.analysis_tool LIKE 'MASIC%' AND
-                                                  NOT J.results_folder_name IS NULL AND
-                                                  J.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd
-                                          ) OrderQ
-                                    ) RankQ
-                              WHERE JobRank = 1
-                           ) JobDirectoryQ
-                   ON Target.dataset_id = JobDirectoryQ.DatasetID
-            WHERE (Target.UpdateRequired > 0 OR
-                   _processingMode >= 3) AND
-                  Coalesce(Target.MASIC_Directory_Name, '') <> JobDirectoryQ.MasicDirectoryName
+            FROM ( SELECT DatasetID,
+                             MasicDirectoryName
+                      FROM ( SELECT OrderQ.DatasetID,
+                                    OrderQ.Job,
+                                    OrderQ.MasicDirectoryName,
+                                    Row_Number() OVER ( PARTITION BY OrderQ.DatasetID
+                                                        ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC ) AS JobRank
+                             FROM ( SELECT J.AJ_DatasetID AS DatasetID,
+                                           J.job AS Job,
+                                           J.Results_Folder_Name AS MasicDirectoryName,
+                                           CASE
+                                               WHEN J.job_state_id = 4 THEN 1
+                                               WHEN J.job_state_id = 14 THEN 2
+                                               ELSE 3
+                                           END LOOP; AS JobStateRank
+                                    FROM t_analysis_job J
+                                         INNER JOIN t_analysis_tool T
+                                           ON J.analysis_tool_id = T.analysis_tool_id
+                                    WHERE T.analysis_tool LIKE 'MASIC%' AND
+                                          NOT J.results_folder_name IS NULL AND
+                                          J.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd
+                                  ) OrderQ
+                            ) RankQ
+                      WHERE JobRank = 1
+                   ) JobDirectoryQ
+            WHERE (Target.UpdateRequired > 0 OR _processingMode >= 3) AND
+                  Target.dataset_id = JobDirectoryQ.DatasetID AND
+                  Coalesce(Target.MASIC_Directory_Name, '') <> JobDirectoryQ.MasicDirectoryName;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

@@ -46,7 +46,6 @@ DECLARE
     _authorized boolean;
     _stateID int;
     _ratingID int;
-    _entryID int := 0;
     _currentDataset text;
     _usageMessage text;
 
@@ -154,7 +153,7 @@ BEGIN
         SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
         INTO _list
         FROM Tmp_DatasetInfo
-        WHERE NOT Dataset_Name IN ( SELECT dataset FROM t_dataset )
+        WHERE NOT Dataset_Name IN ( SELECT dataset FROM t_dataset );
 
         If Coalesce(_list, '') <> '' Then
             _msg := format('The following datasets were not in the database: "%s"', _list);
@@ -171,10 +170,10 @@ BEGIN
         ---------------------------------------------------
         -- Resolve state name
         ---------------------------------------------------
+
         _stateID := 0;
-        --
+
         If _state <> '[no change]' Then
-            --
             SELECT Dataset_state_ID
             INTO _stateID
             FROM  t_dataset_rating_name
@@ -189,10 +188,10 @@ BEGIN
         ---------------------------------------------------
         -- Resolve rating name
         ---------------------------------------------------
+
         _ratingID := 0;
-        --
+
         If _rating <> '[no change]' Then
-            --
             SELECT dataset_rating_id
             INTO _ratingID
             FROM  t_dataset_rating_name
@@ -245,7 +244,7 @@ BEGIN
             If _state <> '[no change]' Then
                 UPDATE t_dataset
                 SET dataset_state_id = _stateID
-                WHERE dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo)
+                WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
                 _datasetStateUpdated := true;
             End If;
@@ -266,36 +265,19 @@ BEGIN
 
                 UPDATE t_dataset
                 SET dataset_rating_id = _ratingID
-                WHERE dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo);
+                WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
                 _datasetRatingUpdated := true;
 
-                If Exists (Select * From Tmp_DatasetSchedulePredefine) And _ratingID >= 2 Then
+                If Exists (SELECT * FROM Tmp_DatasetSchedulePredefine) And _ratingID >= 2 Then
 
                     -- Schedule Predefines
                     --
-                    WHILE true
-                    LOOP
-                        -- This While loop can probably be converted to a For loop; for example:
-                        --    FOR _itemName IN
-                        --        SELECT item_name
-                        --        FROM Tmp_SourceTable
-                        --        ORDER BY entry_id
-                        --    LOOP
-                        --        ...
-                        --    END LOOP;
-
+                    FOR _currentDataset IN
                         SELECT Dataset_Name
-                        INTO _currentDataset
                         FROM Tmp_DatasetSchedulePredefine
-                        WHERE Entry_ID > _entryID
                         ORDER BY Entry_ID
-                        LIMIT 1;
-
-                        If Not FOUND Then
-                            -- Break out of the While Loop
-                            EXIT;
-                        End If;
+                    LOOP
 
                         CALL schedule_predefined_analysis_jobs (_currentDataset);
 
@@ -308,15 +290,17 @@ BEGIN
             -----------------------------------------------
             If _comment <> '[no change]' Then
                 UPDATE t_dataset
-                SET comment = comment || ' ' || _comment
-                WHERE dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo)
+                SET comment = CASE WHEN comment Is Null THEN _comment
+                                   ELSE format('%s; %s', comment, _comment)
+                              END
+                WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
             End If;
 
             -----------------------------------------------
             If _findText <> '[no change]' and _replaceText <> '[no change]' Then
                 UPDATE t_dataset
                 SET comment = Replace(comment, _findText, _replaceText)
-                WHERE dataset in (SELECT Dataset_Name FROM Tmp_DatasetInfo)
+                WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
             End If;
 
             If char_length(_callingUser) > 0 And (_datasetStateUpdated Or _datasetRatingUpdated) Then

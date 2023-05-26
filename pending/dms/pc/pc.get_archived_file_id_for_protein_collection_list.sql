@@ -15,7 +15,7 @@ AS $$
 **  Desc:   Given a series of protein collection names, determine
 **          the entry in T_Archived_Output_Files that corresponds to the list
 **
-**          If an entry is not found, then sets _archivedFileID to 0
+**          If an entry is not found, sets _archivedFileID to 0
 **
 **  Auth:   mem
 **  Date:   06/07/2006
@@ -25,7 +25,6 @@ AS $$
 *****************************************************/
 DECLARE
     _proteinCollectionName text;
-    _uniqueID int;
     _proteinCollectionListClean text := '';
 BEGIN
     _message := '';
@@ -141,39 +140,23 @@ BEGIN
 
     -----------------------------------------------------
     -- More than one protein collection; find the best match
-    -- Do this by querying Tmp_Archived_Output_File_IDs for
-    --  each protein collection in Tmp_ProteinCollectionList
-    -- Note that this procedure does not worry about the order of the protein
-    --  collections in _proteinCollectionList.  If more than one archive exists
-    --  with the same collections, but a different ordering, then the ID value
-    --  for only one of the archives will be returned
-    -----------------------------------------------------
     --
-    _uniqueID := 0;
+    -- Do this by querying Tmp_Archived_Output_File_IDs for
+    -- each protein collection in Tmp_ProteinCollectionList
+    --
+    -- Note that this procedure does not worry about the order of the protein
+    -- collections in _proteinCollectionList.  If more than one archive exists
+    -- with the same collections, but a different ordering, then the ID value
+    -- for only one of the archives will be returned
+    -----------------------------------------------------
+
     _proteinCollectionCount := 0;
 
-    WHILE true
-    LOOP
-        -- This While loop can probably be converted to a For loop; for example:
-        --    FOR _itemName IN
-        --        SELECT item_name
-        --        FROM TmpSourceTable
-        --        ORDER BY entry_id
-        --    LOOP
-        --        ...
-        --    END LOOP;
-
-        SELECT ProteinCollectionName, Unique_ID
-        INTO _proteinCollectionName, _uniqueID
+    FOR _proteinCollectionName IN
+        SELECT ProteinCollectionName
         FROM Tmp_ProteinCollectionList
-        WHERE Unique_ID > _uniqueID
         ORDER BY Unique_ID
-        LIMIT 1;
-
-        If Not FOUND Then
-            -- Break out of the while loop
-            EXIT;
-        End If;
+    LOOP
 
         UPDATE Tmp_Archived_Output_File_IDs AOF
         SET Valid_Member_Count = Valid_Member_Count + 1
@@ -181,38 +164,41 @@ BEGIN
              INNER JOIN pc.t_protein_collections PC
                ON AOFC.protein_collection_id = PC.protein_collection_id
         WHERE PC.collection_name = _proteinCollectionName AND
-              AOF.archived_file_id = AOFC.archived_file_id ;
+              AOF.archived_file_id = AOFC.archived_file_id;
 
         _proteinCollectionCount := _proteinCollectionCount + 1;
 
         If _proteinCollectionCount = 1 Then
             _proteinCollectionListClean := _proteinCollectionName;
         Else
-            _proteinCollectionListClean := _proteinCollectionListClean || ',' || _proteinCollectionName;
+            _proteinCollectionListClean := format('%s,%s', _proteinCollectionListClean, _proteinCollectionName);
         End If;
 
     END LOOP;
 
     -----------------------------------------------------
     -- Grab the last entry in Tmp_Archived_Output_File_IDs with
-    --  Valid_Member_Count equal to _proteinCollectionCount
+    -- Valid_Member_Count equal to _proteinCollectionCount
+    --
     -- Note that all of the entries in Tmp_Archived_Output_File_IDs
-    --  should contain the same number of protein collections,
-    --  but only those entries that contain all of the collections
-    --  in Tmp_ProteinCollectionList will have Valid_Member_Count
-    --  equal to _proteinCollectionCount
+    -- should contain the same number of protein collections,
+    -- but only those entries that contain all of the collections
+    -- in Tmp_ProteinCollectionList will have Valid_Member_Count
+    -- equal to _proteinCollectionCount
     -----------------------------------------------------
     --
     SELECT Archived_File_ID
     INTO _archivedFileID
     FROM Tmp_Archived_Output_File_IDs
     WHERE Valid_Member_Count = _proteinCollectionCount
-    ORDER BY Archived_File_ID Desc
+    ORDER BY Archived_File_ID DESC
     LIMIT 1;
 
     If Not FOUND Then
         _message := format('Warning: Could not find any archived output files that contain "%s" and have Creation_Options "%s"',
                             _proteinCollectionListClean, _creationOptions);
+
+        _archivedFileID := 0;
     End If;
 
     DROP TABLE Tmp_ProteinCollectionList;

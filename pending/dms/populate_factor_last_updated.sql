@@ -22,11 +22,17 @@ AS $$
 DECLARE
     _updateCount int;
     _validFactorEntries int := 0;
-    _eventID int;
+    _eventIDStart int;
     _eventIDEnd int;
     _changeDate timestamp;
     _factorChanges text;
+    _eventID int
     _xml xml;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -42,7 +48,7 @@ BEGIN
         FactorName text null,
         FactorValue text null,
         ValidFactor boolean not null
-    )
+    );
 
     CREATE INDEX IX_Tmp_FactorUpdates ON Tmp_FactorUpdates (RequestID);
 
@@ -51,7 +57,7 @@ BEGIN
         RequestID int not null,
         FactorName text not null,
         Last_Updated timestamp not null
-    )
+    );
 
     CREATE INDEX IX_Tmp_FactorLastUpdated ON Tmp_FactorLastUpdated (RequestID, FactorName);
 
@@ -64,7 +70,7 @@ BEGIN
     _returnCode:= '';
 
     If _dateFilterStart Is Null And _dateFilterEnd Is Null Then
-        _eventID := -1;
+        _eventIDStart := -1;
 
         SELECT MAX(event_id) + 1
         INTO _eventIDEnd
@@ -81,14 +87,14 @@ BEGIN
             _dateFilterStart := '0001-01-01';
         End If;
 
-        _message := format('Finding Factor_Log entries between %s And %s',
+        _message := format('Finding Factor_Log entries between %s and %s',
                         public.timestamp_text(_dateFilterStart),
                         date_trunc('day', _dateFilterEnd) + Interval '86399.999 seconds');
 
         RAISE INFO '%', _message;
 
         SELECT MIN(event_id) - 1
-        INTO _eventID
+        INTO _eventIDStart
         FROM t_factor_log
         WHERE changed_on BETWEEN _dateFilterStart AND _dateFilterEnd + INTERVAL '1 day';
 
@@ -104,28 +110,15 @@ BEGIN
     -- Step through the rows in t_factor_log
     -----------------------------------------------------------
 
-    WHILE true
-    LOOP
-        -- Find the next row entry for a requested run factor update
-        --
-        -- This While loop can probably be converted to a For loop; for example:
-        --    FOR _itemName IN
-        --        SELECT item_name
-        --        FROM TmpSourceTable
-        --        ORDER BY entry_id
-        --    LOOP
-        --        ...
-        --    END LOOP;
-
-        SELECT changes
-        INTO _factorChanges
+    FOR _factorChanges, _eventID IN
+        SELECT changes, event_id
         FROM t_factor_log
-        WHERE event_id > _eventID AND changes LIKE '<r i%'
+        WHERE event_id >= _eventIDStart AND changes LIKE '<r i%'
         ORDER BY event_id
-        LIMIT 1;
+    LOOP
 
-        If Not FOUND Or _eventID > _eventIDEnd Then
-            -- Break out of the While loop
+        If _eventID > _eventIDEnd Then
+            -- Break out of the For loop
             EXIT;
         End If;
 
@@ -137,7 +130,7 @@ BEGIN
 
         _xml := _factorChanges::xml;
 
-        TRUNCATE TABLE Tmp_FactorUpdates
+        TRUNCATE TABLE Tmp_FactorUpdates;
 
         INSERT INTO Tmp_FactorUpdates(RequestID, FactorType, FactorName, FactorValue, ValidFactor)
         SELECT XmlQ.RequestID, XmlQ.FactorType, XmlQ.FactorName, XmlQ.FactorValue, false AS ValidFactor
@@ -160,72 +153,99 @@ BEGIN
         WHERE Not Coalesce(FactorType, '')::citext IN ('Block', 'Run Order') AND
               Not FactorName Is Null;
 
-        If FOUND Then
+        If Not FOUND Then
+            CONTINUE;
+        End If;
 
-            _validFactorEntries := _validFactorEntries + 1;
+        _validFactorEntries := _validFactorEntries + 1;
 
-            /*
-             * Uncomment to debug
-            If _infoOnly AND _validFactorEntries <= 3 Then
+        /*
+         * Uncomment to debug
+        If _infoOnly AND _validFactorEntries <= 3 Then
+            FOR _requestID, _factorName IN
                 SELECT RequestID, FactorName
                 FROM Tmp_FactorUpdates
                 WHERE ValidFactor
                 ORDER BY RequestID, FactorName
-            End If;
-            */
-
-            -- Merge the changes into Tmp_FactorLastUpdated
-            MERGE INTO Tmp_FactorLastUpdated AS t
-            USING ( SELECT RequestID, FactorName
-                    FROM Tmp_FactorUpdates
-                    WHERE ValidFactor
-                  ) AS s
-            ON (t.RequestID = s.RequestID And t.FactorName = s.FactorName)
-            WHEN MATCHED THEN
-                UPDATE SET Last_Updated = _changeDate
-            WHEN NOT MATCHED THEN
-                INSERT (RequestID, FactorName, Last_Updated)
-                VALUES (s.RequestID, s.FactorName, _changeDate);
-
+            LOOP
+                RAISE INFO 'Request ID %, factor %', _requestID, _factorName;
+            END LOOP;
         End If;
+        */
 
-    END LOOP; -- </a>
+        -- Merge the changes into Tmp_FactorLastUpdated
+        MERGE INTO Tmp_FactorLastUpdated AS t
+        USING ( SELECT RequestID, FactorName
+                FROM Tmp_FactorUpdates
+                WHERE ValidFactor
+              ) AS s
+        ON (t.RequestID = s.RequestID And t.FactorName = s.FactorName)
+        WHEN MATCHED THEN
+            UPDATE SET Last_Updated = _changeDate
+        WHEN NOT MATCHED THEN
+            INSERT (RequestID, FactorName, Last_Updated)
+            VALUES (s.RequestID, s.FactorName, _changeDate);
+
+    END LOOP;
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        _formatSpecifier := '%-15s %-15s %-15s %-30s %-40s %-16s';
 
-        SELECT Target.*,
-               Src.last_updated AS Last_Updated_New
-        FROM t_factor Target
-             INNER JOIN Tmp_FactorLastUpdated Src
-               ON Target.type = 'Run_Request' AND
-                  Target.target_id = Src.RequestID AND
-                  Target.name = Src.FactorName
-        WHERE Src.last_updated <> Target.last_updated
-        ORDER BY Target.target_id, Target.name
+        _infoHead := format(_formatSpecifier,
+                            'Factor_ID',
+                            'Type',
+                            'Target_ID',
+                            'Name',
+                            'Value',
+                            'Last_Updated_New'
+                        );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                            '---------------',
+                            '---------------',
+                            '---------------',
+                            '------------------------------',
+                            '----------------------------------------',
+                            '----------------'
+                        );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Target.Factor_ID,
+                   Target.Type,
+                   Target.Target_ID,
+                   Target.Name,
+                   Target.Value,
+                   Src.last_updated AS Last_Updated_New
+            FROM t_factor Target
+                 INNER JOIN Tmp_FactorLastUpdated Src
+                   ON Target.type = 'Run_Request' AND
+                      Target.target_id = Src.RequestID AND
+                      Target.name = Src.FactorName
+            WHERE Src.last_updated <> Target.last_updated
+            ORDER BY Target.target_id, Target.name
+        LOOP
+            RAISE INFO '%', format(_formatSpecifier,
+                                    _previewData.Factor_ID,
+                                    _previewData.Type,
+                                    _previewData.Target_ID,
+                                    _previewData.Name,
+                                    _previewData.Value,
+                                    _previewData.Last_Updated_New
+                                );
+        END LOOP;
 
     Else
         UPDATE t_factor
         SET last_updated = Src.last_updated
-        FROM t_factor Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_factor
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = t_factor.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN Tmp_FactorLastUpdated Src
-               ON Target.Type = 'Run_Request' AND
-                  Target.TargetID = Src.RequestID AND
-                  Target.Name = Src.FactorName
-        WHERE Src.Last_Updated <> Target.Last_Updated
+        FROM Tmp_FactorLastUpdated Src
+        WHERE Target.Type = 'Run_Request' AND
+              Target.TargetID = Src.RequestID AND
+              Target.Name = Src.FactorName AND
+              Src.Last_Updated IS DISTINCT FROM Target.Last_Updated
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -233,7 +253,7 @@ BEGIN
         RAISE INFO '%', _message;
     End If;
 
-    RAISE INFO '%', 'Parsed ' || cast(_validFactorEntries as text) || ' factor log records';
+    RAISE INFO 'Parsed % factor log records', _validFactorEntries;
 
     DROP TABLE Tmp_FactorUpdates;
     DROP TABLE Tmp_FactorLastUpdated;

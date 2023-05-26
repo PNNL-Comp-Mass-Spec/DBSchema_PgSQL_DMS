@@ -157,33 +157,11 @@ BEGIN
         GROUP BY Exp_ID
         HAVING COUNT(*) > 1;
 
-        _currentExpID := 0;
-
-        WHILE true
-        LOOP
-            -- This While loop can probably be converted to a For loop; for example:
-            --    FOR _itemName IN
-            --        SELECT item_name
-            --        FROM TmpSourceTable
-            --        ORDER BY entry_id
-            --    LOOP
-            --        ...
-            --    END LOOP;
-
-
+        FOR _currentExpID IN
             SELECT Exp_ID
-            INTO _currentExpID
             FROM Tmp_AdditionalExperiments
-            WHERE Exp_ID > _currentExpID
             ORDER BY Exp_ID
-            LIMIT 1;
-
-            If Not FOUND Then
-                -- Break out of the While Loop
-                EXIT;
-            End If;
-
-            _biomaterialList := null;
+        LOOP
 
             SELECT string_agg(CC.Biomaterial_Name, '; ')
             INTO _biomaterialList
@@ -191,8 +169,8 @@ BEGIN
                 INNER JOIN T_Biomaterial CC
                 ON ECC.Biomaterial_ID = CC.Biomaterial_ID
             WHERE ECC.Exp_ID = _currentExpID
-            --
-            GET DIAGNOSTICS _matchCount = ROW_COUNT;
+
+            _matchCount := array_length(string_to_array(_biomaterialList, ';'), 1);
 
             INSERT INTO Tmp_ExperimentBiomaterial (Exp_ID, Biomaterial_List, Items)
             SELECT _currentExpID, _biomaterialList, _matchCount;
@@ -203,39 +181,17 @@ BEGIN
         --
         TRUNCATE TABLE Tmp_AdditionalExperiments;
 
-        INSERT INTO Tmp_AdditionalExperiments (exp_id)
-        SELECT exp_id
+        INSERT INTO Tmp_AdditionalExperiments (Exp_ID)
+        SELECT Exp_ID
         FROM t_experiment_reference_compounds
-        GROUP BY exp_id
+        GROUP BY Exp_ID
         HAVING COUNT(*) > 1;
 
-        _currentExpID := 0;
-
-        WHILE true
-        LOOP
-            -- This While loop can probably be converted to a For loop; for example:
-            --    FOR _itemName IN
-            --        SELECT item_name
-            --        FROM TmpSourceTable
-            --        ORDER BY entry_id
-            --    LOOP
-            --        ...
-            --    END LOOP;
-
-
+        FOR _currentExpID IN
             SELECT Exp_ID
-            INTO _currentExpID
             FROM Tmp_AdditionalExperiments
-            WHERE Exp_ID > _currentExpID
             ORDER BY Exp_ID
-            LIMIT 1;
-
-            If Not FOUND Then
-                -- Break out of the While Loop
-                EXIT;
-            End If;
-
-            _refCompoundList := null;
+        LOOP
 
             SELECT string_agg(RC.id_name, '; ')
             INTO _refCompoundList
@@ -243,8 +199,8 @@ BEGIN
                  INNER JOIN t_reference_compound RC
                    ON ERC.compound_id = RC.compound_id
             WHERE ERC.exp_id = _currentExpID;
-            --
-            GET DIAGNOSTICS _matchCount = ROW_COUNT;
+
+            _matchCount := array_length(string_to_array(_refCompoundList, ';'), 1);
 
             INSERT INTO Tmp_ExperimentRefCompounds (Exp_ID, Reference_Compound_List, Items)
             SELECT _currentExpID, _refCompoundList, _matchCount;
@@ -265,7 +221,7 @@ BEGIN
                    ERC.Reference_Compound_List,
                    ERC.Items AS RefCompound_Items
             FROM Tmp_ExperimentBiomaterial ECC
-              FULL OUTER JOIN Tmp_ExperimentRefCompounds ERC
+                 FULL OUTER JOIN Tmp_ExperimentRefCompounds ERC
                    ON ECC.Exp_ID = ERC.Exp_ID
             ORDER BY Coalesce(ECC.Items, ERC.Items), Exp_ID;
 
@@ -304,50 +260,28 @@ BEGIN
                 INSERT(exp_id, reference_compound_list)
                 VALUES(s.exp_id, s.reference_compound_list);
 
+
+
+-- ToDo: Validate the following UPDATE queries
+
+
             ------------------------------------------------
             -- Assure Biomaterial_List and Reference_Compound_List are Null for experiments not in the temp tables
             ------------------------------------------------
             --
-            UPDATE t_cached_experiment_components
+            UPDATE t_cached_experiment_components Target
             SET Biomaterial_List = NULL
-            FROM t_cached_experiment_components Target
+            WHERE NOT EXISTS ( SELECT 1
+                               FROM Tmp_ExperimentBiomaterial Src
+                               WHERE Target.Exp_ID = Src.Exp_ID) AND
+                  NOT Target.Biomaterial_List IS NULL
 
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_cached_experiment_components
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_cached_experiment_components.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 LEFT OUTER JOIN Tmp_ExperimentBiomaterial Src
-                   ON Target.Exp_ID = Src.Exp_ID
-            WHERE NOT Target.Biomaterial_List IS NULL AND
-                  Src.Exp_ID IS NULL
-
-            UPDATE t_cached_experiment_components
-            SET reference_compound_list = NULL
-            FROM t_cached_experiment_components Target
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_cached_experiment_components
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_cached_experiment_components.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 LEFT OUTER JOIN Tmp_ExperimentRefCompounds Src
-                   ON Target.Exp_ID = Src.Exp_ID
-            WHERE NOT Target.Reference_Compound_List IS NULL AND
-                  Src.Exp_ID IS NULL
-
+            UPDATE t_cached_experiment_components Target
+            SET Reference_Compound_List = NULL
+            WHERE NOT EXISTS ( SELECT 1
+                               FROM Tmp_ExperimentRefCompounds Src
+                               WHERE Target.Exp_ID = Src.Exp_ID) AND
+                  NOT Target.Reference_Compound_List IS NULL
         End If;
 
     End If; -- </AllExperiments>

@@ -133,7 +133,7 @@ BEGIN
         Username text,
         Role text,
         Role_ID int null,
-        USER_ID int null,
+        User_ID int null,
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     )
 
@@ -170,7 +170,7 @@ BEGIN
     ---------------------------------------------------
     --
     UPDATE Tmp_TeamMembers
-    SET user_id = t_users.user_id
+    SET User_ID = t_users.user_id
     FROM t_users
     WHERE Tmp_TeamMembers.Username = t_users.username;
 
@@ -189,42 +189,26 @@ BEGIN
     -- In case a name was entered (instead of a username), try-to auto-resolve using the name column in t_users
     ---------------------------------------------------
 
-    _entryID := 0;
-
-    WHILE true
-    LOOP
-        -- This While loop can probably be converted to a For loop; for example:
-        --    FOR _itemName IN
-        --        SELECT item_name
-        --        FROM TmpSourceTable
-        --        ORDER BY entry_id
-        --    LOOP
-        --        ...
-        --    END LOOP;
-
-        SELECT EntryID,
-               Username
-        INTO _entryID, _unknownUsername
+    FOR _entryID, _unknownUsername IN
+        SELECT EntryID, Username
+        INTO _unknownUsername
         FROM Tmp_TeamMembers
-        WHERE EntryID > _entryID AND USER_ID IS NULL
+        WHERE User_ID IS NULL
         ORDER BY EntryID
-        LIMIT 1;
+    LOOP
 
-        If Not FOUND Then
-            -- Break out of the while loop
-            EXIT;
-        End If;
-
-        _matchCount := 0;
-
-        CALL auto_resolve_name_to_username (_unknownUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+        CALL auto_resolve_name_to_username (
+                _unknownUsername,
+                _matchCount => _matchCount,         -- Output
+                _matchingUsername => _newUsername,  -- Output
+                _matchingUserID => _userID);        -- Output
 
         If _matchCount = 1 Then
             -- Single match was found; update Username in Tmp_TeamMembers
             UPDATE Tmp_TeamMembers
             SET Username = _newUsername,
                 User_ID = _newUserID
-            WHERE EntryID = _entryID
+            WHERE EntryID = _entryID;
 
         End If;
 
@@ -238,7 +222,7 @@ BEGIN
     SELECT string_agg(Username, ', ' ORDER BY Username)
     INTO _list
     FROM Tmp_TeamMembers
-    WHERE USER_ID IS NULL
+    WHERE User_ID IS NULL
 
     If _list <> '' Then
         _message := format('Could not resolve following usernames (or last names) to user ID: %s', _list);
@@ -274,8 +258,8 @@ BEGIN
                                             role_id,
                                             user_id )
     SELECT DISTINCT _researchTeamID,
-           role_id,
-           user_id
+           Role_ID,
+           User_ID
     FROM Tmp_TeamMembers;
 
     ---------------------------------------------------

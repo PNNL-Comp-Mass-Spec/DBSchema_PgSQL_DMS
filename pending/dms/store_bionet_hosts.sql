@@ -37,17 +37,18 @@ AS $$
 *****************************************************/
 DECLARE
     _columnCount int := 0;
-    _delimiter text;
+    _lineDelimiter text;
+    _tabDelimiter text;
     _entryID int := 0;
     _entryIDEnd int := 0;
     _charIndex int;
     _colCount int;
     _row text;
-    _hostName text;
-    _hostType text;
+    _hostName citext;
+    _hostType citext;
     _hostData text;
     _instruments text;
-    _isAlias int;
+    _isAlias boolean;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -79,7 +80,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_Hosts (
         Host text not null,
         NameOrIP text not null,
-        IsAlias int not null,
+        IsAlias boolean not null,
         Instruments text null
     );
 
@@ -98,14 +99,14 @@ BEGIN
     -----------------------------------------
 
     If Position(chr(10) In _hostList) > 0 Then
-        _delimiter := chr(10);
+        _lineDelimiter := chr(10);
     Else
-        _delimiter := chr(13);
+        _lineDelimiter := chr(13);
     End If;
 
     INSERT INTO Tmp_HostData (Value)
     SELECT Item
-    FROM public.parse_delimited_list ( _hostList, _delimiter )
+    FROM public.parse_delimited_list ( _hostList, _lineDelimiter )
 
     If Not Exists (SELECT * FROM Tmp_HostData) Then
         _message := 'Nothing returned when splitting the Host List on CR or LF';
@@ -124,26 +125,17 @@ BEGIN
     -----------------------------------------
     -- Parse the host list
     -----------------------------------------
-    --
-    WHILE _entryID < _entryIDEnd
-    LOOP
-        -- This While loop can probably be converted to a For loop; for example:
-        --    FOR _itemName IN
-        --        SELECT item_name
-        --        FROM TmpSourceTable
-        --        ORDER BY entry_id
-        --    LOOP
-        --        ...
-        --    END LOOP;
 
+    -- Set the delimiter to a tab character
+    _tabDelimiter := chr(9);
+
+    FOR  _row IN
         SELECT Value
-        INTO _row
         FROM Tmp_HostData
-        WHERE EntryID > _entryID
         ORDER BY EntryID
-        LIMIT 1;
+    LOOP
 
-        -- _row should now be empty, or contain something like the following:
+        -- _row should now be empty, or contain something like the following (tab-separated values):
         -- 12tfticr64    Host (A)    192.168.30.54
         --   or
         -- agilent_qtof_02    Alias (CNAME)    agqtof02.
@@ -152,78 +144,71 @@ BEGIN
         _row := Replace (_row, chr(13), '');
         _row := Trim(Coalesce(_row, ''));
 
-        If _row <> '' Then
+        If Coalesce(_row, '') = '' Then
+            CONTINUE;
+        End If;
 
-            -- Split the row on tabs to find HostName, HostType, and HostData
-            TRUNCATE TABLE Tmp_DataColumns
-            _delimiter := text;
+        -- Split the row on tabs to find HostName, HostType, and HostData
+        TRUNCATE TABLE Tmp_DataColumns;
 
-            INSERT INTO Tmp_DataColumns (EntryID, Value)
-            SELECT Entry_ID, Value
-            FROM public.parse_delimited_list_ordered(_row, _delimiter, 0)
-            --
-            GET DIAGNOSTICS _columnCount = ROW_COUNT;
+        INSERT INTO Tmp_DataColumns (EntryID, Value)
+        SELECT Entry_ID, Value
+        FROM public.parse_delimited_list_ordered(_row, _tabDelimiter, 0)
+        --
+        GET DIAGNOSTICS _columnCount = ROW_COUNT;
 
-            If _columnCount < 3 Then
-                RAISE INFO '%', 'Skipping row since less than 3 columns: ' || _row;
-                CONTINUE;
-            End If;
+        If _columnCount < 3 Then
+            RAISE INFO 'Skipping row since less than 3 columns: %', _row;
+            CONTINUE;
+        End If;
 
-            _hostName := '';
-            _hostType := '';
-            _hostData := '';
-            _instruments := '';
-            _isAlias := 0;
+        _instruments := '';
+        _isAlias := false;
 
-            SELECT Value
-            INTO _hostName
-            FROM Tmp_DataColumns
-            WHERE EntryID = 1;
+        SELECT Value
+        INTO _hostName
+        FROM Tmp_DataColumns
+        WHERE EntryID = 1;
 
-            SELECT Value
-            INTO _hostType
-            FROM Tmp_DataColumns
-            WHERE EntryID = 2;
+        SELECT Value
+        INTO _hostType
+        FROM Tmp_DataColumns
+        WHERE EntryID = 2;
 
-            SELECT Value
-            INTO _hostData
-            FROM Tmp_DataColumns
-            WHERE EntryID = 3;
+        SELECT Value
+        INTO _hostData
+        FROM Tmp_DataColumns
+        WHERE EntryID = 3;
 
+        If Coalesce(_hostName, '') = '' Or Coalesce(_hostType, '') = '' Or Coalesce(_hostData, '') = '' Then
+            RAISE INFO 'Skipping row since 1 or more columns are blank: %', _row;
+            CONTINUE;
+        End If;
 
-            If _hostName = '' or _hostType = '' Or _hostData = '' Then
-                RAISE INFO '%', 'Skipping row since 1 or more columns are blank: ' || _row;
-            Else
-                If _hostName <> '(same as parent folder)' And Not (_hostName = 'Name' And _hostType = 'Type') Then
-                    If _hostType Like 'Alias%' Then
-                        _isAlias := 1;
+        If _hostName <> '(same as parent folder)' And Not (_hostName = 'Name' And _hostType = 'Type') Then
+            If _hostType Like 'Alias%' Then
+                _isAlias := true;
 
-                        If _hostData Like '%.' Then
-                            _hostData := SubString(_hostData, 1, char_length(_hostData)-1);
-                        End If;
-                    End If;
-
-                    -- Look for instruments that have an inbox on this host
-                    --
-                    SELECT string_agg(Inst.instrument, ', ', Inst.instrument)
-                    INTO _instruments
-                    FROM t_storage_path SPath
-                         INNER JOIN t_instrument_name Inst
-                           ON SPath.storage_path_id = Inst.source_path_id
-                    WHERE (SPath.machine_name = _hostName OR SPath.machine_name = _hostName || '.bionet') AND
-                          (SPath.storage_path_function LIKE '%inbox%');
-
-                    If char_length(_instruments) > 0 Then
-                        _instruments := Substring(_instruments, 3, char_length(_instruments));
-                    End If;
-
-                    INSERT INTO Tmp_Hosts (Host, NameOrIP, IsAlias, Instruments)
-                    VALUES (_hostName, _hostData, _isAlias, _instruments);
-
+                If _hostData Like '%.' Then
+                    _hostData := SubString(_hostData, 1, char_length(_hostData) - 1);
                 End If;
             End If;
 
+            -- Look for instruments that have an inbox on this host
+            --
+            SELECT string_agg(Inst.instrument, ', ' ORDER BY Inst.instrument)
+            INTO _instruments
+            FROM t_storage_path SPath
+                 INNER JOIN t_instrument_name Inst
+                   ON SPath.storage_path_id = Inst.source_path_id
+            WHERE (SPath.machine_name = _hostName OR SPath.machine_name = _hostName || '.bionet') AND
+                  (SPath.storage_path_function LIKE '%inbox%');
+
+            INSERT INTO Tmp_Hosts (Host, NameOrIP, IsAlias, Instruments)
+            VALUES (_hostName, _hostData, _isAlias, _instruments);
+
         End If;
+
     END LOOP;
 
     If _infoOnly Then
@@ -240,7 +225,7 @@ BEGIN
         MERGE INTO t_bionet_hosts AS t
         USING ( SELECT host, NameOrIP AS IP, Instruments
                 FROM Tmp_Hosts
-                WHERE IsAlias = 0
+                WHERE Not IsAlias
               ) AS s
         ON (t.host = s.host)
         WHEN MATCHED AND
@@ -260,7 +245,7 @@ BEGIN
         WHERE NOT EXISTS (SELECT Src.Host AS Alias,
                                  Src.NameOrIP AS TargetHost
                           FROM Tmp_Hosts Src
-                          WHERE Src.IsAlias = 1 And
+                          WHERE Src.IsAlias And
                                 Target.Host = Src.TargetHost AND
                                 Target.Alias = Src.Alias)
               AND Not target.Alias Is Null;
@@ -272,7 +257,7 @@ BEGIN
         FROM ( SELECT Host AS Alias,
                       NameOrIP AS TargetHost
                FROM Tmp_Hosts
-               WHERE IsAlias = 1 ) Src
+               WHERE IsAlias ) Src
         WHERE Target.Host = Src.TargetHost;
 
     End If;
