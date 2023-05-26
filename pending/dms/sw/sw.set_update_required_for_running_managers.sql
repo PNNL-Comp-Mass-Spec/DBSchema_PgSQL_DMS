@@ -62,8 +62,8 @@ BEGIN
     INTO _mgrList
     FROM sw.t_job_steps
     WHERE state = 4;
-    --
-    GET DIAGNOSTICS _mgrCount = ROW_COUNT;
+
+    _mgrCount := array_length(string_to_array(_mgrList, ','), 1);
 
     If _infoOnly Then
         RAISE INFO 'Managers needing an update: %', _mgrList;
