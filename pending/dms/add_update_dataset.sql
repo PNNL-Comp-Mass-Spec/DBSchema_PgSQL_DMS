@@ -723,7 +723,11 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            CALL auto_resolve_name_to_username (_operatorUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (
+                    _operatorUsername,
+                    _matchCount => _matchCount,         -- Output
+                    _matchingUsername => _newUsername,  -- Output
+                    _matchingUserID => _userID);        -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername

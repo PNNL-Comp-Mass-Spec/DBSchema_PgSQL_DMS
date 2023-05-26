@@ -157,7 +157,11 @@ BEGIN
             RETURN;
         End If;
 
-        CALL auto_resolve_name_to_username (_researcher, _matchCount => _matchCount, _matchingUsername => _researcherUsername, _matchingUserID => _userID);
+        CALL auto_resolve_name_to_username (
+                _researcher,
+                _matchCount => _matchCount,                 -- Output
+                _matchingUsername => _researcherUsername,   -- Output
+                _matchingUserID => _userID);                -- Output
 
         If _matchCount = 1 Then
             -- Single match found; update _researcher to be in the form 'Zink, Erika M (D3P704)'

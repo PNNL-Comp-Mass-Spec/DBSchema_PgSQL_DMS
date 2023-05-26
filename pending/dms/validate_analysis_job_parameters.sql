@@ -202,7 +202,11 @@ BEGIN
         -- try to auto-resolve using the name column in t_users
         ---------------------------------------------------
 
-        CALL auto_resolve_name_to_username (_ownerUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+        CALL auto_resolve_name_to_username (
+                _ownerUsername,
+                _matchCount => _matchCount,         -- Output
+                _matchingUsername => _newUsername,  -- Output
+                _matchingUserID => _userID);        -- Output
 
         If _matchCount = 1 Then
             -- Single match was found; update _ownerUsername

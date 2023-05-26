@@ -316,7 +316,11 @@ BEGIN
             -- Could not find entry in database for _requesterUsername
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (_requesterUsername, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (
+                    _requesterUsername,
+                    _matchCount => _matchCount,         -- Output
+                    _matchingUsername => _newUsername,  -- Output
+                    _matchingUserID => _userID);        -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _requesterUsername

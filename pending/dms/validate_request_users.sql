@@ -96,12 +96,15 @@ BEGIN
         FOR _unknownUser IN
             SELECT Name_and_Username
             FROM Tmp_UserInfo
-            WHERE USER_ID IS NULL
+            WHERE User_ID IS NULL
             ORDER BY EntryID
         LOOP
-            _matchCount := 0;
 
-            CALL auto_resolve_name_to_username (_unknownUser, _matchCount => _matchCount, _matchingUsername => _newUsername, _matchingUserID => _userID);
+            CALL auto_resolve_name_to_username (
+                    _unknownUser,
+                    _matchCount => _matchCount,         -- Output
+                    _matchingUsername => _newUsername,  -- Output
+                    _matchingUserID => _userID);        -- Output
 
             If _matchCount = 1 Then
                 -- Single match was found; update User_ID in Tmp_UserInfo
@@ -118,7 +121,7 @@ BEGIN
             SELECT Name_and_Username
             INTO _firstInvalidUser
             FROM Tmp_UserInfo
-            WHERE USER_ID IS NULL
+            WHERE User_ID IS NULL
             LIMIT 1;
 
             _message := format('Invalid username for %s: "%s"', _userFieldName, _firstInvalidUser);
@@ -148,8 +151,8 @@ BEGIN
         UPDATE Tmp_UserInfo
         SET Name_and_Username = U.name_with_username
         FROM t_users U
-        WHERE Tmp_UserInfo.user_id = U.user_id AND
-              Tmp_UserInfo.user_id <> 0;
+        WHERE Tmp_UserInfo.User_ID = U.user_id AND
+              Tmp_UserInfo.User_ID <> 0;
 
         -- Regenerate the list of names
         --
