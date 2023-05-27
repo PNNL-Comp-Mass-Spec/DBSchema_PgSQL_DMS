@@ -109,7 +109,7 @@ BEGIN
             If _infoOnly Then
                 RAISE WARNING '%', _message;
             Else
-                CALL post_log_entry ('Error', _message, 'Get_Instrument_Archive_Path_for_New_Datasets');
+                CALL post_log_entry ('Error', _message, 'Get_Instrument_Archive_Path_For_New_Datasets');
             End If;
 
             RETURN 0;

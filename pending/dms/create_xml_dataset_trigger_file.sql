@@ -287,11 +287,11 @@ DestroyFSO:
 
     If _returnCode <> '' Then
         If Coalesce(_message, '') = '' Then
-            _message := format('Error code %s in Create_Xml_Dataset_Trigger_File', _returnCode);
+            _message := format('Error code %s in Create_XML_Dataset_Trigger_File', _returnCode);
         End If;
 
         If _logErrors Then
-            CALL post_log_entry ('Error', _message, 'Create_Xml_Dataset_Trigger_File');
+            CALL post_log_entry ('Error', _message, 'Create_XML_Dataset_Trigger_File');
         End If;
     End If;
 

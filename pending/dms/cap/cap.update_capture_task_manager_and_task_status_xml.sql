@@ -461,7 +461,7 @@ BEGIN
 
             _logMessage := format('%s, processors %s', _statusMessageInfo, _updatedProcessors);
 
-            CALL public.post_log_entry('Debug', _logMessage, 'Update_Capture_Task_Manager_and_Task_Status_XML', 'cap');
+            CALL public.post_log_entry('Debug', _logMessage, 'Update_Capture_Task_Manager_And_Task_Status_XML', 'cap');
         End If;
 
     EXCEPTION

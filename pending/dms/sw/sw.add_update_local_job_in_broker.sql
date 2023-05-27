@@ -369,7 +369,7 @@ BEGIN
                 RAISE INFO 'JobParamXML: %', _jobParamXML;
 
                 If _logDebugMessages Then
-                    CALL public.post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_in_Broker', 'sw');
+                    CALL public.post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_In_Broker', 'sw');
                 End If;
             End If;
 

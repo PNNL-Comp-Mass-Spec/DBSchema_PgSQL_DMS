@@ -175,7 +175,7 @@ BEGIN
         _message := format('Reset dataset capture for capture task job %s', _jobList);
     End If;
 
-    CALL public.post_log_entry('Normal', _message, 'Retry_Capture_for_DMS_Reset_Tasks', 'cap');
+    CALL public.post_log_entry('Normal', _message, 'Retry_Capture_For_DMS_Reset_Tasks', 'cap');
 
     DROP TABLE Tmp_Selected_Jobs;
 END
