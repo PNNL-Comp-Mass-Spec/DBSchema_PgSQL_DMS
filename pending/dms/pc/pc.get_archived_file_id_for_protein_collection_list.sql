@@ -104,14 +104,14 @@ BEGIN
     HAVING COUNT(*) = _proteinCollectionCount
 
     If Not FOUND Then
-        _message := 'Warning: Could not find any archived output files ';
+        _message := 'Warning: Could not find any archived output files';
         If _proteinCollectionCount > 1 Then
-            _message := _message || 'that contain "' || _proteinCollectionList || '"';
+            _message := format('%s that contain "%s"', _message, _proteinCollectionList);
         Else
-            _message := _message || 'that only contain "' || _proteinCollectionName || '"';
+            _message := format('%s that only contain "%s"', _message, _proteinCollectionList);
         End If;
 
-        _message := _message || ' and have Creation_Options "' || _creationOptions || '"';
+        _message := format('%s and have Creation_Options "%s"', _message, _creationOptions);
 
         DROP TABLE Tmp_ProteinCollectionList;
         DROP TABLE Tmp_Archived_Output_File_IDs;

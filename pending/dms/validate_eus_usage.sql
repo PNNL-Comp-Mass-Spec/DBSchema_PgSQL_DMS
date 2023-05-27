@@ -328,12 +328,12 @@ BEGIN
                             _checkSuperseded := 0;
                         Else
                             INSERT INTO Tmp_Proposal_Stack (Proposal_ID, Numeric_ID)
-                            Values (_autoSupersedeProposalID, Coalesce(_numericID, 0))
+                            VALUES (_autoSupersedeProposalID, Coalesce(_numericID, 0));
 
-                            _message := public.append_to_text(;
-                                    _message,
-                                    'Proposal ' || _eusProposalID || ' is superseded by ' || _autoSupersedeProposalID,
-                                    0, '; ', 1024)
+                            _message := public.append_to_text(
+                                                _message,
+                                                format('Proposal %s is superseded by %s', _eusProposalID, _autoSupersedeProposalID),
+                                                0, '; ', 1024)
 
                             _eusProposalID := _autoSupersedeProposalID;
                         End If;
@@ -384,9 +384,9 @@ BEGIN
             If Coalesce(_personID, 0) > 0 Then
                 _eusUsersList := _personID;
                 _message := public.append_to_text(;
-                                _message,
-                                'Warning: EUS User list was empty; auto-selected user "' || _eusUsersList || '"',
-                                0, '; ', 1024)
+                                    _message,
+                                    format('Warning: EUS User list was empty; auto-selected user "%s"', _eusUsersList),
+                                    0, '; ', 1024)
             End If;
         End If;
 
@@ -555,9 +555,9 @@ BEGIN
 
                 _eusUsersList := Coalesce(_newUserList, '');
                 _message := public.append_to_text(;
-                        _message,
-                        'Warning: Removed users from EUS User list that are not associated with proposal "' || _eusProposalID || '"',
-                        0, '; ', 1024)
+                                    _message,
+                                    format('Warning: Removed users from EUS User list that are not associated with proposal "%s"', _eusProposalID),
+                                    0, '; ', 1024)
 
             End If; -- </f>
         End If; -- </e>
@@ -619,7 +619,8 @@ BEGIN
         WHERE eus_usage_type = _eusUsageType
 
         If Not FOUND Then
-            _msg := _msg || '; Could not find usage type "' || _eusUsageType || '" in t_eus_usage_type; this is unexpected';
+            _msg := format('%s; Could not find usage type "%s" in t_eus_usage_type; this is unexpected', _msg, _eusUsageType);
+
             CALL post_log_entry ('Error', _msg, 'Validate_EUS_Usage');
 
             -- Only append _msg to _message if an error occurs

@@ -440,11 +440,11 @@ BEGIN
                     _newEvaluationMessage := Coalesce(_stepInfo.evaluationMessage, '');
 
                     If _stepInfo.completionCode > 0 Then
-                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, 'Original completion code: ' || Cast(_stepInfo.completionCode As text), 0, '; ', 512);
+                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion code: %s', _stepInfo.completionCode), 0, '; ', 512);
                     End If;
 
                     If Coalesce(_stepInfo.completionMessage, '') <> '' Then
-                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, 'Original completion msg: ' || _stepInfo.completionMessage, 0, '; ', 512);
+                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion msg: %s', _stepInfo.completionMessage), 0, '; ', 512);
                     End If;
 
                     -- This query updates the state to _newState
@@ -491,7 +491,7 @@ BEGIN
         _rowsProcessed := _rowsProcessed + 1;
 
         If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
-            _statusMessage := '... Updating dependent steps: ' || _rowsProcessed::text || ' / ' || _rowCountToProcess::text;
+            _statusMessage := format('... Updating dependent steps: %s / %s', _rowsProcessed, _rowCountToProcess);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Dependent_Steps', 'sw');
             _lastLogTime := clock_timestamp();
         End If;

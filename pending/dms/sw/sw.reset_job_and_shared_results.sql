@@ -179,7 +179,7 @@ BEGIN
                         _logDeletions => true,
                         _logToConsoleOnly => false);
 
-                _message := _message || '; ' || _removeJobsMessage;
+                _message := format('%s; %s', _message, _removeJobsMessage);
             End If;
 
             -- Rename Output Folder in sw.t_job_steps_history for any completed job steps

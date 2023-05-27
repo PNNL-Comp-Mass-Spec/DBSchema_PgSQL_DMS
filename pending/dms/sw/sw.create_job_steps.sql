@@ -434,7 +434,7 @@ BEGIN
             If _jobList = '' Then
                 _jobList := _jobInfo.Job::text;
             Else
-                _jobList := _jobList || ',' || _job::text;
+                _jobList := format('%s,%s', _jobList, _job);
             End If;
 
             _tag := 'unk';

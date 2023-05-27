@@ -162,7 +162,7 @@ BEGIN
 
         -- Log the deletion
         -- First append the data package name
-        _logMessage := _message || ': ' || _dataPackageName;
+        _logMessage :=  format('%s: %s', _message, _dataPackageName);
 
         If _datasetOrExperimentCount > 0 Then
             -- Append the dataset or experiment counts and first/last names

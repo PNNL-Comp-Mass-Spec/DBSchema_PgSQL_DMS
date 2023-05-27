@@ -425,9 +425,8 @@ BEGIN
             LIMIT 1;
 
             If Coalesce(_sharedResultStep, -1) < 0 Then
-                _message := 'Job ' || Cast(_job as text) ||
-                               ' does not have a Mz_Refinery, MSXML_Gen, MSXML_Bruker, PBF_Gen, or ProMex step prior to step ' || Cast(_step as text) +
-                               '; CompletionCode ' || Cast(_completionCode as text) || ' (' || _completionCodeDescription || ') is invalid'
+                _message := format('Job %s does not have a Mz_Refinery, MSXML_Gen, MSXML_Bruker, PBF_Gen, or ProMex step prior to step %s; Completion code %s (%s) is invalid',
+                                    _job, _step, _completionCode, _completionCodeDescription);
 
                 CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 

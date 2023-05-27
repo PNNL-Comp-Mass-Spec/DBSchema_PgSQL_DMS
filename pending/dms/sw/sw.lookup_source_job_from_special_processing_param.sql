@@ -234,10 +234,10 @@ BEGIN
             _sourceJob2 := Coalesce(_sourceJob2, 0);
 
             If _sourceJob2 = _sourceJob Then
-                _warningMessage := 'Source Job 1 and Source Job 2 are identical (both ' || _sourceJob::text || '); this is not allowed and likely indicates the Special Processing parameters for determining Job2 are incorrect';
-                _sourceJobResultsFolderOverride := 'UnknownFolder_Job1_and_Job2_are_both_' || _sourceJob::text;
+                _warningMessage := format('Source Job 1 and Source Job 2 are identical (both %s); this is not allowed and likely indicates the Special Processing parameters for determining Job2 are incorrect', _sourceJob);
+                _sourceJobResultsFolderOverride := format('UnknownFolder_Job1_and_Job2_are_both_%s', _sourceJob);
 
-                _logMessage := 'Auto-query used to lookup Job2 for job ' || _job::text || ': ' || Coalesce(_autoQuerySql, '');
+                _logMessage := format('Auto-query used to lookup Job2 for job %s: %s', _job, Coalesce(_autoQuerySql, ''));
                 CALL public.post_log_entry ('Debug', _logMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
             End If;
 
@@ -253,7 +253,7 @@ BEGIN
                 WHERE Job = _sourceJob2 And Not Results_Folder Is Null;
 
                 If Not FOUND Then
-                    _warningMessage := 'Source Job #2 ' || _sourceJob2::text ||  'not found in DMS, or has a null value for Results_Folder';
+                    _warningMessage := format('Source Job #2 %s not found in DMS, or has a null value for Results_Folder', _sourceJob2);
                 End If;
             End If;
 

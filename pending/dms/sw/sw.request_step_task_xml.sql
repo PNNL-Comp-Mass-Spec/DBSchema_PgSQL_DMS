@@ -252,7 +252,7 @@ BEGIN
         _returnCode := _jobNotAvailableErrorCode;
 
         INSERT INTO sw.t_sp_usage( posted_by, processor_id, calling_user )
-        VALUES('request_step_task_xml', null, session_user || ' Invalid processor: ' || _processorName)
+        VALUES('request_step_task_xml', null, format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
 
         RETURN;
     End If;
@@ -1408,25 +1408,25 @@ BEGIN
 
         SELECT CJS.Seq,
                CASE CJS.Association_Type
-                   WHEN 1 Then   'Exclusive Association'
-                   WHEN 2 Then   'Specific Association'
-                   WHEN 3 THEN   'Non-associated'
-                   WHEN 4 THEN   'Non-associated Generic'
-                   WHEN 5 THEN   'Results_Transfer task (specific to this processor''s server)'
-                   WHEN 6 THEN   'Results_Transfer task (null storage_server)'
-                   WHEN 20 THEN  'Time earlier than next_try value'
-                   WHEN 99 THEN  'Logic error: this should have been updated to 103'
-                   WHEN 100 THEN 'Invalid: Not recognized'
-                   WHEN 101 THEN 'Invalid: CPUs all busy'
-                   WHEN 102 THEN 'Invalid: Archive in progress'
-                   WHEN 103 THEN 'Invalid: job associated with ' || Alternate_Specific_Processor
-                   WHEN 104 THEN 'Invalid: Storage Server has had ' || _maxSimultaneousJobCount::text || ' job steps start within the last ' || _holdoffWindowMinutes::text  || ' minutes'
-                   WHEN 105 THEN 'Invalid: Not enough memory available (' || memory_usage_mb::text|| ' > ' || _availableMemoryMB::text || ', see sw.t_job_steps.memory_usage_mb)'
-                   WHEN 106 THEN 'Invalid: Results_transfer task must run on ' || CJS.Storage_Server
-                   WHEN 107 THEN 'Invalid: Remote server already running ' || _maxSimultaneousRunningRemoteSteps::text || ' job steps; limit reached'
-                   WHEN 108 THEN 'Invalid: Manager not configured to access remote server for running job step'
-                   WHEN 109 THEN 'Invalid: Another manager on this processor''s server recently started processing this dataset'
-                   ELSE          'Warning: Unknown association type'
+                   WHEN 1 Then          'Exclusive Association'
+                   WHEN 2 Then          'Specific Association'
+                   WHEN 3 THEN          'Non-associated'
+                   WHEN 4 THEN          'Non-associated Generic'
+                   WHEN 5 THEN          'Results_Transfer task (specific to this processor''s server)'
+                   WHEN 6 THEN          'Results_Transfer task (null storage_server)'
+                   WHEN 20 THEN         'Time earlier than next_try value'
+                   WHEN 99 THEN         'Logic error: this should have been updated to 103'
+                   WHEN 100 THEN        'Invalid: Not recognized'
+                   WHEN 101 THEN        'Invalid: CPUs all busy'
+                   WHEN 102 THEN        'Invalid: Archive in progress'
+                   WHEN 103 THEN format('Invalid: job associated with %s', Alternate_Specific_Processor)
+                   WHEN 104 THEN format('Invalid: Storage Server has had %s job steps start within the last %s minutes', _maxSimultaneousJobCount, _holdoffWindowMinutes)
+                   WHEN 105 THEN format('Invalid: Not enough memory available (%s > %s, see sw.t_job_steps.memory_usage_mb)', memory_usage_mb, _availableMemoryMB)
+                   WHEN 106 THEN format('Invalid: Results_transfer task must run on %s', CJS.Storage_Server)
+                   WHEN 107 THEN format('Invalid: Remote server already running %s job steps; limit reached', _maxSimultaneousRunningRemoteSteps)
+                   WHEN 108 THEN        'Invalid: Manager not configured to access remote server for running job step'
+                   WHEN 109 THEN        'Invalid: Another manager on this processor''s server recently started processing this dataset'
+                   ELSE                 'Warning: Unknown association type'
                END AS Association_Type,
                CJS.Tool_Priority,
                CJS.Job_Priority,

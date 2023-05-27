@@ -372,7 +372,7 @@ BEGIN
             _message := format('Unable to determine RequestID for %s of %s factors', _invalidCount, _matchCount);
         End If;
 
-        _message := _message || '; treating the Identifier column as ' || _idType;
+        _message := format('%s; treating the Identifier column as %s', _message, _idType);
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo

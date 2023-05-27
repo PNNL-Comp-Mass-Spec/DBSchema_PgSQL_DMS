@@ -211,7 +211,7 @@ BEGIN
                 _message := format('%s (Job %s)', _message, _job);
             End If;
 
-            _message := _message || ': ' || _msg;
+            _message := format('%s: %s', _message, _msg);
             RAISE INFO '%', _message;
 
             RAISE EXCEPTION '%', _message;

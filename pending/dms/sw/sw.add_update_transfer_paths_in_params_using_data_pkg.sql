@@ -126,7 +126,7 @@ BEGIN
         If Coalesce(_cacheRootFolderPath, '') = '' Then
             _xferPath := _dataPkgSharePath;
         Else
-            _cacheFolderPath := _cacheRootFolderPath || '\' || _dataPackageID::text || '_' || REPLACE(_dataPkgName, ' ', '_');
+            _cacheFolderPath := format('%s\%s_%s', _cacheRootFolderPath, _dataPackageID, REPLACE(_dataPkgName, ' ', '_'));
             _xferPath := _cacheRootFolderPath;
 
             If _cacheFolderPathOld <> _cacheFolderPath Then

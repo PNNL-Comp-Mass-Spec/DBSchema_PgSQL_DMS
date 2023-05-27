@@ -63,7 +63,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
 
-    _jobText := 'job ' || Coalesce(_job::text, '??');
+    _jobText := format('job %s', Coalesce(_job::text, '??'));
 
     If _infoOnly Then
         If Exists (SELECT * FROM sw.t_jobs Then

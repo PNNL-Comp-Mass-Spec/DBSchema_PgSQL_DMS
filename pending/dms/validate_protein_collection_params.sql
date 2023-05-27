@@ -192,12 +192,12 @@ BEGIN
     End If;
 
     If _debugMode Then
-        _message := 'Calling pc.validate_analysis_job_protein_parameters: ' ||;
-                            Coalesce(_organismName, '??') || '; ' ||
-                            Coalesce(_ownerUsername, '??') || '; ' ||
-                            Coalesce(_organismDBName, '??') || '; ' ||
-                            Coalesce(_protCollNameList, '??') || '; ' ||
-                            Coalesce(_protCollOptionsList, '??')
+        _message := format('Calling pc.validate_analysis_job_protein_parameters: %s; %s; %s; %s; %s',
+                            Coalesce(_organismName, '??'),
+                            Coalesce(_ownerUsername, '??'),
+                            Coalesce(_organismDBName, '??'),
+                            Coalesce(_protCollNameList, '??'),
+                            Coalesce(_protCollOptionsList, '??'));
 
         RAISE INFO '%', _message;
         -- CALL post_log_entry ('Debug',_message, 'Validate_Protein_Collection_Params');

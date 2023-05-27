@@ -67,7 +67,7 @@ BEGIN
     WHERE script = _scriptName;
 
     If Not FOUND Then
-        _message := 'script not found in sw.t_scripts: ' || Coalesce(_scriptName, '??');
+        _message := format('Script not found in sw.t_scripts: %s', Coalesce(_scriptName, '??'));
         _returnCode := 'U5201';
 
         RAISE INFO '%', _message;
@@ -119,7 +119,7 @@ BEGIN
     ---------------------------------------------------
     --
 
-    SELECT string_agg(Tmp_ParamDefinition.Section || '/' || Tmp_ParamDefinition.Name, ',')
+    SELECT string_agg(format('%s/%s', Tmp_ParamDefinition.Section, Tmp_ParamDefinition.Name), ',')
     INTO _missingParameters
     FROM Tmp_ParamDefinition
          LEFT OUTER JOIN Tmp_JobParameters

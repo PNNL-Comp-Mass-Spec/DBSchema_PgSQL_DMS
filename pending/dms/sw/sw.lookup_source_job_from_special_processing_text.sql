@@ -265,8 +265,9 @@ BEGIN
             End If; -- </e>
 
             If _whereClause = '' And _warningMessage = '' Then
-                _warningMessage := _tagName || ' tag is not numeric in the Special_Processing parameter for job ' || _job::text;
-                _warningMessage := _warningMessage || '; alternatively, can be ' || _tagName || 'Auto{SqlWhereClause} where SqlWhereClause is the where clause to use to select the best analysis job for the given dataset using public.V_Source_Analysis_Job';
+                _warningMessage := format('%s tag is not numeric in the Special_Processing parameter for job %s', _tagName, _job);
+                _warningMessage := format('%s; alternatively, can be %sAuto{SqlWhereClause} where SqlWhereClause is the where clause to use to select the best analysis job for the given dataset using public.V_Source_Analysis_Job',
+                                            _warningMessage, _tagName);
             End If;
         End If; -- </d>
 

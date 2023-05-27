@@ -99,13 +99,12 @@ BEGIN
             RETURN;
         End If;
 
-        INSERT INTO t_research_team (
-            team,
-            description,
-            collaborators
+        INSERT INTO t_research_team( team,
+                                     description,
+                                     collaborators )
         ) VALUES (
             _campaignName,
-            'Research team for campaign ' || _campaignName,
+            format('Research team for campaign %s', _campaignName),
             _collaborators
         )
         RETURNING team_id

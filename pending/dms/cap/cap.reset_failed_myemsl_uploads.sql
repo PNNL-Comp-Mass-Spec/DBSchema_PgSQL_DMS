@@ -167,10 +167,10 @@ BEGIN
                 _logMessage := format('Skipping auto-reset of MyEMSL upload for capture task job %s', _jobInfo.Job);
 
                 If char_length(_skippedSubfolder) > 0 Then
-                    _logMessage := _logMessage || ', subfolder ' || _skippedSubfolder;
+                    _logMessage := format('%s, subfolder %s', _logMessage, _skippedSubfolder);
                 End If;
 
-                _logMessage := _logMessage || ' since the upload has already failed 2 or more times';
+                _logMessage := format('%s since the upload has already failed 2 or more times', _logMessage);
 
                 If Not _infoOnly Then
                     CALL public.post_log_entry ('Error', _logMessage, 'Reset_Failed_MyEMSL_Uploads', 'cap', _duplicateEntryHoldoffHours => 24);

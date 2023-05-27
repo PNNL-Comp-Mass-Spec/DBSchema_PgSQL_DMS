@@ -99,13 +99,13 @@ BEGIN
     -----------------------------------------------------------
     --
     INSERT INTO t_factor_log (changed_by, changes)
-    VALUES (_callingUser, _changeSummary)
+    VALUES (_callingUser, _changeSummary);
 
     ---------------------------------------------------
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Source: ' || _srcRequestID::text || '; Target: ' || _destRequestID::text;
+    _usageMessage := format('Source: %s; Target: %s', _srcRequestID, _destRequestID;
     CALL post_usage_log_entry ('Update_Requested_Run_Copy_Factors', _usageMessage);
 
     DROP TABLE Tmp_Factors;

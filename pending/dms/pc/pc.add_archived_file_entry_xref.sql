@@ -35,13 +35,13 @@ BEGIN
     ---------------------------------------------------
 
     If Not Exists (SELECT * FROM pc.t_protein_collections WHERE protein_collection_id = _collectionID) Then
-        _message := 'protein_collection_id ' || _collectionID::text || ' not found in pc.t_protein_collections';
+        _message := format('protein_collection_id %s not found in pc.t_protein_collections', _collectionID);
         _returnCode := 'U5201';
         RETURN;
     End If;
 
     If Not Exists (SELECT * FROM pc.t_archived_output_files WHERE archived_file_id = _archivedFileID) Then
-        _message := 'archived_file_id ' || _archivedFileID::text || ' not found in pc.t_archived_output_files';
+        _message := format('archived_file_id %s not found in pc.t_archived_output_files', _archivedFileID);
         _returnCode := 'U5202';
         RETURN;
     End If;

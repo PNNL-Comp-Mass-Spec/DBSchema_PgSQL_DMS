@@ -506,11 +506,9 @@ BEGIN
         ---------------------------------------------------
         -- Process the jobs that need to be resumed
         ---------------------------------------------------
-        --
-        _statusMessage := 'Resuming ' || _jobCountToResume::text || ' job';
-        If _jobCountToResume <> 1 Then
-            _statusMessage := _statusMessage || 's';
-        End If;
+
+        _statusMessage := format('Resuming %s %s', _jobCountToResume, public.check_plural(_jobCountToResume, 'job', 'jobs');
+
         CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then

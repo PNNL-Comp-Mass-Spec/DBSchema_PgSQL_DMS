@@ -172,7 +172,7 @@ BEGIN
             _msg := format('Error returned by create_steps_for_task: %s', _returnCode);
 
             If Coalesce(_message, '') <> '' Then
-                _msg := _msg || '; ' || _message;
+                _msg := format('%s; %s', _msg, _message);
             End If;
 
             RAISE WARNING '%', _msg;

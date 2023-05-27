@@ -155,7 +155,7 @@ BEGIN
         End If;
 
     Else
-        _message := 'Unable to determine TransferFolderPath and/or Dataset name for job ' || _job::text;
+        _message := format('Unable to determine TransferFolderPath and/or Dataset name for job %s', _job);
         CALL public.post_log_entry ('Error', _message, 'Validate_Job_Server_Info', 'sw');
 
         _returnCode := 'U5205';

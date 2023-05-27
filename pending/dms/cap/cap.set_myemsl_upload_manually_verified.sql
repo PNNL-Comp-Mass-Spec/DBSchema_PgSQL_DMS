@@ -79,7 +79,7 @@ BEGIN
     LIMIT 1;
 
     If Coalesce(_step, 0) = 0 Then
-        _message := 'Job ' || _job::text || ' does not have an ArchiveVerify step or ArchiveStatusCheck step';
+        _message := format('Job %s does not have an ArchiveVerify step or ArchiveStatusCheck step', _job);
         _returnCode := 'U5202';
         RETURN;
     End If;

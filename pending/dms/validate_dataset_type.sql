@@ -562,7 +562,7 @@ BEGIN
         Else
             If _newDatasetType = '' And _warnMessage = '' Then
                 If _datasetTypeAutoGen <> _currentDatasetType And _datasetTypeAutoGen <> '' Then
-                    _warnMessage := format('Warning: Dataset type is ' || _currentDatasetType || ' while auto-generated type is %s', _datasetTypeAutoGen);
+                    _warnMessage := format('Warning: Dataset type is %s while auto-generated type is %s', _currentDatasetType, _datasetTypeAutoGen);
                 End If;
             End If;
         End If;

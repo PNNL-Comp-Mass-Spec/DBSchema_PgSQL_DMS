@@ -330,7 +330,7 @@ BEGIN
         comment
     )
     SELECT
-        itemType || ' ' || _moveType,
+        format('%s %s', itemType, _moveType),
         itemName,
         itemContainer,
         _container,

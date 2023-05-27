@@ -83,7 +83,7 @@ BEGIN
     --
 
     If Not Exists (SELECT * FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
-        _message := 'Data package ' || _dataPackageID::text || ' not found in the Data_Package database';
+        _message := format('Data package %s not found in the Data_Package database', _dataPackageID);
         _dataPackageID := -1;
 
         If _debugMode Then
@@ -140,7 +140,7 @@ BEGIN
         --
         If _insertCount = 0 Then
             If _scriptName Not In ('Global_Label-Free_AMT_Tag', 'MultiAlign', 'MultiAlign_Aggregator') Then
-                _message := 'Note: Data package ' || _dataPackageID::text || ' either has no jobs or has no jobs with a protein collection or legacy fasta file; pipeline job parameters will not contain organism, fasta file, or protein collection';
+                _message := format('Note: Data package %s either has no jobs or has no jobs with a protein collection or legacy fasta file; pipeline job parameters will not contain organism, fasta file, or protein collection', _dataPackageID);
             End If;
 
             _dataPackageID := -1;
@@ -180,7 +180,7 @@ BEGIN
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinOptions',        _value => _proteinOptions,        _deleteParam => false);
             End If;
 
-            _message := 'Defined OrgDb related parameters for job ' || _job::text;
+            _message := format('Defined OrgDb related parameters for job %s', _job);
 
             DROP TABLE Tmp_OrgDBInfo;
 
@@ -212,12 +212,12 @@ BEGIN
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinOptions',        _value => '',  _deleteParam => true);
             End If;
 
-            _messageAddon := 'Deleted OrgDb related parameters from the PeptideSearch section of the job parameters for job ' || _job::text;
+            _messageAddon := format('Deleted OrgDb related parameters from the PeptideSearch section of the job parameters for job %s', _job);
 
             If Coalesce(_message, '') = '' Then
                 _message := _messageAddon;
             Else
-                _message := _message || '; ' || _messageAddon;
+                _message := format('%s; %s', _message, _messageAddon);
             End If;
 
         End If;

@@ -110,7 +110,7 @@ BEGIN
     -- <a1>
 
         -- Setup the log message in case we need it; also, set _invalidFormat to true for now
-        _logMsg := 'Unable to extract Status_Num from Status_URI for capture task job ' || _job::text || ', dataset ' || _datasetID::text;
+        _logMsg := format('Unable to extract Status_Num from Status_URI for capture task job %s, dataset ID %s', _job, _datasetID);
         _invalidFormat := true;
 
         _charLoc := position('/status/' in _statusURI);
@@ -119,9 +119,8 @@ BEGIN
 
             _charLoc := position(_getStateToken in _statusURI);
             If _charLoc = 0 Then
-                _logMsg := _logMsg || ': did not find either ' || _getStateToken || ' or /status/ in ' || _statusURI;
+                _logMsg := format('%s: did not find either %s or /status/ in %s', _logMsg, _getStateToken, _statusURI);
             Else
-            -- <c>
 
                 -- Extract out the base path, examples:
                 -- https://ingestdmsdev.my.emsl.pnl.gov/get_state?job_id=
@@ -150,10 +149,10 @@ BEGIN
                 End If;
 
                 If _invalidFormat Then
-                    _logMsg := _logMsg || ': number not found after ' || _getStateToken || ' in ' || _statusURI;
+                    _logMsg := format('%s: number not found after %s in %s', _logMsg, _getStateToken, _statusURI);
                 End If;
 
-            End If; -- </c>
+            End If;
 
         Else
         -- <b2>
@@ -174,12 +173,12 @@ BEGIN
                 If Coalesce(_subString, '') <> '' And Not _statusNum Is Null Then
                     _invalidFormat := false;
                 Else
-                    _logMsg := _logMsg || ': number not found after /status/ in ' || _statusURI;
+                    _logMsg := format('%s: number not found after /status/ in %s', _logMsg, _statusURI);
                 End If;
             End If;
 
             If _charLoc = 1 Then
-                _logMsg := _logMsg || ': number not found after /status/ in ' || _statusURI;
+                _logMsg := format('%s: number not found after /status/ in %s', _logMsg, _statusURI);
             End If;
 
             If _charLoc > 1 Then

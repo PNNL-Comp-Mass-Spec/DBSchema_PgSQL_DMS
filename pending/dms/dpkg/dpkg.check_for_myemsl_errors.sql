@@ -89,7 +89,8 @@ BEGIN
 
     If _uploadErrorRate > 0.01 Then
         --
-        _message := 'More than 1% of the uploads to MyEMSL had an error; error rate: ' || _uploadErrorRate*100::text::int || '% for ' || _uploadAttempts::text || ' upload attempts';
+        _message := format('More than 1%% of the uploads to MyEMSL had an error; error rate: %s%% for %s upload attempts',
+                            Round(_uploadErrorRate * 100, 0), _uploadAttempts);
 
         If _logErrors Then
             CALL public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'dpkg');
@@ -100,8 +101,9 @@ BEGIN
     End If;
 
     If _duplicateRate > 0.05 Then
-        --
-        _message := 'More than 5% of the uploads to MyEMSL involved uploading the same data package and subfolder 2 or more times; duplicate rate: ' || _duplicateRate*100::text::int || '% for ' || _dataPkgFolderUploads::text || ' DataPkg/folder combos';
+
+        _message := format('More than 5%% of the uploads to MyEMSL involved uploading the same data package and subfolder 2 or more times; duplicate rate: %s%% for %s DataPkg/folder combos',
+                            Round(_duplicateRate * 100, 0), _dataPkgFolderUploads);
 
         If _logErrors Then
             CALL public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'dpkg');
