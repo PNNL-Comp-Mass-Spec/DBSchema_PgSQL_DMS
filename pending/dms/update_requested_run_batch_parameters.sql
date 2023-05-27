@@ -35,7 +35,7 @@ AS $$
 **          09/02/2011 mem - Now calling PostUsageLogEntry
 **          12/15/2011 mem - Now updating _callingUser to session_user if empty
 **          03/28/2013 grk - added handling for cart, instrument
-**          11/07/2016 mem - Add optional logging via PostLogEntry
+**          11/07/2016 mem - Add optional logging via post_log_entry
 **          11/08/2016 mem - Use GetUserLoginWithoutDomain to obtain the user's network login
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
 **          11/16/2016 mem - Call update_cached_requested_run_eus_users for updated Requested runs

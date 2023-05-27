@@ -28,7 +28,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/02/2017 mem - Pass _invalidUsage to AddUpdateRunInterval; continue updating long intervals if the usage info fails validation for a given entry
 **          06/12/2018 mem - Send _maxLength to AppendToText
-**          05/24/2022 mem - Do not call PostlogEntry for errors of the form 'Total percentage (0) does not add up to 100 for ID 1017648'
+**          05/24/2022 mem - Do not call post_log_entry for errors of the form 'Total percentage (0) does not add up to 100 for ID 1017648'
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

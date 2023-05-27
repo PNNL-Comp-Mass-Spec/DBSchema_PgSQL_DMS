@@ -119,7 +119,7 @@ BEGIN
         --
         -- _msg := format('Procedure called with _mode=%s, _newValue=%s, _reqRunIDList=%s',
         --                 Coalesce(_mode, '??'), Coalesce(_newValue, '??'), Coalesce(_reqRunIDList, '??'));
-        -- CALL PostLogEntry ('Debug', _msg, 'UpdateRequestedRunAssignments');
+        -- CALL post_log_entry ('Debug', _msg, 'Update_Requested_Run_Assignments');
 
         ---------------------------------------------------
         -- Validate the inputs

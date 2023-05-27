@@ -93,8 +93,8 @@ AS $$
 **          10/09/2015 mem - Now allowing the request name and comment to be updated even if a request has associated jobs
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/11/2016 mem - Disabled forcing use of MSConvert for QExactive datasets
-**          11/18/2016 mem - Log try/catch errors using PostLogEntry
-**          11/23/2016 mem - Include the request name when calling PostLogEntry from within the catch block
+**          11/18/2016 mem - Log try/catch errors using post_log_entry
+**          11/23/2016 mem - Include the request name when calling post_log_entry from within the catch block
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          06/16/2017 mem - Restrict access using verify_sp_authorized

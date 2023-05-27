@@ -24,7 +24,7 @@ AS $$
 **          11/05/2009 grk - Modified to use external message sender
 **          03/17/2011 mem - Now calling AddDataFolderCreateTask in the DMS_Pipeline database
 **          04/07/2011 mem - Fixed bug constructing _pathFolder (year was in the wrong place)
-**          07/30/2012 mem - Now updating _message prior to calling PostLogEntry
+**          07/30/2012 mem - Now updating _message prior to calling post_log_entry
 **          03/17/2016 mem - Remove call to CallSendMessage
 **          07/05/2022 mem - Remove reference to obsolete column in view V_Data_Package_Folder_Creation_Parameters
 **          12/15/2023 mem - Ported to PostgreSQL

@@ -36,7 +36,7 @@ AS $$
 **          04/06/2012 mem - No longer posting a log message if _statusURI is blank and _fileCountNew=0 and _fileCountUpdated=0
 **          08/19/2013 mem - Removed parameter _updateURIPathIDsForExistingJob
 **          09/06/2013 mem - No longer using _contentURI
-**          09/11/2013 mem - No longer calling PostLogEntry if _statusURI is invalid but _errorCode is non-zero
+**          09/11/2013 mem - No longer calling post_log_entry if _statusURI is invalid but _errorCode is non-zero
 **          10/01/2015 mem - Added parameter _usedTestInstance
 **          01/04/2016 mem - Added parameters _eusUploaderID, _eusInstrumentID, and _eusProposalID
 **                         - Removed parameter _contentURI

@@ -91,7 +91,7 @@ AS $$
 **          10/25/2010 grk - Bypass updating job in DMS if job not in DMS (_jobInDMS)
 **          05/11/2011 mem - Now updating job state from Failed to Complete if all job steps are now complete and at least one of the job steps finished later than the Finish time in T_Jobs
 **          11/14/2011 mem - Now using >= instead of > when looking for jobs to change from Failed to Complete because all job steps are now complete or skipped
-**          12/31/2011 mem - Fixed PostedBy name when calling PostLogEntry
+**          12/31/2011 mem - Fixed PostedBy name when calling post_log_entry
 **          01/12/2012 mem - Added parameter _infoOnly
 **          09/25/2012 mem - Expanded _orgDBName and Organism_DB_Name to varchar(128)
 **          02/21/2013 mem - Now updating the state of failed jobs in DMS back to state 2 if they are now in-progress or finished

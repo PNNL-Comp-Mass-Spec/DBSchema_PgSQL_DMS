@@ -40,7 +40,7 @@ AS $$
 **          06/11/2013 mem - Renamed the first two parameters (previously _username and _username)
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          08/23/2016 mem - Auto-add 'H' when _mode is 'add' and _hanfordIdNum starts with a number
-**          11/18/2016 mem - Log try/catch errors using PostLogEntry
+**          11/18/2016 mem - Log try/catch errors using post_log_entry
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          06/13/2017 mem - Use SCOPE_IDENTITY()

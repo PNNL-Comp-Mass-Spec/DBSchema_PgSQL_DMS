@@ -82,12 +82,10 @@ BEGIN
     End If;
 
     -- Uncomment to debug
-    -- _debugMsg := 'Updating job state for ' || _job::text +
-    --              ', NewDMSJobState = ' || _newDMSJobState::text +
-    --              ', NewBrokerJobState = ' || _newBrokerJobState::text +
-    --              ', JobCommentAddnl = ' || Coalesce(_jobCommentAddnl, '');
+    -- _debugMsg := format('Updating job state for %s, NewDMSJobState = %s, NewBrokerJobState = %s, JobCommentAddnl = %s',
+    --                    _job, _newDMSJobState, _newBrokerJobState, Coalesce(_jobCommentAddnl, ''));
     --
-    -- call PostLogEntry ('Debug', _debugMsg, update_analysis_job_processing_stats);
+    -- CALL post_log_entry ('Debug', _debugMsg, 'Update_Analysis_Job_Processing_Stats');
 
     ---------------------------------------------------
     -- Perform (or preview) the update

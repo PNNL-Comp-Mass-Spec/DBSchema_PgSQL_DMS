@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **  Date:   05/20/2019 mem - Initial version
 **          07/01/2019 mem - Log details of entries over 1 year old that will have error_code set to 101
 **          07/08/2019 mem - Fix bug updating RetrySucceeded
-**                         - Pass _logMessage to PostLogEntry
+**                         - Pass _logMessage to post_log_entry
 **          10/11/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          04/27/2023 mem - Use boolean for data type name

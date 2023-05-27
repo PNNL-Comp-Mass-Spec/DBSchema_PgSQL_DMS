@@ -58,7 +58,7 @@ AS $$
 **          03/07/2013 mem - Now calling ResetAggregationJob to reset jobs; supports resetting a job that succeeded
 **                         - No longer changing job state to 20; ResetAggregationJob will update the job state
 **          04/10/2013 mem - Now passing _callingUser to MakeLocalJobInBroker
-**          07/23/2013 mem - Now calling PostLogEntry only once in the Catch block
+**          07/23/2013 mem - Now calling post_log_entry only once in the Catch block
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/08/2016 mem - Include job number in errors raised by RAISERROR
 **          06/16/2016 mem - Add call to AddUpdateTransferPathsInParamsUsingDataPkg

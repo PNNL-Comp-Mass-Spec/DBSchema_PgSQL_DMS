@@ -144,8 +144,8 @@ BEGIN
     End If;
 
     -- Uncomment to debug
-    -- Declare _debugMessage text = 'Operation: ' || _operation || '; Instrument: ' || _instrument || '; ' || _year || '-' || _month || '; ' || Cast(_factorList As text)
-    -- call PostLogEntry ('Debug', _debugMessage, 'UpdateInstrumentUsageReport');
+    -- _debugMessage := format('Operation: %s; Instrument: %s; %s-%s; %s', _operation, _instrument, _year, _month, _factorList);
+    -- call post_log_entry ('Debug', _debugMessage, 'Update_Instrument_Usage_Report');
 
     -----------------------------------------------------------
     -- Convert _factorList to rooted XML

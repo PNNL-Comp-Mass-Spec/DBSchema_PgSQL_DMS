@@ -47,8 +47,8 @@ AS $$
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          07/20/2016 mem - Fix spelling in error messages
-**          11/18/2016 mem - Log try/catch errors using PostLogEntry
-**          11/23/2016 mem - Include the cell culture name when calling PostLogEntry from within the catch block
+**          11/18/2016 mem - Log try/catch errors using post_log_entry
+**          11/23/2016 mem - Include the cell culture name when calling post_log_entry from within the catch block
 **                         - Trim trailing and leading spaces from input parameters
 **          12/02/2016 mem - Add _organismList
 **          12/05/2016 mem - Exclude logging some try/catch errors

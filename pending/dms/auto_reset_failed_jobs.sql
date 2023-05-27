@@ -22,7 +22,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   09/30/2010 mem - Initial Version
-**          10/01/2010 mem - Added call to PostLogEntry when changing ManagerErrorCleanupMode for a processor
+**          10/01/2010 mem - Added call to post_log_entry when changing ManagerErrorCleanupMode for a processor
 **          02/16/2012 mem - Fixed major bug that reset the state for all steps of a job to state 2, rather than only resetting the state for the running step
 **                         - Fixed bug finding jobs that are running, but started over 60 minutes ago and for which the processor is reporting Stopped_Error in T_Processor_Status
 **          07/25/2013 mem - Now auto-updating the settings file for MSGF+ jobs that report a comment similar to "MSGF+ skipped 99.2% of the spectra because they did not appear centroided"

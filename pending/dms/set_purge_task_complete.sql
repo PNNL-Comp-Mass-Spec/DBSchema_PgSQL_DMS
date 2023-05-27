@@ -37,7 +37,7 @@ AS $$
 **          07/05/2016 mem - Added support for _completionCode = 8 (Aurora is offline)
 **                         - Archive path is now aurora.emsl.pnl.gov
 **          09/02/2016 mem - Archive path is now adms.emsl.pnl.gov
-**          11/09/2016 mem - Include the storage server name when calling PostLogEntry
+**          11/09/2016 mem - Include the storage server name when calling post_log_entry
 **          07/11/2017 mem - Add support for _completionCode = 9 (Previewed purge)
 **          09/09/2022 mem - Use new argument names when calling MakeNewArchiveUpdateJob
 **          12/15/2023 mem - Ported to PostgreSQL

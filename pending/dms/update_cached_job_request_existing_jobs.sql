@@ -352,7 +352,7 @@ BEGIN
 
     End If;
 
-    -- CALL PostLogEntry ('Debug', _message, 'UpdateCachedJobRequestExistingJobs');
+    -- CALL post_log_entry ('Debug', _message, 'Update_Cached_Job_Request_Existing_Jobs');
 
     DROP TABLE Tmp_RequestsAndExistingJobs;
 END

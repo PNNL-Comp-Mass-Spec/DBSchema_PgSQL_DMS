@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_eus_users(IN _req
 **
 **  Auth:   mem
 **  Date:   11/16/2016 mem - Initial Version
-**          11/18/2016 mem - Log try/catch errors using PostLogEntry
+**          11/18/2016 mem - Log try/catch errors using post_log_entry
 **          11/21/2016 mem - Do not use a Merge statement when _requestID is non-zero
 **          03/31/2023 mem - Ported to PostgreSQL
 **          05/07/2023 mem - Remove unused variable

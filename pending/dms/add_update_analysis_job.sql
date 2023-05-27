@@ -96,7 +96,7 @@ AS $$
 **          02/15/2016 mem - Re-enabled handling of _associatedProcessorGroup
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          07/20/2016 mem - Expand error messages
-**          11/18/2016 mem - Log try/catch errors using PostLogEntry
+**          11/18/2016 mem - Log try/catch errors using post_log_entry
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          06/09/2017 mem - Add support for state 13 (inactive)

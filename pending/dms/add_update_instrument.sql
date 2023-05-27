@@ -53,7 +53,7 @@ AS $$
 **          11/30/2011 mem - Add parameter _percentEMSLOwned
 **          04/01/2013 mem - Expanded _description to varchar(255)
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
-**          11/18/2016 mem - Log try/catch errors using PostLogEntry
+**          11/18/2016 mem - Log try/catch errors using post_log_entry
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

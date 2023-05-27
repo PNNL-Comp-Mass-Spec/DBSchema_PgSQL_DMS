@@ -44,11 +44,11 @@ AS $$
 **          08/02/2013 mem - Removed extra semicolon in status message
 **          06/24/2015 mem - Now passing _infoOnly to AddUpdateAnalysisJob
 **          02/23/2016 mem - Add Set XACT_ABORT on
-**          07/21/2016 mem - Log errors in PostLogEntry
+**          07/21/2016 mem - Log errors in post_log_entry
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          08/29/2018 mem - Tabs to spaces
 **          03/31/2021 mem - Expand _organismName and _organismDBName to varchar(128)
-**          06/14/2022 mem - Send procedure name to PostLogEntry
+**          06/14/2022 mem - Send procedure name to post_log_entry
 **          06/30/2022 mem - Rename parameter file column
 **          06/30/2022 mem - Rename parameter file argument
 **          12/15/2023 mem - Ported to PostgreSQL

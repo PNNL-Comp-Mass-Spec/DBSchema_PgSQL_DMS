@@ -313,7 +313,7 @@ BEGIN
         _addon := format('Updated %s %s in t_cached_dataset_folder_paths', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
         _message := public.append_to_text(_message, _addon, 0, '; ', 512)
 
-        -- Call PostLogEntry ('Debug', _message, 'UpdateCachedDatasetFolderPaths');
+        -- Call post_log_entry ('Debug', _message, 'Update_Cached_Dataset_Folder_Paths');
     End If;
 
 END

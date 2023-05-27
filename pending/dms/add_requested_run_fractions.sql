@@ -51,7 +51,7 @@ AS $$
 **          06/01/2021 mem - Add newly created requested run fractions to the parent request's batch (which will be 0 if not in a batch)
 **                         - Raise an error if _mode is invalid
 **          10/13/2021 mem - Append EUS User ID list to warning message
-**                         - Do not call PostLogEntry where _mode is 'preview'
+**                         - Do not call post_log_entry where _mode is 'preview'
 **          10/22/2021 mem - Use a new instrument group for the new requested runs
 **          11/15/2021 mem - If the the instrument group for the source request is the target instrument group instead of a fraction based group, auto update the source instrument group
 **          01/15/2022 mem - Copy date created from the parent requested run to new requested runs, allowing Days in Queue on the list report to be based on the parent requested run's creation date

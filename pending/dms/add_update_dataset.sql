@@ -112,9 +112,9 @@ AS $$
 **          06/10/2016 mem - Try to auto-associate new datasets with an active requested run (only associate if only one active requested run matches the dataset name)
 **          06/21/2016 mem - Add additional debug messages
 **          08/25/2016 mem - Do not update the dataset comment if the dataset type is changed from 'GC-MS' to 'EI-HMS'
-**          11/18/2016 mem - Log try/catch errors using PostLogEntry
+**          11/18/2016 mem - Log try/catch errors using post_log_entry
 **          11/21/2016 mem - Pass _logDebugMessages to ConsumeScheduledRun
-**          11/23/2016 mem - Include the dataset name when calling PostLogEntry from within the catch block
+**          11/23/2016 mem - Include the dataset name when calling post_log_entry from within the catch block
 **                         - Trim trailing and leading spaces from input parameters
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
