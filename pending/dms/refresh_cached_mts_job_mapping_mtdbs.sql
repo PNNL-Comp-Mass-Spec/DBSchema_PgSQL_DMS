@@ -79,7 +79,7 @@ BEGIN
         _message := format('Deleted %s duplicate %s from t_mts_mt_db_jobs_cached; this is unexpected',
                             _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries');
 
-        CALL PostLogEntry ('Error', _message, 'RefreshCachedMTSJobMappingMTDBs');
+        CALL post_log_entry ('Error', _message, 'Refresh_Cached_MTS_Job_Mapping_MTDBs');
 
         _message := '';
     End If;

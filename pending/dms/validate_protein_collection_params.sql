@@ -200,7 +200,8 @@ BEGIN
                             Coalesce(_protCollOptionsList, '??')
 
         RAISE INFO '%', _message;
-        -- call PostLogEntry ('Debug',_message, 'ValidateProteinCollectionParams');
+        -- CALL post_log_entry ('Debug',_message, 'Validate_Protein_Collection_Params');
+
         _message := '';
     End If;
 

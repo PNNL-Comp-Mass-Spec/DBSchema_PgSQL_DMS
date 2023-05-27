@@ -332,7 +332,7 @@ BEGIN
 
         RAISE INFO '%', _statusMsg;
 
-        CALL public.post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc')
+        CALL public.post_log_entry ('Warning', _statusMsg, 'Update_Cached_Protein_Collection_Members', 'pc');
     END LOOP;
 
     DROP TABLE Tmp_ProteinCollections;

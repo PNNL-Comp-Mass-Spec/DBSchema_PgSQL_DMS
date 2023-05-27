@@ -176,7 +176,7 @@ Code 6 (Purged all data except QC folder)
         -- Drive Missing
         --
         _message := format('Drive not found for dataset %s', _datasetName);
-        CALL post_log_entry 'Error', _message, _postedBy
+        CALL post_log_entry ('Error', _message, _postedBy);
         _message := '';
 
         _completionState := 3   ; -- complete
@@ -198,7 +198,7 @@ Code 6 (Purged all data except QC folder)
         -- Dataset folder missing in archive, either in MyEMSL or at \\adms.emsl.pnl.gov\dmsarch
         --
         _message := format('Dataset folder not found in archive or in MyEMSL; most likely a MyEMSL timeout, but could be a permissions error; dataset %s', _datasetName);
-        CALL post_log_entry 'Error', _message, _postedBy
+        CALL post_log_entry ('Error', _message, _postedBy);
         _message := '';
 
         _completionState := 3   ; -- complete
@@ -208,7 +208,7 @@ Code 6 (Purged all data except QC folder)
         -- Archive is offline (Aurora is offline): \\adms.emsl.pnl.gov\dmsarch
         --
         _message := format('Archive is offline; cannot purge dataset %s', _datasetName);
-        CALL post_log_entry 'Error', _message, _postedBy
+        CALL post_log_entry ('Error', _message, _postedBy);
         _message := '';
 
         _completionState := 3   ; -- complete

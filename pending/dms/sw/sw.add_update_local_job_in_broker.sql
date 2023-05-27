@@ -193,7 +193,7 @@ BEGIN
         End If;
 
         -- Uncomment to log the job parameters to sw.t_log_entries
-        -- exec PostLogEntry 'Debug', _jobParam, 'AddUpdateLocalJobInBroker'
+        -- CALL post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_In_Broker');
         -- RETURN;
 
         CALL sw.verify_job_parameters (

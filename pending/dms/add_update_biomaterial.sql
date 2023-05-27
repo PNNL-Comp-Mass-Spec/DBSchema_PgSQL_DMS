@@ -360,7 +360,7 @@ BEGIN
                 _debugMsg := format('Warning: Inconsistent identity values when adding biomaterial %s: Found ID %s but the INSERT INTO query reported %s',
                                     _biomaterialName, _idConfirm, _biomaterialID);
 
-                CALL postlogentry 'Error', _debugMsg, 'AddUpdateBiomaterial'
+                CALL post_log_entry ('Error', _debugMsg, 'Add_Update_Biomaterial');
 
                 _biomaterialID := _idConfirm;
             End If;

@@ -135,7 +135,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     -- Uncomment to log the XML for debugging purposes
-    -- CALL PostLogEntry ('Debug', _factorList, 'UpdateRequestedRunFactors');
+    -- CALL post_log_entry ('Debug', _factorList, 'Update_Requested_Run_Factors');
 
     -----------------------------------------------------------
     -- Temp table to hold factors

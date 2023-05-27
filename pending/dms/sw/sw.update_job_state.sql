@@ -481,8 +481,8 @@ BEGIN
             -- DMS changes enabled, update DMS job state
 
             -- Uncomment to debug
-            -- Declare _debugMsg text = 'Calling update_analysis_job_processing_stats for job ' || _jobInfo.Job::text
-            -- exec PostLogEntry 'Debug', _debugMsg, 'UpdateJobState'
+            -- Declare _debugMsg text = format('Calling update_analysis_job_processing_stats for job %s', _jobInfo.Job);
+            -- CALL Post_Log_Entry ('Debug', _debugMsg, 'Update_Job_State');
 
             -- Compute the value for _updateCode, which is used as a safety feature to prevent unauthorized job updates
             -- Procedure update_analysis_job_processing_stats will re-compute _updateCode based on _jobInfo.Job,
