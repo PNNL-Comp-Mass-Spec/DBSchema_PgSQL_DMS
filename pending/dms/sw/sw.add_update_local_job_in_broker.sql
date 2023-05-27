@@ -97,7 +97,7 @@ DECLARE
     _tool text := '';
     _msg text := '';
     _reset text := 'N';
-    _paramsUpdated int := 0;
+    _paramsUpdated boolean := false;
     _transferFolderPath text := '';
     _logEntryID int;
 
@@ -295,10 +295,10 @@ BEGIN
 
                 CALL sw.add_update_transfer_paths_in_params_using_data_pkg (
                         _dataPackageID,
-                        _paramsUpdated,         -- Output
-                        _message => _message);  -- Output
+                        _paramsUpdated => _paramsUpdated,   -- Output
+                        _message => _message);              -- Output
 
-                If _paramsUpdated <> 0 Then
+                If _paramsUpdated Then
                     -- ToDo: update this to use XMLAGG(XMLELEMENT(
                     --       Look for similar capture task code in cap.*
 

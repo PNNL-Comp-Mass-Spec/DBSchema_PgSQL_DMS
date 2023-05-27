@@ -123,7 +123,7 @@ BEGIN
                     _indexEnd := Position('}' In _whereClause);
 
                     If _indexStart > 0 And _indexEnd > _indexStart Then
-                        _whereClause := SUBSTRING(_whereClause, _indexStart+1, _indexEnd-_indexStart-1);
+                        _whereClause := SUBSTRING(_whereClause, _indexStart + 1, _indexEnd-_indexStart-1);
                     Else
                         _whereClause := '';
                     End If;
@@ -143,9 +143,9 @@ BEGIN
                             If _indexStart > 0 And _indexEnd > _indexStart Then
                             -- <h1>
 
-                                _part1 := SUBSTRING(_whereClause, 1, _indexStart-1);
-                                _part2 := SUBSTRING(_whereClause, _indexStart, _indexEnd - _indexStart+1);
-                                _part3 := SUBSTRING(_whereClause, _indexEnd+1, char_length(_whereClause));
+                                _part1 := SUBSTRING(_whereClause, 1, _indexStart - 1);
+                                _part2 := SUBSTRING(_whereClause, _indexStart,   _indexEnd - _indexStart + 1);
+                                _part3 := SUBSTRING(_whereClause, _indexEnd + 1, char_length(_whereClause));
 
                                 -- The DatasetTrimmed directive is now in _part2, for example: $ThisDatasetTrimAfter(_Pos)
                                 -- Parse out the text between the parentheses
@@ -154,12 +154,12 @@ BEGIN
                                 _indexEnd   := Position(')' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                                 If _indexStart > 0 And _indexEnd > _indexStart Then
-                                    _textToFind := SUBSTRING(_part2, _indexStart+1, _indexEnd - _indexStart-1);
+                                    _textToFind := SUBSTRING(_part2, _indexStart + 1, _indexEnd - _indexStart - 1);
 
                                     _indexStart := Position(_textToFind In _dataset);
 
                                     If _indexStart > 0 Then
-                                        _dataset := SUBSTRING(_dataset, 1, _indexStart+char_length(_textToFind)-1);
+                                        _dataset := SUBSTRING(_dataset, 1, _indexStart + char_length(_textToFind) - 1);
                                     End If;
 
                                 End If;
@@ -188,9 +188,9 @@ BEGIN
                         If _indexStart > 0 And _indexEnd > _indexStart Then
                         -- <h2>
 
-                            _part1 := SUBSTRING(_whereClause, 1, _indexStart-1);
-                            _part2 := SUBSTRING(_whereClause, _indexStart, _indexEnd - _indexStart+1);
-                            _part3 := SUBSTRING(_whereClause, _indexEnd+1, char_length(_whereClause));
+                            _part1 := SUBSTRING(_whereClause, 1, _indexStart - 1);
+                            _part2 := SUBSTRING(_whereClause, _indexStart,   _indexEnd - _indexStart + 1);
+                            _part3 := SUBSTRING(_whereClause, _indexEnd + 1, char_length(_whereClause));
 
                             -- The replacement command is now in _part2, for example: $Replace(MyLipidDataset,_Pos,)
                             -- Split this command at the ( and , characters to allow us to perform the replacment
@@ -202,7 +202,7 @@ BEGIN
                             -- <i2>
 
                                 -- We have determined the text to search
-                                _textToSearch := SUBSTRING(_part2, _indexStart+1, _indexEnd - _indexStart-1);
+                                _textToSearch := SUBSTRING(_part2, _indexStart + 1, _indexEnd - _indexStart - 1);
 
                                 _indexStart := _indexEnd + 1;
                                 _indexEnd   := Position(',' In Substring(_part2, _indexStart + 1)) + _indexStart;
@@ -224,12 +224,15 @@ BEGIN
                                         -- This would be the case if _specialProcessingText originally contained "$Replace($ThisDataset,"_Pos","")%NEG"}'
                                         _textToFind := REPLACE(_textToFind, '''', '');
                                         _replacement := REPLACE(_replacement, '''', '');
-                                        --select _part2, '[' || _textToSearch || ']', '[' || _textToFind || ']', '[' || _replacement || ']'
+
+                                        -- RAISE INFO '%, [%], [%], [%]', _part2, _textToSearch, _textToFind, _replacement
 
                                         _part2 := REPLACE(_textToSearch, _textToFind, _replacement);
-                                        --select _part2
 
-                                        _whereClause := _part1 + _part2 + _part3;
+                                        -- RAISE INFO '%', _part2;
+
+                                        _whereClause := _part1 || _part2 || _part3;
+
                                     End If; -- <k>
 
                                 End If; -- <j>

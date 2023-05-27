@@ -184,21 +184,21 @@ BEGIN
         -- HPLC Runs - Reference to sample prep request IDs in comma delimited list in text field
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, created)
-        SELECT  _samplePrepRequestID AS ID,
-                Item_ID,
-                Item_Name,
-                'prep_lc_run' AS Item_Type,
-                '' AS Status,
-                created
-        FROM    ( SELECT    LCRun.prep_run_id AS Item_ID,
-                            LCRun.comment as Item_Name,
-                            TL.value AS SPR_ID,
-                            LCRun.created
-                  FROM      t_prep_lc_run LCRun
-                            INNER JOIN LATERAL public.parse_delimited_integer_list(LCRun.sample_prep_requests) As TL On true
-                  WHERE     sample_prep_requests LIKE '%' || _samplePrepRequestID::text || '%'
-                ) TX
-        WHERE   TX.SPR_ID = _samplePrepRequestID;
+        SELECT _samplePrepRequestID AS ID,
+               Item_ID,
+               Item_Name,
+               'prep_lc_run' AS Item_Type,
+               '' AS Status,
+               created
+        FROM ( SELECT LCRun.prep_run_id AS Item_ID,
+                      LCRun.comment as Item_Name,
+                      TL.value AS SPR_ID,
+                      LCRun.created
+               FROM t_prep_lc_run LCRun
+                    INNER JOIN LATERAL public.parse_delimited_integer_list(LCRun.sample_prep_requests) As TL On true
+               WHERE sample_prep_requests LIKE '%' || _samplePrepRequestID::text || '%'
+             ) TX
+        WHERE TX.SPR_ID = _samplePrepRequestID;
 
         ---------------------------------------------------
         -- Mark items for update that are already in database

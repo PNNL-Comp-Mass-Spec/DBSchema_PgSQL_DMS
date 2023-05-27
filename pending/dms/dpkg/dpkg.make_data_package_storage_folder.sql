@@ -85,14 +85,14 @@ BEGIN
 
     SELECT
         _creationParams = '<params>' ||
-        '<package>' || _id::text || '</package>' ||
-        '<local>' || path_local_root || '</local>' ||
-        '<share>' || path_shared_root || '</share>' ||
-        '<year>' || path_year || '</year>' ||
-        '<team>' || path_team || '</team>' ||
-        '<folder>' || package_directory || '</folder>' ||
-        '<cmd>' || _mode || '</cmd>' ||
-        '</params>'
+                          '<package>' || _id::text || '</package>' ||
+                          '<local>' || path_local_root || '</local>' ||
+                          '<share>' || path_shared_root || '</share>' ||
+                          '<year>' || path_year || '</year>' ||
+                          '<team>' || path_team || '</team>' ||
+                          '<folder>' || package_directory || '</folder>' ||
+                          '<cmd>' || _mode || '</cmd>' ||
+                          '</params>'
     FROM
       dpkg.t_data_package
       INNER JOIN dpkg.t_data_package_storage

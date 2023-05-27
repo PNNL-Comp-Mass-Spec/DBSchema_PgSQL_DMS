@@ -401,10 +401,9 @@ BEGIN
             End If; -- </d>
 
             If _infoOnly Then
-                _msg := 'Job ' || _stepInfo.job::text || ', step ' || _stepInfo.step::text || ', _stepInfo.outputFolderName ' || _stepInfo.outputFolderName;
 
-                _msg := _msg || ', _numCompleted ' || _numCompleted::text || ', _numPending ' || _numPending::text || ', _newState ' || _newState::text;
-                RAISE INFO '%', _msg;
+                RAISE INFO 'Job %, step %, _outputFolderName %, _numCompleted %, _numPending %, _newState %',
+                            _stepInfo.job, _stepInfo.step, _stepInfo.outputFolderName, _numCompleted, _numPending, _newState;
             End If;
 
             ---------------------------------------------------

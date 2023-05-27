@@ -44,6 +44,7 @@ DECLARE
     _outputFolder text;
     _removeJobsMessage text;
     _jobMatch int;
+    _msg text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -62,8 +63,6 @@ BEGIN
         _job := Coalesce(_job, 0);
         _sharedResultFolderName := Coalesce(_sharedResultFolderName, '');
         _infoOnly := Coalesce(_infoOnly, false);
-        _message := '';
-        _returnCode:= '';
 
         If _jobs = '' Then
             _message := 'The jobs parameter is empty';
@@ -204,9 +203,14 @@ BEGIN
 
             If _matchCount > 0 Then
 
-                SELECT Job, 'This job likely needs to have it''s Output_Folder field renamed to not be ' || _outputFolder as Message
-                FROM V_Job_Steps
-                WHERE Output_Folder = _outputFolder AND State = 5;
+                FOR _msg IN
+                    SELECT format('Job %s, step %s likely needs to have it''s Output_Folder field renamed to not be %s',
+                                    Job, Step, _outputFolder) As Message
+                    FROM V_Job_Steps
+                    WHERE Output_Folder = _outputFolder AND State = 5
+                LOOP
+                    RAISE INFO '%', _msg;
+                END LOOP;
 
                 If _matchCount = 1 Then
                     SELECT Job

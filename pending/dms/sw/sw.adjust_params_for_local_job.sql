@@ -96,7 +96,8 @@ BEGIN
 
     If FOUND And _sourceJob > 0 Then
 
-        -- PRINT 'sourceJob:' || _sourceJob::text
+        -- RAISE INFO 'SourceJob: %', _sourceJob;
+
         -- look up path to results directory for job given by _sourceJob and add it to temp parameters table
         --
         SELECT Archive_Folder_Path AS ArchiveFolderPath,

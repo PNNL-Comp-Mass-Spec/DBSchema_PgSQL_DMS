@@ -66,75 +66,82 @@ BEGIN
     _jobText := format('job %s', Coalesce(_job::text, '??'));
 
     If _infoOnly Then
-        If Exists (SELECT * FROM sw.t_jobs Then
-                   WHERE job = _job AND;
+        If Exists (SELECT *
+                   FROM sw.t_jobs
+                   WHERE job = _job AND
                          state IN (1, 5, 8) AND
                          NOT job IN ( SELECT JS.job
                                       FROM sw.t_job_steps JS
                                       WHERE JS.job = _job AND
                                             JS.state IN (4, 9) AND
-                                            JS.start >= CURRENT_TIMESTAMP - Interval '48 hours') ) Then
+                                            JS.start >= CURRENT_TIMESTAMP - Interval '48 hours') )
+        Then
 
             ---------------------------------------------------
-            -- Preview deletion of jobs that are new, failed, or holding (job state 1, 5, or 8)
+            -- Job deletion is allowed since state is 1, 5, or 8 (new, failed, or holding), and no running job steps
             ---------------------------------------------------
             --
-            SELECT 'DMS_Pipeline job to be deleted' as Action, *
+            SELECT format('DMS_Pipeline job to be deleted: job %s, state %s, dataset %s', Job, state, dataset)
+            INTO _message
             FROM sw.t_jobs
             WHERE job = _job;
 
-        Else
-            If Exists (SELECT * FROM sw.t_jobs WHERE job = _job) Then
-                SELECT state
-                INTO _jobState
-                FROM sw.t_jobs
-                WHERE job = _job;
-
-                If _jobState IN (2,3,9) Then
-                    _skipMessage := 'DMS_Pipeline job will not be deleted; job is in progress';
-                ElsIf _jobState IN (4,7,14)
-                    _skipMessage := 'DMS_Pipeline job will not be deleted; job completed successfully';
-                Else
-                    _skipMessage := 'DMS_Pipeline job will not be deleted; job state is not New, Failed, or Holding';
-                End If;
-
-                SELECT _skipMessage As Action, *
-                FROM sw.t_jobs
-                WHERE job = _job
-            Else
-                SELECT 'Job not found in sw.t_jobs: ' || _job::text As Action
-            End If;
-        End If;
-
-    Else
-
-        ---------------------------------------------------
-        -- Delete the jobs that are new, failed, or holding (job state 1, 5, or 8)
-        -- Skip any jobs with running job steps that started within the last 2 days
-        ---------------------------------------------------
-        --
-        DELETE FROM sw.t_jobs
-        WHERE job = _job AND
-              state IN (1, 5, 8) AND
-              NOT job IN ( SELECT JS.job
-                           FROM sw.t_job_steps JS
-                           WHERE JS.job = _job AND
-                                 JS.state IN (4, 9) AND
-                                 JS.start >= CURRENT_TIMESTAMP - Interval '48 hours' );
-
-        If FOUND Then
-            _message := format('Deleted analysis %s from sw.t_jobs', _jobText);
             RAISE INFO '%', _message;
-        Else
-            If _jobState IN (2,3,9) Then
-                RAISE INFO 'Pipeline % not deleted; job is in progress', _jobText;
-            ElsIf _jobState IN (4,7,14)
-                RAISE INFO 'Pipeline % not deleted; job completed successfully', _jobText;
-            Else
-                RAISE INFO 'Pipeline % not deleted; job state is not New, Failed, or Holding', _jobText;
-            End If;
+            RETURN;
         End If;
 
+        If Exists (SELECT * FROM sw.t_jobs WHERE job = _job) Then
+            SELECT state
+            INTO _jobState
+            FROM sw.t_jobs
+            WHERE job = _job;
+
+            If _jobState IN (2,3,9) Then
+                _skipMessage := 'DMS_Pipeline job will not be deleted; job is in progress';
+            ElsIf _jobState IN (4,7,14)
+                _skipMessage := 'DMS_Pipeline job will not be deleted; job completed successfully';
+            Else
+                _skipMessage := 'DMS_Pipeline job will not be deleted; job state is not New, Failed, or Holding';
+            End If;
+
+            SELECT format('%s: job %s, state %s, dataset %s', _skipMessage, Job, state, dataset)
+            INTO _message
+            FROM sw.t_jobs
+            WHERE job = _job;
+
+            RAISE WARNING '%', _message;
+            RETURN;
+        End If;
+
+        RAISE WARNING 'Job not found in sw.t_jobs: %', _job;
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
+    -- Delete the jobs that are new, failed, or holding (job state 1, 5, or 8)
+    -- Skip any jobs with running job steps that started within the last 2 days
+    ---------------------------------------------------
+    --
+    DELETE FROM sw.t_jobs
+    WHERE job = _job AND
+          state IN (1, 5, 8) AND
+          NOT job IN ( SELECT JS.job
+                       FROM sw.t_job_steps JS
+                       WHERE JS.job = _job AND
+                             JS.state IN (4, 9) AND
+                             JS.start >= CURRENT_TIMESTAMP - Interval '48 hours' );
+
+    If FOUND Then
+        _message := format('Deleted analysis %s from sw.t_jobs', _jobText);
+        RAISE INFO '%', _message;
+    Else
+        If _jobState IN (2,3,9) Then
+            RAISE WARNING 'Pipeline % not deleted; job is in progress', _jobText;
+        ElsIf _jobState IN (4,7,14)
+            RAISE WARNING 'Pipeline % not deleted; job completed successfully', _jobText;
+        Else
+            RAISE WARNING 'Pipeline % not deleted; job state is not New, Failed, or Holding', _jobText;
+        End If;
     End If;
 
 END

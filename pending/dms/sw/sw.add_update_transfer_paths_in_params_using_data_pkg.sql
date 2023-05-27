@@ -2,7 +2,7 @@
 CREATE OR REPLACE PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pkg
 (
     _dataPackageID int,
-    INOUT _paramsUpdated int = 0,
+    INOUT _paramsUpdated boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default ''
 )
@@ -15,7 +15,7 @@ AS $$
 **      appropriate paths for 'CacheFolderPath' and 'TransferFolderPath'
 **
 **      Updates Tmp_Job_Params to have these paths defined if not yet defined or if different
-**      If Tmp_Job_Params is updated, _paramsUpdated will be set to 1
+**      If Tmp_Job_Params is updated, _paramsUpdated will be set to true
 **
 **      The calling procedure must create and populate table Tmp_Job_Params
 **
@@ -27,7 +27,7 @@ AS $$
 **
 **  Arguments:
 **    _dataPackageID   If 0 or null, will auto-define using parameter 'DataPackageID' in the Tmp_Job_Params table (in section 'JobParameters')
-**    _paramsUpdated   Output: will be 1 if Tmp_Job_Params is updated
+**    _paramsUpdated   Output: will be true if Tmp_Job_Params is updated
 **
 **  Auth:   mem
 **  Date:   06/16/2016 mem - Initial version
@@ -55,7 +55,7 @@ BEGIN
     ---------------------------------------------------
     --
     _dataPackageID := Coalesce(_dataPackageID, 0);
-    _paramsUpdated := 0;
+    _paramsUpdated := false;
 
     ---------------------------------------------------
     -- Update _dataPackageID if 0 yet defined in Tmp_Job_Params
@@ -131,28 +131,28 @@ BEGIN
 
             If _cacheFolderPathOld <> _cacheFolderPath Then
                 DELETE FROM Tmp_Job_Params
-                WHERE Name = 'CacheFolderPath'
-                --
+                WHERE Name = 'CacheFolderPath';
+
                 INSERT INTO Tmp_Job_Params ( Section, Name, Value )
-                VALUES ( 'JobParameters', 'CacheFolderPath', _cacheFolderPath )
+                VALUES ( 'JobParameters', 'CacheFolderPath', _cacheFolderPath );
             End If;
         End If;
 
         If _xferPathOld <> _xferPath Then
             DELETE FROM Tmp_Job_Params
-            WHERE Name = 'TransferFolderPath'
-            --
+            WHERE Name = 'TransferFolderPath';
+
             INSERT INTO Tmp_Job_Params ( Section, Name, Value )
-            VALUES ( 'JobParameters', 'TransferFolderPath', _xferPath )
+            VALUES ( 'JobParameters', 'TransferFolderPath', _xferPath );
         End If;
 
-        Delete From Tmp_Job_Params
-        Where Name = 'DataPackagePath'
-        --
+        DELETE FROM Tmp_Job_Params
+        WHERE Name = 'DataPackagePath';
+
         INSERT INTO Tmp_Job_Params( Section, Name, Value )
         VALUES('JobParameters', 'DataPackagePath', _dataPkgSharePath);
 
-        _paramsUpdated := 1;
+        _paramsUpdated := true;
     End If;
 
 END

@@ -33,7 +33,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _st table (;
     _x xml;
     _xp text;
 BEGIN
@@ -50,7 +49,7 @@ BEGIN
         Section text,
         Name text,
         Value text
-    )
+    );
 
     ---------------------------------------------------
     -- Call get_job_step_params_work to populate the temporary table
@@ -74,7 +73,7 @@ BEGIN
     End If;
 
     If _debugMode Then
-        RAISE INFO '%, GetJobStepParamsXML: populate _st table', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, GetJobStepParamsXML: populate Tmp_SectionNames table', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     --------------------------------------------------------------
@@ -85,11 +84,14 @@ BEGIN
     -- Need a separate table to hold sections
     -- for outer nested 'for xml' query
     --
+    CREATE TEMP TABLE Tmp_SectionNames
+    (
         name text
-    )
-    INSERT INTO _st( name )
+    );
+
+    INSERT INTO Tmp_SectionNames ( name )
     SELECT DISTINCT Section
-    FROM Tmp_JobParamsTable
+    FROM Tmp_JobParamsTable;
 
     If _debugMode Then
         RAISE INFO '%, GetJobStepParamsXML: populate _x xml variable', public.timestamp_text_immutable(clock_timestamp());
@@ -117,7 +119,7 @@ BEGIN
            for xml auto, type
           )
         FROM
-          _st section
+          Tmp_SectionNames section
         for xml auto, type
     )
 
@@ -125,7 +127,7 @@ BEGIN
     -- Add XML version of all parameters to parameter list as its own parameter
     --------------------------------------------------------------
     --
-    _xp := '<sections>' || _x::text || '</sections>';
+    _xp := format('<sections>%s</sections>', _x);
 
     If _debugMode Then
         RAISE INFO '%, GetJobStepParamsXML: exiting', public.timestamp_text_immutable(clock_timestamp());
@@ -138,6 +140,7 @@ BEGIN
     _parameters := _xp;
 
     DROP TABLE Tmp_JobParamsTable;
+    DROP TABLE Tmp_SectionNames;
 
 END
 $$;
