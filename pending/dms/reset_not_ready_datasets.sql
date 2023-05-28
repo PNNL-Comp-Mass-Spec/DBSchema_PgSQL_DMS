@@ -16,7 +16,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   08/06/2003
-**          05/16/2007 mem - Updated to use DS_Last_Affected (Ticket:478)
+**          05/16/2007 mem - Updated to use Last_Affected (Ticket:478)
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          12/15/2023 mem - Ported to PostgreSQL
 **

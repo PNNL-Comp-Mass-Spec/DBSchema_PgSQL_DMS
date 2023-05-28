@@ -76,7 +76,7 @@ BEGIN
                     ) RankQ
                WHERE DatasetRank = 1
                ) LookupQ
-        WHERE Tmp_LCColumns.ID = LookupQ.DS_LC_Column_ID;
+        WHERE Tmp_LCColumns.ID = LookupQ.LC_Column_ID;
 
     End If;
 

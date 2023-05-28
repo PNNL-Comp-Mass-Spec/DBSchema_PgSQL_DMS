@@ -171,14 +171,14 @@ BEGIN
         SET dataset_row_version = DS.dataset_row_version,
             storage_path_row_version = SPath.storage_path_row_version,
             dataset_folder_path = Coalesce(public.combine_paths(SPath.SP_vol_name_client,
-                                         public.combine_paths(SPath.SP_path, Coalesce(DS.DS_folder_name, DS.Dataset_Name))), ''),
+                                           public.combine_paths(SPath.SP_path, Coalesce(DS.folder_name, DS.Dataset_Name))), ''),
             archive_folder_path = CASE
                                       WHEN AP.AP_network_share_path IS NULL THEN ''
                                       ELSE public.combine_paths(AP.AP_network_share_path,
-                                                               Coalesce(DS.DS_folder_name, DS.Dataset_Name))
+                                                               Coalesce(DS.folder_name, DS.Dataset_Name))
                                   End If;,
-            MyEMSL_Path_Flag = '\\MyEMSL\' || public.combine_paths(SPath.SP_path, Coalesce(DS.DS_folder_name, DS.Dataset_Name)),
-            -- Old: Dataset_URL =             SPath.SP_URL + Coalesce(DS.DS_folder_name, DS.Dataset_Name) || '/',
+            MyEMSL_Path_Flag = '\\MyEMSL\' || public.combine_paths(SPath.SP_path, Coalesce(DS.folder_name, DS.Dataset_Name)),
+            -- Old: Dataset_URL =             SPath.SP_URL + Coalesce(DS.folder_name, DS.Dataset_Name) || '/',
             Dataset_URL = CASE WHEN SPath.storage_path_function Like '%inbox%'
                           THEN ''
                           ELSE SPH.URL_Prefix +
@@ -243,14 +243,14 @@ BEGIN
                            DS.dataset_row_version,
                            SPath.storage_path_row_version,
                            Coalesce(public.combine_paths(SPath.SP_vol_name_client,
-                                  public.combine_paths(SPath.SP_path, Coalesce(DS.DS_folder_name, DS.Dataset_Name))), '') AS Dataset_Folder_Path,
+                                  public.combine_paths(SPath.SP_path, Coalesce(DS.folder_name, DS.Dataset_Name))), '') AS Dataset_Folder_Path,
                            CASE
                                WHEN AP.AP_network_share_path IS NULL THEN ''
                                ELSE public.combine_paths(AP.AP_network_share_path,
-                                                        Coalesce(DS.DS_folder_name, DS.Dataset_Name))
+                                                        Coalesce(DS.folder_name, DS.Dataset_Name))
                            END LOOP; AS Archive_Folder_Path,
-                           '\\MyEMSL\' || public.combine_paths(SPath.SP_path, Coalesce(DS.DS_folder_name, DS.Dataset_Name)) AS MyEMSL_Path_Flag,
-                           -- Old:             SPath.SP_URL + Coalesce(DS.DS_folder_name, DS.Dataset_Name) || '/' AS Dataset_URL
+                           '\\MyEMSL\' || public.combine_paths(SPath.SP_path, Coalesce(DS.folder_name, DS.Dataset_Name)) AS MyEMSL_Path_Flag,
+                           -- Old:             SPath.SP_URL + Coalesce(DS.folder_name, DS.Dataset_Name) || '/' AS Dataset_URL
                            CASE WHEN SPath.storage_path_function Like '%inbox%'
                                 THEN ''
                                 ELSE SPH.URL_Prefix +

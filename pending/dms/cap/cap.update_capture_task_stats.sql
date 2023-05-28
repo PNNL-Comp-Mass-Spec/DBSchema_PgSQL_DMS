@@ -56,7 +56,7 @@ BEGIN
          LEFT OUTER JOIN public.T_Dataset DS
            ON JH.Dataset_ID = DS.Dataset_ID
          LEFT OUTER JOIN public.T_Instrument_Name InstName
-           ON DS.DS_instrument_name_ID = InstName.Instrument_ID
+           ON DS.Instrument_ID = InstName.Instrument_ID
     WHERE NOT JH.Start IS NULL
     GROUP BY JH.Script, Coalesce(InstName.In_Name, ''), Extract(year from JH.Start)
 

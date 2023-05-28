@@ -271,7 +271,7 @@ BEGIN
         ---------------------------------------------------
 
         WITH DSCommentClean (dataset_id, comment)
-        AS ( SELECT Dataset_ID, REPLACE(DS_Comment, TextToRemove, '') AS Comment
+        AS ( SELECT Dataset_ID, REPLACE(Comment, TextToRemove, '') AS Comment
              FROM ( SELECT dataset_id, comment,
                            SUBSTRING(comment, AutoSwitchIndex, AutoSwitchIndex + AutoSwitchIndexEnd) AS TextToRemove
                     FROM ( SELECT dataset_id, comment, AutoSwitchIndex,

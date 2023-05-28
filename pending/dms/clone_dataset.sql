@@ -191,14 +191,15 @@ BEGIN
 
         -- Add a new row to t_dataset
         --
-        INSERT INTO t_dataset (dataset, DS_Oper_username, comment, created, DS_instrument_name_ID, DS_LC_column_ID, DS_type_ID,
-                               DS_wellplate_num, DS_well_num, separation_type, dataset_state_id, last_affected, folder_name, DS_storage_path_ID,
-                               -- Remove or update since skipped column: exp_id, DS_internal_standard_ID, dataset_rating_id, DS_Comp_State, DS_Compress_Date, ds_prep_server_name,
-                               acq_time_start, acq_time_end, scan_count, File_Size_Bytes, File_Info_Last_Modified, Interval_to_Next_DS
+
+        INSERT INTO t_dataset (dataset, operator_username, comment, created, instrument_id, lc_column_id, dataset_type_id,
+                               wellplate, well, separation_type, dataset_state_id, last_affected, folder_name, storage_path_ID,
+                               exp_id, internal_standard_id, dataset_rating_id, ds_prep_server_name,
+                               acq_time_start, acq_time_end, scan_count, file_size_bytes, file_info_last_modified, interval_to_next_ds
         )
         SELECT _datasetNew AS Dataset_Name,
             operator_username,
-            'Cloned from dataset ' || _dataset AS DS_comment,
+            'Cloned from dataset ' || _dataset AS Comment,
             CURRENT_TIMESTAMP AS Created,
             instrument_id,
             lc_column_ID,
@@ -207,14 +208,12 @@ BEGIN
             well,
             separation_type,
             dataset_state_id,
-            CURRENT_TIMESTAMP AS DS_Last_Affected,
-            _datasetNew AS DS_folder_name,
+            CURRENT_TIMESTAMP AS Last_Affected,
+            _datasetNew AS folder_name,
             storage_path_ID,
             exp_id,
             internal_standard_ID,
             dataset_rating_id,
-            -- Remove or update since skipped column: DS_Comp_State,
-            -- Remove or update since skipped column: DS_Compress_Date,
             ds_prep_server_name,
             acq_time_start,
             acq_time_end,

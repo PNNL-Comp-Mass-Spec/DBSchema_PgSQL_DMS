@@ -121,9 +121,9 @@ BEGIN
         -- Update the rating
 
         UPDATE DS
-        SET DS_Comment = CASE WHEN DS_comment = '' THEN ''
-                              ELSE format('%s; Not released: SMAQC P_2C = %s', DS_comment, DQC.P_2C::int);
-                         END,
+        SET Comment = CASE WHEN Comment = '' THEN ''
+                           ELSE format('%s; Not released: SMAQC P_2C = %s', Comment, DQC.P_2C);
+                      END,
             dataset_rating_id = - 5
         FROM t_dataset DS
              INNER JOIN Tmp_DatasetsToUpdate U

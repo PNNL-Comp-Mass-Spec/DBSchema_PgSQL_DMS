@@ -20,7 +20,7 @@ AS $$
 **         "Dataset not ready: Exception validating constant file size"
 **
 **  Arguments:
-**    _resetHoldoffHours    Holdoff time to apply to column DS_Last_Affected
+**    _resetHoldoffHours    Holdoff time to apply to column Last_Affected
 **    _maxDatasetsToReset   If greater than 0, will limit the number of datasets to reset
 **    _infoOnly             True to preview the datasets that would be reset
 **    _message              Status message

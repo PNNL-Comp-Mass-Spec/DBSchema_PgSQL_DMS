@@ -121,11 +121,13 @@ BEGIN
         _mergeDeleteCount := 0;
 
         If _mergeInsertCount > 0 OR _mergeUpdateCount > 0 OR _mergeDeleteCount > 0 Then
-            _message := 'Updated t_eus_users: ' || _mergeInsertCount::text || ' added; ' || _mergeUpdateCount::text || ' updated';
-
-            If _mergeDeleteCount > 0 Then
-                _message := _message || '; ' || _mergeDeleteCount::text || ' deleted';
-            End If;
+            _message := format('Updated t_eus_users: %s added; %s updated%s',
+                                _mergeInsertCount,
+                                _mergeUpdateCount,
+                                CASE WHEN _mergeDeleteCount > 0
+                                THEN format('; %s deleted', _mergeDeleteCount)
+                                ELSE ''
+                                END);
 
             CALL post_log_entry ('Normal', _message, 'Update_EUS_Users_From_EUS_Imports');
             _message := '';
@@ -234,11 +236,13 @@ BEGIN
               t_eus_proposals.state_id = 2;
 
         If _mergeInsertCount > 0 OR _mergeUpdateCount > 0 OR _setUnknownCount > 0 Then
-            _message := 'Updated t_eus_proposal_users: ' || _mergeInsertCount::text || ' added; ' || _mergeUpdateCount::text || ' updated';
-
-            If _setUnknownCount > 0 Then
-                _message := _message || '; ' || _setUnknownCount::text || ' set to "unknown association"';
-            End If;
+            _message := format('Updated t_eus_proposal_users: %s added; %s updated%s',
+                                _mergeInsertCount,
+                                _mergeUpdateCount,
+                                CASE WHEN _setUnknownCount > 0
+                                THEN format('; %s set to "unknown association"', _setUnknownCount)
+                                ELSE ''
+                                END);
 
             CALL post_log_entry ('Normal', _message, 'Update_EUS_Users_From_EUS_Imports');
             _message := '';

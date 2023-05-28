@@ -128,7 +128,7 @@ BEGIN
             FROM ( SELECT DI.dataset_id,
                           DI.cache_date,
                           DS.File_Info_Last_Modified,
-                          Dataset_Num,
+                          DS.Dataset,
                           DI.ds_info_xml,
                           DS.Scan_Count AS Scan_Count_Old,
                           DS.File_Size_Bytes AS File_Size_Bytes_Old

@@ -219,15 +219,15 @@ BEGIN
                        WHEN _rating <> '[no change]' THEN _ratingID
                        ELSE dataset_rating_id
                    END AS RatingID_New,
-                   DS_comment AS Comment,
+                   Comment,
                    CASE
-                       WHEN _comment <> '[no change]' THEN DS_comment || ' ' || _comment
-                       ELSE DS_comment
+                       WHEN _comment <> '[no change]' THEN format('%s %s', Comment, _comment)
+                       ELSE Comment
                    END AS Comment_via_Append,
                    CASE
                        WHEN _findText <> '[no change]' AND
-                            _replaceText <> '[no change]' THEN Replace(DS_comment, _findText, _replaceText)
-                       ELSE DS_Comment
+                            _replaceText <> '[no change]' THEN Replace(Comment, _findText, _replaceText)
+                       ELSE Comment
                    END AS Comment_via_Replace
             FROM t_dataset
             WHERE dataset IN ( SELECT Dataset_Name FROM Tmp_DatasetInfo);
