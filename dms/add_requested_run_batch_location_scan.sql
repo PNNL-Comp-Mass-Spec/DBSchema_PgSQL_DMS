@@ -203,10 +203,13 @@ BEGIN
         ON (t.batch_id = s.batch_id AND t.location_id = s.location_id )
         WHEN MATCHED AND (t.first_scan_date < _scanDate OR t.last_scan_date IS NULL OR t.last_scan_date < _scanDate) THEN
             UPDATE SET
-                last_scan_date =  CASE
-                                    WHEN t.last_scan_date IS NULL AND _scanDate < t.first_scan_date THEN t.first_scan_date
-                                    WHEN t.last_scan_date IS NULL OR t.last_scan_date < _scanDate THEN _scanDate
-                                    ELSE t.last_scan_date
+                last_scan_date =   CASE
+                                        -- Copy value from first_scan_date to last_scan_date if we will update first_scan_date
+                                        WHEN t.last_scan_date IS NULL AND _scanDate < t.first_scan_date THEN t.first_scan_date
+                                        -- Update last_scan_date if the value is later than both first_scan_date and last_scan_date (don't allowing storing the same value to both first_scan_date and last_scan_date)
+                                        WHEN t.first_scan_date < _scanDate AND (t.last_scan_date IS NULL OR t.last_scan_date < _scanDate) THEN _scanDate
+                                        -- Otherwise keep the same value
+                                        ELSE t.last_scan_date
                                   END,
                 first_scan_date = CASE
                                     WHEN _scanDate < t.first_scan_date THEN _scanDate
