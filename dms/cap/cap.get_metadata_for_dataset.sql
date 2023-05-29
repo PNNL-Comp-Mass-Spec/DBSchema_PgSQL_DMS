@@ -46,7 +46,7 @@ BEGIN
            DS.dataset_id AS DatasetID,
            InstName.instrument AS Instrument,
            Coalesce(DS.comment, '') AS DatasetComment,
-           DS.separation_type AS SeparationType,
+           DS.separation_type AS SeparationType,                        -- DS_sec_sep
            LCCart.Cart_Name AS LcCartName,
            Coalesce(CartConfig.Cart_Config_Name, '') AS LcCartConfig,
            LCCol.lc_column AS LcColumn,
