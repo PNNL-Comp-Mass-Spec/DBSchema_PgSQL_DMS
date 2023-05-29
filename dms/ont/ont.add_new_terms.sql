@@ -30,7 +30,8 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          05/23/2023 mem - Use format() for string concatenation
 **          05/25/2023 mem - Show a custom message if _ontologyName is BTO, ENVO, or MS
 **                         - Reduce nesting
-**
+**          05/28/2023 mem - Simplify string concatenation
+***
 *****************************************************/
 DECLARE
     _warningMessage text := '';
@@ -111,20 +112,19 @@ BEGIN
 
         _targetTableWithSchema := _targetSchema || '.' || _targetTable;
 
-        _s := '';
-        _s := _s || 'CREATE TABLE %I.%I (';
-        _s := _s ||     ' entry_id int NOT NULL GENERATED ALWAYS AS IDENTITY,';
-        _s := _s ||     ' term_pk citext NOT NULL,';
-        _s := _s ||     ' term_name citext NOT NULL,';
-        _s := _s ||     ' identifier citext NOT NULL,';
-        _s := _s ||     ' is_leaf smallint NOT NULL,';
-        _s := _s ||     ' parent_term_name citext NOT NULL,';
-        _s := _s ||     ' parent_term_id citext NOT NULL,';
-        _s := _s ||     ' grandparent_term_name citext,';
-        _s := _s ||     ' grandparent_term_id citext,';
-        _s := _s ||     ' entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,';
-        _s := _s ||     ' CONSTRAINT pk_' || _targetTable || ' PRIMARY KEY (entry_id)';
-        _s := _s || '); ';
+        _s :=  'CREATE TABLE %I.%I ('
+                  ' entry_id int NOT NULL GENERATED ALWAYS AS IDENTITY,'
+                  ' term_pk citext NOT NULL,'
+                  ' term_name citext NOT NULL,'
+                  ' identifier citext NOT NULL,'
+                  ' is_leaf smallint NOT NULL,'
+                  ' parent_term_name citext NOT NULL,'
+                  ' parent_term_id citext NOT NULL,'
+                  ' grandparent_term_name citext,'
+                  ' grandparent_term_id citext,'
+                  ' entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,' ||
+           format(' CONSTRAINT pk_%s PRIMARY KEY (entry_id)', _targetTable) ||
+              '); ';
 
         If _previewSql Then
             RAISE INFO '%', format(_s, _targetSchema, _targetTable);
@@ -132,11 +132,10 @@ BEGIN
             EXECUTE format(_s, _targetSchema, _targetTable);
         End If;
 
-        _s := '';
-        _s := _s || 'CREATE INDEX ix_' || _targetTable || '_term_name ON ' || _targetTableWithSchema || ' USING btree (term_name); ';
-        _s := _s || 'CREATE INDEX ix_' || _targetTable || '_identifier ON ' || _targetTableWithSchema || ' USING btree (identifier) INCLUDE (term_name); ';
-        _s := _s || 'CREATE INDEX ix_' || _targetTable || '_parent_term_name ON ' || _targetTableWithSchema || ' USING btree (parent_term_name); ';
-        _s := _s || 'CREATE INDEX ix_' || _targetTable || '_grandparent_term_name ON ' || _targetTableWithSchema || ' USING btree (grandparent_term_name);';
+        _s := format('CREATE INDEX ix_%s_term_name             ON %s USING btree (term_name); ', _targetTable, _targetTableWithSchema) ||
+              format('CREATE INDEX ix_%s_identifier            ON %s USING btree (identifier) INCLUDE (term_name); ', _targetTable, _targetTableWithSchema) ||
+              format('CREATE INDEX ix_%s_parent_term_name      ON %s USING btree (parent_term_name); ', _targetTable, _targetTableWithSchema) ||
+              format('CREATE INDEX ix_%s_grandparent_term_name ON %s USING btree (grandparent_term_name);', _targetTable, _targetTableWithSchema);
 
         If _previewSql Then
             RAISE INFO '%', _s;
@@ -163,20 +162,18 @@ BEGIN
 
         /*
          * Old
-        _s := '';
-        _s := _s || ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, parent_term_name, Parent_term_Identifier, grandparent_term_name, grandparent_term_identifier';
-        _s := _s || ' FROM ' || _sourceTable;
-        _s := _s || ' WHERE NOT parent_term_identifier Is Null AND NOT identifier IN ( SELECT identifier::citext FROM ' || _targetTableWithSchema || ' )';
+        _s :=        ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, parent_term_name, Parent_term_Identifier, grandparent_term_name, grandparent_term_identifier' ||
+              format(' FROM %s', _sourceTable) ||
+              format(' WHERE NOT parent_term_identifier Is Null AND NOT identifier IN ( SELECT identifier::citext FROM %s )', _targetTableWithSchema);
         */
 
-        _s := '';
-        _s := _s ||  'SELECT DISTINCT s.term_pk, s.term_name, s.identifier' || CASE WHEN _infoOnly Then '::citext, ' Else '::int, ' END;
-        _s := _s ||                  's.is_leaf, s.parent_term_name, s.Parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier';
-        _s := _s || ' FROM ' || _sourceTable || ' s';
-        _s := _s || '      LEFT OUTER JOIN ' || _targetTableWithSchema || ' t';
-        _s := _s || '        ON s.identifier::int = t.identifier';
-        _s := _s || ' WHERE NOT s.parent_term_identifier Is Null AND';
-        _s := _s || '       t.identifier Is Null';
+        _s := format('SELECT DISTINCT s.term_pk, s.term_name, s.identifier%s', CASE WHEN _infoOnly Then '::citext, ' Else '::int, ' END)                ||
+              format(                's.is_leaf, s.parent_term_name, s.Parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier') ||
+              format(' FROM %s s', _sourceTable) ||
+              format('      LEFT OUTER JOIN %s t', _targetTableWithSchema) ||
+                     '        ON s.identifier::int = t.identifier'
+                     ' WHERE NOT s.parent_term_identifier Is Null AND'
+                     '       t.identifier Is Null';
 
     Else
         -- Other identifiers do start with the ontology name
@@ -184,18 +181,17 @@ BEGIN
 
         _sourceTable := 'ont.v_term_lineage';
 
-        _insertSql := 'INSERT INTO ' || _targetTableWithSchema || ' ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id )';
+        _insertSql := format('INSERT INTO %s ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id )', _targetTableWithSchema);
 
-        _s := '';
-        _s := _s ||  'SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, ';
-        _s := _s ||                  's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier';
-        _s := _s || ' FROM ( SELECT * FROM ' || _sourceTable || '';
-        _s := _s ||        ' WHERE ontology = ''' || _ontologyName || ''' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL ) s';
-        _s := _s ||      ' LEFT OUTER JOIN ( SELECT identifier, parent_term_id, grandparent_term_id FROM ' || _targetTableWithSchema || ' ) t';
-        _s := _s ||          ' ON s.identifier = t.identifier AND';
-        _s := _s ||             ' s.parent_term_identifier = t.parent_term_id AND ';
-        _s := _s ||             ' Coalesce(s.grandparent_term_identifier, '''') = Coalesce(t.grandparent_term_id, '''')';
-        _s := _s || ' WHERE t.identifier Is Null;';
+        _s :=        'SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, '
+                              's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier'       ||
+             format(' FROM ( SELECT * FROM %s', _sourceTable)                                                                              ||
+             format(' WHERE ontology = ''%s'' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL ) s', _ontologyName)      ||
+             format(' LEFT OUTER JOIN ( SELECT identifier, parent_term_id, grandparent_term_id FROM %s ) t', _targetTableWithSchema) ||
+                             ' ON s.identifier = t.identifier AND'
+                                ' s.parent_term_identifier = t.parent_term_id AND '
+                                ' Coalesce(s.grandparent_term_identifier, '''') = Coalesce(t.grandparent_term_id, '''')'
+                    ' WHERE t.identifier Is Null;';
 
     End If;
 

@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable public.citext DEF
 **          10/04/2022 mem - Change _infoOnly and _previewDeleteExtras from integer to boolean
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Capitalize reserved words
+**          05/28/2023 mem - Simplify string concatenation
 **
 *****************************************************/
 DECLARE
@@ -108,13 +109,12 @@ BEGIN
         entry_id int primary key generated always as identity
     );
 
-    _s := '';
-    _s := _s || ' INSERT INTO Tmp_SourceData';
-    _s := _s || ' SELECT term_pk, term_name, identifier, is_leaf, synonyms,';
-    _s := _s || '   parent_term_name, parent_term_id,';
-    _s := _s || '   grandparent_term_name, grandparent_term_id, 0 as matches_existing';
-    _s := _s || ' FROM %I.%I';
-    _s := _s || ' WHERE parent_term_name <> '''' And term_pk Similar To ''ENVO%''';
+    _s := ' INSERT INTO Tmp_SourceData'
+          ' SELECT term_pk, term_name, identifier, is_leaf, synonyms,'
+          '   parent_term_name, parent_term_id,'
+          '   grandparent_term_name, grandparent_term_id, 0 as matches_existing'
+          ' FROM %I.%I'
+          ' WHERE parent_term_name <> '''' And term_pk Similar To ''ENVO%''';
 
     EXECUTE format(_s, _sourceSchema, _sourceTable);
 
