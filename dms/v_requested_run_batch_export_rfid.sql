@@ -11,7 +11,8 @@ CREATE VIEW public.v_requested_run_batch_export_rfid AS
     requestedrunstats.active_requests,
     rrb.requested_instrument_group AS inst_group,
     rrb.created,
-    rrb.rfid_hex_id AS hexid
+    rrb.rfid_hex_id AS hexid,
+    rrb.rfid_hex_id AS hex_id
    FROM ((public.t_requested_run_batches rrb
      LEFT JOIN public.t_users ON ((rrb.owner_user_id = t_users.user_id)))
      LEFT JOIN ( SELECT rr1.batch_id,
