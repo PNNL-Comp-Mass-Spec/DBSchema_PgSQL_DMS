@@ -26,6 +26,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          08/19/2016 mem - Call UpdateCachedDatasetFolderPaths
 **          09/02/2016 mem - Replace archive\dmsarch with simply dmsarch due to switch from \\aurora.emsl.pnl.gov\archive\dmsarch\ to \\adms.emsl.pnl.gov\dmsarch\
+**          05/28/2023 mem - Remove unnecessary call to Replace()
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -201,56 +202,54 @@ BEGIN
             -----------------------------------------
             -- Look for this dataset in t_dataset_archive
             -----------------------------------------
-            _archivePathID := -1;
 
             SELECT storage_path_id
             INTO _archivePathID
             FROM t_dataset_archive
             WHERE dataset_id = _datasetInfo.DatasetID;
 
-            If _archivePathID >= 0 Then
-            -- <c2>
-                -----------------------------------------
-                -- Lookup the auto-defined archive path
-                -----------------------------------------
-                --
+            If Not FOUND Then
+                CONTINUE;
+            End If;
 
-                _archivePathIDNew := get_instrument_archive_path_for_new_datasets (
-                                            _datasetInfo.InstrumentID, _datasetInfo.DatasetID, _autoSwitchActiveArchive => false, _infoOnly => false);
+            -----------------------------------------
+            -- Lookup the auto-defined archive path
+            -----------------------------------------
+            --
 
-                If _archivePathIDNew <> 0 And _archivePathID <> _archivePathIDNew Then
-                -- <d2>
+            _archivePathIDNew := get_instrument_archive_path_for_new_datasets (
+                                        _datasetInfo.InstrumentID, _datasetInfo.DatasetID, _autoSwitchActiveArchive => false, _infoOnly => false);
 
-                    SELECT OldArchive.Path || ' ' || NewArchive.Path
-                    INTO _moveCmd
-                    FROM ( SELECT REPLACE(network_share_path || '\' || _datasetInfo.Dataset, '\dmsarch\', '\dmsarch\') AS Path
-                           FROM t_archive_path
-                           WHERE archive_path_id = _archivePathID
-                         ) OldArchive
-                         CROSS JOIN
-                         ( SELECT REPLACE(network_share_path || '\' || _datasetInfo.Dataset, '\dmsarch\', '\dmsarch\') AS Path
-                           FROM t_archive_path
-                           WHERE archive_path_id = _archivePathIDNew
-                         ) NewArchive;
+            If _archivePathIDNew = 0 Or _archivePathID = _archivePathIDNew Then
+                CONTINUE;
+            End If;
 
-                    If Not _infoOnly Then
+            SELECT format('%s %s', OldArchive.Path, NewArchive.Path)
+            INTO _oldAndNewPaths
+            FROM ( SELECT format('%s\%s', network_share_path, _datasetInfo.Dataset) AS Path
+                   FROM t_archive_path
+                   WHERE archive_path_id = _archivePathID
+                 ) OldArchive
+                 CROSS JOIN
+                 ( SELECT format('%s\%s', network_share_path, _datasetInfo.Dataset) AS Path
+                   FROM t_archive_path
+                   WHERE archive_path_id = _archivePathIDNew
+                 ) NewArchive;
 
-                        UPDATE t_dataset_archive
-                        SET storage_path_id = _archivePathIDNew
-                        WHERE dataset_id = _datasetInfo.DatasetID
+            If Not _infoOnly Then
 
-                        INSERT INTO t_dataset_storage_move_log (dataset_id, archive_path_old, archive_path_new, MoveCmd)
-                        VALUES (_datasetInfo.DatasetID, _archivePathID, _archivePathIDNew, _moveCmd);
+                UPDATE t_dataset_archive
+                SET storage_path_id = _archivePathIDNew
+                WHERE dataset_id = _datasetInfo.DatasetID
 
-                    Else
-                        RAISE INFO '%', _moveCmd;
-                    End If;
+                INSERT INTO t_dataset_storage_move_log (dataset_id, archive_path_old, archive_path_new, MoveCmd)
+                VALUES (_datasetInfo.DatasetID, _archivePathID, _archivePathIDNew, _oldAndNewPaths);
 
-                End If; -- </d2>
+            Else
+                RAISE INFO '%', _oldAndNewPaths;
+            End If;
 
-            End If; -- </c2>
-
-        END LOOP; -- </a>
+        END LOOP;
 
         If Not _infoOnly Then
             UPDATE t_cached_dataset_folder_paths Target
