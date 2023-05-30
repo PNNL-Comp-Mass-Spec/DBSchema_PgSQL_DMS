@@ -34,10 +34,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
     --
-    _type := Rtrim(Ltrim(Coalesce(_type, 'Error')));
-    _message := Rtrim(Ltrim(Coalesce(_message, '')));
-    _postedBy := Rtrim(Ltrim(Coalesce(_postedBy, 'Unknown')));
-    _recipients := Rtrim(Ltrim(Coalesce(_recipients, '')));
+    _type := Trim(Coalesce(_type, 'Error'));
+    _message := Trim(Coalesce(_message, ''));
+    _postedBy := Trim(Coalesce(_postedBy, 'Unknown'));
+    _recipients := Trim(Coalesce(_recipients, ''));
     _postMessageToLogEntries := Coalesce(_postMessageToLogEntries, 1);
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
 
@@ -58,18 +58,18 @@ BEGIN
         SELECT server
         INTO _recipients
         FROM   t_misc_paths
-        WHERE (path_function = 'Email_alert_' || _recipients)
+        WHERE (path_function = format('Email_alert_%s', _recipients);
     End If;
 
     If _recipients = '' Then
-        -- Use the default recipients
+        -- Use the default recipients (admins)
         SELECT server
         INTO _recipients
         FROM t_misc_paths
         WHERE path_function = 'Email_alert_admins';
 
         If _recipients = '' Then
-            _recipients := 'proteomics_pnnl.gov';
+            _recipients := 'proteomics@pnnl.gov';
         End If;
     End If;
 

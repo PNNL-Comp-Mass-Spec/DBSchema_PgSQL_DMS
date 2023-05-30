@@ -167,31 +167,27 @@ BEGIN
     -- Populate Tmp_ParamFiles
     -----------------------------------------
 
-    _sStart := '';
-    _s := '';
+    _sStart := 'INSERT INTO Tmp_ParamFiles (Param_File_ID, Param_File_Name, Param_File_Type_ID, Param_File_Type)';
 
-    _sStart := _sStart || ' INSERT INTO Tmp_ParamFiles (Param_File_ID, Param_File_Name, Param_File_Type_ID, Param_File_Type)';
-    _sStart := _sStart || ' SELECT ';
-
-    _s := _s || ' PF.param_file_id,';
-    _s := _s ||        ' PF.param_file_name,';
-    _s := _s ||        ' PF.param_file_type_id,';
-    _s := _s ||        ' PFT.param_file_type';
-    _s := _s || ' FROM t_param_files PF INNER JOIN ';
-    _s := _s ||   ' t_param_file_types PFT ON PF.param_file_type_id = PFT.param_file_type_id INNER JOIN ';
-    _s := _s ||      ' Tmp_ParamFileTypeFilter PFTF ON PFT.param_file_type = PFTF.param_file_type ';
+    _s := ' SELECT PF.param_file_id,'
+                 ' PF.param_file_name,'
+                 ' PF.param_file_type_id,'
+                 ' PFT.param_file_type'
+          ' FROM t_param_files PF INNER JOIN '
+               ' t_param_file_types PFT ON PF.param_file_type_id = PFT.param_file_type_id INNER JOIN '
+               ' Tmp_ParamFileTypeFilter PFTF ON PFT.param_file_type = PFTF.param_file_type';
 
     If _checkValidOnly Then
-        _s := _s || ' WHERE PF.Valid <> 0';
+        _s := format('%s WHERE PF.Valid <> 0', _s);
     Else
-        _s := _s || ' WHERE PF.Valid = PF.Valid';
+        _s := format('%s WHERE true, _s)';
     End If;
 
     If char_length(_paramFileNameFilter) > 0 Then
-        _s := _s || ' AND (' || public.create_like_clause_from_separated_string(_paramFileNameFilter, 'Param_File_Name', ',') || ')';
+        _s := format('%s AND (%s)', _s, public.create_like_clause_from_separated_string(_paramFileNameFilter, 'Param_File_Name', ','));
     End If;
 
-    _s := _s || ' ORDER BY Param_File_Type, Param_File_ID';
+    _s := format('%s ORDER BY Param_File_Type, Param_File_ID', _s);
 
     If _previewSql Then
         RAISE INFO '% %', _sStart, _s;
@@ -200,17 +196,14 @@ BEGIN
     End If;
 
     If _previewSql Then
-        -- Populate Tmp_ParamFileTypeFilter with the first parameter file matching the filters
-        _sStart := '';
-        _sStart := _sStart || ' INSERT INTO Tmp_ParamFiles (Param_File_ID, Param_File_Name, Param_File_Type_ID, Param_File_Type)';
-        _sStart := _sStart || ' SELECT ';
+        -- Populate Tmp_ParamFiles with the first parameter file matching the filters
 
         EXECUTE (_sStart || _s || ' LIMIT 1');
     End If;
 
     If _previewSql Then
         -- ToDo: Update this to use RAISE INFO
-        SELECT *;
+        SELECT *
         FROM Tmp_ParamFiles
         ORDER BY Entry_ID;
     End If;
@@ -522,18 +515,17 @@ BEGIN
                 -- Find all other parameter files that don't have any param entries
                 -----------------------------------------
                 --
-                _s := '';
-                _s := _s || ' INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)';
-                _s := _s || ' SELECT PF.param_file_id';
-                _s := _s || ' FROM t_param_files PF LEFT OUTER JOIN';
-                _s := _s ||      ' Tmp_ParamEntries PE ON ';
-                _s := _s ||      ' PF.param_file_id = PE.param_file_id AND PE.Compare';
-                _s := _s || ' WHERE PE.param_file_id IS NULL AND ';
-                _s := _s ||       ' PF.param_file_id <> $1 AND';
-                _s := _s ||       ' PF.param_file_type_id = $2';
+                _s :=  ' INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)'
+                       ' SELECT PF.param_file_id'
+                       ' FROM t_param_files PF LEFT OUTER JOIN'
+                            ' Tmp_ParamEntries PE ON '
+                            ' PF.param_file_id = PE.param_file_id AND PE.Compare'
+                       ' WHERE PE.param_file_id IS NULL AND '
+                             ' PF.param_file_id <> $1 AND'
+                             ' PF.param_file_type_id = $2';
 
                 If _checkValidOnly Then
-                    _s := _s || ' AND PF.Valid <> 0';
+                    _s := format('%s AND PF.Valid <> 0', _s);
                 End If;
 
                 If _previewSql Then

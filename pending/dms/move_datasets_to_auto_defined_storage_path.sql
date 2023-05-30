@@ -36,7 +36,7 @@ DECLARE
     _storagePathIDNew int;
     _archivePathID int;
     _archivePathIDNew int;
-    _moveCmd text;
+    _oldAndNewPaths text;
     _callingProcName text;
 
     _sqlState text;
@@ -170,35 +170,33 @@ BEGIN
                                     _infoOnly => false);
 
             If _storagePathIDNew <> 0 And _datasetInfo.StoragePathID <> _storagePathIDNew Then
-            -- <c1>
 
                 SELECT OldStorage.Path || ' ' || NewStorage.Path
-                INTO _moveCmd
-                FROM ( SELECT '\\' || machine_name || '\' || SUBSTRING(vol_name_server, 1, 1) || '$\' || storage_path || _datasetInfo.Dataset AS Path
+                INTO _oldAndNewPaths
+                FROM ( SELECT format('\\%s\%s$\%s%s', machine_name, SUBSTRING(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
                        FROM t_storage_path
                        WHERE storage_path_id = _datasetInfo.StoragePathID
                      ) OldStorage
                      CROSS JOIN
-                     ( SELECT '\\' || machine_name || '\' || SUBSTRING(vol_name_server, 1, 1) || '$\' || storage_path || _datasetInfo.Dataset AS Path
+                     ( SELECT format('\\%s\%s$\%s%s', machine_name, SUBSTRING(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
                        FROM t_storage_path
                        WHERE storage_path_id = _storagePathIDNew
                      ) NewStorage;
 
                 If Not _infoOnly Then
-                -- <d1>
 
                     UPDATE t_dataset
                     SET storage_path_ID = _storagePathIDNew
                     WHERE dataset_id = _datasetInfo.DatasetID;
 
                     INSERT INTO t_dataset_storage_move_log (dataset_id, storage_path_old, storage_path_new, MoveCmd)
-                    VALUES (_datasetInfo.DatasetID, _datasetInfo.StoragePathID, _storagePathIDNew, _moveCmd);
+                    VALUES (_datasetInfo.DatasetID, _datasetInfo.StoragePathID, _storagePathIDNew, _oldAndNewPaths);
 
                 Else
-                    RAISE INFO '%', _moveCmd;
+                    RAISE INFO '%', _oldAndNewPaths;
                 End If;
 
-            End If; -- </c1>
+            End If;
 
             -----------------------------------------
             -- Look for this dataset in t_dataset_archive

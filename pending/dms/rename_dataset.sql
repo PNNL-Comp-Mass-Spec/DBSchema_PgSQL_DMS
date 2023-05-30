@@ -250,12 +250,12 @@ BEGIN
                    DS.Dataset_ID,
                    DS.Created   AS Dataset_Created,
                    CASE WHEN DS.Exp_ID = _newExperimentID
-                        THEN DS.Exp_ID::text || ' (Unchanged)'
-                        ELSE DS.Exp_ID::text || ' -> ' || _newExperimentID::text
+                        THEN format('%s (Unchanged)', DS.Exp_ID)
+                        ELSE format('%s -> %s', DS.Exp_ID, _newExperimentID)
                    END AS Experiment_ID,
                    CASE WHEN E.Experiment = _newExperiment
-                        THEN E.Experiment || ' (Unchanged)'
-                        ELSE E.Experiment || ' -> ' || _newExperiment
+                        THEN format('%s (Unchanged)', E.Experiment)
+                        ELSE format('%s -> %s', E.Experiment, _newExperiment)
                    END AS Experiment
             FROM t_dataset DS
                  INNER JOIN t_experiments AS E
@@ -289,11 +289,11 @@ BEGIN
             -- The dataset was already renamed
             RETURN QUERY
             SELECT _datasetNameOld  AS Dataset_Name_Old,
-                   DS.dataset   AS Dataset_Name_New,
+                   DS.dataset       AS Dataset_Name_New,
                    DS.dataset_id,
-                   DS.created    AS Dataset_Created,
+                   DS.created       AS Dataset_Created,
                    DS.exp_id        AS Experiment_ID,
-                   E.experiment AS Experiment,
+                   E.experiment     AS Experiment,
                    Case When _datasetAlreadyRenamed Then 'Yes' Else 'No' End As Dataset_Already_Renamed
             FROM t_dataset DS
                  INNER JOIN t_experiments AS E
@@ -307,12 +307,12 @@ BEGIN
                    Dataset_ID,
                    Created      AS Dataset_Created,
                    CASE WHEN DS.Exp_ID = _newExperimentID
-                        THEN DS.Exp_ID::text || ' (Unchanged)'
-                        ELSE DS.Exp_ID::text || ' -> ' || _newExperimentID::text
+                        THEN format('%s (Unchanged)', DS.Exp_ID)
+                        ELSE format('%s -> %s', DS.Exp_ID, _newExperimentID)
                    END AS Experiment_ID,
                    CASE WHEN E.Experiment = _newExperiment
-                        THEN E.Experiment || ' (Unchanged)'
-                        ELSE E.Experiment || ' -> ' || _newExperiment
+                        THEN format('%s (Unchanged)', E.Experiment)
+                        ELSE format('%s -> %s', E.Experiment, _newExperiment)
                    END AS Experiment
             FROM t_dataset DS
                  INNER JOIN t_experiments AS E

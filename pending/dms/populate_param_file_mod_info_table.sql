@@ -7,7 +7,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table
     _useModMassAlternativeName int = 0,
     _massModFilterTextColumn text = '',
     _massModFilterText text = '',
-    _massModFilterSql text = ''output,
+    inout _massModFilterSql text default '',
     INOUT _message text default '',
     INOUT _returnCode text default ''
 )
@@ -41,6 +41,7 @@ DECLARE
     _continueAppendDescriptions boolean;
     _modTypeFilter text;
     _s text;
+    _sqlAddon text;
     _mmd text;
     _massModFilterComparison text;
     _addFilter boolean;
@@ -93,13 +94,12 @@ BEGIN
     -- Populate Tmp_ParamFileModInfo
     -----------------------------------------------------------
 
-    _s := '';
-    _s := _s || ' INSERT INTO Tmp_ParamFileModInfo (Param_File_ID, Mod_Entry_ID, ModType, Mod_Description)';
-    _s := _s || ' SELECT PFMM.Param_File_ID, PFMM.Mod_Entry_ID, ';
-    _s := _s ||         ' MT.Mod_Type_Synonym + CASE WHEN R.Residue_Symbol IN (''['',''<'') THEN ''_N''';
-    _s := _s ||                               ' WHEN R.Residue_Symbol IN ('']'',''>'') THEN ''_C''';
-    _s := _s ||                               ' ELSE ''_'' || R.Residue_Symbol ';
-    _s := _s ||                               ' END AS ModType,';
+    _s := ' INSERT INTO Tmp_ParamFileModInfo (Param_File_ID, Mod_Entry_ID, ModType, Mod_Description)'
+          ' SELECT PFMM.Param_File_ID, PFMM.Mod_Entry_ID, '
+                  ' MT.Mod_Type_Synonym + CASE WHEN R.Residue_Symbol IN (''['',''<'') THEN ''_N'''
+                                        ' WHEN R.Residue_Symbol IN ('']'',''>'') THEN ''_C'''
+                                        ' ELSE ''_'' || R.Residue_Symbol '
+                                        ' END AS ModType,';
 
     If _showModSymbol <> 0 Then
         _s := _s || ' Coalesce(Local_Symbol, ''-'') ';
@@ -128,14 +128,13 @@ BEGIN
         End If;
     End If;
 
-    _s := _s ||     ' AS Mod_Description';
-
-    _s := _s || ' FROM Tmp_ParamFileInfo PFI INNER JOIN ';
-    _s := _s ||      ' t_param_file_mass_mods PFMM ON PFI.param_file_id = PFMM.param_file_id INNER JOIN';
-    _s := _s ||      ' t_mass_correction_factors MCF ON PFMM.mass_correction_id = MCF.mass_correction_id INNER JOIN';
-    _s := _s ||      ' t_residues R ON PFMM.residue_id = R.residue_id INNER JOIN';
-    _s := _s ||      ' t_modification_types MT ON PFMM.mod_type_symbol = MT.mod_type_symbol INNER JOIN';
-    _s := _s ||      ' t_seq_local_symbols_list LSL ON PFMM.local_symbol_id = LSL.local_symbol_id';
+    _s := _s ||     ' AS Mod_Description'
+                ' FROM Tmp_ParamFileInfo PFI INNER JOIN '
+                     ' t_param_file_mass_mods PFMM ON PFI.param_file_id = PFMM.param_file_id INNER JOIN'
+                     ' t_mass_correction_factors MCF ON PFMM.mass_correction_id = MCF.mass_correction_id INNER JOIN'
+                     ' t_residues R ON PFMM.residue_id = R.residue_id INNER JOIN'
+                     ' t_modification_types MT ON PFMM.mod_type_symbol = MT.mod_type_symbol INNER JOIN'
+                     ' t_seq_local_symbols_list LSL ON PFMM.local_symbol_id = LSL.local_symbol_id';
 
     EXECUTE _s;
 
@@ -174,12 +173,13 @@ BEGIN
     --  have blank, non-Null values for these new columns
     -----------------------------------------------------------
 
-    _s := '';
-    _s := _s || ' ALTER TABLE Tmp_ParamFileModResults ADD ';
+    _s := ' ALTER TABLE Tmp_ParamFileModResults ADD ';
 
     SELECT string_agg(format('[%s] text DEFAULT ('''') WITH VALUES ', ModType), ', ' ORDER BY UniqueRowID)
-    INTO _s
+    INTO _sqlAddon
     FROM Tmp_ColumnHeaders;
+
+    _s := format('%s%s', _s, _sqlAddon);
 
     -- Execute the Sql to alter the table
     EXECUTE _s;
@@ -207,22 +207,20 @@ BEGIN
 
             _modTypeFilter := format('(ModType = ''%s'')', _currentColumn);
 
-            _mmd := '';
-            _mmd := _mmd || ' SELECT Param_File_ID, MIN(Mod_Description) AS Mod_Description';
-            _mmd := _mmd || ' FROM Tmp_ParamFileModInfo';
-            _mmd := _mmd || ' WHERE Used = 0 AND ' || _modTypeFilter;
-            _mmd := _mmd || ' GROUP BY Param_File_ID';
+            _mmd :=        ' SELECT Param_File_ID, MIN(Mod_Description) AS Mod_Description' ||
+                           ' FROM Tmp_ParamFileModInfo'                                     ||
+                    format(' WHERE Used = 0 AND %s', _modTypeFilter)                        ||
+                           ' GROUP BY Param_File_ID';
 
-            _s := '';
-            _s := _s || ' UPDATE Tmp_ParamFileModResults';
-            _s := _s || ' SET %I = %I || ';
-            _s := _s ||            ' CASE WHEN char_length(%I) > 0';
-            _s := _s ||            ' THEN '', '' ';
-            _s := _s ||            ' ELSE '''' ';
-            _s := _s ||            ' END || SourceQ.Mod_Description';
-            _s := _s || ' FROM Tmp_ParamFileModResults PFMR INNER JOIN';
-            _s := _s ||      ' (' || _mmd || ') SourceQ ';
-            _s := _s ||      ' ON PFMR.Param_File_ID = SourceQ.Param_File_ID';
+            _s := ' UPDATE Tmp_ParamFileModResults'
+                  ' SET %I = %I || '
+                             ' CASE WHEN char_length(%I) > 0'
+                             ' THEN '', '' '
+                             ' ELSE '''' '
+                             ' END || SourceQ.Mod_Description'
+                  ' FROM Tmp_ParamFileModResults PFMR INNER JOIN' ||
+                format(' (%s) SourceQ ', _mmd)                    ||
+                       ' ON PFMR.Param_File_ID = SourceQ.Param_File_ID';
             --
             EXECUTE format(_s, _currentColumn, _currentColumn, _currentColumn);
             --
@@ -231,14 +229,13 @@ BEGIN
             If _updateCount = 0 Then
                 _continueAppendDescriptions := false;
             Else
-                _s := '';
-                _s := _s || ' UPDATE Tmp_ParamFileModInfo';
-                _s := _s || ' SET Used = 1';
-                _s := _s || ' FROM Tmp_ParamFileModInfo PFMI INNER JOIN';
-                _s := _s ||      ' (' || _mmd || ') SourceQ';
-                _s := _s ||      ' ON PFMI.Param_File_ID = SourceQ.Param_File_ID AND';
-                _s := _s ||         ' PFMI.Mod_Description = SourceQ.Mod_Description';
-                _s := _s || ' WHERE ' || _modTypeFilter;
+                _s :=        ' UPDATE Tmp_ParamFileModInfo'
+                             ' SET Used = 1'
+                             ' FROM Tmp_ParamFileModInfo PFMI INNER JOIN'              ||
+                           format(' (%s) SourceQ', _mmd)                               ||
+                                  ' ON PFMI.Param_File_ID = SourceQ.Param_File_ID AND' ||
+                                     ' PFMI.Mod_Description = SourceQ.Mod_Description' ||
+                      format(' WHERE %s', _modTypeFilter);
                 --
                 EXECUTE _s;
 
@@ -249,6 +246,7 @@ BEGIN
         -----------------------------------------------------------
         -- Possibly populate _massModFilterSql
         -----------------------------------------------------------
+
         If char_length(_massModFilterText) > 0 Then
             _addFilter := true;
             If char_length(_massModFilterComparison) > 0 Then
@@ -264,7 +262,7 @@ BEGIN
 
                 _massModFilterSql := _massModFilterSql ||
                                      format(' %I ', _currentColumn) ||
-                                     'LIKE ''%' || _massModFilterText || '%''';
+                                     'SIMILAR TO ''%' || _massModFilterText || '%''';
             End If;
         End If;
 

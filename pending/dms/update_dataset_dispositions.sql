@@ -252,7 +252,7 @@ BEGIN
             If _curComment <> '' AND _comment <> '' Then
                 -- Append the new comment only if it is not already present
                 If Position(_comment In _curComment) <= 0 Then
-                    _curComment := _curComment || '; ' || _comment;
+                    _curComment := format('%s; %s', _curComment, _comment);
                 End If;
 
             ElsIf _curComment = '' AND _comment <> '' Then

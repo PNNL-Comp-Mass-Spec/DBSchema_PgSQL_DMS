@@ -112,7 +112,7 @@ BEGIN
     ---------------------------------------------------
 
     If NOT EXISTS (SELECT * FROM t_analysis_job where job = _job) Then
-        _message := 'job not found in t_analysis_job: ' || _job::text;
+        _message := format('job not found in t_analysis_job: %s', _job);
         _returnCode := 'U5201';
         RETURN;
     End If;

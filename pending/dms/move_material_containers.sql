@@ -165,7 +165,7 @@ BEGIN
         ORDER BY Entry_ID
 
     LOOP
-        _locationTagNew := _freezerTagNew || '.' || CAST(_shelfNew as text) || '.' || CAST(_rackNew as text) || '.' || _row || '.' || _col;
+        _locationTagNew := format('%s.%s.%s.%s.%s', _freezerTagNew, _shelfNew, _rackNew, _row, _col);
         _numContainers := 1;
 
         SELECT ml.location_id,

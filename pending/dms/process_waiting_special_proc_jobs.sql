@@ -196,7 +196,7 @@ BEGIN
 
                         If Not FOUND Then
                             _readyToProcess := false;
-                            _jobMessage := 'Source job ' || _sourceJob::text || ' not found in t_analysis_job';
+                            _jobMessage := format('Source job %s not found in t_analysis_job', _sourceJob);
                         Else
                             If _sourceJobState IN (4, 14) Then
                                 _jobMessage := 'Ready';
@@ -225,7 +225,7 @@ BEGIN
                     If _jobMessage = '' Then
                         _jobMessage := _message2;
                     Else
-                        _jobMessage := _jobMessage || '; ' || _message2;
+                        _jobMessage := format('%s; %s', _jobMessage, _message2);
                     End If;
 
                     If Not _infoOnly Then
@@ -242,7 +242,7 @@ BEGIN
                                 _message := format('Not released dataset: %s', _message);
                             End If;
 
-                            CALL post_log_entry ('Error',   _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => _errorMessagePostingIntervalHours);
+                            CALL post_log_entry ('Error', _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => _errorMessagePostingIntervalHours);
                         End If;
                     End If;
 

@@ -76,32 +76,30 @@ BEGIN
     -- SQL for factors as crosstab (PivotTable)
     -----------------------------------------
     --
-    _crossTabSql := '';
-    _crossTabSql := _crossTabSql || ' SELECT PivotResults.type, PivotResults.target_id,' || _factorNameList;
-    _crossTabSql := _crossTabSql || ' FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value';
-    _crossTabSql := _crossTabSql ||       ' FROM t_factor Src INNER JOIN Tmp_Factors I ON Src.factor_id = I.FactorID';
-    _crossTabSql := _crossTabSql ||       ') AS DataQ';
-    _crossTabSql := _crossTabSql ||       ' PIVOT (';
-    _crossTabSql := _crossTabSql ||       '   MAX(value) FOR name IN ( ' || _factorNameList || ' ) ';
-    _crossTabSql := _crossTabSql ||       ' ) AS PivotResults';
+    _crossTabSql := format(' SELECT PivotResults.type, PivotResults.target_id, %s', _factorNameList)         ||
+                           ' FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value'                      ||
+                                 ' FROM t_factor Src INNER JOIN Tmp_Factors I ON Src.factor_id = I.FactorID' ||
+                                 ') AS DataQ'                                                                ||
+                                 ' PIVOT ('                                                                  ||
+                          format('   MAX(value) FOR name IN ( %s ) ', _factorNameList)                       ||
+                                 ' ) AS PivotResults';
 
     -----------------------------------------
     -- Build dynamic SQL for make_factor_crosstab
     -----------------------------------------
     --
     _factorNameList := Coalesce(_factorNameList, '');
-    _sql := '';
-    _sql := _sql || 'SELECT ' || _colList || ' ';
+
+    _sql := format('SELECT %s', _colList);
 
     If _factorNameList <> '' Then
-        _sql := _sql || ', ' || _factorNameList;
+        _sql := format('%s, %s', _factorNameList);
     End If;
 
-    _sql := _sql || ' FROM ( SELECT * FROM ' || _viewName || ' Src WHERE Src.Request IN (SELECT Request FROM Tmp_RequestIDs) ';
-    _sql := _sql || ' ) UQ ';
+    _sql := format('%s FROM ( SELECT * FROM %s Src WHERE Src.Request IN (SELECT Request FROM Tmp_RequestIDs)) UQ', _viewName);
 
     If _factorNameList <> '' Then
-        _sql := _sql || ' LEFT OUTER JOIN (' || _crossTabSql || ') CrosstabQ ON UQ.Request = CrossTabQ.TargetID';
+        _sql := format('%s LEFT OUTER JOIN (%s) CrosstabQ ON UQ.Request = CrossTabQ.TargetID', _sql, _crossTabSql);
     End If;
 
     RETURN _sql;

@@ -78,14 +78,13 @@ BEGIN
         ORDER BY UniqueID
     LOOP
 
-        _sql := '';
-        _sql := _sql || ' UPDATE Tmp_ParamFileInfo';
-        _sql := _sql || ' SET ' || _paramEntry.TargetColumn || ' = PE.entry_value::' || _paramEntry.TargetDataType;
-        _sql := _sql || ' FROM t_param_entries PE INNER JOIN';
-        _sql := _sql ||      ' Tmp_ParamEntryInfo PEI ON PE.entry_type = PEI.entry_type AND';
-        _sql := _sql ||      ' PE.entry_specifier = PEI.entry_specifier INNER JOIN';
-        _sql := _sql ||      ' Tmp_ParamFileInfo PFI ON PE.param_file_id = PFI.param_file_id';
-        _sql := _sql || ' WHERE PEI.UniqueID = ' || _paramEntry.UniqueID::text;
+        _sql :=        ' UPDATE Tmp_ParamFileInfo'                                           ||
+                format(' SET %s = PE.entry_value::%s', _paramEntry.TargetColumn, _paramEntry.TargetDataType) ||
+                       ' FROM t_param_entries PE INNER JOIN'                                 ||
+                            ' Tmp_ParamEntryInfo PEI ON PE.entry_type = PEI.entry_type AND'  ||
+                            ' PE.entry_specifier = PEI.entry_specifier INNER JOIN'           ||
+                            ' Tmp_ParamFileInfo PFI ON PE.param_file_id = PFI.param_file_id' ||
+                format(' WHERE PEI.UniqueID = %s', _paramEntry.UniqueID);
 
         EXECUTE _sql;
 

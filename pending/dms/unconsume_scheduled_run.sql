@@ -325,23 +325,25 @@ BEGIN
             _newQueueState := 1     ; -- Unassigned;
         End If;
 
-        Update t_requested_run
-        SET
-            state_name = _newStatus,
+        UPDATE t_requested_run
+        SET state_name = _newStatus,
             request_run_start = NULL,
             request_run_finish = NULL,
             dataset_id = NULL,
-            comment = CASE WHEN Coalesce(comment, '') = '' THEN _notation ELSE comment || ' ' || _notation End,
+            comment = CASE WHEN Coalesce(comment, '') = ''
+                           THEN _notation
+                           ELSE format('%s %s', comment, _notation)
+                      END,
             cart_id = Coalesce(_newCartID, cart_id),
             queue_state = _newQueueState
-        WHERE
-            request_id = _requestIDOriginal
+        WHERE request_id = _requestIDOriginal;
 
         If char_length(_callingUser) > 0 Then
 
-            SELECT state_id INTO _stateID
+            SELECT state_id
+            INTO _stateID
             FROM t_requested_run_state_name
-            WHERE (state_name = _newStatus)
+            WHERE state_name = _newStatus;
 
             CALL alter_event_log_entry_user (11, _requestIDOriginal, _stateID, _callingUser);
         End If;

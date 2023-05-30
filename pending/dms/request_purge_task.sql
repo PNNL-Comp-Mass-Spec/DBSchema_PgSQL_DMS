@@ -82,7 +82,7 @@ AS $$
 DECLARE
     _matchCount int := 0;
     _candidateCount int := 0;
-    _purgeQuery record;
+    _purgeInfo record;
     _purgeViewSourceDesc text;
     _s text;
     _noDatasetFound text = 'U5300';
@@ -203,7 +203,7 @@ BEGIN
     -- Process each of the views in Tmp_PurgeViews
     ---------------------------------------------------
 
-    FOR _purgeQuery IN
+    FOR _purgeInfo IN
         SELECT PurgeViewName,
                HoldoffDays,
                OrderByCol
@@ -216,39 +216,33 @@ BEGIN
         ** It is more efficient than the larger query below (which uses Row_Number() to rank things)
         ** However, it doesn't run that much faster, and thus, for simplicity, we're always using the larger query
         **
-            _s := '';
-
-            _s := _s || ' INSERT INTO Tmp_PurgeableDatasets( DatasetID,';
-            _s := _s ||                  ' MostRecent,';
-            _s := _s ||                  ' Source,';
-            _s := _s ||                  ' StorageServerName,';
-            _s := _s ||                  ' ServerVol,';
-            _s := _s ||                  ' Purge_Priority)';
-            _s := _s || ' SELECT Dataset_ID, ';
-            _s := _s ||          _orderByCol || ', ';
-            _s := _s ||        '''' || _purgeViewName || ''' AS Source,';
-            _s := _s ||        ' StorageServerName,';
-            _s := _s ||        ' ServerVol,';
-            _s := _s ||        ' Purge_Priority';
-            _s := _s || ' FROM ' || _purgeViewName;
-            _s := _s || ' WHERE     StorageServerName = ''' || _storageServerName || '''';
-            _s := _s ||       ' AND ServerVol = ''' || _serverDisk || '''';
+            _s :=        ' INSERT INTO Tmp_PurgeableDatasets( DatasetID, MostRecent, Source, StorageServerName, ServerVol, Purge_Priority)' ||
+                         ' SELECT Dataset_ID, '                                   ||
+                          format('%s, ', _purgeInfo.OrderByCol)                   ||
+                          format('''%s'' AS Source,', _purgeInfo.PurgeViewName)   ||
+                                ' StorageServerName,'                             ||
+                                ' ServerVol,'                                     ||
+                                ' Purge_Priority'                                 ||
+                  format(' FROM %s', _purgeInfo.PurgeViewName)                    ||
+                  format(' WHERE StorageServerName = ''%s''', _storageServerName) ||
+                  format(      ' AND ServerVol = ''%s''', _serverDisk);
 
             If _excludeStageMD5RequiredDatasets Then
-                _s := _s ||   ' AND StageMD5_Required = 0 ';
+                _s := format('%s AND StageMD5_Required = 0 ', _s);
             End If;
 
-            If _holdoffDays >= 0 Then
-                _s := _s ||   ' AND round(extract(epoch FROM CURRENT_TIMESTAMP - ' || _orderByCol || ') / 86400) > ' || _holdoffDays::text;
+            If _purgeInfo.HoldoffDays >= 0 Then
+                _s := format('%s AND (%s < CURRENT_TIMESTAMP - make_interval(days => %s)', _s, _purgeInfo.OrderByCol, _purgeInfo.HoldoffDays);
             End If;
 
-            _s := _s || ' ORDER BY Purge_Priority, ' || _orderByCol || ', Dataset_ID';
-            _s := _s || ' LIMIT ' || _previewCount::text;
+            _s := format('%s ORDER BY Purge_Priority, %s, Dataset_ID', _s, _purgeInfo.OrderByCol);
+            _s := format('%s LIMIT %s', _s, _previewCount);
         */
 
-        _purgeViewSourceDesc := _purgeViewName;
-        If _holdoffDays >= 0 Then
-            _purgeViewSourceDesc := _purgeViewSourceDesc || '_' || _holdoffDays::text || 'MinDays';
+        _purgeViewSourceDesc := _purgeInfo.PurgeViewName;
+
+        If _purgeInfo.HoldoffDays >= 0 Then
+            _purgeViewSourceDesc := format('%s_%sMinDays', _purgeViewSourceDesc, _purgeInfo.HoldoffDays;
         End If;
 
         ---------------------------------------------------
@@ -256,57 +250,51 @@ BEGIN
         -- (limiting by _storageServerName or _serverDisk if they are defined)
         ---------------------------------------------------
         --
-        _s := '';
-        _s := _s || ' INSERT INTO Tmp_PurgeableDatasets( DatasetID,';
-        _s := _s ||                  ' MostRecent,';
-        _s := _s ||                  ' Source,';
-        _s := _s ||                  ' StorageServerName,';
-        _s := _s ||                  ' ServerVol,';
-        _s := _s ||                  ' Purge_Priority)';
-        _s := _s || ' SELECT Dataset_ID, ';
-        _s := _s ||        _orderByCol || ', ';
-        _s := _s ||        ' Source,';
-        _s := _s ||        ' StorageServerName,';
-        _s := _s ||        ' ServerVol,';
-        _s := _s ||        ' Purge_Priority';
-        _s := _s || ' FROM ( SELECT Src.Dataset_ID, ';
-        _s := _s ||                'Src.' || _orderByCol || ', ';
-        _s := _s ||               '''' || _purgeViewSourceDesc || ''' AS Source,';
-        _s := _s ||               ' Row_Number() OVER ( PARTITION BY Src.StorageServerName, Src.ServerVol ';
-        _s := _s ||                                   ' ORDER BY Src.Archive_State_ID, Src.Purge_Priority, Src.' || _orderByCol || ', Src.Dataset_ID ) AS RowNumVal,';
-        _s := _s ||               ' Src.StorageServerName,';
-        _s := _s ||               ' Src.ServerVol,';
-        _s := _s ||               ' Src.StageMD5_Required,';
-        _s := _s ||               ' Src.Archive_State_ID,';
-        _s := _s ||         ' Src.Purge_Priority';
-        _s := _s ||        ' FROM ' || _purgeViewName || ' Src';
-        _s := _s ||               ' LEFT OUTER JOIN Tmp_StorageVolsToSkip ';
-        _s := _s ||                 ' ON Src.StorageServerName = Tmp_StorageVolsToSkip.StorageServerName AND';
-        _s := _s ||                ' Src.ServerVol         = Tmp_StorageVolsToSkip.ServerVol ';
-        _s := _s || ' LEFT OUTER JOIN Tmp_PurgeableDatasets ';
-        _s := _s ||                 ' ON Src.Dataset_ID = Tmp_PurgeableDatasets.DatasetID';
-        _s := _s ||        ' WHERE Tmp_StorageVolsToSkip.StorageServerName IS NULL';
-        _s := _s ||               ' AND Tmp_PurgeableDatasets.DatasetID IS NULL ';
+        _s :=  'INSERT INTO Tmp_PurgeableDatasets( DatasetID, MostRecent, Source, StorageServerName, ServerVol, Purge_Priority)' ||
+              ' SELECT Dataset_ID, '                                                                    ||
+               format('%s,', _purgeInfo.OrderByCol)                                                     ||
+                     ' Source,'                                                                         ||
+                     ' StorageServerName,'                                                              ||
+                     ' ServerVol,'                                                                      ||
+                     ' Purge_Priority'                                                                  ||
+              ' FROM ( SELECT Src.Dataset_ID, '                                                         ||
+                     format('Src.%s, ', _purgeInfo.OrderByCol)                                          ||
+                     format('''%s'' AS Source,', _purgeViewSourceDesc)                                  ||
+                            ' Row_Number() OVER ( PARTITION BY Src.StorageServerName, Src.ServerVol '   ||
+                                         format(' ORDER BY Src.Archive_State_ID, Src.Purge_Priority, Src.%s, Src.Dataset_ID ) AS RowNumVal,', _purgeInfo.OrderByCol) ||
+                            ' Src.StorageServerName,'                                                   ||
+                            ' Src.ServerVol,'                                                           ||
+                            ' Src.StageMD5_Required,'                                                   ||
+                            ' Src.Archive_State_ID,'                                                    ||
+                      ' Src.Purge_Priority'                                                             ||
+              format(' FROM %s Src', _purgeInfo.PurgeViewName)                                          ||
+                          ' LEFT OUTER JOIN Tmp_StorageVolsToSkip '                                     ||
+                            ' ON Src.StorageServerName = Tmp_StorageVolsToSkip.StorageServerName AND'   ||
+                               ' Src.ServerVol         = Tmp_StorageVolsToSkip.ServerVol '              ||
+              ' LEFT OUTER JOIN Tmp_PurgeableDatasets '                                                 ||
+                              ' ON Src.Dataset_ID = Tmp_PurgeableDatasets.DatasetID'                    ||
+                     ' WHERE Tmp_StorageVolsToSkip.StorageServerName IS NULL'                           ||
+                            ' AND Tmp_PurgeableDatasets.DatasetID IS NULL ';
 
         If _excludeStageMD5RequiredDatasets Then
-            _s := _s ||       ' AND (StageMD5_Required = 0) ';
+            _s :=  format('%s AND (StageMD5_Required = 0) ', _s);
         End If;
 
         If _storageServerName <> '' Then
-            _s := _s ||  ' AND (Src.StorageServerName = ''' || _storageServerName || ''')';
+            _s :=  format('%s AND (Src.StorageServerName = ''%s'')', _s, _storageServerName);
         End If;
 
         If _serverDisk <> '' Then
-            _s := _s ||           ' AND (Src.ServerVol = ''' || _serverDisk || ''')';
+            _s :=  format('%s AND (Src.ServerVol = '''')', _s, _serverDisk);
         End If;
 
-        If _holdoffDays >= 0 Then
-            _s := _s ||           ' AND (' || _orderByCol || ' < CURRENT_TIMESTAMP - make_interval(days => ' || _holdoffDays::text || ')';
+        If _purgeInfo.HoldoffDays >= 0 Then
+            _s :=  format('%s AND (%s < CURRENT_TIMESTAMP - make_interval(days => %s)', _s, _purgeInfo.OrderByCol, _purgeInfo.HoldoffDays);
         End If;
 
-        _s := _s ||     ') LookupQ';
-        _s := _s || ' WHERE RowNumVal <= ' || Cast(_previewCount as text);
-        _s := _s || ' ORDER BY StorageServerName, ServerVol, Archive_State_ID, Purge_Priority, ' || _orderByCol || ', Dataset_ID';
+        _s := format('%s) LookupQ', _s);
+        _s := format('%s WHERE RowNumVal <= %s', _s, _previewCount);
+        _s := format('%s ORDER BY StorageServerName, ServerVol, Archive_State_ID, Purge_Priority, %s, Dataset_ID', _s, _purgeInfo.OrderByCol);
 
         If _previewSql Then
             RAISE INFO '%', _s;

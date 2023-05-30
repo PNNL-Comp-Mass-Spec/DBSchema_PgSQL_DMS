@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **          06/21/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          05/22/2023 mem - Capitalize reserved word
+**          05/28/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -154,9 +155,10 @@ BEGIN
     FROM Tmp_TX
     WHERE Tmp_TX.ID = 0 AND Tmp_TX.Duration >= 10;
 
-    _s := 'total:' || _totalMinutes::text ||
-          ', normal acquisition:' || (Coalesce(_acquisitionMinutes, 0) + Coalesce(_normalIntervalMinutes, 0))::text ||
-          ', long intervals:' || _longIntervalMinutes::text;
+    _s := format('total:%s, normal acquisition:%s, long intervals:%s',
+                    _totalMinutes,
+                    Coalesce(_acquisitionMinutes, 0) + Coalesce(_normalIntervalMinutes, 0),
+                    _longIntervalMinutes);
 
     INSERT INTO Tmp_TX (Seq, Dataset)
     VALUES (0, _s);

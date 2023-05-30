@@ -209,7 +209,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'Processor group: ' || _pgid::text;
+    _usageMessage := format('Processor group: %s', _pgid);
     CALL post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Membership', _usageMessage);
 
     DROP TABLE Tmp_Processors;

@@ -276,7 +276,8 @@ BEGIN
                 _datasetName := Substring(_filePath, 1, _lastPeriodLoc);
             Else
                 INSERT INTO Tmp_Warnings (Warning, RowText)
-                VALUES (format('Skipping row since Filename "%s" does not contain a period', _filePath), _row);
+                VALUES (format('Skipping row since Filename "%s" does not contain a period', _filePath),
+                        _row);
 
                 CONTINUE;
             End If;
@@ -298,7 +299,8 @@ BEGIN
 
                 If Not FOUND Then
                     INSERT INTO Tmp_Warnings (Warning, RowText)
-                    VALUES ('Skipping row since dataset ID not found in t_dataset: ' || _datasetId), _row);
+                    VALUES (format('Skipping row since dataset ID not found in t_dataset: %s', _datasetId),
+                            _row);
 
                     CONTINUE;
                 End If;
@@ -316,7 +318,8 @@ BEGIN
 
         If Not FOUND Then
             INSERT INTO Tmp_Warnings (Warning, RowText)
-            VALUES ('Skipping row since dataset Name not found in t_dataset: ' || _datasetName, _row);
+            VALUES (format('Skipping row since dataset Name not found in t_dataset: %s', _datasetName),
+                    _row);
 
             CONTINUE;
         End If;
@@ -343,14 +346,16 @@ BEGIN
 
                 If _fileSizeBytes Is Null Then
                     INSERT INTO Tmp_Warnings (Warning, RowText)
-                    VALUES ('Skipping row since file size is not a number (and is less than 40 characters, so is not a hash): ' || _fileHashOrSize, _row);
+                    VALUES (format('Skipping row since file size is not a number (and is less than 40 characters, so is not a hash): %s', _fileHashOrSize),
+                            _row);
 
                     CONTINUE;
                 End If;
             Else
                 If char_length(_fileHashOrSize) > 40 Then
                     INSERT INTO Tmp_Warnings (Warning, RowText)
-                    VALUES ('Skipping row since file hash is not 40 characters long: ' || _fileHashOrSize, _row);
+                    VALUES (format('Skipping row since file hash is not 40 characters long: %s', _fileHashOrSize),
+                            _row);
 
                     CONTINUE;
                 Else
