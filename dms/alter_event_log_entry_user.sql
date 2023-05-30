@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
 **          05/23/2023 mem - Use format() for string concatenation
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -114,10 +115,10 @@ BEGIN
             _dateFilterSql :=  _entryDateFilterSqlWithVariables;
         End If;
 
-        _entryDescription := _entryDescription ||
-                                ' and Entry Time between ' ||
-                                to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss') || ' and ' ||
-                                to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss');
+        _entryDescription := format('%s and Entry Time between %s and %s',
+                                    _entryDescription,
+                                    to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss'),
+                                    to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss'));
     Else
         _dateFilterSql := '';
     End If;
@@ -144,7 +145,7 @@ BEGIN
         RAISE INFO '%;', _s;
 
         _eventID   := 0;
-        _enteredBy := session_user || '_simulated';
+        _enteredBy := format('%s_simulated', SESSION_USER);
         _targetIdMatched := _targetId;
     Else
         EXECUTE _s
@@ -180,7 +181,7 @@ BEGIN
     If _matchIndex > 0 Then
         _enteredByNew := format('%s (via %s)%s',
                                 _newUser,
-                                SubString(_enteredBy, 1, _matchIndex-1) || ')',
+                                SubString(_enteredBy, 1, _matchIndex-1),
                                 SubString(_enteredBy, _matchIndex, char_length(_enteredBy)));
     Else
         _enteredByNew := format('%s (via %s)', _newUser, _enteredBy);

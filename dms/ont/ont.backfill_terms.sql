@@ -36,6 +36,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **          10/04/2022 mem - Change _infoOnly and _previewRelationshipUpdates from integer to boolean
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Remove redundant parentheses
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -92,7 +93,7 @@ BEGIN
 
     DROP TABLE Tmp_CandidateTables;
 
-    _sourceTableWithSchema := _sourceSchema || '.' || _sourceTable;
+    _sourceTableWithSchema := format('%s.%s', _sourceSchema, _sourceTable);
 
     RAISE info 'Back filling ont.t_term and ont.t_term_relationship using %', _sourceTableWithSchema;
 
@@ -115,23 +116,16 @@ BEGIN
         matches_existing int
     );
 
-    _s := '';
-    _s := _s || ' INSERT INTO Tmp_SourceData( term_pk, term_name, identifier, is_leaf,';
-    If _sourceTableWithSchema = 'ont.t_cv_bto' Then
-        _s := _s ||                           ' synonyms,';
-    End If;
-
-    _s := _s ||                               ' parent_term_name, Parent_term_ID, ';
-    _s := _s ||                               ' grandparent_term_name, grandparent_term_id, matches_existing )';
-    _s := _s || ' SELECT term_pk, term_name, identifier, is_leaf, ';
-    If _sourceTableWithSchema = 'ont.t_cv_bto' Then
-        _s := _s || ' synonyms,';
-    End If;
-
-    _s := _s || '   parent_term_name, parent_term_id,';
-    _s := _s || '   grandparent_term_name, grandparent_term_id, 0 AS matches_existing';
-    _s := _s || ' FROM %I.%I';
-    _s := _s || ' WHERE parent_term_name <> '''' ';
+    _s := ' INSERT INTO Tmp_SourceData( term_pk, term_name, identifier, is_leaf,'            ||
+          CASE WHEN _sourceTableWithSchema = 'ont.t_cv_bto' THEN ' synonyms,' ELSE '' END    ||
+                                      ' parent_term_name, Parent_term_ID,'                   ||
+                                      ' grandparent_term_name, grandparent_term_id, matches_existing )' ||
+          ' SELECT term_pk, term_name, identifier, is_leaf,'                                 ||
+          CASE WHEN _sourceTableWithSchema = 'ont.t_cv_bto' THEN ' synonyms,' ELSE '' END    ||
+                 ' parent_term_name, parent_term_id,'                                        ||
+                 ' grandparent_term_name, grandparent_term_id, 0 AS matches_existing'        ||
+          ' FROM %I.%I'                                                                      ||
+          ' WHERE parent_term_name <> '''' ';
 
     Execute format(_s, _sourceSchema, _sourceTable);
 
@@ -241,8 +235,8 @@ BEGIN
             RETURN QUERY
             SELECT 'New relationship'::citext as Item_Type,
                    R.Child_PK As term_pk,
-                   ('New_Relationship_ID: ' || (_autoNumberStartID - R.Entry_ID)::citext)::citext As term_name,
-                   ('Parent_PK: ' || R.Parent_PK)::citext As identifier,
+                   (format('New_Relationship_ID: %s', _autoNumberStartID - R.Entry_ID))::citext As term_name,
+                   (format('Parent_PK: %s', R.Parent_PK))::citext As identifier,
                    'Predicate Name: inferred_is_a'::citext As is_leaf,
                    NULL::timestamp As updated
             FROM Tmp_RelationshipsToAdd R
@@ -291,15 +285,15 @@ BEGIN
             RETURN QUERY
             SELECT 'Delete relationship'::citext as Item_Type,
                    R.subject_term_pk As term_pk,
-                   ('Term_Relationship_ID: ' || (R.term_relationship_id)::citext)::citext As term_name,
-                   ('Predicate_Term_PK: ' || R.predicate_term_pk)::citext As identifier,
-                   ('Object_Term_PK:' || R.object_term_pk)::citext As is_leaf,
+                   (format('Term_Relationship_ID: ', R.term_relationship_id))::citext As term_name,
+                   (format('Predicate_Term_PK: ', R.predicate_term_pk))::citext As identifier,
+                   (format('Object_Term_PK:', R.object_term_pk))::citext As is_leaf,
                    NULL::timestamp As updated
             FROM ont.t_term_relationship R
-            WHERE R.term_relationship_id IN (Select Relationship_ID FROM Tmp_RelationshipsToDelete);
+            WHERE R.term_relationship_id IN (SELECT Relationship_ID FROM Tmp_RelationshipsToDelete);
         Else
             DELETE FROM ont.t_term_relationship
-            WHERE term_relationship_id IN (Select Relationship_ID FROM Tmp_RelationshipsToDelete);
+            WHERE term_relationship_id IN (SELECT Relationship_ID FROM Tmp_RelationshipsToDelete);
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -317,9 +311,9 @@ BEGIN
         RETURN QUERY
         SELECT 'Existing item to update'::citext as Item_Type,
                T.term_pk,
-               (CASE WHEN T.term_name = S.term_name THEN T.term_name ELSE T.term_name || ' --> ' || S.term_name END)::citext term_name,
-               (CASE WHEN T.identifier = S.identifier THEN T.identifier ELSE T.identifier || ' --> ' || S.identifier END)::citext identifier,
-               (CASE WHEN T.is_leaf = S.is_leaf THEN Cast(T.is_leaf AS text) ELSE Cast(T.is_leaf AS text) || ' --> ' || Cast(S.is_leaf AS text) END)::citext is_leaf,
+               (CASE WHEN T.term_name = S.term_name   THEN T.term_name       ELSE format('%s --> %s', T.term_name, S.term_name)   END)::citext term_name,
+               (CASE WHEN T.identifier = S.identifier THEN T.identifier      ELSE format('%s --> %s', T.identifier, S.identifier) END)::citext identifier,
+               (CASE WHEN T.is_leaf = S.is_leaf THEN format('%s', T.is_leaf) ELSE format('%s --> %s', T.is_leaf, S.is_leaf)       END)::citext is_leaf,
                T.updated
         FROM ont.t_term AS T
              INNER JOIN ( SELECT d.term_pk,

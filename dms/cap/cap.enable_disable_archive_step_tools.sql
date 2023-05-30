@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
     AS $$
 /****************************************************
 **
-**  Desc:   Enables or disables archive and archive update step tools
+**  Desc:
+**      Enables or disables archive and archive update step tools
 **
 **  Arguments:
 **    _enable           True to enable the step tools, false to disable
@@ -22,6 +23,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 **          12/18/2017 mem - Avoid adding _disableComment to the comment field multiple times
 **          10/11/2022 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -108,7 +110,7 @@ BEGIN
             UPDATE cap.t_processor_tool Proctool
             SET comment = CASE
                               WHEN comment = '' THEN _disableComment
-                              ELSE comment || '; ' || _disableComment
+                              ELSE format('%s; %s', comment, _disableComment)
                           END
             FROM Tmp_ToolsToUpdate FilterQ
             WHERE ProcTool.Tool_Name = FilterQ.Tool_Name AND
@@ -120,7 +122,7 @@ BEGIN
             UPDATE cap.t_processor_tool Proctool
             SET comment = CASE
                               WHEN comment = _disableComment THEN ''
-                              ELSE Replace(comment, '; ' || _disableComment, '')
+                              ELSE Replace(comment, format('; %s', _disableComment), '')
                           END
             FROM Tmp_ToolsToUpdate FilterQ
             WHERE ProcTool.Tool_Name = FilterQ.Tool_Name AND

@@ -378,9 +378,8 @@ BEGIN
                           entered >= CURRENT_TIMESTAMP - INTERVAL '12 hours';
 
                     If _stepSkipCount >= 15 Then
-                        _msg := 'Job ' || Cast(_stepInfo.job As text) || ', step ' || Cast(_stepInfo.step As text) ||
-                                   ' has been skipped ' || Cast(_stepSkipCount As text) || ' times in the last 12 hours;' ||
-                                   ' setting the step state to 2 to allow results to be regenerated'
+                        _msg := format('Job %s, step %s has been skipped %s times in the last 12 hours; setting the step state to 2 to allow results to be regenerated',
+                                        _stepInfo.job , _stepInfo.step, _stepSkipCount);
 
                         If _infoOnly Then
                             RAISE INFO '%', _msg;

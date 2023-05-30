@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION cap.get_metadata_for_dataset(_datasetname text) RETUR
 **          09/30/2022 mem - Ported to PostgreSQL
 **          02/08/2023 mem - Switch from PRN to Username
 **          02/27/2023 mem - Capitalize XML element names
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -146,7 +147,7 @@ BEGIN
 
     RETURN QUERY
     SELECT _stepParamSectionName AS Section,
-           ('Meta_Aux_Info:' || M.Target || ':' || M.Category || '.' || M.Subcategory || '.' || M.Item)::text AS Name,
+           (format('Meta_Aux_Info:%s:%s.%s.%s', M.Target, M.Category, M.Subcategory, M.Item))::text AS Name,
            M.Value::text
     FROM cap.V_DMS_Get_Experiment_Metadata M
     WHERE Experiment = _datasetInfo.Experiment

@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
 **          05/22/2023 mem - Use format() for string concatenation
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -131,7 +132,7 @@ BEGIN
         RAISE INFO '%;', _s;
         RAISE INFO '%;', regexp_replace(_s, '\$1', _targetID::text);
 
-        _enteredBy := session_user || '_simulated';
+        _enteredBy := format('%s_simulated', SESSION_USER);
         _targetIDMatch := _targetID;
     Else
         EXECUTE _s
@@ -205,12 +206,12 @@ BEGIN
         End If;
 
         If _previewSql Then
-            _message := 'SQL previewed for updating ';
+            _message := 'SQL previewed for updating';
         Else
-            _message := 'Updated ';
+            _message := 'Updated';
         End If;
 
-        _message := _message || _entryDescription || ' to indicate "' || _enteredByNew || '"';
+        _message := format('%s %s to indicate "%s"', _message, _entryDescription, _enteredByNew);
 
     Else
         _s := format(

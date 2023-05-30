@@ -2,7 +2,7 @@
 -- Name: get_instrument_run_datasets(integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks integer DEFAULT 4, _instrument text DEFAULT 'VOrbiETD04'::text) RETURNS TABLE(seq integer, id integer, dataset text, state text, rating text, duration integer, time_start timestamp without time zone, time_end timestamp without time zone, request integer, eus_proposal text, eus_usage text, work_package text, lc_column text, instrument text)
+CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks integer DEFAULT 4, _instrument text DEFAULT 'Lumos03'::text) RETURNS TABLE(seq integer, id integer, dataset text, state text, rating text, duration integer, time_start timestamp without time zone, time_end timestamp without time zone, request integer, eus_proposal text, eus_usage text, work_package text, lc_column text, instrument text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **          06/21/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          05/22/2023 mem - Capitalize reserved word
-**          05/28/2023 mem - Use format() for string concatenation
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -88,7 +88,7 @@ BEGIN
         DS.acq_time_start AS Time_Start,
         DS.acq_time_end AS Time_End,
         DS.acq_length_minutes AS Duration,
-        _instrument
+        InstName.instrument
     FROM
         t_dataset DS
         INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id
@@ -170,7 +170,7 @@ BEGIN
     UPDATE Tmp_TX
     SET State = LookupQ.dataset_state,
         Rating = LookupQ.dataset_rating,
-        lc_column = 'C:' || LookupQ.lc_column,
+        lc_column = format('C:%s', LookupQ.lc_column),
         Request = LookupQ.request_id,
         Work_Package = LookupQ.work_package,
         EUS_Proposal = LookupQ.eus_proposal_id,

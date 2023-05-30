@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/17/2022 mem - Ported to PostgreSQL
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -54,20 +55,20 @@ BEGIN
            ON InstUsage.usage_type_id = InstUsageType.usage_type_id
     WHERE InstUsage.seq = _seq;
 
-    IF _instrumentUsage.usage = 'CAP_DEV' AND _instrumentUsage.operator is null  Then
-        _message := _message || 'Capability Development requires an operator' || ', ';
+    If _instrumentUsage.usage = 'CAP_DEV' AND _instrumentUsage.operator is null Then
+        _message := public.append_to_text(_message, 'Capability Development requires an operator', 0, ', ');
     End If;
 
-    IF NOT _instrumentUsage.usage IN ('ONSITE', 'MAINTENANCE') AND Coalesce(_instrumentUsage.comment, '') = '' Then
-        _message := _message || 'Missing Comment' || ', ';
+    If NOT _instrumentUsage.usage IN ('ONSITE', 'MAINTENANCE') AND Coalesce(_instrumentUsage.comment, '') = '' Then
+        _message := public.append_to_text(_message, 'Missing Comment', 0, ', ');
     End If;
 
-    IF _instrumentUsage.usage = 'OFFSITE' AND _instrumentUsage.proposal = '' Then
-        _message := _message || 'Missing Proposal' || ', ';
+    If _instrumentUsage.usage = 'OFFSITE' AND _instrumentUsage.proposal = '' Then
+        _message := public.append_to_text(_message, 'Missing Proposal', 0, ', ');
     End If;
 
-    IF _instrumentUsage.usage = 'ONSITE' AND Not _instrumentUsage.proposal similar to '[0-9]%' Then
-        _message := _message || 'Preliminary Proposal number' || ', ';
+    If _instrumentUsage.usage = 'ONSITE' AND Not _instrumentUsage.proposal similar to '[0-9]%' Then
+        _message := public.append_to_text(_message, 'Preliminary Proposal number', 0, ', ');
     End If;
 
     SELECT proposal_id as proposalID,
@@ -77,16 +78,16 @@ BEGIN
     FROM  t_eus_proposals
     WHERE proposal_id = _instrumentUsage.proposal;
 
-    IF _instrumentUsage.usage = 'ONSITE' AND _proposalInfo.proposalID IS null Then
-        _message := _message || 'Proposal number is not in ERS' || ', ';
+    If _instrumentUsage.usage = 'ONSITE' AND _proposalInfo.proposalID IS null Then
+        _message := public.append_to_text(_message, 'Proposal number is not in EUS', 0, ', ');
     End If;
 
-    IF NOT _proposalInfo.proposalID IS NULL and _instrumentUsage.usage = 'ONSITE' AND
+    If NOT _proposalInfo.proposalID IS NULL and _instrumentUsage.usage = 'ONSITE' AND
        NOT (_instrumentUsage.start BETWEEN _proposalInfo.proposalStartDate AND _proposalInfo.proposalEndDate) Then
-        _message := _message || 'Run start not between proposal start/end dates' || ', ';
+        _message := public.append_to_text(_message, 'Run start not between proposal start/end dates', 0, ', ');
     End If;
 
-    IF NOT _proposalInfo.proposalID IS NULL Then
+    If NOT _proposalInfo.proposalID IS NULL Then
         If _instrumentUsage.users Like '%,%' Then
             SELECT COUNT(*)
             INTO _hits
@@ -103,8 +104,8 @@ BEGIN
             WHERE proposal_id = _instrumentUsage.proposal And person_id = try_cast(_instrumentUsage.users, 0);
         End If;
 
-        IF _hits = 0 Then
-            _message := _message || 'No users were listed for proposal' || ', ';
+        If _hits = 0 Then
+            _message := public.append_to_text(_message, 'No users were listed for proposal', 0, ', ');
         End If;
     End If;
 

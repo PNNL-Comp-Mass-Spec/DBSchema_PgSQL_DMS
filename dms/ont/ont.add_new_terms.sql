@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          05/23/2023 mem - Use format() for string concatenation
 **          05/25/2023 mem - Show a custom message if _ontologyName is BTO, ENVO, or MS
 **                         - Reduce nesting
-**          05/28/2023 mem - Simplify string concatenation
+**          05/29/2023 mem - Use format() for string concatenation
 ***
 *****************************************************/
 DECLARE
@@ -92,11 +92,11 @@ BEGIN
     ---------------------------------------------------
 
     _targetSchema := 'ont';
-    _targetTable  := 't_cv_' || lower(_ontologyName);
+    _targetTable  := format('t_cv_%s', Lower(_ontologyName));
 
     CREATE TEMP TABLE Tmp_CandidateTables AS
     SELECT Table_to_Find, Schema_Name, Table_Name, Table_Exists, Message
-    FROM resolve_table_name(_targetSchema || '.' || _targetTable);
+    FROM resolve_table_name(format('%s.%s', _targetSchema, _targetTable));
 
     If Exists (SELECT * FROM Tmp_CandidateTables WHERE Table_Exists) Then
         -- Make sure the target name is properly capitalized
@@ -106,11 +106,11 @@ BEGIN
         WHERE Table_Exists
         LIMIT 1;
 
-        _targetTableWithSchema := _targetSchema || '.' || _targetTable;
+        _targetTableWithSchema := format('%s.%s', _targetSchema, _targetTable);
     Else
         -- Table not found; create it
 
-        _targetTableWithSchema := _targetSchema || '.' || _targetTable;
+        _targetTableWithSchema := format('%s.%s', _targetSchema, _targetTable);
 
         _s :=  'CREATE TABLE %I.%I ('
                   ' entry_id int NOT NULL GENERATED ALWAYS AS IDENTITY,'
@@ -158,7 +158,7 @@ BEGIN
 
         _sourceTable := 'ont.v_newt_terms';
 
-        _insertSql := 'INSERT INTO ' || _targetTableWithSchema || ' ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)';
+        _insertSql := format('INSERT INTO %s ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)', _targetTableWithSchema);
 
         /*
          * Old
@@ -184,9 +184,9 @@ BEGIN
         _insertSql := format('INSERT INTO %s ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id )', _targetTableWithSchema);
 
         _s :=        'SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, '
-                              's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier'       ||
-             format(' FROM ( SELECT * FROM %s', _sourceTable)                                                                              ||
-             format(' WHERE ontology = ''%s'' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL ) s', _ontologyName)      ||
+                              's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier' ||
+             format(' FROM ( SELECT * FROM %s', _sourceTable)                                                                        ||
+             format(' WHERE ontology = ''%s'' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL ) s', _ontologyName)        ||
              format(' LEFT OUTER JOIN ( SELECT identifier, parent_term_id, grandparent_term_id FROM %s ) t', _targetTableWithSchema) ||
                              ' ON s.identifier = t.identifier AND'
                                 ' s.parent_term_identifier = t.parent_term_id AND '

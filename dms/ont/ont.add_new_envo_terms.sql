@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable public.citext DEF
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Capitalize reserved words
 **          05/28/2023 mem - Simplify string concatenation
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -164,14 +165,12 @@ BEGIN
         WHERE t.term_pk = s.term_pk AND
               t.parent_term_id = s.parent_term_id AND
               Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '') AND
-              (
-                t.term_name <> s.term_name OR
+              ( t.term_name <> s.term_name OR
                 t.identifier <> s.identifier OR
                 t.is_leaf <> s.is_leaf OR
                 t.synonyms <> s.synonyms OR
                 t.parent_term_name <> s.parent_term_name OR
-                Coalesce( NULLIF(t.grandparent_term_name, s.grandparent_term_name),
-                          NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null
+                t.grandparent_term_name IS DISTINCT FROM s.grandparent_term_name
               );
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
@@ -358,14 +357,14 @@ BEGIN
         SELECT 'Existing item to update'::citext as Item_Type,
                t.entry_id,
                t.term_pk,
-               (CASE WHEN t.term_name = s.term_name THEN t.term_name ELSE t.term_name || ' --> ' || s.term_name END)::citext As term_name,
-               (CASE WHEN t.identifier = s.identifier THEN t.identifier ELSE t.identifier || ' --> ' || s.identifier END)::citext as identifier,
-               (CASE WHEN t.is_leaf = s.is_leaf THEN Cast(t.is_leaf As text) ELSE Cast(t.is_leaf As text) || ' --> ' || Cast(s.is_leaf As text) END)::citext As is_leaf,
-               (CASE WHEN t.synonyms = s.synonyms THEN t.synonyms ELSE t.synonyms || ' --> ' || s.synonyms END)::citext synonyms,
+               (CASE WHEN t.term_name  = s.term_name  THEN t.term_name       ELSE format('%s --> %s', t.term_name,  s.term_name)  END)::citext As term_name,
+               (CASE WHEN t.identifier = s.identifier THEN t.identifier      ELSE format('%s --> %s', t.identifier, s.identifier) END)::citext as identifier,
+               (CASE WHEN t.is_leaf = s.is_leaf THEN format('%s', t.is_leaf) ELSE format('%s --> %s', t.is_leaf, s.is_leaf)       END)::citext As is_leaf,
+               (CASE WHEN t.synonyms = s.synonyms THEN t.synonyms            ELSE format('%s --> %s', t.synonyms, s.synonyms)     END)::citext as synonyms,
                t.parent_term_id::citext,
-               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name ELSE t.parent_term_name || ' --> ' || s.parent_term_name END)::citext As parent_term_name,
+               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name                ELSE format('%s --> %s', t.parent_term_name, s.parent_term_name) END)::citext As parent_term_name,
                t.grandparent_term_id::citext,
-               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE Coalesce(t.grandparent_term_name, 'NULL') || ' --> ' || Coalesce(s.grandparent_term_name, 'NULL') END)::citext As grandparent_term_name,
+               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE format('%s --> %s', Coalesce(t.grandparent_term_name, 'NULL'), Coalesce(s.grandparent_term_name, 'NULL')) END)::citext As grandparent_term_name,
                t.entered::timestamp,
                t.updated::timestamp
         FROM ont.t_cv_envo As t
@@ -374,14 +373,13 @@ BEGIN
                  t.parent_term_id = s.parent_term_id AND
                  Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '')
         WHERE s.matches_existing = 1 AND
-              ( (t.term_name <> s.term_name) OR
-                (t.identifier <> s.identifier) OR
-                (t.is_leaf <> s.is_leaf) OR
-                (t.synonyms <> s.synonyms) OR
-                (t.parent_term_name <> s.parent_term_name) OR
-                (Coalesce(NULLIF(t.grandparent_term_name, s.grandparent_term_name),
-                        NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null)
-               )
+              ( t.term_name <> s.term_name OR
+                t.identifier <> s.identifier OR
+                t.is_leaf <> s.is_leaf OR
+                t.synonyms <> s.synonyms OR
+                t.parent_term_name <> s.parent_term_name OR
+                t.grandparent_term_name IS DISTINCT FROM s.grandparent_term_name
+              )
         UNION
         SELECT 'New item to add'::citext as Item_Type,
                0 As entry_id,

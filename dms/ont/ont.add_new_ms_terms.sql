@@ -33,7 +33,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Capitalize keyword
 **          05/25/2023 mem - Simplify call to RAISE INFO
-**          05/28/2023 mem - Simplify string concatenation
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -320,19 +320,19 @@ BEGIN
         --
         RETURN QUERY
         SELECT 'Existing item to update'::citext as Item_Type,
-            t.entry_id,
-            t.term_pk::citext As term_pk,
-            (CASE WHEN t.term_name = s.term_name THEN t.term_name ELSE t.term_name || ' --> ' || s.term_name END)::citext As term_name,
-            (CASE WHEN t.identifier = s.identifier THEN t.identifier ELSE t.identifier || ' --> ' || s.identifier END)::citext as identifier,
-            (CASE WHEN t.is_leaf = s.is_leaf THEN Cast(t.is_leaf As text) ELSE Cast(t.is_leaf As text) || ' --> ' || Cast(s.is_leaf As text) END)::citext As is_leaf,
-            (CASE WHEN t.parent_term_type = s.parent_term_type THEN t.parent_term_type ELSE Coalesce(t.parent_term_type, 'NULL') || ' --> ' || Coalesce(s.parent_term_type, 'NULL') END)::citext As parent_term_type,
-            (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name ELSE t.parent_term_name || ' --> ' || s.parent_term_name END)::citext As parent_term_name,
-            t.parent_term_id::citext,
-            (CASE WHEN t.grandparent_term_type = s.grandparent_term_type THEN t.grandparent_term_type ELSE Coalesce(t.grandparent_term_type, 'NULL') || ' --> ' || Coalesce(s.grandparent_term_type, 'NULL') END)::citext As grandparent_term_type,
-            (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE Coalesce(t.grandparent_term_name, 'NULL') || ' --> ' || Coalesce(s.grandparent_term_name, 'NULL') END)::citext As grandparent_term_name,
-            t.grandparent_term_id::citext,
-            t.entered::timestamp,
-            t.updated::timestamp
+               t.entry_id,
+               t.term_pk::citext As term_pk,
+               (CASE WHEN t.term_name  = s.term_name  THEN t.term_name       ELSE format('%s --> %s', t.term_name,  s.term_name)  END)::citext As term_name,
+               (CASE WHEN t.identifier = s.identifier THEN t.identifier      ELSE format('%s --> %s', t.identifier, s.identifier) END)::citext as identifier,
+               (CASE WHEN t.is_leaf = s.is_leaf THEN format('%s', t.is_leaf) ELSE format('%s --> %s', t.is_leaf, s.is_leaf)       END)::citext As is_leaf,
+               (CASE WHEN t.parent_term_type = s.parent_term_type THEN t.parent_term_type ELSE format('%s --> %s', Coalesce(t.parent_term_type, 'NULL'), Coalesce(s.parent_term_type, 'NULL')) END)::citext As parent_term_type,
+               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name ELSE format('%s --> %s', t.parent_term_name, s.parent_term_name) END)::citext As parent_term_name,
+               t.parent_term_id::citext,
+               (CASE WHEN t.grandparent_term_type = s.grandparent_term_type THEN t.grandparent_term_type ELSE format('%s --> %s', Coalesce(t.grandparent_term_type, 'NULL'), Coalesce(s.grandparent_term_type, 'NULL')) END)::citext As grandparent_term_type,
+               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE format('%s --> %s', Coalesce(t.grandparent_term_name, 'NULL'), Coalesce(s.grandparent_term_name, 'NULL')) END)::citext As grandparent_term_name,
+               t.grandparent_term_id::citext,
+               t.entered::timestamp,
+               t.updated::timestamp
         FROM ont.t_cv_ms As t
             INNER JOIN Tmp_SourceData As s
               ON t.term_pk = s.term_pk AND

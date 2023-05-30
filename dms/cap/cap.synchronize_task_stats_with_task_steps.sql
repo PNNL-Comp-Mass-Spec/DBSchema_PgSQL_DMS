@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoo
 **                         - Ported to PostgreSQL
 **          02/02/2023 mem - Update table aliases
 **          05/12/2023 mem - Rename variables
+**          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -75,7 +76,7 @@ BEGIN
             _message := 'All';
         End If;
 
-        _message := _message || ' capture task jobs have up-to-date Start and Finish times; nothing to do';
+        _message := format('%s capture task jobs have up-to-date Start and Finish times; nothing to do', _message);
 
         If _infoOnly Then
             RAISE INFO '%', _message;
