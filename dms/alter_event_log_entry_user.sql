@@ -34,7 +34,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          01/24/2023 mem - Update whitespace
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
-**          05/29/2023 mem - Use format() for string concatenation
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -92,7 +92,7 @@ BEGIN
         -- Filter using the current date/time
         ------------------------------------------------
         --
-        _entryDateStart := _currentTime - (_entryTimeWindowSeconds || ' seconds')::INTERVAL;
+        _entryDateStart := _currentTime - (format('%s seconds', _entryTimeWindowSeconds))::INTERVAL;
         _entryDateEnd   := _currentTime + INTERVAL '1 second';
 
         If _infoOnly Then

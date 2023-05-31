@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_biomaterial_after_delete() RETURNS tr
 **  Date:   10/02/2007 mem - Initial version (Ticket #543)
 **          10/31/2007 mem - Added Set NoCount statement (Ticket #569)
 **          08/04/2022 mem - Ported to PostgreSQL
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -29,12 +30,12 @@ BEGIN
             entered,
             entered_by
         )
-    SELECT  2 AS target_type,
-            biomaterial_id AS target_id,
-            0 AS target_state,
-            1 AS prev_target_state,
-            CURRENT_TIMESTAMP,
-            SESSION_USER || '; ' || deleted.biomaterial_name
+    SELECT 2 AS target_type,
+           biomaterial_id AS target_id,
+           0 AS target_state,
+           1 AS prev_target_state,
+           CURRENT_TIMESTAMP,
+           format('%s; %s', SESSION_USER, deleted.biomaterial_name)
     FROM deleted
     ORDER BY biomaterial_id;
 

@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **
 **  Auth:   mem
 **  Date:   01/15/2023 mem - Initial version (code refactored code from UpdateRequestedRunAssignments)
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -123,7 +123,7 @@ BEGIN
                 _allowedDatasetTypes := get_instrument_group_dataset_type_list(_instrumentGroup::citext, ', ');
 
                 _message := format('Dataset type "%s" is invalid for instrument group "%s"; valid types are "%s"',
-                                _requestInfo.DatasetTypeName, _instrumentGroup, _allowedDatasetTypes);
+                                   _requestInfo.DatasetTypeName, _instrumentGroup, _allowedDatasetTypes);
 
                 If _requestInfo.RequestIDCount > 1 Then
                     _message := format('%s; %s conflicting Request IDs, ranging from ID %s to %s', _message, _requestInfo.RequestIDCount, _requestInfo.RequestIDFirst, _requestInfo.RequestIDLast);
@@ -164,13 +164,12 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage = _exceptionMessage || '; Requests ';
-
-        If char_length(_reqRunIDList) < 128 Then
-            _logMessage := _logMessage || _reqRunIDList;
-        Else
-            _logMessage := _logMessage || Substring(_reqRunIDList, 1, 128) || ' ...';
-        End If;
+        _logMessage = format('%s; Requests %s',
+                             _exceptionMessage,
+                             CASE WHEN char_length(_reqRunIDList) < 128 THEN _reqRunIDList
+                                  ELSE format('%s ...', Substring(_reqRunIDList, 1, 128))
+                             END
+                            );
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,

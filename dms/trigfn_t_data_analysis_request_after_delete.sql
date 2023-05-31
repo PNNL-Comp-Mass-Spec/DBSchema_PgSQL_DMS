@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_data_analysis_request_after_delete() 
 **  Auth:   mem
 **  Date:   03/21/2022 mem - Initial version
 **          08/04/2022 mem - Ported to PostgreSQL
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -24,7 +25,7 @@ BEGIN
                                                  old_state_id,
                                                  new_state_id )
     SELECT deleted.request_id,
-           public.get_user_login_without_domain('') || '; ' || COALESCE(deleted.Request_Name, 'Unknown Request'),
+           format('%s; %s', public.get_user_login_without_domain(''), COALESCE(deleted.Request_Name, 'Unknown Request')),
            deleted.state,
            0 AS New_State_ID
     FROM deleted

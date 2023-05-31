@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_reference_compound_after_delete() RET
 **  Auth:   mem
 **  Date:   11/27/2017 mem - Initial version
 **          08/05/2022 mem - Ported to PostgreSQL
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -33,7 +34,7 @@ BEGIN
            0 as target_state,
            1 as prev_target_state,
            CURRENT_TIMESTAMP,
-           SESSION_USER || '; ' || deleted.compound_name
+           format('%s; %s', SESSION_USER, deleted.compound_name)
     FROM deleted
     ORDER BY compound_id;
 

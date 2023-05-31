@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_sample_prep_request_after_delete() RE
 **          11/08/2016 mem - Use GetUserLoginWithoutDomain to obtain the user's network login
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
 **          08/06/2022 mem - Ported to PostgreSQL
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -27,7 +28,7 @@ BEGIN
             beginning_state_ID,
             end_state_id)
     SELECT deleted.prep_request_id,
-           public.get_user_login_without_domain('') || '; ' || COALESCE(deleted.Request_Name, 'Unknown Request'),
+           format('%s; %s', public.get_user_login_without_domain(''), COALESCE(deleted.Request_Name, 'Unknown Request')),
            deleted.state_id,
            0 AS end_state_id
     FROM deleted

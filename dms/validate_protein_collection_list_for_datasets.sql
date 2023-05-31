@@ -7,9 +7,9 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
     AS $$
 /****************************************************
 **
-**  Desc:   Validates that the protein collection names in _protCollNameList
-**          include protein collections for the internal standards
-**          associated with the datasets listed in _datasets
+**  Desc:
+**      Validates that the protein collection names in _protCollNameList include protein collections
+**      for the internal standards associated with the datasets listed in _datasets
 **
 **  Auth:   mem
 **  Date:   11/13/2006 mem - Initial revision (Ticket #320)
@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **                         - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling ValidateAnalysisJobParameters
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          11/08/2022 mem - Ported to PostgreSQL
-**          05/23/2023 mem - Use format() for string concatenation
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -388,9 +388,9 @@ BEGIN
         End If;
 
         If _proteinCollectionInfo.Enzyme_Contaminant_Collection <> 0 Then
-            _msg := 'Added enzyme contaminant collection ' || _proteinCollectionInfo.Protein_Collection_Name;
+            _msg := format('Added enzyme contaminant collection %s', _proteinCollectionInfo.Protein_Collection_Name);
         Else
-            _msg := 'Added protein collection ' || _proteinCollectionInfo.Protein_Collection_Name || ' since it is present in ';
+            _msg := format('Added protein collection %s since it is present in', _proteinCollectionInfo.Protein_Collection_Name);
 
             If _proteinCollectionInfo.Dataset_Count > 0 Then
                 _msg := format('%s %s of %s %s',
@@ -409,7 +409,7 @@ BEGIN
             Else
                 -- Both _proteinCollectionInfo.Dataset_Count and _proteinCollectionInfo.Experiment_Count are 0
                 -- This code should not be reached
-                _msg := _msg || '? datasets and/or ? experiments (unexpected stats)';
+                _msg := format('%s ? datasets and/or ? experiments (unexpected stats)', _msg);
             End If;
 
         End If;

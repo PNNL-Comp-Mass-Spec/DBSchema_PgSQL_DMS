@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_entity_id_by_name(_targettypename
 **
 **  Auth:   mem
 **  Date:   11/29/2022 mem - Initial release
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -46,14 +47,15 @@ BEGIN
 
     If _targetTypeName::citext = 'SamplePrepRequest' And _targetTableNameCol::citext = 'prep_request_id' Then
 
-        _sql := ' SELECT ' || quote_ident(_targetTableIDCol)   || '::text' ||
-                ' FROM '   || quote_ident(_targetTableName)    ||
-                ' WHERE '  || quote_ident(_targetTableNameCol) || ' = $1::int';
-
+        _sql := format('SELECT %s FROM %s WHERE %s = $1::int',
+                       quote_ident(_targetTableIDCol),
+                       quote_ident(_targetTableName),
+                       quote_ident(_targetTableNameCol));
     Else
-        _sql := ' SELECT ' || quote_ident(_targetTableIDCol)   ||
-                ' FROM '   || quote_ident(_targetTableName)    ||
-                ' WHERE '  || quote_ident(_targetTableNameCol) || ' = $1';
+        _sql := format('SELECT %s FROM %s WHERE %s = $1',
+                       quote_ident(_targetTableIDCol),
+                       quote_ident(_targetTableName),
+                       quote_ident(_targetTableNameCol));
     End If;
 
     If _showDebug Then

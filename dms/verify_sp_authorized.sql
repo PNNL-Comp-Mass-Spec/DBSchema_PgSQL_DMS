@@ -55,6 +55,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          05/17/2023 mem - Change _authorized from int to boolean
 **          05/18/2023 mem - Remove implicit string concatenation
 **          05/22/2023 mem - Capitalize reserved words
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -106,16 +107,16 @@ BEGIN
         WHERE a.pid = pg_backend_pid();
 
         If Not FOUND Then
-            _message := 'PID ' || pg_backend_pid()::text || ' not found in the table returned by function get_active_connections; ' ||
-                        'will assume access denied for the current user (' || SESSION_USER || ')';
+            _message := format('PID %s not found in the table returned by function get_active_connections; will assume access denied for the current user (%s)',
+                               pg_backend_pid(), SESSION_USER);
 
             RETURN QUERY
             SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
 
             RETURN;
         Elsif Coalesce(_userName, '') = '' Then
-            _message := 'Function get_active_connections returned a blank username for PID ' || pg_backend_pid()::text || '; ' ||
-                        'will assume access denied for the current user (' || SESSION_USER || ')';
+            _message := format('Function get_active_connections returned a blank username for PID %s; will assume access denied for the current user (%s)',
+                               pg_backend_pid(), SESSION_USER);
 
             RETURN QUERY
             SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;

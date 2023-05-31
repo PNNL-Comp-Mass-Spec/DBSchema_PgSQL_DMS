@@ -56,7 +56,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          05/05/2023 mem - Ported to PostgreSQL
 **          05/11/2023 mem - Update return codes
 **          05/12/2023 mem - Rename variables
-**          05/23/2023 mem - Use format() for string concatenation
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -266,7 +266,7 @@ BEGIN
               );
 
         If _commaList <> '' Then
-            _message := format('Based on the parameter file entered, the following Analysis Job(s) were not compatible with the the tool type' || ':"%s"', _commaList);
+            _message := format('Based on the parameter file entered, the following Analysis Job(s) were not compatible with the the tool type: "%s"', _commaList);
 
             _returnCode := 'U5206';
             RETURN;
@@ -295,7 +295,7 @@ BEGIN
               );
 
         If _invalidJobList <> '' Then
-            _message := format('Based on the settings file entered, the following Analysis Job(s) were not compatible with the the tool type' || ':"%s"', _invalidJobList);
+            _message := format('Based on the settings file entered, the following Analysis Job(s) were not compatible with the the tool type: "%s"', _invalidJobList);
 
             _returnCode := 'U5207';
             RETURN;
@@ -323,7 +323,7 @@ BEGIN
 
             _alterEventLogRequired := true;
 
-            _action := 'Update state to ' || _stateID::text;
+            _action := format('Update state to %s', _stateID);
         End If;
 
         -----------------------------------------------
@@ -337,15 +337,15 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := 'Update priority to ' || _newPriority::text;
+            _action := format('Update priority to %s', _newPriority);
         End If;
 
         -----------------------------------------------
         If _comment <> _noChangeText Then
             UPDATE t_analysis_job
             SET comment = public.append_to_text(comment, _comment, _delimiter => '; ')
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) And
-                  Not comment LIKE '%' || _comment;
+            WHERE job IN (SELECT job FROM Tmp_AnalysisJobs) And
+                  NOT comment LIKE '%' || _comment;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
@@ -478,7 +478,7 @@ BEGIN
             protein_options_list = CASE WHEN _protCollOptionsList = _noChangeText  THEN protein_options_list ELSE _protCollOptionsList END,
             organism_id = CASE WHEN _organismName = _noChangeText                  THEN organism_id ELSE _orgid END,
             priority =  CASE WHEN _priority = _noChangeText                        THEN priority ELSE CAST(_priority AS int) END,
-            comment = comment || CASE WHEN _comment = _noChangeText                THEN '' ELSE ' ' || _comment END,
+            comment = format('%s%s', comment, CASE WHEN _comment = _noChangeText   THEN '' ELSE format(' %s', _comment) END),
             assigned_processor_name = CASE WHEN _assignedProcessor = _noChangeText THEN assigned_processor_name ELSE _assignedProcessor END
         WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
         --
@@ -487,35 +487,35 @@ BEGIN
         _action := 'Reset job state';
 
         If _paramFileName <> _noChangeText Then
-            _action2 := _action2 || '; changed param file to ' || _paramFileName;
+            _action2 := format('%s; changed param file to %s', _action2, _paramFileName);
         End If;
 
         If _settingsFileName <> _noChangeText Then
-            _action2 := _action2 || '; changed settings file to ' || _settingsFileName;
+            _action2 := format('%s; changed settings file to %s', _action2, _settingsFileName);
         End If;
 
         If _protCollNameList <> _noChangeText Then
-            _action2 := _action2 || '; changed protein collection to ' || _protCollNameList;
+            _action2 := format('%s; changed protein collection to %s', _action2, _protCollNameList);
         End If;
 
         If _protCollOptionsList <> _noChangeText Then
-            _action2 := _action2 || '; changed protein options to ' || _protCollOptionsList;
+            _action2 := format('%s; changed protein options to %s', _action2, _protCollOptionsList);
         End If;
 
         If _organismName <> _noChangeText Then
-            _action2 := _action2 || '; changed organism name to ' || _organismName;
+            _action2 := format('%s; changed organism name to %s', _action2, _organismName);
         End If;
 
         If _priority <> _noChangeText Then
-            _action2 := _action2 || '; changed priority to ' || _priority;
+            _action2 := format('%s; changed priority to %s', _action2, _priority);
         End If;
 
         If _comment <> _noChangeText Then
-            _action2 := _action2 || '; appended comment text';
+            _action2 := format('%s; appended comment text', _action2);
         End If;
 
         If _assignedProcessor <> _noChangeText Then
-            _action2 := _action2 || '; updated assigned processor to ' || _assignedProcessor;
+            _action2 := format('%s; updated assigned processor to %s', _action2, _assignedProcessor);
         End If;
 
         -----------------------------------------------
@@ -525,7 +525,7 @@ BEGIN
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
 
             If _assignedProcessor <> _noChangeText Then
-                _action2 := _action2 || '; replaced text in comment';
+                _action2 := format('%s; replaced text in comment', _action2);
             End If;
 
         End If;
@@ -581,7 +581,7 @@ BEGIN
                 _jobCountUpdated := _deleteCount;
             End If;
 
-            _action2 := _action2 || '; remove jobs from processor group';
+            _action2 := format('%s; remove jobs from processor group', _action2);
         Else
             -- For jobs with existing association, change it
             --
@@ -611,7 +611,7 @@ BEGIN
             End If;
 
             If _insertCount <> 0 OR _processorGroupAssociationsUpdated <> 0 Then
-                _action2 := _action2 || '; associate jobs with processor group ' || _associatedProcessorGroup;
+                _action2 := format('%s; associate jobs with processor group %s', _action2, _associatedProcessorGroup);
             End If;
 
             _alterEnteredByRequired := true;
@@ -650,7 +650,7 @@ BEGIN
         DROP TABLE Tmp_ID_Update_List;
     End If;
 
-    _message := 'Number of jobs to update: ' || _jobCountToUpdate::text;
+    _message := format('Number of jobs to update: %s', _jobCountToUpdate);
 
     If Not _alterData Then
         If _jobCountUpdated = 0 Then
@@ -660,8 +660,13 @@ BEGIN
                 _message := format('%s; all jobs were already up-to-date (%s)', _message, _action);
             End If;
         Else
-            _message := format('%s; %s for %s job(s)%s',
-                                _message, _action, _jobCountUpdated, _action2);
+            _message := format('%s; %s for %s %s%s',
+                                _message,
+                                _action,
+                                _jobCountUpdated,
+                                public.check_plural(_jobCountUpdated, 'job', 'jobs'),
+                                _action2     -- Note that _action2 is either an empty string or it starts with a semicolon
+                              );
         End If;
     End If;
 

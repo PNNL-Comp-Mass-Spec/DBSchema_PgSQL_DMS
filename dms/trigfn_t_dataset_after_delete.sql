@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_delete() RETURNS trigge
 **          10/02/2007 mem - Updated to append the dataset name to the entered_by field (Ticket #543)
 **          10/31/2007 mem - Added Set NoCount statement (Ticket #569)
 **          08/04/2022 mem - Ported to PostgreSQL
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -36,7 +37,7 @@ BEGIN
            0 AS target_state,
            dataset_state_id AS prev_target_state,
            CURRENT_TIMESTAMP,
-           SESSION_USER || '; ' || dataset
+           format('%s; %s', SESSION_USER, dataset)
     FROM deleted
     ORDER BY dataset_id;
 

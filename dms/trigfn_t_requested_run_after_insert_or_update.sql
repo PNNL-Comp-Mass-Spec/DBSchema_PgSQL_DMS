@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_after_insert_or_update(
 **                         - Log requested runs that have the same dataset_id
 **          02/08/2023 mem - Switch from PRN to username
 **          02/21/2023 mem - Pass batch group ID to get_requested_run_name_code
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -160,11 +161,12 @@ BEGIN
             INSERT INTO T_Entity_Rename_Log ( target_type, Target_ID, Old_Name, New_Name )
             VALUES (14,
                     NEW.request_id,
-                    OLD.dataset_id::text || ': ' || Coalesce(_datasetNameOld, '??'),
+                    format('%s: %s', OLD.dataset_id, COALESCE(_datasetNameOld, '??')),
                     CASE
                         WHEN NEW.dataset_id IS NULL THEN 'null'
-                        ELSE NEW.dataset_id::text || ': ' || Coalesce(_datasetNameNew, '??')
-                    END);
+                        ELSE format('%s: %s', NEW.dataset_id, COALESCE(_datasetNameNew, '??'))
+                    END
+                   );
         End If;
 
         -- Check for updated Experiment ID
@@ -183,8 +185,9 @@ BEGIN
             INSERT INTO t_entity_rename_log ( target_type, target_id, old_name, new_name )
             VALUES (15,
                     NEW.request_id,
-                    OLD.exp_id::text || ': ' || _experimentNameOld,
-                    NEW.exp_id::text || ': ' || _experimentNameNew);
+                    format('%s: %s', OLD.exp_id, _experimentNameOld),
+                    format('%s: %s', NEW.exp_id, _experimentNameNew)
+                   );
 
         End If;
 
@@ -196,8 +199,8 @@ BEGIN
         INSERT INTO T_Entity_Rename_Log ( target_type, Target_ID, Old_Name, New_Name )
         SELECT 14 AS target_type,
                NEW.request_id,
-               'Dataset ID ' || NEW.dataset_id::text || ' is already referenced by Request ID ' || RR.request_id::text,
-               NEW.dataset_id::text || ': ' || Coalesce(NewDataset.dataset, '??')
+               format('Dataset ID %s is already referenced by Request ID %s', NEW.dataset_id, RR.request_id),
+               format('%s: %s', NEW.dataset_id, COALESCE(NewDataset.dataset, '??'))
         FROM T_Requested_Run RR
              LEFT OUTER JOIN T_Dataset AS NewDataset
                ON RR.dataset_id = NewDataset.dataset_id

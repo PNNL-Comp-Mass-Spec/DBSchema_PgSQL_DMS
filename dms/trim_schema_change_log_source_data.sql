@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infolevel 
 **          12/23/2022 mem - Rename parameter to _infoLevel
 **          04/27/2023 mem - Use boolean for data type name
 **          05/12/2023 mem - Rename variables
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -119,92 +120,98 @@ BEGIN
             SELECT 0 As schema_change_log_id,
                    LocalTimestamp As entered,
                    'Note'::citext As schema_name,
-                   ('Condensed ' || _duplicateCount::text || ' duplicate row(s), having the same object name, object type, and entry time')::citext As object_name,
+                   format('Condensed %s duplicate %s, having the same object name, object type, and entry time',
+                          _duplicateCount, public.check_plural(_duplicateCount, 'row', 'rows'))::citext AS object_name,
                    1 As version_rank,
                    ''::citext As function_name,
                    ''::citext As function_source,
                    0 As source_length_old,
                    0 As source_length_new;
         End If;
+
+        DROP TABLE T_Tmp_SchemaChangeLogRank;
+        RETURN;
+    End If;
+
+    UPDATE t_schema_change_log target
+    SET function_source = left(target.function_source, 100)
+    FROM T_Tmp_SchemaChangeLogRank RankQ
+    WHERE RankQ.trim_data = true AND
+          target.schema_change_log_id = RankQ.schema_change_log_id;
+
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
+    _message = format('Trimmed function_source for %s %s', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
+
+    If _updateCount > 0 Then
+        RAISE INFO '%', _message;
+
+        RETURN QUERY
+        SELECT SCL.schema_change_log_id,
+               SCL.entered,
+               SCL.schema_name,
+               SCL.object_name,
+               RankQ.version_rank,
+               SCL.function_name,
+               SCL.function_source,
+               RankQ.current_source_length as source_length_old,
+               char_length(SCL.function_source) as source_length_new
+        FROM t_schema_change_log SCL
+             INNER JOIN
+                (SELECT DISTINCT L.schema_name AS schema_name, L.object_name as object_name
+                 FROM T_Tmp_SchemaChangeLogRank SCLR
+                      INNER JOIN t_schema_change_log L
+                      ON SCLR.schema_change_log_id = L.schema_change_log_id
+                 WHERE SCLR.trim_data = true) FilterQ
+               ON SCL.schema_name = FilterQ.schema_name AND
+                  SCL.object_name = FilterQ.object_name
+             INNER JOIN
+               T_Tmp_SchemaChangeLogRank RankQ
+                 ON SCL.schema_change_log_id = RankQ.schema_change_log_id
+        ORDER BY SCL.schema_name, SCL.object_name, SCL.schema_change_log_id;
     Else
-        UPDATE t_schema_change_log target
-        SET function_source = left(target.function_source, 100)
-        FROM T_Tmp_SchemaChangeLogRank RankQ
-        WHERE RankQ.trim_data = true AND
-              target.schema_change_log_id = RankQ.schema_change_log_id;
+        RETURN QUERY
+        SELECT 0 As schema_change_log_id,
+               LocalTimestamp As entered,
+               'Note'::citext As schema_name,
+               'Did not find any objects that have more than three entries and function source longer than 100 characters'::citext As object_name,
+               1 As version_rank,
+               ''::citext As function_name,
+               ''::citext As function_source,
+               0 As source_length_old,
+               0 As source_length_new;
+    End If;
 
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
-        _message = 'Trimmed function_source for ' || _updateCount::text || ' row(s)';
+    -- When foreign tables are created using "IMPORT FOREIGN SCHEMA", duplicate entries get logged to t_schema_change_log
+    -- Condense the duplicates by grouping on schema, object, command_tag, and entry time,
+    -- then removing all but the first entry
 
-        If _updateCount > 0 Then
-            RAISE INFO '%', _message;
+    DELETE FROM t_schema_change_log target
+    WHERE target.schema_change_log_id IN
+          ( SELECT FilterQ.schema_change_log_id
+            FROM ( SELECT RankQ.schema_change_log_id,
+                          row_number() OVER ( PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
+                                              ORDER BY RankQ.schema_change_log_id ) AS DupeRank
+                   FROM t_schema_change_log RankQ) FilterQ
+            WHERE FilterQ.DupeRank > 1 );
 
-            RETURN QUERY
-            SELECT SCL.schema_change_log_id,
-                   SCL.entered,
-                   SCL.schema_name,
-                   SCL.object_name,
-                   RankQ.version_rank,
-                   SCL.function_name,
-                   SCL.function_source,
-                   RankQ.current_source_length as source_length_old,
-                   char_length(SCL.function_source) as source_length_new
-            FROM t_schema_change_log SCL
-                 INNER JOIN
-                    (SELECT DISTINCT L.schema_name AS schema_name, L.object_name as object_name
-                     FROM T_Tmp_SchemaChangeLogRank SCLR
-                          INNER JOIN t_schema_change_log L
-                          ON SCLR.schema_change_log_id = L.schema_change_log_id
-                     WHERE SCLR.trim_data = true) FilterQ
-                   ON SCL.schema_name = FilterQ.schema_name AND
-                      SCL.object_name = FilterQ.object_name
-                 INNER JOIN
-                   T_Tmp_SchemaChangeLogRank RankQ
-                     ON SCL.schema_change_log_id = RankQ.schema_change_log_id
-            ORDER BY SCL.schema_name, SCL.object_name, SCL.schema_change_log_id;
-        Else
-            RETURN QUERY
-            SELECT 0 As schema_change_log_id,
-                   LocalTimestamp As entered,
-                   'Note'::citext As schema_name,
-                   'Did not find any objects that have more than three entries and function source longer than 100 characters'::citext As object_name,
-                   1 As version_rank,
-                   ''::citext As function_name,
-                   ''::citext As function_source,
-                   0 As source_length_old,
-                   0 As source_length_new;
-        End If;
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        -- When foreign tables are created using "IMPORT FOREIGN SCHEMA", duplicate entries get logged to t_schema_change_log
-        -- Condense the duplicates by grouping on schema, object, command_tag, and entry time,
-        -- then removing all but the first entry
+    If _deleteCount > 0 Then
+        _message = public.append_to_text(_message,
+                                         format('Condensed %s duplicate %s, having the same object name, object type, and entry time',
+                                                _deleteCount, public.check_plural(_deleteCount, 'row','rows')));
 
-        DELETE FROM t_schema_change_log target
-        WHERE target.schema_change_log_id IN
-              ( SELECT FilterQ.schema_change_log_id
-                FROM ( SELECT RankQ.schema_change_log_id,
-                              row_number() OVER ( PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
-                                                  ORDER BY RankQ.schema_change_log_id ) AS DupeRank
-                       FROM t_schema_change_log RankQ) FilterQ
-                WHERE FilterQ.DupeRank > 1 );
-
-        GET DIAGNOSTICS _deleteCount = ROW_COUNT;
-
-        If _deleteCount > 0 Then
-            _message = _message || 'Condensed ' || _deleteCount::text || ' duplicate row(s), having the same object name, object type, and entry time';
-
-            -- This will append a row to the result set
-            RETURN QUERY
-            SELECT 0 As schema_change_log_id,
-                   LocalTimestamp As entered,
-                   'Note'::citext As schema_name,
-                   ('Condensed ' || _deleteCount::text || ' duplicate row(s), having the same object name, object type, and entry time')::citext As object_name,
-                   1 As version_rank,
-                   ''::citext As function_name,
-                   ''::citext As function_source,
-                   0 As source_length_old,
-                   0 As source_length_new;
-        End If;
+        -- This will append a row to the result set
+        RETURN QUERY
+        SELECT 0 As schema_change_log_id,
+               LocalTimestamp As entered,
+               'Note'::citext As schema_name,
+               format('Condensed %s duplicate s, having the same object name, object type, and entry time', _deleteCount, public.check_plural(_deleteCount, 'row','rows'))::citext AS object_name,
+               1 As version_rank,
+               ''::citext As function_name,
+               ''::citext As function_source,
+               0 As source_length_old,
+               0 As source_length_new;
     End If;
 
     DROP TABLE T_Tmp_SchemaChangeLogRank;

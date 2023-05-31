@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_daily(_year integer,
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          10/22/2022 mem - Directly pass value to function argument
 **          04/20/2023 mem - Cast to float8 for clarity
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -243,7 +244,7 @@ BEGIN
     --
     UPDATE Tmp_T_Report_Accumulation
     SET Comment = CASE WHEN char_length(GroupQ.Comment) > 4090
-                       THEN SUBSTRING(GroupQ.Comment, 1, 4090) || ' ...'
+                       THEN format('%s ...', SUBSTRING(GroupQ.Comment, 1, 4090))
                        ELSE GroupQ.Comment
                   END
     FROM ( SELECT DistinctQ.EMSL_Inst_ID,

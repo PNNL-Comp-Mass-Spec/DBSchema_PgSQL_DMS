@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          04/02/2023 mem - Rename procedure and functions
 **          05/22/2023 mem - Capitalize reserved word
-**                         - Use format() for string concatenation
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -48,10 +48,7 @@ BEGIN
     -- The following adds a root node then converts the XML into a table
     -- Next, string_agg() is used to concatenate the fields
     --
-    SELECT string_agg(
-        'Section="' || XmlQ.section ||
-        '" Name="'  || XmlQ.name    ||
-        '" Value="' || XmlQ.value   || '"', '<br>' ORDER BY XmlQ.section, XmlQ.name)
+    SELECT string_agg(format('Section="%s" Name="%s" Value="%s"', XmlQ.section, XmlQ.name, XmlQ.value), '<br>' ORDER BY XmlQ.section, XmlQ.name)
     INTO _result
     FROM (
         SELECT xmltable.*

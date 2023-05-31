@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_after_delete() RETURNS 
 **  Auth:   mem
 **  Date:   12/12/2011 mem - Initial version
 **          08/06/2022 mem - Ported to PostgreSQL
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -33,7 +34,7 @@ BEGIN
            0 AS target_state,
            RRS.state_id AS prev_target_state,
            CURRENT_TIMESTAMP,
-           SESSION_USER || '; ' || deleted.request_name
+           format('%s; %s', SESSION_USER, deleted.request_name)
     FROM deleted
          INNER JOIN t_requested_run_state_name RRS
            ON deleted.state_name = RRS.state_name

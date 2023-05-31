@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_instrument_allocation_after_delete() 
 **  Auth:   mem
 **  Date:   03/30/2012 mem - Initial version
 **          08/05/2022 mem - Ported to PostgreSQL
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -33,7 +34,7 @@ BEGIN
            null AS allocated_hours_new,
            CASE WHEN COALESCE(comment, '') = ''
                 THEN '(deleted)'
-                ELSE '(deleted); ' || comment
+                ELSE format('(deleted); %s', comment)
            END AS comment,
            CURRENT_TIMESTAMP
     FROM deleted

@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_reference_compound_after_update() RET
 **          08/05/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -24,11 +25,11 @@ BEGIN
 
     INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)
     SELECT 13, NEW.compound_id,
-           OLD.compound_name || ' (modifications ' || COALESCE(OLD.modifications, '') || ', Gene ' || COALESCE(OLD.gene_name, '') || ')',
-           NEW.compound_name || ' (modifications ' || COALESCE(NEW.modifications, '') || ', Gene ' || COALESCE(NEW.gene_name, '') || ')',
+           format('%s (modifications %s, Gene %s)', OLD.compound_name, COALESCE(OLD.modifications, ''), COALESCE(OLD.gene_name, '')),
+           format('%s (modifications %s, Gene %s)', NEW.compound_name, COALESCE(NEW.modifications, ''), COALESCE(NEW.gene_name, '')),
            CURRENT_TIMESTAMP
-    WHERE OLD.compound_name || '_' || COALESCE(OLD.modifications, '') || '_' ||  COALESCE(OLD.gene_name, '') <>
-          NEW.compound_name || '_' || COALESCE(NEW.modifications, '') || '_' ||  COALESCE(NEW.gene_name, '');
+    WHERE format('%s_%s_%s', OLD.compound_name, COALESCE(OLD.modifications, ''), COALESCE(OLD.gene_name, '')) <>
+          format('%s_%s_%s', NEW.compound_name, COALESCE(NEW.modifications, ''), COALESCE(NEW.gene_name, ''));
 
     RETURN null;
 END

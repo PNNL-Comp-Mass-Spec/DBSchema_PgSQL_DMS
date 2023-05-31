@@ -35,7 +35,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          12/12/2022 mem - Whitespace update
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
-**          05/30/2023 mem - Use format() for string concatenation
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -97,7 +97,7 @@ BEGIN
         -- Filter using the current date/time
         ------------------------------------------------
         --
-        _entryDateStart := _currentTime - (_entryTimeWindowSeconds || ' seconds')::INTERVAL;
+        _entryDateStart := _currentTime - (format('%s seconds', _entryTimeWindowSeconds))::INTERVAL;
         _entryDateEnd   := _currentTime + INTERVAL '1 second';
 
         If _infoOnly Then

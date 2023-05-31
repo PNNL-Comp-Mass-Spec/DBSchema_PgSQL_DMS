@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          12/12/2022 mem - Use a single interval when computing _endIntervalEOD
 **          03/20/2023 mem - Treat proposal types 'Capacity' and 'Staff Time' as EMSL funded
 **          05/22/2023 mem - Capitalize reserved words
+**          05/31/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -317,9 +318,10 @@ BEGIN
             FROM Tmp_TX
             WHERE ID = 0 AND Duration >= _maxNormalInterval;
 
-            _s := 'total:' || _totalMinutes::text ||
-            _s := ', normal acquisition:' || (Coalesce(_acquisitionMinutes, 0) + Coalesce(_normalIntervalMinutes, 0))::text ||
-            _s := ', long intervals:' || _longIntervalMinutes::text;
+            _s := format('total:%s, normal acquisition:%s, long intervals:%s',
+                         _totalMinutes,
+                         Coalesce(_acquisitionMinutes, 0) + Coalesce(_normalIntervalMinutes, 0),
+                         _longIntervalMinutes);
 
             INSERT INTO Tmp_TX (Seq, Dataset)
             VALUES (0, _s);
@@ -336,7 +338,7 @@ BEGIN
         SET
             State = DSN.dataset_state ,
             Rating = DRN.dataset_rating ,
-            LC_Column = 'C:' || LC.lc_column ,
+            LC_Column = format('C:%s', LC.lc_column),
             Request = RR.request_id ,
             Work_Package = RR.work_package ,
             EUS_Proposal = RR.eus_proposal_id ,

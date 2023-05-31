@@ -46,6 +46,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          09/01/2022 mem - Use _callingProcSchema for the schema name if _callingProcName is <Auto> or <AutoDetermine> and get_call_stack() returns an empty schema name
 **          10/11/2022 mem - Remove transaction rollback
 **          05/22/2023 mem - Capitalize reserved words
+**          05/31/2023 mem - Use format() for string concatenation
 **
 ****************************************************/
 DECLARE
@@ -122,7 +123,7 @@ BEGIN
     _message := format('Error caught in %s', _callingProcName);
 
     If char_length(_callingProcLocation) > 0 Then
-        _message := _message || ' at "' || _callingProcLocation || '"';
+        _message := format('%s at "%s"', _message, _callingProcLocation);
     End If;
 
     _message := format('%s; %s',
