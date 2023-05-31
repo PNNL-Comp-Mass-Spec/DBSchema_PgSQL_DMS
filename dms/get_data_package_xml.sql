@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **          06/18/2022 mem - Ported to PostgreSQL
 **          11/15/2022 mem - Use new column name
 **          04/27/2023 mem - Use boolean for data type name
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -274,9 +274,9 @@ BEGIN
                         XMLATTRIBUTES(
                             --TDPA.data_package_id,
                             DPJ.job,
-                            DFP.dataset_folder_path || '\' || AJ.results_folder_name as folder_path,
-                            DFP.archive_folder_path || '\' || AJ.results_folder_name as archive_path,
-                            DFP.myemsl_path_flag    || '\' || AJ.results_folder_name as myemsl_path))
+                            format('%s\%s', DFP.dataset_folder_path, AJ.results_folder_name) AS folder_path,
+                            format('%s\%s', DFP.archive_folder_path, AJ.results_folder_name) AS archive_path,
+                            format('%s\%s', DFP.myemsl_path_flag   , AJ.results_folder_name) AS myemsl_path))
                        ) AS xml_item
                FROM dpkg.V_Data_Package_Analysis_Jobs_Export AS DPJ
                     INNER JOIN t_dataset AS DS ON DS.dataset = DPJ.Dataset

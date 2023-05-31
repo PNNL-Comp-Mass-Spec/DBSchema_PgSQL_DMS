@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats(IN _job integer,
 **                         - Without this, svc-dms reports 'INSERT permission was denied'
 **          08/12/2020 mem - Replace _observationStatsAll with _medianIntensitiesTopNPct
 **          05/25/2023 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -200,8 +201,8 @@ BEGIN
 
     END LOOP;
 
-    _sqlInsert := _sqlInsert || ')';
-    _sqlValues := _sqlValues || ')';
+    _sqlInsert := format('%s)', _sqlInsert);
+    _sqlValues := format('%s)', _sqlValues);
 
     If _infoOnly Then
         -----------------------------------------------

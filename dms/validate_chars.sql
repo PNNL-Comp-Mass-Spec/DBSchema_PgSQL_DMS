@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION public.validate_chars(_string text, _validch text DEF
 **          02/13/2008 mem - Updated to check for _string containing a space (Ticket #602)
 **          06/24/2022 mem - Ported to PostgreSQL
 **          04/27/2023 mem - Use boolean for data type name
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -51,8 +51,8 @@ BEGIN
         If Position(_ch In _validCh) = 0 Then
             If _ch = ' ' Then
                 _warnSpace := true;
-            ElseIf Position(_ch in _badChars) = 0 Then
-                _badChars := _badChars || _ch;
+            ElsIf Position(_ch in _badChars) = 0 Then
+                _badChars := format('%s%s', _badChars, _ch);
             End If;
         End If;
 

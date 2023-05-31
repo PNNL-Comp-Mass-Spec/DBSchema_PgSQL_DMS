@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION ont.get_modification_site_list(_unimodid integer, _hi
 **  Date:   05/15/2013 mem - Initial version
 **          03/29/2022 mem - Ported to PostgreSQL
 **                         - Add support for returning all modification sites when _hidden is greater than 1
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -28,7 +29,7 @@ BEGIN
                       THEN S.site
                     WHEN S.site LIKE '_-term'
                       THEN S.position
-                    ELSE S.site || ' @ ' || S.position
+                    ELSE format('%s @ %s', S.site, S.position)
                END AS Site_Description
         FROM ont.t_unimod_specificity AS S
         WHERE S.unimod_id = _unimodID AND

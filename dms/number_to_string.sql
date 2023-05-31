@@ -44,6 +44,7 @@ CREATE OR REPLACE FUNCTION public.number_to_string(_value numeric, _digitsafterd
 **          06/14/2022 mem - Ported to PostgreSQL
 **          11/24/2022 mem - Change _continue to a boolean
 **          05/22/2023 mem - Capitalize reserved word
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -75,7 +76,7 @@ BEGIN
         -- For larger numbers, use to_char() with a format specifier
         -- For example, use '9.999EEEE' for three digits after the decimal point
 
-        _formatCode := '9.' || REPEAT('9', _digitsAfterDecimal) || 'EEEE';
+        _formatCode := format('%s%s%s', '9.', REPEAT('9', _digitsAfterDecimal), 'EEEE');
 
         _valueText = Trim(to_char(_value, _formatCode));
 
@@ -89,14 +90,14 @@ BEGIN
             _matchPos := strpos(_valueText, '0e+');
 
             If _matchPos > 0 Then
-                _valueText = replace( _valueText, '0e+', 'e+');
+                _valueText = Replace( _valueText, '0e+', 'e+');
             Else
                 _continue := false;
             End If;
         END LOOP;
 
         -- If the text is of the form '3.e+22', change to '3e+22'
-        _valueText = replace(_valueText, '.e+', 'e+');
+        _valueText = Replace(_valueText, '.e+', 'e+');
     End If;
 
     RETURN _valueText;

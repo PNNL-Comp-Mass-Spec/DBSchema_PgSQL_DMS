@@ -12,11 +12,12 @@ CREATE OR REPLACE FUNCTION dpkg.get_xml_row(_data_package_id integer, _type text
 **  Auth:   grk
 **  Date:   05/26/2010 grk
 **          06/25/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 
 BEGIN
-    RETURN '<item pkg="' || _data_Package_ID::text || '" type="' || _type || '" id="' || _itemID || '"/>';
+    RETURN format('<item pkg="%s" type="%s" id="%s"/>', _data_Package_ID, _type, _itemID);
 END
 $$;
 

@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_experiment_plex_members_for_entry(_plexexp
     AS $$
 /****************************************************
 **
-**  Desc:   Builds delimited list of experiment plex members for a given experiment plex
+**  Desc:
+*       Builds delimited list of experiment plex members for a given experiment plex
 **
 **  Return value: list delimited with line feeds and vertical bars
 **
@@ -15,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_experiment_plex_members_for_entry(_plexexp
 **  Date:   11/09/2018 mem
 **          11/19/2018 mem - Update column name
 **          06/21/2022 mem - Ported to PostgreSQL
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -25,7 +26,7 @@ DECLARE
     _missingTagCount int := 0;
     _channelCount int := 0;
 BEGIN
-    SELECT Sum(Case When char_length(Coalesce(ReporterIons.tag_name, '')) = 0 Then 1 Else 0 End), Count(*)
+    SELECT SUM(CASE WHEN char_length(Coalesce(ReporterIons.tag_name, '')) = 0 THEN 1 ELSE 0 END), Count(*)
     INTO _missingTagCount, _channelCount
     FROM t_experiment_plex_members PlexMembers
         INNER JOIN t_experiments ChannelExperiment
@@ -40,10 +41,11 @@ BEGIN
     SELECT string_agg(LookupQ.PlexMemberInfo, chr(10) ORDER BY LookupQ.channel)
     INTO _list
     FROM ( SELECT PlexMembers.channel,
-                  Coalesce(ReporterIons.tag_name, PlexMembers.channel::text) || ', ' ||
-                  PlexMembers.exp_id::text || ', ' ||
-                  ChannelType.channel_type_name || ', ' ||
-                  Coalesce(PlexMembers.comment, '') AS PlexMemberInfo
+                  format('%s, %s, %s, %s',
+                          Coalesce(ReporterIons.tag_name, PlexMembers.channel::text),
+                          PlexMembers.exp_id,
+                          ChannelType.channel_type_name,
+                          Coalesce(PlexMembers.comment, '')) AS PlexMemberInfo
            FROM t_experiment_plex_members PlexMembers
                 INNER JOIN t_experiments ChannelExperiment
                   ON PlexMembers.exp_id = ChannelExperiment.exp_id

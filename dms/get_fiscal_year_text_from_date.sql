@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_text_from_date(_rawdate timest
 **  Date:   07/18/2011
 **          06/21/2022 mem - Ported to PostgreSQL
 **          12/15/2022 mem - Use extract(year from _variable) and extract(month from) to extract the year and month from timestamps
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
                         ELSE _rawDate
                    END;
 
-    RETURN 'FY_' || Right(extract(year from _fiscalYear)::text, 2);
+    RETURN format('FY_%s', Right(extract(year from _fiscalYear)::text, 2));
 END
 $$;
 

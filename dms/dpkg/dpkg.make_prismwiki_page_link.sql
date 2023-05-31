@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION dpkg.make_prismwiki_page_link(_packagename text) RETU
 **          06/26/2009 mem - Updated link format to be _baseURL plus the data package name
 **          09/21/2012 mem - Changed from https:// to http://
 **          06/25/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -29,23 +30,23 @@ BEGIN
     _temp := Coalesce(_packageName, '');
 
     -- Replace invalid path characters with an underscore
-    _temp := REPLACE(_temp, ' ', '_');
-    _temp := REPLACE(_temp, '/', '_');
-    _temp := REPLACE(_temp, '\', '_');
-    _temp := REPLACE(_temp, ':', '_');
-    _temp := REPLACE(_temp, '*', '_');
-    _temp := REPLACE(_temp, '?', '_');
-    _temp := REPLACE(_temp, '"', '_');
-    _temp := REPLACE(_temp, '>', '_');
-    _temp := REPLACE(_temp, '<', '_');
-    _temp := REPLACE(_temp, '|', '_');
+    _temp := Replace(_temp, ' ', '_');
+    _temp := Replace(_temp, '/', '_');
+    _temp := Replace(_temp, '\', '_');
+    _temp := Replace(_temp, ':', '_');
+    _temp := Replace(_temp, '*', '_');
+    _temp := Replace(_temp, '?', '_');
+    _temp := Replace(_temp, '"', '_');
+    _temp := Replace(_temp, '>', '_');
+    _temp := Replace(_temp, '<', '_');
+    _temp := Replace(_temp, '|', '_');
 
     -- Replace other characters that we'd rather not see in the wiki link
-    _temp := REPLACE(_temp, '''', '_');
-    _temp := REPLACE(_temp, '||', '_');
-    _temp := REPLACE(_temp, '-', '_');
+    _temp := Replace(_temp, '''', '_');
+    _temp := Replace(_temp, '||', '_');
+    _temp := Replace(_temp, '-', '_');
 
-    _result := _baseURL || _temp;
+    _result := format('%s%s', _baseURL, _temp);
 
     RETURN _result;
 END

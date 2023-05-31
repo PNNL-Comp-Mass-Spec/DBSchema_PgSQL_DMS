@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.resolve_table_name(_tabletofind text) RETURNS 
 **  Auth:   mem
 **  Date:   04/01/2022 mem - Initial Version
 **          05/22/2023 mem - Capitalize reserved words
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -55,8 +56,8 @@ BEGIN
         SELECT _tableToFind::citext,
                _tableSchema,
                _tableName,
-               False As Table_Exists,
-               ('Table not found in the given schema: ' || _tableToFind)::citext;
+               false As Table_Exists,
+               format('Table not found in the given schema: %s', _tableToFind)::citext;
     Else
         If Exists (SELECT * FROM pg_tables WHERE tablename::citext = _tableToFind::citext) Then
             RETURN QUERY
@@ -75,8 +76,8 @@ BEGIN
         SELECT _tableToFind::citext,
                ''::citext,
                _tableToFind::citext,
-               False As Table_Exists,
-               ('Table not found in any schema: ' || _tableToFind)::citext;
+               false As Table_Exists,
+               format('Table not found in any schema: %s', _tableToFind)::citext;
     End If;
 
 END

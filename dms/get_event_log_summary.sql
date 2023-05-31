@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_event_log_summary(_startdate timestamp wit
 **  Date:   07/12/2022 mem - Initial release (based on view V_Event_Log_24_Hour_Summary)
 **          08/26/2022 mem - Use new column name in t_log_entries
 **          04/27/2023 mem - Use boolean for data type name
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -35,33 +36,33 @@ BEGIN
         _timeRange = '';
 
         If _hoursInRange <= 72 Then
-            _rangeDescription := 'Previous ' || _hoursInRange::text || ' hours';
+            _rangeDescription := format('Previous %s hours', _hoursInRange);
         Else
-            _rangeDescription := 'Previous ' || _daysInRange::text || ' days';
+            _rangeDescription := format('Previous %s days', _daysInRange);
         End If;
     Else
         _isPreviousHours := false;
 
         If _hoursInRange <= 72 Then
-            _rangeDescription := 'Over ' || _hoursInRange::text || ' hours';
+            _rangeDescription := format('Over %s hours', _hoursInRange);
         Else
-            _rangeDescription := 'Over ' || _daysInRange::text || ' days';
+            _rangeDescription := format('Over %s days', _daysInRange);
         End If;
 
         If _daysInRange <= 3 Then
-            _timeRange := to_char(_startDate, 'yyyy-mm-dd hh:mi am') || ' to ' || to_char(_endDate, 'yyyy-mm-dd hh:mi am');
+            _timeRange := format('%s to %s', to_char(_startDate, 'yyyy-mm-dd hh:mi am'), to_char(_endDate, 'yyyy-mm-dd hh:mi am'));
         Else
-            _timeRange := to_char(_startDate, 'yyyy-mm-dd') || ' to ' || to_char(_endDate, 'yyyy-mm-dd');
+            _timeRange := format('%s to %s', to_char(_startDate, 'yyyy-mm-dd'), to_char(_endDate, 'yyyy-mm-dd'));
         End If;
     End If;
 
     RETURN QUERY
     SELECT 0::numeric As SortKey,
-        ('DMS ACTIVITY REPORT (' || _rangeDescription || ')')::citext AS Label,
-        (Case When _isPreviousHours
-             Then to_char(CURRENT_TIMESTAMP, 'yyyy-mm-dd hh:mi am')
-             Else _timeRange
-         End)::citext as Value
+        (format('DMS ACTIVITY REPORT (%s)', _rangeDescription))::citext AS Label,
+        (CASE WHEN _isPreviousHours
+             THEN to_char(CURRENT_TIMESTAMP, 'yyyy-mm-dd hh:mi am')
+             ELSE _timeRange
+         END)::citext as Value
     UNION
     SELECT 1.0 As SortKey, 'NEW ENTRIES' AS label, '' AS Value
     UNION
@@ -140,9 +141,9 @@ BEGIN
     WHERE Entered Between _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 7)
     UNION
     SELECT 5.0 As SortKey, 'FAILURES' AS Label,
-           (CASE WHEN COUNT(*) > 0 THEN 'Errors Detected: ' || COUNT(*)::citext ELSE '' END)::citext AS Value
+           (CASE WHEN COUNT(*) > 0 THEN format('Errors Detected: %s', COUNT(*)) ELSE '' END)::citext AS Value
     FROM public.t_event_log
-    WHERE Entered Between _startDate And _endDate AND
+    WHERE Entered BETWEEN _startDate AND _endDate AND
           ( Target_Type = 4 AND Target_State = 5 OR
             Target_Type = 4 AND Target_State = 8 OR
             Target_Type = 6 AND Target_State = 6 OR
@@ -152,14 +153,14 @@ BEGIN
           )
     UNION
     SELECT 1.51 As SortKey,
-           ('    Analysis Jobs entered (' || Tool.analysis_tool || ')')::citext AS Label, COUNT(*)::citext AS Value
+           (format('    Analysis Jobs entered (%s)', Tool.analysis_tool))::citext AS Label, COUNT(*)::citext AS Value
     FROM public.t_analysis_job J INNER JOIN
          public.t_analysis_tool Tool ON J.analysis_tool_id = Tool.analysis_tool_id
     WHERE     J.created Between _startDate And _endDate
     GROUP BY Tool.analysis_tool
     UNION
     SELECT 3.11 As SortKey,
-           ('    Analysis Jobs Successful (' || Tool.analysis_tool || ')')::citext AS Label, COUNT(*)::citext AS Value
+           (format('    Analysis Jobs Successful (%s)', Tool.analysis_tool))::citext AS Label, COUNT(*)::citext AS Value
     FROM   public.t_event_log EL INNER JOIN
            public.t_analysis_job J ON EL.Target_ID = J.job INNER JOIN
            public.t_analysis_tool Tool ON J.analysis_tool_id = Tool.analysis_tool_id
@@ -167,14 +168,14 @@ BEGIN
     GROUP BY Tool.analysis_tool
     UNION
     SELECT 1.41 As SortKey,
-           ('    Datasets entered (' || InstName.instrument_class || ')')::citext AS Label, COUNT(*)::citext AS Value
+           (format('    Datasets entered (%s)', InstName.instrument_class))::citext AS Label, COUNT(*)::citext AS Value
     FROM public.t_dataset DS INNER JOIN
          public.t_instrument_name InstName ON DS.instrument_id = InstName.Instrument_ID
     WHERE DS.created Between _startDate And _endDate
     GROUP BY InstName.instrument_class
     UNION
     SELECT 2.11 As SortKey,
-           ('    Dataset Capture Successful (' || InstName.instrument_class || ')')::citext AS Label, COUNT(*)::citext AS Value
+           (format('    Dataset Capture Successful (%s)', InstName.instrument_class))::citext AS Label, COUNT(*)::citext AS Value
     FROM public.t_event_log EL INNER JOIN
          public.t_dataset DS ON EL.Target_ID = DS.Dataset_ID INNER JOIN
          public.t_instrument_name InstName ON DS.instrument_id = InstName.Instrument_ID
@@ -182,9 +183,12 @@ BEGIN
     GROUP BY InstName.instrument_class
     UNION
     SELECT 6.0 As SortKey, 'LOG ENTRIES' AS Label,
-           (CASE WHEN StatsQ.Errors + StatsQ.Warnings > 0 THEN 'Errors / Warnings: ' || (StatsQ.Errors + StatsQ.Warnings)::text ELSE '' END)::citext AS Value
-    FROM (  SELECT Sum(Case When type = 'Error' Then 1 Else 0 End) as Errors,
-                   Sum(Case When type = 'Warning' Then 1 Else 0 End) as Warnings
+           (CASE WHEN StatsQ.Errors + StatsQ.Warnings > 0
+                 THEN format('Errors / Warnings: %s', StatsQ.Errors + StatsQ.Warnings)
+                 ELSE ''
+            END)::citext AS Value
+    FROM (  SELECT SUM(CASE WHEN type = 'Error'   THEN 1 ELSE 0 END) AS Errors,
+                   SUM(CASE WHEN type = 'Warning' THEN 1 ELSE 0 END) AS Warnings
             FROM public.t_log_entries
             WHERE entered Between _startDate And _endDate AND type IN ('Error', 'Warning')
          ) StatsQ

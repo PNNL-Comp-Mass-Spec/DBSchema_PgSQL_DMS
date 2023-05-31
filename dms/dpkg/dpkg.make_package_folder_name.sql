@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION dpkg.make_package_folder_name(_datapackageid integer,
 **          04/10/2013 mem - Now replacing commas
 **          06/25/2022 mem - Ported to PostgreSQL
 **          04/27/2023 mem - Rename function to use "folder" instead of "directory"
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -25,24 +26,24 @@ BEGIN
     _packageName := Coalesce(_packageName, '');
 
     -- Replace spaces with an underscore
-    _result := _dataPackageID::text || '_' || REPLACE(SUBSTRING(_packageName, 1, 96), ' ', '_');
+    _result := format('%s_%s', _dataPackageID, Replace(Substring(_packageName, 1, 96), ' ', '_'));
 
     -- Replace invalid path characters with an underscore
-    _result := REPLACE(_result, '/', '_');
-    _result := REPLACE(_result, '\', '_');
-    _result := REPLACE(_result, ':', '_');
-    _result := REPLACE(_result, '*', '_');
-    _result := REPLACE(_result, '?', '_');
-    _result := REPLACE(_result, '"', '_');
-    _result := REPLACE(_result, '>', '_');
-    _result := REPLACE(_result, '<', '_');
-    _result := REPLACE(_result, '|', '_');
+    _result := Replace(_result, '/', '_');
+    _result := Replace(_result, '\', '_');
+    _result := Replace(_result, ':', '_');
+    _result := Replace(_result, '*', '_');
+    _result := Replace(_result, '?', '_');
+    _result := Replace(_result, '"', '_');
+    _result := Replace(_result, '>', '_');
+    _result := Replace(_result, '<', '_');
+    _result := Replace(_result, '|', '_');
 
     -- Replace other characters that we'd rather not see in the folder name
-    _result := REPLACE(_result, '''', '_');
-    _result := REPLACE(_result, '||', '_');
-    _result := REPLACE(_result, '-', '_');
-    _result := REPLACE(_result, ',', '_');
+    _result := Replace(_result, '''', '_');
+    _result := Replace(_result, '||', '_');
+    _result := Replace(_result, '-', '_');
+    _result := Replace(_result, ',', '_');
 
     RETURN _result;
 END

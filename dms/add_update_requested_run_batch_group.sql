@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **  Auth:   mem
 **  Date:   02/15/2023 - initial version
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
-**          05/23/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -180,7 +180,7 @@ BEGIN
             WHERE Batch_ID Is Null;
 
             _logErrors := false;
-            _message := 'Batch IDs must be integers, not names; first invalid item: ' || Coalesce(_firstInvalid, '');
+            _message := format('Batch IDs must be integers, not names; first invalid item: %s', _firstInvalid);
 
             _returnCode := 'U5208';
             RAISE EXCEPTION '%', _message;

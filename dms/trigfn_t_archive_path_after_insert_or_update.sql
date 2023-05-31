@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_archive_path_after_insert_or_update()
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/07/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the NEW variable directly instead of using transition tables (which contain every new or updated row, not just the current row)
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -22,7 +23,7 @@ BEGIN
 
     UPDATE t_archive_path
     SET archive_url = CASE WHEN t_archive_path.archive_path LIKE '/archive/dmsarch/%'
-                           THEN 'http://dms2.pnl.gov/dmsarch/' || substring(t_archive_path.archive_path, 18, 256) || '/'
+                           THEN format('http://dms2.pnl.gov/dmsarch/%s/', Substring(t_archive_path.archive_path, 18, 256))
                            ELSE NULL
                       END
     WHERE t_archive_path.archive_path_id = NEW.archive_path_id;

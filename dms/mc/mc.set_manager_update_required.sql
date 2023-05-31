@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Capitalize reserved word
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -265,7 +266,7 @@ BEGIN
 
         END LOOP;
 
-         _message := _message || '; see the Output window for details';
+         _message := format('%s; see the Output window for details', _message);
 
     End If;
 

@@ -41,6 +41,7 @@ CREATE OR REPLACE FUNCTION sw.get_task_script_dot_format_table(_script text) RET
 **  Date:   06/25/2022 mem - Ported to PostgreSQL by converting V_Script_Dot_Format to a function
 **          08/17/2022 mem - Use case-insensitive comparison for script name
 **          12/18/2022 mem - Customized for the pipeline jobs schema
+**          05/30/2023 mem - Use format() for string concatenation
 **
 ****************************************************/
 DECLARE
@@ -97,9 +98,9 @@ BEGIN
     RETURN QUERY
     SELECT format('%s [label="%s %s%s"] [shape=%s, color=black%s];',
                   step, step, tool,
-                  CASE WHEN special_instructions IS NULL THEN '' ELSE ' (' || special_instructions || ')' END,
+                  CASE WHEN special_instructions IS NULL                 THEN ''          ELSE format('(%s)', special_instructions) END,
                   CASE WHEN COALESCE(special_instructions, '') = 'Clone' THEN 'trapezium' ELSE 'box' END,
-                  CASE WHEN COALESCE(shared_result_version, 0) = 0 THEN '' ELSE ', style=filled, fillcolor=lightblue, peripheries=2' END)
+                  CASE WHEN COALESCE(shared_result_version, 0) = 0       THEN ''          ELSE ', style=filled, fillcolor=lightblue, peripheries=2' END)
              As script_line,
            0 As seq
     FROM Tmp_ScriptSteps
@@ -134,7 +135,7 @@ BEGIN
             SELECT format('%s -> %s%s%s;',
                           XmlTableA.parent_step,
                           _scriptStep.step,
-                          CASE WHEN XmlTableA.condition_test IS NULL THEN '' ELSE ' [label="Skip if:' || XmlTableA.condition_test || '"]' END,
+                          CASE WHEN XmlTableA.condition_test IS NULL       THEN ''                ELSE format(' [label="Skip if:%s"]', XmlTableA.condition_test) END,
                           CASE WHEN Coalesce(XmlTableA.enable_only, 0) > 0 THEN ' [style=dotted]' ELSE '' END)
                      As script_line,
                    1 As seq
@@ -153,7 +154,7 @@ BEGIN
 
     END LOOP;
 
-    Drop Table Tmp_ScriptSteps;
+    DROP TABLE Tmp_ScriptSteps;
 END
 $$;
 

@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_predefined_analysis_rule_table(_datasetnam
 **
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version (refactored code from evaluate_predefined_analysis_rules)
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -124,7 +125,7 @@ BEGIN
             _message := 'No rules found';
 
             If _predefineInfo.Rating = -10 Then
-                _message := _message || ' (dataset is unreviewed)';
+                _message := format('%s (dataset is unreviewed)', _message);
             End If;
 
             _message := format('%s: %s', _message, _datasetName);
@@ -134,39 +135,39 @@ BEGIN
     If _message <> '' Then
         RETURN QUERY
         SELECT  _message,
-                0          As predefine_id,
-                0          As predefine_level,
-                0          As predefine_sequence,
-                ''::citext As instrument_class_criteria,
-                ''::citext As campaign_name_criteria,
-                ''::citext As campaign_excl_criteria,
-                ''::citext As experiment_name_criteria,
-                ''::citext As experiment_excl_criteria,
-                ''::citext As instrument_name_criteria,
-                ''::citext As instrument_excl_criteria,
-                ''::citext As organism_name_criteria,
-                ''::citext As dataset_name_criteria,
-                ''::citext As dataset_excl_criteria,
-                ''::citext As dataset_type_criteria,
-                ''::citext As exp_comment_criteria,
-                ''::citext As labelling_incl_criteria,
-                ''::citext As labelling_excl_criteria,
-                ''::citext As separation_type_criteria,
-                0          As scan_count_min_criteria,
-                0          As scan_count_max_criteria,
-                ''::citext As analysis_tool_name,
-                ''::citext As param_file_name,
-                ''::citext As settings_file_name,
-                0          As organism_id,
-                ''::citext As organism,
-                ''::citext As organism_db_name,
-                ''::citext As protein_collection_list,
-                ''::citext As protein_options_list,
-                0          As priority,
-                0          As next_level,
-                0::int2    As trigger_before_disposition,
-                0::int2    As propagation_mode,
-                ''::citext As special_processing;
+                0          AS predefine_id,
+                0          AS predefine_level,
+                0          AS predefine_sequence,
+                ''::citext AS instrument_class_criteria,
+                ''::citext AS campaign_name_criteria,
+                ''::citext AS campaign_excl_criteria,
+                ''::citext AS experiment_name_criteria,
+                ''::citext AS experiment_excl_criteria,
+                ''::citext AS instrument_name_criteria,
+                ''::citext AS instrument_excl_criteria,
+                ''::citext AS organism_name_criteria,
+                ''::citext AS dataset_name_criteria,
+                ''::citext AS dataset_excl_criteria,
+                ''::citext AS dataset_type_criteria,
+                ''::citext AS exp_comment_criteria,
+                ''::citext AS labelling_incl_criteria,
+                ''::citext AS labelling_excl_criteria,
+                ''::citext AS separation_type_criteria,
+                0          AS scan_count_min_criteria,
+                0          AS scan_count_max_criteria,
+                ''::citext AS analysis_tool_name,
+                ''::citext AS param_file_name,
+                ''::citext AS settings_file_name,
+                0          AS organism_id,
+                ''::citext AS organism,
+                ''::citext AS organism_db_name,
+                ''::citext AS protein_collection_list,
+                ''::citext AS protein_options_list,
+                0          AS priority,
+                0          AS next_level,
+                0::int2    AS trigger_before_disposition,
+                0::int2    AS propagation_mode,
+                ''::citext AS special_processing;
     End If;
 END
 $$;

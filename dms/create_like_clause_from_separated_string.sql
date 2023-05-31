@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.create_like_clause_from_separated_string(_inst
 **                         - Increased size of return variable from 2048 to 4096 characters
 **          06/17/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved words
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -32,27 +33,31 @@ BEGIN
         _sepPosition := position(_separator in _inString);
 
         If _sepPosition > 0 Then
-            if _i = 1 Then
-                _result := '((' || _fieldName || ' ILike ''' || Trim(Substring(_inString, 1, _sepPosition - 1)) || ''')';
+            If _i = 1 Then
+                _result := format('((%s ILike ''%s'')',
+                                    _fieldName, Trim(Substring(_inString, 1, _sepPosition - 1)) );
             Else
-                _result := _result || ' OR ' || '(' || _fieldName || ' ILike ''' || Trim(Substring(_inString, 1, _sepPosition - 1)) || ''')';
+                _result := format('%s OR (%s ILike ''%s'')',
+                                    _result, _fieldName, Trim(Substring(_inString, 1, _sepPosition - 1)) );
             End If;
 
             _i := _i + 1;
             _inString := Substring(_inString, _sepPosition + 1, char_length(_inString) - 1);
 
-            continue;
+            CONTINUE;
         Else
-            if _i = 1 Then
-                _result := '((' || _fieldName || ' ILike ''' || Trim(_inString) || '''))';
+            If _i = 1 Then
+                _result := format('((%s ILike ''%s''))', _fieldName, Trim(_inString) );
             Else
-                _result := _result || ' OR ' || '(' || _fieldName || ' ILike ''' || Trim(_inString) || '''))';
+                _result := format('%s OR ((%s ILike ''%s''))', _result, _fieldName, Trim(_inString) );
             End If;
 
-            exit;
+            -- Break out of the while loop
+            EXIT;
         End If;
     END LOOP;
 
+    -- Only remove spaces from the end of _result, since it should start wqith a space
     RETURN RTrim(_result);
 END
 $$;

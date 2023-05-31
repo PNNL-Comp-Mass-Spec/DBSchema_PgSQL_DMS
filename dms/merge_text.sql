@@ -14,18 +14,19 @@ CREATE OR REPLACE FUNCTION public.merge_text(_text1 text, _text2 text) RETURNS t
 **  Auth:   mem
 **  Date:   08/03/2007
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 ****************************************************/
 DECLARE
     _combinedText text;
 BEGIN
     _combinedText := Trim(Coalesce(_text1, ''));
-    _text2 := Trim(Coalesce(_text2, ''));
+    _text2        := Trim(Coalesce(_text2, ''));
 
     If char_length(_text2) > 0 Then
         If _combinedText <> _text2 Then
             If char_length(_combinedText) > 0 Then
-                _combinedText := _combinedText || '; ' || _text2;
+                _combinedText := format('%s; %s', _combinedText, _text2);
             Else
                 _combinedText := _text2;
             End If;

@@ -34,7 +34,6 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          01/24/2023 mem - Update whitespace
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
-**          05/23/2023 mem - Use format() for string concatenation
 **          05/29/2023 mem - Use format() for string concatenation
 **
 *****************************************************/

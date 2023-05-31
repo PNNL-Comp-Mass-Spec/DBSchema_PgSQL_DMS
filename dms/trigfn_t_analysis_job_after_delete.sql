@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_after_delete() RETURNS t
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/07/2022 mem - Reference the NEW and OLD variables directly instead of using transition tables (which contain every deleted row, not just the current row)
 **          08/11/2022 mem - Convert _bestJobByDataset from an int to a record
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -58,8 +59,10 @@ BEGIN
            0 AS target_state,
            OLD.job_state_id AS prev_target_state,
            CURRENT_TIMESTAMP,
-           SESSION_USER || '; ' || COALESCE(_analysisTool, 'Unknown Tool') || ' on '
-                                || COALESCE(_datasetName, 'Unknown Dataset');
+           format('%s; %s on %s',
+                    SESSION_USER,
+                    COALESCE(_analysisTool, 'Unknown Tool'),
+                    COALESCE(_datasetName, 'Unknown Dataset'));
 
     SELECT SourceQ.dataset_id, SourceQ.job
     INTO _bestJobByDataset

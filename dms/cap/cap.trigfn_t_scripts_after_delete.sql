@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_scripts_after_delete() RETURNS trigger
 **
 **  Auth:   mem
 **  Date:   07/31/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -19,7 +20,7 @@ BEGIN
 
     INSERT INTO cap.t_scripts_history
         (script_id, script, results_tag, contents)
-    SELECT script_id, 'Deleted: ' || script, results_tag, contents
+    SELECT script_id, format('Deleted: %s'), script, results_tag, contents
     FROM deleted
     ORDER BY deleted.script_id;
 

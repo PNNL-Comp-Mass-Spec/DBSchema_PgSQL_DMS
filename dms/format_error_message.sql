@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.format_error_message(_sqlstate text, _exceptio
 **  Auth:   grk
 **  Date:   04/16/2010 grk - Initial release
 **          08/24/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 ****************************************************/
 DECLARE
@@ -49,13 +50,13 @@ BEGIN
     End If;
 
     _errorMessage := format('%s, state %s (%s, line %s)',
-                        Coalesce(_exceptionMessage, 'Unknown error'),
-                        Coalesce(_sqlState, '??'),
-                        Coalesce(_functionNameWithSchema, '??'),
-                        Coalesce(_lineNumber, 0));
+                            Coalesce(_exceptionMessage, 'Unknown error'),
+                            Coalesce(_sqlState, '??'),
+                            Coalesce(_functionNameWithSchema, '??'),
+                            Coalesce(_lineNumber, 0));
 
     If char_length(Coalesce(_exceptionDetail, '')) > 0 Then
-        _errorMessage := _errorMessage || ': ' || _exceptionDetail;
+        _errorMessage := format('%s: %s', _errorMessage, _exceptionDetail);
     End If;
 
     RETURN Coalesce(_errorMessage, '');

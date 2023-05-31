@@ -44,7 +44,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/22/2023 mem - Capitalize reserved word
-**          05/23/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -117,8 +117,8 @@ BEGIN
     --
     GET DIAGNOSTICS _managerCount = ROW_COUNT;
 
-    IF NOT FOUND Then
-        _message = 'Use Manager IDs, not manager names';
+    If NOT FOUND Then
+        _message := 'Use Manager IDs, not manager names';
 
         RAISE WARNING '%', _message;
 
@@ -126,16 +126,16 @@ BEGIN
         DROP TABLE Tmp_MgrIDs;
 
         RETURN;
-    END IF;
+    END If;
 
     RAISE Info 'Inserted % manager IDs into Tmp_MgrIDs', _managerCount;
 
-    IF NOT EXISTS (SELECT *
+    If NOT EXISTS (SELECT *
                    FROM mc.t_mgrs M
                           INNER JOIN Tmp_MgrIDs ON M.mgr_id = Tmp_MgrIDs.mgr_id
                    WHERE M.control_from_website > 0) Then
 
-        _message = 'All of the managers have control_from_website = 0 in t_mgrs; parameters not updated';
+        _message := 'All of the managers have control_from_website = 0 in t_mgrs; parameters not updated';
 
         RAISE WARNING '%', _message;
 
@@ -143,7 +143,7 @@ BEGIN
         DROP TABLE Tmp_MgrIDs;
 
         RETURN;
-    END IF;
+    END If;
 
     If _infoOnly Then
         _infoHead := format(_formatSpecifier,
@@ -273,7 +273,7 @@ BEGIN
           Coalesce(PV.value, '') <> _newValue;
 
     If Not FOUND THEN
-        IF NOT EXISTS (SELECT PV.entry_id
+        If NOT EXISTS (SELECT PV.entry_id
                        FROM mc.t_param_value PV
                             INNER JOIN mc.t_mgrs M
                               ON PV.mgr_id = M.mgr_id
@@ -282,20 +282,22 @@ BEGIN
                        WHERE M.control_from_website > 0 AND
                              PV.param_type_id = _paramTypeID) Then
 
-            IF _managerCount > 1 THEN
-                _message = 'Managers ' || _managerIDList || ' do not have parameter ' || _paramName;
-            ELSE
-                _message = 'Manager '|| _managerIDList || ' does not have parameter ' || _paramName;
-            END IF;
+            -- Managers 1277, 1317, 1318 do not have parameter param_name
+            -- Manager 1277 does not have parameter param_name
+
+            _message := format('%s %s %s not have parameter %s',
+                                public.check_plural(_managerCount, 'Manager', 'Managers'),
+                                _managerIDList,
+                                public.check_plural(_managerCount, 'does', 'do'),
+                                _paramName);
 
             RAISE WARNING '%', _message;
-        END IF;
+        END If;
 
-        IF _managerCount > 1 THEN
-            _message = 'All managers already have ' || _newValue || ' for ' || _paramName;
-        ELSE
-            _message = 'Manager '|| _managerIDList || ' already has ' || _newValue || ' for ' || _paramName;
-        END IF;
+        _message := format('%s %s for %s',
+                            public.check_plural(_managerCount, 'Manager', format('Manager %s already has', _managerIDList), 'All managers already have'),
+                            _newValue,
+                            _paramName);
 
         RAISE Info '%', _message;
 
@@ -329,8 +331,8 @@ EXCEPTION
 
     _returnCode := _sqlState;
 
-    DROP TABLE IF EXISTS Tmp_ParamValueEntriesToUpdate;
-    DROP TABLE IF EXISTS Tmp_MgrIDs;
+    DROP TABLE If EXISTS Tmp_ParamValueEntriesToUpdate;
+    DROP TABLE If EXISTS Tmp_MgrIDs;
 END
 $$;
 

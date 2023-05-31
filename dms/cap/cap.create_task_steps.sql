@@ -37,7 +37,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          04/02/2023 mem - Rename procedure and functions
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/12/2023 mem - Rename variables and fix bug with misplaced "And"
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -55,8 +55,8 @@ DECLARE
 
     _xmlParameters xml;
     _scriptXML xml;
-    _tag text;
     _scriptXML2 xml;
+    _tag text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -339,8 +339,7 @@ BEGIN
             FROM cap.t_scripts
             WHERE script = extensionScriptNameList;
 
-            -- FUTURE: process as list INTO _scriptXML2
-            _scriptXML := (_scriptXML::text || _scriptXML2::text)::xml;
+            _scriptXML := format('%s%s', _scriptXML, _scriptXML2)::xml;
         End If;
 
         -- Get parameters for the capture task job as XML

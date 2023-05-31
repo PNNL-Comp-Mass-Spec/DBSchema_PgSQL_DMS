@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION public.get_call_stack(_pgcontext text) RETURNS TABLE(
 **  Date:   08/24/2022 mem - Initial release
 **          08/31/2022 mem - Update comments
 **          05/22/2023 mem - Update whitespace
+**          05/30/2023 mem - Use format() for string concatenation
 **
 ****************************************************/
 DECLARE
@@ -119,11 +120,11 @@ EXCEPTION
     -- (do not call local_error_handler or use format_error_message since those functions reference this function)
 
     _errorMessage := format('Error determining the call stack, %s, state %s',
-                Coalesce(_exceptionMessage, 'Unknown error'),
-                Coalesce(_sqlState, '??'));
+                            Coalesce(_exceptionMessage, 'Unknown error'),
+                            Coalesce(_sqlState, '??'));
 
     If char_length(Coalesce(_exceptionDetail, '')) > 0 Then
-        _errorMessage := _errorMessage || ': ' || _exceptionDetail;
+        _errorMessage := format('%s: %s', _errorMessage, _exceptionDetail);
     End If;
 
     RAISE Warning '%', Coalesce(_errorMessage, '??');

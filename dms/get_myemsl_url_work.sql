@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_work(_keyname text, _value text
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/12/2022 mem - Ported to PostgreSQL
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -35,7 +35,7 @@ BEGIN
 
     _encodedText = public.encode_base64(_json);
 
-    RETURN 'https://my.emsl.pnl.gov/myemsl/search/simple/' || _encodedText;
+    RETURN format('https://my.emsl.pnl.gov/myemsl/search/simple/%s', _encodedText);
 END
 $$;
 

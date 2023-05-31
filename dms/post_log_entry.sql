@@ -37,6 +37,8 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
 **          05/22/2023 mem - Capitalize reserved words
+**          05/30/2023 mem - Use format() for string concatenation
+**                         - Add back implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -86,14 +88,14 @@ BEGIN
         End If;
     End If;
 
-    _minimumPostingTime = CURRENT_TIMESTAMP - (_duplicateEntryHoldoffHours || ' hours')::INTERVAL;
+    _minimumPostingTime = CURRENT_TIMESTAMP - format('%s hours', _duplicateEntryHoldoffHours)::INTERVAL;
 
     If Coalesce(_duplicateEntryHoldoffHours, 0) > 0 Then
         _s := format(
-                'SELECT COUNT(*) '         ||
-                'FROM %s '                 ||
-                'WHERE message = $1 AND '  ||
-                     ' type = $2 AND '     ||
+                'SELECT COUNT(*) '
+                'FROM %s '
+                'WHERE message = $1 AND '
+                     ' type = $2 AND '
                      ' entered >= $3',
                 _targetTableWithSchema);
 
@@ -109,7 +111,7 @@ BEGIN
     End If;
 
     _s := format(
-            'INSERT INTO %s (posted_by, entered, type, message) ' ||
+            'INSERT INTO %s (posted_by, entered, type, message) '
             'VALUES ( $1, CURRENT_TIMESTAMP, $2, $3)',
             _targetTableWithSchema);
 

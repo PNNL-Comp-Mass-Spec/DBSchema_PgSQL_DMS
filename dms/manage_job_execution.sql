@@ -33,7 +33,7 @@ CREATE OR REPLACE PROCEDURE public.manage_job_execution(IN _parameters text DEFA
 **
 **  Auth:   grk
 **  Date:   07/09/2009 grk - Initial release
-**          09/16/2009 mem - Updated to pass table Tmp_AnalysisJobs to UpdateAnalysisJobsWork
+**          09/16/2009 mem - Updated to pass table Tmp_AnalysisJobs to update_analysis_jobs_work
 **                         - Updated to resolve job state defined in the XML with t_analysis_job_state
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.manage_job_execution(IN _parameters text DEFA
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          06/30/2022 mem - Rename parameter file argument
 **          05/05/2023 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -68,6 +69,7 @@ DECLARE
     _protCollOptionsList text;
     _mode text;
     _callingUser text;
+    _jobList text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -232,14 +234,17 @@ BEGIN
         If Coalesce(_message, '') <> '' Then
             _message := format('Error: %s; %s', _message, _returnCode);
         Else
-            _message := format('Unknown error calling UpdateAnalysisJobsWork; %s', _returnCode);
+            _message := format('Unknown error calling update_analysis_jobs_work; %s', _returnCode);
         End If;
     Else
         If Coalesce(_message, '') = '' Then
-            _message := 'Empty message returned by UpdateAnalysisJobsWork.  ';
-            _message := _message || 'The action was "' || _action || '".  ';
-            _message := _message || 'The value was "' || _value || '".  ';
-            _message := _message || 'There were ' || _jobCount::text || ' jobs in the list: ';
+
+            SELECT string_agg(Job, ', ' ORDER BY Job)
+            INTO _jobList
+            FROM Tmp_AnalysisJobs;
+
+            _message := format('Empty message returned by update_analysis_jobs_work for action "%s" and value "%s". There were %s %s in the list: %s',
+                                _action, _value, _jobCount, public.check_plural(_jobCount, 'job', 'jobs'), _jobList);
         End If;
     End If;
 

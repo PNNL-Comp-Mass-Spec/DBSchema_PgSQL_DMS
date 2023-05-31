@@ -8,21 +8,21 @@ CREATE OR REPLACE FUNCTION public.get_factor_list(_requestid integer) RETURNS te
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of factors (as name/value pairs)
-**      for givenrequested run
+**      Builds a delimited list of factors (as name/value pairs) for given requested run
 **
 **  Return value: comma separated list
 **
 **  Auth:   grk
 **  Date:   05/17/2011
 **          06/16/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
     IF NOT _requestID IS NULL Then
-        SELECT string_agg(name || ':' || value, ', ' ORDER BY name)
+        SELECT string_agg(format('%s:%s', name, value), ', ' ORDER BY name)
         INTO _result
         FROM t_factor
         WHERE type = 'Run_Request' AND

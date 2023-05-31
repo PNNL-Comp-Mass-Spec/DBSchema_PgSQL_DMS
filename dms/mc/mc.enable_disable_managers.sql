@@ -57,7 +57,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          10/04/2022 mem - Change _enable, _infoOnly and _includeDisabled from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
-**          05/23/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -118,9 +118,9 @@ BEGIN
 
         If Not Found Then
             If Exists (SELECT * FROM mc.t_mgr_types WHERE mgr_type_id = _managerTypeID AND mgr_type_active = 0) Then
-                _message := '_managerTypeID ' || _managerTypeID::text || ' has mgr_type_active = 0 in mc.t_mgr_types; unable to continue';
+                _message := format('_managerTypeID %s has mgr_type_active = 0 in mc.t_mgr_types; unable to continue', _managerTypeID);
             Else
-                _message := '_managerTypeID ' || _managerTypeID::text || ' not found in mc.t_mgr_types';
+                _message := format('_managerTypeID %s not found in mc.t_mgr_types', _managerTypeID);
             End If;
 
             _returnCode := 'U5203';
@@ -266,7 +266,7 @@ BEGIN
             End If;
         End If;
 
-        _message := _message || '; see also "FETCH ALL FROM _results"';
+        _message := format('%s; see also "FETCH ALL FROM _results"', _message);
 
         RAISE INFO '%', _message;
 
@@ -303,7 +303,7 @@ BEGIN
         RAISE INFO '%', _infoHead;
 
         FOR _previewData IN
-            SELECT PV.value || ' --> ' || _newValue AS State_Change_Preview,
+            SELECT format('%s --> %s', PV.value, _newValue) AS State_Change_Preview,
                    PT.param_name AS Parameter_Name,
                    M.mgr_name AS manager_name,
                    MT.mgr_type_name AS Manager_Type,
@@ -338,7 +338,7 @@ BEGIN
                             _activeStateDescription);
 
         Open _results For
-            SELECT PV.value || ' --> ' || _newValue AS State_Change_Preview,
+            SELECT format('%s --> %s', PV.value, _newValue) AS State_Change_Preview,
                    PT.param_name AS Parameter_Name,
                    M.mgr_name AS manager_name,
                    MT.mgr_type_name AS Manager_Type,

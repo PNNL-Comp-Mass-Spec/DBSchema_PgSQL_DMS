@@ -29,28 +29,27 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text,
 **          02/08/2023 mem - Switch from PRN to username
 **          02/21/2023 mem - Add parameter _batchGroupID
 **          05/22/2023 mem - Capitalize reserved word
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
     RETURN CASE WHEN Coalesce(_batchID, 0) = 0
-                THEN
-                    SUBSTRING(_requestName, 1, 3) || '_' ||
-                    to_char(_requestCreated, 'yyyymmdd') || '_' ||
-                    'R_' ||
-                    _requesterUsername || '_' ||
-                    Coalesce(_datasetTypeID, 0)::text || '_' ||
-                    Coalesce(_separationType, '')
-                ELSE
-                    CASE WHEN Coalesce(_batchGroupID, 0) > 0
-                         THEN _batchGroupID::text || '_'
-                         ELSE ''
-                    END ||
-                    SUBSTRING(_batchName, 1, 3) || '_' ||
-                    to_char(_batchCreated, 'yyyymmdd') || '_' ||
-                    'B_' ||
-                    _batchID::text || '_' ||
-                    Coalesce(_datasetTypeID, 0)::text || '_' ||
-                    Coalesce(_separationType, '')
+                THEN format('%s_%s_R_%s_%s_%s',
+                            SUBSTRING(_requestName, 1, 3),
+                            to_char(_requestCreated, 'yyyymmdd'),
+                            _requesterUsername,
+                            Coalesce(_datasetTypeID, 0),
+                            Coalesce(_separationType, ''))
+                ELSE format('%s%s_%s_B_%s_%s_%s',
+                            CASE WHEN Coalesce(_batchGroupID, 0) > 0
+                                 THEN format('%s_', _batchGroupID)
+                                 ELSE ''
+                            END,
+                            SUBSTRING(_batchName, 1, 3),
+                            to_char(_batchCreated, 'yyyymmdd'),
+                            _batchID,
+                            Coalesce(_datasetTypeID, 0),
+                            Coalesce(_separationType, ''))
            END;
 END
 $$;

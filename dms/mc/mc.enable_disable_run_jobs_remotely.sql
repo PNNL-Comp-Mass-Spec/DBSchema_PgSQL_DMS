@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          05/13/2023 mem - Rename variables
 **          05/22/2023 mem - Use format() for string concatenation
 **          05/25/2023 mem - Simplify calls to RAISE INFO
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -270,7 +271,7 @@ BEGIN
         RAISE INFO '%', _infoHead;
 
         FOR _previewData IN
-            SELECT PV.value || ' --> ' || _newValue AS State_Change_Preview,
+            SELECT format('%s --> %s', PV.value, _newValue) AS State_Change_Preview,
                    PT.param_name AS Parameter_Name,
                    M.mgr_name AS manager_name
             FROM mc.t_param_value PV
@@ -335,8 +336,8 @@ BEGIN
                         _activeStateDescription);
 
         If _countUnchanged <> 0 Then
-            _message := _message ||
-                            format (' (%s %s already set to %s )',
+            _message := format ('%s (%s %s already set to %s )',
+                            _message,
                             _countUnchanged,
                             public.check_plural(_countUnchanged, 'manager was', 'managers were'),
                             _activeStateDescription);

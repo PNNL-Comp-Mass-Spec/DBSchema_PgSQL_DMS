@@ -36,7 +36,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          01/30/2023 mem - Use new column name in view
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -153,10 +153,8 @@ BEGIN
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
     If _insertCount <> 0 Then
-        _message := 'Added entry for "ManagerErrorCleanupMode" to mc.t_param_value for ' || _insertCount::text || ' manager';
-        If _insertCount > 1 Then
-            _message := _message || 's';
-        End If;
+        _message := format('Added entry for "ManagerErrorCleanupMode" to mc.t_param_value for %s %s',
+                            _insertCount, public.check_plural(_insertCount, 'manager', 'managers'));
 
         RAISE INFO '%', _message;
     End If;

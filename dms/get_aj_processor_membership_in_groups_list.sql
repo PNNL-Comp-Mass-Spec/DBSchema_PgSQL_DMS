@@ -23,7 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_membership_in_groups_list(_pr
 **          02/23/2007 mem - Added parameter _enableDisableFilter
 **          06/17/2022 mem - Ported to PostgreSQL
 **          07/06/2022 mem - Fix concatenation typo
-**          05/24/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -31,6 +31,8 @@ DECLARE
     _enabledGroups text;
     _disabledGroups text;
 BEGIN
+    _enableDisableFilter := Coalesce(_enableDisableFilter, 2);
+
     _combinedList := '';
     _enabledGroups := '';
     _disabledGroups := '';
@@ -54,23 +56,23 @@ BEGIN
     End If;
 
     If Coalesce(_enabledGroups, '') <> '' Then
-        If _enableDisableFilter <> 0 And _enableDisableFilter <> 1 Then
+        If Not _enableDisableFilter In (0, 1) Then
             _combinedList := 'Enabled: ';
         End If;
 
-        _combinedList := _combinedList || _enabledGroups;
+        _combinedList := format('%s%s', _combinedList, _enabledGroups);
     End If;
 
     If Coalesce(_disabledGroups, '') <> '' Then
         If char_length(_combinedList) > 0 Then
-            _combinedList := _combinedList || '; ';
+            _combinedList := format('%s%s', _combinedList, '; ');
         End If;
 
-        If _enableDisableFilter <> 0 And _enableDisableFilter <> 1 Then
-            _combinedList := 'Disabled: ';
+        If Not _enableDisableFilter In (0, 1) Then
+            _combinedList := format('%s%s', _combinedList, 'Disabled: ');
         End If;
 
-        _combinedList := _combinedList || _disabledGroups;
+        _combinedList := format('%s%s', _combinedList, _disabledGroups);
     End If;
 
     RETURN Coalesce(_combinedList, '');

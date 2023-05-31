@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_maxquant_mass_mods_list(_paramfileid integ
 **  Auth:   mem
 **  Date:   03/05/2021 mem - Initial version
 **          06/22/2022 mem - Ported to PostgreSQL
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -24,17 +24,20 @@ DECLARE
 BEGIN
     SELECT string_agg(LookupQ.ModInfo, '|' ORDER BY LookupQ.mod_type_symbol DESC, LookupQ.mod_title)
     INTO _list
-    FROM ( SELECT MQM.mod_title || ':' || MQM.mod_id::text || ':' ||
-                     CASE PFMM.Mod_Type_Symbol
-                         WHEN 'S' THEN 'Static'
-                         WHEN 'D' THEN 'Dynamic'
-                         WHEN 'T' THEN 'Static Terminal Peptide'
-                         WHEN 'P' THEN 'Static Terminal Protein'
-                         WHEN 'I' THEN 'Isotopic'
-                         ELSE PFMM.Mod_Type_Symbol
-                     END ||
-                     ':' || R.Residue_Symbol || ':' ||
-                     Round(MCF.Monoisotopic_Mass::numeric, 4)::text AS ModInfo,
+    FROM ( SELECT format('%s:%s:%s:%s:%s',
+                            MQM.mod_title,
+                            MQM.mod_id,
+                            CASE PFMM.Mod_Type_Symbol
+                                WHEN 'S' THEN 'Static'
+                                WHEN 'D' THEN 'Dynamic'
+                                WHEN 'T' THEN 'Static Terminal Peptide'
+                                WHEN 'P' THEN 'Static Terminal Protein'
+                                WHEN 'I' THEN 'Isotopic'
+                                ELSE PFMM.Mod_Type_Symbol
+                            END,
+                            R.Residue_Symbol,
+                            Round(MCF.Monoisotopic_Mass::numeric, 4)
+                        ) AS ModInfo,
                   PFMM.mod_type_symbol,
                   MQM.mod_title
            FROM t_param_file_mass_mods PFMM
@@ -51,7 +54,7 @@ BEGIN
            WHERE PF.param_file_id = _paramFileId
          ) LookupQ;
 
-    If Coalesce(_list ,'') = '' Then
+    If Coalesce(_list, '') = '' Then
         _result := '';
     Else
         _result := format('!Headers!Name:Mod_ID:Type:Residue:Mass|%s', _list);

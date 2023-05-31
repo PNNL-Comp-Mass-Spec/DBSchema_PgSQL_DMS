@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_membership_list(_instrume
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of associated instruments
-**      for given instrument group
+**      Builds delimited list of associated instruments for given instrument group
 **
 **  Return value: delimited list, using a vertical bar if _activeOnly is 2, otherwise using a comma
 **
@@ -18,23 +17,24 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_membership_list(_instrume
 **    _activeOnly       0 for all instruments, 1 for only active instruments, 2 to format the instruments as a vertical bar separated list of instrument name and ID (see comments below)
 **    _maximumLength    Maximum length of the returned list of instruments; if 0, all instruments, sorted alphabetically
 **
+**  When _activeOnly is 2, the instrument list will be in the form:
+**    InstrumentName:InstrumentID|InstrumentName:InstrumentID|InstrumentName:InstrumentID
+**
+**  Additionally, if the instrument is inactive or offsite, the instrument name will show that in parentheses, with inactive taking precedence
+**  This is used to format instrument info on the Instrument Group Detail Report page, https://dms2.pnl.gov/instrument_group/show/VelosOrbi
+**
 **  Auth:   grk
 **  Date:   08/30/2010 grk - Initial version
 **          11/18/2019 mem - Add parameters _activeOnly and _maximumLength
 **          02/18/2021 mem - Add _activeOnly=2 which formats the instruments as a vertical bar separated list of instrument name and instrument ID
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
     _result text := '';
     _delimiter VARCHAR(4);
 BEGIN
-    -- When _activeOnly is 2, the instrument list will be in the form:
-    --   InstrumentName:InstrumentID|InstrumentName:InstrumentID|InstrumentName:InstrumentID
-    -- Additionally, if the instrument is inactive or offsite, the instrument name will show that in parentheses, with inactive taking precedence
-    -- This is used to format instrument on the Instrument Group Detail Report page
-    -- https://dms2.pnl.gov/instrument_group/show/VelosOrbi
-
     If _activeOnly = 2 Then
         _delimiter := '|';
     Else
@@ -46,24 +46,26 @@ BEGIN
     End If;
 
     SELECT string_agg(
-                instrument ||
-                CASE When _activeOnly = 2 AND status::citext = 'inactive' THEN ' (' || status || ')' ELSE '' END ||
-                CASE When _activeOnly = 2 AND status::citext <> 'inactive' AND operations_role::citext = 'Offsite' THEN ' (' || operations_role || ')' ELSE '' END ||
-                CASE When _activeOnly = 2 THEN ':' || instrument_id::text ELSE '' END,
+                format('%s%s%s%s',
+                        instrument,
+                        CASE WHEN _activeOnly = 2 AND status::citext = 'inactive'                                          THEN format(' (%s)', status)          ELSE '' END,
+                        CASE WHEN _activeOnly = 2 AND status::citext <> 'inactive' AND operations_role::citext = 'Offsite' THEN format(' (%s)', operations_role) ELSE '' END,
+                        CASE WHEN _activeOnly = 2                                                                          THEN format(':%s', instrument_id)     ELSE '' END
+                      ),
                 _delimiter ORDER BY instrument)
     INTO _result
     FROM t_instrument_name
-    WHERE instrument_group = _instrumentGroup And
-            (_activeOnly In (0, 2) Or status <> 'inactive') And
+    WHERE instrument_group = _instrumentGroup AND
+            (_activeOnly In (0, 2) Or status <> 'inactive') AND
             (_activeOnly In (0, 2) Or operations_role <> 'Offsite');
 
     If _maximumLength > 0 And char_length(_result) > _maximumLength Then
         _result := Rtrim(Substring(_result, 1, _maximumLength - 3));
 
         If _result Like '%,' Then
-            _result := Substring(_result, 1, char_length(_result) - 1) || '...';
+            _result := format('%s ...', Substring(_result, 1, char_length(_result) - 1));
         Else
-            _result := _result || ' ...';
+            _result := format('%s ...', _result);
         End If;
     End If;
 

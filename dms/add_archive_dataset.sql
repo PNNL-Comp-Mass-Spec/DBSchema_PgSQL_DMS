@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 **                         - Do not create an archive task if 'ArchiveDisabled' has a non-zero value in T_Misc_Options
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/19/2023 mem - Remove redundant parentheses
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -94,8 +95,7 @@ BEGIN
     End If;
 
     If _datasetStateId = 14 Then
-        _message := format('Cannot create a dataset archive task for Dataset ID %s; ' ||
-                           'dataset state is 14 (Capture Failed, Duplicate Dataset Files)', _datasetID);
+        _message := format('Cannot create a dataset archive task for Dataset ID %s; dataset state is 14 (Capture Failed, Duplicate Dataset Files)', _datasetID);
 
         CALL post_log_entry ('Error', _message, 'Add_Archive_Dataset', _duplicateEntryHoldoffHours => 12);
 
@@ -112,7 +112,7 @@ BEGIN
     _archivePathID := get_instrument_archive_path_for_new_datasets (_instrumentID, _datasetID, _autoSwitchActiveArchive => true, _infoOnly => false);
 
     If _archivePathID = 0 Then
-        _message := 'get_instrument_archive_path_for_new_datasets returned zero for an archive path ID for dataset ' || _datasetID::text;
+        _message := format('get_instrument_archive_path_for_new_datasets returned zero for an archive path ID for dataset %s', _datasetID);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5105';

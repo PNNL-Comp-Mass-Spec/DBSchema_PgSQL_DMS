@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_request_after_delete() R
 **  Auth:   mem
 **  Date:   03/26/2013 mem - Initial version
 **          08/04/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 BEGIN
@@ -33,7 +34,7 @@ BEGIN
            0 AS target_state,
            deleted.request_state_id AS prev_target_state,
            CURRENT_TIMESTAMP,
-           SESSION_USER || '; ' || deleted.request_name
+           format('%s; %s', SESSION_USER, deleted.request_name)
     FROM deleted
     ORDER BY deleted.request_id;
 

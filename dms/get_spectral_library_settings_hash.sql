@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **          04/16/2023 mem - Auto-update _proteinCollectionList and _organismDbFile to 'na' if an empty string
 **          04/17/2023 mem - Use 'na' for _organismDBFile if _proteinCollectionList is not 'na' or an empty string
 **          05/22/2023 mem - Capitalize reserved word
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -101,34 +102,36 @@ BEGIN
     ---------------------------------------------------
 
     If public.validate_na_parameter(_proteinCollectionList, 1) <> 'na' Then
-        _settings := _proteinCollectionList || '_na_';
+        _settings := format('%s_na', _proteinCollectionList);
     Else
-        _settings := 'na_';
+        _settings := 'na';
 
         If public.validate_na_parameter(_organismDBFile, 1) <> 'na' Then
-            _settings := _settings || _organismDBFile || '_';
+            _settings := format('%s_%s', _settings, _organismDBFile);
         Else
-            _settings := _settings || 'na_';
+            _settings := format('%s_na', _settings);
         End If;
 
     End If;
 
-    _settings := _settings ||
-                Cast(_fragmentIonMzMin As text)    || '_' ||
-                Cast(_fragmentIonMzMax As text)    || '_' ||
-                CASE WHEN _trimNTerminalMet THEN 'true' ELSE 'false' END || '_' ||
-                Cast(_cleavageSpecificity As text) || '_' ||
-                Cast(_missedCleavages As text)     || '_' ||
-                Cast(_peptideLengthMin As text)    || '_' ||
-                Cast(_peptideLengthMax As text)    || '_' ||
-                Cast(_precursorMzMin As text)      || '_' ||
-                Cast(_precursorMzMax As text)      || '_' ||
-                Cast(_precursorChargeMin As text)  || '_' ||
-                Cast(_precursorChargeMax As text)  || '_' ||
-                CASE WHEN _staticCysCarbamidomethyl THEN 'true' ELSE 'false' END || '_' ||
-                _staticMods                        || '_' ||
-                _dynamicMods                       || '_' ||
-                Cast(_maxDynamicMods As text)      || '_';
+    _settings := format('%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_',
+                        _settings,
+                        _fragmentIonMzMin,
+                        _fragmentIonMzMax,
+                        CASE WHEN _trimNTerminalMet THEN 'true' ELSE 'false' END,
+                        _cleavageSpecificity,
+                        _missedCleavages,
+                        _peptideLengthMin,
+                        _peptideLengthMax,
+                        _precursorMzMin,
+                        _precursorMzMax,
+                        _precursorChargeMin,
+                        _precursorChargeMax,
+                        CASE WHEN _staticCysCarbamidomethyl THEN 'true' ELSE 'false' END,
+                        _staticMods,
+                        _dynamicMods,
+                        _maxDynamicMods
+                       );
 
     If _showDebug Then
         RAISE INFO '%', _settings;

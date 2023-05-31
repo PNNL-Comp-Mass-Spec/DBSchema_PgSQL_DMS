@@ -9,11 +9,12 @@ CREATE OR REPLACE FUNCTION public.merge_text_three_items(_text1 text, _text2 tex
 **  Desc:
 **      Concatenates _text1 and _text2 using a semicolon (but, if identical strings, just use _text1)
 **
-**      Next, contatenates _text3, provided it does not match _text1 or_text2
+**      Next, concatenates _text3, provided it does not match _text1 or_text2
 **
 **  Auth:   mem
 **  Date:   08/03/2007
 **          06/23/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 ****************************************************/
 DECLARE
@@ -28,7 +29,7 @@ BEGIN
     If char_length(_text3) > 0 Then
         If _text1 <> _text3 AND _text2 <> _text3 Then
             If char_length(_combinedText) > 0 Then
-                _combinedText := _combinedText || '; ' || _text3;
+                _combinedText := format('%s; %s', _combinedText, _text3);
             Else
                 _combinedText := _text3;
             End If;

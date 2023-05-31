@@ -128,6 +128,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          05/19/2023 mem - Use Similar To when using square brackets to match text
 **          05/23/2023 mem - Use format() for string concatenation
 **          05/25/2023 mem - Simplify calls to RAISE INFO
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -371,7 +372,7 @@ BEGIN
         --   variable=Oxidation (M)
 
         INSERT INTO Tmp_Mods (EntryID, Value)
-        SELECT EntryID, ModType || '=' || ModName
+        SELECT EntryID, format('%s=%s', ModType, ModName)
         FROM Tmp_MaxQuant_Mods
         ORDER BY EntryID;
     Else
@@ -492,7 +493,7 @@ BEGIN
                     FROM public.parse_delimited_list_ordered(_rowValue, ' ', 0);
 
                     UPDATE Tmp_ModDef
-                    SET Value = 'DynamicMod=' || Value
+                    SET Value = format('DynamicMod=%s', Value)
                     WHERE EntryID = 1;
                 End If;
             End If;
@@ -508,7 +509,7 @@ BEGIN
                     FROM public.parse_delimited_list_ordered(_rowValue, ' ', 0);
 
                     UPDATE Tmp_ModDef
-                    SET Value = 'StaticMod=' || Value
+                    SET Value = format('StaticMod=%s', Value)
                     WHERE EntryID = 1;
 
                     -- _rowKey is Similar To add_C_cysteine or add_Cterm_peptide
@@ -550,7 +551,7 @@ BEGIN
                 _rowValue := Trim(Substring(_row, _charIndex+1, char_length(_row)));
 
                 INSERT INTO Tmp_ModDef (EntryID, Value)
-                VALUES (1, 'DynamicMod=' || _rowValue);
+                VALUES (1, format('DynamicMod=%s', _rowValue));
             End If;
 
             If _row Like 'fixed=%' Then
@@ -558,7 +559,7 @@ BEGIN
                 _rowValue := Trim(Substring(_row, _charIndex+1, char_length(_row)));
 
                 INSERT INTO Tmp_ModDef (EntryID, Value)
-                VALUES (1, 'StaticMod=' || _rowValue);
+                VALUES (1, format('StaticMod=%s', _rowValue));
             End If;
         End If;
 

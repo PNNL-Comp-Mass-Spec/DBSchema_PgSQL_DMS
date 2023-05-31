@@ -7,13 +7,15 @@ CREATE OR REPLACE FUNCTION public.get_experiment_plex_members(_plexexperimentid 
     AS $$
 /****************************************************
 **
-**  Desc:   Builds delimited list of experiment plex members for a given experiment plex
+**  Desc:
+        Builds delimited list of experiment plex members for a given experiment plex
 **
 **  Return value: list delimited with vertical bars and colons
 **
 **  Auth:   mem
 **  Date:   11/09/2018 mem
 **          06/21/2022 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -24,11 +26,12 @@ BEGIN
     SELECT string_agg(LookupQ.PlexMemberInfo, '|' ORDER BY LookupQ.channel)
     INTO _list
     FROM ( SELECT PlexMembers.channel,
-                  Coalesce(ReporterIons.tag_name, PlexMembers.channel::text) || ':' ||
-                  PlexMembers.exp_id::text || ':' ||
-                  ChannelExperiment.experiment || ':' ||
-                  ChannelType.channel_type_name || ':' ||
-                  Coalesce(PlexMembers.comment, '') AS PlexMemberInfo
+                  format('%s:%s:%s:%s:%s',
+                          Coalesce(ReporterIons.tag_name, PlexMembers.channel::text),
+                          PlexMembers.exp_id,
+                          ChannelExperiment.experiment,
+                          ChannelType.channel_type_name,
+                          Coalesce(PlexMembers.comment, '')) AS PlexMemberInfo
            FROM t_experiment_plex_members PlexMembers
                 INNER JOIN t_experiments ChannelExperiment
                   ON PlexMembers.exp_id = ChannelExperiment.exp_id
@@ -42,10 +45,10 @@ BEGIN
            WHERE PlexMembers.plex_exp_id = _plexExperimentID
            ) LookupQ;
 
-    If Coalesce(_list, '') = ''  Then
+    If Coalesce(_list, '') = '' Then
         _result := _headerRow;
     Else
-        _result = _headerRow || '|' || _list;
+        _result = format('%s|%s', _headerRow, _list);
     End If;
 
     RETURN _result;

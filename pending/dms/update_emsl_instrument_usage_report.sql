@@ -651,7 +651,7 @@ BEGIN
             If Not _infoOnly Then
 
                 UPDATE t_emsl_instrument_usage_report InstUsage
-                SET comment = get_nearest_preceding_log_entry(InstUsage.seq, 0)
+                SET comment = get_nearest_preceding_log_entry(InstUsage.seq, false)
                 FROM t_emsl_instrument_usage_type InstUsageType
                 WHERE InstUsage.Year = _year AND
                       InstUsage.Month = _month AND
@@ -669,7 +669,7 @@ BEGIN
                        InstUsage.seq,
                        InstName.IN_Name AS Instrument,
                        comment AS OldComment,
-                       get_nearest_preceding_log_entry(InstUsage.seq, 0) AS NewComment
+                       get_nearest_preceding_log_entry(InstUsage.seq, false) AS NewComment
                 FROM t_emsl_instrument_usage_report InstUsage
                      INNER JOIN t_instrument_name InstName
                        ON InstUsage.DMS_Inst_ID = InstName.instrument_id

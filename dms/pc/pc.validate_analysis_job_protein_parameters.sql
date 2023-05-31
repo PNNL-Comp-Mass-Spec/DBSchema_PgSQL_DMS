@@ -27,7 +27,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          09/25/2012 mem - Expanded _organismDBFileName to varchar(128)
 **          06/24/2013 mem - Now removing duplicate protein collection names in _protCollNameList
 **          05/11/2023 mem - Ported to PostgreSQL
-**          05/23/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -161,7 +161,7 @@ BEGIN
     WHILE true
     LOOP
         If _entryID > 0 Then
-            _cleanCollNameList := _cleanCollNameList || ',';
+            _cleanCollNameList := format('%s,', _cleanCollNameList);
         End If;
 
         SELECT Collection_ID, Collection_Name
@@ -214,7 +214,7 @@ BEGIN
 
         End If;
 
-        _cleanCollNameList := _cleanCollNameList || _collectionName;
+        _cleanCollNameList := format('%s%s', _cleanCollNameList, _collectionName);
     END LOOP;
 
     ---------------------------------------------------
@@ -290,9 +290,9 @@ BEGIN
             _message := format('Keyword: "%s"', _optionString);
 
             If _equalsPosition = 1 Then
-                _message := _message || ' starts with an equals sign';
+                _message := format('%s starts with an equals sign', _message);
             Else
-                _message := _message || ' ends with an equals sign';
+                _message := format('%s ends with an equals sign', _message);
             End If;
 
             _returnCode := 'U5208';
@@ -364,7 +364,7 @@ BEGIN
 
             If FOUND Then
                 If char_length(_cleanOptions) > 0 Then
-                    _cleanOptions := _cleanOptions || ',';
+                    _cleanOptions := format('%s,', _cleanOptions);
                 End If;
 
                 _cleanOptions := format('%s%s=%s', _cleanOptions, _optionItem.Keyword, _optionValueToUse);
@@ -388,7 +388,7 @@ BEGIN
 
         If Not _keywordFound AND _optionItem.IsRequired > 0 Then
             If char_length(_cleanOptions) > 0 Then
-                _cleanOptions := _cleanOptions || ',';
+                _cleanOptions := format('%s,', _cleanOptions);
             End If;
 
             _cleanOptions := format('%s%s=%s', _cleanOptions, _optionItem.Keyword, _optionItem.DefaultValue);

@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly boolean DEFAULT false)
 **          04/07/2022 mem - Use the query results to report status messages
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          05/12/2023 mem - Rename variables
-**          05/21/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -94,7 +94,7 @@ BEGIN
             If _message = '' Then
                 _message := _message2;
             Else
-                _message := _message || '; ' || _message2;
+                _message := format('%s; %s', _message, _message2);
             End If;
         End If;
 

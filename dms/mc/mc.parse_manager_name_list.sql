@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DE
 **                         - Replace temp tables with arrays
 **          08/22/2022 mem - Change column manager_name to citext in the returned table
 **          05/22/2023 mem - Capitalize reserved word
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -70,17 +71,18 @@ BEGIN
 
     -- Parse the entries in _managerSpecList that have a wildcard
     --
+
+    _s := format(
+            'SELECT ARRAY ('
+                    'SELECT mgr_name '
+                    'FROM mc.t_mgrs '
+                    'WHERE mgr_name SIMILAR TO $1 )');
+
     For _managerFilter In
         SELECT NameQ.manager_name
         FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) As NameQ
         WHERE NameQ.manager_name SIMILAR TO '%[%]%' OR NameQ.manager_name SIMILAR TO '%\[%'
     Loop
-        _s := format(
-                'SELECT ARRAY (' ||
-                        'SELECT mgr_name ' ||
-                        'FROM mc.t_mgrs ' ||
-                        'WHERE mgr_name SIMILAR TO $1 )');
-
         EXECUTE _s
         INTO _additionalManagers
         USING _managerFilter;
@@ -90,8 +92,7 @@ BEGIN
         End If;
 
         -- Uncomment to debug:
-        -- _s := regexp_replace(_s, '\$1', '''' || _managerFilter || '''');
-        -- RAISE NOTICE '%', _s;
+        -- RAISE NOTICE '%', regexp_replace(_s, '\$1', format('''%s''', _managerFilter))
 
     End Loop;
 

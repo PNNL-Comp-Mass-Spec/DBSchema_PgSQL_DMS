@@ -35,8 +35,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          12/12/2022 mem - Whitespace update
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
-**          05/22/2023 mem - Use format() for string concatenation
-**          05/29/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -198,7 +197,7 @@ BEGIN
             -- Show the SQL both with the dollar signs, and with values
             RAISE INFO '%;', _s;
             _s := regexp_replace(_s, '\$1', _targetID::text);
-            _s := regexp_replace(_s, '\$4', '''' || _enteredByNew || '''');
+            _s := regexp_replace(_s, '\$4', format('''%s''', _enteredByNew));
             RAISE INFO '%;', _s;
         Else
             EXECUTE _s

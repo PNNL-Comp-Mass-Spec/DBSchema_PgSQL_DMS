@@ -29,7 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **          01/31/2023 mem - Use new column names in tables
 **          05/07/2023 mem - Remove unused variable
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
-**          05/23/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -155,9 +155,9 @@ BEGIN
                   PV.mgr_id = _mgrID);
 
         If Not Found Then
-            _message := _message || '; Entry not found in mc.t_param_value for ManagerErrorCleanupMode; this is unexpected';
+            _message := format('%s; Entry not found in mc.t_param_value for ManagerErrorCleanupMode; this is unexpected', _message);
         Else
-            _message := _message || '; Changed ManagerErrorCleanupMode to 0 in mc.t_param_value';
+            _message := format('%s; Changed ManagerErrorCleanupMode to 0 in mc.t_param_value', _message);
         End If;
     End If;
 

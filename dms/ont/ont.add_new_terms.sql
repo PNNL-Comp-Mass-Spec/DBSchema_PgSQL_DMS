@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          05/23/2023 mem - Use format() for string concatenation
 **          05/25/2023 mem - Show a custom message if _ontologyName is BTO, ENVO, or MS
 **                         - Reduce nesting
-**          05/29/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 ***
 *****************************************************/
 DECLARE
@@ -123,8 +123,8 @@ BEGIN
                   ' grandparent_term_name citext,'
                   ' grandparent_term_id citext,'
                   ' entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,' ||
-           format(' CONSTRAINT pk_%s PRIMARY KEY (entry_id)', _targetTable) ||
-              '); ';
+           format(' CONSTRAINT pk_%s PRIMARY KEY (entry_id)', _targetTable)                  ||
+               '); ';
 
         If _previewSql Then
             RAISE INFO '%', format(_s, _targetSchema, _targetTable);
@@ -132,9 +132,9 @@ BEGIN
             EXECUTE format(_s, _targetSchema, _targetTable);
         End If;
 
-        _s := format('CREATE INDEX ix_%s_term_name             ON %s USING btree (term_name); ', _targetTable, _targetTableWithSchema) ||
+        _s := format('CREATE INDEX ix_%s_term_name             ON %s USING btree (term_name); ', _targetTable, _targetTableWithSchema)                      ||
               format('CREATE INDEX ix_%s_identifier            ON %s USING btree (identifier) INCLUDE (term_name); ', _targetTable, _targetTableWithSchema) ||
-              format('CREATE INDEX ix_%s_parent_term_name      ON %s USING btree (parent_term_name); ', _targetTable, _targetTableWithSchema) ||
+              format('CREATE INDEX ix_%s_parent_term_name      ON %s USING btree (parent_term_name); ', _targetTable, _targetTableWithSchema)               ||
               format('CREATE INDEX ix_%s_grandparent_term_name ON %s USING btree (grandparent_term_name);', _targetTable, _targetTableWithSchema);
 
         If _previewSql Then
@@ -162,15 +162,16 @@ BEGIN
 
         /*
          * Old
-        _s :=        ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, parent_term_name, Parent_term_Identifier, grandparent_term_name, grandparent_term_identifier' ||
-              format(' FROM %s', _sourceTable) ||
+        _s :=        ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, parent_term_name, Parent_term_Identifier, ' ||
+                                      'grandparent_term_name, grandparent_term_identifier'                                  ||
+              format(' FROM %s', _sourceTable)                                                                              ||
               format(' WHERE NOT parent_term_identifier Is Null AND NOT identifier IN ( SELECT identifier::citext FROM %s )', _targetTableWithSchema);
         */
 
         _s := format('SELECT DISTINCT s.term_pk, s.term_name, s.identifier%s', CASE WHEN _infoOnly Then '::citext, ' Else '::int, ' END)                ||
               format(                's.is_leaf, s.parent_term_name, s.Parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier') ||
-              format(' FROM %s s', _sourceTable) ||
-              format('      LEFT OUTER JOIN %s t', _targetTableWithSchema) ||
+              format(' FROM %s s', _sourceTable)                                                                                                        ||
+              format('      LEFT OUTER JOIN %s t', _targetTableWithSchema)                                                                              ||
                      '        ON s.identifier::int = t.identifier'
                      ' WHERE NOT s.parent_term_identifier Is Null AND'
                      '       t.identifier Is Null';

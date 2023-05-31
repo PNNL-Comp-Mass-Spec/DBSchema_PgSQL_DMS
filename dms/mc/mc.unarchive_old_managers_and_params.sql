@@ -40,6 +40,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          10/04/2022 mem - Change _infoOnly and _enableControlFromWebsite from integer to boolean
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -141,7 +142,7 @@ BEGIN
 
     If Exists (SELECT * FROM Tmp_ManagerList Src INNER JOIN mc.t_mgrs Target ON Src.Manager_Name = Target.mgr_name) Then
         INSERT INTO Tmp_WarningMessages (message, manager_name)
-        SELECT 'Manager already exists in t_mgrs with Mgr_Name ' || Target.mgr_name || '; cannot restore',
+        SELECT format('Manager already exists in t_mgrs with Mgr_Name %s; cannot restore', Target.mgr_name),
                manager_name
         FROM Tmp_ManagerList Src
              INNER JOIN mc.t_old_managers Target
@@ -153,7 +154,7 @@ BEGIN
 
     If Exists (SELECT * FROM Tmp_ManagerList Src INNER JOIN mc.t_mgrs Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO Tmp_WarningMessages (message, manager_name)
-        SELECT 'Manager already exists in t_mgrs with Mgr_ID ' || Target.mgr_id || '; cannot restore',
+        SELECT format('Manager already exists in t_mgrs with Mgr_ID %s; cannot restore', Target.mgr_id),
                manager_name
         FROM Tmp_ManagerList Src
              INNER JOIN mc.t_old_managers Target
@@ -165,7 +166,7 @@ BEGIN
 
     If Exists (SELECT * FROM Tmp_ManagerList Src INNER JOIN mc.t_param_value Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO Tmp_WarningMessages (message, manager_name)
-        SELECT 'Manager already has parameters in mc.t_param_value with Mgr_ID ' || Src.mgr_id || '; cannot restore',
+        SELECT format('Manager already has parameters in mc.t_param_value with Mgr_ID %s; cannot restore', Src.mgr_id),
                manager_name
         FROM Tmp_ManagerList Src
              INNER JOIN mc.t_param_value_old_managers Target

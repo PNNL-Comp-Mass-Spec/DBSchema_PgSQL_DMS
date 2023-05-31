@@ -55,7 +55,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          04/16/2023 mem - Auto-update _proteinCollectionList and _organismDbFile to 'na' if an empty string
 **          05/03/2023 mem - Fix typo in format string
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
-**          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -249,7 +249,7 @@ BEGIN
                 _defaultLibraryName := Substring(_defaultLibraryName, 1, 110);
 
                 If Right(_defaultLibraryName, 1) <> '_' Then
-                    _defaultLibraryName := _defaultLibraryName || '_';
+                    _defaultLibraryName := format('%s_', _defaultLibraryName);
                 End If;
 
                  _defaultLibraryName := format('%s%s', _defaultLibraryName, Substring(_libraryNameHash, 1, 8));
@@ -336,8 +336,7 @@ BEGIN
             If _libraryStateID = 1 Then
                 If _allowAddNew And _dmsSourceJob > 0 Then
                     If _infoOnly Then
-                        _message := format('Found existing spectral library ID %s with state 1; ' ||
-                                           'would associate source job %s with the creation of spectra library %s',
+                        _message := format('Found existing spectral library ID %s with state 1; would associate source job %s with the creation of spectra library %s',
                                             _libraryId, _dmsSourceJob, _libraryName);
 
                         RETURN;
@@ -356,14 +355,12 @@ BEGIN
                     WHERE Library_ID = _libraryID;
 
                     If _actualSourceJob = _dmsSourceJob Then
-                        _message := format('Found existing spectral library ID %s with state 1; ' ||
-                                           'associated source job %s with the creation of spectra library %s',
+                        _message := format('Found existing spectral library ID %s with state 1; associated source job %s with the creation of spectra library %s',
                                             _libraryId, _dmsSourceJob, _libraryName);
 
                         _sourceJobShouldMakeLibrary := true;
                     Else
-                        _message := format('Found existing spectral library ID %s with state 1; ' ||
-                                           'tried to associate with source job %s but library is actually associated with job %s: %s',
+                        _message := format('Found existing spectral library ID %s with state 1; tried to associate with source job %s but library is actually associated with job %s: %s',
                                             _libraryId, _dmsSourceJob, _actualSourceJob, _libraryName);
                     End If;
 

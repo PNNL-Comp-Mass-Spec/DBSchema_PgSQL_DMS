@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **          04/21/2017 mem - Add AD_instrumentNameCriteria
 **          06/30/2022 mem - Rename parameter file argument
 **          05/26/2023 mem - Ported to PostgreSQL
+**          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -99,74 +100,74 @@ BEGIN
     _sqlWhere := ' WHERE true';
 
     If _predefineInfo.InstrumentClassCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Instrument_Class SIMILAR TO ''' || _predefineInfo.InstrumentClassCriteria || ''')';
+        _sqlWhere := format('%s AND (Instrument_Class SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.InstrumentClassCriteria);
     End If;
 
     If _predefineInfo.InstrumentNameCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Instrument SIMILAR TO ''' || _predefineInfo.InstrumentNameCriteria || ''')';
+        _sqlWhere := format('%s AND (Instrument SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.InstrumentNameCriteria);
     End If;
 
     If _predefineInfo.InstrumentExclCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (NOT Instrument SIMILAR TO ''' || _predefineInfo.InstrumentExclCriteria || ''')';
+        _sqlWhere := format('%s AND (NOT Instrument SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.InstrumentExclCriteria);
     End If;
 
     If _predefineInfo.CampaignNameCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Campaign SIMILAR TO ''' || _predefineInfo.CampaignNameCriteria || ''')';
+        _sqlWhere := format('%s AND (Campaign SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.CampaignNameCriteria);
     End If;
 
     If _predefineInfo.ExperimentNameCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Experiment SIMILAR TO ''' || _predefineInfo.ExperimentNameCriteria || ''')';
+        _sqlWhere := format('%s AND (Experiment SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.ExperimentNameCriteria);
     End If;
 
     If _predefineInfo.LabellingInclCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Experiment_Labelling SIMILAR TO ''' || _predefineInfo.LabellingInclCriteria || ''')';
+        _sqlWhere := format('%s AND (Experiment_Labelling SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.LabellingInclCriteria);
     End If;
 
     If _predefineInfo.LabellingExclCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (NOT Experiment_Labelling SIMILAR TO ''' || _predefineInfo.LabellingExclCriteria || ''')';
+        _sqlWhere := format('%s AND (NOT Experiment_Labelling SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.LabellingExclCriteria);
     End If;
 
     If _predefineInfo.SeparationTypeCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Separation_Type SIMILAR TO ''' || _predefineInfo.SeparationTypeCriteria || ''')';
+        _sqlWhere := format('%s AND (Separation_Type SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.SeparationTypeCriteria);
     End If;
 
     If _predefineInfo.CampaignExclCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (NOT Campaign SIMILAR TO ''' || _predefineInfo.CampaignExclCriteria || ''')';
+        _sqlWhere := format('%s AND (NOT Campaign SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.CampaignExclCriteria);
     End If;
 
     If _predefineInfo.ExperimentExclCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (NOT Experiment SIMILAR TO ''' || _predefineInfo.ExperimentExclCriteria || ''')';
+        _sqlWhere := format('%s AND (NOT Experiment SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.ExperimentExclCriteria);
     End If;
 
     If _predefineInfo.DatasetExclCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (NOT Dataset SIMILAR TO ''' || _predefineInfo.DatasetExclCriteria || ''')';
+        _sqlWhere := format('%s AND (NOT Dataset SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.DatasetExclCriteria);
     End If;
 
     If _predefineInfo.OrganismNameCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Organism SIMILAR TO ''' || _predefineInfo.OrganismNameCriteria || ''')';
+        _sqlWhere := format('%s AND (Organism SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.OrganismNameCriteria);
     End If;
 
     If _predefineInfo.DatasetNameCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Dataset SIMILAR TO ''' || _predefineInfo.DatasetNameCriteria || ''')';
+        _sqlWhere := format('%s AND (Dataset SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.DatasetNameCriteria);
     End If;
 
     If _predefineInfo.DatasetTypeCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Dataset_Type SIMILAR TO ''' || _predefineInfo.DatasetTypeCriteria || ''')';
+        _sqlWhere := format('%s AND (Dataset_Type SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.DatasetTypeCriteria);
     End If;
 
     If _predefineInfo.ExpCommentCriteria <> '' Then
-        _sqlWhere := _sqlWhere || ' AND (Experiment_Comment SIMILAR TO ''' || _predefineInfo.ExpCommentCriteria || ''')';
+        _sqlWhere := format('%s AND (Experiment_Comment SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.ExpCommentCriteria);
     End If;
 
     _s := '';
 
     If _infoOnly Then
 
-        _s := _s || ' SELECT COUNT(*) AS DatasetCount,';
-        _s := _s ||        ' MIN(DS_Date) AS Dataset_Date_Min,';
-        _s := _s ||        ' MAX(DS_Date) AS Dataset_Date_Max';
-        _s := _s || ' FROM V_Predefined_Analysis_Dataset_Info';
-        _s := _s || _sqlWhere;
+        _s := ' SELECT COUNT(*) AS DatasetCount,'
+                      ' MIN(DS_Date) AS Dataset_Date_Min,'
+                      ' MAX(DS_Date) AS Dataset_Date_Max'
+              ' FROM V_Predefined_Analysis_Dataset_Info' ||
+              _sqlWhere;
 
         If _previewSql Then
             RAISE INFO '%', _s;
@@ -225,21 +226,21 @@ BEGIN
         RETURN;
     End If;
 
-    _s :=       ' SELECT Dataset, ID,';
-    _s := _s ||        ' Instrument_Class, Instrument,';
-    _s := _s ||        ' Campaign, Experiment, Organism,';
-    _s := _s ||        ' Experiment_Labelling, Experiment_Comment,';
-    _s := _s ||        ' Dataset_Comment, Dataset_Type,';
-    _s := _s ||        ' Rating As Dataset_Rating_ID, Rating_Name AS Dataset_Rating,';
-    _s := _s ||        ' Separation_Type,';
-    _s := _s ||        ' ''' || _predefineInfo.AnalysisToolName || '''::citext AS Tool,';
-    _s := _s ||        ' ''' || _predefineInfo.ParamFileName || '''::citext AS Parameter_File,';
-    _s := _s ||        ' ''' || _predefineInfo.SettingsFileName || '''::citext AS Settings_File,';
-    _s := _s ||        ' ''' || _predefineInfo.ProteinCollectionList || '''::citext AS Protein_Collections,';
-    _s := _s ||        ' ''' || _predefineInfo.OrganismDBName || '''::citext AS Legacy_FASTA';
-    _s := _s || ' FROM V_Predefined_Analysis_Dataset_Info';
-    _s := _s || _sqlWhere;
-    _s := _s || ' ORDER BY ID DESC';
+    _s := ' SELECT Dataset, ID,'
+               ' Instrument_Class, Instrument,'
+               ' Campaign, Experiment, Organism,'
+               ' Experiment_Labelling, Experiment_Comment,'
+               ' Dataset_Comment, Dataset_Type,'
+               ' Rating As Dataset_Rating_ID, Rating_Name AS Dataset_Rating,'
+               ' Separation_Type,'                                                              ||
+        format(' ''%s''::citext AS Tool,',                _predefineInfo.AnalysisToolName)      ||
+        format(' ''%s''::citext AS Parameter_File,',      _predefineInfo.ParamFileName)         ||
+        format(' ''%s''::citext AS Settings_File,',       _predefineInfo.SettingsFileName)      ||
+        format(' ''%s''::citext AS Protein_Collections,', _predefineInfo.ProteinCollectionList) ||
+        format(' ''%s''::citext AS Legacy_FASTA',         _predefineInfo.OrganismDBName)        ||
+          ' FROM V_Predefined_Analysis_Dataset_Info'                                            ||
+          _sqlWhere                                                                             ||
+          ' ORDER BY ID DESC';
 
     If _previewSql Then
         RAISE INFO '%', _s;
