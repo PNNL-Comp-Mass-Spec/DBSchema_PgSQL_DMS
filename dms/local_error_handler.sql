@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **    _exceptionMessage             Exception message
 **    _exceptionDetail              Exception detail
 **    _exceptionContext             Exception context, e.g. PL/pgSQL function test.test_exception_handler(text,boolean) line 35 at RAISE
+**                                  The exception context is used by public.get_call_stack() to determine the current function name and any calling function(s)
 **    _callingProcLocation          Most recent location in the calling procedure (optional)
 **    _callingProcName              Calling procedure name; will auto-determine using _exceptionContext and get_call_stack() if '<Auto>', '<AutoDetermine>', or ''
 **    _callingProcSchema            Calling procedure schema; if the exception context does not include a schema name, this argument's value can be used to explicitly define the schema to use. Otherwise, will look for the calling procedure in the system catalog views

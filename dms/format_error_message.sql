@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.format_error_message(_sqlstate text, _exceptio
 **    _exceptionMessage             Exception message
 **    _exceptionDetail              Exception detail
 **    _exceptionContext             Exception context, e.g. PL/pgSQL function test.test_exception_handler(text,boolean) line 35 at RAISE
+**                                  The exception context is used by public.get_call_stack() to determine the current function name and any calling function(s)
 **
 **  Auth:   grk
 **  Date:   04/16/2010 grk - Initial release
