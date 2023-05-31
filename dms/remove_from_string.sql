@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.remove_from_string(_text text, _texttoremove t
 **          08/08/2017 mem - Add support for _textToRemove ending in %
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use ElsIf for Else If
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,7 @@ BEGIN
                 -- Semicolon found
                 _text = regexp_replace(_text, _textToRemove || '[^;]*; *', '', _matchFlag);
 
-            ElseIf char_length((regexp_match(_text, _textToRemove || '[^,]*,', _matchFlag))[1]) > 0 Then
+            ElsIf char_length((regexp_match(_text, _textToRemove || '[^,]*,', _matchFlag))[1]) > 0 Then
                 -- Comma found
                 _text = regexp_replace(_text, _textToRemove || '[^,]*, *', '', _matchFlag);
             Else
@@ -67,7 +68,7 @@ BEGIN
             End If;
         End If;
 
-    ElseIf Coalesce(_textToRemove, '') <> '' Then
+    ElsIf Coalesce(_textToRemove, '') <> '' Then
         WHILE _iteration <= 4
         LOOP
             If _iteration = 0 Then

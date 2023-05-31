@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid in
 **          12/24/2022 mem - Use ::text
 **          04/04/2023 mem - Use char_length() to determine string length
 **          05/24/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use ElsIf for Else If
 **
 *****************************************************/
 DECLARE
@@ -36,14 +37,14 @@ BEGIN
              t_eus_users U ON RRUsers.eus_person_id = U.person_id
         WHERE RRUsers.request_id = _requestID;
 
-    ElseIf _mode = 'N' Then
+    ElsIf _mode = 'N' Then
         SELECT string_agg(U.NAME_FM, '; ' ORDER BY NAME_FM)
         INTO _result
         FROM t_requested_run_eus_users RRUsers INNER JOIN
              t_eus_users U ON RRUsers.eus_person_id = U.person_id
         WHERE RRUsers.request_id = _requestID;
 
-    ElseIf _mode = 'V' Then
+    ElsIf _mode = 'V' Then
         SELECT string_agg(format('%s (%s)', U.NAME_FM, RRUsers.EUS_Person_ID), '; ' ORDER BY NAME_FM)
         INTO _result
         FROM t_requested_run_eus_users RRUsers INNER JOIN

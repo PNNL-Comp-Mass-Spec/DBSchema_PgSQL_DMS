@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION sw.extract_server_name(_path text) RETURNS text
 **  Date:   03/03/2010
 **          06/26/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          05/30/2023 mem - Use ElsIf for Else If
 **
 ****************************************************/
 DECLARE
@@ -36,9 +37,9 @@ BEGIN
 
         If _charPosition1 = 0 And _charPosition2 = 0 Then
             _serverName := _path;
-        ElseIf _charPosition1 > 1 And _charPosition1 < _charPosition2 Then
+        ElsIf _charPosition1 > 1 And _charPosition1 < _charPosition2 Then
             _serverName := SubString(_path, 1, _charPosition1 - 1);
-        ElseIf _charPosition2 > 1 Then
+        ElsIf _charPosition2 > 1 Then
             _serverName := SubString(_path, 1, _charPosition2 - 1);
         End If;
 

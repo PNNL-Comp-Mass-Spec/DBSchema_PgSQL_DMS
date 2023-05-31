@@ -22,6 +22,8 @@ CREATE OR REPLACE FUNCTION public.get_sample_prep_request_eus_users_list(_reques
 **          08/02/2018 mem - T_Sample_Prep_Request now tracks EUS User ID as an integer
 **          06/15/2022 mem - Ported to PostgreSQL
 **          12/09/2022 mem - Assure that _mode is uppercase
+**          05/30/2023 mem - Use ElsIf for Else If
+**                         - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -40,17 +42,17 @@ BEGIN
             SELECT EU.person_id::text
             INTO _list
             FROM t_eus_users EU
-            Where EU.person_id = _eusUserID;
-        ElseIF _mode = 'N' Then
+            WHERE EU.person_id = _eusUserID;
+        ElsIf _mode = 'N' Then
             SELECT EU.name_fm
             INTO _list
             FROM t_eus_users EU
-            Where EU.person_id = _eusUserID;
-        ElseIF _mode = 'V' Then
-            SELECT name_fm || ' (' || EU.person_id::text || ')'
+            WHERE EU.person_id = _eusUserID;
+        ElsIf _mode = 'V' Then
+            SELECT format('%s (%s)', name_fm, EU.person_id)
             INTO _list
             FROM t_eus_users EU
-            Where EU.person_id = _eusUserID;
+            WHERE EU.person_id = _eusUserID;
         End If;
     End If;
 
