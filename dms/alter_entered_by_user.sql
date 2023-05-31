@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
 **          05/31/2023 mem - Use format() for string concatenation
+**                         - Add back implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -85,8 +86,8 @@ BEGIN
                                 _targetID, _targetTableName, _targetIDColumnName);
 
     _s := format(
-            'SELECT %I as target_id_match, %I as entered_by ' ||
-            'FROM %I.%I ' ||
+            'SELECT %I as target_id_match, %I as entered_by '
+            'FROM %I.%I '
             'WHERE %I = $1',
             _targetIDColumnName, _enteredByColumnName,
             _targetTableSchema, _targetTableName,
@@ -178,8 +179,8 @@ BEGIN
     If Not _infoOnly Then
 
         _s := format(
-                'UPDATE %I.%I ' ||
-                'SET %I = $4 '  ||
+                'UPDATE %I.%I '
+                'SET %I = $4 '
                 'WHERE %I = $1',
                 _targetTableSchema, _targetTableName,
                 _enteredByColumnName,
@@ -214,8 +215,8 @@ BEGIN
 
     Else
         _s := format(
-                'SELECT *, ''%s'' AS Entered_By_New ' ||
-                'FROM %I.%I '                         ||
+                'SELECT *, ''%s'' AS Entered_By_New '
+                'FROM %I.%I '
                 'WHERE %I = $1',
                 _enteredByNew,
                 _targetTableSchema, _targetTableName,

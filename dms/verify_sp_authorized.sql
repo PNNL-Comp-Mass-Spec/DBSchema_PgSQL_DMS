@@ -56,12 +56,14 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          05/18/2023 mem - Remove implicit string concatenation
 **          05/22/2023 mem - Capitalize reserved words
 **          05/31/2023 mem - Use format() for string concatenation
+**                         - Add back implicit string concatenation
+**                         - Rename variable
 **
 *****************************************************/
 DECLARE
     _clientHostIP inet;
     _userName text;
-    _targetTableWithSchema text;
+    _authorizationTableWithSchema text;
     _procedureNameWithSchema text;
     _s text;
     _result int;
@@ -82,7 +84,8 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     _targetSchema := COALESCE(_targetSchema, '');
-    If (char_length(_targetSchema) = 0) Then
+
+    If char_length(_targetSchema) = 0 Then
         _targetSchema := 'public';
     End If;
 
@@ -129,15 +132,15 @@ BEGIN
     -- Query t_sp_authorization in the specified schema
     ---------------------------------------------------
 
-    _targetTableWithSchema := format('%I.%I', _targetSchema, 't_sp_authorization');
+    _authorizationTableWithSchema := format('%I.%I', _targetSchema, 't_sp_authorization');
 
     _s := format(
-            'SELECT COUNT(*) '                            ||
-            'FROM %s auth '                               ||
-            'WHERE auth.procedure_name = $1::citext AND ' ||
-            '      auth.login_name = $2::citext AND '     ||
-            '      (auth.host_ip = $3::text Or auth.host_ip = ''*'')',
-            _targetTableWithSchema);
+            'SELECT COUNT(*) '
+            'FROM %s auth '
+            'WHERE auth.procedure_name = $1::citext AND '
+                  'auth.login_name = $2::citext AND '
+                  '(auth.host_ip = $3::text Or auth.host_ip = ''*'')',
+            _authorizationTableWithSchema);
 
     EXECUTE _s
     INTO _result
@@ -147,12 +150,12 @@ BEGIN
         _authorized := true;
     Else
         _s := format(
-                'SELECT COUNT(*) '                        ||
-                'FROM %s auth '                           ||
-                'WHERE auth.procedure_name = ''*'' AND '  ||
-                '      auth.login_name = $1::citext AND ' ||
-                '      (auth.host_ip = $2::text Or auth.host_ip = ''*'')',
-                _targetTableWithSchema);
+                'SELECT COUNT(*) '
+                'FROM %s auth '
+                'WHERE auth.procedure_name = ''*'' AND '
+                      'auth.login_name = $1::citext AND '
+                      '(auth.host_ip = $2::text Or auth.host_ip = ''*'')',
+                _authorizationTableWithSchema);
 
         EXECUTE _s
         INTO _result

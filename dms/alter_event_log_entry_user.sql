@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          05/12/2023 mem - Rename variables
 **          05/18/2023 mem - Remove implicit string concatenation
 **          05/31/2023 mem - Use format() for string concatenation
+**                         - Add back implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -123,14 +124,14 @@ BEGIN
     End If;
 
     _s := format(
-            'SELECT EL.event_id, EL.entered_by, EL.target_id ' ||
-            'FROM %1$I.t_event_log EL INNER JOIN '             ||
-                   ' (SELECT MAX(event_id) AS event_id '       ||
-                   '  FROM %1$I.t_event_log '                  ||
-                   '  WHERE target_type = $1 AND '             ||
-                   '        target_id = $2 AND '               ||
-                   '        target_state = $3'                 ||
-                   '        %s'                                ||
+            'SELECT EL.event_id, EL.entered_by, EL.target_id '
+            'FROM %1$I.t_event_log EL INNER JOIN '
+                   ' (SELECT MAX(event_id) AS event_id '
+                   '  FROM %1$I.t_event_log '
+                   '  WHERE target_type = $1 AND '
+                   '        target_id = $2 AND '
+                   '        target_state = $3'
+                   '        %s'
                    ' ) LookupQ ON EL.event_id = LookupQ.event_id',
             _eventLogSchema,
             _dateFilterSql);
@@ -192,8 +193,8 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        _s := format( 'UPDATE %I.t_event_log ' ||
-                      'SET entered_by = $2 '   ||
+        _s := format( 'UPDATE %I.t_event_log '
+                      'SET entered_by = $2 '
                       'WHERE event_id = $1',
                       _eventLogSchema,
                       _enteredByNew);
@@ -217,11 +218,11 @@ BEGIN
     End If;
 
     _s := format(
-            'SELECT event_id, target_type, target_id, target_state,' ||
-            '       prev_target_state, entered,'                     ||
-            '       entered_by AS Entered_By_Old,'                   ||
-            '       $2 AS Entered_By_New '                           ||
-            'FROM %I.t_event_log '                                   ||
+            'SELECT event_id, target_type, target_id, target_state,'
+            '       prev_target_state, entered,'
+            '       entered_by AS Entered_By_Old,'
+            '       $2 AS Entered_By_New '
+            'FROM %I.t_event_log '
             'WHERE event_id = $1',
             _eventLogSchema);
 

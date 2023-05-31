@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **          04/27/2023 mem - Use boolean for data type name
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/12/2023 mem - Rename variables
+**          05/31/2023 mem - Use implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -232,9 +233,9 @@ BEGIN
                 FROM cap.t_myemsl_uploads
                 WHERE entry_id = _entryID;
 
-                _logMessage := format('Details of an old MyEMSL upload entry to be marked stale; ' ||
-                                      'Entry ID: %s, Capture task job: %s, Subfolder: %s, ' ||
-                                      'FileCountNew: %s, FileCountUpdated: %s, Bytes: %s, ' ||
+                _logMessage := format('Details of an old MyEMSL upload entry to be marked stale; '
+                                      'Entry ID: %s, Capture task job: %s, Subfolder: %s, '
+                                      'FileCountNew: %s, FileCountUpdated: %s, Bytes: %s, '
                                       'Verified: %s, IngestStepsCompleted: %s, ErrorCode: %s, Entered: %s',
                                          _entryID,
                                          _uploadInfo.Job,

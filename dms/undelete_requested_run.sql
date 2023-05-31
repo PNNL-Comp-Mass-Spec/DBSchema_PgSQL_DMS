@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE public.undelete_requested_run(IN _requestid integer,
 **  Auth:   mem
 **  Date:   03/30/2023 mem - Initial version
 **          03/31/2023 mem - Restore requested run batches and batch groups if the requested run refers to a deleted batch or batch group
+**          05/31/2023 mem - Use implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -127,8 +128,7 @@ BEGIN
         LIMIT 1;
 
         If Not FOUND Then
-            _message := format('Requested run ID %s refers to batch %s, which does not exist, and cannot be restored from T_Deleted_Requested_Run_Batch; ' ||
-                               'see entry %s in T_Deleted_Requested_Run',
+            _message := format('Requested run ID %s refers to batch %s, which does not exist, and cannot be restored from T_Deleted_Requested_Run_Batch; see entry %s in T_Deleted_Requested_Run',
                                 _requestID, _batchID, _entryID);
 
             RAISE WARNING '%', _message;
@@ -149,11 +149,11 @@ BEGIN
             LIMIT 1;
 
             If Not FOUND Then
-                _message := format('Requested run ID %s refers to batch %s, which refers to batch group %s, ' ||
-                               'but that batch group does not exist and cannot be restored from T_Deleted_Requested_Run_Batch_Group; ' ||
-                               'see entry %s in T_Deleted_Requested_Run ' ||
-                               'and entry %s in T_Deleted_Requested_Run_Batch',
-                               _requestID, _batchID, _batchGroupID, _entryID, _deletedBatchEntryID);
+                _message := format('Requested run ID %s refers to batch %s, which refers to batch group %s, '
+                                   'but that batch group does not exist and cannot be restored from T_Deleted_Requested_Run_Batch_Group; '
+                                   'see entry %s in T_Deleted_Requested_Run '
+                                   'and entry %s in T_Deleted_Requested_Run_Batch',
+                                   _requestID, _batchID, _batchGroupID, _entryID, _deletedBatchEntryID);
 
                 RAISE WARNING '%', _message;
                 RETURN;
