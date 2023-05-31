@@ -7,8 +7,9 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
     AS $$
 /****************************************************
 **
-**  Desc:   Returns run tracking information for given EUS Instrument ID
-**          Modeled after GetRunTrackingMonthlyInfo
+**  Desc:
+**      Returns run tracking information for given EUS Instrument ID
+**      Modeled after Get_Run_Tracking_Monthly_Info
 **
 **  Arguments:
 **    _eusInstrumentId  EUS Instrument ID
@@ -23,6 +24,8 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 **          06/23/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          05/22/2023 mem - Capitalize reserved words
+**          05/30/2023 mem - Replace * with specific column names when returning query results
+**                         - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -62,10 +65,13 @@ BEGIN
     ---------------------------------------------------
 
     If Coalesce(_year, 0) = 0 OR Coalesce(_month, 0) = 0 OR Coalesce(_eusInstrumentId, 0) = 0 Then
-        INSERT INTO Tmp_TX (Seq, Dataset) VALUES (1, 'Bad arguments');
+        INSERT INTO Tmp_TX (Seq, Dataset)
+        VALUES (1, 'Bad arguments');
 
         RETURN QUERY
-        SELECT *
+        SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",
+               T.Time_Start, T.Time_End, T.Instrument,
+               T.Comment_State, T.Comment
         FROM Tmp_TX;
 
         DROP TABLE Tmp_TX;
@@ -82,14 +88,17 @@ BEGIN
          INNER JOIN t_emsl_dms_instrument_mapping AS InstMapping
            ON InstName.instrument_id = InstMapping.dms_instrument_id
     WHERE InstMapping.eus_instrument_id = _eusInstrumentId
-    Order By InstName.instrument
+    ORDER BY InstName.instrument
     LIMIT 1;
 
     If Coalesce(_instrumentIDFirst, 0) = 0 Then
-        INSERT INTO Tmp_TX (Seq, Dataset) VALUES (1, 'Unrecognized EUS ID; no DMS instruments are mapped to EUS Instrument ID ' || _eusInstrumentId::text);
+        INSERT INTO Tmp_TX (Seq, Dataset)
+        VALUES (1, format('Unrecognized EUS ID; no DMS instruments are mapped to EUS Instrument ID %s', _eusInstrumentId));
 
         RETURN QUERY
-        SELECT *
+        SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",
+               T.Time_Start, T.Time_End, T.Instrument,
+               T.Comment_State, T.Comment
         FROM Tmp_TX;
 
         DROP TABLE Tmp_TX;
@@ -130,8 +139,8 @@ BEGIN
          INNER JOIN t_emsl_dms_instrument_mapping AS InstMapping
            ON TD.instrument_id = InstMapping.dms_instrument_id
     WHERE InstMapping.eus_instrument_id = _eusInstrumentId AND
-          _firstDayOfStartingMonth <= TD.acq_time_start AND
-          TD.acq_time_start < _firstDayOfTrailingMonth
+          TD.acq_time_start >= _firstDayOfStartingMonth AND
+          TD.acq_time_start <  _firstDayOfTrailingMonth
     ORDER BY TD.acq_time_start;
 
     ---------------------------------------------------
@@ -156,13 +165,12 @@ BEGIN
     -- Use "extract(epoch ...) / 60.0" to get the difference in minutes between the two timestamps
     --
     If extract(epoch FROM (_firstStart - _firstDayOfStartingMonth)) / 60.0 > _maxNormalInterval Then
-        SELECT
-            TD.dataset_id AS id,
-            TD.dataset AS dataset,
-            TD.acq_time_start as start,
-            TD.acq_time_end as end,
-            TD.acq_length_minutes as duration,
-            TD.interval_to_next_ds as "interval"
+        SELECT TD.dataset_id AS id,
+               TD.dataset AS dataset,
+               TD.acq_time_start as start,
+               TD.acq_time_end as end,
+               TD.acq_length_minutes as duration,
+               TD.interval_to_next_ds as "interval"
         INTO _preceedingDataset
         FROM t_dataset AS TD
              INNER JOIN t_emsl_dms_instrument_mapping AS InstMapping
@@ -175,9 +183,8 @@ BEGIN
 
         _initialGap := extract(epoch FROM (_firstStart - _firstDayOfStartingMonth)) / 60.0;
 
-        -- If preceeding dataset's end time is before start of month,
-        -- zero the duration and truncate the interval
-        -- othewise just truncate the duration
+        -- If preceeding dataset's end time is before start of month, zero the duration and truncate the interval,
+        -- otherwise just truncate the duration
         --
         If _precEnd < _firstDayOfStartingMonth Then
             _preceedingDataset.duration := 0;
@@ -189,15 +196,15 @@ BEGIN
         -- Add preceeding dataset record (with truncated duration/interval)
         -- at beginning of results
         --
-        INSERT INTO Tmp_TX( seq,
-                            dataset,
-                            id,
-                            day,
-                            time_start,
-                            time_end,
-                            duration,
-                            "interval",
-                            instrument )
+        INSERT INTO Tmp_TX ( seq,
+                             dataset,
+                             id,
+                             day,
+                             time_start,
+                             time_end,
+                             duration,
+                             "interval",
+                             instrument )
         VALUES( _firstRunSeq - 1,               -- seq
                 _preceedingDataset.dataset,
                 _preceedingDataset.id,
@@ -219,10 +226,9 @@ BEGIN
 
     -- Otherwise, if interval hangs over succeeding month, truncate it
     --
-    SELECT
-         Tmp_TX.time_start,
-         Tmp_TX.time_end,
-         Tmp_TX."interval"       -- Interval, in minutes
+    SELECT Tmp_TX.time_start,
+           Tmp_TX.time_end,
+           Tmp_TX."interval"       -- Interval, in minutes
     INTO _lastRunStart, _lastRunEnd, _lastRunInterval
     FROM Tmp_TX
     WHERE Tmp_TX.seq = _lastRunSeq;
@@ -232,7 +238,7 @@ BEGIN
         SET "interval" = 0,
             duration = extract(epoch FROM (_firstDayOfTrailingMonth - _lastRunStart)) / 60.0
         WHERE Tmp_TX.Seq = _lastRunSeq;
-    ElseIf _lastRunEnd + make_interval(mins => _lastRunInterval) > _firstDayOfTrailingMonth Then
+    ElsIf _lastRunEnd + make_interval(mins => _lastRunInterval) > _firstDayOfTrailingMonth Then
         UPDATE Tmp_TX
         SET "interval" = extract(epoch FROM (_firstDayOfTrailingMonth - _lastRunEnd)) / 60.0
         WHERE Tmp_TX.Seq = _lastRunSeq;
@@ -256,8 +262,10 @@ BEGIN
     WHERE Tmp_TX.comment_state Is Null;
 
     RETURN QUERY
-    SELECT *
-    FROM Tmp_TX;
+    SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",
+           T.Time_Start, T.Time_End, T.Instrument,
+           T.Comment_State, T.Comment
+    FROM Tmp_TX T;
 
     DROP TABLE Tmp_TX;
 END
