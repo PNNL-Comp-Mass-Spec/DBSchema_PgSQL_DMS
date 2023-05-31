@@ -24,19 +24,21 @@ CREATE OR REPLACE FUNCTION public.get_current_manager_activity(_activeonly boole
 **
 **  Auth:   grk
 **  Date:   10/06/2003 grk - Initial version
-**          06/01/2004 grk - fixed initial population of XT with jobs
+**          06/01/2004 grk - Fixed initial population of XT with jobs
 **          06/23/2004 grk - Used AJ_start instead of AJ_finish in default population
 **          11/04/2004 grk - Widened 'Who' column of XT to match data in some item queries
-**          02/24/2004 grk - fixed problem with null value for AJ_assignedProcessorName
-**          02/09/2007 grk - added column to note that activity is stale (Ticket #377)
-**          02/27/2007 grk - fixed prep manager reporting (Ticket #398)
-**          04/04/2008 dac - changed output sort order to DESC
-**          09/30/2009 grk - eliminated references to health log
+**          02/24/2004 grk - Fixed problem with null value for AJ_assignedProcessorName
+**          02/09/2007 grk - Added column to note that activity is stale (Ticket #377)
+**          02/27/2007 grk - Fixed prep manager reporting (Ticket #398)
+**          04/04/2008 dac - Changed output sort order to DESC
+**          09/30/2009 grk - Eliminated references to health log
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          10/27/2022 mem - Change # column to lowercase
 **          11/02/2022 mem - Remove # from column name
 **          11/16/2022 mem - Ported to PostgreSQL
-**          11/17/2022 mem - Updated to use DMS_Capture and DMS_Pipeline
+**          11/17/2022 mem - Updated to use tables in the capture and pipeline schemas ('cap' and 'sw')
+**          05/30/2023 mem - Use new step tool column name
+**                         - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -69,11 +71,11 @@ BEGIN
         SELECT RankQ.Who,
                RankQ.What,
                RankQ.Start,
-               'Analysis Jobs' as Source
-        FROM ( SELECT 'Analysis: ' || Processor As Who,
-                      format('Processing job %s, step %s, tool %s', job, step, step_tool) AS What,
+               'Analysis Jobs' AS Source
+        FROM ( SELECT format('Analysis: %s', Processor) AS Who,
+                      format('Processing job %s, step %s, tool %s', job, step, tool) AS What,
                       Start,
-                      Row_Number() Over (Partition By Processor Order By Start Desc) As StartRank
+                      Row_Number() OVER (Partition BY Processor ORDER BY Start DESC) AS StartRank
                FROM sw.t_job_steps
                WHERE State = 4
              ) RankQ
@@ -83,11 +85,11 @@ BEGIN
         SELECT RankQ.Who,
                RankQ.What,
                RankQ.Start,
-               'Capture Tasks' as Source
-        FROM ( SELECT 'Capture: ' || Processor As Who,
-                      format('Processing task %s, step %s, tool %s', job, step, step_tool) AS What,
+               'Capture Tasks' AS Source
+        FROM ( SELECT format('Capture: %s', Processor) AS Who,
+                      format('Processing task %s, step %s, tool %s', job, step, tool) AS What,
                       Start,
-                      Row_Number() Over (Partition By Processor Order By Start Desc) As StartRank
+                      Row_Number() OVER (Partition BY Processor ORDER BY Start DESC) AS StartRank
                FROM sw.t_job_steps
                WHERE State = 4
              ) RankQ
@@ -109,20 +111,20 @@ BEGIN
     -- Populate temporary table with analysis managers that started a job within the date range
     --
     INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
-    SELECT 'Analysis: ' || M.processor AS Who,
+    SELECT format('Analysis: %s', M.processor) AS Who,
            'Idle' AS What,
            M.Most_Recent_Start,
-           'Analysis Jobs' as Source
+           'Analysis Jobs' AS Source
     FROM (  -- Get distinct list of analysis managers
             -- that have been active within the date range
             --
-            SELECT UnionQ.processor, Max(Most_Recent_Start) As Most_Recent_Start
-            FROM ( SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) As Most_Recent_Start
+            SELECT UnionQ.processor, Max(Most_Recent_Start) AS Most_Recent_Start
+            FROM ( SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
                    FROM sw.t_job_steps
                    WHERE Start BETWEEN _startDate AND _endDate
                    GROUP BY processor
                    UNION
-                   SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) As Most_Recent_Start
+                   SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
                    FROM sw.t_job_steps_history
                    WHERE Start BETWEEN _startDate AND _endDate
                    GROUP BY processor
@@ -133,16 +135,16 @@ BEGIN
     -- Update actively running processors
     --
     UPDATE Tmp_ManagerActivity M
-    Set Who = T.Who,
+    SET Who = T.Who,
         What = T.What,
         Status_Date = T.Start
-    From ( SELECT RankQ.Who,
+    FROM ( SELECT RankQ.Who,
                   RankQ.What,
                   RankQ.Start
-           FROM ( SELECT 'Analysis: ' || Processor As Who,
-                         format('Processing job %s, step %s, tool %s', job, step, step_tool) AS What,
+           FROM ( SELECT format('Analysis: %s', Processor) AS Who,
+                         format('Processing job %s, step %s, tool %s', job, step, tool) AS What,
                          Start,
-                         Row_Number() Over (Partition By Processor Order By Start Desc) As StartRank
+                         Row_Number() OVER (Partition BY Processor ORDER BY Start DESC) AS StartRank
                   FROM sw.t_job_steps
                   WHERE State = 4 And Start BETWEEN _startDate AND _endDate
                 ) RankQ
@@ -154,20 +156,20 @@ BEGIN
     -- Populate temporary table with capture task managers that started a capture or archive task within the date range
     --
     INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
-    SELECT 'Capture: ' || M.processor AS Who,
+    SELECT format('Capture: %s', M.processor) AS Who,
            'Idle' AS What,
            M.Most_Recent_Start,
-           'Capture Tasks' as Source
+           'Capture Tasks' AS Source
     FROM (  -- Get distinct list of analysis managers
             -- that have been active within the date range
             --
-            SELECT UnionQ.processor, Max(Most_Recent_Start) As Most_Recent_Start
-            FROM ( SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) As Most_Recent_Start
+            SELECT UnionQ.processor, Max(Most_Recent_Start) AS Most_Recent_Start
+            FROM ( SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
                    FROM cap.t_task_steps
                    WHERE Start BETWEEN _startDate AND _endDate
                    GROUP BY processor
                    UNION
-                   SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) As Most_Recent_Start
+                   SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
                    FROM cap.t_task_steps_history
                    WHERE Start BETWEEN _startDate AND _endDate
                    GROUP BY processor
@@ -178,16 +180,16 @@ BEGIN
     -- Update actively running processors
     --
     UPDATE Tmp_ManagerActivity M
-    Set Who = T.Who,
+    SET Who = T.Who,
         What = T.What,
         Status_Date = T.Start
-    From ( SELECT RankQ.Who,
+    FROM ( SELECT RankQ.Who,
                   RankQ.What,
                   RankQ.Start
-           FROM ( SELECT 'Capture: ' || Processor As Who,
-                         format('Processing task %s, step %s, tool %s', job, step, step_tool) AS What,
+           FROM ( SELECT format('Capture: %s', Processor) AS Who,
+                         format('Processing task %s, step %s, tool %s', job, step, tool) AS What,
                          Start,
-                         Row_Number() Over (Partition By Processor Order By Start Desc) As StartRank
+                         Row_Number() OVER (Partition BY Processor ORDER BY Start DESC) AS StartRank
                   FROM cap.t_task_steps
                   WHERE State = 4 And Start BETWEEN _startDate AND _endDate
                 ) RankQ
@@ -202,7 +204,7 @@ BEGIN
         A.What,
         A.Status_Date
     FROM Tmp_ManagerActivity A
-    ORDER by A.Who;
+    ORDER BY A.Who;
 
     DROP TABLE Tmp_ManagerActivity;
 END
