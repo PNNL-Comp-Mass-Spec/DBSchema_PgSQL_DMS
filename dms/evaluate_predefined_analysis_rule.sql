@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **          01/27/2023 mem - Track legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
 **          05/19/2023 mem - Remove redundant parentheses
+**          05/30/2023 mem - Use append_to_text() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -133,11 +134,7 @@ BEGIN
         If NOT _predefineInfo.RuleNextLevel IS NULL Then
             _minLevelNew := _predefineInfo.RuleNextLevel;
 
-            If char_length(_ruleEvalNotes) > 0 Then
-                _ruleEvalNotes := _ruleEvalNotes || '; ';
-            End If;
-
-            _ruleEvalNotes := format('%sNext rule must have level >= %s', _ruleEvalNotes, _predefineInfo.RuleNextLevel);
+            _ruleEvalNotes := public.append_to_text(_ruleEvalNotes, format('Next rule must have level >= %s', _predefineInfo.RuleNextLevel));
         End If;
 
         ---------------------------------------------------
@@ -152,12 +149,11 @@ BEGIN
             rule_id
         INTO _schedulingRulePriority, _schedulingRuleID
         FROM t_predefined_analysis_scheduling_rules
-        WHERE
-            (enabled > 0) AND
-            (_instrumentClass::citext SIMILAR TO instrument_class   OR instrument_class = '') AND
-            (_instrumentName::citext SIMILAR TO instrument_name     OR instrument_name = '') AND
-            (_datasetName::citext SIMILAR TO dataset_name           OR dataset_name = '') AND
-            (_predefineInfo.AnalysisToolName SIMILAR TO analysis_tool_name OR analysis_tool_name = '')
+        WHERE enabled > 0 AND
+              (_instrumentClass::citext SIMILAR TO instrument_class          OR instrument_class   = '') AND
+              (_instrumentName::citext  SIMILAR TO instrument_name           OR instrument_name    = '') AND
+              (_datasetName::citext     SIMILAR TO dataset_name              OR dataset_name       = '') AND
+              (_predefineInfo.AnalysisToolName SIMILAR TO analysis_tool_name OR analysis_tool_name = '')
         ORDER BY evaluation_order
         LIMIT 1;
 
@@ -176,18 +172,14 @@ BEGIN
             --     _associatedProcessorGroup := '';
             -- End If;
 
-            If char_length(_ruleEvalNotes) > 0 Then
-                _ruleEvalNotes := _ruleEvalNotes || '; ';
-            End If;
-
             -- Obsolete:
             -- If char_length(_associatedProcessorGroup) > 0 Then
-            --     _ruleEvalNotes := format('%sProcessor group set to %s;', _associatedProcessorGroup);
+            --     _ruleEvalNotes := public.append_to_text(_ruleEvalNotes, format('Processor group set to %s', _associatedProcessorGroup));
             -- End If;
 
-            _ruleEvalNotes := format('%sPriority set to %s due to rule_id %s in t_predefined_analysis_scheduling_rules',
-                                        _ruleEvalNotes, _predefineInfo.Priority, _schedulingRuleID);
-
+            _ruleEvalNotes := public.append_to_text(_ruleEvalNotes,
+                                                    format('Priority set to %s due to rule_id %s in t_predefined_analysis_scheduling_rules',
+                                                            _predefineInfo.Priority, _schedulingRuleID));
         End If;
 
         ---------------------------------------------------

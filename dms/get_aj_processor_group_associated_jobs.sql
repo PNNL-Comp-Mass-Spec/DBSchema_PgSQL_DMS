@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_group_associated_jobs(_groupi
 **          07/06/2022 mem - Move Group By queries into subqueries
 **          05/05/2023 mem - Change table alias name
 **          05/24/2023 mem - Use format() for string concatenation
+**          05/30/2023 mem - Use append_to_text() for string concatenation
 **
 *****************************************************/
 DECLARE
@@ -55,15 +56,12 @@ BEGIN
             GROUP BY AJS.job_state, J.job_state_id) CountQ;
 
         If Coalesce(_resultAppend, '') <> '' Then
-            If _result <> '' THEN
-                _result := _result || ', ';
-            End If;
-
-            _result := _result || _resultAppend;
+            _result := public.append_to_text(_result, _resultAppend, 0, ', ');
         End If;
+
     End If;
 
-    If _jobStateFilter Not In (0, 1) Then
+    If Not _jobStateFilter In (0, 1) Then
         _resultAppend := '';
 
         SELECT string_agg(format('%s: %s', CountQ.job_state, CountQ.Jobs), ', ' ORDER BY CountQ.job_state_id)
@@ -77,11 +75,7 @@ BEGIN
             GROUP BY AJS.job_state, J.job_state_id) CountQ;
 
         If Coalesce(_resultAppend, '') <> '' Then
-            If _result <> '' THEN
-                _result := _result || ', ';
-            End If;
-
-            _result := _result || _resultAppend;
+            _result := public.append_to_text(_result, _resultAppend, 0, ', ');
         End If;
     End If;
 
