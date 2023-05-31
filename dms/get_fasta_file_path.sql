@@ -28,14 +28,14 @@ DECLARE
 BEGIN
     _filePath := '';
 
-    IF Coalesce(_fastaFileName, '') = '' Or _fastaFileName = 'na' Then
+    If Coalesce(_fastaFileName, '') = '' Or _fastaFileName = 'na' Then
         SELECT organism_db_path
         INTO _filePath
         FROM t_organisms
         WHERE organism = _organismName
         LIMIT 1;
     Else
-        If NOT _fastaFileName LIKE '%.fasta' Then
+        If Not _fastaFileName LIKE '%.fasta' Then
             _fastaFileName := _fastaFileName || '.fasta';
         End If;
 
@@ -55,7 +55,7 @@ BEGIN
 
         _fileNamePosition := strpos(_filePath, _fastaFileName);
 
-        IF _fileNamePosition > 0 Then
+        If _fileNamePosition > 0 Then
             _filePath := SUBSTRING(_filePath, 1, _fileNamePosition - 1);
         Else
             If Coalesce(_organismName, '') <> '' Then

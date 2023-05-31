@@ -137,7 +137,7 @@ BEGIN
         FROM Tmp_ToolsToUpdate FilterQ
         WHERE ProcTool.Tool_Name = FilterQ.Tool_Name AND
               ProcTool.enabled = _newState AND
-              ProcTool.comment::citext Like 'Disabled%'::citext;
+              ProcTool.comment::citext LIKE 'Disabled%'::citext;
 
     End If;
 
