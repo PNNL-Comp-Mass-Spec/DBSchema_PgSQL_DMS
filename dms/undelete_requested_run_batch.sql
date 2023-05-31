@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE public.undelete_requested_run_batch(IN _batchid inte
 **
 **  Auth:   mem
 **  Date:   03/31/2023 mem - Initial version
+**          05/31/2023 mem - Combine string literals
 **
 *****************************************************/
 DECLARE
@@ -110,9 +111,7 @@ BEGIN
         LIMIT 1;
 
         If Not FOUND Then
-            _message := format('Requested run batch %s refers to batch group %s, ' ||
-                               'which does not exist and cannot be restored from T_Deleted_Requested_Run_Batch_Group; ' ||
-                               'see entry %s in T_Deleted_Requested_Run_Batch',
+            _message := format('Requested run batch %s refers to batch group %s, which does not exist and cannot be restored from T_Deleted_Requested_Run_Batch_Group; see entry %s in T_Deleted_Requested_Run_Batch',
                                _batchID, _batchGroupID, _entryID);
 
             RAISE WARNING '%', _message;

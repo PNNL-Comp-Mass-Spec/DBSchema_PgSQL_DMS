@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **  Auth:   mem
 **  Date:   02/29/2020 mem - Initial version
 **          10/21/2022 mem - Ported to PostgreSQL
+**          05/31/2023 mem - Combine string literals
 **
 *****************************************************/
 DECLARE
@@ -52,8 +53,8 @@ BEGIN
     _datasetName := (xpath('//DatasetInfo/Dataset/text()', _datasetInfoXML))[1]::text;
 
     If Coalesce(_datasetName, '') = '' Then
-        _message := format('XML in _datasetInfoXML is not in the expected form for DatasetID %s in procedure get_dataset_details_from_dataset_info_xml; ' ||
-                           'could not match /DatasetInfo/Dataset', _datasetID);
+        _message := format('XML in _datasetInfoXML is not in the expected form for DatasetID %s in procedure get_dataset_details_from_dataset_info_xml; could not match /DatasetInfo/Dataset',
+                           _datasetID);
 
         _returnCode := 'U5200';
         RETURN;
