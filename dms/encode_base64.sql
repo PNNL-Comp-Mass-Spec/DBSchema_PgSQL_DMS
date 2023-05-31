@@ -16,13 +16,16 @@ CREATE OR REPLACE FUNCTION public.encode_base64(_texttoencode text) RETURNS text
 **  Date:   09/12/2013
 **          06/12/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          05/30/2023 mem - Remove line feeds from the encoded text
 **
 *****************************************************/
 DECLARE
     _encodedText text;
 BEGIN
+    -- Although Replace() could be used to remove the line feeds, translate() is better since it steps through the string one byte at a time
+    -- _encodedText :=Replace(encode(_textToEncode::bytea, 'base64'), chr(10), '');
 
-    _encodedText := encode(_textToEncode::bytea, 'base64');
+    _encodedText := translate(encode(_textToEncode::bytea, 'base64'), E'\n', '');
 
     RETURN _encodedText;
 END
