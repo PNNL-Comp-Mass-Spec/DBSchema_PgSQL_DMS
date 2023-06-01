@@ -76,7 +76,7 @@ BEGIN
     -- Make sure _job is defined in t_tasks
     ---------------------------------------------------
 
-    If NOT EXISTS (SELECT * FROM cap.t_tasks where Job = _job) Then
+    If Not Exists (SELECT * FROM cap.t_tasks WHERE Job = _job) Then
         _message := format('Job not found in t_tasks: %s', _job);
 
         If _infoOnly Then

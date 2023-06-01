@@ -241,7 +241,7 @@ BEGIN
         If _sourceStatus <> 'Active' Then
             _requestName := _sourceRequestName || '_f01%';
 
-            If EXISTS (SELECT * from t_requested_run WHERE request_name Like _requestName) Then
+            If Exists (SELECT * from t_requested_run WHERE request_name Like _requestName) Then
                 RAISE EXCEPTION 'Fraction-based requested runs have already been created for this requested run; nothing to do';
             Else
                 RAISE EXCEPTION 'Source requested run is not active; cannot continue';

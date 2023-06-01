@@ -83,7 +83,7 @@ BEGIN
         -- Set the instrument group to _requestedInstrumentGroup for now
         _instrumentGroupToUse := _requestedInstrumentGroup;
 
-        If NOT EXISTS (SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroupToUse) Then
+        If Not Exists (SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroupToUse) Then
             -- Try to update instrument group using t_instrument_name
             SELECT instrument_group
             INTO _instrumentGroupToUse

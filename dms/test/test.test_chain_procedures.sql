@@ -15,7 +15,7 @@ DECLARE
 Begin
     RAISE Info 'Start';
 
-    IF 1 = 1 Then
+    If 1 = 1 Then
         ------------------------------------------------------------
         -- This Begin/End block logs a message to t_log_entries
         -- A transaction is auto-created when the row is inserted into t_log_entries
@@ -107,7 +107,7 @@ Begin
         END;
 
         RAISE Info 'Inside End If';
-    END IF;
+    End If;
 
     RAISE Info 'End';
 

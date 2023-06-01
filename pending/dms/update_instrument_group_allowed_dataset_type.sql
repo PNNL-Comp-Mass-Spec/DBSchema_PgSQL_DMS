@@ -76,11 +76,11 @@ BEGIN
         -- Validate InstrumentGroup and DatasetType
         ---------------------------------------------------
         --
-        If NOT EXISTS ( SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroup ) Then
+        If Not Exists ( SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroup ) Then
             RAISE EXCEPTION 'Instrument group "%" is not valid', _instrumentGroup;
         End If;
 
-        If NOT EXISTS ( SELECT * FROM t_dataset_rating_name WHERE Dataset_Type = _datasetType ) Then
+        If Not Exists ( SELECT * FROM t_dataset_rating_name WHERE Dataset_Type = _datasetType ) Then
             RAISE EXCEPTION 'Dataset type "%" is not valid', _datasetType;
         End If;
 

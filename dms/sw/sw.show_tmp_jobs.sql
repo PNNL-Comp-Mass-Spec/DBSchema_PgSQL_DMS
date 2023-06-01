@@ -33,7 +33,7 @@ BEGIN
 
     RAISE INFO ' ';
 
-    If Not EXISTS (
+    If Not Exists (
        SELECT *
        FROM information_schema.tables
        WHERE table_type = 'LOCAL TEMPORARY' AND

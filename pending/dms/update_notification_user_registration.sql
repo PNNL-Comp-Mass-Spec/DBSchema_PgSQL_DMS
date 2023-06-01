@@ -113,7 +113,7 @@ BEGIN
     LOOP
 
         If _notifyUser::citext = 'Yes'::citext Then
-            If NOT EXISTS ( SELECT *
+            If Not Exists ( SELECT *
                             FROM t_notification_entity_user
                             WHERE user_id = _userID AND entity_type_id = _entityTypeID ) Then
 

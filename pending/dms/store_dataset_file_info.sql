@@ -425,7 +425,7 @@ BEGIN
         -- Preview the data, then exit
         -----------------------------------------------
 
-        If Exists (Select * From Tmp_HashUpdates) Then
+        If Exists (SELECT * FROM Tmp_HashUpdates) Then
 
             -- ToDo: Update this to use RAISE INFO
 
@@ -437,7 +437,7 @@ BEGIN
             _itemsToUpdate := _itemsToUpdate + _updateCount;
         End If;
 
-        If Exists (Select * From Tmp_SizeUpdates) Then
+        If Exists (SELECT * FROM Tmp_SizeUpdates) Then
 
             -- ToDo: Update this to use RAISE INFO
 
@@ -537,7 +537,7 @@ BEGIN
         Order By Dataset
     End If;
 
-    If Exists (Select * From Tmp_Warnings) Then
+    If Exists (SELECT * FROM Tmp_Warnings) Then
 
         -- ToDo: Show this using RAISE INFO
         Select Warning, RowText

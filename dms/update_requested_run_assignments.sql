@@ -164,7 +164,7 @@ BEGIN
             -- Set the instrument group to _newValue for now
             _newInstrumentGroup := _newValue;
 
-            If NOT EXISTS (SELECT * FROM t_instrument_group WHERE instrument_group = _newInstrumentGroup) Then
+            If Not Exists (SELECT * FROM t_instrument_group WHERE instrument_group = _newInstrumentGroup) Then
                 -- Try to update instrument group using t_instrument_name
                 SELECT instrument_group
                 INTO _newInstrumentGroup
@@ -252,7 +252,7 @@ BEGIN
             -- Set the separation group to _newValue for now
             _newSeparationGroup := _newValue;
 
-            If NOT EXISTS (SELECT * FROM t_separation_group WHERE separation_group = _newSeparationGroup) Then
+            If Not Exists (SELECT * FROM t_separation_group WHERE separation_group = _newSeparationGroup) Then
                 -- Try to update Separation group using t_secondary_sep
                 SELECT separation_group
                 INTO _newSeparationGroup

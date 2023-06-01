@@ -79,7 +79,7 @@ BEGIN
     DELETE FROM Tmp_JobsToExtend
     WHERE Not Valid;
 
-    If NOT EXISTS (SELECT * FROM Tmp_JobsToExtend) Then
+    If Not Exists (SELECT * FROM Tmp_JobsToExtend) Then
         _message := 'No valid jobs';
         _returnCode := 'U5201';
 

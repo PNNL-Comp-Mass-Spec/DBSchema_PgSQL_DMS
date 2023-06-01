@@ -966,7 +966,7 @@ BEGIN
                 -- Verify that request ID is correct
                 ---------------------------------------------------
 
-                If NOT EXISTS (SELECT * FROM t_requested_run WHERE request_id = _requestID) Then
+                If Not Exists (SELECT * FROM t_requested_run WHERE request_id = _requestID) Then
                     RAISE EXCEPTION 'Request request_id not found';
                 End If;
 

@@ -85,7 +85,7 @@ BEGIN
                             _alertCountUpdated, public.check_plural(_alertCountUpdated, 'alert', 'alerts'));
 
         If _alertCountUpdated < _alertCountToUpdate Then
-            _message := _message || '; one or more alerts were skipped since already acknowledged';
+            _message := format('%s; one or more alerts were skipped since already acknowledged', _message);
         End If;
 
         CALL post_log_entry ('Normal', _message, 'Ack_Email_Alerts');

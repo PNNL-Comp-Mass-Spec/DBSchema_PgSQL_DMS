@@ -297,7 +297,7 @@ BEGIN
 
                         _checkSuperseded := 0;
                     Else
-                        If NOT EXISTS (SELECT * FROM Tmp_Proposal_Stack) Then
+                        If Not Exists (SELECT * FROM Tmp_Proposal_Stack) Then
                             INSERT INTO Tmp_Proposal_Stack (Proposal_ID, Numeric_ID)
                             Values (_eusProposalID, Coalesce(_numericID, 0))
                         End If;
@@ -307,7 +307,7 @@ BEGIN
                         FROM t_eus_proposals
                         WHERE proposal_id = _autoSupersedeProposalID
 
-                        If EXISTS (SELECT * FROM Tmp_Proposal_Stack WHERE Proposal_ID = _autoSupersedeProposalID) Then
+                        If Exists (SELECT * FROM Tmp_Proposal_Stack WHERE Proposal_ID = _autoSupersedeProposalID) Then
                             -- Circular reference
                             If _infoOnly Then
                                 RAISE INFO 'Circular reference found; choosing the one with the highest ID';

@@ -111,7 +111,7 @@ BEGIN
     -- Make sure _job is defined in t_analysis_job
     ---------------------------------------------------
 
-    If NOT EXISTS (SELECT * FROM t_analysis_job where job = _job) Then
+    If Not Exists (SELECT * FROM t_analysis_job WHERE job = _job) Then
         _message := format('job not found in t_analysis_job: %s', _job);
         _returnCode := 'U5201';
         RETURN;

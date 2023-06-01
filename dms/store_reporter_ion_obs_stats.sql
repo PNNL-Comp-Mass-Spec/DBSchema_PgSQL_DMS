@@ -74,7 +74,7 @@ BEGIN
     -- Validate the reporter ion
     -----------------------------------------------
 
-    If NOT EXISTS (SELECT * FROM t_sample_labelling_reporter_ions WHERE label = _reporterIon) Then
+    If Not Exists (SELECT * FROM t_sample_labelling_reporter_ions WHERE label = _reporterIon) Then
         _message := format('Unrecognized reporter ion name: %s; for standard reporter ion names, see https://dms2.pnl.gov/sample_label_reporter_ions/report', _reporterIon);
         CALL post_log_entry ('Error', _message, 'Store_Reporter_Ion_Obs_Stats', _duplicateEntryHoldoffHours => 1);
         _returnCode := 'U5202';

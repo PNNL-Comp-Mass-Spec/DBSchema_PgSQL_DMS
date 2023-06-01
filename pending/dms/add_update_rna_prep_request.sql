@@ -132,7 +132,7 @@ BEGIN
             -- Validate the instrument name
             ---------------------------------------------------
 
-            If NOT EXISTS (SELECT * FROM t_instrument_name WHERE instrument = _instrumentName) Then
+            If Not Exists (SELECT * FROM t_instrument_name WHERE instrument = _instrumentName) Then
                 -- Check whether _instrumentName actually has an instrument group
                 --
                 SELECT instrument

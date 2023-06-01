@@ -524,7 +524,7 @@ BEGIN
         -- Determine the Instrument Group
         ---------------------------------------------------
 
-        If NOT EXISTS (SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroup) Then
+        If Not Exists (SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroup) Then
             -- Try to update instrument group using t_instrument_name
             SELECT instrument_group
             INTO _instrumentGroup

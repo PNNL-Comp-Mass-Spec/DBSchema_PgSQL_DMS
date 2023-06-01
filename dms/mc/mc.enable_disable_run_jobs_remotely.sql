@@ -100,13 +100,13 @@ BEGIN
     SELECT manager_name
     FROM mc.parse_manager_name_list (_managerNameList, _remove_unknown_managers => 1);
 
-    IF NOT EXISTS (SELECT * FROM Tmp_ManagerList) THEN
+    If Not Exists (SELECT * FROM Tmp_ManagerList) Then
         _message := 'No valid managers were found in _managerNameList';
         RAISE INFO '%', _message;
 
         DROP TABLE Tmp_ManagerList;
         RETURN;
-    END IF;
+    End If;
 
     -- Set _newValue based on _enable
     If _enable Then

@@ -167,7 +167,7 @@ BEGIN
             End If;
         End If;
 
-        IF Not _includeDisabled THEN
+        If Not _includeDisabled Then
             DELETE FROM Tmp_ManagerList
             WHERE NOT manager_name IN ( SELECT M.mgr_name
                                         FROM Tmp_ManagerList U
@@ -175,7 +175,7 @@ BEGIN
                                                ON M.mgr_name = U.manager_name AND
                                                   M.mgr_type_id = _managerTypeID
                                         WHERE control_from_website > 0);
-        END IF;
+        End If;
     Else
         -- Populate Tmp_ManagerList with all managers in mc.t_mgrs (of type _managerTypeID)
         --

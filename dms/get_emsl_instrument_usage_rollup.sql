@@ -195,7 +195,7 @@ BEGIN
 
         -- We are done when there is nothing left to process in working table
         --
-        IF NOT EXISTS (SELECT * FROM Tmp_T_Working) Then
+        If Not Exists (SELECT * FROM Tmp_T_Working) Then
             _continue := false;
         End If;
 

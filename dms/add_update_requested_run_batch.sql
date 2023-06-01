@@ -387,7 +387,7 @@ BEGIN
 
                     _message := append_to_text(_message, _duplicateMessage, 0, '; ', 512);
                 End If;
-            End if;
+            End If;
 
         End If;
 

@@ -76,13 +76,13 @@ BEGIN
                            ) AND
           M.control_from_website > 0;
 
-    IF NOT FOUND THEN
+    If Not FOUND Then
         _message := format('Did not find any managers of type %s with parameter %s and control_from_website > 0', _managerTypeIDList, _paramName);
         _returnCode := 'U5201';
 
         DROP TABLE Tmp_ParamValueEntriesToUpdate;
         RETURN;
-    END IF;
+    End If;
 
     ---------------------------------------------------
     -- Call update_single_mgr_param_work to perform the update

@@ -276,7 +276,7 @@ BEGIN
     -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
     --------------------------------------------------------------
     --
-    If EXISTS ( SELECT * Then
+    If Exists ( SELECT * Then
                 FROM Tmp_ProteinCollections
                 WHERE Protein_Collection_Name = 'Tryp_Pig_Bov' ) AND
        EXISTS ( SELECT *

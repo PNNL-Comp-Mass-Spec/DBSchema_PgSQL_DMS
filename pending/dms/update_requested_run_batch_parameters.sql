@@ -230,7 +230,7 @@ BEGIN
         -- Is there anything left to update?
         -----------------------------------------------------------
         --
-        If NOT EXISTS (SELECT * FROM Tmp_NewBatchParams) Then
+        If Not Exists (SELECT * FROM Tmp_NewBatchParams) Then
             _message := 'No run parameters to update';
             DROP TABLE Tmp_NewBatchParams;
             RETURN;

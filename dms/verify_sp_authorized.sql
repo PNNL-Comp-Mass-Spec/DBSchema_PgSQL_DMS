@@ -173,7 +173,7 @@ BEGIN
         SELECT true, _procedureName, _userName, host(_clientHostIP), '' as message;
 
         RETURN;
-    End if;
+    End If;
 
     If _infoOnly Then
         _message := format('Access denied to %s for current user (%s on host IP %s)',

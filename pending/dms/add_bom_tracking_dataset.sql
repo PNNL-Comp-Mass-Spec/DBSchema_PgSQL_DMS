@@ -128,7 +128,7 @@ BEGIN
             RAISE EXCEPTION 'Instrument "%" cannot be found', _instrumentName;
         End If;
 
-        If EXISTS (SELECT * FROM t_dataset WHERE dataset = _datasetName) Then
+        If Exists (SELECT * FROM t_dataset WHERE dataset = _datasetName) Then
             If _mode = 'debug' Then
                 _message := format('Dataset already exists: %s', _datasetName);
                 RAISE INFO '%', _message;

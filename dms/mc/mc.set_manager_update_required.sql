@@ -81,13 +81,13 @@ BEGIN
         SELECT manager_name
         FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 1);
 
-        IF NOT EXISTS (SELECT * FROM Tmp_ManagerList) THEN
+        If Not Exists (SELECT * FROM Tmp_ManagerList) Then
             _message := 'No valid managers were found in _mgrList';
             RAISE INFO '%', _message;
 
             DROP TABLE Tmp_ManagerList;
             RETURN;
-        END IF;
+        End If;
 
         UPDATE Tmp_ManagerList
         SET mgr_id = M.mgr_id
@@ -113,7 +113,7 @@ BEGIN
     FROM mc.t_param_type
     WHERE param_name = 'ManagerUpdateRequired';
 
-    IF NOT FOUND THEN
+    If Not FOUND Then
         _message := 'Could not find parameter ManagerUpdateRequired in mc.t_param_type';
         _returnCode := 'U5201';
 

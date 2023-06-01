@@ -109,7 +109,7 @@ BEGIN
         SET last_updated = CURRENT_TIMESTAMP
         WHERE settings_file_id = NEW.settings_file_id;
 
-    End if;
+    End If;
 
     RETURN null;
 END

@@ -130,7 +130,7 @@ BEGIN
 
     RAISE Info 'Inserted % manager IDs into Tmp_MgrIDs', _managerCount;
 
-    If NOT EXISTS (SELECT *
+    If Not Exists (SELECT *
                    FROM mc.t_mgrs M
                           INNER JOIN Tmp_MgrIDs ON M.mgr_id = Tmp_MgrIDs.mgr_id
                    WHERE M.control_from_website > 0) Then
@@ -273,7 +273,7 @@ BEGIN
           Coalesce(PV.value, '') <> _newValue;
 
     If Not FOUND THEN
-        If NOT EXISTS (SELECT PV.entry_id
+        If Not Exists (SELECT PV.entry_id
                        FROM mc.t_param_value PV
                             INNER JOIN mc.t_mgrs M
                               ON PV.mgr_id = M.mgr_id

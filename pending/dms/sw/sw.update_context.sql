@@ -167,7 +167,7 @@ BEGIN
                 _infoOnly => _infoOnly,
                 _debugMode => _DebugMode);
 
-        End if;
+        End If;
 
     EXCEPTION
         -- Error caught; log the error, then continue at the next section

@@ -56,7 +56,7 @@ BEGIN
     -- Make sure _dataPackageID is defined in dpkg.t_data_package
     ---------------------------------------------------
 
-    If NOT EXISTS (SELECT * FROM dpkg.t_data_package    WHERE data_pkg_id = _dataPackageID) Then
+    If Not Exists (SELECT * FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
         _message := format('Data Package data_pkg_id not found in dpkg.t_data_package: %s', _dataPackageID);
         If _infoOnly Then
             RAISE INFO '%', _message;

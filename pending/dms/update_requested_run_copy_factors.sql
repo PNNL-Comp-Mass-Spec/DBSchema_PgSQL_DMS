@@ -72,7 +72,7 @@ BEGIN
     -- Anything to copy?
     -----------------------------------------------------------
     --
-    If NOT EXISTS (SELECT * FROM Tmp_Factors) Then
+    If Not Exists (SELECT * FROM Tmp_Factors) Then
         _message := 'Nothing to copy';
         RETURN;
     End If;
@@ -105,7 +105,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := format('Source: %s; Target: %s', _srcRequestID, _destRequestID;
+    _usageMessage := format('Source: %s; Target: %s', _srcRequestID, _destRequestID);
     CALL post_usage_log_entry ('Update_Requested_Run_Copy_Factors', _usageMessage);
 
     DROP TABLE Tmp_Factors;
