@@ -52,8 +52,8 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype public.ci
 **          02/24/2017 mem - Update capitalization and add comments
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/21/2022 mem - Ported to PostgreSQL
-**          12/15/2022 mem - Use extract(year from _variable) and extract(month from) to extract the year and month from timestamps
-**          05/19/2023 mem - Use format() to combine strings
+**          12/15/2022 mem - Use extract(year from _variable) and extract(month from _variable) to extract the year and month from timestamps
+**          05/19/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE

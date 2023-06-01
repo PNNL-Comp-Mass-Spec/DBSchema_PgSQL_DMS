@@ -58,7 +58,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          05/11/2023 mem - Update return codes
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Move INTO to new line
-**                         - Use format() to combine strings
+**                         - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **
 *****************************************************/
