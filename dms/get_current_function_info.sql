@@ -48,6 +48,7 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
 **          09/01/2022 mem - Auto-determine the schema name if the context does not include a schema name and _schemaName is '<auto>' or '<lookup>'
+**          05/31/2023 mem - Add support for calling this function from an anonymous code block (DO ... BEGIN ... END)
 **
 *****************************************************/
 DECLARE
@@ -81,9 +82,16 @@ BEGIN
 
     If _matchCount > 1 Then
         -- When called from another function, the first match will be this function and the second match will be the calling function
-        _objectSignature := _matches[2]::regprocedure::text;
 
-    ElsIf _matchCount = 1 then
+        If Position('(' In _matches[2]::text) > 0 Then
+            _objectSignature := _matches[2]::regprocedure::text;
+        Else
+            -- Most likely get_current_function() was called from an anonymous code block, and _context contains text of the form "function inline_code_block line 39"
+            -- Cannot cast to type "regprocedure" since that cast expects to find a pair of parentheses
+            _objectSignature := _matches[2]::text;
+        End If;
+
+    ElsIf _matchCount = 1 Then
         -- There should be just one match only if the user directly called this function
         _objectSignature := _matches[1]::regprocedure::text;
 
@@ -96,7 +104,7 @@ BEGIN
     End If;
 
     -- Extract out the arguments
-    _charPos := Position('(' in _objectSignature);
+    _charPos := Position('(' In _objectSignature);
 
     If _charPos > 1 Then
         _objectNameAndSchema := Trim(Left(_objectSignature, _charPos - 1));
