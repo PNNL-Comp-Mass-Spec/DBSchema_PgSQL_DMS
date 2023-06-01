@@ -24,7 +24,7 @@ DECLARE
 
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _infoOnly := Coalesce(_infoOnly, false);
 

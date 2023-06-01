@@ -31,7 +31,7 @@ AS $$
 DECLARE
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     CREATE TEMP TABLE Tmp_MachineStats (
         Machine text NOT NULL,

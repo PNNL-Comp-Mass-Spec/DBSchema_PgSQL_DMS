@@ -44,7 +44,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Temp table to hold list of tracked instruments

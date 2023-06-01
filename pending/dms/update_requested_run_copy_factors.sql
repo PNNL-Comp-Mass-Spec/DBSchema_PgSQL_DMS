@@ -27,7 +27,7 @@ DECLARE
     _usageMessage text := '';
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _callingUser := Coalesce(_callingUser, '(copy factors)');
 

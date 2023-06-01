@@ -29,7 +29,7 @@ DECLARE
     _saveTime timestamp;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _saveTime := CURRENT_TIMESTAMP;
 

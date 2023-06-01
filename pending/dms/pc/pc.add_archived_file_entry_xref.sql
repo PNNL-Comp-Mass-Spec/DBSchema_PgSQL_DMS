@@ -28,7 +28,7 @@ DECLARE
 
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     -------------------------------------------------
     -- Verify the File ID and Collection ID

@@ -31,7 +31,7 @@ DECLARE
     _requestID int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Does entry already exist?

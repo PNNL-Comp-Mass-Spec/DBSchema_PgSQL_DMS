@@ -60,7 +60,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     -- Part A: Validate inputs, Remove Deleted Jobs, Add New Jobs, Hold/Resume/Reset jobs
     BEGIN

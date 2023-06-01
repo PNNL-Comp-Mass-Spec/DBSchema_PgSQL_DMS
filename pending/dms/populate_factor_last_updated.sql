@@ -67,7 +67,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, true);
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     If _dateFilterStart Is Null And _dateFilterEnd Is Null Then
         _eventIDStart := -1;

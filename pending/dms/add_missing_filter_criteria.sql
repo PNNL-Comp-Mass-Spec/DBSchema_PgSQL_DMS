@@ -38,7 +38,7 @@ DECLARE
     _criterionValue float8;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _groupsProcessed := 0;
     _criteriaAdded := 0;

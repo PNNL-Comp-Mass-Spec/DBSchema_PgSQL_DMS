@@ -29,7 +29,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Create a temp table to hold the statistics

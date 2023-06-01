@@ -34,7 +34,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _mergeInsertCount := 0;
     _mergeUpdateCount := 0;

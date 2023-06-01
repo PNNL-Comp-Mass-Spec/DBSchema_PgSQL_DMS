@@ -51,7 +51,7 @@ DECLARE
     _rowsProcessed int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _numStepsSkipped := 0;
     _infoOnly := Coalesce(_infoOnly, false);

@@ -41,7 +41,7 @@ DECLARE
     _port int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Lookup the parameters needed to call AddDataFolderCreateTask

@@ -37,7 +37,7 @@ DECLARE
     _ovr citext := '(lookup)';
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _eusUsageType := Trim(Coalesce(_eusUsageType, ''));
     _eusProposalID := Trim(Coalesce(_eusProposalID, ''));

@@ -33,7 +33,7 @@ DECLARE
     _thresholdP_2C int := 100;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ----------------------------------------------
     -- Validate the Inputs

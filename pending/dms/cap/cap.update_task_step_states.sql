@@ -30,7 +30,7 @@ DECLARE
     _done boolean := false;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 

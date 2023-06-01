@@ -48,7 +48,7 @@ DECLARE
     _updateCodeExpected int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _jobCommentAddnl := Trim(Coalesce(_jobCommentAddnl, ''));
 

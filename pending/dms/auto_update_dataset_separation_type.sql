@@ -31,7 +31,7 @@ DECLARE
     _updateInfo record;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _startDatasetId := Coalesce(_startDatasetId, 0);
     _endDatasetId := Coalesce(_endDatasetId, 0);

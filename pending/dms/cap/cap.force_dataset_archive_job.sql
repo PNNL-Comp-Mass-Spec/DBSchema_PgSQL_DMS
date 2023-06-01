@@ -25,7 +25,7 @@ DECLARE
     _hit int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Find capture task job

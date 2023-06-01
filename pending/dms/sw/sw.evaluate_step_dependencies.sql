@@ -57,7 +57,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _startTime := CURRENT_TIMESTAMP;

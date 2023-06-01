@@ -75,7 +75,7 @@ BEGIN
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
 
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Make sure the capture task job Start and Finish values are up-to-date

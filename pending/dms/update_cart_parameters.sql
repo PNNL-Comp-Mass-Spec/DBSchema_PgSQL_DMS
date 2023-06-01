@@ -39,7 +39,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _mode = Coalesce(_mode, 'InvalidMode');
     _requestID = Coalesce(_requestID, 0);

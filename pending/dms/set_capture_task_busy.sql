@@ -24,7 +24,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     UPDATE t_dataset
     SET dataset_state_id = 2,

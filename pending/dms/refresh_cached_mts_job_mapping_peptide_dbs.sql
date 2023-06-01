@@ -40,7 +40,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _maxint := 2147483647;
 

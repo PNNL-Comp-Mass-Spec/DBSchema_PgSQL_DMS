@@ -48,7 +48,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _failureMessage := Coalesce(_failureMessage, '');
 

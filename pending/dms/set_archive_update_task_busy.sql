@@ -23,7 +23,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     UPDATE t_dataset_archive
     SET archive_update_state_id = 3,

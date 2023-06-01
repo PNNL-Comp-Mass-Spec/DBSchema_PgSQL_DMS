@@ -25,7 +25,7 @@ DECLARE
 
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Clear t_storage_path_bkup

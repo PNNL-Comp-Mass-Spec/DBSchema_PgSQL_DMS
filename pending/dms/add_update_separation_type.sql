@@ -45,7 +45,7 @@ DECLARE
     _datasetName text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate input fields

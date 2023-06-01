@@ -32,7 +32,7 @@ DECLARE
     _duplicateRate float8 := 0;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     -----------------------------------------------
     -- Validate the inputs

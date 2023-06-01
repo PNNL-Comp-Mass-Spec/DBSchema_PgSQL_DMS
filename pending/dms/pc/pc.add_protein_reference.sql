@@ -43,7 +43,7 @@ DECLARE
     _referenceID int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     If Coalesce(_maxProteinNameLength, 0) <= 0 Then
         _maxProteinNameLength := 32;

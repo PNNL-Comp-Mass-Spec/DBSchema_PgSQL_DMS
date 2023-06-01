@@ -30,7 +30,7 @@ DECLARE
     _sourceDB text := DB_Name();
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Lookup the parameters needed to call AddDataFolderCreateTask

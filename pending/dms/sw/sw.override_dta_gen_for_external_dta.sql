@@ -28,7 +28,7 @@ DECLARE
     _externalDTAFolderName text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Get parameter, if present

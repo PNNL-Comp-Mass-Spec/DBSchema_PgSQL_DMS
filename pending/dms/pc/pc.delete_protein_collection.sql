@@ -37,7 +37,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     BEGIN
         _currentLocation := 'Examine _collectionState in pc.t_protein_collections'    ;

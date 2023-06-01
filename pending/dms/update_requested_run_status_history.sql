@@ -29,7 +29,7 @@ DECLARE
     _s text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     If Coalesce(_minimumTimeIntervalHours, 0) = 0 Then
         _updateTable := 1;

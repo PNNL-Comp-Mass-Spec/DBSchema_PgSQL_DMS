@@ -30,7 +30,7 @@ DECLARE
 
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _numProteins := Coalesce(_numProteins, 0);
     _totalResidueCount := Coalesce(_totalResidueCount, 0);

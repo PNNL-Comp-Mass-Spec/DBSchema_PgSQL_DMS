@@ -51,7 +51,7 @@ DECLARE
     _clone_step int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Get clone parameters

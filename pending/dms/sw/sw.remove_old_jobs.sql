@@ -50,7 +50,7 @@ DECLARE
     _jobInfo record
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Create table to track the list of affected jobs

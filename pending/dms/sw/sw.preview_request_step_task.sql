@@ -43,7 +43,7 @@ DECLARE
     _remoteInfo text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _infoLevel := Coalesce(_infoLevel, 1);
 

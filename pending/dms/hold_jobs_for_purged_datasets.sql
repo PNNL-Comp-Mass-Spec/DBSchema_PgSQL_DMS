@@ -23,7 +23,7 @@ DECLARE
     _holdMessage text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _holdMessage := '; holding since dataset purged';
 

@@ -47,7 +47,7 @@ DECLARE
     _requestID int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs

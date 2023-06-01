@@ -32,7 +32,7 @@ AS $$
 DECLARE
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- If job not in main tables,

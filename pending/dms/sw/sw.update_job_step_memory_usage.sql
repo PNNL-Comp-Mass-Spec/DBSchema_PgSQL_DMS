@@ -38,7 +38,7 @@ DECLARE
     _valMemoryRequiredMB int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Look for the memory size parmeters

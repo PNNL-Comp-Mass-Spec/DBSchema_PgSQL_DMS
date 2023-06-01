@@ -45,7 +45,7 @@ DECLARE
     _saveTime timestamp;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Bail if no candidates found

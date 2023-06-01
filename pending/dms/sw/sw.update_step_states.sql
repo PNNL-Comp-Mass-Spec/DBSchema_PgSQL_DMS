@@ -39,7 +39,7 @@ BEGIN
     ---------------------------------------------------
 
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
     _infoOnly := Coalesce(_infoOnly, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);

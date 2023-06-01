@@ -24,7 +24,7 @@ AS $$
 DECLARE
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     If _bypassDMS Then
         RETURN;

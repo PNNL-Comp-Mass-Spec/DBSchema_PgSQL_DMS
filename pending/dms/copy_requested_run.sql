@@ -57,7 +57,7 @@ DECLARE
     _msg text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _requestNameAppendText := Trim(Coalesce(_requestNameAppendText, ''));
     _requestNameOverride := Trim(Coalesce(_requestNameOverride, ''));

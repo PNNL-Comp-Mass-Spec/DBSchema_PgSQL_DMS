@@ -48,7 +48,7 @@ DECLARE
     _statusID int := 0;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate that experiments match

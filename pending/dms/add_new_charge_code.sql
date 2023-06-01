@@ -23,7 +23,7 @@ AS $$
 DECLARE
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ----------------------------------------------------------
     -- Validate the inputs

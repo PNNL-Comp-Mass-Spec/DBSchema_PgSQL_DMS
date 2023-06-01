@@ -31,7 +31,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
 
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Create a temporary table

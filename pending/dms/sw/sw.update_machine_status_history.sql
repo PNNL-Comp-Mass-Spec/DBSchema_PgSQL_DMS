@@ -40,7 +40,7 @@ BEGIN
     _minimumTimeIntervalHours := Coalesce(_minimumTimeIntervalHours, 1);
     _activeProcessWindowHours := Coalesce(_activeProcessWindowHours, 24);
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     If Coalesce(_minimumTimeIntervalHours, 0) = 0 Then
         _updateTable := true;

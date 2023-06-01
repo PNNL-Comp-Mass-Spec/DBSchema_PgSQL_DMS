@@ -50,7 +50,7 @@ DECLARE
     _sharedResultsDirectoryName text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Get job parameters into table format

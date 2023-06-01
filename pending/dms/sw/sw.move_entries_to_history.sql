@@ -29,7 +29,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
 
     -- Require that _intervalDays be at least 32

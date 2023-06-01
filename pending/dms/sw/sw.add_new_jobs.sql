@@ -126,7 +126,7 @@ BEGIN
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     If _bypassDMS Then
         RETURN;

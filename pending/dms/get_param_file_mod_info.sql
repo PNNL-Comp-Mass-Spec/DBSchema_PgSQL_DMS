@@ -38,7 +38,7 @@ DECLARE
     _ln int;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _paramFileID := 0;
     _pmTargetSymbolList := '';

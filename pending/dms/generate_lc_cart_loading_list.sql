@@ -47,7 +47,7 @@ DECLARE
     _dsTypeForBlanks text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 

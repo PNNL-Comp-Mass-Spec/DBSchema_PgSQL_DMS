@@ -56,7 +56,7 @@ DECLARE
     _usageMessage text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Resolve dataset into ID

@@ -30,7 +30,7 @@ DECLARE
     _stepCountNew int := 0;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _jobToPreview := Coalesce(_jobToPreview, 0);
 

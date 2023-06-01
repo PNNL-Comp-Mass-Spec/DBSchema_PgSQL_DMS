@@ -44,7 +44,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, true);
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     If _dataPkgID Is Null Then
         _message := 'Data Package ID cannot be null; unable to continue';

@@ -36,7 +36,7 @@ DECLARE
     _validateEUSData int := 1;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _eusProposalID := Coalesce(_eusProposalID, '');
     _eusUsersList := Coalesce(_eusUsersList, '');

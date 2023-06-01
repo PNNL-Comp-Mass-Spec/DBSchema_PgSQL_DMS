@@ -37,7 +37,7 @@ DECLARE
     _message text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     _job := Coalesce(_job, 0);
     _jobStep := Coalesce(_jobStep, 0);

@@ -27,7 +27,7 @@ DECLARE
     _insertCount int := 0;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
