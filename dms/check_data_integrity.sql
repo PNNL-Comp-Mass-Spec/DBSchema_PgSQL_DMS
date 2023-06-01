@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.check_data_integrity
-(
-    _logErrors boolean := true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: check_data_integrity(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.check_data_integrity(IN _logerrors boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -15,8 +13,8 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   06/10/2016 mem - Initial Version
-**          06/12/2018 mem - Send _maxLength to AppendToText
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
+**          06/01/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -37,21 +35,21 @@ BEGIN
     -- Look for datasets that map to multiple requested runs
     ----------------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(*),
            MIN(FilterQ.dataset_id)
     INTO _datasetCount, _firstDatasetID
     FROM ( SELECT dataset_id
            FROM t_requested_run
            WHERE NOT dataset_id IS NULL
            GROUP BY dataset_id
-           HAVING COUNT(*) > 1 ) FilterQ
+           HAVING COUNT(*) > 1 ) FilterQ;
 
     If _datasetCount > 0 Then
 
         If _datasetCount = 1 Then
-            _errMsg := 'Dataset ' || Cast(_firstDatasetID AS text) || ' is associated with multiple entries in t_requested_run';
+            _errMsg := format('Dataset %s is associated with multiple entries in t_requested_run', _firstDatasetID);
         Else
-            _errMsg := Cast(_datasetCount AS text) || ' datasets map to multiple entries in t_requested_run; for example ' || Cast(_firstDatasetID AS text);
+            _errMsg := format('%s datasets map to multiple entries in t_requested_run; for example %s', _datasetCount, _firstDatasetID);
         End If;
 
         If Not _logErrors Then
@@ -61,10 +59,21 @@ BEGIN
             RAISE INFO '%', _errMsg;
         End If;
 
-        _message := public.append_to_text(_message, _errMsg, 0, '; ', 512);
+        _message := public.append_to_text(_message, _errMsg, 0, '; ');
+
+    ElsIf Not _logErrors Then
+        RAISE INFO 'No errors were found';
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE public.check_data_integrity IS 'CheckDataIntegrity';
+
+ALTER PROCEDURE public.check_data_integrity(IN _logerrors boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE check_data_integrity(IN _logerrors boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.check_data_integrity(IN _logerrors boolean, INOUT _message text, INOUT _returncode text) IS 'CheckDataIntegrity';
+
