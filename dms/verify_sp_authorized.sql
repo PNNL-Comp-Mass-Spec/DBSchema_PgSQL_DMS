@@ -27,12 +27,12 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **  Example usage:
 **
 **        SELECT schema_name, name_with_schema
-**        INTO _schemaName, _nameWithSchema
+**        INTO _currentSchema, _currentProcedure
 **        FROM get_current_function_info('<auto>', _showDebug => false);
 **
 **        SELECT authorized
 **        INTO _authorized
-**        FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+**        FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 **
 **        If Not _authorized Then
 **            -- Commit changes to persist the message logged to public.t_log_entries

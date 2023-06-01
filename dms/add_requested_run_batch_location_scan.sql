@@ -22,11 +22,12 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_batch_location_scan(IN _loc
 **          05/23/2023 mem - Add missing error message and additional validation
 **          05/24/2023 mem - Update _message if any batch IDs are unrecognized, but continue processing
 **                         - Ported to PostgreSQL
+**          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **
 *****************************************************/
 DECLARE
-    _schemaName text;
-    _nameWithSchema text;
+    _currentSchema text;
+    _currentProcedure text;
     _authorized boolean;
 
     _raiseExceptions boolean := true;
@@ -48,13 +49,13 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, name_with_schema
-    INTO _schemaName, _nameWithSchema
+    SELECT schema_name, object_name
+    INTO _currentSchema, _currentProcedure
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized
     INTO _authorized
-    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+    FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries

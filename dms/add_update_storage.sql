@@ -57,11 +57,12 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          05/08/2023 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Use format() for string concatenation
+**          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **
 *****************************************************/
 DECLARE
-    _schemaName text;
-    _nameWithSchema text;
+    _currentSchema text;
+    _currentProcedure text;
     _authorized boolean;
 
     _updateCount int := 0;
@@ -89,12 +90,12 @@ BEGIN
         ---------------------------------------------------
 
         SELECT schema_name, name_with_schema
-        INTO _schemaName, _nameWithSchema
+        INTO _currentSchema, _currentProcedure
         FROM get_current_function_info('<auto>', _showDebug => false);
 
         SELECT authorized
         INTO _authorized
-        FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+        FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
         If Not _authorized Then
             -- Commit changes to persist the message logged to public.t_log_entries

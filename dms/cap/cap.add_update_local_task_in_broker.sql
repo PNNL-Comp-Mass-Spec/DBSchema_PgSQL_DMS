@@ -49,11 +49,12 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          09/01/2022 mem - Change default value for _mode and send '<auto>' to get_current_function_info()
 **          04/02/2023 mem - Rename procedure and functions
 **          04/27/2023 mem - Use boolean for data type name
+**          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **
 *****************************************************/
 DECLARE
-    _schemaName text;
-    _nameWithSchema text;
+    _currentSchema text;
+    _currentProcedure text;
     _authorized boolean;
 
     _logErrors boolean := true;
@@ -72,13 +73,13 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, name_with_schema
-    INTO _schemaName, _nameWithSchema
+    SELECT schema_name, object_name
+    INTO _currentSchema, _currentProcedure
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized
     INTO _authorized
-    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+    FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries

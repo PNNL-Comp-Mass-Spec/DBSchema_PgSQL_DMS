@@ -28,8 +28,9 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _debugMode int := 0;
-    _authorized boolean := false;
+    _currentSchema text;
+    _currentProcedure text;
+    _authorized boolean;
 
     _sqlState text;
     _exceptionMessage text;
@@ -37,19 +38,19 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, name_with_schema
-    INTO _schemaName, _nameWithSchema
+    SELECT schema_name, object_name
+    INTO _currentSchema, _currentProcedure
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized
     INTO _authorized
-    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+    FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries

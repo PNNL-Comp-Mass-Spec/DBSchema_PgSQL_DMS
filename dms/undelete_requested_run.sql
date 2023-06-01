@@ -18,11 +18,12 @@ CREATE OR REPLACE PROCEDURE public.undelete_requested_run(IN _requestid integer,
 **  Date:   03/30/2023 mem - Initial version
 **          03/31/2023 mem - Restore requested run batches and batch groups if the requested run refers to a deleted batch or batch group
 **          05/31/2023 mem - Use implicit string concatenation
+**                         - Use procedure name without schema when calling verify_sp_authorized()
 **
 *****************************************************/
 DECLARE
-    _schemaName text;
-    _nameWithSchema text;
+    _currentSchema text;
+    _currentProcedure text;
     _authorized boolean;
 
     _entryID int;
@@ -42,13 +43,13 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, name_with_schema
-    INTO _schemaName, _nameWithSchema
+    SELECT schema_name, object_name
+    INTO _currentSchema, _currentProcedure
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized
     INTO _authorized
-    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+    FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries

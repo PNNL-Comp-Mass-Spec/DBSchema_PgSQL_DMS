@@ -37,13 +37,15 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          04/27/2023 mem - Use boolean for data type name
 **          05/04/2023 mem - Add _returnCode procedure argument
 **          05/22/2023 mem - Capitalize reserved word
+**          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **
 *****************************************************/
 DECLARE
-    _showDebug boolean;
-    _schemaName text;
-    _nameWithSchema text;
+    _currentSchema text;
+    _currentProcedure text;
     _authorized boolean;
+
+    _showDebug boolean;
     _existingParamsFound boolean = false;
     _xmlParameters xml;
     _results record;
@@ -57,13 +59,13 @@ BEGIN
 
     _showDebug := Coalesce(_infoOnly, false);
 
-    SELECT schema_name, name_with_schema
-    INTO _schemaName, _nameWithSchema
+    SELECT schema_name, object_name
+    INTO _currentSchema, _currentProcedure
     FROM get_current_function_info('<auto>', _showDebug);
 
     SELECT authorized
     INTO _authorized
-    FROM public.verify_sp_authorized(_nameWithSchema, _schemaName, _logError => true);
+    FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries
