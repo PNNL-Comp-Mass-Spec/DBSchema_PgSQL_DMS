@@ -68,15 +68,15 @@ AS $$
 **          02/22/2008 mem - Updated to allow updating jobs in state 'holding'
 **                         - Updated to convert _comment and _associatedProcessorGroup to '' if null (Ticket #648)
 **          02/29/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644, http://prismtrac.pnl.gov/trac/ticket/644)
-**          04/22/2008 mem - Updated to call AlterEnteredByUser when updating T_Analysis_Job_Processor_Group_Associations
-**          09/12/2008 mem - Now passing _paramFileName and _settingsFileName ByRef to ValidateAnalysisJobParameters (Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688)
+**          04/22/2008 mem - Updated to call Alter_Entered_By_User when updating T_Analysis_Job_Processor_Group_Associations
+**          09/12/2008 mem - Now passing _paramFileName and _settingsFileName ByRef to Validate_Analysis_Job_Parameters (Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688)
 **          02/27/2009 mem - Expanded _comment to varchar(512)
 **          04/15/2009 grk - Handles wildcard DTA folder name in comment field (Ticket #733, http://prismtrac.pnl.gov/trac/ticket/733)
 **          08/05/2009 grk - Assign job number from separate table (Ticket #744, http://prismtrac.pnl.gov/trac/ticket/744)
 **          05/05/2010 mem - Now passing _ownerUsername to Validate_Analysis_Job_Parameters as input/output
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          08/18/2010 mem - Now allowing job update if state is Failed, in addition to New or Holding
-**          08/19/2010 grk - Try-catch for error handling
+**          08/19/2010 grk - Use try-catch for error handling
 **          08/26/2010 mem - Added parameter _preventDuplicateJobs
 **          03/29/2011 grk - Added _specialProcessing argument (http://redmine.pnl.gov/issues/304)
 **          04/26/2011 mem - Added parameter _preventDuplicatesIgnoresNoExport
@@ -87,8 +87,8 @@ AS $$
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
 **          01/04/2013 mem - Now ignoring _organismName, _protCollNameList, _protCollOptionsList, and _organismDBName for analysis tools that do not use protein collections (AJT_orgDbReqd = 0)
 **          04/02/2013 mem - Now updating _msg if it is blank yet _result is non-zero
-**          03/13/2014 mem - Now passing _job to ValidateAnalysisJobParameters
-**          04/08/2015 mem - Now passing _autoUpdateSettingsFileToCentroided and _warning to ValidateAnalysisJobParameters
+**          03/13/2014 mem - Now passing _job to Validate_Analysis_Job_Parameters
+**          04/08/2015 mem - Now passing _autoUpdateSettingsFileToCentroided and _warning to Validate_Analysis_Job_Parameters
 **          05/28/2015 mem - No longer creating processor group entries (thus _associatedProcessorGroup is ignored)
 **          06/24/2015 mem - Added parameter _infoOnly
 **          07/21/2015 mem - Now allowing job comment and Export Mode to be changed
@@ -103,8 +103,8 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/09/2017 mem - Allow job state to be changed from Complete (state 4) to No Export (state 14) if _propagationMode is 1 (aka 'No Export')
-**          12/06/2017 mem - Set _allowNewDatasets to false when calling ValidateAnalysisJobParameters
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          12/06/2017 mem - Set _allowNewDatasets to false when calling Validate_Analysis_Job_Parameters
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          09/05/2018 mem - When _mode is 'add', if _state is 'hold' or 'holding', create the job, but put it on hold (state 8)
 **          06/30/2022 mem - Rename parameter file argument
 **          07/29/2022 mem - Assure that the parameter file and settings file names are not null
@@ -509,7 +509,7 @@ BEGIN
 
                 -- ToDo: show this info using RAISE INFO
 
-                SELECT 'Preview ' || _mode as Mode,
+                SELECT format('Preview ', _mode) AS Mode,
                        _jobID AS job,
                        _priority AS priority,
                        CURRENT_TIMESTAMP AS created,
@@ -633,7 +633,7 @@ BEGIN
             If _infoOnly Then
                 -- ToDo: Convert this to RAISE INFO
 
-                SELECT 'Preview ' || _mode as Mode,
+                SELECT format('Preview %s', _mode) AS Mode,
                        _jobID AS job,
                        _priority AS Priority,
                        created,

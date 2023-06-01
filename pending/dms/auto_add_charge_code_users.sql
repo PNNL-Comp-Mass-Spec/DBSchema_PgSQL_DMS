@@ -90,7 +90,7 @@ BEGIN
                                      comment )
                 SELECT Network_ID,
                        LastName_FirstName,
-                       'H' || hid,
+                       format('H%s', hid),
                        payroll,
                        'active' AS status,
                        'Y' AS U_update,

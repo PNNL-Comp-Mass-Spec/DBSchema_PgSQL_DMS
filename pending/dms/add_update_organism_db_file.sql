@@ -115,7 +115,7 @@ BEGIN
     WHEN MATCHED THEN
         UPDATE SET
             organism_id = source.organism_id,
-            description = source.description || '; updated ' || public.timestamp_text(CURRENT_TIMESTAMP),
+            description = format('%s; updated %s', source.description, public.timestamp_text(CURRENT_TIMESTAMP)),
             active = source.active,
             num_proteins = source.num_proteins,
             num_residues = source.num_residues,

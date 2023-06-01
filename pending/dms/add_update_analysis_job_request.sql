@@ -53,7 +53,7 @@ AS $$
 **          10/11/2007 grk - Expand protein collection list size to 4000 characters (http://prismtrac.pnl.gov/trac/ticket/545)
 **          01/17/2008 grk - Modified error codes to help debugging DMS2.  Also had to add explicit NULL column attribute to Tmp_DatasetInfo
 **          02/22/2008 mem - Updated to convert _comment to '' if null (Ticket:648, http://prismtrac.pnl.gov/trac/ticket/648)
-**          09/12/2008 mem - Now passing _paramFileName and _settingsFileName ByRef to ValidateAnalysisJobParameters (Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688)
+**          09/12/2008 mem - Now passing _paramFileName and _settingsFileName ByRef to Validate_Analysis_Job_Parameters (Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688)
 **          09/24/2008 grk - Increased size of comment argument (and column in database)(Ticket:692, http://prismtrac.pnl.gov/trac/ticket/692)
 **          12/02/2008 grk - Disallow editing unless in 'New' state
 **          09/19/2009 grk - Added field to request admin review (Ticket #747, http://prismtrac.pnl.gov/trac/ticket/747)
@@ -62,7 +62,7 @@ AS $$
 **          09/22/2009 mem - Now setting state to 'New (Review Required)' if _state = 'new' and _adminReviewReqd='Yes'
 **          10/02/2009 mem - Revert to only allowing updates if the state is 'New' or 'New (Review Required)'
 **          02/12/2010 mem - Now assuring that rating is not -5 (note: when converting a job request to jobs, you can manually add datasets with a rating of -5; procedure AddAnalysisJobGroup will allow them to be included)
-**          04/21/2010 grk - Try-catch for error handling
+**          04/21/2010 grk - Use try-catch for error handling
 **          05/05/2010 mem - Now passing _requestorPRN to Validate_Analysis_Job_Parameters as input/output
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          03/21/2011 mem - Expanded _datasets to varchar(max) and _requestName to varchar(128)
@@ -76,12 +76,12 @@ AS $$
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
 **          11/05/2012 mem - Now auto-changing the settings file from FinniganDefSettings.xml to FinniganDefSettings_DeconMSN.xml if the request contains HMS% datasets
 **          11/05/2012 mem - Now disallowing mixing low res MS datasets with high res HMS dataset
-**          11/12/2012 mem - Moved dataset validation logic to ValidateAnalysisJobRequestDatasets
+**          11/12/2012 mem - Moved dataset validation logic to validate_analysis_job_request_datasets
 **          11/14/2012 mem - Now assuring that _toolName is properly capitalized
 **          11/20/2012 mem - Removed parameter _workPackage
 **          12/13/2013 mem - Updated _mode to support 'PreviewAdd'
 **          01/11/2013 mem - Renamed MSGF-DB search tool to MSGFPlus
-**          03/05/2013 mem - Added parameter _autoRemoveNotReleasedDatasets, which is passed to ValidateAnalysisJobParameters
+**          03/05/2013 mem - Added parameter _autoRemoveNotReleasedDatasets, which is passed to Validate_Analysis_Job_Parameters
 **          03/26/2013 mem - Added parameter _callingUser
 **          04/09/2013 mem - Now automatically updating the settings file to the MSConvert equivalent if processing QExactive data
 **          05/22/2013 mem - Now preventing an update of analysis job requests only if they have existing analysis jobs (previously would examine request_state_id in T_Analysis_Job_Request)
@@ -89,7 +89,7 @@ AS $$
 **          03/28/2014 mem - Auto-changing _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' if the tool is MODa and the options start with 'seq_direction=forward'
 **          03/30/2015 mem - Now passing _toolName to AutoUpdateSettingsFileToCentroid
 **                         - Now using T_Dataset_Info.ProfileScanCount_MSn to look for datasets with profile-mode MS/MS spectra
-**          04/08/2015 mem - Now passing _autoUpdateSettingsFileToCentroided = false to ValidateAnalysisJobParameters
+**          04/08/2015 mem - Now passing _autoUpdateSettingsFileToCentroided = false to Validate_Analysis_Job_Parameters
 **          10/09/2015 mem - Now allowing the request name and comment to be updated even if a request has associated jobs
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/11/2016 mem - Disabled forcing use of MSConvert for QExactive datasets
@@ -99,13 +99,13 @@ AS $$
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/06/2017 mem - Set _allowNewDatasets to true when calling ValidateAnalysisJobParameters
+**          12/06/2017 mem - Set _allowNewDatasets to true when calling Validate_Analysis_Job_Parameters
 **          05/23/2018 mem - Do not allow _requestorPRN to be the autouser (login H09090911)
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          04/17/2019 mem - Auto-change _protCollOptionsList to 'seq_direction=forward,filetype=fasta' when running TopPIC
 **          04/23/2019 mem - Auto-change _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' when running MSFragger
 **          07/30/2019 mem - Store dataset info in table T_Analysis_Job_Request_Datasets instead of the Datasets column in T_Analysis_Job_Request
-**                         - Call UpdateCachedJobRequestExistingJobs after creating / updating an analysis job request
+**                         - Call Update_Cached_Job_Request_Existing_Jobs after creating / updating an analysis job request
 **          05/28/2020 mem - Auto-update the settings file if the samples used TMTpro
 **          03/10/2021 mem - Add _dataPackageID and remove _adminReviewReqd
 **          05/28/2021 mem - Add _mode 'append', which can be be used to add additional datasets to an existing analysis job request, regardless of state
@@ -392,8 +392,8 @@ BEGIN
 
         ---------------------------------------------------
         -- Validate job parameters
-        -- Note that ValidateAnalysisJobParameters calls ValidateAnalysisJobRequestDatasets
-        -- and that ValidateAnalysisJobRequestDatasets populates Dataset_ID, etc. in Tmp_DatasetInfo
+        -- Note that Validate_Analysis_Job_Parameters calls validate_analysis_job_request_datasets
+        -- and that validate_analysis_job_request_datasets populates Dataset_ID, etc. in Tmp_DatasetInfo
         ---------------------------------------------------
         --
         CALL validate_analysis_job_parameters (
@@ -529,9 +529,9 @@ BEGIN
                 _msgToAppend := format('Note: Auto-updated the settings file to %s', _autoSupersedeName);
 
                 If _profileModeMSnDatasets > 0 Then
-                    _msgToAppend := _msgToAppend || ' because one or more datasets in this job request has profile-mode MSn spectra';
+                    _msgToAppend := format('%s because one or more datasets in this job request has profile-mode MSn spectra', _msgToAppend);
                 Else
-                    _msgToAppend := _msgToAppend || ' because one or more QExactive datasets are included in this job request';
+                    _msgToAppend := format('%s because one or more QExactive datasets are included in this job request', _msgToAppend);
                 End If;
 
                 _message := public.append_to_text(_message, _msgToAppend, 0, ';', 512);

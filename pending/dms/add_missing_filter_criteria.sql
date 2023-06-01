@@ -32,7 +32,6 @@ DECLARE
     _criterionID int;
     _groupsProcessed int;
     _criteriaAdded int;
-    _criteriaAdditionErrors int;
     _continue boolean;
     _criterionComparison text;
     _criterionValue float8;
@@ -42,7 +41,6 @@ BEGIN
 
     _groupsProcessed := 0;
     _criteriaAdded := 0;
-    _criteriaAdditionErrors := 0;
 
     _groupID := -1000000;
     _continue := true;
@@ -217,12 +215,10 @@ BEGIN
     END LOOP; -- </a>
 
     If _groupsProcessed = 0 Then
-        _message := 'No groups found for Filter Set ID ' || _filterSetID::text;
+        _message := format('No groups found for Filter Set ID %s', _filterSetID);
     Else
-        _message := 'Finished processing Filter Set ID ' || _filterSetID::text || '; Processed ' || _groupsProcessed::text || ' groups and added ' || _criteriaAdded::text || ' criteria';
-        If _criteriaAdditionErrors > 0 Then
-            _message := _message || '; Error occurred for the addition of ' || _criteriaAdditionErrors::text || ' criteria';
-        End If;
+        _message := format('Finished processing Filter Set ID %s; Processed %s %s and added %s criteria',
+                            _filterSetID, _groupsProcessed, public.check_plural(_groupsProcessed, 'group', 'groups'), _criteriaAdded);
     End If;
 
     RAISE INFO '%', _message;

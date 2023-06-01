@@ -33,7 +33,7 @@ AS $$
 **  Note: This procedure depends upon the caller having created
 **        temporary table Tmp_DatasetInfo and populating it with the dataset names
 **
-**  This procedure will call ValidateAnalysisJobRequestDatasets to populate the remaining columns
+**  This procedure will call validate_analysis_job_request_datasets to populate the remaining columns
 **
 **  CREATE TEMP TABLE Tmp_DatasetInfo (
 **      Dataset_Name text,
@@ -73,7 +73,7 @@ AS $$
 **          11/12/2010 mem - Now using T_Analysis_Tool_Allowed_Instrument_Class to determine valid instrument classes for a given analysis tool
 **          01/12/2012 mem - Now validating that the analysis tool is active (T_Analysis_Tool.AJT_active > 0)
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
-**          11/12/2012 mem - Moved dataset validation logic to ValidateAnalysisJobRequestDatasets
+**          11/12/2012 mem - Moved dataset validation logic to validate_analysis_job_request_datasets
 **          11/28/2012 mem - Added candidate code to validate that high res MSn datasets are centroided if using MSGFDB
 **          01/11/2013 mem - Renamed MSGF-DB search tool to MSGFPlus
 **          03/05/2013 mem - Added parameter _autoRemoveNotReleasedDatasets
@@ -85,7 +85,7 @@ AS $$
 **          03/02/2015 mem - Now validating that files over 500 MB in size are using MSGFPlus_SplitFasta
 **          04/08/2015 mem - Now validating that profile mode high res MSn datasets are centroided if using MSGFPlus
 **                         - Added optional parameters _autoUpdateSettingsFileToCentroided and _warning
-**          04/23/2015 mem - Now passing _toolName to ValidateAnalysisJobRequestDatasets
+**          04/23/2015 mem - Now passing _toolName to validate_analysis_job_request_datasets
 **          05/01/2015 mem - Now preventing the use of parameter files with more than one dynamic mod when the fasta file is over 2 GB in size
 **          06/24/2015 mem - Added parameter _showDebugMessages
 **          12/16/2015 mem - No longer auto-switching the settings file to a centroided one if high res MSn spectra; only switching if profile mode MSn spectra
@@ -100,7 +100,7 @@ AS $$
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          03/10/2021 mem - Add logic for MaxQuant
 **          03/15/2021 mem - Validate that the settings file and/or parameter file are defined for tools that require them
-**          05/26/2021 mem - Use _allowNonReleasedDatasets when calling ValidateAnalysisJobRequestDatasets
+**          05/26/2021 mem - Use _allowNonReleasedDatasets when calling validate_analysis_job_request_datasets
 **          08/26/2021 mem - Add logic for MSFragger
 **          10/05/2021 mem - Show custom message if _toolName contains an inactive _dta.txt based MS-GF+ tool
 **          11/08/2021 mem - Allow instrument class 'Data_Folders' and dataset type 'DataFiles' (both used by instrument 'DMS_Pipeline_Data') to apply to all analysis tools
@@ -173,7 +173,7 @@ BEGIN
 
     If _returnCode <> '' Then
         If Coalesce(_message, '') = '' Then
-            _message := format('Error code %s returned by ValidateAnalysisJobRequestDatasets in ValidateAnalysisJobParameters', _returnCode);
+            _message := format('Error code %s returned by validate_analysis_job_request_datasets in Validate_Analysis_Job_Parameters', _returnCode);
             If _showDebugMessages Then
                 RAISE INFO '%', _message;
             End If;
@@ -629,7 +629,7 @@ BEGIN
 
     If _returnCode <> '' Then
         If Coalesce(_message, '') = '' Then
-            _message := format('Error code %s returned by ValidateProteinCollectionParams in ValidateAnalysisJobParameters', _returnCode);
+            _message := format('Error code %s returned by ValidateProteinCollectionParams in Validate_Analysis_Job_Parameters', _returnCode);
         End If;
 
         If _showDebugMessages Then

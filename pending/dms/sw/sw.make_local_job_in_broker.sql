@@ -40,7 +40,7 @@ AS $$
 **          02/07/2012 mem - Now validating that _dataPackageID is > 0 when _scriptName is MultiAlign_Aggregator
 **          03/20/2012 mem - Now calling UpdateJobParamOrgDbInfoUsingDataPkg
 **          08/21/2012 mem - Now including the message text reported by CreateStepsForJob if it returns an error code
-**          04/10/2013 mem - Now calling AlterEnteredByUser to update T_Job_Events
+**          04/10/2013 mem - Now calling Alter_Entered_By_User to update T_Job_Events
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          03/10/2021 mem - Do not call S_GetNewJobID when _debugMode is true
 **          10/15/2021 mem - Capitalize keywords and update whitespace

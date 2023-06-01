@@ -22,7 +22,7 @@ AS $$
 **  Date:   12/03/2002
 **          12/06/2002 dac - Corrected state values used in update state test, update complete output
 **          11/30/2007 dac - Removed unused processor name parameter
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/16/2014 mem - Now changing archive state to 3 if it is 14
 **          07/09/2022 mem - Tabs to spaces
 **          12/15/2023 mem - Ported to PostgreSQL

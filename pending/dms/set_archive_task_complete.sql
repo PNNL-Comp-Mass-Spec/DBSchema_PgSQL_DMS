@@ -23,8 +23,8 @@ AS $$
 **          06/21/2005 grk - Added handling for 'requires_preparation'
 **          11/27/2007 dac - Removed _processorname param, which is no longer required
 **          03/23/2009 mem - Now updating AS_Last_Successful_Archive when the archive state is 3=Complete (Ticket #726)
-**          09/02/2011 mem - Now calling PostUsageLogEntry
 **          12/17/2009 grk - Added special success code '100' for use by capture broker
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          07/09/2022 mem - Tabs to spaces
 **          12/15/2023 mem - Ported to PostgreSQL
 **

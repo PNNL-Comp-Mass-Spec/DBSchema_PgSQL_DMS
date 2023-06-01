@@ -24,7 +24,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
-**                         - Add call to PostUsageLogEntry
+**                         - Add call to Post_Usage_Log_Entry
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/12/2023 mem - Remove call to CallSendMessage since it was deprecated in 2016
 **          12/15/2023 mem - Ported to PostgreSQL

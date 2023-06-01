@@ -16,7 +16,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   02/24/2010
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/25/2012 mem - Now assuring that _callingUser is not blank
 **          11/11/2022 mem - Exclude unnamed factors when querying T_Factor
 **          12/15/2023 mem - Ported to PostgreSQL

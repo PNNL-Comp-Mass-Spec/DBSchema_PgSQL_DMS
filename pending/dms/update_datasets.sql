@@ -25,12 +25,12 @@ AS $$
 **  Auth:   jds
 **  Date:   09/21/2006
 **          03/28/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user_multi_id (Ticket #644)
-**          09/02/2011 mem - Now calling PostUsageLogEntry
 **          08/19/2010 grk - Use try-catch for error handling
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          03/30/2015 mem - Tweak warning message grammar
 **          10/07/2015 mem - Added _mode 'preview'
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized

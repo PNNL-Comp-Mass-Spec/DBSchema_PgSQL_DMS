@@ -32,7 +32,7 @@ AS $$
 **          08/01/2012 mem - Now sending _specialProcessing to AddAnalysisJobGroup
 **                         - Updated _datasetList to be varchar(max)
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
-**          04/08/2015 mem - Now parsing the job request list using udfParseDelimitedIntegerList
+**          04/08/2015 mem - Now parsing the job request list using Parse_Delimited_Integer_List
 **          04/11/2022 mem - Expand _protCollNameList to varchar(4000)
 **          06/30/2022 mem - Rename parameter file argument
 **          07/01/2022 mem - Rename parameter file column in temporary table
@@ -171,10 +171,10 @@ BEGIN
                 If _existingJobCount = 1 Then
                     _existingJobMsg := 'Note: 1 job';
                 Else
-                    _existingJobMsg := 'Note: ' || _existingJobCount::text || ' jobs';
+                    _existingJobMsg := format('Note: %s jobs', _existingJobCount);
                 End If;
 
-                _existingJobMsg := _existingJobMsg || ' found matching this request''s parameters';
+                _existingJobMsg := format('%s found matching this request''s parameters', _existingJobMsg);
             Else
                 _existingJobMsg := '';
             End If;
@@ -206,7 +206,7 @@ BEGIN
             _message := Coalesce(_message, '');
 
             If _existingJobCount > 0 Then
-                _message := _existingJobMsg || '; ' || _message;
+                _message := format('%s; %s', _existingJobMsg, _message);
             End If;
 
             -------------------------------------------------

@@ -73,12 +73,12 @@ AS $$
 **          09/06/2017 mem - Fix data type for _tissueID
 **          11/29/2017 mem - No longer pass _cellCultureList to AddExperimentCellCulture since it now uses temp table Tmp_Experiment_to_Biomaterial_Map
 **                         - Remove references to the Cell_Culture_List field in T_Experiments (procedure AddExperimentCellCulture calls UpdateCachedExperimentInfo)
-**                         - Call AddExperimentReferenceCompound
+**                         - Call Add_Experiment_Reference_Compound
 **          01/04/2018 mem - Update fields in Tmp_ExpToRefCompoundMap, switching from Compound_Name to Compound_IDName
 **          12/03/2018 mem - Add parameter _suffix
 **                         - Add support for _mode = 'preview'
 **          12/04/2018 mem - Insert plex member info into T_Experiment_Plex_Members if defined for the parent experiment
-**          12/06/2018 mem - Call UpdateExperimentGroupMemberCount to update T_Experiment_Groups
+**          12/06/2018 mem - Call update_experiment_group_member_count to update T_Experiment_Groups
 **          01/24/2019 mem - Add parameters _nameSearch, _nameReplace, and _addUnderscore
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          02/15/2021 mem - If the parent experiment has a TissueID defined, use it, even if the Sample Prep Request is not 'parent' (for _requestOverride)
@@ -485,7 +485,7 @@ BEGIN
 
             _fractionCount := _fractionCount + _step;
             _newComment := format('(Fraction %s of %s)', _fullfractioncount, _totalcount);
-            _newExpName := _baseFractionName || _nameFractionLinker || _fractionNumberText;
+            _newExpName := format('%s%s%s', _baseFractionName, _nameFractionLinker, _fractionNumberText);
             _fractionsCreated := _fractionsCreated + 1;
 
             -- Verify that experiment name is not duplicated in table
@@ -502,10 +502,10 @@ BEGIN
                 If char_length(_fractionNamePreviewList) = 0 Then
                     _fractionNamePreviewList := _newExpName;
                 Else
-                    _fractionNamePreviewList := _fractionNamePreviewList || ', ' || _newExpName;
+                    _fractionNamePreviewList := format('%s, %s', _fractionNamePreviewList, _newExpName);
                 End If;
             ElsIf _fractionCount = _totalCount Then
-                _fractionNamePreviewList := _fractionNamePreviewList || ', ... ' || _newExpName;
+                _fractionNamePreviewList := format('%s, ... %s', _fractionNamePreviewList, _newExpName);
             End If;
 
             If _mode = 'add' Then

@@ -35,7 +35,7 @@ AS $$
 **  Date:   05/21/2009 grk
 **          05/29/2009 mem - Updated to support Package_File_Folder not allowing null values
 **          06/04/2009 grk - Added parameter _creationParams
-**                         - Updated to call MakeDataPackageStorageFolder
+**                         - Updated to call Make_Data_Package_Storage_Folder
 **          06/05/2009 grk - Added parameter _prismWikiLink, which is used to populate the Wiki_Page_Link field
 **          06/08/2009 mem - Now validating _team and _packageType
 **          06/09/2009 mem - Now warning user if the team name is changed

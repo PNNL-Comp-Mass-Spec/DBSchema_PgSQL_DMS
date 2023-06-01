@@ -22,7 +22,7 @@ AS $$
 **  Arguments:
 **    _month         current month, if blank
 **    _year          current year, if blank
-**    _mode          'add, 'info' (just show instrument names), or 'debug' (call AddBOMTrackingDataset and preview tracking datasets)
+**    _mode          'add, 'info' (just show instrument names), or 'debug' (call Add_BOM_Tracking_Dataset and preview tracking datasets)
 **    _callingUser   Ron Moore
 **
 **  Auth:   grk
@@ -95,7 +95,7 @@ BEGIN
                         _callingUser => _callingUser);
 
                 If _mode = 'debug' And Coalesce(_message, '') = '' Then
-                    _message := 'Called AddBOMTrackingDataset with _mode=''debug''';
+                    _message := 'Called Add_BOM_Tracking_Dataset with _mode=''debug''';
                 End If;
             Else
                 _message := '';

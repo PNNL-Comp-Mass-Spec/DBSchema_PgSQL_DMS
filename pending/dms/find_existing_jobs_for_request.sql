@@ -29,7 +29,7 @@ AS $$
 **          04/09/2008 mem - Now returning associated processor group, if applicable
 **          09/03/2008 mem - Fixed bug that returned Entered_By from T_Analysis_Job_Processor_Group instead of from T_Analysis_Job_Processor_Group_Associations
 **          05/28/2015 mem - Removed reference to T_Analysis_Job_Processor_Group
-**          07/30/2019 mem - After obtaining the actual matching jobs using GetRunRequestExistingJobListTab, compare to the cached values in T_Analysis_Job_Request_Existing_Jobs; call UpdateCachedJobRequestExistingJobs if a mismatch
+**          07/30/2019 mem - After obtaining the actual matching jobs using GetRunRequestExistingJobListTab, compare to the cached values in T_Analysis_Job_Request_Existing_Jobs; call Update_Cached_Job_Request_Existing_Jobs if a mismatch
 **          07/31/2019 mem - Use new function name, get_existing_jobs_matching_job_request
 **          11/28/2022 mem - Ported to PostgreSQL
 **

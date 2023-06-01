@@ -48,7 +48,7 @@ AS $$
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          01/09/2016 mem - Added option for disabling EUS validation using table T_MiscOptions
 **          01/20/2017 mem - Auto-fix USER_UNKOWN to USER_UNKNOWN for _eusUsageType
-**          03/17/2017 mem - Only call MakeTableFromList if _eusUsersList contains a semicolon
+**          03/17/2017 mem - Only call Make_Table_From_List if _eusUsersList contains a semicolon
 **          04/10/2017 mem - Auto-change USER_UNKNOWN to CAP_DEV
 **          07/19/2019 mem - Custom error message if _eusUsageType is blank
 **          11/06/2019 mem - Auto-change _eusProposalID if a value is defined for Proposal_ID_AutoSupersede

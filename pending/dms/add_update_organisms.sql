@@ -68,7 +68,7 @@ AS $$
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          12/02/2016 mem - Assure that _orgName and _orgShortName do not have any spaces or commas
 **          02/06/2017 mem - Auto-update _newtIDList to match _ncbiTaxonomyID if _newtIDList is null or empty
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
@@ -154,7 +154,7 @@ BEGIN
             End If;
 
             If Not _orgStorageLocation Like '%\' Then
-                _orgStorageLocation := _orgStorageLocation || '\';
+                _orgStorageLocation := format('%s\', _orgStorageLocation);
             End If;
 
             If char_length(_orgStorageLocation) > 3 Then
@@ -198,7 +198,7 @@ BEGIN
             FROM t_misc_paths
             WHERE path_function = 'DMSOrganismFiles'
 
-            _orgStorageLocation := public.combine_paths(_orgDbPathBase, _orgName) || '\';
+            _orgStorageLocation := format('%s\', public.combine_paths(_orgDbPathBase, _orgName));
         End If;
 
         If char_length(Coalesce(_orgShortName, '')) > 0 Then

@@ -13,7 +13,7 @@ AS $$
 **
 **  Desc:
 **      Changes cart parameters for given requested run
-**      This procedure is used by AddUpdateDataset
+**      This procedure is used by add_update_dataset
 **
 **  Arguments:
 **    _mode         Type of update being performed ('CartName', 'RunStart', 'RunFinish', 'RunStatus', or 'InternalStandard')
@@ -23,9 +23,9 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   12/16/2003
-**          02/27/2006 grk - added cart ID stuff
-**          05/10/2006 grk - added verification of request ID
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          02/27/2006 grk - Added cart ID stuff
+**          05/10/2006 grk - Added verification of request ID
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/02/2013 mem - Now using _message to return errors looking up cart name from T_LC_Cart
 **          01/09/2017 mem - Update _message when using RAISERROR
 **          01/10/2023 mem - Include previous _message text when updating @message

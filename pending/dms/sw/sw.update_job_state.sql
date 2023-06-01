@@ -72,7 +72,7 @@ AS $$
 **          12/11/2008 mem - Improved null handling for comments
 **          12/15/2008 mem - Now calling SetArchiveUpdateRequired when a job successfully completes
 **          12/17/2008 grk - Calling S_SetArchiveUpdateRequired instead of public.set_archive_update_required
-**          12/18/2008 grk - Calling CopyJobToHistory when a job finishes (both success or fail)
+**          12/18/2008 grk - Calling Copy_Job_To_History when a job finishes (both success or fail)
 **          12/29/2008 mem - Updated logic for when to copy comment information to DMS
 **          01/12/2009 grk - Handle 'No results above threshold' (http://prismtrac.pnl.gov/trac/ticket/706)
 **          02/05/2009 mem - Now populating processing_time_minutes in DMS (Ticket #722, http://prismtrac.pnl.gov/trac/ticket/722)
@@ -103,7 +103,7 @@ AS $$
 **          09/15/2016 mem - Update jobs in DMS5 that are in state 1=New, but are actually in progress
 **          05/13/2017 mem - Treat step state 9 (Running_Remote) as 'In progress'
 **          05/26/2017 mem - Add step state 16 (Failed_Remote)
-**                         - Only call CopyJobToHistory if the job state is 4 or 5
+**                         - Only call Copy_Job_To_History if the job state is 4 or 5
 **          06/15/2017 mem - Expand _comment to varchar(512)
 **          10/16/2017 mem - Remove the leading semicolon from _comment
 **          01/19/2018 mem - Populate column Runtime_Minutes in T_Jobs

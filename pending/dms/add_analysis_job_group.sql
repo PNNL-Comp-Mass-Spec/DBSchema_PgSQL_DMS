@@ -459,7 +459,7 @@ BEGIN
                 INTO _removedDatasets
                 FROM Tmp_MatchingJobDatasets;
 
-                _removedDatasetsMsg := format('%s: %s', _removedDatasetsMsg, Coalesce(_removedDatasets, ''));
+                _removedDatasetsMsg := format('%s: %s', _removedDatasetsMsg, _removedDatasets);
 
                 If _datasetCountToRemove > _threshold Then
                     _removedDatasets := format('%s (more datasets not shown)', _removedDatasets);
@@ -506,7 +506,7 @@ BEGIN
                                 _priority => _priority)          -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateAnalysisJobParameters: % for request % (code %)', _message, _requestID, _returnCode;
+            RAISE EXCEPTION 'Validate_Analysis_Job_Parameters: % for request % (code %)', _message, _requestID, _returnCode;
         End If;
 
         If Coalesce(_warning, '') <> '' Then

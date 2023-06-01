@@ -355,23 +355,23 @@ BEGIN
 
                     If Not FOUND Or Coalesce(_dataPackageFolder, '') = '' Then
                         -- Data Package not found (or Package_File_Folder is not defined)
-                        _jobInfo.Dataset := 'DataPackage_' || _jobInfo.DataPackageID::text;
+                        _jobInfo.Dataset := format('DataPackage_%s', _jobInfo.DataPackageID);
                     Else
                         -- Data Package found
                         _jobInfo.Dataset := format('DataPackage_%s', _dataPackageFolder);
 
                         If _peptideAtlasStagingTask <> 0 Then
-                            _jobInfo.Dataset := _jobInfo.Dataset || '_Staging';
+                            _jobInfo.Dataset := format('%s_Staging', _jobInfo.Dataset);
                         End If;
 
                     End If;
 
-                    _datasetComment := 'https://dms2.pnl.gov/data_package/show/' || _jobInfo.DataPackageID::text;
+                    _datasetComment := format('https://dms2.pnl.gov/data_package/show/%s', _jobInfo.DataPackageID)
 
                 End If;
 
                 If char_length(_jobInfo.Dataset) > 80 Then
-                    -- Truncate the dataset name to avoid triggering an error in AddUpdateDataset
+                    -- Truncate the dataset name to avoid triggering an error in add_update_dataset
                     _jobInfo.Dataset := Substring(_jobInfo.Dataset, 1, 80);
                 End If;
 
@@ -389,12 +389,12 @@ BEGIN
                 LOOP
                     _ch := SUBSTRING(_jobInfo.Dataset, _position, 1);
 
-                    -- Note thate _ch will have a length of 0 if it is a space, but we replaced spaces with underscores above, so _ch should always be a valid character
                     If char_length(_ch) > 0 Then
                         If Position(_ch In _validCh) = 0 Then
-                            _cleanName := _cleanName || '_';
+                            -- Invalid character
+                            _cleanName := format('%s_', _cleanName);
                         Else
-                            _cleanName := _cleanName + _ch;
+                            _cleanName := format('%s%s', _cleanName, _ch);
                         End If;
                     End If;
 
@@ -421,7 +421,7 @@ BEGIN
                     -- Dataset does not exist; create it
                     ------------------------------------------------
 
-                    _currentLocation := 'Call AddUpdateDataset to create dataset ' || _jobInfo.Dataset;
+                    _currentLocation := format('Call add_update_dataset to create dataset %s', _jobInfo.Dataset);
 
                     If _infoOnly Then
                         _mode := 'check_add';
@@ -483,7 +483,7 @@ BEGIN
                             -- Determine the DatasetID for the newly-created dataset
                             ------------------------------------------------
 
-                            _currentLocation := 'Determine DatasetID for newly created dataset ' || _jobInfo.Dataset;
+                            _currentLocation := format('Determine DatasetID for newly created dataset %s', _jobInfo.Dataset);
 
                             SELECT dataset_id
                             INTO _datasetID
@@ -491,7 +491,7 @@ BEGIN
                             WHERE dataset = _jobInfo.Dataset;
 
                             If Not FOUND Then
-                                _message := format('Error creating dataset %s for DMS Pipeline job %s; call to AddUpdateDataset succeeded but dataset not found in t_dataset',
+                                _message := format('Error creating dataset %s for DMS Pipeline job %s; call to add_update_dataset succeeded but dataset not found in t_dataset',
                                                     _jobInfo.Dataset, _jobStr);
 
                                 CALL post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');

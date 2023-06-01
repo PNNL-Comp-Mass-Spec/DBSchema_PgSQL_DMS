@@ -88,9 +88,6 @@ BEGIN
     _mostRecentJobInfo := Coalesce(_mostRecentJobInfo, '');
     _spectrumCount := Coalesce(_spectrumCount, 0);
 
-    _message := '';
-    _returnCode:= '';
-
     If char_length(_mgrName) = 0 Then
         _message := 'Processor name is empty; unable to continue';
         RETURN;

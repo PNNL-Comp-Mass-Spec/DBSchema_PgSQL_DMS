@@ -39,19 +39,19 @@ AS $$
 **  Auth:   grk
 **  Date:   05/23/2011 grk - Initial release
 **          11/29/2011 mem - Now auto-determining OperatorUsername if _callingUser is empty
-**          12/14/2011 mem - Now passing _callingUser to AddUpdateRequestedRun and ConsumeScheduledRun
-**          05/08/2013 mem - Now setting _wellplateName and _wellNumber to Null when calling AddUpdateRequestedRun
-**          01/29/2016 mem - Now calling GetWPforEUSProposal to get the best work package for the given EUS Proposal
+**          12/14/2011 mem - Now passing _callingUser to Add_Update_Requested_Run and Consume_Scheduled_Run
+**          05/08/2013 mem - Now setting _wellplateName and _wellNumber to Null when calling Add_Update_Requested_Run
+**          01/29/2016 mem - Now calling Get_WP_for_EUS_Proposal to get the best work package for the given EUS Proposal
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          05/22/2017 mem - If necessary, change the prefix from AutoReq_ to AutoReq2_ or AutoReq3 to avoid conflicts
-**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling AddUpdateRequestedRun
+**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling Add_Update_Requested_Run
 **          08/06/2018 mem - Rename Operator PRN column to RDS_Requestor_PRN
 **          01/24/2020 mem - Add mode 'preview'
-**          01/31/2020 mem - Display all of the values sent to AddUpdateRequestedRun when mode is 'preview'
+**          01/31/2020 mem - Display all of the values sent to Add_Update_Requested_Run when mode is 'preview'
 **          02/04/2020 mem - Add mode 'add-debug', which will associate the requested run with the dataset, but will also print out debug statements
-**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling AddUpdateRequestedRun
-**          11/25/2022 mem - Update call to AddUpdateRequestedRun to use new parameter name
+**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
+**          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -217,7 +217,7 @@ BEGIN
             WHERE RR.request_id = _templateRequestID
 
             If Not FOUND Then
-                _message := 'Template request ID ' || _templateRequestID::text || ' not found';
+                _message := format('Template request ID %s not found', _templateRequestID);
                 If _showDebugStatements Then
                     RAISE INFO '%', _message;
                 End If;
@@ -225,7 +225,7 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            _comment := _comment || ' using request ' || _templateRequestID::text;
+            _comment := format('%s using request %s', _comment, _templateRequestID);
 
             If _showDebugStatements Then
                 RAISE INFO '%', _comment;
@@ -233,7 +233,7 @@ BEGIN
 
             If Coalesce(_workPackage, 'none') = 'none' Then
                 If _showDebugStatements Then
-                    RAISE INFO 'Calling GetWPforEUSProposal with proposal %', _eusProposalID;
+                    RAISE INFO 'Calling Get_WP_for_EUS_Proposal with proposal %', _eusProposalID;
                 End If;
 
                 SELECT work_package
@@ -241,7 +241,7 @@ BEGIN
                 FROM public.get_wp_for_eus_proposal (_eusProposalID);
 
                 If _showDebugStatements Then
-                    RAISE INFO 'GetWPforEUSProposal returned work package %', _workPackage;
+                    RAISE INFO 'Get_WP_for_EUS_Proposal returned work package %', _workPackage;
                 End If;
             End If;
 
@@ -330,7 +330,7 @@ BEGIN
         End If;
 
         If _showDebugStatements Then
-            RAISE INFO 'AddUpdateRequestedRun reported that it created Request ID %', _requestID;
+            RAISE INFO 'Add_Update_Requested_Run reported that it created Request ID %', _requestID;
         End If;
 
         If _addUpdateMode = 'add-auto' Then

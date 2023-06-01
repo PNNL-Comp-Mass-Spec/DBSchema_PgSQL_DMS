@@ -193,7 +193,7 @@ BEGIN
 
             If _infoOnly Then
                 RAISE INFO '';
-                RAISE INFO 'Call AddUpdateAnalysisJob for dataset % and tool %; param file: %; settings file: %'
+                RAISE INFO 'Call add_update_analysis_job for dataset % and tool %; param file: %; settings file: %'
                             _datasetName, _analysisToolName, Coalesce(_paramFileName, ''), Coalesce(_settingsFileName, '');
             End If;
 

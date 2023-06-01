@@ -19,28 +19,28 @@ AS $$
 **      all production instruments
 **
 **  Arguments:
-**    _daysToProcess   Also affects whether UpdateEMSLInstrumentUsageReport is called for previous months
+**    _daysToProcess   Also affects whether Update_EMSL_Instrument_Usage_Report is called for previous months
 **
 **  Auth:   grk
 **  Date:   02/09/2012 grk - Initial version
 **          03/07/2012 mem - Added parameters _daysToProcess, _infoOnly, and _message
-**          03/21/2012 grk - Added call to UpdateEMSLInstrumentUsageReport
+**          03/21/2012 grk - Added call to Update_EMSL_Instrument_Usage_Report
 **          03/22/2012 mem - Added parameter _updateEMSLInstrumentUsage
-**          03/26/2012 grk - Added call to UpdateEMSLInstrumentUsageReport for previous month
+**          03/26/2012 grk - Added call to Update_EMSL_Instrument_Usage_Report for previous month
 **          03/27/2012 grk - Added code to delete entries from T_EMSL_Instrument_Usage_Report
 **          03/27/2012 grk - Using V_Instrument_Tracked
-**          04/09/2012 grk - modified algorithm
+**          04/09/2012 grk - Modified algorithm
 **          08/02/2012 mem - Updated _daysToProcess to default to 60 days instead of 30 days
 **          09/18/2012 grk - Only do EMSL instrument updates for EMSL instruments
 **          10/06/2012 grk - Removed update of EMSL usage report for previous month
 **          03/12/2014 grk - Added processing for 'tracked' instruments (OMCDA-1058)
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/10/2017 mem - Add parameter _instrumentsToProcess
-**          04/11/2017 mem - Now passing _infoOnly to UpdateEMSLInstrumentUsageReport
+**          04/11/2017 mem - Now passing _infoOnly to Update_EMSL_Instrument_Usage_Report
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          05/03/2019 mem - Pass _eusInstrumentId to UpdateEMSLInstrumentUsageReport for select instruments
-**          01/28/2022 mem - Call UpdateEMSLInstrumentUsageReport for both the current month, plus also previous months if _daysToProcess is greater than 15
+**          05/03/2019 mem - Pass _eusInstrumentId to Update_EMSL_Instrument_Usage_Report for select instruments
+**          01/28/2022 mem - Call Update_EMSL_Instrument_Usage_Report for both the current month, plus also previous months if _daysToProcess is greater than 15
 **          02/15/2022 mem - Fix major bug decrementing _instrumentUsageMonth when processing multiple instruments
 **                         - Add missing Order By clause
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -124,7 +124,7 @@ BEGIN
     _instrumentUsageMonth := CURRENT_TIMESTAMP;
 
     -- Update instrument usage for the current month, plus possibly the last few months, depending on _daysToProcess
-    -- For example, if _daysToProcess is 60, will call UpdateEMSLInstrumentUsageReport for this month plus the last two months
+    -- For example, if _daysToProcess is 60, will call Update_EMSL_Instrument_Usage_Report for this month plus the last two months
     _instrumentUsageMonthsToUpdate := 1 + Round(_daysToProcess / 31.0, 0)
 
     _startDate        := _endDate - make_interval(days => _daysToProcess);
@@ -220,40 +220,27 @@ BEGIN
 
         ---------------------------------------------------
         -- Flag instruments where we need to use EUS instrument ID
-        -- instead of instrument name when calling UpdateEMSLInstrumentUsageReport
+        -- instead of instrument name when calling Update_EMSL_Instrument_Usage_Report
         ---------------------------------------------------
 
         UPDATE Tmp_Instruments
         SET Use_EUS_ID = 1
-        FROM Tmp_Instruments
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE Tmp_Instruments
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = Tmp_Instruments.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-                INNER JOIN ( SELECT InstName.instrument,
-                                    InstMapping.eus_instrument_id
-                            FROM t_instrument_name InstName
-                                INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                                    ON InstName.instrument_id = InstMapping.dms_instrument_id
-                                INNER JOIN ( SELECT eus_instrument_id
-                                             FROM t_instrument_name InstName
-                                                    INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                                                    ON InstName.instrument_id = InstMapping.dms_instrument_id
-                                             WHERE Not eus_instrument_id Is Null
-                                             GROUP BY eus_instrument_id
-                                             HAVING COUNT(*) > 1
-                                           ) LookupQ
-                                    ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
-                           ) FilterQ
-                ON Tmp_Instruments.eus_instrument_id = FilterQ.eus_instrument_id
+        FROM ( SELECT InstName.instrument,
+                       InstMapping.eus_instrument_id
+               FROM t_instrument_name InstName
+                   INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                       ON InstName.instrument_id = InstMapping.dms_instrument_id
+                   INNER JOIN ( SELECT eus_instrument_id
+                                FROM t_instrument_name InstName
+                                       INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                                       ON InstName.instrument_id = InstMapping.dms_instrument_id
+                                WHERE Not eus_instrument_id Is Null
+                                GROUP BY eus_instrument_id
+                                HAVING COUNT(*) > 1
+                              ) LookupQ
+                       ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
+              ) FilterQ
+        WHERE Tmp_Instruments.eus_instrument_id = FilterQ.eus_instrument_id;
 
         If _infoOnly Then
             SELECT *
@@ -299,14 +286,14 @@ BEGIN
 
             If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EmslInstrument = 'Y'::citext OR _instrumentInfo.Tracked = 1)) Then
                 If _infoOnly Then
-                    RAISE INFO 'Skip call to UpdateEMSLInstrumentUsageReport for Instrument %', _instrument;
+                    RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for Instrument %', _instrument;
                     RAISE INFO ' ';
                 End If;
 
                 CONTINUE;
             End If;
 
-            -- Call UpdateEMSLInstrumentUsageReport for this month, plus optionally previous months (if _instrumentUsageMonthsToUpdate is greater than 1)
+            -- Call Update_EMSL_Instrument_Usage_Report for this month, plus optionally previous months (if _instrumentUsageMonthsToUpdate is greater than 1)
             --
             _iteration := 0;
             _currentInstrumentUsageMonth := _instrumentUsageMonth;
@@ -316,7 +303,7 @@ BEGIN
                 _iteration := _iteration + 1;
 
                 If _infoOnly Then
-                    RAISE INFO 'Call UpdateEMSLInstrumentUsageReport for Instrument %, target month %-%',
+                    RAISE INFO 'Call Update_EMSL_Instrument_Usage_Report for Instrument %, target month %-%',
                                 _instrumentInfo.Instrument,
                                 Extract(year from _currentInstrumentUsageMonth),
                                 Extract(month from _currentInstrumentUsageMonth);

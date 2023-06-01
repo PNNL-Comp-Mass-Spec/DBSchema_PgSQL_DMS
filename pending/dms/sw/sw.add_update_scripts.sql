@@ -26,7 +26,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   09/23/2008 grk - Initial Veresion
-**          03/24/2009 mem - Now calling AlterEnteredByUser when _callingUser is defined
+**          03/24/2009 mem - Now calling Alter_Entered_By_User when _callingUser is defined
 **          10/06/2010 grk - Added _parameters field
 **          12/01/2011 mem - Expanded _description to varchar(2000)
 **          01/09/2012 mem - Added parameter _backfillToDMS

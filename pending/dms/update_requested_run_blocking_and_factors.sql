@@ -27,7 +27,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   02/21/2010
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          11/07/2016 mem - Add optional logging via post_log_entry
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized

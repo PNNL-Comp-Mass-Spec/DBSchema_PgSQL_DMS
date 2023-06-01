@@ -44,7 +44,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _organismName text:= '[No Organism]';
+    _organismName text := '[No Organism]';
     _newNCBITaxonomyID int;
     _message text;
     _newDomain text;

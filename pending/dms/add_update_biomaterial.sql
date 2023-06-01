@@ -40,7 +40,7 @@ AS $$
 **          03/11/2008 grk - Added material tracking stuff (http://prismtrac.pnl.gov/trac/ticket/603); also added optional parameter _callingUser
 **          03/25/2008 mem - Now calling alter_event_log_entry_user if _callingUser is not blank (Ticket #644)
 **          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _ownerPRN and _piPRN contain a person's real name rather than their username
-**          08/19/2010 grk - Try-catch for error handling
+**          08/19/2010 grk - Use try-catch for error handling
 **          11/15/2012 mem - Renamed parameter _ownerPRN to _contactPRN; renamed column CC_Owner_PRN to CC_Contact_PRN
 **                         - Added new fields to support peptide standards
 **          06/02/2015 mem - Replaced IDENT_CURRENT with SCOPE_IDENTITY()
@@ -53,7 +53,7 @@ AS $$
 **          12/02/2016 mem - Add _organismList
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
-**          01/06/2017 mem - When adding a new entry, only call UpdateOrganismListForBiomaterial if _organismList is not null
+**          01/06/2017 mem - When adding a new entry, only call Update_Organism_List_For_Biomaterial if _organismList is not null
 **                         - When updating an existing entry, update _organismList to be '' if null (since the DMS website sends null when a form field is blank)
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
@@ -132,7 +132,7 @@ BEGIN
         _container := Trim(Coalesce(_container, ''));
 
         -- Note: leave _organismList null
-        -- Procedure UpdateOrganismListForBiomaterial will leave t_biomaterial_organisms unchanged if _organismList is null
+        -- Procedure Update_Organism_List_For_Biomaterial will leave t_biomaterial_organisms unchanged if _organismList is null
 
         _mutation := Trim(Coalesce(_mutation, ''));
         _plasmid := Trim(Coalesce(_plasmid, ''));

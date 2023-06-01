@@ -83,7 +83,7 @@ AS $$
 **          12/17/2020 mem - Ignore _captureSubfolder if it is an absolute path to a network share (e.g. \\proto-2\External_Orbitrap_Xfer)
 **          05/26/2021 mem - Expand _message to varchar(1024)
 **          08/25/2022 mem - Use new column name in T_Log_Entries
-**          11/25/2022 mem - Rename variable and use new parameter name when calling AddUpdateDataset
+**          11/25/2022 mem - Rename variable and use new parameter name when calling add_update_dataset
 **          02/27/2023 mem - Show parsed values when mode is 'check_add' or 'check_update'
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -112,7 +112,7 @@ DECLARE
     _operatorUsername    text  := '';
     _comment             text  := '';
     _interestRating      text  := '';
-    _requestID           int   := 0 ;   -- Request ID; this might get updated by AddUpdateDataset
+    _requestID           int   := 0 ;   -- Request ID; this might get updated by add_update_dataset
     _workPackage         text  := '';
     _emslUsageType       text  := '';
     _emslProposalID      text  := '';
@@ -504,7 +504,7 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE t_event_log
-        SET entered_by = _datasetCreatorUsername || '; via ' || Coalesce(entered_by, '')
+        SET entered_by = format('%s; via %s', _datasetCreatorUsername, entered_by);
         WHERE Target_ID = _datasetId AND
               Target_State = 1 AND
               Target_Type = 4 AND

@@ -44,7 +44,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Lookup the parameters needed to call AddDataFolderCreateTask
+    -- Lookup the parameters needed to call add_data_folder_create_task
     ---------------------------------------------------
 
     SELECT Local

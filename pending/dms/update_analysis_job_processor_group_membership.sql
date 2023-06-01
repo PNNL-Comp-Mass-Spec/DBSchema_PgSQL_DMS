@@ -25,7 +25,7 @@ AS $$
 **          02/20/2007 grk - Fixed reference to group ID
 **          02/12/2008 grk - Modified temp table Tmp_Processors to have explicit NULL columns for DMS2 upgrade
 **          03/28/2008 mem - Added optional parameter _callingUser; if provided, will populate field Entered_By with this name
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          03/30/2015 mem - Tweak warning message grammar
 **          12/15/2023 mem - Ported to PostgreSQL
 **

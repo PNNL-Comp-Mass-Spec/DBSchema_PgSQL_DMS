@@ -22,9 +22,9 @@ AS $$
 **  Auth:   mem
 **  Date:   05/12/2011 mem - Initial version
 **          05/14/2011 mem - Updated the content of MoveCmd
-**          06/18/2014 mem - Now passing default to udfParseDelimitedIntegerList
+**          06/18/2014 mem - Now passing default to Parse_Delimited_Integer_List
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          08/19/2016 mem - Call UpdateCachedDatasetFolderPaths
+**          08/19/2016 mem - Call Update_Cached_Dataset_Folder_Paths
 **          09/02/2016 mem - Replace archive\dmsarch with simply dmsarch due to switch from \\aurora.emsl.pnl.gov\archive\dmsarch\ to \\adms.emsl.pnl.gov\dmsarch\
 **          05/28/2023 mem - Remove unnecessary call to Replace()
 **          12/15/2023 mem - Ported to PostgreSQL

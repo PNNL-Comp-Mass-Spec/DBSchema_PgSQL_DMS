@@ -60,24 +60,11 @@ BEGIN
     ---------------------------------------------------
 
     If Not _infoOnly Then
-        UPDATE t_email_alerts
+        UPDATE t_email_alerts Alerts
         SET alert_state = 2
-        FROM t_email_alerts Alerts
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_email_alerts
-        **   SET ...
-        **   FROM source
-        **   WHERE source.email_alert_id = t_email_alerts.email_alert_id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN Tmp_AlertIDs
-               ON Alerts.ID = Tmp_AlertIDs.AlertID
-        WHERE Alerts.Alert_State = 1
+        FROM Tmp_AlertIDs
+        WHERE Alerts.Alert_State = 1 AND
+              Alerts.ID = Tmp_AlertIDs.AlertID;
         --
         GET DIAGNOSTICS _alertCountUpdated = ROW_COUNT;
 

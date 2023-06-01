@@ -67,7 +67,7 @@ AS $$
 **          03/29/2018 mem - Decrease _adjustedHoldoffInterval from 90 to 30 minutes
 **          04/19/2018 mem - Add parameters _remoteStart and _remoteFinish
 **          04/25/2018 mem - Stop setting Remote_Finish to the current date since _remoteFinish provides that info
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          10/18/2018 mem - Add output parameter _message
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          12/14/2020 mem - Add support for completion code 18 (CLOSEOUT_SKIPPED_MZ_REFINERY)

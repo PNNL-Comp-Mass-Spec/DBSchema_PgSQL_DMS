@@ -42,12 +42,12 @@ BEGIN
     If _infoOnly Then
         -- Preview the jobs
         --
-        SELECT J.job AS Job, J.AJ_Purged as Job_Purged
+        SELECT J.job AS Job, J.purged AS Job_Purged
         FROM t_analysis_job J INNER JOIN
              Tmp_JobList L ON J.job = L.job
         ORDER BY job
     Else
-        -- Update AJ_Purged
+        -- Update purged
         --
         UPDATE t_analysis_job
         SET purged = 1
@@ -65,7 +65,7 @@ BEGIN
                                ToDo: Fix this query
 
              Tmp_JobList L ON J.job = L.Job
-        WHERE J.AJ_Purged = 0
+        WHERE J.purged = 0
 
     End If;
 

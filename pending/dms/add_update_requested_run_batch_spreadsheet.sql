@@ -31,7 +31,7 @@ AS $$
 **          08/27/2010 mem - Expanded _requestedCompletionDate to varchar(24) to support long dates of the form 'Jan 01 2010 12:00:00AM'
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          02/17/2023 mem - Use new parameter name when calling AddUpdateRequestedRunBatch
+**          02/17/2023 mem - Use new parameter name when calling Add_Update_Requested_Run_Batch
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

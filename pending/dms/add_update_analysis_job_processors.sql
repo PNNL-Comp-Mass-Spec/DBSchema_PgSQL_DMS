@@ -101,7 +101,7 @@ BEGIN
         WHERE ToolID is null
         LIMIT 1;
 
-        _message := 'Invalid tool name: ' || Coalesce(_message, '??');
+        _message := format('Invalid tool name: %s', Coalesce(_message, '??'));
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5208';
@@ -116,7 +116,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If Not Exists SELECT processor_id FROM t_analysis_job_processors WHERE processor_id = _id) Then
-            _message := 'Cannot update processor ID ' || _id::text || '; existing entry not found in the database';
+            _message := format('Cannot update processor ID %s; existing entry not found in the database', _id);
              RAISE WARNING '%', _message;
 
             _returnCode := 'U5207';

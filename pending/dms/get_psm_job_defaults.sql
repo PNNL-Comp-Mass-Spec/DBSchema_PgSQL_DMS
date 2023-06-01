@@ -31,14 +31,14 @@ AS $$
 **  Date:   11/14/2012 mem - Initial version
 **          11/20/2012 mem - Added 3 new parameters: organism name, protein collection name, and protein collection options
 **          01/11/2013 mem - Renamed MSGF-DB search tool to MSGFPlus
-**          03/05/2013 mem - Now passing _autoRemoveNotReleasedDatasets to ValidateAnalysisJobRequestDatasets
+**          03/05/2013 mem - Now passing _autoRemoveNotReleasedDatasets to validate_analysis_job_request_datasets
 **          09/03/2013 mem - Added iTRAQ8
-**          04/23/2015 mem - Now passing _toolName to ValidateAnalysisJobRequestDatasets
+**          04/23/2015 mem - Now passing _toolName to validate_analysis_job_request_datasets
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/18/2016 mem - Added TMT6 and TMT10
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/13/2017 mem - Exclude logging some try/catch errors
-**          12/06/2017 mem - Set _allowNewDatasets to true when calling ValidateAnalysisJobRequestDatasets
+**          12/06/2017 mem - Set _allowNewDatasets to true when calling validate_analysis_job_request_datasets
 **          06/04/2018 mem - Change default tool to MSGFPlus_MzML
 **          01/28/2020 mem - Use '%TMT1%' instead of '%TMT10' so we can match TMT10 and TMT11
 **          09/10/2020 mem - Add job types 'TMT Zero' and 'TMT 16-plex'

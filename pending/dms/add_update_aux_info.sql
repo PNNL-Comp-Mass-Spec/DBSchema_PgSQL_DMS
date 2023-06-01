@@ -29,7 +29,7 @@ AS $$
 **          12/18/2007 grk - Improved ability to handle target ID if supplied as target name
 **          06/30/2008 jds - Added error message to 'Resolve target name and entity name to entity ID' section
 **          05/15/2009 jds - Added a return if just performing a check_add or check_update
-**          08/21/2010 grk - Try-catch for error handling
+**          08/21/2010 grk - Use try-catch for error handling
 **          02/20/2012 mem - Now using temporary tables to parse _itemNameList and _itemValueList
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
 **          02/23/2016 mem - Add set XACT_ABORT on
@@ -37,7 +37,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/10/2018 mem - Remove invalid check of _mode against check_add or check_update
-**          11/19/2018 mem - Pass 0 to the _maxRows parameter to udfParseDelimitedListOrdered
+**          11/19/2018 mem - Pass 0 to the _maxRows parameter to Parse_Delimited_ListOrdered
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/16/2022 mem - Auto change _targetName from 'Cell Culture' to 'Biomaterial' if T_Aux_Info_Target has an entry for 'Biomaterial
 **          07/06/2022 mem - Use new aux info definition view name

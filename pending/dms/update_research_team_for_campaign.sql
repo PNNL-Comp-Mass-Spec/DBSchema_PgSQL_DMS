@@ -36,7 +36,7 @@ AS $$
 **                         - Since a Like clause is used, % characters in the name will be treated as wildcards
 **                         - However, 'anderson, gordon' will be split into two entries: 'anderson' and 'gordon' when parse_delimited_list() is called
 **                         - Thus, use 'anderson%gordon' to match the 'anderson, gordon' entry in T_Users
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized

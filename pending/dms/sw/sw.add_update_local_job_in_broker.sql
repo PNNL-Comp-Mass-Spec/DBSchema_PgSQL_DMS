@@ -68,8 +68,8 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          07/21/2017 mem - Fix double logging of exceptions
 **          08/01/2017 mem - Use THROW if not authorized
-**          11/15/2017 mem - Call ValidateDataPackageForMACJob
-**          03/07/2018 mem - Call AlterEnteredByUser
+**          11/15/2017 mem - Call Validate_Data_Package_For_MAC_Job
+**          03/07/2018 mem - Call Alter_Entered_By_User
 **          04/06/2018 mem - Allow updating comment, priority, and owner regardless of job state
 **          01/21/2021 mem - Log _jobParam to T_Log_Entries when _logDebugMessages is true
 **          03/10/2021 mem - Make _jobParam an input/output variable when calling VerifyJobParameters

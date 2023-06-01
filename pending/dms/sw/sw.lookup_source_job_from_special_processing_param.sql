@@ -237,7 +237,7 @@ BEGIN
                 _warningMessage := format('Source Job 1 and Source Job 2 are identical (both %s); this is not allowed and likely indicates the Special Processing parameters for determining Job2 are incorrect', _sourceJob);
                 _sourceJobResultsFolderOverride := format('UnknownFolder_Job1_and_Job2_are_both_%s', _sourceJob);
 
-                _logMessage := format('Auto-query used to lookup Job2 for job %s: %s', _job, Coalesce(_autoQuerySql, ''));
+                _logMessage := format('Auto-query used to lookup Job2 for job %s: %s', _job, _autoQuerySql);
                 CALL public.post_log_entry ('Debug', _logMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
             End If;
 

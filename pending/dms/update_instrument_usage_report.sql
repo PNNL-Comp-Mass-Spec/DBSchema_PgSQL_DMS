@@ -30,7 +30,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   10/07/2012
-**          10/09/2012 grk - Enabled 10 day edit cutoff and UpdateDatasetInterval for 'reload'
+**          10/09/2012 grk - Enabled 10 day edit cutoff and Update_Dataset_Interval for 'reload'
 **          11/21/2012 mem - Extended cutoff for 'reload' to be 45 days instead of 10 days
 **          01/09/2013 mem - Extended cutoff for 'reload' to be 90 days instead of 45 days
 **          04/03/2013 grk - Made Usage editable
@@ -41,7 +41,7 @@ AS $$
 **          04/11/2017 mem - Now using fields DMS_Inst_ID and Usage_Type in T_EMSL_Instrument_Usage_Report
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          05/03/2019 mem - Pass 0 to UpdateEMSLInstrumentUsageReport for _eusInstrumentID
+**          05/03/2019 mem - Pass 0 to Update_EMSL_Instrument_Usage_Report for _eusInstrumentID
 **          09/10/2019 mem - Extended cutoff for 'update' to be 365 days instead of 90 days
 **                         - Changed the cutoff for reload to 60 days
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer

@@ -25,7 +25,7 @@ AS $$
 **          01/28/2010 grk - Added UpdateParameters action
 **          10/25/2010 mem - Now raising an error if _mode is empty or invalid
 **          04/28/2011 mem - Set defaults for _action and _mode
-**          03/24/2016 mem - Switch to using udfParseDelimitedIntegerList to parse the list of capture task jobs
+**          03/24/2016 mem - Switch to using Parse_Delimited_Integer_List to parse the list of capture task jobs
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW instead of RAISERROR
 **          12/15/2023 mem - Ported to PostgreSQL

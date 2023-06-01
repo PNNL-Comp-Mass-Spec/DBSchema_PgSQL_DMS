@@ -127,7 +127,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/12/2017 mem - Add _stagingLocation (points to T_Material_Locations)
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          08/06/2018 mem - Rename Operator PRN column to RDS_Requestor_PRN
 **          09/03/2018 mem - Apply a maximum length restriction of 64 characters to _requestName when creating a new requested run
 **          12/10/2018 mem - Report an error if the comment contains 'experiment_group/show/0000'
@@ -633,16 +633,16 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'Call ValidateEUSUsage with ' ||;
-                'type ' || Coalesce(_eusUsageType, '?Null?') || ', ' ||
-                'proposal ' || Coalesce(_eusProposalID, '?Null?') || ', and ' ||
-                'user list ' || Coalesce(_eusUsersList, '?Null?')
+            _debugMsg := format('Call validate_eus_usage with type %s, proposal %s, and user list %s',
+                                Coalesce(_eusUsageType, '?Null?'),
+                                Coalesce(_eusProposalID, '?Null?'),
+                                Coalesce(_eusUsersList, '?Null?'));
 
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
         -- Note that if _eusUsersList contains a list of names in the form 'Baker, Erin (41136)',
-        -- ValidateEUSUsage will change this into a list of EUS user IDs (integers)
+        -- validate_eus_usage will change this into a list of EUS user IDs (integers)
 
         If char_length(_eusUsersList) = 0 And _autoPopulateUserListIfBlank Then
             _raiseErrorOnMultipleEUSUsers := false;
@@ -779,9 +779,9 @@ BEGIN
 
         If Not _autoPopulateUserListIfBlank Then
             If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then
-                _message := public.append_to_text(_message, 'Warning: Work Package ' || _workPackage || ' is deactivated', 0, '; ', 1024);
+                _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage),        0, '; ', 1024);
             ElsIf Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And charge_code_state = 0) Then
-                _message := public.append_to_text(_message, 'Warning: Work Package ' || _workPackage || ' is likely deactivated', 0, '; ', 1024);
+                _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage), 0, '; ', 1024);
             End If;
         End If;
 

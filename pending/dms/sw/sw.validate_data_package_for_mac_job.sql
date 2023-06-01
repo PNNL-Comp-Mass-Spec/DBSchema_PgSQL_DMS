@@ -27,11 +27,11 @@ AS $$
 **          04/20/2014 mem - Now mentioning ReporterTol param file when MASIC counts are not correct for an Isobaric_Labeling or MAC_iTRAQ script
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          11/15/2017 mem - Use AppendToText to combine strings
+**          11/15/2017 mem - Use Append_To_Text to combine strings
 **                         - Include data package ID in log messages
 **          01/11/2018 mem - Allow PRIDE_Converter jobs to have multiple MSGF+ jobs for each dataset
 **          04/06/2018 mem - Allow Phospho_FDR_Aggregator jobs to have multiple MSGF+ jobs for each dataset
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          05/01/2019 mem - Fix typo counting SEQUEST jobs
 **          03/09/2021 mem - Add support for MaxQuant
 **          08/26/2021 mem - Add support for MSFragger

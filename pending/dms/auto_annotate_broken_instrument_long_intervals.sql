@@ -78,21 +78,21 @@ BEGIN
         _targetYear := Extract(year from _targetDate);
 
         -- Populate a string with the target month name and year
-        _monthAndYear := DateName(month, _targetDate) || ' ' || Cast(_targetYear As text);
+        _monthAndYear := format('%s %s', Trim(to_char(_targetDate, 'Month')), _targetYear);
 
         CREATE TEMP TABLE Tmp_BrokenInstruments (
             Instrument_ID int NOT NULL,
             Instrument text
-        )
+        );
 
         CREATE TEMP TABLE Tmp_IntervalsToUpdate (
             IntervalID Int
-        )
+        );
 
         INSERT INTO Tmp_BrokenInstruments(instrument_id, instrument )
         SELECT instrument_id, instrument
         FROM t_instrument_name
-        WHERE status = 'Broken'
+        WHERE status = 'Broken';
 
         _instrumentID := -1;
         _continue := true;
@@ -102,7 +102,7 @@ BEGIN
             FROM Tmp_BrokenInstruments
             ORDER BY Instrument_ID
         LOOP
-            DELETE FROM Tmp_IntervalsToUpdate
+            DELETE FROM Tmp_IntervalsToUpdate;
 
             INSERT INTO Tmp_IntervalsToUpdate( IntervalID )
             SELECT interval_id
@@ -156,9 +156,9 @@ BEGIN
 
                 End If;
 
-            END LOOP
+            END LOOP;
 
-        END LOOP; -- </a>
+        END LOOP;
 
     EXCEPTION
         WHEN OTHERS THEN

@@ -142,10 +142,7 @@ BEGIN
         If _datasetsProcessed = 0 Then
             _message := 'No candidates were found in t_predefined_analysis_scheduling_queue';
         Else
-            _message := 'Processed ' || _datasetsProcessed::text || ' dataset';
-            If _datasetsProcessed <> 1 Then
-                _message := _message || 's';
-            End If;
+            _message := format('Processed %s %s', _datasetsProcessed, public.check_plural(_datasetsProcessed, 'dataset', 'datasets'))
         End If;
 
         RAISE INFO '%', _message;

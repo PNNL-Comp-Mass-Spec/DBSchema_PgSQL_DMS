@@ -170,7 +170,7 @@ BEGIN
                FilterQ.Created,
                FilterQ.ID AS RequestedRunID,
                CASE
-                   WHEN FilterQ.work_package = 'none' THEN 'none --> ' || C.BestWorkPackage
+                   WHEN FilterQ.work_package = 'none' THEN format('none --> %s', C.BestWorkPackage)
                    ELSE FilterQ.work_package
                END AS work_package
         FROM Tmp_ProposalsToCheck C

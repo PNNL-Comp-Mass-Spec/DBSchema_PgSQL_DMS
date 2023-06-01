@@ -184,7 +184,7 @@ BEGIN
             If _datasetCount = 1 Then
                 _datasetDescription := format('dataset %s', _datasetName);
             Else
-                _datasetDescription := _datasetCount::text || ' datasets';
+                _datasetDescription := format('%s datasets', _datasetCount);
             End If;
 
             If _stateInt <> _oldState Then

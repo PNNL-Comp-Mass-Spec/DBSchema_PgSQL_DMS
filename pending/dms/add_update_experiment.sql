@@ -82,11 +82,11 @@ AS $$
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          01/24/2017 mem - Fix validation of _labelling to raise an error when the label name is unknown
 **          01/27/2017 mem - Change _internalStandard and _postdigestIntStd to 'none' if empty
-**          03/17/2017 mem - Only call MakeTableFromListDelim if _biomaterialList contains a semicolon
+**          03/17/2017 mem - Only call Make_Table_From_List_Delim if _biomaterialList contains a semicolon
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/18/2017 mem - Add parameter _tissue (tissue name, e.g. hypodermis)
 **          09/01/2017 mem - Allow _tissue to be a BTO ID (e.g. BTO:0000131)
-**          11/29/2017 mem - Call udfParseDelimitedList instead of MakeTableFromListDelim
+**          11/29/2017 mem - Call Parse_Delimited_List instead of Make_Table_From_List_Delim
 **                           Rename #CC to Tmp_ExpToCCMap
 **                           No longer pass _biomaterialList to AddExperimentCellCulture since it uses Tmp_ExpToCCMap
 **                           Remove references to the Cell_Culture_List field in T_Experiments (procedure AddExperimentCellCulture calls UpdateCachedExperimentInfo)

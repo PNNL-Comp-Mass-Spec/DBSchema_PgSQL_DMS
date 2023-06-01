@@ -16,7 +16,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   12/12/2007 mem - Initial version (Ticket #585)
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/03/2014 mem - Now showing _message when _infoOnly is true
 **          05/27/2014 mem - Now using a temporary table to track the jobs that need to be updated (due to deadlock issues)
 **          12/15/2023 mem - Ported to PostgreSQL

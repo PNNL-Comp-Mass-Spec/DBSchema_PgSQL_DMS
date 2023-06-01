@@ -30,7 +30,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/09/2010
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          12/12/2011 mem - Now calling alter_event_log_entry_user_multi_id
 **          11/16/2016 mem - Call update_cached_requested_run_eus_users for updated Requested runs
 **          06/16/2017 mem - Restrict access using verify_sp_authorized

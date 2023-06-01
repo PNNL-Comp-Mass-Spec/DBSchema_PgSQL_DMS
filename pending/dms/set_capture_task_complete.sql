@@ -21,17 +21,17 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   11/04/2002 grk - Initial release
-**          09/02/2011 mem - Now calling PostUsageLogEntry
 **          08/06/2003 grk - Added handling for 'Not Ready' state
 **          11/13/2003 dac - Changed FTICR instrument class to Finnigan_FTICR following instrument class renaming
 **          06/21/2005 grk - Added handling 'requires_preparation'
 **          09/25/2007 grk - Return result from DoDatasetCompletionActions (http://prismtrac.pnl.gov/trac/ticket/537)
 **          10/09/2007 grk - Limit number of retries (ticket 537)
 **          12/16/2007 grk - Add completion code '100' for use by capture broker
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/04/2012 mem - Added parameter _failureMessage
 **          08/19/2015 mem - If _completionCode is 0, now looking for and removing messages of the form "Error while copying \\15TFTICR64\data\"
 **          12/16/2017 mem - If _completionCode is 0, now calling CleanupDatasetComments to remove error messages in the comment field
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          06/13/2018 mem - Add support for _completionCode 101
 **          08/08/2018 mem - Add _completionState 14 (Duplicate Dataset Files)
 **

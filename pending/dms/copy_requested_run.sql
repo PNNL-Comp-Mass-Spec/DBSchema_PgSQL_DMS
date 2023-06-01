@@ -118,7 +118,7 @@ BEGIN
     --
 
     If _requestNameOverride = '' Then
-        _newRequestName := _oldRequestName || _requestNameAppendText;
+        _newRequestName := format('%s%s' _oldRequestName, _requestNameAppendText);
     Else
         _newRequestName := _requestNameOverride;
     End If;

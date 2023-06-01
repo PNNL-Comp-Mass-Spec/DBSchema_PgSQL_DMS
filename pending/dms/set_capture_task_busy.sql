@@ -15,8 +15,8 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   12/15/2009
-**          09/02/2011 mem - Now calling PostUsageLogEntry
 **          01/14/2010 grk - Removed path ID fields
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

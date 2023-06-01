@@ -33,7 +33,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/18/2017 mem - Disable logging certain messages to T_Log_Entries
-**          12/06/2018 mem - Call UpdateExperimentGroupMemberCount to update T_Experiment_Groups
+**          12/06/2018 mem - Call update_experiment_group_member_count to update T_Experiment_Groups
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          11/18/2022 mem - Rename parameter to _groupName
 **          12/15/2023 mem - Ported to PostgreSQL

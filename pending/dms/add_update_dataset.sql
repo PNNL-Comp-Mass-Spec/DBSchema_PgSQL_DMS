@@ -67,28 +67,28 @@ AS $$
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          04/09/2008 mem - Added call to alter_event_log_entry_user to handle dataset rating entries (event log target type 8)
 **          05/23/2008 mem - Now calling schedule_predefined_analysis_jobs if the dataset rating is changed from -5 to 5 and no jobs exist yet for this dataset (Ticket #675)
-**          04/08/2009 jds - Added support for the additional parameters _secSep and _mRMAttachment to the AddUpdateRequestedRun procedure (Ticket #727)
+**          04/08/2009 jds - Added support for the additional parameters _secSep and _mRMAttachment to the Add_Update_Requested_Run procedure (Ticket #727)
 **          09/16/2009 mem - Now checking dataset type (_msType) against the Instrument_Allowed_Dataset_Type table (Ticket #748)
 **          01/14/2010 grk - Assign storage path on creation of dataset
 **          02/28/2010 grk - Added add-auto mode for requested run
 **          03/02/2010 grk - Added status field to requested run
 **          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _operPRN contains a person's real name rather than their username
-**          07/27/2010 grk - try-catch for error handling
+**          07/27/2010 grk - Use try-catch for error handling
 **          08/26/2010 mem - Now passing _callingUser to schedule_predefined_analysis_jobs
-**          08/27/2010 mem - Now calling ValidateInstrumentGroupAndDatasetType to validate the instrument type for the selected instrument's instrument group
-**          09/01/2010 mem - Now passing _skipTransactionRollback to AddUpdateRequestedRun
+**          08/27/2010 mem - Now calling Validate_Instrument_Group_and_Dataset_Type to validate the instrument type for the selected instrument's instrument group
+**          09/01/2010 mem - Now passing _skipTransactionRollback to Add_Update_Requested_Run
 **          09/02/2010 mem - Now allowing _msType to be blank or invalid when _mode = 'add'; The assumption is that the dataset type will be auto-updated if needed based on the results from the DatasetQuality tool, which runs during dataset capture
 **                         - Expanded _msType to varchar(50)
-**          09/09/2010 mem - Now passing _autoPopulateUserListIfBlank to AddUpdateRequestedRun
+**          09/09/2010 mem - Now passing _autoPopulateUserListIfBlank to Add_Update_Requested_Run
 **                         - Relaxed EUS validation to ignore _eusProposalID, _eusUsageType, and _eusUsersList if _requestID is non-zero
 **                         - Auto-updating RequestID, experiment, and EUS information for 'Blank' datasets
 **          03/10/2011 mem - Tweaked text added to dataset comment when dataset type is auto-updated or auto-defined
-**          05/11/2011 mem - Now calling GetInstrumentStoragePathForNewDatasets
-**          05/12/2011 mem - Now passing _refDate and _autoSwitchActiveStorage to GetInstrumentStoragePathForNewDatasets
+**          05/11/2011 mem - Now calling Get_Instrument_Storage_Path_For_New_Datasets
+**          05/12/2011 mem - Now passing _refDate and _autoSwitchActiveStorage to Get_Instrument_Storage_Path_For_New_Datasets
 **          05/24/2011 mem - Now checking for change of rating from -5, -6, or -7 to 5
 **                         - Now ignoring AJ_DatasetUnreviewed jobs when determining whether or not to call schedule_predefined_analysis_jobs
 **          12/12/2011 mem - Updated call to ValidateEUSUsage to treat _eusUsageType as an input/output parameter
-**          12/14/2011 mem - Now passing _callingUser to AddUpdateRequestedRun and ConsumeScheduledRun
+**          12/14/2011 mem - Now passing _callingUser to Add_Update_Requested_Run and Consume_Scheduled_Run
 **          12/19/2011 mem - Now auto-replacing &quot; with a double-quotation mark in _comment
 **          01/11/2012 mem - Added parameter _aggregationJobDataset
 **          02/29/2012 mem - Now auto-updating the _eus parameters if null
@@ -106,26 +106,26 @@ AS $$
 **          06/19/2015 mem - Now auto-fixing QC_Shew names, e.g. QC_Shew_15-01 to QC_Shew_15_01
 **          10/01/2015 mem - Add support for (ignore) for _eusProposalID, _eusUsageType, and _eusUsersList
 **          10/14/2015 mem - Remove double quotes from error messages
-**          01/29/2016 mem - Now calling GetWPforEUSProposal to get the best work package for the given EUS Proposal
+**          01/29/2016 mem - Now calling Get_WP_for_EUS_Proposal to get the best work package for the given EUS Proposal
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          05/23/2016 mem - Disallow certain dataset names
 **          06/10/2016 mem - Try to auto-associate new datasets with an active requested run (only associate if only one active requested run matches the dataset name)
 **          06/21/2016 mem - Add additional debug messages
 **          08/25/2016 mem - Do not update the dataset comment if the dataset type is changed from 'GC-MS' to 'EI-HMS'
 **          11/18/2016 mem - Log try/catch errors using post_log_entry
-**          11/21/2016 mem - Pass _logDebugMessages to ConsumeScheduledRun
+**          11/21/2016 mem - Pass _logDebugMessages to Consume_Scheduled_Run
 **          11/23/2016 mem - Include the dataset name when calling post_log_entry from within the catch block
 **                         - Trim trailing and leading spaces from input parameters
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
-**          01/09/2017 mem - Pass _logDebugMessages to AddUpdateRequestedRun
+**          01/09/2017 mem - Pass _logDebugMessages to Add_Update_Requested_Run
 **          02/23/2017 mem - Add parameter _lcCartConfig
 **          03/06/2017 mem - Decreased maximum dataset name length from 90 characters to 80 characters
 **          04/28/2017 mem - Disable logging certain messages to T_Log_Entries
-**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling AddUpdateRequestedRun
+**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling Add_Update_Requested_Run
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          08/29/2017 mem - Allow updating EUS info for existing datasets (calls AddUpdateRequestedRun)
+**          08/29/2017 mem - Allow updating EUS info for existing datasets (calls Add_Update_Requested_Run)
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **                         - Expand _warning to varchar(512)
 **          04/15/2019 mem - Add call to UpdateCachedDatasetInstruments
@@ -142,9 +142,9 @@ AS $$
 **                         - Expand _message to varchar(1024)
 **          05/27/2021 mem - Refactor EUS Usage validation code into ValidateEUSUsage
 **          10/01/2021 mem - Also check for a period when verifying that the dataset name does not end with .raw or .wiff
-**          11/12/2021 mem - When _mode is update, pass _batch, _block, and _runOrder to AddUpdateRequestedRun
+**          11/12/2021 mem - When _mode is update, pass _batch, _block, and _runOrder to Add_Update_Requested_Run
 **          02/17/2022 mem - Rename variables and add missing Else clause
-**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling AddUpdateRequestedRun
+**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
 **          05/27/2022 mem - Expand _msg to varchar(1024)
 **          08/22/2022 mem - Do not log EUS Usage validation errors to T_Log_Entries
 **          11/25/2022 mem - Rename parameter to _wellplate
@@ -607,7 +607,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := format('CALL ValidateInstrumentGroupAndDatasetType with type = %s and group = %s', _msType, _instrumentGroup);
+            _debugMsg := format('CALL Validate_Instrument_Group_and_Dataset_Type with type = %s and group = %s', _msType, _instrumentGroup);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
@@ -681,7 +681,7 @@ BEGIN
         If _returnCode <> '' Then
             -- _msg should already contain the details of the error
             If Coalesce(_msg, '') = '' Then
-                _msg := format('ValidateInstrumentGroupAndDatasetType returned non-zero result code: %s', _returnCode);
+                _msg := format('Validate_Instrument_Group_and_Dataset_Type returned non-zero result code: %s', _returnCode);
             End If;
 
             RAISE EXCEPTION '%', _msg;
@@ -751,7 +751,7 @@ BEGIN
                    (_eusUsageType::citext = '(ignore)') Then
                     _warning := '';
                 Else
-                    _warning := 'Warning: ignoring proposal ID, usage type, and user list since request ' || _requestID::text || ' was specified';
+                    _warning := format('Warning: ignoring proposal ID, usage type, and user list since request %s was specified', _requestID);
                 End If;
 
                 -- When a request is specified, force _eusProposalID, _eusUsageType, and _eusUsersList to be blank
@@ -810,7 +810,7 @@ BEGIN
         If _requestID = 0 AND _addingDataset Then
 
             If _logDebugMessages Then
-                _debugMsg := format('Call FindActiveRequestedRunForDataset with _datasetName = %s', _datasetName);
+                _debugMsg := format('Call Find_Active_Requested_Run_for_Dataset with _datasetName = %s', _datasetName);
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
@@ -824,9 +824,9 @@ BEGIN
             If _requestID > 0 Then
                 -- Match found; check for an instrument group mismatch
                 If _requestInstGroup <> _instrumentGroup Then
-                    _warning := public.append_to_text(_warning,;
-                        'Instrument group for requested run (' || _requestInstGroup || ') ' ||
-                        'does not match instrument group for ' || _instrumentName || ' (' || _instrumentGroup || ')', 0, '; ', 512)
+                    _warning := public.append_to_text(_warning,
+                        format('Instrument group for requested run (%s) does not match instrument group for %s (%s)',
+                               _requestInstGroup, _instrumentName, _instrumentGroup), 0, '; ', 512)
                 End If;
             End If;
         End If;
@@ -866,7 +866,7 @@ BEGIN
         -- <AddTrigger>
 
             If _requestID <> 0 Then
-                --**Check code taken from ConsumeScheduledRun procedure**
+                --**Check code taken from Consume_Scheduled_Run procedure**
                 ---------------------------------------------------
                 -- Validate that experiments match
                 ---------------------------------------------------
@@ -910,7 +910,7 @@ BEGIN
                 -- RequestID not specified
                 -- Try to determine EUS information using Experiment name
 
-                --**Check code taken from AddUpdateRequestedRun procedure**
+                --**Check code taken from Add_Update_Requested_Run procedure**
 
                 ---------------------------------------------------
                 -- Lookup EUS field (only effective for experiments that have associated sample prep requests)
@@ -1038,7 +1038,7 @@ BEGIN
             _refDate := CURRENT_TIMESTAMP;
 
             If _logDebugMessages Then
-                _debugMsg := format('Call GetInstrumentStoragePathForNewDatasets with _instrumentID = %s', _instrumentID);
+                _debugMsg := format('Call Get_Instrument_Storage_Path_For_New_Datasets with _instrumentID = %s', _instrumentID);
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
@@ -1119,13 +1119,11 @@ BEGIN
                 SELECT dataset_id
                 INTO _datasetIDConfirm
                 FROM t_dataset
-                WHERE dataset = _datasetName
+                WHERE dataset = _datasetName;
 
                 If _datasetID <> Coalesce(_datasetIDConfirm, _datasetID) Then
-                    _debugMsg := ;
-                        'Warning: Inconsistent identity values when adding dataset ' || _datasetName || ': Found ID ' ||
-                        _datasetIDConfirm::text || ' but the INSERT INTO query reported ' ||
-                        _datasetID::text;
+                    _debugMsg := format('Warning: Inconsistent identity values when adding dataset %s: Found ID %s but the INSERT INTO query reported %s',
+                                        _datasetName, _datasetIDConfirm, _datasetID);
 
                     CALL post_log_entry ('Error', _debugMsg, 'Add_Update_Dataset');
 
@@ -1156,7 +1154,7 @@ BEGIN
 
                     If _workPackage::citext In ('', 'none', 'na', '(lookup)') Then
                         If _logDebugMessages Then
-                            RAISE INFO '%', 'Call GetWPforEUSProposal';
+                            RAISE INFO '%', 'Call Get_WP_for_EUS_Proposal';
                         End If;
 
                         SELECT work_package
@@ -1167,7 +1165,7 @@ BEGIN
                     _requestName := format('AutoReq_%s', _datasetName);
 
                     If _logDebugMessages Then
-                        RAISE INFO '%', 'Call AddUpdateRequestedRun';
+                        RAISE INFO '%', 'Call Add_Update_Requested_Run';
                     End If;
 
                     CALL add_update_requested_run (
@@ -1273,7 +1271,7 @@ BEGIN
             END;
 
             If _logDebugMessages Then
-                _debugMsg := 'Call update_cached_dataset_instruments with _datasetId = ' || _datasetId::text
+                _debugMsg := format('Call update_cached_dataset_instruments with _datasetId = %s', _datasetId);
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
@@ -1473,7 +1471,7 @@ BEGIN
             ElsIf _message = _warning Then
                 _message := _warningWithPrefix;
             Else
-                _message := _warningWithPrefix || '; ' || _message;
+                _message := format('%s; %s', _warningWithPrefix, _message);
             End If;
         End If;
 

@@ -20,7 +20,7 @@ AS $$
 **          03/25/2011 mem - Updated to remove entries from T_EUS_Proposal_Users if the row is no longer in V_EUS_Import_Proposal_Participants yet the proposal is still active
 **          04/01/2011 mem - No longer removing entries from T_EUS_Proposal_Users; now changing to state 5 = 'No longer associated with proposal'
 **                         - Added support for state 4 = 'Permanently associated with proposal'
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          03/19/2012 mem - Now populating T_EUS_Users.HID
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/12/2021 mem - Use new NEXUS-based views

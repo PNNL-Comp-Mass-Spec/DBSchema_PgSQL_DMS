@@ -30,7 +30,7 @@ AS $$
 **  Auth:   mem
 **  Date:   07/01/2014 mem - Initial version
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized

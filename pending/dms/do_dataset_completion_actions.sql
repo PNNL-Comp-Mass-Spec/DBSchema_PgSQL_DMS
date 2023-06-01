@@ -139,7 +139,7 @@ BEGIN
     -- However, if 'ArchiveDisabled" has a value of 1 in T_Misc_Options, the archive task will not be created
     ---------------------------------------------------
     --
-    CALL AddArchiveDataset (_datasetID, _returnCode => _returnCode);
+    CALL Add_Archive_Dataset (_datasetID, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         ROLLBACK;

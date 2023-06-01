@@ -28,11 +28,11 @@ AS $$
 **          08/15/2008 mem - Added call to alter_event_log_entry_user to handle dataset rating entries (event log target type 8)
 **          08/19/2010 grk - Use try-catch for error handling
 **          11/18/2010 mem - Updated logic for calling schedule_predefined_analysis_jobs to include dataset state 4 (Inactive)
-**          09/02/2011 mem - Now calling PostUsageLogEntry
-**          12/13/2011 mem - Now passing _callingUser to UnconsumeScheduledRun
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
+**          12/13/2011 mem - Now passing _callingUser to Unconsume_scheduled_run
 **          02/20/2013 mem - Expanded _message to varchar(1024)
 **          02/21/2013 mem - More informative error messages
-**          05/08/2013 mem - No longer passing _wellplateName and _wellNumber to UnconsumeScheduledRun
+**          05/08/2013 mem - No longer passing _wellplateName and _wellNumber to Unconsume_scheduled_run
 **          03/30/2015 mem - Tweak warning message grammar
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

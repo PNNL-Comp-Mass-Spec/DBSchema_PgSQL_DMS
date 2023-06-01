@@ -39,11 +39,11 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/03/2017 mem - Allow resetting a dataset if DatasetIntegrity failed
-**          08/08/2017 mem - Use function RemoveCaptureErrorsFromString to remove common dataset capture errors when resetting a dataset
-**          09/07/2018 mem - Remove mode 'delete_all'; if you need to delete a dataset, manually call procedure DeleteDataset
+**          08/08/2017 mem - Use function Remove_Capture_Errors_From_String to remove common dataset capture errors when resetting a dataset
+**          09/07/2018 mem - Remove mode 'delete_all'; if you need to delete a dataset, manually call procedure Delete_Dataset
 **                         - Rename _datasetName to _datasetNameOrID
-**          09/27/2018 mem - Use named parameter names when calling DeleteDataset
-**          11/16/2018 mem - Pass _infoOnly to DeleteDataset
+**          09/27/2018 mem - Use named parameter names when calling Delete_Dataset
+**          11/16/2018 mem - Pass _infoOnly to Delete_Dataset
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -197,7 +197,7 @@ BEGIN
             -- Delete the dataset
             ---------------------------------------------------
 
-            CALL DeleteDataset (_datasetName, _infoOnly => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
+            CALL Delete_Dataset (_datasetName, _infoOnly => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
             --
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not delete dataset "%"', _datasetName;

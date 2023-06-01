@@ -29,7 +29,7 @@ BEGIN
 
     _cutoffDateTime := CURRENT_TIMESTAMP - make_interval(days => _intervalDays);
 
-    -- Copy entries into the historic log database
+    -- Copy entries into the historic log tables
     --
     INSERT INTO logdms.t_event_log( event_id,
                                     target_type,

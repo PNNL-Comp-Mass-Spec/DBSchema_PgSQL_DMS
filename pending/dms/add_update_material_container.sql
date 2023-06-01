@@ -177,9 +177,9 @@ BEGIN
             _message := 'Researcher must be a valid DMS user';
 
             If _matchCount = 0 Then
-                _message := _message || '; ' || _researcher || ' is an unknown person';
+                _message := format('%s; %s is an unknown person', _message, _researcher);
             Else
-                _message := _message || '; ' || _researcher || ' is an ambiguous match to multiple people';
+                _message := format('%s; %s is an ambiguous match to multiple people', _message, _researcher);
             End If;
 
             _returnCode := 'U5207';

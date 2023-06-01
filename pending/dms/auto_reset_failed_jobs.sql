@@ -370,20 +370,22 @@ BEGIN
                     If _settingsFileChanged Then
                         -- Note: do not append a semicolon because if the job fails again in the future, the text after the semicolon may get auto-removed
                         If char_length(_newComment) > 0 Then
-                            _newComment := _newComment || ', ';
+                            _newComment := format('%s, ', _newComment);
                         End If;
 
-                        _newComment := _newComment || 'Auto-switched settings file from ' || _settingsFile || ' (' || _skipInfo || ')';
+                        _newComment := format('%sAuto-switched settings file from %s (%s)';
+                                              _newComment, _settingsFile, _skipInfo);
                     Else
                         If char_length(_newComment) > 0 Then
-                            _newComment := _newComment || ' ';
+                            _newComment := format('%s ', _newComment);
                         End If;
 
-                        _newComment := _newComment || '(retry ' || _stepTool;
+                        _newComment := format('%s(retry %s', _newComment, _stepTool);
 
                         _retryCount := _retryCount + 1;
+
                         If _retryCount = 1 Then
-                            _newComment := _newComment || ')';
+                            _newComment := format('%s)', _newComment);
                         Else
                             _newComment := format('%s #%s)', _newComment, _retryCount);
                         End If;
@@ -401,7 +403,7 @@ BEGIN
                             RerunAllJobSteps = _settingsFileChanged
                         WHERE Job = _job
 
-                        _resetReason := 'job step failed in the last ' || _windowHours::text || ' hours';
+                        _resetReason := format('job step failed in the last %s hours', _windowHours);
                     End If;
 
                     If _stepState = 4 Then

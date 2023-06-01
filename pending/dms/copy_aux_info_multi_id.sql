@@ -93,9 +93,10 @@ BEGIN
 
     _matchVal := Null;
 
-    _sql := ' SELECT ' || quote_ident(_tgtTableIDCol) ||
-            ' FROM '   || quote_ident(_tgtTableName)  ||
-            ' WHERE '  || quote_ident(_tgtTableIDCol) || ' = $1';
+    _sql := format('SELECT %s FROM %s WHERE %s = $1',
+                    quote_ident(_tgtTableIDCol),
+                    quote_ident(_tgtTableName),
+                    quote_ident(_tgtTableIDCol);
 
     EXECUTE _sql
     INTO _matchVal
@@ -130,10 +131,11 @@ BEGIN
     -- Look for unknown IDs in Tmp_TargetEntities
     ---------------------------------------------------
 
-    _sql := ' UPDATE Tmp_TargetEntities' ||
-            ' SET Valid = true' ||
-            ' FROM Tmp_TargetEntities TE INNER JOIN ' ||
-            quote_ident(_tgtTableName) || ' T ON TE.EntityID = T.' || quote_ident(_tgtTableIDCol);
+    _sql := format('UPDATE Tmp_TargetEntities TE '
+                   'SET Valid = true '
+                   'FROM %s T '
+                   'WHERE TE.EntityID = T.%s',
+                         quote_ident(_tgtTableName), quote_ident(_tgtTableIDCol));
 
     EXECUTE _sql;
 

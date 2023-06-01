@@ -23,9 +23,9 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   12/30/2010 mem - Initial version
-**          01/11/2011 mem - Renamed parameter _serverVol to _serverDisk when calling RequestPurgeTask
-**          02/01/2011 mem - Now passing parameter _excludeStageMD5RequiredDatasets to RequestPurgeTask
-**          06/07/2013 mem - Now auto-updating _storageServerName and _storageVol to match the format required by RequestPurgeTask
+**          01/11/2011 mem - Renamed parameter _serverVol to _serverDisk when calling Request_Purge_Task
+**          02/01/2011 mem - Now passing parameter _excludeStageMD5RequiredDatasets to Request_Purge_Task
+**          06/07/2013 mem - Now auto-updating _storageServerName and _storageVol to match the format required by Request_Purge_Task
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -71,7 +71,7 @@ BEGIN
     RAISE INFO 'Volume: %', _storageVol;
 
     --------------------------------------------------
-    -- Call RequestPurgeTask to obtain the data
+    -- Call Request_Purge_Task to obtain the data
     --------------------------------------------------
 
     CALL request_purge_task (

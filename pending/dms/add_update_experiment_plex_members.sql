@@ -130,7 +130,7 @@ AS $$
 **          11/28/2018 mem - Allow the second column in the plex table to have experiment names instead of IDs
 **                         - Make _expIdChannel and _channelType parameters optional
 **                         - Add _comment parameters
-**          11/29/2018 mem - Call AlterEnteredByUser
+**          11/29/2018 mem - Call Alter_Entered_By_User
 **          11/30/2018 mem - Make _plexExperimentId an output parameter
 **          09/04/2019 mem - If the plex experiment is a parent experiment of an experiment group, copy plex info to the members (fractions) of the experiment group
 **          09/06/2019 mem - When updating a plex experiment that is a parent experiment of an experiment group, also update the members (fractions) of the experiment group
@@ -527,7 +527,7 @@ BEGIN
                             INTO _validValues
                             FROM t_experiment_plex_channel_type_name;
 
-                            _message := _message || _validValues;
+                            _message := format('%s%s', _message, _validValues);
 
                             RAISE EXCEPTION '%', _message;
                         End If;
@@ -660,13 +660,13 @@ BEGIN
 
                             If Not FOUND Then
                                 _message := format('Invalid channel type %s for channel %s; valid values: ',
-                                                 _channelTypeName, _channelNum);
+                                                   _channelTypeName, _channelNum);
 
                                 SELECT string_agg(channel_type_name, ', ' ORDER BY channel_type_name)
                                 INTO _validValues
                                 FROM t_experiment_plex_channel_type_name;
 
-                                _message := _message || _validValues;
+                                _message := format('%s%s', _message, _validValues);
 
                                 RAISE EXCEPTION '%', _message;
                             End If;

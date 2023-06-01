@@ -32,7 +32,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          02/14/2022 mem - Update error messages to show the correct dataset name
 **                         - When _mode is 'debug', update _message to include the run start date and dataset name
-**          02/15/2022 mem - Mention UpdateDatasetInterval and T_Run_Interval in the debug message
+**          02/15/2022 mem - Mention Update_Dataset_Interval and T_Run_Interval in the debug message
 **          02/22/2022 mem - When _mode is 'debug', do not log an error if the dataset already exists
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -113,7 +113,7 @@ BEGIN
 
         _dateLabel := to_char(_bom, 'ddMonyy');
 
-        _datasetName := _instrumentName || '_' || _dateLabel;
+        _datasetName := format('%s_%s', _instrumentName, _dateLabel);
 
         ---------------------------------------------------
         -- Is it OK to make the dataset?
@@ -141,7 +141,7 @@ BEGIN
         SELECT dataset
         INTO _conflictingDataset
         FROM t_dataset
-        WHERE acq_time_start = _bom AND instrument_id = _instID
+        WHERE acq_time_start = _bom AND instrument_id = _instID;
 
         If (_conflictingDataset <> '') Then
             RAISE EXCEPTION 'Dataset "%" has same start time', _conflictingDataset;
@@ -155,7 +155,7 @@ BEGIN
         WHERE (Not (acq_time_start IS NULL)) AND
               (Not (acq_time_end IS NULL)) AND
               _bom BETWEEN acq_time_start AND acq_time_end AND
-              instrument_id = _instID
+              instrument_id = _instID;
 
         If (_conflictingDataset <> '') Then
             RAISE EXCEPTION 'Tracking dataset would overlap existing dataset "%", Dataset ID %', _conflictingDataset, _datasetID;
@@ -177,8 +177,8 @@ BEGIN
             RAISE INFO 'EUS Users:           %', _eusUsersList;
             RAISE INFO 'mode:                %', _mode;
 
-            -- Note that AddUpdateTrackingDataset calls UpdateDatasetInterval after creating the dataset
-            _message := format('Would create dataset with run start %s and name ''%s'', then call UpdateDatasetInterval to update t_run_interval',
+            -- Note that Add_Update_Tracking_Dataset calls Update_Dataset_Interval after creating the dataset
+            _message := format('Would create dataset with run start %s and name ''%s'', then call Update_Dataset_Interval to update t_run_interval',
                                 _runStart, _datasetName);
         End If;
 

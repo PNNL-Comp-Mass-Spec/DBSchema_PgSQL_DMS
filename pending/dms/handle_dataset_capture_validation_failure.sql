@@ -27,10 +27,10 @@ AS $$
 **  Date:   04/28/2011 mem - Initial version
 **          10/29/2014 mem - Now allowing _comment to contain a single punctuation mark, which means the comment should not be updated
 **          11/25/2014 mem - Now using public.append_to_text() to avoid appending duplicate text
-**          02/27/2015 mem - Add space after semicolon when calling AppendToText
+**          02/27/2015 mem - Add space after semicolon when calling Append_To_Text
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          05/22/2017 mem - Change _comment to '' if 'Bad .raw file' yet the dataset comment contains 'Cannot convert .D to .UIMF'
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          12/15/2023 mem - Ported to PostgreSQL
 **

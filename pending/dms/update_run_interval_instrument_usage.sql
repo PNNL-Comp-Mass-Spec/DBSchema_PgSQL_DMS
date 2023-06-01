@@ -14,8 +14,8 @@ AS $$
 **
 **  Desc:
 **      Determines the instrument associated with the given run interval ID
-**      then calls UpdateDatasetIntervalForMultipleInstruments
-**      (which calls UpdateDatasetInterval and UpdateEMSLInstrumentUsageReport)
+**      then calls Update_Dataset_Interval_For_Multiple_Instruments
+**      (which calls Update_Dataset_Interval and Update_EMSL_Instrument_Usage_Report)
 **
 **  Auth:   mem
 **  Date:   02/15/2022 mem - Initial version

@@ -19,14 +19,14 @@ AS $$
 **          03/01/2004 grk - Added unconsume scheduled run
 **          04/07/2006 grk - Got rid of dataset list stuff
 **          04/07/2006 grk - Got rid of CDBurn stuff
-**          05/01/2007 grk - Modified to call modified UnconsumeScheduledRun (Ticket #446)
+**          05/01/2007 grk - Modified to call modified Unconsume_scheduled_run (Ticket #446)
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          05/08/2009 mem - Now checking T_Dataset_Info
-**          12/13/2011 mem - Now passing _callingUser to UnconsumeScheduledRun
+**          12/13/2011 mem - Now passing _callingUser to Unconsume_scheduled_run
 **                         - Now checking T_Dataset_QC and T_Dataset_ScanTypes
 **          02/19/2013 mem - No longer allowing deletion if analysis jobs exist
-**          02/21/2013 mem - Updated call to UnconsumeScheduledRun to refer to _retainHistory by name
-**          05/08/2013 mem - No longer passing _wellplateName and _wellNumber to UnconsumeScheduledRun
+**          02/21/2013 mem - Updated call to Unconsume_scheduled_run to refer to _retainHistory by name
+**          05/08/2013 mem - No longer passing _wellplateName and _wellNumber to Unconsume_scheduled_run
 **          08/31/2016 mem - Delete failed capture jobs for the dataset
 **          10/27/2016 mem - Update T_Log_Entries in DMS_Capture
 **          01/23/2017 mem - Delete jobs from cap.t_tasks

@@ -53,11 +53,11 @@ AS $$
 **          08/05/2013 mem - Now passing _analysisToolNameFilter to predefined_analysis_job_preview (predefined_analysis_jobs) when _infoOnly is true
 **                         - Added parameter _campaignFilter
 **          01/08/2014 mem - Now returning additional debug information when _infoOnly is true
-**          06/18/2014 mem - Now passing default to udfParseDelimitedList
+**          06/18/2014 mem - Now passing default to Parse_Delimited_List
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/03/2017 mem - Exclude datasets associated with the Tracking experiment
 **                         - Exclude datasets of type Tracking
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          03/25/2020 mem - Add parameter _datasetIDFilterList and add support for _showDebug
 **          11/28/2022 mem - Always log an error if schedule_predefined_analysis_jobs has a non-zero return code
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -489,25 +489,23 @@ BEGIN
 
                 If _jobCountAdded > 0 Then
                     UPDATE t_analysis_job
-                    SET comment = Coalesce(comment, '') || ' (missed predefine)'
+                    SET comment = public.append_to_text(comment, '(missed predefine)', 0, ' ')
                     WHERE dataset_id = _datasetID AND
                           created >= _startDate;
                     --
                     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
                     If _updateCount <> _jobCountAdded Then
-                        _message := 'Added ' || _jobCountAdded::text || ' missing predefined analysis job(s) for dataset ' || _datasetName ||
-                                    ', but updated the comment for ' || _updateCount::text || ' job(s); mismatch is unexpected';
+                        _message := format('Added %s missing predefined analysis job(s) for dataset %s, but updated the comment for %s job(s); mismatch is unexpected',
+                                            _jobCountAdded, _datasetName, _updateCount);
 
                         CALL post_log_entry ('Error', _message, 'Add_Missing_Predefined_Jobs');
                     End If;
 
-                    _message := 'Added ' || _jobCountAdded::text || ' missing predefined analysis job';
-                    If _jobCountAdded <> 1 Then
-                        _message := _message || 's';
-                    End If;
-
-                    _message := _message || ' for dataset ' || _datasetName;
+                    _message := format('Added %s missing predefined analysis %s for dataset %s',
+                                        _jobCountAdded,
+                                        public.check_plural(_jobCountAdded, 'job', 'jobs'),
+                                        _datasetName);
 
                     CALL post_log_entry ('Warning', _message, 'Add_Missing_Predefined_Jobs');
 
@@ -551,17 +549,9 @@ BEGIN
     END LOOP;
 
     If _datasetsProcessed > 0 And Not _infoOnly Then
-        _message := 'Added predefined analysis jobs for ' || _datasetsWithNewJobs::text || ' dataset';
-        If _datasetsWithNewJobs <> 1 Then
-            _message := _message || 's';
-        End If;
-
-        _message := _message || ' (processed ' || _datasetsProcessed::text || ' dataset';
-        If _datasetsProcessed <> 1 Then
-            _message := _message || 's';
-        End If;
-
-        _message := _message || ')';
+        _message := format('Added predefined analysis jobs for %s %s (processed %s %s)',
+                            _datasetsWithNewJobs, public.check_plural(_datasetsWithNewJobs, 'dataset', 'datasets'),
+                            _datasetsProcessed,   public.check_plural(_datasetsProcessed,   'dataset', 'datasets'));
 
         If _datasetsWithNewJobs > 0 And Not _infoOnly Then
             CALL post_log_entry ('Normal', _message, 'Add_Missing_Predefined_Jobs');

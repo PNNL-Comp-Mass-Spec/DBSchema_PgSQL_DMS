@@ -34,7 +34,7 @@ AS $$
 **          03/21/2011 mem - Expanded _datasets to varchar(max)
 **          03/14/2012 mem - Now preventing both Tryp_Pig_Bov and Tryp_Pig from being included in _protCollNameList
 **          10/23/2017 mem - Do not add any enzyme-related protein collections if any of the protein collections in _protCollNameList already include contaminants
-**                           - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling ValidateAnalysisJobParameters
+**                           - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling Validate_Analysis_Job_Parameters
 **          07/30/2019 mem - Renamed from ValidateProteinCollectionListForDatasets to ValidateProteinCollectionListForDatasetTable
 **          07/31/2019 mem - Prevent _protCollNameList from containing both HumanContam and Tryp_Pig_Bov
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
@@ -390,9 +390,8 @@ BEGIN
     -- internal standard collections and contaminant collections
     -- are listed first and that the original collection order is preserved
     --
-    -- Note that ValidateAnalysisJobParameters will Call ValidateProteinCollectionParams,
-    -- which calls S_ValidateAnalysisJobProteinParameters in the Protein_Sequences database,
-    -- and that procedure uses StandardizeProteinCollectionList to order the protein collections in a standard manner,
+    -- Note that Validate_Analysis_Job_Parameters will call Validate_Protein_Collection_Params,
+    -- and that procedure uses Standardize_Protein_Collection_List to order the protein collections in a standard manner,
     -- so the order here is not critical
     --
     -- The standard order is:

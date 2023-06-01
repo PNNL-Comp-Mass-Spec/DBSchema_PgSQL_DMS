@@ -73,13 +73,12 @@ BEGIN
     _returnCode := '';
 
     _numStepsSkipped := 0;
-    _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    _message := '';
-    _returnCode:= '';
+
+    _infoOnly := Coalesce(_infoOnly, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);

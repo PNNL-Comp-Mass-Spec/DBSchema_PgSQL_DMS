@@ -19,7 +19,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   03/25/2011 mem - Initial version
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          01/08/2013 mem - Now calling UpdateEUSInstrumentsFromEUSImports
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/12/2021 mem - Add option to update EUS Users for Inactive proposals

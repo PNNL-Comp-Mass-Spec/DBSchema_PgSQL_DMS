@@ -394,7 +394,7 @@ BEGIN
                J.AJ_organismDBName,
                J.AJ_organismID,
                J.AJ_datasetID,
-               'Rerun of job ' || J.job::text AS comment,
+               format('Rerun of job %s', J.job) AS comment,
                J.AJ_owner,
                CASE
                    WHEN Coalesce(_newProteinCollectionList, '') = '' THEN J.AJ_proteinCollectionList
@@ -446,7 +446,7 @@ BEGIN
 
             UPDATE t_analysis_job
             SET comment = CASE WHEN Not _updateOldJobComment THEN Target.comment
-                               ELSE public.append_to_text(Target.comment, _action || ' ' || Src.JobId_New::text, 0, '; ', 512)
+                               ELSE public.append_to_text(Target.comment, format('%s %s', _action, Src.JobId_New), 0, '; ', 512)
                           END,
                 job_state_id = CASE WHEN Not _supersedeOldJob THEN Target.job_state_id
                                     ELSE 14

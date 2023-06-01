@@ -38,7 +38,7 @@ AS $$
 **  Date:   12/05/2006 mem - Initial version (Ticket #337)
 **          12/11/2006 mem - Renamed from GetSequestParamFileCrosstab to GetParamFileCrosstab (Ticket #342)
 **                         - Added parameters _parameterFileTypeName and _showValidOnly
-**                         - Updated to call PopulateParamFileInfoTableSequest and PopulateParamFileModInfoTable
+**                         - Updated to call Populate_Param_File_Info_Table_Sequest and Populate_Param_File_Mod_Info_Table
 **          04/07/2008 mem - Added parameters _previewSql, _massModFilterTextColumn, and _massModFilterText
 **          05/19/2009 mem - Now returning column Job_Usage_Count
 **          02/12/2010 mem - Expanded _parameterFileFilter to varchar(255)

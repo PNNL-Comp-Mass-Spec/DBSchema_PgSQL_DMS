@@ -15,16 +15,16 @@ AS $$
 **      Updates the parameters in T_Job_Parameters for the specified job
 **
 **
-**  Note:    The job parameters come from the DMS5 database (via CreateParametersForJob
-**          and then GetJobParamTable), and not from the T_Job_Parameters table local to this DB
-**
+**      Note: The job parameters come from the public schema tables
+**            (via Create_Parameters_For_Job and then Get_Job_Param_Table),
+**            and not from the T_Job_Parameters table local to this DB
 **
 **  Arguments:
 **    _settingsFileOverride   When defined, will use this settings file name instead of the one obtained with public.v_get_pipeline_job_parameters (in GetJobParamTable)
 **
 **  Auth:   mem
 **  Date:   01/24/2009
-**          02/08/2009 grk - Modified to call CreateParametersForJob
+**          02/08/2009 grk - Modified to call Create_Parameters_For_Job
 **          01/05/2010 mem - Added parameter _settingsFileOverride
 **          03/21/2011 mem - Now calling UpdateInputFolderUsingSourceJobComment
 **          04/04/2011 mem - Now calling UpdateInputFolderUsingSpecialProcessingParam

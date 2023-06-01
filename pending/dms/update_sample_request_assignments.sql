@@ -18,14 +18,14 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   06/14/2005
-**          09/02/2011 mem - Now calling PostUsageLogEntry
 **          07/26/2005 grk - Added 'req_assignment'
 **          08/02/2005 grk - Assignement also sets state to 'open'
 **          08/14/2005 grk - Update state changed date
 **          03/14/2006 grk - Added stuff for estimated completion date
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          02/20/2012 mem - Now using a temporary table to track the requests to update
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
-**          06/18/2014 mem - Now passing default to udfParseDelimitedIntegerList
+**          06/18/2014 mem - Now passing default to Parse_Delimited_Integer_List
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/02/2022 mem - Fix bug that treated priority as an integer; instead, should be Normal or High

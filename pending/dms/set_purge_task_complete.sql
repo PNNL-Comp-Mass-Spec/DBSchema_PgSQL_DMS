@@ -24,8 +24,8 @@ AS $$
 **          01/26/2011 grk - Modified actions for _completionCode = 2 to bump holdoff and call broker
 **          01/28/2011 mem - Changed holdoff bump from 12 to 24 hours when _completionCode = 2
 **          02/01/2011 mem - Added support for _completionCode 3
-**          09/02/2011 mem - Now updating AJ_Purged for jobs associated with this dataset
-**                         - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now updating t_analysis_job.purged for jobs associated with this dataset
+**                         - Now calling Post_Usage_Log_Entry
 **          01/27/2012 mem - Now bumping AS_purge_holdoff_date by 90 minutes when _completionCode = 3
 **          04/17/2012 mem - Added support for _completionCode = 4 (drive missing)
 **          06/12/2012 mem - Added support for _completionCode = 5 and _completionCode = 6  (corresponding to Archive States 14 and 15)

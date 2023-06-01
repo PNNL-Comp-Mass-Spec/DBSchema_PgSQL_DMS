@@ -239,9 +239,9 @@ BEGIN
         End If;
 
         If _sourceStatus <> 'Active' Then
-            _requestName := _sourceRequestName || '_f01%';
+            _requestName := format('%s_f01%%', _sourceRequestName);
 
-            If Exists (SELECT * from t_requested_run WHERE request_name Like _requestName) Then
+            If Exists (SELECT * FROM t_requested_run WHERE request_name LIKE _requestName) Then
                 RAISE EXCEPTION 'Fraction-based requested runs have already been created for this requested run; nothing to do';
             Else
                 RAISE EXCEPTION 'Source requested run is not active; cannot continue';
@@ -369,7 +369,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := format('ValidateInstrumentGroupAndDatasetType for %s', _msType);
+            _debugMsg := format('Validate_Instrument_Group_and_Dataset_Type for %s', _msType);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
@@ -381,7 +381,7 @@ BEGIN
                         _returnCode => _returnCode);                    -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateInstrumentGroupAndDatasetType: %', _msg;
+            RAISE EXCEPTION 'Validate_Instrument_Group_and_Dataset_Type: %', _msg;
         End If;
 
         ---------------------------------------------------
@@ -465,10 +465,10 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := 'CALL ValidateEUSUsage with ' ||;
-                'type ' || Coalesce(_eusUsageType, '?Null?') || ', ' ||
-                'proposal ' || Coalesce(_eusProposalID, '?Null?') || ', and ' ||
-                'user list ' || Coalesce(_eusUserID, '?Null?')
+            _debugMsg := format('Call validate_eus_usage with type %s, proposal %s, and user list %s',
+                                Coalesce(_eusUsageType, '?Null?'),
+                                Coalesce(_eusProposalID, '?Null?'),
+                                Coalesce(_eusUserID, '?Null?'));
 
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
@@ -594,9 +594,9 @@ BEGIN
 
         If Not _autoPopulateUserListIfBlank Then
             If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then
-                _message := public.append_to_text(_message, 'Warning: Work Package ' || _workPackage || ' is deactivated', 0, '; ', 1024);
+                _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage),        0, '; ', 1024);
             ElsIf Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And charge_code_state = 0) Then
-                _message := public.append_to_text(_message, 'Warning: Work Package ' || _workPackage || ' is likely deactivated', 0, '; ', 1024);
+                _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage), 0, '; ', 1024);
             End If;
         End If;
 

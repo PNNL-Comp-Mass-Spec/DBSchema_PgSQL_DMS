@@ -14,7 +14,7 @@ AS $$
 **      Get values for misc fields from the sample prep
 **      request associated with the given experiment (if there is one)
 **
-**      This procedure is used by AddUpdateRequestedRun and
+**      This procedure is used by Add_Update_Requested_Run and
 **      the error messages assume that this is the case
 **
 **  Auth:   grk

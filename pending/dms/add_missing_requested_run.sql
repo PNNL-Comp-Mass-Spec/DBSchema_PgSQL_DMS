@@ -20,7 +20,7 @@ AS $$
 **      The requested run will be named 'AutoReq_DatasetName'
 **
 **
-**      Note that this procedure is similar to AddRequestedRunToExistingDataset,
+**      Note that this procedure is similar to Add_Requested_Run_To_Existing_Dataset,
 **      though that procedure has parameter _templateRequestID which defines
 **      an existing requested run ID from which to lookup EUS information
 **
@@ -30,11 +30,11 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   10/20/1010 mem - Initial version
-**          05/08/2013 mem - Now setting _wellplateName and _wellNumber to Null when calling AddUpdateRequestedRun
-**          01/29/2016 mem - Now calling GetWPforEUSProposal to get the best work package for the given EUS Proposal
-**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling AddUpdateRequestedRun
-**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling AddUpdateRequestedRun
-**          11/25/2022 mem - Update call to AddUpdateRequestedRun to use new parameter name
+**          05/08/2013 mem - Now setting _wellplateName and _wellNumber to Null when calling Add_Update_Requested_Run
+**          01/29/2016 mem - Now calling Get_WP_for_EUS_Proposal to get the best work package for the given EUS Proposal
+**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling Add_Update_Requested_Run
+**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
+**          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
 **          12/15/2023 mem - Ported to PostgreSQL
 **

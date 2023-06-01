@@ -25,7 +25,7 @@ AS $$
 **          12/21/2009 grk - Commented out requirement that cell cultures belong to same campaign
 **          02/20/2012 mem - Now using a temporary table to track the cell culture names in _cellCultureList
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          11/29/2017 mem - Remove parameter _cellCultureList and use temporary table Tmp_Experiment_to_Biomaterial_Map instead
 **                           Add parameter _updateCachedInfo
 **          12/15/2023 mem - Ported to PostgreSQL

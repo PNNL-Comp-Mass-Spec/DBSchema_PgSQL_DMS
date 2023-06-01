@@ -34,8 +34,8 @@ AS $$
 **                         - Add call to UpdateCachedDatasetInstruments
 **          10/19/2020 mem - Rename the instrument group column to instrument_group
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
-**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling AddUpdateRequestedRun
-**          11/25/2022 mem - Rename variable and update call to AddUpdateRequestedRun to use new parameter name
+**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
+**          11/25/2022 mem - Rename variable and update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
 **          12/15/2023 mem - Ported to PostgreSQL
 **

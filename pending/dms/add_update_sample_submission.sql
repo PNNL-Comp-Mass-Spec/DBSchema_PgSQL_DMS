@@ -220,9 +220,9 @@ BEGIN
                 -- Add containers (as needed)
                 --
                 If _newContainerComment = '' Then
-                    _comment := '(created via sample submission ' || _id::text || ')';
+                    _comment := format('(created via sample submission %s)', _id);
                 Else
-                    _comment := _newContainerComment || ' (sample submission ' || _id::text || ')';
+                    _comment := format('%s (sample submission %s)', _newContainerComment, _id);
                 End If;
 
                 CALL assure_material_containers_exist (

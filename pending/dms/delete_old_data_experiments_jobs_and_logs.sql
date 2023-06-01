@@ -38,11 +38,11 @@ AS $$
 **          05/28/2015 mem - Removed T_Analysis_Job_Processor_Group_Associations, since deprecated
 **          10/28/2015 mem - Added T_Prep_LC_Run_Dataset and removed T_Analysis_Job_Annotations and T_Dataset_Annotations
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/04/2017 mem - Add T_Experiment_Reference_Compounds
-**          12/06/2018 mem - Call UpdateExperimentGroupMemberCount to update T_Experiment_Groups
+**          12/06/2018 mem - Call update_experiment_group_member_count to update T_Experiment_Groups
 **          08/15/2022 mem - Use new column names
 **          08/26/2022 mem - Use new column name in T_Log_Entries
 **          12/15/2023 mem - Ported to PostgreSQL

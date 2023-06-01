@@ -143,7 +143,7 @@ BEGIN
             WHERE MessageID > _messageID
             ORDER BY MessageID
         LOOP
-            _matchIndex := Position('; ' || _messageText In _comment);
+            _matchIndex := Position(format('; %s', _messageText) In _comment);
 
             If _matchIndex = 0 Then
                 _matchIndex := Position(_messageText In _comment);

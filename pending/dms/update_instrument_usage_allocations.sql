@@ -298,7 +298,7 @@ BEGIN
         End If;
 
         -----------------------------------------------------------
-        -- Call UpdateInstrumentUsageAllocationsWork to perform the work
+        -- Call update_instrument_usage_allocations_work to perform the work
         -----------------------------------------------------------
         --
         CALL update_instrument_usage_allocations_work (_fy, _message => _message, _callingUser => _callingUser, _infoOnly => _infoOnly);

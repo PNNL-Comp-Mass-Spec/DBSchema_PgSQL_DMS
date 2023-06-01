@@ -34,7 +34,7 @@ AS $$
 **          03/07/2012 grk - Changed data type of _itemList from varchar(max) to text
 **          12/31/2013 mem - Added support for EUS Proposals
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          04/07/2016 mem - Switch to udfParseDelimitedList
+**          04/07/2016 mem - Switch to Parse_Delimited_List
 **          05/18/2016 mem - Add parameter _infoOnly
 **          10/19/2016 mem - Update Tmp_DataPackageItems to use an integer field for data package ID
 **          11/14/2016 mem - Add parameter _removeParents

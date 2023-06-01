@@ -271,9 +271,9 @@ BEGIN
         End If;
 
         If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackageNumber And deactivated = 'Y') Then
-            _message := public.append_to_text(_message, 'Warning: Work Package ' || _workPackageNumber || ' is deactivated', 0, '; ', 512);
+            _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackageNumber),        0, '; ', 512);
         ElsIf Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackageNumber And charge_code_state = 0) Then
-            _message := public.append_to_text(_message, 'Warning: Work Package ' || _workPackageNumber || ' is likely deactivated', 0, '; ', 512);
+            _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackageNumber), 0, '; ', 512);
         End If;
 
         -- Make sure the Work Package is capitalized properly

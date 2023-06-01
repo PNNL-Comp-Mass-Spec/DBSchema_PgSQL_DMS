@@ -70,13 +70,13 @@ AS $$
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
 **          06/13/2013 mem - Added _vialingConc and _vialingVol
                            - Now validating _workPackageNumber against T_Charge_Code
-**          06/18/2014 mem - Now passing default to udfParseDelimitedList
+**          06/18/2014 mem - Now passing default to Parse_Delimited_List
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          05/19/2017 mem - Use _logErrors to toggle logging errors caught by the try/catch block
-**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling AddUpdateRequestedRun
+**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling Add_Update_Requested_Run
 **          12/12/2017 mem - Add _stagingLocation (points to T_Material_Locations)
 **          05/29/2021 mem - Add parameters to allow also creating a batch
 **          06/01/2021 mem - Show names of the new requests when previewing updates
@@ -85,10 +85,10 @@ AS $$
 **          07/09/2021 mem - Fix bug handling instrument group name when _batchName is blank
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          02/17/2022 mem - Update operator username warning
-**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling AddUpdateRequestedRun
-**          11/25/2022 mem - Update call to AddUpdateRequestedRun to use new parameter name
+**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
+**          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          02/14/2023 mem - Use new parameter names for validate_requested_run_batch_params
-**          02/17/2023 mem - Use new parameter name when calling AddUpdateRequestedRunBatch
+**          02/17/2023 mem - Use new parameter name when calling Add_Update_Requested_RunBatch
 **          02/27/2023 mem - Use new argument name, _requestName
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -189,7 +189,7 @@ BEGIN
 
         ---------------------------------------------------
         -- Validate the work package
-        -- This validation also occurs in AddUpdateRequestedRun but we want to validate it now before we enter the while loop
+        -- This validation also occurs in Add_Update_Requested_Run but we want to validate it now before we enter the while loop
         ---------------------------------------------------
 
         If _workPackage <> '(lookup)' Then
@@ -354,9 +354,14 @@ BEGIN
             If _returnCode = '' And _mode = 'add' Then
                 UPDATE Tmp_ExperimentsToProcess
                 SET RequestID = _request
-                WHERE EntryID = _entryID
+                WHERE EntryID = _entryID;
 
-                _requestedRunList := _requestedRunList || _request::text || ', ';
+                If _requestedRunList = '' Then
+                    _requestedRunList := format('%s', _request);
+                Else
+                    _requestedRunList := format('%s, %s', _requestedRunList, _request);
+                End If
+
             End If;
 
             If _resolvedInstrumentInfo = '' And _resolvedInstrumentInfoCurrent <> '' Then

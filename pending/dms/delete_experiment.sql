@@ -25,7 +25,7 @@ AS $$
 **          02/26/2010 mem - Merged T_Requested_Run_History with T_Requested_Run
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/06/2018 mem - Call UpdateExperimentGroupMemberCount to update T_Experiment_Groups
+**          12/06/2018 mem - Call update_experiment_group_member_count to update T_Experiment_Groups
 **          09/10/2019 mem - Delete from T_Experiment_Plex_Members if mapped to Plex_Exp_ID
 **                         - Prevent deletion if the experiment is a plex channel in T_Experiment_Plex_Members
 **                         - Add _infoOnly

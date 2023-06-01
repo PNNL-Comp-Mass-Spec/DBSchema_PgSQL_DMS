@@ -23,13 +23,13 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   06/04/2013 mem - Initial version
-**          06/05/2013 mem - Now calling AutoAddChargeCodeUsers
+**          06/05/2013 mem - Now calling Auto_Add_Charge_Code_Users
 **          06/06/2013 mem - Now caching column DEACT_SW, which is 'Y' when the charge code is Deactivated (can also be 'R'; don't know what that means)
 **          12/03/2013 mem - Now changing Charge_Code_State to 0 for Deactivated work packages
 **                         - Now populating Activation_State when inserting new rows via the merge
 **          08/13/2015 mem - Added field _explicitChargeCodeList
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          07/11/2017 mem - Use computed column HID_Number in T_Users
 **          02/08/2022 mem - Change tabs to spaces and update comments
 **          07/21/2022 mem - Also examine SubAccount_Inactive_Date when considering changing Charge_Code_State from 0 to 1 for work packages that are no longer Deactivated

@@ -58,10 +58,10 @@ AS $$
 **    _infoOnly     Set to true to preview the changes that would be made
 **
 **  Auth:   grk
-**          09/02/2011 mem - Now calling PostUsageLogEntry
 **  Date:   02/20/2010 grk - Initial release
 **          03/17/2010 grk - Expanded blacklist
 **          03/22/2010 grk - Allow dataset id
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          12/08/2011 mem - Added additional blacklisted factor names: Experiment, Dataset, Name, and Status
 **          12/09/2011 mem - Now checking for invalid Requested Run IDs
 **          12/15/2011 mem - Added support for the "type" attribute in the <id> tag

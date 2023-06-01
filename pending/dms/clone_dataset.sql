@@ -29,9 +29,9 @@ AS $$
 **          09/25/2014 mem - Updated T_Job_Step_Dependencies to use Job
 **                           Removed the Machine column from T_Job_Steps
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling AddUpdateRequestedRun
-**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling AddUpdateRequestedRun
-**          11/25/2022 mem - Update call to AddUpdateRequestedRun to use new parameter name
+**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling Add_Update_Requested_Run
+**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
+**          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -99,7 +99,7 @@ BEGIN
     -- Make sure the target dataset does not already exist
     ---------------------------------------------------
 
-    _datasetNew := _Dataset || _suffix;
+    _datasetNew := format('%s%s', _dataset, _suffix);
 
     If Exists (SELECT * FROM t_dataset WHERE dataset = _datasetNew) Then
         _message := format('Target dataset already exists: %s', _datasetNew);
@@ -147,7 +147,7 @@ BEGIN
                ON RR.eus_usage_type_id = EUT.request_id
         WHERE DS.dataset = _dataset;
 
-        _requestNameNew := format('AutoReq_%s', _DatasetNew);
+        _requestNameNew := format('AutoReq_%s', _datasetNew);
 
         If _infoOnly Then
         -- <a>
@@ -199,7 +199,7 @@ BEGIN
         )
         SELECT _datasetNew AS Dataset_Name,
             operator_username,
-            'Cloned from dataset ' || _dataset AS Comment,
+            format('Cloned from dataset %s', _dataset) AS Comment,
             CURRENT_TIMESTAMP AS Created,
             instrument_id,
             lc_column_ID,
@@ -227,7 +227,7 @@ BEGIN
         INTO _datasetIDNew;
 
         -- Create a requested run for the dataset
-        -- (code is from AddUpdateDataset)
+        -- (code is from add_update_dataset)
 
         CALL public.add_update_requested_run (
                                 _requestName => _requestNameNew,
@@ -289,7 +289,7 @@ BEGIN
         -- Possibly create a Dataset Archive task
         --
         If _createDatasetArchiveTask Then
-            CALL AddArchiveDataset (_datasetIDNew);
+            CALL Add_Archive_Dataset (_datasetIDNew);
         Else
             RAISE INFO 'You should manually create a dataset archive task using: CALL Add_Archive_Dataset %', _datasetIDNew;
         End If;
@@ -421,7 +421,7 @@ BEGIN
                    CURRENT_TIMESTAMP AS Start,
                    CURRENT_TIMESTAMP AS Finish,
                    0 AS Archive_Busy,
-                   'Cloned from dataset ' || _dataset AS Comment
+                   format('Cloned from dataset %s', _dataset) AS Comment
             FROM cap.t_tasks
             WHERE Dataset = _dataset AND
                   Script LIKE '%capture%'
@@ -499,7 +499,7 @@ BEGIN
 
             CALL post_log_entry ('Normal', _jobMessage, 'Clone_Dataset');
 
-            _message := _message || '; ' || _jobMessage;
+            _message := format('%s; %s', _message, _jobMessage);
         End If;
 
     EXCEPTION

@@ -156,7 +156,7 @@ BEGIN
 
     If _addMissingFilterCriteria Then
         -----------------------------------------
-        -- Call AddMissingFilterCriteria to add any missing criteria
+        -- Call Add_Missing_Filter_Criteria to add any missing criteria
         -----------------------------------------
         --
         CALL add_missing_filter_criteria (_destFilterSetID);

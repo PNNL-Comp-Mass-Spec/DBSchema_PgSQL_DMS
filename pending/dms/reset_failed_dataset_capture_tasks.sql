@@ -32,7 +32,7 @@ AS $$
 **          11/02/2016 mem - Check for Folder size changed and File size changed
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          08/08/2017 mem - Call RemoveCaptureErrorsFromString instead of RemoveFromString
+**          08/08/2017 mem - Call Remove_Capture_Errors_From_String instead of Remove_From_String
 **          08/16/2017 mem - Look for failed Openchrom conversion tasks
 **                         - Prevent dataset from being automatically reset more than 4 times
 **          08/16/2017 mem - Look for 'Authentication failure: The user name or password is incorrect'

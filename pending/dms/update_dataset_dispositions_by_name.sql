@@ -23,8 +23,8 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   10/15/2008 grk - Initial release (Ticket #582)
-**          08/19/2010 grk - Try-catch for error handling
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          08/19/2010 grk - Use try-catch for error handling
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          02/20/2013 mem - Expanded _message to varchar(1024)
 **          02/21/2013 mem - Now requiring _recycleRequest to be yes or no
 **          02/23/2016 mem - Add set XACT_ABORT on

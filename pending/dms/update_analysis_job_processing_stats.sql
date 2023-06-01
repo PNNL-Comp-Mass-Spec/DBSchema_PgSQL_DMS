@@ -31,11 +31,11 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   06/02/2009 mem - Initial version
-**          09/02/2011 mem - Now setting AJ_Purged to 0 when job is complete, no-export, or failed
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now setting t_analysis_job.purged to 0 when job is complete, no-export, or failed
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/18/2012 mem - Now preventing addition of _jobCommentAddnl to the comment field if it already contains _jobCommentAddnl
-**          06/15/2015 mem - Use function AppendToText to concatenate _jobCommentAddnl to comment
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/15/2015 mem - Use function Append_To_Text to concatenate _jobCommentAddnl to comment
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          08/03/2020 mem - Update T_Cached_Dataset_Links.MASIC_Directory_Name when a MASIC job finishes successfully
 **          12/15/2023 mem - Ported to PostgreSQL
 **

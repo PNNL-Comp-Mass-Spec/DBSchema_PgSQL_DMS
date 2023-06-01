@@ -67,7 +67,7 @@ AS $$
 **  Arguments:
 **    _datasetID             If this value is 0, will determine the dataset name using the contents of _datasetInfoXML
 **    _datasetInfoXML        XML describing the properties of a single dataset
-**    _validateDatasetType   If true, will call ValidateDatasetType after updating T_Dataset_ScanTypes
+**    _validateDatasetType   If true, will call Validate_Dataset_Type after updating T_Dataset_ScanTypes
 **
 **  Auth:   mem
 **  Date:   05/03/2010 mem - Initial version

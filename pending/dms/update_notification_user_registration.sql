@@ -29,7 +29,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   04/03/2010
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          06/11/2012 mem - Renamed _dataset to _datasetNotReleased
 **                         - Added _datasetReleased
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

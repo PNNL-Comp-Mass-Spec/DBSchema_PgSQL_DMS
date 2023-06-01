@@ -45,7 +45,7 @@ BEGIN
            posted_by = 'RebuildFragmentedIndices' AND type = 'Normal' AND message LIKE 'Reindexed % due to Fragmentation%'
            );
 
-    -- Copy entries into the historic log database
+    -- Copy entries into the historic log tables
     --
     INSERT INTO logdms.t_log_entries (entry_id, posted_by, Entered, type, message)
     SELECT entry_id,

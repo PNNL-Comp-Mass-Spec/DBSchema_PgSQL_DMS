@@ -33,17 +33,17 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Lookup the parameters needed to call AddDataFolderCreateTask
+    -- Lookup the parameters needed to call s_add_data_folder_create_task
     ---------------------------------------------------
 
     SELECT
         _packageID = ID,
         _pathSharedRoot  = Path_Shared_Root ,
         _pathFolder = Path_Folder
-    FROM    V_OSM_Package_Paths
+    FROM V_OSM_Package_Paths
     WHERE ID = _id
 
-    CALL s_add_data_folder_create_task
+    CALL sw.add_data_folder_create_task
                     _pathLocalRoot = _pathLocalRoot,
                     _pathSharedRoot = _pathSharedRoot,
                     _folderPath = _pathFolder,

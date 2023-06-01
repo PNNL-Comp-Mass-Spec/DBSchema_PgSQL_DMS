@@ -53,7 +53,7 @@ AS $$
 **          11/16/2016 mem - Call update_cached_requested_run_eus_users to update T_Active_Requested_Run_Cached_EUS_Users
 **          03/07/2017 mem - Append _Recycled to new requests created when _recycleRequest is yes
 **                         - Remove leading space in message ' (recycled from dataset ...'
-**          06/12/2018 mem - Send _maxLength to AppendToText
+**          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          06/14/2019 mem - Change cart to Unknown when making the request active again
 **          10/23/2021 mem - If recycling a request with queue state 3 (Analyzed), change the queue state to 2 (Assigned)
 **          12/15/2023 mem - Ported to PostgreSQL

@@ -32,21 +32,21 @@ AS $$
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version
 **          11/21/2012 mem - No longer passing work package to AddUpdateAnalysisJobRequest
-**                         - Now calling PostUsageLogEntry
+**                         - Now calling Post_Usage_Log_Entry
 **          12/13/2012 mem - Added parameter _previewMode, which indicates what should be passed to AddUpdateAnalysisJobRequest for _mode
 **          01/11/2013 mem - Renamed MSGF-DB search tool to MSGFPlus
-**          03/05/2013 mem - Now passing _autoRemoveNotReleasedDatasets to ValidateAnalysisJobRequestDatasets
+**          03/05/2013 mem - Now passing _autoRemoveNotReleasedDatasets to validate_analysis_job_request_datasets
 **          04/09/2013 mem - Now automatically updating the settings file to the MSConvert equivalent if processing QExactive data
 **          03/30/2015 mem - Now passing _toolName to AutoUpdateSettingsFileToCentroid
 **                         - Now using T_Dataset_Info.ProfileScanCount_MSn to look for datasets with profile-mode MS/MS spectra
-**          04/23/2015 mem - Now passing _toolName to ValidateAnalysisJobRequestDatasets
+**          04/23/2015 mem - Now passing _toolName to validate_analysis_job_request_datasets
 **          03/21/2016 mem - Add support for column Enabled
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/13/2017 mem - Update grammar
 **                         - Exclude logging some try/catch errors
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/06/2017 mem - Set _allowNewDatasets to true when calling ValidateAnalysisJobRequestDatasets
+**          12/06/2017 mem - Set _allowNewDatasets to true when calling validate_analysis_job_request_datasets
 **          03/19/2021 mem - Remove obsolete parameter from call to AddUpdateAnalysisJobRequest
 **          06/06/2022 mem - Use new argument name when calling AddUpdateAnalysisJobRequest
 **          06/30/2022 mem - Rename parameter file argument

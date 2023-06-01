@@ -26,12 +26,12 @@ AS $$
 **          04/08/2008 grk - Added handling for separation field (Ticket #658)
 **          03/26/2009 grk - Added MRM transition list attachment (Ticket #727)
 **          02/26/2010 grk - Merged T_Requested_Run_History with T_Requested_Run
-**          11/29/2011 mem - Now calling AddRequestedRunToExistingDataset if re-using an existing request
-**          12/05/2011 mem - Updated call to AddRequestedRunToExistingDataset to include _datasetName
-**                         - Now copying batch and blocking info from the existing request to the new auto-request created by AddRequestedRunToExistingDataset
+**          11/29/2011 mem - Now calling Add_Requested_Run_To_Existing_Dataset if re-using an existing request
+**          12/05/2011 mem - Updated call to Add_Requested_Run_To_Existing_Dataset to include _datasetName
+**                         - Now copying batch and blocking info from the existing request to the new auto-request created by Add_Requested_Run_To_Existing_Dataset
 **          12/12/2011 mem - Updated log message when re-using an existing request
-**          12/14/2011 mem - Added parameter _callingUser, which is passed to AddRequestedRunToExistingDataset and alter_event_log_entry_user
-**          11/16/2016 mem - call update_cached_requested_run_eus_users to update T_Active_Requested_Run_Cached_EUS_Users
+**          12/14/2011 mem - Added parameter _callingUser, which is passed to Add_Requested_Run_To_Existing_Dataset and alter_event_log_entry_user
+**          11/16/2016 mem - Call update_cached_requested_run_eus_users to update T_Active_Requested_Run_Cached_EUS_Users
 **          11/21/2016 mem - Add parameter _logDebugMessages
 **          05/22/2017 mem - No longer abort the addition if a request already exists named AutoReq_DatasetName
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -103,7 +103,7 @@ BEGIN
             FROM t_dataset
             WHERE dataset_id = _existingDatasetID;
 
-            -- Change DatasetID to Null for this request before calling AddRequestedRunToExistingDataset
+            -- Change DatasetID to Null for this request before calling Add_Requested_Run_To_Existing_Dataset
             UPDATE t_requested_run
             SET dataset_id = Null
             WHERE request_id = _requestID;
@@ -149,9 +149,8 @@ BEGIN
 
             Else
 
-                _logMessage := format('Tried to add a new automatic requested run for dataset "%s" since re-using request %s; ' ||
-                                      'however, add_requested_run_to_existing_dataset was unable to auto-create a new Requested Run',
-                                        _existingDatasetName, _requestID);
+                _logMessage := format('Tried to add a new automatic requested run for dataset "%s" since re-using request %s; however, add_requested_run_to_existing_dataset was unable to auto-create a new Requested Run',
+                                      _existingDatasetName, _requestID);
 
                 CALL post_log_entry ('Error', _logMessage, 'Consume_Scheduled_Run');
 

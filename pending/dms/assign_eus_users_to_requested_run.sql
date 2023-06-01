@@ -14,7 +14,7 @@ AS $$
 **  Desc:
 **      Associates the given list of EUS users with given requested run
 **
-**      The calling procedure should call ValidateEUSUsage before calling this procedure
+**      The calling procedure should call validate_eus_usage before calling this procedure
 **
 **  Arguments:
 **    _eusProposalID   Only used for logging
@@ -23,8 +23,8 @@ AS $$
 **  Auth:   grk
 **  Date:   02/21/2006
 **          11/09/2006 grk - Added numeric test for eus user ID (Ticket #318)
-**          11/16/2016 mem - Use udfParseDelimitedIntegerList to parse _eusUsersList
 **          07/11/2007 grk - Factored out EUS proposal validation (Ticket #499)
+**          11/16/2016 mem - Use Parse_Delimited_Integer_List to parse _eusUsersList
 **          03/24/2017 mem - Validate user IDs in _eusUsersList
 **          12/15/2023 mem - Ported to PostgreSQL
 **

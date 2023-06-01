@@ -31,7 +31,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   12/02/2015 mem - Initial version
-**          11/19/2018 mem - Pass 0 to the _maxRows parameter to udfParseDelimitedListOrdered
+**          11/19/2018 mem - Pass 0 to the _maxRows parameter to Parse_Delimited_ListOrdered
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

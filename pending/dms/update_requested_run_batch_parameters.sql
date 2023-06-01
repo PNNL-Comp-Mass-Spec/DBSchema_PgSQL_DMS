@@ -31,8 +31,8 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   02/09/2010
-**          09/02/2011 mem - Now calling PostUsageLogEntry
 **          02/16/2010 grk - Eliminated batchID from arg list
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          12/15/2011 mem - Now updating _callingUser to session_user if empty
 **          03/28/2013 grk - Added handling for cart, instrument
 **          11/07/2016 mem - Add optional logging via post_log_entry
@@ -45,7 +45,7 @@ AS $$
 **          03/04/2019 mem - Update Last_Ordered if the run order changes
 **          10/19/2020 mem - Rename the instrument group column to instrument_group
 **          01/24/2023 mem - Recognize 'Run_Order' for run order
-**          02/11/2023 mem - Update the usage message sent to PostUsageLogEntry
+**          02/11/2023 mem - Update the usage message sent to Post_Usage_Log_Entry
 **          03/10/2023 mem - Call update_cached_requested_run_batch_stats to update T_Cached_Requested_Run_Batch_Stats
 **          12/15/2023 mem - Ported to PostgreSQL
 **

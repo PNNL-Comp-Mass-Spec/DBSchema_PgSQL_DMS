@@ -42,7 +42,7 @@ AS $$
 **          05/08/2013 mem - Now setting _wellplateName and _wellNumber to Null instead of 'na'
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling AddUpdateRequestedRun
+**          06/13/2017 mem - Rename _operPRN to _requestorPRN when calling Add_Update_Requested_Run
 **                         - Use SCOPE_IDENTITY()
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
@@ -50,9 +50,9 @@ AS $$
 **          02/25/2021 mem - Use ReplaceCharacterCodes to replace character codes with punctuation marks
 **                         - Use RemoveCrLf to replace linefeeds with semicolons
 **          02/17/2022 mem - Rename variables, adjust formatting, convert tabs to spaces
-**          02/18/2022 mem - Call AddUpdateRequestedRun if the EUS usage info is updated
-**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling AddUpdateRequestedRun
-**          11/25/2022 mem - Update call to AddUpdateRequestedRun to use new parameter name
+**          02/18/2022 mem - Call Add_Update_Requested_Run if the EUS usage info is updated
+**          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
+**          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          11/27/2022 mem - Remove query artifact that was used for debugging
 **          12/24/2022 mem - Fix logic error evaluating _runDuration
 **          02/27/2023 mem - Use new argument name, _requestName
@@ -466,7 +466,7 @@ BEGIN
                 CALL alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser);
             End If;
 
-            -- Call AddUpdateRequestedRun if the EUS info has changed
+            -- Call Add_Update_Requested_Run if the EUS info has changed
 
             SELECT RR.request_name,
                    RR.eus_proposal_id,
@@ -533,7 +533,7 @@ BEGIN
             ElsIf _message = _warning Then
                 _message := _warningWithPrefix;
             Else
-                _message := _warningWithPrefix || '; ' || _message;
+                _message := format('%s; %s', _warningWithPrefix, _message);
             End If;
         End If;
 

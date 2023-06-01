@@ -214,7 +214,7 @@ BEGIN
         --
         --
         If Not Exists (SELECT * FROM t_settings_files WHERE settings_file_id = _settingsFileID) Then
-            _message := 'Settings file settings_file_id ' || Cast(_settingsFileID As text)|| ' not found in database; cannot update';
+            _message := format('Settings file settings_file_id %s not found in database; cannot update', _settingsFileID);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5210';

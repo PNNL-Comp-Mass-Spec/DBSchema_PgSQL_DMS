@@ -52,7 +52,7 @@ AS $$
 **  Auth:   grk
 **  Date:   01/26/2001
 **          07/24/2001 grk - Added Archive Path setup
-**          03/12/2003 grk - Modified to call AddUpdateStorage:
+**          03/12/2003 grk - Modified to call Add_Update_Storage:
 **          11/06/2003 grk - Modified to handle new ID for archive path independent of instrument id
 **          01/30/2004 grk - Modified to return message (grk)
 **          02/24/2004 grk - Fixed problem inserting first entry into empty tables
@@ -77,7 +77,7 @@ AS $$
 **          09/02/2016 mem - Archive path is now adms.emsl.pnl.gov
 **          05/03/2019 mem - Add the source machine to T_Storage_Path_Hosts
 **          10/27/2020 mem - Populate Auto_SP_URL_Domain and store https:// in T_Storage_Path_Hosts.URL_Prefix
-**                           Pass _urlDomain to AddUpdateStorage
+**                           Pass _urlDomain to Add_Update_Storage
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -142,7 +142,7 @@ BEGIN
     -- Derive shared path name
     ---------------------------------------------------
     --
-    _archiveNetworkSharePath := '\' || REPLACE(REPLACE(_archivePath, 'archive', 'adms.emsl.pnl.gov'), '/', '\');
+    _archiveNetworkSharePath := format('\%s', REPLACE(REPLACE(_archivePath, 'archive', 'adms.emsl.pnl.gov'), '/', '\'));
 
     ---------------------------------------------------
     -- Resolve Yes/No parameters to 0 or 1
@@ -172,12 +172,12 @@ BEGIN
         If Coalesce(_autoSPVolNameClient, '') <> '' AND _autoSPVolNameClient NOT LIKE '%\' Then
             -- Auto-add a slash;
         End If;
-            _autoSPVolNameClient := _autoSPVolNameClient || '\';
+            _autoSPVolNameClient := format('%s\', _autoSPVolNameClient);
 
         If Coalesce(_autoSPVolNameServer, '') <> '' AND _autoSPVolNameServer NOT LIKE '%\' Then
             -- Auto-add a slash;
         End If;
-            _autoSPVolNameServer := _autoSPVolNameServer || '\';
+            _autoSPVolNameServer := format('%s\', _autoSPVolNameServer);
 
         ---------------------------------------------------
         -- Validate the _autoSP parameteres
@@ -304,7 +304,7 @@ BEGIN
     CALL add_update_storage (
             _sourcePath,
             '(na)',
-            _sourceMachineName,     -- Note that AddUpdateStorage will remove '\' characters from _sourceMachineName since _storFunction = 'inbox'
+            _sourceMachineName,     -- Note that Add_Update_Storage will remove '\' characters from _sourceMachineName since _storFunction = 'inbox'
             'inbox',
             _instrumentName,
             '(na)',
@@ -312,7 +312,7 @@ BEGIN
             _spStoragePathID,               -- Output
             'add',
             _message => _message,           -- Output
-            _returnCode => _returnCode);     -- Output
+            _returnCode => _returnCode);    -- Output
 
     --
     If _returnCode <> '' Then
