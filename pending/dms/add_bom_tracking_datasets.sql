@@ -27,7 +27,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   12/16/2012
-**          12/16/2012 grk - initial release
+**          12/16/2012 grk - Initial release
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          02/14/2022 mem - Assure that msg is not an empty string when _mode is 'debug'

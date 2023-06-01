@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION public.get_long_interval_threshold() RETURNS integer
 **      to be considered a long interval
 **
 **  Auth:   grk
-**  Date:   06/08/2012 grk - initial release
+**  Date:   06/08/2012 grk - Initial release
 **          06/18/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/

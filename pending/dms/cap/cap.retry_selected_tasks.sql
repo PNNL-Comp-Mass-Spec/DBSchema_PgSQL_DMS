@@ -15,7 +15,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   01/11/2010
-**          01/18/2010 grk - reset step retry count
+**          01/18/2010 grk - Reset step retry count
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -24,7 +24,7 @@ DECLARE
 
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Set any failed or holding capture task job steps to waiting

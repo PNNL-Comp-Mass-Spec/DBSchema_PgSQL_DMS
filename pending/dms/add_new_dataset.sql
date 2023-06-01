@@ -60,7 +60,7 @@ AS $$
 **          10/16/2007 mem - Added support for the 'DS Creator (PRN)' field
 **          01/02/2008 mem - Now setting the rating to 'Released' for datasets that start with 'Blank' (Ticket #593)
 **          02/13/2008 mem - Increased size of _datasetName to varchar(128) (Ticket #602)
-**          02/26/2010 grk - merged T_Requested_Run_History with T_Requested_Run
+**          02/26/2010 grk - Merged T_Requested_Run_History with T_Requested_Run
 **          09/09/2010 mem - Now always looking up the request number associated with the new dataset
 **          03/04/2011 mem - Now validating that _runFinish is not a future date
 **          03/07/2011 mem - Now auto-defining experiment name if empty for QC_Shew and Blank datasets

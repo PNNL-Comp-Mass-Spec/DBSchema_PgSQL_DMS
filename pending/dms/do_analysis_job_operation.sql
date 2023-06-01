@@ -20,10 +20,10 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   05/02/2002
-**          05/05/2005 grk - removed default mode value
+**          05/05/2005 grk - Removed default mode value
 **          02/29/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
-**          08/19/2010 grk - try-catch for error handling
-**          11/18/2010 mem - Now returning 0 after successful call to DeleteNewAnalysisJob
+**          08/19/2010 grk - Use try-catch for error handling
+**          11/18/2010 mem - Now returning 0 after successful call to Delete_New_Analysis_Job
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          04/21/2017 mem - Add _mode previewDelete

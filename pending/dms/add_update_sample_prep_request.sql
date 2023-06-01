@@ -58,40 +58,40 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   06/09/2005
-**          06/10/2005 grk - added Reason argument
-**          06/16/2005 grk - added state restriction for update
-**          07/26/2005 grk - added stuff for requested personnel
-**          08/09/2005 grk - widened _sampleNameList
-**          10/12/2005 grk - added _useSingleLCColumn
-**          10/26/2005 grk - disallowed change if not in 'New" state
-**          10/28/2005 grk - added handling for internal standard
-**          11/01/2005 grk - rescinded disallowed change in 'New' state
-**          11/11/2005 grk - added handling for postdigest internal standard
-**          01/03/2006 grk - added check for existing request name
-**          03/14/2006 grk - added stuff for multiple assigned users
-**          08/10/2006 grk - modified state handling
-**          08/10/2006 grk - allowed multiple requested personnel users
-**          12/15/2006 grk - added EstimatedMSRuns argument (Ticket #336)
-**          04/20/2007 grk - added validation for organism, campaign, cell culture (Ticket #440)
-**          07/11/2007 grk - added 'standard' EUS fields and removed old proposal field(Ticket #499)
-**          07/30/2007 grk - corrected error in update of EUS fields (Ticket #499)
-**          09/01/2007 grk - added instrument name and datasets type fields (Ticket #512)
-**          09/04/2007 grk - added _technicalReplicates fields (Ticket #512)
-**          05/02/2008 grk - repaired leaking query and arranged for default add state to be 'Pending Approval'
+**          06/10/2005 grk - Added Reason argument
+**          06/16/2005 grk - Added state restriction for update
+**          07/26/2005 grk - Added stuff for requested personnel
+**          08/09/2005 grk - Widened _sampleNameList
+**          10/12/2005 grk - Added _useSingleLCColumn
+**          10/26/2005 grk - Disallowed change if not in 'New" state
+**          10/28/2005 grk - Added handling for internal standard
+**          11/01/2005 grk - Rescinded disallowed change in 'New' state
+**          11/11/2005 grk - Added handling for postdigest internal standard
+**          01/03/2006 grk - Added check for existing request name
+**          03/14/2006 grk - Added stuff for multiple assigned users
+**          08/10/2006 grk - Modified state handling
+**          08/10/2006 grk - Allowed multiple requested personnel users
+**          12/15/2006 grk - Added EstimatedMSRuns argument (Ticket #336)
+**          04/20/2007 grk - Added validation for organism, campaign, cell culture (Ticket #440)
+**          07/11/2007 grk - Added 'standard' EUS fields and removed old proposal field(Ticket #499)
+**          07/30/2007 grk - Corrected error in update of EUS fields (Ticket #499)
+**          09/01/2007 grk - Added instrument name and datasets type fields (Ticket #512)
+**          09/04/2007 grk - Added _technicalReplicates fields (Ticket #512)
+**          05/02/2008 grk - Repaired leaking query and arranged for default add state to be 'Pending Approval'
 **          05/16/2008 mem - Added optional parameter _callingUser; if provided, will populate field System_Account in T_Sample_Prep_Request_Updates with this name (Ticket #674)
-**          12/02/2009 grk - don't allow change to 'Prep in Progress' unless someone has been assigned
-**          04/14/2010 grk - widened _biomaterialList field
-**          04/22/2010 grk - try-catch for error handling
-**          08/09/2010 grk - added handling for 'Closed (containers and material)'
-**          08/15/2010 grk - widened _biomaterialList field
+**          12/02/2009 grk - Don't allow change to 'Prep in Progress' unless someone has been assigned
+**          04/14/2010 grk - Widened _biomaterialList field
+**          04/22/2010 grk - Use try-catch for error handling
+**          08/09/2010 grk - Added handling for 'Closed (containers and material)'
+**          08/15/2010 grk - Widened _biomaterialList field
 **          08/27/2010 mem - Now auto-switching _instrumentName to be instrument group instead of instrument name
-**          08/15/2011 grk - added Separation_Type
+**          08/15/2011 grk - Added Separation_Type
 **          12/12/2011 mem - Updated call to ValidateEUSUsage to treat _eusUsageType as an input/output parameter
 **          10/19/2012 mem - Now auto-changing _separationType to Separation_Group if _separationType specifies a separation type
 **          04/05/2013 mem - Now requiring that _estimatedMSRuns be defined.  If it is non-zero, instrument group, dataset type, and separation group must also be defined
 **          04/08/2013 grk - Added _blockAndRandomizeSamples, _blockAndRandomizeRuns, and _iOPSPermitsCurrent
-**          04/09/2013 grk - disregarding internal standards
-**          04/09/2013 grk - changed priority to text "Normal/High", added _numberOfBiomaterialRepsReceived, removed Facility field
+**          04/09/2013 grk - Disregarding internal standards
+**          04/09/2013 grk - Changed priority to text "Normal/High", added _numberOfBiomaterialRepsReceived, removed Facility field
 **          04/09/2013 mem - Renamed parameter _instrumentName to _instrumentGroup
 **                         - Renamed parameter _separationType to _separationGroup
 **          05/02/2013 mem - Now validating that fields _blockAndRandomizeSamples, _blockAndRandomizeRuns, and _iOPSPermitsCurrent are 'Yes', 'No', '', or Null

@@ -24,12 +24,12 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/21/2012
-**          03/26/2012 grk - added code to clean up comments and pin trans-month interval starting time
-**          04/09/2012 grk - modified algorithm
-**          06/08/2012 grk - added lookup for _maxNormalInterval
-**          08/30/2012 grk - don't overwrite existing non-blank items, do auto-comment non-onsite datasets
-**          10/02/2012 grk - added debug output
-**          10/06/2012 grk - adding 'updated by' date and user
+**          03/26/2012 grk - Added code to clean up comments and pin trans-month interval starting time
+**          04/09/2012 grk - Modified algorithm
+**          06/08/2012 grk - Added lookup for _maxNormalInterval
+**          08/30/2012 grk - Don't overwrite existing non-blank items, do auto-comment non-onsite datasets
+**          10/02/2012 grk - Added debug output
+**          10/06/2012 grk - Adding 'updated by' date and user
 **          01/31/2013 mem - Now using Coalesce(_message, '') when copying _message to _debug
 **          03/12/2014 grk - Allow null EMSL_Inst_ID in Tmp_Staging (OMCDA-1058)
 **          02/23/2016 mem - Add set XACT_ABORT on

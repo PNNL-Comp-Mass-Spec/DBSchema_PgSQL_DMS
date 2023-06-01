@@ -10,8 +10,8 @@ AS $$
 **  Auth:   grk
 **  Date:   10/20/2002
 **          11/15/2007 mem - Switched to Truncate Table for improved performance (Ticket:576)
-**          01/18/2010 grk - added update for run requests and sample prep requests (http://prismtrac.pnl.gov/trac/ticket/753)
-**          01/25/2010 grk - added 'most recent activity' (http://prismtrac.pnl.gov/trac/ticket/753)
+**          01/18/2010 grk - Added update for run requests and sample prep requests (http://prismtrac.pnl.gov/trac/ticket/753)
+**          01/25/2010 grk - Added 'most recent activity' (http://prismtrac.pnl.gov/trac/ticket/753)
 **          04/15/2015 mem - Added Data_Package_Count
 **          08/29/2018 mem - Added Sample_Submission_Count and Sample_Submission_Most_Recent
 **          08/30/2018 mem - Use merge instead of truncate

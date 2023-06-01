@@ -18,7 +18,7 @@ AS $$
 **    _mode   'update' or 'debug'
 **
 **  Auth:   grk
-**  Date:   07/05/2013 grk - initial release
+**  Date:   07/05/2013 grk - Initial release
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

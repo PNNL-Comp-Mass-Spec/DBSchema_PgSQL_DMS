@@ -17,13 +17,13 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **     _options         'Show All', 'No Intervals', 'Intervals Only', or 'Long Intervals'
 **
 **  Auth:   grk
-**  Date:   05/26/2011 grk - initial release
+**  Date:   05/26/2011 grk - Initial release
 **          12/02/2011 mem - Added several Campaign-related columns: Campaign_ID, Fraction_EMSL_Funded, and Campaign_Proposals
 **          01/31/2012 grk - Added Interval column to output and made separate interval rows an option
 **          02/06/2012 grk - Added _endIntervalEOD padding to pick up trailing interval
 **          02/07/2012 grk - Added anchoring of long intervals to beginning and end of month.
 **          02/15/2012 mem - Now using T_Dataset.Acq_Length_Minutes
-**          06/08/2012 grk - added lookup for _maxNormalInterval
+**          06/08/2012 grk - Added lookup for _maxNormalInterval
 **          04/05/2017 mem - Compute Fraction_EMSL_Funded using EUS usage type (previously computed using CM_Fraction_EMSL_Funded, which is estimated by the user for each campaign)
 **          05/16/2022 mem - Add renamed proposal type 'Resource Owner'
 **          05/18/2022 mem - Treat additional proposal types as not EMSL funded

@@ -15,7 +15,7 @@ AS $$
 **      to look for incompatibilities
 **
 **  Auth:   grk
-**  Date:   02/03/2009 grk - initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
+**  Date:   02/03/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
 **          03/11/2009 mem - Now including Old/New step tool and Old/New Signatures if differences are found (Ticket #725, http://prismtrac.pnl.gov/trac/ticket/725)
 **          01/06/2011 mem - Added parameter _ignoreSignatureMismatch
 **          12/15/2023 mem - Ported to PostgreSQL

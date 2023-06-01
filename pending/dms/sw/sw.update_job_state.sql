@@ -65,8 +65,8 @@ AS $$
 **    _infoOnly                 If true, preview updates
 **
 **  Auth:   grk
-**  Date:   05/06/2008 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/666)
-**          11/05/2008 grk - fixed issue with broker job state update
+**  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
+**          11/05/2008 grk - Fixed issue with broker job state update
 **          12/05/2008 mem - Now setting Assigned_Processor_Name to 'Job_Broker' in t_analysis_job
 **          12/09/2008 grk - Cleaned out debug code, and uncommented parts of update for DMS job comment and fasta file name
 **          12/11/2008 mem - Improved null handling for comments

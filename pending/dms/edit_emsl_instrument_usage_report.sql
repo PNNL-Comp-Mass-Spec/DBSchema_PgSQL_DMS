@@ -29,7 +29,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   08/31/2012 grk - Initial release
-**          09/11/2012 grk - fixed update SQL
+**          09/11/2012 grk - Fixed update SQL
 **          04/11/2017 mem - Replace column Usage with Usage_Type
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          12/15/2023 mem - Ported to PostgreSQL

@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 **    _debugMode            When true, show debug messages
 **
 **  Auth:   grk
-**  Date:   02/06/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/720)
+**  Date:   02/06/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)
 **          05/25/2011 mem - Removed priority column from t_task_steps
 **          03/12/2012 mem - Added column Tool_Version_ID
 **          03/21/2012 mem - Now disabling identity_insert prior to inserting a row into t_tasks

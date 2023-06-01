@@ -24,10 +24,10 @@ AS $$
 **    _preventDuplicateJobs         When true, will not create new jobs that duplicate old jobs
 **
 **  Auth:   grk
-**  Date:   06/29/2005 grk - supersedes procedure ScheduleDefaultAnalyses
-**          03/28/2006 grk - added protein collection fields
-**          04/04/2006 grk - increased sized of param file name
-**          06/01/2006 grk - fixed calling sequence to AddUpdateAnalysisJob
+**  Date:   06/29/2005 grk - Supersedes procedure ScheduleDefaultAnalyses
+**          03/28/2006 grk - Added protein collection fields
+**          04/04/2006 grk - Increased sized of param file name
+**          06/01/2006 grk - Fixed calling sequence to AddUpdateAnalysisJob
 **          03/15/2007 mem - Updated call to AddUpdateAnalysisJob (Ticket #394)
 **                         - Replaced processor name with associated processor group (Ticket #388)
 **          02/29/2008 mem - Added optional parameter _callingUser; If provided, will call alter_event_log_entry_user (Ticket #644)

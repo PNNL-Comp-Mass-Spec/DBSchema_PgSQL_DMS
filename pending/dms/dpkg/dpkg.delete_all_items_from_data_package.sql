@@ -15,7 +15,7 @@ AS $$
 **  removes all existing items from data package
 **
 **  Auth:   grk
-**  Date:   06/10/2009 grk - initial release
+**  Date:   06/10/2009 grk - Initial release
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/05/2016 mem - Add T_Data_Package_EUS_Proposals
 **          05/18/2016 mem - Log errors to T_Log_Entries

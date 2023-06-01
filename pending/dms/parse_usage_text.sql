@@ -36,9 +36,9 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/02/2012
-**          03/11/2012 grk - added OtherNotAvailable
-**          03/11/2012 grk - return commment without usage text
-**          09/18/2012 grk - added 'Operator' and 'PropUser' keywords
+**          03/11/2012 grk - Added OtherNotAvailable
+**          03/11/2012 grk - Return commment without usage text
+**          09/18/2012 grk - Added 'Operator' and 'PropUser' keywords
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

@@ -29,7 +29,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   12/09/2003
-**          08/19/2010 grk - try-catch for error handling
+**          08/19/2010 grk - Use try-catch for error handling
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          07/20/2016 mem - Fix error message entity name
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

@@ -34,8 +34,8 @@ AS $$
 **          01/20/2010 mem - Added indices on Tmp_New_Jobs
 **          01/21/2010 mem - Added parameters _datasetIDFilterMin and _datasetIDFilterMax
 **          01/25/2010 dac - Changed default _onlyDMSArchiveUpdateReqdDatasets value to 0. Parameter no longer needed
-**          01/28/2010 grk - added time window for No_Dataset_Archive (only applies to recently completed capture task jobs)
-**          02/02/2010 dac - mods to get defaults input params from database table (in progress)
+**          01/28/2010 grk - Added time window for No_Dataset_Archive (only applies to recently completed capture task jobs)
+**          02/02/2010 dac - Mods to get defaults input params from database table (in progress)
 **          03/15/2010 mem - Now excluding rows from the source view where Input_Folder_Name is Null
 **          06/04/2010 dac - Excluding rows where there are any existing capture task jobs that are not in state 3 (complete)
 **          05/05/2011 mem - Removed _onlyDMSArchiveUpdateReqdDatasets since it was only required for a short while after we switched over to the DMS_Capture DB in January 2010

@@ -17,7 +17,7 @@ AS $$
 **          Tmp_Job_Parameters
 **
 **  Auth:   grk
-**  Date:   02/06/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/720)
+**  Date:   02/06/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)
 **          05/25/2011 mem - Removed priority column from t_task_steps
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          05/17/2019 mem - Switch from folder to directory
@@ -31,7 +31,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
 /*
 select * from Tmp_Jobs

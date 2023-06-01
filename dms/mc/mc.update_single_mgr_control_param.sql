@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **
 **  Auth:   jds
 **  Date:   06/20/2007
-**          07/31/2007 grk - changed for 'controlfromwebsite' no longer a parameter
+**          07/31/2007 grk - Changed for 'controlfromwebsite' no longer a parameter
 **          04/16/2009 mem - Added optional parameter _callingUser; if provided, then UpdateSingleMgrParamWork will populate field Entered_By with this name
 **          04/08/2011 mem - Will now add parameter _paramValue to managers that don't yet have the parameter defined
 **          04/21/2011 mem - Expanded _managerIDList to varchar(8000)

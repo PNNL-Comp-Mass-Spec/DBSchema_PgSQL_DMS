@@ -60,39 +60,39 @@ AS $$
 **  Auth:   grk
 **  Date:   01/11/2002
 **          02/15/2003
-**          12/05/2003 grk - added wellplate stuff
-**          01/05/2004 grk - added internal standard stuff
-**          03/01/2004 grk - added manual identity calculation (removed identity column)
-**          03/10/2004 grk - repaired manual identity calculation to include history table
-**          07/15/2004 grk - added verification of experiment location aux info
-**          11/26/2004 grk - changed type of _comment from text to varchar
-**          01/12/2004 grk - fixed null return on check existing when table is empty
+**          12/05/2003 grk - Added wellplate stuff
+**          01/05/2004 grk - Added internal standard stuff
+**          03/01/2004 grk - Added manual identity calculation (removed identity column)
+**          03/10/2004 grk - Repaired manual identity calculation to include history table
+**          07/15/2004 grk - Added verification of experiment location aux info
+**          11/26/2004 grk - Changed type of _comment from text to varchar
+**          01/12/2004 grk - Fixed null return on check existing when table is empty
 **          10/12/2005 grk - Added stuff for new work package and proposal fields.
 **          02/21/2006 grk - Added stuff for EUS proposal and user tracking.
 **          11/09/2006 grk - Fixed error message handling (Ticket #318)
-**          01/12/2007 grk - added verification mode
-**          01/31/2007 grk - added verification for _requestorPRN (Ticket #371)
-**          03/19/2007 grk - added _defaultPriority (Ticket #421) (set it back to 0 on 04/25/2007)
-**          04/25/2007 grk - get new ID from UDF (Ticket #446)
-**          04/30/2007 grk - added better name validation (Ticket #450)
-**          07/11/2007 grk - factored out EUS proposal validation (Ticket #499)
-**          07/11/2007 grk - modified to look up EUS fields from sample prep request (Ticket #499)
+**          01/12/2007 grk - Added verification mode
+**          01/31/2007 grk - Added verification for _requestorPRN (Ticket #371)
+**          03/19/2007 grk - Added _defaultPriority (Ticket #421) (set it back to 0 on 04/25/2007)
+**          04/25/2007 grk - Get new ID from UDF (Ticket #446)
+**          04/30/2007 grk - Added better name validation (Ticket #450)
+**          07/11/2007 grk - Factored out EUS proposal validation (Ticket #499)
+**          07/11/2007 grk - Modified to look up EUS fields from sample prep request (Ticket #499)
 **          07/17/2007 grk - Increased size of comment field (Ticket #500)
 **          07/30/2007 mem - Now checking dataset type (_msType) against Allowed_Dataset_Types in T_Instrument_Class (Ticket #502)
-**          09/06/2007 grk - factored out instrument name and dataset type validation to ValidateInstrumentAndDatasetType (Ticket #512)
-**          09/06/2007 grk - added call to LookupInstrumentRunInfoFromExperimentSamplePrep (Ticket #512)
+**          09/06/2007 grk - Factored out instrument name and dataset type validation to ValidateInstrumentAndDatasetType (Ticket #512)
+**          09/06/2007 grk - Added call to LookupInstrumentRunInfoFromExperimentSamplePrep (Ticket #512)
 **          09/06/2007 grk - Removed _specialInstructions (http://prismtrac.pnl.gov/trac/ticket/522)
 **          02/13/2008 mem - Now checking for _badCh = 'space' (Ticket #602)
 **          04/09/2008 grk - Added secondary separation field (Ticket #658)
 **          03/26/2009 grk - Added MRM transition list attachment (Ticket #727)
-**          06/03/2009 grk - look up work package (Ticket #739)
-**          07/27/2009 grk - added lookup for wellplate and well fields (http://prismtrac.pnl.gov/trac/ticket/741)
-**          02/28/2010 grk - added add-auto mode
-**          03/02/2010 grk - added status field to requested run
-**          03/10/2010 grk - fixed issue with status validation
-**          03/27/2010 grk - fixed problem creating new requests with 'Completed' status.
-**          04/20/2010 grk - fixed problem with experiment lookup validation
-**          04/21/2010 grk - try-catch for error handling
+**          06/03/2009 grk - Look up work package (Ticket #739)
+**          07/27/2009 grk - Added lookup for wellplate and well fields (http://prismtrac.pnl.gov/trac/ticket/741)
+**          02/28/2010 grk - Added add-auto mode
+**          03/02/2010 grk - Added status field to requested run
+**          03/10/2010 grk - Fixed issue with status validation
+**          03/27/2010 grk - Fixed problem creating new requests with 'Completed' status.
+**          04/20/2010 grk - Fixed problem with experiment lookup validation
+**          04/21/2010 grk - Use try-catch for error handling
 **          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _requestorPRN contains a person's real name rather than their username
 **          08/27/2010 mem - Now auto-switching _instrumentName to be instrument group instead of instrument name
 **          09/01/2010 mem - Added parameter _skipTransactionRollback

@@ -17,7 +17,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   10/29/2012 grk - Initial release
-**          11/01/2012 grk - eliminated job template
+**          11/01/2012 grk - Eliminated job template
 **          01/31/2013 mem - Renamed MSGFDB to MSGFPlus
 **                         - Updated error messages shown to user
 **          02/13/2013 mem - Fix misspelled word

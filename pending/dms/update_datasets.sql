@@ -25,8 +25,8 @@ AS $$
 **  Auth:   jds
 **  Date:   09/21/2006
 **          03/28/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user_multi_id (Ticket #644)
-**          08/19/2010 grk - try-catch for error handling
 **          09/02/2011 mem - Now calling PostUsageLogEntry
+**          08/19/2010 grk - Use try-catch for error handling
 **          03/30/2015 mem - Tweak warning message grammar
 **          10/07/2015 mem - Added _mode 'preview'
 **          02/23/2016 mem - Add set XACT_ABORT on

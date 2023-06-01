@@ -21,10 +21,10 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   02/18/2010
-**          02/26/2010 grk - merged T_Requested_Run_History with T_Requested_Run
-**          03/02/2010 grk - added status field to requested run
-**          03/17/2010 grk - added filtering for request name contains
-**          03/18/2010 grk - eliminated call to GetFactorCrosstabByFactorID
+**          02/26/2010 grk - Merged T_Requested_Run_History with T_Requested_Run
+**          03/02/2010 grk - Added status field to requested run
+**          03/17/2010 grk - Added filtering for request name contains
+**          03/18/2010 grk - Eliminated call to GetFactorCrosstabByFactorID
 **          02/17/2012 mem - Updated to delete data from Tmp_Requests only if _nameContains is not blank
 **          01/05/2023 mem - Use new column names in V_Requested_Run_Unified_List
 **          01/24/2023 mem - Use lowercase column names in _colList

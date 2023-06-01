@@ -45,7 +45,7 @@ AS $$
 **  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
 **          01/28/2009 grk - Modified for parallelization (http://prismtrac.pnl.gov/trac/ticket/718)
 **          01/30/2009 grk - Modified output folder name initiation (http://prismtrac.pnl.gov/trac/ticket/719)
-**          02/06/2009 grk - modified for extension jobs (http://prismtrac.pnl.gov/trac/ticket/720)
+**          02/06/2009 grk - Modified for extension jobs (http://prismtrac.pnl.gov/trac/ticket/720)
 **          02/08/2009 mem - Added parameters _debugMode and _jobOverride
 **          02/26/2009 mem - Removed old Script_ID column from the temporary tables
 **          03/11/2009 mem - Removed parameter _jobOverride since _existingJob can be used to specify an existing job

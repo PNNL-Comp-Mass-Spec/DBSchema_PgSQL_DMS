@@ -29,9 +29,9 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   02/20/2010
-**          03/02/2010 grk - added status field to requested run
-**          03/08/2010 grk - improved field validation
-**          03/18/2010 grk - eliminated call to GetFactorCrosstabByFactorID
+**          03/02/2010 grk - Added status field to requested run
+**          03/08/2010 grk - Improved field validation
+**          03/18/2010 grk - Eliminated call to GetFactorCrosstabByFactorID
 **          01/23/2023 mem - Use lowercase column names when querying V_Requested_Run_Unified_List
 **          12/15/2023 mem - Ported to PostgreSQL
 **

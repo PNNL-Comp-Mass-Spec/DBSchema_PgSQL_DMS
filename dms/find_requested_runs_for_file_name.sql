@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.find_requested_runs_for_file_name(_filename pu
 **      The entire request name must match the start of the file name
 **
 **  Auth:   grk
-**  Date:   07/20/2012 grk - initial release
+**  Date:   07/20/2012 grk - Initial release
 **          06/17/2022 mem - Ported to PostgreSQL
 **
 *****************************************************/

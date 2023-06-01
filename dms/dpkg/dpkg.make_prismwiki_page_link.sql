@@ -11,8 +11,8 @@ CREATE OR REPLACE FUNCTION dpkg.make_prismwiki_page_link(_packagename text) RETU
 **      Generates URL to PRISM Wiki page for data package
 **
 **  Auth:   grk
-**          06/05/2009 grk - initial release
-**          06/10/2009 grk - using package name for link
+**          06/05/2009 grk - Initial release
+**          06/10/2009 grk - Using package name for link
 **          06/11/2009 mem - Removed space from before https://
 **          06/26/2009 mem - Updated link format to be _baseURL plus the data package name
 **          09/21/2012 mem - Changed from https:// to http://

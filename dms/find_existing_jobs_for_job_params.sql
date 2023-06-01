@@ -13,10 +13,10 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **
 **  Auth:   grk
 **  Date:   12/07/2005
-**          04/04/2006 grk - increased sized of param file name
-**          03/28/2006 grk - added protein collection fields
-**          04/07/2006 grk - eliminated job to request map table
-**          01/02/2009 grk - added dataset to output rowset
+**          04/04/2006 grk - Increased sized of param file name
+**          03/28/2006 grk - Added protein collection fields
+**          04/07/2006 grk - Eliminated job to request map table
+**          01/02/2009 grk - Added dataset to output rowset
 **          02/27/2009 mem - Expanded _comment to varchar(512)
 **          03/27/2009 mem - Updated Where clause logic for Peptide_Hit jobs to ignore organism name when using a Protein Collection List
 **                         - Expanded _datasetList to varchar(6000)

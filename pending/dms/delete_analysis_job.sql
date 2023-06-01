@@ -16,9 +16,9 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/06/2001
-**          06/09/2004 grk - added delete for analysis job request reference
-**          04/07/2006 grk - eliminated job to request map table
-**          02/20/2007 grk - added code to remove any job-to-group associations
+**          06/09/2004 grk - Added delete for analysis job request reference
+**          04/07/2006 grk - Eliminated job to request map table
+**          02/20/2007 grk - Added code to remove any job-to-group associations
 **          03/16/2007 mem - Fixed bug that required 1 or more rows be deleted from T_Analysis_Job_Processor_Group_Associations (Ticket #393)
 **          02/29/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          12/31/2008 mem - Now calling sw.DeleteJob

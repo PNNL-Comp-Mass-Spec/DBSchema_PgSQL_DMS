@@ -8,7 +8,7 @@ AS $$
 **      Calls auto import function for all currently active OSM packages
 **
 **  Auth:   grk
-**  Date:   03/20/2013 grk - initial release
+**  Date:   03/20/2013 grk - Initial release
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/18/2016 mem - Log errors to T_Log_Entries
 **          12/15/2023 mem - Ported to PostgreSQL

@@ -23,7 +23,7 @@ AS $$
 **    _jobIsRunningRemote   RequestStepTaskXML will set this to 1 if the newly started job step was state 9
 **
 **  Auth:   grk
-**  Date:   12/11/2008 grk - initial release
+**  Date:   12/11/2008 grk - Initial release
 **          01/14/2009 mem - Increased the length of the Value entries extracted from T_Job_Parameters to be 2000 characters (nvarchar(4000)), Ticket #714, http://prismtrac.pnl.gov/trac/ticket/714
 **          05/29/2009 mem - Added parameter _debugMode
 **          12/04/2009 mem - Moved the code that defines the job parameters to GetJobStepParamsWork

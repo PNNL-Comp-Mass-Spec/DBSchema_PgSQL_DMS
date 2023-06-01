@@ -17,10 +17,10 @@ AS $$
 **    _infoOnly     When true, don't actually delete, just dump list of jobs that would have been
 **
 **  Auth:   grk
-**  Date:   02/19/2009 grk - initial release (Ticket #723)
+**  Date:   02/19/2009 grk - Initial release (Ticket #723)
 **          02/26/2009 mem - Updated to look for any job not present in DMS, but to exclude jobs with a currently running job step
 **          06/01/2009 mem - Added parameter _maxJobsToProcess (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
-**          04/13/2010 grk - don't delete jobs where dataset ID = 0
+**          04/13/2010 grk - Don't delete jobs where dataset ID = 0
 **          05/26/2017 mem - Treat state 9 (Running_Remote) as an active job
 **          12/15/2023 mem - Ported to PostgreSQL
 **

@@ -19,7 +19,7 @@ AS $$
 **    _maxDatasetsToProcess   Set to a positive number to limit the number of affected datasets
 **
 **  Auth:   grk
-**  Date:   08/26/2010 grk - initial release
+**  Date:   08/26/2010 grk - Initial release
 **          08/26/2010 mem - Added _maxDatasetsToProcess and _infoOnly
 **                         - Now passing _preventDuplicateJobs to CreatePredefinedAnalysisJobs
 **          03/27/2013 mem - Now obtaining Dataset name from T_Dataset

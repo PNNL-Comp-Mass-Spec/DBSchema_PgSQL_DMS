@@ -35,8 +35,8 @@ AS $$
 **      );
 **
 **  Auth:   grk
-**  Date:   01/28/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/718)
-**          02/06/2009 grk - modified for extension jobs (http://prismtrac.pnl.gov/trac/ticket/720)
+**  Date:   01/28/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/718)
+**          02/06/2009 grk - Modified for extension jobs (http://prismtrac.pnl.gov/trac/ticket/720)
 **          05/25/2011 mem - Removed priority column from Tmp_Job_Steps
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies

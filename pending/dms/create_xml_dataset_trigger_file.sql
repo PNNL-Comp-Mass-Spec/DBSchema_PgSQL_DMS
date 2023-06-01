@@ -59,7 +59,7 @@ AS $$
 **
 **  Auth:   jds
 **  Date:   10/03/2007 jds - Initial version
-**          04/26/2010 grk - widened _datasetName to 128 characters
+**          04/26/2010 grk - Widened _datasetName to 128 characters
 **          02/03/2011 mem - Now calling XMLQuoteCheck() to replace double quotes with &quot;
 **          07/31/2012 mem - Now using udfCombinePaths to build the output file path
 **          05/08/2013 mem - Removed Coalesce() checks since XMLQuoteCheck() now changes Nulls to empty strings

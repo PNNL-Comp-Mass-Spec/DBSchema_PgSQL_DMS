@@ -20,8 +20,8 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   11/04/2002
-**          08/06/2003 grk - added handling for 'Not Ready' state
-**          07/01/2005 grk - changed to use 'schedule_predefined_analysis_jobs'
+**          08/06/2003 grk - Added handling for 'Not Ready' state
+**          07/01/2005 grk - Changed to use 'schedule_predefined_analysis_jobs'
 **          11/18/2010 mem - Now checking dataset rating and not calling schedule_predefined_analysis_jobs if the rating is -10 (unreviewed)
 **                         - Removed CD burn schedule code
 **          02/09/2011 mem - Added back calling schedule_predefined_analysis_jobs regardless of dataset rating

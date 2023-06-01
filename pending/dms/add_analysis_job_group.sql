@@ -41,36 +41,36 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   01/29/2004
-**          04/01/2004 grk - fixed error return
+**          04/01/2004 grk - Fixed error return
 **          06/07/2004 to 4/04/2006 -- multiple updates
-**          04/05/2006 grk - major rewrite
-**          04/10/2006 grk - widened size of list argument to 6000 characters
+**          04/05/2006 grk - Major rewrite
+**          04/10/2006 grk - Widened size of list argument to 6000 characters
 **          11/30/2006 mem - Added column Dataset_Type to Tmp_DatasetInfo (Ticket #335)
 **          12/19/2006 grk - Added propagation mode (Ticket #348)
 **          12/20/2006 mem - Added column dataset_rating_id to Tmp_DatasetInfo (Ticket #339)
-**          02/07/2007 grk - eliminated 'Spectra Required' states (Ticket #249)
-**          02/15/2007 grk - added associated processor group (Ticket #383)
-**          02/21/2007 grk - removed _assignedProcessor  (Ticket #383)
+**          02/07/2007 grk - Eliminated 'Spectra Required' states (Ticket #249)
+**          02/15/2007 grk - Added associated processor group (Ticket #383)
+**          02/21/2007 grk - Removed _assignedProcessor  (Ticket #383)
 **          10/11/2007 grk - Expand protein collection list size to 4000 characters (https://prismtrac.pnl.gov/trac/ticket/545)
-**          02/19/2008 grk - add explicit NULL column attribute to Tmp_DatasetInfo
+**          02/19/2008 grk - Add explicit NULL column attribute to Tmp_DatasetInfo
 **          02/29/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user or alter_event_log_entry_user_multi_id (Ticket #644)
 **          05/27/2008 mem - Increased _entryTimeWindowSeconds value to 45 seconds when calling alter_event_log_entry_user_multi_id
-**          09/12/2008 mem - Now passing _paramFileName and _settingsFileName ByRef to ValidateAnalysisJobParameters (Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688)
+**          09/12/2008 mem - Now passing _paramFileName and _settingsFileName ByRef to Validate_Analysis_Job_Parameters (Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688)
 **          02/27/2009 mem - Expanded _comment to varchar(512)
-**          04/15/2009 grk - handles wildcard DTA folder name in comment field (Ticket #733, http://prismtrac.pnl.gov/trac/ticket/733)
-**          08/05/2009 grk - assign job number from separate table (Ticket #744, http://prismtrac.pnl.gov/trac/ticket/744)
+**          04/15/2009 grk - Handles wildcard DTA folder name in comment field (Ticket #733, http://prismtrac.pnl.gov/trac/ticket/733)
+**          08/05/2009 grk - Assign job number from separate table (Ticket #744, http://prismtrac.pnl.gov/trac/ticket/744)
 **          08/05/2009 mem - Now removing duplicates when populating Tmp_DatasetInfo
 **                         - Updated to use get_new_job_id_block to obtain job numbers
 **          09/17/2009 grk - Don't make new jobs for datasets with existing jobs (optional mode) (Ticket #747, http://prismtrac.pnl.gov/trac/ticket/747)
 **          09/19/2009 grk - Improved return message
 **          09/23/2009 mem - Updated to handle requests with state "New (Review Required)"
 **          12/21/2009 mem - Now updating field job_count in T_Analysis_Job_Request when _requestID is > 1
-**          04/22/2010 grk - try-catch for error handling
-**          05/05/2010 mem - Now passing _ownerUsername to ValidateAnalysisJobParameters as input/output
+**          04/22/2010 grk - Use try-catch for error handling
+**          05/05/2010 mem - Now passing _ownerUsername to Validate_Analysis_Job_Parameters as input/output
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          01/31/2011 mem - Expanded _datasetList to varchar(max)
 **          02/24/2011 mem - No longer skipping jobs with state 'No Export' when finding datasets that have existing, matching jobs
-**          03/29/2011 grk - added _specialProcessing argument (http://redmine.pnl.gov/issues/304)
+**          03/29/2011 grk - Added _specialProcessing argument (http://redmine.pnl.gov/issues/304)
 **          05/24/2011 mem - Now populating column AJ_DatasetUnreviewed
 **          06/15/2011 mem - Now ignoring organism, protein collection, and organism DB when looking for existing jobs and the analysis tool does not use an organism database
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
@@ -79,20 +79,20 @@ AS $$
 **          03/26/2013 mem - Now calling alter_event_log_entry_user after updating T_Analysis_Job_Request
 **          03/27/2013 mem - Now auto-updating _ownerUsername to _callingUser if _callingUser maps to a valid user
 **          06/06/2013 mem - Now setting job state to 19="Special Proc. Waiting" if analysis tool has Use_SpecialProcWaiting enabled
-**          04/08/2015 mem - Now passing _autoUpdateSettingsFileToCentroided and _warning to ValidateAnalysisJobParameters
+**          04/08/2015 mem - Now passing _autoUpdateSettingsFileToCentroided and _warning to Validate_Analysis_Job_Parameters
 **          05/28/2015 mem - No longer creating processor group entries (thus _associatedProcessorGroup is ignored)
 **          12/17/2015 mem - Now considering _specialProcessing when looking for existing jobs
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/18/2016 mem - Log errors to T_Log_Entries
 **          05/18/2016 mem - Include the Request ID in error messages
-**          07/12/2016 mem - Pass _priority to ValidateAnalysisJobParameters
+**          07/12/2016 mem - Pass _priority to Validate_Analysis_Job_Parameters
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/06/2017 mem - Set _allowNewDatasets to false when calling ValidateAnalysisJobParameters
+**          12/06/2017 mem - Set _allowNewDatasets to false when calling Validate_Analysis_Job_Parameters
 **          05/11/2018 mem - When the settings file is Decon2LS_DefSettings.xml, also match jobs with a settings file of 'na'
 **          06/12/2018 mem - Send _maxLength to append_to_text
-**          07/30/2019 mem - Call UpdateCachedJobRequestExistingJobs after creating new jobs
+**          07/30/2019 mem - Call Update_Cached_Job_Request_Existing_Jobs after creating new jobs
 **          03/10/2021 mem - Add _dataPackageID
 **          03/11/2021 mem - Associate new pipeline-based jobs with their analysis job request
 **          03/15/2021 mem - Read setting CacheFolderRootPath from MaxQuant settings files

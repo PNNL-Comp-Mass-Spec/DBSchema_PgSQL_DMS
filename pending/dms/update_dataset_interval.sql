@@ -23,10 +23,10 @@ AS $$
 **          02/15/2012 mem - No longer updating Acq_Length_Minutes in T_Dataset since now a computed column
 **          03/07/2012 mem - Added parameter _infoOnly
 **                         - Now validating _instrumentName
-**          03/29/2012 grk - interval values in T_Run_Interval were not being updated
-**          04/10/2012 grk - now deleting 'short' long intervals
-**          06/08/2012 grk - added lookup for _maxNormalInterval
-**          08/30/2012 grk - extended dataset update to include beginning of next month
+**          03/29/2012 grk - Interval values in T_Run_Interval were not being updated
+**          04/10/2012 grk - Now deleting 'short' long intervals
+**          06/08/2012 grk - Added lookup for _maxNormalInterval
+**          08/30/2012 grk - Extended dataset update to include beginning of next month
 **          11/19/2013 mem - Now updating Interval_to_Next_DS in T_Dataset only if the newly computed interval differs from the stored interval
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

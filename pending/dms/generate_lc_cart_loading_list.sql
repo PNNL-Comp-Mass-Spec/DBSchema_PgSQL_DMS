@@ -26,11 +26,11 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   04/09/2007 (Ticket #424)
-**          04/16/2007 grk - added priority as highest sort attribute
-**          06/07/2007 grk - added EMSL user columns to output (Ticket #488)
-**          07/31/2007 mem - now returning Dataset Type for each request (Ticket #505)
-**          08/27/2007 grk - add ability to start columns with a blank (Ticket #517)
-**          09/17/2009 grk - added check for requests that don't have column assignments
+**          04/16/2007 grk - Added priority as highest sort attribute
+**          06/07/2007 grk - Added EMSL user columns to output (Ticket #488)
+**          07/31/2007 mem - Now returning Dataset Type for each request (Ticket #505)
+**          08/27/2007 grk - Add ability to start columns with a blank (Ticket #517)
+**          09/17/2009 grk - Added check for requests that don't have column assignments
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

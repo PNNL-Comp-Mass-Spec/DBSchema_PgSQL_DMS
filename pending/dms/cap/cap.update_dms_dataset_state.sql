@@ -19,8 +19,8 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   01/05/2010 grk - Initial Version
-**          01/14/2010 grk - removed path ID fields
-**          05/05/2010 grk - added handling for dataset info XML
+**          01/14/2010 grk - Removed path ID fields
+**          05/05/2010 grk - Added handling for dataset info XML
 **          09/01/2010 mem - Now calling update_dms_file_info_xml
 **          03/16/2011 grk - Now recognizes IMSDatasetCapture
 **          04/04/2012 mem - Now passing _failureMessage to public.set_capture_task_complete when the capture task job is failed in the broker

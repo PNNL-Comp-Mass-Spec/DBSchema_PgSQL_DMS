@@ -18,9 +18,9 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   05/11/2004
-**          06/16/2005 grk - added delete for experiment group members table
-**          02/27/2006 grk - added delete for experiment group table
-**          08/31/2006 jds - added check for requested runs (Ticket #199)
+**          06/16/2005 grk - Added delete for experiment group members table
+**          02/27/2006 grk - Added delete for experiment group table
+**          08/31/2006 jds - Added check for requested runs (Ticket #199)
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          02/26/2010 mem - Merged T_Requested_Run_History with T_Requested_Run
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

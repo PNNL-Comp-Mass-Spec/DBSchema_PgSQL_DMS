@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 **    _saveTimeOverride     Timestamp to use when _overrideSaveTime is true
 **
 **  Auth:   grk
-**  Date:   09/12/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/746)
+**  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          05/25/2011 mem - Removed priority column from t_task_steps
 **          03/12/2012 mem - Now copying column Tool_Version_ID
 **          03/10/2015 mem - Added t_task_step_dependencies_history

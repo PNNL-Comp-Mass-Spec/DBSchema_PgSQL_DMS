@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scrip
 **        Tmp_Job_Step_Dependencies
 **
 **  Auth:   grk
-**  Date:   09/05/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/746)
+**  Date:   09/05/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          05/25/2011 mem - Removed _priority parameter and removed priority column from t_task_steps
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          05/17/2019 mem - Switch from folder to directory in temp tables

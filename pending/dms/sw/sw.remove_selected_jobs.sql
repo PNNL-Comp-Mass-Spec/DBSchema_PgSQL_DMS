@@ -25,7 +25,7 @@ AS $$
 **    _logToConsoleOnly     When _logDeletions is true, optionally set this to true to only show deleted job info in the output console (via RAISE INFO messages)
 **
 **  Auth:   grk
-**  Date:   02/19/2009 grk - initial release (Ticket #723)
+**  Date:   02/19/2009 grk - Initial release (Ticket #723)
 **          02/26/2009 mem - Added parameter _logDeletions
 **          02/28/2009 grk - Added logic to preserve record of successful shared results
 **          08/20/2013 mem - Added support for _logToConsoleOnly

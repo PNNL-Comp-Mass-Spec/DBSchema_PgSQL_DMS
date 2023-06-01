@@ -19,9 +19,9 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/04/2003
-**          02/16/2007 grk - add completion code options and also set archive state (Ticket #131)
+**          02/16/2007 grk - Add completion code options and also set archive state (Ticket #131)
 **          08/04/2008 mem - Now updating column AS_instrument_data_purged (Ticket #683)
-**          01/26/2011 grk - modified actions for _completionCode = 2 to bump holdoff and call broker
+**          01/26/2011 grk - Modified actions for _completionCode = 2 to bump holdoff and call broker
 **          01/28/2011 mem - Changed holdoff bump from 12 to 24 hours when _completionCode = 2
 **          02/01/2011 mem - Added support for _completionCode 3
 **          09/02/2011 mem - Now updating AJ_Purged for jobs associated with this dataset

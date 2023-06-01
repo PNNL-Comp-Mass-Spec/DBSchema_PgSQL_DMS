@@ -25,8 +25,8 @@ AS $$
 **    _removeParents   When 1, remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
 **
 **  Auth:   grk
-**  Date:   06/10/2009 grk - initial release
-**          05/23/2010 grk - factored out grunt work into new sproc UpdateDataPackageItemsUtility
+**  Date:   06/10/2009 grk - Initial release
+**          05/23/2010 grk - Factored out grunt work into new sproc UpdateDataPackageItemsUtility
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/18/2016 mem - Log errors to T_Log_Entries
 **          10/19/2016 mem - Update Tmp_DataPackageItems to use an integer field for data package ID

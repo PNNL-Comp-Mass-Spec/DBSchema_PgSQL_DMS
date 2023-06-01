@@ -16,8 +16,8 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   01/26/2001
-**          03/01/2004 grk - added unconsume scheduled run
-**          04/07/2006 grk - got rid of dataset list stuff
+**          03/01/2004 grk - Added unconsume scheduled run
+**          04/07/2006 grk - Got rid of dataset list stuff
 **          04/07/2006 grk - Got rid of CDBurn stuff
 **          05/01/2007 grk - Modified to call modified UnconsumeScheduledRun (Ticket #446)
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)

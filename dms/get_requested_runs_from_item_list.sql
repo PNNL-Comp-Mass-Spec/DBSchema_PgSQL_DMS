@@ -25,8 +25,8 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **
 **  Auth:   grk
 **  Date:   03/22/2010
-**          03/22/2010 grk - initial release
-**          03/12/2012 grk - added 'Data_Package_ID' mode
+**          03/22/2010 grk - Initial release
+**          03/12/2012 grk - Added 'Data_Package_ID' mode
 **          10/19/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use ElsIf for Else If
 **

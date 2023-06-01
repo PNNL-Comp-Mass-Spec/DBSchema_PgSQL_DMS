@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE public.do_requested_run_batch_operation(IN _batchid 
 **  Date:   01/12/2006
 **          09/20/2006 jds - Added support for Granting High Priority and Denying High Priority for fields Actual_Bath_Priority and Requested_Batch_Priority
 **          08/27/2009 grk - Delete batch fixes requested run references in history table
-**          02/26/2010 grk - merged T_Requested_Run_History with T_Requested_Run
+**          02/26/2010 grk - Merged T_Requested_Run_History with T_Requested_Run
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          07/25/2017 mem - Remove mode BatchOrder since unused
 **          08/01/2017 mem - Use THROW if not authorized

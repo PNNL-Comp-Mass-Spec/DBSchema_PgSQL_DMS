@@ -29,15 +29,15 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **
 **  Auth:   grk
 **  Date:   04/06/2006
-**          04/10/2006 grk - widened size of list argument to 6000 characters
-**          04/12/2006 grk - eliminated forcing null for blank assigned processor
-**          06/20/2006 jds - added support to find/replace text in the comment field
-**          08/02/2006 grk - clear the Results_Folder_Name, AJ_extractionProcessor,
+**          04/10/2006 grk - Widened size of list argument to 6000 characters
+**          04/12/2006 grk - Eliminated forcing null for blank assigned processor
+**          06/20/2006 jds - Added support to find/replace text in the comment field
+**          08/02/2006 grk - Clear the Results_Folder_Name, AJ_extractionProcessor,
 **                           AJ_extractionStart, and AJ_extractionFinish fields when resetting a job
-**          11/15/2006 grk - add logic for propagation mode (ticket #328)
-**          03/02/2007 grk - add _associatedProcessorGroup (ticket #393)
-**          03/18/2007 grk - make _associatedProcessorGroup viable for reset mode (ticket #418)
-**          05/07/2007 grk - corrected spelling of sproc name
+**          11/15/2006 grk - Add logic for propagation mode (ticket #328)
+**          03/02/2007 grk - Add _associatedProcessorGroup (ticket #393)
+**          03/18/2007 grk - Make _associatedProcessorGroup viable for reset mode (ticket #418)
+**          05/07/2007 grk - Corrected spelling of sproc name
 **          02/29/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user_multi_id (Ticket #644)
 **          03/14/2008 grk - Fixed problem with null arguments (Ticket #655)
 **          04/09/2008 mem - Now calling AlterEnteredByUserMultiID if the jobs are associated with a processor group
@@ -52,7 +52,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **          07/16/2009 mem - Added missing rollback transaction statements when verifying _associatedProcessorGroup
 **          09/16/2009 mem - Expanded _jobList to varchar(max)
 **                         - Now calls UpdateAnalysisJobsWork to do the work
-**          08/19/2010 grk - try-catch for error handling
+**          08/19/2010 grk - Use try-catch for error handling
 **          09/02/2011 mem - Now calling PostUsageLogEntry
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

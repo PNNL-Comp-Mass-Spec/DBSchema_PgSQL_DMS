@@ -24,7 +24,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   02/15/2007 (ticket 389)
-**          02/23/2007 grk - added _analysisToolsList stuff
+**          02/23/2007 grk - Added _analysisToolsList stuff
 **          03/15/2007 mem - Tweaked invalid tool name error message
 **          02/13/2008 mem - Now assuring that _analysisToolsList results in a non-redundant list of analysis tool names (Ticket #643)
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will populate field Entered_By with this name

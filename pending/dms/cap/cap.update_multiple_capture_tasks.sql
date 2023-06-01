@@ -20,9 +20,9 @@ AS $$
 **    _mode     Update or Preview
 **
 **  Auth:   grk
-**  Date:   01/04/2010 grk - initial release
-**          01/14/2010 grk - enabled all modes
-**          01/28/2010 grk - added UpdateParameters action
+**  Date:   01/04/2010 grk - Initial release
+**          01/14/2010 grk - Enabled all modes
+**          01/28/2010 grk - Added UpdateParameters action
 **          10/25/2010 mem - Now raising an error if _mode is empty or invalid
 **          04/28/2011 mem - Set defaults for _action and _mode
 **          03/24/2016 mem - Switch to using udfParseDelimitedIntegerList to parse the list of capture task jobs

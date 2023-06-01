@@ -18,7 +18,7 @@ AS $$
 **  Auth:   grk
 **  Date:   10/06/2010 grk - Initial release
 **          11/25/2010 mem - Now validating that the script exists in T_Scripts
-**          12/10/2013 grk - problem inserting null values into Tmp_ParamDefinition
+**          12/10/2013 grk - Problem inserting null values into Tmp_ParamDefinition
 **          04/08/2016 mem - Clear _message if null
 **          03/10/2021 mem - Validate protein collection (or FASTA file) options for MaxQuant jobs
 **                         - Rename the XML job parameters argument and make it an input/output argument

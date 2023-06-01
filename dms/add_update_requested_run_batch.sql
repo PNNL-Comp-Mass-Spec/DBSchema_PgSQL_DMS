@@ -29,10 +29,10 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **  Auth:   grk
 **  Date:   01/11/2006 - initial version
 **          09/15/2006 jds - Added _requestedBatchPriority, _actualBathPriority, _requestedCompletionDate, _justificationHighPriority, and _comment
-**          11/04/2006 grk - added _requestedInstrument
-**          12/03/2009 grk - checking for presence of _justificationHighPriority If priority is high
+**          11/04/2006 grk - Added _requestedInstrument
+**          12/03/2009 grk - Checking for presence of _justificationHighPriority If priority is high
 **          05/05/2010 mem - Now calling auto_resolve_name_to_username to check If _operatorUsername contains a person's real name rather than their username
-**          08/04/2010 grk - try-catch for error handling
+**          08/04/2010 grk - Use try-catch for error handling
 **          08/27/2010 mem - Now auto-switching _requestedInstrument to be instrument group instead of instrument name
 **                         - Expanded _requestedCompletionDate to varchar(24) to support long dates of the form 'Jan 01 2010 12:00:00AM'
 **          05/14/2013 mem - Expanded _requestedCompletionDate to varchar(32) to support long dates of the form 'Jan 29 2010 12:00:00:000AM'

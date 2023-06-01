@@ -54,7 +54,7 @@ AS $$
 **          02/07/2010 grk - Added validation for campaign name
 **          02/07/2010 mem - No longer validating _progmgrUsername or _piUsername in this procedure since this is now handled by UpdateResearchTeamForCampaign
 **          03/17/2010 grk - DataReleaseRestrictions (Ticket http://prismtrac.pnl.gov/trac/ticket/758)
-**          04/21/2010 grk - try-catch for error handling
+**          04/21/2010 grk - Use try-catch for error handling
 **          10/27/2011 mem - Added parameter _fractionEMSLFunded
 **          12/01/2011 mem - Updated _fractionEMSLFunded to be a required value
 **                         - Now calling alter_event_log_entry_user for updates to CM_Fraction_EMSL_Funded or CM_Data_Release_Restrictions

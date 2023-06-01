@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION cap.create_parameters_for_task(_job integer, _dataset
 **      Format parameters for given capture task job as XML
 **
 **  Auth:   grk
-**  Date:   09/05/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/746)
+**  Date:   09/05/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          05/31/2013 mem - Added parameter _scriptName
 **                         - Added support for script 'MyEMSLDatasetPush'
 **          07/11/2013 mem - Added support for script 'MyEMSLDatasetPushRecursive'

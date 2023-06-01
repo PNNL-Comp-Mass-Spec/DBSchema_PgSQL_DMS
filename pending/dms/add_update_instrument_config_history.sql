@@ -25,7 +25,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   09/30/2008
-**          03/19/2012 grk - added 'PostedBy'
+**          03/19/2012 grk - Added 'PostedBy'
 **          06/13/2017 mem - Use SCOPE_IDENTITY
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized

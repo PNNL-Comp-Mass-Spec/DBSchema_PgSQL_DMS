@@ -26,7 +26,7 @@ AS $$
 **  Auth:   grk
 **  Date:   11/15/2012 grk - Initial version
 **          11/20/2012 mem - Now returning organism name, protein collection list, and protein options list
-**          11/20/2012 grk - removed extra RETURN that was blocking error return
+**          11/20/2012 grk - Removed extra RETURN that was blocking error return
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          12/15/2023 mem - Ported to PostgreSQL

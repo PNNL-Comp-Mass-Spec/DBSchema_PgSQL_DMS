@@ -68,7 +68,7 @@ AS $$
 **          01/17/2009 mem - Moved updating of T_Jobs.Archive_Busy to SyncJobInfo (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)
 **          02/12/2009 mem - Updated job resume logic to change step states from 6 or 7 to 1=waiting (instead of 2=enabled) and to reset Evaluated and Triggered to 0 in T_Job_Step_Dependencies for the affected steps
 **                         - Added parameter _debugMode
-**          03/02/2009 grk - added code to update job parameters when jobs are resumed (from hold or fail)
+**          03/02/2009 grk - Added code to update job parameters when jobs are resumed (from hold or fail)
 **          03/11/2009 mem - Now also resetting jobs if they are running or failed, but do not have any running or completed job steps (Ticket #725, http://prismtrac.pnl.gov/trac/ticket/725)
 **          06/01/2009 mem - Moved the job resuming updates to occur outside the transaction (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **                         - Added parameter _maxJobsToProcess

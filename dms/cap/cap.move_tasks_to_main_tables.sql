@@ -15,8 +15,8 @@ CREATE OR REPLACE PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, I
 **          To main database tables
 **
 **  Auth:   grk
-**  Date:   02/06/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/720)
-**          01/14/2010 grk - removed path ID fields
+**  Date:   02/06/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)
+**          01/14/2010 grk - Removed path ID fields
 **          05/25/2011 mem - Removed priority column from t_task_steps
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          05/29/2015 mem - Add support for column Capture_Subfolder

@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **    _mode             'add' or 'update'
 **
 **  Auth:   jds
-**  Date:   06/24/2004 jds - initial release
+**  Date:   06/24/2004 jds - Initial release
 **          12/29/2008 grk - Added _networkSharePath (http://prismtrac.pnl.gov/trac/ticket/708)
 **          05/11/2011 mem - Expanded _archivePath, _archiveServer, _networkSharePath, and _archiveNote to larger varchar() variables
 **          06/02/2015 mem - Replaced IDENT_CURRENT with SCOPE_IDENTITY()

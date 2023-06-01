@@ -20,7 +20,7 @@ AS $$
 **    _mode     Unused parameter (proposed to be 'all' or 'actual_run_order', but in reality this procedure always calls update_requested_run_factors with f="Actual_Run_Order" defined by dataset acquisition times)
 **
 **  Auth:   grk
-**  Date:   03/23/2010 grk - initial release
+**  Date:   03/23/2010 grk - Initial release
 **          11/08/2016 mem - Use GetUserLoginWithoutDomain to obtain the user's network login
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
 **          06/10/2022 mem - Exit the procedure if _batchID is 0 or null

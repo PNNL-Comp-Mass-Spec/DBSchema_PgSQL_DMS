@@ -18,8 +18,8 @@ CREATE OR REPLACE PROCEDURE cap.finish_task_creation(IN _job integer, INOUT _mes
 **          Tmp_Job_Step_Dependencies
 **
 **  Auth:   grk
-**  Date:   01/31/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/720)
-**          03/06/2009 grk - added code for: Special="Job_Results"
+**  Date:   01/31/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)
+**          03/06/2009 grk - Added code for: Special="Job_Results"
 **          07/31/2009 mem - Now filtering by capture task job in the subquery that looks for job steps with flag Special="Job_Results" (necessary when Tmp_Job_Steps contains more than one capture task job)
 **          04/08/2011 mem - Now skipping the 'ImsDeMultiplex' step for datasets that end in '_inverse'
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies

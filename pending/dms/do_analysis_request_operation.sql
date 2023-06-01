@@ -19,7 +19,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   10/13/2004
-**          05/05/2005 grk - removed default mode value
+**          05/05/2005 grk - Removed default mode value
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/15/2023 mem - Ported to PostgreSQL

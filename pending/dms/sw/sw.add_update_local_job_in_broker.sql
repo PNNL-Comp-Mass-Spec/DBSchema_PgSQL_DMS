@@ -46,7 +46,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   08/29/2010 grk - Initial release
-**          08/31/2010 grk - reset job
+**          08/31/2010 grk - Reset job
 **          10/06/2010 grk - Check _jobParam against parameters for script
 **          10/25/2010 grk - Removed creation prohibition all jobs except aggregation jobs
 **          11/25/2010 mem - Added parameter _debugMode

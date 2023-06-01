@@ -49,8 +49,8 @@ AS $$
 **    _mode   'add' or 'update'
 **
 **  Auth:   grk
-**  Date:   06/21/2005 grk - superseded AddUpdateDefaultAnalysis
-**          03/28/2006 grk - added protein collection fields
+**  Date:   06/21/2005 grk - Superseded AddUpdateDefaultAnalysis
+**          03/28/2006 grk - Added protein collection fields
 **          01/26/2007 mem - Switched to organism ID instead of organism name (Ticket #368)
 **          07/30/2007 mem - Now validating dataset type and instrument class for the matching instruments against the specified analysis tool (Ticket #502)
 **          08/06/2008 mem - Added new filter criteria: SeparationType, CampaignExclusion, ExperimentExclusion, and DatasetExclusion (Ticket #684)

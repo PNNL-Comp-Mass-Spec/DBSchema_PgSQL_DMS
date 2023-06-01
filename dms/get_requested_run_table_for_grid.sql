@@ -12,8 +12,8 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_table_for_grid(_itemlist tex
 **
 **  Auth:   grk
 **  Date:   01/13/2013
-**          01/13/2013 grk - initial release
-**          03/14/2013 grk - removed "Active" status filter
+**          01/13/2013 grk - Initial release
+**          03/14/2013 grk - Removed "Active" status filter
 **          10/19/2020 mem - Rename the instrument group column to RDS_instrument_group
 **          10/25/2022 mem - Ported to PostgreSQL
 **          03/28/2023 mem - Update table aliases

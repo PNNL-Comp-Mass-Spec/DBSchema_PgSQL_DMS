@@ -32,14 +32,14 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   02/25/2005
-**          03/01/2005 grk - added column for instrument name at end
-**          12/19/2005 grk - added 'MD' and 'TS' prefixes (ticket #345)
+**          03/01/2005 grk - Added column for instrument name at end
+**          12/19/2005 grk - Added 'MD' and 'TS' prefixes (ticket #345)
 **          08/17/2007 mem - Updated to examine Dataset State and Dataset Rating when counting Bad and Blank datasets (ticket #520)
 **                         - Now excluding TS datasets from the Study Specific Datasets total (in addition to excluding Blank, QC, and Bad datasets)
 **                         - Now extending the end date to 11:59:59 pm on the given day if _endDate does not contain a time component
 **          04/25/2008 grk - Added "% Blank Datasets" column
 **          08/30/2010 mem - Added parameter _productionOnly and updated to allow _startDate and/or _endDate to be blank
-**                         - try/catch error handling
+**                         - Add try/catch error handling
 **          09/08/2010 mem - Now grouping Method Development (MD) datasets in with Troubleshooting datasets
 **                         - Added checking for invalid dates
 **          09/09/2010 mem - Now reporting % Study Specific datasets

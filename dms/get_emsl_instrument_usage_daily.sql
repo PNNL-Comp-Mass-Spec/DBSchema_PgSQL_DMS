@@ -16,9 +16,9 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_daily(_year integer,
 **      See also /files1/www/html/prismsupport/dms2ws/application/controllers/Instrument_usage_report.php
 **
 **  Auth:   grk
-**  Date:   09/15/2015 grk - initial release
-**          10/20/2015 grk - added users to output
-**          02/10/2016 grk - added rollup of comments and operators
+**  Date:   09/15/2015 grk - Initial release
+**          10/20/2015 grk - Added users to output
+**          02/10/2016 grk - Added rollup of comments and operators
 **          04/11/2017 mem - Update for new fields DMS_Inst_ID and Usage_Type
 **          04/09/2020 mem - Truncate the concatenated comment if over 4090 characters long
 **          04/17/2020 mem - Use Dataset_ID instead of ID

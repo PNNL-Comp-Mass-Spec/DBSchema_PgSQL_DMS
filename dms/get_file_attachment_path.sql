@@ -45,9 +45,9 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype public.ci
 **
 **  Auth:   grk
 **  Date:   04/16/2011
-**          04/26/2011 grk - added sample prep request
-**          08/23/2011 grk - added experiment_group
-**          11/15/2011 grk - added sample_submission
+**          04/26/2011 grk - Added sample prep request
+**          08/23/2011 grk - Added experiment_group
+**          11/15/2011 grk - Added sample_submission
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          02/24/2017 mem - Update capitalization and add comments
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0

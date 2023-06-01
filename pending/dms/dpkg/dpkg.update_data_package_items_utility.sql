@@ -29,11 +29,11 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   05/23/2010
-**          06/10/2009 grk - changed size of item list to max
+**          06/10/2009 grk - Changed size of item list to max
 **          06/10/2009 mem - Now calling UpdateDataPackageItemCounts to update the data package item counts
 **          10/01/2009 mem - Now populating Campaign in T_Data_Package_Biomaterial
 **          12/31/2009 mem - Added DISTINCT keyword to the INSERT INTO queries in case the source views include some duplicate rows (in particular, V_Experiment_Detail_Report_Ex)
-**          05/23/2010 grk - create this sproc from common function factored out of UpdateDataPackageItems and UpdateDataPackageItemsXML
+**          05/23/2010 grk - Create this sproc from common function factored out of UpdateDataPackageItems and UpdateDataPackageItemsXML
 **          12/31/2013 mem - Added support for EUS Proposals
 **          09/02/2014 mem - Updated to remove non-numeric items when working with analysis jobs
 **          10/28/2014 mem - Added support for adding datasets using dataset IDs; to delete datasets, you must use the dataset name (safety feature)

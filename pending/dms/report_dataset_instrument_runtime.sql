@@ -20,7 +20,7 @@ AS $$
 **    _reportOptions   'No Intervals', 'Intervals Only'
 **
 **  Auth:   grk
-**  Date:   05/26/2011 grk - initial release
+**  Date:   05/26/2011 grk - Initial release
 **          01/31/2012 grk - Added Interval column to output and made separate interval rows an option
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

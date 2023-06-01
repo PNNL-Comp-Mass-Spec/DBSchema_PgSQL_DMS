@@ -26,7 +26,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **
 **  Auth:   grk
 **  Date:   01/26/2003
-**          12/11/2003 grk - removed LCMS cart modes
+**          12/11/2003 grk - Removed LCMS cart modes
 **          07/27/2007 mem - When _mode = 'instrument, then checking dataset type (_datasetTypeName) against Allowed_Dataset_Types in T_Instrument_Class (Ticket #503)
 **                         - Added output parameter _message to report the number of items updated
 **          09/16/2009 mem - Now checking dataset type (_datasetTypeName) using Instrument_Allowed_Dataset_Type table (Ticket #748)

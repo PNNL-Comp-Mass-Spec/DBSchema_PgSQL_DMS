@@ -18,9 +18,9 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_task(IN _joblist text, INO
 **    _infoOnly     When true, show updated values in cap.t_tasks and show the new job parameters
 **
 **  Auth:   grk
-**  Date:   12/16/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/746)
-**          01/14/2010 grk - removed path ID fields
-**          01/28/2010 grk - modified to use create_parameters_for_task, and to take list of capture task jobs
+**  Date:   12/16/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
+**          01/14/2010 grk - Removed path ID fields
+**          01/28/2010 grk - Modified to use create_parameters_for_task, and to take list of capture task jobs
 **          04/13/2010 mem - Fixed bug that didn't properly update T_task_Parameters when Tmp_Job_Parameters contains multiple capture task jobs (because _jobList contained multiple capture task jobs)
 **                         - Added support for capture task jobs being present in T_Tasks but not present in T_task_Parameters
 **          05/18/2011 mem - Updated _jobList to varchar(max)

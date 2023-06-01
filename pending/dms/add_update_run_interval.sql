@@ -25,10 +25,10 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   02/15/2012
-**          02/15/2012 grk - modified percentage parameters
-**          03/03/2012 grk - changed to embedded usage tags
+**          02/15/2012 grk - Modified percentage parameters
+**          03/03/2012 grk - Changed to embedded usage tags
 **          03/07/2012 mem - Now populating Last_Affected and Entered_By
-**          03/21/2012 grk - modified to handle modified ParseUsageText
+**          03/21/2012 grk - Modified to handle modified ParseUsageText
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          04/28/2017 mem - Disable logging to T_Log_Entries when ParseUsageText reports an error

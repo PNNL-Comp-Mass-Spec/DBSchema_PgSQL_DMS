@@ -18,11 +18,11 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   06/14/2005
-**          07/26/2005 grk - added 'req_assignment'
-**          08/02/2005 grk - assignement also sets state to 'open'
-**          08/14/2005 grk - update state changed date
-**          03/14/2006 grk - added stuff for estimated completion date
 **          09/02/2011 mem - Now calling PostUsageLogEntry
+**          07/26/2005 grk - Added 'req_assignment'
+**          08/02/2005 grk - Assignement also sets state to 'open'
+**          08/14/2005 grk - Update state changed date
+**          03/14/2006 grk - Added stuff for estimated completion date
 **          02/20/2012 mem - Now using a temporary table to track the requests to update
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
 **          06/18/2014 mem - Now passing default to udfParseDelimitedIntegerList

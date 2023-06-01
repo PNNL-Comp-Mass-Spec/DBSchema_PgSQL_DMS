@@ -20,7 +20,7 @@ AS $$
 **    _mode   'make_folder'
 **
 **  Auth:   grk
-**  Date:   05/07/2010 grk - initial release
+**  Date:   05/07/2010 grk - Initial release
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

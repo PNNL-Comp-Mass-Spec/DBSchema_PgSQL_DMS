@@ -15,7 +15,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   11/10/2005
-**          01/04/2006 grk - added delete for aux info
+**          01/04/2006 grk - Added delete for aux info
 **          05/16/2008 mem - Added optional parameter _callingUser; if provided, will populate field System_Account in T_Sample_Prep_Request_Updates with this name (Ticket #674)
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized

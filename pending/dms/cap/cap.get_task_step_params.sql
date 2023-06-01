@@ -21,7 +21,7 @@ AS $$
 **      Data comes from tables cap.t_tasks, cap.t_task_steps, and cap.t_task_parameters
 **
 **  Auth:   grk
-**  Date:   09/08/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/746)
+**  Date:   09/08/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          08/30/2013 mem - Added MyEMSL_Status_URI
 **          01/04/2016 mem - Added EUS_InstrumentID, EUS_ProposalID, and EUS_UploaderID
 **          06/15/2017 mem - Only append /xml to the MyEMSL status URI if it contains /status/

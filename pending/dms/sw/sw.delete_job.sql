@@ -16,7 +16,7 @@ AS $$
 **      However, now DeleteAnalysisJob calls DeleteJobIfNewOrFailed in this database
 **
 **  Auth:   mem
-**  Date:   12/31/2008 mem - initial release
+**  Date:   12/31/2008 mem - Initial release
 **          05/26/2009 mem - Now deleting from T_Job_Step_Dependencies and T_Job_Parameters
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

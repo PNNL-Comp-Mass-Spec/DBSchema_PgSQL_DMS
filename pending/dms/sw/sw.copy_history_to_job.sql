@@ -16,7 +16,7 @@ AS $$
 **      run in the history tables back into the main tables
 **
 **  Auth:   grk
-**  Date:   02/06/2009 grk - initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
+**  Date:   02/06/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
 **          10/05/2009 mem - Now looking up CPU_Load for each step tool
 **          04/05/2011 mem - Now copying column Special_Processing
 **          05/19/2011 mem - Now calling UpdateJobParameters

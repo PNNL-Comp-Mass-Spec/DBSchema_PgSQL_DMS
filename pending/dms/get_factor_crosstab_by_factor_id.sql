@@ -28,7 +28,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   02/18/2010
-**          02/19/2010 grk - tweaked logic that creates _factorNameList
+**          02/19/2010 grk - Tweaked logic that creates _factorNameList
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

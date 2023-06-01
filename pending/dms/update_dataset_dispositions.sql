@@ -26,7 +26,7 @@ AS $$
 **          08/22/2007 mem - Disallow setting datasets to rating 5 (Released) when their state is 5 (Capture Failed); Ticket #524
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          08/15/2008 mem - Added call to alter_event_log_entry_user to handle dataset rating entries (event log target type 8)
-**          08/19/2010 grk - try-catch for error handling
+**          08/19/2010 grk - Use try-catch for error handling
 **          11/18/2010 mem - Updated logic for calling schedule_predefined_analysis_jobs to include dataset state 4 (Inactive)
 **          09/02/2011 mem - Now calling PostUsageLogEntry
 **          12/13/2011 mem - Now passing _callingUser to UnconsumeScheduledRun

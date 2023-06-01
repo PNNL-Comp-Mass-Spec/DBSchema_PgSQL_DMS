@@ -21,14 +21,14 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **  Auth:   grk
 **  Date:   06/23/2005
 **          03/03/2006 mem - Increased size of the AD_datasetNameCriteria and AD_expCommentCriteria fields in temporary table #AD
-**          03/28/2006 grk - added protein collection fields
-**          04/04/2006 grk - increased sized of param file name
+**          03/28/2006 grk - Added protein collection fields
+**          04/04/2006 grk - Increased sized of param file name
 **          11/30/2006 mem - Now evaluating dataset type for each analysis tool (Ticket #335)
 **          12/21/2006 mem - Updated 'Show Rules' to include explanations for why a rule was used, altered, or skipped (Ticket #339)
 **          01/26/2007 mem - Now getting organism name from T_Organisms (Ticket #368)
 **          03/15/2007 mem - Replaced processor name with associated processor group (Ticket #388)
 **          03/16/2007 mem - Updated to use processor group ID (Ticket #419)
-**          09/04/2007 grk - corrected bug in "_ruleEvalNotes" update.
+**          09/04/2007 grk - Corrected bug in "_ruleEvalNotes" update.
 **          12/28/2007 mem - Updated to allow preview of jobs for datasets with rating -10 (unreviewed)
 **          01/04/2007 mem - Fixed bug that incorrectly allowed rules to be evaluated when rating = -10 and _outputType = 'Export Jobs'
 **          01/30/2008 grk - Set several in Tmp_RuleEval to be explicitly null (needed by DMS2)

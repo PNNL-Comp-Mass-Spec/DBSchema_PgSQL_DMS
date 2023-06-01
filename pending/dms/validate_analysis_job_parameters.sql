@@ -52,10 +52,10 @@ AS $$
 **    _allowNewDatasets   When false, all datasets must have state 3 (Complete); when true, will also allow datasets with state 1 or 2 (New or Capture In Progress)
 **
 **  Auth:   grk
-**  Date:   04/04/2006 grk - supersedes MakeAnalysisJobX
-**          05/01/2006 grk - modified to conditionally call pc.validate_analysis_job_protein_parameters
-**          06/01/2006 grk - removed dataset archive state restriction
-**          08/30/2006 grk - removed restriction for dataset state verification that limited it to 'add' mode (http://prismtrac.pnl.gov/trac/ticket/219)
+**  Date:   04/04/2006 grk - Supersedes MakeAnalysisJobX
+**          05/01/2006 grk - Modified to conditionally call pc.validate_analysis_job_protein_parameters
+**          06/01/2006 grk - Removed dataset archive state restriction
+**          08/30/2006 grk - Removed restriction for dataset state verification that limited it to 'add' mode (http://prismtrac.pnl.gov/trac/ticket/219)
 **          11/30/2006 mem - Now checking dataset type against AJT_allowedDatasetTypes in T_Analysis_Tool (Ticket #335)
 **          12/20/2006 mem - Now assuring dataset rating is not -2=Data Files Missing (Ticket #339)
 **          09/06/2007 mem - Updated to reflect Protein_Sequences DB move to server ProteinSeqs

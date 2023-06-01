@@ -19,7 +19,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   10/06/2004
-**          04/17/2006 grk - added stuf for set archive update
+**          04/17/2006 grk - Added stuff for set archive update
 **          03/27/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized

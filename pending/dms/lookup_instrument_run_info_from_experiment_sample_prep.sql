@@ -20,7 +20,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   09/06/2007 (Ticket #512 http://prismtrac.pnl.gov/trac/ticket/512)
-**          01/09/2012 grk - added _secSep
+**          01/09/2012 grk - Added _secSep
 **          03/28/2013 mem - Now returning more explicit error messages when the experiment does not have an associated sample prep request
 **          06/10/2014 mem - Now using Instrument_Group in T_Sample_Prep_Request
 **          08/20/2014 mem - Switched from Instrument_Name to Instrument_Group

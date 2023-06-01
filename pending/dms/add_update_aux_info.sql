@@ -29,7 +29,7 @@ AS $$
 **          12/18/2007 grk - Improved ability to handle target ID if supplied as target name
 **          06/30/2008 jds - Added error message to 'Resolve target name and entity name to entity ID' section
 **          05/15/2009 jds - Added a return if just performing a check_add or check_update
-**          08/21/2010 grk - try-catch for error handling
+**          08/21/2010 grk - Try-catch for error handling
 **          02/20/2012 mem - Now using temporary tables to parse _itemNameList and _itemValueList
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
 **          02/23/2016 mem - Add set XACT_ABORT on

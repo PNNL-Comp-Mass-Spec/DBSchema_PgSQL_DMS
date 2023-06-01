@@ -36,15 +36,15 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   10/9/2003
-**          02/11/2006 grk - added validation for tool compatibility
-**          03/28/2006 grk - added protein collection fields
-**          04/04/2006 grk - increased sized of param file name
-**          04/04/2006 grk - modified to use ValidateAnalysisJobParameters
-**          04/10/2006 grk - widened size of list argument to 6000 characters
-**          04/11/2006 grk - modified logic to allow changing name of exising request
-**          08/31/2006 grk - restored apparently missing prior modification http://prismtrac.pnl.gov/trac/ticket/217
-**          10/16/2006 jds - added support for work package number
-**          10/16/2006 mem - updated to force _state to 'new' if _mode = 'add'
+**          02/11/2006 grk - Added validation for tool compatibility
+**          03/28/2006 grk - Added protein collection fields
+**          04/04/2006 grk - Increased sized of param file name
+**          04/04/2006 grk - Modified to use Validate_Analysis_Job_Parameters
+**          04/10/2006 grk - Widened size of list argument to 6000 characters
+**          04/11/2006 grk - Modified logic to allow changing name of exising request
+**          08/31/2006 grk - Restored apparently missing prior modification http://prismtrac.pnl.gov/trac/ticket/217
+**          10/16/2006 jds - Added support for work package number
+**          10/16/2006 mem - Updated to force _state to 'new' if _mode = 'add'
 **          11/13/2006 mem - Now calling ValidateProteinCollectionListForDatasets to validate _protCollNameList
 **          11/30/2006 mem - Added column Dataset_Type to Tmp_DatasetInfo (Ticket:335)
 **          12/20/2006 mem - Added column dataset_rating_id to Tmp_DatasetInfo (Ticket:339)
@@ -58,16 +58,16 @@ AS $$
 **          12/02/2008 grk - Disallow editing unless in 'New' state
 **          09/19/2009 grk - Added field to request admin review (Ticket #747, http://prismtrac.pnl.gov/trac/ticket/747)
 **          09/19/2009 grk - Allowed updates from any state
-**          09/22/2009 grk - changed state 'review_required' to 'New (Review Required)'
+**          09/22/2009 grk - Changed state 'review_required' to 'New (Review Required)'
 **          09/22/2009 mem - Now setting state to 'New (Review Required)' if _state = 'new' and _adminReviewReqd='Yes'
 **          10/02/2009 mem - Revert to only allowing updates if the state is 'New' or 'New (Review Required)'
 **          02/12/2010 mem - Now assuring that rating is not -5 (note: when converting a job request to jobs, you can manually add datasets with a rating of -5; procedure AddAnalysisJobGroup will allow them to be included)
-**          04/21/2010 grk - try-catch for error handling
-**          05/05/2010 mem - Now passing _requestorPRN to ValidateAnalysisJobParameters as input/output
+**          04/21/2010 grk - Try-catch for error handling
+**          05/05/2010 mem - Now passing _requestorPRN to Validate_Analysis_Job_Parameters as input/output
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          03/21/2011 mem - Expanded _datasets to varchar(max) and _requestName to varchar(128)
 **                         - Now using SCOPE_IDENTITY() to determine the ID of the newly added request
-**          03/29/2011 grk - added _specialProcessing argument (http://redmine.pnl.gov/issues/304)
+**          03/29/2011 grk - Added _specialProcessing argument (http://redmine.pnl.gov/issues/304)
 **          05/16/2011 mem - Now auto-removing duplicate datasets and auto-formatting _datasets
 **          04/02/2012 mem - Now auto-removing datasets named 'Dataset' or 'Dataset_Name' in _datasets
 **          05/15/2012 mem - Added _organismDBName

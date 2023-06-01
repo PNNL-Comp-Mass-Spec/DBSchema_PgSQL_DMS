@@ -16,7 +16,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:
-**          03/20/2013 grk - initial release
+**          03/20/2013 grk - Initial release
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

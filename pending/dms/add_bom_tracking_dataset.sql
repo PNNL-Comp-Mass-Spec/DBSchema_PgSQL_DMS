@@ -25,9 +25,9 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   12/14/2012
-**          12/14/2012 grk - initial release
-**          12/16/2012 grk - added concept of 'next' month
-**          02/01/2013 grk - fixed broken logic for specifying year/month
+**          12/14/2012 grk - Initial release
+**          12/16/2012 grk - Added concept of 'next' month
+**          02/01/2013 grk - Fixed broken logic for specifying year/month
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          02/14/2022 mem - Update error messages to show the correct dataset name

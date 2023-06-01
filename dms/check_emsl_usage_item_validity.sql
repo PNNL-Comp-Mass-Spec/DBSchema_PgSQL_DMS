@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **
 **  Auth:   grk
 **  Date:   08/28/2012
-**          08/31/2012 grk - fixed spelling error in message
+**          08/31/2012 grk - Fixed spelling error in message
 **          10/03/2012 grk - Maintenance usage no longer requires comment
 **          03/20/2013 mem - Changed from Call_Type to Proposal_Type
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int

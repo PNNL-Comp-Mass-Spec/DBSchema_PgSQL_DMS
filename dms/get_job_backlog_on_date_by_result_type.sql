@@ -31,7 +31,7 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_result_type(_target
 **  Auth:   grk
 **  Date:   01/21/2005
 **          01/22/2005 mem - Added two additional parameters
-**          01/25/2005 grk - modified to use result type
+**          01/25/2005 grk - Modified to use result type
 **          06/23/2022 mem - Ported to PostgreSQL
 **                         - Removed argument _processorNameFilter since all jobs are processed by the Job Broker
 **          07/12/2022 mem - Renamed function and added another usage example

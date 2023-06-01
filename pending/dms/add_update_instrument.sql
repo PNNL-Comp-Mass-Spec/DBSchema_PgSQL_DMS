@@ -47,7 +47,7 @@ AS $$
 **  Date:   06/07/2005 grk - Initial release
 **          10/15/2008 grk - Allowed for null Usage
 **          08/27/2010 mem - Add parameter _instrumentGroup
-**                         - try-catch for error handling
+**                         - Use try-catch for error handling
 **          05/12/2011 mem - Add _autoDefineStoragePath and related _autoSP parameters
 **          05/13/2011 mem - Now calling ValidateAutoStoragePathParams
 **          11/30/2011 mem - Add parameter _percentEMSLOwned

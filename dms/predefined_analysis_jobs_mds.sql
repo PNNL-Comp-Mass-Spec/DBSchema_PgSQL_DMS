@@ -19,8 +19,8 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 **
 **  Auth:   grk
 **  Date:   06/23/2005
-**          03/28/2006 grk - added protein collection fields
-**          04/04/2006 grk - increased sized of param file name
+**          03/28/2006 grk - Added protein collection fields
+**          04/04/2006 grk - Increased sized of param file name
 **          03/16/2007 mem - Replaced processor name with associated processor group (Ticket #388)
 **          04/11/2008 mem - Now passing _raiseErrorMessages to EvaluatePredefinedAnalysisRules
 **          07/22/2008 grk - Changed protein collection column names for final list report output

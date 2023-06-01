@@ -41,8 +41,8 @@ AS $$
 **          04/08/2008 grk - Added handling for separation field (Ticket #658)
 **          03/26/2009 grk - Added MRM transition list attachment (Ticket #727)
 **          02/24/2010 grk - Added handling for requested run factors
-**          02/26/2010 grk - merged T_Requested_Run_History with T_Requested_Run
-**          03/02/2010 grk - added status field to requested run
+**          02/26/2010 grk - Merged T_Requested_Run_History with T_Requested_Run
+**          03/02/2010 grk - Added status field to requested run
 **          08/04/2010 mem - No longer updating the "date created" date for the recycled request
 **          12/13/2011 mem - Added parameter _callingUser, which is sent to CopyRequestedRun, alter_event_log_entry_user, and DeleteRequestedRun
 **          02/20/2013 mem - Added ability to lookup the original request from an auto-created recycled request

@@ -15,7 +15,7 @@ AS $$
 **
 **
 **  Auth:   grk
-**  Date:   02/06/2009 grk - initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
+**  Date:   02/06/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
 **          10/22/2010 mem - Added parameter _debugMode
 **          03/21/2011 mem - Renamed _debugMode to _infoOnly
 **          05/25/2011 mem - Removed priority column from T_Job_Steps

@@ -19,7 +19,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/28/2013
-**          03/28/2013 grk - cloned from GetFactorCrosstabByBatch
+**          03/28/2013 grk - Cloned from GetFactorCrosstabByBatch
 **          01/24/2023 bcg - Use lowercase column names in _colList
 **          12/15/2023 mem - Ported to PostgreSQL
 **

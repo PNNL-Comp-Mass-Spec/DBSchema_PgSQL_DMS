@@ -19,8 +19,8 @@ AS $$
 **    _loopingUpdateInterval   Seconds between detailed logging while looping through the dependencies
 **
 **  Auth:   grk
-**  Date:   05/06/2008 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/666)
-**          01/06/2009 grk - added condition evaluation logic for Completion_Message_Contains http://prismtrac.pnl.gov/trac/ticket/706.
+**  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
+**          01/06/2009 grk - Added condition evaluation logic for Completion_Message_Contains http://prismtrac.pnl.gov/trac/ticket/706.
 **          06/01/2009 mem - Added parameter _maxJobsToProcess (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **          06/03/2009 mem - Added parameter _loopingUpdateInterval
 **          12/21/2009 mem - Added parameter _infoOnly

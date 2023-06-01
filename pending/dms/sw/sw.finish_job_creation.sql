@@ -16,8 +16,8 @@ AS $$
 **      copying to the main database tables
 **
 **  Auth:   grk
-**  Date:   01/31/2009 grk - initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
-**          03/06/2009 grk - added code for: Special = 'Job_Results'
+**  Date:   01/31/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
+**          03/06/2009 grk - Added code for: Special = 'Job_Results'
 **          07/31/2009 mem - Now filtering by job in the subquery that looks for job steps with flag Special = 'Job_Results' (necessary when Tmp_Job_Steps contains more than one job)
 **          03/21/2011 mem - Added support for Special = 'ExtractSourceJobFromComment'
 **          03/22/2011 mem - Now calling AddUpdateJobParameterTempTable

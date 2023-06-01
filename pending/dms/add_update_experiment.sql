@@ -46,23 +46,23 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   01/8/2002 - initial release
-**          08/25/2004 jds - updated proc to add T_Enzyme table value
-**          06/10/2005 grk - added handling for sample prep request
-**          10/28/2005 grk - added handling for internal standard
-**          11/11/2005 grk - added handling for postdigest internal standard
-**          11/21/2005 grk - fixed update error for postdigest internal standard
-**          01/12/2007 grk - added verification mode
-**          01/13/2007 grk - switched to organism ID instead of organism name (Ticket #360)
-**          04/30/2007 grk - added better name validation (Ticket #450)
+**          08/25/2004 jds - Updated proc to add T_Enzyme table value
+**          06/10/2005 grk - Added handling for sample prep request
+**          10/28/2005 grk - Added handling for internal standard
+**          11/11/2005 grk - Added handling for postdigest internal standard
+**          11/21/2005 grk - Fixed update error for postdigest internal standard
+**          01/12/2007 grk - Added verification mode
+**          01/13/2007 grk - Switched to organism ID instead of organism name (Ticket #360)
+**          04/30/2007 grk - Added better name validation (Ticket #450)
 **          02/13/2008 mem - Now checking for _badCh = 'space' (Ticket #602)
-**          03/13/2008 grk - added material tracking stuff (http://prismtrac.pnl.gov/trac/ticket/603); also added optional parameter _callingUser
+**          03/13/2008 grk - Added material tracking stuff (http://prismtrac.pnl.gov/trac/ticket/603); also added optional parameter _callingUser
 **          03/25/2008 mem - Now calling alter_event_log_entry_user if _callingUser is not blank (Ticket #644)
-**          07/16/2009 grk - added wellplate and well fields (http://prismtrac.pnl.gov/trac/ticket/741)
-**          12/01/2009 grk - modified to skip checking of existing well occupancy if updating existing experiment
-**          04/22/2010 grk - try-catch for error handling
+**          07/16/2009 grk - Added wellplate and well fields (http://prismtrac.pnl.gov/trac/ticket/741)
+**          12/01/2009 grk - Modified to skip checking of existing well occupancy if updating existing experiment
+**          04/22/2010 grk - Use try-catch for error handling
 **          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _researcherPRN contains a person's real name rather than their username
 **          05/18/2010 mem - Now validating that _internalStandard and _postdigestIntStd are active internal standards when creating a new experiment (_mode is 'add' or 'check_add')
-**          11/15/2011 grk - added alkylation field
+**          11/15/2011 grk - Added alkylation field
 **          12/19/2011 mem - Now auto-replacing &quot; with a double-quotation mark in _comment
 **          03/26/2012 mem - Now validating _container
 **                         - Updated to validate additional terms when _mode = 'check_add'

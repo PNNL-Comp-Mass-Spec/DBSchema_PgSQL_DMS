@@ -56,7 +56,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/04/2003
-**          02/11/2005 grk - added _rawDataType to output
+**          02/11/2005 grk - Added _rawDataType to output
 **          06/02/2009 mem - Decreased population of Tmp_PurgeableDatasets to be limited to 2 rows
 **          12/13/2010 mem - Added _infoOnly and defined defaults for several parameters
 **          12/30/2010 mem - Updated to allow _storageServerName and/or _serverDisk to be blank

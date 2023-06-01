@@ -21,7 +21,7 @@ AS $$
 **  Auth:   grk
 **  Date:   07/23/2008 grk - Initial version (ticket http://prismtrac.pnl.gov/trac/ticket/603)
 **          10/01/2009 mem - Expanded error message
-**          08/19/2010 grk - Add try-catch for error handling
+**          08/19/2010 grk - Use try-catch for error handling
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

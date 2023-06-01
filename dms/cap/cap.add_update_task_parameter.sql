@@ -31,7 +31,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/23/2022 mem - Ported to PostgreSQL
 **          08/24/2022 mem - Switch from get_current_function_name() to get_current_function_info()
-**          08/26/2022 mem - verify_sp_authorized now has boolean parameters
+**          08/26/2022 mem - Verify_sp_authorized now has boolean parameters
 **          08/27/2022 mem - Change arguments _infoOnly and _deleteParam from int to boolean
 **          09/01/2022 mem - Send '<auto>' to get_current_function_info()
 **          04/27/2023 mem - Use boolean for data type name

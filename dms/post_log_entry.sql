@@ -20,10 +20,10 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **
 **  Auth:   grk
 **  Date:   01/26/2001
-**          06/08/2006 grk - added logic to put data extraction manager stuff in analysis log
+**          06/08/2006 grk - Added logic to put data extraction manager stuff in analysis log
 **          03/30/2009 mem - Added parameter _duplicateEntryHoldoffHours
 **                         - Expanded the size of _type, _message, and _postedBy
-**          07/20/2009 grk - eliminate health log (http://prismtrac.pnl.gov/trac/ticket/742)
+**          07/20/2009 grk - Eliminate health log (http://prismtrac.pnl.gov/trac/ticket/742)
 **          09/13/2010 mem - Eliminate analysis log
 **                         - Auto-update _duplicateEntryHoldoffHours to be 24 when the log type is Health or Normal and the source is the space manager
 **          02/27/2017 mem - Although _message is varchar(4096), the Message column in T_Log_Entries may be shorter (512 characters in DMS); disable ANSI Warnings before inserting into the table

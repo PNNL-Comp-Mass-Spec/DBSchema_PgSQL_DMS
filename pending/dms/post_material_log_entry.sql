@@ -18,7 +18,7 @@ AS $$
 **  Auth:   grk
 **  Date:   03/20/2008
 **          03/25/2008 mem - Now validating that _callingUser is not blank
-**          03/26/2008 grk - added handling for comment
+**          03/26/2008 grk - Added handling for comment
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

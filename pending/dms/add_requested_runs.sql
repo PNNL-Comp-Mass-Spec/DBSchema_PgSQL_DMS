@@ -50,7 +50,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   07/22/2005 - Initial version
-**          07/27/2005 grk - modified prefix
+**          07/27/2005 grk - Modified prefix
 **          10/12/2005 grk - Added stuff for new work package and proposal fields.
 **          02/23/2006 grk - Added stuff for EUS proposal and user tracking.
 **          03/24/2006 grk - Added stuff for auto incrementing well numbers.
@@ -61,11 +61,11 @@ AS $$
 **          09/06/2007 grk - Removed _specialInstructions (http://prismtrac.pnl.gov/trac/ticket/522)
 **          04/25/2008 grk - Added secondary separation field (Ticket #658)
 **          03/26/2009 grk - Added MRM transition list attachment (Ticket #727)
-**          07/27/2009 grk - removed autonumber for well fields (http://prismtrac.pnl.gov/trac/ticket/741)
-**          03/02/2010 grk - added status field to requested run
+**          07/27/2009 grk - Removed autonumber for well fields (http://prismtrac.pnl.gov/trac/ticket/741)
+**          03/02/2010 grk - Added status field to requested run
 **          08/27/2010 mem - Now referring to _instrumentGroup as an instrument group
-**          09/29/2011 grk - fixed limited size of variable holding delimited list of experiments from group
-**          12/14/2011 mem - Added parameter _callingUser, which is passed to AddUpdateRequestedRun
+**          09/29/2011 grk - Fixed limited size of variable holding delimited list of experiments from group
+**          12/14/2011 mem - Added parameter _callingUser, which is passed to Add_Update_Requested_Run
 **          02/20/2012 mem - Now using a temporary table to track the experiment names for which requested runs need to be created
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
 **          06/13/2013 mem - Added _vialingConc and _vialingVol

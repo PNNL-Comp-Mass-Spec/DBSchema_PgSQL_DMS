@@ -31,8 +31,8 @@ AS $$
 **    Comma separated list of container names (via argument _containerList)
 **
 **  Auth:   grk
-**  Date:   04/27/2010 grk - initial release
-**          09/23/2011 grk - accomodate researcher field in AddUpdateMaterialContainer
+**  Date:   04/27/2010 grk - Initial release
+**          09/23/2011 grk - Accomodate researcher field in AddUpdateMaterialContainer
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          05/04/2023 mem - Use TOP 1 when retrieving the next item to process
@@ -49,7 +49,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     BEGIN
 

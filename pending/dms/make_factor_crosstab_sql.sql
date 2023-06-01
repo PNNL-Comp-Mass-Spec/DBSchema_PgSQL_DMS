@@ -31,7 +31,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/22/2010
-**          03/22/2010 grk - initial release
+**          03/22/2010 grk - Initial release
 **          10/19/2022 mem - Combined make_factor_crosstab_sql and make_factor_crosstab_sql_ex
 **          11/11/2022 mem - Exclude unnamed factors when querying T_Factor
 **          12/15/2023 mem - Ported to PostgreSQL

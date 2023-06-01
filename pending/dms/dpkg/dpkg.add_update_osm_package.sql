@@ -28,14 +28,14 @@ AS $$
 **
 **  Auth:   grk
 **  Date:
-**          10/26/2012 grk - now setting "last affected" date
-**          11/02/2012 grk - removed _requester
-**          05/20/2013 grk - added _noteFilesLink
-**          07/06/2013 grk - added _samplePrepRequestList
-**          08/20/2013 grk - added handling for onenote file path
-**          08/21/2013 grk - removed _noteFilesLink
-**          08/21/2013 grk - added call to create onenote folder
-**          11/04/2013 grk - added _userFolderPath
+**          10/26/2012 grk - Now setting "last affected" date
+**          11/02/2012 grk - Removed _requester
+**          05/20/2013 grk - Added _noteFilesLink
+**          07/06/2013 grk - Added _samplePrepRequestList
+**          08/20/2013 grk - Added handling for onenote file path
+**          08/21/2013 grk - Removed _noteFilesLink
+**          08/21/2013 grk - Added call to create onenote folder
+**          11/04/2013 grk - Added _userFolderPath
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/18/2016 mem - Log errors to T_Log_Entries
 **          06/16/2017 mem - Restrict access using verify_sp_authorized

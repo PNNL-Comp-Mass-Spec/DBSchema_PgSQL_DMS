@@ -33,7 +33,7 @@ AS $$
 **    _processorName     Name of the processor setting the job as complete
 **
 **  Auth:   grk
-**  Date:   05/07/2008 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/666)
+**  Date:   05/07/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
 **          06/17/2008 dac - Added default values for completionMessage, evaluationCode, and evaluationMessage
 **          10/05/2009 mem - Now allowing for CPU_Load to be null in T_Job_Steps
 **          10/17/2011 mem - Added column Memory_Usage_MB

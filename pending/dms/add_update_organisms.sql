@@ -49,7 +49,7 @@ AS $$
 **          09/09/2009 mem - No longer populating field OG_organismDBLocalPath
 **          11/20/2009 mem - Removed parameter _orgDBLocalPath
 **          12/03/2009 mem - Now making sure that _orgDBPath starts with two slashes and ends with one slash
-**          08/04/2010 grk - try-catch for error handling
+**          08/04/2010 grk - Use try-catch for error handling
 **          08/01/2012 mem - Now calling RefreshCachedOrganisms in MT_Main on ProteinSeqs
 **          09/25/2012 mem - Expanded _orgName and _orgDBName to varchar(128)
 **          11/20/2012 mem - No longer allowing _orgDBName to contain '.fasta'

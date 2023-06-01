@@ -33,7 +33,7 @@ AS $$
 **          06/01/2009 mem - Added parameter _maxJobsToProcess (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **          06/03/2009 mem - Added parameter _loopingUpdateInterval
 **          10/30/2009 grk - Modified skip logic to not pass through folder for DTARefinery tool (temporary ugly hack)
-**          02/15/2010 mem - added some additional debug statements to be shown when _infoOnly is true
+**          02/15/2010 mem - Added some additional debug statements to be shown when _infoOnly is true
 **          07/01/2010 mem - Updated DTARefinery skip logic to name the tool DTA_Refinery
 **          05/25/2011 mem - Now using the Priority column from T_Jobs
 **          12/20/2011 mem - Now updating T_Job_Steps.Dependencies if the dependency count listed is lower than that defined in T_Job_Step_Dependencies

@@ -18,9 +18,9 @@ CREATE OR REPLACE FUNCTION public.get_existing_jobs_matching_job_request(_reques
 **
 **  Auth:   grk
 **  Date:   12/06/2005 grk - Initial release
-**          03/28/2006 grk - added protein collection fields
-**          08/30/2006 grk - fixed selection logic to handle auto-generated fasta file names https://prismtrac.pnl.gov/trac/ticket/218
-**          01/26/2007 mem - now getting organism name from T_Organisms (Ticket #368)
+**          03/28/2006 grk - Added protein collection fields
+**          08/30/2006 grk - Fixed selection logic to handle auto-generated fasta file names https://prismtrac.pnl.gov/trac/ticket/218
+**          01/26/2007 mem - Now getting organism name from T_Organisms (Ticket #368)
 **          10/11/2007 mem - Expanded protein collection list size to 4000 characters (https://prismtrac.pnl.gov/trac/ticket/545)
 **          03/27/2009 mem - Updated Where clause logic for Peptide_Hit jobs to ignore organism name when using a Protein Collection List
 **          05/03/2012 mem - Now comparing the special processing field

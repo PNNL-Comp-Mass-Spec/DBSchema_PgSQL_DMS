@@ -46,23 +46,23 @@ AS $$
 **  Auth:   grk
 **  Date:   01/10/2002
 **          01/30/2004 fixed @@identity problem with insert
-**          05/06/2004 grk - allowed analysis processor preset
-**          11/05/2004 grk - added parameter for assigned processor
+**          05/06/2004 grk - Allowed analysis processor preset
+**          11/05/2004 grk - Added parameter for assigned processor
 **                           removed batchID parameter
-**          02/10/2005 grk - fixed update to include assigned processor
-**          03/28/2006 grk - added protein collection fields
-**          04/04/2006 grk - increased size of param file name
-**          04/07/2006 grk - revised validation logic to use ValidateAnalysisJobParameters
-**          04/11/2006 grk - added state field and reset mode
-**          04/21/2006 grk - reset now allowed even if job not in 'new' state
-**          06/01/2006 grk - added code to handle '(default)' organism
+**          02/10/2005 grk - Fixed update to include assigned processor
+**          03/28/2006 grk - Added protein collection fields
+**          04/04/2006 grk - Increased size of param file name
+**          04/07/2006 grk - Revised validation logic to use Validate_Analysis_Job_Parameters
+**          04/11/2006 grk - Added state field and reset mode
+**          04/21/2006 grk - Reset now allowed even if job not in 'new' state
+**          06/01/2006 grk - Added code to handle '(default)' organism
 **          11/30/2006 mem - Added column Dataset_Type to Tmp_DatasetInfo (Ticket #335)
 **          12/20/2006 mem - Added column dataset_rating_id to Tmp_DatasetInfo (Ticket #339)
-**          01/13/2007 grk - switched to organism ID instead of organism name (Ticket #360)
-**          02/07/2007 grk - eliminated 'Spectra Required' states (Ticket #249)
-**          02/15/2007 grk - added associated processor group (Ticket #383)
+**          01/13/2007 grk - Switched to organism ID instead of organism name (Ticket #360)
+**          02/07/2007 grk - Eliminated 'Spectra Required' states (Ticket #249)
+**          02/15/2007 grk - Added associated processor group (Ticket #383)
 **          02/15/2007 grk - Added propagation mode (Ticket #366)
-**          02/21/2007 grk - removed _assignedProcessor (Ticket #383)
+**          02/21/2007 grk - Removed _assignedProcessor (Ticket #383)
 **          10/11/2007 grk - Expand protein collection list size to 4000 characters (http://prismtrac.pnl.gov/trac/ticket/545)
 **          01/17/2008 grk - Modified error codes to help debugging DMS2.  Also had to add explicit NULL column attribute to Tmp_DatasetInfo
 **          02/22/2008 mem - Updated to allow updating jobs in state 'holding'
@@ -71,12 +71,12 @@ AS $$
 **          04/22/2008 mem - Updated to call AlterEnteredByUser when updating T_Analysis_Job_Processor_Group_Associations
 **          09/12/2008 mem - Now passing _paramFileName and _settingsFileName ByRef to ValidateAnalysisJobParameters (Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688)
 **          02/27/2009 mem - Expanded _comment to varchar(512)
-**          04/15/2009 grk - handles wildcard DTA folder name in comment field (Ticket #733, http://prismtrac.pnl.gov/trac/ticket/733)
-**          08/05/2009 grk - assign job number from separate table (Ticket #744, http://prismtrac.pnl.gov/trac/ticket/744)
-**          05/05/2010 mem - Now passing _ownerUsername to ValidateAnalysisJobParameters as input/output
+**          04/15/2009 grk - Handles wildcard DTA folder name in comment field (Ticket #733, http://prismtrac.pnl.gov/trac/ticket/733)
+**          08/05/2009 grk - Assign job number from separate table (Ticket #744, http://prismtrac.pnl.gov/trac/ticket/744)
+**          05/05/2010 mem - Now passing _ownerUsername to Validate_Analysis_Job_Parameters as input/output
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          08/18/2010 mem - Now allowing job update if state is Failed, in addition to New or Holding
-**          08/19/2010 grk - try-catch for error handling
+**          08/19/2010 grk - Try-catch for error handling
 **          08/26/2010 mem - Added parameter _preventDuplicateJobs
 **          03/29/2011 grk - Added _specialProcessing argument (http://redmine.pnl.gov/issues/304)
 **          04/26/2011 mem - Added parameter _preventDuplicatesIgnoresNoExport

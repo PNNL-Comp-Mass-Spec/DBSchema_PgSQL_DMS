@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **  Auth:   grk
 **  Date:   02/23/2006
 **          10/29/2009 mem - Made _message an optional output parameter
-**          02/26/2010 grk - delete factors
+**          02/26/2010 grk - Delete factors
 **          12/12/2011 mem - Added parameter _callingUser, which is passed to alter_event_log_entry_user
 **          03/22/2016 mem - Added parameter _skipDatasetCheck
 **          06/13/2017 mem - Fix typo

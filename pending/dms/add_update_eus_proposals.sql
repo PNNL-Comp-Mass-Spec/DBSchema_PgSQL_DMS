@@ -31,7 +31,7 @@ AS $$
 **
 **  Auth:   jds
 **  Date:   08/15/2006
-**          11/16/2006 grk - fix problem with GetEUSPropID not able to return varchar (ticket #332)
+**          11/16/2006 grk - Fix problem with GetEUSPropID not able to return varchar (ticket #332)
 **          04/01/2011 mem - Now updating State_ID in T_EUS_Proposal_Users
 **          10/13/2015 mem - Added _eusProposalType
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

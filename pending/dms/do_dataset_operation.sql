@@ -20,13 +20,13 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   04/08/2002
-**          08/07/2003 grk - allowed reset from 'Not Ready' state
-**          05/05/2005 grk - removed default value from mode
-**          03/24/2006 grk - added 'restore' mode
-**          09/15/2006 grk - repair 'restore' mode
+**          08/07/2003 grk - Allowed reset from 'Not Ready' state
+**          05/05/2005 grk - Removed default value from mode
+**          03/24/2006 grk - Added 'restore' mode
+**          09/15/2006 grk - Repair 'restore' mode
 **          03/27/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          07/15/2008 jds - Added 'delete_all' mode (Ticket #644) - deletes a dataset without any restrictions
-**          08/19/2010 grk - try-catch for error handling
+**          08/19/2010 grk - Use try-catch for error handling
 **          05/25/2011 mem - Fixed bug that reported 'mode was unrecognized' for valid modes
 **                         - Removed 'restore' mode
 **          01/12/2012 mem - Now preventing deletion if _mode is 'delete' and the dataset exists in cap.V_Capture_Tasks_Active_Or_Complete

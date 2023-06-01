@@ -10,7 +10,7 @@ AS $$
 **      automatic capture task job creation table
 **
 **  Auth:   grk
-**  Date:   09/11/2009 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/746)
+**  Date:   09/11/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          01/26/2017 mem - Add support for column Enabled in T_Automatic_Jobs
 **          01/29/2021 mem - Remove unused parameters
 **          12/15/2023 mem - Ported to PostgreSQL

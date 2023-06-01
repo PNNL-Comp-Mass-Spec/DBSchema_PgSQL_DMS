@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **      Returns list of datasets and acquisition time information for given instrument
 **
 **  Auth:   grk
-**  Date:   09/04/2010 grk - initial release
+**  Date:   09/04/2010 grk - Initial release
 **          02/15/2012 mem - Now using T_Dataset.Acq_Length_Minutes
 **          06/21/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument

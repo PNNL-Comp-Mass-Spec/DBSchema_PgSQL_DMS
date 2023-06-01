@@ -62,8 +62,8 @@ AS $$
 **          06/28/2006 grk - Added support for Usage and Operations Role fields
 **          12/11/2008 grk - Fixed problem with NULL _usage
 **          12/14/2008 grk - Fixed problem with select result being inadvertently returned
-**          01/05/2009 grk - added _archiveNetworkSharePath (http://prismtrac.pnl.gov/trac/ticket/709)
-**          01/05/2010 grk - added _allowedDatasetTypes (http://prismtrac.pnl.gov/trac/ticket/752)
+**          01/05/2009 grk - Added _archiveNetworkSharePath (http://prismtrac.pnl.gov/trac/ticket/709)
+**          01/05/2010 grk - Added _allowedDatasetTypes (http://prismtrac.pnl.gov/trac/ticket/752)
 **          02/12/2010 mem - Now calling UpdateInstrumentAllowedDatasetType for each dataset type in _allowedDatasetTypes
 **          05/25/2010 dac - Updated archive paths for switch from nwfs to aurora
 **          08/30/2010 mem - Replaced parameter _allowedDatasetTypes with _instrumentGroup

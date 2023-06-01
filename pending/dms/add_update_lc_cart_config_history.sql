@@ -24,7 +24,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/09/2011
-**          03/26/2012 grk - added _postedBy
+**          03/26/2012 grk - Added _postedBy
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
@@ -41,7 +41,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode:= '';
+    _returnCode := '';
 
     BEGIN
 

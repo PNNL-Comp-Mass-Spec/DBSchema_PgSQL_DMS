@@ -45,7 +45,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   03/27/2012
-**          09/11/2012 grk - changed type of _start
+**          09/11/2012 grk - Changed type of _start
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/11/2017 mem - Replace column Usage with Usage_Type
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

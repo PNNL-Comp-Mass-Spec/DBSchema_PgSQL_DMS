@@ -57,8 +57,8 @@ AS $$
 **    _throttleAllStepTools     Only used if _throttleByStartTime is non-zero; when 0, will not throttle Sequest or Results_Transfer steps
 **
 **  Auth:   grk
-**  Date:   08/23/2008 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/666)
-**          12/03/2008 grk - included processor-tool priority in assignement logic
+**  Date:   08/23/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
+**          12/03/2008 grk - Included processor-tool priority in assignement logic
 **          12/04/2008 mem - Now returning _jobNotAvailableErrorCode if _processorName is not in T_Local_Processors
 **          12/11/2008 mem - Rearranged preference order for job assignment priorities
 **          12/11/2008 grk - Rewrote to use tool/processor priority in assignment logic

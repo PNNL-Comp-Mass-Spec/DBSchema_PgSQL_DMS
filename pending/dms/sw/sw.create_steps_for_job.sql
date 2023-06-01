@@ -19,12 +19,12 @@ AS $$
 **        Tmp_Job_Step_Dependencies
 **
 **  Auth:   grk
-**  Date:   08/23/2008 grk - initial release (http://prismtrac.pnl.gov/trac/ticket/666)
+**  Date:   08/23/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
 **          12/05/2008 mem - Changed the formatting of the auto-generated results folder name
 **          01/14/2009 mem - Increased maximum Value length in Tmp_Job_Parameters to 2000 characters (Ticket #714, http://prismtrac.pnl.gov/trac/ticket/714)
-**          01/28/2009 grk - modified for parallelization (http://prismtrac.pnl.gov/trac/ticket/718)
-**          01/30/2009 grk - modified output folder name initiation (http://prismtrac.pnl.gov/trac/ticket/719)
-**          02/05/2009 grk - modified for extension jobs (http://prismtrac.pnl.gov/trac/ticket/720)
+**          01/28/2009 grk - Modified for parallelization (http://prismtrac.pnl.gov/trac/ticket/718)
+**          01/30/2009 grk - Modified output folder name initiation (http://prismtrac.pnl.gov/trac/ticket/719)
+**          02/05/2009 grk - Modified for extension jobs (http://prismtrac.pnl.gov/trac/ticket/720)
 **          05/25/2011 mem - Removed _priority parameter and removed priority column from T_Job_Steps
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          04/16/2012 grk - Added error checking for missing step tools
