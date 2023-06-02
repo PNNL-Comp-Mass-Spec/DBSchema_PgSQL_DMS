@@ -99,7 +99,7 @@ BEGIN
 
     If _myEMSLStatusURI Like '%/status/%' Then
         -- Need a URL of the form https://ingest.my.emsl.pnl.gov/myemsl/cgi-bin/status/3268638/xml
-        _myEMSLStatusURI := _myEMSLStatusURI || '/xml';
+        _myEMSLStatusURI := format('%s/xml', _myEMSLStatusURI);
     End If;
 
     ---------------------------------------------------

@@ -71,20 +71,17 @@ BEGIN
                FROM t_factor Src
                     INNER JOIN Tmp_FactorItems I
                       ON Src.factor_id = I.factor_id
-               GROUP BY Src.name ) GroupingQ
+               GROUP BY Src.name ) GroupingQ;
 
         -----------------------------------------
         -- Return the factors, displayed as a crosstab (PivotTable)
         -----------------------------------------
         --
-        _crossTabSql := '';
-        _crossTabSql := _crossTabSql || ' SELECT PivotResults.type, PivotResults.target_id,' || _factorNameList;
-        _crossTabSql := _crossTabSql || ' FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value';
-        _crossTabSql := _crossTabSql ||       ' FROM  t_factor Src INNER JOIN Tmp_FactorItems I ON Src.factor_id = I.factor_id';
-        _crossTabSql := _crossTabSql ||       ') AS DataQ';
-        _crossTabSql := _crossTabSql ||       ' PIVOT (';
-        _crossTabSql := _crossTabSql ||       '   MAX(value) FOR name IN ( ' || _factorNameList || ' ) ';
-        _crossTabSql := _crossTabSql ||       ' ) AS PivotResults';
+        _crossTabSql := format('SELECT PivotResults.type, PivotResults.target_id, %s ', _factorNameList) ||
+                               'FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value '
+                                    ' FROM t_factor Src INNER JOIN Tmp_FactorItems I ON Src.factor_id = I.factor_id '
+                                    ') AS DataQ '                                                        ||
+                              format('PIVOT ( MAX(value) FOR name IN (%s) ) AS PivotResults', _factorNameList);
 
         -- ToDo: return the results using the RefCursor _results
 

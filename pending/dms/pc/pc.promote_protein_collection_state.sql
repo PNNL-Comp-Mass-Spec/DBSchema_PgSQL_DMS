@@ -123,7 +123,7 @@ BEGIN
                 End If;
 
                 If char_length(_proteinCollectionsUpdated) > 0 Then
-                    _proteinCollectionsUpdated := _proteinCollectionsUpdated || ', ';
+                    _proteinCollectionsUpdated := format('%s, ', _proteinCollectionsUpdated);
                 End If;
 
                 _proteinCollectionsUpdated := _proteinCollectionsUpdated + _proteinCollectionName;

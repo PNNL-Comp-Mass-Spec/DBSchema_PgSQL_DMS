@@ -112,7 +112,7 @@ BEGIN
 
             END LOOP;
 
-            _formattedSequence := _formattedSequence || '</pre>';
+            _formattedSequence := format('%s</pre>', _formattedSequence);
         End If;
 
         ---------------------------------------------------

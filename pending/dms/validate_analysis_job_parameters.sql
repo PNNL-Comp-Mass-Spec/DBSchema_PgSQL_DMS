@@ -259,7 +259,7 @@ BEGIN
             _message := 'The MSGFPlus tool used concatenated _dta.txt files, which are PNNL-specific. Please use tool MSGFPlus_MzML instead (for example requests, see https://dms2.pnl.gov/analysis_job_request/report/-/-/-/-/StartsWith__MSGFPlus_MzML/-/- )';
         ElsIf _toolName::citext In ('MSGFPlus_SplitFasta', 'MSGFPlus_DTARefinery_SplitFasta')
             _message := 'The MSGFPlus SplitFasta tool used concatenated _dta.txt files, which are PNNL-specific. Please use tool MSGFPlus_MzML instead (for example requests, see https://dms2.pnl.gov/analysis_job_request/report/-/-/-/-/StartsWith__MSGFPlus_MzML_SplitFasta/-/- )';
-        ElsIf _mode = 'reset' And (_toolName LIKE 'MAC[_]%' Or _toolName = 'MaxQuant_DataPkg' Or _toolName = 'MSFragger_DataPkg' Or _toolName = 'DiaNN_DataPkg')
+        ElsIf _mode = 'reset' And (_toolName Similar To 'MAC[_]%' Or _toolName = 'MaxQuant_DataPkg' Or _toolName = 'MSFragger_DataPkg' Or _toolName = 'DiaNN_DataPkg')
             _message := format('%s %s must be reset by clicking Edit on the Pipeline Job Detail report', _toolName, public.check_plural(_toolName, 'job', 'jobs');
 
             If Coalesce(_job, 0) > 0 Then

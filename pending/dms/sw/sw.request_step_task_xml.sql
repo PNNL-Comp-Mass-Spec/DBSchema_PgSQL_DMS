@@ -1391,7 +1391,7 @@ BEGIN
         _message := 'No available jobs';
 
         If _cpuLoadExceeded > 0 Then
-            _message := _message || ' (note: one or more step tools would exceed the available CPU load)';
+            _message := format('%s (note: one or more step tools would exceed the available CPU load)', _message);
         End If;
     End If;
 

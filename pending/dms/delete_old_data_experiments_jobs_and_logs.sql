@@ -354,7 +354,7 @@ BEGIN
                 DELETE FROM T_Analysis_Job_Annotations target
                 WHERE EXISTS (SELECT j.job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
                 --
-                _message := _message || 'T_Analysis_Job_Annotations, ';
+                _message := format('%sT_Analysis_Job_Annotations, ', _message);
             */
 
             /*
@@ -366,7 +366,7 @@ BEGIN
                 DELETE FROM t_analysis_job_processor_group_associations target
                 WHERE EXISTS (SELECT j.job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
                 --
-                _message := _message || 't_analysis_job_processor_group_associations, ';
+                _message := format('%st_analysis_job_processor_group_associations, ', _message);
             */
 
             _currentLocation := 'DELETE t_analysis_job_psm_stats';
@@ -374,7 +374,7 @@ BEGIN
             DELETE FROM t_analysis_job_psm_stats target
             WHERE EXISTS (SELECT J.Job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
             --
-            _message := _message || 't_analysis_job_psm_stats';
+            _message := format('%st_analysis_job_psm_stats, ', _message);
 
             -- Disable the trigger that prevents all rows from being deleted
             ALTER TABLE t_analysis_job DISABLE TRIGGER trig_t_analysis_job_after_delete_all
@@ -384,7 +384,7 @@ BEGIN
             DELETE FROM t_analysis_job target
             WHERE EXISTS (SELECT J.Job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
             --
-            _message := _message || ' and t_analysis_job';
+            _message := format('%sand t_analysis_job', _message);
 
             CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
@@ -565,7 +565,7 @@ BEGIN
                 DELETE FROM T_Dataset_Annotations target
                 WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
                 --
-                _message := _message || 'T_Dataset_Annotations, ';
+                _message := format('%sT_Dataset_Annotations, ', _message);
             */
 
             _currentLocation := 'DELETE t_dataset_archive';

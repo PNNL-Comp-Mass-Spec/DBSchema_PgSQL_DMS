@@ -52,19 +52,18 @@ BEGIN
         RETURN;
     End If;
 
-    _sql := '';
-    _sql := _sql || ' SELECT PFMM.*, R.residue_symbol,';
-    _sql := _sql ||        ' MCF.mass_correction_tag, MCF.monoisotopic_mass,';
-    _sql := _sql ||        ' SLS.local_symbol, R.description AS Residue_Desc';
-    _sql := _sql || ' FROM t_param_file_mass_mods PFMM';
-    _sql := _sql ||      ' INNER JOIN t_residues R';
-    _sql := _sql ||        ' ON PFMM.residue_id = R.residue_id';
-    _sql := _sql ||      ' INNER JOIN t_mass_correction_factors MCF';
-    _sql := _sql ||        ' ON PFMM.mass_correction_id = MCF.mass_correction_id';
-    _sql := _sql ||      ' INNER JOIN t_seq_local_symbols_list SLS';
-    _sql := _sql ||        ' ON PFMM.local_symbol_id = SLS.local_symbol_id';
-    _sql := _sql ||      ' WHERE (PFMM.param_file_id = ' || _destParamFileID::text || ')';
-    _sql := _sql || ' ORDER BY PFMM.param_file_id, PFMM.local_symbol_id, R.residue_symbol';
+    _sql := 'SELECT PFMM.*, R.residue_symbol, '
+                   'MCF.mass_correction_tag, MCF.monoisotopic_mass, '
+                   'SLS.local_symbol, R.description AS Residue_Desc'
+            'FROM t_param_file_mass_mods PFMM '
+                 'INNER JOIN t_residues R '
+                   'ON PFMM.residue_id = R.residue_id '
+                 'INNER JOIN t_mass_correction_factors MCF '
+                   'ON PFMM.mass_correction_id = MCF.mass_correction_id '
+                 'INNER JOIN t_seq_local_symbols_list SLS '
+                   'ON PFMM.local_symbol_id = SLS.local_symbol_id ' ||
+     format('WHERE (PFMM.param_file_id = %s) ', _destParamFileID) ||
+            'ORDER BY PFMM.param_file_id, PFMM.local_symbol_id, R.residue_symbol';
 
     RAISE INFO '%', _sql;
 

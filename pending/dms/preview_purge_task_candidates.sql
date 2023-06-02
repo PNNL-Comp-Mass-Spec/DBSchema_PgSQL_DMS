@@ -64,7 +64,7 @@ BEGIN
 
     -- Auto change drive F: to F:\
     If _storageVol SIMILAR TO '[a-z]:' Then
-        _storageVol := _storageVol || '\';
+        _storageVol := format('%s\', _storageVol);
     End If;
 
     RAISE INFO 'Server: %', _storageServerName;

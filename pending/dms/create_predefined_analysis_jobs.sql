@@ -135,7 +135,7 @@ BEGIN
             _errorMessage := format('predefined_analysis_jobs returned error code %s', _returnCode);
 
             If Not Coalesce(_message, '') = '' Then
-                _errorMessage := _errorMessage || '; ' || _message;
+                _errorMessage := format('%s; %s', _errorMessage, _message);
             End If;
 
             _message := _errorMessage;
@@ -238,7 +238,7 @@ BEGIN
                 If _message = '' Then
                     _message := _newMessage;
                 Else
-                    _message := _message || '; ' || _newMessage;
+                    _message := format('%s; %s', _message, _newMessage);
                 End If;
 
                 -- ResultCode U5250 means a duplicate job exists; that error can be ignored
@@ -258,7 +258,7 @@ BEGIN
                     If Position(_datasetName In _logMessage) < 1 Then
                         _logMessage := _logMessage || '; Dataset ' || _datasetName || ', ';
                     Else
-                        _logMessage := _logMessage || ';';
+                        _logMessage := format('%s;', _logMessage);
                     End If;
 
                     _logMessage := _logMessage + _analysisToolName;
@@ -275,11 +275,7 @@ BEGIN
         -- Construct the summary message
         ---------------------------------------------------
         --
-        _newMessage := 'Created ' || _jobsCreated::text || ' job';
-
-        If _jobsCreated <> 1 Then
-            _newMessage := _newMessage || 's';
-        End If;
+        _newMessage := format('Created %s %s', _jobsCreated, public.check_plural(_jobsCreated, 'job', 'jobs');
 
         If _message <> '' Then
             -- _message might look like this: Dataset rating (-10) does not allow creation of jobs: 47538_Pls_FF_IGT_23_25Aug10_Andromeda_10-07-10

@@ -213,7 +213,7 @@ BEGIN
 
         End If;
 
-        If _datasetName Similar To '%[.]raw' Or _datasetName Similar To '%[.]wiff' Or _datasetName Like '%[.]d' Then
+        If _datasetName Similar To '%[.]raw' Or _datasetName Similar To '%[.]wiff' Or _datasetName Similar To '%[.]d' Then
             RAISE EXCEPTION 'Dataset name may not end in .raw, .wiff, or .d';
         End If;
 

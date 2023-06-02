@@ -89,10 +89,10 @@ BEGIN
         _message := format('Cannot rename %s to %s because the new username already exists in t_users', _oldUserName, _newUserName);
 
         If Substring(_oldUserName, 1, char_length(_newUserName)) = _newUserName Then
-            _message := _message || '. Will check for required renames in other tables';
+            _message := format('%s. Will check for required renames in other tables', _message);
             RAISE INFO '%', _message;
         Else
-            _message := _message || '. The new username is too different than the old username; aborting';
+            _message := format('%s. The new username is too different than the old username; aborting', _message);
 
             RAISE WARNING '%', _message;
             RETURN;

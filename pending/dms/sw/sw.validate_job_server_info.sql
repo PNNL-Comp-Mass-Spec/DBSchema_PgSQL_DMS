@@ -133,7 +133,7 @@ BEGIN
         End If;
 
         If Right(_transferFolderPath, 1) <> '\' Then
-            _transferFolderPath := _transferFolderPath || '\';
+            _transferFolderPath := format('%s\', _transferFolderPath);
         End If;
 
         _storageServerName := public.extract_server_name(_transferFolderPath);

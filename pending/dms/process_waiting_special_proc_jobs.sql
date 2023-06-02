@@ -235,7 +235,7 @@ BEGIN
                         If _datasetIsBad Then
                             CALL delete_analysis_job (_jobInfo.Job);
 
-                            _message := _message || '; job deleted since dataset is bad';
+                            _message := format('%s; job deleted since dataset is bad', _message);
                             CALL post_log_entry ('Warning', _message, 'Process_Waiting_Special_Proc_Jobs', _duplicateEntryHoldoffHours => 0);
                         Else
                             If _jobInfo.DatasetRating = -5 Then

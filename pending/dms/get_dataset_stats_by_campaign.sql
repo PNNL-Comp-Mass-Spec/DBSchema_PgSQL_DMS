@@ -116,55 +116,56 @@ BEGIN
     -- Construct the query to retrieve the results
     -----------------------------------------
     --
-    _sql := '';
-    _sql := _sql || ' INSERT INTO Tmp_CampaignDatasetStats (Campaign, WorkPackage, FractionEMSLFunded, RuntimeHours, Datasets, Building, Instrument, RequestMin, RequestMax)';
-    _sql := _sql || ' SELECT C.Campaign,';
-    _sql := _sql ||        ' RR.work_package,';
-    _sql := _sql ||        ' C.Fraction_EMSL_Funded,';
-    _sql := _sql ||        ' Cast(Sum(DS.Acq_Length_Minutes) / 60.0 AS numeric(9,1)) AS RuntimeHours,';
-    _sql := _sql ||        ' COUNT(*) AS Datasets,';
-    _sql := _sql ||        ' InstName.Building,';
-    If _includeInstrument > 0 Then
-        _sql := _sql ||    ' InstName.instrument As Instrument,';
-    Else
-        _sql := _sql ||    ' '''' As Instrument,';
-    End If;
-    _sql := _sql ||        ' MIN(RR.request_id) AS RequestMin,';
-    _sql := _sql ||        ' MAX(RR.request_id) AS RequestMax';
+    _sql := 'INSERT INTO Tmp_CampaignDatasetStats (Campaign, WorkPackage, FractionEMSLFunded, RuntimeHours, Datasets, Building, Instrument, RequestMin, RequestMax) '
+            'SELECT C.Campaign, '
+                   'RR.work_package, '
+                   'C.Fraction_EMSL_Funded, '
+                   'Cast(Sum(DS.Acq_Length_Minutes) / 60.0 AS numeric(9,1)) AS RuntimeHours, '
+                   'COUNT(*) AS Datasets, '
+                   'InstName.Building, ';
 
-    _sql := _sql || ' FROM t_dataset DS';
-    _sql := _sql ||      ' INNER JOIN t_experiments E ON DS.exp_id = E.exp_id';
-    _sql := _sql ||      ' INNER JOIN t_campaign C ON E.campaign_id = C.campaign_id';
-    _sql := _sql ||      ' INNER JOIN t_requested_run RR ON DS.dataset_id = RR.dataset_id';
-    _sql := _sql ||      ' INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id';
+    If _includeInstrument > 0 Then
+        _sql := _sql || 'InstName.instrument As Instrument, ';
+    Else
+        _sql := _sql || ''''' As Instrument, ';
+    End If;
+
+    _sql := _sql ||
+                   'MIN(RR.request_id) AS RequestMin, '
+                   'MAX(RR.request_id) AS RequestMax '
+            'FROM t_dataset DS '
+                 'INNER JOIN t_experiments E ON DS.exp_id = E.exp_id '
+                 'INNER JOIN t_campaign C ON E.campaign_id = C.campaign_id '
+                 'INNER JOIN t_requested_run RR ON DS.dataset_id = RR.dataset_id '
+                 'INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id ';
 
     If _mostRecentWeeks > 0 Then
-        _sql := _sql || format(' WHERE DS.DateSortKey > CURRENT_TIMESTAMP - INTERVAL ''%s weeks''', _mostRecentWeeks);
+        _sql := _sql || format('WHERE DS.DateSortKey > CURRENT_TIMESTAMP - INTERVAL ''%s weeks''', _mostRecentWeeks);
     Else
-        _sql := _sql || format(' WHERE DS.DateSortKey BETWEEN ''%s'' AND ''%s''', _startDate, _endDate;
+        _sql := _sql || format('WHERE DS.DateSortKey BETWEEN ''%s'' AND ''%s''', _startDate, _endDate;
     End If;
 
     If _campaignNameFilter <> '' Then
-        _sql := _sql ||   format(' AND ' || _optionalCampaignNot || ' C.Campaign LIKE ''%s''', _campaignNameFilter);
+        _sql := _sql || format(' AND %s C.Campaign SIMILAR TO ''%s''', _optionalCampaignNot, _campaignNameFilter);
     End If;
 
     If _campaignNameExclude <> '' Then
-        _sql := _sql ||   format(' AND NOT C.Campaign LIKE ''%s''', _campaignNameExclude);
+        _sql := _sql || format(' AND NOT C.Campaign SIMILAR TO ''%s''', _campaignNameExclude);
     End If;
 
     If _instrumentBuilding <> '' Then
-        _sql := _sql ||   format(' AND ' || _optionalBuildingNot || ' InstName.Building LIKE ''%s''', _instrumentBuilding);
+        _sql := _sql || format(' AND %s InstName.Building SIMILAR TO ''%s''', _optionalBuildingNot, _instrumentBuilding);
     End If;
 
     If _excludeQCAndBlankWithoutWP > 0 Then
-        _sql := _sql ||   ' AND NOT (C.Campaign LIKE ''QC[-_]%'' AND RR.work_package = ''None'') ';
-        _sql := _sql ||   ' AND NOT (C.Campaign IN (''Blank'', ''DataUpload'', ''DMS_Pipeline_Jobs'', ''Tracking'') AND RR.work_package = ''None'') ';
-        _sql := _sql ||   ' AND NOT (InstName.instrument LIKE ''External%'' AND RR.work_package = ''None'') ';
+        _sql := _sql || ' AND NOT (C.Campaign SIMILAR TO ''QC[-_]%'' AND RR.work_package = ''None'') '
+                        ' AND NOT (C.Campaign IN (''Blank'', ''DataUpload'', ''DMS_Pipeline_Jobs'', ''Tracking'') AND RR.work_package = ''None'') '
+                        ' AND NOT (InstName.instrument LIKE ''External%'' AND RR.work_package = ''None'') ';
     End If;
 
     If _excludeAllQCAndBlank > 0 Then
-        _sql := _sql ||   ' AND NOT C.Campaign LIKE ''QC[-_]%'' ';
-        _sql := _sql ||   ' AND NOT C.Campaign IN (''Blank'', ''DataUpload'', ''DMS_Pipeline_Jobs'', ''Tracking'') ';
+        _sql := _sql || ' AND NOT C.Campaign SIMILAR TO ''QC[-_]%'' '
+                        ' AND NOT C.Campaign IN (''Blank'', ''DataUpload'', ''DMS_Pipeline_Jobs'', ''Tracking'') ';
     End If;
 
     _sql := _sql || ' GROUP BY Campaign, RR.work_package, C.CM_Fraction_EMSL_Funded, InstName.Building';

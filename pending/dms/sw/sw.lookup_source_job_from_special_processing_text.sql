@@ -79,7 +79,7 @@ BEGIN
 
     BEGIN
         If _tagName Not Like '%:' Then
-            _tagName := _tagName || ':';
+            _tagName := format('%s:', _tagName);
         End If;
 
         ------------------------------------------------
@@ -283,7 +283,7 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _whereClause <> '' Then
-            _currentLocation := _currentLocation || '; using SQL Where Clause (see separate log entry)';
+            _currentLocation := format('%s; using SQL Where Clause (see separate log entry)', _currentLocation);
         End If;
 
         _message := local_error_handler (
