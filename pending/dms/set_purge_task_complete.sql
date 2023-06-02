@@ -28,9 +28,9 @@ AS $$
 **                         - Now calling Post_Usage_Log_Entry
 **          01/27/2012 mem - Now bumping AS_purge_holdoff_date by 90 minutes when _completionCode = 3
 **          04/17/2012 mem - Added support for _completionCode = 4 (drive missing)
-**          06/12/2012 mem - Added support for _completionCode = 5 and _completionCode = 6  (corresponding to Archive States 14 and 15)
+**          06/12/2012 mem - Added support for _completionCode = 5 and _completionCode = 6 (corresponding to Archive States 14 and 15)
 **          06/15/2012 mem - No longer changing the purge holdoff date if _completionCode = 4 (drive missing)
-**          08/13/2013 mem - Now using explicit parameter names when calling S_MakeNewArchiveUpdateJob
+**          08/13/2013 mem - Now using explicit parameter names when calling S_Make_New_Archive_Update_Job
 **          08/15/2013 mem - Added support for _completionCode = 7 (dataset folder missing in archive)
 **          08/26/2013 mem - Now mentioning 'permissions error' when _completionCode = 7
 **          03/21/2014 mem - Tweaked log message for _completionCode = 7
@@ -39,7 +39,7 @@ AS $$
 **          09/02/2016 mem - Archive path is now adms.emsl.pnl.gov
 **          11/09/2016 mem - Include the storage server name when calling post_log_entry
 **          07/11/2017 mem - Add support for _completionCode = 9 (Previewed purge)
-**          09/09/2022 mem - Use new argument names when calling MakeNewArchiveUpdateJob
+**          09/09/2022 mem - Use new argument names when calling Make_New_Archive_Update_Job
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

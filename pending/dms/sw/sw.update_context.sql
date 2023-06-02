@@ -29,8 +29,8 @@ AS $$
 **  Auth:   grk
 **  Date:   05/30/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
 **          01/09/2009 mem - Added parameter _infoOnly (http://prismtrac.pnl.gov/trac/ticket/713)
-**          01/17/2009 mem - Now calling SyncJobInfo (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)
-**          02/19/2009 grk - Added call to RemoveDMSDeletedJobs (Ticket #723)
+**          01/17/2009 mem - Now calling Sync_Job_Info (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)
+**          02/19/2009 grk - Added call to Remove_DMS_Deleted_Jobs (Ticket #723)
 **          06/02/2009 mem - Added parameter _maxJobsToProcess (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **          06/03/2009 mem - Added parameters _logIntervalThreshold, _loggingEnabled, and _loopingUpdateInterval
 **          06/04/2009 mem - Added Try/Catch error handling
@@ -38,9 +38,9 @@ AS $$
 **          06/05/2009 mem - Added expanded support for T_Process_Step_Control
 **          03/21/2011 mem - Added parameter _debugMode; now passing _infoOnly to AddNewJobs
 **          01/12/2012 mem - Now passing _infoOnly to UpdateJobState
-**          05/02/2015 mem - Now calling AutoFixFailedJobs
-**          05/28/2015 mem - No longer calling ImportJobProcessors
-**          11/20/2015 mem - Now calling UpdateActualCPULoading
+**          05/02/2015 mem - Now calling Auto_Fix_Failed_Jobs
+**          05/28/2015 mem - No longer calling Import_Job_Processors
+**          11/20/2015 mem - Now calling Update_Actual_CPU_Loading
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/30/2018 mem - Update comments
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -100,7 +100,7 @@ BEGIN
             SELECT enabled
             INTO _result
             FROM sw.t_process_step_control
-            WHERE (processing_step_name = 'UpdateDMS');
+            WHERE processing_step_name = 'UpdateDMS';
 
             If Coalesce(_result, 1) = 0 Then
                 _bypassDMS := true;
@@ -117,7 +117,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'RemoveDMSDeletedJobs');
+        WHERE processing_step_name = 'RemoveDMSDeletedJobs';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -127,7 +127,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' RemoveDMSDeletedJobs';
+            _statusMessage := format('%s Remove_DMS_Deleted_Jobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -141,7 +141,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'AddNewJobs');
+        WHERE processing_step_name = 'AddNewJobs';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -151,7 +151,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' AddNewJobs';
+            _statusMessage := format('%s AddNewJobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -198,7 +198,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'ImportProcessors');
+        WHERE processing_step_name = 'ImportProcessors';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -208,7 +208,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' ImportProcessors';
+            _statusMessage := format('%s ImportProcessors', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -225,7 +225,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'ImportJobProcessors');
+        WHERE processing_step_name = 'ImportJobProcessors';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -235,7 +235,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' ImportJobProcessors';
+            _statusMessage := format('%s Import_Job_Processors', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -250,7 +250,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'SyncJobInfo');
+        WHERE processing_step_name = 'SyncJobInfo';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -260,7 +260,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' SyncJobInfo';
+            _statusMessage := format('%s Sync_Job_Info', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -298,7 +298,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'CreateJobSteps');
+        WHERE processing_step_name = 'CreateJobSteps';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -308,7 +308,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' CreateJobSteps';
+            _statusMessage := format('%s CreateJobSteps', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -354,7 +354,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'UpdateStepStates');
+        WHERE processing_step_name = 'UpdateStepStates';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -364,7 +364,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' UpdateStepStates';
+            _statusMessage := format('%s UpdateStepStates', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -406,7 +406,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'UpdateJobState');
+        WHERE processing_step_name = 'UpdateJobState';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -416,7 +416,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' UpdateJobState';
+            _statusMessage := format('%s UpdateJobState', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -458,7 +458,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'UpdateCPULoading');
+        WHERE processing_step_name = 'UpdateCPULoading';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -468,7 +468,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' UpdateCPULoading';
+            _statusMessage := format('%s UpdateCPULoading', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
@@ -510,7 +510,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE (processing_step_name = 'AutoFixFailedJobs');
+        WHERE processing_step_name = 'AutoFixFailedJobs';
 
         If _result = 0 Then
             _action := 'Skipping';
@@ -520,7 +520,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' AutoFixFailedJobs';
+            _statusMessage := format('%s AutoFixFailedJobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 

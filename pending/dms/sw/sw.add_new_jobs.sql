@@ -31,7 +31,7 @@ AS $$
 **  New       (job not         Import job:
 **             in broker)      - Add it to local job table
 **                             - Set local job state to freshly imported
-**                               (CreateJobSteps will set local state to New)
+**                               (Create_Job_Steps will set local state to New)
 **
 **  New       failed           Resume job:
 **            holding          - Reset any failed/holding job steps to waiting
@@ -65,7 +65,7 @@ AS $$
 **          12/05/2008 mem - Now populating Transfer_Folder_Path in T_Jobs
 **          12/09/2008 grk - Clarified comment description of how DMS state affects broker
 **          01/07/2009 mem - Updated job resume logic to match steps with state of 6 or 7 in T_Job_Steps; also updated to match jobs with state of 5 or 8 in T_Jobs
-**          01/17/2009 mem - Moved updating of T_Jobs.Archive_Busy to SyncJobInfo (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)
+**          01/17/2009 mem - Moved updating of T_Jobs.Archive_Busy to Sync_Job_Info (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)
 **          02/12/2009 mem - Updated job resume logic to change step states from 6 or 7 to 1=waiting (instead of 2=enabled) and to reset Evaluated and Triggered to 0 in T_Job_Step_Dependencies for the affected steps
 **                         - Added parameter _debugMode
 **          03/02/2009 grk - Added code to update job parameters when jobs are resumed (from hold or fail)
@@ -77,12 +77,12 @@ AS $$
 **          07/29/2009 mem - Now populating Comment in T_Jobs
 **          03/03/2010 mem - Now populating Storage_Server in T_Jobs
 **          03/21/2011 mem - Added parameter _infoOnly and moved position of parameter _debugMode
-**                         - Now calling UpdateInputFolderUsingSourceJobComment if needed when resuming jobs
+**                         - Now calling Update_Input_Folder_Using_Source_Job_Comment if needed when resuming jobs
 **          04/04/2011 mem - Now populating Special_Processing in T_Jobs
-**                         - Removed call to UpdateInputFolderUsingSourceJobComment
-**                         - Now using function GetJobParamTableLocal() to lookup a value in T_Job_Parameters
+**                         - Removed call to Update_Input_Folder_Using_Source_Job_Comment
+**                         - Now using function Get_Job_Param_Table_Local() to lookup a value in T_Job_Parameters
 **          07/05/2011 mem - Now updating Tool_Version_ID when resetting job steps
-**          07/12/2011 mem - Now calling ValidateJobServerInfo
+**          07/12/2011 mem - Now calling Validate_Job_Server_Info
 **          01/09/2012 mem - Now populating Owner in T_Jobs
 **          01/12/2012 mem - Now only auto-adding jobs for scripts with Backfill_to_DMS = 0
 **          01/19/2012 mem - Now populating DataPkgID in T_Jobs

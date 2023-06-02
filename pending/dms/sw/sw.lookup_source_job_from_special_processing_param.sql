@@ -31,8 +31,8 @@ AS $$
 **  Date:   03/21/2011 mem - Initial Version
 **          04/04/2011 mem - Updated to use the Special_Processing param instead of the job comment
 **          04/20/2011 mem - Updated to support cases where _specialProcessingText contains ORDER BY
-**          05/03/2012 mem - Now calling LookupSourceJobFromSpecialProcessingText to parse _specialProcessingText
-**          05/04/2012 mem - Now passing _tagName and _autoQueryUsed to LookupSourceJobFromSpecialProcessingText
+**          05/03/2012 mem - Now calling Lookup_Source_Job_From_Special_Processing_Text to parse _specialProcessingText
+**          05/04/2012 mem - Now passing _tagName and _autoQueryUsed to Lookup_Source_Job_From_Special_Processing_Text
 **          07/12/2012 mem - Now looking up details for Job2 (if defined in the Special_Processing text)
 **          07/13/2012 mem - Now storing SourceJob2Dataset in Tmp_Source_Job_Folders
 **          03/11/2013 mem - Now overriding _sourceJobResultsFolder if there is a problem determining the details for Job2

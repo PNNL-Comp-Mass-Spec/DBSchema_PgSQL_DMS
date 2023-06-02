@@ -28,7 +28,7 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_task(IN _joblist text, INO
 **          08/27/2013 mem - Now updating 4 fields in T_Tasks if they are null (which will be the case if a capture task job was copied from T_Tasks_History to T_Tasks yet the job had no parameters in T_task_Parameters_History)
 **          05/29/2015 mem - Add support for column Capture_Subfolder
 **          06/01/2015 mem - Changed update logic for Capture_Subfolder to pull from cap.V_DMS_Get_Dataset_Definition _unless_ the value in V_DMS_Get_Dataset_Definition is null
-**          03/24/2016 mem - Switch to using udfParseDelimitedIntegerList to parse the list of capture task jobs
+**          03/24/2016 mem - Switch to using Parse_Delimited_Integer_List to parse the list of capture task jobs
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW instead of RAISERROR
 **          01/30/2018 mem - Always update instrument settings using data in DMS (Storage_Server, Instrument, Instrument_Class, Max_Simultaneous_Captures, Capture_Subfolder)

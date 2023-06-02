@@ -12,8 +12,8 @@ AS $$
 **
 **  Desc:
 **      Deletes the given job from T_Jobs and T_Job_Steps
-**      This procedure was previously called by DeleteAnalysisJob in DMS5
-**      However, now DeleteAnalysisJob calls DeleteJobIfNewOrFailed in this database
+**      This procedure was previously called by public.Delete_Analysis_Job
+**      However, now public.Delete_Analysis_Job calls sw.Delete_Job_If_New_Or_Failed
 **
 **  Auth:   mem
 **  Date:   12/31/2008 mem - Initial release

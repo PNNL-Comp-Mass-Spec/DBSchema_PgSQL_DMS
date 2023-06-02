@@ -11,7 +11,7 @@ AS $$
 **
 **  Desc:
 **      Adds or updates an entry in temp table Tmp_ParamTab
-**      This procedure is typically called by GetJobParamTable
+**      This procedure is typically called by Get_Job_Param_Table
 **
 **      The calling procedure must create table Tmp_ParamTab
 **

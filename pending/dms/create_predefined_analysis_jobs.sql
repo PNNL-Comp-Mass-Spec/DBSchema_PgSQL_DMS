@@ -27,8 +27,8 @@ AS $$
 **  Date:   06/29/2005 grk - Supersedes procedure ScheduleDefaultAnalyses
 **          03/28/2006 grk - Added protein collection fields
 **          04/04/2006 grk - Increased sized of param file name
-**          06/01/2006 grk - Fixed calling sequence to AddUpdateAnalysisJob
-**          03/15/2007 mem - Updated call to AddUpdateAnalysisJob (Ticket #394)
+**          06/01/2006 grk - Fixed calling sequence to Add_Update_Analysis_Job
+**          03/15/2007 mem - Updated call to Add_Update_Analysis_Job (Ticket #394)
 **                         - Replaced processor name with associated processor group (Ticket #388)
 **          02/29/2008 mem - Added optional parameter _callingUser; If provided, will call alter_event_log_entry_user (Ticket #644)
 **          04/11/2008 mem - Now passing _raiseErrorMessages to evaluate_predefined_analysis_rules (predefined_analysis_jobs)
@@ -38,11 +38,11 @@ AS $$
 **          08/26/2010 grk - This was cloned from schedule_predefined_analysis_jobs; added try-catch error handling
 **          08/26/2010 mem - Added output parameter _jobsCreated
 **          02/16/2011 mem - Added support for Propagation Mode (aka Export Mode)
-**          04/11/2011 mem - Updated call to AddUpdateAnalysisJob
-**          04/26/2011 mem - Now sending _preventDuplicatesIgnoresNoExport = 0 to AddUpdateAnalysisJob
+**          04/11/2011 mem - Updated call to Add_Update_Analysis_Job
+**          04/26/2011 mem - Now sending _preventDuplicatesIgnoresNoExport = 0 to Add_Update_Analysis_Job
 **          05/03/2012 mem - Added support for the Special Processing field
 **          08/02/2013 mem - Removed extra semicolon in status message
-**          06/24/2015 mem - Now passing _infoOnly to AddUpdateAnalysisJob
+**          06/24/2015 mem - Now passing _infoOnly to Add_Update_Analysis_Job
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          07/21/2016 mem - Log errors in post_log_entry
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

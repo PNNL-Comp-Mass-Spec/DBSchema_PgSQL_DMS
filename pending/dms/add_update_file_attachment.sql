@@ -29,7 +29,7 @@ AS $$
 **    _entityType          Page family name: campaign, experiment, sample_prep_request, lc_cart_configuration, etc.
 **    _entityID            Must be data type varchar since Experiment, Campaign, Cell Culture, and Material Container file attachments are tracked via Experiment Name, Campaign Name, etc.
 **    _fileSizeBytes       This file size is actually in KB
-**    _archiveFolderPath   This path is constructed when File_attachment.php or Experiment_File_attachment.php calls function GetFileAttachmentPath in this database
+**    _archiveFolderPath   This path is constructed when File_attachment.php or Experiment_File_attachment.php calls function Get_File_Attachment_Path in this database
 **    _mode                'add' or 'update'
 **
 **  Auth:   grk

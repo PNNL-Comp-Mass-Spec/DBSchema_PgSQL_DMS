@@ -31,13 +31,13 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version
-**          11/21/2012 mem - No longer passing work package to AddUpdateAnalysisJobRequest
+**          11/21/2012 mem - No longer passing work package to Add_Update_Analysis_Job_Request
 **                         - Now calling Post_Usage_Log_Entry
-**          12/13/2012 mem - Added parameter _previewMode, which indicates what should be passed to AddUpdateAnalysisJobRequest for _mode
+**          12/13/2012 mem - Added parameter _previewMode, which indicates what should be passed to Add_Update_Analysis_Job_Request for _mode
 **          01/11/2013 mem - Renamed MSGF-DB search tool to MSGFPlus
 **          03/05/2013 mem - Now passing _autoRemoveNotReleasedDatasets to validate_analysis_job_request_datasets
 **          04/09/2013 mem - Now automatically updating the settings file to the MSConvert equivalent if processing QExactive data
-**          03/30/2015 mem - Now passing _toolName to AutoUpdateSettingsFileToCentroid
+**          03/30/2015 mem - Now passing _toolName to Auto_Update_Settings_File_To_Centroid
 **                         - Now using T_Dataset_Info.ProfileScanCount_MSn to look for datasets with profile-mode MS/MS spectra
 **          04/23/2015 mem - Now passing _toolName to validate_analysis_job_request_datasets
 **          03/21/2016 mem - Add support for column Enabled
@@ -47,8 +47,8 @@ AS $$
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/06/2017 mem - Set _allowNewDatasets to true when calling validate_analysis_job_request_datasets
-**          03/19/2021 mem - Remove obsolete parameter from call to AddUpdateAnalysisJobRequest
-**          06/06/2022 mem - Use new argument name when calling AddUpdateAnalysisJobRequest
+**          03/19/2021 mem - Remove obsolete parameter from call to Add_Update_Analysis_Job_Request
+**          06/06/2022 mem - Use new argument name when calling Add_Update_Analysis_Job_Request
 **          06/30/2022 mem - Rename parameter file argument
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -334,8 +334,8 @@ BEGIN
 
         ---------------------------------------------------
         -- Automatically switch from decoy to forward if using MSGFPlus
-        -- AddUpdateAnalysisJobRequest also does this, but it displays a warning message to the user
-        -- We don't want the warning message to appear when the user is using CreatePSMJobRequest; instead we silently update things
+        -- Add_Update_Analysis_Job_Request also does this, but it displays a warning message to the user
+        -- We don't want the warning message to appear when the user is using Create_PSM_Job_Request; instead we silently update things
         ---------------------------------------------------
         --
         If _toolName::citext Like 'MSGFPlus%' And _protCollOptionsList::citext Like '%decoy%' And _paramFile::citext Not Similar To '%[_]NoDecoy%' Then

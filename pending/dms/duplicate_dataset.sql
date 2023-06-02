@@ -31,7 +31,7 @@ AS $$
 **  Auth:   mem
 **  Date:   12/12/2018 mem - Initial version
 **          08/19/2020 mem - Add _newOperatorUsername
-**                         - Add call to UpdateCachedDatasetInstruments
+**                         - Add call to Update_Cached_Dataset_Instruments
 **          10/19/2020 mem - Rename the instrument group column to instrument_group
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run

@@ -43,8 +43,8 @@ AS $$
 **          06/11/2009 grk - Added Requester field
 **          07/01/2009 mem - Expanced _massTagDatabase to varchar(1024)
 **          10/23/2009 mem - Expanded _prismWikiLink to varchar(1024)
-**          03/17/2011 mem - Removed extra, unused parameter from MakeDataPackageStorageFolder
-**                         - Now only calling MakeDataPackageStorageFolder when _mode = 'add'
+**          03/17/2011 mem - Removed extra, unused parameter from Make_Data_Package_Storage_Folder
+**                         - Now only calling Make_Data_Package_Storage_Folder when _mode = 'add'
 **          08/31/2015 mem - Now replacing the symbol & with 'and' in the name when _mode = 'add'
 **          02/19/2016 mem - Now replacing a semicolon with a comma when _mode = 'add'
 **          10/18/2016 mem - Call update_data_package_eus_info

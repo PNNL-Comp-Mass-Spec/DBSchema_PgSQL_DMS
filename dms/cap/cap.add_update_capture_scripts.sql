@@ -23,7 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **
 **  Auth:   grk
 **  Date:   09/23/2008 grk - Initial version
-**          03/24/2009 mem - Now calling AlterEnteredByUser when _callingUser is defined
+**          03/24/2009 mem - Now calling Alter_Entered_By_User when _callingUser is defined
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/04/2022 mem - Ported to PostgreSQL

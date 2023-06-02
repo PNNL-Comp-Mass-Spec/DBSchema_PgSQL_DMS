@@ -50,7 +50,7 @@ AS $$
 **          11/20/2009 mem - Removed parameter _orgDBLocalPath
 **          12/03/2009 mem - Now making sure that _orgDBPath starts with two slashes and ends with one slash
 **          08/04/2010 grk - Use try-catch for error handling
-**          08/01/2012 mem - Now calling RefreshCachedOrganisms in MT_Main on ProteinSeqs
+**          08/01/2012 mem - Now calling Refresh_Cached_Organisms in MT_Main on ProteinSeqs
 **          09/25/2012 mem - Expanded _orgName and _orgDBName to varchar(128)
 **          11/20/2012 mem - No longer allowing _orgDBName to contain '.fasta'
 **          05/10/2013 mem - Added _newtIdentifier
@@ -58,7 +58,7 @@ AS $$
 **          05/24/2013 mem - Added _newtIDList
 **          10/15/2014 mem - Removed _orgDBPath and added validation logic to _orgStorageLocation
 **          06/25/2015 mem - Now validating that the protein collection specified by _orgDBName exists
-**          09/10/2015 mem - Switch to using synonym S_MT_Main_RefreshCachedOrganisms
+**          09/10/2015 mem - Switch to using synonym S_MT_Main_Refresh_Cached_Organisms
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          02/26/2016 mem - Check for _orgName containing a space
 **          03/01/2016 mem - Added _ncbiTaxonomyID

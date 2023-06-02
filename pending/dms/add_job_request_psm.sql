@@ -33,7 +33,7 @@ AS $$
 **  Date:   11/14/2012 grk - Initial release
 **          11/16/2012 grk - Added
 **          11/20/2012 grk - Added _organismName
-**          11/21/2012 mem - Now calling CreatePSMJobRequest
+**          11/21/2012 mem - Now calling Create_PSM_Job_Request
 **          12/13/2012 mem - Added support for _mode='preview'
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

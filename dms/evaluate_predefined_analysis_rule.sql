@@ -190,7 +190,7 @@ BEGIN
         _ownerUsername := 'H09090911'; -- autouser
 
         ---------------------------------------------------
-        -- Possibly auto-add tEnzyme-related protein collections to _predefineInfo.ProteinCollectionList
+        -- Possibly auto-add enzyme-related protein collections to _predefineInfo.ProteinCollectionList
         ---------------------------------------------------
         --
         _proteinCollectionListValidated := Trim(Coalesce(_predefineInfo.ProteinCollectionList, ''));
@@ -208,7 +208,7 @@ BEGIN
         -- Insert job into job holding table
         ---------------------------------------------------
         --
-        -- Note that AddUpdateAnalysisJob will call ValidateAnalysisJobParameters to validate this data
+        -- Note that Add_Update_Analysis_Job will call Validate_Analysis_Job_Parameters to validate this data
 
         INSERT INTO Tmp_PredefineJobsToCreate (
             predefine_id,

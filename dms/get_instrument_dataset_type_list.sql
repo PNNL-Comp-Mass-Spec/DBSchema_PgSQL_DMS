@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_dataset_type_list(_instrumentid
     AS $$
 /****************************************************
 **
-**  Desc:
+**  Desc:Get_Instrument_Group_Dataset_Type_List
 **  Builds delimited list of allowed dataset types
 **  for given instrument ID
 **
@@ -15,8 +15,8 @@ CREATE OR REPLACE FUNCTION public.get_instrument_dataset_type_list(_instrumentid
 **
 **  Auth:   mem
 **  Date:   09/17/2009 mem - Initial version (Ticket #748)
-**          08/28/2010 mem - Updated to use GetInstrumentGroupDatasetTypeList
-**          02/04/2021 mem - Provide a delimiter when calling GetInstrumentGroupDatasetTypeList
+**          08/28/2010 mem - Updated to use Get_Instrument_Group_Dataset_Type_List
+**          02/04/2021 mem - Provide a delimiter when calling Get_Instrument_Group_Dataset_Type_List
 **          06/14/2022 mem - Ported to PostgreSQL
 **          04/04/2023 mem - Use char_length() to determine string length
 **

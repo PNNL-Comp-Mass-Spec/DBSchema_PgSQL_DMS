@@ -14,7 +14,7 @@ AS $$
 **  Desc:
 **      Deletes the given job from T_Jobs if the state is New, Failed, or Holding
 **      Does not delete the job if it has running job steps (though if the step started over 48 hours ago, ignore that job step)
-**      This procedure is called by DeleteAnalysisJob in DMS5
+**      This procedure is called by public.Delete_Analysis_Job
 **
 **  Auth:   mem
 **  Date:   04/21/2017 mem - Initial release

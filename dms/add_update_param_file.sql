@@ -37,13 +37,13 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/28/2017 mem - Add _validateUnimod
 **          10/02/2017 mem - Abort adding a new parameter file if _paramfileMassMods does not validate (when _validateUnimod is 1)
-**          08/17/2018 mem - Pass _paramFileType to StoreParamFileMassMods
-**          11/19/2018 mem - Pass 0 to the _maxRows parameter to udfParseDelimitedListOrdered
+**          08/17/2018 mem - Pass _paramFileType to Store_Param_File_Mass_Mods
+**          11/19/2018 mem - Pass 0 to the _maxRows parameter to Parse_Delimited_List_Ordered
 **          11/30/2018 mem - Make _paramFileID an input/output parameter
 **          11/04/2021 mem - Populate the Mod_List field using get_param_file_mass_mod_code_list
 **          04/11/2022 mem - Check for whitespace in _paramFileName
 **          02/23/2023 mem - Add mode 'previewadd'
-**                         - If the mode is 'previewadd', set _infoOnly to true when calling StoreParamFileMassMods
+**                         - If the mode is 'previewadd', set _infoOnly to true when calling Store_Param_File_Mass_Mods
 **          02/23/2023 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Remove local variable use when raising exceptions
@@ -247,7 +247,7 @@ BEGIN
                 _mode = 'update' And _replaceExistingMassMods = 0 AND Not Exists (Select * FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID)) Then
 
                 ---------------------------------------------------
-                -- Validate the mods by calling StoreParamFileMassMods with @paramFileID = 0
+                -- Validate the mods by calling Store_Param_File_Mass_Mods with @paramFileID = 0
                 ---------------------------------------------------
 
                 _validateMods := CASE WHEN _validateUnimod > 0 THEN true ELSE false END;
@@ -346,7 +346,7 @@ BEGIN
                     _returnCode => _returnCode);                -- Output
 
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'StoreParamFileMassMods: "%"', _message;
+                    RAISE EXCEPTION 'Store_Param_File_Mass_Mods: "%"', _message;
                 End If;
             End If;
         End If;

@@ -20,7 +20,7 @@ AS $$
 **  Auth:   mem
 **  Date:   03/25/2011 mem - Initial version
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
-**          01/08/2013 mem - Now calling UpdateEUSInstrumentsFromEUSImports
+**          01/08/2013 mem - Now calling Update_EUS_Instruments_From_EUS_Imports
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/12/2021 mem - Add option to update EUS Users for Inactive proposals
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -72,7 +72,7 @@ BEGIN
 
         If _returnCode <> '' And _statusMessage = '' Then
             If _message = '' Then
-                _statusMessage := 'Error calling UpdateEUSInstrumentsFromEUSImports';
+                _statusMessage := 'Error calling Update_EUS_Instruments_From_EUS_Imports';
             Else
                 _statusMessage := _message;
             End If;

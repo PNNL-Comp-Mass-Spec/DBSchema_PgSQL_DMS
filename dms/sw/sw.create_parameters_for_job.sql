@@ -25,8 +25,8 @@ CREATE OR REPLACE FUNCTION sw.create_parameters_for_job(_job integer, _settingsf
 **  Auth:   grk
 **          01/31/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
 **          02/08/2009 mem - Added parameter _debugMode
-**          06/01/2009 mem - Switched from S_GetJobParamTable (which pointed to a stored procedure in DMS5)
-**                           to GetJobParamTable, which is local to this database (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
+**          06/01/2009 mem - Switched from S_Get_Job_Param_Table (which pointed to a stored procedure in DMS5)
+**                           to Get_Job_Param_Table, which is local to this database (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **          01/05/2010 mem - Added parameter _settingsFileOverride
 **          10/14/2022 mem - Ported to PostgreSQL
 **          03/26/2023 mem - Update logic to handle data package based jobs (which should have dataset name 'Aggregation')

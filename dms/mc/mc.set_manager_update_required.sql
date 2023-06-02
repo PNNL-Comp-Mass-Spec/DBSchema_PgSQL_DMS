@@ -25,7 +25,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **  Date:   01/24/2009 mem - Initial version
 **          04/17/2014 mem - Expanded _managerList to varchar(max) and added parameter _showTable
 **          02/08/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          03/23/2022 mem - Use mc schema when calling Parse_Manager_Name_List
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs

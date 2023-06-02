@@ -157,7 +157,7 @@ BEGIN
         -------------------------------------------------
         If _mode = 'delete' Then
             -- Deletes are ignored by this procedure
-            -- Use DeleteSamplePrepRequest instead
+            -- Use Delete_Sample_Prep_Request instead
         End If;
 
         -------------------------------------------------

@@ -29,8 +29,8 @@ AS $$
 **  Date:   02/26/2010
 **          03/03/2010 grk - Added status field
 **          08/04/2010 mem - Now using the Created date from the original request as the Created date for the new request
-**          08/30/2010 mem - Now clearing _message after a successful call to UpdateRequestedRunCopyFactors
-**          12/13/2011 mem - Added parameter _callingUser, which is sent to UpdateRequestedRunCopyFactors
+**          08/30/2010 mem - Now clearing _message after a successful call to Update_Requested_Run_Copy_Factors
+**          12/13/2011 mem - Added parameter _callingUser, which is sent to Update_Requested_Run_Copy_Factors
 **          04/25/2012 mem - Fixed _callingUser bug when updating _callingUserUnconsume
 **          02/21/2013 mem - Now verifying that a new row was added to T_Requested_Run
 **          05/08/2013 mem - Now copying Vialing_Conc and Vialing_Vol

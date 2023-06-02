@@ -18,7 +18,7 @@ AS $$
 **  Auth:   mem
 **  Date:   10/04/2011 mem - Initial version
 **          07/31/2012 mem - Renamed Historic Log DB from DMSHistoricLog1 to DMSHistoricLog
-**          11/21/2012 mem - Removed call to MoveAnalysisLogEntries
+**          11/21/2012 mem - Removed call to Move_Analysis_Log_Entries
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          06/09/2022 mem - Update default log retention interval
 **          12/15/2023 mem - Ported to PostgreSQL

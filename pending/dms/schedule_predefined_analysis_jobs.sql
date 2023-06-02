@@ -29,8 +29,8 @@ AS $$
 **  Date:   06/29/2005 grk - Supersedes procedure ScheduleDefaultAnalyses
 **          03/28/2006 grk - Added protein collection fields
 **          04/04/2006 grk - Increased sized of param file name
-**          06/01/2006 grk - Fixed calling sequence to AddUpdateAnalysisJob
-**          03/15/2007 mem - Updated call to AddUpdateAnalysisJob (Ticket #394)
+**          06/01/2006 grk - Fixed calling sequence to Add_Update_Analysis_Job
+**          03/15/2007 mem - Updated call to Add_Update_Analysis_Job (Ticket #394)
 **                         - Replaced processor name with associated processor group (Ticket #388)
 **          02/29/2008 mem - Added optional parameter _callingUser; If provided, will call alter_event_log_entry_user (Ticket #644)
 **          04/11/2008 mem - Now passing _raiseErrorMessages to EvaluatePredefinedAnalysisRules

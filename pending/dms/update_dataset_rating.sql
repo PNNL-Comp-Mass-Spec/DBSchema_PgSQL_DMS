@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the rating for the given datasets by calling SP UpdateDatasets
+**      Updates the rating for the given datasets by calling procedure Update_Datasets
 **
 **  Arguments:
 **    _datasets   Comma-separated list of datasets
@@ -95,7 +95,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Call procedure UpdateDatasets
+    -- Call procedure Update_Datasets
     ---------------------------------------------------
 
     CALL update_datasets (

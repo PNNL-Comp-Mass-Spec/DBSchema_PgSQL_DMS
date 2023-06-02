@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_storage_path_for_new_datasets(_
 **          05/12/2011 mem - Added _refDate and _autoSwitchActiveStorage
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          10/27/2020 mem - Pass Auto_SP_URL_Domain to AddUpdateStorage
-**          12/17/2020 mem - Rollback any open transactions before calling LocalErrorHandler
+**          12/17/2020 mem - Rollback any open transactions before calling Local_Error_Handler
 **          05/08/2023 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Use format() for string concatenation
 **

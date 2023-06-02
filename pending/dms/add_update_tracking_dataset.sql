@@ -47,8 +47,8 @@ AS $$
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
-**          02/25/2021 mem - Use ReplaceCharacterCodes to replace character codes with punctuation marks
-**                         - Use RemoveCrLf to replace linefeeds with semicolons
+**          02/25/2021 mem - Use Replace_Character_Codes to replace character codes with punctuation marks
+**                         - Use Remove_Cr_Lf to replace linefeeds with semicolons
 **          02/17/2022 mem - Rename variables, adjust formatting, convert tabs to spaces
 **          02/18/2022 mem - Call Add_Update_Requested_Run if the EUS usage info is updated
 **          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run

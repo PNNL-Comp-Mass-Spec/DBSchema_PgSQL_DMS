@@ -30,16 +30,16 @@ AS $$
 **  Auth:   grk
 **  Date:   04/13/2010 grk - Initial release
 **          05/25/2010 grk - All dataset name other than 'na'
-**          10/25/2010 grk - Added call to AdjustParamsForLocalJob
+**          10/25/2010 grk - Added call to Adjust_Params_For_Local_Job
 **          11/25/2010 mem - Added code to update the Dependencies column in Tmp_Job_Steps
-**          05/25/2011 mem - Updated call to CreateStepsForJob and removed Priority from Tmp_Job_Steps
+**          05/25/2011 mem - Updated call to Create_Steps_For_Job and removed Priority from Tmp_Job_Steps
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          11/14/2011 mem - Now populating column Transfer_Folder_Path in T_Jobs
 **          01/09/2012 mem - Added parameter _ownerPRN
 **          01/19/2012 mem - Added parameter _dataPackageID
 **          02/07/2012 mem - Now validating that _dataPackageID is > 0 when _scriptName is MultiAlign_Aggregator
-**          03/20/2012 mem - Now calling UpdateJobParamOrgDbInfoUsingDataPkg
-**          08/21/2012 mem - Now including the message text reported by CreateStepsForJob if it returns an error code
+**          03/20/2012 mem - Now calling Update_Job_Param_Org_Db_Info_Using_Data_Pkg
+**          08/21/2012 mem - Now including the message text reported by Create_Steps_For_Job if it returns an error code
 **          04/10/2013 mem - Now calling Alter_Entered_By_User to update T_Job_Events
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          03/10/2021 mem - Do not call S_GetNewJobID when _debugMode is true
@@ -161,7 +161,7 @@ BEGIN
     -- Note: _datasetID needs to be 0
     --
     -- If it is non-zero, the newly created job will get deleted from
-    -- this DB the next time UpdateContext runs, since the system will think
+    -- this DB the next time Update_Context runs, since the system will think
     -- the job no-longer exists in DMS5 and thus should be deleted
     ---------------------------------------------------
 
@@ -267,7 +267,7 @@ BEGIN
     -- Save job parameters as XML into temp table
     ---------------------------------------------------
 
-    -- FUTURE: need to get set of parameters normally provided by GetJobParamTable,
+    -- FUTURE: need to get set of parameters normally provided by Get_Job_Param_Table,
     -- except for the job specifc ones which need to be provided as initial content of _jobParamXML
     --
     INSERT INTO Tmp_Job_Parameters (Job, Parameters)

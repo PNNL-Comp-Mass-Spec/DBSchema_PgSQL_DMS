@@ -39,10 +39,10 @@ AS $$
 **          04/11/2017 mem - Populate columns DMS_Inst_ID and Usage_Type instead of Instrument and Usage
 **                         - Add parameter _infoOnly
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**                         - Set _validateTotal to 0 when calling ParseUsageText
+**                         - Set _validateTotal to 0 when calling Parse_Usage_Text
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          08/02/2017 mem - Trim whitespace from the cleaned comment returned by ParseUsageText
+**          08/02/2017 mem - Trim whitespace from the cleaned comment returned by Parse_Usage_Text
 **          01/05/2017 mem - Remove LF and CR from dataset comments
 **          05/03/2019 mem - Add parameter _eusInstrumentId
 **          04/17/2020 mem - Use Dataset_ID instead of ID
@@ -50,7 +50,7 @@ AS $$
 **                         - Replace SQL server specific syntax with more generic syntax for assigning sequential values to the seq column
 **          02/15/2022 mem - Define column names when previewing updates
 **          03/17/2022 mem - After populating the staging table, update _instrument if required
-**                         - Call procedure UpdateEMSLInstrumentAcqOverlapColumn
+**                         - Call procedure Update_EMSL_Instrument_Acq_Overlap_Data
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -343,13 +343,13 @@ BEGIN
                 _cleanedComment := 'Broken';
             Else
                 ---------------------------------------------------
-                -- ParseUsageText looks for special usage tags in the comment and extracts that information, returning it as XML
+                -- Parse_Usage_Text looks for special usage tags in the comment and extracts that information, returning it as XML
                 --
                 -- If _cleanedComment is initially 'User[100%], Proposal[49361], PropUser[50082] Extra information about interval'
-                -- after calling ParseUsageText, _cleanedComment will be ' Extra information about interval''
+                -- after calling Parse_Usage_Text, _cleanedComment will be ' Extra information about interval''
                 -- and _xml will be <u User="100" Proposal="49361" PropUser="50082" />
                 --
-                -- If _cleanedComment only has 'User[100%], Proposal[49361], PropUser[50082]', _cleanedComment will be empty after the call to ParseUsageText
+                -- If _cleanedComment only has 'User[100%], Proposal[49361], PropUser[50082]', _cleanedComment will be empty after the call to Parse_Usage_Text
                 ---------------------------------------------------
 
                 CALL public.parse_usage_text (

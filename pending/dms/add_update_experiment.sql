@@ -88,8 +88,8 @@ AS $$
 **          09/01/2017 mem - Allow _tissue to be a BTO ID (e.g. BTO:0000131)
 **          11/29/2017 mem - Call Parse_Delimited_List instead of Make_Table_From_List_Delim
 **                           Rename #CC to Tmp_ExpToCCMap
-**                           No longer pass _biomaterialList to AddExperimentCellCulture since it uses Tmp_ExpToCCMap
-**                           Remove references to the Cell_Culture_List field in T_Experiments (procedure AddExperimentCellCulture calls UpdateCachedExperimentInfo)
+**                           No longer pass _biomaterialList to Add_Experiment_Cell_Culture since it uses Tmp_ExpToCCMap
+**                           Remove references to the Cell_Culture_List field in T_Experiments (procedure Add_Experiment_Cell_Culture calls Update_Cached_Experiment_Info)
 **                           Add argument _referenceCompoundList
 **          01/04/2018 mem - Entries in _referenceCompoundList are now assumed to be in the form Compound_ID:Compound_Name, though we also support only Compound_ID or only Compound_Name
 **          07/30/2018 mem - Expand _reason and _comment to varchar(500)
@@ -98,8 +98,8 @@ AS $$
 **          11/30/2018 mem - Add output parameter _experimentID
 **          03/27/2019 mem - Update _experimentId using _existingExperimentID
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
-**          02/25/2021 mem - Use ReplaceCharacterCodes to replace character codes with punctuation marks
-**                         - Use RemoveCrLf to replace linefeeds with semicolons
+**          02/25/2021 mem - Use Replace_Character_Codes to replace character codes with punctuation marks
+**                         - Use Remove_Cr_Lf to replace linefeeds with semicolons
 **          07/06/2021 mem - Expand _organismName and _labNotebookRef to varchar(128)
 **          09/30/2021 mem - Allow renaming an experiment if it does not have an associated requested run or dataset
 **                         - Move argument _experimentID, making it the first argument

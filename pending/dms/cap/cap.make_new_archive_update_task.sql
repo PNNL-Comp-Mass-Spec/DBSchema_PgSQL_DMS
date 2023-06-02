@@ -177,7 +177,7 @@ BEGIN
                    _datasetName AS Dataset,
                    _datasetID AS Dataset_ID,
                    _resultsDirectoryName AS Results_Folder_Name,
-                   'Created manually using MakeNewArchiveUpdateJob' AS comment,
+                   'Created manually using Make_New_Archive_Update_Job' AS comment,
                    CASE
                        WHEN _resultsDirectoryName = '' THEN 3
                        ELSE 4

@@ -12,9 +12,9 @@ CREATE OR REPLACE PROCEDURE mc.disable_analysis_managers(IN _infoonly boolean DE
 **  Auth:   mem
 **  Date:   05/09/2008
 **          10/09/2009 mem - Changed _ManagerTypeIDList to 11
-**          06/09/2011 mem - Now calling EnableDisableAllManagers
+**          06/09/2011 mem - Now calling Enable_Disable_All_Managers
 **          01/30/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling EnableDisableAllManagers
+**          03/23/2022 mem - Use mc schema when calling Enable_Disable_All_Managers
 **          04/02/2022 mem - Use new procedure name
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **

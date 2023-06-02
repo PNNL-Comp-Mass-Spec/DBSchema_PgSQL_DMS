@@ -87,7 +87,7 @@ AS $$
 **          05/12/2011 mem - Now passing _refDate and _autoSwitchActiveStorage to Get_Instrument_Storage_Path_For_New_Datasets
 **          05/24/2011 mem - Now checking for change of rating from -5, -6, or -7 to 5
 **                         - Now ignoring AJ_DatasetUnreviewed jobs when determining whether or not to call schedule_predefined_analysis_jobs
-**          12/12/2011 mem - Updated call to ValidateEUSUsage to treat _eusUsageType as an input/output parameter
+**          12/12/2011 mem - Updated call to Validate_EUS_Usage to treat _eusUsageType as an input/output parameter
 **          12/14/2011 mem - Now passing _callingUser to Add_Update_Requested_Run and Consume_Scheduled_Run
 **          12/19/2011 mem - Now auto-replacing &quot; with a double-quotation mark in _comment
 **          01/11/2012 mem - Added parameter _aggregationJobDataset
@@ -128,7 +128,7 @@ AS $$
 **          08/29/2017 mem - Allow updating EUS info for existing datasets (calls Add_Update_Requested_Run)
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **                         - Expand _warning to varchar(512)
-**          04/15/2019 mem - Add call to UpdateCachedDatasetInstruments
+**          04/15/2019 mem - Add call to Update_Cached_Dataset_Instruments
 **          07/19/2019 mem - Change _eusUsageType to 'maintenance' if empty for _Tune_ or TuneMix datasets
 **          11/11/2019 mem - Auto change 'Blank-' and 'blank_' to 'Blank'
 **          09/15/2020 mem - Now showing 'https://dms2.pnl.gov/dataset_disposition/search' instead of http://
@@ -136,11 +136,11 @@ AS $$
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          12/17/2020 mem - Verify that _captureSubfolder is a relative path and add debug messages
 **          02/25/2021 mem - Remove the requested run comment from the dataset comment if the dataset comment starts with the requested run comment
-**                         - Use ReplaceCharacterCodes to replace character codes with punctuation marks
-**                         - Use RemoveCrLf to replace linefeeds with semicolons
+**                         - Use Replace_Character_Codes to replace character codes with punctuation marks
+**                         - Use Remove_Cr_Lf to replace linefeeds with semicolons
 **          05/26/2021 mem - When _mode is 'add', 'check_add', or 'add_trigger', possibly override the EUSUsageType based on the campaign's EUS Usage Type
 **                         - Expand _message to varchar(1024)
-**          05/27/2021 mem - Refactor EUS Usage validation code into ValidateEUSUsage
+**          05/27/2021 mem - Refactor EUS Usage validation code into Validate_EUS_Usage
 **          10/01/2021 mem - Also check for a period when verifying that the dataset name does not end with .raw or .wiff
 **          11/12/2021 mem - When _mode is update, pass _batch, _block, and _runOrder to Add_Update_Requested_Run
 **          02/17/2022 mem - Rename variables and add missing Else clause
@@ -1017,7 +1017,7 @@ BEGIN
                             _returnCode => _returnCode);        -- Output
 
             If _returnCode <> '' Then
-                -- CreateXmlDatasetTriggerFile should have already logged critical errors to t_log_entries
+                -- Create_Xml_Dataset_Trigger_File should have already logged critical errors to t_log_entries
                 -- No need for this procedure to log the message again
                 _logErrors := false;
                 RAISE EXCEPTION 'There was an error while creating the XML Trigger file: %', _message;

@@ -26,7 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **  Auth:   mem
 **  Date:   03/22/2011 mem - Initial Version
 **          04/04/2011 mem - Expanded [Value] to varchar(4000) in _task_Parameters
-**          01/19/2012 mem - Now using AddUpdateJobParameterXML
+**          01/19/2012 mem - Now using Add_Update_Job_Parameter_XML
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/23/2022 mem - Ported to PostgreSQL

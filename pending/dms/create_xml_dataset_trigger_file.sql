@@ -60,9 +60,9 @@ AS $$
 **  Auth:   jds
 **  Date:   10/03/2007 jds - Initial version
 **          04/26/2010 grk - Widened _datasetName to 128 characters
-**          02/03/2011 mem - Now calling XMLQuoteCheck() to replace double quotes with &quot;
-**          07/31/2012 mem - Now using udfCombinePaths to build the output file path
-**          05/08/2013 mem - Removed Coalesce() checks since XMLQuoteCheck() now changes Nulls to empty strings
+**          02/03/2011 mem - Now calling XML_Quote_Check() to replace double quotes with &quot;
+**          07/31/2012 mem - Now using Combine_Paths to build the output file path
+**          05/08/2013 mem - Removed Coalesce() checks since XML_Quote_Check() now changes Nulls to empty strings
 **          06/23/2015 mem - Added _captureSubfolder
 **          02/23/2017 mem - Added _lcCartConfig
 **          03/15/2017 mem - Log an error if _triggerFolderPath does not exist

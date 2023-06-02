@@ -15,7 +15,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   05/26/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
-**          01/17/2009 mem - Removed Insert operation for T_Local_Job_Processors, since SyncJobInfo now populates T_Local_Job_Processors (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)
+**          01/17/2009 mem - Removed Insert operation for T_Local_Job_Processors, since Sync_Job_Info now populates T_Local_Job_Processors (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)
 **          06/27/2009 mem - Now removing entries from T_Local_Job_Processors only if the job is complete or not present in T_Jobs; if a job is failed but still in T_Jobs, the entry is not removed from T_Local_Job_Processors
 **          07/01/2010 mem - No longer logging message "Updated T_Local_Job_Processors; DeleteCount=" each time T_Local_Job_Processors is updated
 **          06/01/2015 mem - No longer deleting rows in T_Local_Job_Processors since we have deprecated processor groups

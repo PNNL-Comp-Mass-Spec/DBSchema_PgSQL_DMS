@@ -20,7 +20,7 @@ AS $$
 **          03/06/2009 grk - Added code for: Special = 'Job_Results'
 **          07/31/2009 mem - Now filtering by job in the subquery that looks for job steps with flag Special = 'Job_Results' (necessary when Tmp_Job_Steps contains more than one job)
 **          03/21/2011 mem - Added support for Special = 'ExtractSourceJobFromComment'
-**          03/22/2011 mem - Now calling AddUpdateJobParameterTempTable
+**          03/22/2011 mem - Now calling Add_Update_Job_Parameter_Temp_Table
 **          04/04/2011 mem - Removed SourceJob code since needs to occur after T_Job_Parameters has been updated for this job
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          02/13/2023 mem - Update Special="Job_Results" comment to mention ProMex

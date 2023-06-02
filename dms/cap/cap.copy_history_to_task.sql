@@ -23,7 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 **          03/12/2012 mem - Added column Tool_Version_ID
 **          03/21/2012 mem - Now disabling identity_insert prior to inserting a row into t_tasks
 **                         - Fixed bug finding most recent successful capture task job in t_tasks_history
-**          08/27/2013 mem - Now calling UpdateParametersForJob
+**          08/27/2013 mem - Now calling Update_Parameters_For_Job
 **          10/21/2013 mem - Added _assignNewJobNumber
 **          03/10/2015 mem - Added t_task_step_dependencies_history
 **          03/10/2015 mem - Now updating t_task_steps.Dependencies if it doesn't match the dependent steps listed in t_task_step_dependencies

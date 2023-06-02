@@ -35,7 +35,7 @@ AS $$
 **          03/14/2012 mem - Now preventing both Tryp_Pig_Bov and Tryp_Pig from being included in _protCollNameList
 **          10/23/2017 mem - Do not add any enzyme-related protein collections if any of the protein collections in _protCollNameList already include contaminants
 **                           - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling Validate_Analysis_Job_Parameters
-**          07/30/2019 mem - Renamed from ValidateProteinCollectionListForDatasets to ValidateProteinCollectionListForDatasetTable
+**          07/30/2019 mem - Renamed from Validate_Protein_Collection_List_For_Datasets to ValidateProteinCollectionListForDatasetTable
 **          07/31/2019 mem - Prevent _protCollNameList from containing both HumanContam and Tryp_Pig_Bov
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          12/15/2023 mem - Ported to PostgreSQL

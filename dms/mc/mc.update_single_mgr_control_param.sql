@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **  Auth:   jds
 **  Date:   06/20/2007
 **          07/31/2007 grk - Changed for 'controlfromwebsite' no longer a parameter
-**          04/16/2009 mem - Added optional parameter _callingUser; if provided, then UpdateSingleMgrParamWork will populate field Entered_By with this name
+**          04/16/2009 mem - Added optional parameter _callingUser; if provided, then Update_Single_Mgr_Param_Work will populate field Entered_By with this name
 **          04/08/2011 mem - Will now add parameter _paramValue to managers that don't yet have the parameter defined
 **          04/21/2011 mem - Expanded _managerIDList to varchar(8000)
 **          05/11/2011 mem - Fixed bug reporting error resolving _paramValue to _paramTypeID
@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **                         - Added parameter _infoOnly
 **                         - Renamed the first parameter from _paramValue to _paramName
 **          02/10/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
+**          03/23/2022 mem - Use mc schema when calling Update_Single_Mgr_Param_Work
 **                         - Show a warning if all of the managers have control_from_website = 0 in t_mgrs
 **          03/24/2022 mem - Show a warning if _managerIDList did not have one or more integers
 **          04/02/2022 mem - Use new procedure name

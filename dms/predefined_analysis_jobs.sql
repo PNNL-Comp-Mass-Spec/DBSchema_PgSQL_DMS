@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **          07/22/2009 mem - Now returning 0 if _jobsCreated = 0 and _myError = 0 (previously, we were returning 1, which a calling procedure could erroneously interpret as meaning an error had occurred)
 **          09/04/2009 mem - Added DatasetType filter
 **          12/18/2009 mem - Now using T_Analysis_Tool_Allowed_Dataset_Type to determine valid dataset types for a given analysis tool
-**          07/12/2010 mem - Now calling ValidateProteinCollectionListForDatasets to validate the protein collection list (and possibly add mini proteome or enzyme-related protein collections)
+**          07/12/2010 mem - Now calling Validate_Protein_Collection_List_For_Datasets to validate the protein collection list (and possibly add mini proteome or enzyme-related protein collections)
 **                         - Expanded protein Collection fields and variables to varchar(4000)
 **          09/24/2010 mem - Now testing for a rating of -6 (Not Accepted)
 **          11/18/2010 mem - Rearranged rating check code for clarity

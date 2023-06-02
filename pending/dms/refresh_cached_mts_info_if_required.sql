@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Calls the various RefreshCachedMTS procedures if the
+**      Calls the various Refresh_Cached_MTS procedures if the
 **      Last_Refreshed date in T_MTS_Cached_Data_Status is over
 **      _updateInterval hours before the present
 **
@@ -24,7 +24,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   02/02/2010 mem - Initial Version
-**          04/21/2010 mem - Now calling RefreshCachedMTSJobMappingPeptideDB' and RefreshCachedMTSJobMappingMTDBs
+**          04/21/2010 mem - Now calling Refresh_Cached_MTS_Job_Mapping_Peptide_DBs and Refresh_Cached_MTS_Job_Mapping_MTDBs
 **          11/21/2012 mem - Now updating job stats in T_MTS_PT_DBs_Cached and T_MTS_MT_DBs_Cached
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -85,32 +85,32 @@ BEGIN
             If _iteration = 1 Then
                 _cacheTable := 't_mts_peak_matching_tasks_cached';
                 _idColumnName := 'mts_job_id';
-                _procedure := 'RefreshCachedMTSPeakMatchingTasks';
+                _procedure := 'Refresh_Cached_MTS_Peak_Matching_Tasks';
             End If;
 
             If _iteration = 2 Then
                 _cacheTable := 't_mts_mt_dbs_cached';
                 _idColumnName := '';
-                _procedure := 'RefreshCachedMTDBs';
+                _procedure := 'Refresh_Cached_MTDBs';
             End If;
 
             If _iteration = 3 Then
                 _cacheTable := 't_mts_pt_dbs_cached';
                 _idColumnName := '';
-                _procedure := 'RefreshCachedPTDBs';
+                _procedure := 'Refresh_Cached_PTDBs';
             End If;
 
             If _iteration = 4 Then
                 _cacheTable := 't_mts_pt_db_jobs_cached';
                 _idColumnName := 'job';
-                _procedure := 'RefreshCachedMTSJobMappingPeptideDBs';
+                _procedure := 'Refresh_Cached_MTS_Job_Mapping_Peptide_DBs';
                 _limitToMaxKnownDMSJobs := 1;
             End If;
 
             If _iteration = 5 Then
                 _cacheTable := 't_mts_mt_db_jobs_cached';
                 _idColumnName := 'job';
-                _procedure := 'RefreshCachedMTSJobMappingMTDBs';
+                _procedure := 'Refresh_Cached_MTS_Job_Mapping_MTDBs';
                 _limitToMaxKnownDMSJobs := 1;
             End If;
 

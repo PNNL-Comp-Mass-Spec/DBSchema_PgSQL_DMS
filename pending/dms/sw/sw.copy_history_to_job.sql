@@ -19,9 +19,9 @@ AS $$
 **  Date:   02/06/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
 **          10/05/2009 mem - Now looking up CPU_Load for each step tool
 **          04/05/2011 mem - Now copying column Special_Processing
-**          05/19/2011 mem - Now calling UpdateJobParameters
+**          05/19/2011 mem - Now calling Update_Job_Parameters
 **          05/25/2011 mem - Removed priority column from T_Job_Steps
-**          07/12/2011 mem - Now calling ValidateJobServerInfo
+**          07/12/2011 mem - Now calling Validate_Job_Server_Info
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          11/01/2011 mem - Added column Tool_Version_ID
 **          11/14/2011 mem - Added column Transfer_Folder_Path

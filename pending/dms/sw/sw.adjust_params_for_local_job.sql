@@ -24,7 +24,7 @@ AS $$
 **          01/19/2012 mem - Added parameter _dataPackageID
 **          01/03/2014 grk - Added logic for CacheFolderRootPath
 **          03/14/2014 mem - Added job parameter InstrumentDataPurged
-**          06/16/2016 mem - Move data package transfer folder path logic to AddUpdateTransferPathsInParamsUsingDataPkg
+**          06/16/2016 mem - Move data package transfer folder path logic to Add_Update_Transfer_Paths_In_Params_Using_Data_Pkg
 **          04/11/2022 mem - Use varchar(4000) when populating temp table Tmp_Job_Params using _jobParamXML
 **          03/22/2023 mem - Rename job parameter to DatasetName
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath

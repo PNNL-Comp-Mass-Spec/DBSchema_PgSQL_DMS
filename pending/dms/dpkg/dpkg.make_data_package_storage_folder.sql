@@ -22,7 +22,7 @@ AS $$
 **          07/14/2009 mem - Now logging to T_Log_Entries
 **          08/19/2009 grk - Added failover to backup broker
 **          11/05/2009 grk - Modified to use external message sender
-**          03/17/2011 mem - Now calling AddDataFolderCreateTask in the DMS_Pipeline database
+**          03/17/2011 mem - Now calling Add_Data_Folder_Create_Task in the DMS_Pipeline database
 **          04/07/2011 mem - Fixed bug constructing _pathFolder (year was in the wrong place)
 **          07/30/2012 mem - Now updating _message prior to calling post_log_entry
 **          03/17/2016 mem - Remove call to CallSendMessage

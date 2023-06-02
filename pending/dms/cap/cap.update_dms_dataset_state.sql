@@ -91,7 +91,7 @@ BEGIN
                      cap.t_tasks T ON TS.Job = T.Job
                 WHERE (TS.Job = _job) AND Coalesce(TS.Completion_Message, '') <> '';
 
-                -- Auto remove "; To ignore this error, use Exec AddUpdateJobParameter" or
+                -- Auto remove "; To ignore this error, use Exec Add_Update_Job_Parameter" or
                 --             "; To ignore this error, use call add_update_task_parameter"
                 --             "; To ignore this error, use call add_update_task_parameter"
                 -- from the completion message
@@ -145,4 +145,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_dms_dataset_state IS 'update_dms_dataset_state';
+COMMENT ON PROCEDURE cap.update_dms_dataset_state IS 'UpdateDMSDatasetState';

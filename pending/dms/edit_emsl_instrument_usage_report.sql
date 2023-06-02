@@ -168,7 +168,3 @@ END
 $$;
 
 COMMENT ON PROCEDURE public.edit_emsl_instrument_usage_report IS 'EditEMSLInstrumentUsageReport';
-
--- EvaluatePredefinedAnalysisRules was refactored into functions
---   predefined_analysis_jobs, predefined_analysis_rules, and get_predefined_analysis_rule_table and procedures
---   predefined_analysis_jobs_proc and predefined_analysis_rules_proc, and evaluate_predefined_analysis_rule

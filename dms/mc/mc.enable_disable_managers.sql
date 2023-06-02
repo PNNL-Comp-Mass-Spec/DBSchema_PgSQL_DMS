@@ -44,7 +44,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **          02/05/2020 mem - Update _message when previewing updates
 **          02/15/2020 mem - Add _results cursor
-**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          03/23/2022 mem - Use mc schema when calling Parse_Manager_Name_List
 **          03/24/2022 mem - Fix typo in comment
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name

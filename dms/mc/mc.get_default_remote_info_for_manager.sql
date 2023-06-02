@@ -23,10 +23,10 @@ CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managerna
 **
 **  Auth:   mem
 **  Date:   05/18/2017 mem - Initial version
-**          03/14/2018 mem - Use GetManagerParametersWork to lookup manager parameters, allowing for getting remote info parameters from parent groups
+**          03/14/2018 mem - Use Get_Manager_Parameters_Work to lookup manager parameters, allowing for getting remote info parameters from parent groups
 **          03/29/2018 mem - Return an empty string if the manager does not have parameters RunJobsRemotely and RemoteHostName defined, or if RunJobsRemotely is false
 **          02/05/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling GetManagerParametersWork
+**          03/23/2022 mem - Use mc schema when calling Get_Manager_Parameters_Work
 **          04/02/2022 mem - Use new procedure name
 **                         - Use case insensitive matching of manager name
 **          04/16/2022 mem - Use new function name

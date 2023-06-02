@@ -235,7 +235,7 @@ BEGIN
         If _mode = 'update' Then
 
             ---------------------------------------------------
-            -- Insert unmarked items into database
+            -- Insert unmarked items into table
             ---------------------------------------------------
 
             INSERT INTO t_sample_prep_request_items (

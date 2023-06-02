@@ -29,7 +29,7 @@ AS $$
 **          09/20/2007 mem - Now checks for existing jobs if _mode <> 'add'
 **          02/27/2009 mem - Expanded _comment to varchar(512)
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
-**          08/01/2012 mem - Now sending _specialProcessing to AddAnalysisJobGroup
+**          08/01/2012 mem - Now sending _specialProcessing to Add_Analysis_Job_Group
 **                         - Updated _datasetList to be varchar(max)
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
 **          04/08/2015 mem - Now parsing the job request list using Parse_Delimited_Integer_List

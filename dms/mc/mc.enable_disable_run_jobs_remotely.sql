@@ -25,7 +25,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **  Date:   03/28/2018 mem - Initial version
 **          03/29/2018 mem - Add parameter _addMgrParamsIfMissing
 **          02/05/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          03/23/2022 mem - Use mc schema when calling Parse_Manager_Name_List
 **          03/24/2022 mem - Fix typo in comment
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name

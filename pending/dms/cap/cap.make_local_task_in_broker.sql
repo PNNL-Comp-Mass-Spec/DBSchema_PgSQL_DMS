@@ -155,7 +155,7 @@ BEGIN
         ---------------------------------------------------
         -- Save capture task job parameters as XML into temp table
         ---------------------------------------------------
-        -- FUTURE: need to get set of parameters normally provided by GetJobParamTable,
+        -- FUTURE: need to get set of parameters normally provided by Get_Job_Param_Table,
         -- except for the job specific ones which need to be provided as initial content of _jobParamXML
         --
         INSERT INTO Tmp_Job_Parameters (Job, Parameters)
@@ -200,7 +200,7 @@ BEGIN
 
             BEGIN
 
-                -- MoveJobsToMainTables sproc assumes that t_tasks table entry is already there
+                -- Move_Tasks_To_Main_Tables procedure assumes that t_tasks table entry is already there
                 --
                 INSERT INTO cap.t_tasks (
                       Priority,

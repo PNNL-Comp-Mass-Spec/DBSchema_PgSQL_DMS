@@ -29,7 +29,7 @@ AS $$
 **          05/15/2012 mem - Now verifying that _organismDBName is 'na' if _protCollNameList is defined, or vice versa
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
 **          08/19/2013 mem - Auto-clearing _organismDBName if both _organismDBName and _protCollNameList are defined and _organismDBName is the auto-generated FASTA file for the specified protein collection
-**          07/12/2016 mem - Now using a synonym when calling ValidateAnalysisJobProteinParameters in the Protein_Sequences database
+**          07/12/2016 mem - Now using a synonym when calling Validate_Analysis_Job_Protein_Parameters in the Protein_Sequences database
 **          04/11/2022 mem - Increase warning threshold for length of _protCollNameList to 4000
 **          12/15/2023 mem - Ported to PostgreSQL
 **

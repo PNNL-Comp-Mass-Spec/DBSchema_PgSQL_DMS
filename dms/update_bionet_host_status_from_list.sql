@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE public.update_bionet_host_status_from_list(IN _hostn
 **  Date:   12/03/2015 mem - Initial version
 **          12/04/2015 mem - Now auto-removing ".bionet"
 **                         - Add support for including IP addresses, for example ltq_orb_3_192.168.30.78
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          05/09/2023 mem - Add arguments _message and _returnCode
 **                     mem - Ported to PostgreSQL
 **

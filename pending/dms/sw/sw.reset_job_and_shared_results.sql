@@ -82,7 +82,7 @@ BEGIN
             Output_Folder text
         )
 
-        -- This table is used by RemoveSelectedJobs and must be named Tmp_SJL
+        -- This table is used by Remove_Selected_Jobs and must be named Tmp_SJL
         CREATE TEMP TABLE Tmp_SJL (
             Job int,
             State int
@@ -243,7 +243,7 @@ BEGIN
                 WHERE job = _job;
 
             Else
-                -- Reset the job (but don't delete it from the tables, and don't use RemoveSelectedJobs since it would update sw.t_shared_results)
+                -- Reset the job (but don't delete it from the tables, and don't use Remove_Selected_Jobs since it would update sw.t_shared_results)
 
                 -- Reset dependencies
                 UPDATE sw.t_job_step_dependencies

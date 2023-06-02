@@ -23,9 +23,9 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **  Date:   07/17/2007
 **          07/31/2007 grk - Changed for 'controlfromwebsite' no longer a parameter
 **          03/30/2009 mem - Added optional parameter _callingUser; if provided, then will call alter_entered_by_user_multi_id and possibly alter_event_log_entry_user_multi_id
-**          04/16/2009 mem - Now calling UpdateSingleMgrParamWork to perform the updates
+**          04/16/2009 mem - Now calling Update_Single_Mgr_Param_Work to perform the updates
 **          02/15/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling UpdateSingleMgrParamWork
+**          03/23/2022 mem - Use mc schema when calling Update_Single_Mgr_Param_Work
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new object names
 **          08/20/2022 mem - Update warnings shown when an exception occurs

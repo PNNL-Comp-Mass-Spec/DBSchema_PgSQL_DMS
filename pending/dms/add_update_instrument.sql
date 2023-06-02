@@ -41,7 +41,7 @@ AS $$
 **    _autoSPVolNameServer     Example: F:\
 **    _autoSPPathRoot          Example: Lumos01\
 **    _autoSPUrlDomain         Example: pnl.gov
-**    _mode                    Note that 'add' is not allowed in this procedure; instead use https://dms2.pnl.gov/new_instrument/create (which in turn calls AddNewInstrument)
+**    _mode                    Note that 'add' is not allowed in this procedure; instead use https://dms2.pnl.gov/new_instrument/create (which in turn calls Add_New_Instrument)
 **
 **  Auth:   grk
 **  Date:   06/07/2005 grk - Initial release
@@ -49,7 +49,7 @@ AS $$
 **          08/27/2010 mem - Add parameter _instrumentGroup
 **                         - Use try-catch for error handling
 **          05/12/2011 mem - Add _autoDefineStoragePath and related _autoSP parameters
-**          05/13/2011 mem - Now calling ValidateAutoStoragePathParams
+**          05/13/2011 mem - Now calling Validate_Auto_Storage_Path_Params
 **          11/30/2011 mem - Add parameter _percentEMSLOwned
 **          04/01/2013 mem - Expanded _description to varchar(255)
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int

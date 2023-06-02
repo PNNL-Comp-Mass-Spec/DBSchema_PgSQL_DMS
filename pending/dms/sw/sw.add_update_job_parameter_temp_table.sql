@@ -18,7 +18,7 @@ AS $$
 **      Adds or updates an entry in the XML parameters for a given job
 **      Alternatively, use _deleteParam = true to delete the given parameter
 **
-**      This procedure is nearly identical to AddUpdateJobParameter;
+**      This procedure is nearly identical to Add_Update_Job_Parameter;
 **      However, it operates on Tmp_Job_Parameters
 **
 **  Arguments:
@@ -29,7 +29,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   03/22/2011 mem - Initial Version
-**          01/19/2012 mem - Now using AddUpdateJobParameterXML
+**          01/19/2012 mem - Now using Add_Update_Job_Parameter_XML
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

@@ -31,7 +31,7 @@ AS $$
 **  Date:   02/20/2010
 **          03/02/2010 grk - Added status field to requested run
 **          03/08/2010 grk - Improved field validation
-**          03/18/2010 grk - Eliminated call to GetFactorCrosstabByFactorID
+**          03/18/2010 grk - Eliminated call to Get_Factor_Crosstab_By_Factor_ID
 **          01/23/2023 mem - Use lowercase column names when querying V_Requested_Run_Unified_List
 **          12/15/2023 mem - Ported to PostgreSQL
 **

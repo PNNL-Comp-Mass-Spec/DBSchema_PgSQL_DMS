@@ -54,11 +54,12 @@ END
 $$;
 
 
+
 ALTER FUNCTION public.get_new_job_id_block(_jobcount integer, _note text) OWNER TO d3l243;
 
 --
 -- Name: FUNCTION get_new_job_id_block(_jobcount integer, _note text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_new_job_id_block(_jobcount integer, _note text) IS 'get_new_job_id_block';
+COMMENT ON FUNCTION public.get_new_job_id_block(_jobcount integer, _note text) IS 'GetNewJobIDBlock';
 

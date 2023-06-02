@@ -64,12 +64,12 @@ AS $$
 **          12/14/2008 grk - Fixed problem with select result being inadvertently returned
 **          01/05/2009 grk - Added _archiveNetworkSharePath (http://prismtrac.pnl.gov/trac/ticket/709)
 **          01/05/2010 grk - Added _allowedDatasetTypes (http://prismtrac.pnl.gov/trac/ticket/752)
-**          02/12/2010 mem - Now calling UpdateInstrumentAllowedDatasetType for each dataset type in _allowedDatasetTypes
+**          02/12/2010 mem - Now calling Update_Instrument_Allowed_Dataset_Type for each dataset type in _allowedDatasetTypes
 **          05/25/2010 dac - Updated archive paths for switch from nwfs to aurora
 **          08/30/2010 mem - Replaced parameter _allowedDatasetTypes with _instrumentGroup
 **          05/12/2011 mem - Added _autoDefineStoragePath
 **                         - Expanded _archivePath, _archiveServer, and _archiveNote to larger varchar() variables
-**          05/13/2011 mem - Now calling ValidateAutoStoragePathParams
+**          05/13/2011 mem - Now calling Validate_Auto_Storage_Path_Params
 **          11/30/2011 mem - Added parameter _percentEMSLOwned
 **          06/02/2015 mem - Replaced IDENT_CURRENT with SCOPE_IDENTITY()
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int

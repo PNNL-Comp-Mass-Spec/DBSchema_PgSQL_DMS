@@ -9,7 +9,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Move old log entries and event entries to DMSHistoricLogPipeline
+**      Move old log entries and event entries to historic log tables (in the logsw schema)
 **
 **  Auth:   mem
 **  Date:   10/04/2011 mem - Initial version
@@ -57,7 +57,7 @@ BEGIN
                message LIKE 'Deleted job % from sw.t_jobs')
 
         ----------------------------------------------------
-        -- Move old log entries and event entries to DMSHistoricLogPipeline
+        -- Move old log entries and event entries to logsw.t_job_events, logsw.t_job_step_events, and logsw.t_log_entries
         ----------------------------------------------------
         --
         _currentLocation := 'Call sw.move_entries_to_history';

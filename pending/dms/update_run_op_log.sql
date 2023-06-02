@@ -160,7 +160,7 @@ BEGIN
                             _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank);
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'ValidateEUSUsage: %', _msg;
+                RAISE EXCEPTION 'Validate_EUS_Usage: %', _msg;
             End If;
 
             -----------------------------------------------------------

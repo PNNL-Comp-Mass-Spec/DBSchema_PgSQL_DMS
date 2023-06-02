@@ -27,7 +27,7 @@ AS $$
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          05/12/2017 mem - Add Remote_Info_ID
 **          01/19/2018 mem - Add Runtime_Minutes
-**          06/20/2018 mem - Move rollback transaction to before the call to LocalErrorHandler
+**          06/20/2018 mem - Move rollback transaction to before the call to Local_Error_Handler
 **          07/25/2019 mem - Add Remote_Start and Remote_Finish
 **          12/15/2023 mem - Ported to PostgreSQL
 **

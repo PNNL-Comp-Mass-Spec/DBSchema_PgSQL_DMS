@@ -87,7 +87,7 @@ BEGIN
 
 
     ----------------------------------------------------------
-    -- Copy Job_Step_Events entries into database DMSHistoricLogPipeline
+    -- Copy Job_Step_Events entries into logsw.t_job_step_events
     ----------------------------------------------------------
     --
     BEGIN
@@ -135,7 +135,7 @@ BEGIN
     END;
 
     ----------------------------------------------------------
-    -- Copy Job_Step_Processing_Log entries into database DMSHistoricLogPipeline
+    -- Copy Job_Step_Processing_Log entries into logsw.t_job_step_processing_log
     ----------------------------------------------------------
     --
     BEGIN
@@ -181,7 +181,7 @@ BEGIN
     END;
 
     ----------------------------------------------------------
-    -- Copy Log entries into database DMSHistoricLogPipeline
+    -- Copy Log entries into logsw.t_log_entries
     ----------------------------------------------------------
     --
     BEGIN

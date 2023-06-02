@@ -20,14 +20,14 @@ AS $$
 **            and not from the T_Job_Parameters table local to this DB
 **
 **  Arguments:
-**    _settingsFileOverride   When defined, will use this settings file name instead of the one obtained with public.v_get_pipeline_job_parameters (in GetJobParamTable)
+**    _settingsFileOverride   When defined, will use this settings file name instead of the one obtained with public.v_get_pipeline_job_parameters (in Get_Job_Param_Table)
 **
 **  Auth:   mem
 **  Date:   01/24/2009
 **          02/08/2009 grk - Modified to call Create_Parameters_For_Job
 **          01/05/2010 mem - Added parameter _settingsFileOverride
-**          03/21/2011 mem - Now calling UpdateInputFolderUsingSourceJobComment
-**          04/04/2011 mem - Now calling UpdateInputFolderUsingSpecialProcessingParam
+**          03/21/2011 mem - Now calling Update_Input_Folder_Using_Source_Job_Comment
+**          04/04/2011 mem - Now calling Update_Input_Folder_Using_Special_Processing_Param
 **          01/11/2012 mem - Updated to support _xmlParameters being null, which will be the case for a job created directly in the pipeline database
 **          12/15/2023 mem - Ported to PostgreSQL
 **

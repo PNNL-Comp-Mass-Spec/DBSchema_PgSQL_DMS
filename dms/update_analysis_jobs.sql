@@ -40,7 +40,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **          05/07/2007 grk - Corrected spelling of sproc name
 **          02/29/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user_multi_id (Ticket #644)
 **          03/14/2008 grk - Fixed problem with null arguments (Ticket #655)
-**          04/09/2008 mem - Now calling AlterEnteredByUserMultiID if the jobs are associated with a processor group
+**          04/09/2008 mem - Now calling Alter_Entered_By_User_Multi_ID if the jobs are associated with a processor group
 **          07/11/2008 jds - Added 5 new fields (_paramFileName, _settingsFileName, _organismID, _protCollNameList, _protCollOptionsList)
 **                           and code to validate param file settings file against tool type
 **          10/06/2008 mem - Now updating parameter file name, settings file name, protein collection list, protein options list, and organism when a job is reset (for any of these that are not '[no change]')
@@ -51,9 +51,9 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **          03/12/2009 grk - Removed [no change] from _associatedProcessorGroup to allow dissasociation of jobs with groups
 **          07/16/2009 mem - Added missing rollback transaction statements when verifying _associatedProcessorGroup
 **          09/16/2009 mem - Expanded _jobList to varchar(max)
-**                         - Now calls UpdateAnalysisJobsWork to do the work
+**                         - Now calls Update_Analysis_Jobs_Work to do the work
 **          08/19/2010 grk - Use try-catch for error handling
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
@@ -137,7 +137,7 @@ BEGIN
         GET DIAGNOSTICS _jobCount = ROW_COUNT;
 
         ---------------------------------------------------
-        -- Call UpdateAnalysisJobs to do the work
+        -- Call Update_Analysis_Jobs to do the work
         -- It uses Tmp_AnalysisJobs to determine which jobs to update
         ---------------------------------------------------
 

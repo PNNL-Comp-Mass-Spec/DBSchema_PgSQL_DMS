@@ -51,7 +51,7 @@ AS $$
 **          05/29/2005 grk - Added mods to better work with entry page
 **          05/31/2005 grk - Added mods for separate group members table
 **          06/10/2005 grk - Added handling for sample prep request
-**          10/04/2005 grk - Added call to AddExperimentCellCulture
+**          10/04/2005 grk - Added call to Add_Experiment_Cell_Culture
 **          10/04/2005 grk - Added override for request ID
 **          10/28/2005 grk - Added handling for internal standard
 **          11/11/2005 grk - Added handling for postdigest internal standard
@@ -71,8 +71,8 @@ AS $$
 **          08/22/2017 mem - Copy TissueID
 **          08/25/2017 mem - Use TissueID from the Sample Prep Request if _requestOverride is not 'parent' and if the prep request has a tissue defined
 **          09/06/2017 mem - Fix data type for _tissueID
-**          11/29/2017 mem - No longer pass _cellCultureList to AddExperimentCellCulture since it now uses temp table Tmp_Experiment_to_Biomaterial_Map
-**                         - Remove references to the Cell_Culture_List field in T_Experiments (procedure AddExperimentCellCulture calls UpdateCachedExperimentInfo)
+**          11/29/2017 mem - No longer pass _cellCultureList to Add_Experiment_Cell_Culture since it now uses temp table Tmp_Experiment_to_Biomaterial_Map
+**                         - Remove references to the Cell_Culture_List field in T_Experiments (procedure Add_Experiment_Cell_Culture calls Update_Cached_Experiment_Info)
 **                         - Call Add_Experiment_Reference_Compound
 **          01/04/2018 mem - Update fields in Tmp_ExpToRefCompoundMap, switching from Compound_Name to Compound_IDName
 **          12/03/2018 mem - Add parameter _suffix
@@ -511,7 +511,7 @@ BEGIN
             If _mode = 'add' Then
             -- <AddFraction>
 
-                -- Insert new experiment into database
+                -- Insert new experiment into table
                 --
                 INSERT INTO t_experiments (
                     experiment,

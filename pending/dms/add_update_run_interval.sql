@@ -28,15 +28,15 @@ AS $$
 **          02/15/2012 grk - Modified percentage parameters
 **          03/03/2012 grk - Changed to embedded usage tags
 **          03/07/2012 mem - Now populating Last_Affected and Entered_By
-**          03/21/2012 grk - Modified to handle modified ParseUsageText
+**          03/21/2012 grk - Modified to handle modified Parse_Usage_Text
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          04/28/2017 mem - Disable logging to T_Log_Entries when ParseUsageText reports an error
+**          04/28/2017 mem - Disable logging to T_Log_Entries when Parse_Usage_Text reports an error
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/02/2017 mem - _id is no longer an output variable
 **                         - Add parameters _showDebug and _invalidUsage
-**                         - Pass _id and _invalidUsage to ParseUsageText
+**                         - Pass _id and _invalidUsage to Parse_Usage_Text
 **          05/03/2019 mem - Update comments
 **          02/15/2022 mem - Update error messages and rename variables
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -100,21 +100,21 @@ BEGIN
 
         ---------------------------------------------------
         -- Validate usage and comment
-        -- ParseUsageText looks for special usage tags in the comment and extracts that information, returning it as XML
+        -- Parse_Usage_Text looks for special usage tags in the comment and extracts that information, returning it as XML
         --
         -- If _comment is 'User[100%], Proposal[49361], PropUser[50082] Extra information about interval'
-        -- after calling ParseUsageText, _cleanedComment will be 'Extra information about interval'
+        -- after calling Parse_Usage_Text, _cleanedComment will be 'Extra information about interval'
         -- and _usageXML will be <u User="100" Proposal="49361" PropUser="50082" />
         --
-        -- If _comment only has 'User[100%], Proposal[49361], PropUser[50082]', _cleanedComment will be empty after the call to ParseUsageText
+        -- If _comment only has 'User[100%], Proposal[49361], PropUser[50082]', _cleanedComment will be empty after the call to Parse_Usage_Text
         --
-        -- Since _validateTotal is set to 1, if the percentages do not add up to 100%, ParseUsageText will raise an error (and _usageXML will be null)
+        -- Since _validateTotal is set to 1, if the percentages do not add up to 100%, Parse_Usage_Text will raise an error (and _usageXML will be null)
         ---------------------------------------------------
 
         _cleanedComment := _comment;
 
         If _showDebug Then
-            RAISE INFO '%', 'Calling ParseUsageText';
+            RAISE INFO '%', 'Calling Parse_Usage_Text';
         End If;
 
         CALL parse_usage_text (_cleanedComment => _cleanedComment,      -- Input / Output
@@ -127,7 +127,7 @@ BEGIN
                                _invalidUsage => _invalidUsage);
 
         If _showDebug Then
-            RAISE INFO 'ParseUsageText return code: %', _returnCode;
+            RAISE INFO 'Parse_Usage_Text return code: %', _returnCode;
         End If;
 
         If _returnCode <> '' Then
@@ -135,7 +135,7 @@ BEGIN
         End If;
 
         If _showDebug Then
-            RAISE INFO '_returnCode is '''' after ParseUsageText';
+            RAISE INFO '_returnCode is '''' after Parse_Usage_Text';
         End If;
 
         _logErrors := true;

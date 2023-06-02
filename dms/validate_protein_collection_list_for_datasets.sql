@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          03/21/2011 mem - Expanded _datasets to varchar(max)
 **          03/14/2012 mem - Now preventing both Tryp_Pig_Bov and Tryp_Pig from being included in _protCollNameList
 **          10/23/2017 mem - Do not add any enzyme-related protein collections if any of the protein collections in _protCollNameList already include contaminants
-**                         - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling ValidateAnalysisJobParameters
+**                         - Place auto-added protein collections at the end of _protCollNameList, which is more consistent with the order we get after calling Validate_Analysis_Job_Parameters
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          11/08/2022 mem - Ported to PostgreSQL
 **          05/31/2023 mem - Use format() for string concatenation

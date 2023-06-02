@@ -36,7 +36,7 @@ AS $$
 **  Date:   03/28/2012 grk - Initial release
 **          03/30/2012 grk - Added change command capability
 **          03/30/2012 mem - Added support for x="Comment" in the XML
-**                         - Now calling UpdateInstrumentUsageAllocationsWork to apply the updates
+**                         - Now calling Update_Instrument_Usage_Allocations_Work to apply the updates
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

@@ -36,7 +36,7 @@ AS $$
 **          01/23/2008 grk - Added _userUpdate
 **          10/14/2010 mem - Added _comment
 **          06/01/2012 mem - Added Try/Catch block
-**          06/05/2013 mem - Now calling AddUpdateUserOperations
+**          06/05/2013 mem - Now calling Add_Update_User_Operations
 **          06/11/2013 mem - Renamed the first two parameters (previously _username and _username)
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          08/23/2016 mem - Auto-add 'H' when _mode is 'add' and _hanfordIdNum starts with a number

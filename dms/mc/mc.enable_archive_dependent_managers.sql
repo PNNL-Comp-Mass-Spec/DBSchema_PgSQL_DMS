@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_archive_dependent_managers(IN _infoonly bo
 **  Auth:   mem
 **  Date:   06/09/2011 mem - Initial Version
 **          02/05/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling EnableDisableAllManagers
+**          03/23/2022 mem - Use mc schema when calling Enable_Disable_All_Managers
 **          04/02/2022 mem - Use new procedure name
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **

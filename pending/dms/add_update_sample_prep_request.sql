@@ -86,7 +86,7 @@ AS $$
 **          08/15/2010 grk - Widened _biomaterialList field
 **          08/27/2010 mem - Now auto-switching _instrumentName to be instrument group instead of instrument name
 **          08/15/2011 grk - Added Separation_Type
-**          12/12/2011 mem - Updated call to ValidateEUSUsage to treat _eusUsageType as an input/output parameter
+**          12/12/2011 mem - Updated call to Validate_EUS_Usage to treat _eusUsageType as an input/output parameter
 **          10/19/2012 mem - Now auto-changing _separationType to Separation_Group if _separationType specifies a separation type
 **          04/05/2013 mem - Now requiring that _estimatedMSRuns be defined.  If it is non-zero, instrument group, dataset type, and separation group must also be defined
 **          04/08/2013 grk - Added _blockAndRandomizeSamples, _blockAndRandomizeRuns, and _iOPSPermitsCurrent
@@ -123,15 +123,15 @@ AS $$
 **          09/01/2017 mem - Allow _tissue to be a BTO ID (e.g. BTO:0000131)
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          08/22/2018 mem - Change the EUS User parameter from a varchar(1024) to an integer
-**          08/29/2018 mem - Remove call to DoSamplePrepMaterialOperation since we stopped associating biomaterial (cell cultures) with Sample Prep Requests in June 2017
+**          08/29/2018 mem - Remove call to Do_Sample_Prep_Material_Operation since we stopped associating biomaterial (cell cultures) with Sample Prep Requests in June 2017
 **          11/30/2018 mem - Make _reason an input/output parameter
 **          01/23/2019 mem - Switch _reason back to a normal input parameter since view V_Sample_Prep_Request_Entry now appends the __NoCopy__ flag to several fields
 **          01/13/2020 mem - Require _requestedPersonnel to include a sample prep staff member (no longer allow 'na' or 'any')
-**          08/12/2020 mem - Check for ValidateEUSUsage returning a message, even if it returns 0
+**          08/12/2020 mem - Check for Validate_EUS_Usage returning a message, even if it returns 0
 **          09/15/2020 mem - Use 'https://dms2.pnl.gov/' instead of http://
-**          05/25/2021 mem - Set _samplePrepRequest to 1 when calling ValidateEUSUsage
+**          05/25/2021 mem - Set _samplePrepRequest to 1 when calling Validate_EUS_Usage
 **          05/26/2021 mem - Override _eusUsageType if _mode is 'add' and the campaign has EUSUsageType = 'USER_REMOTE
-**          05/27/2021 mem - Refactor EUS Usage validation code into ValidateEUSUsage
+**          05/27/2021 mem - Refactor EUS Usage validation code into Validate_EUS_Usage
 **          06/10/2021 mem - Add parameters _estimatedPrepTimeDays and _stateComment
 **          06/11/2021 mem - Auto-remove 'na' from _assignedPersonnel
 **          10/11/2021 mem - Clear _stateComment when _state is 'Closed'
@@ -186,7 +186,7 @@ BEGIN
     If Coalesce(_state, '') = 'Closed (containers and material)' Then
         -- Prior to September 2018, we would also look for biomaterial (cell cultures)
         -- and would close them if _state was 'Closed (containers and material)'
-        -- by calling DoSamplePrepMaterialOperation
+        -- by calling Do_Sample_Prep_Material_Operation
         --
         -- We stopped associating biomaterial (cell cultures) with Sample Prep Requests in June 2017
         -- so simply change the state to Closed

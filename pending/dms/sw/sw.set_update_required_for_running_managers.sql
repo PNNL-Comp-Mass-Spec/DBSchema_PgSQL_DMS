@@ -68,7 +68,7 @@ BEGIN
     If _infoOnly Then
         RAISE INFO 'Managers needing an update: %', _mgrList;
     Else
-        RAISE INFO 'Calling SetManagerUpdateRequired for % %', _mgrCount, public.check_plural(_mgrCount, 'manager', 'managers');
+        RAISE INFO 'Calling Set_Manager_Update_Required for % %', _mgrCount, public.check_plural(_mgrCount, 'manager', 'managers');
         CALL mc.set_manager_update_required (_mgrList, _showtable => true);
     End If;
 

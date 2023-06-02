@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **  Auth:   04/04/2006 grk
 **  Date:   04/11/2006 kja
 **          06/06/2006 mem - Updated Creation Options List logic to allow wider range of _protCollOptionsList values
-**          06/08/2006 mem - Added call to StandardizeProteinCollectionList to validate the order of _protCollNameList
+**          06/08/2006 mem - Added call to Standardize_Protein_Collection_List to validate the order of _protCollNameList
 **          06/26/2006 mem - Updated to ignore _organismDBFileName If _protCollNameList is <> 'na'
 **          10/04/2007 mem - Expanded _protCollNameList from varchar(512) to varchar(max)
 **                           Expanded _organismName from varchar(64) to varchar(128)

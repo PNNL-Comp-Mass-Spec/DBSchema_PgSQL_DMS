@@ -11,7 +11,7 @@ AS $$
 **  Desc:
 **      Updates T_DMS_Organism_DB_Info in MT_Main
 **      However, does not delete extra rows;
-**        use RefreshCachedOrganismDBInfo in MT_Main for a full synchronization, including deletes
+**        use Refresh_Cached_Organism_DB_Info in MT_Main for a full synchronization, including deletes
 **
 **
 **  Auth:   mem

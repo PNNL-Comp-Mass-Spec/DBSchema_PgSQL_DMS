@@ -21,7 +21,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   03/21/2011 mem - Initial Version
-**          03/22/2011 mem - Now calling AddUpdateJobParameter to store the SourceJob in T_Job_Parameters
+**          03/22/2011 mem - Now calling Add_Update_Job_Parameter to store the SourceJob in T_Job_Parameters
 **          04/04/2011 mem - Updated to use the Special_Processing param instead of the job comment
 **          07/13/2012 mem - Now determining job parameters with additional items if SourceJob2 is defined: SourceJob2, SourceJob2Dataset, SourceJob2FolderPath, and SourceJob2FolderPathArchive
 **          12/15/2023 mem - Ported to PostgreSQL

@@ -62,7 +62,7 @@ AS $$
 **          08/31/2018 mem - Add _mutation, _plasmid, and _cellLine
 **                         - Remove deprecated parameters that are now tracked in T_Reference_Compound
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
-**          07/08/2022 mem - Rename procedure from AddUpdateCellCulture to AddUpdateBiomaterial and update argument names
+**          07/08/2022 mem - Rename procedure from Add_Update_Cell_Culture to Add_Update_Biomaterial and update argument names
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

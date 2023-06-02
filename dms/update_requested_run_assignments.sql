@@ -33,7 +33,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          08/28/2010 mem - Now auto-switching _newValue to be instrument group instead of instrument name (when _mode = 'instrument')
 **                         - Now validating dataset type for instrument using T_Instrument_Group_Allowed_DS_Type
 **                         - Added try-catch for error handling
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          12/12/2011 mem - Added parameter _callingUser, which is passed to DeleteRequestedRun
 **          06/26/2013 mem - Added mode 'instrumentIgnoreType' (doesn't validate dataset type when changing the instrument group)
 **                     mem - Added mode 'datasetType'
@@ -50,7 +50,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          10/20/2020 mem - Rename mode 'instrument' to 'instrumentGroup'
 **                         - Rename mode 'instrumentIgnoreType' to 'instrumentGroupIgnoreType'
 **                         - Add mode 'assignedInstrument'
-**          02/04/2021 mem - Provide a delimiter when calling GetInstrumentGroupDatasetTypeList
+**          02/04/2021 mem - Provide a delimiter when calling Get_Instrument_Group_Dataset_Type_List
 **          01/13/2023 mem - Refactor instrument group validation code into validate_instrument_group_for_requested_runs
 **                         - Validate the instrument group for modes 'instrumentGroup' and 'assignedInstrument'
 **          01/16/2023 mem - Ported to PostgreSQL

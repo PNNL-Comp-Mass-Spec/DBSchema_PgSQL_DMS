@@ -35,12 +35,12 @@ AS $$
 **  Desc:
 **      Logs the current status of the given analysis manager
 **
-**      Manager status is typically stored in the database using UpdateManagerAndTaskStatusXML,
+**      Manager status is typically stored in the database using Update_Manager_And_Task_Status_XML,
 **      which is called by the StatusMessageDBUpdater
 **      (running at \\proto-5\DMS_Programs\StatusMessageDBUpdater)
 **
 **      The StatusMessageDBUpdater caches the status messages from the managers, then
-**      periodically calls UpdateManagerAndTaskStatusXML to update T_Processor_Status
+**      periodically calls Update_Manager_And_Task_Status_XML to update T_Processor_Status
 **
 **      However, if the message broker stops working, running analysis managers
 **      will set LogStatusToBrokerDB to true, meaning calls to WriteStatusFile
@@ -55,7 +55,7 @@ AS $$
 **          03/31/2009 mem - Added parameter _dSScanCount
 **          04/09/2009 grk - _message needs to be initialized to '' inside body of sproc
 **          06/26/2009 mem - Expanded to support the new status fields
-**          08/29/2009 mem - Commented out the update code to disable the functionality of this procedure (superseded by UpdateManagerAndTaskStatusXML, which is called by StatusMessageDBUpdater)
+**          08/29/2009 mem - Commented out the update code to disable the functionality of this procedure (superseded by Update_Manager_And_Task_Status_XML, which is called by StatusMessageDBUpdater)
 **          05/04/2015 mem - Added Process_ID
 **          11/20/2015 mem - Added ProgRunner_ProcessID and ProgRunner_CoreUsage
 **          08/25/2022 mem - Re-enabled the functionality of this procedure

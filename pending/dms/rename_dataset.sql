@@ -30,7 +30,7 @@ AS $$
 **          01/04/2019 mem - Add sed command for updating the index.html file in the QC directory
 **          01/20/2020 mem - Show the File_Hash in T_Dataset_Files when previewing updates
 **                         - Add commands for updating the DatasetInfo.xml file with sed
-**                         - Switch from Folder to Directory when calling AddUpdateJobParameter
+**                         - Switch from Folder to Directory when calling Add_Update_Job_Parameter
 **          02/19/2021 mem - Validate the characters in the new dataset name
 **          11/04/2021 mem - Add more MASIC file names and use sed to edit MASIC's index.html file
 **          11/05/2021 mem - Add more MASIC file names and rename files in any MzRefinery directories

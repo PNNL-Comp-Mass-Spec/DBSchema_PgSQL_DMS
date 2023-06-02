@@ -25,7 +25,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          09/29/2014 mem - Expanded _mgrList to varchar(max) and added parameters _showTable and _infoOnly
 **                         - Fixed where clause bug in final update query
 **          02/07/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          03/23/2022 mem - Use mc schema when calling Parse_Manager_Name_List
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs

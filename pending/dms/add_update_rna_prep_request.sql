@@ -50,7 +50,7 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          08/22/2018 mem - Change the EUS User parameter from a varchar(1024) to an integer
 **          08/29/2018 mem - Remove parameters _biomaterialList,  _projectNumber, and _numberOfBiomaterialRepsReceived
-**                         - Remove call to DoSamplePrepMaterialOperation
+**                         - Remove call to Do_Sample_Prep_Material_Operation
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

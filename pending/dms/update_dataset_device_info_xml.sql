@@ -53,7 +53,7 @@ AS $$
 **  Arguments:
 **    _datasetID        If this value is 0, will determine the dataset ID using the contents of _deviceInfoXML by looking for <Dataset>DatasetName</Dataset>
 **    _datasetInfoXML   Dataset info, in XML format
-**    _skipValidation   When true, if _datasetID is non-zero, skip calling GetDatasetDetailsFromDatasetInfoXML
+**    _skipValidation   When true, if _datasetID is non-zero, skip calling Get_Dataset_Details_From_Dataset_Info_XML
 **
 **  Auth:   mem
 **  Date:   03/01/2020 mem - Initial version

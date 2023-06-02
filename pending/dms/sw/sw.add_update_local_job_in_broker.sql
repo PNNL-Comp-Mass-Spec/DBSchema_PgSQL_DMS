@@ -54,14 +54,14 @@ AS $$
 **          01/09/2012 mem - Added parameter _ownerPRN
 **          01/19/2012 mem - Added parameter _dataPackageID
 **          02/07/2012 mem - Now updating Transfer_Folder_Path after updating T_Job_Parameters
-**          03/20/2012 mem - Now calling UpdateJobParamOrgDbInfoUsingDataPkg
-**          03/07/2013 mem - Now calling ResetAggregationJob to reset jobs; supports resetting a job that succeeded
-**                         - No longer changing job state to 20; ResetAggregationJob will update the job state
+**          03/20/2012 mem - Now calling Update_Job_Param_Org_Db_Info_Using_Data_Pkg
+**          03/07/2013 mem - Now calling Reset_Aggregation_Job to reset jobs; supports resetting a job that succeeded
+**                         - No longer changing job state to 20; Reset_Aggregation_Job will update the job state
 **          04/10/2013 mem - Now passing _callingUser to MakeLocalJobInBroker
 **          07/23/2013 mem - Now calling post_log_entry only once in the Catch block
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/08/2016 mem - Include job number in errors raised by RAISERROR
-**          06/16/2016 mem - Add call to AddUpdateTransferPathsInParamsUsingDataPkg
+**          06/16/2016 mem - Add call to Add_Update_Transfer_Paths_In_Params_Using_Data_Pkg
 **          11/08/2016 mem - Auto-define _ownerPRN if it is empty
 **          11/10/2016 mem - Pass _callingUser to GetUserLoginWithoutDomain
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
@@ -72,10 +72,10 @@ AS $$
 **          03/07/2018 mem - Call Alter_Entered_By_User
 **          04/06/2018 mem - Allow updating comment, priority, and owner regardless of job state
 **          01/21/2021 mem - Log _jobParam to T_Log_Entries when _logDebugMessages is true
-**          03/10/2021 mem - Make _jobParam an input/output variable when calling VerifyJobParameters
-**                         - Send _dataPackageID and _debugMode to VerifyJobParameters
+**          03/10/2021 mem - Make _jobParam an input/output variable when calling Verify_Job_Parameters
+**                         - Send _dataPackageID and _debugMode to Verify_Job_Parameters
 **          03/15/2021 mem - Fix bug in the Catch block that changed _myError
-**                         - If VerifyJobParameters returns an error, return the error message in _message
+**                         - If Verify_Job_Parameters returns an error, return the error message in _message
 **          01/31/2022 mem - Add more print statements to aid debugging
 **          04/11/2022 mem - Use varchar(4000) when populating temp table Tmp_Job_Params using _jobParamXML
 **          07/01/2022 mem - Update parameter names in comments
@@ -238,7 +238,7 @@ BEGIN
 
 
             If _returnCode <> '' Then
-                -- Change _logErrors to false since the error was already logged to sw.t_log_entries by ValidateDataPackageForMACJob
+                -- Change _logErrors to false since the error was already logged to sw.t_log_entries by Validate_Data_Package_For_MAC_Job
                 _logErrors := false;
 
                 RAISE EXCEPTION '%', _msg;

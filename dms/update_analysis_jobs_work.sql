@@ -33,7 +33,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          05/07/2007 grk - Corrected spelling of sproc name
 **          02/29/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user_multi_id (Ticket #644)
 **          03/14/2008 grk - Fixed problem with null arguments (Ticket #655)
-**          04/09/2008 mem - Now calling AlterEnteredByUserMultiID if the jobs are associated with a processor group
+**          04/09/2008 mem - Now calling Alter_Entered_By_User_Multi_ID if the jobs are associated with a processor group
 **          07/11/2008 jds - Added 5 new fields (_paramFileName, _settingsFileName, _organismID, _protCollNameList, _protCollOptionsList)
 **                           and code to validate param file settings file against tool type
 **          10/06/2008 mem - Now updating parameter file name, settings file name, protein collection list, protein options list, and organism when a job is reset (for any of these that are not '[no change]')
@@ -43,7 +43,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **                           Expanded _comment to varchar(512)
 **          03/12/2009 grk - Removed [no change] from _associatedProcessorGroup to allow dissasociation of jobs with groups
 **          07/16/2009 mem - Added missing rollback transaction statements when verifying _associatedProcessorGroup
-**          09/16/2009 mem - Extracted code from UpdateAnalysisJobs
+**          09/16/2009 mem - Extracted code from Update_Analysis_Jobs
 **                         - Added parameter _disableRaiseError
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          03/30/2015 mem - Tweak warning message grammar

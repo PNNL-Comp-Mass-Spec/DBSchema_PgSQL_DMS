@@ -21,9 +21,9 @@ CREATE OR REPLACE FUNCTION mc.get_manager_parameters(_managernamelist text DEFAU
 **  Date:   05/07/2015 mem - Initial version
 **          08/10/2015 mem - Add _sortMode=3
 **          09/02/2016 mem - Increase the default for parameter _maxRecursion from 5 to 50
-**          03/14/2018 mem - Refactor actual parameter lookup into stored procedure GetManagerParametersWork
+**          03/14/2018 mem - Refactor actual parameter lookup into stored procedure Get_Manager_Parameters_Work
 **          02/05/2020 mem - Ported to PostgreSQL
-**          03/23/2022 mem - Use mc schema when calling GetManagerParametersWork
+**          03/23/2022 mem - Use mc schema when calling Get_Manager_Parameters_Work
 **          04/02/2022 mem - Use new procedure name
 **          08/19/2022 mem - Drop the temp table when exiting the function
 **          02/01/2023 mem - Rename columns in Tmp_Mgr_Params

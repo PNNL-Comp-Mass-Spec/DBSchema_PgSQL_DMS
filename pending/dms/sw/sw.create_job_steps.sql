@@ -56,13 +56,13 @@ AS $$
 **          12/21/2009 mem - Now displaying additional information when _debugMode is non-zero
 **          01/05/2010 mem - Renamed parameter _extensionScriptNameList to _extensionScriptName
 **                         - Added parameter _extensionScriptSettingsFileOverride
-**          10/22/2010 mem - Now passing _debugMode to MergeJobsToMainTables
-**          01/06/2011 mem - Now passing _ignoreSignatureMismatch to CrossCheckJobParameters
+**          10/22/2010 mem - Now passing _debugMode to Merge_Jobs_To_Main_Tables
+**          01/06/2011 mem - Now passing _ignoreSignatureMismatch to Cross_Check_Job_Parameters
 **          03/21/2011 mem - Now passing _debugMode to FinishJobCreation
-**          05/25/2011 mem - Updated call to CreateStepsForJob
-**          10/17/2011 mem - Now populating column Memory_Usage_MB using UpdateJobStepMemoryUsage
+**          05/25/2011 mem - Updated call to Create_Steps_For_Job
+**          10/17/2011 mem - Now populating column Memory_Usage_MB using Update_Job_Step_Memory_Usage
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
-**          09/14/2015 mem - Now passing _debugMode to MoveJobsToMainTables
+**          09/14/2015 mem - Now passing _debugMode to Move_Jobs_To_Main_Tables
 **                         - Verify that T_Step_Tool_Versions has Tool_Version_ID 1 (unknown)
 **          11/09/2015 mem - Assure that Dataset_ID is only if the dataset name is 'Aggregation'
 **          05/12/2017 mem - Verify that T_Remote_Info has Remote_Info_ID 1 (unknown)
@@ -662,7 +662,7 @@ BEGIN
     If _debugMode And _mode::citext <> 'ExtendExistingJob' Then
         -- Show the contents of Tmp_Jobs
         --  (If _mode is 'ExtendExistingJob', we will have
-        --   already done this in MergeJobsToMainTables)
+        --   already done this in Merge_Jobs_To_Main_Tables)
 
         CALL sw.show_tmp_jobs();
     End If;

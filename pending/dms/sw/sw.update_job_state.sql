@@ -70,8 +70,8 @@ AS $$
 **          12/05/2008 mem - Now setting Assigned_Processor_Name to 'Job_Broker' in t_analysis_job
 **          12/09/2008 grk - Cleaned out debug code, and uncommented parts of update for DMS job comment and fasta file name
 **          12/11/2008 mem - Improved null handling for comments
-**          12/15/2008 mem - Now calling SetArchiveUpdateRequired when a job successfully completes
-**          12/17/2008 grk - Calling S_SetArchiveUpdateRequired instead of public.set_archive_update_required
+**          12/15/2008 mem - Now calling Set_Archive_Update_Required when a job successfully completes
+**          12/17/2008 grk - Calling S_Set_Archive_Update_Required instead of public.set_archive_update_required
 **          12/18/2008 grk - Calling Copy_Job_To_History when a job finishes (both success or fail)
 **          12/29/2008 mem - Updated logic for when to copy comment information to DMS
 **          01/12/2009 grk - Handle 'No results above threshold' (http://prismtrac.pnl.gov/trac/ticket/706)
@@ -80,8 +80,8 @@ AS $$
 **          02/07/2009 mem - Tweaked logic for updating Start and Finish in T_Jobs
 **          02/16/2009 mem - Updated processing time calculation to use the Maximum processing time for each step tool, then take the sum of those values to compute the total job time
 **          03/16/2009 mem - Updated to handle jobs with non-zero propagation_mode values in T_Analysis_Job in DMS
-**          06/02/2009 mem - Now calling S_DMS_UpdateAnalysisJobProcessingStats instead of directly updating DMS5.t_Analysis_Job (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
-**                         - No longer calling S_SetArchiveUpdateRequired since UpdateAnalysisJobProcessingStats does this for us
+**          06/02/2009 mem - Now calling S_DMS_Update_Analysis_Job_Processing_Stats instead of directly updating DMS5.t_Analysis_Job (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
+**                         - No longer calling S_Set_Archive_Update_Required since Update_Analysis_Job_Processing_Stats does this for us
 **                         - Added parameter _maxJobsToProcess
 **                         - Renamed synonym for T_Analysis_Job table to S_DMS_T_Analysis_Job
 **                         - Altered method of populating _startMin and _finishMax to avoid warning 'Null value is eliminated by an aggregate or other Set operation'

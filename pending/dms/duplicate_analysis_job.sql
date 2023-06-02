@@ -15,7 +15,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Duplicates an analysis job by calling AddUpdateAnalysisJob
+**      Duplicates an analysis job by calling Add_Update_Analysis_Job
 **
 **  Arguments:
 **    _job                     Job number to copy
@@ -154,7 +154,7 @@ BEGIN
             Raise Info '%', _message;
         Else
             If Coalesce(_message, '') = '' Then
-                _message := format('AddUpdateAnalysisjob returned error code = %s', _returnCode);
+                _message := format('Add_Update_Analysis_Job returned error code = %s', _returnCode);
             End If;
 
             RAISE WARNING '%', _message;

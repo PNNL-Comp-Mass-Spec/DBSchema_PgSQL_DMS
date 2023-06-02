@@ -45,7 +45,7 @@ AS $$
 **          08/31/2006 grk - Restored apparently missing prior modification http://prismtrac.pnl.gov/trac/ticket/217
 **          10/16/2006 jds - Added support for work package number
 **          10/16/2006 mem - Updated to force _state to 'new' if _mode = 'add'
-**          11/13/2006 mem - Now calling ValidateProteinCollectionListForDatasets to validate _protCollNameList
+**          11/13/2006 mem - Now calling Validate_Protein_Collection_List_For_Datasets to validate _protCollNameList
 **          11/30/2006 mem - Added column Dataset_Type to Tmp_DatasetInfo (Ticket:335)
 **          12/20/2006 mem - Added column dataset_rating_id to Tmp_DatasetInfo (Ticket:339)
 **          01/26/2007 mem - Switched to organism ID instead of organism name (Ticket:368)
@@ -61,7 +61,7 @@ AS $$
 **          09/22/2009 grk - Changed state 'review_required' to 'New (Review Required)'
 **          09/22/2009 mem - Now setting state to 'New (Review Required)' if _state = 'new' and _adminReviewReqd='Yes'
 **          10/02/2009 mem - Revert to only allowing updates if the state is 'New' or 'New (Review Required)'
-**          02/12/2010 mem - Now assuring that rating is not -5 (note: when converting a job request to jobs, you can manually add datasets with a rating of -5; procedure AddAnalysisJobGroup will allow them to be included)
+**          02/12/2010 mem - Now assuring that rating is not -5 (note: when converting a job request to jobs, you can manually add datasets with a rating of -5; procedure Add_Analysis_Job_Group will allow them to be included)
 **          04/21/2010 grk - Use try-catch for error handling
 **          05/05/2010 mem - Now passing _requestorPRN to Validate_Analysis_Job_Parameters as input/output
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
@@ -87,7 +87,7 @@ AS $$
 **          05/22/2013 mem - Now preventing an update of analysis job requests only if they have existing analysis jobs (previously would examine request_state_id in T_Analysis_Job_Request)
 **          06/10/2013 mem - Now filtering on Analysis_Tool when checking whether an HMS_AutoSupersede file exists for the given settings file
 **          03/28/2014 mem - Auto-changing _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' if the tool is MODa and the options start with 'seq_direction=forward'
-**          03/30/2015 mem - Now passing _toolName to AutoUpdateSettingsFileToCentroid
+**          03/30/2015 mem - Now passing _toolName to Auto_Update_Settings_File_To_Centroid
 **                         - Now using T_Dataset_Info.ProfileScanCount_MSn to look for datasets with profile-mode MS/MS spectra
 **          04/08/2015 mem - Now passing _autoUpdateSettingsFileToCentroided = false to Validate_Analysis_Job_Parameters
 **          10/09/2015 mem - Now allowing the request name and comment to be updated even if a request has associated jobs

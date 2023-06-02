@@ -31,7 +31,7 @@ CREATE OR REPLACE PROCEDURE public.update_eus_instruments_from_eus_imports(INOUT
 **  Auth:   grk
 **  Date:   06/29/2011 grk - Initial version
 **          07/19/2011 grk - Last_Affected
-**          09/02/2011 mem - Now calling PostUsageLogEntry
+**          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          03/27/2012 grk - Added EUS_Active_Sw and EUS_Primary_Instrument
 **          05/12/2021 mem - Use new NEXUS-based views
 **          12/30/2022 mem - Ported to PostgreSQL

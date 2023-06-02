@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 **          02/20/2012 mem - Now using a temporary table to track the dataset names in _datasetList
 **          02/22/2012 mem - Switched to using a table-variable for dataset names (instead of a physical temporary table)
 **          05/03/2012 mem - Added support for the Special Processing field
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          06/30/2022 mem - Rename parameter file column
 **          11/09/2022 mem - Ported to PostgreSQL
 **          01/26/2023 mem - Include Predefine_ID in the query results

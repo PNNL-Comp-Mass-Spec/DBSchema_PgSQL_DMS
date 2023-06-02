@@ -80,7 +80,7 @@ AS $$
 **          07/17/2007 grk - Increased size of comment field (Ticket #500)
 **          07/30/2007 mem - Now checking dataset type (_msType) against Allowed_Dataset_Types in T_Instrument_Class (Ticket #502)
 **          09/06/2007 grk - Factored out instrument name and dataset type validation to ValidateInstrumentAndDatasetType (Ticket #512)
-**          09/06/2007 grk - Added call to LookupInstrumentRunInfoFromExperimentSamplePrep (Ticket #512)
+**          09/06/2007 grk - Added call to Lookup_Instrument_Run_Info_From_Experiment_Sample_Prep (Ticket #512)
 **          09/06/2007 grk - Removed _specialInstructions (http://prismtrac.pnl.gov/trac/ticket/522)
 **          02/13/2008 mem - Now checking for _badCh = 'space' (Ticket #602)
 **          04/09/2008 grk - Added secondary separation field (Ticket #658)
@@ -100,10 +100,10 @@ AS $$
 **          07/29/2011 mem - Now querying T_Requested_Run with both _requestName and _status when the mode is update or check_update
 **          11/29/2011 mem - Tweaked warning messages when checking for existing request
 **          12/05/2011 mem - Updated _transName to use a custom transaction name
-**          12/12/2011 mem - Updated call to ValidateEUSUsage to treat _eusUsageType as an input/output parameter
+**          12/12/2011 mem - Updated call to Validate_EUS_Usage to treat _eusUsageType as an input/output parameter
 **                         - Added parameter _callingUser, which is passed to alter_event_log_entry_user
 **          12/19/2011 mem - Now auto-replacing &quot; with a double-quotation mark in _comment
-**          01/09/2012 grk - Added _secSep to LookupInstrumentRunInfoFromExperimentSamplePrep
+**          01/09/2012 grk - Added _secSep to Lookup_Instrument_Run_Info_From_Experiment_Sample_Prep
 **          10/19/2012 mem - Now auto-updating secondary separation to separation group name when creating a new requested run
 **          05/08/2013 mem - Added _vialingConc and _vialingVol
 **          06/05/2013 mem - Now validating _workPackageNumber against T_Charge_Code
@@ -135,14 +135,14 @@ AS $$
 **          02/03/2020 mem - Raise an error if _eusUsersList contains multiple user IDs (since ERS only allows for a single user to be associated with a dataset)
 **          10/19/2020 mem - Rename the instrument group column to instrument_group
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
-**          02/25/2021 mem - Use ReplaceCharacterCodes to replace character codes with punctuation marks
-**                         - Use RemoveCrLf to replace linefeeds with semicolons
-**          05/25/2021 mem - Append new messages to _message (including from LookupEUSFromExperimentSamplePrep)
+**          02/25/2021 mem - Use Replace_Character_Codes to replace character codes with punctuation marks
+**                         - Use Remove_Cr_Lf to replace linefeeds with semicolons
+**          05/25/2021 mem - Append new messages to _message (including from Lookup_EUS_From_Experiment_Sample_Prep)
 **                         - Expand _message to varchar(1024)
 **          05/26/2021 mem - Check for undefined EUS Usage Type (ID = 1)
 **                     bcg - Bug fix: use _eusUsageTypeID to prevent use of EUS Usage Type 'Undefined'
 **                     mem - When _mode is 'add', 'add-auto', or 'check_add', possibly override the EUSUsageType based on the campaign's EUS Usage Type
-**          05/27/2021 mem - Refactor EUS Usage validation code into ValidateEUSUsage
+**          05/27/2021 mem - Refactor EUS Usage validation code into Validate_EUS_Usage
 **          05/31/2021 mem - Add output parameter _resolvedInstrumentInfo
 **          06/01/2021 mem - Update the message stored in _resolvedInstrumentInfo
 **          10/06/2021 mem - Add _batch, _block, and _runOrder
@@ -503,7 +503,7 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := format('LookupInstrumentRunInfoFromExperimentSamplePrep for %s', _experimentName);
+            _debugMsg := format('Lookup_Instrument_Run_Info_From_Experiment_Sample_Prep for %s', _experimentName);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
@@ -517,7 +517,7 @@ BEGIN
                             _returnCode => _returnCode);                -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'LookupInstrumentRunInfoFromExperimentSamplePrep: %', _msg;
+            RAISE EXCEPTION 'Lookup_Instrument_Run_Info_From_Experiment_Sample_Prep: %', _msg;
         End If;
 
         ---------------------------------------------------
@@ -684,7 +684,7 @@ BEGIN
             _message := public.append_to_text('Requested runs can only have a single EUS user associated with them', _message, 0, '; ', 1024);
 
             If _raiseErrorOnMultipleEUSUsers Then
-                RAISE EXCEPTION 'ValidateEUSUsage: %', _message;
+                RAISE EXCEPTION 'Validate_EUS_Usage: %', _message;
             End If;
 
             -- Only keep the first user

@@ -146,7 +146,6 @@ DECLARE
     _enabled int;
     _processToolGroup text;
     _processorDoesGP int := -1;
-    _availableProcessorTools TABLE (;
     _stepsRunningRemotely int := 0;
     _processorGP int;
     _cpuLoadExceeded int := 0;
@@ -323,12 +322,13 @@ BEGIN
     End If;
 
     If _infoLevel > 0 Then
-    -- <PreviewProcessorTools>
 
         ---------------------------------------------------
         -- Get list of step tools currently assigned to processor
         ---------------------------------------------------
         --
+        CREATE TEMP TABLE Tmp_AvailableProcessorTools
+        (
             Processor_Tool_Group text,
             Tool_Name text,
             CPU_Load int,
@@ -338,9 +338,9 @@ BEGIN
             Max_Job_Priority int,
             Exceeds_Available_CPU_Load int NOT NULL,
             Exceeds_Available_Memory int NOT NULL
-        )
-        --
-        INSERT INTO _availableProcessorTools (
+        );
+
+        INSERT INTO Tmp_AvailableProcessorTools (
             Processor_Tool_Group, tool_name,
             cpu_load, memory_usage_mb,
             Tool_Priority, GP, max_job_priority,
@@ -368,6 +368,8 @@ BEGIN
         WHERE LP.processor_name = _processorName AND
               PTGD.enabled > 0
 
+        -- ToDo: use RAISE INFO to preview the tools for this processor
+
         -- Preview the tools for this processor (as defined in _availableProcessorTools, which we just populated)
         SELECT PT.Processor_Tool_Group,
                PT.Tool_Name,
@@ -382,10 +384,10 @@ BEGIN
                PT.Exceeds_Available_CPU_Load,
                PT.Exceeds_Available_Memory,
              CASE WHEN _processorDoesGP > 0 THEN 'Yes' ELSE 'No' END AS Processor_Does_General_Proc
-        FROM _availableProcessorTools PT
+        FROM Tmp_AvailableProcessorTools PT
              CROSS JOIN ( SELECT M.total_cpus,
-           M.cpus_available,
-               M.total_memory_mb,
+                                 M.cpus_available,
+                                 M.total_memory_mb,
                                  M.memory_available
                           FROM sw.t_local_processors LP
                              INNER JOIN sw.t_machines M
@@ -393,10 +395,10 @@ BEGIN
                           WHERE LP.processor_name = _processorName ) MachineQ
         ORDER BY PT.Tool_Name
 
-    End If; -- </PreviewProcessorTools>
+        DROP TABLE Tmp_AvailableProcessorTools;
+    End If;
 
     If _remoteInfo <> '' Then
-    -- <CheckRunningRemoteTasks>
 
         ---------------------------------------------------
         -- Get list of job steps that are currently RunningRemote
@@ -457,7 +459,7 @@ BEGIN
             End If;
         End If;
 
-    End If; -- </CheckRunningRemoteTasks>
+    End If;
 
     ---------------------------------------------------
     -- Temp table to hold job step candidates
@@ -480,7 +482,7 @@ BEGIN
         Storage_Server text,
         Dataset_ID int,
         Next_Try timestamp
-    )
+    );
 
     If _infoLevel > 1 Then
         RAISE INFO '%, RequestStepTaskXML: Populate Tmp_CandidateJobSteps', public.timestamp_text_immutable(clock_timestamp());
@@ -532,7 +534,7 @@ BEGIN
             CASE
                 WHEN (J.Archive_Busy = 1)
                     -- Transfer tool steps for jobs that are in the midst of an archive operation
-                    -- The archive_busy flag in sw.t_jobs is updated by SyncJobInfo
+                    -- The archive_busy flag in sw.t_jobs is updated by Sync_Job_Info
                     -- It uses public.v_get_analysis_jobs_for_archive_busy to look for jobs that have an archive in progress
                     -- However, if the dataset has been in state 'Archive In Progress' for over 90 minutes, archive_busy will be changed back to 0 (false)
                     THEN 102
@@ -823,8 +825,9 @@ BEGIN
         _processorGP := Coalesce(_processorGP, 0);
 
         If _processorGP = 0 Then
-        -- <LimitedProcessingMachine>
+
             -- Processor does not do general processing
+            --
             INSERT INTO Tmp_CandidateJobSteps (
                 job,
                 step,
@@ -901,12 +904,11 @@ BEGIN
                 Job,
                 Step;
 
-              -- </LimitedProcessingMachine>
         Else
-              -- <GeneralProcessingMachine>
         */
 
             -- Processor does do general processing
+            --
             INSERT INTO Tmp_CandidateJobSteps (
                 Job,
                 Step,
@@ -1029,7 +1031,7 @@ BEGIN
                 Step;
 
         -- Comment this end statement out due to deprecating processor groups
-        -- End If;     -- </GeneralProcessingMachine>
+        -- End If;
 
     End If;-- </UseMultiStep>
 

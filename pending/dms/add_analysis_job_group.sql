@@ -731,7 +731,7 @@ BEGIN
                             organism_db_name = _organismDBName
                         WHERE job = _pipelineJob;
                     Else
-                        _msgForLog := format('Error code %s calling BackfillPipelineJobs: %s', _returnCode, Coalesce(_msgForLog, '??'));
+                        _msgForLog := format('Error code %s calling Backfill_Pipeline_Jobs: %s', _returnCode, Coalesce(_msgForLog, '??'));
                         CALL post_log_entry ('Error', _msgForLog, 'Add_Analysis_Job_Group');
                     End If;
                 End If;

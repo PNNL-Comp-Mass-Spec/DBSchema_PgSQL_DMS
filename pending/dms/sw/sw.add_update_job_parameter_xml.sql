@@ -26,7 +26,7 @@ AS $$
 **    _deleteParam   When false, adds/updates the given parameter; when true, deletes the parameter
 **
 **  Auth:   mem
-**  Date:   01/19/2012 mem - Initial Version (refactored from AddUpdateJobParameter)
+**  Date:   01/19/2012 mem - Initial Version (refactored from Add_Update_Job_Parameter)
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          04/11/2022 mem - Expand Section and Name to varchar(128)

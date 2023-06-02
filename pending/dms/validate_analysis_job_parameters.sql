@@ -69,7 +69,7 @@ AS $$
 **          02/11/2010 mem - Now assuring dataset rating is not -1 (or -2)
 **          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _ownerUsername contains a person's real name rather than their username
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
-**          08/26/2010 mem - Now calling ValidateProteinCollectionParams to validate the protein collection info
+**          08/26/2010 mem - Now calling Validate_Protein_Collection_Params to validate the protein collection info
 **          11/12/2010 mem - Now using T_Analysis_Tool_Allowed_Instrument_Class to determine valid instrument classes for a given analysis tool
 **          01/12/2012 mem - Now validating that the analysis tool is active (T_Analysis_Tool.AJT_active > 0)
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
@@ -629,7 +629,7 @@ BEGIN
 
     If _returnCode <> '' Then
         If Coalesce(_message, '') = '' Then
-            _message := format('Error code %s returned by ValidateProteinCollectionParams in Validate_Analysis_Job_Parameters', _returnCode);
+            _message := format('Error code %s returned by Validate_Protein_Collection_Params in Validate_Analysis_Job_Parameters', _returnCode);
         End If;
 
         If _showDebugMessages Then

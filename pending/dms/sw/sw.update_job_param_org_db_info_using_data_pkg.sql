@@ -87,14 +87,14 @@ BEGIN
         _dataPackageID := -1;
 
         If _debugMode Then
-            RAISE INFO 'UpdateJobParamOrgDbInfoUsingDataPkg: %', _message;
+            RAISE INFO 'Update_Job_Param_Org_Db_Info_Using_Data_Pkg: %', _message;
         End If;
     End If;
 
     If _dataPackageID > 0 AND NOT _scriptName ILIKE 'MaxQuant%' AND NOT _scriptName ILIKE 'MSFragger%' AND NOT _scriptName ILIKE 'DiaNN%' Then
 
         If _debugMode Then
-            RAISE INFO 'UpdateJobParamOrgDbInfoUsingDataPkg: update OrgDB info for jobs associated with data package % for script %', _dataPackageID, _scriptName;
+            RAISE INFO 'Update_Job_Param_Org_Db_Info_Using_Data_Pkg: update OrgDB info for jobs associated with data package % for script %', _dataPackageID, _scriptName;
         End If;
 
         CREATE TEMP TABLE Tmp_OrgDBInfo (
@@ -168,7 +168,7 @@ BEGIN
 
             If _debugMode Then
                 RAISE INFO '';
-                RAISE INFO 'UpdateJobParamOrgDbInfoUsingDataPkg would update the following parameters for job %', _job;
+                RAISE INFO 'Update_Job_Param_Org_Db_Info_Using_Data_Pkg would update the following parameters for job %', _job;
                 RAISE INFO '  OrganismName=         %', _organismName;
                 RAISE INFO '  LegacyFastaFileName=  %', _legacyFastaFileName;
                 RAISE INFO '  ProteinCollectionList=%', _proteinCollectionList;
@@ -200,7 +200,7 @@ BEGIN
         If _deleteIfInvalid Then
             If _debugMode Then
                 RAISE INFO '';
-                RAISE INFO 'UpdateJobParamOrgDbInfoUsingDataPkg would delete following parameters for job % since the data package ID is 0', _job;
+                RAISE INFO 'Update_Job_Param_Org_Db_Info_Using_Data_Pkg would delete following parameters for job % since the data package ID is 0', _job;
                 RAISE INFO '  OrganismName';
                 RAISE INFO '  LegacyFastaFileName';
                 RAISE INFO '  ProteinCollectionList';

@@ -30,12 +30,12 @@ AS $$
 **  Auth:   grk
 **  Date:   12/18/2008 grk - Initial release
 **          12/29/2008 mem - Updated to use Start time if Finish time is null and the Job has failed (State=5)
-**          02/19/2009 grk - Added call to RemoveSelectedJobs (Ticket #723)
-**          02/26/2009 mem - Now passing _logDeletions = false to RemoveSelectedJobs
+**          02/19/2009 grk - Added call to Remove_Selected_Jobs (Ticket #723)
+**          02/26/2009 mem - Now passing _logDeletions = false to Remove_Selected_Jobs
 **          05/31/2009 mem - Updated _intervalDaysForSuccess to support partial days (e.g. 0.5)
 **          02/24/2012 mem - Added parameter _maxJobsToProcess with a default of 25000
 **          08/20/2013 mem - Added parameter _logDeletions
-**          03/10/2014 mem - Added call to SynchronizeJobStatsWithJobSteps
+**          03/10/2014 mem - Added call to Synchronize_Job_Stats_With_Job_Steps
 **          01/18/2017 mem - Now counting job state 7 (No Intermediate Files Created) as Success
 **          08/17/2021 mem - When looking for completed or inactive jobs, use the Start time if Finish is null
 **                         - Also look for jobs with state 14 = Failed, Ignore Job Step States

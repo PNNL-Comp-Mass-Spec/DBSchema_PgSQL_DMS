@@ -189,7 +189,7 @@ BEGIN
         -- Delete?
         ---------------------------------------------------
 
-        -- RemoveSelectedJobs 0, _message => _message, 0
+        -- CALL Remove_Selected_Jobs 0, _message => _message, 0
 
         ---------------------------------------------------
         -- If we reach this point, action was not implemented

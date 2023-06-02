@@ -1,5 +1,4 @@
 --
-
 CREATE OR REPLACE PROCEDURE sw.verify_job_parameters
 (
     INOUT _jobParam text,

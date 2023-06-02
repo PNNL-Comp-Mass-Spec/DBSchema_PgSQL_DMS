@@ -111,7 +111,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          10/02/2017 mem - If _paramFileID is 0 or negative, validate mods only.  Returns 0 if valid, error code if not valid
 **          08/17/2018 mem - Add support for TopPIC mods
 **                           Add parameter _paramFileType
-**          11/19/2018 mem - Pass 0 to the _maxRows parameter to udfParseDelimitedListOrdered
+**          11/19/2018 mem - Pass 0 to the _maxRows parameter to Parse_Delimited_List_Ordered
 **          04/23/2019 mem - Add support for MSFragger mod defs
 **          03/05/2021 mem - Add support for MaxQuant mod defs
 **          05/13/2021 mem - Fix handling of static MaxQuant mods that are N-terminal or C-terminal

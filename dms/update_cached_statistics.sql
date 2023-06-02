@@ -27,7 +27,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_statistics(INOUT _message text 
 **  Date:   11/04/2008 mem - Initial version (Ticket: #698)
 **          12/21/2009 mem - Add parameter _updateJobRequestStatistics
 **          10/20/2011 mem - Now considering analysis tool name when updated T_Param_Files and T_Settings_Files
-**          09/11/2012 mem - Now updating T_Protein_Collection_Usage by calling UpdateProteinCollectionUsage
+**          09/11/2012 mem - Now updating T_Protein_Collection_Usage by calling Update_Protein_Collection_Usage
 **          07/18/2016 mem - Now updating Job_Usage_Last_Year in T_Param_Files and T_Settings_Files
 **          02/23/2017 mem - Update dataset usage in T_LC_Cart_Configuration
 **          08/30/2018 mem - Tabs to spaces

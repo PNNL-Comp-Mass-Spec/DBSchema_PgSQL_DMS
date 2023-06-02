@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **      See also procedure mc.archive_old_managers_and_params
 **
 **  Arguments:
-**    _mgrList                    One or more manager names (comma-separated list); supports wildcards because uses stored procedure ParseManagerNameList
+**    _mgrList                    One or more manager names (comma-separated list); supports wildcards because uses stored procedure Parse_Manager_Name_List
 **    _infoOnly                   False to perform the update, true to preview
 **    _enableControlFromWebsite   If true, set control_from_website to 1 when storing the manager info in mc.t_mgrs
 **
@@ -31,7 +31,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
 **          03/23/2022 mem - Remove check for "control_from_web > 0" in delete query
 **                         - Abort restore if the manager already exists in mc.t_mgrs
-**                         - Use mc schema when calling ParseManagerNameList
+**                         - Use mc schema when calling Parse_Manager_Name_List
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **                         - Drop temp tables before exiting the function

@@ -43,11 +43,11 @@ AS $$
 **  Date:   10/22/2020 mem - Initial Version
 **          10/23/2020 mem - Set the Origin of the new requested runs to 'Fraction'
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
-**          02/25/2021 mem - Use ReplaceCharacterCodes to replace character codes with punctuation marks
-**                         - Use RemoveCrLf to replace linefeeds with semicolons
-**          05/25/2021 mem - Append new messages to _message (including from LookupEUSFromExperimentSamplePrep)
+**          02/25/2021 mem - Use Replace_Character_Codes to replace character codes with punctuation marks
+**                         - Use Remove_Cr_Lf to replace linefeeds with semicolons
+**          05/25/2021 mem - Append new messages to _message (including from Lookup_EUS_From_Experiment_Sample_Prep)
 **                         - Expand _message to varchar(1024)
-**          05/27/2021 mem - Specify _samplePrepRequest, _experimentID, _campaignID, and _addingItem when calling ValidateEUSUsage
+**          05/27/2021 mem - Specify _samplePrepRequest, _experimentID, _campaignID, and _addingItem when calling Validate_EUS_Usage
 **          06/01/2021 mem - Add newly created requested run fractions to the parent request's batch (which will be 0 if not in a batch)
 **                         - Raise an error if _mode is invalid
 **          10/13/2021 mem - Append EUS User ID list to warning message
@@ -57,7 +57,7 @@ AS $$
 **          01/15/2022 mem - Copy date created from the parent requested run to new requested runs, allowing Days in Queue on the list report to be based on the parent requested run's creation date
 **          02/17/2022 mem - Update requestor username warning
 **          05/23/2022 mem - Rename requester username argument and update username warning
-**          10/13/2022 mem - Fix bug calling LookupEUSFromExperimentSamplePrep
+**          10/13/2022 mem - Fix bug calling Lookup_EUS_From_Experiment_Sample_Prep
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -453,7 +453,7 @@ BEGIN
                             _returnCode => _returnCode);        -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'LookupEUSFromExperimentSamplePrep: %', _msg;
+            RAISE EXCEPTION 'Lookup_EUS_From_Experiment_Sample_Prep: %', _msg;
         End If;
 
         If Coalesce(_msg, '') <> '' Then
@@ -474,7 +474,7 @@ BEGIN
         End If;
 
         -- Note that if _eusUserID contains a list of names in the form "Baker, Erin (41136)",
-        -- ValidateEUSUsage will change this into a list of EUS user IDs (integers)
+        -- Validate_EUS_Usage will change this into a list of EUS user IDs (integers)
 
         If char_length(_eusUserID) = 0 And _autoPopulateUserListIfBlank Then
             _raiseErrorOnMultipleEUSUsers := false;
@@ -512,7 +512,7 @@ BEGIN
             _message := public.append_to_text(_msg, _message, 0, '; ', 1024);
 
             If _raiseErrorOnMultipleEUSUsers Then
-                RAISE EXCEPTION 'ValidateEUSUsage: %', _message;
+                RAISE EXCEPTION 'Validate_EUS_Usage: %', _message;
             End If;
 
             -- Only keep the first user

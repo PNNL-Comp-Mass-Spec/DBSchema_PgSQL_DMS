@@ -40,7 +40,7 @@ AS $$
 **    _showDatasetInfoTable            When true, if _showDebugMessages is also true, show the contents of Tmp_DatasetInfo
 **
 **  Auth:   mem
-**  Date:   11/12/2012 mem - Initial version (extracted code from AddUpdateAnalysisJobRequest and Validate_Analysis_Job_Parameters)
+**  Date:   11/12/2012 mem - Initial version (extracted code from Add_Update_Analysis_Job_Request and Validate_Analysis_Job_Parameters)
 **          03/05/2013 mem - Added parameter _autoRemoveNotReleasedDatasets
 **          08/02/2013 mem - Tweaked message for 'Not Released' datasets
 **          03/30/2015 mem - Tweak warning message grammar

@@ -28,15 +28,15 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **          06/02/2009 mem - Updated to run within the DMS_Pipeline DB and to use view v_get_pipeline_job_parameters (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **          07/29/2009 mem - Updated to look in T_Jobs.Comment for the 'DTA:' tag when 'ExternalDTAFolderName' is defined in the script
 **          01/05/2010 mem - Added parameter _settingsFileOverride
-**          02/23/2010 mem - Updated to not return any debug info using SELECT statements; required since CreateParametersForJob calls this SP using the notation: INSERT INTO ... exec GetJobParamTable ...
+**          02/23/2010 mem - Updated to not return any debug info using SELECT statements; required since CreateParametersForJob calls this SP using the notation: INSERT INTO ... exec Get_Job_Param_Table ...
 **          04/04/2011 mem - Updated to support public.t_settings_files returning true XML for the Contents column (using S_DMS_V_GetPipelineSettingsFiles)
 **                         - Added support for field Special_Processing
-**          04/20/2011 mem - Now calling CheckAddSpecialProcessingParam to look for an AMTDB entry in the Special_Processing parameter
+**          04/20/2011 mem - Now calling Check_Add_Special_Processing_Param to look for an AMTDB entry in the Special_Processing parameter
 **                         - Additionally, adding parameter AMTDBServer if the AMTDB entry is present
 **          08/01/2011 mem - Now filtering on Analysis_Tool when querying public.t_settings_files
 **          05/07/2012 mem - Now including DatasetType
 **          05/07/2012 mem - Now including Experiment
-**          08/23/2012 mem - Now calling CheckAddSpecialProcessingParam to look for a DataImportFolder entry
+**          08/23/2012 mem - Now calling Check_Add_Special_Processing_Param to look for a DataImportFolder entry
 **          04/23/2013 mem - Now including Instrument and InstrumentGroup
 **          01/30/2014 mem - Now using S_DMS_V_Settings_File_Lookup when a match is not found in public.t_settings_files for the given settings file and analysis tool
 **          03/14/2014 mem - Added InstrumentDataPurged

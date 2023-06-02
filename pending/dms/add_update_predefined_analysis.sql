@@ -59,7 +59,7 @@ AS $$
 **          10/05/2009 mem - Now validating the parameter file name
 **          12/18/2009 mem - Switched to use GetInstrumentDatasetTypeList() to get the allowed dataset types for the dataset and GetAnalysisToolAllowedDSTypeList() to get the allowed dataset types for the analysis tool
 **          05/06/2010 mem - Now calling auto_resolve_name_to_username to validate _creator
-**          08/26/2010 mem - Now calling ValidateProteinCollectionParams to validate the protein collection info
+**          08/26/2010 mem - Now calling Validate_Protein_Collection_Params to validate the protein collection info
 **          08/28/2010 mem - Now using T_Instrument_Group_Allowed_DS_Type to determine allowed dataset types for matching instruments
 **                         - Added try-catch for error handling
 **          11/12/2010 mem - Now using T_Analysis_Tool_Allowed_Instrument_Class to lookup the allowed instrument class names for a given analysis tool

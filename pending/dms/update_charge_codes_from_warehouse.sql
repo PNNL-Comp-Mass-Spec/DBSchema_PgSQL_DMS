@@ -226,7 +226,7 @@ BEGIN
             -- whenever values in any of these fields change:
             --    Deactivated, Charge_Code_State, Usage_SamplePrep, Usage_RequestedRun, Activation_State
             --
-            -- Activation_State values are determined by scalar-valued function ChargeCodeActivationState
+            -- Activation_State values are determined by scalar-valued function Charge_Code_Activation_State
             -- That function uses the Deactivated, Charge_Code_State, Usage_SamplePrep, and Usage_RequestedRun to determine the activation state
             --
             -- Logic below updates Charge_Code_State based on Deactivated, Setup_Date, Usage_SamplePrep, and Usage_RequestedRun

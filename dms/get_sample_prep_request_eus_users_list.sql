@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_sample_prep_request_eus_users_list(_reques
 **
 **  Auth:   mem
 **  Date:   05/01/2014
-**          03/17/2017 mem - Pass this procedure's name to udfParseDelimitedList
+**          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          08/02/2018 mem - T_Sample_Prep_Request now tracks EUS User ID as an integer
 **          06/15/2022 mem - Ported to PostgreSQL
 **          12/09/2022 mem - Assure that _mode is uppercase

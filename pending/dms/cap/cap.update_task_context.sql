@@ -89,7 +89,7 @@ BEGIN
             SELECT enabled
             INTO _result
             FROM cap.t_process_step_control
-            WHERE (processing_step_name = 'UpdateDMS');
+            WHERE processing_step_name = 'UpdateDMS';
 
             If FOUND And Coalesce(_result, 1) = 0 Then
                 _bypassDMS := true;
@@ -117,7 +117,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' make_new_automatic_tasks';
+            _statusMessage := format('%s make_new_automatic_tasks', _action);
             CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
@@ -143,7 +143,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' make_new_tasks_from_analysis_broker';
+            _statusMessage := format('%s make_new_tasks_from_analysis_broker', _action);
             CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
@@ -169,7 +169,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' make_new_tasks_from_dms';
+            _statusMessage := format('%s make_new_tasks_from_dms', _action);
             CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
@@ -203,7 +203,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' make_new_archive_tasks_from_dms';
+            _statusMessage := format('%s make_new_archive_tasks_from_dms', _action);
             CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
@@ -257,7 +257,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' create_task_steps';
+            _statusMessage := format('%s create_task_steps', _action);
             CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
@@ -314,7 +314,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' update_task_step_states';
+            _statusMessage := format('%s update_task_step_states', _action);
             CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
@@ -367,7 +367,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' update_task_state';
+            _statusMessage := format('%s update_task_state', _action);
             CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
@@ -416,7 +416,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' RetryCaptureForDMSResetJobs';
+            _statusMessage := format('%s RetryCaptureForDMSResetJobs', _action);
             CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
@@ -465,7 +465,7 @@ BEGIN
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := _action || ' UpdateCPULoading';
+            _statusMessage := format('%s UpdateCPULoading', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 

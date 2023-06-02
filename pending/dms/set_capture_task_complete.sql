@@ -30,7 +30,7 @@ AS $$
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/04/2012 mem - Added parameter _failureMessage
 **          08/19/2015 mem - If _completionCode is 0, now looking for and removing messages of the form "Error while copying \\15TFTICR64\data\"
-**          12/16/2017 mem - If _completionCode is 0, now calling CleanupDatasetComments to remove error messages in the comment field
+**          12/16/2017 mem - If _completionCode is 0, now calling Cleanup_Dataset_Comments to remove error messages in the comment field
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          06/13/2018 mem - Add support for _completionCode 101
 **          08/08/2018 mem - Add _completionState 14 (Duplicate Dataset Files)

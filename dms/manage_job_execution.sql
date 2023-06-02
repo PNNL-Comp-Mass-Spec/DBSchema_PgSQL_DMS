@@ -138,7 +138,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Set up default arguments
-    -- for calling UpdateAnalysisJobs
+    -- for calling Update_Analysis_Jobs
     ---------------------------------------------------
     --
     _noChangeText := '[no change]';

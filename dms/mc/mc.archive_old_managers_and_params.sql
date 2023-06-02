@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          04/22/2016 mem - Now updating M_Comment in mc.t_old_managers
 **          01/29/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name
-**          03/23/2022 mem - Use mc schema when calling ParseManagerNameList
+**          03/23/2022 mem - Use mc schema when calling Parse_Manager_Name_List
 **          04/02/2022 mem - Use new procedure name
 **          04/16/2022 mem - Use new procedure name
 **          08/20/2022 mem - Update warnings shown when an exception occurs

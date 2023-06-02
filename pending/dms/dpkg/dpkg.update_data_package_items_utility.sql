@@ -30,7 +30,7 @@ AS $$
 **  Auth:   grk
 **  Date:   05/23/2010
 **          06/10/2009 grk - Changed size of item list to max
-**          06/10/2009 mem - Now calling UpdateDataPackageItemCounts to update the data package item counts
+**          06/10/2009 mem - Now calling Update_Data_Package_Item_Counts to update the data package item counts
 **          10/01/2009 mem - Now populating Campaign in T_Data_Package_Biomaterial
 **          12/31/2009 mem - Added DISTINCT keyword to the INSERT INTO queries in case the source views include some duplicate rows (in particular, V_Experiment_Detail_Report_Ex)
 **          05/23/2010 grk - Create this sproc from common function factored out of UpdateDataPackageItems and UpdateDataPackageItemsXML
@@ -1093,7 +1093,7 @@ BEGIN
         ---------------------------------------------------
 
         If _itemCountChanged > 0 Then
-        -- <UpdateDataPackageItemCounts>
+
             CREATE TEMP TABLE Tmp_DataPackageDatasets (ID int)
 
             _createdDataPackageDatasetsTable := true;
@@ -1110,7 +1110,7 @@ BEGIN
                 CALL update_data_package_item_counts (_packageID);
             END LOOP;
 
-        End If; -- </UpdateDataPackageItemCounts>
+        End If;
 
         ---------------------------------------------------
         -- Update EUS Info for all data packages in the list
