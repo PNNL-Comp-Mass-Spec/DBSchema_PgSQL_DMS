@@ -147,16 +147,16 @@ BEGIN
            RR.instrument_group As InstrumentName,
            RR.work_package As WorkPackage,
            RR.instrument_setting As InstrumentSettings,
-           DTN.Dataset_Type As MsType,
+           DSType.Dataset_Type As MsType,
            RR.separation_group As SeparationGroup,
            RR.eus_proposal_id As EusProposalID,
            EUT.eus_usage_type As EusUsageType
     INTO _requestedRunInfo
     FROM t_requested_run AS RR
-         INNER JOIN t_dataset_rating_name AS DTN
-           ON RR.request_type_id = DTN.DST_Type_ID
+         INNER JOIN t_dataset_type_name AS DSType
+           ON RR.request_type_id = DSType.dataset_type_id
          INNER JOIN t_eus_usage_type AS EUT
-           ON RR.eus_usage_type_id = EUT.request_id
+           ON RR.eus_usage_type_id = EUT.eus_usage_type_id
     WHERE dataset_id = _datasetInfo.SourceDatasetId
 
     If Not FOUND Then

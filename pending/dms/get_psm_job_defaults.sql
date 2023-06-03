@@ -164,12 +164,12 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_DatasetTypeStats (Dataset_Type, Description, DatasetCount)
-    SELECT DTN.Dataset_Type, DTN.DST_Description, COUNT(*) AS DatasetCount
+    SELECT DSType.Dataset_Type, DSType.Description, COUNT(*) AS DatasetCount
     FROM Tmp_DatasetInfo
-         INNER JOIN t_dataset_rating_name DTN
-           ON Tmp_DatasetInfo.Dataset_Type = DTN.Dataset_Type
-    GROUP BY DTN.Dataset_Type, DTN.DST_Description
-    ORDER BY DTN.Dataset_Type;
+         INNER JOIN t_dataset_type_name DSType
+           ON Tmp_DatasetInfo.Dataset_Type = DSType.Dataset_Type
+    GROUP BY DSType.Dataset_Type, DSType.Description
+    ORDER BY DSType.Dataset_Type;
 
     SELECT Dataset_Type
     INTO _topDatasetType

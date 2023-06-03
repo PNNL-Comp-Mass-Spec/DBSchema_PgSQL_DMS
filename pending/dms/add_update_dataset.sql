@@ -595,8 +595,8 @@ BEGIN
                 -- Update _msType
                 SELECT Dataset_Type
                 INTO _msType
-                FROM t_dataset_rating_name
-                WHERE DST_Type_ID = _datasetTypeID
+                FROM t_dataset_type_name
+                WHERE dataset_type_ID = _datasetTypeID
             Else
                 RAISE EXCEPTION 'Could not find entry in database for dataset type %', _msType;
             End If;
@@ -655,8 +655,8 @@ BEGIN
                 -- Update _msType
                 SELECT Dataset_Type
                 INTO _msType
-                FROM t_dataset_rating_name
-                WHERE DST_Type_ID = _datasetTypeID
+                FROM t_dataset_type_name
+                WHERE dataset_type_id = _datasetTypeID
 
                 If _msTypeOld::citext = 'GC-MS' And _msType::citext = 'EI-HMS' Then
                     -- This happens for most datasets from instrument GCQE01; do not update the comment

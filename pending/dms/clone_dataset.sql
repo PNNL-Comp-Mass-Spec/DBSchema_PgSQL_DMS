@@ -124,7 +124,7 @@ BEGIN
                DS.operator_username As OperatorUsername
                Inst.instrument As InstrumentName
                RR.work_package As WorkPackage
-               DTN.Dataset_Type As DatasetType                         -- Aka _msType
+               DSType.Dataset_Type As DatasetType                         -- Aka _msType
                RR.instrument_setting As InstrumentSettings
                RR.wellplate As Wellplate
                RR.well As WellNum
@@ -141,10 +141,10 @@ BEGIN
                ON DS.exp_id = E.exp_id
              INNER JOIN t_instrument_name Inst
                ON DS.instrument_id = Inst.instrument_id
-             INNER JOIN t_dataset_rating_name DTN
-               ON DS.dataset_type_ID = DTN.DST_Type_ID
+             INNER JOIN t_dataset_type_name DSType
+               ON DS.dataset_type_ID = DSType.dataset_type_id
              INNER JOIN t_eus_usage_type EUT
-               ON RR.eus_usage_type_id = EUT.request_id
+               ON RR.eus_usage_type_id = EUT.eus_usage_type_id
         WHERE DS.dataset = _dataset;
 
         _requestNameNew := format('AutoReq_%s', _datasetNew);

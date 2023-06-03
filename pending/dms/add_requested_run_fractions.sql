@@ -220,8 +220,8 @@ BEGIN
              _sourceStatus,
              _sourceRequestBatchID,
              _sourceCreated
-        FROM t_requested_run RR INNER JOIN t_dataset_rating_name
-               ON RR.request_type_id = t_dataset_rating_name.DST_Type_ID
+        FROM t_requested_run RR INNER JOIN t_dataset_type_name
+               ON RR.request_type_id = t_dataset_type_name.dataset_type_id
         WHERE RR.request_id = _sourceRequestID
 
         If Not FOUND Then

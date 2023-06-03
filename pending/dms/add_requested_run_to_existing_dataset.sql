@@ -181,14 +181,14 @@ BEGIN
 
         SELECT E.experiment,
                InstName.instrument,
-               DTN.Dataset_Type,
+               DSType.Dataset_Type,
                SS.separation_type
         INTO _experimentName, _instrumentName, _msType, _secSep
         FROM t_dataset AS TD
              INNER JOIN t_instrument_name AS InstName
                ON TD.instrument_id = InstName.instrument_id
-             INNER JOIN t_dataset_rating_name AS DTN
-               ON TD.dataset_type_ID = DTN.DST_Type_ID
+             INNER JOIN t_dataset_type_name AS DSType
+               ON TD.dataset_type_ID = DSType.dataset_type_ID
              INNER JOIN t_experiments AS E
                ON TD.exp_id = E.exp_id
              INNER JOIN t_secondary_sep AS SS
@@ -213,7 +213,7 @@ BEGIN
             INTO _workPackage, _requesterUsername, _eusProposalID, _eusUsageType, _eusUsersList
             FROM t_requested_run AS RR
                  INNER JOIN t_eus_usage_type AS EUT
-                   ON RR.eus_usage_type_id = EUT.request_id
+                   ON RR.eus_usage_type_id = EUT.eus_usage_type_id
             WHERE RR.request_id = _templateRequestID
 
             If Not FOUND Then

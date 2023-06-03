@@ -174,7 +174,7 @@ BEGIN
     SELECT DISTINCT DS.dataset_id, true AS Process_Dataset
     FROM t_dataset DS
          INNER JOIN T_Dataset_Type_Name DSType
-           ON DSType.DST_Type_ID = DS.dataset_type_ID
+           ON DSType.dataset_type_id = DS.dataset_type_ID
          INNER JOIN t_instrument_name InstName
            ON DS.instrument_id = InstName.instrument_id
          INNER JOIN t_experiments E

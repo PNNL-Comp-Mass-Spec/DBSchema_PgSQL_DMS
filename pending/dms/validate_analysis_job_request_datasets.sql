@@ -98,7 +98,7 @@ BEGIN
          INNER JOIN t_instrument_class
            ON t_instrument_name.instrument_class = t_instrument_class.instrument_class
          INNER JOIN t_dataset_rating_name
-           ON t_dataset_rating_name.DST_Type_ID = t_dataset.dataset_type_ID
+           ON t_dataset_type_name.dataset_type_id = t_dataset.dataset_type_ID
          LEFT OUTER JOIN t_dataset_archive
            ON t_dataset.dataset_id = t_dataset_archive.dataset_id
     WHERE Tmp_DatasetInfo.dataset = t_dataset.dataset;

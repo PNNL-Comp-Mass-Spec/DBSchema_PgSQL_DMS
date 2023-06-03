@@ -264,8 +264,8 @@ BEGIN
            COUNT(*)
     INTO _dsTypeForBlanks, _matchCount
     FROM t_requested_run RR
-         INNER JOIN t_dataset_rating_name DSType
-           ON RR.request_type_id = DSType.DST_Type_ID
+         INNER JOIN t_dataset_type_name DSType
+           ON RR.request_type_id = DSType.dataset_type_id
          INNER JOIN Tmp_XF
            ON RR.request_id = Tmp_XF.request
     GROUP BY DSType.Dataset_Type
@@ -319,9 +319,9 @@ BEGIN
          INNER JOIN t_requested_run RR
            ON E.exp_id = RR.exp_id
          INNER JOIN t_eus_usage_type EUT
-           ON RR.eus_usage_type_id = EUT.request_id
-         INNER JOIN t_dataset_rating_name DSType
-           ON RR.request_type_id = DSType.DST_Type_ID
+           ON RR.eus_usage_type_id = EUT.eus_usage_type_id
+         INNER JOIN t_dataset_type_name DSType
+           ON RR.request_type_id = DSType.dataset_type_id
          RIGHT OUTER JOIN Tmp_XF
            ON RR.request_id = Tmp_XF.request
     ORDER BY Tmp_XF.seq

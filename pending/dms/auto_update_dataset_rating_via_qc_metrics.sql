@@ -73,12 +73,12 @@ BEGIN
            ON DS.exp_id = E.exp_id
          INNER JOIN t_campaign C
            ON E.campaign_id = C.campaign_id
-         INNER JOIN t_dataset_rating_name DTN
-           ON DS.dataset_type_ID = DTN.DST_Type_ID
+         INNER JOIN t_dataset_type_name DSType
+           ON DS.dataset_type_ID = DSType.dataset_type_id
     WHERE DS.dataset_rating_id = 5 AND
           DQC.p_2a < _thresholdP_2A AND      -- Number of tryptic peptides; total spectra count
           DQC.p_2c < _thresholdP_2C AND      -- Number of tryptic peptides; unique peptide count
-          DTN.Dataset_Type LIKE '%msn%' AND
+          DSType.Dataset_Type LIKE '%msn%' AND
           DS.created >= _datasetCreatedMinimum AND
           C.campaign LIKE _campaignName AND
           NOT E.experiment LIKE _experimentExclusion;
@@ -95,7 +95,7 @@ BEGIN
                InstName.instrument AS Instrument,
                DS.created AS Dataset_Created,
                DS.dataset AS Dataset,
-               DTN.Dataset_Type AS Dataset_Type,
+               DSType.Dataset_Type AS Dataset_Type,
                DS.comment AS Comment,
                DQC.p_2a,
                DQC.p_2c
@@ -110,8 +110,8 @@ BEGIN
                ON DS.exp_id = E.exp_id
              INNER JOIN t_campaign C
                ON E.campaign_id = C.campaign_id
-             INNER JOIN t_dataset_rating_name DTN
-               ON DS.dataset_type_ID = DTN.DST_Type_ID
+             INNER JOIN t_dataset_type_name DSType
+               ON DS.dataset_type_ID = DSType.dataset_type_id
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

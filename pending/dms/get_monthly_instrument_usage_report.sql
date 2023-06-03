@@ -225,13 +225,13 @@ BEGIN
                    Coalesce(GRTMI.INTERVAL, 0) AS Interval,
                    Coalesce(RR.eus_proposal_id, '') AS Proposal,
                    RR.eus_usage_type_id AS UsageID,
-                   TEUT.eus_usage_type AS Usage,
+                   EUT.eus_usage_type AS Usage,
                    1
             FROM get_run_tracking_monthly_info_by_id ( _eusInstrumentId, _year, _month, '' ) AS GRTMI
                  LEFT OUTER JOIN t_requested_run AS RR
                    ON GRTMI.request_id = RR.dataset_id
-                 INNER JOIN t_eus_usage_type TEUT
-                   ON RR.eus_usage_type_id = TEUT.request_id;
+                 INNER JOIN t_eus_usage_type EUT
+                   ON RR.eus_usage_type_id = EUT.eus_usage_type_id;
 
         Else
 
@@ -253,13 +253,13 @@ BEGIN
                    Coalesce(GRTMI.INTERVAL, 0) AS Interval,
                    Coalesce(RR.eus_proposal_id, '') AS Proposal,
                    RR.eus_usage_type_id AS UsageID,
-                   TEUT.eus_usage_type AS Usage,
+                   EUT.eus_usage_type AS Usage,
                    1
             FROM get_run_tracking_monthly_info ( _instrument, _year, _month, '' ) AS GRTMI
                  LEFT OUTER JOIN t_requested_run AS RR
                    ON GRTMI.request_id = RR.dataset_id
-                 INNER JOIN t_eus_usage_type TEUT
-                   ON RR.eus_usage_type_id = TEUT.request_id;
+                 INNER JOIN t_eus_usage_type EUT
+                   ON RR.eus_usage_type_id = EUT.eus_usage_type_id;
 
         End If;
 

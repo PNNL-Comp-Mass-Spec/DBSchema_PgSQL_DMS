@@ -70,8 +70,8 @@ BEGIN
            DST.Dataset_Type
     INTO _dataset, _currentDatasetType
     FROM t_dataset DS
-         LEFT OUTER JOIN t_dataset_rating_name DST
-           ON DS.dataset_type_ID = DST.DST_Type_ID
+         LEFT OUTER JOIN t_dataset_type_name DST
+           ON DS.dataset_type_ID = DST.dataset_type_ID
     WHERE DS.dataset_id = _datasetID;
 
     If Not FOUND Then
@@ -590,9 +590,9 @@ BEGIN
     If _newDatasetType <> '' Then
         _newDSTypeID := 0;
 
-        SELECT DST_Type_ID
+        SELECT dataset_type_id
         INTO _newDSTypeID
-        FROM t_dataset_rating_name
+        FROM t_dataset_type_name
         WHERE Dataset_Type = _newDatasetType;
 
         If _newDSTypeID <> 0 Then
