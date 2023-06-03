@@ -136,7 +136,7 @@ BEGIN
             ---------------------------------------------------
             --
             _iMode := 'retire_items';
-            _itemList := _typeTag || ':' || _tmpID::text;
+            _itemList := format('%s:%s', _typeTag, _tmpID);
             _itemType := 'mixed_material';
             _newValue := '';
             _comment := '';

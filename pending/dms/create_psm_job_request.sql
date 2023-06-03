@@ -106,7 +106,7 @@ BEGIN
         _requestID := 0;
         _toolName := Coalesce(_toolName, '');
 
-        _requestName := Coalesce(_requestName, 'New ' || _toolName || ' request on ' || public.timestamp_text(current_timestamp));
+        _requestName := Coalesce(_requestName, format('New %s request on %s', _toolName, public.timestamp_text(current_timestamp)));
         _datasets := Coalesce(_datasets, '');
         _jobTypeName := Coalesce(_jobTypeName, '');
         _protCollNameList := Coalesce(_protCollNameList, '');

@@ -97,7 +97,7 @@ AS $$
 **                         - Now requiring that the dataset name be 90 characters or less (longer names can lead to 'path-too-long' errors; Windows has a 254 character path limit)
 **          11/21/2012 mem - Now requiring that the dataset name be at least 6 characters in length
 **          01/22/2013 mem - Now updating the dataset comment if the default dataset type is invalid for the instrument group
-**          04/02/2013 mem - Now updating _lCCartName (if not blank) when updating an existing dataset
+**          04/02/2013 mem - Now updating _lcCartName (if not blank) when updating an existing dataset
 **          05/08/2013 mem - Now setting _wellplateName and _wellNumber to Null if they are blank or 'na'
 **          02/27/2014 mem - Now skipping check for name ending in Raw or Wiff if _aggregationJobDataset is true
 **          05/07/2015 mem - Now showing URL http://dms2.pnl.gov/dataset_disposition/search if the user tries to change the rating from Unreleased to something else (previously showed http://dms2.pnl.gov/dataset_disposition/report)

@@ -72,13 +72,13 @@ BEGIN
     -----------------------------------------
 
     If Not Exists (SELECT * FROM t_param_files WHERE param_file_id = _sourceParamFileID) Then
-        _message := 'Source Param File ID (' || _sourceParamFileID::text || ') not found in t_param_files; unable to continue';
+        _message := format('Source Param File ID (%s) not found in t_param_files; unable to continue', _sourceParamFileID);
         _returnCode := 'U5201';
         RETURN;
     End If;
 
     If Not Exists (SELECT * FROM t_param_files WHERE param_file_id = _destParamFileID) Then
-        _message := 'Destination Param File ID (' || _destParamFileID::text || ') not found in t_param_files; unable to continue';
+        _message := format('Destination Param File ID (%s) not found in t_param_files; unable to continue', _destParamFileID);
         _returnCode := 'U5202';
         RETURN;
     End If;
@@ -88,14 +88,14 @@ BEGIN
     -----------------------------------------
 
     If Exists (SELECT * FROM t_param_file_mass_mods WHERE param_file_id = _destParamFileID) Then
-        _message := 'Destination Param File ID (' || _destParamFileID::text || ') already has entries in t_param_file_mass_mods; unable to continue';
+        _message := format('Destination Param File ID (%s) already has entries in t_param_file_mass_mods; unable to continue', _destParamFileID;
         _returnCode := 'U5203';
         RETURN;
     End If;
 
     If _updateParamEntries Then
         If Exists (SELECT * FROM t_param_entries WHERE param_file_id = _destParamFileID) Then
-            _message := 'Destination Param File ID (' || _destParamFileID::text || ') already has entries in t_param_entries; unable to continue';
+            _message := format('Destination Param File ID (%s) already has entries in t_param_entries; unable to continue', _destParamFileID);
             _returnCode := 'U5204';
             RETURN;
         End If;
@@ -141,7 +141,7 @@ BEGIN
         ORDER BY param_file_id, mod_type_symbol, local_symbol_id;
 
         If Not FOUND Then
-            _message := 'Warning: Param File ID ' || _sourceParamFileID::text || ' does not have any entries in t_param_file_mass_mods';
+            _message := format('Warning: Param File ID %s does not have any entries in t_param_file_mass_mods', _sourceParamFileID);
         End If;
 
         If _updateParamEntries Then

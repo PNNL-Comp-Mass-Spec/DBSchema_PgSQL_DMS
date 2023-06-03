@@ -230,7 +230,7 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        Select 'Call Delete_Aux_Info for ' || _experimentName
+        RAISE INFO 'Call Delete_Aux_Info for %', _experimentName;
     Else
         ---------------------------------------------------
         -- Delete any auxiliary info associated with Experiment

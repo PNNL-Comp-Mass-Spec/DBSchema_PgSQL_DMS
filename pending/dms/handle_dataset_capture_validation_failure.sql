@@ -106,36 +106,31 @@ BEGIN
         End If;
     End If;
 
-    If _returnCode = '' Then
-        If _comment = 'Bad .raw file' AND _existingComment LIKE '%Cannot convert .D to .UIMF%' Then
-            _comment := '';
-        End If;
+    If _comment = 'Bad .raw file' AND _existingComment LIKE '%Cannot convert .D to .UIMF%' Then
+        _comment := '';
+    End If;
 
-        If _infoOnly Then
-            SELECT 'Mark dataset as bad: ' || _comment as Message, *
-            FROM t_dataset
-            WHERE dataset_id = _datasetID
-        Else
+    If _infoOnly Then
+        RAISE INFO 'Mark dataset ID % as bad: % (%)', _datasetID, _comment, _datasetName;
+        EXIT;
+    End If;
 
-            UPDATE t_dataset
-            SET comment = public.append_to_text(comment, _comment, 0, '; ', 512),
-                dataset_state_id = 4,
-                dataset_rating_id = -1
-            WHERE dataset_id = _datasetID
+    UPDATE t_dataset
+    SET comment = public.append_to_text(comment, _comment, 0, '; ', 512),
+        dataset_state_id = 4,
+        dataset_rating_id = -1
+    WHERE dataset_id = _datasetID
 
-            If Not FOUND Then
-                _message := format('Unable to update dataset in t_dataset: %s', _datasetName);
-                _returnCode := 'U5203';
-                RAISE INFO '%', _message;
-            Else
-                -- Also update t_dataset_archive
-                CALL add_archive_dataset _datasetID
+    If Not FOUND Then
+        _message := format('Unable to update dataset in t_dataset: %s', _datasetName);
+        _returnCode := 'U5203';
+        RAISE INFO '%', _message;
+    Else
+        -- Also update t_dataset_archive
+        CALL add_archive_dataset _datasetID
 
-                _message := format('Marked dataset as bad: %s', _datasetName);
-                RAISE INFO '%', _message;
-
-            End If;
-        End If;
+        _message := format('Marked dataset as bad: %s', _datasetName);
+        RAISE INFO '%', _message;
 
     End If;
 

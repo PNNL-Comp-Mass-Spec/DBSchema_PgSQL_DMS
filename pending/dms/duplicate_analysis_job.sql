@@ -90,7 +90,7 @@ BEGIN
     WHERE J.job = _job;
 
     If Not FOUND Then
-        _message := 'Job not found: ' || Cast(_job as text);
+        _message := format('Job not found: %s', _job);
         RAISE ERROR '%', _message;
 
         RETURN;
@@ -150,7 +150,7 @@ BEGIN
 
     If Not _infoOnly Then
         If _returnCode = '' Then
-            _message := 'Duplicated job ' || Cast(_job as text) || ' to create job ' || Coalesce(_newJob, '');
+            _message := format('Duplicated job %s to create job %s', _job, _newJob);
             Raise Info '%', _message;
         Else
             If Coalesce(_message, '') = '' Then

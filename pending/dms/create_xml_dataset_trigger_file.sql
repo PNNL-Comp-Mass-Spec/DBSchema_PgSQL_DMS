@@ -109,7 +109,7 @@ BEGIN
     FROM t_misc_paths
     WHERE path_function = 'DIMTriggerFileDir'
 
-    _filePath := public.combine_paths(_triggerFolderPath, 'man_' || _datasetName || '.xml');
+    _filePath := public.combine_paths(_triggerFolderPath, format('man_%s.xml', _datasetName));
 
     -- Create a filesystem object
     CALL _hr => sp_oacreate 'Scripting.FileSystemObject', _fso OUT
@@ -125,15 +125,18 @@ BEGIN
     If _hr <> 0 Then
         CALL load_get_oaerror_message _fso, _hr, _message OUT
         _returnCode := 'U5202';
+
         If Coalesce(_message, '') = '' Then
-            _message := 'Error verifying that the trigger folder exists at ' || Coalesce(_triggerFolderPath, '??');
+            _message := format('Error verifying that the trigger folder exists at %s', Coalesce(_triggerFolderPath, '??'));
         End If;
+
         goto DestroyFSO
     End If;
 
     If _result = 0 Then
         _returnCode := 'U5203';
-        _message := 'Trigger folder not found at ' || Coalesce(_triggerFolderPath, '??') || '; update t_misc_paths';
+        _message := format('Trigger folder not found at %s; update t_misc_paths', Coalesce(_triggerFolderPath, '??'));
+
         goto DestroyFSO
     End If;
 
@@ -172,7 +175,7 @@ BEGIN
     ---------------------------------------------------
     --
 
-    _newLine := chr(13) || chr(10);
+    _newLine := format('%s%s', chr(13) || chr(10));
 
     --XML Header
     _tmpXmlLine := format('<?xml version="1.0" ?>%s', _newLine);
@@ -216,7 +219,7 @@ BEGIN
         CALL load_get_oaerror_message _fso, _hr, _message OUT
         _returnCode := 'U5204';
         If Coalesce(_message, '') = '' Then
-            _message := 'Error looking for an existing trigger file at ' || Coalesce(_filePath, '??');
+            _message := format('Error looking for an existing trigger file at %s', Coalesce(_filePath, '??'));
         End If;
         goto DestroyFSO
     End If;
@@ -225,6 +228,7 @@ BEGIN
         _logErrors := false;
         _message := format('Trigger file already exists (%s).  Enter a different dataset name', _filePath);
         _returnCode := 'U5205';
+
         goto DestroyFSO
     End If;
 
@@ -234,9 +238,11 @@ BEGIN
         CALL sp_oaget_error_info _fso, _src OUT, _desc OUT
         SELECT hr=_hr::varbinary(4), Source=_src, Description=_desc
         _returnCode := 'U5206';
+
         If Coalesce(_message, '') = '' Then
-            _message := 'Error creating the trigger file at ' || Coalesce(_filePath, '??');
+            _message := format('Error creating the trigger file at %s', Coalesce(_filePath, '??'));
         End If;
+
         goto DestroyFSO
     End If;
 
@@ -246,9 +252,11 @@ BEGIN
         CALL sp_oaget_error_info _fso, _src OUT, _desc OUT
         SELECT hr=_hr::varbinary(4), Source=_src, Description=_desc
         _returnCode := 'U5207';
+
         If Coalesce(_message, '') = '' Then
-            _message := 'Error writing to the trigger file at ' || Coalesce(_filePath, '??');
+            _message := format('Error writing to the trigger file at %s', Coalesce(_filePath, '??'));
         End If;
+
         goto DestroyFSO
     End If;
 
@@ -258,9 +266,11 @@ BEGIN
         CALL sp_oaget_error_info _fso, _src OUT, _desc OUT
         SELECT hr=_hr::varbinary(4), Source=_src, Description=_desc
         _returnCode := 'U5208';
+
         If Coalesce(_message, '') = '' Then
-            _message := 'Error closing the trigger file at ' || Coalesce(_filePath, '??');
+            _message := format('Error closing the trigger file at %s', Coalesce(_filePath, '??'));
         End If;
+
         goto DestroyFSO
     End If;
 

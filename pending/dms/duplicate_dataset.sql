@@ -50,6 +50,10 @@ DECLARE
     _userID int;
     _matchCount int;
     _newUsername text;
+
+    _formatSpecifier text;
+	_infoHead text;
+	_infoHeadSeparator txt;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -202,48 +206,78 @@ BEGIN
                 RETURN;
             End If;
         End If;
-    End If;
+   End If;
 
     If _infoOnly Then
-        -- ToDo: Update the following two queries to use RAISE INFO
-        --
-        SELECT _newDataset AS Dataset,
-               _datasetInfo.OperUsername AS Operator_Username,
-               _datasetInfo.Comment AS Comment,
-               CURRENT_TIMESTAMP AS Created,
-               _datasetInfo.InstrumentID AS Instrument_ID,
-               _datasetInfo.DatasetTypeID AS DS_TypeID,
-               _datasetInfo.WellNum AS WellNum,
-               _datasetInfo.SecSep AS SecondarySep,
-               _datasetStateID AS DatasetStateID,
-               _newDataset AS Dataset_Folder,
-               _datasetInfo.StoragePathID AS StoragePathID,
-               _datasetInfo.ExperimentID AS ExperimentID,
-               _datasetInfo.RatingID AS RatingID,
-               _datasetInfo.ColumnID AS ColumnID,
-               _datasetInfo.Wellplate AS Wellplate,
-               _datasetInfo.IntStdID AS InternalStandardID,
-               _datasetInfo.CaptureSubfolder AS Capture_SubFolder,
-               _datasetInfo.CartConfigID AS CartConfigID;
 
-        Select 'AutoReq_' || _newDataset As Requested_Run,
-                                _datasetInfo.ExperimentName As Experiment,
-                                _datasetInfo.OperatorUsername As Operator_Username,
-                                _requestedRunInfo.InstrumentName As Instrument,
-                                _requestedRunInfo.WorkPackage As WP,
-                                _requestedRunInfo.MsType As MSType,
-                                _requestedRunInfo.SeparationGroup As SeparationGroup,
-                                _requestedRunInfo.InstrumentSettings As Instrument_Settings,
-                                _datasetInfo.Wellplate As Wellplate,
-                                _datasetInfo.WellNum As WellNum,
-                                'na' As InternalStandard,
-                                'Automatically created by Dataset entry' As Comment,
-                                _requestedRunInfo.EusProposalID As EUS_ProposalID,
-                                _requestedRunInfo.EusUsageType As EUS_ProposalType,
-                                _eusUsersList As EUS_ProposalUsers,
-                                _requestedRunInfo.SeparationGroup As SeparationGroup,
-                                '' As MRMAttachment,
-                                'Completed' As Status
+        -- Format info for previewing the dataset that would be created
+        _formatSpecifier := '%-80s %-20s %-15s %-15s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Dataset',
+                            'Comment',
+                            'Created',
+                            'Instrument_ID',
+                            'ExperimentID'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                    '--------------------------------------------------------------------------------',
+                                    '--------------------',
+                                    '--------------------',
+                                    '---------------',
+                                    '---------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        -- Show the dataset that would be created
+        RAISE INFO '%', format(_formatSpecifier,
+                               _newDataset,
+                               _datasetInfo.Comment,
+                               timestamp_text(CURRENT_TIMESTAMP),
+                               _datasetInfo.InstrumentID,
+                               _datasetInfo.ExperimentID);
+
+        -- Format info for previewing the requested run that would be created
+        _formatSpecifier := '%-80s %-60s %-10s %-15s %-10s %-10s %-15s, %-25s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Requested_Run',
+                            'Experiment',
+                            'Operator',
+                            'Instrument',
+                            'WP',
+                            'MSType',
+                            'Sep_Group',
+                            'Comment'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                    '--------------------------------------------------------------------------------',
+                                    '------------------------------------------------------------',
+                                    '----------',
+                                    '---------------',
+                                    '----------',
+                                    '----------',
+                                    '---------------',
+                                    '-------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        -- Show the requested run that would be created
+        RAISE INFO '%', format(_formatSpecifier,
+                               format('AutoReq_%s', _newDataset),
+                               _datasetInfo.ExperimentName,
+                               _datasetInfo.OperatorUsername,
+                               _requestedRunInfo.InstrumentName,
+                               _requestedRunInfo.WorkPackage,
+                               _requestedRunInfo.MsType,
+                               _requestedRunInfo.SeparationGroup,
+                               'Automatically created by Dataset entry'
 
         RETURN;
     End If;

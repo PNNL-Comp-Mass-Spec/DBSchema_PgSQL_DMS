@@ -96,13 +96,13 @@ BEGIN
             WHILE _startIndex <= _sequenceLength
             LOOP
                 If _currentLineLength < _lineLengthThreshold Then
-                    _formattedSequence := _formattedSequence || Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize) || ' ';
+                    _formattedSequence := format('%s%s ', _formattedSequence, Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize));
                     _currentLineLength := _currentLineLength + _chunkSize + 1;
                 Else
                     If _startIndex + _chunkSize <= _sequenceLength Then
-                        _formattedSequence := _formattedSequence || Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize) || '<br>';
+                        _formattedSequence := format('%s%s<br>', _formattedSequence, Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize));
                     Else
-                        _formattedSequence := _formattedSequence || Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize);
+                        _formattedSequence := format('%s%s', _formattedSequence, Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize);
                     End If;
 
                     _currentLineLength := 0;

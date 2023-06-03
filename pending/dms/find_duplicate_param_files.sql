@@ -167,15 +167,15 @@ BEGIN
     -- Populate Tmp_ParamFiles
     -----------------------------------------
 
-    _sStart := 'INSERT INTO Tmp_ParamFiles (Param_File_ID, Param_File_Name, Param_File_Type_ID, Param_File_Type)';
+    _sStart := 'INSERT INTO Tmp_ParamFiles (Param_File_ID, Param_File_Name, Param_File_Type_ID, Param_File_Type) ';
 
-    _s := ' SELECT PF.param_file_id,'
-                 ' PF.param_file_name,'
-                 ' PF.param_file_type_id,'
-                 ' PFT.param_file_type'
-          ' FROM t_param_files PF INNER JOIN '
-               ' t_param_file_types PFT ON PF.param_file_type_id = PFT.param_file_type_id INNER JOIN '
-               ' Tmp_ParamFileTypeFilter PFTF ON PFT.param_file_type = PFTF.param_file_type';
+    _s := 'SELECT PF.param_file_id, '
+                 'PF.param_file_name, '
+                 'PF.param_file_type_id, '
+                 'PFT.param_file_type '
+          'FROM t_param_files PF INNER JOIN '
+               't_param_file_types PFT ON PF.param_file_type_id = PFT.param_file_type_id INNER JOIN '
+               'Tmp_ParamFileTypeFilter PFTF ON PFT.param_file_type = PFTF.param_file_type';
 
     If _checkValidOnly Then
         _s := format('%s WHERE PF.Valid <> 0', _s);
@@ -190,22 +190,25 @@ BEGIN
     _s := format('%s ORDER BY Param_File_Type, Param_File_ID', _s);
 
     If _previewSql Then
-        RAISE INFO '% %', _sStart, _s;
-    Else
-        EXECUTE (_sStart || _s);
-    End If;
+        RAISE INFO '%', format('%s%s', _sStart, _s);
 
-    If _previewSql Then
         -- Populate Tmp_ParamFiles with the first parameter file matching the filters
+        EXECUTE (format('%s%s LIMIT 1', _sStart, _s));
 
-        EXECUTE (_sStart || _s || ' LIMIT 1');
-    End If;
 
-    If _previewSql Then
-        -- ToDo: Update this to use RAISE INFO
-        SELECT *
-        FROM Tmp_ParamFiles
-        ORDER BY Entry_ID;
+        FOR _paramFileInfo IN
+            SELECT Param_File_ID AS ParamFileID,
+                   Param_File_Name AS ParamFileName,
+                   Param_File_Type_ID AS ParamFileTypeID,
+                   Param_File_Type AS ParamFileType
+            FROM Tmp_ParamFiles
+            ORDER BY Entry_ID
+        LOOP
+            RAISE INFO '%', format('%s param file ID %s: %s', _paramFile.ParamFileType, _paramFile.ParamFileID, _paramFile.ParamFileName);
+        END LOOP;
+
+    Else
+        EXECUTE (format('%s%s', _sStart, _s));
     End If;
 
     -----------------------------------------
@@ -233,10 +236,10 @@ BEGIN
         -----------------------------------------
         --
         INSERT INTO Tmp_ParamEntries( param_file_id,
-                                    entry_type,
-                                    entry_specifier,
-                                    entry_value,
-                                    Compare )
+                                      entry_type,
+                                      entry_specifier,
+                                      entry_value,
+                                      Compare )
         SELECT PE.param_file_id,
             PE.entry_type,
             PE.entry_specifier,
@@ -508,7 +511,6 @@ BEGIN
             WHERE Compare AND Param_File_ID = _paramFileInfo.ParamFileID;
 
             If _modCount = 0 Then
-            -- <d1>
 
                 -----------------------------------------
                 -- Parameter file doesn't have any param entries (with compare = true)
@@ -535,7 +537,6 @@ BEGIN
                     USING _paramFileInfo.ParamFileID, _paramFileInfo.ParamFileTypeID
                 End If;
             Else
-            -- <d2>
 
                 -----------------------------------------
                 -- Find parameter files that are of the same type and have the same set of param entries
@@ -572,7 +573,7 @@ BEGIN
                 GROUP BY B.param_file_id
                 HAVING COUNT(*) = _entryCount;
 
-            End If; -- </d2>
+            End If;
 
             -----------------------------------------
             -- Any Param_File_ID values that are in Tmp_ParamEntryDuplicates and Tmp_MassModDuplicates are duplicates

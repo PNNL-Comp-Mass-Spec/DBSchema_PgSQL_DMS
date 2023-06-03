@@ -135,7 +135,7 @@ BEGIN
             If Position(_name In _message) > 0 Then
                 _logMessage := _exceptionMessage;
             Else
-                _logMessage := _exceptionMessage || ' (container ' || _name || ')';
+                _logMessage := format('%s (container %s)', _exceptionMessage, _name);
             End If;
 
             _logMessage := format('%s; Dataset %s', _exceptionMessage, _datasetNameOrID);

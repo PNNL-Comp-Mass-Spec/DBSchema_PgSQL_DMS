@@ -164,21 +164,22 @@ BEGIN
     -----------------------------------------------------------
     -- Return the results
     -----------------------------------------------------------
-    _sql := format('SELECT PF.Param_File_Name, PF.Param_File_Description, PF.Job_Usage_Count, %s',
+
+    _sql := 'SELECT PF.Param_File_Name, PF.Param_File_Description, PF.Job_Usage_Count, ' ||
                     CASE WHEN char_length(Coalesce(_paramFileInfoColumnList, '')) > 0
                          THEN format('%s, ', _paramFileInfoColumnList)
                          ELSE ''
-                    END) ||
-                         'PFMR.*, '
-                         'PF.date_created, PF.date_modified, PF.valid '
-                  'FROM Tmp_ParamFileInfo PFI INNER JOIN '
-                       't_param_files PF ON PFI.param_file_id = PF.param_file_id LEFT OUTER JOIN '
-                       'Tmp_ParamFileModResults PFMR ON PFI.param_file_id = PFMR.param_file_id ' ||
-                    CASE WHEN char_length(_massModFilterSql) > 0
-                         THEN format('WHERE %s ', _massModFilterSql)
-                         ELSE ''
                     END ||
-                  'ORDER BY PF.Param_File_Name';
+                   'PFMR.*, '
+                   'PF.date_created, PF.date_modified, PF.valid '
+            'FROM Tmp_ParamFileInfo PFI INNER JOIN '
+                 't_param_files PF ON PFI.param_file_id = PF.param_file_id LEFT OUTER JOIN '
+                 'Tmp_ParamFileModResults PFMR ON PFI.param_file_id = PFMR.param_file_id ' ||
+                  CASE WHEN char_length(_massModFilterSql) > 0
+                       THEN format('WHERE %s ', _massModFilterSql)
+                       ELSE ''
+                  END ||
+            '    ORDER BY PF.Param_File_Name';
 
     -- ToDo: Return the query results using the RefCursor
 

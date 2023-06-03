@@ -99,7 +99,7 @@ BEGIN
     ORDER BY filter_criteria_group_id;
 
     If Not FOUND Then
-        _message := 'No groups found for Filter Set ID ' || _sourceFilterSetID::text;
+        _message := format('No groups found for Filter Set ID %s', _sourceFilterSetID);
         RETURN;
     End If;
 
@@ -162,7 +162,7 @@ BEGIN
         CALL add_missing_filter_criteria (_destFilterSetID);
     End If;
 
-    _message := 'Duplicated criteria from Filter Set ID ' || _sourceFilterSetID::text || ' to Filter Set ID ' || _destFilterSetID::text;
+    _message := format('Duplicated criteria from Filter Set ID %s to Filter Set ID %s', _sourceFilterSetID, _destFilterSetID);
 
     If char_length(_message) > 0 Then
         RAISE INFO '%', _message;

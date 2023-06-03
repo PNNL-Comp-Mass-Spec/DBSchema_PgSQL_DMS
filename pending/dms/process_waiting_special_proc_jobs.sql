@@ -159,7 +159,7 @@ BEGIN
                     ORDER BY Entry_ID
                 LOOP -- <b>
 
-                    If Position(_tagName || ':' In _jobInfo.SpecialProcessingText) < 1 Then
+                    If Position(format('%s:', _tagName) In _jobInfo.SpecialProcessingText) = 0 Then
                         CONTINUE;
                     End If;
 

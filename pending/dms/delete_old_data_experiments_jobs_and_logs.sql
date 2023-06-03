@@ -539,7 +539,7 @@ BEGIN
                         _warningMsg := format('%s datasets have jobs and thus cannot be deleted', _deleteCount);
                         RAISE WARNING '%', _warningMsg;
 
-                        _message := _message || '; ' || _warningMsg;
+                        _message := format('%s; %s', _message, _warningMsg);
                     End If
                 End If;
 

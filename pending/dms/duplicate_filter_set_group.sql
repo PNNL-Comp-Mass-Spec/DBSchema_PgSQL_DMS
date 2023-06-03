@@ -43,8 +43,8 @@ BEGIN
     -- Validate that _filterSetID is defined in t_filter_sets
     -----------------------------------------
     --
-    If Not Exists (SELECT *    FROM t_filter_sets WHERE filter_set_id = _filterSetID) Then
-        _message := 'Filter Set ID ' || _filterSetID::text || ' was not found in t_filter_sets; unable to continue';
+    If Not Exists (SELECT * FROM t_filter_sets WHERE filter_set_id = _filterSetID) Then
+        _message := format('Filter Set ID %s was not found in t_filter_sets; unable to continue', _filterSetID);
         RETURN;
     End If;
 
@@ -52,8 +52,8 @@ BEGIN
     -- Validate that _filterCriteriaGroupID is defined in t_filter_set_criteria_groups
     -----------------------------------------
     --
-    If Not Exists (SELECT *    FROM t_filter_set_criteria_groups WHERE filter_criteria_group_id = _filterCriteriaGroupID) Then
-        _message := 'Filter Criteria Group ID ' || _filterCriteriaGroupID::text || ' was not found in t_filter_set_criteria_groups; unable to continue';
+    If Not Exists (SELECT * FROM t_filter_set_criteria_groups WHERE filter_criteria_group_id = _filterCriteriaGroupID) Then
+        _message := format('Filter Criteria Group ID %s was not found in t_filter_set_criteria_groups; unable to continue', _filterCriteriaGroupID);
         RETURN;
     End If;
 
@@ -61,8 +61,8 @@ BEGIN
     -- Make sure that _filterCriteriaGroupID is mapped to _filterSetID
     -----------------------------------------
     --
-    If Not Exists (SELECT *    FROM t_filter_set_criteria_groups WHERE filter_criteria_group_id = _filterCriteriaGroupID AND filter_set_id = _filterSetID) Then
-        _message := 'Filter Criteria Group ID ' || _filterCriteriaGroupID::text || ' is not mapped to Filter Set ID ' || _filterSetID::text || ' in t_filter_set_criteria_groups; unable to continue';
+    If Not Exists (SELECT * FROM t_filter_set_criteria_groups WHERE filter_criteria_group_id = _filterCriteriaGroupID AND filter_set_id = _filterSetID) Then
+        _message := format('Filter Criteria Group ID %s is not mapped to Filter Set ID %s in t_filter_set_criteria_groups; unable to continue', _filterCriteriaGroupID, _filterSetID);
         RETURN;
     End If;
 

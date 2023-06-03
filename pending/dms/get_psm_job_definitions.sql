@@ -23,6 +23,18 @@ AS $$
 **    _defaults   Output parameter: default values, as a vertical bar delimited list (using colons between parameter name and value)
 **    _mode       'PSM' (unused)
 **
+**  Example usage:
+**    CALL get_psm_job_definitions ('QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13',
+**                                  _metadata,      -- Output
+**                                  _defaults,      -- Output
+**                                  _mode,
+**                                  _message,       -- Output
+**                                  _returnCode);   -- Output
+**
+**    Output values:
+**      _metadata = 'Metadata:Description:Datasets|HMS-HCD-HMSn:High res MS with high res HCD MSn:1|Alkylated:Sample (experiment) marked as alkylated in DMS:1|Labeling:none:1|Enzyme:Trypsin:1|'
+**      _defaults = 'ToolName:MSGFPlus_MzML|JobTypeName:High Res MS1|JobTypeDesc:Data acquired with high resolution MS1 spectra, typically an Orbitrap or LTQ-FT|DynMetOxEnabled:1|StatCysAlkEnabled:1|DynSTYPhosEnabled:0|OrganismName:Mus_musculus|ProteinCollectionList:M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov|ProteinOptionsList:seq_direction=decoy|'
+**
 **  Auth:   grk
 **  Date:   11/15/2012 grk - Initial version
 **          11/20/2012 mem - Now returning organism name, protein collection list, and protein options list
@@ -68,16 +80,15 @@ BEGIN
                 _message => _message,                           -- Output
                 _returnCode => _returnCode);                    -- Output
 
-        _defaults := '';
-        _defaults := _defaults || 'ToolName' ||              ':' || _toolName                                || '|';
-        _defaults := _defaults || 'JobTypeName' ||           ':' || _jobTypeName                             || '|';
-        _defaults := _defaults || 'JobTypeDesc' ||           ':' || _jobTypeDesc                             || '|';
-        _defaults := _defaults || 'DynMetOxEnabled' ||       ':' || _dynMetOxEnabled::text   || '|';
-        _defaults := _defaults || 'StatCysAlkEnabled' ||     ':' || _statCysAlkEnabled::text || '|';
-        _defaults := _defaults || 'DynSTYPhosEnabled' ||     ':' || _dynSTYPhosEnabled::text || '|';
-        _defaults := _defaults || 'OrganismName' ||          ':' || _organismName                            || '|';
-        _defaults := _defaults || 'ProteinCollectionList' || ':' || _protCollNameList                        || '|';
-        _defaults := _defaults || 'ProteinOptionsList' ||    ':' || _protCollOptionsList                     || '|';
+        _defaults := format('ToolName:%s|',               _toolName)              ||
+                     format('JobTypeName:%s|',            _jobTypeName)           ||
+                     format('JobTypeDesc:%s|',            _jobTypeDesc)           ||
+                     format('DynMetOxEnabled:%s|',        _dynMetOxEnabled)       ||
+                     format('StatCysAlkEnabled:%s|',      _statCysAlkEnabled)     ||
+                     format('DynSTYPhosEnabled:%s|',      _dynSTYPhosEnabled)     ||
+                     format('OrganismName:%s|',           _organismName)          ||
+                     format('ProteinCollectionList:%s|',  _protCollNameList)      ||
+                     format('ProteinOptionsList:%s|',     _protCollOptionsList);
 
     EXCEPTION
         WHEN OTHERS THEN

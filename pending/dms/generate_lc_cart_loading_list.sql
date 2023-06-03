@@ -1,12 +1,28 @@
 --
-CREATE OR REPLACE PROCEDURE public.generate_lc_cart_loading_list
+CREATE OR REPLACE FUNCTION public.generate_lc_cart_loading_list
 (
-    _lCCartName text,
+    _lcCartName text,
     _blanksFollowingRequests text,
     _columnsWithLeadingBlanks text,
     _mode text = '',
     INOUT _message text default '',
     INOUT _returnCode text default ''
+)
+RETURNS TABLE
+(
+	"sequence" int4,
+	"name" citext,
+	request int4,
+	column_number int4,
+	experiment citext,
+	priority int2,
+	"type" citext,
+	batch int4,
+	block int4,
+	run_order int4,
+	emsl_usage_type citext,
+	emsl_proposal_id citext,
+	emsl_users_list citext
 )
 LANGUAGE plpgsql
 AS $$
@@ -73,9 +89,11 @@ BEGIN
     FROM t_requested_run
          INNER JOIN t_lc_cart
            ON t_requested_run.cart_id = t_lc_cart.cart_id
-    WHERE t_lc_cart.cart_name = _lCCartName
-    ORDER BY t_requested_run.priority DESC, t_requested_run.batch_id, t_requested_run.run_order,
-               t_requested_run.request_id
+    WHERE t_lc_cart.cart_name = _lcCartName
+    ORDER BY t_requested_run.priority DESC,
+             t_requested_run.batch_id,
+             t_requested_run.run_order,
+             t_requested_run.request_id
 
     ---------------------------------------------------
     -- Verify that all requests have column assignments
@@ -246,7 +264,8 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_XF (request, col)
-    SELECT request, col FROM Tmp_XS
+    SELECT request, col
+    FROM Tmp_XS
     ORDER BY seq;
 
     ---------------------------------------------------
@@ -301,9 +320,10 @@ BEGIN
     -- Output final report
     ---------------------------------------------------
 
+    RETURN QUERY
     SELECT
         Tmp_XF.seq AS Sequence,
-        CASE WHEN Tmp_XF.request = 0 THEN 'Blank-' || CAST(Tmp_XF.blankSeq as text) ELSE RR.request_name END AS Name,
+        (CASE WHEN Tmp_XF.request = 0 THEN format('Blank-%s', Tmp_XF.blankSeq) ELSE RR.request_name END)::citext AS Name,
         Tmp_XF.request AS Request,
         Tmp_XF.col AS Column_Number,
         E.experiment AS Experiment,
@@ -314,7 +334,7 @@ BEGIN
         RR.run_order AS Run_Order,
         EUT.eus_usage_type AS EMSL_Usage_Type,
         RR.eus_proposal_id AS EMSL_Proposal_ID,
-        get_requested_run_eus_users_list(RR.request_id, 'I') AS EMSL_Users_List
+        get_requested_run_eus_users_list(RR.request_id, 'I')::citext AS EMSL_Users_List
     FROM t_experiments E
          INNER JOIN t_requested_run RR
            ON E.exp_id = RR.exp_id

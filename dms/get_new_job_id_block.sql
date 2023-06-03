@@ -54,7 +54,6 @@ END
 $$;
 
 
-
 ALTER FUNCTION public.get_new_job_id_block(_jobcount integer, _note text) OWNER TO d3l243;
 
 --

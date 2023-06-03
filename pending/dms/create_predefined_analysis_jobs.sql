@@ -173,6 +173,7 @@ BEGIN
             FROM Tmp_JobsToCreate
             ORDER BY ID
         LOOP
+
             If _analysisToolNameFilter = '' Then
                 _createJob := true;
             ElsIf _analysisToolName Like _analysisToolNameFilter Then
@@ -226,50 +227,50 @@ BEGIN
                         _specialProcessingWaitUntilReady  => true,
                         _infoOnly                         => _infoOnly);
 
-            -- If there was an error creating the job, remember it
+            -- If there was an error creating the job, store it in _message
             -- otherwise bump the job count
             --
             If _returnCode = '' Then
                 If Not _infoOnly Then
                     _jobsCreated := _jobsCreated + 1;
                 End If;
+
+                CONTINUE;
+            End If;
+
+            If _message = '' Then
+                _message := _newMessage;
             Else
-            -- <d>
-                If _message = '' Then
-                    _message := _newMessage;
+                _message := format('%s; %s', _message, _newMessage);
+            End If;
+
+            -- ResultCode U5250 means a duplicate job exists; that error can be ignored
+            If _returnCode <> 'U5250' Then
+
+                -- Append the _result ID to _message
+                -- Increment _jobFailCount, but keep trying to create the other predefined jobs for this dataset
+                _jobFailCount := _jobFailCount + 1;
+                If _jobFailErrorCode = '' Then
+                    _jobFailErrorCode := _returnCode;
+                End If;
+
+                _message := format('%s [%s]', _message, _returnCode);
+
+                _logMessage := _newMessage;
+
+                If Position(_datasetName In _logMessage) = 0 Then
+                    _logMessage := format('%s; Dataset %s,', _logMessage, _datasetName)
                 Else
-                    _message := format('%s; %s', _message, _newMessage);
+                    _logMessage := format('%s;', _logMessage);
                 End If;
 
-                -- ResultCode U5250 means a duplicate job exists; that error can be ignored
-                If _returnCode <> 'U5250' Then
+                _logMessage := format('%s %s', _logMessage, _analysisToolName);
 
-                    -- Append the _result ID to _message
-                    -- Increment _jobFailCount, but keep trying to create the other predefined jobs for this dataset
-                    _jobFailCount := _jobFailCount + 1;
-                    If _jobFailErrorCode = '' Then
-                        _jobFailErrorCode := _returnCode;
-                    End If;
+                CALL post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
 
-                    _message := _message || ' [' || _returnCode || ']';
+            End If;
 
-                    _logMessage := _newMessage;
-
-                    If Position(_datasetName In _logMessage) < 1 Then
-                        _logMessage := _logMessage || '; Dataset ' || _datasetName || ', ';
-                    Else
-                        _logMessage := format('%s;', _logMessage);
-                    End If;
-
-                    _logMessage := _logMessage + _analysisToolName;
-
-                    CALL post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
-
-                End If;
-
-            End If; -- </d>
-
-        END LOOP; -- </b>
+        END LOOP;
 
         ---------------------------------------------------
         -- Construct the summary message
@@ -281,9 +282,9 @@ BEGIN
             -- _message might look like this: Dataset rating (-10) does not allow creation of jobs: 47538_Pls_FF_IGT_23_25Aug10_Andromeda_10-07-10
             -- If it does, update _message to remove the dataset name
 
-            _message := Replace(_message, 'does not allow creation of jobs: ' || _datasetName, 'does not allow creation of jobs');
+            _message := Replace(_message, format('does not allow creation of jobs: %s', _datasetName), 'does not allow creation of jobs');
 
-            _newMessage := _newMessage || '; ' || _message;
+            _newMessage := format('%s; %s', _newMessage, _message);
         End If;
 
         _message := _newMessage;

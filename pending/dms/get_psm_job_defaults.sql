@@ -24,8 +24,44 @@ AS $$
 **      default search settings for creating an analysis job to search MS/MS data (PSM search)
 **
 **  Arguments:
-**    _datasets   Input/output parameter; comma-separated list of datasets; will be alphabetized after removing duplicates
-**    _metadata   Output parameter; table of metadata with columns separated by colons and rows separated by vertical bars
+**    _datasets             Input/output parameter; comma-separated list of datasets; will be alphabetized after removing duplicates
+**    _metadata             Output parameter; table of metadata with columns separated by colons and rows separated by vertical bars
+**    _toolName             Output parameter; tool name
+**    _jobTypeName          Output parameter; job type name
+**    _jobTypeDesc          Output parameter; job type description
+**    _dynMetOxEnabled      Output parameter; 1 if dynamic Met Oxidation should be enabled, otherwise 0
+**    _statCysAlkEnabled    Output parameter; 1 if static Cys Alkylation should be enabled, otherwise 0
+**    _dynSTYPhosEnabled    Output parameter; 1 if dynamic STY Phosphorylation should be enabled, otherwise 0
+**    _organismName         Output parameter; organism
+**    _protCollNameList     Output parameter; protein collections
+**    _protCollOptionsList  Output parameter; protein collection options
+**
+**  Example usage:
+**    CALL get_psm_job_defaults ('QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13',
+**                               _metadata,              -- Output
+**                               _toolName,              -- Output
+**                               _jobTypeName,           -- Output
+**                               _jobTypeDesc,           -- Output
+**                               _dynMetOxEnabled,       -- Output
+**                               _statCysAlkEnabled,     -- Output
+**                               _dynSTYPhosEnabled,     -- Output
+**                               _organismName,          -- Output
+**                               _protCollNameList,      -- Output
+**                               _protCollOptionsList,   -- Output
+**                               _message,               -- Output
+**                               _returnCode);           -- Output
+**
+**    Output values:
+**      _metadata = 'Metadata:Description:Datasets|HMS-HCD-HMSn:High res MS with high res HCD MSn:1|Alkylated:Sample (experiment) marked as alkylated in DMS:1|Labeling:none:1|Enzyme:Trypsin:1|'
+**      _toolName = 'MSGFPlus_MzML'
+**      _jobTypeName = 'High Res MS1'
+**      _jobTypeDesc = 'Data acquired with high resolution MS1 spectra, typically an Orbitrap or LTQ-FT'
+**      _dynMetOxEnabled = '1'
+**      _statCysAlkEnabled = '1'
+**      _dynSTYPhosEnabled = '0'
+**      _organismName = 'Mus_musculus'
+**      _protCollNameList = 'M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov'
+**      _protCollOptionsList = 'seq_direction=decoy	'
 **
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version
@@ -249,11 +285,11 @@ BEGIN
 
     -- Dataset Type stats
     --
-    SELECT string_agg(Dataset_Type || ':' || Description || ':' || DatasetCount::text, '|' ORDER BY Dataset_Type)
+    SELECT string_agg(format('%s:%s:%s', Dataset_Type, Description, DatasetCount), '|' ORDER BY Dataset_Type)
     INTO _addon
     FROM Tmp_DatasetTypeStats;
 
-    _metadata := _metadata || _addon || '|' ;
+    _metadata := format('%s%s|', _metadata, _addon);
 
     -- Alkylation
     --
@@ -266,19 +302,19 @@ BEGIN
          INNER JOIN t_experiments E
            ON DS.exp_id = E.exp_id;
 
-    _metadata := _metadata || format('Alkylated:Sample (experiment) marked as alkylated in DMS:%s|', datasetCountAlkylated);
+    _metadata := format('%sAlkylated:Sample (experiment) marked as alkylated in DMS:%s|', _metadata, datasetCountAlkylated);
 
     -- Labeling
     --
-    SELECT string_agg('Labeling:' || Labeling || ':' || DatasetCount::text, '|' ORDER BY Labeling)
+    SELECT string_agg(format('Labeling:%s:%s', Labeling, DatasetCount), '|' ORDER BY Labeling)
     INTO _addon
     FROM Tmp_DatasetLabelingStats;
 
-    _metadata := _metadata || _addon || '|';
+    _metadata := format('%s%s|', _metadata, _addon);
 
     -- Enzyme
     --
-    SELECT string_agg('Enzyme:' || CountQ.enzyme_name || ':' || CountQ.Datasets::text, '|' ORDER BY CountQ.enzyme_name)
+    SELECT string_agg('Enzyme:%s:%s', CountQ.enzyme_name, CountQ.Datasets, '|' ORDER BY CountQ.enzyme_name)
     INTO _addon
     FROM (  SELECT Enz.enzyme_name, COUNT(*) As Datasets
             FROM Tmp_DatasetInfo
@@ -292,16 +328,16 @@ BEGIN
         ) CountQ
     ORDER BY;
 
-    _metadata := _metadata || _addon || '|';
+    _metadata := format('%s%s|', _metadata, _addon);
 
     -- Display the organism names if datasets from multiple organisms are present
     --
     If _organismCount > 1 Then
-        SELECT string_agg('Organism:' || OrganismName || ':' || DatasetCount::text, '|' ORDER BY OrganismName)
+        SELECT string_agg(format('Organism:%s:%s', OrganismName, DatasetCount), '|' ORDER BY OrganismName)
         INTO _addon
         FROM Tmp_Organisms;
 
-        _metadata := _metadata || _addon || '|';
+        _metadata := format('%s%s|', _metadata, _addon);
     End If;
 
     -- Look for phosphorylation
