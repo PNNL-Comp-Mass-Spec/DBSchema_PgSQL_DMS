@@ -59,7 +59,7 @@ BEGIN
 
     -- Auto change drive F to F:\
     If _storageVol SIMILAR TO '[A-Z]' Then
-        _storageVol := _storageVol || ':\';
+        _storageVol := format('%s:\', _storageVol);
     End If;
 
     -- Auto change drive F: to F:\

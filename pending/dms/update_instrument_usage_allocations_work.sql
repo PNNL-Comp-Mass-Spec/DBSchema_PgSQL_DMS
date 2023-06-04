@@ -70,7 +70,7 @@ BEGIN
     -----------------------------------------------------------
 
     MERGE INTO t_instrument_allocation AS Target
-    USING ( SELECT Proposal, InstGroup,  Allocation, comment, FY, Operation
+    USING ( SELECT Proposal, InstGroup, Allocation, Comment, FY, Operation
             FROM Tmp_Allocation_Operations
           ) AS Source
     ON (Source.Proposal = Target.proposal_id AND

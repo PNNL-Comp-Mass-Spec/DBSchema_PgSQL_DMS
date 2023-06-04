@@ -64,9 +64,7 @@ DECLARE
     _curVal text;
     _keywordStartIndex int := 0;
     _uniqueID int := 0
-    _nextID int := 0;
-    _kw text;
-    _continue boolean;
+    _keyword text;
     _total int := 0;
     _hasUser int := 0;
     _hasProposal int := 0;
@@ -160,34 +158,19 @@ BEGIN
         -- corresponding values
         ---------------------------------------------------
 
-        _continue := true;
-
-        WHILE _continue
-        LOOP
-            ---------------------------------------------------
-            -- Get next keyword to look for
-            ---------------------------------------------------
-
-            SELECT ',' || UsageKey || '[' As KeyWord
-                UsageValue,
-                UniqueID
-            INTO _kw, _curVal, _uniqueID
+        FOR _keyword, _curVal, _uniqueID IN
+            SELECT format(',%s[', UsageKey) As KeyWord
+                   UsageValue,
+                   UniqueID
             FROM Tmp_UsageInfo
-            WHERE UniqueID > _nextID
-            LIMIT 1;
+            ORDER BY UniqueID
 
-            If Not FOUND Then
-                -- Break out of the while loop
-                EXIT;
-            End If;
-
-            _nextID := _uniqueID;
-
+        LOOP
             ---------------------------------------------------
             -- Look for the keyword in _commentToSearch
             ---------------------------------------------------
 
-            _index := Position(_kw In _commentToSearch);
+            _index := Position(_keyword In _commentToSearch);
 
             ---------------------------------------------------
             -- If we found a keyword in the text
@@ -196,25 +179,25 @@ BEGIN
 
             If _index = 0 Then
                 If _showDebug Then
-                    RAISE INFO '  keyword not found: %', _kw;
+                    RAISE INFO '  keyword not found: %', _keyword;
                 End If;
 
                 CONTINUE;
             End If;
 
             If _showDebug Then
-                RAISE INFO 'Parse keyword % at index %', _kw, _index;
+                RAISE INFO 'Parse keyword % at index %', _keyword, _index;
             End If;
 
             _keywordStartIndex := _index;
 
-            _startOfValue := _index + char_length(_kw);
+            _startOfValue := _index + char_length(_keyword);
             _endOfValue := Position(']' In Substring(_commentToSearch, _startOfValue)) + _startOfValue - 1;
 
             If _endOfValue = 0 Then
                 _logErrors := false;
                 _invalidUsage := 1;
-                RAISE EXCEPTION 'Could not find closing bracket for "%"', _kw;
+                RAISE EXCEPTION 'Could not find closing bracket for "%"', _keyword;
             End If;
 
             INSERT INTO Tmp_UsageText ( UsageText )
@@ -228,7 +211,7 @@ BEGIN
             If public.try_cast(_val, null::int) Is Null Then
                 _logErrors := false;
                 _invalidUsage := 1;
-                RAISE EXCEPTION 'Percentage value for usage "%" is not a valid integer; see ID %', _kw, _seq;
+                RAISE EXCEPTION 'Percentage value for usage "%" is not a valid integer; see ID %', _keyword, _seq;
             End If;
 
             UPDATE Tmp_UsageInfo

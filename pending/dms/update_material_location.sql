@@ -176,11 +176,11 @@ BEGIN
             If _oldComment <> '' Then
                 If _comment = '' Then
                     _logMessage := format('Material location comment "%s" removed by %s for material location %s',
-                                            _oldComment, _callingUser, _locationTag);
+                                          _oldComment, _callingUser, _locationTag);
 
                 Else
                     _logMessage := format('Material location comment changed from "%s" to "%s" by %s for material location %s',
-                                            _oldComment, _comment, _callingUser, _locationTag);
+                                          _oldComment, _comment, _callingUser, _locationTag);
                 End If;
 
                 CALL post_log_entry ('Normal', _logMessage, 'Update_Material_Location');

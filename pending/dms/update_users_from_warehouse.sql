@@ -131,7 +131,7 @@ BEGIN
                false AS UpdateRequired
         FROM t_users U
              INNER JOIN pnnldata."VW_PUB_BMI_EMPLOYEE" Src
-               ON U.hid = 'H' || Src.HANFORD_ID
+               ON U.hid = format('H%s', Src.HANFORD_ID)
         WHERE U.update = 'Y';
 
         ----------------------------------------------------------
@@ -147,7 +147,7 @@ BEGIN
                                    active,
                                    UpdateRequired )
         SELECT U.user_id,
-               Src.last_name || ', ' || Src.pref_first_name,
+               format('%s, %s', Src.last_name, Src.pref_first_name),
                Src.internet_address,
                NetworkInfo.NETWORK_DOMAIN,
                NetworkInfo.NETWORK_ID,
@@ -156,7 +156,7 @@ BEGIN
                false AS UpdateRequired
         FROM t_users U
              INNER JOIN pnnldata.vw_pub_pnnl_associate Src
-               ON U.hid = 'H' || Src.HANFORD_ID
+               ON U.hid = format('H%s', Src.HANFORD_ID)
              LEFT OUTER JOIN pnnldata."VW_PUB_BMI_NT_ACCT_TBL" NetworkInfo
                ON Src.hanford_id = NetworkInfo.HANFORD_ID
              LEFT OUTER JOIN Tmp_UserInfo Target
@@ -228,7 +228,7 @@ BEGIN
 
             _message := format('User update would result in %s', public.check_plural(_conflictCount, 'a duplicate name', 'duplicate names'));
 
-            SELECT string_agg(Coalesce(OldName, '??? Undefined ???') || ' --> ' | Coalesce(NewName, '??? Undefined ???'), ', ' ORDER BY NewName, OldName)
+            SELECT string_agg(format('%s --> %s', Coalesce(OldName, '??? Undefined ???'), Coalesce(NewName, '??? Undefined ???')), ', ' ORDER BY NewName, OldName)
             INTO _addon
             FROM Tmp_NamesAfterUpdate
             WHERE Conflict;
@@ -279,12 +279,12 @@ BEGIN
             -- Preview the updates
             ----------------------------------------------------------
             --
-            SELECT U.name,    Src.name AS Name_New,
-                   U.email,   Src.email AS EMail_New,
-                   U.domain,  Src.domain AS Domain_New,
-                   U.payroll, Src.PNNL_Payroll AS Payroll_New,
-                   U.username,     Src.NetworkLogin AS NetworkLogin_New,
-                   U.active,  Src.active AS Active_New
+            SELECT U.name,     Src.name AS Name_New,
+                   U.email,    Src.email AS EMail_New,
+                   U.domain,   Src.domain AS Domain_New,
+                   U.payroll,  Src.PNNL_Payroll AS Payroll_New,
+                   U.username, Src.NetworkLogin AS NetworkLogin_New,
+                   U.active,   Src.active AS Active_New
             FROM t_users U
                  INNER JOIN Tmp_UserInfo Src
                    ON U.user_id = Src.user_id
@@ -317,7 +317,7 @@ BEGIN
         If Not _infoOnly And _missingCount > 0 Then
             _message := format('%s not found in the Data Warehouse', public.check_plural(_missingCount, 'User', 'Users');
 
-            SELECT string_agg(Coalesce(U.hid, '??? Undefined hid for user_id=' || U.user_id::text || ' ???'), ', ' ORDER BY U.user_id)
+            SELECT string_agg(Coalesce(U.hid, format('??? Undefined hid for user_id=%s ???', U.user_id)), ', ' ORDER BY U.user_id)
             INTO _addon
             FROM t_users U
                  INNER JOIN Tmp_UserProblems M
@@ -350,7 +350,7 @@ BEGIN
             _message := format('%s with mismatch between username in DMS and NetworkLogin in Warehouse', public.check_plural(_missingCount, 'User', 'Users'));
 
             SELECT string_agg(format('%s <> %s',
-                                        Coalesce(U.username, '??? Undefined username for user_id=' || U.user_id::text || ' ???'),
+                                        Coalesce(U.username, format('??? Undefined username for user_id=%s ???', U.user_id)),
                                         Coalesce(M.NetworkLogin, '??')),
                               ', ' ORDER BY U.user_id)
             INTO _addon
@@ -371,7 +371,7 @@ BEGIN
 
             SELECT M.Warning,
                    U.user_id,
-                   Coalesce(U.hid, '??? Undefined hid for user_id=' || Convert(text, U.user_id) || ' ???') AS U_HID,
+                   Coalesce(U.hid, format('??? Undefined hid for user_id=%s ???', U.user_id)) AS U_HID,
                    name,
                    username,
                    status,

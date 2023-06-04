@@ -245,7 +245,7 @@ BEGIN
             -- Show the old and new values
 
             RETURN QUERY
-            SELECT DS.Dataset_Name  AS Dataset_Name_Old,
+            SELECT DS.Dataset  AS Dataset_Name_Old,
                    _datasetNameNew AS Dataset_Name_New,
                    DS.Dataset_ID,
                    DS.Created   AS Dataset_Created,
@@ -603,14 +603,14 @@ BEGIN
             ORDER BY SuffixID
         LOOP
             RAISE INFO 'Move % %',
-                        _datasetNameOld || _fileSuffix,
-                        _datasetNameNew || _fileSuffix;
+                        format('%s%s', _datasetNameOld, _fileSuffix),
+                        format('%s%s', _datasetNameNew, _fileSuffix);
 
             _jobFileUpdateCount := _jobFileUpdateCount + 1;
 
         END LOOP;
 
-        _datasetInfoFile := _datasetNameNew || '_DatasetInfo.xml'
+        _datasetInfoFile := format('%s_DatasetInfo.xml', _datasetNameNew)
 
         If _resultsFolder = 'QC' Then
             RAISE INFO '';

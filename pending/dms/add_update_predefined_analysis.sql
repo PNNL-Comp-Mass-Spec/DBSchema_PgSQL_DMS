@@ -334,7 +334,7 @@ BEGIN
                     FROM public.get_analysis_tool_allowed_dataset_type_list(_analysisToolID);
 
                     _msg := format('Criteria matched instrument "%s" with allowed dataset types of "%s"; however, analysis tool %s allows these dataset types: "%s"',
-                                    _instrument.InstrumentName, _allowedDatasetTypes, _analysisToolName, _allowedDSTypesForTool);
+                                   _instrument.InstrumentName, _allowedDatasetTypes, _analysisToolName, _allowedDSTypesForTool);
 
                     RAISE EXCEPTION '%', _msg;
                 End If;
@@ -356,7 +356,7 @@ BEGIN
                     FROM public.get_analysis_tool_allowed_instrument_class_list (_analysisToolID);
 
                     _msg := format('Criteria matched instrument "%s" which is Instrument Class "%s"; however, analysis tool %s allows these instrument classes: "%s"'
-                                    _instrument.InstrumentName, _instrument.InstrumentClass, _analysisToolName, _allowedInstClassesForTool);
+                                   _instrument.InstrumentName, _instrument.InstrumentClass, _analysisToolName, _allowedInstClassesForTool);
 
                     RAISE EXCEPTION '%', _msg;
                 END If;

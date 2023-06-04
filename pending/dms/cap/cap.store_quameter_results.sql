@@ -15,7 +15,7 @@ AS $$
 **      Store Quameter results by calling public.store_quameter_results
 **
 **  Arguments:
-**    _datasetID    If this value is 0,  will determine the dataset name using the contents of _resultsXML
+**    _datasetID    If this value is 0, will determine the dataset name using the contents of _resultsXML
 **    _resultsXML   XML holding the Quameter results for a single dataset
 **
 **  Auth:   mem

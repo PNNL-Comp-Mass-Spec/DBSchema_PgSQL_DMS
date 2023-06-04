@@ -184,7 +184,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := _datasetCount::text || ' datasets updated';
+    _usageMessage := format('%s %s updated', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets');
     CALL post_usage_log_entry ('Update_Dataset_Dispositions_By_Name', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetsToUpdate;

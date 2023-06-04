@@ -127,7 +127,7 @@ BEGIN
             If FOUND Then
 
                 _logMessage := format('Added new automatic requested run since re-using request %s; dataset "%s" is now associated with request %s',
-                                        _requestID, _existingDatasetName, _newAutoRequestID);
+                                      _requestID, _existingDatasetName, _newAutoRequestID);
 
                 CALL post_log_entry ('Warning', _logMessage, 'Consume_Scheduled_Run');
 

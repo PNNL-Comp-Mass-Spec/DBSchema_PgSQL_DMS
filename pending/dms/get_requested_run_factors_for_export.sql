@@ -58,17 +58,15 @@ BEGIN
     -- Filter by request name
     -----------------------------------------
     --
-    DELETE FROM
-        Tmp_Requests
-    WHERE
-        NOT EXISTS (
+    DELETE FROM Tmp_Requests
+    WHERE NOT EXISTS (
             SELECT request_id
             FROM t_requested_run
-            WHERE
-                request_id = Request AND
-                request_name LIKE '%' || _nameContains || '%'
+            WHERE request_id = Request AND
+                  request_name LIKE '%' || _nameContains || '%'
         )
 */
+
     -----------------------------------------
     -- Build the Sql for obtaining the factors
     -- for the requests
@@ -80,7 +78,7 @@ BEGIN
 
     DROP TABLE Tmp_Requests;
 
-    _colList := 'BatchID, Name,  Status,  Request,  Dataset_ID,  Dataset,  Experiment,  Experiment_ID,  Block,  [Run Order] ';
+    _colList := 'BatchID, Name, Status, Request, Dataset_ID, Dataset, Experiment, Experiment_ID, Block, [Run Order] ';
 
     CALL make_factor_crosstab_sql (_colList, _sql => _sql);
 

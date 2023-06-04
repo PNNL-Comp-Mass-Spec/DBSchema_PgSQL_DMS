@@ -390,7 +390,7 @@ BEGIN
     --
     If _paramFileName <> 'na' Then
         If _paramFileName Similar To 'MSGFDB[_]%' Then
-            _paramFileName := 'MSGFPlus_' || Substring(_paramFileName, 8, 500);
+            _paramFileName := format('MSGFPlus_%s', Substring(_paramFileName, 8, 500));
         End If;
 
         If Exists (SELECT * FROM t_param_files WHERE param_file_name = _paramFileName AND valid <> 0) Then
@@ -414,7 +414,11 @@ BEGIN
                 ORDER BY ToolList.analysis_tool_id
                 LIMIT 1;
 
-                _message := 'Parameter file "' || Coalesce(_paramFileName, '??') || '" is for tool ' || Coalesce(_paramFileTool, '??') || '; not ' || Coalesce(_toolName, '??');
+                _message := format('Parameter file "%s" is for tool %s; not %s',
+                                   Coalesce(_paramFileName, '??'),
+                                   Coalesce(_paramFileTool, '??'),
+                                   Coalesce(_toolName, '??'));
+
                 If _showDebugMessages Then
                     RAISE INFO '%', _message;
                 End If;
@@ -426,9 +430,9 @@ BEGIN
             -- Parameter file either does not exist or is inactive
             --
             If Exists (SELECT * FROM t_param_files WHERE param_file_name = _paramFileName AND valid = 0) Then
-                _message := format('Parameter file is inactive and cannot be used' || ':"%s"', _paramFileName);
+                _message := format('Parameter file is inactive and cannot be used:"%s"', _paramFileName);
             Else
-                _message := format('Parameter file could not be found' || ':"%s"', _paramFileName);
+                _message := format('Parameter file could not be found:"%s"', _paramFileName);
             End If;
 
             If _showDebugMessages Then
@@ -449,9 +453,9 @@ BEGIN
             -- Settings file either does not exist or is inactive
             --
             If Exists (SELECT * FROM t_settings_files WHERE file_name = _settingsFileName AND active = 0) Then
-                _message := format('Settings file is inactive and cannot be used' || ':"%s"', _settingsFileName);
+                _message := format('Settings file is inactive and cannot be used:"%s"', _settingsFileName);
             Else
-                _message := format('Settings file could not be found' || ':"%s"', _settingsFileName);
+                _message := format('Settings file could not be found:"%s"', _settingsFileName);
             End If;
 
             If _showDebugMessages Then

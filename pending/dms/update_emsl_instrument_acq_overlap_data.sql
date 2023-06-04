@@ -294,7 +294,7 @@ BEGIN
                        InstUsage.Start,
                        InstUsage.Dataset_ID,
                        InstUsage.Seq,
-                       DS.Dataset_Name,
+                       DS.Dataset,
                        CASE WHEN InstUsage.Dataset_ID = _datasetID AND InstUsage.Seq = _lastSeq
                             THEN NULL
                             ELSE _datasetID
@@ -309,7 +309,7 @@ BEGIN
                               WHEN InstUsage.dataset_id = _datasetID THEN 2
                               ELSE 3
                          END,
-                         DS.Dataset_Name
+                         DS.Dataset
             End If;
 
         END LOOP;

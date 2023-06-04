@@ -27,7 +27,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          05/17/2018 mem - Prevent updating containers of type 'na'
-**          07/07/2022 mem - Include container name when logging error messages from UpdateMaterialContainers
+**          07/07/2022 mem - Include container name when logging error messages from Update_Material_Containers
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

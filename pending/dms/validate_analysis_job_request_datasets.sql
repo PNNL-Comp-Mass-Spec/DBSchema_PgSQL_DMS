@@ -130,7 +130,7 @@ BEGIN
 
         -- Truncate if over 400 characters long
         If char_length(_list) >= 400 Then
-            _list := Left(_list, 397) || '...';
+            _list := format('%s...', Left(_list, 397));
         End If;
 
         If Not _autoRemoveNotReleasedDatasets Then
@@ -241,7 +241,7 @@ BEGIN
           Dataset_Type LIKE 'IMS-MS%';
 
     If _hmsCount > 0 AND _msCount > 0 AND NOT _toolName::citext IN ('MSXML_Gen', 'MaxQuant', 'MSFragger', 'DiaNN') Then
-        _message := format('You cannot mix high-res MS datasets with low-res datasets; create separate analysis job requests. ' ||
+        _message := format('You cannot mix high-res MS datasets with low-res datasets; create separate analysis job requests. '
                            'You currently have %s high res (HMS) and %s low res (MS) datasets', _hmsCount, _msCount);
 
         If _showDebugMessages Then

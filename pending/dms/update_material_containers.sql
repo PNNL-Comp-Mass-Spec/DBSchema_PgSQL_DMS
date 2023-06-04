@@ -127,14 +127,14 @@ BEGIN
 
     If Exists (Select * From Tmp_Material_Container_List Where Type = 'na') Then
         If Position(',' In _containerList) > 1 Then
-            _message := 'Containers of type "na" cannot be updated by the website; contact a DMS admin (see UpdateMaterialContainers)';
+            _message := 'Containers of type "na" cannot be updated by the website; contact a DMS admin (see Update_Material_Containers)';
         Else
 
             SELECT Name
             INTO _containerName
             From Tmp_Material_Container_List
 
-            _message := 'Container "' || Coalesce(_containerName, _containerList) || '" cannot be updated by the website; contact a DMS admin (see UpdateMaterialContainers)';
+            _message := format('Container "%s" cannot be updated by the website; contact a DMS admin (see Update_Material_Containers)', Coalesce(_containerName, _containerList));
         End If;
 
         _returnCode := 'U5111';

@@ -265,7 +265,7 @@ BEGIN
 
     If Not _idType IN ('RequestID', 'DatasetID', 'Job', 'Dataset') Then
         _message := format('Identifier type "%s" was not recognized in the header row; should be Request, RequestID, DatasetID, Job, or Dataset (i.e. Dataset Name)',
-                            _idTypeOriginal);
+                           _idTypeOriginal);
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo

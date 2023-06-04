@@ -201,8 +201,8 @@ BEGIN
             FROM t_storage_path SPath
                  INNER JOIN t_instrument_name Inst
                    ON SPath.storage_path_id = Inst.source_path_id
-            WHERE (SPath.machine_name = _hostName OR SPath.machine_name = _hostName || '.bionet') AND
-                  (SPath.storage_path_function LIKE '%inbox%');
+            WHERE SPath.machine_name = _hostName OR SPath.machine_name = format('%s.bionet', _hostName) AND
+                  SPath.storage_path_function LIKE '%inbox%';
 
             INSERT INTO Tmp_Hosts (Host, NameOrIP, IsAlias, Instruments)
             VALUES (_hostName, _hostData, _isAlias, _instruments);

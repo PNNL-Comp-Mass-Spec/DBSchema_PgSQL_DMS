@@ -67,7 +67,7 @@ BEGIN
                                 Source.name_fm,
                                 CASE WHEN hanford_id IS NULL
                                      THEN NULL
-                                     ELSE 'H' || hanford_id
+                                     ELSE format('H%s', hanford_id)
                                      END AS HID,
                                 CASE WHEN hanford_id IS NULL
                                      THEN 2        -- Offsite

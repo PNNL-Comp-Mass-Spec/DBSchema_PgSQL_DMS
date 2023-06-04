@@ -105,7 +105,7 @@ BEGIN
         )
 
         INSERT INTO Tmp_RequestedRunUsageInfo
-            (request, usage,  proposal,emsl_user)
+            (request, usage, proposal, emsl_user)
         SELECT
             xmlNode.value('@request', 'text') request,
             xmlNode.value('@usage', 'text') usage,

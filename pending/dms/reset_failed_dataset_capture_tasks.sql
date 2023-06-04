@@ -175,14 +175,14 @@ BEGIN
                                    Entered,
                                    type,
                                    message )
-        SELECT 'ResetFailedDatasetCaptureTasks',
+        SELECT 'Reset_Failed_Dataset_Capture_Tasks',
                CURRENT_TIMESTAMP,
                'Error',
-               DS.Reset_Comment || ' ' || DS.Dataset AS Log_Message
+               format('%s %s', DS.Reset_Comment, DS.Dataset) AS Log_Message
         FROM Tmp_Datasets DS
              LEFT OUTER JOIN t_log_entries Logs
-               ON Logs.message = DS.Reset_Comment || ' ' || DS.Dataset AND
-                  posted_by = 'ResetFailedDatasetCaptureTasks'
+               ON Logs.message = format('%s %s', DS.Reset_Comment, DS.Dataset) AND
+                  posted_by IN ('Reset_Failed_Dataset_Capture_Tasks', 'ResetFailedDatasetCaptureTasks')
         WHERE DS.Reset_Comment <> '' AND
               Logs.message IS NULL
 

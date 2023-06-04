@@ -547,8 +547,8 @@ BEGIN
         SET Acq_Time_End = Acq_Time_Start + Interval '1 hour';
 
         _message := format(
-            'Acquisition length for dataset %s is over 7 days; ' ||
-            'the Acq_Time_End value (%s) is likely invalid, relative to Acq_Time_Start (%s); ' ||
+            'Acquisition length for dataset %s is over 7 days; '
+            'the Acq_Time_End value (%s) is likely invalid, relative to Acq_Time_Start (%s); '
             'setting Acq_Time_End to be 60 minutes after Acq_Time_Start',
             _datasetName,
             public.timestamp_text(_acqTimeEnd),

@@ -84,7 +84,7 @@ BEGIN
         WHERE interval_id = _runIntervalId
 
         If _returnCode <> '' OR Coalesce(_instrumentName, '') = '' Then
-            _message := 'Run Interval ID ' || Cast(_runIntervalId As text) || ' does not exist; cannot determine the instrument';
+            _message := format('Run Interval ID %s does not exist; cannot determine the instrument', _runIntervalId);
             RAISE EXCEPTION '%', _message;
         End If;
 

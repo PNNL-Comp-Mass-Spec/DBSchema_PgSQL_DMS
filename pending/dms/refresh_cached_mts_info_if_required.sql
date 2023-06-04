@@ -43,7 +43,7 @@ DECLARE
     _hoursSinceLastRefresh numeric(9,3);
     _hoursSinceLastFullRefresh numeric(9,3);
     _iteration int;
-    _limitToMaxKnownDMSJobs int;
+    _limitToMaxKnownDMSJobs boolean;
     _maxKnownDMSJob int;
     _callingProcName text;
     _currentLocation text := 'Start';
@@ -79,7 +79,7 @@ BEGIN
         WHILE _iteration <= 5
         LOOP
             _cacheTable := '';
-            _limitToMaxKnownDMSJobs := 0;
+            _limitToMaxKnownDMSJobs := false;
             _procedure := '';
 
             If _iteration = 1 Then
@@ -104,14 +104,14 @@ BEGIN
                 _cacheTable := 't_mts_pt_db_jobs_cached';
                 _idColumnName := 'job';
                 _procedure := 'Refresh_Cached_MTS_Job_Mapping_Peptide_DBs';
-                _limitToMaxKnownDMSJobs := 1;
+                _limitToMaxKnownDMSJobs := true;
             End If;
 
             If _iteration = 5 Then
                 _cacheTable := 't_mts_mt_db_jobs_cached';
                 _idColumnName := 'job';
                 _procedure := 'Refresh_Cached_MTS_Job_Mapping_MTDBs';
-                _limitToMaxKnownDMSJobs := 1;
+                _limitToMaxKnownDMSJobs := true;
             End If;
 
             If char_length(_cacheTable) > 0 Then
@@ -151,10 +151,10 @@ BEGIN
                         -- Less than _updateIntervalAllItems hours has elapsed since the last full update
                         -- Bump up _idMinimum to _dynamicMinimumCountThreshold less than the max ID in the target table
 
-                        _sql := ' SELECT MAX(' || quote_ident(_idColumnName) || ') FROM ' || quote_ident(_cacheTable);
+                        _sql := format('SELECT MAX(%I) FROM %I', _idColumnName _cacheTable);
 
-                        If _limitToMaxKnownDMSJobs = 1 Then
-                             _sql := _sql || ' WHERE ' || quote_ident(_idColumnName) || ' <= %1';
+                        If _limitToMaxKnownDMSJobs Then
+                             _sql := format('%s WHERE %I <= $1', _sql, _idColumnName);
                         End If;
 
                         EXECUTE _sql

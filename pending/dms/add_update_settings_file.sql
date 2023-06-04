@@ -131,7 +131,7 @@ BEGIN
 
         If _analysisToolForAutoSupersede <> _analysisTool Then
             _message := format('The Analysis Tool for the HMS_AutoSupersede file ("%s") must match the analysis tool for this settings file: %s vs. %s',
-                                _hmsAutoSupersede, _analysisToolForAutoSupersede, _analysisTool);
+                               _hmsAutoSupersede, _analysisToolForAutoSupersede, _analysisTool);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5205';
@@ -166,7 +166,7 @@ BEGIN
 
         If _analysisToolForAutoCentroid <> _analysisTool Then
             _message := format('The Analysis Tool for the MSGFPlus_AutoCentroid file ("%s") must match the analysis tool for this settings file: %s vs. %s',
-                                _msgfPlusAutoCentroid, _analysisToolForAutoCentroid, _analysisTool);
+                               _msgfPlusAutoCentroid, _analysisToolForAutoCentroid, _analysisTool);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5208';
@@ -191,7 +191,7 @@ BEGIN
 
         If FOUND Then
             _message := format('Settings file ID %s is named "%s"; cannot create a new, duplicate settings file',
-                                _settingsFileID, _fileName);
+                               _settingsFileID, _fileName);
 
             RAISE WARNING '%', _message;
 

@@ -85,7 +85,7 @@ BEGIN
     _eusUsersList :=  CASE WHEN _eusUsersList::citext  = _ovr THEN _userListSamplePrep   ELSE _eusUsersList  END;
 
     If _usageTypeSamplePrep = 'USER_REMOTE' And _eusUsageType::citext In ('USER', 'USER_ONSITE') Then
-        _message := 'Changed Usage Type to USER_REMOTE based on Prep Request ID ' || Cast(_prepRequestID as text);
+        _message := format('Changed Usage Type to USER_REMOTE based on Prep Request ID %s', _prepRequestID);
         _eusUsageType := 'USER_REMOTE';
     End If;
 END

@@ -157,7 +157,7 @@ BEGIN
         INTO _datasetCount
         FROM Tmp_DatasetInfo;
 
-        _message := 'Number of affected datasets:' || cast(_datasetCount as text);
+        _message := format('Number of affected datasets: %s', _datasetCount)
 
         ---------------------------------------------------
         -- Get information for datasets in list
@@ -357,7 +357,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := _datasetCount::text || ' datasets updated';
+    _usageMessage := format('%s %s updated', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets');
     CALL post_usage_log_entry ('Update_Dataset_Dispositions', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;

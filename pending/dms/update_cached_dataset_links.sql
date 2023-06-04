@@ -24,6 +24,7 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          07/31/2020 mem - Update MASIC_Directory_Name
 **          09/06/2022 mem - When _processingMode is 3, update datasets in batches (to decrease the likelihood of deadlock issues)
+**          06/03/2023 mem - Link to the SMAQC P_2C metric for QC_Mam datasets
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -293,31 +294,33 @@ BEGIN
         SET dataset_row_version = DFP.dataset_row_version,
             storage_path_row_version = DFP.storage_path_row_version,
             dataset_folder_path = CASE
-                WHEN DA.archive_state_id = 4 THEN 'Purged: ' || DFP.dataset_folder_path
+                WHEN DA.archive_state_id = 4 THEN format('Purged: %s', DFP.dataset_folder_path)
                 ELSE CASE
-                        WHEN DA.AS_instrument_data_purged > 0 THEN 'Raw Data Purged: ' || DFP.Dataset_Folder_Path
+                        WHEN DA.instrument_data_purged > 0 THEN format('Raw Data Purged: %s', DFP.Dataset_Folder_Path)
                         ELSE DFP.Dataset_Folder_Path
-                     End If;
+                     END
                 END,
             Archive_Folder_Path = CASE
-                WHEN DA.MyEMSLState > 0 And DS.Created >= make_date(2013, 9, 17) Then ''
+                WHEN DA.myemsl_state > 0 And DS.Created >= make_date(2013, 9, 17) THEN ''
                 ELSE DFP.Archive_Folder_Path
                 END,
             MyEMSL_URL = format('https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/%s', DS.Dataset_ID),
             QC_Link = CASE
                 WHEN DA.QC_Data_Purged > 0 THEN ''
-                ELSE DFP.Dataset_URL || 'QC/index.html'
+                ELSE format('%sQC/index.html', DFP.Dataset_URL)
                 END,
             QC_2D = CASE
                 WHEN DA.QC_Data_Purged > 0 THEN ''
-                ELSE DFP.Dataset_URL || J.Results_Folder_Name || '/'
+                ELSE format('%s%s/', DFP.Dataset_URL, J.Results_Folder_Name)
                 END,
             QC_Metric_Stats = CASE
                 WHEN Experiment SIMILAR TO 'QC[_]Shew%' THEN
-                        'http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/' || Inst.IN_Name || '/filterDS/QC_Shew'
+                       format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
+                WHEN Experiment SIMILAR TO 'QC[_]Mam%'  THEN
+                       format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
                 WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
-                        'http://prismsupport.pnl.gov/smaqc/index.php/smaqc/qcart/inst/' || Inst.IN_Name || '/filterDS/TEDDY_DISCOVERY'
-                ELSE 'http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/MS2_Count/inst/' || Inst.IN_Name || '/filterDS/' || SUBSTRING(DS.Dataset_Name, 1, 4)
+                       format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
+                ELSE   format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, SUBSTRING(DS.Dataset, 1, 4))
                 END,
             update_required = 0,
             last_affected = CURRENT_TIMESTAMP
@@ -378,31 +381,33 @@ BEGIN
                            DFP.dataset_row_version,
                            DFP.storage_path_row_version,
                            CASE
-                                WHEN DA.archive_state_id = 4 THEN 'Purged: ' || DFP.dataset_folder_path
+                                WHEN DA.archive_state_id = 4 THEN format('Purged: %s', DFP.dataset_folder_path)
                                 ELSE CASE
-                                        WHEN DA.AS_instrument_data_purged > 0 THEN 'Raw Data Purged: ' || DFP.Dataset_Folder_Path
+                                        WHEN DA.instrument_data_purged > 0 THEN format('Raw Data Purged: %s', DFP.Dataset_Folder_Path)
                                         ELSE DFP.Dataset_Folder_Path
-                                     END;
+                                     END
                            END AS Dataset_Folder_Path,
                            CASE
-                                WHEN DA.MyEMSLState > 0 And DS.Created >= make_date(2013, 9, 17) Then ''
+                                WHEN DA.myemsl_state > 0 And DS.Created >= make_date(2013, 9, 17) Then ''
                                 ELSE DFP.Archive_Folder_Path
                            END AS Archive_Folder_Path,
                            format('https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/%s', DS.Dataset_ID) AS MyEMSL_URL,
                            CASE
                                 WHEN DA.QC_Data_Purged > 0 THEN ''
-                                ELSE DFP.Dataset_URL || 'QC/index.html'
+                                ELSE format('%sQC/index.html', DFP.Dataset_URL)
                            END AS QC_Link,
                            CASE
                                 WHEN DA.QC_Data_Purged > 0 THEN ''
-                                ELSE DFP.Dataset_URL || J.Results_Folder_Name || '/'
+                                ELSE format('%s%s/', DFP.Dataset_URL, J.Results_Folder_Name)
                            END AS QC_2D,
                            CASE
-                                WHEN Experiment::citext SIMILAR TO 'QC[_]Shew%'::citext THEN
-                                    'http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/' || Inst.IN_Name || '/filterDS/QC_Shew'
-                                WHEN Experiment::citext SIMILAR TO 'TEDDY[_]DISCOVERY%'::citext THEN
-                                    'http://prismsupport.pnl.gov/smaqc/index.php/smaqc/qcart/inst/' || Inst.IN_Name || '/filterDS/TEDDY_DISCOVERY'
-                                ELSE 'http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/MS2_Count/inst/' || Inst.IN_Name || '/filterDS/' || SUBSTRING(DS.Dataset_Name, 1, 4)
+                                WHEN Experiment SIMILAR TO 'QC[_]Shew%' THEN
+                                     format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
+                                WHEN Experiment SIMILAR TO 'QC[_]Mam%' THEN
+                                     format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
+                                WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
+                                     format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
+                                ELSE format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, SUBSTRING(DS.Dataset, 1, 4))
                            END AS QC_Metric_Stats
                     FROM t_dataset DS
                         INNER JOIN t_cached_dataset_links DL

@@ -106,7 +106,7 @@ BEGIN
     If _orgDbReqd = 0 Then
         If _organismDBName::citext <> 'na' OR _protCollNameList::citext <> 'na' OR _protCollOptionsList::citext <> 'na' Then
             _message := format('Protein parameters must all be "na"; you have: Legacy Fasta (OrgDBName) = "%s", ProteinCollectionList = "%s", ProteinOptionsList = "%s"',
-                                _organismDBName, _protCollNameList,  _protCollOptionsList);
+                               _organismDBName, _protCollNameList,  _protCollOptionsList);
 
             _returnCode := 'U5393';
             RETURN;
@@ -161,7 +161,7 @@ BEGIN
 
             If FOUND Then
                 _message := format('Legacy Fasta file "%s" is defined for organism %s; you specified organism %s; cannot continue',
-                                    _organismDBName, _organismMatch, _organismName);
+                                   _organismDBName, _organismMatch, _organismName);
 
                 _returnCode := 'U5320';
                 RETURN;

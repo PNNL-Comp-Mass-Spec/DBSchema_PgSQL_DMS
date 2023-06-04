@@ -131,7 +131,7 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode::citext In ('add', 'update') Then
-            _msg2 := 'Invalid mode: ' || Coalesce(_mode, '??');
+            _msg2 := format('Invalid mode: %s', Coalesce(_mode, '??'));
             RAISE EXCEPTION '%', _msg2;
         End If;
 

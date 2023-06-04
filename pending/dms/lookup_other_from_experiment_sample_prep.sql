@@ -53,7 +53,7 @@ BEGIN
                 _message := format('Work package cannot be "%s" when the experiment does not have a sample prep request. Please provide a valid work package.', _ovr);
             Else
                 _message := format('Unable to change the work package from "%s" to the one associated with the experiment because the experiment was not found: %s',
-                                    _ovr, _experimentName
+                                   _ovr, _experimentName
             End If;
 
             _returnCode := 'U5201';

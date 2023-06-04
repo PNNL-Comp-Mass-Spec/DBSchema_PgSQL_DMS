@@ -571,7 +571,7 @@ BEGIN
 
                 If _returnCode <> '' Then
                     If _mode::citext = 'UpdateExistingJob' Then
-                        -- If None of the job steps has completed yet,  it's OK if there are parameter differences
+                        -- If None of the job steps has completed yet, it's OK if there are parameter differences
                         If Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state = 5) Then
                             _message := format('Conflicting parameters are not allowed when one or more job steps has completed: %s', _message);
                             RETURN;

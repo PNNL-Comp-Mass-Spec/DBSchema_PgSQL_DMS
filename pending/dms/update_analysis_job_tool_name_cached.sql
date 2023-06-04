@@ -89,7 +89,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := _jobCount::text || ' jobs updated';
+    _usageMessage := format('%s %s updated', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
 
     If Not _infoOnly Then
         CALL post_usage_log_entry ('Update_Analysis_Job_Tool_Name_Cached', _usageMessage;);

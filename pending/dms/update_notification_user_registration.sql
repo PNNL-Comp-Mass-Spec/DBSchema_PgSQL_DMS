@@ -138,7 +138,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := 'User ' || Coalesce(_username, 'NULL');
+    _usageMessage := format('User %s', Coalesce(_username, 'NULL'));
     CALL post_usage_log_entry ('Update_Notification_User_Registration', _usageMessage);
 
     DROP TABLE Tmp_NotificationOptions;

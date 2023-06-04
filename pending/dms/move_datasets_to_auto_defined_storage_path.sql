@@ -172,7 +172,7 @@ BEGIN
 
             If _storagePathIDNew <> 0 And _datasetInfo.StoragePathID <> _storagePathIDNew Then
 
-                SELECT OldStorage.Path || ' ' || NewStorage.Path
+                SELECT format('%s %s', OldStorage.Path, NewStorage.Path)
                 INTO _oldAndNewPaths
                 FROM ( SELECT format('\\%s\%s$\%s%s', machine_name, SUBSTRING(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
                        FROM t_storage_path

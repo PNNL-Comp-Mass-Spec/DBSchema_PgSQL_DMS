@@ -73,10 +73,10 @@ BEGIN
     Else
         UPDATE t_analysis_job
         SET job_state_id = 8,
-            comment = comment || _holdMessage
+            comment = format('%s%s', comment, _holdMessage)
         FROM Tmp_JobsToUpdate JTU
         WHERE JTU.Job = AJ.job AND
-               AJ.job_state_id = 1
+               AJ.job_state_id = 1;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

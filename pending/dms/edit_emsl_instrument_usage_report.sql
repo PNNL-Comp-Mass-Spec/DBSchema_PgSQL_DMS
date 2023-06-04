@@ -25,7 +25,7 @@ AS $$
 **
 **  Arguments:
 **    _operator    Operator for update (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
-**    _fieldName   Proposal, Usage,  Users,  Operator,  Comment,
+**    _fieldName   Proposal, Usage, Users, Operator, Comment
 **
 **  Auth:   grk
 **  Date:   08/31/2012 grk - Initial release

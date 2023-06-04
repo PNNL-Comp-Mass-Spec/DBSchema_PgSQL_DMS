@@ -260,7 +260,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := _updateRowCount::text || ' requested runs updated';
+    _usageMessage := format('%s requested %s updated', _updateRowCount, public.check_plural(_updateRowCount, 'run', 'runs'));
     CALL post_usage_log_entry ('Update_LC_Cart_Request_Assignments', _usageMessage);
 
     DROP TABLE Tmp_BlockingInfo;

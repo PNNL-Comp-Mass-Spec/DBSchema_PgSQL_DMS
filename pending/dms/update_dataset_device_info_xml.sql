@@ -205,8 +205,8 @@ BEGIN
                Src.device_description
         FROM Tmp_DatasetDevicesTable Src
         WHERE Src.device_id IS NULL
-        Union
-        SELECT 'Existing device, ID ' || Cast(DD.device_id AS text) AS Info_Message,
+        UNION
+        SELECT format('Existing device, ID %s', DD.device_id) AS Info_Message,
                DD.device_type,
                DD.device_number,
                DD.device_name,

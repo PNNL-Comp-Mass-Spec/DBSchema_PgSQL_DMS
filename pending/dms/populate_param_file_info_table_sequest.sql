@@ -80,9 +80,9 @@ BEGIN
 
         _sql :=        ' UPDATE Tmp_ParamFileInfo'                                           ||
                 format(' SET %s = PE.entry_value::%s', _paramEntry.TargetColumn, _paramEntry.TargetDataType) ||
-                       ' FROM t_param_entries PE INNER JOIN'                                 ||
-                            ' Tmp_ParamEntryInfo PEI ON PE.entry_type = PEI.entry_type AND'  ||
-                            ' PE.entry_specifier = PEI.entry_specifier INNER JOIN'           ||
+                       ' FROM t_param_entries PE INNER JOIN'
+                            ' Tmp_ParamEntryInfo PEI ON PE.entry_type = PEI.entry_type AND'
+                            ' PE.entry_specifier = PEI.entry_specifier INNER JOIN'
                             ' Tmp_ParamFileInfo PFI ON PE.param_file_id = PFI.param_file_id' ||
                 format(' WHERE PEI.UniqueID = %s', _paramEntry.UniqueID);
 

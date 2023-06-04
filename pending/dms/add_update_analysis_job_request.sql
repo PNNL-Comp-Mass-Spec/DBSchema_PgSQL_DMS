@@ -674,7 +674,7 @@ BEGIN
         ---------------------------------------------------
         If _mode::citext = 'PreviewAdd' Then
             _message := format('Would create request "%s" with parameter file "%s" and settings file "%s"',
-                            _requestName, _paramFileName, _settingsFileName;
+                               _requestName, _paramFileName, _settingsFileName;
         End If;
 
         ---------------------------------------------------

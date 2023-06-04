@@ -20,7 +20,7 @@ AS $$
 **  Auth:   grk
 **  Date:   03/04/2003
 **          02/16/2007 grk - Add completion code options and also set archive state (Ticket #131)
-**          08/04/2008 mem - Now updating column AS_instrument_data_purged (Ticket #683)
+**          08/04/2008 mem - Now updating column instrument_data_purged (Ticket #683)
 **          01/26/2011 grk - Modified actions for _completionCode = 2 to bump holdoff and call broker
 **          01/28/2011 mem - Changed holdoff bump from 12 to 24 hours when _completionCode = 2
 **          02/01/2011 mem - Added support for _completionCode 3
@@ -240,13 +240,13 @@ Code 6 (Purged all data except QC folder)
     WHERE dataset_id = _datasetID;
 
     If _completionState in (4, 14) Then
-        -- Dataset was purged; update AS_instrument_data_purged to be 1
+        -- Dataset was purged; update instrument_data_purged to be 1
 
         -- This field is useful because, if an analysis job is run on a purged dataset,
         -- archive_state_id will change back to 3=Complete, and we therefore
         -- wouldn't be able to tell if the raw instrument file is available
 
-        -- Note that trigger trig_u_Dataset_Archive will likely have already updated AS_instrument_data_purged
+        -- Note that trigger trig_u_Dataset_Archive will likely have already updated instrument_data_purged
         --
         UPDATE t_dataset_archive
         SET instrument_data_purged = 1
@@ -256,7 +256,7 @@ Code 6 (Purged all data except QC folder)
 
     If _completionState in (4) Then
         -- Make sure QC_Data_Purged is now 1
-        -- Note that trigger trig_u_Dataset_Archive will likely have already updated AS_instrument_data_purged
+        -- Note that trigger trig_u_Dataset_Archive will likely have already updated instrument_data_purged
         --
         UPDATE t_dataset_archive
         SET qc_data_purged = 1

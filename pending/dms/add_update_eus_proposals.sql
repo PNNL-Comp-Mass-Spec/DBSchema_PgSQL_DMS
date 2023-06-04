@@ -160,7 +160,7 @@ BEGIN
             If Not Exists (SELECT * FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
                 _logErrors := false;
                 _msg := format('Cannot supersede proposal "%s" with "%s" since the new proposal is not in the database',
-                                _eusPropID, _autoSupersedeProposalID);
+                               _eusPropID, _autoSupersedeProposalID);
                 RAISE EXCEPTION '%', _msg;
             End If;
 

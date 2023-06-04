@@ -171,7 +171,7 @@ BEGIN
     WHERE storage_path_id = _storagePathIdNew
 
     If Not FOUND Then
-        _message := 'Storage path ID ' || Cast(_storagePathIdNew As text) || ' not found in t_storage_path; aborting';
+        _message := format('Storage path ID %s not found in t_storage_path; aborting', _storagePathIdNew);
         _returnCode := 'U5206';
         RETURN;
     End If;

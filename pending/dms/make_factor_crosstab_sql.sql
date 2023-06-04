@@ -60,26 +60,27 @@ BEGIN
     WHERE Src.type= 'Run_Request' AND
           Trim(Src.Name) <> '';
 
-    -----------------------------------------
-    -- Determine the factor names defined by the
-    -- factor entries in Tmp_Factors
-    -----------------------------------------
+    -----------------------------------------------------------------------------
+    -- Determine the factor names defined by the factor entries in Tmp_Factors
+    -- Use %I to quote any factor names that have a space or capital letters
+    -----------------------------------------------------------------------------
 
-    SELECT string_agg(format('"%s"', Src.name), ', ' ORDER BY Src.name)
+    SELECT string_agg(format('%I', GroupQ.name), ', ' ORDER BY GroupQ.name)
     INTO _factorNameList
-    FROM t_factor Src
-        INNER JOIN Tmp_Factors I
-        ON Src.factor_id = I.FactorID
-    GROUP BY Src.name;
+    FROM ( SELECT Src.name
+           FROM t_factor Src
+                INNER JOIN Tmp_Factors I
+                  ON Src.factor_id = I.FactorID
+           GROUP BY Src.name) GroupQ
 
-    -----------------------------------------
+    ---------------------------------------------------
     -- SQL for factors as crosstab (PivotTable)
-    -----------------------------------------
+    ---------------------------------------------------
     --
     _crossTabSql := format(' SELECT PivotResults.type, PivotResults.target_id, %s', _factorNameList)         ||
-                           ' FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value'                      ||
-                                 ' FROM t_factor Src INNER JOIN Tmp_Factors I ON Src.factor_id = I.FactorID' ||
-                                 ') AS DataQ'                                                                ||
+                           ' FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value'
+                                 ' FROM t_factor Src INNER JOIN Tmp_Factors I ON Src.factor_id = I.FactorID'
+                                 ') AS DataQ'
                                  ' PIVOT ('                                                                  ||
                           format('   MAX(value) FOR name IN ( %s ) ', _factorNameList)                       ||
                                  ' ) AS PivotResults';

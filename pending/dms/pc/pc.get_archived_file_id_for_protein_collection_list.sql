@@ -196,7 +196,7 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Warning: Could not find any archived output files that contain "%s" and have Creation_Options "%s"',
-                            _proteinCollectionListClean, _creationOptions);
+                           _proteinCollectionListClean, _creationOptions);
 
         _archivedFileID := 0;
     End If;
