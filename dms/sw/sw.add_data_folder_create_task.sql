@@ -1,20 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.add_data_folder_create_task
-(
-    _pathLocalRoot text,
-    _pathSharedRoot text,
-    _folderPath text,
-    _sourceDB text,
-    _sourceTable text,
-    _sourceID int,
-    _sourceIDFieldName text,
-    _command text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_data_folder_create_task(text, text, text, text, integer, text, text, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.add_data_folder_create_task(IN _pathlocalroot text, IN _pathsharedroot text, IN _folderpath text, IN _sourcetable text, IN _sourceid integer, IN _sourceidfieldname text, IN _command text DEFAULT 'add'::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -26,17 +16,17 @@ AS $$
 **    _pathLocalRoot       Required, for example: F:\DataPkgs
 **    _pathSharedRoot      Required, for example: \\protoapps\DataPkgs\
 **    _folderPath          Required, for example: Public\2011\264_PNWRCE_Dengue_iTRAQ
-**    _sourceDB            Optional, for example: DMS_Data_Package
 **    _sourceTable         Optional, for example: T_Data_Package
 **    _sourceID            Optional, for example: 264
 **    _sourceIDFieldName   Optional, for example: ID
 **    _command             Optional, for example: add
+**    _infoOnly            When true, preview the info that would be added to T_Data_Folder_Create_Queue
 **
 **  Auth:   mem
 **  Date:   03/17/2011 mem - Initial version
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/04/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -68,16 +58,10 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        SELECT
-            1 AS State,
-            _sourceDB as SourceDB,
-            _sourceTable as SourceTable,
-            _sourceID as SourceID,
-            _sourceIDFieldName as SourceIDFieldName,
-            _pathLocalRoot as PathLocalRoot,
-            _pathSharedRoot as PathSharedRoot,
-            _folderPath as FolderPath,
-            _command as Command
+        _message := format('Add row to t_data_folder_create_queue for %s = %s in table %s, command ''%s'', folder path ''%s'', local root ''%s'', share root ''%s''',
+                           _sourceIDFieldName, _sourceID, _sourceTable, _command,
+                           _folderPath, _pathLocalRoot, _sourceIDFieldName);
+
     Else
         INSERT INTO sw.t_data_folder_create_queue
         (
@@ -91,19 +75,27 @@ BEGIN
             path_folder,
             command
         )
-        SELECT
-            1 AS State,
-            _sourceDB,
-            _sourceTable,
-            _sourceID,
-            _sourceIDFieldName,
-            _pathLocalRoot,
-            _pathSharedRoot,
-            _folderPath,
-            _command
+        VALUES ( 1,      -- State
+                 'DMS',
+                 _sourceTable,
+                 _sourceID,
+                 _sourceIDFieldName,
+                 _pathLocalRoot,
+                 _pathSharedRoot,
+                 _folderPath,
+                 _command
+               );
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE sw.add_data_folder_create_task IS 'AddDataFolderCreateTask';
+
+ALTER PROCEDURE sw.add_data_folder_create_task(IN _pathlocalroot text, IN _pathsharedroot text, IN _folderpath text, IN _sourcetable text, IN _sourceid integer, IN _sourceidfieldname text, IN _command text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_data_folder_create_task(IN _pathlocalroot text, IN _pathsharedroot text, IN _folderpath text, IN _sourcetable text, IN _sourceid integer, IN _sourceidfieldname text, IN _command text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.add_data_folder_create_task(IN _pathlocalroot text, IN _pathsharedroot text, IN _folderpath text, IN _sourcetable text, IN _sourceid integer, IN _sourceidfieldname text, IN _command text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'AddDataFolderCreateTask';
+
