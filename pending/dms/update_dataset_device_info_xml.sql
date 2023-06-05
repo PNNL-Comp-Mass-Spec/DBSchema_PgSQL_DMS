@@ -160,7 +160,7 @@ BEGIN
            XmlQ.Device_Software_Version, XmlQ.Device_Description
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _datasetInfoXML as rooted_xml
+        FROM ( SELECT _datasetInfoXML As rooted_xml
              ) Src,
              XMLTABLE('//DatasetInfo/AcquisitionInfo/DeviceList/Device'
                       PASSING Src.rooted_xml

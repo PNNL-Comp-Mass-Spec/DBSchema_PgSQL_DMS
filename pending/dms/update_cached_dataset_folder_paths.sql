@@ -237,7 +237,7 @@ BEGIN
             -- If you update this merge statement, be sure to update the query
             ------------------------------------------------
             --
-            MERGE INTO t_cached_dataset_folder_paths as target
+            MERGE INTO t_cached_dataset_folder_paths As target
             USING ( SELECT DS.dataset_id,
                            DS.dataset_row_version,
                            SPath.storage_path_row_version,

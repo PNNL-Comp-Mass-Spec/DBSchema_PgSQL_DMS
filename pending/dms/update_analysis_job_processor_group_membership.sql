@@ -104,7 +104,7 @@ BEGIN
         RETURN;
     End If;
 
-    _pgid := CAST(_processorGroupID as int);
+    _pgid := CAST(_processorGroupID As int);
 
     ---------------------------------------------------
     -- Mode set_membership_enabled

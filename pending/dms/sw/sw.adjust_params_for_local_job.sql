@@ -55,7 +55,7 @@ BEGIN
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml as rooted_xml ) Src,
+        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml As rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section citext PATH '@Section',

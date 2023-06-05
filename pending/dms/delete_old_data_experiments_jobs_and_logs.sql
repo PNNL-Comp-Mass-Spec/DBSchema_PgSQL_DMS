@@ -276,7 +276,7 @@ BEGIN
         -- ToDo: Update this to use RAISE INFO
 
         -- Preview all of the datasets and experiments that would be deleted
-        SELECT Dataset_ID, Dataset as Dataset_to_Delete, Created
+        SELECT Dataset_ID, Dataset As Dataset_to_Delete, Created
         FROM Tmp_DatasetsToDelete
         ORDER BY Dataset_ID Desc
 

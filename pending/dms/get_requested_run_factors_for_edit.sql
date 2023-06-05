@@ -71,7 +71,7 @@ BEGIN
     -- for the requests
     -----------------------------------------
 
-    _colList := ' ''x'' as sel, batch_id, experiment, dataset, name, status, request'
+    _colList := ' ''x'' As sel, batch_id, experiment, dataset, name, status, request'
 
     CALL make_factor_crosstab_sql (_colList, _sql => _sql);
 
@@ -88,7 +88,7 @@ BEGIN
                '' As experiment,
                '' As dataset,
                '' As name citext
-               'Preview SQL' as status,
+               'Preview SQL' As status,
                0 As request;
     Else
         RETURN QUERY

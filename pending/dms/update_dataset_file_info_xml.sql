@@ -319,7 +319,7 @@ BEGIN
     SELECT XmlQ.ScanType, XmlQ.ScanCount, XmlQ.ScanFilter
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _datasetInfoXML as rooted_xml
+        FROM ( SELECT _datasetInfoXML As rooted_xml
              ) Src,
              XMLTABLE('//DatasetInfo/ScanTypes/ScanType'
                       PASSING Src.rooted_xml
@@ -337,7 +337,7 @@ BEGIN
     SELECT XmlQ.InstFilePath, XmlQ.InstFileHash, XmlQ.InstFileHashType, XmlQ.InstFileSize
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _datasetInfoXML as rooted_xml
+        FROM ( SELECT _datasetInfoXML As rooted_xml
              ) Src,
              XMLTABLE('//DatasetInfo/AcquisitionInfo/InstrumentFiles/InstrumentFile'
                       PASSING Src.rooted_xml
@@ -414,7 +414,7 @@ BEGIN
             LIMIT 1;
 
             -- Duplicate dataset found: DatasetID 693058 has the same instrument file as DatasetID 692115; see table t_dataset_files
-            _duplicateDatasetInfoSuffix := format('has the same instrument file as Dataset ID %s; to allow this duplicate, set allow_duplicates to true for DatasetID %s in table t_dataset_files',
+            _duplicateDatasetInfoSuffix := format('has the same instrument file As Dataset ID %s; to allow this duplicate, set allow_duplicates to true for DatasetID %s in table t_dataset_files',
                                                     _duplicateDatasetID, _duplicateDatasetID);
 
             -- The message 'Duplicate dataset found' is used by a SQL Server Agent job that notifies admins hourly if a duplicate dataset is uploaded
@@ -447,7 +447,7 @@ BEGIN
             ORDER BY Dataset_ID Desc
             LIMIT 1;
 
-            _duplicateDatasetInfoSuffix := ('has the same instrument file as Dataset ID %s; see table t_dataset_files', _duplicateDatasetID);
+            _duplicateDatasetInfoSuffix := format('has the same instrument file As Dataset ID %s; see table t_dataset_files', _duplicateDatasetID);
 
             _msg := format('Allowing duplicate dataset to be added since Allow_Duplicates is true: Dataset ID %s %s',
                             _datasetId, _duplicateDatasetInfoSuffix);
@@ -497,7 +497,7 @@ BEGIN
 
         -- ToDo: show this using RAISE INFO
 
-        SELECT *, _separationType As Separation_Type, _optimalSeparationType as Optimal_Separation_Type
+        SELECT *, _separationType As Separation_Type, _optimalSeparationType As Optimal_Separation_Type
         FROM Tmp_DSInfoTable
 
         SELECT *

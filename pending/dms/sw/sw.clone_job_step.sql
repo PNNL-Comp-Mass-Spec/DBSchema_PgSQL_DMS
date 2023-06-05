@@ -99,7 +99,7 @@ BEGIN
     --
     SELECT unnest(xpath('//params/Param[@Name="NumberOfClonedSteps"]/@Value', rooted_xml))::text
     INTO _num_clones
-    FROM ( SELECT ('<params>' || create_parameters_for_job::text || '</params>')::xml as rooted_xml
+    FROM ( SELECT ('<params>' || create_parameters_for_job::text || '</params>')::xml As rooted_xml
            FROM sw.create_parameters_for_job(2048662)
          ) Src
     LIMIT 1;
@@ -113,7 +113,7 @@ BEGIN
     --
     SELECT unnest(xpath('//params/Param[@Name="CloneStepRenumberStart"]/@Value', rooted_xml))::text
     INTO _clone_step_num_base
-    FROM ( SELECT ('<params>' || create_parameters_for_job::text || '</params>')::xml as rooted_xml
+    FROM ( SELECT ('<params>' || create_parameters_for_job::text || '</params>')::xml As rooted_xml
            FROM sw.create_parameters_for_job(2048662)
          ) Src
     LIMIT 1;

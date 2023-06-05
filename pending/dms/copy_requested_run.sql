@@ -145,8 +145,8 @@ BEGIN
         SELECT
             request_id As Source_Request_ID,
             request_name As Source_Request_Name,
-            _newRequestName as New_Request_Name,
-            _notation as Comment,
+            _newRequestName As New_Request_Name,
+            _notation As Comment,
             requester_username,
             created,                -- Pass along the original request's 'created' date into the new entry
             instrument_group,

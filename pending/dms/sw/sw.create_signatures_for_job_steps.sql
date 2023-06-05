@@ -69,7 +69,7 @@ BEGIN
     SELECT XmlQ.job, XmlQ.step, XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml as rooted_xml ) Src,
+        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml As rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS job int PATH '@Job',
@@ -132,12 +132,12 @@ BEGIN
         -- It uses those names to find the rows in Tmp_Job_Parameters that match any of the section names
         -- In addition, matching rows must either have a null Step_Number or have Step_Number = _curStep
 
-        SELECT string_agg(JP.Name || '=' || JP.Value, ';' ORDER BY JP.Section, JP.Name)
+        SELECT string_agg(format('%s=%s', JP.Name, JP.Value), ';' ORDER BY JP.Section, JP.Name)
         INTO _settings
         FROM Tmp_Job_Parameters JP
         WHERE JP.Section In (
                 SELECT unnest(xpath('//sections/section/@name', rooted_xml))::text
-                FROM ( SELECT ('<sections>' || Parameter_Template::text || '</sections>')::xml as rooted_xml
+                FROM ( SELECT ('<sections>' || Parameter_Template::text || '</sections>')::xml As rooted_xml
                        FROM sw.T_Step_Tools
                        WHERE sw.T_Step_Tools.step_tool = _stepTool
                      ) Src

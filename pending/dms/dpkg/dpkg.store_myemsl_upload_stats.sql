@@ -213,7 +213,7 @@ BEGIN
                _uploadTimeSeconds AS UploadTimeSeconds,
                _statusURI AS URI,
                _statusURI_PathID AS StatusURI_PathID,
-               _statusNum as StatusNum,
+               _statusNum As StatusNum,
                _errorCode AS ErrorCode
 
         RETURN;

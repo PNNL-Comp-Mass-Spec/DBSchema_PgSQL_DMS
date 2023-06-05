@@ -175,7 +175,7 @@ BEGIN
         RETURNING archived_file_id
         INTO _archiveFileID;
 
-        _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT('000000' || archived_file_id::text, 6));
+        _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT(format('000000%s', archived_file_id), 6));
 
         UPDATE pc.t_archived_output_files
         SET archived_file_path = _archivedFilePath

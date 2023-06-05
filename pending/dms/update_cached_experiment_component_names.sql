@@ -122,7 +122,7 @@ BEGIN
         INSERT INTO Tmp_ExperimentBiomaterial (Exp_ID, Biomaterial_List, Items)
         SELECT ECC.Exp_ID,
                CC.Biomaterial_Name,
-               1 as Items
+               1 As Items
         FROM T_Experiment_Biomaterial ECC
              INNER JOIN T_Biomaterial CC
                ON ECC.Biomaterial_ID = CC.Biomaterial_ID
@@ -137,7 +137,7 @@ BEGIN
         INSERT INTO Tmp_ExperimentRefCompounds (exp_id, Reference_Compound_List, Items)
         SELECT ERC.exp_id,
                RC.id_name,
-               1 as Items
+               1 As Items
         FROM t_experiment_reference_compounds ERC
              INNER JOIN t_reference_compound RC
                ON ERC.compound_id = RC.compound_id

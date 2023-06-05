@@ -220,13 +220,13 @@ BEGIN
 
     If _infoOnly Then
 
-        _message := format('Preview store upload stats for ' ||
-                           'Job: %s, Dataset_ID: %s, Subfolder: %s, ' ||
-                           'FileCountNew: %s, FileCountUpdated: %s, MB_Transferred: %s, UploadTimeSeconds: %s, ' ||
+        _message := format('Preview store upload stats for '
+                           'Job: %s, Dataset_ID: %s, Subfolder: %s, '
+                           'FileCountNew: %s, FileCountUpdated: %s, MB_Transferred: %s, UploadTimeSeconds: %s, '
                            'URI: %s, StatusURI_PathID: %s, Status_Num: %s, ErrorCode: %s',
                             _job, _datasetID, _subfolder,
                             _fileCountNew, _fileCountUpdated,
-                            round(_bytes / 1024.0 / 1024.0, 3),
+                            Round(_bytes / 1024.0 / 1024.0, 3),
                             _uploadTimeSeconds,
                             _statusURI, _statusURI_PathID, _statusNum, _errorCode);
 

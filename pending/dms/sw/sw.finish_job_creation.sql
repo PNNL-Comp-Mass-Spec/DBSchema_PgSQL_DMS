@@ -58,7 +58,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Set results directory name for the job to be that of
-    -- the output folder for any step designated as
+    -- the output folder for any step designated As
     -- Special = 'Job_Results'
     --
     -- This will only affect jobs that have a step with

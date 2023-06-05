@@ -94,7 +94,7 @@ BEGIN
         ---------------------------------------------------
 
         If Not Exists (SELECT * FROM cap.t_myemsl_uploads MU WHERE status_num = _statusNum) Then
-            _message := 'status_num ' || Cast(_statusNum as text) || ' not found in cap.t_myemsl_uploads';
+            _message := format('status_num %s not found in cap.t_myemsl_uploads', _statusNum);
             _returnCode := 'U5202';
             RETURN;
         End If;
@@ -111,7 +111,7 @@ BEGIN
               dataset_id = _datasetID;
 
         If Not FOUND Then
-            _message := 'The DatasetID for Status_Num ' || Cast(_statusNum as text) || ' is not ' || Cast(_datasetID as text) || '; will not update Ingest_Steps_Completed';
+            _message := format('The DatasetID for Status_Num %s is not %s; will not update Ingest_Steps_Completed', _statusNum, _datasetID)
             _returnCode := 'U5203';
             RETURN;
         End If;

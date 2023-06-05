@@ -203,7 +203,7 @@ BEGIN
 
     -- Update the message field in Tmp_JobList
     UPDATE Tmp_JobList
-    Set Message = _actionText || SJF.SourceJobResultsFolder
+    Set Message = format('%s%s', _actionText, SJF.SourceJobResultsFolder)
     FROM Tmp_Source_Job_Folders SJF
     WHERE JL.Job = SJF.Job AND Coalesce(SJF.SourceJobResultsFolder, '') <> '';
 

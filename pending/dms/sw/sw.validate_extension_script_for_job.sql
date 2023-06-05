@@ -140,7 +140,7 @@ BEGIN
         SELECT  ScriptSteps.Script,
                 ScriptSteps.Step_Number,
                 ScriptSteps.Step_Tool,
-                Case When ConflictQ.Step_Number Is Null Then 0 Else 1 End as Conflict
+                Case When ConflictQ.Step_Number Is Null Then 0 Else 1 End As Conflict
         FROM (
             SELECT _currentScript AS Script,
                 xmlNode.value('@Number', 'text') Step_Number,
@@ -152,7 +152,7 @@ BEGIN
         SELECT  ScriptSteps.Script,
                 ScriptSteps.Step_Number,
                 ScriptSteps.Step_Tool,
-                Case When ConflictQ.Step_Number Is Null Then 0 Else 1 End as Conflict
+                Case When ConflictQ.Step_Number Is Null Then 0 Else 1 End As Conflict
         FROM (
             SELECT _extensionScriptName AS Script,
                 xmlNode.value('@Number', 'text') Step_Number,

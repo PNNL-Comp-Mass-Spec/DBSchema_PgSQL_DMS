@@ -35,7 +35,7 @@ BEGIN
                     WHERE protein_collection_id = _proteinCollectionID )
     Then
 
-        _message := ('Protein collection ID not found: %s', _proteinCollectionID);
+        _message := format('Protein collection ID not found: %s', _proteinCollectionID);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';

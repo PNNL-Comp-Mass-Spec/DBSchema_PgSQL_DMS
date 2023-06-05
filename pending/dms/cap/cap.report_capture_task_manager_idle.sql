@@ -138,7 +138,7 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT job, dataset_id, step, script, tool, state_name, processor, timestamp_text(start) as start, runtime_minutes, dataset
+                SELECT job, dataset_id, step, script, tool, state_name, processor, timestamp_text(start) As start, runtime_minutes, dataset
                 FROM cap.V_task_Steps
                 WHERE Processor = _managerName AND State = 4
                 ORDER BY Job, Step;

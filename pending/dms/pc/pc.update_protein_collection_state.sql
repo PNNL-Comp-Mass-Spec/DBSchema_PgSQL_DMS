@@ -34,7 +34,7 @@ BEGIN
         FROM pc.t_protein_collection_states
         WHERE collection_state_id = _stateID)
     Then
-        _message := ('Collection_State_ID %s does not exist', _stateID);
+        _message := format('Collection_State_ID %s does not exist', _stateID);
         RAISE WARNING '%', _message;
 
         _returnCode = 'U5201';

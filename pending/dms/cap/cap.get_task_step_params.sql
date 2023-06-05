@@ -84,7 +84,7 @@ BEGIN
     -- Furthermore, we won't get a row until after the ArchiveUpdate or DatasetArchive step successfully completes
     -- This URI will be used by the ArchiveVerify tool
     --
-    SELECT StatusU.uri_path || MU.status_num::text AS myemsl_status_uri,
+    SELECT format('%s%s', StatusU.uri_path, MU.status_num) AS myemsl_status_uri,
            eus_instrument_id,
            eus_proposal_id,
            eus_uploader_id

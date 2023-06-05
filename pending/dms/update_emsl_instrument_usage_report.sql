@@ -262,7 +262,7 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Initial data' as State, *
+            SELECT 'Initial data' As State, *
             FROM Tmp_Staging;
         End If;
 
@@ -280,7 +280,7 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Mark set to 1' as State, *
+            SELECT 'Mark set to 1' As State, *
             FROM Tmp_Staging WHERE Mark = 1;
         End If;
 
@@ -318,7 +318,7 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Mark set to 0' as State, * FROM Tmp_Staging WHERE Mark = 0
+            SELECT 'Mark set to 0' As State, * FROM Tmp_Staging WHERE Mark = 0
         End If;
 
         ---------------------------------------------------
@@ -373,7 +373,7 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Comments cleaned' as State, *
+            SELECT 'Comments cleaned' As State, *
             FROM Tmp_Staging WHERE Mark = 0;
         End If;
 
@@ -389,7 +389,7 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Intervals' as State, *
+            SELECT 'Intervals' As State, *
             FROM Tmp_Staging WHERE Type = 'Interval';
 
         End If;
@@ -503,7 +503,7 @@ BEGIN
 
                 _previewCount := 0;
 
-                SELECT 'Update Row' as Action,
+                SELECT 'Update Row' As Action,
                         Tmp_Staging.minutes,
                         Tmp_Staging.start,
                         CASE WHEN Coalesce(InstUsage.proposal, '') = '' THEN Tmp_Staging.proposal ELSE InstUsage.proposal END As Proposal,
@@ -665,7 +665,7 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
-                SELECT 'Add log reference to comment' as Action,
+                SELECT 'Add log reference to comment' As Action,
                        InstUsage.seq,
                        InstName.IN_Name AS Instrument,
                        comment AS OldComment,

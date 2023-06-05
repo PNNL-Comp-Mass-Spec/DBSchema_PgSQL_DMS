@@ -188,7 +188,7 @@ BEGIN
 
         UPDATE Tmp_FailedJobs Target
         SET SkipResetMode = 2,
-            SkipReason = TS.Tool || ' tool is in state 7 (holding)'
+            SkipReason = format('%s tool is in state 7 (holding)', TS.Tool)
         FROM cap.t_task_steps TS
         WHERE Target.Job = TS.Job AND
               Target.Subfolder = TS.Output_Folder_Name AND

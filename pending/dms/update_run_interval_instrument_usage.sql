@@ -74,7 +74,7 @@ BEGIN
     BEGIN
 
         If _runIntervalId < 0 Then
-            _message := ('Invalid run interval ID: %s', _runIntervalId);
+            _message := format('Invalid run interval ID: %s', _runIntervalId);
             RAISE EXCEPTION '%', _message;
         End If;
 

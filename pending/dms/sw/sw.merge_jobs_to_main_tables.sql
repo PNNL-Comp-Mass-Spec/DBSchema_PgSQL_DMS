@@ -35,8 +35,8 @@ BEGIN
 
         -- ToDo: Show this information using RAISE INFO
 
-        SELECT 'Tmp_Jobs' as Table, * FROM Tmp_Jobs
-        SELECT 'Tmp_Job_Parameters ' as Table, * FROM Tmp_Job_Parameters
+        SELECT 'Tmp_Jobs' As Table, * FROM Tmp_Jobs
+        SELECT 'Tmp_Job_Parameters ' As Table, * FROM Tmp_Job_Parameters
 
         -- No need to output these tables, since procedure Create_Job_Steps will have already displayed them
         -- SELECT 'Tmp_Job_Steps ' as Table, * FROM Tmp_Job_Steps

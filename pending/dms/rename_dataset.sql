@@ -463,7 +463,7 @@ BEGIN
            Script,
            State,
            Dataset,
-           _datasetNameNew as Dataset_Name_New,
+           _datasetNameNew As Dataset_Name_New,
            Dataset_ID,
            Imported
     FROM sw.T_Jobs

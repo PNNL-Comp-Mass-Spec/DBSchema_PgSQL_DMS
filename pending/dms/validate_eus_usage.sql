@@ -104,7 +104,7 @@ BEGIN
     _eusProposalID := Trim(Coalesce(_eusProposalID, ''));
     _eusUsersList := Trim(Coalesce(_eusUsersList, ''));
 
-    If _eusUsageType = '(ignore)' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType) Then
+    If _eusUsageType::citext = '(ignore)' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
         _eusProposalID := '';
         _eusUsersList := '';
@@ -114,19 +114,19 @@ BEGIN
     -- Auto-fix _eusUsageType if it is an abbreviated form of Cap_Dev, Maintenance, or Broken
     ---------------------------------------------------
     --
-    If _eusUsageType Like 'Cap%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType) Then
+    If _eusUsageType::citext Like 'Cap%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
     End If;
 
-    If _eusUsageType Like 'Maint%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType) Then
+    If _eusUsageType::citext Like 'Maint%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'MAINTENANCE';
     End If;
 
-    If _eusUsageType Like 'Brok%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType) Then
+    If _eusUsageType::citext Like 'Brok%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'BROKEN';
     End If;
 
-    If _eusUsageType Like 'USER_UNKOWN%' Then
+    If _eusUsageType::citext Like 'USER_UNKOWN%' Then
         _eusUsageType := 'USER_UNKNOWN';
     End If;
 
@@ -135,7 +135,7 @@ BEGIN
     -- Monthly EUS instrument usage validation will not allow USER_UNKNOWN but will allow CAP_DEV
     ---------------------------------------------------
     --
-    If _eusUsageType = 'USER_UNKNOWN' Then
+    If _eusUsageType::citext = 'USER_UNKNOWN' Then
         _eusUsageType := 'CAP_DEV';
     End If;
 
@@ -170,14 +170,12 @@ BEGIN
         RETURN;
     End If;
 
-    _eusUsageTypeID := 0;
-    --
     SELECT eus_usage_type_id,
            eus_usage_type,
            public.try_cast(enabled_prep_request::text, false)
     INTO _eusUsageTypeID, _eusUsageTypeName, _enabledForPrepRequests
     FROM t_eus_usage_type
-    WHERE eus_usage_type = _eusUsageType;
+    WHERE eus_usage_type = _eusUsageType::citext;
 
     If Not FOUND Then
         _message := format('Could not resolve EUS usage type: "%s"', _eusUsageType);
@@ -186,11 +184,11 @@ BEGIN
     End If;
 
     If _samplePrepRequest And Not _enabledForPrepRequests Then
-        If _eusUsageType = 'USER' Then
-            _message := 'Please choose usage type USER_ONSITE if processing a sample from an onsite user or a sample for a Resource Owner project; ' ||;
-                           'choose USER_REMOTE if processing a sample for an EMSL user'
+        If _eusUsageType::citext = 'USER' Then
+            _message := 'Please choose usage type USER_ONSITE if processing a sample from an onsite user or a sample for a Resource Owner project; '
+                        'choose USER_REMOTE if processing a sample for an EMSL user';
         Else
-            _message := format('EUS usage type: "%s" is not allowed for Sample Prep Requests', _eusUsageType);
+            _message := format('EUS usage type "%s" is not allowed for Sample Prep Requests', _eusUsageType);
         End If;
 
         _returnCode := 'U5372';
@@ -272,8 +270,8 @@ BEGIN
             Else
             -- <c>
                 If _eusProposalID = _autoSupersedeProposalID Then
-                    _logMessage := 'Proposal ' || Coalesce(_eusProposalID, '??') || ' in t_eus_proposals ' ||;
-                                      'has proposal_id_auto_supersede set to itself; this is invalid'
+                    _logMessage := format('Proposal %s in t_eus_proposals has proposal_id_auto_supersede set to itself; this is invalid',
+                                          Coalesce(_eusProposalID, '??'));
 
                     If Not _infoOnly Then
                         CALL post_log_entry ('Error', _logMessage, 'Validate_EUS_Usage', _duplicateEntryHoldoffHours => 1);
@@ -285,9 +283,8 @@ BEGIN
                 Else
                 -- <d>
                     If Not Exists (SELECT * FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
-                        _logMessage := 'Proposal ' || Coalesce(_eusProposalID, '??') || ' in t_eus_proposals ' ||;
-                                          'has proposal_id_auto_supersede set to ' || Coalesce(_autoSupersedeProposalID, '??') || ', ' ||
-                                          'but that proposal does not exist in t_eus_proposals'
+                        _logMessage := format('Proposal %s in t_eus_proposals has proposal_id_auto_supersede set to %s, but that proposal does not exist in t_eus_proposals',
+                                              Coalesce(_eusProposalID, '??'), Coalesce(_autoSupersedeProposalID, '??'));
 
                         If Not _infoOnly Then
                             CALL post_log_entry ('Error', _logMessage, 'Validate_EUS_Usage', _duplicateEntryHoldoffHours => 1);
@@ -414,7 +411,7 @@ BEGIN
                     _currentChar := Substring(_eusUsersList, _charNum, 1);
 
                     If _currentChar = ',' Or _currentChar Similar To '[0-9]' Then
-                        _integerList := _integerList || _currentChar;
+                        _integerList := format('%s%s', _integerList, _currentChar);
                     End If;
 
                     _charNum := _charNum + 1;
@@ -515,7 +512,7 @@ BEGIN
                 DELETE
                 FROM  Tmp_Users
                 WHERE
-                    CAST(Item as int) NOT IN
+                    CAST(Item As int) NOT IN
                     (
                         SELECT person_id
                         FROM  t_eus_proposal_users
@@ -616,7 +613,7 @@ BEGIN
         SELECT eus_usage_type_id
         INTO _eusUsageTypeID
         FROM t_eus_usage_type
-        WHERE eus_usage_type = _eusUsageType
+        WHERE eus_usage_type = _eusUsageType::citext;
 
         If Not FOUND Then
             _msg := format('%s; Could not find usage type "%s" in t_eus_usage_type; this is unexpected', _msg, _eusUsageType);

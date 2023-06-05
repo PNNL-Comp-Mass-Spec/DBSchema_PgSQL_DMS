@@ -84,7 +84,7 @@ BEGIN
         -- Compute the new stats
         -----------------------------------------------------
         INSERT INTO Tmp_JobStepStatusHistory  (Posting_Time, step_tool, state, Step_Count)
-        SELECT CURRENT_TIMESTAMP as Posting_Time, Tool, State, COUNT(*) AS Step_Count
+        SELECT CURRENT_TIMESTAMP As Posting_Time, Tool, State, COUNT(*) AS Step_Count
         FROM sw.t_job_steps
         GROUP BY Tool, state;
         --

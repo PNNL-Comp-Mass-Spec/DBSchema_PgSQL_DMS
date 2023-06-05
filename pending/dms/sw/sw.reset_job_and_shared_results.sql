@@ -126,11 +126,11 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
-                SELECT 'Delete from sw.t_shared_results' as Message, *
+                SELECT 'Delete from sw.t_shared_results' As Message, *
                 FROM sw.t_shared_results
                 WHERE results_name = _outputFolder;
 
-                SELECT 'Remove job from sw.t_jobs, but leave in sw.t_jobs_history' as Message,
+                SELECT 'Remove job from sw.t_jobs, but leave in sw.t_jobs_history' As Message,
                        V_Job_Steps.job AS JobToRemoveFromTJobs,
                        sw.t_jobs.state AS Job_State
                 FROM V_Job_Steps
@@ -140,7 +140,7 @@ BEGIN
                       V_Job_Steps.state = 5 AND
                       sw.t_jobs.state = 4;
 
-                SELECT 'Update sw.t_job_steps_history' as Message, Output_Folder_Name, Output_Folder_Name || '_BAD' as Output_Folder_Name_New
+                SELECT 'Update sw.t_job_steps_history' As Message, Output_Folder_Name, format('%s_BAD', Output_Folder_Name) As Output_Folder_Name_New
                 FROM sw.t_job_steps_history
                 WHERE output_folder_name = _outputFolder AND state = 5;
 
@@ -183,8 +183,8 @@ BEGIN
 
             -- Rename Output Folder in sw.t_job_steps_history for any completed job steps
             UPDATE sw.t_job_steps_history
-            SET output_folder_name = output_folder_name || '_BAD'
-            WHERE output_folder_name = _outputFolder AND state = 5
+            SET output_folder_name = format('%s_BAD', output_folder_name)
+            WHERE output_folder_name = _outputFolder AND state = 5;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

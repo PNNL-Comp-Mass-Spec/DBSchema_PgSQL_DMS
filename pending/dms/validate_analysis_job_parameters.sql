@@ -553,7 +553,7 @@ BEGIN
                 SELECT XmlQ.name, XmlQ.value
                 FROM (
                     SELECT xmltable.*
-                    FROM ( SELECT contents as settings
+                    FROM ( SELECT contents As settings
                            FROM t_settings_files
                            WHERE file_name = _settingsFileName AND analysis_tool = _toolName
                          ) Src,
@@ -801,9 +801,9 @@ BEGIN
 
         SELECT SettingValue
         INTO _splitFasta
-        FROM ( SELECT b.value('@key', 'text') as SettingName,
-                      b.value('@value', 'text') as SettingValue
-               FROM _xml.nodes('/sections/section/item') as a(b)
+        FROM ( SELECT b.value('@key', 'text') As SettingName,
+                      b.value('@value', 'text') As SettingValue
+               FROM _xml.nodes('/sections/section/item') As a(b)
              ) ParseQ
         WHERE SettingName = 'SplitFasta'
 
@@ -825,9 +825,9 @@ BEGIN
 
         SELECT SettingValue
         INTO _numberOfClonedSteps
-        From ( SELECT b.value('@key', 'text') as SettingName,
-                      b.value('@value', 'int') as SettingValue
-               FROM _xml.nodes('/sections/section/item') as a(b)
+        From ( SELECT b.value('@key', 'text') As SettingName,
+                      b.value('@value', 'int') As SettingValue
+               FROM _xml.nodes('/sections/section/item') As a(b)
              ) ParseQ
         WHERE SettingName = 'NumberOfClonedSteps';
 

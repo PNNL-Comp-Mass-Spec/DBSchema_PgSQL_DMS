@@ -118,18 +118,19 @@ BEGIN
     _wellList := '';
     _hits := 0;
 
-    SELECT
-        _hits = _hits + 1,
-        _wellList = CASE WHEN _wellList = '' THEN well ELSE ', ' || well END
+    SELECT string_agg(well, ', ' ORDER BY well)
+    INTO _wellList
     FROM t_experiments
-    WHERE
-        wellplate = _wellplateName AND
-        public.get_well_index(well) IN (
-            select wellIndex
-            from Tmp_Wells
-        );
+    WHERE wellplate = _wellplateName AND
+          public.get_well_index(well) IN (
+              SELECT wellIndex
+              FROM Tmp_Wells
+          );
 
-    If _hits > 0 Then
+    If Coalesce(_wellList, '') <> '' Then
+
+        _hits := array_length(string_to_array(_wellList, ','), 1);
+
         _wellList := SUBSTRING(_wellList, 0, 256);
 
         If _hits = 1 Then

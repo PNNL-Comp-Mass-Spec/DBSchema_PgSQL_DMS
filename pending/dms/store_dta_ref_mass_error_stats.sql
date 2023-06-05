@@ -119,7 +119,7 @@ BEGIN
     SELECT XmlQ.Name, XmlQ.ValueText
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _resultsXML as rooted_xml
+        FROM ( SELECT _resultsXML As rooted_xml
              ) Src,
              XMLTABLE('//DTARef_MassErrorStats/Measurements/Measurement'
                       PASSING Src.rooted_xml

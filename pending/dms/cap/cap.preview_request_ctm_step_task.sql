@@ -70,8 +70,8 @@ BEGIN
                                 _returnCode               => _returnCode)
 
     If Exists (Select * FROM cap.t_tasks WHERE Job = _job) Then
-        SELECT format('t_tasks Data for Job %s', _job) as Parameter,
-               format('Dataset %s, Processor %s, Parameters %s; %s', Dataset, _processorName, _parameters, _message) as Value
+        SELECT format('t_tasks Data for Job %s', _job) As Parameter,
+               format('Dataset %s, Processor %s, Parameters %s; %s', Dataset, _processorName, _parameters, _message) As Value
         FROM cap.t_tasks
         WHERE Job = _job;
     End If;

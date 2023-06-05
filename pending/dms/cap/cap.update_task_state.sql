@@ -156,7 +156,7 @@ BEGIN
         SELECT
           T.Job,
           T.Dataset_ID,
-          T.State as OldState,
+          T.State As OldState,
           T.Results_Folder_Name,
           T.Storage_Server,
           CASE
@@ -528,7 +528,7 @@ BEGIN
                    Script,
                    Dataset_ID,
                    timestamp_text(Start_New) AS Start_New,
-                   timestamp_text(Finish_New) as Finish_New,
+                   timestamp_text(Finish_New) As Finish_New,
                    Dataset_Name
             FROM Tmp_ChangedJobs
             ORDER BY Job

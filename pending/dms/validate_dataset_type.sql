@@ -600,7 +600,7 @@ BEGIN
             If _newDatasetType = 'HMS' And _currentDatasetType = 'EI-HMS' Then
                 -- Leave the dataset type as 'EI-HMS'
                 If _infoOnly Then
-                    RAISE INFO 'Leaving dataset type unchanged as %', _currentDatasetType
+                    RAISE INFO 'Leaving dataset type unchanged As %', _currentDatasetType
                 End If;
                 RETURN;
             End If;

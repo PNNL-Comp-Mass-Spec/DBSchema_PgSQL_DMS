@@ -82,7 +82,7 @@ BEGIN
     WHERE Exp_ID = _expID;
 
     INSERT INTO T_Experiment_Biomaterial (Exp_ID, Biomaterial_ID)
-    SELECT DISTINCT _expID as Exp_ID, Biomaterial_ID
+    SELECT DISTINCT _expID As Exp_ID, Biomaterial_ID
     FROM Tmp_Experiment_to_Biomaterial_Map
 
     ---------------------------------------------------

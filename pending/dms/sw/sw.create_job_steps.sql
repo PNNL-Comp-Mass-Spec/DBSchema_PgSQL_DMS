@@ -294,7 +294,7 @@ BEGIN
     End If;
 
     If _mode::citext = 'UpdateExistingJob' Then
-        -- Note: As of April 4, 2011, the 'UpdateExistingJob' mode is not used in the DMS_Pipeline database
+        -- Note: as of April 4, 2011, the 'UpdateExistingJob' mode is not used in the DMS_Pipeline database
         --
         If Not Exists (SELECT job FROM sw.t_jobs Where job = _existingJob) Then
             _message := format('Job %s not found in sw.t_jobs; unable to continue', _existingJob);
@@ -454,7 +454,7 @@ BEGIN
                 WHERE script = _extensionScriptName;
 
                 -- FUTURE: process as list INTO _scriptXML2
-                _scriptXML := (_scriptXML::text || _scriptXML2::text)::xml;
+                _scriptXML := format('%s%s', _scriptXML, _scriptXML2)::xml;
             End If;
 
             If _debugMode Then
@@ -549,7 +549,7 @@ BEGIN
                 End If;
             End If;
 
-            -- Handle external DTAs If any
+            -- Handle external DTas If any
             -- This updates DTA_Gen steps in Tmp_Job_Steps for which the job parameters contain parameter 'ExternalDTAFolderName' with value 'DTA_Manual'
             CALL sw.override_dta_gen_for_external_dta _job, _xmlParameters, _message => _message
 

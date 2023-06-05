@@ -86,7 +86,7 @@ BEGIN
         -- Compute the new stats
         -----------------------------------------------------
         INSERT INTO Tmp_TaskStepStatusHistory (Posting_Time, Step_Tool, State, Step_Count)
-        SELECT CURRENT_TIMESTAMP as Posting_Time, Tool, State, COUNT(*) AS Step_Count
+        SELECT CURRENT_TIMESTAMP As Posting_Time, Tool, State, COUNT(*) AS Step_Count
         FROM cap.t_task_steps
         GROUP BY Tool, State
         --

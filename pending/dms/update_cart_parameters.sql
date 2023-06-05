@@ -98,7 +98,7 @@ BEGIN
         If _newValue = '' Then
             _dt := CURRENT_TIMESTAMP;
         Else
-            _dt := cast(_newValue as timestamp);
+            _dt := cast(_newValue As timestamp);
         End If;
 
         UPDATE t_requested_run
@@ -110,7 +110,7 @@ BEGIN
         If _newValue = '' Then
             _dt := CURRENT_TIMESTAMP;
         Else
-            _dt := cast(_newValue as timestamp);
+            _dt := cast(_newValue As timestamp);
         End If;
 
         UPDATE t_requested_run

@@ -585,7 +585,7 @@ BEGIN
                 SELECT XmlQ.section, XmlQ.name, XmlQ.value
                 FROM (
                     SELECT xmltable.*
-                    FROM ( SELECT contents as settings
+                    FROM ( SELECT contents As settings
                            FROM t_settings_files
                            WHERE file_name = _settingsFileName AND analysis_tool = _toolName
                          ) Src,

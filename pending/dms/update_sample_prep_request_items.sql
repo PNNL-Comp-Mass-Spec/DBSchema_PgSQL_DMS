@@ -191,7 +191,7 @@ BEGIN
                '' AS Status,
                created
         FROM ( SELECT LCRun.prep_run_id AS Item_ID,
-                      LCRun.comment as Item_Name,
+                      LCRun.comment As Item_Name,
                       TL.value AS SPR_ID,
                       LCRun.created
                FROM t_prep_lc_run LCRun

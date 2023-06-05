@@ -240,7 +240,7 @@ BEGIN
             )
 
             INSERT INTO Tmp_NEWT_IDs (NEWT_ID_Text)
-            SELECT Cast(Value as text)
+            SELECT Cast(Value As text)
             FROM public.parse_delimited_list(_newtIDList, ',')
             WHERE Coalesce(Value, '') <> ''
 

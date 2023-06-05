@@ -88,7 +88,7 @@ BEGIN
     -- for the requests
     -----------------------------------------
 
-    _colList := ' ''x'' as sel, batch_id, name, status, dataset_id, request, block, run_order';
+    _colList := ' ''x'' As sel, batch_id, name, status, dataset_id, request, block, run_order';
 
     CALL make_factor_crosstab_sql (_colList, _sql => _sql);
 
@@ -102,7 +102,7 @@ BEGIN
 
     If _infoOnly Then
         RETURN QUERY
-        SELECT _sql as Sel,
+        SELECT _sql As Sel,
 
     Else
         RETURN QUERY

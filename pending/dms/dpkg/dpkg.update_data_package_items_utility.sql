@@ -791,7 +791,7 @@ BEGIN
 
                 SELECT DISTINCT
                     Tmp_DataPackageItems.DataPackageID,
-                    'New Experiment ID' as Item_Type,
+                    'New Experiment ID' As Item_Type,
                     TX.ID,
                     _comment AS Comment,
                     TX.Experiment,

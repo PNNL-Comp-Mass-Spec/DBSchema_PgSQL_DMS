@@ -80,7 +80,7 @@ BEGIN
                '' As experiment,
                '' As dataset,
                '' As name citext
-               'Preview SQL' as status,
+               'Preview SQL' As status,
                0 As request;
     Else
         RETURN QUERY

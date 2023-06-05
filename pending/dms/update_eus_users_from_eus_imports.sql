@@ -63,7 +63,7 @@ BEGIN
         FROM t_eus_users;
 
         MERGE INTO t_eus_users AS target
-        USING ( SELECT DISTINCT Source.user_id as Person_ID,
+        USING ( SELECT DISTINCT Source.user_id As Person_ID,
                                 Source.name_fm,
                                 CASE WHEN hanford_id IS NULL
                                      THEN NULL
@@ -72,7 +72,7 @@ BEGIN
                                 CASE WHEN hanford_id IS NULL
                                      THEN 2        -- Offsite
                                      ELSE 1        -- Onsite
-                                     END as Site_Status,
+                                     END As Site_Status,
                                 Source.first_name,
                                 Source.last_name
                 FROM V_NEXUS_Import_Proposal_Participants Source

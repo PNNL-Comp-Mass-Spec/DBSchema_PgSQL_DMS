@@ -113,7 +113,7 @@ BEGIN
 
     If _infoOnly Then
 
-        _message := format('Mark dataset %s as bad: %s', _datasetName, _comment);
+        _message := format('Mark dataset %s As bad: %s', _datasetName, _comment);
         RAISE INFO '%', _message;
 
         SELECT format('Capture Task Job %s, Dataset_ID %s, Instrument %s, Imported %s',
@@ -159,7 +159,7 @@ BEGIN
         -- Mark the dataset as bad in public.t_dataset
         CALL public.handle_dataset_capture_validation_failure (_datasetID, _comment, _infoOnly, _message => _message, _returnCode => _returnCode);
 
-        _message := format('Marked dataset as bad: %s', _datasetName);
+        _message := format('Marked dataset As bad: %s', _datasetName);
         RAISE INFO '%', _message;
 
     End If;

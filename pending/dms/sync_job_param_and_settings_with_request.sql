@@ -134,9 +134,9 @@ BEGIN
         --
         SELECT Target.request_id AS RequestID,
                Target.param_file_name AS ParamFileName,
-               Case When Target.param_file_name <> R.ParamFileName Then R.ParamFileName Else '' End as ParamFileNameNew,
+               Case When Target.param_file_name <> R.ParamFileName Then R.ParamFileName Else '' End As ParamFileNameNew,
                Target.settings_file_name AS SettingsFileName,
-               Case When Target.settings_file_name <> R.SettingsFileName Then R.SettingsFileName Else '' End as SettingsFileNameNew
+               Case When Target.settings_file_name <> R.SettingsFileName Then R.SettingsFileName Else '' End As SettingsFileNameNew
         FROM t_analysis_job_request Target
              INNER JOIN Tmp_Request_Params R
                ON Target.request_id = R.RequestID

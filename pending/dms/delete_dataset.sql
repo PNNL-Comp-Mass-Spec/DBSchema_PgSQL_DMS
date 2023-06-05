@@ -159,7 +159,7 @@ BEGIN
         FROM t_dataset_scan_types
         WHERE dataset_id = _datasetID
 
-        SELECT 'To be flagged as deleted' AS Action, *
+        SELECT 'To be flagged As deleted' AS Action, *
         FROM t_dataset_files
         WHERE dataset_id = _datasetID
 

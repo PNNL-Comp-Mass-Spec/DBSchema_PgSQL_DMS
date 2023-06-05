@@ -132,7 +132,7 @@ BEGIN
                JS.State AS Step_State,
                Coalesce(JS.Processor, '') AS Processor,
                Coalesce(J.comment, '') AS Comment,
-               Coalesce(J.finish, J.start) as Job_Finish,
+               Coalesce(J.finish, J.start) As Job_Finish,
                J.settings_file_name,
                Tool.analysis_tool
         FROM t_analysis_job J
@@ -159,7 +159,7 @@ BEGIN
                JS.State AS Step_State,
                Coalesce(JS.Processor, '') AS Processor,
                Coalesce(J.comment, '') AS Comment,
-               Coalesce(J.finish, J.start) as Job_Finish,
+               Coalesce(J.finish, J.start) As Job_Finish,
                J.settings_file_name,
                Tool.analysis_tool
         FROM t_analysis_job J

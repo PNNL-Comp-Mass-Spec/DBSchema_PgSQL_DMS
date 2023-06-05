@@ -965,7 +965,7 @@ BEGIN
                    ON J.job = JS.job
                  INNER JOIN (    -- Viable processors/step tools combinations (with CPU loading and processor group information)
                               SELECT LP.Processor_Name,
-                                     LP.ID as Processor_ID,
+                                     LP.ID As Processor_ID,
                                      PTGD.Tool_Name,
                                      PTGD.priority AS Tool_Priority,
                                      PTGD.Max_Job_Priority,
@@ -1253,7 +1253,7 @@ BEGIN
             /* Declare _debugMsg text;
                 _debugMsg := format('Assigned job %s, step %s; remoteInfoID=%s, jobIsRunningRemote=%s, setting Remote_Start to %s'
                                     _job, _step, _remoteInfoId, _jobIsRunningRemote,
-                                    CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 0 THEN Cast(CURRENT_TIMESTAMP as text)
+                                    CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 0 THEN Cast(CURRENT_TIMESTAMP As text)
                                          WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 1 THEN 'existing Remote_Start value'
                                          ELSE 'Null'
                                     END

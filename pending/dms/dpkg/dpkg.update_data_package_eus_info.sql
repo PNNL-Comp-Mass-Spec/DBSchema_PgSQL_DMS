@@ -103,23 +103,23 @@ BEGIN
 
     If _dataPackageCount = 0 Then
         _message := format('No valid data packages were found in the list: %s', _dataPackageList);
-        RAISE INFO '%', _message;
+        RAISE WARNING '%', _message;
 
         DROP TABLE Tmp_DataPackagesToUpdate;
         RETURN;
     Else
         If _dataPackageCount > 1 Then
-            _message := 'Updating ' || Cast(_dataPackageCount as text) || ' data packages';
+            _message := format('Updating %s data packages', _dataPackageCount);
         Else
 
             SELECT ID
             INTO _firstID
             FROM Tmp_DataPackagesToUpdate
 
-            _message := 'Updating data package ' || Cast(_firstID as text);
+            _message := format('Updating data package %s', _firstID)
         End If;
 
-        -- Print _message
+        -- RAISE INFO '%', _message
     End If;
 
     ---------------------------------------------------

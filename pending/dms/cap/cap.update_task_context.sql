@@ -499,7 +499,7 @@ BEGIN
 */
 
     If _loggingEnabled Then
-        _statusMessage := 'Update context complete: ' || extract(epoch FROM CURRENT_TIMESTAMP - _startTime) || ' seconds elapsed';
+        _statusMessage := format('Update context complete: %s seconds elapsed', extract(epoch FROM CURRENT_TIMESTAMP - _startTime));
         CALL public.post_log_entry('Normal', _statusMessage, 'Update_Task_Context', 'cap');
     End If;
 

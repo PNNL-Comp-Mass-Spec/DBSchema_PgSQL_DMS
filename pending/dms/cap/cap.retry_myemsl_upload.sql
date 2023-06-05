@@ -133,7 +133,7 @@ BEGIN
         If Coalesce(_skipCount, 0) > 0 Then
             _message := format('Skipping %s capture task job(s) that do not have a failed ArchiveVerify step', _skipCount);
             RAISE INFO '%', _message;
-            Select _message as Warning
+            Select _message As Warning
         End If;
 
         -- Construct a comma-separated list of capture task jobs
@@ -182,8 +182,8 @@ BEGIN
                        TS.Tool,
                        'Step would be reset' AS Message,
                        TS.State,
-                       timestamp_text(TS.Start) as Start,
-                       timestamp_text(TS.Finish) as Finish
+                       timestamp_text(TS.Start) As Start,
+                       timestamp_text(TS.Finish) As Finish
                 FROM cap.V_task_Steps TS
                      INNER JOIN Tmp_JobsToReset JR
                        ON TS.Job = JR.Job

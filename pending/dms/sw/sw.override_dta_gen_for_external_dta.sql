@@ -36,7 +36,7 @@ BEGIN
 
     SELECT unnest(xpath('//params/Param[@Name="ExternalDTAFolderName"]/@Value', rooted_xml))::text
     INTO _externalDTAFolderName
-    FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml as rooted_xml
+    FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml As rooted_xml
          ) Src
     LIMIT 1;
 

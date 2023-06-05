@@ -390,7 +390,7 @@ BEGIN
                 (job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
                 comment, special_processing, storage_server, owner_username, DataPkgID)
             SELECT TOP (_maxJobsToAddResetOrResume)
-                DJ.job, DJ.priority, DJ.script, 0 as State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
+                DJ.job, DJ.priority, DJ.script, 0 As State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
                 DJ.comment, DJ.special_processing, sw.extract_server_name(DJ.transfer_folder_path) AS Storage_Server, DJ.Owner_Username, 0 AS DataPkgID
             FROM Tmp_DMSJobs DJ
                  INNER JOIN sw.t_scripts S

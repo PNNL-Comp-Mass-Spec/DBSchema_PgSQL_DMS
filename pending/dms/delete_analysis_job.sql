@@ -97,7 +97,7 @@ BEGIN
 
     If _infoOnly Then
         -- ToDo: Show this using RAISE INFO
-        SELECT 'To be deleted' as Action, *
+        SELECT 'To be deleted' As Action, *
         FROM t_analysis_job
         WHERE (job = _jobID);
         RETURN;

@@ -185,7 +185,7 @@ BEGIN
             CONTINUE;
         End If;
 
-        If _hostName <> '(same as parent folder)' And Not (_hostName = 'Name' And _hostType = 'Type') Then
+        If _hostName <> '(same As parent folder)' And Not (_hostName = 'Name' And _hostType = 'Type') Then
             If _hostType Like 'Alias%' Then
                 _isAlias := true;
 

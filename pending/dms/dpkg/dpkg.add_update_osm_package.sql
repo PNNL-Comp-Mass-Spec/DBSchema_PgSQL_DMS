@@ -165,9 +165,9 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            -- create wiki page link
+            -- Create the wiki page link
             If NOT _name IS NULL Then
-                _wikiLink := 'http://prismwiki.pnl.gov/wiki/OSMPackages:' || REPLACE(_name, ' ', '_');
+                _wikiLink := format('http://prismwiki.pnl.gov/wiki/OSMPackages:%s', REPLACE(_name, ' ', '_'))
             End If;
 
             INSERT INTO dpkg.t_osm_package (

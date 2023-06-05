@@ -89,7 +89,7 @@ BEGIN
         xmlNode.value('@Section', 'text') Section,
         xmlNode.value('@Name', 'text') Name,
         xmlNode.value('@Value', 'text') VALUE,
-        Coalesce(xmlNode.value('@Reqd', 'text'), 'No') as Reqd
+        Coalesce(xmlNode.value('@Reqd', 'text'), 'No') As Reqd
     FROM
         _paramDefinition.nodes('//Param') AS R(xmlNode)
 
@@ -315,7 +315,7 @@ BEGIN
 
             _jobParamXML := ( SELECT * FROM Tmp_JobParameters AS Param FOR XML AUTO, TYPE);
 
-            _jobParam := CAST(_jobParamXML as text);
+            _jobParam := CAST(_jobParamXML As text);
         End If;
     End If;
 

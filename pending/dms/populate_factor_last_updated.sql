@@ -136,7 +136,7 @@ BEGIN
         SELECT XmlQ.RequestID, XmlQ.FactorType, XmlQ.FactorName, XmlQ.FactorValue, false AS ValidFactor
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT ('<factors>' || _xml || '</factors>')::xml as rooted_xml
+            FROM ( SELECT ('<factors>' || _xml || '</factors>')::xml As rooted_xml
                  ) Src,
                  XMLTABLE('//factors/r'
                           PASSING Src.rooted_xml

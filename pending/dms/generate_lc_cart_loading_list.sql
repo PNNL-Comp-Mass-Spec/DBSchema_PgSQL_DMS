@@ -234,7 +234,7 @@ BEGIN
         UPDATE Tmp_XS
         SET seq = CountQ.Seq
         FROM ( SELECT os,
-                      Row_Number() OVER (ORDER BY os) * 10 as Seq
+                      Row_Number() OVER (ORDER BY os) * 10 As Seq
                FROM Tmp_XS
                WHERE col = _col) CountQ
         WHERE Tmp_XS.os = CountQ.os
@@ -330,7 +330,7 @@ BEGIN
         RR.priority AS Priority,
         CASE WHEN Tmp_XF.request = 0 THEN _dsTypeForBlanks ELSE DSType.Dataset_Type END AS Type,
         RR.batch_id AS Batch,
-        RR.block as Block,
+        RR.block As Block,
         RR.run_order AS Run_Order,
         EUT.eus_usage_type AS EMSL_Usage_Type,
         RR.eus_proposal_id AS EMSL_Proposal_ID,

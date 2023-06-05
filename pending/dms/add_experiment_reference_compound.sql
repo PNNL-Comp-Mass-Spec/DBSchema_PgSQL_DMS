@@ -116,7 +116,7 @@ BEGIN
     WHERE exp_id = _expID;
 
     INSERT INTO t_experiment_reference_compounds (exp_id, compound_id)
-    SELECT DISTINCT _expID as Exp_ID, Compound_ID
+    SELECT DISTINCT _expID As Exp_ID, Compound_ID
     FROM Tmp_ExpToRefCompoundMap;
 
     ---------------------------------------------------

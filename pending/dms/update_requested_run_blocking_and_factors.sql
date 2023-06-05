@@ -71,7 +71,7 @@ BEGIN
 
     If _debugEnabled Then
 
-        _logMessage := Cast(_blockingList as text);
+        _logMessage := Cast(_blockingList As text);
         If Coalesce(_logMessage, '') = '' Then
             _logMessage := '_blockingList is empty';
         Else
@@ -80,7 +80,7 @@ BEGIN
 
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
 
-        _logMessage := Cast(_factorList as text);
+        _logMessage := Cast(_factorList As text);
         If Coalesce(_logMessage, '') = '' Then
             _logMessage := '_factorList is empty';
         Else

@@ -79,7 +79,7 @@ BEGIN
     SELECT
         COALESCE(instrument_group, instrument_name, '') As InstrumentGroup,
         Coalesce(dataset_type, '') As DatasetType,
-        Coalesce(instrument_analysis_specifications, '') as InstrumentSettings,
+        Coalesce(instrument_analysis_specifications, '') As InstrumentSettings,
         Coalesce(separation_type, '') As SeparationType
     INTO _instrumentInfo
     FROM t_sample_prep_request

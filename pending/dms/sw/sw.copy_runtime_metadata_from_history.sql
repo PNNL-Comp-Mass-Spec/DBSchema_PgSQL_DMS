@@ -98,7 +98,7 @@ BEGIN
     ---------------------------------------------------
     --
     INSERT INTO Tmp_Jobs (Job, Update_Required, Invalid)
-    SELECT Value as Job, false, false
+    SELECT Value As Job, false, false
     FROM public.parse_delimited_integer_list(_jobList, ',');
 
     If Not Exists (SELECT * FROM Tmp_Jobs) Then
@@ -208,7 +208,7 @@ BEGIN
     ---------------------------------------------------
     --
     UPDATE Tmp_Jobs
-    SET Comment = format('Results_Transfer step in sw.t_job_steps has a different start/finish value vs. sw.t_job_steps_history; ' ||
+    SET Comment = format('Results_Transfer step in sw.t_job_steps has a different start/finish value vs. sw.t_job_steps_history; '
                          'step %s; start %s vs. %s; finish %s vs. %s',
                            InvalidQ.step,
                            public.timestamp_text(InvalidQ.start),  public.timestamp_text(InvalidQ.start_history),
@@ -324,7 +324,7 @@ BEGIN
            JS.Tool,
            JS.StateName,
            JS.state,
-           JSH.state as New_State,
+           JSH.state As New_State,
            JS.start,
            JS.finish,
            JSH.start AS New_Start,

@@ -86,7 +86,7 @@ BEGIN
         INSERT INTO Tmp_ProteinCollections (protein_collection_id, num_proteins, Processed)
         SELECT PC.protein_collection_id,
                PC.num_proteins,
-               0 as Processed
+               0 As Processed
         FROM (SELECT protein_collection_id, num_proteins
               FROM pc.t_protein_collections
               WHERE collection_state_id NOT IN (4)) PC
@@ -212,7 +212,7 @@ BEGIN
                  INNER JOIN pc.t_protein_collections PC
                    ON PCM.protein_collection_id = PC.protein_collection_id
             WHERE PCM.protein_collection_id IN (SELECT protein_collection_id FROM Tmp_CurrentIDs)
-        ) as s
+        ) As s
         ON ( t."protein_collection_id" = s."protein_collection_id" AND t."reference_id" = s."reference_id")
         WHEN MATCHED AND (
             t."protein_name" <> s."protein_name" OR

@@ -85,7 +85,7 @@ BEGIN
     -----------------------------------------------------------
     --
     INSERT INTO Tmp_LCColumns (lc_column_id, Last_Used)
-    SELECT LCCol.lc_column_id, LCCol.created as Last_Used
+    SELECT LCCol.lc_column_id, LCCol.created As Last_Used
     FROM t_lc_column LCCol
          LEFT OUTER JOIN t_dataset DS
            ON LCCol.lc_column_id = DS.lc_column_ID

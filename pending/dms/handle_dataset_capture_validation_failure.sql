@@ -111,7 +111,7 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        RAISE INFO 'Mark dataset ID % as bad: % (%)', _datasetID, _comment, _datasetName;
+        RAISE INFO 'Mark dataset ID % As bad: % (%)', _datasetID, _comment, _datasetName;
         EXIT;
     End If;
 
@@ -129,7 +129,7 @@ BEGIN
         -- Also update t_dataset_archive
         CALL add_archive_dataset _datasetID
 
-        _message := format('Marked dataset as bad: %s', _datasetName);
+        _message := format('Marked dataset As bad: %s', _datasetName);
         RAISE INFO '%', _message;
 
     End If;

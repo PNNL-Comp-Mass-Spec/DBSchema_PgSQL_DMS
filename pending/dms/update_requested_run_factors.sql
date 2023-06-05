@@ -372,7 +372,7 @@ BEGIN
             _message := format('Unable to determine RequestID for %s of %s factors', _invalidCount, _matchCount);
         End If;
 
-        _message := format('%s; treating the Identifier column as %s', _message, _idType);
+        _message := format('%s; treating the Identifier column As %s', _message, _idType);
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
@@ -401,7 +401,7 @@ BEGIN
         If char_length(_badFactorNames) < 256 Then
             _message := format('Unacceptable characters in factor names "%s"', _badFactorNames);
         Else
-            _message := ('Unacceptable characters in factor names "%s ..."', LEFT(_badFactorNames, 256));
+            _message := format('Unacceptable characters in factor names "%s ..."', LEFT(_badFactorNames, 256));
         End If;
 
         If _infoOnly Then

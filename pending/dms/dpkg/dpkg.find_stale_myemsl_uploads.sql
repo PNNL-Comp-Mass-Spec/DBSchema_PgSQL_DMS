@@ -25,6 +25,11 @@ DECLARE
     _dataPackageID Int;
     _entryIDList text;
     _dataPackageList text;
+
+ 	_formatSpecifier text;
+	_infoHead text;
+	_infoHeadSeparator txt;
+    _uploadInfo record;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -78,48 +83,93 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        _formatSpecifier := '%-20s %-10s %-10s %-10s %-80s %-30s %-60s %-20s';
 
-        SELECT 'Stale: ' || Cast(DateDiff(Day, Stale.Entered, CURRENT_TIMESTAMP) As text) || ' days old' As Message,
-               Uploads.*
-        FROM V_MyEMSL_Uploads Uploads
-             INNER JOIN Tmp_StaleUploads Stale
-               ON Uploads.Entry_ID = Stale.Entry_ID
-        ORDER BY Entry_ID
-    Else
+        _infoHead := format(_formatSpecifier,
+                            'Message',
+                            'Entry_ID',
+                            'Job',
+                            'Dataset_ID',
+                            'Dataset',
+                            'Subfolder',
+                            'Status_uri',
+                            'Entered'
+                           );
 
-        UPDATE dpkg.t_myemsl_uploads Uploads
-        SET error_code = 101
-        FROM Tmp_StaleUploads Stale
-        WHERE Uploads.Entry_ID = Stale.Entry_ID;
-        --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+        _infoHeadSeparator := format(_formatSpecifier,
+                                    '--------------------',
+                                    '----------',
+                                    '----------',
+                                    '----------',
+                                    '--------------------------------------------------------------------------------',
+                                    '------------------------------',
+                                    '------------------------------------------------------------',
+                                    '--------------------'
+                                    );
 
-        If _updateCount = 1 Then
-            SELECT Entry_ID,
-                   Data_Package_ID
-            INTO _entryID, _dataPackageID
-            FROM Tmp_StaleUploads
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
-            -- MyEMSL upload task 3944 for data package 2967 has been unverified for over 45 days; ErrorCode set to 101
-            _message := format('MyEMSL upload task %s for data package %s has been', _entryID, _dataPackageID);
-        Else
-            SELECT string_agg(Entry_ID::text, ',' ORDER BY Entry_ID),
-                   string_agg(Data_Package_ID::text, ',' ORDER BY Data_Package_ID),
-            INTO _entryIDList, _dataPackageList
-            FROM Tmp_StaleUploads
+        FOR _uploadInfo IN
+            SELECT format('Stale: %s days old', Round(extract(epoch FROM CURRENT_TIMESTAMP - Stale.Entered) / 86400)) As Message,
+                   Uploads.entry_id,
+                   Uploads.job,
+                   Uploads.dataset_id,
+                   Uploads.dataset,
+                   Uploads.subfolder,
+                   Uploads.status_uri,
+                   Uploads.entered
+            FROM V_MyEMSL_Uploads Uploads
+                 INNER JOIN Tmp_StaleUploads Stale
+                   ON Uploads.Entry_ID = Stale.Entry_ID
+            ORDER BY Entry_ID
+        LOOP
 
-            -- MyEMSL upload tasks 3944,4119,4120 for data packages 2967,2895,2896 have been unverified for over 45 days; ErrorCode set to 101
-            _message := format('MyEMSL upload tasks %s for data packages %s have been', _entryIDList, _dataPackageList);
-        End If;
+            RAISE INFO '%', format(_formatSpecifier,
+                                   _uploadInfo.Message,
+                                   _uploadInfo.Entry_ID,
+                                   _uploadInfo.Job,
+                                   _uploadInfo.Dataset_ID,
+                                   _uploadInfo.Dataset,
+                                   _uploadInfo.Subfolder,
+                                   _uploadInfo.Status_uri,
+                                   timestamp_text(_uploadInfo.Entered));
+        END LOOP;
 
-        _message := format('%s unverified for over %s days; ErrorCode set to 101', _message, _staleUploadDays);
-
-        CALL public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg');
-
-        RAISE INFO '%', _message;
-
+        DROP TABLE Tmp_StaleUploads;
+        RETURN;
     End If;
+
+    UPDATE dpkg.t_myemsl_uploads Uploads
+    SET error_code = 101
+    FROM Tmp_StaleUploads Stale
+    WHERE Uploads.Entry_ID = Stale.Entry_ID;
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+    If _updateCount = 1 Then
+        SELECT Entry_ID,
+               Data_Package_ID
+        INTO _entryID, _dataPackageID
+        FROM Tmp_StaleUploads
+
+        -- MyEMSL upload task 3944 for data package 2967 has been unverified for over 45 days; ErrorCode set to 101
+        _message := format('MyEMSL upload task %s for data package %s has been', _entryID, _dataPackageID);
+    Else
+        SELECT string_agg(Entry_ID::text, ',' ORDER BY Entry_ID),
+               string_agg(Data_Package_ID::text, ',' ORDER BY Data_Package_ID),
+        INTO _entryIDList, _dataPackageList
+        FROM Tmp_StaleUploads
+
+        -- MyEMSL upload tasks 3944,4119,4120 for data packages 2967,2895,2896 have been unverified for over 45 days; ErrorCode set to 101
+        _message := format('MyEMSL upload tasks %s for data packages %s have been', _entryIDList, _dataPackageList);
+    End If;
+
+    _message := format('%s unverified for over %s days; ErrorCode set to 101', _message, _staleUploadDays);
+
+    CALL public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg');
+
+    RAISE INFO '%', _message;
 
     DROP TABLE Tmp_StaleUploads;
 END

@@ -105,21 +105,21 @@ BEGIN
     SELECT 'Step tools available to this processor (Tmp_AvailableProcessorTools)' AS Parameter,
            string_agg(format('%s (Priority: %s, Only_on_Storage_Server: %s, Capacity_Limited: %s, Processor_Assignment_Applies: %s)',
                              Tool_Name, Tool_Priority, Only_On_Storage_Server, Instrument_Capacity_Limited, Processor_Assignment_Applies),
-                      '; ') as Value
+                      '; ') As Value
     FROM Tmp_AvailableProcessorTools;
 
     RETURN QUERY
     SELECT 'Instruments subject to CPU loading restrictions (Tmp_InstrumentLoading)' AS Parameter,
            string_agg(format('%s (Captures_In_Progress: %s, Max_Simultaneous: %s, Capacity: %s)',
                              Instrument, Captures_In_Progress, Max_Simultaneous_Captures, Available_Capacity),
-                      '; ') as Value
+                      '; ') As Value
     FROM Tmp_InstrumentLoading;
 
     RETURN QUERY
     SELECT 'Instruments assigned to specific processors (Tmp_InstrumentProcessor)' AS Parameter,
            string_agg(format('%s (Assigned_to_this_proc: %s, Assigned_to_any_Proc: %s)',
                              Instrument, Assigned_To_This_Processor, Assigned_To_Any_Processor),
-                      '; ') as Value
+                      '; ') As Value
     FROM Tmp_InstrumentProcessor;
 
     RETURN QUERY

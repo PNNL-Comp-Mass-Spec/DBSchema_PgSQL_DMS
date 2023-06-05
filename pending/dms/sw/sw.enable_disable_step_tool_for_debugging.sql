@@ -90,11 +90,11 @@ BEGIN
 
             _matchCount := 0;
 
-            SELECT 'Set enabled to 1' as Action, *
+            SELECT 'Set enabled to 1' As Action, *
             FROM sw.t_processor_tool_group_details
             WHERE tool_name = _tool AND enabled < 0 AND group_id <> _groupID
             UNION
-            SELECT 'Set enabled to 0' as Action, *
+            SELECT 'Set enabled to 0' As Action, *
             FROM sw.t_processor_tool_group_details
             WHERE tool_name = _tool AND enabled <> 0 AND group_id = _groupID;
 
@@ -134,11 +134,11 @@ BEGIN
         Else
             -- Convert this to use RAISE INFO
 
-            SELECT 'Set enabled to -1' as Action, *
+            SELECT 'Set enabled to -1' As Action, *
             FROM sw.t_processor_tool_group_details
             WHERE tool_name = _tool AND enabled > 0 AND group_id <> _groupID
             UNION
-            SELECT 'Set enabled to 1' as Action, *
+            SELECT 'Set enabled to 1' As Action, *
             FROM sw.t_processor_tool_group_details
             WHERE tool_name = _tool AND enabled <> 1 AND group_id = _groupID;
             --

@@ -143,7 +143,7 @@ BEGIN
                _trypticPeptides AS Tryptic_Peptides,
                _keratinPeptides AS Keratin_Peptides,
                _trypsinPeptides AS Trypsin_Peptides,
-               _uniqueAcetylPeptidesFDR as Acetyl_Peptides,
+               _uniqueAcetylPeptidesFDR As Acetyl_Peptides,
                _dynamicReporterIon AS Dynamic_Reporter_Ion,
                _percentPSMsMissingNTermReporterIon AS Percent_PSMs_Missing_NTermReporterIon,
                _percentPSMsMissingReporterIon AS Percent_PSMs_Missing_ReporterIon

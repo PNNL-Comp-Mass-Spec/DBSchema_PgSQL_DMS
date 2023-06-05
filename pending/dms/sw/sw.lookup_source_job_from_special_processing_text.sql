@@ -110,11 +110,11 @@ BEGIN
                 --   SourceJob:Auto{Tool = "Decon2LS_V2" AND [Param File] = "LTQ_FT_Lipidomics_2012-04-16.xml"}, Job2:Auto{Tool = "Decon2LS_V2" AND [Param File] = "LTQ_FT_Lipidomics_2012-04-16.xml" AND Dataset LIKE "$Replace($ThisDataset,_Pos,)%NEG"}
 
                 _autoQueryUsed := true;
-                _indexStart := Position(_tagName || 'Auto' In _specialProcessingText);
+                _indexStart := Position(format('%sAuto', _tagName) In _specialProcessingText);
 
                 If _indexStart > 0 Then
                 -- <f>
-                    _whereClause := SUBSTRING(_specialProcessingText, _indexStart + char_length(_tagName || 'Auto'), char_length(_specialProcessingText));
+                    _whereClause := SUBSTRING(_specialProcessingText, _indexStart + char_length(format('%sAuto', _tagName)), char_length(_specialProcessingText));
 
                     -- Replace double quotes with single quotes
                     _whereClause := REPLACE(_whereClause, '"', '''');
@@ -166,7 +166,7 @@ BEGIN
 
                             End If; -- </h1>
 
-                            _whereClause := _part1 || _dataset || _part3;
+                            _whereClause := format('%s%s%s', _part1, _dataset, _part3);
                             _whereClause := format('WHERE (%s)', _whereClause);
 
                         Else
@@ -231,7 +231,7 @@ BEGIN
 
                                         -- RAISE INFO '%', _part2;
 
-                                        _whereClause := _part1 || _part2 || _part3;
+                                        _whereClause := format('%s%s%s', _part1, _part2, _part3);
 
                                     End If; -- <k>
 

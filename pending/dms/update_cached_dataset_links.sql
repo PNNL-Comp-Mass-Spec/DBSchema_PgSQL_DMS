@@ -376,7 +376,7 @@ BEGIN
             -- If you update this merge statement, be sure to update the query
             ------------------------------------------------
             --
-            MERGE INTO t_cached_dataset_links as target
+            MERGE INTO t_cached_dataset_links As target
             USING ( SELECT DS.dataset_id,
                            DFP.dataset_row_version,
                            DFP.storage_path_row_version,

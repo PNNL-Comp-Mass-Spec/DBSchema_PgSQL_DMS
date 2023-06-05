@@ -130,7 +130,7 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_DatasetInfo (DatasetID)
-        SELECT CAST(Item as int)
+        SELECT CAST(Item As int)
         FROM public.parse_delimited_list(_datasetIDList)
 
         ---------------------------------------------------

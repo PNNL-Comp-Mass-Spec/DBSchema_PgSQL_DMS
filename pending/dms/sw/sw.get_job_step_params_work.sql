@@ -231,7 +231,7 @@ BEGIN
                            xmltable.name
                            xmltable.value
                            REPLACE(REPLACE(REPLACE( Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
-                    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
+                    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml As rooted_xml
                            FROM sw.t_job_parameters
                            WHERE sw.t_job_parameters.job = _job ) Src,
                          XMLTABLE('//params/Param'

@@ -90,7 +90,7 @@ BEGIN
     End If;
 
     If _jobState = 5 AND Not Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state IN (6,7)) Then
-        _message := format('Job %s is marked as failed (State=5 in sw.t_jobs) yet there are no failed or holding job steps; the job cannot be reset at this time', _job);
+        _message := format('Job %s is marked As failed (State=5 in sw.t_jobs) yet there are no failed or holding job steps; the job cannot be reset at this time', _job);
         RAISE INFO '%', _message;
         RAISE EXCEPTION '%', _message;
     End If;
@@ -125,7 +125,7 @@ BEGIN
             -- ToDo: Preview the job steps using RAISE INFO
 
             -- Show job steps
-            SELECT job, step, output_folder_name as Output_Folder_Old, _resultsDirectoryName as Output_Folder_New
+            SELECT job, step, output_folder_name As Output_Folder_Old, _resultsDirectoryName As Output_Folder_New
             FROM sw.t_job_steps
             WHERE job = _job And (state <> 1 OR input_folder_name Like _folderLikeClause OR  Output_Folder_Name Like _folderLikeClause)
             ORDER BY step

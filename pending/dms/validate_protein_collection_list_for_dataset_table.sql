@@ -128,7 +128,7 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        SELECT 'Tmp_ProteinCollections' as Table_Name, *
+        SELECT 'Tmp_ProteinCollections' As Table_Name, *
         FROM Tmp_ProteinCollections
     End If;
 
@@ -173,7 +173,7 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Tmp_IntStds' as Table_Name, *
+            SELECT 'Tmp_IntStds' As Table_Name, *
             FROM Tmp_IntStds
         End If;
     Else
@@ -267,7 +267,7 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        SELECT 'Tmp_IntStds' as Table_Name, *
+        SELECT 'Tmp_IntStds' As Table_Name, *
         FROM Tmp_IntStds
     End If;
 
@@ -291,7 +291,7 @@ BEGIN
             -- ToDo: Update this to use RAISE INFO
 
             If Exists (Select * From Tmp_IntStds) Then
-                SELECT 'Tmp_IntStds' as Table_Name, *, 'After removing HumanContam' As Comment
+                SELECT 'Tmp_IntStds' As Table_Name, *, 'After removing HumanContam' As Comment
                 FROM Tmp_IntStds
             Else
                 SELECT 'Tmp_IntStds is empty after removing HumanContam' As Comment
@@ -324,7 +324,7 @@ BEGIN
         -- ToDo: Show this info using RAISE INFO
 
         If Exists (Select * From Tmp_ProteinCollectionsToAdd) Then
-            SELECT 'Tmp_ProteinCollectionsToAdd' as Table_Name, *
+            SELECT 'Tmp_ProteinCollectionsToAdd' As Table_Name, *
             FROM Tmp_ProteinCollectionsToAdd
         Else
             RAISE INFO 'Tmp_ProteinCollectionsToAdd is empty';

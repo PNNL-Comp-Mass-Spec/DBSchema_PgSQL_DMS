@@ -90,7 +90,7 @@ BEGIN
                                   Reset_Comment )
         SELECT dataset_id,
                dataset AS Dataset,
-               '' as Reset_Comment
+               '' As Reset_Comment
         FROM t_dataset
         WHERE dataset_state_id = 5 AND
               (comment LIKE '%Exception validating constant%' OR
@@ -102,7 +102,7 @@ BEGIN
         UNION
         SELECT dataset_id,
                dataset AS Dataset,
-               '' as Reset_Comment
+               '' As Reset_Comment
         FROM t_dataset
         WHERE dataset_state_id = 5 AND
               (comment Like '%Authentication failure%password is incorrect%') AND

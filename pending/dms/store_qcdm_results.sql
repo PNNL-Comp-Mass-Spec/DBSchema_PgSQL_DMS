@@ -121,7 +121,7 @@ BEGIN
     SELECT XmlQ.Name, XmlQ.ValueText
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _resultsXML as rooted_xml
+        FROM ( SELECT _resultsXML As rooted_xml
              ) Src,
              XMLTABLE('//QCDM_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml

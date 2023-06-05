@@ -42,7 +42,7 @@ BEGIN
     --
     If _job Is Null Then
         _message := 'Invalid job';
-        _myError := 50000;
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -55,7 +55,7 @@ BEGIN
 
     If Coalesce(_updateCode, 0) <> _updateCodeExpected Then
         _message := 'Invalid Update Code';
-        _myError := 50002;
+        _returnCode := 'U5202'
         RETURN;
     End If;
 
