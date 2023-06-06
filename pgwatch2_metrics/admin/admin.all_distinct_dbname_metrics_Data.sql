@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.1
+-- Dumped from database version 15.3
 -- Dumped by pg_dump version 15.1
 
 SET statement_timeout = 0;
@@ -36,7 +36,6 @@ DMS_PrismWeb3	recommendations	2020-05-12 11:43:35.556687-07
 DMS_PrismWeb3	wal	2020-05-12 11:43:35.557399-07
 DMS_PrismWeb3	archiver	2020-05-12 11:43:35.558018-07
 DMS_PrismWeb3	bgwriter	2020-05-12 11:43:35.558621-07
-DMS_PrismWeb3	db_stats	2020-05-12 11:43:35.559877-07
 DMS_PrismWeb3	table_bloat_approx_summary_sql	2020-05-12 11:43:35.560541-07
 DMS_PrismWeb3	kpi	2020-05-12 11:43:35.561167-07
 DMS_PrismWeb3	psutil_cpu	2020-05-12 11:43:35.561767-07
@@ -46,11 +45,11 @@ DMS_PrismWeb3	locks_mode	2020-05-12 11:43:35.56476-07
 DMS_PrismWeb3	psutil_disk_io_total	2020-05-12 11:43:35.566517-07
 DMS_PrismWeb3	backup_age_pgbackrest	2020-05-12 12:43:15.068505-07
 DMS_PrismWeb3	configured_dbs	2020-05-12 23:42:19.439743-07
+DMS_PrismDB1	index_changes	2023-01-31 16:16:06.836682-08
+DMS_PrismDB1	configuration_changes	2023-04-27 17:38:25.540179-07
 DMS_PrismWeb3	psutil_disk_io_total_per_disk	2020-05-13 19:13:52.113185-07
-DMS_PrismDB1	index_changes	2022-10-26 18:21:40.630226-07
-DMS_PrismWeb3	configuration_changes	2022-11-14 04:09:44.996261-08
-DMS_PrismWeb3	object_changes	2022-11-14 04:20:45.066754-08
-DMS_PrismDB1	configuration_changes	2022-12-22 02:56:54.198659-08
+DMS_PrismWeb3	configuration_changes	2023-05-16 04:08:29.626919-07
+DMS_PrismWeb3	object_changes	2023-05-16 04:18:29.690654-07
 DMS_PrismDB1	server_log_event_counts	2020-06-23 16:36:04.624322-07
 DMS_PrismDB1	recommendations	2020-06-23 16:36:04.625543-07
 DMS_PrismDB1	psutil_mem	2020-06-23 16:36:04.626274-07
@@ -72,7 +71,6 @@ DMS_PrismDB1	settings	2020-06-23 16:36:04.634777-07
 DMS_PrismDB1	locks_mode	2020-06-23 16:36:04.635333-07
 DMS_PrismDB1	stat_ssl	2020-06-23 16:36:04.635363-07
 DMS_PrismDB1	table_io_stats	2020-06-23 16:36:04.63644-07
-DMS_PrismDB1	db_stats	2020-06-23 16:36:04.637586-07
 DMS_PrismDB1	archiver	2020-06-23 16:36:04.638121-07
 DMS_PrismDB1	psutil_disk_io_total_per_disk	2020-06-23 16:36:04.6393-07
 DMS_PrismDB1	kpi	2020-06-23 16:36:04.639876-07
