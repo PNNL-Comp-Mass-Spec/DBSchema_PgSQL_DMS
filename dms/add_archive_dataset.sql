@@ -47,7 +47,7 @@ BEGIN
     _datasetID := Coalesce(_datasetID, 0);
 
     ---------------------------------------------------
-    -- Don't allow duplicate dataset IDs in table
+    -- Don't allow duplicate dataset IDs in the table
     ---------------------------------------------------
     --
     If Exists (SELECT * FROM t_dataset_archive WHERE dataset_id = _datasetID) Then

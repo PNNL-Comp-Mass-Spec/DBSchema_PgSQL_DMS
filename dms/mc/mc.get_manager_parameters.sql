@@ -9,7 +9,8 @@ CREATE OR REPLACE FUNCTION mc.get_manager_parameters(_managernamelist text DEFAU
 **
 **  Desc:
 **      Gets the parameters for the given analysis manager(s)
-**      Uses MgrSettingGroupName to lookup parameters from the parent group, if any
+**
+**      Uses parameter MgrSettingGroupName to lookup parameters from the parent group, if any
 **
 **  Arguments:
 **    _sortMode   0 means sort by param_type_id, mgr_name

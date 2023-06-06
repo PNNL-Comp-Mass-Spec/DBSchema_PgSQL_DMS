@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.update_charge_code_usage(_infoonly boolean DEF
 **  Desc:
 **      Updates the usage columns in T_Charge_Code
 **
-**  Parameters:
+**  Arguments:
 **    _infoOnly     When true, preview the old and new values; otherwise, update the stats
 **
 **  Example usage:
