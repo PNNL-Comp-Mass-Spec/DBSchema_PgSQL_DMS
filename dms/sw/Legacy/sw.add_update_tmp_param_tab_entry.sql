@@ -1,17 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE sw.add_update_tmp_param_tab_entry
-(
-    _section text,
-    _paramName text,
-    _paramValue text
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_tmp_param_tab_entry(text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.add_update_tmp_param_tab_entry(IN _section text, IN _paramname text, IN _paramvalue text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds or updates an entry in temp table Tmp_ParamTab
-**      This procedure is typically called by Get_Job_Param_Table
+**      This procedure was previously called by Get_Job_Param_Table and by legacy procedure Check_Add_Special_Processing_Param
 **
 **      The calling procedure must create table Tmp_ParamTab
 **
@@ -21,7 +19,7 @@ AS $$
 **          Section text,
 **          Name text,
 **          Value text
-**      )
+**      );
 **
 **  Arguments:
 **    _section      Example: JobParameters
@@ -30,7 +28,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   04/20/2011 mem - Initial Version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/05/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -55,5 +53,12 @@ BEGIN
 
 END
 $$;
+
+
+ALTER PROCEDURE sw.add_update_tmp_param_tab_entry(IN _section text, IN _paramname text, IN _paramvalue text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_tmp_param_tab_entry(IN _section text, IN _paramname text, IN _paramvalue text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
 
 COMMENT ON PROCEDURE sw.add_update_tmp_param_tab_entry IS 'AddUpdateTmpParamTabEntry';
