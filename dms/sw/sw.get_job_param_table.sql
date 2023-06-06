@@ -51,6 +51,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **          10/14/2022 mem - Ported to PostgreSQL
 **          03/22/2023 mem - Rename dataset name parameter to DatasetName
 **          05/12/2023 mem - Rename variables
+**          06/05/2023 mem - Rename temp table
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
     -- Temp table to hold job parameters
     ---------------------------------------------------
     --
-    CREATE TEMP TABLE Tmp_ParamTab (
+    CREATE TEMP TABLE Tmp_Param_Tab (
       Section text,
       Name text,
       Value text
@@ -79,10 +80,10 @@ BEGIN
     ---------------------------------------------------
     -- Job Parameters
     --
-    -- Convert columns of data from public.v_get_pipeline_job_parameters into rows added to Tmp_ParamTab
+    -- Convert columns of data from public.v_get_pipeline_job_parameters into rows added to Tmp_Param_Tab
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ParamTab (Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     SELECT 'JobParameters' As Section,
            UnpivotQ.Name,
            UnpivotQ.Value
@@ -147,7 +148,7 @@ BEGIN
     -- Simulate section association for step tool
     ---------------------------------------------------
     --
-    UPDATE Tmp_ParamTab target
+    UPDATE Tmp_Param_Tab target
     SET Section = 'PeptideSearch'
     WHERE target.Name in ('ParamFileName', 'ParamFileStoragePath', 'OrganismName',  'LegacyFastaFileName',  'ProteinCollectionList',  'ProteinOptions');
 
@@ -156,7 +157,7 @@ BEGIN
     ---------------------------------------------------
     --
     If _settingsFileOverride <> '' Then
-        UPDATE Tmp_ParamTab target
+        UPDATE Tmp_Param_Tab target
         SET Value = _settingsFileOverride
         WHERE target.Name = 'SettingsFileName';
 
@@ -165,7 +166,7 @@ BEGIN
                 RAISE INFO 'Updated settings file to: %', _settingsFileOverride;
             End If;
         Else
-            INSERT INTO Tmp_ParamTab (Section, Name, Value)
+            INSERT INTO Tmp_Param_Tab (Section, Name, Value)
             SELECT 'JobParameters' AS Section,
                    'SettingsFileName' AS Name,
                    _settingsFileOverride AS Value;
@@ -184,7 +185,7 @@ BEGIN
     --
     SELECT P.Value
     INTO _settingsFileName
-    FROM Tmp_ParamTab P
+    FROM Tmp_Param_Tab P
     WHERE P.Name = 'SettingsFileName';
 
     If Not FOUND Or _settingsFileName Is Null Then
@@ -199,7 +200,7 @@ BEGIN
     --
     SELECT P.Value
     INTO _analysisToolName
-    FROM Tmp_ParamTab P
+    FROM Tmp_Param_Tab P
     WHERE P.Name = 'ToolName';
 
     If Not FOUND Or _analysisToolName Is Null Then
@@ -275,7 +276,7 @@ BEGIN
 
         ---------------------------------------------------
 
-        INSERT INTO Tmp_ParamTab (Section, Name, Value)
+        INSERT INTO Tmp_Param_Tab (Section, Name, Value)
         SELECT XmlQ.section, XmlQ.name, XmlQ.value
         FROM (
             SELECT xmltable.*
@@ -301,7 +302,7 @@ BEGIN
     -- External DTA folder defined
     ---------------------------------------------------
     --
-    If Exists (SELECT * FROM Tmp_ParamTab P WHERE P.Name = 'ExternalDTAFolderName') Then
+    If Exists (SELECT * FROM Tmp_Param_Tab P WHERE P.Name = 'ExternalDTAFolderName') Then
         ---------------------------------------------------
         -- Look for a Special_Processing entry in the job parameters
         -- If one exists, look for the DTA: tag
@@ -313,7 +314,7 @@ BEGIN
         --
         SELECT sw.extract_tagged_name('DTA:', P.Value)
         INTO _extDTA
-        FROM Tmp_ParamTab P
+        FROM Tmp_Param_Tab P
         WHERE P.Name = 'Special_Processing';
 
         If _extDTA = '' Then
@@ -324,7 +325,7 @@ BEGIN
         End If;
 
         If _extDTA <> '' Then
-            UPDATE Tmp_ParamTab P
+            UPDATE Tmp_Param_Tab P
             SET Value = _extDTA
             WHERE P.Name = 'ExternalDTAFolderName';
 
@@ -334,7 +335,7 @@ BEGIN
         Else
             SELECT P.Value
             INTO _extDTA
-            FROM P.Tmp_ParamTab
+            FROM P.Tmp_Param_Tab
             WHERE P.Name = 'ExternalDTAFolderName';
 
             If _debugMode Then
@@ -344,7 +345,7 @@ BEGIN
     End If;
 
     If _debugMode Then
-        INSERT INTO Tmp_ParamTab (Section, Name, Value)
+        INSERT INTO Tmp_Param_Tab (Section, Name, Value)
         VALUES ('Misc', 'DebugMode', _debugMode::text);
     End If;
 
@@ -357,10 +358,10 @@ BEGIN
            P.Section,
            P.Name,
            P.Value
-    FROM Tmp_ParamTab P
+    FROM Tmp_Param_Tab P
     ORDER BY P.Section, P.Name;
 
-    DROP TABLE Tmp_ParamTab;
+    DROP TABLE Tmp_Param_Tab;
 END
 $$;
 
