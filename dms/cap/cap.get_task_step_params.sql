@@ -1,23 +1,15 @@
 --
-CREATE OR REPLACE FUNCTION cap.get_task_step_params
-(
-    _job int,
-    _step int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _debugMode boolean = false
-)
-RETURNS TABLE (
-    Section text,
-    Name text,
-    Value text
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_task_step_params(integer, integer); Type: FUNCTION; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION cap.get_task_step_params(_job integer, _step integer) RETURNS TABLE(section text, name text, value text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Return a table with capture task job step parameters for given job step
+**
 **      Data comes from tables cap.t_tasks, cap.t_task_steps, and cap.t_task_parameters
 **
 **  Auth:   grk
@@ -27,7 +19,7 @@ AS $$
 **          06/15/2017 mem - Only append /xml to the MyEMSL status URI if it contains /status/
 **          06/12/2018 mem - Now calling Get_Metadata_For_Dataset
 **          05/17/2019 mem - Switch from folder to directory
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/06/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -36,20 +28,12 @@ DECLARE
     _stepParmSectionName text := 'StepParameters';
     _dataset text := '';
 BEGIN
-    _message := '';
-    _returnCode := '';
-
-    _myEMSLStatusURI := '';
-
-    _eusInstrumentID := 0;
-    _eusProposalID := '';
-    _eusUploaderID := 0;
 
     CREATE TEMP TABLE Tmp_Param_Tab (
         Section text,
         Name text,
         Value text
-    )
+    );
 
     ---------------------------------------------------
     -- Get basic capture task job step parameters
@@ -58,7 +42,7 @@ BEGIN
     SELECT S.Tool,
            S.Input_Folder_Name,
            S.Output_Folder_Name,
-           S.Results_Folder_Name
+           T.Results_Folder_Name
     INTO _jobStepInfo
     FROM cap.t_task_steps S
          INNER JOIN cap.t_tasks T
@@ -67,14 +51,7 @@ BEGIN
           S.Step = _step;
 
     If Not FOUND Then
-        _message := format('Could not find basic capture task job step parameters for Job %s, Step %s', _job, _step);
-        _returnCode := 'U5201';
-
-        RAISE WARNING '%', _message;
-
-        SELECT Section, Name, Value
-        FROM Tmp_Param_Tab;
-
+        RAISE WARNING 'Could not find basic capture task job step parameters for Job %, Step % in cap.t_task_steps', _job, _step;
         DROP TABLE Tmp_Param_Tab;
         RETURN;
     End If;
@@ -97,9 +74,9 @@ BEGIN
     ORDER BY MU.entry_id DESC
     LIMIT 1;
 
-    If _myEMSLStatusURI Like '%/status/%' Then
+    If _uploadInfo.myemsl_status_uri Like '%/status/%' Then
         -- Need a URL of the form https://ingest.my.emsl.pnl.gov/myemsl/cgi-bin/status/3268638/xml
-        _myEMSLStatusURI := format('%s/xml', _myEMSLStatusURI);
+        _uploadInfo.myemsl_status_uri := format('%s/xml', _uploadInfo.myemsl_status_uri);
     End If;
 
     ---------------------------------------------------
@@ -107,17 +84,17 @@ BEGIN
     ---------------------------------------------------
     --
     --
-    INSERT INTO Tmp_ParamTab (Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     VALUES (_stepParmSectionName, 'Job',                  _job),
-    VALUES (_stepParmSectionName, 'Step',                 _step),
-    VALUES (_stepParmSectionName, 'StepTool',             _jobStepInfo.Tool),
-    VALUES (_stepParmSectionName, 'ResultsDirectoryName', _jobStepInfo.Results_Folder_Name),
-    VALUES (_stepParmSectionName, 'InputDirectoryName',   _jobStepInfo.Input_Folder_Name),
-    VALUES (_stepParmSectionName, 'OutputDirectoryName',  _jobStepInfo.Output_Folder_Name),
-    VALUES (_stepParmSectionName, 'MyEMSL_Status_URI',    _uploadInfo.myemsl_status_uri),
-    VALUES (_stepParmSectionName, 'EUS_InstrumentID',     _uploadInfo.eus_instrument_id),
-    VALUES (_stepParmSectionName, 'EUS_ProposalID',       _uploadInfo.eus_proposal_id),
-    VALUES (_stepParmSectionName, 'EUS_UploaderID',       _uploadInfo.eus_uploader_id);
+           (_stepParmSectionName, 'Step',                 _step),
+           (_stepParmSectionName, 'StepTool',             _jobStepInfo.Tool),
+           (_stepParmSectionName, 'ResultsDirectoryName', _jobStepInfo.Results_Folder_Name),
+           (_stepParmSectionName, 'InputDirectoryName',   _jobStepInfo.Input_Folder_Name),
+           (_stepParmSectionName, 'OutputDirectoryName',  _jobStepInfo.Output_Folder_Name),
+           (_stepParmSectionName, 'MyEMSL_Status_URI',    _uploadInfo.myemsl_status_uri),
+           (_stepParmSectionName, 'EUS_InstrumentID',     _uploadInfo.eus_instrument_id),
+           (_stepParmSectionName, 'EUS_ProposalID',       _uploadInfo.eus_proposal_id),
+           (_stepParmSectionName, 'EUS_UploaderID',       _uploadInfo.eus_uploader_id);
 
     ---------------------------------------------------
     -- Get capture task job parameters
@@ -128,37 +105,58 @@ BEGIN
     -- that either are not locked to any step
     -- (step number is null) or are locked to the current step
     --
-    INSERT INTO Tmp_ParamTab
-    SELECT
-        xmlNode.value('_section', 'text') Section,
-        xmlNode.value('_name', 'text') Name,
-        xmlNode.value('_value', 'text') Value
-    FROM
-        cap.t_task_parameters cross apply parameters.nodes('//Param') AS R(xmlNode)
-    WHERE
-        cap.t_task_parameters.Job = _job AND
-        ((xmlNode.value('_step', 'text') IS NULL) OR (xmlNode.value('_step', 'text') = _step))
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
+    SELECT XmlQ.section,
+           XmlQ.name,
+           XmlQ.value
+    FROM (
+            SELECT xmltable.section,
+                   xmltable.name,
+                   xmltable.value,
+                   xmltable.step,
+                   Coalesce(public.try_cast(xmltable.step, null::int), 0) As StepNumber
+            FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml As rooted_xml
+                   FROM cap.t_task_parameters
+                   WHERE cap.t_task_parameters.job = _job ) Src,
+                       XMLTABLE('//params/Param'
+                          PASSING Src.rooted_xml
+                          COLUMNS section citext PATH '@Section',
+                                  name citext PATH '@Name',
+                                  value citext PATH '@Value',
+                                  step citext PATH '@Step')
+         ) XmlQ
+    WHERE XmlQ.step Is Null Or XmlQ.StepNumber = _step;
 
     -- Get metadata for dataset if running the Dataset Info plugin or the Dataset Quality plugin
     -- The Dataset Info tool uses the Reporter_Mz_Min value to validate datasets with reporter ions
     -- The Dataset Quality tool creates file metadata.xml
-    If _stepTool In ('DatasetInfo', 'DatasetQuality') Then
+    If _jobStepInfo.Tool In ('DatasetInfo', 'DatasetQuality') Then
         SELECT Dataset
         INTO _dataset
         FROM cap.t_tasks
         WHERE Job = _job;
 
         INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-        SELECT Section, Name, Value
-        FROM cap.get_metadata_for_dataset (_dataset);
+        SELECT Src.Section, Src.Name, Src.Value
+        FROM cap.get_metadata_for_dataset (_dataset) Src
+        ORDER BY Src.Section, Src.Name;
 
     End If;
 
-    SELECT Section, Name, Value
-    FROM Tmp_Param_Tab;
+    RETURN QUERY
+    SELECT Src.Section, Src.Name, Src.Value
+    FROM Tmp_Param_Tab Src;
 
     DROP TABLE Tmp_Param_Tab;
 END
 $$;
 
-COMMENT ON PROCEDURE cap.get_task_step_params IS 'GetJobStepParams';
+
+ALTER FUNCTION cap.get_task_step_params(_job integer, _step integer) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_task_step_params(_job integer, _step integer); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON FUNCTION cap.get_task_step_params(_job integer, _step integer) IS 'GetTaskStepParams or GetJobStepParams';
+
