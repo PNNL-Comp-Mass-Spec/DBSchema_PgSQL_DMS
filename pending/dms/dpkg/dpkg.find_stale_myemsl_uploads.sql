@@ -28,7 +28,7 @@ DECLARE
 
  	_formatSpecifier text;
 	_infoHead text;
-	_infoHeadSeparator txt;
+	_infoHeadSeparator text;
     _uploadInfo record;
 BEGIN
     _message := '';

@@ -53,7 +53,7 @@ DECLARE
 
     _formatSpecifier text;
 	_infoHead text;
-	_infoHeadSeparator txt;
+	_infoHeadSeparator text;
 BEGIN
     _message := '';
     _returnCode := '';
