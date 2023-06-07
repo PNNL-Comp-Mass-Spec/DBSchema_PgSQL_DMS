@@ -83,11 +83,10 @@ BEGIN
         If Not Exists (SELECT * FROM t_instrument_group_allowed_ds_type WHERE instrument_group = _instrumentGroup AND dataset_type = _datasetType) Then
             _allowedDatasetTypes := '';
 
-            SELECT string_agg(dataset_type, ', ')
+            SELECT string_agg(dataset_type, ', ' ORDER BY dataset_type)
             INTO _allowedDatasetTypes
             FROM t_instrument_group_allowed_ds_type
-            WHERE instrument_group = _instrumentGroup
-            ORDER BY dataset_type;
+            WHERE instrument_group = _instrumentGroup;
 
             _message := format('Dataset type "%s" is invalid for instrument group "%s"; valid types are "%s"',
                                 _datasetType, _instrumentGroup, _allowedDatasetTypes);

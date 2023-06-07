@@ -142,7 +142,7 @@ BEGIN
     -- Create a list of Entitites that have Valid = false in Tmp_TargetEntities
     _idListMaxLength := 200;
 
-    SELECT string_agg(EntityID::text, ', ')
+    SELECT string_agg(EntityID::text, ', ' ORDER BY EntityID)
     INTO _idList
     FROM Tmp_TargetEntities
     WHERE Not Valid;

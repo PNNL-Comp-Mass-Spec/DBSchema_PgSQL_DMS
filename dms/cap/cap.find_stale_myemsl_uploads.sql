@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/12/2023 mem - Rename variables
 **          05/31/2023 mem - Use implicit string concatenation
+**          06/07/2023 mem - Add Order By to string_agg()
 **
 *****************************************************/
 DECLARE
@@ -275,13 +276,13 @@ BEGIN
 
         If _updateCount > 1 Then
 
-            SELECT string_agg(Entry_ID::text, ','),
-                   string_agg(Job::text,      ',')
+            SELECT string_agg(Entry_ID::text, ',' ORDER BY Entry_ID),
+                   string_agg(Job::text,      ',' ORDER BY Entry_ID)
             INTO _entryIDList, _jobList
             FROM ( SELECT Entry_ID, Job
-                  FROM Tmp_StaleUploads
-                  ORDER BY Entry_ID
-                  LIMIT 20) FilterQ;
+                   FROM Tmp_StaleUploads
+                   ORDER BY Entry_ID
+                   LIMIT 20) FilterQ;
 
             -- MyEMSL upload tasks 1633334,1633470,1633694 for capture task jobs 3789097,3789252,3789798 have been unverified for over 45 days; error_code set to 101
             _message := format('MyEMSL upload tasks %s for capture task jobs %s have been',_entryIDList, _jobList);

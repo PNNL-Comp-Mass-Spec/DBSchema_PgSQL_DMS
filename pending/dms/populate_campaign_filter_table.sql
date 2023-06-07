@@ -44,7 +44,7 @@ BEGIN
 
         -- Look for invalid Campaign ID values
 
-        SELECT string_agg(CF.campaign_id, ',')
+        SELECT string_agg(CF.campaign_id::text, ',' ORDER BY CF.campaign_id)
         INTO _invalidCampaignIDs
         FROM Tmp_CampaignFilter CF
              LEFT OUTER JOIN t_campaign C

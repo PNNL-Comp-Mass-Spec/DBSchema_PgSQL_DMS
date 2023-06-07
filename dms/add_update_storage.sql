@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
+**          06/07/2023 mem - Add Order By to string_agg()
 **
 *****************************************************/
 DECLARE
@@ -265,7 +266,7 @@ BEGIN
 
                     -- Build list of paths that will be changed
                     --
-                    SELECT string_agg(storage_path_id::text, ', ' )
+                    SELECT string_agg(storage_path_id::text, ', ' ORDER BY storage_path_id)
                     INTO _pathIDs
                     FROM t_storage_path
                     WHERE storage_path_function = 'raw-storage' AND
@@ -400,7 +401,7 @@ BEGIN
 
                 -- Build list of paths that will be changed
                 --
-                SELECT string_agg(storage_path_id::text, ', ' )
+                SELECT string_agg(storage_path_id::text, ', ' ORDER BY storage_path_id)
                 INTO _pathIDs
                 FROM t_storage_path
                 WHERE storage_path_function = 'raw-storage' AND

@@ -105,7 +105,7 @@ BEGIN
     ---------------------------------------------------
     --
     --
-    SELECT string_agg(requestID::text, ', ')
+    SELECT string_agg(requestID::text, ', ' ORDER BY requestID)
     INTO _list
     FROM Tmp_Requests
     WHERE Not requestID IN (SELECT request_id FROM t_requested_run);

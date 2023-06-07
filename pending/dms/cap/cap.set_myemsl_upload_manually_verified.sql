@@ -156,7 +156,7 @@ BEGIN
         FROM public.parse_delimited_integer_list(_statusNumList, ',')
         ORDER BY Value;
 
-        SELECT string_agg(MU.Status_URI, ', ')
+        SELECT string_agg(MU.Status_URI, ', ' ORDER BY MU.Status_URI)
         INTO _statusURIList
         FROM cap.V_MyEMSL_Uploads MU
              INNER JOIN Tmp_VerifiedStatusNumTable SL

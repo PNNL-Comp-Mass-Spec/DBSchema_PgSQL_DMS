@@ -61,10 +61,9 @@ BEGIN
 
     -- Construct a comma-separated list of capture task jobs
 
-    SELECT string_agg(Job, ',' )
+    SELECT string_agg(Job::text, ', ' ORDER BY Job)
     INTO _jobList
-    FROM Tmp_Selected_Jobs
-    ORDER BY Job;
+    FROM Tmp_Selected_Jobs;
 
     UPDATE Tmp_Selected_Jobs
     SET ResetFailedStepsOnly = 1

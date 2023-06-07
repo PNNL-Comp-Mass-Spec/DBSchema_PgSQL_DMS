@@ -42,7 +42,7 @@ BEGIN
     -- Make sure that the tools in the script exist
     ---------------------------------------------------
     --
-    SELECT string_agg(XmlQ.Tool, ', ')
+    SELECT string_agg(XmlQ.Tool, ', ' ORDER BY XmlQ.Tool)
     INTO _missingTools
     FROM ( SELECT xmltable.tool
            FROM ( SELECT _scriptXML As ScriptXML ) Src,

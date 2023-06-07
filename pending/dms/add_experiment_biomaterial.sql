@@ -63,7 +63,7 @@ BEGIN
     ---------------------------------------------------
     --
 
-    SELECT string_agg(Biomaterial_Name, ', ')
+    SELECT string_agg(Biomaterial_Name, ', ' ORDER BY Biomaterial_Name)
     INTO _invalidBiomaterialList
     FROM Tmp_Experiment_to_Biomaterial_Map
     WHERE Biomaterial_ID IS NULL;

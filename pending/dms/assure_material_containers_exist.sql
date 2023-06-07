@@ -89,11 +89,10 @@ BEGIN
         -- Quick check of list
         ---------------------------------------------------
         --
-        SELECT string_agg(Item, ', ')
+        SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _msg
         FROM Tmp_ContainerItems
-        WHERE Not IsLocation AND Not IsContainer
-        ORDER BY Item;
+        WHERE Not IsLocation AND Not IsContainer;
 
         If Coalesce(_msg, '') <> '' Then
             RAISE EXCEPTION 'Item(s) "%" is/are not containers or locations', _msg;

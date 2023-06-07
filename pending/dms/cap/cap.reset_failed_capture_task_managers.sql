@@ -60,10 +60,9 @@ BEGIN
         -----------------------------------------------------------
         --
 
-        SELECT string_agg(Processor_Name, ',')
+        SELECT string_agg(Processor_Name, ',' ORDER BY Processor_Name)
         INTO _managerList
-        FROM Tmp_ManagersToReset
-        ORDER BY Processor_Name
+        FROM Tmp_ManagersToReset;
 
         -----------------------------------------------------------
         -- Call the manager control error cleanup procedure

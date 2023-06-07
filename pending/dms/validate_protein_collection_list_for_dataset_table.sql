@@ -105,7 +105,7 @@ BEGIN
     --------------------------------------------------------------
     --
 
-    SELECT string_agg(CountQ.Protein_Collection_Name, ', ')
+    SELECT string_agg(CountQ.Protein_Collection_Name, ', ' ORDER BY CountQ.Protein_Collection_Name)
     INTO _dups
     FROM (
         SELECT Protein_Collection_Name

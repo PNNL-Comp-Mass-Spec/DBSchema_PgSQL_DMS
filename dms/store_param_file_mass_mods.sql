@@ -129,6 +129,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          05/23/2023 mem - Use format() for string concatenation
 **          05/25/2023 mem - Simplify calls to RAISE INFO
 **          05/30/2023 mem - Use format() for string concatenation
+**          06/07/2023 mem - Add Order By to string_agg()
 **
 *****************************************************/
 DECLARE
@@ -1156,7 +1157,7 @@ BEGIN
 
             -- Lookup the affected residues
 
-            SELECT string_agg(R.residue_symbol, '')
+            SELECT string_agg(R.residue_symbol, '' ORDER BY R.residue_symbol)
             INTO _affectedResidues
             FROM t_maxquant_mod_residues M
                  INNER JOIN t_residues R

@@ -209,7 +209,7 @@ BEGIN
             -- Validate
             -----------------------------------------------------------
 
-            SELECT string_agg(Tmp_NewBatchParams.Value, ', ')
+            SELECT string_agg(Tmp_NewBatchParams.Value, ', ' ORDER BY Tmp_NewBatchParams.Value)
             INTO _misnamedCarts
             FROM Tmp_NewBatchParams
             WHERE Tmp_NewBatchParams.Parameter = 'Cart' AND
@@ -321,10 +321,9 @@ BEGIN
                         WHERE batch_id = _minBatchID;
                     Else
 
-                        SELECT string_agg(Request::text, ', ')
+                        SELECT string_agg(Request::text, ', ' ORDER BY Request)
                         INTO _requestedRunList
-                        FROM Tmp_NewBatchParams
-                        ORDER BY Request;
+                        FROM Tmp_NewBatchParams;
 
                         _logMessage := format('Requested runs do not all belong to the same batch: %s vs. %s; see requested runs %s',
                                             _minBatchID, _maxBatchID, _requestedRunList);
@@ -377,7 +376,7 @@ BEGIN
             -- Convert changed items to XML for logging
             -----------------------------------------------------------
             --
-            SELECT string_agg(format('<r i="%s" t="%s" v="%s" />', Request, Parameter, Value), '')
+            SELECT string_agg(format('<r i="%s" t="%s" v="%s" />', Request, Parameter, Value), '' ORDER BY Request)
             INTO _changeSummary
             FROM Tmp_NewBatchParams;
 

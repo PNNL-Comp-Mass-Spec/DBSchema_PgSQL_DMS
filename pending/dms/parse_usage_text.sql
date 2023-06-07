@@ -281,7 +281,7 @@ BEGIN
         -- Key="Value"
         ---------------------------------------------------
 
-        SELECT string_agg(format('%s="%s"', UsageKey, UsageValue, ' ')
+        SELECT string_agg(format('%s="%s"', UsageKey, UsageValue, ' ' ORDER BY UsageKey)
         INTO _s
         FROM Tmp_UsageInfo;
 

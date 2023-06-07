@@ -31,11 +31,10 @@ BEGIN
     ---------------------------------------------------
     --
 
-    SELECT string_agg(Processor, ',')
+    SELECT string_agg(Processor, ', ' ORDER BY Processor;)
     INTO _mgrList
     FROM cap.t_task_steps
-    WHERE State = 4
-    ORDER BY Processor;
+    WHERE State = 4;
 
     If _infoOnly Then
         RAISE INFO 'Managers to update: %', _mgrList;

@@ -172,22 +172,20 @@ BEGIN
 
             -- Look for invalid Usage_Name values
             --
-            SELECT string_agg(UF.Usage_Name, ',')
+            SELECT string_agg(UF.Usage_Name, ',' ORDER BY UF.Usage_Name)
             INTO _valueList
             FROM Tmp_EUSUsageFilter UF
                  LEFT OUTER JOIN t_eus_usage_type U
                    ON UF.Usage_Name = U.eus_usage_type
-            WHERE U.eus_usage_type_id IS NULL
-            ORDER BY UF.Usage_Name;
+            WHERE U.eus_usage_type_id IS NULL;
 
             If Coalesce(_valueList, '') <> '' Then
                 _msg := format('Invalid Usage Type(s): %s', _valueList);
 
-                SELECT string_agg(eus_usage_type, ', ')
+                SELECT string_agg(eus_usage_type, ', ' ORDER BY eus_usage_type)
                 INTO _valueList
                 FROM t_eus_usage_type
-                WHERE eus_usage_type_id <> 1
-                ORDER BY eus_usage_type;
+                WHERE eus_usage_type_id <> 1;
 
                 _message := format('%s; known types are: %s', _msg, _valueList);
 

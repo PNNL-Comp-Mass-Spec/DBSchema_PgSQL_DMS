@@ -70,10 +70,11 @@ BEGIN
     ---------------------------------------------------
     --
 
-    SELECT string_agg(rr.request_id::text, ', ')
+    SELECT string_agg(RR.request_id::text, ', ' ORDER BY RR.request_id)
     INTO _requestedRunList
-    FROM public.parse_delimited_list(_requestNameList) r
-        join t_requested_run rr on r.Item = rr.request_name
+    FROM public.parse_delimited_list(_requestNameList) R
+         INNER JOIN t_requested_run RR
+           ON R.Item = RR.request_name;
 
     If Coalesce(_requestedRunList, '') = '' Then
         _message := 'The requests submitted in the list do not exist in the database. Check the requests and try again.';

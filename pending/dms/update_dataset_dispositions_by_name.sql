@@ -120,7 +120,7 @@ BEGIN
         -- Any datasets not found?
         ---------------------------------------------------
 
-        SELECT string_agg(DatasetName, ', ' Order By DatasetName)
+        SELECT string_agg(DatasetName, ', ' ORDER BY DatasetName)
         INTO _datasetIDList
         FROM Tmp_DatasetsToUpdate
         WHERE DatasetID IS NULL;
@@ -134,7 +134,7 @@ BEGIN
         -- Make list of dataset IDs
         ---------------------------------------------------
 
-        SELECT string_agg(DatasetID, ', ' Order By DatasetID);
+        SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID);
         INTO _datasetIDList
         FROM Tmp_DatasetsToUpdate;
 

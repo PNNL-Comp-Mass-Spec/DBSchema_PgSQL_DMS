@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scrip
 **          03/08/2023 mem - Switch back to t_step_tools.step_tool
 **          04/02/2023 mem - Rename procedure and functions
 **          05/23/2023 mem - Use format() for string concatenation
+**          06/07/2023 mem - Add Order By to string_agg()
 **
 *****************************************************/
 DECLARE
@@ -39,7 +40,7 @@ BEGIN
     -- Make sure that the tools in the script exist
     ---------------------------------------------------
     --
-    SELECT string_agg(XmlQ.tool, ', ')
+    SELECT string_agg(XmlQ.tool, ', ' ORDER BY XmlQ.tool)
     INTO _missingTools
     FROM ( SELECT xmltable.tool
            FROM ( SELECT _scriptXML As ScriptXML ) Src,

@@ -253,12 +253,12 @@ BEGIN
             UPDATE Tmp_NEWT_IDs
             Set NEWT_ID = public.try_cast(NEWT_ID_Text, null::int)
 
-            SELECT string_agg(Tmp_NEWT_IDs.NEWT_ID_Text, ', ')
+            SELECT string_agg(Tmp_NEWT_IDs.NEWT_ID_Text, ', ' ORDER BY Tmp_NEWT_IDs.NEWT_ID_Text)
             INTO _invalidNEWTIDs
             FROM Tmp_NEWT_IDs
                  LEFT OUTER JOIN S_V_CV_NEWT
                    ON Tmp_NEWT_IDs.NEWT_ID = S_V_CV_NEWT.identifier
-            WHERE S_V_CV_NEWT.identifier IS NULL
+            WHERE ont.V_CV_NEWT.identifier IS NULL
 
             If char_length(Coalesce(_invalidNEWTIDs, '')) > 0 Then
                 RAISE EXCEPTION 'Invalid NEWT ID(s) "%"; see http://dms2.pnl.gov/ontology/report/NEWT', _invalidNEWTIDs;

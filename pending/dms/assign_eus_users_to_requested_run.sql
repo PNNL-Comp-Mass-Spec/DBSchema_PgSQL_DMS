@@ -70,7 +70,7 @@ BEGIN
     -- Post a log entry if unknown users are found
     ---------------------------------------------------
 
-    SELECT string_agg(ID:int, ',')
+    SELECT string_agg(ID:int, ',' ORDER BY ID)
     INTO _unknownUsers
     FROM Tmp_UserIDs NewUsers LEFT OUTER JOIN t_eus_users U ON NewUsers.ID = U.person_id
     WHERE U.person_id IS Null;

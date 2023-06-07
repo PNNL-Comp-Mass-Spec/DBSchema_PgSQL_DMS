@@ -118,7 +118,7 @@ BEGIN
     ---------------------------------------------------
     --
 
-    SELECT string_agg(format('%s/%s', Tmp_ParamDefinition.Section, Tmp_ParamDefinition.Name), ',')
+    SELECT string_agg(format('%s/%s', Tmp_ParamDefinition.Section, Tmp_ParamDefinition.Name), ', ' ORDER BY Tmp_ParamDefinition.Section, Tmp_ParamDefinition.Name)
     INTO _missingParameters
     FROM Tmp_ParamDefinition
          LEFT OUTER JOIN Tmp_JobParameters

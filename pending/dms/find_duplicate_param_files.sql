@@ -144,7 +144,7 @@ BEGIN
     WHERE NOT EXISTS (SELECT PFT.param_file_type FROM t_param_file_types PFT WHERE Tmp_ParamFileTypeFilter.param_file_type = PFT.param_file_type);
 
     If FOUND Then
-        SELECT string_agg(param_file_type, ', ')
+        SELECT string_agg(param_file_type, ', ' ORDER BY param_file_type)
         INTO _message
         FROM Tmp_ParamFileTypeFilter
         WHERE Not Valid;

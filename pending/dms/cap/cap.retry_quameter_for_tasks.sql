@@ -114,10 +114,9 @@ BEGIN
         -- Construct a comma-separated list of capture task jobs
         --
 
-        SELECT string_agg(Job::text, ',')
+        SELECT string_agg(Job::text, ', ' ORDER BY Job)
         INTO _jobList
-        FROM Tmp_JobStepsToReset
-        ORDER BY Job;
+        FROM Tmp_JobStepsToReset;
 
         -----------------------------------------------------------
         -- Reset the DatasetQuality step

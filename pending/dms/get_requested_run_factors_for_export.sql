@@ -72,7 +72,7 @@ BEGIN
     -- for the requests
     -----------------------------------------
 
-    SELECT string_agg(Request::text, ',')
+    SELECT string_agg(Request::text, ',' ORDER BY Request)
     INTO _requestIdList
     FROM Tmp_Requests;
 

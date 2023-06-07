@@ -90,7 +90,7 @@ BEGIN
     -- Convert changed items to XML for logging
     -----------------------------------------------------------
     --
-    SELECT string_agg(format('<r i="%s" f="%s" v="%s" />', _destRequestID, Factor, Value), '')
+    SELECT string_agg(format('<r i="%s" f="%s" v="%s" />', _destRequestID, Factor, Value), '' ORDER BY Factor)
     INTO _changeSummary
     FROM Tmp_Factors;
 

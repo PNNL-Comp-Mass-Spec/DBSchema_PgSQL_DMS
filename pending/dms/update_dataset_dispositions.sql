@@ -137,7 +137,7 @@ BEGIN
         -- Verify that all datasets exist
         ---------------------------------------------------
         --
-        SELECT string_agg(DatasetID, ', ')
+        SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _list
         FROM Tmp_DatasetInfo
         WHERE NOT DatasetID IN (SELECT dataset_id FROM t_dataset)

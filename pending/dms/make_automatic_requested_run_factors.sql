@@ -58,7 +58,7 @@ BEGIN
           NOT t_dataset.acq_time_start IS NULL
     ORDER BY t_dataset.acq_time_start;
 
-    SELECT string_agg(format('<r i="%s" f="Actual_Run_Order" v="%s" />', Request, Actual_Run_Order), '')
+    SELECT string_agg(format('<r i="%s" f="Actual_Run_Order" v="%s" />', Request, Actual_Run_Order), '' ORDER BY Request)
     INTO _factorList
     FROM Tmp_Requests;
 

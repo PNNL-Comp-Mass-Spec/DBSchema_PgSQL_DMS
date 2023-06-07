@@ -215,7 +215,7 @@ BEGIN
             -- Make sure changed fields are allowed
             -----------------------------------------------------------
 
-            SELECT string_agg(Field, ',')
+            SELECT string_agg(Field, ',' ORDER BY Field)
             INTO _badFields
             FROM Tmp_Factors
             WHERE NOT Field IN ('Proposal', 'Operator', 'Comment', 'Users', 'Usage');

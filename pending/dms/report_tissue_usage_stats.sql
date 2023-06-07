@@ -109,7 +109,7 @@ BEGIN
 
             -- Look for invalid Organism ID values
 
-            SELECT string_agg(OrgFilter.organism_id::text, ',')
+            SELECT string_agg(OrgFilter.organism_id::text, ',' ORDER BY OrgFilter.organism_id)
             INTO _invalidOrganismIDs
             FROM Tmp_OrganismFilter OrgFilter
                  LEFT OUTER JOIN t_organisms Org

@@ -167,10 +167,10 @@ BEGIN
     WHERE Exp_ID = 0;
 
     If _count <> 0 Then
-        SELECT string_agg(Experiment, ',')
+        SELECT string_agg(Experiment, ',' ORDER BY Experiment)
         INTO _invalidExperiments
         FROM Tmp_Experiments
-        WHERE Exp_ID = 0
+        WHERE Exp_ID = 0;
 
         _logErrors := false;
         _message := format('Experiment run list contains experiments that do not exist: %s', _invalidExperiments);

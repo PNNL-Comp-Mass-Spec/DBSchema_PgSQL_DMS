@@ -48,14 +48,14 @@ BEGIN
         -- Processing a single experiment
         ------------------------------------------------
         --
-        SELECT string_agg(CC.Biomaterial_Name, '; ')
+        SELECT string_agg(CC.Biomaterial_Name, '; ' ORDER BY CC.Biomaterial_Name)
         INTO _biomaterialList
         FROM T_Experiment_Biomaterial ECC
              INNER JOIN T_Biomaterial CC
                ON ECC.Biomaterial_ID = CC.Biomaterial_ID
         WHERE ECC.Exp_ID = _expID;
 
-        SELECT string_agg(RC.id_name, '; ')
+        SELECT string_agg(RC.id_name, '; ' ORDER BY RC.id_name)
         INTO _refCompoundList
         FROM t_experiment_reference_compounds ERC
              INNER JOIN t_reference_compound RC
@@ -163,7 +163,7 @@ BEGIN
             ORDER BY Exp_ID
         LOOP
 
-            SELECT string_agg(CC.Biomaterial_Name, '; ')
+            SELECT string_agg(CC.Biomaterial_Name, '; ' ORDER BY CC.Biomaterial_Name)
             INTO _biomaterialList
             FROM T_Experiment_Biomaterial ECC
                 INNER JOIN T_Biomaterial CC
@@ -193,7 +193,7 @@ BEGIN
             ORDER BY Exp_ID
         LOOP
 
-            SELECT string_agg(RC.id_name, '; ')
+            SELECT string_agg(RC.id_name, '; ' ORDER BY RC.id_name)
             INTO _refCompoundList
             FROM t_experiment_reference_compounds ERC
                  INNER JOIN t_reference_compound RC

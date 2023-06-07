@@ -284,7 +284,7 @@ BEGIN
     --
     If _idType IN ('RequestID', 'DatasetID', 'Job') Then
 
-        SELECT string_agg(Coalesce(Identifier, '<NULL>'), ',')
+        SELECT string_agg(Coalesce(Identifier, '<NULL>'), ',' ORDER BY Identifier)
         INTO _invalidIDs
         FROM Tmp_FactorInfo
         WHERE public.try_cast(Identifier, null::int) Is Null;
@@ -446,7 +446,7 @@ BEGIN
     --
     _badFactorNames := '';
 
-    SELECT string_agg(Factor, ', ')
+    SELECT string_agg(Factor, ', ' ORDER BY Factor)
     INTO _badFactorNames
     FROM ( SELECT DISTINCT Factor
            FROM Tmp_FactorInfo
@@ -483,7 +483,7 @@ BEGIN
     -- Check for invalid Request IDs in the factors table
     -----------------------------------------------------------
     --
-    SELECT string_agg(RequestID, ', ')
+    SELECT string_agg(RequestID::text, ', ' ORDER BY RequestID)
     INTO _invalidRequestIDs
     FROM Tmp_FactorInfo
          LEFT OUTER JOIN t_requested_run RR
@@ -583,7 +583,7 @@ BEGIN
     -- Convert changed items to XML for logging
     -----------------------------------------------------------
     --
-    SELECT string_agg(format('<r i="%s" f="%s" v="%s" />', RequestID, Factor, Value))
+    SELECT string_agg(format('<r i="%s" f="%s" v="%s" />', RequestID, Factor, Value), '' ORDER BY RequestID, Factor)
     INTO _changeSummary
     FROM Tmp_FactorInfo
     WHERE UpdateSkipCode = 0;

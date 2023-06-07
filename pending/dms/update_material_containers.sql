@@ -217,11 +217,10 @@ BEGIN
         If _numContainers = 1 Then
             _message := format('Container %s is not empty; cannot retire it', _containerList);
         Else
-            SELECT string_agg(Name, ', ')
+            SELECT string_agg(Name, ', ' ORDER BY Name)
             INTO _nonEmptyContainers
             FROM Tmp_Material_Container_List
-            WHERE ItemCount > 0
-            ORDER BY Name;
+            WHERE ItemCount > 0;
 
             _message := format('All containers must be empty in order to retire them; see %s', _nonEmptyContainers);
         End If;

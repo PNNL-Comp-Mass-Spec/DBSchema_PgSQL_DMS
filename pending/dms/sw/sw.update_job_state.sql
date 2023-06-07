@@ -327,7 +327,7 @@ BEGIN
         ---------------------------------------------------
         --
         --
-        SELECT string_agg(Completion_Message, '; ')
+        SELECT string_agg(Completion_Message, '; ' ORDER BY step)
         INTO _comment
         FROM sw.t_job_steps
         WHERE job = _jobInfo.Job AND Not completion_message Is Null

@@ -47,7 +47,7 @@ BEGIN
         --         ELSE format(' step %s Output_Folder_Name (%s|%s);', OJS.Step, OJS.Output_Folder_Name, NJS.Output_Folder_Name)
         --    END
 
-        , '; ')     -- Delimiter for string_agg()
+        , '; ' ORDER BY OJS.Step)     -- Use a semicolon as the delimiter for string_agg()
 
     INTO _message
     FROM sw.t_job_steps OJS

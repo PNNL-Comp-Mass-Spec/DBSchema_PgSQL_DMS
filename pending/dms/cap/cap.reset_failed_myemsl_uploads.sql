@@ -230,11 +230,10 @@ BEGIN
             -- Construct a comma-separated list of capture task jobs then call retry_myemsl_upload
             -----------------------------------------------------------
             --
-            SELECT string_agg(Job, ',')
+            SELECT string_agg(Job::TEXT, ',' ORDER BY Job)
             INTO _jobList
             FROM Tmp_FailedJobs
-            WHERE SkipResetMode = 0
-            ORDER BY Job;
+            WHERE SkipResetMode = 0;
 
             CALL cap.retry_myemsl_upload (_jobs => _jobList, _infoOnly => _infoOnly, _message => _message);
 

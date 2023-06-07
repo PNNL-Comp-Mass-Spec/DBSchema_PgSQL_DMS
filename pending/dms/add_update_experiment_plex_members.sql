@@ -717,7 +717,7 @@ BEGIN
             Else
                 _message := 'Invalid Experiment IDs: ';
 
-                SELECT string_agg(Exp_ID::text, ',')
+                SELECT string_agg(Exp_ID::text, ',' ORDER BY Exp_ID)
                 INTO _message
                 FROM Tmp_Experiment_Plex_Members
                 WHERE ValidExperiment = 0;

@@ -122,11 +122,10 @@ BEGIN
 
     If _notReleasedCount > 0 And Not _allowNonReleasedDatasets Then
 
-        SELECT string_agg(Dataset_Name, ', ')
+        SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
         INTO _list
         FROM Tmp_DatasetInfo
-        WHERE dataset_rating_id = -5
-        ORDER BY Dataset_Name;
+        WHERE dataset_rating_id = -5;
 
         -- Truncate if over 400 characters long
         If char_length(_list) >= 400 Then
@@ -165,7 +164,7 @@ BEGIN
     --
     _list := null;
     --
-    SELECT string_agg(Dataset_Name, ', ')
+    SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
     INTO _list
     FROM Tmp_DatasetInfo
     WHERE Dataset_ID IS NULL;
@@ -187,7 +186,7 @@ BEGIN
     -- If _allowNewDatasets is true, we also allow New and Capture In Progress datasets
     ---------------------------------------------------
     --
-    SELECT string_agg(Dataset_Name, ', ')
+    SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
     INTO _list
     FROM Tmp_DatasetInfo
     WHERE (Not _allowNewDatasets AND dataset_state_id <> 3) OR
@@ -207,7 +206,7 @@ BEGIN
     -- Verify rating of datasets
     ---------------------------------------------------
 
-    SELECT string_agg(Dataset_Name, ', ')
+    SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
     INTO _list
     FROM Tmp_DatasetInfo
     WHERE dataset_rating_id IN (-1, -2);

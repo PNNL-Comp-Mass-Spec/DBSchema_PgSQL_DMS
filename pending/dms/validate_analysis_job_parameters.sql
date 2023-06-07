@@ -301,7 +301,7 @@ BEGIN
 
     -- Find datasets that are not compatible with tool
     --
-    SELECT string_agg(Dataset_Name, ', ')
+    SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
     INTO _datasetList
     FROM Tmp_DatasetInfo
     WHERE instrument_class <> 'Data_Folders' And

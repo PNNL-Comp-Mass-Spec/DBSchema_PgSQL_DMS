@@ -19,11 +19,12 @@ CREATE OR REPLACE FUNCTION ont.get_modification_site_list(_unimodid integer, _hi
 **          03/29/2022 mem - Ported to PostgreSQL
 **                         - Add support for returning all modification sites when _hidden is greater than 1
 **          05/30/2023 mem - Use format() for string concatenation
+**          06/07/2023 mem - Add Order By to string_agg()
 **
 *****************************************************/
 BEGIN
     RETURN QUERY
-    SELECT _unimodID AS Unimod_ID, string_agg(SourceQ.Site_Description, ', ')::citext AS Sites
+    SELECT _unimodID AS Unimod_ID, string_agg(SourceQ.Site_Description, ', ' ORDER BY SourceQ.Site_Description)::citext AS Sites
     FROM (
         SELECT CASE WHEN S.position IN ('Anywhere', 'Any N-Term', 'Any C-term')
                       THEN S.site

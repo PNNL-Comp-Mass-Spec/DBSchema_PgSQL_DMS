@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          05/12/2023 mem - Rename variables
 **          05/31/2023 mem - Use format() for string concatenation
 **                         - Use procedure name without schema when calling verify_sp_authorized()
+**          06/07/2023 mem - Add Order By to string_agg()
 **
 *****************************************************/
 DECLARE
@@ -161,7 +162,7 @@ BEGIN
     -- Verify that all jobs exist
     ---------------------------------------------------
     --
-    SELECT string_agg(Job::text, ', ')
+    SELECT string_agg(Job::text, ', ' ORDER BY Job)
     INTO _list
     FROM Tmp_AnalysisJobs
     WHERE NOT job IN (SELECT job FROM t_analysis_job);
