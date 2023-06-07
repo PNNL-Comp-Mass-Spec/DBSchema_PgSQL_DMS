@@ -16,7 +16,7 @@ AS $$
 **  Desc:
 **      Get job step parameters for given job step
 **
-**  Note: Data comes from sw.T_Job_Parameters, not from the public tables
+**      Data comes from sw.T_Job_Parameters, not from the public tables
 **
 **  Arguments:
 **    _parameters           Output: job step parameters (in XML)

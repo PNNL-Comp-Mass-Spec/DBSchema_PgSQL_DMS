@@ -108,8 +108,9 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
-    -- Table variable to hold state changes
+    -- Table to hold state changes
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_ChangedJobs (
         Job int,
         OldState int,

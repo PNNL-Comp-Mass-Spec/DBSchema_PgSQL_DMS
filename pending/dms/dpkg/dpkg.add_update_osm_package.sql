@@ -98,7 +98,6 @@ BEGIN
         -- Validate sample prep request list
         ---------------------------------------------------
 
-        -- Table variable to hold items from sample prep request list
         CREATE TEMP TABLE Tmp_PrepRequestItems
             Item int,
             Valid boolean not null

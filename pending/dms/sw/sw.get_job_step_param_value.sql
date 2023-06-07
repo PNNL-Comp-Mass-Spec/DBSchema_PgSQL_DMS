@@ -17,7 +17,7 @@ AS $$
 **  Desc:
 **      Get a single job step parameter value
 **
-**  Note: Data comes from sw.T_Job_Parameters, not from the public schema tables
+**      Data comes from sw.T_Job_Parameters, not from the public schema tables
 **
 **  Arguments:
 **    _section               Optional section name to filter on, for example: JobParameters

@@ -21,31 +21,31 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for analysis job step that is appropriate for the given Processor Name.
+**      Looks for analysis job step that is appropriate for the given Analysis manager
 **      If found, step is assigned to caller
 **
-**      Job assignment will be based on:
-**      Assignment type:
-**         Exclusively associated steps ('Exclusive Association', aka Association_Type=1):
-**         Directly associated steps ('Specific Association', aka Association_Type=2):
-**         Directly associated steps (Generic) ('Specific Association', aka Association_Type=2):
-**         Non-associated steps ('Non-associated', aka Association_Type=3):
-**         Generic processing steps ('Non-associated Generic', aka Association_Type=4):
-**         No processing load available on machine, aka Association_Type=101 (disqualified)
-**         Transfer tool steps for jobs that are in the midst of an archive operation, aka Association_Type=102 (disqualified)
-**         Specifically assigned to alternate processor, aka Association_Type=103 (disqualified)
-**         Too many recently started job steps for the given tool, aka Association_Type=104 (disqualified)
-**      Job-Tool priority
-**      Job priority
-**      Job number
-**      Step Number
-**      Max_Job_Priority for the step tool associated with a manager
-**      Next_Try
+**      Job assignment is based on:
+**        Assignment type:
+**          Exclusively associated steps ('Exclusive Association', aka Association_Type=1):
+**          Directly associated steps ('Specific Association', aka Association_Type=2):
+**          Directly associated steps (Generic) ('Specific Association', aka Association_Type=2):
+**          Non-associated steps ('Non-associated', aka Association_Type=3):
+**          Generic processing steps ('Non-associated Generic', aka Association_Type=4):
+**          No processing load available on machine, aka Association_Type=101 (disqualified)
+**          Transfer tool steps for jobs that are in the midst of an archive operation, aka Association_Type=102 (disqualified)
+**          Specifically assigned to alternate processor, aka Association_Type=103 (disqualified)
+**          Too many recently started job steps for the given tool, aka Association_Type=104 (disqualified)
+**        Job-Tool priority
+**        Job priority
+**        Job number
+**        Step Number
+**        Max_Job_Priority for the step tool associated with a manager
+**        Next_Try
 **
 **  Arguments:
 **    _processorName            Name of the processor (aka manager) requesting a job
-**    _job                      Job number assigned; 0 if no job available
-**    _parameters               job step parameters (in XML)
+**    _job                      Output: Job number assigned; 0 if no job available
+**    _parameters               Output: job step parameters (in XML)
 **    _message                  Output message
 **    _infoLevel                Set to 1 to preview the job that would be returned; if 2, will print debug statements
 **    _analysisManagerVersion   Used to update T_Local_Processors
@@ -103,7 +103,7 @@ AS $$
 **          05/04/2017 mem - Filter on column Next_Try
 **          05/11/2017 mem - Look for jobs in state 2 or 9
 **                           Commit the transaction earlier to reduce the time that a HoldLock is on table T_Job_Steps
-**                           Pass _jobIsRunningRemote to GetJobStepParamsXML
+**                           Pass _jobIsRunningRemote to Get_Job_Step_Params_XML
 **          05/15/2017 mem - Consider MonitorRunningRemote when looking for candidate jobs
 **          05/16/2017 mem - Do not update T_Job_Step_Processing_Log if checking the status of a remotely running job
 **          05/18/2017 mem - Add parameter _remoteInfo

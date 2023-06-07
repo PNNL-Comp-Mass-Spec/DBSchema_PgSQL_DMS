@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.find_log_entry(IN _entryid text DEFAULT ''::t
 **      END;
 **
 **  Alternatively, use an anonymous code block:
+
     DO
     LANGUAGE plpgsql
     $$

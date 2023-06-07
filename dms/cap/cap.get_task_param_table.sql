@@ -8,7 +8,10 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 /****************************************************
 **
 **  Desc:
-**      Returns the parameters for the given capture task job in Section/Name/Value rows
+**      Returns the parameters for the given capture task job in Section, Name, Value rows
+**
+**      Data comes from both the procedure arguments and view cap.V_DMS_Dataset_Metadata,
+**      which uses tables in the public schema
 **
 **  Auth:   grk
 **  Date:   09/05/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -42,9 +45,9 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_ParamTab(
-      Section text,
-      Name text,
-      Value text
+        Section text,
+        Name text,
+        Value text
     );
 
     ---------------------------------------------------
@@ -151,7 +154,7 @@ BEGIN
     INSERT INTO Tmp_ParamTab (Section, Name, Value)
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
-        SELECT xmltable.*
+        SELECT xmltable.section, xmltable.name, xmltable.value
         FROM ( SELECT _paramXML As params
              ) Src,
              XMLTABLE('//sections/section/item'
