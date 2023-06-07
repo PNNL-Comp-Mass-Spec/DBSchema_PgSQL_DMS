@@ -1,26 +1,18 @@
 --
-CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task
-(
-    _processorName text,
-    INOUT _job int = 0,
-    INOUT _results refcursor DEFAULT '_results'::refcursor
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoLevel int = 0,
-    _managerVersion text = '',
-    _jobCountToPreview int = 10,
-    _serverPerspectiveEnabled int = 0,
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: request_ctm_step_task(text, integer, refcursor, text, text, integer, text, integer, integer); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _jobnumber integer DEFAULT 0, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infolevel integer DEFAULT 0, IN _managerversion text DEFAULT ''::text, IN _jobcounttopreview integer DEFAULT 10, IN _serverperspectiveenabled integer DEFAULT 0)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
-**      Looks for capture task job step that is appropriate for the given Processor Name.
+**      Looks for capture task job step that is appropriate for the given Capture task manager
 **      If found, step is assigned to caller
 **
-**      Task assignment will be based on:
-**      Assignment restrictions:
+**      Task assignment is based on:
+**        Assignment restrictions:
 **          Job not in hold state
 **          Processor on storage machine (for step tools that require it)
 **          Bionet access (for step tools that reqire it)
@@ -31,24 +23,64 @@ AS $$
 **        Step Number
 **
 **  Arguments:
-**    _processorName    Capture task manager name
-**    _job              Capture task job number assigned; 0 if no job available
-**    _results          Cursor for retrieving the job parameters
-**    _message          Output: message (if an error)
-**    _returnCode       Output: return code (if an error)
-**    _infoLevel        0 to request a task, 1 to preview the capture task job that would be returned; 2 to include details on teh available capture tasks
+**    _processorName                Capture task manager name
+**    _jobNumber                    Capture task job number assigned; 0 if no job available
+**    _results                      Cursor for retrieving the job parameters
+**    _message                      Output: message (if an error)
+**    _returnCode                   Output: return code (if an error)
+**    _infoLevel                    0 to request a task, 1 to preview the capture task job that would be returned; 2 to include details on the available capture tasks
+**    _managerVersion               Capture task manager version (stored in cap.t_local_processors)
+**    _jobCountToPreview            The number of capture task jobs to preview
+**    _serverPerspectiveEnabled     When 0, manager parameter 'perspective' is 'client', meaning the manager will use paths of the form \\proto-5\Exact04\2012_1
+**                                  When 1, manager parameter 'perspective' is 'server', meaning the manager will use paths of the form E:\Exact04\2012_1
+**                                  The Capture Task Manager does not set the value for this parameter, meaning it is always 0
 **
-**  Use this to view the data returned by the _results cursor
-**
-**      BEGIN;
-**          CALL cap.request_ctm_step_task (
-**              _processorName => 'Proto-3_CTM',
-**              _job => _job,
-**              _message => _message,
-**              _returnCode => _returnCode
-**          );
-**          FETCH ALL FROM _results;
-**      END;
+**  To test this procedure, use an anonymous code block:
+
+    DO
+    LANGUAGE plpgsql
+    $$
+    DECLARE
+        _jobNumber int;
+        _results refcursor;
+        _message text;
+        _returnCode text;
+        _jobParams record;
+        _itemsShown int = 0;
+        _formatSpecifier text;
+    BEGIN
+        CALL cap.request_ctm_step_task(
+                    _processorName => 'Proto-3_CTM',
+                    _jobNumber => _jobNumber,
+                    _results => _results,
+                    _message => _message,
+                    _returnCode => _returnCode,
+                    _infoLevel => 2,
+                    _managerVersion => '',
+                    _jobCountToPreview => 10
+                );
+
+        RAISE INFO '';
+        RAISE INFO 'Capture task job parameters';
+
+        _formatSpecifier := '%-22s %-30s';
+
+        WHILE Not _results Is Null
+        LOOP
+            FETCH NEXT FROM _results
+            INTO _jobParams;
+
+            If Not FOUND Or _itemsShown > 10 Then
+                 EXIT;
+            End If;
+
+            RAISE INFO '%', format(_formatSpecifier,  _jobParams.Parameter || ':', _jobParams.Value);
+
+            _itemsShown := _itemsShown + 1;
+        END LOOP;
+    END
+    $$;
+
 **
 **  Auth:   grk
 **  Date:   09/15/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -72,7 +104,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/12/2018 mem - Update code formatting
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
-**          12/15/2023 mem - Renamed _infoOnly to _infoLevel and Ported to PostgreSQL
+**          06/07/2023 mem - Renamed _infoOnly to _infoLevel and Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -80,13 +112,29 @@ DECLARE
     _currentProcedure text;
     _authorized boolean;
 
-    _debugMode boolean := false;
+    _processorNameMatch citext;
+    _machine citext;
+    _numTools int;
+    _processorAssignmentCount int;
+
     _debugMessage text;
-    _jobNotAvailableErrorCode text := 'U5301'
+    _jobNotAvailableErrorCode text := 'U5301';
 
-   _num_candidates int;
-   _jobAssigned boolean := false;
+    _numCandidates int;
+    _step int;
+    _stepTool text;
+    _jobAssigned boolean := false;
+    _machineLockedStepTools text;
+    _excludeCaptureTasks boolean := false;
+    _candidateJobStepsToRetrieve int := 25;
+    _processorLockedToInstrument boolean := false;
+    _jobInfo record;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+
+    _callingProcLocation text := 'Start';
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -122,7 +170,7 @@ BEGIN
         ---------------------------------------------------
 
         _processorName := Coalesce(_processorName, '');
-        _job := 0;
+        _jobNumber := 0;
         _message := '';
         _infoLevel := Coalesce(_infoLevel, 0);
         _managerVersion := Coalesce(_managerVersion, '');
@@ -136,25 +184,27 @@ BEGIN
         ---------------------------------------------------
         -- The capture task manager expects a non-zero
         -- return value if no capture task jobs are available
-        -- Code 53000 is used for this
+        -- Code 'U5301' is used for this
         ---------------------------------------------------
         --
 
         If _infoLevel > 1 Then
-            RAISE INFO '%, RequestStepTask: Starting; make sure this is a valid processor', public.timestamp_text_immutable(clock_timestamp());
+            RAISE INFO '';
+            RAISE INFO '%, Request_CTM_Step_Task: Starting; make sure this is a valid processor', public.timestamp_text_immutable(clock_timestamp());
         End If;
+
+        _callingProcLocation := 'Query cap.t_local_processors';
 
         ---------------------------------------------------
         -- Make sure this is a valid processor
         -- (and capitalize it according to cap.t_local_processors)
         ---------------------------------------------------
         --
-        --
         SELECT machine,
                processor_name
-        INTO _machine, _processorName
+        INTO _machine, _processorNameMatch
         FROM cap.t_local_processors
-        WHERE processor_name = _processorName
+        WHERE processor_name = _processorName::citext;
 
         -- Check if no processor found?
         If Not FOUND Then
@@ -165,6 +215,8 @@ BEGIN
 
             RETURN;
         End If;
+
+        _processorName := _processorNameMatch;
 
         ---------------------------------------------------
         -- Show processor name and machine if _infoLevel is non-zero
@@ -180,10 +232,19 @@ BEGIN
         ---------------------------------------------------
         --
         If _infoLevel = 0 Then
+            _callingProcLocation := 'Update cap.t_local_processors';
+
             UPDATE cap.t_local_processors
-            Set latest_request = CURRENT_TIMESTAMP,
-                manager_version = _managerVersion
-            WHERE processor_name = _processorName
+            SET latest_request = CURRENT_TIMESTAMP,
+                manager_version = CASE WHEN char_length(_managerVersion) = 0
+                                       THEN manager_version
+                                       ELSE _managerVersion
+                                  END
+            WHERE processor_name = _processorName;
+
+            If char_length(_managerVersion) = 0 Then
+                RAISE Warning 'Manager version is an empty string; updated latest_request in cap.t_local_processors but left manager_version unchanged';
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -199,8 +260,10 @@ BEGIN
             Instrument_Capacity_Limited text,
             Bionet_OK text,
             Processor_Assignment_Applies text
-        )
-        --
+        );
+
+        _callingProcLocation := 'Populate Tmp_AvailableProcessorTools';
+
         INSERT INTO Tmp_AvailableProcessorTools( Tool_Name,
                                                  Tool_Priority,
                                                  Only_On_Storage_Server,
@@ -226,27 +289,25 @@ BEGIN
                ON LP.machine = M.machine
         WHERE ProcTool.enabled > 0 AND
               LP.state = 'E' AND
-              LP.processor_name = _processorName
+              LP.processor_name = _processorName;
 
         If _infoLevel > 1 Then
-            SELECT string_agg(Tool_Name, ', ')
+            SELECT string_agg(Tool_Name, ', ' ORDER BY Tool_Name)
             INTO _debugMessage
-            FROM Tmp_AvailableProcessorTools
-            ORDER BY Tool_Name;
+            FROM Tmp_AvailableProcessorTools;
 
             RAISE INFO 'Tools enabled for this processor: %', _debugMessage;
         End If;
 
         ---------------------------------------------------
-        -- Bail out if no tools available, and we are not
-        -- in infoOnly mode
+        -- Bail out if no tools available, and _infoLevel is 0
         ---------------------------------------------------
         --
         SELECT COUNT(*)
-        INTO _num_tools
-        FROM Tmp_AvailableProcessorTools
-        --
-        If _infoLevel = 0 AND _num_tools = 0 Then
+        INTO _numTools
+        FROM Tmp_AvailableProcessorTools;
+
+        If _infoLevel = 0 AND _numTools = 0 Then
             _message := format('No tools presently available for processor "%s"', _processorName);
             _returnCode := _jobNotAvailableErrorCode;
 
@@ -257,7 +318,7 @@ BEGIN
         ---------------------------------------------------
         -- Get a list of instruments and their current loading
         -- (steps in busy state that have step tools that are
-        -- instrument capacity limited tools, summed by Instrument)
+        --  instrument capacity limited tools, summed by Instrument)
         --
         -- Ignore capture task job steps that started over 18 hours ago; they're probably stalled
         --
@@ -269,8 +330,10 @@ BEGIN
             Captures_In_Progress int,
             Max_Simultaneous_Captures int,
             Available_Capacity int
-        )
-        --
+        );
+
+        _callingProcLocation := 'Populate Tmp_InstrumentLoading';
+
         INSERT INTO Tmp_InstrumentLoading( Instrument,
                                            Captures_In_Progress,
                                            Max_Simultaneous_Captures,
@@ -278,7 +341,7 @@ BEGIN
         SELECT T.Instrument,
                COUNT(*) AS Captures_In_Progress,
                T.Max_Simultaneous_Captures,
-               Available_Capacity = T.Max_Simultaneous_Captures - COUNT(*)
+               T.Max_Simultaneous_Captures - COUNT(*) AS Available_Capacity
         FROM cap.t_task_steps TS
              INNER JOIN cap.t_step_tools ST
                ON TS.Tool = ST.step_tool
@@ -293,9 +356,8 @@ BEGIN
         -- Is processor assigned to any instrument?
         ---------------------------------------------------
         --
-        --
         SELECT COUNT(*)
-        INTO _processorIsAssigned
+        INTO _processorAssignmentCount
         FROM cap.t_processor_instrument
         WHERE processor_name = _processorName AND
               enabled > 0;
@@ -308,14 +370,16 @@ BEGIN
             Instrument text,
             Assigned_To_This_Processor int,
             Assigned_To_Any_Processor int
-        )
+        );
+
+        _callingProcLocation := 'Populate Tmp_InstrumentProcessor';
 
         INSERT INTO Tmp_InstrumentProcessor( Instrument,
                                              Assigned_To_This_Processor,
                                              Assigned_To_Any_Processor )
         SELECT Instrument_Name AS Instrument,
                SUM(CASE
-                       WHEN Processor_Name = _processorName THEN 1
+                       WHEN Processor_Name = _processorName::citext THEN 1
                        ELSE 0
                    END) AS Assigned_To_This_Processor,
                SUM(1) AS Assigned_To_Any_Processor
@@ -323,36 +387,35 @@ BEGIN
         WHERE enabled = 1
         GROUP BY instrument_name;
 
-        If _processorIsAssigned = 0 And _serverPerspectiveEnabled <> 0 Then
+        If _processorAssignmentCount = 0 And _serverPerspectiveEnabled <> 0 Then
             -- The capture task managers running on the Proto-x servers have perspective = 'server'
-            -- During dataset capture, If perspective='server' Then the manager will use dataset paths of the form E:\Exact04\2012_1
+            -- During dataset capture, if perspective='server', the manager will use dataset paths of the form E:\Exact04\2012_1
             --   In contrast, CTM's with  perspective='client' will use dataset paths of the form \\proto-5\Exact04\2012_1
             -- Therefore, capture tasks that occur on the Proto-x servers should be limited to instruments whose data is stored on the same server as the CTM
-            --   This is accomplished via one or more mapping rows in table cap.t_processor_instrument in the DMS_Capture DB
+            --   This is accomplished via one or more mapping rows in table cap.t_processor_instrument
             -- If a capture task manager running on a Proto-x server has the DatasetCapture tool enabled, yet does not have an entry in cap.t_processor_instrument,
-            --   then we do not allow capture tasks to be assigned (to thus avoid drive path problems)
-            _excludeCaptureTasks := 1;
+            --   we do not allow capture tasks to be assigned (to thus avoid drive path problems)
+            _excludeCaptureTasks := true;
 
             If _infoLevel > 0 Then
-                RAISE INFO 'Note: setting _excludeCaptureTasks=1 because this processor does not have any entries in cap.t_processor_instrument yet _serverPerspectiveEnabled=1';
+                RAISE INFO 'Note: setting _excludeCaptureTasks to true because this processor does not have any entries in cap.t_processor_instrument, yet _serverPerspectiveEnabled is 1';
             End If;
         End If;
 
         If Exists (Select * From Tmp_InstrumentProcessor WHERE Assigned_To_This_Processor > 0) Then
-            _processorLockedToInstrument := 1;
+            _processorLockedToInstrument := true;
 
             If _infoLevel > 1 Then
-                SELECT string_agg(Instrument_Name, ',')
+                SELECT string_agg(Instrument_Name, ', ' ORDER BY Instrument)
                 INTO _debugMessage
-                FROM Tmp_InstrumentProcessor
-                ORDER BY Instrument;
+                FROM Tmp_InstrumentProcessor;
 
                 RAISE INFO 'Instruments locked to this processor: %', _debugMessage;
             End If;
         End If;
 
         ---------------------------------------------------
-        -- Table variable to hold capture task job step candidates
+        -- Table to hold capture task job step candidates
         -- for possible assignment
         ---------------------------------------------------
         --
@@ -363,18 +426,20 @@ BEGIN
             Job_Priority int,
             Tool text,
             Tool_Priority int
-        )
+        );
+
+        _callingProcLocation := 'Populate Tmp_CandidateJobSteps';
 
         ---------------------------------------------------
-        -- Get list of viable capture task job step assignments organized
-        -- by processor, in order of assignment priority
+        -- Get list of viable capture task job steps,
+        -- organized by processor, in order of assignment priority
         ---------------------------------------------------
         --
         INSERT INTO Tmp_CandidateJobSteps( Job,
-                                            Step,
-                                            Job_Priority,
-                                            Tool,
-                                            Tool_Priority )
+                                           Step,
+                                           Job_Priority,
+                                           Tool,
+                                           Tool_Priority )
         SELECT T.Job,
                TS.Step,
                T.Priority,
@@ -394,22 +459,21 @@ BEGIN
               APT.Bionet_OK = 'Y' AND
               T.State < 100 AND
               NOT (APT.Only_On_Storage_Server = 'Y' AND Storage_Server <> _machine) AND
-              NOT (_excludeCaptureTasks = 1 AND TS.Tool = 'DatasetCapture') AND
+              NOT (_excludeCaptureTasks AND TS.Tool = 'DatasetCapture') AND
               (APT.Instrument_Capacity_Limited = 'N'  OR (NOT Coalesce(IL.Available_Capacity, 1) < 1)) AND
               (APT.Processor_Assignment_Applies = 'N' OR (
-                 (_processorIsAssigned > 0 AND Coalesce(IP.Assigned_To_This_Processor, 0) > 0) OR
-                 (_processorIsAssigned = 0 AND Coalesce(IP.Assigned_To_Any_Processor,  0) = 0)))
+                 (_processorAssignmentCount > 0 AND Coalesce(IP.Assigned_To_This_Processor, 0) > 0) OR
+                 (_processorAssignmentCount = 0 AND Coalesce(IP.Assigned_To_Any_Processor,  0) = 0)))
         ORDER BY APT.Tool_Priority, T.Priority, T.Job, TS.Step
         LIMIT _candidateJobStepsToRetrieve;
         --
-        GET DIAGNOSTICS _num_candidates = ROW_COUNT;
+        GET DIAGNOSTICS _numCandidates = ROW_COUNT;
 
         ---------------------------------------------------
-        -- Bail out if no steps available, and we are not
-        -- in infoOnly mode
+        -- Bail out if no steps available, and _infoLevel = 0
         ---------------------------------------------------
         --
-        If _infoLevel = 0 AND _num_candidates = 0 Then
+        If _infoLevel = 0 AND _numCandidates = 0 Then
             _message := 'No candidates presently available';
             _returnCode := _jobNotAvailableErrorCode;
 
@@ -426,8 +490,10 @@ BEGIN
         ---------------------------------------------------
 
         If _infoLevel > 1 Then
-            RAISE INFO '%, RequestStepTask: look for available step', public.timestamp_text_immutable(clock_timestamp());
+            RAISE INFO '%, Request_CTM_Step_Task: look for available step', public.timestamp_text_immutable(clock_timestamp());
         End If;
+
+        _callingProcLocation := 'Find best step candidate';
 
         BEGIN
             ---------------------------------------------------
@@ -439,12 +505,11 @@ BEGIN
             --   Job number
             ---------------------------------------------------
             --
-            --
             SELECT TS.Job,
                    TS.Step,
                    TS.Tool
-            INTO _job, _step, _stepTool
-            FROM cap.t_task_steps tjs
+            INTO _jobNumber, _step, _stepTool
+            FROM cap.t_task_steps TS
                  INNER JOIN Tmp_CandidateJobSteps CJS
                    ON CJS.Job = TS.Job AND
                       CJS.Step = TS.Step
@@ -454,24 +519,28 @@ BEGIN
 
             If FOUND Then
                 _jobAssigned := true;
+
+                If _infoLevel > 0 Then
+                    RAISE INFO 'Would assign Capture Task Job %, Step %', _jobNumber, _step;
+                End If;
             End If;
 
             ---------------------------------------------------
             -- If a capture task job step was assigned and
-            -- if we are not in infoOnly mode,
-            -- update the step state to Running
+            -- if _infoLevel is 0, update the step state to Running
             ---------------------------------------------------
             --
             If _jobAssigned AND _infoLevel = 0 Then
-            --<e>
+                _callingProcLocation := 'Update State and Processor in cap.t_task_steps';
+
                 UPDATE cap.t_task_steps
-                Set State = 4,
+                SET State = 4,
                     Processor = _processorName,
                     Start = CURRENT_TIMESTAMP,
                     Finish = NULL
-                WHERE Job = _job AND
+                WHERE Job = _jobNumber AND
                       Step = _step;
-            End If; --<e>
+            End If;
 
         END;
 
@@ -485,22 +554,26 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => _callingProcLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
+        End If;
+
+        If _infoLevel > 0 Then
+            RAISE WARNING 'Exception: %', _message;
         End If;
 
         DROP TABLE IF EXISTS Tmp_AvailableProcessorTools;
         DROP TABLE IF EXISTS Tmp_InstrumentLoading;
         DROP TABLE IF EXISTS Tmp_InstrumentProcessor;
         DROP TABLE IF EXISTS Tmp_CandidateJobSteps;
-        DROP TABLE IF EXISTS Tmp_ParamTab;
 
         RETURN;
     END;
 
-    If _jobAssigned Then
+    If _jobAssigned And _infoLevel = 0 Then
+        _callingProcLocation := 'Commit since _jobAssigned is true';
         COMMIT;
     End If;
 
@@ -509,11 +582,13 @@ BEGIN
         -- Temp table to hold capture task job parameters
         ---------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_ParamTab (
+        DROP TABLE IF EXISTS Tmp_JobParamsTable;
+
+        CREATE TEMP TABLE Tmp_JobParamsTable (
             Section text,
             Name text,
             Value text
-        )
+        );
 
         If _jobAssigned Then
 
@@ -522,28 +597,26 @@ BEGIN
                 -- Add entry to T_task_Step_Processing_Log
                 ---------------------------------------------------
 
+                _callingProcLocation := 'Add entry to T_task_Step_Processing_Log';
+
                 INSERT INTO cap.t_task_step_processing_log (job, step, processor)
-                VALUES (_job, _step, _processorName)
+                VALUES (_jobNumber, _step, _processorName);
             End If;
 
             If _infoLevel > 1 Then
-                RAISE INFO '%, RequestStepTask: Call cap.get_task_step_params', public.timestamp_text_immutable(clock_timestamp());
+                RAISE INFO '%, Request_CTM_Step_Task: Query cap.get_task_step_params', public.timestamp_text_immutable(clock_timestamp());
             End If;
 
             ---------------------------------------------------
             -- Capture task job was assigned; get step parameters
             ---------------------------------------------------
 
-            If _infoLevel > 0 Then
-                _debugMode := true;
-            End If;
+            _callingProcLocation := 'Populate Tmp_JobParamsTable';
 
-            -- Populate Tmp_ParamTab with step parameters
-            CALL cap.get_task_step_params (_job, _step, _message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
+            INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
+            SELECT Src.Section, Src.Name, Src.Value
+            FROM cap.get_task_step_params (_jobNumber, _step) Src;
 
-            If _infoLevel <> 0 AND char_length(_message) = 0 Then
-                _message := format('Job %s, Step %s would be assigned to %s', _job, _step, _processorName;
-            End If;
         Else
             ---------------------------------------------------
             -- No capture task job step found; update _message and _returnCode
@@ -551,45 +624,87 @@ BEGIN
             --
             _message := 'No available capture task jobs';
             _returnCode := _jobNotAvailableErrorCode;
+
+            If _infoLevel > 1 Then
+                RAISE INFO '%', _message;
+            End If;
         End If;
 
         ---------------------------------------------------
-        -- Dump candidate list if in infoOnly mode
+        -- Dump candidate list if _infoLevel is non-zero
         ---------------------------------------------------
         --
         If _infoLevel <> 0 Then
             If _infoLevel > 1 Then
-                RAISE INFO '%, RequestStepTask: Preview results', public.timestamp_text_immutable(clock_timestamp());
+                RAISE INFO '%, Request_CTM_Step_Task: Preview results', public.timestamp_text_immutable(clock_timestamp());
             End If;
 
-            SELECT string_agg(step_tool, ', ')
+            _callingProcLocation := 'Populate _machineLockedStepTools';
+
+            SELECT string_agg(step_tool, ', ' ORDER BY step_tool)
             INTO _machineLockedStepTools
             FROM cap.t_step_tools
-            WHERE only_on_storage_server = 'Y'
-            ORDER BY step_tool;
+            WHERE only_on_storage_server = 'Y';
 
             -- Preview the next _jobCountToPreview available capture task jobs
 
+            RAISE INFO '';
+
             If Exists (Select * From Tmp_CandidateJobSteps) Then
+
+                _callingProcLocation := 'Show candidate job steps';
 
                 RAISE INFO 'Candidate capture task job steps for %', _processorName;
 
-                -- ToDo: Update this to use RAISE INFO
+                _formatSpecifier := '%-10s %-5s %-20s %-6s %-14s %-14s %-80s';
 
-                SELECT format('Job %s, step %s, tool %s', CJS.Job, Step, Tool) As Parameter,
-                       format('Seq %s, Tool_Priority %s, Job_Priority %s, Dataset %s', Seq, Tool_Priority, Job_Priority, T.Dataset) As Value
-                FROM Tmp_CandidateJobSteps CJS
-                     INNER JOIN cap.t_tasks T
-                       ON CJS.Job = T.Job
-                ORDER BY Seq
-                LIMIT _jobCountToPreview;
+                _infoHead := format(_formatSpecifier,
+                                    'Job',
+                                    'Step',
+                                    'Tool',
+                                    'Seq',
+                                    'Tool_Priority',
+                                    'Job_Priority',
+                                    'Dataset'
+                                   );
 
+                _infoHeadSeparator := format(_formatSpecifier,
+                                            '----------',
+                                            '-----',
+                                            '--------------------',
+                                            '------',
+                                            '--------------',
+                                            '--------------',
+                                            '--------------------------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _jobInfo IN
+                    SELECT CJS.Job, CJS.Step, CJS.Tool,
+                           CJS.Seq, T.Priority,
+                           CJS.Job_Priority, T.Dataset
+                    FROM Tmp_CandidateJobSteps CJS
+                         INNER JOIN cap.t_tasks T
+                           ON CJS.Job = T.Job
+                    ORDER BY Seq
+                    LIMIT _jobCountToPreview
+                LOOP
+                    RAISE INFO '%', format(_formatSpecifier,
+                                           _jobInfo.Job,
+                                           _jobInfo.Step,
+                                           _jobInfo.Tool,
+                                           _jobInfo.Seq,
+                                           _jobInfo.Priority,
+                                           _jobInfo.Job_Priority,
+                                           _jobInfo.Dataset);
+                END LOOP;
             Else
-
                 RAISE INFO 'No candidate capture task job steps found for % (capture task jobs with step tools % only assigned if dataset stored on %)',
-                                _processorName, _machineLockedStepTools, _machine);
+                                _processorName, _machineLockedStepTools, _machine;
 
-                If _processorLockedToInstrument > 0 THEN
+                If _processorLockedToInstrument THEN
                     RAISE INFO 'Note: Processor locked to instrument';
                 End If;
 
@@ -601,10 +716,33 @@ BEGIN
             --
             If _infoLevel >= 2 Then
 
-                -- ToDo: Update this to use RAISE INFO
+                _callingProcLocation := 'Show results from request_ctm_step_task_explanation';
 
-                SELECT Parameter, Value
-                FROM cap.request_ctm_step_task_explanation(_processorName, _processorIsAssigned, _machine);
+                _formatSpecifier := '%-80s %-80s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Parameter',
+                                    'Value'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                            '--------------------------------------------------------------------------------',
+                                            '--------------------------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '';
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _jobInfo IN
+                    SELECT Parameter, Value
+                    FROM cap.request_ctm_step_task_explanation(_processorName, _processorAssignmentCount, _machine)
+                LOOP
+                    RAISE INFO '%', format(_formatSpecifier,
+                                           _jobInfo.Parameter,
+                                           _jobInfo.Value);
+
+                END LOOP;
             End If;
 
         End If;
@@ -613,18 +751,20 @@ BEGIN
         -- Output capture task job parameters as resultset
         ---------------------------------------------------
         --
+
         Open _results For
             SELECT Name AS Parameter,
                    Value
-            FROM Tmp_ParamTab;
+            FROM Tmp_JobParamsTable;
 
         DROP TABLE Tmp_AvailableProcessorTools;
         DROP TABLE Tmp_InstrumentLoading;
         DROP TABLE Tmp_InstrumentProcessor;
         DROP TABLE Tmp_CandidateJobSteps;
-        DROP TABLE Tmp_ParamTab;
 
- EXCEPTION
+        -- Note: do not drop tmp_jobparamstable since the _results cursor still needs to reference it
+
+    EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
                 _sqlState         = returned_sqlstate,
@@ -634,20 +774,31 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => _callingProcLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
+        End If;
+
+        If _infoLevel > 0 Then
+            RAISE WARNING 'Exception: %', _message;
         End If;
 
         DROP TABLE IF EXISTS Tmp_AvailableProcessorTools;
         DROP TABLE IF EXISTS Tmp_InstrumentLoading;
         DROP TABLE IF EXISTS Tmp_InstrumentProcessor;
         DROP TABLE IF EXISTS Tmp_CandidateJobSteps;
-        DROP TABLE IF EXISTS Tmp_ParamTab;
     END;
 
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE cap.request_ctm_step_task IS 'RequestStepTask';
+
+ALTER PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _jobnumber integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE request_ctm_step_task(IN _processorname text, INOUT _jobnumber integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _jobnumber integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer) IS 'RequestCTMStepTask or RequestStepTask';
+
