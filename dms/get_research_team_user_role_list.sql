@@ -22,12 +22,12 @@ BEGIN
     SELECT string_agg(R.role, '|' ORDER BY R.role)
     INTO _result
     FROM T_Research_Team_Roles R
-             INNER JOIN T_Research_Team_Membership M
-               ON R.role_id = M.role_id
-             INNER JOIN T_Users U
-               ON M.User_ID = U.user_id
-        WHERE M.Team_ID = _researchTeamID AND
-              M.User_ID = _userID;
+         INNER JOIN T_Research_Team_Membership M
+           ON R.role_id = M.role_id
+         INNER JOIN T_Users U
+           ON M.User_ID = U.user_id
+    WHERE M.Team_ID = _researchTeamID AND
+          M.User_ID = _userID;
 
     RETURN _result;
 END
