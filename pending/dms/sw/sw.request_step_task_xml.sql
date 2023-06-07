@@ -224,7 +224,7 @@ BEGIN
     --
 
     If _infoLevel > 1 Then
-        RAISE INFO '%, RequestStepTaskXML: Starting; make sure this is a valid processor', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Request_Step_Task_XML: Starting; make sure this is a valid processor', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -251,7 +251,7 @@ BEGIN
         _returnCode := _jobNotAvailableErrorCode;
 
         INSERT INTO sw.t_sp_usage( posted_by, processor_id, calling_user )
-        VALUES('request_step_task_xml', null, format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
+        VALUES('Request_Step_Task_XML', null, format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
 
         RETURN;
     End If;
@@ -264,14 +264,21 @@ BEGIN
     If _infoLevel = 0 Then
         UPDATE sw.t_local_processors
         SET latest_request = CURRENT_TIMESTAMP,
-            manager_version = _analysisManagerVersion
-        WHERE processor_name = _processorName
+            manager_version = CASE WHEN char_length(_analysisManagerVersion) = 0
+                                   THEN manager_version
+                                   ELSE _analysisManagerVersion
+                              END
+        WHERE processor_name = _processorName;
+
+        If char_length(_analysisManagerVersion) = 0 Then
+            RAISE Warning 'Manager version is an empty string; updated latest_request in sw.t_local_processors but left manager_version unchanged';
+        End If;
 
         If Coalesce(_logSPUsage, 0) <> 0 Then
             INSERT INTO sw.t_sp_usage ( Posted_By,
                                         ProcessorID,
-                                        CALLing_User )
-            VALUES('request_step_task_xml', _processorID, session_user)
+                                        Calling_User )
+            VALUES('Request_Step_Task_XML', _processorID, session_user)
         End If;
 
     End If;
@@ -485,7 +492,7 @@ BEGIN
     );
 
     If _infoLevel > 1 Then
-        RAISE INFO '%, RequestStepTaskXML: Populate Tmp_CandidateJobSteps', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Request_Step_Task_XML: Populate Tmp_CandidateJobSteps', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -1040,7 +1047,7 @@ BEGIN
     ---------------------------------------------------
     --
     If _infoLevel > 1 Then
-        RAISE INFO '%, RequestStepTaskXML: Check for jobs with Association_Type 101', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Request_Step_Task_XML: Check for jobs with Association_Type 101', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     If Exists (SELECT * FROM Tmp_CandidateJobSteps WHERE Association_Type = 101) Then
@@ -1056,7 +1063,7 @@ BEGIN
     --
     If _throttleByStartTime <> 0 Then
         If _infoLevel > 1 Then
-            RAISE INFO '%, RequestStepTaskXML: Check for servers that need to be throttled', public.timestamp_text_immutable(clock_timestamp());
+            RAISE INFO '%, Request_Step_Task_XML: Check for servers that need to be throttled', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
         -- The following query counts the number of job steps that recently started,
@@ -1208,7 +1215,7 @@ BEGIN
     End If;
 
     If _infoLevel > 1 Then
-        RAISE INFO '%, RequestStepTaskXML: Start transaction', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Request_Step_Task_XML: Start transaction', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     BEGIN
@@ -1301,7 +1308,7 @@ BEGIN
     COMMIT;
 
     If _infoLevel > 1 Then
-        RAISE INFO '%, RequestStepTaskXML: Transaction committed', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Request_Step_Task_XML: Transaction committed', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     If _jobAssigned AND _infoLevel = 0 And _remoteInfoID <= 1 Then
@@ -1363,7 +1370,7 @@ BEGIN
         End If;
 
         If _infoLevel > 1 Then
-            RAISE INFO '%, RequestStepTaskXML: Call get_job_step_params_xml', public.timestamp_text_immutable(clock_timestamp());
+            RAISE INFO '%, Request_Step_Task_XML: Call get_job_step_params_xml', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
         ---------------------------------------------------
@@ -1373,8 +1380,9 @@ BEGIN
         CALL sw.get_job_step_params_xml (
                                 _job,
                                 _step,
-                                _parameters output,
-                                _message => _message,
+                                _parameters,                                -- Output
+                                _message => _message,                       -- Output
+                                _returnCode => _returnCode,                 -- Output
                                 _jobIsRunningRemote => _jobIsRunningRemote,
                                 _debugMode => CASE _infoLevel WHEN > 0 THEN true ELSE false END);
 
@@ -1401,7 +1409,7 @@ BEGIN
     --
     If _infoLevel > 0 Then
         If _infoLevel > 1 Then
-            RAISE INFO '%, RequestStepTaskXML: Preview results', public.timestamp_text_immutable(clock_timestamp());
+            RAISE INFO '%, Request_Step_Task_XML: Preview results', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
         -- Preview the next _jobCountToPreview available jobs

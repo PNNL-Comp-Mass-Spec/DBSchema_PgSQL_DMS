@@ -63,6 +63,7 @@ BEGIN
             _remoteInfo = _remoteInfo);
 
     If Exists (Select * FROM sw.t_jobs WHERE job = _job) Then
+        RETURN QUERY
         SELECT _job AS JobNumber,
                dataset,
                _processorName AS Processor,
@@ -71,6 +72,7 @@ BEGIN
         FROM sw.t_jobs
         WHERE job = _job;
     Else
+        RETURN QUERY
         SELECT 0 AS JobNumber,
                '' AS dataset,
                '' AS Processor,

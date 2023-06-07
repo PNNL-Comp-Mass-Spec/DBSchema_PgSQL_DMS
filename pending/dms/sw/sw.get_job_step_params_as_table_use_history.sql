@@ -1,14 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE sw.get_job_step_params_as_table_use_history
+CREATE OR REPLACE FUNCTION sw.get_job_step_params_as_table_use_history
 (
     _job int,
     _step int,
     _section text = '',
     _paramName text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    INOUT _firstParameterValue text = '',
     _debugMode boolean = false
+)
+RETURNS TABLE (
+    Section text,
+    Name text,
+    Value text
 )
 LANGUAGE plpgsql
 AS $$
@@ -17,12 +19,11 @@ AS $$
 **  Desc:
 **      Get job step parameters for given job step
 **
-**  Note: Data comes from sw.T_Job_Parameters_History, not from the public schema tables
+**      Data comes from sw.T_Job_Parameters_History, not from the public schema tables
 **
 **  Arguments:
 **    _section               Optional section name to filter on, for example: JobParameters
 **    _paramName             Optional parameter name to filter on, for example: SourceJob
-**    _firstParameterValue   The value of the first parameter in the retrieved job parameters; useful when using both _section and _paramName
 **
 **  Auth:   mem
 **  Date:   07/31/2013 mem - Initial release
@@ -31,11 +32,8 @@ AS $$
 **
 *****************************************************/
 DECLARE
-BEGIN
-    _message := '';
-    _returnCode := '';
 
-    _firstParameterValue := '';
+BEGIN
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -52,20 +50,17 @@ BEGIN
         Section text,
         Name text,
         Value text
-    )
+    );
 
     ---------------------------------------------------
-    -- Call get_job_step_params_from_history_work to populate the temporary table
+    -- Query get_job_step_params_from_history_work to populate the temporary table
     ---------------------------------------------------
 
-    CALL sw.get_job_step_params_from_history_work (
-                _job,
-                _step,
-                _message => _message,           -- Output
-                _returnCode => _returnCode,     -- Output
-                _debugMode => _debugMode)
+    INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
+    SELECT Section, Name, Value
+    FROM sw.get_job_step_params_from_history_work (_job, _step);
 
-    If _returnCode <> '' Then
+    If Not FOUND Then
         DROP TABLE Tmp_JobParamsTable;
         RETURN;
     End If;
@@ -76,12 +71,12 @@ BEGIN
 
     If _section <> '' Then
         DELETE FROM Tmp_JobParamsTable
-        WHERE Section <> _section
+        WHERE Section <> _section;
     End If;
 
     If _paramName <> '' Then
         DELETE FROM Tmp_JobParamsTable
-        WHERE Name <> _paramName
+        WHERE Name <> _paramName;
     End If;
 
     ---------------------------------------------------
@@ -98,13 +93,14 @@ BEGIN
     -- Return the contents of Tmp_JobParamsTable
     ---------------------------------------------------
 
-    SELECT *
+    RETURN QUERY
+    SELECT Section, Name, Value
     FROM Tmp_JobParamsTable
-    ORDER BY Section, Name, Value
+    ORDER BY Section, Name, Value;
 
     DROP TABLE Tmp_JobParamsTable;
 
 END
 $$;
 
-COMMENT ON PROCEDURE sw.get_job_step_params_as_table_use_history IS 'GetJobStepParamsAsTableUseHistory';
+COMMENT ON FUNCTION sw.get_job_step_params_as_table_use_history IS 'GetJobStepParamsAsTableUseHistory';

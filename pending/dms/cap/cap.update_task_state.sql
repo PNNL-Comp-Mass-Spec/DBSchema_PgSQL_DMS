@@ -122,9 +122,9 @@ BEGIN
         Storage_Server text,
         Start_New timestamp null,
         Finish_New timestamp null
-    )
+    );
 
-    CREATE INDEX IX_Tmp_ChangedJobs_Job ON Tmp_ChangedJobs (Job)
+    CREATE INDEX IX_Tmp_ChangedJobs_Job ON Tmp_ChangedJobs (Job);
 
     ---------------------------------------------------
     -- Determine what current state of active capture task jobs should be
@@ -197,7 +197,7 @@ BEGIN
            INNER JOIN cap.t_tasks AS T
              ON JS_Stats.Job = T.Job
     ) UpdateQ
-    WHERE UpdateQ.OldState <> UpdateQ.NewState
+    WHERE UpdateQ.OldState <> UpdateQ.NewState;
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
     --
@@ -509,14 +509,14 @@ BEGIN
                         );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                            '----------',
-                            '----------',
-                            '----------',
-                            '--------------------',
-                            '----------',
-                            '--------------------',
-                            '--------------------',
-                            '--------------------------------------------------'
+                                     '----------',
+                                     '----------',
+                                     '----------',
+                                     '--------------------',
+                                     '----------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------------------------------------'
                         );
 
         RAISE INFO '%', _infoHead;
@@ -535,14 +535,14 @@ BEGIN
             ORDER BY Job
         LOOP
             _infoData := format(_formatSpecifier,
-                                    _previewData.Job,
-                                    _previewData.OldState,
-                                    _previewData.NewState,
-                                    _previewData.Script,
-                                    _previewData.Dataset_ID,
-                                    _previewData.Start_New,
-                                    _previewData.Finish_New,
-                                    _previewData.Dataset_Name
+                                _previewData.Job,
+                                _previewData.OldState,
+                                _previewData.NewState,
+                                _previewData.Script,
+                                _previewData.Dataset_ID,
+                                _previewData.Start_New,
+                                _previewData.Finish_New,
+                                _previewData.Dataset_Name
                             );
 
             RAISE INFO '%', _infoData;

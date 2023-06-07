@@ -52,28 +52,25 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- Call get_job_step_params_work to populate the temporary table
+    -- Query get_job_step_params_work to populate the temporary table
     ---------------------------------------------------
 
-    CALL sw.get_job_step_params_work (
-            _job,
-            _step,
-            _message => _message,           -- Output
-            _returnCode => _returnCode,     -- Output
-            _debugMode => _debugMode);
+    INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
+    SELECT Section, Name, Value
+    FROM sw.get_job_step_params_work (_job, _step);
 
-    If _returnCode <> '' Then
+    If Not FOUND Then
         DROP TABLE Tmp_JobParamsTable;
         RETURN;
     End If;
 
     If (Coalesce(_jobIsRunningRemote, 0) > 0) Then
         INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
-        VALUES ('StepParameters', 'RunningRemote', _jobIsRunningRemote)
+        VALUES ('StepParameters', 'RunningRemote', _jobIsRunningRemote);
     End If;
 
     If _debugMode Then
-        RAISE INFO '%, GetJobStepParamsXML: populate Tmp_SectionNames table', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_XML: populate Tmp_SectionNames table', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     --------------------------------------------------------------
@@ -94,7 +91,7 @@ BEGIN
     FROM Tmp_JobParamsTable;
 
     If _debugMode Then
-        RAISE INFO '%, GetJobStepParamsXML: populate _x xml variable', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_XML: populate _x xml variable, %', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     --------------------------------------------------------------
@@ -130,7 +127,7 @@ BEGIN
     _xp := format('<sections>%s</sections>', _x);
 
     If _debugMode Then
-        RAISE INFO '%, GetJobStepParamsXML: exiting', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_XML: exiting, %', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------

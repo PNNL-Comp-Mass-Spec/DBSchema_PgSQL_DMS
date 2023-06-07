@@ -1,28 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE sw.get_job_step_params_from_history_work
+CREATE OR REPLACE FUNCTION sw.get_job_step_params_from_history_work
 (
     _job int,
     _step int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _debugMode boolean = false
+)
+RETURNS TABLE (
+    Section text,
+    Name text,
+    Value text
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Populates temporary table Tmp_JobParamsTable with the parameters for the given job and step
+**      Returns a table with the parameters for the given job and step
 **
-**      Note: Data comes from sw.T_Job_Parameters_History, not from the public schema tables
-**
-**      The calling procedure must CREATE TEMP TABLE Tmp_JobParamsTable
-**
-**      CREATE TEMP TABLE Tmp_JobParamsTable (
-**          Section text,
-**          Name text,
-**          Value text
-**      )
+**      Data comes from sw.T_Job_Parameters_History, not from the public schema tables
 **
 **  Auth:   mem
 **  Date:   07/31/2013 mem - Ported from GetJobStepParamsWork
@@ -43,13 +38,10 @@ DECLARE
     _stepInputFolderName text := '';
     _stepParmSectionName text;
 BEGIN
-    _message := '';
-    _returnCode := '';
-
     _debugMode := Coalesce(_debugMode, false);
 
     If _debugMode Then
-        RAISE INFO '%, GetJobStepParamsFromHistoryWork: Get basic job step parameters', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_From_History_Work: Get basic job step parameters', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -72,7 +64,7 @@ BEGIN
     End If;
 
     If _debugMode Then
-        RAISE INFO '%, GetJobStepParamsFromHistoryWork: Get shared results directory name list', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_From_History_Work: Get shared results directory name list', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -101,7 +93,7 @@ BEGIN
           most_recent_entry = 1;
 
     If _debugMode Then
-        RAISE INFO '%, GetJobStepParamsFromHistoryWork: Get job step parameters', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_From_History_Work: Get job step parameters', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -126,26 +118,34 @@ BEGIN
             JSH.most_recent_entry = 1;
 
     ---------------------------------------------------
+    -- Create a temporary table to hold the job parameters
+    ---------------------------------------------------
+
+    CREATE TEMP TABLE Tmp_Param_Tab (
+        Section text,
+        Name text,
+        Value text
+    );
+
+    ---------------------------------------------------
     -- Get job step parameters
     ---------------------------------------------------
     --
     _stepParmSectionName := 'StepParameters';
     --
-    INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     VALUES (_stepParmSectionName, 'Job', _job),
            (_stepParmSectionName, 'Step', _step),
            (_stepParmSectionName, 'StepTool', _stepTool),
            (_stepParmSectionName, 'InputFolderName', _inputFolderName),
            (_stepParmSectionName, 'OutputFolderName', _outputFolderName),
            (_stepParmSectionName, 'SharedResultsFolders', _sharedFolderList),
-
            (_stepParmSectionName, 'StepOutputFolderName', _stepOutputFolderName),
            (_stepParmSectionName, 'StepInputFolderName', _stepInputFolderName),
-
            ('JobParameters', 'DataPackageID', _dataPackageID);
 
     If _debugMode Then
-        RAISE INFO '%, GetJobStepParamsFromHistoryWork: Get job parameters using cross apply', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_From_History_Work: Get job parameters from t_job_parameters_history', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -169,7 +169,7 @@ BEGIN
     --   "No ("
     --   ")"
 
-    INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     SELECT ConvertQ.section, ConvertQ.name, ConvertQ.value
     FROM (
             SELECT XmlQ.section,
@@ -185,7 +185,7 @@ BEGIN
                            FROM sw.t_job_parameters_history
                            WHERE sw.t_job_parameters_history.job = _job AND
                                  sw.t_job_parameters_history.most_recent_entry = 1 ) Src,
-                         XMLTABLE('//params/Param'
+                               XMLTABLE('//params/Param'
                                   PASSING Src.rooted_xml
                                   COLUMNS section citext PATH '@Section',
                                           name citext PATH '@Name',
@@ -197,7 +197,13 @@ BEGIN
           (ConvertQ.StepNumber = 0 OR
            ConvertQ.StepNumber = _step);
 
+    RETURN QUERY
+    SELECT Section, Name, Value
+    FROM Tmp_Param_Tab;
+
+    DROP TABLE Tmp_Param_Tab;
+
 END
 $$;
 
-COMMENT ON PROCEDURE sw.get_job_step_params_from_history_work IS 'GetJobStepParamsFromHistoryWork';
+COMMENT ON FUNCTION sw.get_job_step_params_from_history_work IS 'GetJobStepParamsFromHistoryWork';

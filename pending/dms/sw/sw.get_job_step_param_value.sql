@@ -57,20 +57,17 @@ BEGIN
         Section text,
         Name text,
         Value text
-    )
+    );
 
     ---------------------------------------------------
-    -- Call get_job_step_params_work to populate the temporary table
+    -- Query get_job_step_params_work to populate the temporary table
     ---------------------------------------------------
 
-    CALL sw.get_job_step_params_work (
-            _job,
-            _step,
-            _message => _message,           -- Output
-            _returnCode => _returnCode,     -- Output
-            _debugMode => _debugMode);
+    INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
+    SELECT Section, Name, Value
+    FROM sw.get_job_step_params_work (_job, _step);
 
-    If _returnCode <> '' Then
+    If Not FOUND Then
         DROP TABLE Tmp_JobParamsTable;
         RETURN;
     End If;
@@ -81,12 +78,12 @@ BEGIN
 
     If _section <> '' Then
         DELETE FROM Tmp_JobParamsTable
-        WHERE Not Section Like _section
+        WHERE Not Section Like _section;
     End If;
 
     If _paramName <> '' Then
         DELETE FROM Tmp_JobParamsTable
-        WHERE Not Name Like _paramName
+        WHERE Not Name Like _paramName;
     End If;
 
     ---------------------------------------------------
