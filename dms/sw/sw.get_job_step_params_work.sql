@@ -1,16 +1,10 @@
 --
-CREATE OR REPLACE FUNCTION sw.get_job_step_params_work
-(
-    _job int,
-    _step int
-)
-RETURNS TABLE (
-    Section text,
-    Name text,
-    Value text
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_job_step_params_work(integer, integer, boolean); Type: FUNCTION; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION sw.get_job_step_params_work(_job integer, _step integer, _debugmode boolean DEFAULT false) RETURNS TABLE(section text, name text, value text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -35,7 +29,8 @@ AS $$
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          04/11/2022 mem - Use varchar(4000) when extracting values from the XML
 **          07/27/2022 mem - Move check for missing ToolName parameter to after adding job parameters using T_Job_Parameters
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/07/2023 mem - Rename variables and update alias names
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -52,12 +47,14 @@ DECLARE
     _stepInputFolderName text := '';
     _paramFileStoragePath text := '';
     _cpuLoad int := 1;
-    _stepParmSectionName text := 'StepParameters';
+    _stepParamSectionName text := 'StepParameters';
 BEGIN
+
     _debugMode := Coalesce(_debugMode, false);
 
     If _debugMode Then
-        RAISE INFO '%, Get_Job_Step_Params_Work: Get basic job step parameters', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '';
+        RAISE INFO '%, Get_Job_Step_Params_Work: Get basic job step parameters from sw.t_job_steps', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -75,19 +72,18 @@ BEGIN
           JS.step = _step;
 
     If Not FOUND Then
-        _message := 'Could not find basic job step parameters';
-        _returnCode := 'U5442';
+        RAISE WARNING 'Job %, step % not found in sw.t_job_steps', _job, _step;
         RETURN;
     End If;
 
     If _debugMode Then
-        RAISE INFO '%, Get_Job_Step_Params_Work: Get shared results directory name list', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_Work: Get data package ID and script from sw.t_jobs', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
     -- Lookup data package ID and script name in sw.t_jobs
     ---------------------------------------------------
-    --
+
     SELECT data_pkg_id,
            script
     INTO _dataPackageID, _scriptName
@@ -99,7 +95,7 @@ BEGIN
     ---------------------------------------------------
     -- Lookup server info in sw.t_remote_info if _remoteInfoId > 1
     ---------------------------------------------------
-    --
+
     If Coalesce(_remoteInfoId, 0) > 1 Then
         SELECT remote_info
         INTO _remoteInfo
@@ -109,20 +105,25 @@ BEGIN
         _remoteInfo := Coalesce(_remoteInfo, '');
     End If;
 
+
+    If _debugMode Then
+        RAISE INFO '%, Get_Job_Step_Params_Work: Get shared results directory name list', public.timestamp_text_immutable(clock_timestamp());
+    End If;
+
     ---------------------------------------------------
     -- Get shared results directory name list
     -- Be sure to sort by increasing step number so that the newest shared result folder is last
     ---------------------------------------------------
-    --
+
     SELECT string_agg(output_folder_name, ', ' ORDER BY step)
     INTO _sharedFolderList
     FROM sw.t_job_steps
-    WHERE (job = _job) AND
-          (shared_result_version > 0) AND
-          (state IN (3, 5));
+    WHERE job = _job AND
+          shared_result_version > 0 AND
+          state IN (3, 5);
 
     If _debugMode Then
-        RAISE INFO '%, Get_Job_Step_Params_Work: Get job step parameters', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_Work: Get job step parameters from sw.t_job_steps', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -141,7 +142,7 @@ BEGIN
     WHERE JS.job = _job AND
           JS.step = _step;
 
-    SELECT 'Step_%s_%s', TSD.target_step, ST.tag
+    SELECT format('Step_%s_%s', TSD.target_step, ST.tag)
     INTO _stepInputFolderName
     FROM sw.t_job_step_dependencies AS TSD
          INNER JOIN sw.t_job_steps AS JS
@@ -152,6 +153,10 @@ BEGIN
     WHERE TSD.job = _job AND
           TSD.step = _step AND
           TSD.enable_only = 0;
+
+    If Not FOUND Then
+        _stepInputFolderName := '';
+    End If;
 
     ---------------------------------------------------
     -- Create a temporary table to hold the job parameters
@@ -166,40 +171,40 @@ BEGIN
     ---------------------------------------------------
     -- Get job step parameters
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    VALUES (_stepParmSectionName, 'Job', _job),
-           (_stepParmSectionName, 'Step', _step),
-           (_stepParmSectionName, 'StepTool', _stepTool),
-           (_stepParmSectionName, 'InputFolderName', _inputFolderName),
-           (_stepParmSectionName, 'OutputFolderName', _outputFolderName),
-           (_stepParmSectionName, 'SharedResultsFolders', _sharedFolderList),
-           (_stepParmSectionName, 'StepOutputFolderName', _stepOutputFolderName),
-           (_stepParmSectionName, 'StepInputFolderName', _stepInputFolderName);
+    VALUES (_stepParamSectionName, 'Job', _job),
+           (_stepParamSectionName, 'Step', _step),
+           (_stepParamSectionName, 'StepTool', _stepTool),
+           (_stepParamSectionName, 'InputFolderName', _inputFolderName),
+           (_stepParamSectionName, 'OutputFolderName', _outputFolderName),
+           (_stepParamSectionName, 'SharedResultsFolders', _sharedFolderList),
+           (_stepParamSectionName, 'StepOutputFolderName', _stepOutputFolderName),
+           (_stepParamSectionName, 'StepInputFolderName', _stepInputFolderName);
 
     If Coalesce(_paramFileStoragePath, '') <> '' Then
         INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-        VALUES (_stepParmSectionName, 'ParamFileStoragePath', _paramFileStoragePath);
+        VALUES (_stepParamSectionName, 'ParamFileStoragePath', _paramFileStoragePath);
     End If;
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    VALUES (_stepParmSectionName, 'CPU_Load', _cpuLoad);
+    VALUES (_stepParamSectionName, 'CPU_Load', _cpuLoad);
 
     If Coalesce(_remoteInfo, '') <> '' Then
         INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-        VALUES (_stepParmSectionName, 'RemoteInfo', _remoteInfo);
+        VALUES (_stepParamSectionName, 'RemoteInfo', _remoteInfo);
     End If;
 
     If Coalesce(_remoteTimestamp, '') <> '' Then
         INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-        VALUES (_stepParmSectionName, 'RemoteTimestamp', _remoteTimestamp);
+        VALUES (_stepParamSectionName, 'RemoteTimestamp', _remoteTimestamp);
     End If;
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     VALUES ('JobParameters', 'DataPackageID', _dataPackageID);
 
     If _debugMode Then
-        RAISE INFO '%, Get_Job_Step_Params_Work: Get job parameters from t_job_parameters', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params_Work: Get job parameters from sw.t_job_parameters', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -232,8 +237,8 @@ BEGIN
                    Coalesce(public.try_cast(XmlQ.Step, null::int), 0) As StepNumber
             FROM (
                     SELECT xmltable.section,
-                           xmltable.name
-                           xmltable.value
+                           xmltable.name,
+                           xmltable.value,
                            REPLACE(REPLACE(REPLACE( Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
                     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml As rooted_xml
                            FROM sw.t_job_parameters
@@ -250,20 +255,31 @@ BEGIN
           (ConvertQ.StepNumber = 0 OR
            ConvertQ.StepNumber = _step);
 
+    ---------------------------------------------------
     -- Add ToolName if not present in Tmp_Param_Tab
     -- This will be the case for jobs created directly in the pipeline database (including MAC jobs and MaxQuant_DataPkg jobs)
-    If Not Exists (Select * from Tmp_Param_Tab Where Section = 'JobParameters' and Name = 'ToolName') Then
+    ---------------------------------------------------
+
+    If Not Exists (Select * from Tmp_Param_Tab P Where P.Section = 'JobParameters' And P.Name = 'ToolName') Then
         INSERT INTO Tmp_Param_Tab (Section, Name, Value)
         VALUES ('JobParameters', 'ToolName', _scriptName);
     End If;
 
     RETURN QUERY
-    SELECT Section, Name, Value
-    FROM Tmp_Param_Tab;
+    SELECT Src.Section, Src.Name, Src.Value
+    FROM Tmp_Param_Tab Src;
 
     DROP TABLE Tmp_Param_Tab;
 
 END
 $$;
 
-COMMENT ON FUNCTION sw.get_job_step_params_work IS 'GetJobStepParamsWork';
+
+ALTER FUNCTION sw.get_job_step_params_work(_job integer, _step integer, _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_job_step_params_work(_job integer, _step integer, _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON FUNCTION sw.get_job_step_params_work(_job integer, _step integer, _debugmode boolean) IS 'GetJobStepParamsWork';
+

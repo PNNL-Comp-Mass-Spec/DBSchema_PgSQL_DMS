@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE FUNCTION sw.get_job_step_params_from_history_work
-(
-    _job int,
-    _step int,
-    _debugMode boolean = false
-)
-RETURNS TABLE (
-    Section text,
-    Name text,
-    Value text
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_job_step_params_from_history_work(integer, integer, boolean); Type: FUNCTION; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION sw.get_job_step_params_from_history_work(_job integer, _step integer, _debugmode boolean DEFAULT false) RETURNS TABLE(section text, name text, value text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -25,7 +18,10 @@ AS $$
 **          06/20/2016 mem - Update procedure name shown when using _debugMode
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          04/11/2022 mem - Use varchar(4000) when extracting values from the XML
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/07/2023 mem - Set _stepInputFolderName to '' if step = 1 (matching the behavior of get_job_step_params_work)
+**                         - Add step parameter 'ParamFileStoragePath'
+**                         - Add job parameter 'ToolName' if not present in T_Job_Parameters_History
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -33,21 +29,24 @@ DECLARE
     _inputFolderName text := '';
     _outputFolderName text := '';
     _dataPackageID int := 0;
+    _scriptName text := '';
     _sharedFolderList text;
     _stepOutputFolderName text := '';
     _stepInputFolderName text := '';
-    _stepParmSectionName text;
+    _paramFileStoragePath text := '';
+    _stepParamSectionName text := 'StepParameters';
 BEGIN
+
     _debugMode := Coalesce(_debugMode, false);
 
     If _debugMode Then
-        RAISE INFO '%, Get_Job_Step_Params_From_History_Work: Get basic job step parameters', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params: Get basic job step parameters from sw.t_job_steps_history', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
     -- Get basic job step parameters
     ---------------------------------------------------
-    --
+
     SELECT JSH.tool,
            JSH.input_folder_name,
            JSH.output_folder_name
@@ -58,26 +57,30 @@ BEGIN
           JSH.most_recent_entry = 1;
 
     If Not FOUND Then
-        _message := 'Could not find basic job step parameters';
-        _returnCode := 'U5442';
+        RAISE WARNING 'Job %, step % not found in sw.t_job_steps_history', _job, _step;
         RETURN;
     End If;
 
     If _debugMode Then
-        RAISE INFO '%, Get_Job_Step_Params_From_History_Work: Get shared results directory name list', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params: Get data package ID and script from sw.t_jobs', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
-    -- Lookup data package ID in sw.t_jobs
+    -- Lookup data package ID and script name in sw.t_jobs_history
     ---------------------------------------------------
-    --
-    SELECT data_pkg_id
-    INTO _dataPackageID
+
+    SELECT data_pkg_id,
+           script
+    INTO _dataPackageID, _scriptName
     FROM sw.t_jobs_history
     WHERE job = _job AND
           most_recent_entry = 1;
 
     _dataPackageID := Coalesce(_dataPackageID, 0);
+
+    If _debugMode Then
+        RAISE INFO '%, Get_Job_Step_Params: Get shared results directory name list', public.timestamp_text_immutable(clock_timestamp());
+    End If;
 
     ---------------------------------------------------
     -- Get shared results directory name list
@@ -93,29 +96,35 @@ BEGIN
           most_recent_entry = 1;
 
     If _debugMode Then
-        RAISE INFO '%, Get_Job_Step_Params_From_History_Work: Get job step parameters', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params: Get job step parameters from sw.t_job_steps_history', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
     -- Get input and output folder names for individual steps
     -- (used by aggregation jobs created in broker)
+    -- Also lookup the parameter file storage path and the CPU_Load
     ---------------------------------------------------
 
-    SELECT format('Step_%s_%s', JSH.step, ST.tag)
-    INTO _stepOutputFolderName
-    FROM    sw.t_job_steps_history JSH
-            INNER JOIN sw.t_step_tools ST ON JSH.tool = ST.step_tool
-    WHERE   JSH.job = _job AND
-            JSH.step = _step AND
-            JSH.most_recent_entry = 1;
+    SELECT format('Step_%s_%s', JSH.step, ST.tag),
+           ST.param_file_storage_path
+    INTO _stepOutputFolderName, _paramFileStoragePath
+    FROM sw.t_job_steps_history JSH
+         INNER JOIN sw.t_step_tools ST
+           ON JSH.tool = ST.step_tool
+    WHERE JSH.job = _job AND
+          JSH.step = _step AND
+          JSH.most_recent_entry = 1;
 
-    SELECT format('Step_%s_NotDefined', JSH.step)
-    INTO _stepInputFolderName
-    FROM  sw.t_job_steps_history AS JSH
-            INNER JOIN sw.t_step_tools AS ST ON JSH.tool = ST.step_tool
-    WHERE   ( JSH.job = _job ) AND
-            ( JSH.step = _step ) AND
-            JSH.most_recent_entry = 1;
+    If _step > 1 Then
+        SELECT format('Step_%s_NotDefined', JSH.step - 1)
+        INTO _stepInputFolderName
+        FROM sw.t_job_steps_history AS JSH
+             INNER JOIN sw.t_step_tools AS ST
+               ON JSH.tool = ST.step_tool
+        WHERE JSH.job = _job AND
+              JSH.step = _step AND
+              JSH.most_recent_entry = 1;
+    End If;
 
     ---------------------------------------------------
     -- Create a temporary table to hold the job parameters
@@ -130,22 +139,27 @@ BEGIN
     ---------------------------------------------------
     -- Get job step parameters
     ---------------------------------------------------
-    --
-    _stepParmSectionName := 'StepParameters';
-    --
+
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    VALUES (_stepParmSectionName, 'Job', _job),
-           (_stepParmSectionName, 'Step', _step),
-           (_stepParmSectionName, 'StepTool', _stepTool),
-           (_stepParmSectionName, 'InputFolderName', _inputFolderName),
-           (_stepParmSectionName, 'OutputFolderName', _outputFolderName),
-           (_stepParmSectionName, 'SharedResultsFolders', _sharedFolderList),
-           (_stepParmSectionName, 'StepOutputFolderName', _stepOutputFolderName),
-           (_stepParmSectionName, 'StepInputFolderName', _stepInputFolderName),
-           ('JobParameters', 'DataPackageID', _dataPackageID);
+    VALUES (_stepParamSectionName, 'Job', _job),
+           (_stepParamSectionName, 'Step', _step),
+           (_stepParamSectionName, 'StepTool', _stepTool),
+           (_stepParamSectionName, 'InputFolderName', _inputFolderName),
+           (_stepParamSectionName, 'OutputFolderName', _outputFolderName),
+           (_stepParamSectionName, 'SharedResultsFolders', _sharedFolderList),
+           (_stepParamSectionName, 'StepOutputFolderName', _stepOutputFolderName),
+           (_stepParamSectionName, 'StepInputFolderName', _stepInputFolderName);
+
+    If Coalesce(_paramFileStoragePath, '') <> '' Then
+        INSERT INTO Tmp_Param_Tab (Section, Name, Value)
+        VALUES (_stepParamSectionName, 'ParamFileStoragePath', _paramFileStoragePath);
+    End If;
+
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
+    VALUES ('JobParameters', 'DataPackageID', _dataPackageID);
 
     If _debugMode Then
-        RAISE INFO '%, Get_Job_Step_Params_From_History_Work: Get job parameters from t_job_parameters_history', public.timestamp_text_immutable(clock_timestamp());
+        RAISE INFO '%, Get_Job_Step_Params: Get job parameters from sw.t_job_parameters_history', public.timestamp_text_immutable(clock_timestamp());
     End If;
 
     ---------------------------------------------------
@@ -178,8 +192,8 @@ BEGIN
                    Coalesce(public.try_cast(XmlQ.Step, null::int), 0) As StepNumber
             FROM (
                     SELECT xmltable.section,
-                           xmltable.name
-                           xmltable.value
+                           xmltable.name,
+                           xmltable.value,
                            REPLACE(REPLACE(REPLACE( Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
                     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml As rooted_xml
                            FROM sw.t_job_parameters_history
@@ -197,13 +211,31 @@ BEGIN
           (ConvertQ.StepNumber = 0 OR
            ConvertQ.StepNumber = _step);
 
+    ---------------------------------------------------
+    -- Add ToolName if not present in Tmp_Param_Tab
+    -- This will be the case for jobs created directly in the pipeline database (including MAC jobs and MaxQuant_DataPkg jobs)
+    ---------------------------------------------------
+
+    If Not Exists (Select * from Tmp_Param_Tab P Where P.Section = 'JobParameters' And P.Name = 'ToolName') Then
+        INSERT INTO Tmp_Param_Tab (Section, Name, Value)
+        VALUES ('JobParameters', 'ToolName', _scriptName);
+    End If;
+
     RETURN QUERY
-    SELECT Section, Name, Value
-    FROM Tmp_Param_Tab;
+    SELECT Src.Section, Src.Name, Src.Value
+    FROM Tmp_Param_Tab Src;
 
     DROP TABLE Tmp_Param_Tab;
 
 END
 $$;
 
-COMMENT ON FUNCTION sw.get_job_step_params_from_history_work IS 'GetJobStepParamsFromHistoryWork';
+
+ALTER FUNCTION sw.get_job_step_params_from_history_work(_job integer, _step integer, _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_job_step_params_from_history_work(_job integer, _step integer, _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON FUNCTION sw.get_job_step_params_from_history_work(_job integer, _step integer, _debugmode boolean) IS 'GetJobStepParamsFromHistoryWork';
+
