@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_step_params(_job integer, _step integer)
 DECLARE
     _jobStepInfo record;
     _uploadInfo record;
-    _stepParmSectionName text := 'StepParameters';
+    _stepParamSectionName text := 'StepParameters';
     _dataset text := '';
 BEGIN
 
@@ -85,16 +85,16 @@ BEGIN
     --
     --
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    VALUES (_stepParmSectionName, 'Job',                  _job),
-           (_stepParmSectionName, 'Step',                 _step),
-           (_stepParmSectionName, 'StepTool',             _jobStepInfo.Tool),
-           (_stepParmSectionName, 'ResultsDirectoryName', _jobStepInfo.Results_Folder_Name),
-           (_stepParmSectionName, 'InputDirectoryName',   _jobStepInfo.Input_Folder_Name),
-           (_stepParmSectionName, 'OutputDirectoryName',  _jobStepInfo.Output_Folder_Name),
-           (_stepParmSectionName, 'MyEMSL_Status_URI',    _uploadInfo.myemsl_status_uri),
-           (_stepParmSectionName, 'EUS_InstrumentID',     _uploadInfo.eus_instrument_id),
-           (_stepParmSectionName, 'EUS_ProposalID',       _uploadInfo.eus_proposal_id),
-           (_stepParmSectionName, 'EUS_UploaderID',       _uploadInfo.eus_uploader_id);
+    VALUES (_stepParamSectionName, 'Job',                  _job),
+           (_stepParamSectionName, 'Step',                 _step),
+           (_stepParamSectionName, 'StepTool',             _jobStepInfo.Tool),
+           (_stepParamSectionName, 'ResultsDirectoryName', _jobStepInfo.Results_Folder_Name),
+           (_stepParamSectionName, 'InputDirectoryName',   _jobStepInfo.Input_Folder_Name),
+           (_stepParamSectionName, 'OutputDirectoryName',  _jobStepInfo.Output_Folder_Name),
+           (_stepParamSectionName, 'MyEMSL_Status_URI',    _uploadInfo.myemsl_status_uri),
+           (_stepParamSectionName, 'EUS_InstrumentID',     _uploadInfo.eus_instrument_id),
+           (_stepParamSectionName, 'EUS_ProposalID',       _uploadInfo.eus_proposal_id),
+           (_stepParamSectionName, 'EUS_UploaderID',       _uploadInfo.eus_uploader_id);
 
     ---------------------------------------------------
     -- Get capture task job parameters

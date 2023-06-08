@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          08/31/2022 mem - Rename view V_DMS_Capture_Job_Parameters to V_DMS_Dataset_Metadata
 **          09/28/2022 mem - Ported to PostgreSQL
 **          02/09/2023 mem - Switch from Operator_PRN to Operator_Username
+**          06/07/2023 mem - Rename temp table
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,7 @@ BEGIN
     -- Temp table to hold capture task job parameters
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_ParamTab(
+    CREATE TEMP TABLE Tmp_Param_Tab(
         Section text,
         Name text,
         Value text
@@ -54,7 +55,7 @@ BEGIN
     -- Locally cached params
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ParamTab ( Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab ( Section, Name, Value)
     VALUES ('JobParameters', 'Dataset_ID', _datasetID),
            ('JobParameters', 'Dataset', _dataset),
            ('JobParameters', 'Storage_Server_Name', _storageServer),
@@ -66,10 +67,10 @@ BEGIN
     ---------------------------------------------------
     -- Dataset Parameters
     --
-    -- Convert columns of data from V_DMS_Dataset_Metadata into rows added to Tmp_ParamTab
+    -- Convert columns of data from V_DMS_Dataset_Metadata into rows added to Tmp_Param_Tab
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ParamTab ( Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab ( Section, Name, Value)
     SELECT 'JobParameters' AS Section,
            UnpivotQ.Name,
            UnpivotQ.Value
@@ -151,7 +152,7 @@ BEGIN
     --   </sections>
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ParamTab (Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
         SELECT xmltable.section, xmltable.name, xmltable.value
@@ -181,7 +182,7 @@ BEGIN
         _performCalibrationText := 'True';
     End If;
 
-    INSERT INTO Tmp_ParamTab (Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     VALUES ('JobParameters', 'PerformCalibration', _performCalibrationText);
 
     ---------------------------------------------------
@@ -192,7 +193,7 @@ BEGIN
 
     SELECT P.Value
     INTO _storageVolExternal
-    FROM Tmp_ParamTab P
+    FROM Tmp_Param_Tab P
     WHERE P.Name = 'Storage_Vol_External';
 
     SELECT Transfer_Directory_Path
@@ -211,7 +212,7 @@ BEGIN
 
     _transferDirectoryPath := Coalesce(_transferDirectoryPath, '');
 
-    INSERT INTO Tmp_ParamTab (Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     VALUES ('JobParameters', 'TransferDirectoryPath', _transferDirectoryPath);
 
     ---------------------------------------------------
@@ -226,7 +227,7 @@ BEGIN
           File_Size_Rank = 1;
 
     If FOUND Then
-        INSERT INTO Tmp_ParamTab (Section, Name, Value)
+        INSERT INTO Tmp_Param_Tab (Section, Name, Value)
         VALUES ('JobParameters', 'Instrument_File_Hash', _fileHash);
     End If;
 
@@ -239,10 +240,10 @@ BEGIN
            P.Section,
            P.Name,
            P.Value
-    FROM Tmp_ParamTab P
+    FROM Tmp_Param_Tab P
     ORDER BY P.Section, P.Name;
 
-    DROP TABLE Tmp_ParamTab;
+    DROP TABLE Tmp_Param_Tab;
 
 END
 $$;
