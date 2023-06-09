@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE FUNCTION sw.get_job_step_params_as_table
-(
-    _job int,
-    _step int,
-    _section text = '',
-    _paramName text = '',
-    _debugMode boolean = false
-)
-RETURNS TABLE (
-    Section text,
-    Name text,
-    Value text
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_job_step_params_as_table(integer, integer, text, text); Type: FUNCTION; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION sw.get_job_step_params_as_table(_job integer, _step integer, _section text DEFAULT ''::text, _paramname text DEFAULT ''::text) RETURNS TABLE(section public.citext, name public.citext, value public.citext)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -22,14 +13,16 @@ AS $$
 **      Data comes from sw.T_Job_Parameters, not from the public schema tables
 **
 **  Arguments:
-**    _section               Optional section name to filter on, for example: JobParameters
-**    _paramName             Optional parameter name to filter on, for example: SourceJob
+**    _job int          Job number
+**    _step int         Step number
+**    _section          Optional section name to filter on, for example: 'JobParameters'
+**    _paramName        Optional parameter name to filter on, for example: 'Instrument', 'Dataset%', or 'StepTool'
 **
 **  Auth:   mem
 **  Date:   12/04/2009 mem - Initial release
 **          01/05/2018 mem - Add parameters _section, _paramName, and _firstParameterValue
 **          02/12/2020 mem - Allow _section and _paramName to have wildcards
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/08/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -39,17 +32,17 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _section := Coalesce(_section, '');
-    _paramName := Coalesce(_paramName, '');
+    _section := Trim(Coalesce(_section, ''));
+    _paramName := Trim(Coalesce(_paramName, ''));
 
     ---------------------------------------------------
     -- Temporary table to hold job parameters
     ---------------------------------------------------
     --
     CREATE TEMP TABLE Tmp_JobParamsTable (
-        Section text,
-        Name text,
-        Value text
+        Section citext,
+        Name citext,
+        Value citext
     );
 
     ---------------------------------------------------
@@ -57,8 +50,8 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
-    SELECT Section, Name, Value
-    FROM sw.get_job_step_params_work (_job, _step);
+    SELECT Src.Section, Src.Name, Src.Value
+    FROM sw.get_job_step_params_work (_job, _step) Src;
 
     If Not FOUND Then
         DROP TABLE Tmp_JobParamsTable;
@@ -70,37 +63,34 @@ BEGIN
     ---------------------------------------------------
 
     If _section <> '' Then
-        DELETE FROM Tmp_JobParamsTable
-        WHERE Not Section Like _section
+        DELETE FROM Tmp_JobParamsTable Target
+        WHERE Not Target.Section ILike _section;
     End If;
 
     If _paramName <> '' Then
-        DELETE FROM Tmp_JobParamsTable
-        WHERE Not Name Like _paramName
+        DELETE FROM Tmp_JobParamsTable Target
+        WHERE Not Target.Name ILike _paramName;
     End If;
-
-    ---------------------------------------------------
-    -- Cache the first parameter value (sorting on section name then parameter name)
-    ---------------------------------------------------
-
-    SELECT Value
-    INTO _firstParameterValue
-    FROM Tmp_JobParamsTable
-    ORDER BY Section, Name
-    LIMIT 1;
 
     ---------------------------------------------------
     -- Return the contents of Tmp_JobParamsTable
     ---------------------------------------------------
 
     RETURN QUERY
-    SELECT Section, Name, Value
-    FROM Tmp_JobParamsTable
-    ORDER BY Section, Name, Value;
+    SELECT Src.Section, Src.Name, Src.Value
+    FROM Tmp_JobParamsTable Src;
 
     DROP TABLE Tmp_JobParamsTable;
 
 END
 $$;
 
-COMMENT ON FUNCTION sw.get_job_step_params_as_table IS 'GetJobStepParamsAsTable';
+
+ALTER FUNCTION sw.get_job_step_params_as_table(_job integer, _step integer, _section text, _paramname text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_job_step_params_as_table(_job integer, _step integer, _section text, _paramname text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON FUNCTION sw.get_job_step_params_as_table(_job integer, _step integer, _section text, _paramname text) IS 'GetJobStepParamsAsTable';
+
