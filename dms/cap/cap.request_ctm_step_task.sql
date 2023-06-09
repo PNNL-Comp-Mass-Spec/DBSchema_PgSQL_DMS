@@ -762,7 +762,7 @@ BEGIN
         DROP TABLE Tmp_InstrumentProcessor;
         DROP TABLE Tmp_CandidateJobSteps;
 
-        -- Note: do not drop tmp_jobparamstable since the _results cursor still needs to reference it
+        -- Note: do not drop Tmp_JobParamsTable since the _results cursor still needs to reference it
 
     EXCEPTION
         WHEN OTHERS THEN

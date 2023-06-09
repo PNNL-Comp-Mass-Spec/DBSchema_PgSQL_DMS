@@ -39,12 +39,12 @@ CREATE OR REPLACE FUNCTION public.condense_integer_list_to_ranges(_debugmode boo
 **
 **      SELECT * FROM condense_integer_list_to_ranges(false);
 **
-**      Example results:
+**  Example results:
 **
-**          Category  ValueList
-**          --------  ---------------------
-**          Job       100-102, 114-115, 118
-**          Dataset   500, 505-508, 512
+**      Category  ValueList
+**      --------  ---------------------
+**      Job       100-102, 114-115, 118
+**      Dataset   500, 505-508, 512
 **
 **  Auth:   mem
 **  Date:   07/01/2014 mem - Initial version
