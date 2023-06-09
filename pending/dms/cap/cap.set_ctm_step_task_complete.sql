@@ -173,7 +173,7 @@ BEGIN
                     End If;
 
                     If _newStepState <> 5 Then
-                        _stepInfo.NextTry := CURRENT_TIMESTAMP + make_interval(0, 0, 0, 0, 0, _stepInfo.HoldoffIntervalMinutes);
+                        _stepInfo.NextTry := CURRENT_TIMESTAMP + make_interval(mins => _stepInfo.HoldoffIntervalMinutes);
                     End If;
                 End If;
 

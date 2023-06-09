@@ -66,7 +66,7 @@ BEGIN
          INNER JOIN ( SELECT dataset_id
                       FROM cap.t_myemsl_uploads
                       WHERE status_uri_path_id > 1 AND
-                            entered >= CURRENT_TIMESTAMP - make_interval(0,0,0, _windowDays) AND
+                            entered >= CURRENT_TIMESTAMP - make_interval(days => _windowDays) AND
                             Coalesce(subfolder, '') = ''
                      ) LookupQ
            ON DA.Dataset_ID = LookupQ.dataset_id
@@ -126,7 +126,7 @@ BEGIN
                              subfolder
            FROM cap.t_myemsl_uploads
                       WHERE status_uri_path_id > 1 AND
-                            entered >= CURRENT_TIMESTAMP - make_interval(0,0,0, _windowDays) AND
+                            entered >= CURRENT_TIMESTAMP - make_interval(days => _windowDays) AND
                             Coalesce(subfolder, '') <> ''
                      ) LookupQ
            ON T.dataset_id = LookupQ.dataset_id AND

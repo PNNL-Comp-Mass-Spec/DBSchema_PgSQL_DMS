@@ -104,7 +104,7 @@ BEGIN
                Completion_Message LIKE '%ingest/backend/tasks.py%' OR
                Completion_Message LIKE '%pacifica/ingest/tasks.py%') AND
               Job_State = 5 AND
-              Finish < CURRENT_TIMESTAMP - make_interval(0, 0, 0, 0, 0, _resetHoldoffMinutes, 0)
+              Finish < CURRENT_TIMESTAMP - make_interval(mins => _resetHoldoffMinutes)
         GROUP BY Job, Dataset_ID, Output_Folder, Input_Folder;
 
         If _jobListOverride <> '' Then

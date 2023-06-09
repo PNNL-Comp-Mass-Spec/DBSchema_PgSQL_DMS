@@ -89,7 +89,7 @@ BEGIN
     --
     If _intervalDaysForSuccess > 0 Then
 
-        _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(0,0,0, _intervalDaysForSuccess);
+        _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForSuccess);
 
         INSERT INTO Tmp_Selected_Jobs (Job, State)
         SELECT Job, State
@@ -121,7 +121,7 @@ BEGIN
     ---------------------------------------------------
     --
     If _intervalDaysForFail > 0 Then
-        _cutoffDateTimeForFail := CURRENT_TIMESTAMP - make_interval(0,0,0, _intervalDaysForFail);
+        _cutoffDateTimeForFail := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForFail);
 
         INSERT INTO Tmp_Selected_Jobs (Job, State)
         SELECT Job, State

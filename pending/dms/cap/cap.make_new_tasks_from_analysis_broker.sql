@@ -164,7 +164,7 @@ BEGIN
            false AS Archive_Update_Current
     FROM cap.V_DMS_Pipeline_Get_Completed_Results_Transfer AS TS
     WHERE NOT Input_Folder_Name IS NULL AND
-          Finish > CURRENT_TIMESTAMP - make_interval(0, 0, 0, _importWindowDays);
+          Finish > CURRENT_TIMESTAMP - make_interval(days => _importWindowDays);
     ORDER BY Finish DESC;
 
     If _datasetIDFilterMin > 0 Then
@@ -189,7 +189,7 @@ BEGIN
     --
     UPDATE Tmp_New_Jobs
     SET No_Dataset_Archive = true
-    WHERE Tmp_New_Jobs.Finish >= CURRENT_TIMESTAMP - make_interval(0,0,0, _timeWindowToRequireExisingDatasetArchiveJob) AND
+    WHERE Tmp_New_Jobs.Finish >= CURRENT_TIMESTAMP - make_interval(days => _timeWindowToRequireExisingDatasetArchiveJob) AND
           NOT EXISTS ( SELECT Dataset_ID
                        FROM cap.t_tasks
                        WHERE Script = 'DatasetArchive' AND

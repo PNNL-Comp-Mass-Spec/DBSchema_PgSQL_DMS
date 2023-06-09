@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_start(_numberofrecentyears int
 **          06/21/2022 mem - Ported to PostgreSQL
 **          12/15/2022 mem - Use extract(year from _variable) and extract(month from) to extract the year and month from timestamps
 **          05/22/2023 mem - Capitalize reserved word
+**          06/08/2023 mem - Directly pass value to function argument
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ DECLARE
 BEGIN
     _referenceDate := CURRENT_TIMESTAMP;
 
-    _targetYear := extract(year from _referenceDate - make_interval(_numberOfRecentYears));
+    _targetYear := extract(year from _referenceDate - make_interval(years => _numberOfRecentYears));
 
     If extract(month from _referenceDate) < 10 Then
         _targetYear := _targetYear - 1;
