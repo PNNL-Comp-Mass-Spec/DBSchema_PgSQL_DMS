@@ -465,5 +465,5 @@ ALTER PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assignnewjobnumber
 -- Name: PROCEDURE copy_history_to_task(IN _job integer, IN _assignnewjobnumber boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assignnewjobnumber boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CopyHistoryToJob';
+COMMENT ON PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assignnewjobnumber boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CopyHistoryToTask or CopyHistoryToJob';
 

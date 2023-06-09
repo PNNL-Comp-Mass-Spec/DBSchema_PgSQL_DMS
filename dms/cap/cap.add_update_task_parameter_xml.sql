@@ -310,5 +310,5 @@ ALTER FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section te
 -- Name: FUNCTION add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam boolean, _showdebug boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam boolean, _showdebug boolean) IS 'AddUpdateJobParameterXML';
+COMMENT ON FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml, _section text, _paramname text, _value text, _deleteparam boolean, _showdebug boolean) IS 'AddUpdateTaskParameterXML or AddUpdateJobParameterXML';
 

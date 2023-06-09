@@ -255,5 +255,5 @@ ALTER FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid 
 -- Name: FUNCTION get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) IS 'GetJobParamTable';
+COMMENT ON FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) IS 'GetTaskParamTable or GetJobParamTable';
 

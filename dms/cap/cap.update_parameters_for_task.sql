@@ -358,5 +358,5 @@ ALTER PROCEDURE cap.update_parameters_for_task(IN _joblist text, INOUT _message 
 -- Name: PROCEDURE update_parameters_for_task(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.update_parameters_for_task(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'UpdateParametersForJob';
+COMMENT ON PROCEDURE cap.update_parameters_for_task(IN _joblist text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'UpdateParametersForTask or UpdateParametersForJob';
 

@@ -212,5 +212,5 @@ ALTER PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, 
 -- Name: PROCEDURE copy_task_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone) IS 'CopyJobToHistory';
+COMMENT ON PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone) IS 'CopyTaskToHistory or CopyJobToHistory';
 

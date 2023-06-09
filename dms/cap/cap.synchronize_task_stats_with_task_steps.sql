@@ -183,5 +183,5 @@ ALTER PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoonly boolean,
 -- Name: PROCEDURE synchronize_task_stats_with_task_steps(IN _infoonly boolean, IN _completedjobsonly boolean, INOUT _message text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoonly boolean, IN _completedjobsonly boolean, INOUT _message text) IS 'SynchronizeJobStatsWithJobSteps';
+COMMENT ON PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoonly boolean, IN _completedjobsonly boolean, INOUT _message text) IS 'SynchronizeTaskStatsWithTaskSteps or SynchronizeJobStatsWithJobSteps';
 

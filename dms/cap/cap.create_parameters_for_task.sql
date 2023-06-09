@@ -51,7 +51,7 @@ BEGIN
     ---------------------------------------------------
     -- Convert the capture task job parameters to XML
     ---------------------------------------------------
-    --
+
     SELECT xml_item
     INTO _xmlParameters
     FROM ( SELECT
@@ -79,5 +79,5 @@ ALTER FUNCTION cap.create_parameters_for_task(_job integer, _dataset text, _data
 -- Name: FUNCTION create_parameters_for_task(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.create_parameters_for_task(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) IS 'CreateParametersForJob';
+COMMENT ON FUNCTION cap.create_parameters_for_task(_job integer, _dataset text, _datasetid integer, _scriptname text, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) IS 'CreateParametersForTask or CreateParametersForJob';
 

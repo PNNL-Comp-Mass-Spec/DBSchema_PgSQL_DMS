@@ -183,5 +183,5 @@ ALTER PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, INOUT _return
 -- Name: PROCEDURE move_tasks_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'MoveJobsToMainTables';
+COMMENT ON PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'MoveTasksToMainTables or MoveJobsToMainTables';
 

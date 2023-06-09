@@ -225,5 +225,5 @@ ALTER PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boolean, INOUT _m
 -- Name: PROCEDURE delete_old_tasks_from_history(IN _infoonly boolean, INOUT _message text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boolean, INOUT _message text) IS 'DeleteOldJobsFromHistory';
+COMMENT ON PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boolean, INOUT _message text) IS 'DeleteOldTasksFromHistory or DeleteOldJobsFromHistory';
 

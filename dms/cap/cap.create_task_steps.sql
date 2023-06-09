@@ -448,5 +448,5 @@ ALTER PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean
 -- Name: PROCEDURE create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text) IS 'CreateJobSteps';
+COMMENT ON PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text) IS 'CreateTaskSteps or CreateJobSteps';
 

@@ -212,5 +212,5 @@ ALTER PROCEDURE cap.delete_orphaned_tasks(IN _infoonly boolean, INOUT _message t
 -- Name: PROCEDURE delete_orphaned_tasks(IN _infoonly boolean, INOUT _message text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.delete_orphaned_tasks(IN _infoonly boolean, INOUT _message text) IS 'DeleteOrphanedJobs';
+COMMENT ON PROCEDURE cap.delete_orphaned_tasks(IN _infoonly boolean, INOUT _message text) IS 'DeleteOrphanedTasks or DeleteOrphanedJobs';
 

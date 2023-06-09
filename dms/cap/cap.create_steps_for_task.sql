@@ -147,5 +147,5 @@ ALTER PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scriptxml xml, IN
 -- Name: PROCEDURE create_steps_for_task(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CreateStepsForJob';
+COMMENT ON PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CreateStepsForTask or CreateStepsForJob';
 

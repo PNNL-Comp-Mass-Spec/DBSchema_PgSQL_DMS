@@ -101,5 +101,5 @@ ALTER FUNCTION cap.get_task_param_list(_job integer) OWNER TO d3l243;
 -- Name: FUNCTION get_task_param_list(_job integer); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.get_task_param_list(_job integer) IS 'GetJobParamList';
+COMMENT ON FUNCTION cap.get_task_param_list(_job integer) IS 'GetTaskParamList or GetJobParamList';
 

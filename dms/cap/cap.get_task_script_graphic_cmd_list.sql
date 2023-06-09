@@ -36,5 +36,5 @@ ALTER FUNCTION cap.get_task_script_graphic_cmd_list(_script text) OWNER TO d3l24
 -- Name: FUNCTION get_task_script_graphic_cmd_list(_script text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.get_task_script_graphic_cmd_list(_script text) IS 'GetJobScriptGraphicCmdList';
+COMMENT ON FUNCTION cap.get_task_script_graphic_cmd_list(_script text) IS 'GetTaskScriptGraphicCmdList or GetJobScriptGraphicCmdList';
 

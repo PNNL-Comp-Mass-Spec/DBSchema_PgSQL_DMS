@@ -38,7 +38,7 @@ BEGIN
     ---------------------------------------------------
     -- Get basic capture task job step parameters
     ---------------------------------------------------
-    --
+
     SELECT S.Tool,
            S.Input_Folder_Name,
            S.Output_Folder_Name,
@@ -56,11 +56,13 @@ BEGIN
         RETURN;
     End If;
 
+    ---------------------------------------------------
     -- Lookup the MyEMSL Status URI
     -- We will only get a match if this capture task job contains step tool ArchiveUpdate or DatasetArchive
     -- Furthermore, we won't get a row until after the ArchiveUpdate or DatasetArchive step successfully completes
     -- This URI will be used by the ArchiveVerify tool
-    --
+    ---------------------------------------------------
+
     SELECT format('%s%s', StatusU.uri_path, MU.status_num) AS myemsl_status_uri,
            eus_instrument_id,
            eus_proposal_id,
@@ -82,8 +84,7 @@ BEGIN
     ---------------------------------------------------
     -- Get capture task job step parameters
     ---------------------------------------------------
-    --
-    --
+
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     VALUES (_stepParamSectionName, 'Job',                  _job),
            (_stepParamSectionName, 'Step',                 _step),
@@ -104,7 +105,7 @@ BEGIN
     -- in a single script, look at parameters in sections
     -- that either are not locked to any step
     -- (step number is null) or are locked to the current step
-    --
+
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     SELECT XmlQ.section,
            XmlQ.name,
@@ -127,9 +128,12 @@ BEGIN
          ) XmlQ
     WHERE XmlQ.step Is Null Or XmlQ.StepNumber = _step;
 
+    ---------------------------------------------------
     -- Get metadata for dataset if running the Dataset Info plugin or the Dataset Quality plugin
     -- The Dataset Info tool uses the Reporter_Mz_Min value to validate datasets with reporter ions
     -- The Dataset Quality tool creates file metadata.xml
+    ---------------------------------------------------
+
     If _jobStepInfo.Tool In ('DatasetInfo', 'DatasetQuality') Then
         SELECT Dataset
         INTO _dataset
