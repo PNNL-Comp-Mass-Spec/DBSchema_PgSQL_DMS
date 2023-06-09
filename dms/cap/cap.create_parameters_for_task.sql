@@ -10,6 +10,34 @@ CREATE OR REPLACE FUNCTION cap.create_parameters_for_task(_job integer, _dataset
 **  Desc:
 **      Format parameters for given capture task job as XML
 **
+**  Arguments:
+**    _job                      Job number
+**    _dataset                  Dataset name
+**    _datasetid                Dataset ID
+**    _scriptname               Capture task script
+**    _storageserver            Storage server
+**    _instrument               Instrument
+**    _instrumentclass          Instrument class
+**    _maxsimultaneouscaptures  Maximum simultaneous capture tasks
+**    _capturesubdirectory      Capture subdirectory
+**
+**  Example Usage:
+**    SELECT create_parameters_for_task::text
+**    FROM cap.create_parameters_for_task(5273219, 'ABF_Rt_HH_B112_CP_M_d7_r2_46_LC', '1016835', 'DatasetCapture', 'proto-4', 'Agilent_QQQ_04', 'Agilent_TOF_V2', 1, '')
+**
+**  Example Results:
+**    <Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" />
+**    <Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" />
+**    <Param Section="DatasetQC" Name="LCMS2DOverviewPlotDivisor" Value="10" />
+**    <Param Section="DatasetQC" Name="LCMS2DPlotMaxPointsToPlot" Value="200000" />
+**    <Param Section="JobParameters" Name="Created" Value="2022-03-28 11:04:47" />
+**    <Param Section="JobParameters" Name="Dataset" Value="ABF_Rt_HH_B112_CP_M_d7_r2_46_LC" />
+**    <Param Section="JobParameters" Name="Dataset_ID" Value="1016835" />
+**    <Param Section="JobParameters" Name="Dataset_Type" Value="HMS" />
+**    <Param Section="JobParameters" Name="Instrument_File_Hash" Value="64d1747df782f82d909c18ed5df07fecba97b999" />
+**    <Param Section="JobParameters" Name="Instrument_Name" Value="Agilent_QQQ_04" />
+**    <Param Section="JobParameters" Name="TransferDirectoryPath" Value="\\proto-4\DMS3_Xfer\" />
+**
 **  Auth:   grk
 **  Date:   09/05/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          05/31/2013 mem - Added parameter _scriptName

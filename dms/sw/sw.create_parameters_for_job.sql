@@ -16,11 +16,19 @@ CREATE OR REPLACE FUNCTION sw.create_parameters_for_job(_job integer, _settingsf
 **    _debugMode              When true, show additional debug messages
 **
 **  Example usage:
-**
 **      SELECT * FROM sw.create_parameters_for_job(2023504);
-**      SELECT create_parameters_for_job::text FROM sw.create_parameters_for_job(2023504);
+**      SELECT Src::text FROM sw.create_parameters_for_job(2023504) Src;
 **      SELECT * FROM sw.create_parameters_for_job(2023504, '', true);
 **      SELECT * FROM sw.create_parameters_for_job(2023504, 'IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml', true);
+**
+**  Example results:
+**      <Param Section="JobParameters" Name="DatasetID" Value="1122275"/>
+**      <Param Section="JobParameters" Name="DatasetName" Value="QC_Mam_19_01-run03_1Feb23_Titus_WBEH-22-12-08"/>
+**      <Param Section="JobParameters" Name="Instrument" Value="QEHFX01"/>
+**      <Param Section="JobParameters" Name="ToolName" Value="MSGFPlus_MzML_NoRefine"/>
+**      <Param Section="JobParameters" Name="TransferFolderPath" Value="\\proto-3\DMS3_Xfer\"/>
+**      <Param Section="PeptideSearch" Name="ParamFileName" Value="MSGFPlus_Tryp_MetOx_StatCysAlk_20ppmParTol.txt"/>
+**      <Param Section="PeptideSearch" Name="ProteinCollectionList" Value="M_musculus_UniProt_SPROT_2013_09_2013-09-18,Tryp_Pig_Bov"/>
 **
 **  Auth:   grk
 **          01/31/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
