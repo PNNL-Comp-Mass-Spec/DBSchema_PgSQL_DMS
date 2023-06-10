@@ -1,16 +1,16 @@
 --
--- Name: get_default_remote_info_for_manager(text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: get_default_remote_info_for_manager(text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managername text, INOUT _remoteinfoxml text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE sw.get_default_remote_info_for_manager(IN _managername text, INOUT _remoteinfoxml text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
 **      Gets the default remote info parameters for the given manager
-**      Retrieves parameters using get_manager_parameters_work, so properly retrieves parent group parameters, if any
-
+**      Retrieves parameters using mc.get_manager_parameters_work, so properly retrieves parent group parameters, if any
+**
 **      If the manager does not have parameters RunJobsRemotely and RemoteHostName defined, returns an empty string
 **      Also returns an empty string if RunJobsRemotely is not True
 **
@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE mc.get_default_remote_info_for_manager(IN _managerna
 **          02/01/2023 mem - Rename columns in temporary table
 **          05/07/2023 mem - Remove unused variable
 **          05/19/2023 mem - Use format() for string concatenation
+**          06/09/2023 mem - Move to the sw schema
 **
 *****************************************************/
 DECLARE
@@ -142,11 +143,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.get_default_remote_info_for_manager(IN _managername text, INOUT _remoteinfoxml text) OWNER TO d3l243;
+ALTER PROCEDURE sw.get_default_remote_info_for_manager(IN _managername text, INOUT _remoteinfoxml text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE get_default_remote_info_for_manager(IN _managername text, INOUT _remoteinfoxml text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE get_default_remote_info_for_manager(IN _managername text, INOUT _remoteinfoxml text); Type: COMMENT; Schema: sw; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.get_default_remote_info_for_manager(IN _managername text, INOUT _remoteinfoxml text) IS 'GetDefaultRemoteInfoForManager';
+COMMENT ON PROCEDURE sw.get_default_remote_info_for_manager(IN _managername text, INOUT _remoteinfoxml text) IS 'GetDefaultRemoteInfoForManager';
 
