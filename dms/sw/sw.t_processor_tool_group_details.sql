@@ -4,7 +4,7 @@
 
 CREATE TABLE sw.t_processor_tool_group_details (
     group_id integer NOT NULL,
-    mgr_id smallint NOT NULL,
+    mgr_id integer NOT NULL,
     tool_name public.citext NOT NULL,
     priority smallint NOT NULL,
     enabled smallint NOT NULL,

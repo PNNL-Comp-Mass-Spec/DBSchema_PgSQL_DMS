@@ -6,7 +6,7 @@ CREATE TABLE sw.t_local_processors (
     processor_name public.citext NOT NULL,
     processor_id integer NOT NULL,
     state character(1) NOT NULL,
-    proc_tool_mgr_id smallint DEFAULT 1 NOT NULL,
+    proc_tool_mgr_id integer DEFAULT 1 NOT NULL,
     groups integer DEFAULT 0,
     gp_groups integer,
     machine public.citext NOT NULL,
