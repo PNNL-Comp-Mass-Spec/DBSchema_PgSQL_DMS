@@ -8,12 +8,11 @@ CREATE OR REPLACE FUNCTION cap.preview_request_ctm_step_task(_processorname text
 /****************************************************
 **
 **  Desc:
-**      Previews the next step task that would be returned for a given processor
+**      Previews the next capture task job step that would be assigned to the given processor
 **
 **  Arguments:
+**    _processorName        Name of the processor (aka manager) requesting a job
 **    _jobCountToPreview    The number of capture task jobs to preview
-**    _jobNumber            Capture task job number that would be assigned; 0 if no job available
-**    _parameters           Capture task job step parameters (as XML)
 **    _infoLevel            0 or 1 to preview the assigned task; 2 to preview the task and see extra status messages; 3 to dump candidate tables and variables
 **
 **  Example usage:
