@@ -58,7 +58,7 @@ BEGIN
     --
     SELECT data_pkg_id,
            package_name,
-           package_directory,
+           package_folder,
            wiki_page_link
     INTO _currentDataPkgID, _dataPackageName, _currentDataPackageFolder, _currentDataPackageWiki
     FROM dpkg.t_data_package
@@ -90,7 +90,7 @@ BEGIN
             RAISE INFO '%', _message;
         Else
             UPDATE dpkg.t_data_package
-            SET package_directory = _newDataPackageFolder
+            SET package_folder = _newDataPackageFolder
             WHERE data_pkg_id = _dataPkgID;
 
             _message := format('Changed data package folder name to "%s" for ID %s', _newDataPackageFolder, _dataPkgID);

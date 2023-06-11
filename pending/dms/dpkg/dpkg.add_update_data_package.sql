@@ -259,7 +259,7 @@ BEGIN
             _prismWikiLink := dpkg.Make_PRISMWiki_Page_Link(_id, _name);
 
             UPDATE dpkg.t_data_package
-            SET package_directory = _pkgFileFolder,
+            SET package_folder = _pkgFileFolder,
                 wiki_page_link = _prismWikiLink
             WHERE data_pkg_id = _id;
 
