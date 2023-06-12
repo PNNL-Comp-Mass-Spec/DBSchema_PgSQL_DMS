@@ -1,21 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_complete
-(
-    _job int,
-    _step int,
-    _completionCode int,
-    _completionMessage text = '',
-    _evaluationCode int = 0,
-    _evaluationMessage text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_ctm_step_task_complete(integer, integer, integer, text, integer, text, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_complete(IN _job integer, IN _step integer, IN _completioncode integer, IN _completionmessage text DEFAULT ''::text, IN _evaluationcode integer DEFAULT 0, IN _evaluationmessage text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Make entry in step completion table
+**      Update capture task job step in cap.t_task_steps
 **
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -39,24 +32,16 @@ AS $$
 **          08/09/2018 mem - Expand _completionMessage to varchar(512)
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          08/21/2020 mem - Set _holdoffIntervalMinutes to 60 (or higher) if _retryCount is 0
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/11/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 
     _stepInfo record;
---    _processor text := '';
---    _initialState int := 0;
---    _retryCount int := 0;
---    _holdoffIntervalMinutes int := 30;
---    _nextTry timestamp := CURRENT_TIMESTAMP;
---    _stepTool text;
---    _outputFolderName text;
---    _datasetID int;
---    _datasetName text;
     _newStepState int := 5;
     _myEMSLStateNew int := 0;
 
@@ -72,8 +57,8 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, object_name
-    INTO _currentSchema, _currentProcedure
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized
@@ -93,7 +78,6 @@ BEGIN
         ---------------------------------------------------
         -- Get current state of this capture task job step
         ---------------------------------------------------
-        --
 
         SELECT TS.state AS InitialState,
                TS.Processor AS Processor,
@@ -113,8 +97,14 @@ BEGIN
         WHERE TS.Job = _job AND
               TS.Step = _step;
 
-        If _stepInfo.InitialState <> 4 Then
+        If Not FOUND Then
             _returnCode := 'U5201';
+            _message := format('Empty query results for capture task job %s, step %s when obtaining the current state of the job step using cap.t_task_steps', _job, _step);
+            RETURN;
+        End If;
+
+        If _stepInfo.InitialState <> 4 Then
+            _returnCode := 'U5202';
             _message := format('Capture task job step is not in correct state to be completed; job: %s, step: %s, actual state: %s, expected state: 4',
                                 _job, _step, _stepInfo.InitialState);
             RETURN;
@@ -124,7 +114,6 @@ BEGIN
         -- Determine completion state
         -- Initially assume new state will be 5 (success)
         ---------------------------------------------------
-        --
 
         If _completionCode = 0 And _evaluationCode <> 9 Then
             -- Completed successfully
@@ -132,13 +121,13 @@ BEGIN
         Else
             -- Either completion code is non-zero, or the step was skipped (eval-code 9)
 
-            If _evaluationCode = 8      -- EVAL_CODE_FAILURE_DO_NOT_RETRY Then
+            If _evaluationCode = 8 Then -- EVAL_CODE_FAILURE_DO_NOT_RETRY Then
                 -- Failed
                 _newStepState := 6;
                 _stepInfo.RetryCount := 0;
             End If;
 
-            If _evaluationCode = 9      -- EVAL_CODE_SKIPPED Then
+            If _evaluationCode = 9 Then -- EVAL_CODE_SKIPPED Then
                 -- Skipped
                 _newStepState := 3;
             End If;
@@ -150,20 +139,20 @@ BEGIN
                 End If;
 
                 If _stepInfo.RetryCount > 0 Then
-                    _stepInfo.RetryCount := _stepInfo.RetryCount - 1  ; -- decrement retry count
+                    _stepInfo.RetryCount := _stepInfo.RetryCount - 1; -- decrement retry count
                 End If;
 
                 If _evaluationCode = 3 Then
                     -- The captureTaskManager returns 3 (EVAL_CODE_NETWORK_ERROR_RETRY_CAPTURE) when a network error occurs during capture
                     -- Auto-retry the capture again (even if _stepInfo.RetryCount is 0)
-                    _stepInfo.NextTry := CURRENT_TIMESTAMP + INTERVAL '15 minutes'
+                    _stepInfo.NextTry := CURRENT_TIMESTAMP + INTERVAL '15 minutes';
                 Else
                     If _stepInfo.StepTool = 'ArchiveVerify' AND _stepInfo.RetryCount > 0 Then
                         _stepInfo.HoldoffIntervalMinutes :=
-                            CASE WHEN _stepInfo.HoldoffIntervalMinutes  < 5 THEN 5
-                                 WHEN _stepInfo.HoldoffIntervalMinutes  < 10 THEN 10
-                                 WHEN _stepInfo.HoldoffIntervalMinutes  < 15 THEN 15
-                                 WHEN _stepInfo.HoldoffIntervalMinutes  < 30 THEN 30
+                            CASE WHEN _stepInfo.HoldoffIntervalMinutes < 5 THEN 5
+                                 WHEN _stepInfo.HoldoffIntervalMinutes < 10 THEN 10
+                                 WHEN _stepInfo.HoldoffIntervalMinutes < 15 THEN 15
+                                 WHEN _stepInfo.HoldoffIntervalMinutes < 30 THEN 30
                                  ELSE _stepInfo.HoldoffIntervalMinutes
                             END;
                     End If;
@@ -253,14 +242,14 @@ BEGIN
         -- Check for reporter ion m/z validation warnings or errors
         ---------------------------------------------------
 
-        If _completionMessage Like '%Over%of the % spectra have a minimum m/z value larger than the required minimum%' Then
+        If _completionMessage ILike '%Over%of the % spectra have a minimum m/z value larger than the required minimum%' Then
             _message := format('Dataset %s (ID %s): %s',
                                 _stepInfo.DatasetName, _stepInfo.DatasetID, _completionMessage);
 
             CALL public.post_email_alert ('Error', _message, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
 
-        ElsIf _completionMessage Like '%Some of the % spectra have a minimum m/z value larger than the required minimum%' Or
-              _completionMessage Like '%reporter ion peaks likely could not be detected%' Then
+        ElsIf _completionMessage ILike '%Some of the % spectra have a minimum m/z value larger than the required minimum%' Or
+              _completionMessage ILike '%reporter ion peaks likely could not be detected%' Then
 
             _message := format('Dataset %s (ID %s): %s',
                                 _stepInfo.DatasetName, _stepInfo.DatasetID, _completionMessage);
@@ -271,7 +260,7 @@ BEGIN
         ---------------------------------------------------
         -- Possibly update MyEMSL State values
         ---------------------------------------------------
-        --
+
         If _completionCode = 0 Then
 
             -- _evaluationCode = 4 means Submitted to MyEMSL
@@ -314,4 +303,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.set_ctm_step_task_complete IS 'SetStepTaskComplete';
+
+ALTER PROCEDURE cap.set_ctm_step_task_complete(IN _job integer, IN _step integer, IN _completioncode integer, IN _completionmessage text, IN _evaluationcode integer, IN _evaluationmessage text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_ctm_step_task_complete(IN _job integer, IN _step integer, IN _completioncode integer, IN _completionmessage text, IN _evaluationcode integer, IN _evaluationmessage text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.set_ctm_step_task_complete(IN _job integer, IN _step integer, IN _completioncode integer, IN _completionmessage text, IN _evaluationcode integer, IN _evaluationmessage text, INOUT _message text, INOUT _returncode text) IS 'SetCTMStepTaskComplete or SetStepTaskComplete';
+
