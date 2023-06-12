@@ -67,3 +67,9 @@ $$;
 
 ALTER PROCEDURE sw.import_processors(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
+--
+-- Name: PROCEDURE import_processors(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.import_processors(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text) IS 'ImportProcessors';
+

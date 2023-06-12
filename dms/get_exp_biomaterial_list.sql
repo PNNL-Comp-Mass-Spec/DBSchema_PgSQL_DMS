@@ -41,5 +41,5 @@ ALTER FUNCTION public.get_exp_biomaterial_list(_experimentname text) OWNER TO d3
 -- Name: FUNCTION get_exp_biomaterial_list(_experimentname text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_exp_biomaterial_list(_experimentname text) IS 'GetExpCellCultureList';
+COMMENT ON FUNCTION public.get_exp_biomaterial_list(_experimentname text) IS 'GetExpBiomaterialList or GetExpCellCultureList';
 

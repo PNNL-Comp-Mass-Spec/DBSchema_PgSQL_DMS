@@ -38,5 +38,5 @@ ALTER FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time 
 -- Name: FUNCTION get_fiscal_year_from_date(_rawdate timestamp without time zone); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time zone) IS 'GetFYFromDate';
+COMMENT ON FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp without time zone) IS 'GetFiscalYearFromDate or GetFYFromDate';
 
