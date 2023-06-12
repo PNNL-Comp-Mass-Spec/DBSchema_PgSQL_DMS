@@ -58,6 +58,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          05/31/2023 mem - Use format() for string concatenation
 **                         - Add back implicit string concatenation
 **                         - Rename variable
+**          06/12/2023 mem - Ignore prefix 'PNL\' when looking for the login name in t_sp_authorization
 **
 *****************************************************/
 DECLARE
@@ -138,7 +139,7 @@ BEGIN
             'SELECT COUNT(*) '
             'FROM %s auth '
             'WHERE auth.procedure_name = $1::citext AND '
-                  'auth.login_name = $2::citext AND '
+                  '(auth.login_name = $2::citext OR login_name LIKE ''PNL\\%%'' AND Substring(login_name, 5)::citext = $2::citext) AND '
                   '(auth.host_ip = $3::text Or auth.host_ip = ''*'')',
             _authorizationTableWithSchema);
 
@@ -153,7 +154,7 @@ BEGIN
                 'SELECT COUNT(*) '
                 'FROM %s auth '
                 'WHERE auth.procedure_name = ''*'' AND '
-                      'auth.login_name = $1::citext AND '
+                      '(auth.login_name = $1::citext OR login_name LIKE ''PNL\\%%'' AND Substring(login_name, 5)::citext = $1::citext) AND '
                       '(auth.host_ip = $2::text Or auth.host_ip = ''*'')',
                 _authorizationTableWithSchema);
 
