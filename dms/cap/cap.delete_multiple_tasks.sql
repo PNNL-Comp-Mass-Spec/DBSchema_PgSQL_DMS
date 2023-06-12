@@ -24,11 +24,13 @@ CREATE OR REPLACE PROCEDURE cap.delete_multiple_tasks(IN _joblist text, INOUT _m
 **          04/27/2023 mem - Use boolean for data type name
 **          05/22/2023 mem - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
+**          06/11/2023 mem - Add missing variable _nameWithSchema
 **
 *****************************************************/
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 
     _jobCount int;
@@ -46,8 +48,8 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, object_name
-    INTO _currentSchema, _currentProcedure
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized

@@ -105,11 +105,13 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          06/12/2018 mem - Update code formatting
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          06/07/2023 mem - Renamed _infoOnly to _infoLevel and Ported to PostgreSQL
+**          06/11/2023 mem - Add missing variable _nameWithSchema
 **
 *****************************************************/
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 
     _processorNameMatch citext;
@@ -147,8 +149,8 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, object_name
-    INTO _currentSchema, _currentProcedure
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized

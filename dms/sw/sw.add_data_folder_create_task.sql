@@ -27,11 +27,13 @@ CREATE OR REPLACE PROCEDURE sw.add_data_folder_create_task(IN _pathlocalroot tex
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/04/2023 mem - Ported to PostgreSQL
+**          06/11/2023 mem - Add missing variable _nameWithSchema
 **
 *****************************************************/
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 BEGIN
     _message := '';
@@ -41,8 +43,8 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, object_name
-    INTO _currentSchema, _currentProcedure
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized

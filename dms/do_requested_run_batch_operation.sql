@@ -27,11 +27,13 @@ CREATE OR REPLACE PROCEDURE public.do_requested_run_batch_operation(IN _batchid 
 **          03/31/2023 mem - Ported to PostgreSQL
 **                         - When deleting a batch, archive it in T_Deleted_Requested_Run_Batch
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
+**          06/11/2023 mem - Add missing variable _nameWithSchema
 **
 *****************************************************/
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 
     _batchExists boolean := false;
@@ -45,8 +47,8 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, object_name
-    INTO _currentSchema, _currentProcedure
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized

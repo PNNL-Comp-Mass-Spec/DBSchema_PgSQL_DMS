@@ -82,6 +82,7 @@ AS $$
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 
     _stepToolsToSkip text[];
@@ -107,8 +108,8 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, object_name
-    INTO _currentSchema, _currentProcedure
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized
@@ -137,8 +138,7 @@ BEGIN
     ---------------------------------------------------
     -- Get current state of this job step
     ---------------------------------------------------
-    --
-    --
+
     SELECT LP.Machine,
            CASE WHEN ST.Uses_All_Cores > 0 AND JS.Actual_CPU_Load = JS.CPU_Load
                 THEN Coalesce(M.Total_CPUs, 1)
@@ -158,10 +158,10 @@ BEGIN
          LEFT OUTER JOIN sw.t_machines M
            ON LP.machine = M.machine
     WHERE JS.job = _job AND
-          JS.step = _step
+          JS.step = _step;
 
     If Not FOUND Then
-        _message := format('Empty query results for job %s, step %s when obtaining the current state of the job step', _job, _step);
+        _message := format('Empty query results for job %s, step %s when obtaining the current state of the job step using sw.t_job_steps', _job, _step);
 
         CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
@@ -178,7 +178,7 @@ BEGIN
         _returnCode := 'U5266';
         RETURN;
     End If;
-    --
+
     If _state <> 4 Then
         _message := format('%s is not in the correct state (4) to be marked complete by processor %s; actual state is %s',
                             _jobStepDescriptionCapital, _processorName, _state);
@@ -203,7 +203,6 @@ BEGIN
     ---------------------------------------------------
     -- Determine completion state
     ---------------------------------------------------
-    --
 
     If _completionCode = 0 Then
         _stepState := 5; -- success
@@ -349,7 +348,7 @@ BEGIN
         ---------------------------------------------------
         -- Update job step
         ---------------------------------------------------
-        --
+
         UPDATE sw.t_job_steps
         Set    state = _stepState,
                finish = CURRENT_TIMESTAMP,
@@ -369,7 +368,7 @@ BEGIN
         ---------------------------------------------------
         -- Update machine loading for this job step's processor's machine
         ---------------------------------------------------
-        --
+
         UPDATE sw.t_machines
         Set cpus_available = cpus_available + _cpuLoad,
             memory_available = memory_available + _memoryUsageMB
@@ -378,7 +377,7 @@ BEGIN
         ---------------------------------------------------
         -- Update sw.t_remote_info if appropriate
         ---------------------------------------------------
-        --
+
         If Coalesce(_remoteInfo, '') <> '' Then
 
             _remoteInfoID := get_remote_info_id (_remoteInfo);
@@ -465,7 +464,7 @@ BEGIN
                     CALL public.post_log_entry ('Normal', _message, 'Set_Step_Task_Complete', 'sw');
 
                     -- Reset shared results step just upstream from this step
-                    --
+
                     UPDATE sw.t_job_steps
                     Set state = 2,                  -- 2=Enabled
                         tool_version_id = 1,        -- 1=Unknown
@@ -523,7 +522,7 @@ BEGIN
         If Not _abortReset And array_length(_stepToolsToSkip, 1) > 0 Then
 
             -- Skip specific waiting step tools for this job
-            --
+
             UPDATE sw.t_job_steps JS
             SET state = 3
             FROM ( SELECT unnest(_stepToolsToSkip) As tool) ToolsToSkip
@@ -538,9 +537,9 @@ BEGIN
     COMMIT;
 
     ---------------------------------------------------
-    -- Update fasta file name (if one was passed in from the analysis tool manager)
+    -- Update FASTA file name (if one was passed in from the analysis tool manager)
     ---------------------------------------------------
-    --
+
     If Coalesce(_organismDBName,'') <> '' Then
         UPDATE sw.t_jobs
         Set organism_db_name = _organismDBName

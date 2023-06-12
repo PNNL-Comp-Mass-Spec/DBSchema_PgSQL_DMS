@@ -50,6 +50,7 @@ AS $$
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 
     _msg text;
@@ -75,27 +76,27 @@ BEGIN
     _message := '';
     _returnCode := '';
 
+    ---------------------------------------------------
+    -- Verify that the user can execute this procedure from the given client host
+    ---------------------------------------------------
+
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
+    FROM get_current_function_info('<auto>', _showDebug => false);
+
+    SELECT authorized
+    INTO _authorized
+    FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
+
+    If Not _authorized Then
+        -- Commit changes to persist the message logged to public.t_log_entries
+        COMMIT;
+
+        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        RAISE EXCEPTION '%', _message;
+    End If;
+
     BEGIN
-
-        ---------------------------------------------------
-        -- Verify that the user can execute this procedure from the given client host
-        ---------------------------------------------------
-
-        SELECT schema_name, name_with_schema
-        INTO _currentSchema, _currentProcedure
-        FROM get_current_function_info('<auto>', _showDebug => false);
-
-        SELECT authorized
-        INTO _authorized
-        FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
-
-        If Not _authorized Then
-            -- Commit changes to persist the message logged to public.t_log_entries
-            COMMIT;
-
-            _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
-            RAISE EXCEPTION '%', _message;
-        End If;
 
         ---------------------------------------------------
         -- Get datasetID and current state

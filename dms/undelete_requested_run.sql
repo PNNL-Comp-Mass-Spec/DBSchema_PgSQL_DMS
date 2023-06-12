@@ -19,11 +19,13 @@ CREATE OR REPLACE PROCEDURE public.undelete_requested_run(IN _requestid integer,
 **          03/31/2023 mem - Restore requested run batches and batch groups if the requested run refers to a deleted batch or batch group
 **          05/31/2023 mem - Use implicit string concatenation
 **                         - Use procedure name without schema when calling verify_sp_authorized()
+**          06/11/2023 mem - Add missing variable _nameWithSchema
 **
 *****************************************************/
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 
     _entryID int;
@@ -43,8 +45,8 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    SELECT schema_name, object_name
-    INTO _currentSchema, _currentProcedure
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
     SELECT authorized
