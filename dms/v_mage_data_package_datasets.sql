@@ -14,7 +14,8 @@ CREATE VIEW public.v_mage_data_package_datasets AS
     vmd.folder,
     vmd.comment,
     tpd.data_pkg_id AS data_package_id,
-    tpd.package_comment
+    tpd.package_comment,
+    vmd.storage_server_folder
    FROM (public.v_mage_dataset_list vmd
      JOIN dpkg.t_data_package_datasets tpd ON ((vmd.dataset_id = tpd.dataset_id)));
 

@@ -20,7 +20,8 @@ CREATE VIEW public.v_mage_dataset_list AS
             END
         END AS folder,
     ds.comment,
-    org.organism
+    org.organism,
+    dfp.dataset_folder_path AS storage_server_folder
    FROM ((((((((public.t_dataset ds
      JOIN public.t_dataset_state_name dsn ON ((dsn.dataset_state_id = ds.dataset_state_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
