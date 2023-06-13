@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.validate_dataset_type
-(
-    _datasetID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false,
-    _autoDefineOnAllMismatches boolean = true
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_dataset_type(integer, text, text, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _autodefineonallmismatches boolean DEFAULT true)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -35,7 +31,8 @@ AS $$
 **          10/13/2020 mem - Add support for datasets that only have MS2 spectra (they will be assigned dataset type HMS or MS, despite the fact that they have no MS1 spectra; this is by design)
 **          05/26/2021 mem - Add support for low res HCD
 **          07/01/2021 mem - Auto-switch from HMS-CID-MSn to HMS-MSn
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/12/2023 mem - Sum actual scan counts, not simply 0 or 1
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -63,8 +60,6 @@ BEGIN
     -----------------------------------------------------------
     -- Lookup the dataset type for the given Dataset ID
     -----------------------------------------------------------
-
-    _currentDatasetType := '';
 
     SELECT DS.dataset,
            DST.Dataset_Type
@@ -94,56 +89,46 @@ BEGIN
     -- Summarize the scan type information in t_dataset_scan_types
     -----------------------------------------------------------
 
-    SELECT SUM(CASE WHEN ScanType = 'MS'    Then 1 Else 0 End) AS ActualCountMS,
-           SUM(CASE WHEN ScanType = 'HMS'   Then 1 Else 0 End) AS ActualCountHMS
-           SUM(CASE WHEN ScanType = 'GC-MS' Then 1 Else 0 End) AS ActualCountGCM
+    SELECT SUM(CASE WHEN Scan_Type = 'MS'    Then scan_count Else 0 End) AS ActualCountMS,
+           SUM(CASE WHEN Scan_Type = 'HMS'   Then scan_count Else 0 End) AS ActualCountHMS,
+           SUM(CASE WHEN Scan_Type = 'GC-MS' Then scan_count Else 0 End) AS ActualCountGCMS,
 
-           SUM(CASE WHEN ScanType LIKE '%-MSn'    OR ScanType = 'MSn'  Then 1 Else 0 End) AS ActualCountAny
-           SUM(CASE WHEN ScanType LIKE '%-HMSn'   OR ScanType = 'HMSn' Then 1 Else 0 End) AS ActualCountAny
+           SUM(CASE WHEN Scan_Type LIKE '%-MSn'    OR Scan_Type = 'MSn'  Then scan_count Else 0 End) AS ActualCountAnyMSn,
+           SUM(CASE WHEN Scan_Type LIKE '%-HMSn'   OR Scan_Type = 'HMSn' Then scan_count Else 0 End) AS ActualCountAnyHMSn,
 
-           SUM(CASE WHEN ScanType LIKE '%CID-MSn'  OR ScanType = 'MSn'  Then 1 Else 0 End) AS ActualCountCID
-           SUM(CASE WHEN ScanType LIKE '%CID-HMSn' OR ScanType = 'HMSn' Then 1 Else 0 End) AS ActualCountCID
+           SUM(CASE WHEN Scan_Type LIKE '%CID-MSn'  OR Scan_Type = 'MSn'  Then scan_count Else 0 End) AS ActualCountCIDMSn,
+           SUM(CASE WHEN Scan_Type LIKE '%CID-HMSn' OR Scan_Type = 'HMSn' Then scan_count Else 0 End) AS ActualCountCIDHMSn,
 
-           SUM(CASE WHEN ScanType LIKE '%ETD-MSn'  Then 1 Else 0 End) AS ActualCountETD
-           SUM(CASE WHEN ScanType LIKE '%ETD-HMSn' Then 1 Else 0 End) AS ActualCountETD
+           SUM(CASE WHEN Scan_Type LIKE '%ETD-MSn'  Then scan_count Else 0 End) AS ActualCountETDMSn,
+           SUM(CASE WHEN Scan_Type LIKE '%ETD-HMSn' Then scan_count Else 0 End) AS ActualCountETDHMSn,
 
-           SUM(CASE WHEN ScanType LIKE '%HCD-MSn'  Then 1 Else 0 End) AS ActualCountHCD
-           SUM(CASE WHEN ScanType LIKE '%HCD-HMSn' Then 1 Else 0 End) AS ActualCountHCD
+           SUM(CASE WHEN Scan_Type LIKE '%HCD-MSn'  Then scan_count Else 0 End) AS ActualCountHCDMSn,
+           SUM(CASE WHEN Scan_Type LIKE '%HCD-HMSn' Then scan_count Else 0 End) AS ActualCountHCDHMSn,
 
-           SUM(CASE WHEN ScanType LIKE '%ETciD-MSn'  Then 1 Else 0 End) AS ActualCountETc
-           SUM(CASE WHEN ScanType LIKE '%ETciD-HMSn' Then 1 Else 0 End) AS ActualCountETc
-           SUM(CASE WHEN ScanType LIKE '%EThcD-MSn'  Then 1 Else 0 End) AS ActualCountETh
-           SUM(CASE WHEN ScanType LIKE '%EThcD-HMSn' Then 1 Else 0 End) AS ActualCountETh
+           SUM(CASE WHEN Scan_Type LIKE '%ETciD-MSn'  Then scan_count Else 0 End) AS ActualCountETciDMSn,
+           SUM(CASE WHEN Scan_Type LIKE '%ETciD-HMSn' Then scan_count Else 0 End) AS ActualCountETciDHMSn,
+           SUM(CASE WHEN Scan_Type LIKE '%EThcD-MSn'  Then scan_count Else 0 End) AS ActualCountEThcDMSn,
+           SUM(CASE WHEN Scan_Type LIKE '%EThcD-HMSn' Then scan_count Else 0 End) AS ActualCountEThcDHMSn,
 
-           SUM(CASE WHEN ScanType SIMILAR TO '%SRM' Or ScanType LIKE '%MRM' OR ScanType SIMILAR TO 'Q[1-3]MS' Then 1 Else 0 End) AS ActualCountMRM
-           SUM(CASE WHEN ScanType LIKE '%PQD%' Then 1 Else 0 End)                                                                AS ActualCountPQD
+           SUM(CASE WHEN Scan_Type LIKE '%SRM' Or Scan_Type LIKE '%MRM' OR Scan_Type SIMILAR TO 'Q[1-3]MS' Then scan_count Else 0 End) AS ActualCountMRM,
+           SUM(CASE WHEN Scan_Type LIKE '%PQD%' Then scan_count Else 0 End)                                                            AS ActualCountPQD
     INTO _scanCounts
     FROM t_dataset_scan_types
     WHERE dataset_id = _datasetID
-    GROUP BY dataset_id
+    GROUP BY dataset_id;
 
     If _infoOnly Then
-
-        -- ToDo: Update this to use RAISE INFO
-
-       SELECT _scanCounts.ActualCountMS,
-              _scanCounts.ActualCountHMS,
-              _scanCounts.ActualCountGCMS,
-              _scanCounts.ActualCountAnyMSn,
-              _scanCounts.ActualCountAnyHMSn,
-              _scanCounts.ActualCountCIDMSn,
-              _scanCounts.ActualCountCIDHMSn,
-              _scanCounts.ActualCountETDMSn,
-              _scanCounts.ActualCountETDHMSn,
-              _scanCounts.ActualCountHCDMSn,
-              _scanCounts.ActualCountHCDHMSn,
-              _scanCounts.ActualCountETciDMSn,
-              _scanCounts.ActualCountETciDHMSn,
-              _scanCounts.ActualCountEThcDMSn,
-              _scanCounts.ActualCountEThcDHMSn,
-              _scanCounts.ActualCountMRM,
-              _scanCounts.ActualCountPQD;
-
+        RAISE INFO '';
+        RAISE INFO 'Actual scan counts for % (Dataset ID %)', _dataset, _datasetID;
+        RAISE INFO '%', format('      MS:  %6s,        HMS: %6s, GCMS: %6s', _scanCounts.ActualCountMS, _scanCounts.ActualCountHMS, _scanCounts.ActualCountGCMS);
+        RAISE INFO '%', format('      MRM: %6s,        PQD: %6s',            _scanCounts.ActualCountMRM, _scanCounts.ActualCountPQD);
+        RAISE INFO '%', format('  Any MSn: %6s,   Any HMSn: %6s',            _scanCounts.ActualCountAnyMSn, _scanCounts.ActualCountAnyHMSn);
+        RAISE INFO '%', format('  CID MSn: %6s,   CID HMSn: %6s',            _scanCounts.ActualCountCIDMSn, _scanCounts.ActualCountCIDHMSn);
+        RAISE INFO '%', format('  ETD MSn: %6s,   ETD HMSn: %6s',            _scanCounts.ActualCountETDMSn, _scanCounts.ActualCountETDHMSn);
+        RAISE INFO '%', format('  HCD MSn: %6s,   HCD HMSn: %6s',            _scanCounts.ActualCountHCDMSn, _scanCounts.ActualCountHCDHMSn);
+        RAISE INFO '%', format('ETciD MSn: %6s, ETciD HMSn: %6s',            _scanCounts.ActualCountETciDMSn, _scanCounts.ActualCountETciDHMSn);
+        RAISE INFO '%', format('EThcD MSn: %6s, EThcD HMSn: %6s',            _scanCounts.ActualCountEThcDMSn, _scanCounts.ActualCountEThcDHMSn);
+        RAISE INFO '';
     End If;
 
     -----------------------------------------------------------
@@ -487,9 +472,9 @@ BEGIN
                         -- One or more ETD spectra
                         If _scanCounts.ActualCountCIDHMSn > 0 Then
                             _datasetTypeAutoGen := _datasetTypeAutoGen || '-CID/ETD-HMSn';
-                        ElsIf _scanCounts.ActualCountCIDMSn > 0
+                        ElsIf _scanCounts.ActualCountCIDMSn > 0 Then
                             _datasetTypeAutoGen := _datasetTypeAutoGen || '-CID/ETD-MSn';
-                        ElsIf _scanCounts.ActualCountETDHMSn > 0
+                        ElsIf _scanCounts.ActualCountETDHMSn > 0 Then
                             _datasetTypeAutoGen := _datasetTypeAutoGen || '-ETD-HMSn';
                         Else
                             _datasetTypeAutoGen := _datasetTypeAutoGen || '-ETD-MSn';
@@ -498,7 +483,7 @@ BEGIN
                         -- No ETD spectra
                         If _scanCounts.ActualCountCIDHMSn > 0 Then
                              _datasetTypeAutoGen := _datasetTypeAutoGen || '-CID-HMSn';
-                        ElsIf _scanCounts.ActualCountCIDMSn > 0 OR _scanCounts.ActualCountPQD > 0
+                        ElsIf _scanCounts.ActualCountCIDMSn > 0 OR _scanCounts.ActualCountPQD > 0 Then
                             _datasetTypeAutoGen := _datasetTypeAutoGen || '-CID-MSn';
                         Else
                             _datasetTypeAutoGen := _datasetTypeAutoGen || '-HMSn';
@@ -550,7 +535,7 @@ BEGIN
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because _datasetTypeAutoGen <> '''' (it is %) AND _autoDefineOnAllMismatches is true', _datasetTypeAutoGen;
+                RAISE INFO 'Set _autoDefineDSType to true because _datasetTypeAutoGen <> '''' (it is %) and _autoDefineOnAllMismatches is true', _datasetTypeAutoGen;
             End If;
 
         End If;
@@ -595,27 +580,33 @@ BEGIN
         FROM t_dataset_type_name
         WHERE Dataset_Type = _newDatasetType;
 
-        If _newDSTypeID <> 0 Then
-
+        If Not FOUND Then
+            _message := format('Unrecognized dataset type based on actual scan types; need to auto-switch from %s to %s', _currentDatasetType, _newDatasetType);
+        Else
             If _newDatasetType = 'HMS' And _currentDatasetType = 'EI-HMS' Then
                 -- Leave the dataset type as 'EI-HMS'
                 If _infoOnly Then
-                    RAISE INFO 'Leaving dataset type unchanged As %', _currentDatasetType
+                    _message := format('Leaving dataset type unchanged as %s', _currentDatasetType);
+                    RAISE INFO '%', _message;
                 End If;
                 RETURN;
             End If;
 
-            _message := format('Auto-switched dataset type from %s to %s', _currentDatasetType, _newDatasetType);
+            _message := format('%s dataset type from %s to %s',
+                               CASE WHEN _infoOnly
+                                    THEN 'Would auto-switch'
+                                    ELSE 'Auto-switched'
+                               END,
+                               _currentDatasetType,
+                               _newDatasetType);
 
             If Not _infoOnly Then
                 UPDATE t_dataset
                 SET dataset_type_ID = _newDSTypeID
-                WHERE dataset_id = _datasetID
+                WHERE dataset_id = _datasetID;
             Else
                 RAISE INFO 'New dataset type: % (dataset type ID %)', _newDatasetType, _newDSTypeID;
             End If;
-        Else
-            _message := format('Unrecognized dataset type based on actual scan types; need to auto-switch from %s to %s', _currentDatasetType, _newDatasetType);
         End If;
     End If;
 
@@ -631,4 +622,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.validate_dataset_type IS 'ValidateDatasetType';
+
+ALTER PROCEDURE public.validate_dataset_type(IN _datasetid integer, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _autodefineonallmismatches boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_dataset_type(IN _datasetid integer, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _autodefineonallmismatches boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.validate_dataset_type(IN _datasetid integer, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _autodefineonallmismatches boolean) IS 'ValidateDatasetType';
+
