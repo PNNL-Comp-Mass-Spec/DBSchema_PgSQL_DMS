@@ -16,6 +16,19 @@ CREATE TABLE logcap.t_task_events (
 ALTER TABLE logcap.t_task_events OWNER TO d3l243;
 
 --
+-- Name: t_task_events_id_seq; Type: SEQUENCE; Schema: logcap; Owner: d3l243
+--
+
+ALTER TABLE logcap.t_task_events ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME logcap.t_task_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: t_task_events pk_t_task_events; Type: CONSTRAINT; Schema: logcap; Owner: d3l243
 --
 
