@@ -38,6 +38,7 @@ AS $$
 **          07/29/2022 mem - Settings file names can no longer be null
 **          10/04/2022 mem - Assure that auto-generated dataset names only contain alphanumeric characters (plus underscore or dash)
 **          03/27/2023 mem - Auto change script DiaNN_DataPkg to DiaNN
+**          06/13/2023 mem - Fix bug that used harded coded job number 1914830 instead of _job
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -273,20 +274,20 @@ BEGIN
             SELECT Param_Value
             INTO _parameterFileName
             FROM sw.V_Pipeline_Job_Parameters
-            WHERE job = 1914830 AND
-                  Param_Name = 'ParamFileName'
+            WHERE job = _job AND
+                  Param_Name = 'ParamFileName';
 
             SELECT Param_Value
             INTO _proteinCollectionList
             FROM sw.V_Pipeline_Job_Parameters
-            WHERE job = 1914830 AND
-                  Param_Name = 'ProteinCollectionList'
+            WHERE job = _job AND
+                  Param_Name = 'ProteinCollectionList';
 
             SELECT Param_Value
             INTO _legacyFastaFileName
             FROM sw.V_Pipeline_Job_Parameters
-            WHERE job = 1914830 AND
-                  Param_Name = 'LegacyFastaFileName'
+            WHERE job = _job AND
+                  Param_Name = 'LegacyFastaFileName';
 
             If Coalesce(_parameterFileName, '') = '' Then
                 _parameterFileName := 'na';
