@@ -2,12 +2,17 @@
 -- Name: get_task_param_table_local(integer); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_task_param_table_local(_job integer) RETURNS TABLE(job integer, name public.citext, value public.citext)
+CREATE OR REPLACE FUNCTION cap.get_task_param_table_local(_job integer) RETURNS TABLE(job integer, section public.citext, name public.citext, value public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
-**  Desc:   Returns a table of the capture task job parameters stored locally in t_task_parameters
+**  Desc:
+**      Returns a table of the capture task job parameters stored locally
+**      in either cap.t_task_parameters or cap.t_task_parameters_history
+**
+**  Arguments:
+**    _job      Capture task job number
 **
 **  Auth:   grk
 **  Date:   06/07/2010
@@ -17,9 +22,12 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table_local(_job integer) RETURNS 
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          04/02/2023 mem - Rename procedure and functions
+**          06/13/2023 mem - Add section name column to the output table
+**                         - Look for the job in cap.t_task_parameters_history if not found in cap.t_task_parameters
 **
 *****************************************************/
 DECLARE
+    _xmlParameters xml;
     _message citext;
 
     _sqlState text;
@@ -69,18 +77,37 @@ BEGIN
     */
 
     ---------------------------------------------------
+    -- Look up the capture task job parameters
+    ---------------------------------------------------
+
+    SELECT Src.parameters
+    INTO _xmlParameters
+    FROM cap.t_task_parameters Src
+    WHERE Src.job = _job;
+
+    If Not FOUND Then
+        SELECT Src.parameters
+        INTO _xmlParameters
+        FROM cap.t_task_parameters_history Src
+        WHERE Src.job = _job AND
+              Src.most_recent_entry = 1;
+
+        If Not FOUND Then
+            RAISE WARNING 'Capture task job % not found in cap.t_task_parameters or cap.t_task_parameters_history', _job;
+            RETURN;
+        End If;
+    End If;
+
+    ---------------------------------------------------
     -- Convert the XML job parameters into a table
     -- We must surround the job parameter XML with <params></params> so that the XML will be rooted, as required by XMLTABLE()
     ---------------------------------------------------
-    --
+
     RETURN QUERY
-    SELECT _job AS Job, XmlQ.name, XmlQ.value
+    SELECT _job AS Job, XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || TaskParams.parameters::text || '</params>')::xml as rooted_xml
-               FROM cap.t_task_parameters TaskParams
-               WHERE TaskParams.job = _job
-             ) Src,
+        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml as rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section citext PATH '@Section',
@@ -100,11 +127,11 @@ EXCEPTION
 
     _message := local_error_handler (
                     _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                    format('XML parameter formatting for capture task job %s', _job),
+                    format('get capture task job parameters for job %s', _job),
                     _logError => true);
 
     RETURN QUERY
-    SELECT _job AS Job, 'Error_Message'::citext, _message::citext;
+    SELECT _job AS Job, 'Error_Message'::citext, _message::citext, _message::citext;
 END
 $$;
 
