@@ -6,11 +6,12 @@ CREATE VIEW sw.v_pipeline_job_parameters AS
  SELECT j.job,
     j.script,
     j.dataset,
+    jobparams.section,
     jobparams.name AS param_name,
     jobparams.value AS param_value
    FROM ((sw.t_jobs j
      JOIN sw.t_scripts s ON ((j.script OPERATOR(public.=) s.script)))
-     CROSS JOIN LATERAL sw.get_job_param_table_local(j.job) jobparams(job, name, value));
+     CROSS JOIN LATERAL sw.get_job_param_table_local(j.job) jobparams(job, section, name, value));
 
 
 ALTER TABLE sw.v_pipeline_job_parameters OWNER TO d3l243;
