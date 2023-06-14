@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **  Date:   02/29/2020 mem - Initial version
 **          10/21/2022 mem - Ported to PostgreSQL
 **          05/31/2023 mem - Combine string literals
+**          06/13/2023 mem - Show a warning if _datasetInfoXML is null
 **
 *****************************************************/
 DECLARE
@@ -41,6 +42,14 @@ BEGIN
 
     _datasetID := Coalesce(_datasetID, 0);
     _datasetName := '';
+
+    If _datasetInfoXML Is Null Then
+        _message := '_datasetInfoXML is null; unable to continue';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5200';
+        RETURN;
+    End If;
 
     ---------------------------------------------------
     -- Parse out the dataset name from _datasetInfoXML
@@ -56,7 +65,7 @@ BEGIN
         _message := format('XML in _datasetInfoXML is not in the expected form for DatasetID %s in procedure get_dataset_details_from_dataset_info_xml; could not match /DatasetInfo/Dataset',
                            _datasetID);
 
-        _returnCode := 'U5200';
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -72,7 +81,7 @@ BEGIN
 
         If Not FOUND Then
             _message := format('Dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetName);
-            _returnCode := 'U5201';
+            _returnCode := 'U5202';
             RETURN;
         End If;
     Else
@@ -81,7 +90,7 @@ BEGIN
         -- Validate that _datasetID exists in t_dataset
         If Not Exists (SELECT * FROM t_dataset WHERE dataset_id = _datasetID) Then
             _message := format('Dataset ID %s not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetID);
-            _returnCode := 'U5202';
+            _returnCode := 'U5203';
             RETURN;
         End If;
 
@@ -91,8 +100,8 @@ BEGIN
         WHERE DS.dataset = _datasetName;
 
         If Not FOUND Then
-            _message := format('dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetName);
-            _returnCode := 'U5203';
+            _message := format('Dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetName);
+            _returnCode := 'U5204';
             RETURN;
         End If;
 
@@ -100,7 +109,7 @@ BEGIN
             _message := format('Dataset ID values for dataset %s do not match; expecting %s but procedure param _datasetID is %s',
                                 _datasetName, _datasetIDCheck, _datasetID);
 
-            _returnCode := 'U5204';
+            _returnCode := 'U5205';
             RETURN;
         End If;
     End If;
