@@ -41,7 +41,6 @@ BEGIN
     ---------------------------------------------------
     -- Populate a temporary table with the list of jobs
     ---------------------------------------------------
-    --
 
     INSERT INTO Tmp_JobsToExtend (Job, Valid)
     SELECT Value, false
@@ -50,7 +49,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate that the job numbers exist in sw.t_jobs or sw.t_jobs_history
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_JobsToExtend
     SET Valid = true, script = sw.t_jobs.script
     FROM sw.t_jobs
@@ -65,7 +64,7 @@ BEGIN
     ---------------------------------------------------
     -- Warn the user if any invalid jobs are present
     ---------------------------------------------------
-    --
+
     If Exists (SELECT * FROM Tmp_JobsToExtend WHERE Valid = 0) Then
         FOR _message IN
             SELECT format('Invalid job (either not in sw.t_jobs or in sw.t_jobs_history but does not have state=4): %s', job)
@@ -90,7 +89,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure all of the jobs used the same script
     ---------------------------------------------------
-    --
+
     SELECT MIN(Script),
            MAX(Script),
            MIN(Job)
@@ -108,7 +107,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate that the extension script is appropriate for the existing job script
     ---------------------------------------------------
-    --
+
     CALL sw.validate_extension_script_for_job (
             _job,
             _extensionScriptName,
@@ -123,7 +122,6 @@ BEGIN
     ---------------------------------------------------
     -- Loop through the jobs and call create_job_steps for each
     ---------------------------------------------------
-    --
 
     FOR _job IN
         SELECT Job

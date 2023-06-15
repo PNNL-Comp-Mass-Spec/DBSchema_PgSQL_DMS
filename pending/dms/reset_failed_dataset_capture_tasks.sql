@@ -72,7 +72,7 @@ BEGIN
         ------------------------------------------------
         -- Create a temporary table
         ------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Datasets (
             Dataset_ID int not null,
             Dataset text not null,
@@ -84,7 +84,7 @@ BEGIN
         -- that have Dataset State 5=Capture Failed
         -- and a comment containing known errors
         ------------------------------------------------
-        --
+
         INSERT INTO Tmp_Datasets( dataset_id,
                                   dataset,
                                   Reset_Comment )
@@ -143,7 +143,6 @@ BEGIN
             ------------------------------------------------
             -- Preview the datasets to reset
             ------------------------------------------------
-            --
 
             -- ToDo: Update this to use RAISE INFO
 
@@ -170,7 +169,7 @@ BEGIN
         -- Possibly post log error messages for datasets with a reset comment,
         -- then remove those datasets from Tmp_Datasets
         ------------------------------------------------
-        --
+
         INSERT INTO t_log_entries( posted_by,
                                    Entered,
                                    type,
@@ -192,7 +191,7 @@ BEGIN
         ------------------------------------------------
         -- Reset the datasets
         ------------------------------------------------
-        --
+
         UPDATE t_dataset
         SET dataset_state_id = 1,
             comment = remove_capture_errors_from_string(comment)
@@ -212,7 +211,7 @@ BEGIN
             ------------------------------------------------
             -- Look for log entries in DMS_Capture to auto-update
             ------------------------------------------------
-            --
+
             FOR _datasetName IN
                 SELECT Dataset
                 FROM Tmp_Datasets

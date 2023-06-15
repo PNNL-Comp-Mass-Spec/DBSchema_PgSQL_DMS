@@ -93,7 +93,7 @@ BEGIN
     ---------------------------------------------------
     -- Verify that all jobs exist
     ---------------------------------------------------
-    --
+
     SELECT string_agg(Job::text, ', ' ORDER BY Job)
     INTO _list;
     FROM Tmp_JobList
@@ -117,7 +117,7 @@ BEGIN
     -- Get rid of existing associations if we are
     -- replacing them with jobs in list
     ---------------------------------------------------
-    --
+
     If _mode = 'replace' And _gid > 0 Then
         DELETE FROM t_analysis_job_processor_group_associations
         WHERE group_id = _gid;
@@ -136,7 +136,7 @@ BEGIN
     ---------------------------------------------------
     -- Add associations for new jobs to list
     ---------------------------------------------------
-    --
+
     If _mode IN ('replace', 'add') Then
         INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
         SELECT job, _gid

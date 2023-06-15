@@ -96,7 +96,7 @@ BEGIN
         -- Make temp table to hold requested run changes
         -- and populate it from the input XML
         -----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_RequestedRunUsageInfo (
             request int NULL,
             usage text NULL,
@@ -194,7 +194,6 @@ BEGIN
         ---------------------------------------------------
         -- Loop though long intervals and update
         ---------------------------------------------------
-        --
 
         FOR
             SELECT id, note

@@ -41,6 +41,7 @@ BEGIN
     ---------------------------------------------------
     -- Table to hold jobs to process
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_JobsToProcess (
         Job int
     )
@@ -50,7 +51,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate Tmp_JobsToProcess
     ---------------------------------------------------
-    --
+
     If _jobListToProcess = '' Then
         INSERT INTO Tmp_JobsToProcess (Job)
         SELECT sw.t_jobs.job
@@ -74,7 +75,7 @@ BEGIN
     ---------------------------------------------------
     -- Update jobs where the start or finish time differ
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
 
         -- ToDo: Update this to use RAISE INFO

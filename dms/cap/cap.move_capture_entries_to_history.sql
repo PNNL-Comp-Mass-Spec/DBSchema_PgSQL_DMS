@@ -49,7 +49,7 @@ BEGIN
     ----------------------------------------------------------
     -- Copy Job_Events entries into historic log tables
     ----------------------------------------------------------
-    --
+
     BEGIN
         If _infoOnly Then
             SELECT COUNT(*)
@@ -106,7 +106,7 @@ BEGIN
     ----------------------------------------------------------
     -- Copy Job_Step_Events entries into historic log tables
     ----------------------------------------------------------
-    --
+
     BEGIN
         If _infoOnly Then
             SELECT COUNT(*)
@@ -166,7 +166,7 @@ BEGIN
     ----------------------------------------------------------
     -- Copy Job_Step_Processing_Log entries into historic log tables
     ----------------------------------------------------------
-    --
+
     BEGIN
         If _infoOnly Then
             SELECT COUNT(*)
@@ -224,7 +224,7 @@ BEGIN
     -- Copy Log entries into historic log tables
     -- Skip entries of type 'Info'
     ----------------------------------------------------------
-    --
+
     BEGIN
         If _infoOnly Then
             SELECT COUNT(*)
@@ -284,7 +284,7 @@ BEGIN
     -- Note that this data is intentionally not copied to the historic log tables
     -- because it is very easy to re-generate (use update_parameters_for_task)
     ----------------------------------------------------------
-    --
+
     If _infoOnly Then
             SELECT COUNT(*)
             INTO _matchCount

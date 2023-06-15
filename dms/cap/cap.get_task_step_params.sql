@@ -100,7 +100,7 @@ BEGIN
     ---------------------------------------------------
     -- Get capture task job parameters
     ---------------------------------------------------
-    --
+
     -- To allow for more than one instance of a tool
     -- in a single script, look at parameters in sections
     -- that either are not locked to any step

@@ -184,7 +184,7 @@ BEGIN
             ---------------------------------------------------
             -- Lookup AnalysisToolID for _jobInfo.Script
             ---------------------------------------------------
-            --
+
             _analysisToolID := -1;
 
             If _jobInfo.Script SIMILAR TO 'MaxQuant[_]%'::citext Then
@@ -246,7 +246,7 @@ BEGIN
             ---------------------------------------------------
             -- Validate _jobInfo.Owner; update if not valid
             ---------------------------------------------------
-            --
+
             If Not Exists (SELECT * FROM t_users WHERE username = Coalesce(_jobInfo.Owner, '')) Then
                 _jobInfo.Owner := 'H09090911';
             End If;
@@ -254,7 +254,7 @@ BEGIN
             ---------------------------------------------------
             -- Validate _jobInfo.State; update if not valid
             ---------------------------------------------------
-            --
+
             If Not Exists (SELECT * FROM t_analysis_job_state WHERE job_state_id = _jobInfo.State) Then
                 _message := 'State %s not found in t_analysis_job_state; -- this is unexpected; will set _jobInfo.State to 4'; _jobInfo.State)
 
@@ -270,7 +270,7 @@ BEGIN
             ------------------------------------------------
             -- Lookup parameter file name and protein collection, if defined
             ------------------------------------------------
-            --
+
             SELECT Param_Value
             INTO _parameterFileName
             FROM sw.V_Pipeline_Job_Parameters
@@ -304,7 +304,7 @@ BEGIN
             ------------------------------------------------
             -- Check whether the dataset exists if it is not 'Aggregation'
             ------------------------------------------------
-            --
+
             _datasetID := -1;
             _datasetComment := '';
 

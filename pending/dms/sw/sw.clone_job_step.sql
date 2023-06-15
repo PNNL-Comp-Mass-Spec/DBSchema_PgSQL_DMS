@@ -136,7 +136,7 @@ BEGIN
         ---------------------------------------------------
         -- Copy new job steps from clone step
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_Job_Steps (
             Job,
             Step,
@@ -170,7 +170,7 @@ BEGIN
         ---------------------------------------------------
         -- Copy the clone step's dependencies
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_Job_Step_Dependencies( Job,
                                                Step,
                                                Target_Step,
@@ -190,7 +190,7 @@ BEGIN
         ---------------------------------------------------
         -- Copy the dependencies that target the clone step
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_Job_Step_Dependencies( Job,
                                                Step,
                                                Target_Step,
@@ -213,7 +213,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove original dependencies
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_Job_Step_Dependencies
     WHERE Job = _job AND
           Target_Step = _step_to_clone;
@@ -221,7 +221,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove original dependencies
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_Job_Step_Dependencies
     WHERE Job = _job AND
           Step = _step_to_clone;
@@ -229,7 +229,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove the cloned step
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_Job_Steps
     WHERE Job = _job AND
           Step = _step_to_clone;

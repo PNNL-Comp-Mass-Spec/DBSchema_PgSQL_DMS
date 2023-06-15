@@ -142,7 +142,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve Yes/No parameters to 0 or 1
         ---------------------------------------------------
-        --
+
         _valTrackUsageWhenInactive := public.boolean_text_to_tinyint(_trackUsageWhenInactive);
         _valScanSourceDir          := public.boolean_text_to_tinyint(_scanSourceDir);
         _valAutoDefineStoragePath  := public.boolean_text_to_tinyint(_autoDefineStoragePath);
@@ -172,7 +172,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_instrument_name

@@ -98,7 +98,7 @@ BEGIN
     -- For that, the base is: https://ingestdms.my.emsl.pnl.gov/get_state?job_id=
     -- and the value is 1305088
     -----------------------------------------------
-    --
+
     _statusURI_PathID := 1;
     _statusURI_Path := '';
     _statusNum := null;
@@ -239,7 +239,7 @@ BEGIN
         -----------------------------------------------
         -- Add a new row to cap.t_myemsl_uploads
         -----------------------------------------------
-        --
+
         INSERT INTO cap.t_myemsl_uploads (job, dataset_id, subfolder,
                                           file_count_new, file_count_updated,
                                           bytes, upload_time_seconds,
@@ -264,7 +264,6 @@ BEGIN
         -----------------------------------------------
         -- Add a new row to T_MyEMSL_TestUploads
         -----------------------------------------------
-        --
         INSERT INTO T_MyEMSL_TestUploads (  Job, Dataset_ID, Subfolder,
                                             FileCountNew, FileCountUpdated,
                                             Bytes, UploadTimeSeconds,

@@ -93,7 +93,7 @@ BEGIN
         -- Create a temporary table to track the charge code information
         -- stored in the data warehouse
         ----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_ChargeCode(
             Charge_Code text NOT NULL,
             Resp_Username text NULL,
@@ -118,7 +118,7 @@ BEGIN
         ----------------------------------------------------------
         -- Obtain charge code info
         ----------------------------------------------------------
-        --
+
         _currentLocation := 'Query opwhse';
 
         If Exists (Select * from Tmp_WPsExplicit) Then
@@ -231,7 +231,7 @@ BEGIN
             --
             -- Logic below updates Charge_Code_State based on Deactivated, Setup_Date, Usage_SamplePrep, and Usage_RequestedRun
             ----------------------------------------------------------
-            --
+
             _currentLocation := 'Merge data';
 
             SELECT COUNT(*)
@@ -317,7 +317,7 @@ BEGIN
             ----------------------------------------------------------
             -- Update usage columns
             ----------------------------------------------------------
-            --
+
             _currentLocation := 'Update usage columns';
 
             CALL update_charge_code_usage (_infoOnly => false);
@@ -326,7 +326,7 @@ BEGIN
             -- Update Inactive_Date_Most_Recent
             -- based on Inactive_Date and SubAccount_Inactive_Date
             ----------------------------------------------------------
-            --
+
             _currentLocation := 'Update Inactive_Date_Most_Recent using Inactive_Date and SubAccount_Inactive_Date';
 
             UPDATE t_charge_code Target
@@ -352,7 +352,7 @@ BEGIN
             -- Update Inactive_Date_Most_Recent
             -- based on Deactivated
             ----------------------------------------------------------
-            --
+
             _currentLocation := 'Update Inactive_Date_Most_Recent using Deactivated';
 
             UPDATE t_charge_code
@@ -382,7 +382,7 @@ BEGIN
             -- Auto-mark active charge codes that are currently in state 1 = 'Interest Unknown'
             -- Change the state to 2 for any that have sample prep requests or requested runs that use the charge code
             ----------------------------------------------------------
-            --
+
             _currentLocation := 'Update Charge_Code_State';
 
             UPDATE t_charge_code
@@ -394,7 +394,7 @@ BEGIN
             ----------------------------------------------------------
             -- Find WPs used within the last 3 years
             ----------------------------------------------------------
-            --
+
             INSERT INTO Tmp_WPsInUseLast3Years ( Charge_Code, Most_Recent_Usage)
             SELECT Charge_Code, MAX(Most_Recent_Usage)
             FROM ( SELECT A.Charge_Code,
@@ -425,7 +425,7 @@ BEGIN
             -- Auto-mark Inactive charge codes that have usage counts of 0 and became inactive at least 6 months ago
             -- Note that DMS updates Inactive_Date_Most_Recent from Null to a valid date when it finds that a charge_code has been deactivated
             ----------------------------------------------------------
-            --
+
             UPDATE t_charge_code
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
@@ -437,7 +437,7 @@ BEGIN
             -- Auto-mark Inactive charge codes that became inactive at least 12 months ago
             -- and haven't had any recent sample prep request or requested run usage
             ----------------------------------------------------------
-            --
+
             UPDATE t_charge_code
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
@@ -451,7 +451,7 @@ BEGIN
             -- and haven't had any sample prep request or requested run usage within the last 3 years
             -- The goal is to hide charge codes that are still listed as active in the warehouse, yet have not been used in DMS for 3 years
             ----------------------------------------------------------
-            --
+
             UPDATE t_charge_code
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
@@ -463,7 +463,7 @@ BEGIN
             -- Add new users as DMS_Guest users
             -- We only add users associated with charge codes that have been used in DMS
             ----------------------------------------------------------
-            --
+
             CALL auto_add_charge_code_users (_infoOnly => false);
 
             DROP TABLE Tmp_WPsInUseLast3Years;
@@ -476,7 +476,7 @@ BEGIN
         ----------------------------------------------------------
         -- Preview the updates
         ----------------------------------------------------------
-        --
+
         UPDATE Tmp_ChargeCode
         SET Update_Status =
                 CASE WHEN target.Deactivated = 'Y' And source.Deactivated = 'N' THEN 'Re-activated Existing WP'

@@ -53,14 +53,13 @@ BEGIN
         -----------------------------------------
         -- Validate the inputs
         -----------------------------------------
-        --
+
         _datasetIDList := Coalesce(_datasetIDList, '');
         _infoOnly := Coalesce(_infoOnly, true);
 
         -----------------------------------------
         -- Parse the values in _datasetIDList
         -----------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_Datasets (
             DatasetID int not null,
@@ -144,7 +143,6 @@ BEGIN
         -----------------------------------------
         -- Parse each dataset in _datasetIDList
         -----------------------------------------
-        --
 
         FOR _datasetInfo IN
             SELECT Tmp_Datasets.DatasetID As DatasetID
@@ -163,7 +161,7 @@ BEGIN
             -----------------------------------------
             -- Lookup the auto-defined storage path
             -----------------------------------------
-            --
+
             _storagePathIDNew := get_instrument_storage_path_for_new_datasets (
                                     _datasetInfo.InstrumentID,
                                     _datasetInfo.RefDate,
@@ -215,7 +213,6 @@ BEGIN
             -----------------------------------------
             -- Lookup the auto-defined archive path
             -----------------------------------------
-            --
 
             _archivePathIDNew := get_instrument_archive_path_for_new_datasets (
                                         _datasetInfo.InstrumentID, _datasetInfo.DatasetID, _autoSwitchActiveArchive => false, _infoOnly => false);
@@ -283,7 +280,6 @@ BEGIN
     -----------------------------------------
     -- Exit
     -----------------------------------------
-    --
 
     DROP TABLE IF EXISTS Tmp_Datasets;
 END

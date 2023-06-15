@@ -36,7 +36,7 @@ BEGIN
     ----------------------------------------
     -- Validate the inputs
     ----------------------------------------
-    --
+
     _minimumTimeIntervalHours := Coalesce(_minimumTimeIntervalHours, 1);
     _activeProcessWindowHours := Coalesce(_activeProcessWindowHours, 24);
     _message := '';
@@ -48,7 +48,7 @@ BEGIN
         ----------------------------------------
         -- Lookup how long ago the table was last updated
         ----------------------------------------
-        --
+
         SELECT extract(epoch FROM (CURRENT_TIMESTAMP - MAX(posting_time))) / 3600.0
         INTO _timeIntervalLastUpdateHours
         FROM sw.t_machine_status_history;

@@ -60,7 +60,7 @@ BEGIN
     ---------------------------------------------------
     -- Get capture task job parameters from main database
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Task_Parameters (Job, Section, Name, Value)
     SELECT Job, Section, Name, Value
     FROM cap.get_task_param_table(_job, _dataset, _datasetID, _storageServer, _instrument, _instrumentClass, _maxSimultaneousCaptures, _captureSubdirectory);

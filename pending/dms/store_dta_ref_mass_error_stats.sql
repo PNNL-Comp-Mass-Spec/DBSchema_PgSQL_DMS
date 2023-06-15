@@ -101,7 +101,7 @@ BEGIN
     ---------------------------------------------------
     -- Parse the contents of _resultsXML to populate Tmp_DatasetInfo
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_DatasetInfo (
         Dataset_ID,
         Dataset_Name,
@@ -114,7 +114,7 @@ BEGIN
     ---------------------------------------------------
     -- Now extract out the Measurement information
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Measurements (Name, ValueText)
     SELECT XmlQ.Name, XmlQ.ValueText
     FROM (
@@ -131,7 +131,7 @@ BEGIN
     ---------------------------------------------------
     -- Update or Validate Dataset_ID in Tmp_DatasetInfo
     ---------------------------------------------------
-    --
+
     If _datasetID = 0 Then
         UPDATE Tmp_DatasetInfo target
         SET Dataset_ID = DS.Dataset_ID
@@ -254,7 +254,7 @@ BEGIN
     -----------------------------------------------
     -- Add/Update t_dataset_qc using a MERGE statement
     -----------------------------------------------
-    --
+
     MERGE INTO t_dataset_qc AS target
     USING ( SELECT DI.dataset_id,
                    DI.psm_source_job,

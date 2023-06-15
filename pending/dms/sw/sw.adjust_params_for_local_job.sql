@@ -152,7 +152,7 @@ BEGIN
     ---------------------------------------------------
     -- Update _jobParamXML if changes were made
     ---------------------------------------------------
-    --
+
     If _paramsUpdated Then
         -- ToDo: convert this to use XMLAGG(XMLELEMENT(
         --       Look for similar capture task code in cap.*

@@ -50,7 +50,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if no candidates found
     ---------------------------------------------------
-    --
+
      If Coalesce(_job, 0) = 0 Then
         _message := 'Job cannot be 0';
         RAISE WARNING '%', _message;
@@ -61,7 +61,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if not a state we save for
     ---------------------------------------------------
-    --
+
     If Not _jobState in (4, 5) Then
         _message := 'Job state must be 4 or 5 to be copied to t_jobs_history (this is not an error)';
         RETURN;
@@ -70,7 +70,6 @@ BEGIN
     ---------------------------------------------------
     -- Define a common timestamp for all history entries
     ---------------------------------------------------
-    --
 
     If Coalesce(_overrideSaveTime, false) Then
         _saveTime := Coalesce(_saveTimeOverride, CURRENT_TIMESTAMP);
@@ -81,7 +80,7 @@ BEGIN
     ---------------------------------------------------
     -- Copy jobs
     ---------------------------------------------------
-    --
+
     INSERT INTO sw.t_jobs_history (
         job,
         priority,
@@ -127,7 +126,7 @@ BEGIN
     ---------------------------------------------------
     -- Copy Steps
     ---------------------------------------------------
-    --
+
     INSERT INTO sw.t_job_steps_history (
         job,
         step,
@@ -179,7 +178,7 @@ BEGIN
     ---------------------------------------------------
     -- Copy parameters
     ---------------------------------------------------
-    --
+
     INSERT INTO sw.t_job_parameters_history (
         job,
         parameters,

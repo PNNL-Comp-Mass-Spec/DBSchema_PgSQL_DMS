@@ -106,7 +106,7 @@ BEGIN
         ----------------------------------------------------------
         -- Create some temporary tables
         ----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_ReqRunsToUpdate (
             request_id int not null,
             Request_Name text not null,
@@ -124,7 +124,7 @@ BEGIN
         ----------------------------------------------------------
         -- Find the Requested Runs to update
         ----------------------------------------------------------
-        --
+
         If _requestedIdList <> '' Then
 
             -- Find requested runs using _requestedIdList
@@ -200,7 +200,7 @@ BEGIN
         ----------------------------------------------------------
         -- Generate log message that describes the requested runs that will be updated
         ----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_ValuesByCategory (
             Category text,
             Value int
@@ -238,7 +238,7 @@ BEGIN
             ----------------------------------------------------------
             -- Preview what would be updated
             ----------------------------------------------------------
-            --
+
             RAISE INFO '%', _logMessage;
 
             SELECT request_id,
@@ -255,7 +255,7 @@ BEGIN
             ----------------------------------------------------------
             -- Perform the update
             ----------------------------------------------------------
-            --
+
             UPDATE t_requested_run target
             Set work_package = _newWorkPackage
             FROM Tmp_ReqRunsToUpdate src

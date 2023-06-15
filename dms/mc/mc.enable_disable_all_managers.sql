@@ -63,7 +63,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _enable := Coalesce(_enable, false);
     _managerTypeIDList := Coalesce(_managerTypeIDList, '');
     _managerNameList := Coalesce(_managerNameList, '');

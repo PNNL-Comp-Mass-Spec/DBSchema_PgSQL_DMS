@@ -66,7 +66,7 @@ BEGIN
     ---------------------------------------------------
     -- Get job parameters into table format
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Job_Parameters (
         Section text,
         Name text,
@@ -82,7 +82,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate Tmp_Job_Parameters with the parameters
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Job_Parameters
         (Section, Name, Value)
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
@@ -111,7 +111,7 @@ BEGIN
         -- Add/update the specified parameter
         -- First try an update
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_Job_Parameters
         SET VALUE = _value
         WHERE Section = _section AND
@@ -126,7 +126,7 @@ BEGIN
         ---------------------------------------------------
         -- Delete the specified parameter
         ---------------------------------------------------
-        --
+
         DELETE FROM Tmp_Job_Parameters
         WHERE Section = _section AND
               Name = _paramName;
@@ -139,7 +139,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview the parameters
         ---------------------------------------------------
-        --
+
         SELECT 'After update' AS Note, *
         FROM Tmp_Job_Parameters
         ORDER BY Section

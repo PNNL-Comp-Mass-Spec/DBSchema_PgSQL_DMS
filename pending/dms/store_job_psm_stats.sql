@@ -154,7 +154,7 @@ BEGIN
     -----------------------------------------------
     -- Add/Update t_analysis_job_psm_stats using a MERGE statement
     -----------------------------------------------
-    --
+
     ;
     MERGE INTO t_analysis_job_psm_stats AS target
     USING ( SELECT _job AS Job,
@@ -255,14 +255,13 @@ BEGIN
         -- No phosphopeptide results for this job
         -- Make sure t_analysis_job_psm_stats_phospho does not have this job
         -----------------------------------------------
-        --
+
         DELETE FROM t_analysis_job_psm_stats_phospho
         WHERE job = _job;
     Else
         -----------------------------------------------
         -- Add/Update t_analysis_job_psm_stats_phospho using a MERGE statement
         -----------------------------------------------
-        --
 
         MERGE INTO t_analysis_job_psm_stats_phospho AS target
         USING ( SELECT _job AS Job,

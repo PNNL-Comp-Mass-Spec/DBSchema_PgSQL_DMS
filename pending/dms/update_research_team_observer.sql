@@ -70,7 +70,7 @@ BEGIN
     ---------------------------------------------------
     -- User id
     ---------------------------------------------------
-    --
+
     If _callingUser = '' Then
         _returnCode := 'U5201';
         _message := 'User ID is missing';
@@ -82,9 +82,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve
     ---------------------------------------------------
-    --
-    --
-    --
+
     SELECT campaign_id,
            Coalesce(research_team, 0)
     INTO _campaignID, _researchTeamID
@@ -100,8 +98,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve
     ---------------------------------------------------
-    --
-    --
+
     SELECT user_id
     INTO _userID
     FROM t_users
@@ -116,8 +113,7 @@ BEGIN
     ---------------------------------------------------
     -- Is user already an observer?
     ---------------------------------------------------
-    --
-    --
+
     SELECT COUNT(*)
     INTO _membershipExists
     FROM t_research_team_membership
@@ -128,7 +124,7 @@ BEGIN
     ---------------------------------------------------
     -- Add / update the user
     ---------------------------------------------------
-    --
+
     If _membershipExists > 0 AND _mode = 'remove' Then
         DELETE FROM t_research_team_membership
         WHERE team_id = _researchTeamID AND

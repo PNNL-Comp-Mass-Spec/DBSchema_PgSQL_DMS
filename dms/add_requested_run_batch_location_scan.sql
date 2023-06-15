@@ -94,7 +94,7 @@ BEGIN
         ---------------------------------------------------
         -- Create temporary table for requests in list
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_BatchIDs (
             BatchIDText text NULL,
             Batch_ID int NULL,
@@ -104,7 +104,7 @@ BEGIN
         ---------------------------------------------------
         -- Populate temporary table from list
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_BatchIDs (BatchIDText)
         SELECT DISTINCT Value
         FROM public.parse_delimited_list(_batchIDList, ',');
@@ -112,7 +112,7 @@ BEGIN
         ---------------------------------------------------
         -- Convert Batch IDs to integers
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_BatchIDs
         SET Batch_ID = try_cast(BatchIDText, null::int);
 

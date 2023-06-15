@@ -89,7 +89,7 @@ BEGIN
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)
     ---------------------------------------------------
-    --
+
     SELECT prep_column_id
     INTO _existingID
     FROM  t_prep_lc_column
@@ -155,7 +155,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_prep_lc_column

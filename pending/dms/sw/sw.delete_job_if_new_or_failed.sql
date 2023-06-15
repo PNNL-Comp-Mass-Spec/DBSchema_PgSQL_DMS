@@ -81,7 +81,7 @@ BEGIN
             ---------------------------------------------------
             -- Job deletion is allowed since state is 1, 5, or 8 (new, failed, or holding), and no running job steps
             ---------------------------------------------------
-            --
+
             SELECT format('DMS_Pipeline job to be deleted: job %s, state %s, dataset %s', Job, state, dataset)
             INTO _message
             FROM sw.t_jobs
@@ -122,7 +122,7 @@ BEGIN
     -- Delete the jobs that are new, failed, or holding (job state 1, 5, or 8)
     -- Skip any jobs with running job steps that started within the last 2 days
     ---------------------------------------------------
-    --
+
     DELETE FROM sw.t_jobs
     WHERE job = _job AND
           state IN (1, 5, 8) AND

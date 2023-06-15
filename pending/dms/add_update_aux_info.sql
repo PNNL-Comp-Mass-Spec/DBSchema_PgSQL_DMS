@@ -140,7 +140,7 @@ BEGIN
             ---------------------------------------------------
             -- Resolve target name to target ID using the entity's data table, as defined in t_aux_info_target
             ---------------------------------------------------
-            --
+
             SELECT target_table,
                    target_id_column,
                    target_name_column,

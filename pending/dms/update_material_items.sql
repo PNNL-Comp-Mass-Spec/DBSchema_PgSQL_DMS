@@ -53,7 +53,7 @@ BEGIN
     ---------------------------------------------------
     -- Default container to null container
     ---------------------------------------------------
-    --
+
     _contID := 1;
 
     ---------------------------------------------------
@@ -81,7 +81,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve container name to actual ID (if applicable)
     ---------------------------------------------------
-    --
+
     If _mode = 'move_material' AND _newValue = '' Then
         _message := 'No destination container was provided';
         RAISE WARNING '%', _message;
@@ -109,6 +109,7 @@ BEGIN
         ---------------------------------------------------
         -- Is container a valid target?
         ---------------------------------------------------
+
         If _contStatus <> 'Active' Then
             _message := format('Container "%s" must be in "Active" state to receive material', _container);
             RAISE WARNING '%', _message;
@@ -121,6 +122,7 @@ BEGIN
     ---------------------------------------------------
     -- Temporary table to hold material items
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_Material_Items (
         ID int,
         itemType text,            -- B for Biomaterial, E for Experiment, R for RefCompound
@@ -134,7 +136,6 @@ BEGIN
         -- Populate temporary table from type-tagged list
         -- of material items, if applicable
         ---------------------------------------------------
-        --
 
         -- _itemList is a comma separated list of items of the form Type:ID, for example 'E:8432,E:8434,E:9786'
         -- This is a list of three experiments, IDs 8432, 8434, and 9786
@@ -153,7 +154,7 @@ BEGIN
         -- biomaterial entities (if any)
         -- They have itemType = 'B'
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_Material_Items
         SET itemName = V.Name,
             itemContainer = V.Container
@@ -166,7 +167,7 @@ BEGIN
         -- experiment entities (if any)
         -- They have itemType = 'E'
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_Material_Items
         SET itemName = V.Experiment,
             itemContainer = V.Container
@@ -181,7 +182,7 @@ BEGIN
         -- reference compound entities (if any)
         -- They have itemType = 'R'
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_Material_Items
         SET itemName = V.Name,
             itemContainer = V.Container
@@ -223,7 +224,7 @@ BEGIN
         -- Populate material item list with items contained
         -- by containers given in input list, if applicable
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_Material_Items
             (container_id, itemType, itemName, itemContainer)
         SELECT
@@ -261,7 +262,6 @@ BEGIN
     -- and update material status (if retiring)
     -- for biomaterial items (if any)
     ---------------------------------------------------
-    --
     UPDATE T_Biomaterial
     SET Container_ID = CASE
                        WHEN _mode = 'move_material' THEN _contID
@@ -278,7 +278,7 @@ BEGIN
     -- and update material status (if retiring)
     -- for experiment items (if any)
     ---------------------------------------------------
-    --
+
     UPDATE t_experiments
     SET container_id = CASE
                        WHEN _mode = 'move_material' THEN _contID
@@ -294,7 +294,7 @@ BEGIN
     -- Update container reference to destination container
     -- for reference compounds (if any)
     ---------------------------------------------------
-    --
+
     UPDATE t_reference_compound
     SET container_id = CASE
                        WHEN _mode = 'move_material' THEN _contID
@@ -321,7 +321,7 @@ BEGIN
     ---------------------------------------------------
     -- Make log entries
     ---------------------------------------------------
-    --
+
     INSERT INTO t_material_log (
         type,
         item,

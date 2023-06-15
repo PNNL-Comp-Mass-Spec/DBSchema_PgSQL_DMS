@@ -55,7 +55,7 @@ BEGIN
     -----------------------------------------
     -- convert item list into temp table
     -----------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Items (
         Item text
     );
@@ -124,7 +124,7 @@ BEGIN
     -----------------------------------------
     -- Return requsets runs based on items in list
     -----------------------------------------
-    --
+
     If _itemType::citext = 'Batch_ID'::citext Then
         RETURN QUERY
         SELECT Request

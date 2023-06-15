@@ -86,7 +86,7 @@ BEGIN
     -----------------------------------------------------------
     -- Create and populate temp table with block assignments
     -----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_BlockingInfo (
         batch_id int,
         block   int,
@@ -112,7 +112,7 @@ BEGIN
     -----------------------------------------------------------
     -- Resolve cart name to cart ID
     -----------------------------------------------------------
-    --
+
     UPDATE Tmp_BlockingInfo
     SET cart_id = t_lc_cart.cart_id
     FROM t_lc_cart
@@ -128,7 +128,7 @@ BEGIN
     -----------------------------------------------------------
     -- Create and populate temp table with request assignments
     -----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_RequestsInBlock (
         request_id int,
         cart_id  int,
@@ -149,7 +149,7 @@ BEGIN
     -----------------------------------------------------------
     -- Update requested runs
     -----------------------------------------------------------
-    --
+
     UPDATE t_requested_run
     SET cart_id = BI.cart_id,
         cart_column = BI.col

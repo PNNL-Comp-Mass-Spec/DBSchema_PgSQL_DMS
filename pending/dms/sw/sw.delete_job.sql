@@ -65,28 +65,28 @@ BEGIN
     ---------------------------------------------------
     -- Delete job dependencies
     ---------------------------------------------------
-    --
+
     DELETE FROM sw.t_job_step_dependencies
     WHERE (job = _jobID);
 
     ---------------------------------------------------
     -- Delete job parameters
     ---------------------------------------------------
-    --
+
     DELETE FROM sw.t_job_parameters
     WHERE job = _jobID;
 
     ---------------------------------------------------
     -- Delete job steps
     ---------------------------------------------------
-    --
+
     DELETE FROM sw.t_job_steps
     WHERE job = _jobID;
 
     ---------------------------------------------------
     -- Delete jobs
     ---------------------------------------------------
-    --
+
     DELETE FROM sw.t_jobs
     WHERE job = _jobID;
 

@@ -117,7 +117,7 @@ BEGIN
     ---------------------------------------------------
     -- Perform the actions necessary when dataset is complete
     ---------------------------------------------------
-    --
+
     CALL do_dataset_completion_actions (
             _datasetName,
             _completionState,

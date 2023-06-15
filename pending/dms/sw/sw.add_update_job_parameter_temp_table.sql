@@ -49,7 +49,7 @@ BEGIN
     ---------------------------------------------------
     -- Lookup the current parameters stored in Tmp_Job_Parameters for this job
     ---------------------------------------------------
-    --
+
     SELECT Parameters
     INTO _xmlParameters
     FROM Tmp_Job_Parameters
@@ -68,7 +68,7 @@ BEGIN
     ---------------------------------------------------
     -- Call add_update_job_parameter_xml to perform the work
     ---------------------------------------------------
-    --
+
     CALL sw.add_update_job_parameter_xml (
             _xmlParameters output,
             _section,
@@ -83,7 +83,7 @@ BEGIN
         -- Update Tmp_Job_Parameters
         -- Note: Ordering by Section name but not by parameter name
         ---------------------------------------------------
-        --
+
         If _existingParamsFound Then
             UPDATE Tmp_Job_Parameters
             SET Parameters = _xmlParameters

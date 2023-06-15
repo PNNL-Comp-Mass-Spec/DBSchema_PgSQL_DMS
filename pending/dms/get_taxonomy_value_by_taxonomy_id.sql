@@ -221,7 +221,7 @@ BEGIN
     ---------------------------------------------------
     -- Auto-define some values when the Taxonomy ID is 48479 (environmental samples)
     ---------------------------------------------------
-    --
+
     If _ncbiTaxonomyID = 48479 Then
         -- Auto-define Phylum as Community if Phlyum is empty
         If Lower(Coalesce(_newPhylum, '')) In ('na', '') Then
@@ -253,7 +253,7 @@ BEGIN
     ---------------------------------------------------
     -- Possibly preview the old / new values
     ---------------------------------------------------
-    --
+
     If _previewResults Then
         SELECT  Case When _previewOrganismID > 0 Then _previewOrganismID Else 0 End AS OrganismID,
                 _organismName AS Organism,
@@ -281,7 +281,7 @@ BEGIN
     ---------------------------------------------------
     -- Update the output variables
     ---------------------------------------------------
-    --
+
     _orgDomain  := _newDomain;
     _orgKingdom := _newKingdom;
     _orgPhylum  := _newPhylum;

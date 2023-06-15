@@ -157,6 +157,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode = 'add' Then
 
             INSERT INTO t_operations_tasks (
@@ -194,7 +195,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_operations_tasks

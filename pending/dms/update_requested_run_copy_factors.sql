@@ -34,7 +34,7 @@ BEGIN
     -----------------------------------------------------------
     -- Temp table to hold factors being copied
     -----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Factors (
         Request int,
         Factor text,
@@ -44,7 +44,7 @@ BEGIN
     -----------------------------------------------------------
     -- Populate temp table
     -----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_Factors ( Request, Factor, value )
     SELECT target_id AS Request,
            name AS Factor,
@@ -57,7 +57,7 @@ BEGIN
     -----------------------------------------------------------
     -- Clean out old factors for _destRequest
     -----------------------------------------------------------
-    --
+
     DELETE FROM t_factor
     WHERE t_factor.type = 'Run_Request' AND target_id = _destRequestID;
 
@@ -65,13 +65,13 @@ BEGIN
     -- Get rid of any blank entries from temp table
     -- (shouldn't be any, but let's be cautious)
     -----------------------------------------------------------
-    --
+
     DELETE FROM Tmp_Factors WHERE Coalesce(Value, '') = '';
 
     -----------------------------------------------------------
     -- Anything to copy?
     -----------------------------------------------------------
-    --
+
     If Not Exists (SELECT * FROM Tmp_Factors) Then
         _message := 'Nothing to copy';
         RETURN;
@@ -80,7 +80,7 @@ BEGIN
     -----------------------------------------------------------
     -- Copy from temp table to factors table for _destRequest
     -----------------------------------------------------------
-    --
+
     INSERT INTO t_factor ( type, target_id, name, Value )
     SELECT
         'Run_Request' AS Type, _destRequestID AS TargetID, Factor AS Name, Value
@@ -89,7 +89,7 @@ BEGIN
     -----------------------------------------------------------
     -- Convert changed items to XML for logging
     -----------------------------------------------------------
-    --
+
     SELECT string_agg(format('<r i="%s" f="%s" v="%s" />', _destRequestID, Factor, Value), '' ORDER BY Factor)
     INTO _changeSummary
     FROM Tmp_Factors;
@@ -97,7 +97,7 @@ BEGIN
     -----------------------------------------------------------
     -- Log changes
     -----------------------------------------------------------
-    --
+
     INSERT INTO t_factor_log (changed_by, changes)
     VALUES (_callingUser, _changeSummary);
 

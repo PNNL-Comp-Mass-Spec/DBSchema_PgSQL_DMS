@@ -97,7 +97,7 @@ BEGIN
     -----------------------------------------------------------
     -- Create and populate temp table with block assignments
     -----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_BlockingInfo (
         request_id int,
         cart_name text,
@@ -131,7 +131,7 @@ BEGIN
     -----------------------------------------------------------
     -- Resolve cart name to cart ID
     -----------------------------------------------------------
-    --
+
     UPDATE Tmp_BlockingInfo
     SET cart_id = t_lc_cart.cart_id
     FROM t_lc_cart
@@ -160,7 +160,7 @@ BEGIN
     -----------------------------------------------------------
     -- Resolve cart config name to cart config ID
     -----------------------------------------------------------
-    --
+
     UPDATE Tmp_BlockingInfo
     SET cart_config_id = CartConfig.cart_config_id
     FROM t_lc_cart_configuration AS CartConfig
@@ -184,7 +184,7 @@ BEGIN
     -----------------------------------------------------------
     -- Batch info
     -----------------------------------------------------------
-    --
+
     UPDATE Tmp_BlockingInfo
     SET locked = RRB.Locked
     FROM t_requested_run RR
@@ -219,7 +219,7 @@ BEGIN
     -----------------------------------------------------------
     -- Disregard unchanged requests
     -----------------------------------------------------------
-    --
+
     DELETE FROM Tmp_BlockingInfo
     WHERE request_id IN ( SELECT request
                           FROM Tmp_BlockingInfo
@@ -247,7 +247,7 @@ BEGIN
     -----------------------------------------------------------
     -- Update requested runs
     -----------------------------------------------------------
-    --
+
     UPDATE t_requested_run
     SET cart_id = Tmp_BlockingInfo.cart_id,
         cart_config_id = Tmp_BlockingInfo.cart_config_id,

@@ -59,7 +59,7 @@ BEGIN
     ---------------------------------------------------
     -- Get job parameters from public schema tables
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Job_Parameters (Job, Section, Name, Value)
     SELECT Job, Section, Name, Value
     FROM sw.get_job_param_table(_job, _settingsFileOverride, _debugMode => _debugMode);
@@ -170,7 +170,7 @@ BEGIN
         ---------------------------------------------------
         -- Convert the job parameters to XML
         ---------------------------------------------------
-        --
+
         SELECT xml_item
         INTO _xmlParameters
         FROM ( SELECT

@@ -109,7 +109,7 @@ BEGIN
     ------------------------------------------------------
     -- Create a table for tracking debug reports to show
     ------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_DebugReports (
         Debug_ID int
     )
@@ -118,7 +118,7 @@ BEGIN
         ------------------------------------------------------
         -- Parse which debug reports should be shown
         ------------------------------------------------------
-        --
+
         INSERT INTO Tmp_DebugReports (Debug_ID)
         SELECT Value
         FROM public.parse_delimited_integer_list(_message, ',')
@@ -248,7 +248,7 @@ BEGIN
         ---------------------------------------------------
         -- Populate columns DMS_Inst_ID and Usage_Type
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_Staging
         SET DMS_Inst_ID = InstName.Instrument_ID
         FROM t_instrument_name InstName

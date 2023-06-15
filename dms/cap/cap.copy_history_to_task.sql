@@ -56,7 +56,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if no candidates found
     ---------------------------------------------------
-    --
+
     If Coalesce(_job, 0) = 0 Then
         _message := 'Capture task job number is 0 or null; nothing to do';
         RAISE WARNING '%', _message;
@@ -73,7 +73,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if capture task job already exists in main tables
     ---------------------------------------------------
-    --
+
     If Exists (SELECT * FROM cap.t_tasks WHERE Job = _job) Then
         _message := format('Job %s already exists in cap.t_tasks; aborting', _job);
         RAISE WARNING '%', _message;
@@ -84,7 +84,7 @@ BEGIN
     ---------------------------------------------------
     -- Get capture task job status from most recent completed historic capture task job
     ---------------------------------------------------
-    --
+
     SELECT MAX(Saved)
     INTO _dateStamp
     FROM cap.t_tasks_history
@@ -113,7 +113,7 @@ BEGIN
     ---------------------------------------------------
     -- Start transaction
     ---------------------------------------------------
-    --
+
     Begin
 
         _newJob := _job;
@@ -421,7 +421,6 @@ BEGIN
     ---------------------------------------------------
     -- Make sure the Storage_Server is up-to-date in t_tasks
     ---------------------------------------------------
-    --
 
     If _debugMode Then
         RAISE INFO 'Verifying storage server info by calling cap.update_parameters_for_task for capture task job %', _newJob;
@@ -432,7 +431,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure the Dependencies column is up-to-date in t_task_steps
     ---------------------------------------------------
-    --
+
     UPDATE cap.t_task_steps target
     SET Dependencies = CountQ.dependencies
     FROM ( SELECT Step,

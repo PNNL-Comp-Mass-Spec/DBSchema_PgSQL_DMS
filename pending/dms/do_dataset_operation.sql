@@ -134,7 +134,7 @@ BEGIN
         ---------------------------------------------------
         -- Schedule the dataset for predefined job processing
         ---------------------------------------------------
-        --
+
         If _mode = 'createjobs' Then
             If Coalesce(_callingUser, '') = '' Then
                 _callingUser := session_user;
@@ -170,7 +170,7 @@ BEGIN
         ---------------------------------------------------
         -- Delete dataset if it is in 'new' state only
         ---------------------------------------------------
-        --
+
         If _mode = 'delete' Then
 
             ---------------------------------------------------
@@ -212,7 +212,7 @@ BEGIN
         -- Reset state of failed dataset to 'new'
         -- This is used by the 'Retry Capture' button on the dataset detail report page
         ---------------------------------------------------
-        --
+
         If _mode = 'reset' Then
 
             -- If dataset not in failed state, can't reset it

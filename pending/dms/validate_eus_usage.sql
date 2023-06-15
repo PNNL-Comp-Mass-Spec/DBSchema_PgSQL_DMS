@@ -99,7 +99,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove leading and trailing spaces, and check for nulls
     ---------------------------------------------------
-    --
+
     _eusUsageType := Trim(Coalesce(_eusUsageType, ''));
     _eusProposalID := Trim(Coalesce(_eusProposalID, ''));
     _eusUsersList := Trim(Coalesce(_eusUsersList, ''));
@@ -113,7 +113,7 @@ BEGIN
     ---------------------------------------------------
     -- Auto-fix _eusUsageType if it is an abbreviated form of Cap_Dev, Maintenance, or Broken
     ---------------------------------------------------
-    --
+
     If _eusUsageType::citext Like 'Cap%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
     End If;
@@ -134,7 +134,7 @@ BEGIN
     -- Auto-change USER_UNKNOWN to CAP_DEV
     -- Monthly EUS instrument usage validation will not allow USER_UNKNOWN but will allow CAP_DEV
     ---------------------------------------------------
-    --
+
     If _eusUsageType::citext = 'USER_UNKNOWN' Then
         _eusUsageType := 'CAP_DEV';
     End If;
@@ -142,7 +142,6 @@ BEGIN
     ---------------------------------------------------
     -- Confirm that EUS validation is enabled
     ---------------------------------------------------
-    --
 
     SELECT value
     INTO _validateEUSData
@@ -201,7 +200,7 @@ BEGIN
     -- Validate EUS proposal and user
     -- if EUS usage type requires them
     ---------------------------------------------------
-    --
+
     If Not _eusUsageType::citext In ('USER', 'USER_ONSITE', 'USER_REMOTE') Then
         -- Make sure no proposal ID or users are specified
         If Coalesce(_eusProposalID, '') <> '' OR _eusUsersList <> '' Then
@@ -218,6 +217,7 @@ BEGIN
         ---------------------------------------------------
         -- Proposal and user list cannot be blank when the usage type is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
         ---------------------------------------------------
+
         If Coalesce(_eusProposalID, '') = '' Then
             _message := format('A Proposal ID must be selected for usage type "%s"', _eusUsageType);
             _returnCode := 'U5373';
@@ -242,7 +242,7 @@ BEGIN
         ---------------------------------------------------
         -- Check for a superseded proposal
         ---------------------------------------------------
-        --
+
         -- Create a table to track superseded proposals in the case of a circular reference
         -- E.g. two proposals with the same name, but different IDs (and likely different start or end dates)
         CREATE TEMP TABLE Tmp_Proposal_Stack (

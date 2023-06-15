@@ -68,7 +68,7 @@ BEGIN
     ---------------------------------------------------
     -- We are done if there is no associated request
     ---------------------------------------------------
-    --
+
     _requestID := Coalesce(_requestID, 0);
     If _requestID = 0 Then
         _message := 'Source request ID is 0; nothing to do';
@@ -78,7 +78,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure the source request exists
     ---------------------------------------------------
-    --
+
     SELECT request_name
     INTO _oldRequestName
     FROM t_requested_run
@@ -93,7 +93,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate _status
     ---------------------------------------------------
-    --
+
     SELECT state_id
     INTO _stateID
     FROM t_requested_run_state_name
@@ -115,7 +115,6 @@ BEGIN
     -- Determine the name for the new request
     -- Note that _requestNameAppendText may be blank
     ---------------------------------------------------
-    --
 
     If _requestNameOverride = '' Then
         _newRequestName := format('%s%s' _oldRequestName, _requestNameAppendText);
@@ -187,7 +186,7 @@ BEGIN
     ---------------------------------------------------
     -- Make copy
     ---------------------------------------------------
-    --
+
     -- Make new request
     --
     INSERT INTO t_requested_run
@@ -284,7 +283,7 @@ BEGIN
     -- Copy factors from the request being unconsumed to the
     -- renumbered copy being retained in the history
     ------------------------------------------------------------
-    --
+
     -- First define the calling user text
     --
 
@@ -317,7 +316,7 @@ BEGIN
     -- Copy proposal users for new auto request
     -- from original request
     ---------------------------------------------------
-    --
+
     INSERT INTO t_requested_run_eus_users (eus_person_id, request_id)
     SELECT eus_person_id, _newRequestID
     FROM t_requested_run_eus_users

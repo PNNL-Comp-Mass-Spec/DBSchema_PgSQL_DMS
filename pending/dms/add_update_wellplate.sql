@@ -92,6 +92,7 @@ BEGIN
     ---------------------------------------------------
     -- In this mode, add new entry if it doesn't exist
     ---------------------------------------------------
+
     If _mode = 'assure' And (_existingCount = 0 Or _existingID = 0) Then
         _mode := 'add';
     End If;
@@ -123,6 +124,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
+
     If _mode = 'add' Then
 
         INSERT INTO t_wellplates (
@@ -138,7 +140,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_wellplates

@@ -40,7 +40,7 @@ BEGIN
     ---------------------------------------------------
     -- Dataset Capture
     ---------------------------------------------------
-    --
+
     If _script = 'DatasetCapture' OR _script = 'IMSDatasetCapture' Then
         If _jobInfo.NewState in (2, 3, 5) Then -- always call in case capture task job completes too quickly for normal update cycle Then
             CALL public.set_capture_task_busy (_datasetName, '(broker)', _message => _message);
@@ -109,7 +109,7 @@ BEGIN
     ---------------------------------------------------
     -- Dataset Archive
     ---------------------------------------------------
-    --
+
     If _script = 'DatasetArchive' Then
         If _jobInfo.NewState in (2, 3, 5) -- always call in case capture task job completes too quickly for normal update cycle Then
             CALL public.set_archive_task_busy (_datasetName, _storageServerName, _message => _message);
@@ -127,7 +127,7 @@ BEGIN
     ---------------------------------------------------
     -- Archive Update
     ---------------------------------------------------
-    --
+
     If _script = 'ArchiveUpdate' Then
         If _jobInfo.NewState in (2, 3, 5) -- always call in case capture task job completes too quickly for normal update cycle Then
             CALL public.set_archive_update_task_busy (_datasetName, _storageServerName, _message => _message);

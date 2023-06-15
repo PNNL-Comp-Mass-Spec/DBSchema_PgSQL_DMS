@@ -290,6 +290,7 @@ BEGIN
         ---------------------------------------------------
         -- Overall time stats
         ---------------------------------------------------
+
         If _includeStats = 1 Then
             Declare _latestFinish timestamp,
                     _totalMinutes int,

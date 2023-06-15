@@ -52,7 +52,7 @@ BEGIN
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
-    --
+
     _jobs := Coalesce(_jobs, '');
     _infoOnly := Coalesce(_infoOnly, false);
 
@@ -67,7 +67,6 @@ BEGIN
         -----------------------------------------------------------
         -- Create the temporary tables
         -----------------------------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_Jobs (
             Job int
@@ -98,7 +97,7 @@ BEGIN
         -----------------------------------------------------------
         -- Look for capture task jobs that have a failed ArchiveVerify step
         -----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_JobsToReset( Job )
         SELECT TS.Job
         FROM cap.V_task_Steps TS
@@ -110,7 +109,7 @@ BEGIN
         -----------------------------------------------------------
         -- Look for capture task jobs that do not have a failed ArchiveVerify step
         -----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_JobsToSkip( Job )
         SELECT JL.Job
         FROM Tmp_Jobs JL
@@ -146,7 +145,6 @@ BEGIN
         -----------------------------------------------------------
         -- Reset the ArchiveUpdate or DatasetArchive step
         -----------------------------------------------------------
-        --
 
         If _infoOnly Then
 

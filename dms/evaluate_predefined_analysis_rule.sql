@@ -96,7 +96,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate that _datasetType is appropriate for this analysis tool
     ---------------------------------------------------
-    --
+
     If Not Exists (
         SELECT *
         FROM t_analysis_tool_allowed_dataset_type ADT
@@ -185,14 +185,14 @@ BEGIN
         ---------------------------------------------------
         -- Define the comment and job owner
         ---------------------------------------------------
-        --
+
         _comment := format('Auto predefined %s', _predefineInfo.PredefineID);
         _ownerUsername := 'H09090911'; -- autouser
 
         ---------------------------------------------------
         -- Possibly auto-add enzyme-related protein collections to _predefineInfo.ProteinCollectionList
         ---------------------------------------------------
-        --
+
         _proteinCollectionListValidated := Trim(Coalesce(_predefineInfo.ProteinCollectionList, ''));
 
         If char_length(_proteinCollectionListValidated) > 0 And public.validate_na_parameter(_proteinCollectionListValidated, 1) <> 'na' Then
@@ -207,7 +207,7 @@ BEGIN
         ---------------------------------------------------
         -- Insert job into job holding table
         ---------------------------------------------------
-        --
+
         -- Note that Add_Update_Analysis_Job will call Validate_Analysis_Job_Parameters to validate this data
 
         INSERT INTO Tmp_PredefineJobsToCreate (

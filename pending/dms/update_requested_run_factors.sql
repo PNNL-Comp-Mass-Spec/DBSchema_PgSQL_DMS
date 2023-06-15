@@ -141,7 +141,7 @@ BEGIN
     -----------------------------------------------------------
     -- Temp table to hold factors
     -----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_FactorInfo (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Identifier citext null,         -- Could be RequestID or DatasetName
@@ -190,7 +190,7 @@ BEGIN
     -----------------------------------------------------------
     -- Populate temp table with new parameters
     -----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_FactorInfo (Identifier, Factor, Value, DatasetID, UpdateSkipCode)
     SELECT XmlQ.Identifier, XmlQ.Factor, XmlQ.Value, XmlQ.DatasetID, 0
     FROM (
@@ -282,7 +282,7 @@ BEGIN
     -----------------------------------------------------------
     -- Make sure the identifiers are all numeric for certain types
     -----------------------------------------------------------
-    --
+
     If _idType IN ('RequestID', 'DatasetID', 'Job') Then
 
         SELECT string_agg(Coalesce(Identifier, '<NULL>'), ',' ORDER BY Identifier)
@@ -310,7 +310,7 @@ BEGIN
     -----------------------------------------------------------
     -- Populate column RequestID using the Identifier column
     -----------------------------------------------------------
-    --
+
     If _idType = 'RequestID' Then
         -- Identifier is Requestid
         UPDATE Tmp_FactorInfo
@@ -356,7 +356,7 @@ BEGIN
     -----------------------------------------------------------
     -- Check for unresolved requests
     -----------------------------------------------------------
-    --
+
     SELECT COUNT(*)
            SUM(CASE WHEN RequestID IS NULL THEN 1 ELSE 0 END)
     INTO _matchCount, _invalidCount
@@ -389,7 +389,7 @@ BEGIN
     -----------------------------------------------------------
     -- Validate factor names
     -----------------------------------------------------------
-    --
+
     SELECT string_agg(Factor, ', ' ORDER BY Factor)
     INTO _badFactorNames
     FROM ( SELECT DISTINCT Factor
@@ -444,7 +444,7 @@ BEGIN
     -- Note that Javascript code behind http://dms2.pnl.gov/requested_run_factors/param and https://dms2.pnl.gov/requested_run_batch_blocking/grid
     -- should auto-remove factors "Block" and "Run_Order" if it is present
     -----------------------------------------------------------
-    --
+
     _badFactorNames := '';
 
     SELECT string_agg(Factor, ', ' ORDER BY Factor)
@@ -476,14 +476,14 @@ BEGIN
     -----------------------------------------------------------
     -- Auto-remove standard DMS names from the factor table
     -----------------------------------------------------------
-    --
+
     DELETE FROM Tmp_FactorInfo
     WHERE Factor::citext IN ('Dataset_ID', 'Dataset ID', 'Dataset', 'Experiment')
 
     -----------------------------------------------------------
     -- Check for invalid Request IDs in the factors table
     -----------------------------------------------------------
-    --
+
     SELECT string_agg(RequestID::text, ', ' ORDER BY RequestID)
     INTO _invalidRequestIDs
     FROM Tmp_FactorInfo
@@ -509,7 +509,7 @@ BEGIN
     -----------------------------------------------------------
     -- Flag values that are unchanged
     -----------------------------------------------------------
-    --
+
     UPDATE Tmp_FactorInfo
     SET UpdateSkipCode = 1
     WHERE UpdateSkipCode = 0 AND
@@ -533,7 +533,7 @@ BEGIN
     -----------------------------------------------------------
     -- Remove blank values from factors table
     -----------------------------------------------------------
-    --
+
     DELETE FROM t_factor
     WHERE t_factor.type = 'Run_Request' AND
           EXISTS ( SELECT *
@@ -546,7 +546,7 @@ BEGIN
     -----------------------------------------------------------
     -- Update existing items in factors tables
     -----------------------------------------------------------
-    --
+
     UPDATE t_factor Target
     SET value = Tmp_FactorInfo.value,
         last_updated = CURRENT_TIMESTAMP
@@ -560,7 +560,7 @@ BEGIN
     -----------------------------------------------------------
     -- Add new factors
     -----------------------------------------------------------
-    --
+
     INSERT INTO t_factor( type,
                           target_id,
                           name,
@@ -583,7 +583,7 @@ BEGIN
     -----------------------------------------------------------
     -- Convert changed items to XML for logging
     -----------------------------------------------------------
-    --
+
     SELECT string_agg(format('<r i="%s" f="%s" v="%s" />', RequestID, Factor, Value), '' ORDER BY RequestID, Factor)
     INTO _changeSummary
     FROM Tmp_FactorInfo
@@ -592,7 +592,7 @@ BEGIN
     -----------------------------------------------------------
     -- Log changes
     -----------------------------------------------------------
-    --
+
     If _changeSummary <> '' Then
         INSERT INTO t_factor_log (changed_by, changes)
         VALUES (_callingUser, _changeSummary);

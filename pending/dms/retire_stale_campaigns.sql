@@ -45,7 +45,7 @@ BEGIN
     -----------------------------------------------------------
     -- Find LC columns that have been used with a dataset, but not in the last 9 months
     -----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_Campaigns (Campaign_ID, Campaign, Created, Most_Recent_Activity, Most_Recent_Dataset, Most_Recent_Analysis_Job)
     SELECT Campaign_ID,
            Campaign,
@@ -64,7 +64,7 @@ BEGIN
         -----------------------------------------------------------
         -- Preview the campaigns that would be retired
         -----------------------------------------------------------
-        --
+
         SELECT *
         FROM Tmp_Campaigns
         ORDER BY Campaign_ID
@@ -72,7 +72,7 @@ BEGIN
         -----------------------------------------------------------
         -- Change the campaign states to 'Inactive'
         -----------------------------------------------------------
-        --
+
         UPDATE t_campaign
         SET state = 'Inactive'
         WHERE campaign_id IN ( SELECT campaign_id FROM Tmp_Campaigns )

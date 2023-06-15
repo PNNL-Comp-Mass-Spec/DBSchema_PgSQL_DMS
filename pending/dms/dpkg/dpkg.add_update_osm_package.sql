@@ -89,7 +89,7 @@ BEGIN
         ---------------------------------------------------
         -- Get active path
         ---------------------------------------------------
-        --
+
         SELECT path_id
         INTO _rootPath
         FROM dpkg.t_osm_package_storage

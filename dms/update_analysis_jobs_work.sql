@@ -163,7 +163,7 @@ BEGIN
     ---------------------------------------------------
     -- Verify that all jobs exist
     ---------------------------------------------------
-    --
+
     SELECT string_agg(Job::text, ', ' ORDER BY Job)
     INTO _list
     FROM Tmp_AnalysisJobs
@@ -186,7 +186,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve state name
     ---------------------------------------------------
-    --
+
     If _state <> _noChangeText Then
         --
         SELECT job_state_id
@@ -209,7 +209,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve organism ID
     ---------------------------------------------------
-    --
+
     If _organismName <> _noChangeText Then
         SELECT ID
         INTO _orgid
@@ -231,7 +231,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate param file for tool
     ---------------------------------------------------
-    --
+
     _result := 0;
     --
     If _paramFileName <> _noChangeText Then
@@ -250,7 +250,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate parameter file for tool
     ---------------------------------------------------
-    --
+
     If _paramFileName <> _noChangeText Then
 
         SELECT string_agg(TD.job::text, ',' ORDER BY TD.job)
@@ -279,7 +279,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate settings file for tool
     ---------------------------------------------------
-    --
+
     If _settingsFileName <> _noChangeText And _settingsFileName::citext <> 'na' Then
         -- Validate settings file for tool only
 
@@ -310,7 +310,7 @@ BEGIN
     -- Update jobs from temporary table
     -- in cases where parameter has changed
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         _alterData := true;
@@ -461,7 +461,7 @@ BEGIN
     ---------------------------------------------------
     -- Reset job to New state
     ---------------------------------------------------
-    --
+
     If _mode = 'reset' Then
 
         _alterData := true;

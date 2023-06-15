@@ -148,7 +148,7 @@ BEGIN
     -- Find the most common EUS proposal used by the datasets associated with each data package
     -- Exclude proposals that start with EPR since those are not official EUS proposals
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_EUS_Proposal_ID = FilterQ.EUS_Proposal_ID
     FROM ( SELECT RankQ.data_pkg_id,
@@ -177,7 +177,7 @@ BEGIN
     -- Look for any data packages that have a null Best_EUS_Proposal_ID in Tmp_DataPackagesToUpdate
     -- yet have entries defined in dpkg.t_data_package_eus_proposals
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_DataPackagesToUpdateTarget
     SET Best_EUS_Proposal_ID = FilterQ.Proposal_ID
     FROM ( SELECT data_pkg_id,
@@ -198,7 +198,7 @@ BEGIN
     ---------------------------------------------------
     -- Find the most common Instrument used by the datasets associated with each data package
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_Instrument_Name = FilterQ.Instrument
     FROM ( SELECT RankQ.data_pkg_id,
@@ -224,7 +224,7 @@ BEGIN
     ---------------------------------------------------
     -- Update EUS_Instrument_ID in Tmp_DataPackagesToUpdate
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_EUS_Instrument_ID = EUSInst.EUS_Instrument_ID
     FROM V_EUS_Instrument_ID_Lookup EUSInst
@@ -234,7 +234,7 @@ BEGIN
     -- Update EUS Proposal data_pkg_id, eus_instrument_id, and Instrument_ID as necessary
     -- Do not change existing values in dpkg.t_data_package to null values
     ---------------------------------------------------
-    --
+
     UPDATE dpkg.t_data_package DP
     SET eus_proposal_id = Coalesce(Best_EUS_Proposal_ID, eus_proposal_id),
         eus_instrument_id = Coalesce(Best_EUS_Instrument_ID, eus_instrument_id),

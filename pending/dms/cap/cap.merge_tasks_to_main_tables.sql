@@ -44,7 +44,7 @@ RETURN;
     ---------------------------------------------------
     -- Replace capture task job parameters
     ---------------------------------------------------
-    --
+
     UPDATE cap.t_task_parameters Target
     SET Parameters = JP.Parameters
     FROM Tmp_Job_Parameters JP
@@ -53,7 +53,7 @@ RETURN;
     ---------------------------------------------------
     -- Update capture task job
     ---------------------------------------------------
-    --
+
     UPDATE cap.t_tasks Target
     SET
         Priority = T.Priority,

@@ -55,7 +55,7 @@ BEGIN
     -- Convert the XML job parameters into a table
     -- We must surround the job parameter XML with <params></params> so that the XML will be rooted, as required by XMLTABLE()
     ---------------------------------------------------
-    --
+
     RETURN QUERY
     SELECT _job AS Job, XmlQ.name, XmlQ.value
     FROM (

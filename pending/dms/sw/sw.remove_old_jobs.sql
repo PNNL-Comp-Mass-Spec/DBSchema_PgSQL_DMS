@@ -55,7 +55,7 @@ BEGIN
     ---------------------------------------------------
     -- Create table to track the list of affected jobs
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_SJL (
         Job int not null,
         State int
@@ -95,13 +95,13 @@ BEGIN
     ---------------------------------------------------
     -- Make sure the job Start and Finish values are up-to-date
     ---------------------------------------------------
-    --
+
     CALL sw.synchronize_job_stats_with_job_steps (_infoOnly => false);
 
     ---------------------------------------------------
     -- Add old successful jobs to be removed to list
     ---------------------------------------------------
-    --
+
     If _intervalDaysForSuccess > 0 Then
 
         _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForSuccess);
@@ -136,7 +136,7 @@ BEGIN
     ---------------------------------------------------
     -- Add old failed jobs to be removed to list
     ---------------------------------------------------
-    --
+
     If _intervalDaysForFail > 0 Then
 
         _cutoffDateTimeForFail := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForFail);
@@ -153,6 +153,7 @@ BEGIN
     ---------------------------------------------------
     -- Add any jobs defined in _jobListOverride
     ---------------------------------------------------
+
     If _jobListOverride <> '' Then
         INSERT INTO Tmp_SJL (job, state)
         SELECT job,

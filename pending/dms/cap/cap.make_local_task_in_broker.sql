@@ -121,7 +121,6 @@ BEGIN
         ---------------------------------------------------
         -- Script
         ---------------------------------------------------
-        --
 
         -- Get contents of script and tag for results Directory name
         SELECT results_tag
@@ -136,7 +135,7 @@ BEGIN
         ---------------------------------------------------
         -- Add capture task job to temp table
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_Jobs( Job,
                            Priority,
                            Script,
@@ -165,7 +164,7 @@ BEGIN
         -- Create the basic capture task job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
         ---------------------------------------------------
-        --
+
         CALL cap.create_steps_for_task (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
 
         If _returnCode <> '' Then
@@ -190,12 +189,13 @@ BEGIN
         -- in the temporary tables to finalize them before
         -- copying to the main database tables
         ---------------------------------------------------
-        --
+
         CALL cap.finish_task_creation (_job, _message => _message, _debugMode => _debugMode);
 
         ---------------------------------------------------
         -- Move temp tables to main tables
         ---------------------------------------------------
+
         If Not _debugMode Then
 
             BEGIN

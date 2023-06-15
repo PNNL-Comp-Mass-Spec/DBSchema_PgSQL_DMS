@@ -96,7 +96,6 @@ BEGIN
     ---------------------------------------------------
     -- Add/Update t_organism_db_file
     ---------------------------------------------------
-    --
 
     If Exists (SELECT * FROM t_organism_db_file WHERE file_name = _fastaFileName) Then
         _existingEntry := true;

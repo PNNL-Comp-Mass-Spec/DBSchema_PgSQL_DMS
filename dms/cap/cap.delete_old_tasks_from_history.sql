@@ -120,7 +120,6 @@ BEGIN
     ---------------------------------------------------
     -- Delete the old capture task jobs (preview if _infoOnly is true)
     ---------------------------------------------------
-    --
 
     If _infoOnly Then
 

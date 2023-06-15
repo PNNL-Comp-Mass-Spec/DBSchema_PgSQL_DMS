@@ -107,7 +107,7 @@ BEGIN
         ---------------------------------------------------
         -- Temp table to hold time information about datasets
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Durations (
             Seq int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Dataset_ID int,

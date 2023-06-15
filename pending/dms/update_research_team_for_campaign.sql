@@ -128,7 +128,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table to hold new membership for team
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_TeamMembers (
         Username text,
         Role text,
@@ -140,7 +140,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate temp membership table from lists
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Item AS Username, 'Project Mgr' AS Role
     FROM public.parse_delimited_list(_progmgrUsername) AS member
@@ -168,7 +168,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve user username and role to respective IDs
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_TeamMembers
     SET User_ID = t_users.user_id
     FROM t_users
@@ -217,7 +217,7 @@ BEGIN
     ---------------------------------------------------
     -- Error if any username or role did not resolve to ID
     ---------------------------------------------------
-    --
+
     --
     SELECT string_agg(Username, ', ' ORDER BY Username)
     INTO _list
@@ -245,7 +245,7 @@ BEGIN
     ---------------------------------------------------
     -- Clean out any existing membership
     ---------------------------------------------------
-    --
+
     DELETE FROM t_research_team_membership
     WHERE team_id = _researchTeamID AND
           role_id BETWEEN 1 AND 6;       -- Restrict to roles that are editable via campaign
@@ -253,7 +253,7 @@ BEGIN
     ---------------------------------------------------
     -- Replace with new membership
     ---------------------------------------------------
-    --
+
     INSERT INTO t_research_team_membership( team_id,
                                             role_id,
                                             user_id )

@@ -64,7 +64,7 @@ BEGIN
     -- Find proposals with a requested run within the
     -- last _mostRecentMonths and a work package of 'none'
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ProposalsToCheck( EUSProposal )
     SELECT P.proposal_id
     FROM t_eus_proposals P
@@ -80,7 +80,6 @@ BEGIN
     ---------------------------------------------------
     -- Process each proposal
     ---------------------------------------------------
-    --
 
     FOR _eusProposal IN
         SELECT EUSProposal

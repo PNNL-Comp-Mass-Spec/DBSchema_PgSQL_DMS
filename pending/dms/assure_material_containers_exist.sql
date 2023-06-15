@@ -58,7 +58,7 @@ BEGIN
         ---------------------------------------------------
         -- Get container list items into temp table
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_ContainerItems (
             Container text NULL,
             Item text,                  -- Either container name or location name
@@ -73,7 +73,7 @@ BEGIN
         ---------------------------------------------------
         -- Mark list items as either container or location
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_ContainerItems
         SET IsContainer = true,
             Container = Item
@@ -88,7 +88,7 @@ BEGIN
         ---------------------------------------------------
         -- Quick check of list
         ---------------------------------------------------
-        --
+
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _msg
         FROM Tmp_ContainerItems
@@ -108,7 +108,7 @@ BEGIN
         ---------------------------------------------------
         -- Make new containers for locations
         ---------------------------------------------------
-        --
+
         WHILE true
         LOOP
 
@@ -151,7 +151,7 @@ BEGIN
         ---------------------------------------------------
         -- Make consolidated list of containers
         ---------------------------------------------------
-        --
+
         SELECT string_agg(Container, ', ' ORDER BY Container)
         INTO _containerList
         FROM Tmp_ContainerItems

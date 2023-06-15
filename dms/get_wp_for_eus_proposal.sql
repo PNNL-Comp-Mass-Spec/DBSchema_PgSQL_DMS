@@ -52,7 +52,7 @@ BEGIN
     -- First look for use in the last 2 months
     -- If no match, try the last 4 months, then 8 months, then 16 months, then all records
     -----------------------------------------
-    --
+
     If Exists (SELECT * FROM t_eus_proposals WHERE proposal_id = _eusProposalID) Then
 
         _monthThreshold := 2;

@@ -54,7 +54,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     If _job Is Null Then
         _message := 'Invalid job';
         _returnCode := 'U5201';
@@ -90,7 +90,7 @@ BEGIN
     -- Perform (or preview) the update
     -- Note: Comment is not updated if _newBrokerJobState = 2
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
         -- ToDo: Use RAISE INFO to display the old and new values
         SELECT State_ID,
@@ -160,7 +160,7 @@ BEGIN
     -------------------------------------------------------------------
     -- If Job is Complete or No Export, do some additional tasks
     -------------------------------------------------------------------
-    --
+
     If _newDMSJobState in (4, 14) AND Not _infoOnly Then
         -- Get the dataset ID, dataset name, and tool name
         --

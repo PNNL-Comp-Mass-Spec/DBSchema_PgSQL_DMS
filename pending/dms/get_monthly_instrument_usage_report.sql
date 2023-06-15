@@ -92,8 +92,6 @@ BEGIN
         _processByEUS := true;
     End If;
 
-    ---------------------------------------------------
-    ---------------------------------------------------
     BEGIN
 
         _monthValue := public.try_cast(_month, null::int);

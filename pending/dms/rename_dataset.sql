@@ -99,7 +99,7 @@ BEGIN
     --------------------------------------------
     -- Validate the inputs
     --------------------------------------------
-    --
+
     _datasetNameOld := Coalesce(_datasetNameOld, '');
     _datasetNameNew := Coalesce(_datasetNameNew, '');
     _newRequestedRunID := Coalesce(_newRequestedRunID, 0);
@@ -136,7 +136,7 @@ BEGIN
     --------------------------------------------
     -- Lookup the dataset ID
     --------------------------------------------
-    --
+
     SELECT dataset_id,
            exp_id
     INTO _datasetID, _newExperimentID
@@ -242,7 +242,7 @@ BEGIN
         --------------------------------------------
         -- Rename the dataset in t_dataset
         --------------------------------------------
-        --
+
         If Not _datasetAlreadyRenamed And Not Exists (Select * from t_dataset WHERE dataset = _datasetNameNew) Then
             -- Show the old and new values
 
@@ -404,7 +404,7 @@ BEGIN
     --------------------------------------------
     -- Update jobs in the DMS_Capture database
     --------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_JobsToUpdate (
          Job int not null
     );
@@ -431,7 +431,7 @@ BEGIN
         --------------------------------------------
         -- Update capture task jobs in DMS_Capture
         --------------------------------------------
-        --
+
         FOR _job IN
             SELECT Job
             FROM Tmp_JobsToUpdate
@@ -450,7 +450,7 @@ BEGIN
     --------------------------------------------
     -- Update jobs in the DMS_Pipeline database
     --------------------------------------------
-    --
+
     DELETE FROM Tmp_JobsToUpdate;
 
     INSERT INTO Tmp_JobsToUpdate (Job)
@@ -491,7 +491,7 @@ BEGIN
     --------------------------------------------
     -- Show commands for renaming the dataset directory and .raw file
     --------------------------------------------
-    --
+
     RAISE INFO 'pushd %', _storageServerSharePath;
     RAISE INFO 'move % %', _datasetNameOld, _datasetNameNew;
     RAISE INFO 'cd %', _datasetNameNew;
@@ -500,7 +500,7 @@ BEGIN
     --------------------------------------------
     -- Show example commands for renaming the job files
     --------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Extensions (
         SuffixID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         FileSuffix text NOT null
@@ -539,7 +539,7 @@ BEGIN
             --------------------------------------------
             -- No more jobs; show example commands for renaming QC files
             --------------------------------------------
-            --
+
             _continue := false;
             _resultsFolder := 'QC';
 

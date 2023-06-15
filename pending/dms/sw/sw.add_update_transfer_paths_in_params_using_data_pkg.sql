@@ -53,14 +53,14 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _dataPackageID := Coalesce(_dataPackageID, 0);
     _paramsUpdated := false;
 
     ---------------------------------------------------
     -- Update _dataPackageID if 0 yet defined in Tmp_Job_Params
     ---------------------------------------------------
-    --
+
     If _dataPackageID <= 0 Then
 
         SELECT Value
@@ -76,7 +76,7 @@ BEGIN
     ---------------------------------------------------
     -- Get data package info (if one is specified)
     ---------------------------------------------------
-    --
+
     If _dataPackageID <> 0 Then
         SELECT dp.package_name,
                dpp.share_path
@@ -108,7 +108,7 @@ BEGIN
     ---------------------------------------------------
     -- Define the path parameters
     ---------------------------------------------------
-    --
+
     If _dataPackageID > 0 Then
         -- Lookup paths already defined in Tmp_Job_Params
         --

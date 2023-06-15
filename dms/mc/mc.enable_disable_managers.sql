@@ -87,7 +87,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _managerNameList := Coalesce(_managerNameList, '');
     _infoOnly        := Coalesce(_infoOnly, false);
     _includeDisabled := Coalesce(_includeDisabled, false);

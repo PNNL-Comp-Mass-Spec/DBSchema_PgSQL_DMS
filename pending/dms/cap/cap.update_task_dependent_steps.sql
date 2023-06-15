@@ -72,6 +72,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table to hold scratch list of step dependencies
     ---------------------------------------------------
+
     CREATE TEMP TABLE T_Tmp_Steplist (
         Job int,
         Step int,
@@ -93,7 +94,7 @@ BEGIN
     -- Bump up the value for Dependencies in t_task_steps if it is too low
     -- This will happen if new rows are manually added to t_task_step_dependencies
     ---------------------------------------------------
-    --
+
     UPDATE cap.t_task_steps TS
     SET Dependencies = CompareQ.Actual_Dependencies
     FROM ( SELECT SD.Job,
@@ -112,7 +113,7 @@ BEGIN
     -- Get summary of dependencies for steps
     -- in 'Waiting' state and add to scratch list
     ---------------------------------------------------
-    --
+
     INSERT INTO T_Tmp_Steplist (Job, Step, Tool, Priority, Total, Evaluated, Triggered, Output_Folder_Name)
     SELECT TSD.Job,
            TSD.Step AS Step,
@@ -141,7 +142,7 @@ BEGIN
     -- Add waiting steps that have no dependencies
     -- to scratch list
     ---------------------------------------------------
-    --
+
     INSERT INTO T_Tmp_Steplist (Job, Step, Tool, Priority, Total, Evaluated, Triggered, Output_Folder_Name)
     SELECT TS.Job,
            TS.Step,
@@ -171,7 +172,7 @@ BEGIN
     -- Populate the ProcessingOrder column in T_Tmp_Steplist
     -- Sorting by Priority so that shared steps will tend to be enabled for higher priority capture task jobs first
     ---------------------------------------------------
-    --
+
     UPDATE T_Tmp_Steplist TargetQ
     SET ProcessingOrder = LookupQ.ProcessingOrder
     FROM ( SELECT TS.EntryID,
@@ -222,7 +223,7 @@ BEGIN
         ---------------------------------------------------
         -- Get information for this capture task job
         ---------------------------------------------------
-        --
+
         SELECT
             _dataset = Dataset,
             _datasetID = Dataset_ID
@@ -234,7 +235,7 @@ BEGIN
         -- new state will be 'Skipped'
         -- otherwise, new state will be 'Enabled'
         ---------------------------------------------------
-        --
+
         If _stepInfo.Triggered = 0 Then
             _newState := 2; -- 'Enabled'
         Else
@@ -248,6 +249,7 @@ BEGIN
             ---------------------------------------------------
             -- If step has shared results, state change may be affected
             ---------------------------------------------------
+
             If _stepInfo.Shared <> 0 Then
             --<d>
                 --
@@ -329,7 +331,7 @@ BEGIN
         ---------------------------------------------------
         -- If step state needs to be changed, update step
         ---------------------------------------------------
-        --
+
         If _newState <> 1 Then
         --<e>
 
@@ -337,7 +339,7 @@ BEGIN
             -- Update step state and output folder name
             -- (input folder name is passed through if step is skipped)
             ---------------------------------------------------
-            --
+
             If _infoOnly Then
                 RAISE INFO 'Update State in cap.t_task_steps for capture task job %, step %, from 1 to %', _stepInfo.Job, _stepInfo.Step, _newState;
             Else

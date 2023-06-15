@@ -150,7 +150,6 @@ BEGIN
         ---------------------------------------------------
         -- Create temporary table for batches in list
         ---------------------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_BatchIDs (
             Entry_ID Int Not Null,
@@ -162,7 +161,7 @@ BEGIN
         ---------------------------------------------------
         -- Populate temporary table from list
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_BatchIDs (Entry_ID, Batch_ID_Text)
         SELECT Min(Entry_ID), Value
         FROM public.parse_delimited_list_ordered(_requestedRunBatchList, ',', 0)
@@ -171,7 +170,7 @@ BEGIN
         ---------------------------------------------------
         -- Convert Batch IDs to integers
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_BatchIDs
         SET Batch_ID = public.try_cast(Batch_ID_Text, null::int);
 
@@ -232,7 +231,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for preview mode
         ---------------------------------------------------
-        --
+
         If _mode = Lower('PreviewAdd') Then
             _message := format('Would create batch group "%s" with %s batches', _name, _count);
 
@@ -243,7 +242,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
 
             INSERT INTO t_requested_run_batch_group (
@@ -279,7 +278,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_requested_run_batch_group

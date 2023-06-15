@@ -77,7 +77,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate table from dataset list
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_DatasetInfo (ToolName)
     SELECT DISTINCT Item
     FROM public.parse_delimited_list(_analysisToolsList);
@@ -85,7 +85,7 @@ BEGIN
     ---------------------------------------------------
     -- Get tool ID for each tool in temp table
     ---------------------------------------------------
-    --
+
     UPDATE T
     SET T.ToolID = analysis_tool_id
     FROM Tmp_DatasetInfo T INNER JOIN
@@ -128,6 +128,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
+
     If _mode = 'add' Then
 
         INSERT INTO t_analysis_job_processors (
@@ -154,7 +155,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_analysis_job_processors

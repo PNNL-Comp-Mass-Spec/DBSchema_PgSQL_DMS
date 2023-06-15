@@ -195,7 +195,7 @@ BEGIN
     -----------------------------------------
     -- Parse the host list
     -----------------------------------------
-    --
+
     FOR _entryID, _row IN
         SELECT EntryID, Value
         FROM Tmp_FileData
@@ -467,7 +467,7 @@ BEGIN
     -----------------------------------------------
     -- Add/Update hash info in t_dataset_files using a Merge statement
     -----------------------------------------------
-    --
+
     MERGE INTO t_dataset_files AS target
     USING ( SELECT dataset_id, InstFilePath, InstFileHash
             FROM Tmp_HashUpdates
@@ -484,7 +484,7 @@ BEGIN
     -----------------------------------------------
     -- Add/Update file size info in t_dataset_files using a Merge statement
     -----------------------------------------------
-    --
+
     MERGE INTO t_dataset_files As target
     USING ( SELECT dataset_id, InstFilePath, InstFileSize
             FROM Tmp_SizeUpdates
@@ -506,7 +506,7 @@ BEGIN
     -----------------------------------------------
     -- Update the File_Size_Rank column for the datasets
     -----------------------------------------------
-    --
+
     UPDATE t_dataset_files Target
     SET file_size_rank = SrcQ.Size_Rank
     FROM ( SELECT dataset_id,
@@ -528,6 +528,7 @@ BEGIN
     -----------------------------------------------
     -- Show the updated files
     -----------------------------------------------
+
     If Exists (SELECT Dataset_ID FROM Tmp_UpdatedDatasets) Then
 
         -- ToDo: Show this using RAISE INFO

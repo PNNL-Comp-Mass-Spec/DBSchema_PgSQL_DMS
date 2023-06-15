@@ -30,7 +30,6 @@ BEGIN
     -- Update the purge priority for datasets acquired on offsite instruments
     -- However, compare the purge_holdoff_date to 45 days before the current date to skip newer datasets
     ---------------------------------------------------
-    --
 
     INSERT INTO Tmp_DatasetsToUpdate (dataset_id)
     SELECT DS.dataset_id

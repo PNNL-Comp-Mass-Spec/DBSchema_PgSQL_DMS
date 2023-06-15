@@ -200,7 +200,7 @@ BEGIN
         -----------------------------------------------------------
         -- Temp table to hold operations
         -----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Allocation_Operations (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Allocation text null,
@@ -301,7 +301,7 @@ BEGIN
         -----------------------------------------------------------
         -- Call update_instrument_usage_allocations_work to perform the work
         -----------------------------------------------------------
-        --
+
         CALL update_instrument_usage_allocations_work (_fy, _message => _message, _callingUser => _callingUser, _infoOnly => _infoOnly);
 
     EXCEPTION

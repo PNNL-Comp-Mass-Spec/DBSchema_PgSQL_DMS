@@ -47,7 +47,7 @@ BEGIN
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
-    --
+
     _processingMode := Coalesce(_processingMode, 0);
     _showDebug := Coalesce(_showDebug, false);
 
@@ -63,7 +63,7 @@ BEGIN
     ------------------------------------------------
     -- Add new datasets to t_cached_dataset_links
     ------------------------------------------------
-    --
+
     INSERT INTO t_cached_dataset_links (dataset_id,
                                         dataset_row_version,
                                         storage_path_row_version,
@@ -120,7 +120,7 @@ BEGIN
         ------------------------------------------------
         -- Find existing entries with a mismatch in dataset_row_version or storage_path_row_version
         ------------------------------------------------
-        --
+
         UPDATE t_cached_dataset_links
         SET update_required = 1
         FROM t_cached_dataset_folder_paths DFP
@@ -227,7 +227,7 @@ BEGIN
             -- This is a bulk update query, which can take some time to run, though if _processingMode is 3, datasets are processed in baches
             -- It should be kept in sync with the above query that includes Row_Number()
             ------------------------------------------------
-            --
+
             UPDATE t_cached_dataset_links Target
             SET masic_directory_name = JobDirectoryQ.MasicDirectoryName
             FROM ( SELECT DatasetID,
@@ -289,7 +289,7 @@ BEGIN
         -- Note that this query runs 2x faster than the merge statement below
         -- If you update this query, be sure to update the merge statement
         ------------------------------------------------
-        --
+
         UPDATE t_cached_dataset_links
         SET dataset_row_version = DFP.dataset_row_version,
             storage_path_row_version = DFP.storage_path_row_version,
@@ -375,7 +375,7 @@ BEGIN
             -- Note that this merge statement runs 2x slower than the query above
             -- If you update this merge statement, be sure to update the query
             ------------------------------------------------
-            --
+
             MERGE INTO t_cached_dataset_links As target
             USING ( SELECT DS.dataset_id,
                            DFP.dataset_row_version,

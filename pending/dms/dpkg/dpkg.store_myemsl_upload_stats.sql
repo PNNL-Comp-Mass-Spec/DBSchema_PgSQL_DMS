@@ -77,7 +77,7 @@ BEGIN
     -- For that, the base is: https://ingestdms.my.emsl.pnl.gov/get_state?job_id=
     -- and the value is 1305088
     -----------------------------------------------
-    --
+
     _statusURI_PathID := 1;
     _statusURI_Path := '';
     _statusNum := null;
@@ -222,7 +222,7 @@ BEGIN
     -----------------------------------------------
     -- Add a new row to dpkg.t_myemsl_uploads
     -----------------------------------------------
-    --
+
     INSERT INTO dpkg.t_myemsl_uploads( data_pkg_id,
                                        subfolder,
                                        file_count_new,

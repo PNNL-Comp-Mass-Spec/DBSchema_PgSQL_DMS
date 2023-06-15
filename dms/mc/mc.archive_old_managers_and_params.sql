@@ -60,7 +60,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _mgrList := Coalesce(_mgrList, '');
     _infoOnly := Coalesce(_infoOnly, true);
 
@@ -80,7 +80,7 @@ BEGIN
     -- Populate TmpManagerList with the managers in _mgrList
     -- Setting _remove_unknown_managers to 0 so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
-    --
+
     INSERT INTO TmpManagerList (manager_name)
     SELECT manager_name
     FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 0);

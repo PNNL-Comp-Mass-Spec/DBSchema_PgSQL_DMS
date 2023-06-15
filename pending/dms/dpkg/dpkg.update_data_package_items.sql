@@ -110,7 +110,7 @@ BEGIN
         ---------------------------------------------------
         -- Create and populate a temporary table using the XML in _paramListXML
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_DataPackageItems (
             DataPackageID int not null,   -- Data package ID
             ItemType   citext null,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
@@ -124,7 +124,7 @@ BEGIN
         ---------------------------------------------------
         -- Apply the changes
         ---------------------------------------------------
-        --
+
         CALL update_data_package_items_utility (
                                     _comment,
                                     _mode,

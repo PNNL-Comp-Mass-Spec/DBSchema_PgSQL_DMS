@@ -249,7 +249,7 @@ BEGIN
         -- Find the top _previewCount candidates for each drive on each server
         -- (limiting by _storageServerName or _serverDisk if they are defined)
         ---------------------------------------------------
-        --
+
         _s :=  'INSERT INTO Tmp_PurgeableDatasets( DatasetID, MostRecent, Source, StorageServerName, ServerVol, Purge_Priority) '
                'SELECT Dataset_ID, '                                                                    ||
                format('%s, ', _purgeInfo.OrderByCol)                                                    ||
@@ -330,7 +330,7 @@ BEGIN
         -- Count the number of candidates on each volume on each storage server
         -- Add entries to Tmp_StorageVolsToSkip
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_StorageVolsToSkip( StorageServerName,
                                            ServerVol )
         SELECT Src.StorageServerName,
@@ -435,7 +435,7 @@ BEGIN
     ---------------------------------------------------
     -- Get information for assigned dataset
     ---------------------------------------------------
-    --
+
     SELECT DS.dataset As Dataset,
            DS.dataset_id As DatasetID,
            DS.folder_name As Folder,

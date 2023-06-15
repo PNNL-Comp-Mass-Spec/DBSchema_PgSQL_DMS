@@ -94,7 +94,7 @@ BEGIN
     --------------------------------------------------------------
     -- Populate Tmp_ProteinCollections with the protein collections in _protCollNameList
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
     SELECT Value, 0 AS Collection_Appended
     FROM public.parse_delimited_list(_protCollNameList, ',');
@@ -103,7 +103,6 @@ BEGIN
     -- Look for duplicates in Tmp_ProteinCollections
     -- If found, remove them
     --------------------------------------------------------------
-    --
 
     SELECT string_agg(CountQ.Protein_Collection_Name, ', ' ORDER BY CountQ.Protein_Collection_Name)
     INTO _dups
@@ -137,7 +136,7 @@ BEGIN
     -- with the enzymes for the experiments of the datasets in Tmp_DatasetList
     -- These are typically the contaminant collections like Tryp_Pig_Bov
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID,
                             protein_collection_name,
                             Dataset_Count,
@@ -168,7 +167,7 @@ BEGIN
         --------------------------------------------------------------
         -- Nothing was added; no point in looking for protein collections with Includes_Contaminants > 0
         --------------------------------------------------------------
-        --
+
         If _showDebug Then
 
             -- ToDo: Update this to use RAISE INFO
@@ -180,7 +179,6 @@ BEGIN
         --------------------------------------------------------------
         -- Check whether any of the protein collections already includes contaminants
         --------------------------------------------------------------
-        --
 
         _matchCount := 0;
         _collectionWithContaminants := '';
@@ -209,7 +207,7 @@ BEGIN
     -- Populate Tmp_IntStds with any internal standards associated
     -- with the datasets in Tmp_DatasetList, including their parent experiments
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_IntStds( internal_standard_id, protein_collection_name,
                              Dataset_Count, Experiment_Count,
                              Enzyme_Contaminant_Collection )
@@ -275,7 +273,7 @@ BEGIN
     -- If Tmp_IntStds contains 'HumanContam' but Tmp_ProteinCollections contains 'Tryp_Pig_Bov',
     -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
     --------------------------------------------------------------
-    --
+
     If Exists ( SELECT * Then
                 FROM Tmp_ProteinCollections
                 WHERE Protein_Collection_Name = 'Tryp_Pig_Bov' ) AND
@@ -304,7 +302,7 @@ BEGIN
     -- Make sure _protCollNameList contains each of the
     -- Protein_Collection_Name values in Tmp_IntStds
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_ProteinCollectionsToAdd( Protein_Collection_Name,
                                              Dataset_Count,
                                              Experiment_Count,

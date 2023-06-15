@@ -99,6 +99,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
+
     If _mode = 'add' Then
 
         INSERT INTO sw.t_step_tools (
@@ -128,7 +129,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE sw.t_step_tools

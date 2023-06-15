@@ -194,7 +194,7 @@ BEGIN
         ---------------------------------------------------
         -- Create a temporary table to track the IDs of new requested runs
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_NewRequests (
             Fraction_Number int NOT NULL,
             Request_Name text NOT NULL,
@@ -267,7 +267,6 @@ BEGIN
         ---------------------------------------------------
         -- Lookup StatusID
         ---------------------------------------------------
-        --
 
         SELECT state_id
         INTO _statusID
@@ -278,7 +277,7 @@ BEGIN
         -- Validate that the experiment exists
         -- Lookup wellplate and well number if either is (lookup)
         ---------------------------------------------------
-        --
+
         SELECT Experiment,
                CASE WHEN _wellplateName = '(lookup)' THEN wellplate
                     ELSE _wellplateName
@@ -388,7 +387,7 @@ BEGIN
         ---------------------------------------------------
         -- Examine the fraction count of the source separation group
         ---------------------------------------------------
-        --
+
         If _logDebugMessages Then
             _debugMsg := format('Examine fraction counts of source and target separation groups: %s and %s', _sourceSeparationGroup, _separationGroup);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
@@ -411,7 +410,7 @@ BEGIN
         -- Examine the fraction count of the separation group for the new requested runs
         -- The target group should not be fraction based
         ---------------------------------------------------
-        --
+
         SELECT fraction_count
         INTO _targetGroupFractionCount
         FROM t_separation_group
@@ -428,7 +427,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve ID for MRM attachment
         ---------------------------------------------------
-        --
+
         If _mrmAttachment <> '' Then
             SELECT attachment_id
             INTO _mrmAttachmentID
@@ -618,7 +617,7 @@ BEGIN
         ---------------------------------------------------
         -- Make sure none of the new requested runs will conflict with an existing requested run
         ---------------------------------------------------
-        --
+
         _fractionNumber := 1;
         WHILE _fractionNumber <= _fractionCount
         LOOP
@@ -646,7 +645,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for preview mode
         ---------------------------------------------------
-        --
+
         If _mode = 'preview' Then
             If _logDebugMessages Then
                 _debugMsg := 'Create preview message';
@@ -674,7 +673,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
         -- <add>
 

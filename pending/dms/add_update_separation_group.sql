@@ -93,7 +93,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
 
             INSERT INTO t_separation_group( separation_group,
@@ -108,7 +108,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_separation_group

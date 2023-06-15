@@ -68,7 +68,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table to hold job parameters
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Param_Tab (
       Section text,
       Name text,
@@ -148,7 +148,7 @@ BEGIN
     ---------------------------------------------------
     -- Simulate section association for step tool
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Param_Tab target
     SET Section = 'PeptideSearch'
     WHERE target.Name in ('ParamFileName', 'ParamFileStoragePath', 'OrganismName',  'LegacyFastaFileName',  'ProteinCollectionList',  'ProteinOptions');
@@ -156,7 +156,7 @@ BEGIN
     ---------------------------------------------------
     -- Possibly override the settings file name
     ---------------------------------------------------
-    --
+
     If _settingsFileOverride <> '' Then
         UPDATE Tmp_Param_Tab target
         SET Value = _settingsFileOverride
@@ -302,7 +302,7 @@ BEGIN
     -- Check whether the settings file has an
     -- External DTA folder defined
     ---------------------------------------------------
-    --
+
     If Exists (SELECT * FROM Tmp_Param_Tab P WHERE P.Name = 'ExternalDTAFolderName') Then
         ---------------------------------------------------
         -- Look for a Special_Processing entry in the job parameters
@@ -312,7 +312,7 @@ BEGIN
         -- If the DTA: tag is found, the name after the column represents an external DTA folder name
         -- to override the external DTA folder name defined in the settings file
         ---------------------------------------------------
-        --
+
         SELECT sw.extract_tagged_name('DTA:', P.Value)
         INTO _extDTA
         FROM Tmp_Param_Tab P

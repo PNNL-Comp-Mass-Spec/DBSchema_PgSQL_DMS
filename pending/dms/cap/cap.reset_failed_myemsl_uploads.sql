@@ -67,7 +67,7 @@ BEGIN
         -----------------------------------------------------------
         -- Validate the inputs
         -----------------------------------------------------------
-        --
+
         _infoOnly := Coalesce(_infoOnly, false);
         _maxJobsToReset := Coalesce(_maxJobsToReset, 0);
         _jobListOverride := Coalesce(_jobListOverride, '');
@@ -76,7 +76,6 @@ BEGIN
         -----------------------------------------------------------
         -- Create the temporary tables
         -----------------------------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_FailedJobs (
             Job int,
@@ -198,7 +197,6 @@ BEGIN
         -----------------------------------------------------------
         -- Possibly limit the number of capture task jobs to reset
         -----------------------------------------------------------
-        --
 
         SELECT COUNT(*)
         INTO _jobCountAtStart
@@ -229,7 +227,7 @@ BEGIN
             -----------------------------------------------------------
             -- Construct a comma-separated list of capture task jobs then call retry_myemsl_upload
             -----------------------------------------------------------
-            --
+
             SELECT string_agg(Job::TEXT, ',' ORDER BY Job)
             INTO _jobList
             FROM Tmp_FailedJobs
@@ -241,7 +239,7 @@ BEGIN
             -- Post a log entry if any capture task jobs were reset
             -- Posting as an error so that it shows up in the daily error log
             -----------------------------------------------------------
-            --
+
             If Not _infoOnly Then
 
                 SELECT COUNT(*)

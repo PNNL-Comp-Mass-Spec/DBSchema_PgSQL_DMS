@@ -131,7 +131,7 @@ BEGIN
     ---------------------------------------------------
     -- Replace empty Grandparent term IDs and names with NULL
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_SourceData t
     SET grandparent_term_type = NULL,
         grandparent_term_id = NULL,
@@ -143,7 +143,7 @@ BEGIN
     ---------------------------------------------------
     -- Set matches_existing to 1 for rows that match an existing row in ont.t_cv_ms
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_SourceData t
     SET matches_existing = 1
     FROM ont.t_cv_ms s
@@ -154,7 +154,7 @@ BEGIN
     ---------------------------------------------------
     -- Look for obsolete terms that need to be deleted
     ---------------------------------------------------
-    --
+
     _s := ' SELECT COUNT(*)'
           ' FROM ('
             ' SELECT s.term_pk, s.Comment, s.Definition'
@@ -182,7 +182,7 @@ BEGIN
         -- Obsolete items found
         -- Construct SQL to delete them
         ---------------------------------------------------
-        --
+
         _s := ' DELETE FROM ont.t_cv_ms'
               ' USING ont.t_cv_ms t'
               '       INNER JOIN %I.%I s'
@@ -212,7 +212,7 @@ BEGIN
             ---------------------------------------------------
             -- Delete obsolete entries
             ---------------------------------------------------
-            --
+
             EXECUTE format(_deleteObsolete1, _sourceSchema, _sourceTable);
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -230,7 +230,7 @@ BEGIN
         ---------------------------------------------------
         -- Update existing rows
         ---------------------------------------------------
-        --
+
         UPDATE ont.t_cv_ms t
         SET term_name = s.term_name,
             identifier = s.identifier,
@@ -269,7 +269,7 @@ BEGIN
         ---------------------------------------------------
         -- Add new rows
         ---------------------------------------------------
-        --
+
         INSERT INTO ont.t_cv_ms (term_pk, term_name, identifier, is_leaf,
                                   parent_term_type, parent_term_name, parent_term_id,
                                   grandparent_term_type, grandparent_term_name, grandparent_term_id)
@@ -317,7 +317,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview existing rows that would be updated
         ---------------------------------------------------
-        --
+
         RETURN QUERY
         SELECT 'Existing item to update'::citext as Item_Type,
                t.entry_id,

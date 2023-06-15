@@ -41,7 +41,7 @@ BEGIN
     ---------------------------------------------------
     -- Is it already in the signatures table?
     ---------------------------------------------------
-    --
+
     SELECT reference
     INTO _reference
     FROM sw.t_signatures
@@ -65,7 +65,7 @@ BEGIN
         ---------------------------------------------------
         -- Update Last_Used and possibly update String
         ---------------------------------------------------
-        --
+
         IF Exists (SELECT * FROM sw.t_signatures WHERE reference = _reference AND string IS NULL) Then
             UPDATE sw.t_signatures
             SET Last_Used = CURRENT_TIMESTAMP,

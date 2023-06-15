@@ -68,7 +68,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
-        --
+
         _bypassDMS := Coalesce(_bypassDMS, false);
         _infoOnly := Coalesce(_infoOnly, false);
         _debugMode := Coalesce(_debugMode, false);
@@ -110,7 +110,6 @@ BEGIN
         ---------------------------------------------------
         -- Call the various procedures for performing updates
         ---------------------------------------------------
-        --
 
         -- Step 1: Remove jobs deleted from DMS
         --

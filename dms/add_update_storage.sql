@@ -244,7 +244,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Save existing state of instrument and storage tables
                 ---------------------------------------------------
-                --
+
                 CALL backup_storage_state (_message => _message, _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
@@ -263,7 +263,7 @@ BEGIN
                 -- Clean up any existing raw-storage assignments
                 -- for instrument
                 ---------------------------------------------------
-                --
+
                 If _storFunction = 'raw-storage' Then
 
                     -- Build list of paths that will be changed
@@ -318,7 +318,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Add the new entry
                 ---------------------------------------------------
-                --
+
                 INSERT INTO t_storage_path (
                     storage_path,
                     vol_name_client,
@@ -348,7 +348,7 @@ BEGIN
             ---------------------------------------------------
             -- Update the assigned storage for the instrument
             ---------------------------------------------------
-            --
+
             If _storFunction = 'raw-storage' Then
                 UPDATE t_instrument_name
                 SET storage_path_id = _storagePathID
@@ -379,7 +379,7 @@ BEGIN
             ---------------------------------------------------
             -- Save existing state of instrument and storage tables
             ---------------------------------------------------
-            --
+
             CALL backup_storage_state (_message => _message, _returnCode => _returnCode);
 
             If _returnCode <> '' Then
@@ -398,7 +398,7 @@ BEGIN
             -- Clean up any existing raw-storage assignments
             -- for instrument when changing to new raw-storage path
             ---------------------------------------------------
-            --
+
             If _storFunction = 'raw-storage' And _oldFunction <> 'raw-storage' Then
 
                 -- Build list of paths that will be changed
@@ -420,7 +420,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Update the assigned storage for the instrument
                 ---------------------------------------------------
-                --
+
                 UPDATE t_instrument_name
                 SET storage_path_id = _tmpID
                 WHERE instrument = _instrumentName;
@@ -436,7 +436,7 @@ BEGIN
             -- Validate against changing current raw-storage path
             -- to old-storage
             ---------------------------------------------------
-            --
+
             If _storFunction <> 'raw-storage' And _oldFunction = 'raw-storage' Then
                 ROLLBACK;
 
@@ -466,7 +466,7 @@ BEGIN
             ---------------------------------------------------
             -- Update storage path info
             ---------------------------------------------------
-            --
+
             UPDATE t_storage_path
             SET
                 storage_path =_path,

@@ -36,7 +36,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _enable := Coalesce(_enable, false);
     _disableComment := Coalesce(_disableComment, '');
     _infoOnly := Coalesce(_infoOnly, false);
@@ -54,7 +54,7 @@ BEGIN
     -----------------------------------------------
     -- Create a temp table to track the tools to update
     -----------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_ToolsToUpdate (
         Tool_Name text
     );
@@ -65,7 +65,7 @@ BEGIN
     -----------------------------------------------
     -- Preview changes, or perform the work
     -----------------------------------------------
-    --
+
     If _infoOnly Then
         RETURN QUERY
         SELECT _task AS Task,

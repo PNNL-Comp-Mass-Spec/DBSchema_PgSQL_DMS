@@ -57,7 +57,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _job := Coalesce(_job, 0);
     _step := Coalesce(_step, 0);
     _toolVersionInfo := Coalesce(_toolVersionInfo, '');
@@ -71,7 +71,7 @@ BEGIN
     ---------------------------------------------------
     -- Look for _toolVersionInfo in sw.t_step_tool_versions
     ---------------------------------------------------
-    --
+
     SELECT tool_version_id
     INTO _toolVersionID
     FROM sw.t_step_tool_versions
@@ -84,7 +84,7 @@ BEGIN
         -- Use an upsert query in case simultaneous calls to this procedure (from separate analysis managers)
         -- results in two threads simultaneously trying to insert a row with the new tool version
         ---------------------------------------------------
-        --
+
         INSERT INTO sw.t_step_tool_versions (tool_version, entered)
         VALUES (source.tool_version, CURRENT_TIMESTAMP)
         ON CONFLICT (tool_version)

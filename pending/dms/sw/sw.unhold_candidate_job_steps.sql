@@ -42,7 +42,7 @@ BEGIN
     -----------------------------------------------------------
     -- Count the number of job steps in state 2 for step tool _stepTool
     -----------------------------------------------------------
-    --
+
     SELECT COUNT(*)
     INTO _candidateSteps
     FROM t_job_steps

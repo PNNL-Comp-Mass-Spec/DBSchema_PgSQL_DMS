@@ -48,7 +48,6 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
 
     If _job Is Null Or _dataPackageID Is Null Then
         _message := '_job and _dataPackageID are required';
@@ -68,7 +67,7 @@ BEGIN
         ---------------------------------------------------
         -- Lookup the name of the job script
         ---------------------------------------------------
-        --
+
         SELECT script
         INTO _scriptName
         FROM sw.t_jobs
@@ -80,7 +79,6 @@ BEGIN
     ---------------------------------------------------
     -- Validate _dataPackageID
     ---------------------------------------------------
-    --
 
     If Not Exists (SELECT * FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
         _message := format('Data package %s not found in the Data_Package database', _dataPackageID);
@@ -109,7 +107,7 @@ BEGIN
         ---------------------------------------------------
         -- Lookup the OrgDB info for jobs associated with data package _dataPackageID
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_OrgDBInfo( OrganismName,
                                    LegacyFastaFileName,
                                    ProteinCollectionList,
@@ -137,7 +135,7 @@ BEGIN
         ---------------------------------------------------
         -- Check for invalid data
         ---------------------------------------------------
-        --
+
         If _insertCount = 0 Then
             If _scriptName Not In ('Global_Label-Free_AMT_Tag', 'MultiAlign', 'MultiAlign_Aggregator') Then
                 _message := format('Note: Data package %s either has no jobs or has no jobs with a protein collection or legacy fasta file; pipeline job parameters will not contain organism, fasta file, or protein collection', _dataPackageID);
@@ -195,7 +193,6 @@ BEGIN
         --   For MAC jobs, the data package does not have any jobs with a protein collection or legacy fasta file
         --   For MaxQuant, MSFragger, or DiaNN jobs, the data package does not have any datasets
         ---------------------------------------------------
-        --
 
         If _deleteIfInvalid Then
             If _debugMode Then

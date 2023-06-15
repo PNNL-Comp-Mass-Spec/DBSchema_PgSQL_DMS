@@ -51,7 +51,7 @@ BEGIN
     ---------------------------------------------------
     -- Try to resolve any null biomaterial ID values in Tmp_Experiment_to_Biomaterial_Map
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Experiment_to_Biomaterial_Map Target
     SET Biomaterial_ID = Src.Biomaterial_ID
     FROM T_Biomaterial Src
@@ -61,7 +61,6 @@ BEGIN
     ---------------------------------------------------
     -- Look for invalid entries in Tmp_Experiment_to_Biomaterial_Map
     ---------------------------------------------------
-    --
 
     SELECT string_agg(Biomaterial_Name, ', ' ORDER BY Biomaterial_Name)
     INTO _invalidBiomaterialList
@@ -77,7 +76,7 @@ BEGIN
     ---------------------------------------------------
     -- Add/remove biomaterial items
     ---------------------------------------------------
-    --
+
     DELETE FROM T_Experiment_Biomaterial
     WHERE Exp_ID = _expID;
 
@@ -88,7 +87,7 @@ BEGIN
     ---------------------------------------------------
     -- Optionally update t_cached_experiment_components
     ---------------------------------------------------
-    --
+
     If _updateCachedInfo Then
         CALL update_cached_experiment_component_names _expID
     End If;

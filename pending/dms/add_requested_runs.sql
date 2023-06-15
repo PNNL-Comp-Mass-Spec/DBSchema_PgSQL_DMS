@@ -262,7 +262,6 @@ BEGIN
         -- Set up wellplate stuff to force lookup
         -- from experiments
         ---------------------------------------------------
-        --
 
         If char_length(_batchName) > 0 Then
             ---------------------------------------------------

@@ -50,7 +50,7 @@ BEGIN
     ---------------------------------------------------
     -- Does cart exist?
     ---------------------------------------------------
-    --
+
     --
     If _mode = 'add' Then
 
@@ -103,7 +103,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate request ids
     ---------------------------------------------------
-    --
+
     --
     SELECT string_agg(requestID::text, ', ' ORDER BY requestID)
     INTO _list
@@ -121,7 +121,7 @@ BEGIN
     ---------------------------------------------------
     -- Update requests
     ---------------------------------------------------
-    --
+
     UPDATE t_requested_run
     SET cart_id = _cartID,
         cart_config_id = _cartConfigID

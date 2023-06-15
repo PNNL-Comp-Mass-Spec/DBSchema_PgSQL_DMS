@@ -130,7 +130,7 @@ BEGIN
     -- Determine what current state of active capture task jobs should be
     -- and get list of the ones that need be changed
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ChangedJobs (
         Job,
         OldState,
@@ -200,7 +200,7 @@ BEGIN
     WHERE UpdateQ.OldState <> UpdateQ.NewState;
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
-    --
+
     _jobCountToProcess := _matchCount;
 
     ---------------------------------------------------
@@ -237,13 +237,13 @@ BEGIN
             (T.Script = 'ArchiveUpdate'  AND T.State = 2 AND DAS.AS_update_state_ID = 5) )
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
-    --
+
     _jobCountToProcess := _jobCountToProcess + _matchCount;
 
     ---------------------------------------------------
     -- Find failed capture task jobs that do not have any failed steps
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ChangedJobs(
         Job,
         OldState,
@@ -269,14 +269,14 @@ BEGIN
           NOT Job In (SELECT Job FROM Tmp_ChangedJobs)
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
-    --
+
     _jobCountToProcess := _jobCountToProcess + _matchCount;
 
     ---------------------------------------------------
     -- Loop through capture task jobs whose state has changed
     -- and update local state and DMS state
     ---------------------------------------------------
-    --
+
     _curJob := 0;
     _done := false;
     _jobsProcessed := 0;
@@ -399,7 +399,7 @@ BEGIN
             ---------------------------------------------------
             -- Update local capture task job state and timestamp (if appropriate)
             ---------------------------------------------------
-            --
+
             UPDATE cap.t_tasks
             Set
                 State = _jobInfo.NewState,
@@ -421,7 +421,7 @@ BEGIN
         -- update_dms_dataset_state will also call cap.update_dms_file_info_XML to push the data into public.T_Dataset_Info
         -- If a duplicate dataset is found, update_dms_dataset_state will change this capture task job's state to 14 in t_tasks
         ---------------------------------------------------
-        --
+
         If Not _bypassDMS AND _jobInfo.Dataset_ID <> 0 Then
         -- <c>
 
@@ -466,7 +466,7 @@ BEGIN
         ---------------------------------------------------
         -- Save capture task job in the history tables
         ---------------------------------------------------
-        --
+
         If _jobInfo.NewState IN (3, 5) AND
            Not (_jobInfo.OldState = 2 And _jobInfo.NewState = 2) AND
            Not (_jobInfo.OldState = 5 And _jobInfo.NewState = 2) THEN

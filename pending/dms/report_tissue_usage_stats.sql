@@ -48,7 +48,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Validate the inputs
         --------------------------------------------------------------------
-        --
+
         _campaignIDFilterList := Trim(Coalesce(_campaignIDFilterList, ''));
         _organismIDFilterList := Trim(Coalesce(_organismIDFilterList, ''));
         _instrumentFilterList := Trim(Coalesce(_instrumentFilterList, ''));
@@ -56,7 +56,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Populate a temporary table with the Campaign IDs to filter on
         --------------------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_CampaignFilter (
             Campaign_ID int NOT NULL,
             Fraction_EMSL_Funded numeric NULL
@@ -74,7 +74,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Populate a temporary table with the Instrument IDs to filter on
         --------------------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_InstrumentFilter (
             Instrument_ID int NOT NULL
         )
@@ -93,7 +93,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Populate a temporary table with the organisms to filter on
         --------------------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_OrganismFilter (
             Organism_ID int NOT NULL,
             Organism_Name text NULL

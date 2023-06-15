@@ -52,7 +52,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate inputs
     ---------------------------------------------------
-    --
+
     _sourceTable := Coalesce(_sourceTable, '');
     _infoOnly := Coalesce(_infoOnly, true);
     _previewRelationshipUpdates := Coalesce(_previewRelationshipUpdates, true);
@@ -60,7 +60,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate that the source table exists
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_CandidateTables AS
     SELECT Table_to_Find, Schema_Name, Table_Name, Table_Exists, Message
     FROM resolve_table_name(_sourceTable);
@@ -132,7 +132,7 @@ BEGIN
     ---------------------------------------------------
     -- Set matches_existing to 1 for rows that match an existing row in ont.t_term
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_SourceData
     SET matches_existing = 1
     FROM ont.t_term s
@@ -141,7 +141,7 @@ BEGIN
     ---------------------------------------------------
     -- Determine the ontology_id
     ---------------------------------------------------
-    --
+
     SELECT T.ontology_id
     INTO _ontologyID
     FROM Tmp_SourceData S
@@ -156,7 +156,7 @@ BEGIN
         ---------------------------------------------------
         -- Update existing rows
         ---------------------------------------------------
-        --
+
         UPDATE ont.t_term AS T
         SET term_name = s.term_name,
             identifier = s.identifier,
@@ -180,7 +180,7 @@ BEGIN
         ---------------------------------------------------
         -- Add new rows
         ---------------------------------------------------
-        --
+
         INSERT INTO ont.t_term (term_pk, ontology_id, term_name, identifier, definition, namespace, is_obsolete, is_root_term, is_leaf)
         SELECT s.term_pk, _ontologyID, s.term_name, s.identifier, '' as definition, _namespace, 0 as is_obsolete, 0 as i_root_term, Max(s.is_leaf)
         FROM Tmp_SourceData s
@@ -307,7 +307,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview existing rows that would be updated
         ---------------------------------------------------
-        --
+
         RETURN QUERY
         SELECT 'Existing item to update'::citext as Item_Type,
                T.term_pk,
@@ -341,7 +341,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview parents to add
         ---------------------------------------------------
-        --
+
         /*
         SELECT DISTINCT 'Missing parent/child relationship' as Relationship
                         SourceTable.identifier AS Child,

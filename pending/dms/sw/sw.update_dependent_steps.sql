@@ -89,6 +89,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table to hold scratch list of step dependencies
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_Steplist (
         Job int,
         Step int,
@@ -114,7 +115,7 @@ BEGIN
     -- Bump up the value for dependencies in sw.t_job_steps if it is too low
     -- This will happen if new rows are manually added to sw.t_job_step_dependencies
     ---------------------------------------------------
-    --
+
     UPDATE sw.t_job_steps
     SET dependencies = CompareQ.Actual_Dependencies
     FROM ( SELECT job,
@@ -133,7 +134,7 @@ BEGIN
     -- Get summary of dependencies for steps
     -- in 'Waiting' state and add to scratch list
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Steplist (job, step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
                                  completion_code, completion_message, evaluation_code, Evaluation_Message)
     SELECT JSD.job,
@@ -172,7 +173,7 @@ BEGIN
     -- Add waiting steps that have no dependencies
     -- to scratch list
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Steplist (job, step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
                               completion_code, completion_message, evaluation_code, Evaluation_Message)
     SELECT JS.job,
@@ -209,7 +210,7 @@ BEGIN
     -- Populate the ProcessingOrder column in Tmp_Steplist
     -- Sorting by Priority so that shared steps will tend to be enabled for higher priority jobs first
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Steplist TargetQ
     SET ProcessingOrder = LookupQ.ProcessingOrder
     FROM ( SELECT EntryID,
@@ -277,14 +278,14 @@ BEGIN
         -- If all dependencies for the step are evaluated,
         -- the step's state may be changed
         ---------------------------------------------------
-        --
+
         If _stepInfo.Evaluated = _stepInfo.Total Then
         -- <c>
 
             ---------------------------------------------------
             -- Get information from parent job
             ---------------------------------------------------
-            --
+
             SELECT dataset, dataset_id
             INTO _dataset, _datasetID
             FROM sw.t_jobs
@@ -295,7 +296,7 @@ BEGIN
             -- new state will be 'Skipped'
             -- otherwise, new state will be 'Enabled'
             ---------------------------------------------------
-            --
+
             If _stepInfo.Triggered = 0 Then
                 _newState := 2; -- 'Enabled'
             Else
@@ -309,6 +310,7 @@ BEGIN
             -- If step has shared results, state change may be affected
             -- Data packaged based jobs cannot have shared results (and will have _datasetID = 0)
             ---------------------------------------------------
+
             If _stepInfo.Shared <> 0 And _datasetID > 0 Then
             -- <d>
 
@@ -407,7 +409,7 @@ BEGIN
             ---------------------------------------------------
             -- If step state needs to be changed, update step
             ---------------------------------------------------
-            --
+
             If _newState <> 1 Then
             -- <e>
 
@@ -417,7 +419,7 @@ BEGIN
                 -- unless the tool is DTA_Refinery or Mz_Refinery or ProMex, then the folder name is
                 -- NOT passed through if the tool is skipped)
                 ---------------------------------------------------
-                --
+
                 If _infoOnly Then
                     RAISE INFO 'Update state in sw.t_job_steps for job %, step % from 1 to %',_stepInfo.job, _stepInfo.step, _newState;
                 Else

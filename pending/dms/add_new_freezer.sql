@@ -92,7 +92,7 @@ BEGIN
     ---------------------------------------------------
     -- Cache the new rows in a temporary table
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_T_Material_Locations (
         ID              int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1000 INCREMENT BY 1),
         Freezer_Tag     text NULL,
@@ -136,7 +136,7 @@ BEGIN
     ---------------------------------------------------
     -- Preview or store the rows
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
         SELECT *
         FROM Tmp_T_Material_Locations
@@ -174,7 +174,6 @@ BEGIN
     ---------------------------------------------------
     -- Done
     ---------------------------------------------------
-    --
 
     DROP TABLE Tmp_T_Material_Locations;
 END

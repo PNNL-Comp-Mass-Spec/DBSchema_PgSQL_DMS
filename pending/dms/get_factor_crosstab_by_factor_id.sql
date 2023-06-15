@@ -63,7 +63,6 @@ BEGIN
         -----------------------------------------
         -- Determine the factor names defined by the factor entries in Tmp_FactorItems
         -----------------------------------------
-        --
 
         SELECT string_agg(format('"%s"', FactorName), ', ' ORDER BY FactorName)
         INTO _factorNameList
@@ -76,7 +75,7 @@ BEGIN
         -----------------------------------------
         -- Return the factors, displayed as a crosstab (PivotTable)
         -----------------------------------------
-        --
+
         _crossTabSql := format('SELECT PivotResults.type, PivotResults.target_id, %s ', _factorNameList) ||
                                'FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value '
                                     ' FROM t_factor Src INNER JOIN Tmp_FactorItems I ON Src.factor_id = I.factor_id '

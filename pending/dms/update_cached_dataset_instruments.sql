@@ -34,7 +34,7 @@ BEGIN
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
-    --
+
     _processingMode := Coalesce(_processingMode, 0);
     _datasetId := Coalesce(_datasetId, 0);
     _infoOnly := Coalesce(_infoOnly, false);
@@ -66,7 +66,7 @@ BEGIN
     ------------------------------------------------
     -- Add new datasets to t_cached_dataset_folder_paths
     ------------------------------------------------
-    --
+
     If _processingMode = 0 Or _infoOnly Then
 
         If _infoOnly Then

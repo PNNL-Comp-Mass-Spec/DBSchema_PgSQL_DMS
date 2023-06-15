@@ -58,7 +58,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate a temporary table with the jobs in _jobList
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_JobsToCopy (
         Job int NOT NULL,
         DateStamp timestamp NULL
@@ -73,7 +73,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if no candidates found
     ---------------------------------------------------
-    --
+
     If Not Exists (SELECT * FROM Tmp_JobsToCopy) Then
         _message := '_jobList was empty or contained no jobs';
         RAISE INFO '%', _message;
@@ -85,14 +85,14 @@ BEGIN
     ---------------------------------------------------
     -- Remove jobs that already exist in sw.t_jobs
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_JobsToCopy
     WHERE job IN (SELECT job FROM sw.t_jobs);
 
     ---------------------------------------------------
     -- Bail if no candidates found
     ---------------------------------------------------
-    --
+
     If Not Exists (SELECT * FROM Tmp_JobsToCopy) Then
         _message := 'All jobs in _jobList already exist in sw.t_jobs';
         RAISE INFO '%', _message;
@@ -104,14 +104,14 @@ BEGIN
     ---------------------------------------------------
     -- Delete jobs not present in sw.t_jobs_history
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_JobsToCopy
     WHERE NOT job IN (SELECT job FROM sw.t_jobs_history);
 
     ---------------------------------------------------
     -- Bail if no candidates remain
     ---------------------------------------------------
-    --
+
     If Not Exists (SELECT * FROM Tmp_JobsToCopy) Then
         _message := 'None of the jobs in _jobList exists in sw.t_jobs_history';
         RAISE INFO '%', _message;
@@ -123,7 +123,6 @@ BEGIN
     ---------------------------------------------------
     -- Lookup the max saved date for each job
     ---------------------------------------------------
-    --
 
     UPDATE Tmp_JobsToCopy
     SET DateStamp = DateQ.MostRecentDate
@@ -139,7 +138,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove jobs where DateStamp is null
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_JobsToCopy
     WHERE DateStamp Is Null;
     --
@@ -441,7 +440,7 @@ BEGIN
         ---------------------------------------------------
         -- Jobs successfully copied
         ---------------------------------------------------
-        --
+
         _message := format('Copied %s jobs from the history tables to the main tables', _jobsCopied);
 
         CALL public.post_log_entry ('Normal', _message, 'Copy_History_To_Job_Multi', 'sw');
@@ -456,7 +455,7 @@ BEGIN
             ---------------------------------------------------
             -- Update the job parameters in case any parameters have changed (in particular, storage path)
             ---------------------------------------------------
-            --
+
             _currentLocation := format('Call update_job_parameters for job ', _job);
             --
             CALL sw.update_job_parameters (_job, _infoOnly => false);
@@ -464,7 +463,7 @@ BEGIN
             ---------------------------------------------------
             -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
             ---------------------------------------------------
-            --
+
             _currentLocation := format('Call validate_job_server_info for job ', _job);
             --
             CALL sw.validate_job_server_info (_job, _useJobParameters => true);

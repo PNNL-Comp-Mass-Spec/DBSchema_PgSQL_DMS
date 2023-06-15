@@ -140,7 +140,7 @@ BEGIN
         ---------------------------------------------------
         -- Get active path
         ---------------------------------------------------
-        --
+
         SELECT path_id
         INTO _storagePathID
         FROM dpkg.t_data_package_storage
@@ -255,7 +255,7 @@ BEGIN
             ---------------------------------------------------
             -- Data package folder and wiki page auto naming
             ---------------------------------------------------
-            --
+
             _pkgFileFolder := dpkg.Make_Package_Folder_Name(_id, _name);
             _prismWikiLink := dpkg.Make_PRISMWiki_Page_Link(_id, _name);
 
@@ -314,7 +314,7 @@ BEGIN
         ---------------------------------------------------
         -- Update EUS_Person_ID and EUS_Proposal_ID
         ---------------------------------------------------
-        --
+
         CALL dpkg.update_data_package_eus_info (_id, _message => _message, _returnCode => _returnCode);
 
     EXCEPTION

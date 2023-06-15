@@ -261,7 +261,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
 
             -- future: accept '<next bag>' or '<next box> and generate container name
@@ -290,7 +290,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_material_containers

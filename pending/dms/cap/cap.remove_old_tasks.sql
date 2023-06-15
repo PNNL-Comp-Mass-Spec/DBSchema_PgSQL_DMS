@@ -43,7 +43,7 @@ BEGIN
     ---------------------------------------------------
     -- Create table to track the list of affected capture task jobs
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Selected_Jobs (
         Job int not null,
         State int
@@ -80,13 +80,13 @@ BEGIN
     ---------------------------------------------------
     -- Make sure the capture task job Start and Finish values are up-to-date
     ---------------------------------------------------
-    --
+
     CALL cap.synchronize_task_stats_with_task_steps (_infoOnly => false);
 
     ---------------------------------------------------
     -- Add old successful capture task jobs to be removed to list
     ---------------------------------------------------
-    --
+
     If _intervalDaysForSuccess > 0 Then
 
         _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForSuccess);
@@ -119,7 +119,7 @@ BEGIN
     ---------------------------------------------------
     -- Add old failed capture task jobs to be removed to list
     ---------------------------------------------------
-    --
+
     If _intervalDaysForFail > 0 Then
         _cutoffDateTimeForFail := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForFail);
 

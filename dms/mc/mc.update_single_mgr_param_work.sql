@@ -69,7 +69,7 @@ BEGIN
     ---------------------------------------------------
     -- Count the number of rows that already have this value
     ---------------------------------------------------
-    --
+
     SELECT Count(*)
     INTO _rowCountUnchanged
     FROM mc.t_param_value
@@ -79,7 +79,7 @@ BEGIN
     ---------------------------------------------------
     -- Update the values defined in Tmp_ParamValueEntriesToUpdate
     ---------------------------------------------------
-    --
+
     UPDATE mc.t_param_value
     SET value = _newValue
     WHERE entry_id IN (SELECT entry_id FROM Tmp_ParamValueEntriesToUpdate) AND

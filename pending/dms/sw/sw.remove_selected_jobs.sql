@@ -72,7 +72,7 @@ BEGIN
     -- Preserve record of successfully completed
     -- shared results
     ---------------------------------------------------
-    --
+
     -- For the jobs being deleted, finds all instances of
     -- successfully completed results transfer steps that
     -- were directly dependent upon steps that generated
@@ -99,7 +99,7 @@ BEGIN
     ---------------------------------------------------
     -- Delete job dependencies
     ---------------------------------------------------
-    --
+
     DELETE FROM sw.t_job_step_dependencies
     WHERE job IN (SELECT job FROM Tmp_SJL);
     --
@@ -112,7 +112,7 @@ BEGIN
     ---------------------------------------------------
     -- Delete job parameters
     ---------------------------------------------------
-    --
+
     DELETE FROM sw.t_job_parameters
     WHERE job IN (SELECT job FROM Tmp_SJL);
     --
@@ -127,7 +127,7 @@ BEGIN
     ---------------------------------------------------
     -- Delete job steps
     ---------------------------------------------------
-    --
+
     DELETE FROM sw.t_job_steps
     WHERE job IN (SELECT job FROM Tmp_SJL);
     --
@@ -142,7 +142,7 @@ BEGIN
     ---------------------------------------------------
     -- Delete entries in sw.t_jobs
     ---------------------------------------------------
-    --
+
     If _logDeletions And Not _logToConsoleOnly Then
 
         ---------------------------------------------------

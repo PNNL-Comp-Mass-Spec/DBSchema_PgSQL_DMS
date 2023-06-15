@@ -127,7 +127,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate input fields
         ---------------------------------------------------
-        --
+
         _analysisType := Coalesce(_analysisType, '');
 
         If char_length(Coalesce(_description, '')) < 1 Then
@@ -171,7 +171,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate analysis type
         ---------------------------------------------------
-        --
+
         If NOT Exists (Select * From t_data_analysis_request_type_name Where analysis_type = _analysisType) Then
             RAISE EXCEPTION 'Invalid data analysis type: %', _analysisType;
         End If;
@@ -612,7 +612,7 @@ BEGIN
         ---------------------------------------------------
         -- Check for name collisions
         ---------------------------------------------------
-        --
+
         If _mode like '%add%' Then
             If Exists (SELECT * FROM t_data_analysis_request WHERE request_name = _requestName) Then
                 RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
@@ -627,7 +627,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
             BEGIN
 
@@ -697,7 +697,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             SELECT estimated_analysis_time_days

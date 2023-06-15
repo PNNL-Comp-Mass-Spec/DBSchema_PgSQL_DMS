@@ -43,7 +43,7 @@ BEGIN
     ---------------------------------------------------
     -- Temporary table to hold job parameters
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_JobParamsTable (
         Section citext,
         Name citext,

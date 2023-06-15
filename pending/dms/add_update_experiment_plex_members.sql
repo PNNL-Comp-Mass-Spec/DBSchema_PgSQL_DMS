@@ -769,7 +769,7 @@ BEGIN
                 -- Add experiments that are associated with parent experiment _plexExperimentId
                 -- Assure that the parent experiment is not the 'Placeholder' experiment
                 ---------------------------------------------------
-                --
+
                 INSERT INTO Tmp_ExperimentsToUpdate ( plexExperimentId )
                 SELECT DISTINCT EGM.exp_id
                 FROM t_experiment_groups EG

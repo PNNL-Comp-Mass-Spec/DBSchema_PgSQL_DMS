@@ -52,7 +52,7 @@ BEGIN
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
-    --
+
     -- Assure that one of the following is non-zero
     If Coalesce(_showModSymbol, 0) = 0 AND Coalesce(_showModName, 0) = 0 AND Coalesce(_showModMass, 0) = 0 Then
         _showModSymbol := 0;
@@ -153,6 +153,7 @@ BEGIN
     -- Generate a list of the unique mod types in Tmp_ParamFileModInfo
     -- Use these to define the column headers for the crosstab
     -----------------------------------------------------------
+
     INSERT INTO Tmp_ColumnHeaders (ModType)
     SELECT ModType
     FROM Tmp_ParamFileModInfo

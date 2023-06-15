@@ -98,7 +98,6 @@ BEGIN
     -----------------------------------------
     -- Create a temporary table to cache the results
     -----------------------------------------
-    --
 
     CREATE TEMP TABLE Tmp_CampaignDatasetStats (
         Campaign text Not Null,
@@ -115,7 +114,7 @@ BEGIN
     -----------------------------------------
     -- Construct the query to retrieve the results
     -----------------------------------------
-    --
+
     _sql := 'INSERT INTO Tmp_CampaignDatasetStats (Campaign, WorkPackage, FractionEMSLFunded, RuntimeHours, Datasets, Building, Instrument, RequestMin, RequestMax) '
             'SELECT C.Campaign, '
                    'RR.work_package, '
@@ -177,7 +176,7 @@ BEGIN
     -----------------------------------------
     -- Preview or execute the query
     -----------------------------------------
-    --
+
     If _previewSql Then
         RAISE INFO '%', _sql;
     Else
@@ -186,7 +185,7 @@ BEGIN
         -----------------------------------------
         -- Determine the total runtime
         -----------------------------------------
-        --
+
         SELECT Sum(RuntimeHours)
         INTO _totalRuntimeHours
         FROM Tmp_CampaignDatasetStats AS StatsQ

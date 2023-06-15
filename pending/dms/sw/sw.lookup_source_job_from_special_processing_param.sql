@@ -97,7 +97,7 @@ BEGIN
             -------------------------------------------------
             -- Lookup the Dataset for this job
             -------------------------------------------------
-            --
+
             SELECT dataset
             INTO _dataset
             FROM sw.t_jobs
@@ -199,7 +199,7 @@ BEGIN
                 -------------------------------------------------
                 -- Check whether a 2nd source job is defined
                 -------------------------------------------------
-                --
+
                 _tagName := 'Job2';
 
                 CALL sw.lookup_source_job_from_special_processing_text (

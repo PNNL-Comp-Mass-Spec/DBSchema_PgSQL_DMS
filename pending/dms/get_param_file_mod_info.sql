@@ -48,7 +48,7 @@ BEGIN
     -----------------------------------------------------------
     -- Make sure this parameter file is defined in t_param_files
     -----------------------------------------------------------
-    --
+
     SELECT param_file_id
     INTO _paramFileID
     FROM t_param_files
@@ -65,7 +65,6 @@ BEGIN
     -----------------------------------------------------------
     -- Dynamic mods
     -----------------------------------------------------------
-    --
 
     SELECT string_agg(Local_Symbol,        ',' ORDER BY Local_Symbol),
            string_agg(Mass_Correction_Tag, ',' ORDER BY Local_Symbol)

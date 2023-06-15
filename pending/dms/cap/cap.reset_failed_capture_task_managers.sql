@@ -36,13 +36,12 @@ BEGIN
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, false);
 
     -----------------------------------------------------------
     -- Find managers reporting error 'Flag file' within the last 6 hours
     -----------------------------------------------------------
-    --
 
     INSERT INTO Tmp_ManagersToReset (Processor_Name, Status_Date)
     SELECT Processor_Name,
@@ -58,7 +57,6 @@ BEGIN
         -----------------------------------------------------------
         -- Construct a comma-separated list of manager names
         -----------------------------------------------------------
-        --
 
         SELECT string_agg(Processor_Name, ',' ORDER BY Processor_Name)
         INTO _managerList
@@ -67,7 +65,7 @@ BEGIN
         -----------------------------------------------------------
         -- Call the manager control error cleanup procedure
         -----------------------------------------------------------
-        --
+
         CALL mc.set_manager_error_cleanup_mode (_managerList, _cleanupMode => 1, _showTable => 1, _infoOnly => _infoOnly);
 
     End If;

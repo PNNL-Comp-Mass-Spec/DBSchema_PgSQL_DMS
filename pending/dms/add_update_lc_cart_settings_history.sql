@@ -99,6 +99,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
+
     If _mode = 'add' Then
 
         INSERT INTO t_lc_cart_settings_history (
@@ -150,7 +151,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
         UPDATE t_lc_cart_settings_history
         SET valve_to_column_extension = _valveToColumnExtension,

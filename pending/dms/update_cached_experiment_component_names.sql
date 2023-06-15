@@ -37,7 +37,7 @@ BEGIN
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
-    --
+
     _expID := Coalesce(_expID, 0);
     _infoOnly := Coalesce(_infoOnly, false);
 
@@ -47,7 +47,7 @@ BEGIN
         ------------------------------------------------
         -- Processing a single experiment
         ------------------------------------------------
-        --
+
         SELECT string_agg(CC.Biomaterial_Name, '; ' ORDER BY CC.Biomaterial_Name)
         INTO _biomaterialList
         FROM T_Experiment_Biomaterial ECC
@@ -93,7 +93,6 @@ BEGIN
         -- Processing all experiments
         -- Populate temporary tables with the data to store
         ------------------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_ExperimentBiomaterial (
             Exp_ID int not null,
@@ -214,7 +213,7 @@ BEGIN
             ------------------------------------------------
             -- Preview the data that would be merged into t_cached_experiment_components
             ------------------------------------------------
-            --
+
             SELECT ECC.Exp_ID,
                    ECC.Biomaterial_List,
                    ECC.Items AS CellCulture_Items,
@@ -229,7 +228,7 @@ BEGIN
             ------------------------------------------------
             -- Update biomaterial lists
             ------------------------------------------------
-            --
+
             MERGE INTO t_cached_experiment_components AS t
             USING ( SELECT exp_id, Biomaterial_List
                     FROM Tmp_ExperimentBiomaterial
@@ -246,7 +245,7 @@ BEGIN
             ------------------------------------------------
             -- Update reference compound lists
             ------------------------------------------------
-            --
+
             MERGE INTO t_cached_experiment_components AS t
             USING ( SELECT exp_id, reference_compound_list
                     FROM Tmp_ExperimentRefCompounds
@@ -268,7 +267,7 @@ BEGIN
             ------------------------------------------------
             -- Assure Biomaterial_List and Reference_Compound_List are Null for experiments not in the temp tables
             ------------------------------------------------
-            --
+
             UPDATE t_cached_experiment_components Target
             SET Biomaterial_List = NULL
             WHERE NOT EXISTS ( SELECT 1

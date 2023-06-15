@@ -188,7 +188,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve data release restriction name to ID
         ---------------------------------------------------
-        --
+
         SELECT release_restriction_id
         INTO _dataReleaseRestrictionsID
         FROM t_data_release_restrictions
@@ -202,7 +202,6 @@ BEGIN
         -- Validate Fraction EMSL Funded
         -- If _fractionEMSLFunded is empty we treat it as a Null value
         ---------------------------------------------------
-        --
 
         _fractionEMSLFunded := Coalesce(_fractionEMSLFunded, '');
         If char_length(_fractionEMSLFunded) > 0 Then
@@ -231,7 +230,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate campaign name
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
             _badCh := public.validate_chars(_campaignName, '');
             _badCh := REPLACE(_badCh, 'space', '');
@@ -248,7 +247,6 @@ BEGIN
         ---------------------------------------------------
         -- Validate EUS Usage Type
         ---------------------------------------------------
-        --
 
         _eusUsageType := Coalesce(_eusUsageType, '');
 
@@ -297,7 +295,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate Fraction EMSL Funded
         ---------------------------------------------------
-        --
+
         If _fractionEMSLFundedToStore > 1 Then
             _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is greater than 1)', _fractionEMSLFunded);
             RAISE EXCEPTION '%', _msg;
@@ -318,12 +316,13 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode = 'add' Then
 
             ---------------------------------------------------
             -- Create research team
             ---------------------------------------------------
-            --
+
             CALL update_research_team_for_campaign
                                 _campaignName,
                                 _progmgrUsername,
@@ -344,7 +343,7 @@ BEGIN
             ---------------------------------------------------
             -- Create campaign
             ---------------------------------------------------
-            --
+
             INSERT INTO t_campaign (
                 campaign,
                 project,
@@ -412,13 +411,13 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             ---------------------------------------------------
             -- Update campaign
             ---------------------------------------------------
-            --
+
             UPDATE t_campaign
             SET
                 project = _projectName,
@@ -438,7 +437,7 @@ BEGIN
             ---------------------------------------------------
             -- Update research team membershipe
             ---------------------------------------------------
-            --
+
             CALL update_research_team_for_campaign (
                                 _campaignName,
                                 _progmgrUsername,

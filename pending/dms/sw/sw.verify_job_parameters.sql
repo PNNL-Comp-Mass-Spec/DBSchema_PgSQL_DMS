@@ -96,7 +96,7 @@ BEGIN
     ---------------------------------------------------
     -- Extract input parameters into temp table
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_JobParameters (
         Section text,
         Name text,
@@ -116,7 +116,6 @@ BEGIN
     ---------------------------------------------------
     -- Cross check to make sure required parameters are defined in Tmp_JobParameters (populated using _paramInput)
     ---------------------------------------------------
-    --
 
     SELECT string_agg(format('%s/%s', Tmp_ParamDefinition.Section, Tmp_ParamDefinition.Name), ', ' ORDER BY Tmp_ParamDefinition.Section, Tmp_ParamDefinition.Name)
     INTO _missingParameters
@@ -139,7 +138,7 @@ BEGIN
     ---------------------------------------------------
     -- Cross check to make sure required parameters are defined in Tmp_JobParameters (populated using _paramInput)
     ---------------------------------------------------
-    --
+
     If _scriptName ILIKE 'MaxQuant%' Or _scriptName ILIKE 'MSFragger%' Or _scriptName ILIKE 'DiaNN%' Then
         -- Verify the MaxQuant, MSFragger, or DiaNN parameter file name
 
@@ -282,7 +281,7 @@ BEGIN
             -- will populate _message with an explanatory note
             -- if _protCollNameList is updated
             ---------------------------------------------------
-            --
+
             CALL sw.validate_protein_collection_list_for_data_package (
                                 _dataPackageID,
                                 _protCollNameList => _protCollNameList,             -- Output

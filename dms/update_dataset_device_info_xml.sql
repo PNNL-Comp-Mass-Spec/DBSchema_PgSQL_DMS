@@ -297,7 +297,7 @@ BEGIN
     ---------------------------------------------------
     -- Add new devices
     ---------------------------------------------------
-    --
+
     INSERT INTO t_dataset_device( device_type,
                                   device_number,
                                   device_name,

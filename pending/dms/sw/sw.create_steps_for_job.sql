@@ -41,7 +41,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure that the tools in the script exist
     ---------------------------------------------------
-    --
+
     SELECT string_agg(XmlQ.Tool, ', ' ORDER BY XmlQ.Tool)
     INTO _missingTools
     FROM ( SELECT xmltable.tool
@@ -63,7 +63,7 @@ BEGIN
     ---------------------------------------------------
     -- Make set of job steps for job based on _scriptXML
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Job_Steps (
         job,
         step,
@@ -103,7 +103,7 @@ BEGIN
     ---------------------------------------------------
     -- Make set of step dependencies based on scriptXML
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Job_Step_Dependencies
     (
         Step,

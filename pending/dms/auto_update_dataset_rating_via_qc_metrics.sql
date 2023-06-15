@@ -38,7 +38,7 @@ BEGIN
     ----------------------------------------------
     -- Validate the Inputs
     ----------------------------------------------
-    --
+
     -- Do not allow _campaignName to be blank
     _campaignName := Coalesce(_campaignName, '');
     If _campaignName = '' Then
@@ -62,6 +62,7 @@ BEGIN
     ----------------------------------------------
     -- Find Candidate Datasets
     ----------------------------------------------
+
     INSERT INTO Tmp_DatasetsToUpdate (dataset_id)
     SELECT DS.dataset_id
     FROM t_dataset DS

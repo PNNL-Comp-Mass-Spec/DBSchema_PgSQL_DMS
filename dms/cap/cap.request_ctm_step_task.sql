@@ -188,7 +188,6 @@ BEGIN
         -- return value if no capture task jobs are available
         -- Code 'U5301' is used for this
         ---------------------------------------------------
-        --
 
         If _infoLevel > 1 Then
             RAISE INFO '';
@@ -201,7 +200,7 @@ BEGIN
         -- Make sure this is a valid processor
         -- (and capitalize it according to cap.t_local_processors)
         ---------------------------------------------------
-        --
+
         SELECT machine,
                processor_name
         INTO _machine, _processorNameMatch
@@ -223,7 +222,7 @@ BEGIN
         ---------------------------------------------------
         -- Show processor name and machine if _infoLevel is non-zero
         ---------------------------------------------------
-        --
+
         If _infoLevel <> 0 Then
             RAISE INFO 'Processor %, Machine %', _processorName, _machine;
         End If;
@@ -232,7 +231,7 @@ BEGIN
         -- Update processor's request timestamp
         -- (to show when the processor was most recently active)
         ---------------------------------------------------
-        --
+
         If _infoLevel = 0 Then
             _currentLocation := 'Update cap.t_local_processors';
 
@@ -254,7 +253,7 @@ BEGIN
         -- active tools that are presently handled by this processor
         -- (don't use tools that require bionet if processor machine doesn't have it)
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_AvailableProcessorTools (
             Tool_Name text,
             Tool_Priority int,
@@ -304,7 +303,7 @@ BEGIN
         ---------------------------------------------------
         -- Bail out if no tools available, and _infoLevel is 0
         ---------------------------------------------------
-        --
+
         SELECT COUNT(*)
         INTO _numTools
         FROM Tmp_AvailableProcessorTools;
@@ -326,7 +325,7 @@ BEGIN
         --
         -- In practice, the only step tool that is instrument-capacity limited is DatasetCapture
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_InstrumentLoading (
             Instrument text,
             Captures_In_Progress int,
@@ -357,7 +356,7 @@ BEGIN
         ---------------------------------------------------
         -- Is processor assigned to any instrument?
         ---------------------------------------------------
-        --
+
         SELECT COUNT(*)
         INTO _processorAssignmentCount
         FROM cap.t_processor_instrument
@@ -367,7 +366,7 @@ BEGIN
         ---------------------------------------------------
         -- Get list of instruments that have processor assignments
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_InstrumentProcessor (
             Instrument text,
             Assigned_To_This_Processor int,
@@ -420,7 +419,7 @@ BEGIN
         -- Table to hold capture task job step candidates
         -- for possible assignment
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_CandidateJobSteps (
             Seq int NOT NULL GENERATED ALWAYS AS IDENTITY,
             Job int,
@@ -436,7 +435,7 @@ BEGIN
         -- Get list of viable capture task job steps,
         -- organized by processor, in order of assignment priority
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_CandidateJobSteps( Job,
                                            Step,
                                            Job_Priority,
@@ -474,7 +473,7 @@ BEGIN
         ---------------------------------------------------
         -- Bail out if no steps available, and _infoLevel = 0
         ---------------------------------------------------
-        --
+
         If _infoLevel = 0 AND _numCandidates = 0 Then
             _message := 'No candidates presently available';
             _returnCode := _jobNotAvailableErrorCode;
@@ -506,7 +505,7 @@ BEGIN
             --   Later steps over earler steps
             --   Job number
             ---------------------------------------------------
-            --
+
             SELECT TS.Job,
                    TS.Step,
                    TS.Tool
@@ -531,7 +530,7 @@ BEGIN
             -- If a capture task job step was assigned and
             -- if _infoLevel is 0, update the step state to Running
             ---------------------------------------------------
-            --
+
             If _jobAssigned AND _infoLevel = 0 Then
                 _currentLocation := 'Update State and Processor in cap.t_task_steps';
 
@@ -623,7 +622,7 @@ BEGIN
             ---------------------------------------------------
             -- No capture task job step found; update _message and _returnCode
             ---------------------------------------------------
-            --
+
             _message := 'No available capture task jobs';
             _returnCode := _jobNotAvailableErrorCode;
 
@@ -635,7 +634,7 @@ BEGIN
         ---------------------------------------------------
         -- Dump candidate list if _infoLevel is non-zero
         ---------------------------------------------------
-        --
+
         If _infoLevel <> 0 Then
             If _infoLevel > 1 Then
                 RAISE INFO '%, Request_CTM_Step_Task: Preview results', public.timestamp_text_immutable(clock_timestamp());
@@ -715,7 +714,7 @@ BEGIN
             ---------------------------------------------------
             -- Dump candidate list if the info level is 2 or higher
             ---------------------------------------------------
-            --
+
             If _infoLevel >= 2 Then
 
                 _currentLocation := 'Show results from request_ctm_step_task_explanation';
@@ -752,7 +751,6 @@ BEGIN
         ---------------------------------------------------
         -- Output capture task job parameters as resultset
         ---------------------------------------------------
-        --
 
         Open _results For
             SELECT Name AS Parameter,

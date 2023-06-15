@@ -1114,7 +1114,7 @@ BEGIN
         ---------------------------------------------------
         -- Update EUS Info for all data packages in the list
         ---------------------------------------------------
-        --
+
         If _itemCountChanged > 0 Then
 
             SELECT string_agg(DataPackageID::text, ',' ORDER BY DataPackageID)
@@ -1128,7 +1128,7 @@ BEGIN
         ---------------------------------------------------
         -- Update the last modified date for affected data packages
         ---------------------------------------------------
-        --
+
         If _itemCountChanged > 0 Then
             UPDATE dpkg.t_data_package
             SET last_modified = CURRENT_TIMESTAMP

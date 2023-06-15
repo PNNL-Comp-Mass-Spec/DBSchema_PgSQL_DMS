@@ -50,7 +50,7 @@ BEGIN
             -- Add a new entry to sw.t_remote_info
             -- Use a Merge statement to avoid the use of an explicit transaction
             ---------------------------------------------------
-            --
+
             MERGE INTO sw.t_remote_info AS target
             USING ( SELECT _remoteInfo AS Remote_Info
                   ) AS Source

@@ -175,6 +175,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode = 'add' Then
 
             INSERT INTO t_eus_proposals (
@@ -198,7 +199,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_eus_proposals
@@ -233,7 +234,6 @@ BEGIN
         -- Add associations between proposal and users
         -- who are in list, but not in association table
         ---------------------------------------------------
-        --
 
         If _eusPropStateID IN (1, 2) Then
             _proposalUserStateID := 1;

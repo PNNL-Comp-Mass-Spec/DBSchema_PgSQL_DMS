@@ -47,7 +47,7 @@ BEGIN
         ---------------------------------------------------
         -- Look for datasets with an incorrect state
         ---------------------------------------------------
-        --
+
         _currentLocation := 'Populate Tmp_Datasets';
 
         -- Find datasets with a complete DatasetCapture task, yet a state of 1 or 2 in DMS5
@@ -68,7 +68,7 @@ BEGIN
         ---------------------------------------------------
         -- Look for analysis jobs with an incorrect state
         ---------------------------------------------------
-        --
+
         _currentLocation := 'Populate Tmp_Jobs';
 
         -- Find jobs complete in DMS_Pipeline, yet a state of 1, 2, or 8 in DMS5

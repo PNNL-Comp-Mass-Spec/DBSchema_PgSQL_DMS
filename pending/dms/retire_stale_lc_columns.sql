@@ -46,7 +46,7 @@ BEGIN
     -----------------------------------------------------------
     -- Find LC columns that have been used with a dataset, but not in the last 9 months
     -----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_LCColumns (lc_column_id, Last_Used)
     SELECT LCCol.lc_column_id, MAX(DS.created) As Last_Used
     FROM t_lc_column LCCol
@@ -83,7 +83,7 @@ BEGIN
     -----------------------------------------------------------
     -- Next find LC columns created at least 2 years ago that have never been used with a dataset
     -----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_LCColumns (lc_column_id, Last_Used)
     SELECT LCCol.lc_column_id, LCCol.created As Last_Used
     FROM t_lc_column LCCol
@@ -97,7 +97,7 @@ BEGIN
     -----------------------------------------------------------
     -- Remove certain columns that we don't want to auto-retire
     -----------------------------------------------------------
-    --
+
     DELETE FROM Tmp_LCColumns
     WHERE lc_column_id IN ( SELECT lc_column_id
                             FROM t_lc_column
@@ -110,7 +110,7 @@ BEGIN
         -----------------------------------------------------------
         -- Preview the columns that would be retired
         -----------------------------------------------------------
-        --
+
         SELECT LCCol.lc_column_id,
                LCCol.lc_column,
                Src.Last_Used,
@@ -132,7 +132,7 @@ BEGIN
         -----------------------------------------------------------
         -- Change the LC Column state to 3=Retired
         -----------------------------------------------------------
-        --
+
         UPDATE t_lc_column
         SET column_state_id = 3
         WHERE lc_column_id IN ( SELECT lc_column_id

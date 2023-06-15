@@ -37,7 +37,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _mostRecentDays := Coalesce(_mostRecentDays, 0);
     _startDate := Coalesce(_startDate, DateAdd(day, -2, CURRENT_TIMESTAMP));
 
@@ -52,7 +52,6 @@ BEGIN
     -----------------------------------------------
     -- Query the upload stats
     -----------------------------------------------
-    --
 
     SELECT COUNT(*)
     INTO _uploadErrors

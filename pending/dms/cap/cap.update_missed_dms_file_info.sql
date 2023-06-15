@@ -40,7 +40,7 @@ BEGIN
     --------------------------------------------
     -- Validate the inputs
     --------------------------------------------
-    --
+
     _deleteFromTableOnSuccess := Coalesce(_deleteFromTableOnSuccess, true);
     _replaceExistingData := Coalesce(_replaceExistingData, false);
     _datasetIDs := Coalesce(_datasetIDs, '');
@@ -49,7 +49,7 @@ BEGIN
     --------------------------------------------
     -- Create a table to hold datasets to process
     --------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_DatasetsToProcess (
         Dataset_ID int not null
     )
@@ -60,7 +60,7 @@ BEGIN
     -- Look for Datasets with entries in cap.t_dataset_info_xml but null values for File_Info_Last_Modified in DMS
     -- Alternatively, if _replaceExistingData is true, process all entries in cap.t_dataset_info_xml
     --------------------------------------------
-    --
+
     INSERT INTO Tmp_DatasetsToProcess (dataset_id)
     SELECT DI.dataset_id
     FROM cap.t_dataset_info_xml DI
@@ -72,7 +72,7 @@ BEGIN
     --------------------------------------------
     -- Possibly filter on _datasetIDs
     --------------------------------------------
-    --
+
     DELETE Tmp_DatasetsToProcess
     WHERE NOT Dataset_ID IN ( SELECT Value
                               FROM public.parse_delimited_integer_list ( _datasetIDs, ',' ) )
@@ -80,7 +80,7 @@ BEGIN
     --------------------------------------------
     -- Delete any entries that don't exist in public.T_Dataset
     --------------------------------------------
-    --
+
     DELETE FROM Tmp_DatasetsToProcess
     WHERE NOT EXISTS (SELECT DS.Dataset_ID
                       FROM public.t_dataset DS
@@ -97,7 +97,7 @@ BEGIN
         --------------------------------------------
         -- Delete any entries in cap.t_dataset_info_xml that were cached over 7 days ago and do not exist in public.T_Dataset
         --------------------------------------------
-        --
+
         DELETE FROM cap.t_dataset_info_xml
         WHERE Cache_Date < CURRENT_TIMESTAMP - Interval '7 days' AND
               NOT EXISTS (SELECT DS.Dataset_ID
@@ -111,7 +111,6 @@ BEGIN
     -- Will only update if the cache_date in cap.t_dataset_info_xml is newer than
     -- the File_Info_Last_Modified date in T_Dataset
     --------------------------------------------
-    --
 
 
     -- ToDo: Update this to use xpath()

@@ -310,7 +310,7 @@ BEGIN
         ---------------------------------------------------
         -- Convert _mods to rooted XML
         ---------------------------------------------------
-        --
+
         _xml := public.try_cast('<root>' || _mods || '</root>', null::xml);
 
         If _xml Is Null Then
@@ -423,7 +423,6 @@ BEGIN
     -----------------------------------------
     -- Parse the modification definitions
     -----------------------------------------
-    --
 
     FOR _row IN
         SELECT Value
@@ -593,7 +592,7 @@ BEGIN
         -----------------------------------------
         -- Look for an equals sign in the first entry of Tmp_ModDef
         -----------------------------------------
-        --
+
         _field := '';
 
         SELECT Trim(Value)
@@ -621,7 +620,7 @@ BEGIN
         -----------------------------------------
         -- Determine the ModType
         -----------------------------------------
-        --
+
         _modType := SubString(_field, 1, _charIndex - 1);
 
         If _modType Not In ('DynamicMod', 'StaticMod') Then
@@ -877,7 +876,7 @@ BEGIN
             -----------------------------------------
             -- Determine the Mass_Correction_ID based on the UniMod name
             -----------------------------------------
-            --
+
             SELECT Mass_Correction_ID, monoisotopic_mass
             INTO _massCorrectionID, _modMass
             FROM t_mass_correction_factors
@@ -920,7 +919,7 @@ BEGIN
             -----------------------------------------
             -- Determine the affected residues
             -----------------------------------------
-            --
+
             SELECT Trim(Value)
             INTO _location
             FROM Tmp_ModDef
@@ -1021,7 +1020,7 @@ BEGIN
             -----------------------------------------
             -- Determine the Mass_Correction_ID based on the mod mass
             -----------------------------------------
-            --
+
             SELECT Trim(Value)
             INTO _field
             FROM Tmp_ModDef
@@ -1107,7 +1106,7 @@ BEGIN
             -----------------------------------------
             -- Determine the Mass_Correction_ID and affected residues based on the mod name
             -----------------------------------------
-            --
+
             SELECT Trim(Value)
             INTO _field
             FROM Tmp_ModDef
@@ -1251,7 +1250,7 @@ BEGIN
         -----------------------------------------
         -- Determine the residue IDs for the entries in Tmp_Residues
         -----------------------------------------
-        --
+
         UPDATE Tmp_Residues
         SET Residue_ID = R.Residue_ID,
             Residue_Desc = R.Description
@@ -1313,7 +1312,7 @@ BEGIN
         -----------------------------------------
         -- Check for N-terminal or C-terminal static mods that do not use *
         -----------------------------------------
-        --
+
         If _modTypeSymbol = 'S' And Exists (Select * From Tmp_Residues Where Residue_Symbol In ('<', '>') AND Not Terminal_AnyAA) Then
             -- Auto-switch to tracking as a dynamic mod (required for PHRP)
             _modTypeSymbol := 'D';
@@ -1322,7 +1321,7 @@ BEGIN
         -----------------------------------------
         -- Determine the Local_Symbol_ID to store for dynamic mods
         -----------------------------------------
-        --
+
         If _modTypeSymbol = 'D' Then
             If Exists (SELECT * FROM Tmp_ModsToStore WHERE Mod_Name = _modName AND Mod_Type_Symbol = 'D') Then
                 -- This DynamicMod entry uses the same mod name as a previous one; re-use it
@@ -1346,7 +1345,7 @@ BEGIN
             -----------------------------------------
             -- Check whether this isobaric mod already exists in Tmp_ModsToStore
             -----------------------------------------
-            --
+
             SELECT CASE WHEN _modTypeSymbol = 'S' AND
                              Residue_Symbol IN ('<', '>') THEN 'T'
                         ELSE _modTypeSymbol
@@ -1375,7 +1374,7 @@ BEGIN
         -----------------------------------------
         -- Append the mod defs to Tmp_ModsToStore
         -----------------------------------------
-        --
+
         INSERT INTO Tmp_ModsToStore (
                 Mod_Name,
                 Mass_Correction_ID,

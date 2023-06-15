@@ -46,7 +46,7 @@ BEGIN
     ---------------------------------------------------
     -- Find associated sample prep request for experiment
     ---------------------------------------------------
-    --
+
     --
     SELECT sample_prep_request_id
     INTO _prepRequestID
@@ -57,7 +57,7 @@ BEGIN
     -- If there is no associated sample prep request
     -- we are done
     ---------------------------------------------------
-    --
+
     If Not FOUND Then
         RETURN;
     End If;
@@ -78,7 +78,6 @@ BEGIN
     ---------------------------------------------------
     -- Handle overrides
     ---------------------------------------------------
-    --
 
     _eusUsageType :=  CASE WHEN _eusUsageType::citext  = _ovr THEN _usageTypeSamplePrep  ELSE _eusUsageType  END;
     _eusProposalID := CASE WHEN _eusProposalID::citext = _ovr THEN _proposalIdSamplePrep ELSE _eusProposalID END;

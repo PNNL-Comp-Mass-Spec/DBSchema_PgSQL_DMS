@@ -43,7 +43,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _itemList := Coalesce(_itemList, '');
 
     RAISE INFO '%', _message;

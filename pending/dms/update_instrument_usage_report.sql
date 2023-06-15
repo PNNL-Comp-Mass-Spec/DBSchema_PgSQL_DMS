@@ -187,7 +187,7 @@ BEGIN
             -----------------------------------------------------------
             -- Temp table to hold update items
             -----------------------------------------------------------
-            --
+
             CREATE TEMP TABLE Tmp_Factors (
                 Identifier int null,
                 Field citext null,
@@ -197,7 +197,7 @@ BEGIN
             -----------------------------------------------------------
             -- Populate temp table with new parameters
             -----------------------------------------------------------
-            --
+
             INSERT INTO Tmp_Factors (Identifier, Field, Value)
             SELECT XmlQ.Identifier, XmlQ.Field, XmlQ.Value
             FROM (
@@ -244,7 +244,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Get list of EMSL instruments
                 ---------------------------------------------------
-                --
+
                 CREATE TEMP TABLE Tmp_Instruments (
                     Seq int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                     Instrument text

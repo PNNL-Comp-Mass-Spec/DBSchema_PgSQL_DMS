@@ -62,7 +62,7 @@ BEGIN
     -----------------------------------------------------
     -- Lookup the most recent posting time
     -----------------------------------------------------
-    --
+
     SELECT MAX(entered)
     INTO _mostRecentPostingTime
     FROM sw.t_job_step_processing_stats;
@@ -83,7 +83,7 @@ BEGIN
         -----------------------------------------------------
         -- Cache the new stats
         -----------------------------------------------------
-        --
+
         INSERT INTO Tmp_JobStepProcessingStats( Job,
                                                 Step,
                                                 Processor,

@@ -91,7 +91,7 @@ BEGIN
     ---------------------------------------------------
     -- Lookup the current parameters stored in t_task_parameters for this capture task job
     ---------------------------------------------------
-    --
+
     SELECT Parameters
     INTO _xmlParameters
     FROM cap.t_task_parameters
@@ -119,7 +119,7 @@ BEGIN
     ---------------------------------------------------
     -- Use function_update_task_parameter_xml to update the XML
     ---------------------------------------------------
-    --
+
     SELECT updated_xml, success, message
     INTO _results
     FROM cap.add_update_task_parameter_xml(_xmlParameters, _section, _paramName, _value, _deleteParam, _showDebug => _infoOnly);
@@ -136,7 +136,7 @@ BEGIN
         -- Update T_task_Parameters
         -- Note: Ordering by Section name but not by parameter name
         ---------------------------------------------------
-        --
+
         If _existingParamsFound Then
             UPDATE cap.t_task_parameters
             SET parameters = _results.updated_xml

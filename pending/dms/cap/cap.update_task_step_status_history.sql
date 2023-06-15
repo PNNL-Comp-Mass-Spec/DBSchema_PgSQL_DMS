@@ -64,7 +64,7 @@ BEGIN
     -----------------------------------------------------
     -- Lookup the most recent posting time
     -----------------------------------------------------
-    --
+
     SELECT MAX(Posting_Time)
     INTO _mostRecentPostingTime
     FROM cap.t_task_step_status_history
@@ -85,6 +85,7 @@ BEGIN
         -----------------------------------------------------
         -- Compute the new stats
         -----------------------------------------------------
+
         INSERT INTO Tmp_TaskStepStatusHistory (Posting_Time, Step_Tool, State, Step_Count)
         SELECT CURRENT_TIMESTAMP As Posting_Time, Tool, State, COUNT(*) AS Step_Count
         FROM cap.t_task_steps

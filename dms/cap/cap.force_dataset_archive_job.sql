@@ -31,7 +31,7 @@ BEGIN
     ---------------------------------------------------
     -- Find capture task job (the script for the job does not matter)
     ---------------------------------------------------
-    --
+
     SELECT Dataset,
            Dataset_ID
     INTO _dataset, _datasetID
@@ -50,7 +50,7 @@ BEGIN
     -- Is there another DatasetArchive capture task job
     -- for this dataset already in broker?
     ---------------------------------------------------
-    --
+
     SELECT job
     INTO _existingJob
     FROM cap.t_tasks
@@ -67,7 +67,7 @@ BEGIN
     ---------------------------------------------------
     -- Create dataset archive entry in DMS
     ---------------------------------------------------
-    --
+
     CALL public.add_archive_dataset (_datasetID,
                                      _message => _message,          -- Output
                                      _returnCode => _returnCode);   -- Output
@@ -79,7 +79,7 @@ BEGIN
     ---------------------------------------------------
     -- Create DatasetArchive capture task job
     ---------------------------------------------------
-    --
+
     INSERT INTO t_tasks ( Script,
                           Dataset,
                           Dataset_ID,

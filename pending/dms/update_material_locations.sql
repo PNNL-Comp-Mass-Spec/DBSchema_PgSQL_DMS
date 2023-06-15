@@ -89,7 +89,7 @@ BEGIN
         -----------------------------------------------------------
         -- Temp table to hold location info
         -----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_LocationInfo (
             Location text,
             ID text NULL,
@@ -112,7 +112,7 @@ BEGIN
         -----------------------------------------------------------
         -- Populate temp table with new parameters
         -----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_LocationInfo (Location, ID, Action, Value)
         SELECT XmlQ.Location, XmlQ.ID, XmlQ.Action, XmlQ.Value
         FROM (

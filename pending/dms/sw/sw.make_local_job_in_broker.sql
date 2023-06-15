@@ -147,7 +147,7 @@ BEGIN
     ---------------------------------------------------
     -- Obtain new job number (if not debugging)
     ---------------------------------------------------
-    --
+
     If Not _debugMode Then
         _job := public.get_new_job_id('Created in broker', false)
 
@@ -168,14 +168,14 @@ BEGIN
     ---------------------------------------------------
     -- Add job to temp table
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Jobs (Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
     VALUES (_job, _priority, _scriptName, 1, _datasetName, _datasetID, NULL)
 
     ---------------------------------------------------
     -- Construct the results directory name
     ---------------------------------------------------
-    --
+
     _resultsDirectoryName := sw.get_results_directory_name (_job, _tag);
 
     If _resultsDirectoryName Is Null Then
@@ -198,7 +198,7 @@ BEGIN
     -- Create the basic job structure (steps and dependencies)
     -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
     ---------------------------------------------------
-    --
+
     CALL sw.create_steps_for_job (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
@@ -221,6 +221,7 @@ BEGIN
     ---------------------------------------------------
     -- Do special needs for local jobs that target other jobs
     ---------------------------------------------------
+
     CALL sw.adjust_params_for_local_job
         _scriptName,
         _datasetName,
@@ -237,7 +238,7 @@ BEGIN
     -- Calculate signatures for steps that require them (and also handle shared results directories)
     -- Details are stored in Tmp_Job_Steps
     ---------------------------------------------------
-    --
+
     CALL sw.create_signatures_for_job_steps (
             _job,
             _jobParamXML,
@@ -276,7 +277,7 @@ BEGIN
     ---------------------------------------------------
     -- Handle any step cloning
     ---------------------------------------------------
-    --
+
     CALL sw.clone_job_step (_job, _jobParamXML, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
@@ -299,7 +300,7 @@ BEGIN
     ---------------------------------------------------
     -- Update step dependency count (code taken from SP FinishJobCreation)
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Job_Steps
     SET Dependencies = T.dependencies
     FROM ( SELECT Step,
@@ -342,7 +343,6 @@ BEGIN
         ---------------------------------------------------
         -- Populate column transfer_folder_path in sw.t_jobs
         ---------------------------------------------------
-        --
 
         SELECT Value
         INTO _transferFolderPath
@@ -359,7 +359,7 @@ BEGIN
         -- If a data package is defined, update entries for
         -- OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList in sw.t_job_parameters
         ---------------------------------------------------
-        --
+
         If _dataPackageID > 0 Then
             CALL sw.update_job_param_org_db_info_using_data_pkg (
                         _job,
@@ -376,6 +376,7 @@ BEGIN
         -----------------------------------------------
         -- Call update_job_param_org_db_info_using_data_pkg with debug mode enabled
         ---------------------------------------------------
+
         CALL sw.update_job_param_org_db_info_using_data_pkg (
                 _job,
                 _dataPackageID,

@@ -167,7 +167,7 @@ BEGIN
     -- Populate Tmp_DatasetInfo using the dataset list
     -- Remove any duplicates that may be present
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
     SELECT DISTINCT Item
     FROM public.parse_delimited_list ( _datasets )

@@ -38,7 +38,7 @@ BEGIN
     -- If job not in main tables,
     -- restore it from most recent successful historic job.
     ---------------------------------------------------
-    --
+
     CALL sw.copy_history_to_job (_job, _message => _message, _returnCode => _returnCode);
     --
     If _returnCode <> '' Then
@@ -48,7 +48,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate Tmp_Jobs using T_Jobs
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Jobs (job, priority, script, state, dataset, dataset_id, results_directory_name)
     SELECT job, priority, script, state, dataset, dataset_id, results_folder_name
     FROM sw.t_jobs

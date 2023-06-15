@@ -27,7 +27,7 @@ BEGIN
     ------------------------------------------------
     -- Look for _uriPath in dpkg.t_uri_paths
     ------------------------------------------------
-    --
+
     SELECT uri_path_id
     INTO _uriPathID
     FROM dpkg.t_uri_paths

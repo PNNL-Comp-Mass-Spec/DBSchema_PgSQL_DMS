@@ -30,20 +30,20 @@ BEGIN
     ---------------------------------------------------
     -- Window for sample prep request activity
     ---------------------------------------------------
-    --
+
     _window := CURRENT_TIMESTAMP - INTERVAL '7 days'
 
     ---------------------------------------------------
     -- Earlier than batch creation window
     -- (default for datasets with null start time)
     ---------------------------------------------------
-    --
+
     _now := CURRENT_TIMESTAMP;
 
     ---------------------------------------------------
     -- Temp table for events to be added
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_NewEvents (
         Target_ID int,
         Event_Type int
@@ -96,7 +96,7 @@ BEGIN
         ---------------------------------------------------
         -- Add new events to table
         ---------------------------------------------------
-        --
+
         INSERT INTO t_notification_event( event_type_id,
                                           target_id )
         SELECT Tmp_NewEvents.event_type_id,
@@ -110,7 +110,7 @@ BEGIN
         ---------------------------------------------------
         -- Clean out batch events older than window
         ---------------------------------------------------
-        --
+
         DELETE FROM t_notification_event
         WHERE event_type_id BETWEEN 11 AND 19 AND
               entered < _window;

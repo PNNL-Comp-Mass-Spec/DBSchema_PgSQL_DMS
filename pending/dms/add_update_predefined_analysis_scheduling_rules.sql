@@ -115,7 +115,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
-    --
+
     If _mode = 'add' Then
 
         INSERT INTO t_predefined_analysis_scheduling_rules (
@@ -145,7 +145,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_predefined_analysis_scheduling_rules

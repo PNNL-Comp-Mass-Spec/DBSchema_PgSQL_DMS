@@ -37,7 +37,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _mostRecentDays := Coalesce(_mostRecentDays, 0);
     _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '2 days');
 
@@ -52,7 +52,7 @@ BEGIN
     -----------------------------------------------
     -- Query the upload stats
     -----------------------------------------------
-    --
+
     SELECT COUNT(*)
     INTO _uploadErrors
     FROM cap.t_myemsl_uploads

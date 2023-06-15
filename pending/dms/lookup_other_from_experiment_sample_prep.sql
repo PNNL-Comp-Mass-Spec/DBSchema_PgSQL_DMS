@@ -37,7 +37,7 @@ BEGIN
     ---------------------------------------------------
     -- Find associated sample prep request for experiment
     ---------------------------------------------------
-    --
+
     SELECT sample_prep_request_id
     INTO _prepRequestID
     FROM t_experiments

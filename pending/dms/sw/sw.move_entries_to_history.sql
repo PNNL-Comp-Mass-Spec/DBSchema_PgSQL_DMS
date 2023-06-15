@@ -42,7 +42,7 @@ BEGIN
     ----------------------------------------------------------
     -- Copy Job_Events entries into historic log tables
     ----------------------------------------------------------
-    --
+
     BEGIN
 
         INSERT INTO logsw.t_job_events( event_id,
@@ -89,7 +89,7 @@ BEGIN
     ----------------------------------------------------------
     -- Copy Job_Step_Events entries into logsw.t_job_step_events
     ----------------------------------------------------------
-    --
+
     BEGIN
 
         INSERT INTO logsw.t_job_step_events( event_id,
@@ -137,7 +137,7 @@ BEGIN
     ----------------------------------------------------------
     -- Copy Job_Step_Processing_Log entries into logsw.t_job_step_processing_log
     ----------------------------------------------------------
-    --
+
     BEGIN
 
         INSERT INTO logsw.t_job_step_processing_log( event_id,
@@ -183,7 +183,7 @@ BEGIN
     ----------------------------------------------------------
     -- Copy Log entries into logsw.t_log_entries
     ----------------------------------------------------------
-    --
+
     BEGIN
 
         INSERT INTO logsw.t_log_entries( entry_id,

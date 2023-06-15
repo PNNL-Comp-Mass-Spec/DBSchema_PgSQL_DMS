@@ -41,7 +41,7 @@ BEGIN
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
-    --
+
     _processingMode := Coalesce(_processingMode, 0);
     _requestID := Coalesce(_requestID, 0);
     _jobSearchHours := Coalesce(_jobSearchHours, 0);
@@ -101,7 +101,7 @@ BEGIN
         ------------------------------------------------
         -- Find jobs created in the last _jobSearchHours that match one or more job requests
         ------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_RequestsAndExistingJobs (
             Request_ID int NOT NULL,
             Job        int NOT NULL
@@ -148,7 +148,7 @@ BEGIN
             ------------------------------------------------
             -- Preview the update of cached info
             ------------------------------------------------
-            --
+
             SELECT DISTINCT RJ.request_id AS Request_ID,
                    CASE
                        WHEN CachedJobs.request_id IS NULL
@@ -166,7 +166,7 @@ BEGIN
             ------------------------------------------------
             -- Count the new number of job requests that are not yet in Tmp_RequestsAndExistingJobs
             ------------------------------------------------
-            --
+
             SELECT COUNT(DISTINCT Src.request_id)
             INTO _jobRequestsAdded
             FROM Tmp_RequestsAndExistingJobs Src
@@ -180,7 +180,6 @@ BEGIN
             -- We must process each request_id separately so that we can
             -- delete extra rows in t_analysis_job_request_existing_jobs for each request_id
             ------------------------------------------------
-            --
 
             FOR _currentRequestId IN
                 SELECT Request_ID
@@ -232,7 +231,7 @@ BEGIN
         ------------------------------------------------
         -- Add new analysis job requests to t_analysis_job_request_existing_jobs
         ------------------------------------------------
-        --
+
         If _infoOnly Then
 
             -- ToDo: Update this to use RAISE INFO
@@ -262,7 +261,7 @@ BEGIN
             -- There are a large number of existing job requests that were never used to create jobs
             -- Therefore, this query only examines job requests from the last 30 days
             ------------------------------------------------
-            --
+
             INSERT INTO t_analysis_job_request_existing_jobs( request_id, job )
             SELECT DISTINCT LookupQ.request_id,
                             get_existing_jobs_matching_job_request.job
@@ -289,7 +288,7 @@ BEGIN
         ------------------------------------------------
         -- Update t_analysis_job_request_existing_jobs using all existing analysis job requests
         ------------------------------------------------
-        --
+
         If _infoOnly Then
 
             -- ToDo: Update this to use RAISE INFO
@@ -297,7 +296,7 @@ BEGIN
             ------------------------------------------------
             -- Preview the update of cached info
             ------------------------------------------------
-            --
+
             SELECT DISTINCT AJR.request_id AS Request_ID,
               CASE
                   WHEN CachedJobs.request_id IS NULL
@@ -320,7 +319,7 @@ BEGIN
             -- Update cached info for all job requests
             -- This will take at least 30 seconds to complete
             ------------------------------------------------
-            --
+
             MERGE INTO t_analysis_job_request_existing_jobs AS target
             USING ( SELECT DISTINCT AJR.request_id As Request_ID, MatchingJobs.Job
                     FROM t_analysis_job_request AJR CROSS APPLY get_existing_jobs_matching_job_request(AJR.request_id) MatchingJobs

@@ -66,7 +66,7 @@ BEGIN
         --------------------------------------------------------------
         -- Loop through pc.t_proteins and populate pc.t_protein_headers
         --------------------------------------------------------------
-        --
+
         _currentLocation := 'Iterate through the proteins';
 
         WHILE true

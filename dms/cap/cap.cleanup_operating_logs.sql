@@ -64,7 +64,7 @@ BEGIN
     -- Typically only public.t_log_entries will have Info or Warn log messages,
     -- so the following queries will likely not match any rows
     ----------------------------------------------------
-    --
+
     BEGIN
         _currentLocation := 'Delete Info and Warn entries';
 
@@ -102,7 +102,7 @@ BEGIN
     ----------------------------------------------------
     -- Move old log entries and event entries to historic log tables
     ----------------------------------------------------
-    --
+
     _currentLocation := 'Call cap.move_capture_entries_to_history';
 
     CALL cap.move_capture_entries_to_history (_logRetentionIntervalDays, _infoOnly);

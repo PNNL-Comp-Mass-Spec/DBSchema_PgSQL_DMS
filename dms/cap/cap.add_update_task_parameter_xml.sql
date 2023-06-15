@@ -160,7 +160,7 @@ BEGIN
     ---------------------------------------------------
     -- Parse the XML and store in a table
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Task_Parameters (
         Section citext,
         Name citext,
@@ -228,7 +228,6 @@ BEGIN
         -- Add/update the specified parameter
         -- First try an update
         ---------------------------------------------------
-        --
 
         UPDATE Tmp_Task_Parameters
         SET Value = _value, State = Case When Value Is Distinct From _value Then 'Updated Value' Else 'Unchanged Value' End
@@ -245,7 +244,7 @@ BEGIN
         ---------------------------------------------------
         -- Delete the specified parameter
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_Task_Parameters
         SET State = _deletedFlag
         WHERE Section = _section::citext AND

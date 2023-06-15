@@ -52,7 +52,7 @@ BEGIN
         -----------------------------------------------------------
         -- Validate the inputs
         -----------------------------------------------------------
-        --
+
         _jobs := Coalesce(_jobs, '');
         _infoOnly := Coalesce(_infoOnly, false);
 
@@ -67,7 +67,6 @@ BEGIN
         -----------------------------------------------------------
         -- Create the temporary tables
         -----------------------------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_Jobs (
             Job int
@@ -90,7 +89,7 @@ BEGIN
         -----------------------------------------------------------
         -- Find steps for the given capture task jobs that need to be reset
         -----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_JobStepsToReset( Job, Step )
         SELECT DISTINCT TS.Job,
                         TS.Step

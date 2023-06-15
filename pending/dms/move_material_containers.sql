@@ -82,7 +82,7 @@ BEGIN
     ---------------------------------------------------
     -- Create some temporary tables
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_ContainersToProcess (
         Entry_ID     int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1)
         MC_ID        int NOT NULL,
@@ -110,7 +110,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate the table
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ContainersToProcess (MC_ID, container, type, location_id, Location_Tag, Shelf, Rack, Row, Col )
     SELECT MC.container_id AS MC_ID,
            MC.container AS Container,
@@ -147,7 +147,6 @@ BEGIN
     ---------------------------------------------------
     -- Step through the containers and update their location
     ---------------------------------------------------
-    --
 
     _continue := true;
 

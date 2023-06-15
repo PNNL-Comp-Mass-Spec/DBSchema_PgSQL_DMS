@@ -122,7 +122,7 @@ BEGIN
     ---------------------------------------------------
     -- Replace empty Grandparent term IDs and names with NULL
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_SourceData t
     SET grandparent_term_id = NULL,
         grandparent_term_name = NULL
@@ -133,7 +133,7 @@ BEGIN
     ---------------------------------------------------
     -- Set matches_existing to 1 for rows that match an existing row in ont.t_cv_envo
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_SourceData t
     SET matches_existing = 1
     FROM ont.t_cv_envo s
@@ -147,7 +147,7 @@ BEGIN
         ---------------------------------------------------
         -- Update existing rows
         ---------------------------------------------------
-        --
+
         UPDATE ont.t_cv_envo t
         SET term_name = s.term_name,
             identifier = s.identifier,
@@ -180,7 +180,7 @@ BEGIN
         ---------------------------------------------------
         -- Add new rows
         ---------------------------------------------------
-        --
+
         INSERT INTO ont.t_cv_envo (term_pk, term_name, identifier, is_leaf, synonyms,
                                   parent_term_name, parent_term_id,
                                   grandparent_term_name, grandparent_term_id)
@@ -197,7 +197,7 @@ BEGIN
         ---------------------------------------------------
         -- Look for identifiers with invalid term names
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_InvalidTermNames (
             entry_id   int PRIMARY KEY GENERATED ALWAYS As IDENTITY,
             identifier citext not null,
@@ -328,7 +328,7 @@ BEGIN
         ---------------------------------------------------
         -- Update the Children counts
         ---------------------------------------------------
-        --
+
         UPDATE ont.t_cv_envo t
         SET children = StatsQ.children
         FROM ( SELECT s.parent_term_id, COUNT(*) As children
@@ -352,7 +352,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview existing rows that would be updated
         ---------------------------------------------------
-        --
+
         RETURN QUERY
         SELECT 'Existing item to update'::citext as Item_Type,
                t.entry_id,

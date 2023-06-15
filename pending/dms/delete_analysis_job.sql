@@ -82,7 +82,7 @@ BEGIN
     -------------------------------------------------------
     -- Validate that the job exists
     -------------------------------------------------------
-    --
+
     If Not Exists (SELECT * FROM t_analysis_job WHERE job = _jobID) Then
 
         _message := format('job not found; nothing to delete: %s', _job);
@@ -107,14 +107,14 @@ BEGIN
         -------------------------------------------------------
         -- Delete the job from t_reporter_ion_observation_rates (if it exists)
         -------------------------------------------------------
-        --
+
         DELETE FROM t_reporter_ion_observation_rates
         WHERE job = _jobID
 
         -------------------------------------------------------
         -- Delete the job from t_analysis_job
         -------------------------------------------------------
-        --
+
         DELETE FROM t_analysis_job
         WHERE (job = _jobID)
 
@@ -125,7 +125,7 @@ BEGIN
         -------------------------------------------------------
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
         -------------------------------------------------------
-        --
+
         If char_length(_callingUser) > 0 Then
             _stateID := 0;
 
@@ -139,7 +139,7 @@ BEGIN
     -- Also delete from the DMS_Pipeline database if the state is New, Failed, or Holding
     -- Ignore any jobs with running job steps (though if the step started over 48 hours ago, ignore that job step)
     -------------------------------------------------------
-    --
+
     CALL sw.delete_job_if_new_or_failed (_jobID, _callingUser, _message => _msg, _infoOnly => _infoOnly);
 
     If char_length(_msg) > 0 Then

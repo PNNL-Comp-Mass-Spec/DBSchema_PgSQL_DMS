@@ -55,7 +55,7 @@ BEGIN
     ---------------------------------------------------
     -- Get job parameters into table format
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Job_Parameters (
         Job int,
         Step int,

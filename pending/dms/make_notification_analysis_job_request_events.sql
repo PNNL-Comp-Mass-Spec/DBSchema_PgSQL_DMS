@@ -57,7 +57,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table for analysis job requests of interest
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_AnalysisJobRequests (
         Request_ID int,
         Total_Jobs int,
@@ -69,7 +69,7 @@ BEGIN
     ---------------------------------------------------
     -- Find analysis job requests to process
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_AnalysisJobRequests
     SELECT t_analysis_job_request.request_id,
            COUNT(t_analysis_job.job) AS Total_Jobs,
@@ -127,7 +127,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table for events to be added
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_NewEvents (
         Target_ID int,
         Event_Type int
@@ -205,7 +205,7 @@ BEGIN
         ---------------------------------------------------
         -- Add new events to table
         ---------------------------------------------------
-        --
+
         INSERT INTO t_notification_event( event_type_id,
                                           target_id )
         SELECT Tmp_NewEvents.event_type_id,
@@ -219,7 +219,7 @@ BEGIN
         ---------------------------------------------------
         -- Clean out batch events older than window
         ---------------------------------------------------
-        --
+
         DELETE FROM t_notification_event
         WHERE event_type_id IN (4, 5) AND
               entered < _window;

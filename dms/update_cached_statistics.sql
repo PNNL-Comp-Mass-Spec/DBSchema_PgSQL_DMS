@@ -54,7 +54,7 @@ BEGIN
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
-    --
+
     _previewSql := Coalesce(_previewSql, false);
     _updateParamSettingsFileCounts := Coalesce(_updateParamSettingsFileCounts, true);
     _updateGeneralStatistics := Coalesce(_updateGeneralStatistics, false);
@@ -74,7 +74,6 @@ BEGIN
         ------------------------------------------------
         -- Update Usage Counts for Parameter Files
         ------------------------------------------------
-        --
 
         _startTime := CURRENT_TIMESTAMP;
 
@@ -115,7 +114,7 @@ BEGIN
         ------------------------------------------------
         -- Update Usage Counts for Settings Files
         ------------------------------------------------
-        --
+
         _startTime := CURRENT_TIMESTAMP;
 
         UPDATE t_settings_files target
@@ -153,7 +152,7 @@ BEGIN
         ------------------------------------------------
         -- Update Usage Counts for LC Cart Configuration items
         ------------------------------------------------
-        --
+
         _startTime := CURRENT_TIMESTAMP;
 
         UPDATE t_lc_cart_configuration target
@@ -188,7 +187,7 @@ BEGIN
         ------------------------------------------------
         -- Update Usage Counts for Instrument Groups
         ------------------------------------------------
-        --
+
         _startTime := CURRENT_TIMESTAMP;
 
         UPDATE t_instrument_group_allowed_ds_type target
@@ -230,7 +229,7 @@ BEGIN
         ------------------------------------------------
         -- Update Usage Counts for Instruments, by dataset type
         ------------------------------------------------
-        --
+
         _startTime := CURRENT_TIMESTAMP;
 
         -- Add missing rows to t_cached_instrument_dataset_type_usage
@@ -300,7 +299,7 @@ BEGIN
         ------------------------------------------------
         -- Update Usage Counts for Protein Collections
         ------------------------------------------------
-        --
+
         _startTime := CURRENT_TIMESTAMP;
 
         CALL update_protein_collection_usage (_message => _message, _returnCode => _returnCode);

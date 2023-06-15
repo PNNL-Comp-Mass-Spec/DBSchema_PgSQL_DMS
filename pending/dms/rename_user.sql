@@ -54,7 +54,7 @@ BEGIN
     --------------------------------------------
     -- Validate the inputs
     --------------------------------------------
-    --
+
     _oldUserName := Coalesce(_oldUserName, '');
     _newUserName := Coalesce(_newUserName, '');
 
@@ -79,7 +79,7 @@ BEGIN
     --------------------------------------------
     -- Examine t_users
     --------------------------------------------
-    --
+
     If Not Exists (Select * From t_users Where username = _oldUserName) Then
         _message := format('User %s does not exist in t_users; nothing to do', _oldUserName);
         RAISE WARNING '%', _message;

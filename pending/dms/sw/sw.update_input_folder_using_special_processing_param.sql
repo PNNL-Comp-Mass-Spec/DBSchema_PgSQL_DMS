@@ -67,7 +67,7 @@ BEGIN
     ---------------------------------------------------
     -- Parse the jobs in _jobList
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_JobList (job, script, Message)
     SELECT Value AS Job,
            Coalesce(J.script, '') AS Script,

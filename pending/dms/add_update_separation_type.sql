@@ -63,7 +63,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate _state
     ---------------------------------------------------
-    --
+
     If Not _state::citext IN ('Active', 'Inactive') Then
         _message := format('Separation type state must be Active or Inactive; %s is not allowed', _state);
         RAISE WARNING '%', _message;
@@ -75,6 +75,7 @@ BEGIN
     ---------------------------------------------------
     -- Convert text state to integer
     ---------------------------------------------------
+
     If _state = 'Active' Then
         _stateint := 1;
     Else
@@ -112,6 +113,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the sample type and get the ID
     ---------------------------------------------------
+
     SELECT sample_type_id
     INTO _sampleTypeID
     FROM t_secondary_sep_sample_type
@@ -128,7 +130,6 @@ BEGIN
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)
     ---------------------------------------------------
-    --
 
     If _mode = 'update' Then
         -- Lookup the current name and state
@@ -167,7 +168,7 @@ BEGIN
         ---------------------------------------------------
         -- Only allow updating the state of Separation Type items that are associated with a dataset
         ---------------------------------------------------
-        --
+
         If _ignoreDatasetChecks = 0 And Exists (Select * FROM t_dataset Where separation_type = _sepTypeName) Then
 
             SELECT COUNT(*),
@@ -211,7 +212,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate that the LC Cart Config name is unique when creating a new entry
     ---------------------------------------------------
-    --
+
     If _mode = 'add' Then
         If Exists (Select * FROM t_secondary_sep Where separation_type = _sepTypeName) Then
             _message := format('Separation Type already exists; cannot add a new separation type named %s', _sepTypeName);
@@ -225,7 +226,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
-    --
+
     If _mode = 'add' Then
 
         SELECT MAX(separation_type_id) + 1
@@ -254,7 +255,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_secondary_sep

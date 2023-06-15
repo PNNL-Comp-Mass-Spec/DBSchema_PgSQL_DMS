@@ -190,7 +190,7 @@ BEGIN
         ---------------------------------------------------
         -- Determine if we are adding or check_adding a dataset
         ---------------------------------------------------
-        --
+
         If _mode::citext In ('add', 'check_add') Then
             _addingDataset := true;
         Else
@@ -200,7 +200,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate dataset name
         ---------------------------------------------------
-        --
+
         _badCh := public.validate_chars(_datasetName, '');
 
         If _badCh <> '' Then
@@ -307,7 +307,6 @@ BEGIN
             ---------------------------------------------------
             -- Lookup storage path ID
             ---------------------------------------------------
-            --
 
             _storagePathID := get_instrument_storage_path_for_new_datasets (_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
 
@@ -448,7 +447,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_dataset
@@ -541,7 +540,7 @@ BEGIN
         ---------------------------------------------------
         -- Update interval table
         ---------------------------------------------------
-        --
+
         _startDate := _refDate - INTERVAL '1 month';
         _endDate   := _refDate + INTERVAL '1 month';
 

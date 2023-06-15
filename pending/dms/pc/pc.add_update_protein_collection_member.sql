@@ -44,7 +44,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         INSERT INTO pc.t_protein_collection_members (
             original_reference_id,
             protein_id,
@@ -67,7 +67,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         UPDATE pc.t_protein_collection_members
         SET sorting_index = _sortingIndex
         WHERE protein_id = _proteinID And

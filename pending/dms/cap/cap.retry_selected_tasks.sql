@@ -30,7 +30,7 @@ BEGIN
     -- Set any failed or holding capture task job steps to waiting
     -- and reset retry count from step tools table
     ---------------------------------------------------
-    --
+
     UPDATE cap.t_task_steps Target
     SET State = 1,
         Retry_Count = cap.t_step_tools.number_of_retries
@@ -42,7 +42,7 @@ BEGIN
     ---------------------------------------------------
     -- Reset the entries in cap.t_task_step_dependencies for any steps with state 1
     ---------------------------------------------------
-    --
+
     UPDATE cap.t_task_step_dependencies TSD
     SET Evaluated = 0,
         Triggered = 0
@@ -55,7 +55,7 @@ BEGIN
     ---------------------------------------------------
     -- Set capture task job state to 'new'
     ---------------------------------------------------
-    --
+
     UPDATE cap.t_tasks
     SET State = 1                   -- 1=new
     WHERE Job IN (SELECT Job From Tmp_Selected_Jobs);

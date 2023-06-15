@@ -54,7 +54,7 @@ BEGIN
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
-    --
+
     _jobs := Coalesce(_jobs, '');
     _infoOnly := Coalesce(_infoOnly, false);
     _ignoreQuameterErrors := Coalesce(_ignoreQuameterErrors, true);
@@ -71,7 +71,6 @@ BEGIN
         -----------------------------------------------------------
         -- Create the temporary tables
         -----------------------------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_Jobs (
             Job int
@@ -94,7 +93,7 @@ BEGIN
         -----------------------------------------------------------
         -- Look for capture task jobs that have a failed DatasetQuality step
         -----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_JobStepsToReset( Job, Step )
         SELECT TS.Job, TS.Step
         FROM cap.V_task_Steps TS
@@ -121,7 +120,6 @@ BEGIN
         -----------------------------------------------------------
         -- Reset the DatasetQuality step
         -----------------------------------------------------------
-        --
 
         If _ignoreQuameterErrors Then
 

@@ -67,28 +67,28 @@ BEGIN
         ---------------------------------------------------
         -- Delete the capture task job dependencies
         ---------------------------------------------------
-        --
+
         DELETE FROM cap.t_task_step_dependencies
         WHERE Job = _job;
 
         ---------------------------------------------------
         -- Delete the capture task job parameters
         ---------------------------------------------------
-        --
+
         DELETE FROM cap.t_task_parameters
         WHERE Job = _job;
 
         ---------------------------------------------------
         -- Delete the capture task job steps
         ---------------------------------------------------
-        --
+
         DELETE FROM cap.t_task_steps
         WHERE Job = _job;
 
         ---------------------------------------------------
         -- Delete the capture task job
         ---------------------------------------------------
-        --
+
         DELETE FROM cap.t_tasks
         WHERE Job = _job;
 

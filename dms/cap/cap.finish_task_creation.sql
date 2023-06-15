@@ -38,7 +38,7 @@ BEGIN
     ---------------------------------------------------
     -- Update step dependency count
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Job_Steps
     SET Dependencies = T.dependencies
     FROM ( SELECT Step,
@@ -56,7 +56,7 @@ BEGIN
     -- Initialize input directory of dataset
     -- for steps that have no dependencies
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Job_Steps
     SET Input_Directory_Name = ''
     WHERE Dependencies = 0 AND
@@ -80,7 +80,7 @@ BEGIN
     -- This will only affect capture task jobs that have a step with
     -- the Special_Instructions = 'Job_Results' attribute
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Jobs
     SET Results_Directory_Name = LookupQ.Output_Directory_Name
     FROM ( SELECT Job, Output_Directory_Name
@@ -96,7 +96,7 @@ BEGIN
     -- Skip the demultiplex step for datasets that end in _inverse
     -- These datasets have already been demultiplexed
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Job_Steps TS
     SET State = 3
     FROM Tmp_Jobs T
@@ -111,7 +111,7 @@ BEGIN
     ---------------------------------------------------
     -- Set capture task job state to 1 ("New")
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Jobs
     SET State = 1
     WHERE Job = _job;

@@ -74,7 +74,7 @@ BEGIN
     ----------------------------------------------------
     -- Validate the temporary table
     ----------------------------------------------------
-    --
+
     UPDATE Tmp_ValuesByCategory V
     SET Category = ''
     WHERE V.Category IS NULL;
@@ -86,7 +86,7 @@ BEGIN
     ----------------------------------------------------
     -- Process the data
     ----------------------------------------------------
-    --
+
     INSERT INTO Tmp_ValueCategories (Category)
     SELECT V.Category
     FROM Tmp_ValuesByCategory V

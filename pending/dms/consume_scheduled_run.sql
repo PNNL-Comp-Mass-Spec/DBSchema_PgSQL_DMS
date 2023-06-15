@@ -189,7 +189,7 @@ BEGIN
     -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
     -- This procedure will delete the cached EUS user list from t_active_requested_run_cached_eus_users for this request ID
     ---------------------------------------------------
-    --
+
     CALL update_cached_requested_run_eus_users (
             _requestID,
             _message => _message,           -- Output

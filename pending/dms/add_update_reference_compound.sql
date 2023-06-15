@@ -276,7 +276,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve current container id to name
         ---------------------------------------------------
-        --
+
         SELECT container
         INTO _curContainerName
         FROM t_material_containers

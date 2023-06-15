@@ -34,7 +34,7 @@ BEGIN
     ---------------------------------------------------
     -- Determine the new item counts for this data package
     ---------------------------------------------------
-    --
+
     SELECT COUNT(*)
     INTO _jobCount
     FROM dpkg.t_data_package_analysis_jobs
@@ -63,7 +63,7 @@ BEGIN
     ---------------------------------------------------
     -- Update the item counts for this data package
     ---------------------------------------------------
-    --
+
     UPDATE dpkg.t_data_package
     SET analysis_job_item_count = _jobCount,
         dataset_item_count = _datasetCount,

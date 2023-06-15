@@ -299,7 +299,7 @@ BEGIN
             -- Populate table using the datasets currently associated with the data package
             -- Remove any duplicates that may be present
             ---------------------------------------------------
-            --
+
             INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
             SELECT DISTINCT Dataset
             FROM dpkg.V_Data_Package_Dataset_Export
@@ -315,7 +315,7 @@ BEGIN
             -- Populate table from dataset list
             -- Remove any duplicates that may be present
             ---------------------------------------------------
-            --
+
             INSERT INTO Tmp_DatasetInfo (Dataset_Name)
             SELECT DISTINCT Item
             FROM public.parse_delimited_list (_datasets)
@@ -329,7 +329,7 @@ BEGIN
             ---------------------------------------------------
             --Auto-delete dataset column names from Tmp_DatasetInfo
             ---------------------------------------------------
-            --
+
             DELETE FROM Tmp_DatasetInfo
             WHERE Dataset_Name::citext IN ('Dataset', 'Dataset Name', 'Dataset_Name', 'Dataset_Num')
         End If;
@@ -337,7 +337,7 @@ BEGIN
         ---------------------------------------------------
         -- Find the first and last dataset in Tmp_DatasetInfo
         ---------------------------------------------------
-        --
+
         SELECT COUNT(*)
         INTO _datasetCount
         FROM Tmp_DatasetInfo
@@ -356,7 +356,7 @@ BEGIN
         ---------------------------------------------------
         -- Create and populate the temporary table used by validate_protein_collection_list_for_dataset_table
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_DatasetList (
             Dataset_Name text Not NULL
         )
@@ -374,7 +374,6 @@ BEGIN
         -- will populate _message with an explanatory note
         -- if _protCollNameList is updated
         ---------------------------------------------------
-        --
 
         _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
 
@@ -396,7 +395,7 @@ BEGIN
         -- Note that Validate_Analysis_Job_Parameters calls validate_analysis_job_request_datasets
         -- and that validate_analysis_job_request_datasets populates Dataset_ID, etc. in Tmp_DatasetInfo
         ---------------------------------------------------
-        --
+
         CALL validate_analysis_job_parameters (
                                 _toolName => _toolName,
                                 _paramFileName => _paramFileName,               -- Output
@@ -423,7 +422,7 @@ BEGIN
         ---------------------------------------------------
         -- Assure that _toolName is properly capitalized
         ---------------------------------------------------
-        --
+
         SELECT analysis_tool
         INTO _toolName
         FROM t_analysis_tool
@@ -433,7 +432,7 @@ BEGIN
         -- Assure that we are not running a decoy search if using MSGFPlus, TopPIC, or MaxQuant (since those tools auto-add decoys)
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow _protCollOptionsList to contain Decoy
         ---------------------------------------------------
-        --
+
         If (_toolName ILIKE 'MSGFPlus%' Or _toolName ILIKE 'TopPIC%' Or _toolName ILIKE 'MaxQuant%' Or _toolName ILIKE 'DiaNN%') And
            _protCollOptionsList ILIKE '%decoy%' And
            Not _paramFileName ILIKE '%_NoDecoy%' Then
@@ -461,7 +460,7 @@ BEGIN
         -- Assure that we are running a decoy search if using MODa or MSFragger
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow @protCollOptionsList to contain Decoy
         ---------------------------------------------------
-        --
+
         If (_toolName ILIKE 'MODa%' Or _toolName ILIKE 'MSFragger%') And _protCollOptionsList ILIKE '%forward%' And Not _paramFileName ILIKE '%_NoDecoy%' Then
             _protCollOptionsList := 'seq_direction=decoy,filetype=fasta';
 
@@ -477,7 +476,7 @@ BEGIN
         -- Auto-update the settings file if one or more HMS datasets are present
         -- but the user chose a settings file that is not appropriate for HMS datasets
         ---------------------------------------------------
-        --
+
         If Exists (SELECT * FROM Tmp_DatasetInfo WHERE Dataset_Type LIKE 'hms%' OR Dataset_Type LIKE 'ims-hms%') Then
             -- Possibly auto-update the settings file
 
@@ -542,7 +541,7 @@ BEGIN
         ---------------------------------------------------
         -- Auto-change the settings file if TMTpro samples
         ---------------------------------------------------
-        --
+
         If (_toolName LIKE 'MSGFPlus%' AND _settingsFileName LIKE '%TMT%') Then
             SELECT COUNT(Distinct DS.dataset_id)
             INTO _tmtProDatasets
@@ -578,7 +577,7 @@ BEGIN
         ---------------------------------------------------
         -- If mode is add, force _state to 'new'
         ---------------------------------------------------
-        --
+
         If _mode::citext In ('add', 'PreviewAdd') Then
             -- Lookup the name for state 'New'
             SELECT request_state
@@ -590,7 +589,6 @@ BEGIN
         ---------------------------------------------------
         -- Resolve state name to ID
         ---------------------------------------------------
-        --
 
         SELECT request_state_id
         INTO _stateID
@@ -673,6 +671,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode::citext = 'PreviewAdd' Then
             _message := format('Would create request "%s" with parameter file "%s" and settings file "%s"',
                                _requestName, _paramFileName, _settingsFileName;
@@ -681,7 +680,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode::citext In ('update', 'append') Then
             -- Update the request
 

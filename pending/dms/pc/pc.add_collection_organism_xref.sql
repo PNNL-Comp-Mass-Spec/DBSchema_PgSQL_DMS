@@ -51,7 +51,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
-    --
+
     INSERT INTO pc.t_collection_organism_xref (protein_collection_id, organism_id)
     VALUES (_proteinCollectionID, _organismID)
     RETURNING ID

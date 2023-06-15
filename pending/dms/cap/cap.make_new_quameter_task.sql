@@ -58,7 +58,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure a pending or running DatasetQuality capture task job doesn't already exist
     ---------------------------------------------------
-    --
+
     _jobID := 0;
 
     SELECT TS.Job
@@ -74,7 +74,7 @@ BEGIN
     ---------------------------------------------------
     -- Create new Quameter capture task job for the specified dataset
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
         _message := format('Would create a new Quameter job for dataset ID %s: %s', _datasetID, _datasetName);
     Else

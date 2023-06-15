@@ -64,7 +64,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, false);
     _debugMode := Coalesce(_debugMode, false);
     _existingJob := Coalesce(_existingJob, 0);
@@ -127,7 +127,7 @@ BEGIN
     -- Create temporary tables to accumulate capture task job steps,
     -- job step dependencies, and job parameters
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Jobs (
         Job int NOT NULL,
         Priority int NULL,
@@ -185,7 +185,7 @@ BEGIN
     ---------------------------------------------------
     -- Get capture task jobs that need to be processed
     ---------------------------------------------------
-    --
+
     If _mode::citext = 'CreateFromImportedJobs' Then
         If _maxJobsToProcess > 0 Then
             _maxJobsToAdd := _maxJobsToProcess;
@@ -294,7 +294,7 @@ BEGIN
     ---------------------------------------------------
     -- Loop through capture task jobs and process them into temp tables
     ---------------------------------------------------
-    --
+
     SELECT COUNT(*)
     INTO _jobCountToProcess
     FROM Tmp_Jobs;
@@ -399,7 +399,7 @@ BEGIN
     ---------------------------------------------------
     -- We've got new capture task jobs in temp tables - what to do?
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
         _message = _infoMessage;
     Else
@@ -422,7 +422,7 @@ BEGIN
     ---------------------------------------------------
     -- Exit
     ---------------------------------------------------
-    --
+
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Exiting';
         CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');

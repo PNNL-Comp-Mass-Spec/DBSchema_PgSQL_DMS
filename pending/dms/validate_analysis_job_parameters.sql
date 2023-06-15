@@ -225,7 +225,7 @@ BEGIN
     ---------------------------------------------------
     -- Get analysis tool ID from tool name
     ---------------------------------------------------
-    --
+
     _analysisToolID := get_analysis_tool_id (_toolName)
 
     If _analysisToolID = 0 Then
@@ -242,7 +242,7 @@ BEGIN
     ---------------------------------------------------
     -- Verify the tool name and get its requirements
     ---------------------------------------------------
-    --
+
     SELECT active,
            settings_file_required,
            param_file_required
@@ -282,7 +282,7 @@ BEGIN
     ---------------------------------------------------
     -- Get organism ID using organism name
     ---------------------------------------------------
-    --
+
     _organismID := get_organism_id(_organismName);
 
     If _organismID = 0 Then
@@ -352,7 +352,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure settings for which 'na' is acceptable truly have lowercase 'na' and not 'NA' or 'n/a'
     ---------------------------------------------------
-    --
+
     _settingsFileName := public.validate_na_parameter(_settingsFileName, 1);
     _paramFileName :=    public.validate_na_parameter(_paramFileName, 1);
 
@@ -385,7 +385,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate param file for tool
     ---------------------------------------------------
-    --
+
     _result := 0;
     --
     If _paramFileName <> 'na' Then

@@ -177,7 +177,7 @@ BEGIN
         -- Create temp table for capture task jobs that are being updated
         -- and populate it
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Jobs (
             Job int NOT NULL,
             Priority int NULL,
@@ -227,7 +227,7 @@ BEGIN
         -- Temp table to accumulate XML parameters for
         -- capture task jobs in list
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Job_Parameters (
             Job int NOT NULL,
             Parameters xml NULL
@@ -237,7 +237,6 @@ BEGIN
         -- Loop through capture task jobs and accumulate parameters
         -- into temp table
         ---------------------------------------------------
-        --
 
         FOR _jobInfo IN
             SELECT Job,
@@ -269,7 +268,7 @@ BEGIN
         ---------------------------------------------------
         -- Replace params in T_task_Parameters (or output debug messages)
         ---------------------------------------------------
-        --
+
         If _infoOnly Then
 
             RAISE INFO ' ';

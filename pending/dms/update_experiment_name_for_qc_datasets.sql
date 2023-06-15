@@ -137,7 +137,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview the updates
         ---------------------------------------------------
-        --
+
         SELECT DS.dataset_id,
                DS.dataset AS Dataset,
                DTU.OldExperiment,
@@ -170,7 +170,7 @@ BEGIN
         ---------------------------------------------------
         -- Update the experiments associated with the datasets
         ---------------------------------------------------
-        --
+
         UPDATE t_dataset
         SET exp_id = DTU.NewExpID,
             comment = public.append_to_text(DS.comment,

@@ -106,7 +106,7 @@ BEGIN
         -----------------------------------------
         -- Create some temporary tables
         -----------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_SourceJobs (
             JobId int NOT NULL,
             Valid int NOT NULL,
@@ -138,7 +138,7 @@ BEGIN
         -----------------------------------------
         -- Find the source jobs
         -----------------------------------------
-        --
+
         INSERT INTO Tmp_SourceJobs (JobId, Valid, StateID, RowNum)
         SELECT Value, 0 As Valid, 0 AS StateID, Row_Number() Over (Order By Value) As RowNum
         FROM public.parse_delimited_integer_list(_sourceJobs, ',')
@@ -154,7 +154,7 @@ BEGIN
         -----------------------------------------
         -- Validate the source job IDs
         -----------------------------------------
-        --
+
         UPDATE Tmp_SourceJobs
         SET Valid = 1,
             StateID = J.job_state_id
@@ -190,7 +190,7 @@ BEGIN
         -----------------------------------------
         -- Count the source jobs
         -----------------------------------------
-        --
+
         SELECT COUNT(*)
         INTO _jobCount
         FROM Tmp_SourceJobs;
@@ -279,7 +279,7 @@ BEGIN
         -- If _newProteinCollectionList is not empty,
         -- make sure that it was not in use by any of the old jobs
         -----------------------------------------
-        --
+
         If _newProteinCollectionList <> '' Then
             If Exists ( SELECT * Then
                         FROM Tmp_SourceJobs;
@@ -300,7 +300,7 @@ BEGIN
         -----------------------------------------
         -- Make sure that something is changing
         -----------------------------------------
-        --
+
         If _newParamFileName = '' And _newSettingsFileName = '' And _newProteinCollectionList = '' Then
             _message := '_newParamFileName, _newSettingsFileName, and _newProteinCollectionList cannot all be empty';
             RAISE WARNING '%', _message;
@@ -333,7 +333,6 @@ BEGIN
         -----------------------------------------
         -- Determine the starting JobID for the new jobs
         -----------------------------------------
-        --
 
         If Not _infoOnly Then
             -- Reserve a block of Job Ids
@@ -361,7 +360,7 @@ BEGIN
         -----------------------------------------
         -- Populate Tmp_NewJobInfo with the new job info
         -----------------------------------------
-        --
+
         INSERT INTO Tmp_NewJobInfo( JobId_Old,
                                      JobId_New,
                                      AJ_batchID,
@@ -424,7 +423,7 @@ BEGIN
         -----------------------------------------
         -- Make the new jobs
         -----------------------------------------
-        --
+
         INSERT INTO t_analysis_job (
             job, batch_id, AJ_priority, created, analysis_tool_id, AJ_parmFileName, AJ_settingsFileName, AJ_organismDBName,
             organism_id, dataset_id, comment, AJ_owner, job_state_id, AJ_proteinCollectionList, AJ_proteinOptionsList,

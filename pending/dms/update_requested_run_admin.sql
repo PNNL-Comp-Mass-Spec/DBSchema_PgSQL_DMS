@@ -100,7 +100,7 @@ BEGIN
     -----------------------------------------------------------
     -- Temp table to hold list of requests
     -----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Requests (
         Item text,              -- Request ID, as text
         Status citext NULL,
@@ -122,7 +122,6 @@ BEGIN
     -----------------------------------------------------------
     -- Populate temp table with request IDs (storing as text for now)
     -----------------------------------------------------------
-    --
 
     INSERT INTO Tmp_Requests ( Item )
     SELECT unnest(xpath('//root/r/@i', _xml));
@@ -183,7 +182,7 @@ BEGIN
     -----------------------------------------------------------
     -- Populate a temporary table with the list of Requested Run IDs to be updated or deleted
     -----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_ID_Update_List (
         TargetID int NOT NULL
     );
@@ -199,7 +198,7 @@ BEGIN
     -----------------------------------------------------------
     -- Update status
     -----------------------------------------------------------
-    --
+
     If _mode = 'active' OR _mode = 'inactive' Then
         UPDATE t_requested_run
         SET state_name = _mode
@@ -241,7 +240,7 @@ BEGIN
     -----------------------------------------------------------
     -- Delete requests
     -----------------------------------------------------------
-    --
+
     If _mode = 'delete' Then
         DELETE FROM t_requested_run
         WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND
@@ -272,7 +271,7 @@ BEGIN
     -----------------------------------------------------------
     -- Unassign requests
     -----------------------------------------------------------
-    --
+
     If _mode::citext = 'UnassignInstrument' Then
 
         UPDATE t_requested_run

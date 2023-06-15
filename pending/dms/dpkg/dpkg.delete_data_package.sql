@@ -48,7 +48,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, true);
 
     BEGIN
@@ -67,7 +67,7 @@ BEGIN
             ---------------------------------------------------
             -- Preview the data package to be deleted
             ---------------------------------------------------
-            --
+
             SELECT ID,
                    Name,
                    Package_Type,
@@ -95,7 +95,7 @@ BEGIN
         ---------------------------------------------------
         -- Lookup the data package name
         ---------------------------------------------------
-        --
+
         SELECT package_name
         INTO _dataPackageName
         FROM dpkg.t_data_package
@@ -104,7 +104,7 @@ BEGIN
         ---------------------------------------------------
         -- Find the first and last dataset in the data package
         ---------------------------------------------------
-        --
+
         SELECT Min(dataset),
                Max(dataset),
                Count(*)
@@ -130,7 +130,7 @@ BEGIN
         ---------------------------------------------------
         -- Lookup the share path on Protoapps
         ---------------------------------------------------
-        --
+
         SELECT Share_Path
         INTO _sharePath
         FROM dpkg.V_Data_Package_Paths
@@ -139,7 +139,7 @@ BEGIN
         ---------------------------------------------------
         -- Delete the associated items
         ---------------------------------------------------
-        --
+
         CALL dpkg.delete_all_items_from_data_package (
                         _packageID => _packageID,
                         _mode => 'delete',
@@ -179,7 +179,7 @@ BEGIN
         ---------------------------------------------------
         -- Display some messages
         ---------------------------------------------------
-        --
+
         RAISE INFO '%', _message;
         RAISE INFO '';
         RAISE INFO 'Be sure to delete directory %', _sharePath;

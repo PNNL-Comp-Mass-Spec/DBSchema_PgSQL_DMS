@@ -232,7 +232,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate input fields
         ---------------------------------------------------
-        --
+
         _instrumentGroup := Coalesce(_instrumentGroup, '');
 
         _datasetType := Coalesce(_datasetType, '');
@@ -301,7 +301,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate instrument group and dataset type
         ---------------------------------------------------
-        --
+
         If NOT (_estimatedMSRuns::citext IN ('0', 'None')) Then
             If _instrumentGroup::citext IN ('none', 'na') Then
                 RAISE EXCEPTION 'Estimated runs must be 0 or "none" when instrument group is: %', _instrumentGroup;
@@ -539,7 +539,7 @@ BEGIN
         ---------------------------------------------------
         -- Auto-change separation type to separation group, if applicable
         ---------------------------------------------------
-        --
+
         If Not Exists (SELECT * FROM t_separation_group WHERE separation_group = _separationGroup) Then
 
             SELECT separation_group
@@ -609,7 +609,7 @@ BEGIN
         ---------------------------------------------------
         -- Check for name collisions
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
             If Exists (SELECT * FROM t_sample_prep_request WHERE request_name = _requestName) Then
                 RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
@@ -624,7 +624,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
 
             INSERT INTO t_sample_prep_request (
@@ -710,7 +710,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             SELECT estimated_prep_time_days

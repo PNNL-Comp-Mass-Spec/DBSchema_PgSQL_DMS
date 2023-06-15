@@ -92,7 +92,7 @@ BEGIN
         ------------------------------------------------
         -- Filter using the current date/time
         ------------------------------------------------
-        --
+
         _entryDateStart := _currentTime - (format('%s seconds', _entryTimeWindowSeconds))::INTERVAL;
         _entryDateEnd   := _currentTime + INTERVAL '1 second';
 

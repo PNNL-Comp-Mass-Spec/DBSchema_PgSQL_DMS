@@ -114,7 +114,7 @@ BEGIN
         ---------------------------------------------------
         -- Temporary table to hold processor status messages
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Processor_Status_Info (
             Processor_Name text,
             Mgr_Status text,
@@ -147,7 +147,7 @@ BEGIN
         ---------------------------------------------------
         -- Load status messages into temp table
         ---------------------------------------------------
-        --
+
         WITH Src (StatusXML) AS (SELECT _statusXML)
         INSERT INTO Tmp_Processor_Status_Info(
                           Processor_Name,
@@ -358,7 +358,7 @@ BEGIN
         ---------------------------------------------------
         -- Update status for existing processors
         ---------------------------------------------------
-        --
+
         UPDATE cap.t_processor_status Target
         SET mgr_status = Src.mgr_status,
             status_date = Status_Date_Value,
@@ -398,7 +398,7 @@ BEGIN
         ---------------------------------------------------
         -- Add missing processors to cap.t_processor_status
         ---------------------------------------------------
-        --
+
         INSERT INTO cap.t_processor_status (
             processor_name,
             mgr_status,

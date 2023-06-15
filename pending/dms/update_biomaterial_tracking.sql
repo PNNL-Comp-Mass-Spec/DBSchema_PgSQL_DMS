@@ -23,7 +23,7 @@ BEGIN
     ----------------------------------------------------------
     -- Create a temporary table to hold the stats
     ----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Biomaterial_Stats (
         Biomaterial_ID int NOT NULL,
         Experiment_Count int NOT NULL,
@@ -35,7 +35,7 @@ BEGIN
     ----------------------------------------------------------
     -- Make entry in results table for each biomaterial
     ----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_Biomaterial_Stats( Biomaterial_ID,
                                        Experiment_Count,
                                        Dataset_Count,
@@ -46,7 +46,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update experiment count statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_Biomaterial_Stats
     SET Experiment_Count = S.Cnt
     FROM Tmp_Biomaterial_Stats
@@ -72,7 +72,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update dataset count statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_Biomaterial_Stats
     SET Dataset_Count = S.Cnt
     FROM Tmp_Biomaterial_Stats
@@ -102,7 +102,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update analysis count statistics for results table
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_Biomaterial_Stats
     SET Job_Count = S.Cnt
     FROM Tmp_Biomaterial_Stats
@@ -134,7 +134,6 @@ BEGIN
     ----------------------------------------------------------
     -- Update T_Biomaterial_Type_Name using Tmp_Biomaterial_Stats
     ----------------------------------------------------------
-    --
     MERGE INTO T_Biomaterial_Type_Name AS t
     USING ( SELECT * FROM Tmp_Biomaterial_Stats
           ) AS s

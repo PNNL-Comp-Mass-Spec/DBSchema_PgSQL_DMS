@@ -64,7 +64,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
-        --
+
         _job := Coalesce(_job, 0);
         _step := Coalesce(_step, 0);
         _toolVersionInfo := Coalesce(_toolVersionInfo, '');
@@ -76,7 +76,7 @@ BEGIN
         ---------------------------------------------------
         -- Look for _toolVersionInfo in cap.t_step_tool_versions
         ---------------------------------------------------
-        --
+
         SELECT tool_version_id
         INTO _toolVersionID
         FROM cap.t_step_tool_versions

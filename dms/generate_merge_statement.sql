@@ -338,7 +338,7 @@ BEGIN
         -- SQL for updating when rows match
         -- Do not update primary keys or identity columns
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_SQL (value) VALUES ('WHEN MATCHED AND');
         INSERT INTO Tmp_SQL (value) VALUES ('     (');
 
@@ -416,7 +416,7 @@ BEGIN
     ---------------------------------------------------
     -- SQL for inserting new rows
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_SQL (value) VALUES ('WHEN NOT MATCHED THEN');
 
     INSERT INTO Tmp_InsertableColumns (ColumnName)
@@ -460,7 +460,6 @@ BEGIN
     ---------------------------------------------------
     -- SQL for deleting extra rows
     ---------------------------------------------------
-    --
 
     SELECT ColumnName
     INTO _firstPrimaryKeyColumn

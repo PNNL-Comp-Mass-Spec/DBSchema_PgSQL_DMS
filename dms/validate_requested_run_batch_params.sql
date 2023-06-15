@@ -94,7 +94,7 @@ BEGIN
         ---------------------------------------------------
         -- High priority requires justification
         ---------------------------------------------------
-        --
+
         If _requestedBatchPriority = 'High' AND Coalesce(_justificationHighPriority, '') = '' Then
             _message := 'Justification must be entered If high priority is being requested';
             _returnCode := 'U5203';

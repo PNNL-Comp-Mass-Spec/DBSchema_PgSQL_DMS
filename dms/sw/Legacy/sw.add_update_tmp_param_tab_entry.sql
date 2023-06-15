@@ -36,7 +36,7 @@ BEGIN
     ---------------------------------------------------
     -- Use a Merge statement to add or update the value
     ---------------------------------------------------
-    --
+
     MERGE INTO Tmp_ParamTab AS target
     USING ( SELECT Null AS Step,
                    _section AS Section,

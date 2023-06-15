@@ -121,7 +121,7 @@ BEGIN
         ---------------------------------------------------
         -- Make sure a pending archive update task doesn't already exist
         ---------------------------------------------------
-        --
+
         _jobID := 0;
 
         SELECT Job
@@ -158,7 +158,7 @@ BEGIN
         ---------------------------------------------------
         -- Create new Archive Update task for specified dataset
         ---------------------------------------------------
-        --
+
         If _infoOnly Then
             _message := format('Would create a new archive update task (%s) for dataset ID %s: %s', _script, _datasetID, _datasetName);
 

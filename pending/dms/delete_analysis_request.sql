@@ -56,7 +56,7 @@ BEGIN
     ---------------------------------------------------
     -- Does request exist?
     ---------------------------------------------------
-    --
+
     SELECT request_id
     INTO _tempID
     FROM t_analysis_job_request
@@ -71,7 +71,7 @@ BEGIN
     ---------------------------------------------------
     -- Look up number of jobs made from the request
     ---------------------------------------------------
-    --
+
     --
     SELECT COUNT(*)
     INTO _jobCount
@@ -87,7 +87,7 @@ BEGIN
     ---------------------------------------------------
     -- Delete the analysis request
     ---------------------------------------------------
-    --
+
     DELETE FROM t_analysis_job_request_datasets
     WHERE request_id = _requestID;
 

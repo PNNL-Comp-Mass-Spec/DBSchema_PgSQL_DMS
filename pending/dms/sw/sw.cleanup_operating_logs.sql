@@ -48,7 +48,7 @@ BEGIN
         ----------------------------------------------------
         -- Delete Info and Warn entries posted more than _infoHoldoffWeeks weeks ago
         ----------------------------------------------------
-        --
+
         _currentLocation := 'Delete non-noteworthy log entries';
 
         DELETE FROM sw.t_log_entries
@@ -59,7 +59,7 @@ BEGIN
         ----------------------------------------------------
         -- Move old log entries and event entries to logsw.t_job_events, logsw.t_job_step_events, and logsw.t_log_entries
         ----------------------------------------------------
-        --
+
         _currentLocation := 'Call sw.move_entries_to_history';
 
         CALL sw.move_entries_to_history _logRetentionIntervalDays

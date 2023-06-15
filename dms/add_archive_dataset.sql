@@ -49,7 +49,7 @@ BEGIN
     ---------------------------------------------------
     -- Don't allow duplicate dataset IDs in the table
     ---------------------------------------------------
-    --
+
     If Exists (SELECT * FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
         _message := format('Dataset ID %s is already in t_dataset_archive', _datasetID);
         RAISE WARNING '%', _message;
@@ -64,7 +64,7 @@ BEGIN
 
     SELECT Value
     INTO _archiveDisabled
-    FROM T_Misc_Options
+    FROM t_misc_options
     WHERE Name = 'ArchiveDisabled';
 
     If Not FOUND Then
@@ -80,7 +80,7 @@ BEGIN
     ---------------------------------------------------
     -- Lookup the Instrument ID and dataset state
     ---------------------------------------------------
-    --
+
     SELECT instrument_id, dataset_state_id
     INTO _instrumentID, _datasetStateId
     FROM t_dataset
@@ -108,7 +108,7 @@ BEGIN
     ---------------------------------------------------
     -- Get the assigned archive path
     ---------------------------------------------------
-    --
+
     _archivePathID := get_instrument_archive_path_for_new_datasets (_instrumentID, _datasetID, _autoSwitchActiveArchive => true, _infoOnly => false);
 
     If _archivePathID = 0 Then
@@ -122,7 +122,6 @@ BEGIN
     ---------------------------------------------------
     -- Lookup the purge policy for this instrument
     ---------------------------------------------------
-    --
 
     SELECT default_purge_policy,
            default_purge_priority,
@@ -138,7 +137,7 @@ BEGIN
     ---------------------------------------------------
     -- Make entry into archive table
     ---------------------------------------------------
-    --
+
     INSERT INTO t_dataset_archive
         ( dataset_id,
           archive_state_id,

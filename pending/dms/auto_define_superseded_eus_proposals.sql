@@ -41,7 +41,7 @@ BEGIN
     ---------------------------------------------------
     -- Find proposals that need to be updated
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ProposalsToUpdate( proposal_id, Newest_Proposal_ID )
     SELECT EUP.proposal_id,
            RankQ.proposal_id AS Newest_ID
@@ -71,7 +71,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview the updates
         ---------------------------------------------------
-        --
+
         SELECT EUP.proposal_id,
                EUP.numeric_id,
                EUP.title,
@@ -95,7 +95,7 @@ BEGIN
             ---------------------------------------------------
             -- Construct a list of the proposals IDs being updated
             ---------------------------------------------------
-            --
+
             _proposalList := '';
 
             SELECT string_agg(Proposal_ID, ', ' ORDER BY Proposal_ID)
@@ -105,7 +105,7 @@ BEGIN
             ---------------------------------------------------
             -- Populate Proposal_ID_AutoSupersede
             ---------------------------------------------------
-            --
+
             UPDATE t_eus_proposals EUP
             SET proposal_id_auto_supersede = UpdatesQ.Newest_Proposal_ID
             FROM Tmp_ProposalsToUpdate UpdatesQ

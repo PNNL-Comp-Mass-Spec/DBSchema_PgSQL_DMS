@@ -59,7 +59,7 @@ BEGIN
         -----------------------------------------------------------
         -- Validate the inputs
         -----------------------------------------------------------
-        --
+
         _job := Coalesce(_job, 0);
         _sharedResultFolderName := Coalesce(_sharedResultFolderName, '');
         _infoOnly := Coalesce(_infoOnly, false);
@@ -75,7 +75,6 @@ BEGIN
         -----------------------------------------------------------
         -- Create the temporary tables
         -----------------------------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_SharedResultFolders (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -92,7 +91,7 @@ BEGIN
             -----------------------------------------------------------
             -- Find the shared result folders for this job
             -----------------------------------------------------------
-            --
+
             INSERT INTO Tmp_SharedResultFolders( Output_Folder )
             SELECT DISTINCT output_folder_name
             FROM sw.t_job_steps

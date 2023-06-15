@@ -288,7 +288,7 @@ BEGIN
         -- Update processor's request timestamp
         -- (to show when the processor was most recently active)
         ---------------------------------------------------
-        --
+
         If _infoLevel = 0 Then
             _currentLocation := 'Update sw.t_local_processors';
 
@@ -316,6 +316,7 @@ BEGIN
         ---------------------------------------------------
         -- Abort if not enabled in sw.t_local_processors
         ---------------------------------------------------
+
         If _processorState <> 'E' Then
             _message := format('Processor is not enabled in sw.t_local_processors: %s', _processorName);
             _returnCode := _jobNotAvailableErrorCode;
@@ -812,7 +813,7 @@ BEGIN
         -- Get list of viable job step assignments organized
         -- by processor in order of assignment priority
         ---------------------------------------------------
-        --
+
         If _useBigBangQuery OR _infoLevel <> 0 Then
 
             _currentLocation := 'Populate Tmp_CandidateJobSteps using all-in-one query';

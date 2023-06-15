@@ -74,7 +74,7 @@ BEGIN
     ----------------------------------------------------
     -- Find duplicate log entries
     ----------------------------------------------------
-    --
+
     If _messageFilter = '' Then
         INSERT INTO Tmp_DuplicateMessages( message, Entry_ID_First, Entry_ID_Last )
         SELECT L.message, Min(L.entry_id), Max(L.entry_id)
@@ -107,7 +107,7 @@ BEGIN
     -- Find the messages that should be deleted,
     -- keeping only the first one if _keepFirstMessageOnly is true
     ----------------------------------------------------
-    --
+
     If Not _keepFirstMessageOnly Then
         INSERT INTO Tmp_MessagesToDelete
         SELECT L.entry_id
@@ -130,7 +130,7 @@ BEGIN
     ----------------------------------------------------
     -- Show the duplicate messages, along with an action message
     ----------------------------------------------------
-    --
+
     If Not _infoOnly Then
         _statusKeep := 'Retained';
         _statusDelete := 'Deleted';

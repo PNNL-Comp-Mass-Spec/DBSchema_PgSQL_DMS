@@ -89,7 +89,7 @@ BEGIN
     -- This is accomplished in two steps, with two temporary tables,
     --   since a single-step query was found to not scale well
     -----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_RequestIDs (RequestID)
     SELECT A.request_id
     FROM ( SELECT request_id,
@@ -113,7 +113,7 @@ BEGIN
     -----------------------------------------------------------
     -- Cache the param file and settings file for the requests
     -----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_Request_Params (RequestID, ParamFileName, SettingsFileName)
     SELECT J.request_id,
            J.param_file_name,
@@ -131,7 +131,7 @@ BEGIN
         -----------------------------------------------------------
         -- Preview the requests that would be updated
         -----------------------------------------------------------
-        --
+
         SELECT Target.request_id AS RequestID,
                Target.param_file_name AS ParamFileName,
                Case When Target.param_file_name <> R.ParamFileName Then R.ParamFileName Else '' End As ParamFileNameNew,
@@ -159,7 +159,7 @@ BEGIN
         -----------------------------------------------------------
         -- Update the requests
         -----------------------------------------------------------
-        --
+
         UPDATE t_analysis_job_request Target
         SET param_file_name = R.ParamFileName,
             settings_file_name = R.SettingsFileName

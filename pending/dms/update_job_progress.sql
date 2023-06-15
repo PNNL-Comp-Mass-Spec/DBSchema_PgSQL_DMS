@@ -96,7 +96,7 @@ BEGIN
     -- Update progress and ETA for failed jobs
     -- This logic is also used by trigger trig_u_AnalysisJob
     -----------------------------------------
-    --
+
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = -1,
         ETA_Minutes = Null
@@ -106,7 +106,7 @@ BEGIN
     -- Update progress and ETA for new, holding, inactive, or Special Proc. Waiting jobs
     -- This logic is also used by trigger trig_u_AnalysisJob
     -----------------------------------------
-    --
+
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = 0,
         ETA_Minutes = Null
@@ -116,7 +116,7 @@ BEGIN
     -- Update progress and ETA for completed jobs
     -- This logic is also used by trigger trig_u_AnalysisJob
     -----------------------------------------
-    --
+
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = 100,
         ETA_Minutes = 0
@@ -125,7 +125,7 @@ BEGIN
     -----------------------------------------
     -- Determine the incremental progress for running jobs
     -----------------------------------------
-    --
+
     UPDATE Tmp_JobsToUpdate Target
     SET Progress_New = Source.Progress_Overall,
         Steps = Source.Steps,
@@ -172,7 +172,7 @@ BEGIN
     -----------------------------------------
     -- Compute Runtime_Predicted_Minutes
     -----------------------------------------
-    --
+
     UPDATE Tmp_JobsToUpdate
     SET Runtime_Predicted_Minutes = CurrentRuntime_Minutes / (Progress_New / 100.0)
     WHERE Progress_New > 0 AND
@@ -188,7 +188,7 @@ BEGIN
     -- If this is the case, we update Runtime_Predicted_Minutes to match the predicted runtime of that job step
     -- and compute a new overall job progress
     -----------------------------------------
-    --
+
     UPDATE Tmp_JobsToUpdate Target
     SET Runtime_Predicted_Minutes = RunningStepsQ.RunTime_Predicted_Minutes,
         Progress_New = CASE WHEN RunningStepsQ.Runtime_Predicted_Minutes > 0
@@ -213,7 +213,7 @@ BEGIN
     -- Compute the approximate time remaining for the job to finish
     -- We tack on 0.5 minutes for each uncompleted step, to account for the state machine aspect of the DMS_Pipeline database
     -----------------------------------------
-    --
+
     UPDATE Tmp_JobsToUpdate
     SET ETA_Minutes = Runtime_Predicted_Minutes - CurrentRuntime_Minutes + (Steps - StepsCompleted) * 0.5
     WHERE Progress_New > 0;
@@ -260,7 +260,7 @@ BEGIN
     -----------------------------------------
     -- Update the progress
     -----------------------------------------
-    --
+
     UPDATE t_analysis_job Target
     SET progress = Src.Progress_New,
         eta_minutes = Src.eta_minutes

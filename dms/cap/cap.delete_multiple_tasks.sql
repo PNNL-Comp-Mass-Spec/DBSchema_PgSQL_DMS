@@ -69,6 +69,7 @@ BEGIN
         ---------------------------------------------------
         -- Create and populate a temporary table
         ---------------------------------------------------
+
         CREATE TEMP TABLE Tmp_Job_List (
             Job int
         );
@@ -101,28 +102,28 @@ BEGIN
         ---------------------------------------------------
         -- Delete capture task job dependencies
         ---------------------------------------------------
-        --
+
         DELETE FROM cap.t_task_step_dependencies
         WHERE Job IN (SELECT Job FROM Tmp_Job_List);
 
         ---------------------------------------------------
         -- Delete capture task job parameters
         ---------------------------------------------------
-        --
+
         DELETE FROM cap.t_task_parameters
         WHERE Job IN (SELECT Job FROM Tmp_Job_List);
 
         ---------------------------------------------------
         -- Delete capture task job steps
         ---------------------------------------------------
-        --
+
         DELETE FROM cap.t_task_steps
         WHERE Job IN (SELECT Job FROM Tmp_Job_List);
 
         ---------------------------------------------------
         -- Delete capture task jobs
         ---------------------------------------------------
-        --
+
         DELETE FROM cap.t_tasks
         WHERE Job IN (SELECT Job FROM Tmp_Job_List);
         --

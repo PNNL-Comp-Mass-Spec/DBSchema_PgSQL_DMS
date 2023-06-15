@@ -34,7 +34,7 @@ BEGIN
     ---------------------------------------------------
     -- Update step dependency count
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Job_Steps
     SET Dependencies = T.dependencies
     FROM ( SELECT Step,
@@ -50,7 +50,7 @@ BEGIN
     -- Initialize the input folder to an empty string
     -- for steps that have no dependencies
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Job_Steps
     SET Input_Folder_Name = ''
     WHERE Job = _job AND
@@ -68,7 +68,7 @@ BEGIN
     -- produce a shared results directory, yet we also want
     -- the results directory for the job to show the shared results directory name
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Jobs
     SET Results_Directory_Name = TZ.Output_Directory_Name
     FROM (
@@ -84,7 +84,7 @@ BEGIN
     ---------------------------------------------------
     -- Set job to initialized state ('New')
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Jobs
     SET State = 1
     WHERE Job = _job;

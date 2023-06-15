@@ -62,7 +62,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if no candidates found
     ---------------------------------------------------
-    --
+
     If Coalesce(_job, 0) = 0 Then
         _message := 'Job number is 0 or null; nothing to do';
         RAISE WARNING '%', _message;
@@ -77,7 +77,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if job already exists in main tables
     ---------------------------------------------------
-    --
+
     If Exists (SELECT * FROM sw.t_jobs WHERE job = _job) Then
         _message := format('Job %s already exists in sw.t_jobs; aborting', _job);
         RAISE WARNING '%', _message;
@@ -418,19 +418,19 @@ BEGIN
     ---------------------------------------------------
     -- Update the job parameters in case any parameters have changed (in particular, storage path)
     ---------------------------------------------------
-    --
+
     CALL sw.update_job_parameters (_job, _infoOnly => false);
 
     ---------------------------------------------------
     -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
     ---------------------------------------------------
-    --
+
     CALL sw.validate_job_server_info (_job, _useJobParameters => true);
 
     ---------------------------------------------------
     -- Make sure the dependencies column is up-to-date in sw.t_job_steps
     ---------------------------------------------------
-    --
+
     UPDATE sw.t_job_steps target
     SET dependencies = CountQ.dependencies
     FROM ( SELECT step,

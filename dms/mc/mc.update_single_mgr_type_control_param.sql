@@ -62,7 +62,7 @@ BEGIN
     ---------------------------------------------------
     -- Find the _paramName entries for the Manager Types in _managerTypeIDList
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ParamValueEntriesToUpdate (entry_id)
     SELECT PV.entry_id
     FROM mc.t_param_value PV
@@ -88,7 +88,7 @@ BEGIN
     -- Call update_single_mgr_param_work to perform the update
     -- Note that it calls alter_entered_by_user_multi_id and alter_event_log_entry_user_multi_id for _callingUser
     ---------------------------------------------------
-    --
+
     CALL mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
 
     DROP TABLE Tmp_ParamValueEntriesToUpdate;

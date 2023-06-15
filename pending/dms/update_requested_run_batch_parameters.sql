@@ -121,7 +121,7 @@ BEGIN
         -----------------------------------------------------------
         -- Temp table to hold new parameters
         -----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_NewBatchParams (
             Parameter citext,
             request_id int,
@@ -144,7 +144,7 @@ BEGIN
             -----------------------------------------------------------
             -- Populate temp table with new parameters
             -----------------------------------------------------------
-            --
+
             INSERT INTO Tmp_NewBatchParams ( Parameter, request_id, Value )
             SELECT XmlQ.Parameter, XmlQ.RequestID, XmlQ.Value
             FROM (
@@ -161,7 +161,7 @@ BEGIN
             -----------------------------------------------------------
             -- Normalize parameter names
             -----------------------------------------------------------
-            --
+
             UPDATE Tmp_NewBatchParams SET Parameter = 'Block'     WHERE Parameter = 'BK';
             UPDATE Tmp_NewBatchParams SET Parameter = 'Run Order' WHERE Parameter = 'RO';
             UPDATE Tmp_NewBatchParams SET Parameter = 'Run Order' WHERE Parameter = 'Run_Order';
@@ -174,7 +174,7 @@ BEGIN
             -----------------------------------------------------------
             -- Store current values in the temp table
             -----------------------------------------------------------
-            --
+
             UPDATE Tmp_NewBatchParams
             SET ExistingValue = CASE
                                     WHEN Tmp_NewBatchParams.Parameter = 'Block'      THEN Cast(block As Text)
@@ -202,7 +202,7 @@ BEGIN
             -----------------------------------------------------------
             -- Remove entries that are unchanged
             -----------------------------------------------------------
-            --
+
             DELETE FROM Tmp_NewBatchParams
             WHERE Tmp_NewBatchParams.Value = Tmp_NewBatchParams.ExistingValue;
 
@@ -230,7 +230,7 @@ BEGIN
         -----------------------------------------------------------
         -- Is there anything left to update?
         -----------------------------------------------------------
-        --
+
         If Not Exists (SELECT * FROM Tmp_NewBatchParams) Then
             _message := 'No run parameters to update';
             DROP TABLE Tmp_NewBatchParams;
@@ -240,7 +240,7 @@ BEGIN
         -----------------------------------------------------------
         -- Actually do the update
         -----------------------------------------------------------
-        --
+
         If _mode = 'update' Then
             BEGIN
                 UPDATE t_requested_run
@@ -376,7 +376,7 @@ BEGIN
             -----------------------------------------------------------
             -- Convert changed items to XML for logging
             -----------------------------------------------------------
-            --
+
             SELECT string_agg(format('<r i="%s" t="%s" v="%s" />', Request, Parameter, Value), '' ORDER BY Request)
             INTO _changeSummary
             FROM Tmp_NewBatchParams;
@@ -384,7 +384,7 @@ BEGIN
             -----------------------------------------------------------
             -- Log changes
             -----------------------------------------------------------
-            --
+
             If _changeSummary <> '' Then
                 INSERT INTO t_factor_log (changed_by, changes)
                 VALUES (_callingUser, _changeSummary);

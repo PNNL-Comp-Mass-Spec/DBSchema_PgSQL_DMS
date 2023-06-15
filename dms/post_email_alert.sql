@@ -31,7 +31,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _type := Trim(Coalesce(_type, 'Error'));
     _message := Trim(Coalesce(_message, ''));
     _postedBy := Trim(Coalesce(_postedBy, 'Unknown'));

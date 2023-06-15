@@ -29,7 +29,6 @@ BEGIN
     ---------------------------------------------------
     -- Populate a temporary table with tissue usage stats for DMS experiments
     ---------------------------------------------------
-    --
 
     CREATE TEMP TABLE Tmp_UsageStats (
         Tissue_ID            citext NOT NULL,

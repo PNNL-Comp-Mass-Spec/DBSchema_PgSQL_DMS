@@ -180,7 +180,7 @@ BEGIN
             ---------------------------------------------------
             -- Update capture task job step
             ---------------------------------------------------
-            --
+
             UPDATE cap.t_task_steps
             SET    State = _newStepState,
                    Finish = CURRENT_TIMESTAMP,

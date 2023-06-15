@@ -48,7 +48,7 @@ BEGIN
     ---------------------------------------------------
     -- Replace job parameters
     ---------------------------------------------------
-    --
+
     UPDATE sw.t_job_parameters
     SET sw.t_job_parameters.parameters = Tmp_Job_Parameters.parameters
     FROM Tmp_Job_Parameters
@@ -57,7 +57,7 @@ BEGIN
     ---------------------------------------------------
     -- Update job
     ---------------------------------------------------
-    --
+
     UPDATE sw.t_jobs
     SET priority = Tmp_Jobs.priority,
         state = Tmp_Jobs.state,

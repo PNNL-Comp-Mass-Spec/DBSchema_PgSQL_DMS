@@ -76,7 +76,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate InstrumentGroup and DatasetType
         ---------------------------------------------------
-        --
+
         If Not Exists ( SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroup ) Then
             RAISE EXCEPTION 'Instrument group "%" is not valid', _instrumentGroup;
         End If;
@@ -97,7 +97,7 @@ BEGIN
         ---------------------------------------------------
         -- Does an entry already exist?
         ---------------------------------------------------
-        --
+
         If Exists (SELECT instrument_group
                    FROM t_instrument_group_allowed_ds_type
                    WHERE instrument_group = _instrumentGroup AND
@@ -111,7 +111,7 @@ BEGIN
         ---------------------------------------------------
         -- Add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
             If _itemExists Then
                 RAISE EXCEPTION 'Cannot add: Entry "%" already exists for group %', _datasetType, _instrumentGroup;
@@ -128,7 +128,7 @@ BEGIN
         ---------------------------------------------------
         -- Update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
             If Not _itemExists Then
                 RAISE EXCEPTION 'Cannot Update: Entry "%" does not exist for group %', _datasetType, _instrumentGroup;
@@ -145,7 +145,7 @@ BEGIN
         ---------------------------------------------------
         -- Delete mode
         ---------------------------------------------------
-        --
+
         If _mode = 'delete' Then
             If Not _itemExists Then
                 RAISE EXCEPTION 'Cannot Delete: Entry "%" does not exist for group %' _datasetType, _instrumentGroup;

@@ -94,7 +94,7 @@ BEGIN
     -----------------------------------------------------------
     -- Update the blocking and run order
     -----------------------------------------------------------
-    --
+
     If char_length(_blockingList) > 0 Then
         CALL update_requested_run_batch_parameters (
                             _blockingList,
@@ -109,7 +109,6 @@ BEGIN
         -----------------------------------------------------------
         -- Update the factors
         -----------------------------------------------------------
-        --
 
         CALL update_requested_run_factors (
                                 _factorList,

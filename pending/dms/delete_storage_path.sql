@@ -55,7 +55,7 @@ BEGIN
     ---------------------------------------------------
     -- Verify no associated datasets
     ---------------------------------------------------
-    --
+
     If Exists (SELECT COUNT(*) FROM t_dataset WHERE storage_path_ID = _pathID) Then
         RAISE EXCEPTION 'Cannot delete storage path that is being used by existing datasets';
 

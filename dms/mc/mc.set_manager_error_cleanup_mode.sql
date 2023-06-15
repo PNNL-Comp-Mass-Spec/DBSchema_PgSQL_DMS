@@ -85,7 +85,7 @@ BEGIN
         ---------------------------------------------------
         -- Populate Tmp_ManagerList with the managers in _mgrList
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_ManagerList (manager_name)
         SELECT manager_name
         FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 1);

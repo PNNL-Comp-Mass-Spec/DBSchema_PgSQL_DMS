@@ -52,7 +52,7 @@ BEGIN
     -----------------------------------------------
     -- Add/Update cap.t_dataset_info_xml
     -----------------------------------------------
-    --
+
     INSERT INTO cap.t_dataset_info_xml (dataset_id, ds_info_xml, cache_date)
     VALUES (_datasetID, _datasetInfoXML, CURRENT_TIMESTAMP)
     ON CONFLICT (dataset_id)

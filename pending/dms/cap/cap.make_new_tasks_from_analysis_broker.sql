@@ -145,7 +145,7 @@ BEGIN
     -- from analysis broker with a completion date
     -- within the number of days in the import window
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_New_Jobs (
         Dataset,
         Dataset_ID,
@@ -186,7 +186,7 @@ BEGIN
     --
     -- If _bypassDatasetArchive = true, the value of No_Dataset_Archive will be ignored
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_New_Jobs
     SET No_Dataset_Archive = true
     WHERE Tmp_New_Jobs.Finish >= CURRENT_TIMESTAMP - make_interval(days => _timeWindowToRequireExisingDatasetArchiveJob) AND
@@ -201,7 +201,7 @@ BEGIN
     -- Mark entries for which there is an existing ArchiveUpdate capture task job
     -- for the same results folder that has state <> 3
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_New_Jobs
     SET Pending_Archive_Update = true
     WHERE EXISTS (
@@ -219,7 +219,7 @@ BEGIN
     -- with a finsh date later than the analysis broker
     -- job step's finish date
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_New_Jobs
     SET Archive_Update_Current = true
     WHERE EXISTS (
@@ -299,7 +299,7 @@ BEGIN
         -- remaining imported
         -- analysis broker results transfer steps
         ---------------------------------------------------
-        --
+
         INSERT INTO cap.t_tasks (Script, Dataset, Dataset_ID, Results_Folder_Name, Comment)
         SELECT DISTINCT 'ArchiveUpdate' AS Script,
                         Dataset,

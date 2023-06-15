@@ -40,7 +40,7 @@ BEGIN
     ---------------------------------------------------
     -- Get job parameters and list of datasets from request
     ---------------------------------------------------
-    --
+
     SELECT datasets As DatasetList,
            analysis_tool As ToolName,
            param_file_name As ParamFileName,
@@ -73,7 +73,6 @@ BEGIN
     ---------------------------------------------------
     -- Get request datasets into local table
     ---------------------------------------------------
-    --
 
     INSERT INTO Tmp_RequestDatasets(dataset)
     SELECT value
@@ -83,7 +82,6 @@ BEGIN
     -- Get list of datasets that have jobs that match
     -- job parameters from request
     ---------------------------------------------------
-    --
 
     INSERT INTO Tmp_MatchingJobDatasets(dataset, Jobs, New, Busy, Complete, Failed, Holding)
     SELECT

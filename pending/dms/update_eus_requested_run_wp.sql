@@ -63,7 +63,7 @@ BEGIN
         ----------------------------------------------------------
         -- Create some temporary tables
         ----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_WPInfo (
             Proposal_ID text not null,
             work_package text not null,
@@ -86,7 +86,7 @@ BEGIN
         ----------------------------------------------------------
         -- Find the Proposal_ID to Work_Package mapping for Requested Runs that have a WP defined
         ----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_WPInfo( proposal_id,
                                 work_package,
                                 Requests,
@@ -150,7 +150,7 @@ BEGIN
         -- These tables are used to generate the log message
         -- that describes the requested runs that will be updated
         ----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_ValuesByCategory (
             Category text,
             Value int
@@ -233,7 +233,7 @@ BEGIN
             ----------------------------------------------------------
             -- Preview what would be updated
             ----------------------------------------------------------
-            --
+
             If Exists (Select * from Tmp_ReqRunsToUpdate) Then
 
                 -- ToDo: Update this to use RAISE INFO

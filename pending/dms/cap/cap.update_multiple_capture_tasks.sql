@@ -133,7 +133,6 @@ BEGIN
         ---------------------------------------------------
         -- future: verify that capture task jobs exist?
         ---------------------------------------------------
-        --
 
         ---------------------------------------------------
         -- Retry capture task jobs
@@ -150,6 +149,7 @@ BEGIN
         ---------------------------------------------------
         -- Hold
         ---------------------------------------------------
+
         If _action::citext = 'Hold' AND _mode = 'update' Then
 
             UPDATE cap.t_tasks
@@ -163,6 +163,7 @@ BEGIN
         ---------------------------------------------------
         -- Ignore
         ---------------------------------------------------
+
         If _action::citext = 'Ignore' AND _mode = 'update' Then
 
             UPDATE cap.t_tasks
@@ -176,6 +177,7 @@ BEGIN
         ---------------------------------------------------
         -- Release
         ---------------------------------------------------
+
         If _action::citext = 'Release' AND _mode = 'update' Then
 
             UPDATE cap.t_tasks

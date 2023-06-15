@@ -149,7 +149,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate _paramFileType
         ---------------------------------------------------
-        --
+
         SELECT param_file_type_id
         INTO _paramFileTypeID
         FROM t_param_file_types
@@ -163,7 +163,7 @@ BEGIN
         ---------------------------------------------------
         -- Is entry already in database?
         ---------------------------------------------------
-        --
+
         SELECT param_file_id
         INTO _existingParamFileID
         FROM t_param_files
@@ -186,7 +186,7 @@ BEGIN
         ---------------------------------------------------
         -- Check for renaming or changing the type when the parameter file has already been used
         ---------------------------------------------------
-        --
+
         If _mode Like '%update%' Then
 
             SELECT param_file_name,
@@ -311,7 +311,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_param_files

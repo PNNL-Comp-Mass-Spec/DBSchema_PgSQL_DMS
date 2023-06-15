@@ -62,7 +62,6 @@ BEGIN
     -----------------------------------------------
     -- Lookup the initial manager parameters
     -----------------------------------------------
-    --
 
     INSERT INTO Tmp_Mgr_Params(  mgr_name,
                                  param_name,
@@ -98,7 +97,6 @@ BEGIN
     -- Append parameters for parent groups, which are
     -- defined by parameter Default_AnalysisMgr_Params (param_type_id 162)
     -----------------------------------------------
-    --
 
     While Exists (Select * from Tmp_Mgr_Params Where parent_param_pointer_state = 1) And _iterations < _maxRecursion
     Loop

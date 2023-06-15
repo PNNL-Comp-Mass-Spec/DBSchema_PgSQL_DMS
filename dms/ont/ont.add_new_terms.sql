@@ -61,7 +61,7 @@ BEGIN
     -- Ontology PSI is superseded by PSI_MS
     -- Do not allow processing of the 'PSI' ontology
     ---------------------------------------------------
-    --
+
     If _ontologyName = 'PSI' Then
         _warningMessage := 'Ontology PSI is superseded by MS (aka PSI_MS); creation of table T_CV_PSI is not allowed';
 
@@ -150,7 +150,7 @@ BEGIN
     ---------------------------------------------------
     -- Construct the Insert Into and Select SQL
     ---------------------------------------------------
-    --
+
     If _ontologyName = 'NEWT' Then
         -- NEWT identifiers do not start with NEWT
         -- Query v_newt_terms (which in turn queries V_Term_Lineage)
@@ -199,7 +199,7 @@ BEGIN
     ---------------------------------------------------
     -- Add or preview new terms
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
         If _previewSql Then
             RAISE INFO '%', _s;

@@ -39,7 +39,7 @@ BEGIN
         ---------------------------------------------------
         -- Create temporary tables
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Tools (
             tool text
         );
@@ -58,7 +58,7 @@ BEGIN
         ---------------------------------------------------
         -- get list of package datasets
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_Datasets( dataset,
                                   id )
         SELECT DISTINCT dataset,
@@ -80,7 +80,7 @@ BEGIN
         ---------------------------------------------------
         -- Get list of tools covered by package jobs
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_Tools ( tool )
         SELECT DISTINCT tool
         FROM dpkg.t_data_package_analysis_jobs

@@ -63,7 +63,6 @@ BEGIN
     ---------------------------------------------------
     -- Make sure a pending source file rename capture task job doesn't already exist
     ---------------------------------------------------
-    --
 
     SELECT Job
     INTO _jobID
@@ -82,7 +81,7 @@ BEGIN
     ---------------------------------------------------
     -- Create new SourceFileRename capture task job for specified dataset
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
         _message := format('Would create a new SourceFileRename job for dataset ID %s: %s', _datasetID, _datasetName);
     Else

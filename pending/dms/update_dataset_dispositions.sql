@@ -137,7 +137,7 @@ BEGIN
         ---------------------------------------------------
         -- Verify that all datasets exist
         ---------------------------------------------------
-        --
+
         SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _list
         FROM Tmp_DatasetInfo
@@ -193,7 +193,7 @@ BEGIN
     ---------------------------------------------------
     -- Update datasets from temporary table
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         _prevDatasetID := 0;

@@ -234,7 +234,7 @@ BEGIN
         -- The stats used come from the most recent DeconTools job for the datasets
         -- If there are multiple peak matching tasks, results come from the task with the lowest MD_State value and latest Job_Finish value
         ---------------------------------------------------
-        --
+
         UPDATE t_dataset_qc
         SET mass_error_ppm_viper = SourceQ.PPMShift_VIPER,
             amts_10pct_fdr = SourceQ.AMT_Count_10pct_FDR,

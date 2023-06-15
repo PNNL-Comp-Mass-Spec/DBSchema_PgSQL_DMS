@@ -68,7 +68,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve biomaterial name to ID
     ---------------------------------------------------
-    --
+
     SELECT Biomaterial_ID
     INTO _biomaterialID
     FROM T_Biomaterial
@@ -106,7 +106,7 @@ BEGIN
     ---------------------------------------------------
     -- Create a temp table to hold the list of organism names and IDs for this biomaterial item
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_BiomaterialOrganisms (
         Organism_Name text not null,
         Organism_ID int null,
@@ -116,7 +116,7 @@ BEGIN
     ---------------------------------------------------
     -- Parse the comma-separated list of organism names supplied by the user
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_BiomaterialOrganisms ( Organism_Name )
     SELECT Item
     FROM public.parse_delimited_list(_organismList) AS Organisms
@@ -124,7 +124,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve the organism ID for the organism names
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_BiomaterialOrganisms
     SET Organism_ID = Org.Organism_ID
     FROM t_organisms Org
@@ -162,7 +162,7 @@ BEGIN
     ---------------------------------------------------
     -- Error if any of the organism names could not be resolved
     ---------------------------------------------------
-    --
+
     --
     SELECT string_agg('Organism_Name', ', ' ORDER BY Organism_Name)
     INTO _list
@@ -180,7 +180,7 @@ BEGIN
     ---------------------------------------------------
     -- Update the organisms using a merge statement
     ---------------------------------------------------
-    --
+
     MERGE INTO t_biomaterial_organisms AS t
     USING ( SELECT _biomaterialID AS Biomaterial_ID,
                    Organism_ID
@@ -204,7 +204,6 @@ BEGIN
     ---------------------------------------------------
     -- Update Cached_Organism_List
     ---------------------------------------------------
-    --
     UPDATE T_Biomaterial
     SET Cached_Organism_List = get_biomaterial_organism_list(_biomaterialID)
     WHERE Biomaterial_ID = _biomaterialID

@@ -143,7 +143,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
             --
             UPDATE t_emsl_instrument_usage_report

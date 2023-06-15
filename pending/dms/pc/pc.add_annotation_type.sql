@@ -52,7 +52,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
-    --
+
     INSERT INTO pc.t_annotation_types (type_name, description, example, Authority_ID)
     VALUES (_name, _description, _example, _authID)
     RETURNING annotation_type_id

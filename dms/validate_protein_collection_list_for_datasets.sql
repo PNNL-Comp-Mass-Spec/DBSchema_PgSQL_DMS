@@ -86,7 +86,7 @@ BEGIN
     --------------------------------------------------------------
     -- Populate Tmp_ProteinCollections with the protein collections in _protCollNameList
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
     SELECT Value, 0 AS Collection_Appended
     FROM public.parse_delimited_list(_protCollNameList, ',');
@@ -95,7 +95,7 @@ BEGIN
     -- Look for duplicates in Tmp_ProteinCollections
     -- If found, remove them
     --------------------------------------------------------------
-    --
+
     SELECT string_agg(Protein_Collection_Name, ', ' ORDER BY Protein_Collection_Name)
     INTO _dups
     FROM Tmp_ProteinCollections
@@ -127,7 +127,7 @@ BEGIN
     --------------------------------------------------------------
     -- Populate Tmp_Datasets with the datasets in _datasets
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_Datasets (Dataset)
     SELECT Value
     FROM public.parse_delimited_list(_datasets, ',');
@@ -137,7 +137,7 @@ BEGIN
     -- with the enzymes for the experiments of the datasets in Tmp_Datasets
     -- These are typically the contaminant collections like Tryp_Pig_Bov
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID,
                             protein_collection_name,
                             Dataset_Count,
@@ -172,7 +172,7 @@ BEGIN
         --------------------------------------------------------------
         -- Check whether any of the protein collections already includes contaminants
         --------------------------------------------------------------
-        --
+
         SELECT COUNT(*),
                Min(PCLocal.Protein_Collection_Name)
         INTO _matchCount, _collectionWithContaminants
@@ -201,7 +201,7 @@ BEGIN
     -- Populate Tmp_IntStds with any internal standards associated
     -- with the datasets in Tmp_Datasets, including their parent experiments
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID, protein_collection_name,
                              Dataset_Count, Experiment_Count,
                              Enzyme_Contaminant_Collection )
@@ -269,7 +269,7 @@ BEGIN
     -- Make sure _protCollNameList contains each of the
     -- Protein_Collection_Name values in Tmp_IntStds
     --------------------------------------------------------------
-    --
+
     INSERT INTO Tmp_ProteinCollectionsToAdd( Protein_Collection_Name,
                                              Dataset_Count,
                                              Experiment_Count,

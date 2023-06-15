@@ -319,7 +319,6 @@ BEGIN
                 ---------------------------------------------------
                 -- Lookup the transfer folder path from the job parameters
                 ---------------------------------------------------
-                --
 
                 SELECT Value
                 INTO _transferFolderPath
@@ -336,7 +335,7 @@ BEGIN
                 -- If a data package is defined, update entries for
                 -- OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList in sw.t_job_parameters
                 ---------------------------------------------------
-                --
+
                 If _dataPackageID > 0 Then
                     CALL sw.update_job_param_org_db_info_using_data_pkg _job, _dataPackageID, _deleteIfInvalid => 0, _message => _message output, _callingUser => _callingUser
                 End If;

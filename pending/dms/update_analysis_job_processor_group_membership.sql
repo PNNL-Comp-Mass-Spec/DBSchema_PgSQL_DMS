@@ -44,7 +44,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
     If _processorNameList = '' and _mode <> 'add_processors' Then
@@ -109,7 +109,7 @@ BEGIN
     ---------------------------------------------------
     -- Mode set_membership_enabled
     ---------------------------------------------------
-    --
+
     If _mode like 'set_membership_enabled_%' Then
         -- Get membership enabled value for this group
         --
@@ -149,11 +149,11 @@ BEGIN
     End If;
 */
     ---------------------------------------------------
-    --
+
     -- If mode = 'add_processors', add processors in _processorNameList
     -- to existing membership of group (be careful not to make duplicates)
     ---------------------------------------------------
-    --
+
     If _mode = 'add_processors' Then
         INSERT INTO t_analysis_job_processor_group_membership
             (processor_id, group_id)
@@ -172,7 +172,7 @@ BEGIN
     -- If mode = 'remove_processors', remove processors in _processorNameList
     -- from existing membership of group
     ---------------------------------------------------
-    --
+
     If _mode = 'remove_processors' Then
         DELETE FROM t_analysis_job_processor_group_membership
         WHERE

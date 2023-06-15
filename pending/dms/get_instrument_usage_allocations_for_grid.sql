@@ -32,7 +32,7 @@ BEGIN
     -----------------------------------------
     -- Convert item list into temp table
     -----------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Proposals (
         Item text
     );
@@ -42,7 +42,7 @@ BEGIN
     FROM public.parse_delimited_list(_itemList);
 
     -----------------------------------------
-    --
+
     -----------------------------------------
 
     SELECT  fiscal_year,

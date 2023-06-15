@@ -49,7 +49,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
@@ -75,7 +75,6 @@ BEGIN
     ---------------------------------------------------
     -- Add new capture task jobs
     ---------------------------------------------------
-    --
 
     If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Querying DMS';

@@ -77,14 +77,14 @@ BEGIN
     ---------------------------------------------------
     -- Auto-delete dataset column names from Tmp_DatasetInfo
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_DatasetInfo
     WHERE Dataset_Name::citext IN ('Dataset', 'Dataset Name', 'Dataset_Name', 'Dataset_Num')
 
     ---------------------------------------------------
     -- Update the additional info in Tmp_DatasetInfo
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_DatasetInfo
     SET Tmp_DatasetInfo.dataset_id = t_dataset.dataset_id,
         Tmp_DatasetInfo.instrument_class = t_instrument_class.instrument_class,
@@ -113,7 +113,6 @@ BEGIN
     ---------------------------------------------------
     -- Make sure none of the datasets has a rating of -5 (Not Released)
     ---------------------------------------------------
-    --
 
     SELECT COUNT(*)
     INTO _notReleasedCount
@@ -161,7 +160,7 @@ BEGIN
     ---------------------------------------------------
     -- Verify that datasets in list all exist
     ---------------------------------------------------
-    --
+
     _list := null;
     --
     SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
@@ -185,7 +184,7 @@ BEGIN
     -- If _allowNewDatasets is false, they must all have state Complete
     -- If _allowNewDatasets is true, we also allow New and Capture In Progress datasets
     ---------------------------------------------------
-    --
+
     SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
     INTO _list
     FROM Tmp_DatasetInfo
@@ -225,7 +224,6 @@ BEGIN
     -- Do not allow high res datasets to be mixed with low res datasets
     -- (though this is OK if the tool is MSXML_Gen, MaxQuant, MSFragger, or DiaNN)
     ---------------------------------------------------
-    --
 
     SELECT COUNT(*)
     INTO _hmsCount

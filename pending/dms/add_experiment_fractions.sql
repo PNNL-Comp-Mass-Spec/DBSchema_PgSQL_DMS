@@ -246,7 +246,7 @@ BEGIN
         ---------------------------------------------------
         -- Cache the biomaterial mapping
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_Experiment_to_Biomaterial_Map( Biomaterial_Name,
                                                        Biomaterial_ID )
         SELECT CC.Biomaterial_Name,
@@ -259,7 +259,7 @@ BEGIN
         ---------------------------------------------------
         -- Cache the reference compound mapping
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_ExpToRefCompoundMap( Compound_IDName,
                                              compound_id )
         SELECT RC.compound_id::text,
@@ -272,7 +272,7 @@ BEGIN
         ---------------------------------------------------
         -- Set up and validate wellplate values
         ---------------------------------------------------
-        --
+
         CALL validate_wellplate_loading (
                                 _wellplateName => _wellplateName,   -- Output
                                 _wellNumber => _wellNumber,         -- Output
@@ -290,7 +290,7 @@ BEGIN
         ---------------------------------------------------
         -- Assure that wellplate is in wellplate table (if set)
         ---------------------------------------------------
-        --
+
         If Not _wellplateName Is Null Then
             If _wellplateName = 'new' Then
                 _wellplateName := '(generate name)';
@@ -349,6 +349,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve predigest internal standard ID
         ---------------------------------------------------
+
         If _internalStandard <> 'parent' Then
             --
             SELECT internal_standard_id
@@ -367,7 +368,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve postdigestion internal standard ID
         ---------------------------------------------------
-        --
+
         If _postdigestIntStd <> 'parent' Then
 
             SELECT internal_standard_id
@@ -386,7 +387,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve researcher
         ---------------------------------------------------
-        --
+
         If _researcher <> 'parent' Then
             _userID := public.get_user_id (_researcher);
 
@@ -429,6 +430,7 @@ BEGIN
             ---------------------------------------------------
             -- Make Experiment group entry
             ---------------------------------------------------
+
             INSERT INTO t_experiment_groups (
                 group_type,
                 parent_exp_id,
@@ -592,7 +594,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Append Experiment ID to _experimentIDList and _materialIDList
                 ---------------------------------------------------
-                --
+
                 If char_length(_experimentIDList) > 0 Then
                     _experimentIDList := format('%s,%s', _experimentIDList, _newExpID);
                 Else
@@ -638,14 +640,14 @@ BEGIN
                 -- Update the member_count field in t_experiment_groups
                 -- Note that the count includes the parent experiment
                 ---------------------------------------------------
-                --
+
                 CALL update_experiment_group_member_count (_groupID => _groupID);
             End If;
 
             ---------------------------------------------------
             -- Increment well number
             ---------------------------------------------------
-            --
+
             If Not _wn Is Null Then
                 _wellIndex := _wellIndex + 1;
                 _wn := get_well_position(_wellIndex);
@@ -661,7 +663,7 @@ BEGIN
             ---------------------------------------------------
             -- Resolve parent container name
             ---------------------------------------------------
-            --
+
             If _container = 'parent' Then
                 SELECT container
                 INTO _container
@@ -672,7 +674,7 @@ BEGIN
             ---------------------------------------------------
             -- Move new fraction experiments to container
             ---------------------------------------------------
-            --
+
             CALL update_material_items (
                         'move_material',
                         _materialIDList,

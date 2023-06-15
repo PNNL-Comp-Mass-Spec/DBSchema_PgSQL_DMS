@@ -106,7 +106,7 @@ BEGIN
     -- When _state is Override, the state will be left unchanged, but data can still be updated
     -- even if the cart config is already associated with datasets
     ---------------------------------------------------
-    --
+
     If Not _state::citext IN ('Active', 'Inactive', 'Invalid', 'Override') Then
         _message := format('Cart config state must be Active, Inactive, or Invalid; %s is not allowed', _state);
         RAISE WARNING '%', _message;
@@ -156,7 +156,6 @@ BEGIN
     ---------------------------------------------------
     -- Next assure that it starts with a valid cart name followed by an underscore, or starts with 'Unknown_'
     ---------------------------------------------------
-    --
 
     _underscoreLoc := Position('_' In _configName);
 
@@ -177,7 +176,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve cart name to ID
     ---------------------------------------------------
-    --
+
     --
     SELECT cart_id
     INTO _cartID
@@ -195,7 +194,7 @@ BEGIN
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
         -- Lookup the current name and state
 
@@ -263,7 +262,7 @@ BEGIN
         ---------------------------------------------------
         -- Only allow updating the state of Cart Config items that are associated with a dataset
         ---------------------------------------------------
-        --
+
         If _ignoreDatasetChecks = 0 And Exists (Select * FROM t_dataset Where cart_config_id = _id) Then
 
             SELECT COUNT(*),
@@ -307,7 +306,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate that the LC Cart Config name is unique when creating a new entry
     ---------------------------------------------------
-    --
+
     If _mode = 'add' Then
         If Exists (Select * FROM t_lc_cart_configuration Where cart_config_name = _configName) Then
             _message := format('LC Cart Config already exists; cannot add a new config named %s', _configName);
@@ -321,7 +320,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
-    --
+
     If _mode = 'add' Then
 
         INSERT INTO t_lc_cart_configuration( cart_config_name,
@@ -396,7 +395,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
         --
         UPDATE t_lc_cart_configuration

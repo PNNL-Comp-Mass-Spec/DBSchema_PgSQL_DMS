@@ -60,7 +60,7 @@ BEGIN
     ---------------------------------------------------
     -- Get current state of this task
     ---------------------------------------------------
-    --
+
     _processor := '';
     --
     _state := 0;
@@ -96,7 +96,7 @@ BEGIN
     ---------------------------------------------------
     -- Update job step
     ---------------------------------------------------
-    --
+
     UPDATE sw.t_data_folder_create_queue
     SET    state = _stepState,
            finish = CURRENT_TIMESTAMP,

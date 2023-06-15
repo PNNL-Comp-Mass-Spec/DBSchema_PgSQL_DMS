@@ -36,7 +36,7 @@ BEGIN
     ---------------------------------------------------
     -- Create table to track the list of affected jobs
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_SJL (
         Job int,
         State int
@@ -46,7 +46,7 @@ BEGIN
     -- Find all jobs present in the Pipeline DB but not present in DMS
     -- V_DMS_PipelineExistingJob returns a list of all jobs in DMS (regardless of state)
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_SJL (job, state)
     SELECT job, state
     FROM t_jobs
@@ -61,7 +61,7 @@ BEGIN
     -- Remove any entries from Tmp_SJL that have a currently running job step
     -- However, ignore job steps that started over 48 hours ago
     ---------------------------------------------------
-    --
+
     DELETE Tmp_SJL
     FROM sw.t_job_steps JS
     WHERE Tmp_SJL.job = JS.job AND

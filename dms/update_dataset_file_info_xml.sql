@@ -301,7 +301,7 @@ BEGIN
         ---------------------------------------------------
         -- Make sure Dataset_ID is up-to-date in Tmp_DSInfoTable
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_DSInfoTable
         SET Dataset_ID = _datasetID;
 
@@ -391,7 +391,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate the hash type
         ---------------------------------------------------
-        --
+
         SELECT InstFileHashType
         INTO _unrecognizedHashType
         FROM Tmp_InstrumentFiles
@@ -835,7 +835,7 @@ BEGIN
         -----------------------------------------------
         -- Update the scan_types field in t_dataset_info for this dataset
         -----------------------------------------------
-        --
+
         UPDATE t_dataset_info DI
         SET scan_types = get_dataset_scan_type_list(_datasetID)
         WHERE DI.dataset_id = _datasetID;
@@ -878,7 +878,7 @@ BEGIN
         -----------------------------------------------
         -- Possibly validate the dataset type defined for this dataset
         -----------------------------------------------
-        --
+
         If _validateDatasetType Then
             _currentLocation := 'Call validate_dataset_type';
 

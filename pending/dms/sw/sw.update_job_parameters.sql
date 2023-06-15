@@ -14,7 +14,6 @@ AS $$
 **  Desc:
 **      Updates the parameters in T_Job_Parameters for the specified job
 **
-**
 **      Note: The job parameters come from the public schema tables
 **            (via Create_Parameters_For_Job and then Get_Job_Param_Table),
 **            and not from the T_Job_Parameters table local to this DB
@@ -43,6 +42,7 @@ BEGIN
     ----------------------------------------------
     -- Validate the inputs
     ----------------------------------------------
+
     If _job Is Null Then
         _message := '_job cannot be null';
         _returnCode := 'U5301';

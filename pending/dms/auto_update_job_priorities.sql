@@ -35,13 +35,13 @@ BEGIN
     ----------------------------------------------
     -- Validate the Inputs
     ----------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, false);
 
     ----------------------------------------------
     -- Create temporary tables
     ----------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_ProteinCollectionJobs (
         ParamFile text NOT NULL,
         SettingsFile text NOT NULL,
@@ -119,7 +119,7 @@ BEGIN
     ----------------------------------------------
     -- Add candidate jobs to Tmp_JobsToUpdate
     ----------------------------------------------
-    --
+
     INSERT INTO Tmp_JobsToUpdate (job, Old_Priority, New_Priority, Ignored, Source)
     SELECT job, 0 AS Old_Priority, 0 AS New_Priority, 0 AS Ignored, MIN(Source)
     FROM (

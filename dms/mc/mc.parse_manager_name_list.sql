@@ -44,7 +44,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _manager_name_list := Coalesce(_manager_name_list, '');
     _remove_unknown_managers := Coalesce(_remove_unknown_managers, 1);
 

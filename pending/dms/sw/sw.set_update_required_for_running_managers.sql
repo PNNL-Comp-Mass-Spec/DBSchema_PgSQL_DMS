@@ -57,7 +57,6 @@ BEGIN
     ---------------------------------------------------
     -- Get a list of the currently running managers
     ---------------------------------------------------
-    --
 
     SELECT string_agg(processor, ',' ORDER BY processor)
     INTO _mgrList

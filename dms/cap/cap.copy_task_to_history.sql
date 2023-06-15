@@ -36,7 +36,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if no candidates found
     ---------------------------------------------------
-    --
+
      If Coalesce(_job, 0) = 0 Then
         _message := 'Capture task job cannot be 0';
         RAISE WARNING '%', _message;
@@ -47,7 +47,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if not a state we save for
     ---------------------------------------------------
-    --
+
     If Not _jobState In (3, 5) Then
         _message := 'Capture task job state must be 3 or 5 to be copied to t_tasks_history (this is not an error)';
         RETURN;
@@ -56,7 +56,6 @@ BEGIN
     ---------------------------------------------------
     -- Define a common timestamp for all history entries
     ---------------------------------------------------
-    --
 
     If Coalesce(_overrideSaveTime, false) Then
         _saveTime := Coalesce(_saveTimeOverride, CURRENT_TIMESTAMP);
@@ -67,7 +66,7 @@ BEGIN
     ---------------------------------------------------
     -- Copy capture task job
     ---------------------------------------------------
-    --
+
     INSERT INTO cap.t_tasks_history (
         Job,
         Priority,
@@ -99,7 +98,7 @@ BEGIN
     ---------------------------------------------------
     -- Copy steps
     ---------------------------------------------------
-    --
+
     INSERT INTO cap.t_task_steps_history (
         Job,
         Step,
@@ -139,7 +138,7 @@ BEGIN
     ---------------------------------------------------
     -- Copy parameters
     ---------------------------------------------------
-    --
+
     INSERT INTO cap.t_task_parameters_history (
         Job,
         Parameters,
@@ -155,7 +154,7 @@ BEGIN
     ---------------------------------------------------
     -- Copy capture task job step dependencies
     ---------------------------------------------------
-    --
+
     -- First delete any extra steps for this capture task job that are in t_task_step_dependencies_history
     --
     DELETE FROM cap.t_task_step_dependencies_history target

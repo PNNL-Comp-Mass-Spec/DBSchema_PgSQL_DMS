@@ -171,7 +171,7 @@ BEGIN
     ---------------------------------------------------
     -- Trap 'parse_only' mode here
     ---------------------------------------------------
-    --
+
     If _mode = 'parse_only' Then
 
         -- ToDo: Use RAISE INFO to show the values
@@ -322,7 +322,7 @@ BEGIN
     ---------------------------------------------------
     -- Possibly auto-define the experiment
     ---------------------------------------------------
-    --
+
     If _experimentName = '' Then
         If _datasetName Like 'Blank%' Then
             _experimentName := 'Blank';
@@ -334,7 +334,7 @@ BEGIN
     ---------------------------------------------------
     -- Possibly auto-define the _emslUsageType
     ---------------------------------------------------
-    --
+
     If _emslUsageType = '' Then
         If _datasetName Like 'Blank%' OR _datasetName Like 'QC_Shew%' Then
             _emslUsageType := 'MAINTENANCE';
@@ -385,6 +385,7 @@ BEGIN
     ---------------------------------------------------
     -- Create new dataset
     ---------------------------------------------------
+
     CALL add_update_dataset (
                         _datasetName,
                         _experimentName,

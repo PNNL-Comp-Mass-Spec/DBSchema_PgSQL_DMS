@@ -147,7 +147,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve location to ID (according to mode)
     ---------------------------------------------------
-    --
+
     _location := 'None' -- the null location;
     _locID    := 1      -- the null location;
 
@@ -203,7 +203,7 @@ BEGIN
     ---------------------------------------------------
     -- Determine whether or not any containers have contents
     ---------------------------------------------------
-    --
+
     SELECT COUNT(*)
     INTO _nonEmptyContainerCount
     FROM Tmp_Material_Container_List
@@ -213,7 +213,7 @@ BEGIN
     -- For 'plain' container retirement
     -- container must be empty
     ---------------------------------------------------
-    --
+
     If _mode = 'retire_container' AND _nonEmptyContainerCount > 0 Then
         If _numContainers = 1 Then
             _message := format('Container %s is not empty; cannot retire it', _containerList);
@@ -312,7 +312,7 @@ BEGIN
     ---------------------------------------------------
     -- Make log entries
     ---------------------------------------------------
-    --
+
     INSERT INTO t_material_log (
         type,
         item,

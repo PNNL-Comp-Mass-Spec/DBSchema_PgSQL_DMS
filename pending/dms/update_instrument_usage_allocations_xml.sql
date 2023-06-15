@@ -94,7 +94,7 @@ BEGIN
         -----------------------------------------------------------
         -- Temp table to hold operations
         -----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Allocation_Operations (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Allocation text NULL,
@@ -115,7 +115,7 @@ BEGIN
         -- Example XML to parse:
         --   <c fiscal_year="2022"/>
         -----------------------------------------------------------
-        --
+
         _fiscalYear := (xpath('//c/@fiscal_year', _xml))[1]::text;
 
         _fy := public.try_cast(_fiscalYear, Extract(year from CURRENT_TIMESTAMP));
@@ -129,7 +129,7 @@ BEGIN
         -- Example XML to parse:
         --   <r o="i" p="29591" g="FT" a="14.5" x="Comment"/>
         -----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_Allocation_Operations
             (Operation, Proposal, InstGroup, Allocation, Comment, FY)
         SELECT
@@ -143,7 +143,7 @@ BEGIN
         -----------------------------------------------------------
         -- Call update_instrument_usage_allocations_work to perform the work
         -----------------------------------------------------------
-        --
+
         CALL update_instrument_usage_allocations_work (_fy, _message => _message, _callingUser, _infoOnly);
 
     EXCEPTION

@@ -84,7 +84,7 @@ BEGIN
     -----------------------------------------
     -- Find datasets run within the date range
     -----------------------------------------
-    --
+
     INSERT INTO Tmp_Project_Usage_Stats( StartDate,
                                          EndDate,
                                          TheYear,
@@ -153,7 +153,7 @@ BEGIN
     -- Find user-initiated analysis jobs started within the date range
     -- Store in t_project_usage_stats via a merge
     -----------------------------------------
-    --
+
     MERGE INTO Tmp_Project_Usage_Stats AS t
     USING ( SELECT _startdate AS StartDate,
                    _endDate AS EndDate,
@@ -234,7 +234,7 @@ BEGIN
     -- Find experiments (samples) prepared within the date range
     -- Store in t_project_usage_stats via a merge
     -----------------------------------------
-    --
+
     MERGE INTO Tmp_Project_Usage_Stats AS t
     USING ( SELECT _startdate AS StartDate,
                    _endDate AS EndDate,

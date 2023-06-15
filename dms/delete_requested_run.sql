@@ -79,7 +79,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the requested run ID
     ---------------------------------------------------
-    --
+
     If _requestID = 0 Then
         _message := '_requestID is 0; nothing to do';
         RAISE INFO '%', _message;
@@ -177,21 +177,21 @@ BEGIN
         ---------------------------------------------------
         -- Delete associated factors
         ---------------------------------------------------
-        --
+
         DELETE FROM t_factor
         WHERE target_id = _requestID;
 
         ---------------------------------------------------
         -- Delete EUS users associated with request
         ---------------------------------------------------
-        --
+
         DELETE FROM t_requested_run_eus_users
         WHERE request_id = _requestID;
 
         ---------------------------------------------------
         -- Delete associated auto-created request
         ---------------------------------------------------
-        --
+
         DELETE FROM t_requested_run
         WHERE request_id = _requestID;
 

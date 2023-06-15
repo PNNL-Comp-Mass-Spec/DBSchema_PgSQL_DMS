@@ -47,6 +47,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate a temporary table with the dataset names to create jobs for
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_DatasetsToProcess
     (
         EntryID int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -118,7 +119,6 @@ BEGIN
     -- Process list into datasets and get set of generated jobs
     -- for each one into job holding table
     ---------------------------------------------------
-    --
 
     FOR _datasetName IN
         SELECT Src.Dataset
@@ -128,6 +128,7 @@ BEGIN
         ---------------------------------------------------
         -- Add jobs created for the dataset to the job holding table
         ---------------------------------------------------
+
         INSERT INTO Tmp_PredefineJobsToCreate_MDS (
             predefine_id, dataset, priority, analysis_tool_name, param_file_name, settings_file_name,
             organism_name, protein_collection_list, protein_options_list, organism_db_name,

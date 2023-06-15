@@ -39,7 +39,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve target name to target ID using the entity's data table, as defined in t_aux_info_target
     ---------------------------------------------------
-    --
+
     SELECT lower(T.target_table),
            lower(T.target_id_col),
            lower(T.target_name_col)

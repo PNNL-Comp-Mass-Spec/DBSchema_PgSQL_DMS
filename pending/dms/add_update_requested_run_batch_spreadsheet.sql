@@ -69,7 +69,6 @@ BEGIN
     ---------------------------------------------------
     -- Get list of request ids based on Request name list
     ---------------------------------------------------
-    --
 
     SELECT string_agg(RR.request_id::text, ', ' ORDER BY RR.request_id)
     INTO _requestedRunList

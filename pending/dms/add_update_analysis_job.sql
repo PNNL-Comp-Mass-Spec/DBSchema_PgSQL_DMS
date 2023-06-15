@@ -309,7 +309,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve processor group ID
         ---------------------------------------------------
-        --
+
         If _associatedProcessorGroup <> '' Then
             SELECT group_id
             INTO _gid
@@ -339,7 +339,7 @@ BEGIN
         ---------------------------------------------------
         -- Add dataset to table
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_DatasetInfo( Dataset_Name )
         VALUES (_datasetName);
 
@@ -360,7 +360,6 @@ BEGIN
         ---------------------------------------------------
         -- Validate job parameters
         ---------------------------------------------------
-        --
 
         CALL validate_analysis_job_parameters (
                                 _toolName => _toolName,
@@ -410,7 +409,7 @@ BEGIN
         ---------------------------------------------------
         -- Lookup the Dataset ID
         ---------------------------------------------------
-        --
+
         --
         SELECT Dataset_ID
         INTO _datasetID
@@ -420,7 +419,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
 
             If _preventDuplicateJobs Then
@@ -484,7 +483,7 @@ BEGIN
             ---------------------------------------------------
             -- Get ID for new job
             ---------------------------------------------------
-            --
+
             _jobID := public.get_new_job_id ('Job created in DMS', _infoOnly)
 
             If _jobID = 0 Then
@@ -592,7 +591,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' or _mode = 'reset' Then
 
             ---------------------------------------------------
@@ -621,7 +620,7 @@ BEGIN
             ---------------------------------------------------
             -- Associate job with processor group
             ---------------------------------------------------
-            --
+
             -- Is there an existing association between the job
             -- and a processor group?
             --
@@ -691,7 +690,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Deal with job association with group,
                 ---------------------------------------------------
-                --
+
                 -- If no group is given, but existing association
                 -- exists for job, delete it
                 --

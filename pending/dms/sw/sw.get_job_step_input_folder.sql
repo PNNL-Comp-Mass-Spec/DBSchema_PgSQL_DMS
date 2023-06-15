@@ -48,7 +48,7 @@ BEGIN
     ---------------------------------------------------
     -- First look in sw.t_job_steps
     ---------------------------------------------------
-    --
+
     SELECT JS.input_folder_name,
            JS.Tool
     INTO _inputFolderName, _stepToolMatch

@@ -173,7 +173,6 @@ BEGIN
     -- In reality, only the comment should have double-quote characters, but we'll check all text fields just to be safe
     -- Note that xml_quote_check will also change Null values to empty strings
     ---------------------------------------------------
-    --
 
     _newLine := format('%s%s', chr(13) || chr(10));
 

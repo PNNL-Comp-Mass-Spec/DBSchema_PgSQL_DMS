@@ -37,13 +37,13 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Look for Bruker_DA_Export jobs that failed with error 'No spectra were exported'
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_JobsToFix
 
     INSERT INTO Tmp_JobsToFix (job, step)
@@ -81,7 +81,7 @@ BEGIN
     ---------------------------------------------------
     -- Look for Formularity or NOMSI jobs that failed with error 'No peaks found'
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_JobsToFix
 
     INSERT INTO Tmp_JobsToFix( job, step )
@@ -137,7 +137,7 @@ BEGIN
     -- or
     -- Error retrieving protein collection or legacy FASTA file: Timeout expired
     ---------------------------------------------------
-    --
+
     DELETE FROM Tmp_JobsToFix
 
     INSERT INTO Tmp_JobsToFix (job, step)

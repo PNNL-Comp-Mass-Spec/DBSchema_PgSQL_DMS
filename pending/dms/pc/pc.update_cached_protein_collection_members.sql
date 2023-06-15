@@ -288,7 +288,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the num_proteins value in pc.t_protein_collections
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ProteinCountErrors( protein_collection_id,
                                         NumProteinsOld,
                                         NumProteinsNew )

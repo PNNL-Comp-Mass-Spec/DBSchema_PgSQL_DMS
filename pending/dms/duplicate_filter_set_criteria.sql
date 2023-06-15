@@ -66,7 +66,7 @@ BEGIN
     -----------------------------------------
     -- Validate that _destFilterSetID is defined in t_filter_sets
     -----------------------------------------
-    --
+
     If Not Exists ( SELECT * FROM t_filter_sets WHERE filter_set_id = _destFilterSetID ) Then
         _message := format('Filter Set ID %s was not found in t_filter_sets; make an entry in that table for this filter set before calling this procedure', _destFilterSetID);
         RETURN;
@@ -75,7 +75,6 @@ BEGIN
     -----------------------------------------
     -- Validate that no groups exist for _destFilterSetID
     -----------------------------------------
-    --
 
     If Exists ( SELECT * FROM t_filter_set_criteria_groups WHERE filter_set_id = _destFilterSetID ) Then
         _message := format('Existing groups were found for Filter Set ID %s; this is not allowed', _destFilterSetID);
@@ -91,7 +90,7 @@ BEGIN
     -----------------------------------------
     -- Populate Tmp_FilterSetGroups with the groups defined for _sourceFilterSetID
     -----------------------------------------
-    --
+
     INSERT INTO Tmp_FilterSetGroups (Group_ID_Old)
     SELECT filter_criteria_group_id
     FROM t_filter_set_criteria_groups
@@ -158,7 +157,7 @@ BEGIN
         -----------------------------------------
         -- Call Add_Missing_Filter_Criteria to add any missing criteria
         -----------------------------------------
-        --
+
         CALL add_missing_filter_criteria (_destFilterSetID);
     End If;
 

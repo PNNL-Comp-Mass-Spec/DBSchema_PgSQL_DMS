@@ -56,7 +56,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove any references from experiments
     ---------------------------------------------------
-    --
+
     UPDATE t_experiments
     SET sample_prep_request_id = 0
     WHERE (sample_prep_request_id = _requestID)
@@ -80,7 +80,7 @@ BEGIN
     ---------------------------------------------------
     -- Delete the sample prep request itself
     ---------------------------------------------------
-    --
+
     DELETE FROM t_sample_prep_request
     WHERE     (prep_request_id = _requestID)
 

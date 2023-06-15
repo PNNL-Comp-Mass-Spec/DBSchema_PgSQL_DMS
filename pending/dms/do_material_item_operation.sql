@@ -135,7 +135,7 @@ BEGIN
             ---------------------------------------------------
             -- Call the material update function
             ---------------------------------------------------
-            --
+
             _iMode := 'retire_items';
             _itemList := format('%s:%s', _typeTag, _tmpID);
             _itemType := 'mixed_material';

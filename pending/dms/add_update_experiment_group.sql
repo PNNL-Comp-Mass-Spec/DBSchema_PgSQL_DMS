@@ -129,7 +129,7 @@ BEGIN
     ---------------------------------------------------
     -- Create temporary table for experiments in list
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Experiments (
         Experiment text,
         Exp_ID     int
@@ -138,7 +138,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate temporary table from list
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Experiments ( Experiment,
                                   Exp_ID )
     SELECT value AS Experiment,
@@ -224,7 +224,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
-    --
+
     If _mode = 'add' Then
 
         INSERT INTO t_experiment_groups (
@@ -250,7 +250,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_experiment_groups

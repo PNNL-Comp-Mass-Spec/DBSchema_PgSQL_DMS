@@ -38,7 +38,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview the updates
         ---------------------------------------------------
-        --
+
         SELECT E.exp_id,
                E.last_used,
                LookupRR.MostRecentUse AS Last_Used_ReqRun,
@@ -69,7 +69,7 @@ BEGIN
     ---------------------------------------------------
     -- Update based on the most recent Requested Run
     ---------------------------------------------------
-    --
+
     UPDATE t_experiments Target
     SET last_used = LookupQ.MostRecentUse
     FROM ( SELECT E.exp_id,
@@ -85,7 +85,7 @@ BEGIN
     ---------------------------------------------------
     -- Update based on the most recent Dataset
     ---------------------------------------------------
-    --
+
     UPDATE t_experiments Target
     SET last_used = LookupQ.MostRecentUse
     FROM ( SELECT E.exp_id,

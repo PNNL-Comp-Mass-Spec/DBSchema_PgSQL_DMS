@@ -35,7 +35,7 @@ BEGIN
     -- This procedure populates Tmp_Requests
     -- Procedure make_factor_crosstab_sql will populate Tmp_Factors
     -----------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Requests (
         Request int
     );
@@ -48,7 +48,7 @@ BEGIN
     -----------------------------------------
     -- Populate Tmp_Requests with list of requests
     -----------------------------------------
-    --
+
     INSERT INTO Tmp_Requests (Request)
     SELECT request_id
     FROM public.get_requested_runs_from_item_list (_itemList, _itemType);
@@ -57,7 +57,7 @@ BEGIN
     -----------------------------------------
     -- Filter by request name
     -----------------------------------------
-    --
+
     DELETE FROM Tmp_Requests
     WHERE NOT EXISTS (
             SELECT request_id
@@ -85,7 +85,6 @@ BEGIN
     -----------------------------------------
     -- Return the output table
     -----------------------------------------
-    --
 
     -- ToDo: Convert this procedure to a function
 

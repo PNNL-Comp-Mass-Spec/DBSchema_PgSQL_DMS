@@ -560,7 +560,7 @@ BEGIN
     -----------------------------------------------------------
     -- If a warning message was defined, display it
     -----------------------------------------------------------
-    --
+
     If _warnMessage <> '' And Not (_currentDatasetType Like 'IMS%' and _datasetTypeAutoGen Like 'IMS%') Then
         _message := _warnMessage;
 
@@ -571,7 +571,7 @@ BEGIN
     -----------------------------------------------------------
     -- If a new dataset type is defined, update _newDSTypeID
     -----------------------------------------------------------
-    --
+
     If _newDatasetType <> '' Then
         _newDSTypeID := 0;
 

@@ -242,7 +242,7 @@ BEGIN
         -- Update datasets from temporary table
         -- in cases where parameter has changed
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             If _state <> '[no change]' Then

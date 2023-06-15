@@ -69,7 +69,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve dataset into ID and state
     ---------------------------------------------------
-    --
+
     SELECT dataset_id,
            dataset_state_id,
            dataset_rating_id
@@ -86,7 +86,7 @@ BEGIN
     ---------------------------------------------------
     -- Verify that datset is in correct state
     ---------------------------------------------------
-    --
+
     If Not _completionState in (3, 5, 6, 8, 9, 14) Then
         _message := format('Completion state argument incorrect for %s', _datasetName);
         RAISE WARNING '%', _message;
@@ -114,7 +114,7 @@ BEGIN
     ---------------------------------------------------
     -- Update state of dataset
     ---------------------------------------------------
-    --
+
     UPDATE t_dataset
     SET dataset_state_id = _completionState,
     WHERE dataset_id = _datasetID;

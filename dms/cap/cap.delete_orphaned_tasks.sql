@@ -44,7 +44,7 @@ BEGIN
     ---------------------------------------------------
     -- Find orphaned capture task jobs
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_JobsToDelete (
         Job int Not Null,
         HasDependencies boolean Not null
@@ -105,7 +105,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview the capture task jobs that would be deleted
         ---------------------------------------------------
-        --
+
         RAISE INFO ' ';
 
         _infoHead := format(_formatSpecifier,
@@ -164,7 +164,7 @@ BEGIN
         ---------------------------------------------------
         -- Delete each capture task job individually (so that we can log the dataset name and ID in cap.t_log_entries)
         ---------------------------------------------------
-        --
+
         _jobsDeleted := 0;
 
         FOR _job IN

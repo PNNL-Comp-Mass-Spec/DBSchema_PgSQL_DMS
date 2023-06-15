@@ -59,7 +59,7 @@ BEGIN
     -- However, we now allow jobs to run if a dataset has an archive update job running
     --
     ---------------------------------------------------
-    --
+
     UPDATE sw.t_jobs
     SET archive_busy = 0
     WHERE archive_busy = 1 AND

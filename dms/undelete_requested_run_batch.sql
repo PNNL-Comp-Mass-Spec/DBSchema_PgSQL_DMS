@@ -60,7 +60,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the requested run ID
     ---------------------------------------------------
-    --
+
     If Coalesce(_batchID, 0) = 0 Then
         _message := '_batchID is 0; nothing to do';
         RAISE INFO '%', _message;

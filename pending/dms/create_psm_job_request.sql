@@ -127,7 +127,7 @@ BEGIN
         ---------------------------------------------------
         -- Assure that key parameters are not empty
         ---------------------------------------------------
-        --
+
         If Coalesce(_datasets, '') = '' Then
             RAISE EXCEPTION 'Dataset list is empty';
         End If;
@@ -147,7 +147,7 @@ BEGIN
         ---------------------------------------------------
         -- Assure that _jobTypeName, _toolName, and _requestName are valid
         ---------------------------------------------------
-        --
+
         If Not Exists (SELECT * FROM t_default_psm_job_types WHERE job_type_name = _jobTypeName) Then
             RAISE EXCEPTION 'Invalid job type name: %', _jobTypeName;
         End If;
@@ -186,7 +186,7 @@ BEGIN
         -- Populate Tmp_DatasetInfo using the dataset list
         -- Remove any duplicates that may be present
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
         SELECT DISTINCT Item
         FROM public.parse_delimited_list ( _datasets )
@@ -318,7 +318,6 @@ BEGIN
         ---------------------------------------------------
         -- Lookup the most common organism for the datasets in Tmp_DatasetInfo
         ---------------------------------------------------
-        --
 
         SELECT t_organisms.organism
         INTO _organismName
@@ -338,7 +337,7 @@ BEGIN
         -- Add_Update_Analysis_Job_Request also does this, but it displays a warning message to the user
         -- We don't want the warning message to appear when the user is using Create_PSM_Job_Request; instead we silently update things
         ---------------------------------------------------
-        --
+
         If _toolName::citext Like 'MSGFPlus%' And _protCollOptionsList::citext Like '%decoy%' And Not _paramFile::citext Similar To '%[_]NoDecoy%' Then
             _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
         End If;
@@ -350,7 +349,7 @@ BEGIN
         ---------------------------------------------------
         -- Now create the analysis job request
         ---------------------------------------------------
-        --
+
         CALL add_update_analysis_job_request (
                 _datasets => _datasets,
                 _requestName => _requestName,

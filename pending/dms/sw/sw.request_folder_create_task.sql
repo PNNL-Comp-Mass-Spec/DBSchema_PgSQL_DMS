@@ -93,7 +93,7 @@ BEGIN
     -- return value if no tasks are available
     -- Code 'U53000' is used for this
     ---------------------------------------------------
-    --
+
     _taskNotAvailableErrorCode := 53000;
 
     BEGIN
@@ -101,7 +101,6 @@ BEGIN
         ---------------------------------------------------
         -- Get first available task from sw.t_data_folder_create_queue
         ---------------------------------------------------
-        --
 
         SELECT entry_id
         INTO _taskID
@@ -118,7 +117,7 @@ BEGIN
         -- If a task step was found (_taskID <> 0) and if _infoOnly is false,
         -- update the step state to Running
         ---------------------------------------------------
-        --
+
         If _taskAssigned AND Not _infoOnly Then
             UPDATE sw.t_data_folder_create_queue
             SET state = 2,
@@ -138,7 +137,6 @@ BEGIN
         ---------------------------------------------------
         -- Task was assigned; return parameters in XML format
         ---------------------------------------------------
-        --
 
         -- ToDo: update this to use XMLAGG(XMLELEMENT(
         --       Look for similar capture task code in cap.*
@@ -174,7 +172,7 @@ BEGIN
     ---------------------------------------------------
     -- Dump candidate list if in infoOnly mode
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
         -- Preview the next _taskCountToPreview available tasks
 

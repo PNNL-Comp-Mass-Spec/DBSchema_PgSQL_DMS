@@ -87,7 +87,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, false);
     _maxDatasetsToProcess := Coalesce(_maxDatasetsToProcess, 0);
     _dayCountForRecentDatasets := Coalesce(_dayCountForRecentDatasets, 30);
@@ -165,7 +165,7 @@ BEGIN
     -- Also excludes datasets with an undesired state or undesired rating
     -- Optionally only matches analysis tools with names matching _analysisToolNameFilter
     ---------------------------------------------------
-    --
+
     -- First construct a list of all recent datasets that have an instrument class
     -- that has an active predefined job
     -- Optionally filter on campaign

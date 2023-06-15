@@ -46,7 +46,7 @@ BEGIN
     --
     -- This is a two-step query to avoid locking sw.t_job_steps
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_MachineStats (Machine, CPUs_Used, Memory_Used)
     SELECT M.Machine,
         SUM(CASE WHEN JobStepsQ.State = 4

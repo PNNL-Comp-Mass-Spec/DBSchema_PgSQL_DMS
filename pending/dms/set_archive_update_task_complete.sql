@@ -40,7 +40,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve dataset name to ID and archive state
     ---------------------------------------------------
-    --
+
     _datasetID := 0;
     _updateState := 0;
     --
@@ -59,6 +59,7 @@ BEGIN
     ---------------------------------------------------
     -- Check dataset archive state for 'in progress'
     ---------------------------------------------------
+
     If _updateState <> 3 Then
         _returnCode := 'U5250';
         _message := format('Archive update state for dataset "%s" is not correct', _datasetName);

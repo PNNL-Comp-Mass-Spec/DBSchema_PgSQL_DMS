@@ -53,7 +53,7 @@ BEGIN
         -----------------------------------------
         -- See if this instrument has Auto_Define_Storage_Path enabled
         -----------------------------------------
-        --
+
         _storagePathID := 0;
 
         SELECT auto_define_storage_path As AutoDefineStoragePath,   -- This is stored as an integer in t_instrument_name

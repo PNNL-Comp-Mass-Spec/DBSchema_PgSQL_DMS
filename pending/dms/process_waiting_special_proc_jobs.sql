@@ -96,7 +96,7 @@ BEGIN
     ------------------------------------------------
     -- Create a table to track the jobs to update
     ------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_JobsWaiting
     (
         Job int not null,

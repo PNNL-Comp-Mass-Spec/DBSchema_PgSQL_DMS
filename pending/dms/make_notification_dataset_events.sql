@@ -48,7 +48,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table for events to be added
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_NewEvents (
         Target_ID int,
         Event_Type int
@@ -126,7 +126,7 @@ BEGIN
         ---------------------------------------------------
         -- Add new events to table
         ---------------------------------------------------
-        --
+
         INSERT INTO t_notification_event( event_type_id,
                                           target_id )
         SELECT Tmp_NewEvents.event_type_id,
@@ -140,7 +140,7 @@ BEGIN
         ---------------------------------------------------
         -- Clean out batch events older than window
         ---------------------------------------------------
-        --
+
         DELETE FROM t_notification_event
         WHERE event_type_id IN (20, 21) AND
               entered < _window;

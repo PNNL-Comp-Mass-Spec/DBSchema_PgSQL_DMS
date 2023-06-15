@@ -36,7 +36,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _managerNameList := Coalesce(_managerNameList, '');
 
     _sortMode := Coalesce(_sortMode, 0);

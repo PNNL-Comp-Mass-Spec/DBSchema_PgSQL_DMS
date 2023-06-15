@@ -71,7 +71,7 @@ BEGIN
     -- Create temporary table to hold requested runs
     -- assigned to cart
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_XR (
         request int NOT NULL,
         col int NULL,
@@ -137,6 +137,7 @@ BEGIN
     ---------------------------------------------------
     -- Add column lead blanks to table
     ---------------------------------------------------
+
     If _columnsWithLeadingBlanks <> '' Then
         --
         INSERT INTO Tmp_XR (request, col, os)
@@ -198,7 +199,7 @@ BEGIN
     -- Create temporary table to sequence samples
     -- for cart
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_XS (
         request int NOT NULL,
         col int NULL,
@@ -251,7 +252,7 @@ BEGIN
     ---------------------------------------------------
     -- Create temporary table to hold the final sequence
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_XF (
         request int NOT NULL,
         col int,

@@ -48,7 +48,7 @@ BEGIN
         -----------------------------------------------------------
         -- Validate the inputs
         -----------------------------------------------------------
-        --
+
         _jobs := Coalesce(_jobs, '');
         _infoOnly := Coalesce(_infoOnly, false);
         _message := '';
@@ -64,7 +64,6 @@ BEGIN
         -----------------------------------------------------------
         -- Create the temporary tables
         -----------------------------------------------------------
-        --
 
         CREATE TEMP TABLE Tmp_Jobs (
             Job int
@@ -87,7 +86,7 @@ BEGIN
         -----------------------------------------------------------
         -- Find steps for the given jobs that need to be reset
         -----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_JobStepsToReset( job, step )
         SELECT DISTINCT JS.job,
                         JS.step

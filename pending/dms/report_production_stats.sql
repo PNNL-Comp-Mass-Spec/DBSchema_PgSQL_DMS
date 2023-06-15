@@ -97,7 +97,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Validate the inputs
         --------------------------------------------------------------------
-        --
+
         _productionOnly := Coalesce(_productionOnly, 1);
         _campaignIDFilterList := Trim(Coalesce(_campaignIDFilterList, ''));
         _eusUsageFilterList := Trim(Coalesce(_eusUsageFilterList, ''));
@@ -108,7 +108,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Populate a temporary table with the Campaign IDs to filter on
         --------------------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_CampaignFilter (
             Campaign_ID int NOT NULL,
             Fraction_EMSL_Funded numeric NULL
@@ -132,7 +132,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Populate a temporary table with the Instrument IDs to filter on
         --------------------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_InstrumentFilter (
             Instrument_ID int NOT NULL
         )
@@ -156,7 +156,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Populate a temporary table with the EUS Usage types to filter on
         --------------------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_EUSUsageFilter (
             Usage_ID int NOT NULL,
             Usage_Name text NOT NULL
@@ -245,13 +245,13 @@ BEGIN
         --------------------------------------------------------------------
         -- Compute the number of days to be examined
         --------------------------------------------------------------------
-        --
+
         _daysInRange := round(extract(epoch FROM _eDate - _stDate) / 86400);
 
         --------------------------------------------------------------------
         -- Populate a temporary table with the datasets to use
         --------------------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Datasets (
             Dataset_ID int NOT NULL,
             Campaign_ID int NOT NULL,

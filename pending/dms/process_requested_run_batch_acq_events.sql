@@ -42,7 +42,7 @@ BEGIN
     -- Temporary list of batches to calculate
     -- automatic factors for
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_BatchIDs (
         BatchID int
     );
@@ -51,7 +51,7 @@ BEGIN
     -- Event 'Requested Run Batch Acq Time Ready'
     -- since last time we did this
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_BatchIDs ( BatchID )
     SELECT target_id
     FROM t_notification_event

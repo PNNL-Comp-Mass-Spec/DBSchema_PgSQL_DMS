@@ -115,10 +115,9 @@ BEGIN
     ---------------------------------------------------
     -- Resolve Archive function
     ---------------------------------------------------
-    --
+
     -- Do not allow changing 'Active' to non active
     --
-
     If _archiveFunction::citext <> 'Active' Then
 
         If Exists ( SELECT archive_path_id
@@ -133,7 +132,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for active instrument
     ---------------------------------------------------
-    --
+
     -- Check for active instrument to prevent multiple Active paths for an instrument
     --
     If _archiveFunction::citext = 'Active' AND Exists (
@@ -158,7 +157,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
-    --
+
     -- Insert new archive path
     --
     If _mode = 'add' Then
@@ -186,7 +185,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_archive_path

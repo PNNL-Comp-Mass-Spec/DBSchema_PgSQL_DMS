@@ -157,7 +157,7 @@ BEGIN
         ---------------------------------------------------
         -- Create temporary table for requests in list
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_RequestedRuns (
             RequestIDText text NULL,
             Request_ID int NULL
@@ -166,7 +166,7 @@ BEGIN
         ---------------------------------------------------
         -- Populate temporary table from list
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_RequestedRuns (RequestIDText)
         SELECT DISTINCT Value
         FROM public.parse_delimited_list(_requestedRunList, ',');
@@ -174,7 +174,7 @@ BEGIN
         ---------------------------------------------------
         -- Convert Request IDs to integers
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_RequestedRuns
         SET Request_ID = public.try_cast(RequestIDText, null::int);
 
@@ -235,7 +235,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for preview mode
         ---------------------------------------------------
-        --
+
         If _mode::citext = 'PreviewAdd' Then
             _message := format('Would create batch "%s" with %s requested runs', _name, _count);
 
@@ -246,7 +246,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         If _mode = 'add' Then
 
             INSERT INTO t_requested_run_batches (
@@ -300,7 +300,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             -- Check whether this batch is currently a member of a batch group

@@ -166,7 +166,7 @@ BEGIN
     -- Get job parameters
     -- Exclude DataPackageID since we obtained that from sw.t_jobs
     ---------------------------------------------------
-    --
+
     -- To allow for more than one instance of a tool in a single script,
     -- look at parameters in sections that either are not locked to any step (step number is null)
     -- or are locked to the current step

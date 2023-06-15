@@ -128,7 +128,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure instrument is not already in instrument table
     ---------------------------------------------------
-    --
+
     SELECT instrument_id
     INTO _hit
     FROM t_instrument_name
@@ -141,13 +141,12 @@ BEGIN
     ---------------------------------------------------
     -- Derive shared path name
     ---------------------------------------------------
-    --
+
     _archiveNetworkSharePath := format('\%s', REPLACE(REPLACE(_archivePath, 'archive', 'adms.emsl.pnl.gov'), '/', '\'));
 
     ---------------------------------------------------
     -- Resolve Yes/No parameters to 0 or 1
     ---------------------------------------------------
-    --
 
     If _autoDefineStoragePath = 'Yes' Or _autoDefineStoragePath = 'Y' OR _autoDefineStoragePath = '1' Then
         _autoDefineStoragePathBool := true;
@@ -159,7 +158,6 @@ BEGIN
     -- Define the _autoSP variables
     -- Auto-populate if _autoDefineStoragePathBool is true
     ---------------------------------------------------
-    --
 
     If _autoDefineStoragePathBool Then
         _autoSPVolNameClient := _spVolClient;
@@ -248,7 +246,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure the source machine exists in t_storage_path_hosts
     ---------------------------------------------------
-    --
+
     _sourceMachineNameToFind := replace(_sourceMachineName, '\', '');
 
     If Not Exists (Select * From t_storage_path_hosts Where sp_machine_name = _sourceMachineNameToFind) Then
@@ -275,7 +273,7 @@ BEGIN
         ---------------------------------------------------
         -- Make new raw storage directory in storage table
         ---------------------------------------------------
-        --
+
         CALL add_update_storage (
                 _spPath,
                 _spVolClient,
@@ -300,7 +298,7 @@ BEGIN
     ---------------------------------------------------
     -- Make new source (inbox) directory in storage table
     ---------------------------------------------------
-    --
+
     CALL add_update_storage (
             _sourcePath,
             '(na)',
@@ -326,7 +324,7 @@ BEGIN
         ---------------------------------------------------
         -- Add new archive storage path for new instrument
         ---------------------------------------------------
-        --
+
         -- Get new archive ID
         --
         --

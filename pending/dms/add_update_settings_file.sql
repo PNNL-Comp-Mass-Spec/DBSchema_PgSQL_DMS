@@ -227,7 +227,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
-    --
+
     If _mode = 'add' Then
 
         INSERT INTO t_settings_files(
@@ -255,7 +255,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_settings_files

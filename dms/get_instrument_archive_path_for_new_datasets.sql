@@ -74,7 +74,7 @@ BEGIN
         -----------------------------------------
         -- See if this instrument has Auto_Define_Storage_Path enabled
         -----------------------------------------
-        --
+
         SELECT auto_define_storage_path             As AutoDefineStoragePath,    -- This is stored as an integer in t_instrument_name
                auto_sp_archive_server_name::text    As AutoSPArchiveServerName,
                auto_sp_archive_path_root            As AutoSPArchivePathRoot,
@@ -203,7 +203,7 @@ BEGIN
         -----------------------------------------
         -- Return the archive path ID
         -----------------------------------------
-        --
+
         RETURN Coalesce(_archivePathID, 0);
 
     EXCEPTION

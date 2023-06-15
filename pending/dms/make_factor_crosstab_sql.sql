@@ -76,7 +76,7 @@ BEGIN
     ---------------------------------------------------
     -- SQL for factors as crosstab (PivotTable)
     ---------------------------------------------------
-    --
+
     _crossTabSql := format(' SELECT PivotResults.type, PivotResults.target_id, %s', _factorNameList)         ||
                            ' FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value'
                                  ' FROM t_factor Src INNER JOIN Tmp_Factors I ON Src.factor_id = I.FactorID'
@@ -88,7 +88,7 @@ BEGIN
     -----------------------------------------
     -- Build dynamic SQL for make_factor_crosstab
     -----------------------------------------
-    --
+
     _factorNameList := Coalesce(_factorNameList, '');
 
     _sql := format('SELECT %s', _colList);

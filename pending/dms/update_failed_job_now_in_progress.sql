@@ -39,7 +39,7 @@ BEGIN
        ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     If _job Is Null Then
         _message := 'Invalid job';
         _returnCode := 'U5201';

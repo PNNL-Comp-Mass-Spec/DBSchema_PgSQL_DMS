@@ -46,7 +46,7 @@ BEGIN
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
-    --
+
     _processingMode := Coalesce(_processingMode, 0);
     _showDebug := Coalesce(_showDebug, 0);
 
@@ -62,7 +62,7 @@ BEGIN
     ------------------------------------------------
     -- Add new datasets to t_cached_dataset_folder_paths
     ------------------------------------------------
-    --
+
     INSERT INTO t_cached_dataset_folder_paths (dataset_id,
                                                dataset_row_version,
                                                update_required )
@@ -117,7 +117,7 @@ BEGIN
         ------------------------------------------------
         -- Find existing entries with a mismatch in storage_path_row_version
         ------------------------------------------------
-        --
+
         UPDATE t_cached_dataset_folder_paths
         SET update_required = 1
         FROM t_dataset DS
@@ -139,7 +139,7 @@ BEGIN
         ------------------------------------------------
         -- Find existing entries with a mismatch in dataset_row_version
         ------------------------------------------------
-        --
+
         UPDATE t_cached_dataset_folder_paths
         SET update_required = 1
         FROM t_dataset DS
@@ -166,7 +166,7 @@ BEGIN
         -- Note that this query runs 2x faster than the merge statement below
         -- If you update this query, be sure to update the merge statement
         ------------------------------------------------
-        --
+
         UPDATE t_cached_dataset_folder_paths
         SET dataset_row_version = DS.dataset_row_version,
             storage_path_row_version = SPath.storage_path_row_version,
@@ -236,7 +236,7 @@ BEGIN
             -- Note that this merge statement runs 2x slower than the query above
             -- If you update this merge statement, be sure to update the query
             ------------------------------------------------
-            --
+
             MERGE INTO t_cached_dataset_folder_paths As target
             USING ( SELECT DS.dataset_id,
                            DS.dataset_row_version,

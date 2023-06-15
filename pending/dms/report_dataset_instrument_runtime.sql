@@ -47,7 +47,7 @@ BEGIN
         --------------------------------------------------------------------
         -- If _endDate is empty, auto-set to the end of the current day
         --------------------------------------------------------------------
-        --
+
         If Trim(Coalesce(_endDate, '')) = '' Then
             _eDateAlternate := date_trunc('day', CURRENT_TIMESTAMP) + Interval '86399.999 seconds';
 
@@ -65,7 +65,7 @@ BEGIN
         --------------------------------------------------------------------
         -- Check whether _endDate only contains year, month, and day
         --------------------------------------------------------------------
-        --
+
         _eDate := public.try_cast(_endDate, CURRENT_TIMESTAMP);
 
         _eDateAlternate := date_trunc('day', _eDate);
@@ -82,7 +82,7 @@ BEGIN
         --------------------------------------------------------------------
         -- If _startDate is empty, auto-set to 2 weeks before _eDate
         --------------------------------------------------------------------
-        --
+
         If Coalesce(_startDate, '') = '' Then
             _stDate := date_trunc('day', _eDate) - Interval '2 weeks';
         Else

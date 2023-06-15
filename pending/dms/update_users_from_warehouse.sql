@@ -95,7 +95,7 @@ BEGIN
         -- Create a temporary table to track the user information
         -- stored in the data warehouse
         ----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_UserInfo (
             ID int not null,                    -- User ID
             U_Name text NULL,           -- Last Name, First Name
@@ -112,7 +112,7 @@ BEGIN
         ----------------------------------------------------------
         -- Obtain info for staff
         ----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_UserInfo( user_id,
                                    name,
                                    email,
@@ -137,7 +137,7 @@ BEGIN
         ----------------------------------------------------------
         -- Obtain info for associates
         ----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_UserInfo( user_id,
                                    name,
                                    email,
@@ -167,7 +167,7 @@ BEGIN
         ----------------------------------------------------------
         -- Look for users that need to be updated
         ----------------------------------------------------------
-        --
+
         UPDATE Tmp_UserInfo
         SET UpdateRequired = true
         FROM t_users U
@@ -182,7 +182,7 @@ BEGIN
         ----------------------------------------------------------
         -- Look for updates that would result in a name conflict
         ----------------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_NamesAfterUpdate (
             ID int not null,
             OldName text NULL,
@@ -247,7 +247,7 @@ BEGIN
             ----------------------------------------------------------
             -- Perform the update, skip entries with a potential name conflict
             ----------------------------------------------------------
-            --
+
             UPDATE t_users U
             SET name = CASE WHEN Coalesce(NameConflicts.Conflict, false)
                               THEN U.name
@@ -278,7 +278,7 @@ BEGIN
             ----------------------------------------------------------
             -- Preview the updates
             ----------------------------------------------------------
-            --
+
             SELECT U.name,     Src.name AS Name_New,
                    U.email,    Src.email AS EMail_New,
                    U.domain,   Src.domain AS Domain_New,
@@ -301,7 +301,7 @@ BEGIN
         ----------------------------------------------------------
         -- Look for users marked for auto-update who were not found in either of the data warehouse views
         ----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_UserProblems (user_id, Warning, NetworkLogin)
         SELECT U.user_id,
                'User not found in the Data Warehouse',
@@ -333,7 +333,7 @@ BEGIN
         ----------------------------------------------------------
         -- Look for users for which Username does not match NetworkLogin
         ----------------------------------------------------------
-        --
+
         INSERT INTO Tmp_UserProblems (user_id, Warning, NetworkLogin)
         SELECT U.user_id,
                'Mismatch between username in DMS and NetworkLogin in Warehouse',

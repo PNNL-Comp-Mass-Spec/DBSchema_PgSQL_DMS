@@ -35,7 +35,7 @@ BEGIN
     ---------------------------------------------------
     -- Find managers with an active job step and valid values for ProgRunner_ProcessID and ProgRunner_CoreUsage
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_PendingUpdates( Processor_Name,
                                     Job,
                                     Step,

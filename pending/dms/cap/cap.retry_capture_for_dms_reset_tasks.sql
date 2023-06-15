@@ -42,7 +42,7 @@ BEGIN
     -- These are datasets that have been reset (either via the dataset detail report web page or manually)
     -- and we thus want to retry capture for these datasets
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Selected_Jobs (Job, ResetFailedStepsOnly)
     SELECT DISTINCT T.Job, 0
     FROM cap.V_DMS_Get_New_Datasets NewDS

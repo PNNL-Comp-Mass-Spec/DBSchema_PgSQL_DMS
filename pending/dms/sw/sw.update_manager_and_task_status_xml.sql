@@ -118,7 +118,7 @@ BEGIN
         ---------------------------------------------------
         -- Temporary table to hold processor status messages
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Processor_Status_Info (
             Processor_Name text,
             Remote_Manager text,
@@ -153,7 +153,7 @@ BEGIN
         ---------------------------------------------------
         -- Load status messages into temp table
         ---------------------------------------------------
-        --
+
         WITH Src (StatusXML) AS (SELECT _statusXML)
         INSERT INTO Tmp_Processor_Status_Info(
                           Processor_Name,

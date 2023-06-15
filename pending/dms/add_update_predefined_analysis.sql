@@ -380,7 +380,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate the parameter file name
         ---------------------------------------------------
-        --
+
         If _paramFileName <> 'na' Then
             If Not Exists (SELECT * FROM t_param_files WHERE param_file_name = _paramFileName) Then
                 _msg := format('Could not find entry in database for parameter file "%s"', _paramFileName);
@@ -391,7 +391,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate the settings file name
         ---------------------------------------------------
-        --
+
         If _settingsFileName <> 'na' Then
             If Not Exists (SELECT * FROM t_settings_files WHERE file_name = _settingsFileName) Then
                 _msg := format('Could not find entry in database for settings file "%s"', _settingsFileName);
@@ -472,6 +472,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode = 'add' Then
 
             INSERT INTO t_predefined_analysis (
@@ -551,7 +552,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             UPDATE t_predefined_analysis

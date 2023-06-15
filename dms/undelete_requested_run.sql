@@ -64,7 +64,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the requested run ID
     ---------------------------------------------------
-    --
+
     If Coalesce(_requestID, 0) = 0 Then
         _message := '_requestID is 0; nothing to do';
         RAISE INFO '%', _message;

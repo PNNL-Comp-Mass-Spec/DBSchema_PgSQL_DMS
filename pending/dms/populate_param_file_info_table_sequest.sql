@@ -43,6 +43,7 @@ BEGIN
     -- Create and populate a table to track the columns
     -- to populate in Tmp_ParamFileInfo
     -----------------------------------------------------------
+
     CREATE TEMP TABLE Tmp_ParamEntryInfo (
         UniqueID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Entry_Type text,
@@ -93,7 +94,7 @@ BEGIN
     -----------------------------------------------------------
     -- Convert Enzyme from a number to a name
     -----------------------------------------------------------
-    --
+
     UPDATE Tmp_ParamFileInfo PFI
     SET Enzyme = Coalesce(Enz.Enzyme_Name, PFI.Enzyme)
     FROM ( SELECT Param_File_ID, public.try_cast(Enzyme, null::int) As EnzymeID
@@ -107,7 +108,7 @@ BEGIN
     -----------------------------------------------------------
     -- Display the enzyme name as 'none' if the enzyme is 0 or null
     -----------------------------------------------------------
-    --
+
     UPDATE Tmp_ParamFileInfo
     SET Enzyme = 'none'
     WHERE char_length(Coalesce(Enzyme, '')) = 0 OR Enzyme = '0'

@@ -59,7 +59,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure a pending or running IMSDemultiplex capture task job doesn't already exist
     ---------------------------------------------------
-    --
+
     _jobID := 0;
 
     SELECT TS.Job
@@ -76,7 +76,7 @@ BEGIN
     ---------------------------------------------------
     -- Create new IMSDemultiplex capture task job for the specified dataset
     ---------------------------------------------------
-    --
+
     If _infoOnly Then
         _message := format('Would create a new IMSDemultiplex job for dataset ID %s: %s', _datasetID, _datasetName);
     Else

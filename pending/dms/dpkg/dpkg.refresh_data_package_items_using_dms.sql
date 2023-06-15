@@ -27,7 +27,7 @@ BEGIN
     ---------------------------------------------------
     -- Update the experiment name associated with each dataset
     ---------------------------------------------------
-    --
+
     UPDATE dpkg.t_data_package_datasets
     SET experiment = E.Experiment_Num
     FROM public.T_Dataset DS INNER JOIN
@@ -47,7 +47,7 @@ BEGIN
     ---------------------------------------------------
     -- Update the campaign name associated with biomaterial (cell culture) entities
     ---------------------------------------------------
-    --
+
     UPDATE dpkg.t_data_package_biomaterial
     SET campaign = C.Campaign_Num
     FROM public.T_Campaign C INNER JOIN

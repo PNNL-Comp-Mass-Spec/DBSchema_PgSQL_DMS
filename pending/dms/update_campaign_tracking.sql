@@ -27,7 +27,7 @@ BEGIN
     ----------------------------------------------------------
     -- Create a temporary table to hold the stats
     ----------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_CampaignStats (
         Campaign_ID int NOT NULL,
         Sample_Submission_Count int NOT NULL,
@@ -52,7 +52,7 @@ BEGIN
     ----------------------------------------------------------
     -- Make entry in results table for each campaign
     ----------------------------------------------------------
-    --
+
     INSERT INTO Tmp_CampaignStats( campaign_id,
                                    Most_Recent_Activity,
                                    Sample_Submission_Count,
@@ -71,7 +71,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update sample submission statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_CampaignStats
     SET Sample_Submission_Count = S.Cnt,
         Sample_Submission_Most_Recent = S.Most_Recent,
@@ -104,7 +104,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update biomaterial statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_CampaignStats
     SET Biomaterial_Count = S.Cnt,
         Biomaterial_Most_Recent = S.Most_Recent,
@@ -137,7 +137,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update experiment statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_CampaignStats
     SET Experiment_Count = S.Cnt,
         Experiment_Most_Recent = S.Most_Recent,
@@ -170,7 +170,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update dataset statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_CampaignStats
     SET Dataset_Count = S.Cnt,
         Dataset_Most_Recent = S.Most_Recent,
@@ -205,7 +205,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update analysis statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_CampaignStats
     SET Job_Count = S.Cnt,
         Job_Most_Recent = S.Most_Recent,
@@ -242,7 +242,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update requested run statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_CampaignStats
     SET Run_Request_Count = S.cnt,
         Run_Request_Most_Recent = S.Most_Recent,
@@ -275,7 +275,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update sample prep statistics
     ----------------------------------------------------------
-    --
+
     UPDATE Tmp_CampaignStats
     SET Sample_Prep_Request_Count = S.cnt,
         Sample_Prep_Request_Most_Recent = S.Most_Recent,
@@ -308,7 +308,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update Data Package counts
     ----------------------------------------------------------
-    --
+
     UPDATE t_campaign_tracking
     SET data_package_count = S.cnt
     FROM t_campaign_tracking
@@ -335,7 +335,7 @@ BEGIN
     ----------------------------------------------------------
     -- Update t_campaign_tracking using Tmp_CampaignStats
     ----------------------------------------------------------
-    --
+
     MERGE INTO t_campaign_tracking AS T
     USING ( SELECT * FROM Tmp_CampaignStats
           ) AS s

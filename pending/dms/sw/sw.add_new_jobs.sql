@@ -116,7 +116,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, false);
     _infoLevel := Coalesce(_infoLevel, 0);
 
@@ -154,7 +154,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table to hold jobs from DMS to process
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_DMSJobs (
         Job int,
         Priority int,
@@ -178,7 +178,7 @@ BEGIN
     -- which shows new jobs in state 1 or 8 but it
     -- excludes jobs that have recently been archived
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_DMSJobs( Job,
                              Priority,
                              script,
@@ -229,7 +229,7 @@ BEGIN
     ---------------------------------------------------
     -- Find jobs to reset
     ---------------------------------------------------
-    --
+
     If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Finding jobs to reset';
@@ -268,7 +268,7 @@ BEGIN
         -- Reset job:
         -- delete existing job info from database
         ---------------------------------------------------
-        --
+
         -- Find jobs that are complete in the broker, but in state 1=New in DMS
         --
         --
@@ -354,7 +354,7 @@ BEGIN
                 -- Set up and populate temp table and call sproc
                 -- to delete jobs listed in it
                 ---------------------------------------------------
-                --
+
                 CREATE TEMP TABLE Tmp_SJL (Job int);
 
                 CREATE INDEX IX_Tmp_SJL_Job ON Tmp_SJL (Job);
@@ -385,7 +385,7 @@ BEGIN
             -- Copy new jobs from DMS that are not already in table
             -- (only take jobs that have script that is currently active)
             ---------------------------------------------------
-            --
+
             INSERT INTO sw.t_jobs
                 (job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
                 comment, special_processing, storage_server, owner_username, DataPkgID)
@@ -413,7 +413,7 @@ BEGIN
         -- state to the 'waiting' state and set the job
         -- state to 'resuming'.
         ---------------------------------------------------
-        --
+
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := 'Finding jobs to Resume';
@@ -544,7 +544,7 @@ BEGIN
             ---------------------------------------------------
             -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
             ---------------------------------------------------
-            --
+
             CALL sw.validate_job_server_info (_job, _useJobParameters => true, _debugMode => _debugMode);
 
             _jobsProcessed := _jobsProcessed + 1;
@@ -608,7 +608,7 @@ BEGIN
             ---------------------------------------------------
             -- Set any failed or holding job steps to waiting
             ---------------------------------------------------
-            --
+
             UPDATE sw.t_job_steps
             SET state = 1,                  -- 1=waiting
                 tool_version_id = 1,        -- 1=Unknown
@@ -626,7 +626,7 @@ BEGIN
             ---------------------------------------------------
             -- Reset the entries in sw.t_job_step_dependencies for any steps with state 1
             ---------------------------------------------------
-            --
+
             UPDATE sw.t_job_step_dependencies JSD
             SET evaluated = 0,
                 triggered = 0
@@ -639,7 +639,7 @@ BEGIN
             ---------------------------------------------------
             -- Set job state to 'resuming'
             ---------------------------------------------------
-            --
+
             UPDATE sw.t_jobs
             SET state = 20                        -- 20=resuming
             WHERE job IN (SELECT job From Tmp_JobsToResumeOrReset);
@@ -660,7 +660,7 @@ BEGIN
     ---------------------------------------------------
     -- Exit
     ---------------------------------------------------
-    --
+
     If _debugMode Then
         -- ToDo: Update this to use Raise Info
         SELECT *

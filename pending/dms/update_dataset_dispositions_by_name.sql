@@ -94,7 +94,7 @@ BEGIN
         ---------------------------------------------------
         -- Temp table  for holding dataset names and IDs
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_DatasetsToUpdate
             DatasetID text,
             DatasetName text
@@ -103,7 +103,7 @@ BEGIN
         --------------------------------------------------
         -- Add datasets from input list to table
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_DatasetsToUpdate( DatasetName )
         SELECT Item
         FROM public.parse_delimited_list ( _datasetList )
@@ -111,7 +111,7 @@ BEGIN
         ---------------------------------------------------
         -- Look up dataset IDs for datasets
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_DatasetsToUpdate
         SET DatasetID = D.Dataset_ID::text
         FROM t_dataset D

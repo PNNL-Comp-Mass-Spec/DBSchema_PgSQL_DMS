@@ -73,7 +73,7 @@ BEGIN
     ---------------------------------------------------
     -- Add missing associations between operations and user
     ---------------------------------------------------
-    --
+
     INSERT INTO t_user_operations_permissions( user_id, operation_id )
     SELECT _userID, UO.operation_id
     FROM Tmp_UserOperations NewOps
@@ -87,7 +87,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove extra associations
     ---------------------------------------------------
-    --
+
     DELETE FROM t_user_operations_permissions
     WHERE UOP.user_id = _userID AND
           NOT EXISTS ( SELECT UO.operation_id

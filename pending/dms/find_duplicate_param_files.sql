@@ -214,7 +214,7 @@ BEGIN
     -----------------------------------------
     -- Populate Tmp_MassModCounts
     -----------------------------------------
-    --
+
     INSERT INTO Tmp_MassModCounts( Param_File_ID,
                                    ModCount )
     SELECT P.Param_File_ID,
@@ -234,7 +234,7 @@ BEGIN
         -- Populate Tmp_ParamEntries with t_param_entries
         -- After this, standardize the entries to allow for rapid comparison
         -----------------------------------------
-        --
+
         INSERT INTO Tmp_ParamEntries( param_file_id,
                                       entry_type,
                                       entry_specifier,
@@ -257,7 +257,7 @@ BEGIN
         -----------------------------------------
         -- Possibly add entries for 'sequest_N14_NE.params' to Tmp_ParamEntries
         -----------------------------------------
-        --
+
         _paramFileID := 1000;
 
         SELECT param_file_id
@@ -335,7 +335,7 @@ BEGIN
         -----------------------------------------
         -- Make sure all 'FragmentIonTolerance' entries are non-zero (defaulting to 1 if 0)
         -----------------------------------------
-        --
+
         UPDATE Tmp_ParamEntries
         SET Entry_value = '1'
         WHERE Entry_Type = 'AdvancedParam' AND
@@ -346,7 +346,7 @@ BEGIN
         -- Change Compare to false for entries in Tmp_ParamEntries that correspond to
         -- Entry_Specifier values in Tmp_DefaultSequestParamEntries that have Compare = 0
         -----------------------------------------
-        --
+
         UPDATE Tmp_ParamEntries
         SET Compare = false
         FROM ( SELECT DISTINCT Entry_Type, Entry_Specifier
@@ -369,7 +369,7 @@ BEGIN
         -----------------------------------------
         -- If _ignoreParentMassType is true, mark these entries as Not-Compared
         -----------------------------------------
-        --
+
         If _ignoreParentMassType Then
 
             UPDATE Tmp_ParamEntries
@@ -386,7 +386,7 @@ BEGIN
             -----------------------------------------
             -- Display stats on the data in Tmp_ParamEntries
             -----------------------------------------
-            --
+
             SELECT Compare,
                    Entry_Type,
                    Entry_Specifier,
@@ -414,7 +414,7 @@ BEGIN
     -- Step through the entries in Tmp_ParamFiles and look for
     -- duplicate and similar param files
     -----------------------------------------
-    --
+
     _filesProcessed := 0;
 
     FOR _paramFileInfo IN
@@ -432,7 +432,7 @@ BEGIN
         -----------------------------------------
         -- Look for duplicates in t_param_file_mass_mods
         -----------------------------------------
-        --
+
         -- First, lookup the mod count for this parameter file
         --
         SELECT ModCount
@@ -445,7 +445,7 @@ BEGIN
             -----------------------------------------
             -- Parameter file doesn't have any mass modifications
             -----------------------------------------
-            --
+
             INSERT INTO Tmp_MassModDuplicates (param_file_id)
             SELECT PF.param_file_id
             FROM t_param_files PF
@@ -462,7 +462,7 @@ BEGIN
             -- Find parameter files that are of the same type and have the same set of modifications
             -- Note that we're ignoring Local_Symbol_ID
             -----------------------------------------
-            --
+
             INSERT INTO Tmp_MassModDuplicates (param_file_id)
             SELECT B.param_file_id
             FROM ( SELECT param_file_id,
@@ -497,14 +497,14 @@ BEGIN
         -- Look for duplicates in t_param_entries
         -- At present, this is only applicable to Sequest parameter files
         -----------------------------------------
-        --
+
         If _paramFileInfo.ParamFileType::citext = 'Sequest' Then
 
             -----------------------------------------
             -- First, Count the number of entries in the table for this parameter file
             -- Skipping entries with Compare = false
             -----------------------------------------
-            --
+
             SELECT COUNT(*)
             INTO _entryCount
             FROM Tmp_ParamEntries
@@ -516,7 +516,7 @@ BEGIN
                 -- Parameter file doesn't have any param entries (with compare = true)
                 -- Find all other parameter files that don't have any param entries
                 -----------------------------------------
-                --
+
                 _s :=  ' INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)'
                        ' SELECT PF.param_file_id'
                        ' FROM t_param_files PF LEFT OUTER JOIN'
@@ -541,7 +541,7 @@ BEGIN
                 -----------------------------------------
                 -- Find parameter files that are of the same type and have the same set of param entries
                 -----------------------------------------
-                --
+
                 INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)
                 SELECT B.param_file_id
                 FROM (    SELECT param_file_id,

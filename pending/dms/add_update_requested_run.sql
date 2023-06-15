@@ -236,7 +236,7 @@ BEGIN
         ---------------------------------------------------
         -- Preliminary steps
         ---------------------------------------------------
-        --
+
         If _mode = 'add-auto' Then
             _mode := 'add';
             _requestOrigin := 'auto';
@@ -407,7 +407,7 @@ BEGIN
         ---------------------------------------------------
         -- Confirm that the new status value is valid
         ---------------------------------------------------
-        --
+
         _status := Coalesce(_status, '');
 
         If _mode::citext In ('add', 'check_add') AND (_status::citext = 'Completed' OR _status = '') Then
@@ -558,7 +558,7 @@ BEGIN
         -- Resolve ID for _separationGroup
         -- First look in t_separation_group
         ---------------------------------------------------
-        --
+
         If _logDebugMessages Then
             _debugMsg := format('Resolve separation group: %s', _separationGroup);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
@@ -592,7 +592,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve ID for MRM attachment
         ---------------------------------------------------
-        --
+
         --
         _mrmAttachment := Coalesce(_mrmAttachment, '');
 
@@ -800,6 +800,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode = 'add' Then
 
             -- Start transaction
@@ -903,7 +904,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
 
             SELECT batch_id

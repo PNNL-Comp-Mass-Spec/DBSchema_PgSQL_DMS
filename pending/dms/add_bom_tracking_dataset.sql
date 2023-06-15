@@ -67,6 +67,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate input arguments
     ---------------------------------------------------
+
     If Coalesce(_instrumentName, '') = '' Then
         RAISE EXCEPTION 'Instrument name cannot be empty';
     End If;

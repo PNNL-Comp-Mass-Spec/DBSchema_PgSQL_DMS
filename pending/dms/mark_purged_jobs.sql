@@ -22,7 +22,6 @@ BEGIN
     ---------------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------------
-    --
 
     _jobList := Coalesce(_jobList, '');
     _infoOnly := Coalesce(_infoOnly, false);
@@ -30,7 +29,7 @@ BEGIN
     ---------------------------------------------------------
     -- Populate a temporary table with the jobs in _jobList
     ---------------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_JobList (
         Job int
     )

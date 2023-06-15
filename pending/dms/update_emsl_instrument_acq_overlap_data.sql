@@ -84,7 +84,7 @@ BEGIN
     ------------------------------------------------------
     -- Validate parameters
     ------------------------------------------------------
-    --
+
     If _instrument = '' Then
         _message := '_instrument must be defined';
         RAISE WARNING '%', _message;

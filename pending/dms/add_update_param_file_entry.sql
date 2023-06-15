@@ -288,7 +288,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
         If _infoOnly Then
             RAISE INFO 'Mode: %, SeqOrder: %, Type: %, Specifier: %, Value: %, ParamFileID: %, ParamEntryID: %',

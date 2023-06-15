@@ -254,9 +254,9 @@ BEGIN
         ---------------------------------------------------
         -- Deprecated in May 2015: resolve processor group ID
         ---------------------------------------------------
-        --
+
         _gid := 0;
-        --
+
         If _associatedProcessorGroup <> '' Then
             SELECT group_id
             INTO _gid
@@ -302,7 +302,7 @@ BEGIN
             -- Populate table using the datasets currently associated with the data package
             -- Remove any duplicates that may be present
             ---------------------------------------------------
-            --
+
             INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
             SELECT DISTINCT Dataset
             FROM dpkg.v_data_package_dataset_export
@@ -317,7 +317,7 @@ BEGIN
             -- Populate table from dataset list
             -- Using Select Distinct to make sure any duplicates are removed
             ---------------------------------------------------
-            --
+
             INSERT INTO Tmp_DatasetInfo (Dataset_Name)
             SELECT DISTINCT Trim(Item)
             FROM public.parse_delimited_list(_datasetList)
@@ -339,7 +339,7 @@ BEGIN
         -- Assure that we are not running a decoy search if using MSGFPlus, TopPIC, or MaxQuant (since those tools auto-add decoys)
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow _protCollOptionsList to contain Decoy
         ---------------------------------------------------
-        --
+
         If (_toolName ILIKE 'MSGFPlus%' Or _toolName ILIKE 'TopPIC%' Or _toolName ILIKE 'MaxQuant%' Or _toolName ILIKE 'DiaNN%') And
            _protCollOptionsList ILIKE '%decoy%' And
            Not _paramFileName ILIKE '%_NoDecoy%' Then
@@ -367,7 +367,7 @@ BEGIN
         -- Assure that we are running a decoy search if using MODa or MSFragger
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow @protCollOptionsList to contain Decoy
         ---------------------------------------------------
-        --
+
         If (_toolName ILIKE 'MODa%' Or _toolName ILIKE 'MSFragger%') And _protCollOptionsList ILIKE '%forward%' And Not _paramFileName ILIKE '%_NoDecoy%' Then
             _protCollOptionsList := 'seq_direction=decoy,filetype=fasta';
 
@@ -379,6 +379,7 @@ BEGIN
         ---------------------------------------------------
         -- Auto-update _ownerUsername to _callingUser if possible
         ---------------------------------------------------
+
         If char_length(_callingUser) > 0 Then
 
             _newUsername := _callinguser;
@@ -401,7 +402,6 @@ BEGIN
         --
         -- If AJT_orgDbReqd = 0, we ignore organism, protein collection, and organism DB
         ---------------------------------------------------
-        --
 
         If _dataPackageID = 0 And _removeDatasetsWithJobs <> 'N' Then
 
@@ -482,7 +482,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate job parameters
         ---------------------------------------------------
-        --
+
         _organismName := Trim(_organismName);
 
         CALL validate_analysis_job_parameters (
@@ -531,7 +531,7 @@ BEGIN
         ---------------------------------------------------
         -- Populate the Dataset_Unreviewed column in Tmp_DatasetInfo
         ---------------------------------------------------
-        --
+
         UPDATE Tmp_DatasetInfo
         SET Dataset_Unreviewed = CASE WHEN DS.dataset_rating_id = -10 THEN 1 ELSE 0 END
         FROM t_dataset DS
@@ -543,7 +543,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Make sure the job request is in state 1=new or state 5=new (Review Required)
                 ---------------------------------------------------
-                --
+
                 SELECT request_state_id
                 INTO _requestStateID
                 FROM t_analysis_job_request
@@ -634,7 +634,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Add (or preview) a new aggregation job for data package _dataPackageID
                 ---------------------------------------------------
-                --
+
                 _pipelineJob := 0;
                 _resultsDirectoryName = '';
 
@@ -743,7 +743,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Mark request as used
                 ---------------------------------------------------
-                --
+
                 _requestStateID := 2;
 
                 UPDATE t_analysis_job_request
@@ -787,7 +787,6 @@ BEGIN
             ---------------------------------------------------
             -- Create a new batch if multiple jobs being created
             ---------------------------------------------------
-            --
 
             SELECT COUNT(*)
             INTO _numDatasets
@@ -810,7 +809,7 @@ BEGIN
             ---------------------------------------------------
             -- Deal with request
             ---------------------------------------------------
-            --
+
             If _requestID = 0 Then
                 _requestID := 1; -- for the default request
             Else
@@ -887,7 +886,7 @@ BEGIN
             -- Insert a new job in analysis job table for
             -- every dataset in temporary table
             ---------------------------------------------------
-            --
+
             INSERT INTO t_analysis_job (
                 job,
                 priority,

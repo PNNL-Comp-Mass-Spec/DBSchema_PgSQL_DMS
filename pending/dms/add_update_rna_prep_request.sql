@@ -113,7 +113,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate input fields
         ---------------------------------------------------
-        --
+
         _instrumentName := Coalesce(_instrumentName, '');
 
         _datasetType := Coalesce(_datasetType, '');
@@ -123,7 +123,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate dataset type
         ---------------------------------------------------
-        --
+
         If NOT (_instrumentName::citext IN ('', 'none', 'na')) Then
             If Coalesce(_datasetType, '') = '' Then
                 RAISE EXCEPTION 'Dataset type cannot be empty since the Instrument Name is defined';
@@ -340,6 +340,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
+
         If _mode = 'add' Then
 
             INSERT INTO t_sample_prep_request (
@@ -403,7 +404,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
             --
             UPDATE t_sample_prep_request

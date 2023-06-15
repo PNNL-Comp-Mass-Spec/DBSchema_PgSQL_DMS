@@ -118,7 +118,7 @@ BEGIN
         ---------------------------------------------------
         -- Return the result
         ---------------------------------------------------
-        --
+
         RETURN QUERY
         SELECT _proteinCollectionInfo.ProteinCollectionID,
                _proteinCollectionInfo.ProteinName,

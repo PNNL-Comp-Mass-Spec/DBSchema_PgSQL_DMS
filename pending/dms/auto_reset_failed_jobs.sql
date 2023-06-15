@@ -91,7 +91,7 @@ BEGIN
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
-        --
+
         _windowHours := Coalesce(_windowHours, 12);
         If _windowHours < 2 Then
             _windowHours := 2;
@@ -122,7 +122,7 @@ BEGIN
         ---------------------------------------------------
         -- Populate a temporary table with jobs that failed within the last _windowHours hours
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_FailedJobs (job, Step_Number, Step_Tool, Job_State, Step_State,
            Processor, comment, Job_Finish, Settings_File, AnalysisTool)
         SELECT J.job AS Job,
@@ -149,7 +149,7 @@ BEGIN
         -- Next look for job steps that are running, but started over 60 minutes ago and for which
         -- the processor is reporting Stopped_Error in T_Processor_Status
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_FailedJobs (job, Step_Number, Step_Tool, Job_State, Step_State,
                                      Processor, comment, Job_Finish, Settings_File, AnalysisTool)
         SELECT J.job AS Job,

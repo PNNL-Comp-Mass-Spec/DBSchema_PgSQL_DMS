@@ -36,7 +36,7 @@ BEGIN
     ---------------------------------------------------
     -- Create table to track the list of affected jobs
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_SJL (
         Job int,
         State int
@@ -57,7 +57,6 @@ BEGIN
     ---------------------------------------------------
     -- Insert specified job to Tmp_SJL
     ---------------------------------------------------
-    --
 
     INSERT INTO Tmp_SJL
     SELECT job, state

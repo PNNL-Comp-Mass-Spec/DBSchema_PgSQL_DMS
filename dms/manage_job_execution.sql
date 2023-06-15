@@ -100,7 +100,7 @@ BEGIN
     ---------------------------------------------------
     -- Extract parameters from XML input
     ---------------------------------------------------
-    --
+
     _paramXML := public.try_cast(_parameters, null::xml);
 
     If _paramXML Is Null Then
@@ -127,6 +127,7 @@ BEGIN
     -- Create temporary table to hold list of jobs
     -- and populate it from job list
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_AnalysisJobs (
         Job int
     );
@@ -142,7 +143,7 @@ BEGIN
     -- Set up default arguments
     -- for calling Update_Analysis_Jobs
     ---------------------------------------------------
-    --
+
     _noChangeText := '[no change]';
 
     _state                    := _noChangeText;
@@ -166,7 +167,7 @@ BEGIN
     -- Change affected calling arguments based on
     -- command action and value
     ---------------------------------------------------
-    --
+
     If _action = 'state' Then
         If _value::citext = 'Hold'::citext Then
             -- Holding;
@@ -208,7 +209,7 @@ BEGIN
     -- Call update_analysis_jobs_work function
     -- It uses Tmp_AnalysisJobs to determine which jobs to update
     ---------------------------------------------------
-    --
+
     CALL update_analysis_jobs_work (
         _state,
         _priority,

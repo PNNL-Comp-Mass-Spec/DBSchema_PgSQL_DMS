@@ -99,7 +99,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _infoOnly := Coalesce(_infoOnly, false);
     _debugMode := Coalesce(_debugMode, false);
     _existingJob := Coalesce(_existingJob, 0);
@@ -237,7 +237,7 @@ BEGIN
     ---------------------------------------------------
     -- Get recently imported jobs that need to be processed
     ---------------------------------------------------
-    --
+
     If _mode::citext = 'CreateFromImportedJobs' Then
         If _maxJobsToProcess > 0 Then
             _maxJobsToAdd := _maxJobsToProcess;
@@ -286,7 +286,7 @@ BEGIN
     ---------------------------------------------------
     -- Set up to process extension job
     ---------------------------------------------------
-    --
+
     If _mode::citext = 'ExtendExistingJob' Then
         -- Populate Tmp_Jobs with info from existing job
         -- If it only exists in history, restore it to main tables
@@ -319,7 +319,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure sw.t_step_tool_versions as the "Unknown" version (ID=1)
     ---------------------------------------------------
-    --
+
     If Not Exists (Select * from sw.t_step_tool_versions WHERE tool_version_id = 1) Then
 
         -- ToDo: Update this to work with PostgreSQL
@@ -340,7 +340,7 @@ BEGIN
     ---------------------------------------------------
     -- Make sure sw.t_remote_info as the "Unknown" version (ID=1)
     ---------------------------------------------------
-    --
+
     If Not Exists (Select * from sw.t_remote_info WHERE remote_info_id = 1) Then
 
         -- ToDo: Update this to work with PostgreSQL
@@ -378,7 +378,7 @@ BEGIN
         -- Get next unprocessed job and
         -- build it into the temporary tables
         ---------------------------------------------------
-        --
+
         SELECT
             Job,
             Script As ScriptName,
@@ -396,6 +396,7 @@ BEGIN
         -- If no job was found, we are done
         -- otherwise, process the job
         ---------------------------------------------------
+
         If Not FOUND Then
             -- Break out of the while loop
             EXIT;
@@ -657,7 +658,6 @@ BEGIN
     ---------------------------------------------------
     -- Exit
     ---------------------------------------------------
-    --
 
     If _debugMode And _mode::citext <> 'ExtendExistingJob' Then
         -- Show the contents of Tmp_Jobs

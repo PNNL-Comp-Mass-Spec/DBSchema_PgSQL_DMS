@@ -95,7 +95,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _entryIDValue := public.try_cast(_EntryID, null::int);
 
     _postedByWildcard := '%' || _PostedBy || '%';
@@ -112,7 +112,7 @@ BEGIN
     ---------------------------------------------------
     -- Construct the query
     ---------------------------------------------------
-    --
+
    _sql := ' SELECT * FROM V_Log_Report';
 
     If _entryIDValue > 0 Then
@@ -188,7 +188,7 @@ BEGIN
     ---------------------------------------------------
     -- Run the query
     ---------------------------------------------------
-    --
+
     Open _results For
         EXECUTE _sql
         USING _entryIDValue, _postedByWildcard, _earliestPostingTime, _latestPostingTime, _typeWildcard, _messageWildcard;

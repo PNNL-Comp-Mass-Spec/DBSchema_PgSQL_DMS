@@ -35,7 +35,7 @@ BEGIN
     ---------------------------------------------------
     -- Create a temporary table to hold dataset names
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_DatasetList (
         Dataset_Name text,
     );
@@ -43,7 +43,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the data package ID
     ---------------------------------------------------
-    --
+
     SELECT package_name
     INTO _dataPackageName
     FROM dpkg.t_data_package
@@ -58,7 +58,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate the table
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_DatasetList (Dataset_Name)
     SELECT Dataset
     FROM dpkg.t_Data_Package_Datasets

@@ -25,7 +25,7 @@ BEGIN
     ------------------------------------------------
     -- Look for _uriPath in cap.t_uri_paths
     ------------------------------------------------
-    --
+
     SELECT uri_path_id
     INTO _uri_PathID
     FROM cap.t_uri_paths

@@ -43,7 +43,7 @@ BEGIN
     ---------------------------------------------------
     -- Bail if no candidates found
     ---------------------------------------------------
-    --
+
     SELECT COUNT(*)
     INTO _numJobs
     FROM Tmp_Selected_Jobs
@@ -88,28 +88,28 @@ BEGIN
     ---------------------------------------------------
     -- Delete capture task job dependencies
     ---------------------------------------------------
-    --
+
     DELETE FROM cap.t_task_step_dependencies
     WHERE (Job IN (SELECT Job FROM Tmp_Selected_Jobs))
 
     ---------------------------------------------------
     -- Delete capture task job parameters
     ---------------------------------------------------
-    --
+
     DELETE FROM cap.t_task_parameters
     WHERE Job IN (SELECT Job FROM Tmp_Selected_Jobs)
 
     ---------------------------------------------------
     -- Delete job steps
     ---------------------------------------------------
-    --
+
     DELETE FROM cap.t_task_steps
     WHERE Job IN (SELECT Job FROM Tmp_Selected_Jobs)
 
     ---------------------------------------------------
     -- Delete entries in t_tasks
     ---------------------------------------------------
-    --
+
     If _logDeletions Then
 
         ---------------------------------------------------

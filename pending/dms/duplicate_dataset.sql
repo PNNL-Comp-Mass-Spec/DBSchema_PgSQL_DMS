@@ -101,7 +101,7 @@ BEGIN
     ---------------------------------------------------
     -- Lookup the source dataset info, including Experiment name
     ---------------------------------------------------
-    --
+
     SELECT D.dataset_id AS SourceDatasetId
            D.operator_username AS OperatorUsername,
            D.comment AS Comment,
@@ -146,7 +146,7 @@ BEGIN
     ---------------------------------------------------
     -- Lookup requested run information
     ---------------------------------------------------
-    --
+
     SELECT RR.request_id As SourceDatasetRequestID,
            RR.instrument_group As InstrumentName,
            RR.work_package As WorkPackage,
@@ -285,7 +285,7 @@ BEGIN
     ---------------------------------------------------
     -- Create the new dataset
     ---------------------------------------------------
-    --
+
     INSERT INTO t_dataset (
         dataset,
         operator_username,
@@ -331,7 +331,7 @@ BEGIN
     ---------------------------------------------------
     -- Create a requested run
     ---------------------------------------------------
-    --
+
     _requestName := format('AutoReq_%s', _newDataset);
 
     CALL add_update_requested_run (

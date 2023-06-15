@@ -162,7 +162,7 @@ BEGIN
             -- This unused mode was renamed to 'instrumentGroup' in October 2020
             -- Mode 'instrumentGroupIgnoreType' is used by http://dms2.pnl.gov/requested_run_admin/report
             ---------------------------------------------------
-            --
+
             -- Set the instrument group to _newValue for now
             _newInstrumentGroup := _newValue;
 
@@ -215,7 +215,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Determine the Instrument ID of the selected instrument
                 ---------------------------------------------------
-                --
+
                 SELECT instrument_id, instrument_group
                 INTO _newAssignedInstrumentID, _newInstrumentGroup
                 FROM t_instrument_name
@@ -250,7 +250,7 @@ BEGIN
             -- Validate the separation group
             -- Mode 'separationGroup' is used by http://dms2.pnl.gov/requested_run_admin/report
             ---------------------------------------------------
-            --
+
             -- Set the separation group to _newValue for now
             _newSeparationGroup := _newValue;
 
@@ -286,7 +286,7 @@ BEGIN
             -- Validate the dataset type
             -- Mode 'datasetType' is used by http://dms2.pnl.gov/requested_run_admin/report
             ---------------------------------------------------
-            --
+
             -- Set the dataset type to _newValue for now
             _newDatasetType := _newValue;
 

@@ -69,7 +69,7 @@ BEGIN
     -- Loop through the protein collections with a state of 1
     -- Limit to protein collections created within the last _mostRecentMonths months
     --------------------------------------------------------------
-    --
+
     BEGIN
 
         _proteinCollectionID := 0;

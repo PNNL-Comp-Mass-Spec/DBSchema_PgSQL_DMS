@@ -86,7 +86,7 @@ BEGIN
     -- get unevaluated dependencies that target steps
     -- that are finished (skipped or completed)
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_DepTable (
         Job,
         DependentStep,
@@ -159,7 +159,7 @@ BEGIN
         ---------------------------------------------------
         -- Get next step dependency
         ---------------------------------------------------
-        --
+
         SELECT SortOrder,
                Job,
                DependentStep,
@@ -180,7 +180,7 @@ BEGIN
             ---------------------------------------------------
             -- Evaluate dependency condition (if one is defined)
             ---------------------------------------------------
-            --
+
             If _showDebug Then
                 RAISE INFO 'Evaluating job %, step %, which is triggered after step % completes', _stepInfo.Job, _stepInfo.DependentStep, _stepInfo.TargetStep;
             End If;
@@ -280,7 +280,7 @@ BEGIN
             -- to input directory for dependent step,
             -- unless dependency is "Enable_Only"
             ---------------------------------------------------
-            --
+
             If _stepInfo.EnableOnly = 0 Then
 
                 SELECT Output_Folder_Name
@@ -297,7 +297,7 @@ BEGIN
             ---------------------------------------------------
             -- Update state of dependency
             ---------------------------------------------------
-            --
+
             UPDATE cap.t_task_step_dependencies
             SET Evaluated = 1,
                 Triggered = _triggered
@@ -312,7 +312,7 @@ BEGIN
             ---------------------------------------------------
             -- Remove dependency from processing table
             ---------------------------------------------------
-            --
+
             DELETE FROM Tmp_DepTable
             WHERE SortOrder = _stepInfo.SortOrder;
 

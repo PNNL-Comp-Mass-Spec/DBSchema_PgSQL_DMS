@@ -83,7 +83,6 @@ BEGIN
     ----------------------------------------------------
     -- Find datasets to process
     ----------------------------------------------------
-    --
 
     INSERT Tmp_DatasetsToUpdate (DatasetID, InvalidID, StateID, ExistingComment, NewComment)
     SELECT Src.Value,

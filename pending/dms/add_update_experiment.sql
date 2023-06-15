@@ -397,7 +397,7 @@ BEGIN
         ---------------------------------------------------
         -- Set up and validate wellplate values
         ---------------------------------------------------
-        --
+
         If _mode::citext In ('add', 'check_add') THEN
             _totalCount := 1;
         Else
@@ -446,7 +446,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve labelling ID
         ---------------------------------------------------
-        --
+
         SELECT label_id
         INTO _labelID
         FROM t_sample_labelling
@@ -478,7 +478,7 @@ BEGIN
         ---------------------------------------------------
         -- Resolve postdigestion internal standard ID
         ---------------------------------------------------
-        --
+
         _internalStandardState := 'I';
         --
         SELECT internal_standard_id active
@@ -516,7 +516,7 @@ BEGIN
         -- Resolve current container id to name
         -- (skip if adding experiment)
         ---------------------------------------------------
-        --
+
         If Not _mode::citext In ('add', 'check_add') Then
             SELECT container
             INTO _curContainerName
@@ -565,15 +565,15 @@ BEGIN
 
         -- Verify that biomaterial items exist
         --
-        UPDATE Tmp_Experiment_to_Biomaterial_Map Src
-        SET Biomaterial_ID = Src.Biomaterial_ID
-        FROM T_Biomaterial Src
-        WHERE Src.Biomaterial_Name = Target.Biomaterial_Name
+        UPDATE tmp_experiment_to_biomaterial_map Src
+        SET biomaterial_id = Src.biomaterial_id
+        FROM t_biomaterial Src
+        WHERE Src.biomaterial_name = Target.biomaterial_name
 
-        SELECT string_agg(Biomaterial_Name, ', ' ORDER BY Biomaterial_Name)
+        SELECT string_agg(biomaterial_name, ', ' ORDER BY biomaterial_name)
         INTO _invalidBiomaterialList
-        FROM Tmp_Experiment_to_Biomaterial_Map
-        WHERE Biomaterial_ID IS NULL
+        FROM tmp_experiment_to_biomaterial_map
+        WHERE biomaterial_id IS NULL
 
         If Coalesce(_invalidBiomaterialList, '') <> '' Then
             RAISE EXCEPTION 'Invalid biomaterial name(s): %', _invalidBiomaterialList;
@@ -632,7 +632,6 @@ BEGIN
         ---------------------------------------------------
         -- Look for invalid entries in Tmp_ExpToRefCompoundMap
         ---------------------------------------------------
-        --
 
         -- First look for entries without a Compound_ID
         --

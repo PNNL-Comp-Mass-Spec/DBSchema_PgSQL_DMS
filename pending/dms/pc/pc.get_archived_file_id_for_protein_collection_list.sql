@@ -45,7 +45,7 @@ BEGIN
     -----------------------------------------------------
     -- Create some temporary tables
     -----------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_ProteinCollectionList (
         Unique_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         ProteinCollectionName text NOT NULL
@@ -59,7 +59,7 @@ BEGIN
     -----------------------------------------------------
     -- Parse the protein collection names and populate a temporary table
     -----------------------------------------------------
-    --
+
     INSERT INTO Tmp_ProteinCollectionList (ProteinCollectionName)
     SELECT Value
     FROM public.parse_delimited_list(_proteinCollectionList, ',')
@@ -67,7 +67,7 @@ BEGIN
     -----------------------------------------------------
     -- Count the number of protein collection names present
     -----------------------------------------------------
-    --
+
     _proteinCollectionName := '';
     _proteinCollectionCount := 0;
 
@@ -88,7 +88,7 @@ BEGIN
     -- Additionally, count the number of protein collections included in each archived output file
     --  and only return the archived output files that contain _proteinCollectionCount collections
     -----------------------------------------------------
-    --
+
     INSERT INTO Tmp_Archived_Output_File_IDs (archived_file_id)
     SELECT AOF.archived_file_id
     FROM pc.t_archived_output_file_collections_xref AOFC INNER JOIN
@@ -125,7 +125,7 @@ BEGIN
         --  creation DLL could result in different versions of the output .fasta file, so
         --  we'll always return the newest version)
         -----------------------------------------------------
-        --
+
         SELECT Archived_File_ID
         INTO _archivedFileID
         FROM Tmp_Archived_Output_File_IDs
@@ -186,7 +186,7 @@ BEGIN
     -- in Tmp_ProteinCollectionList will have Valid_Member_Count
     -- equal to _proteinCollectionCount
     -----------------------------------------------------
-    --
+
     SELECT Archived_File_ID
     INTO _archivedFileID
     FROM Tmp_Archived_Output_File_IDs

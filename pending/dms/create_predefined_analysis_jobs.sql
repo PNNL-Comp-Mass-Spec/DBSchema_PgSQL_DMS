@@ -201,6 +201,7 @@ BEGIN
             ---------------------------------------------------
             -- Create the job
             ---------------------------------------------------
+
             CALL add_update_analysis_job (
                         _datasetName                      => _jobInfo.DatasetName,
                         _priority                         => _jobInfo.Priority,
@@ -275,7 +276,7 @@ BEGIN
         ---------------------------------------------------
         -- Construct the summary message
         ---------------------------------------------------
-        --
+
         _newMessage := format('Created %s %s', _jobsCreated, public.check_plural(_jobsCreated, 'job', 'jobs');
 
         If _message <> '' Then

@@ -88,7 +88,7 @@ BEGIN
     ---------------------------------------------------
     -- Get datasetID
     ---------------------------------------------------
-    --
+
     SELECT dataset_id
     INTO _datasetID
     FROM t_dataset
@@ -115,6 +115,7 @@ BEGIN
     ---------------------------------------------------
     -- We are done if there is no associated request
     ---------------------------------------------------
+
     If Not FOUND Then
         RETURN;
     End If;
@@ -122,7 +123,6 @@ BEGIN
     ---------------------------------------------------
     -- Was request automatically created by dataset entry?
     ---------------------------------------------------
-    --
 
     If _requestOrigin = 'auto' Then
         _autoCreatedRequest := true;
@@ -153,7 +153,7 @@ BEGIN
         -- Original request was user-entered,
         -- We will copy it (if commanded to) and set status to 'Completed'
         ---------------------------------------------------
-        --
+
         _requestIDOriginal := _requestID;
         _recycleOriginalRequest := true;
 
@@ -167,7 +167,7 @@ BEGIN
         -- Original request was auto created
         -- delete it (if commanded to)
         ---------------------------------------------------
-        --
+
         If Not _retainHistory Then
         -- <b2>
             CALL delete_requested_run (
@@ -189,7 +189,7 @@ BEGIN
             -- Original request was auto-created
             -- Examine the request comment to determine if it was a recycled request
             ---------------------------------------------------
-            --
+
             If _requestComment SIMILAR TO '%Automatically created by recycling request [0-9]%[0-9] from dataset [0-9]%' Then
             -- <c>
 
@@ -279,7 +279,7 @@ BEGIN
         ---------------------------------------------------
         -- Copy the request and associate the dataset with the newly created request
         ---------------------------------------------------
-        --
+
         -- Warning: The text 'Automatically created by recycling request' is used earlier in this procedure; thus, do not update it here
         --
         _notation := format('Automatically created by recycling request %s from dataset %s on %s',
@@ -306,7 +306,7 @@ BEGIN
         ---------------------------------------------------
         -- Recycle the original request
         ---------------------------------------------------
-        --
+
         -- Create annotation to be appended to comment
         --
         _notation := format('(recycled from dataset %s on %s)',
@@ -353,7 +353,7 @@ BEGIN
         ---------------------------------------------------
         -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
         ---------------------------------------------------
-        --
+
         CALL update_cached_requested_run_eus_users (
             _requestIDOriginal,
             _message => _message,           -- Output

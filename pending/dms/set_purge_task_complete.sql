@@ -62,7 +62,7 @@ BEGIN
     -- Resolve dataset into ID
     -- Also determine the storage server name
     ---------------------------------------------------
-    --
+
     SELECT DS.dataset_id,
            SPath.machine_name
     INTO _datasetID, _storageServerName

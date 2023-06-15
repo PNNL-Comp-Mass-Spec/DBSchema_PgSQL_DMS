@@ -52,7 +52,7 @@ BEGIN
         -- Dates in mc.V_Mgr_Work_Dir will be of the form
         -- \\ServerName\C$\DMS_WorkDir1
         ---------------------------------------------------
-        --
+
         INSERT INTO Tmp_MgrWorkDirs (processor_id, processor_name, MgrWorkDir)
         SELECT processor_id,
                processor_name,

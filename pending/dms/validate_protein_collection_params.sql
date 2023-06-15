@@ -75,7 +75,7 @@ BEGIN
     ---------------------------------------------------
     -- Lookup orgDbReqd for the analysis tool
     ---------------------------------------------------
-    --
+
     _orgDbReqd := 0;
 
     If Coalesce(_toolName, '') = '' Then

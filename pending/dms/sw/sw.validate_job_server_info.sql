@@ -39,7 +39,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _job := Coalesce(_job, 0);
     _useJobParameters := Coalesce(_useJobParameters, true);
 
@@ -54,7 +54,7 @@ BEGIN
         -- The XML we are querying looks like:
         -- <Param Section="JobParameters" Name="TransferFolderPath" Value="\\proto-9\DMS3_Xfer\"/>
         ---------------------------------------------------
-        --
+
         SELECT Value
         INTO _transferFolderPath
         FROM sw.get_job_param_table_local ( _job )
@@ -85,7 +85,7 @@ BEGIN
         -- Get the settings from public.t_analysis_job (and related tables) using sw.get_job_param_table,
         -- which references public.v_get_pipeline_job_parameters
         ---------------------------------------------------
-        --
+
         CREATE TEMP TABLE Tmp_Job_Parameters (
             Job int,
             Section text,

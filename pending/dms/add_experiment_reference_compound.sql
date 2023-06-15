@@ -48,7 +48,7 @@ BEGIN
     ---------------------------------------------------
     -- Try to resolve any null reference compound ID values in Tmp_ExpToRefCompoundMap
     ---------------------------------------------------
-    --
+
     -- Make sure column Colon_Pos is populated
     UPDATE Tmp_ExpToRefCompoundMap
     SET Colon_Pos = Position(':' In Compound_IDName)
@@ -77,7 +77,6 @@ BEGIN
     ---------------------------------------------------
     -- Look for invalid entries in Tmp_ExpToRefCompoundMap
     ---------------------------------------------------
-    --
 
     -- First look for entries without a Compound_ID
     --
@@ -111,7 +110,7 @@ BEGIN
     ---------------------------------------------------
     -- Add/remove reference compounds
     ---------------------------------------------------
-    --
+
     DELETE FROM t_experiment_reference_compounds
     WHERE exp_id = _expID;
 
@@ -122,7 +121,7 @@ BEGIN
     ---------------------------------------------------
     -- Optionally update t_cached_experiment_components
     ---------------------------------------------------
-    --
+
     If _updateCachedInfo Then
         CALL update_cached_experiment_component_names (_expID);
     End If;

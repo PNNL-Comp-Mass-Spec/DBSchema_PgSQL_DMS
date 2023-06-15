@@ -73,14 +73,14 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _jobList := Coalesce(_jobList, '');
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Create two temporary tables
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Jobs (
         Job int not null,
         Update_Required boolean not null,
@@ -96,7 +96,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate a temporary table with jobs to process
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_Jobs (Job, Update_Required, Invalid)
     SELECT Value As Job, false, false
     FROM public.parse_delimited_integer_list(_jobList, ',');
@@ -198,7 +198,7 @@ BEGIN
     ---------------------------------------------------
     -- Look for jobs with Update_Required = false
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Jobs
     SET Comment = 'Nothing to update; no job steps were started (or completed) after their corresponding Results_Transfer or Results_Cleanup step'
     WHERE Not Update_Required;
@@ -206,7 +206,7 @@ BEGIN
     ---------------------------------------------------
     -- Look for jobs where the Results_Transfer steps do not match sw.t_job_steps_history
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_Jobs
     SET Comment = format('Results_Transfer step in sw.t_job_steps has a different start/finish value vs. sw.t_job_steps_history; '
                          'step %s; start %s vs. %s; finish %s vs. %s',
@@ -248,7 +248,7 @@ BEGIN
         -- Update metadata for the job steps in Tmp_JobStepsToUpdate,
         -- filtering out any jobs with Invalid = true
         ---------------------------------------------------
-        --
+
         UPDATE sw.t_job_steps
         SET start = JSH.start,
             finish = JSH.finish,
@@ -313,7 +313,7 @@ BEGIN
     ---------------------------------------------------
     -- Show job steps that were updated, or would be updated, or that cannot be updated
     ---------------------------------------------------
-    --
+
     RETURN QUERY
     SELECT J.job,
            J.Update_Required,
@@ -353,7 +353,6 @@ BEGIN
     ---------------------------------------------------
     -- Exit
     ---------------------------------------------------
-    --
 
     If _message <> '' Then
         RAISE INFO '%', _message;

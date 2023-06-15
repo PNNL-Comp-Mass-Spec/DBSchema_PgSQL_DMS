@@ -35,7 +35,7 @@ BEGIN
     -- This procedure populates Tmp_Requests
     -- Procedure make_factor_crosstab_sql will populate Tmp_Factors
     -----------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_Requests (
         Request int
     );
@@ -48,7 +48,7 @@ BEGIN
     -----------------------------------------
     -- Populate Tmp_Requests with list of requests
     -----------------------------------------
-    --
+
     INSERT INTO Tmp_Requests (Request)
     SELECT Value
     FROM public.parse_delimited_integer_list(_itemList);
@@ -69,7 +69,7 @@ BEGIN
     --
     -- Either show the dynamic SQL or execute the SQL and return the results
     -----------------------------------------
-    --
+
     If _infoOnly Then
 
          -- ToDo: update these columns

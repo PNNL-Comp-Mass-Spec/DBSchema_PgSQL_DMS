@@ -37,7 +37,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _windowDays := Abs(Coalesce(_windowDays, 30));
     _infoOnly := Coalesce(_infoOnly, false);
 
@@ -48,7 +48,7 @@ BEGIN
     ---------------------------------------------------
     -- Create a temporary table to hold the datasets or capture task jobs that need to be updated
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_IDsToUpdate (
         EntityID int NOT NULL
     )
@@ -59,7 +59,7 @@ BEGIN
     -- Look for datasets that have a value of 0 for MyEMSLState
     -- and were uploaded to MyEMSL within the last _windowDays days
     --------------------------------------------
-    --
+
     INSERT INTO Tmp_IDsToUpdate(EntityID)
     SELECT DISTINCT LookupQ.dataset_id
     FROM public.T_Dataset_Archive DA
@@ -118,7 +118,7 @@ BEGIN
     -- Look for capture task jobs that have a value of 0 for AJ_MyEMSLState
     -- and were uploaded to MyEMSL within the last _windowDays days
     --------------------------------------------
-    --
+
     INSERT INTO Tmp_IDsToUpdate(EntityID)
     SELECT DISTINCT T.AJ_JobID
     FROM public.T_Analysis_Job T

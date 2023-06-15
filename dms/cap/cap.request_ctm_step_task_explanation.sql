@@ -93,7 +93,7 @@ BEGIN
     ---------------------------------------------------
     -- Mark actual candidates that were in request table
     ---------------------------------------------------
-    --
+
     UPDATE Tmp_CandidateJobStepDetails
     SET Candidate = 'Y'
     FROM Tmp_CandidateJobSteps

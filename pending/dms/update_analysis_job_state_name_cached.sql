@@ -47,7 +47,7 @@ BEGIN
     ---------------------------------------------------
     -- Find jobs that need to be updated
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_JobsToUpdate (job)
     SELECT AJ.job
     FROM t_analysis_job AJ
@@ -64,7 +64,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview the jobs
         ---------------------------------------------------
-        --
+
         SELECT AJ.job AS Job,
                AJ.state_name_cached AS State_Name_Cached,
                AJDAS.Job_State AS New_State_Name_Cached
@@ -88,7 +88,7 @@ BEGIN
             ---------------------------------------------------
             -- Update the jobs
             ---------------------------------------------------
-            --
+
             UPDATE t_analysis_job AJ
             SET state_name_cached = Coalesce(AJDAS.Job_State, '')
             FROM V_Analysis_Job_and_Dataset_Archive_State AJDAS

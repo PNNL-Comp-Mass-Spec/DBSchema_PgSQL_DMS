@@ -350,7 +350,7 @@ BEGIN
         ---------------------------------------------------
         -- Determine if we are adding or check_adding a dataset
         ---------------------------------------------------
-        --
+
         If _mode::citext In ('add', 'check_add', 'add_trigger') Then
             _addingDataset := true;
         Else
@@ -691,7 +691,7 @@ BEGIN
         ---------------------------------------------------
         -- Check for instrument changing when dataset not in new state
         ---------------------------------------------------
-        --
+
         If _mode::citext In ('update', 'check_update') and _instrumentID <> _curDSInstID and _curDSStateID <> 1 Then
             RAISE EXCEPTION 'Cannot change instrument if dataset not in "new" state';
         End If;
@@ -790,7 +790,7 @@ BEGIN
         ---------------------------------------------------
         -- If the dataset starts with 'blank' and _requestID is zero, perform some additional checks
         ---------------------------------------------------
-        --
+
         If _requestID = 0 AND _addingDataset Then
             -- If the EUS information is not defined, auto-define the EUS usage type as 'MAINTENANCE'
             If (_datasetName::citext Similar To 'Blank%' Or
@@ -807,7 +807,7 @@ BEGIN
         ---------------------------------------------------
         -- Possibly look for an active requested run that we can auto-associate with this dataset
         ---------------------------------------------------
-        --
+
         If _requestID = 0 AND _addingDataset Then
 
             If _logDebugMessages Then
@@ -835,7 +835,7 @@ BEGIN
         ---------------------------------------------------
         -- Update the dataset comment if it starts with the requested run's comment
         ---------------------------------------------------
-        --
+
         If _requestID <> 0 AND _addingDataset Then
             _reqRunComment := '';
 
@@ -1215,7 +1215,7 @@ BEGIN
                 -- If a cart name is specified, update it for the
                 -- requested run
                 ---------------------------------------------------
-                --
+
                 If Not _lcCartName::citext IN ('', 'no update') And _requestID > 0 Then
 
                     If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
@@ -1284,7 +1284,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
-        --
+
         If _mode = 'update' Then
         -- <UpdateMode>
 
@@ -1349,7 +1349,7 @@ BEGIN
             -- If a cart name is specified, update it for the
             -- requested run
             ---------------------------------------------------
-            --
+
             If Not _lcCartName::citext IN ('', 'no update') Then
 
                 If Coalesce(_requestID, 0) = 0 Then
@@ -1427,7 +1427,7 @@ BEGIN
             -- If no jobs are found, Call schedule_predefined_analysis_jobs for this dataset
             -- Skip jobs with AJ_DatasetUnreviewed=1 when looking for existing jobs (these jobs were created before the dataset was dispositioned)
             ---------------------------------------------------
-            --
+
             If _ratingID >= 2 and Coalesce(_curDSRatingID, -1000) IN (-5, -6, -7) Then
                 If Not Exists (SELECT * FROM t_analysis_job WHERE dataset_id = _datasetID AND dataset_unreviewed = 0 ) Then
                     CALL schedule_predefined_analysis_jobs (_datasetName, _callingUser => _callingUser);

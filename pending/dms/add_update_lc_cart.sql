@@ -65,7 +65,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    --
+
     _cartName := Trim(Coalesce(_cartName, ''));
     _cartDescription := Trim(Coalesce(_cartDescription, ''));
     _cartState := Trim(Coalesce(_cartState, ''));
@@ -82,7 +82,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve cart state name to ID
     ---------------------------------------------------
-    --
+
     --
     SELECT cart_state_id
     INTO _cartStateID
@@ -159,7 +159,7 @@ BEGIN
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
-    --
+
     If _mode = 'update' Then
 
         UPDATE t_lc_cart

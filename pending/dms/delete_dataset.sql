@@ -96,7 +96,7 @@ BEGIN
     ---------------------------------------------------
     -- Get the datasetID and current state
     ---------------------------------------------------
-    --
+
     _datasetID := 0;
     --
     SELECT dataset_state_id,
@@ -116,7 +116,6 @@ BEGIN
     ---------------------------------------------------
     -- Get the dataset directory path
     ---------------------------------------------------
-    --
 
     SELECT Dataset_Folder_Path
     INTO _datasetDirectoryPath
@@ -195,14 +194,14 @@ BEGIN
     ---------------------------------------------------
     -- Delete any entries for the dataset from the archive table
     ---------------------------------------------------
-    --
+
     DELETE FROM t_dataset_archive
     WHERE dataset_id = _datasetID
 
     ---------------------------------------------------
     -- Delete any auxiliary info associated with dataset
     ---------------------------------------------------
-    --
+
     CALL delete_aux_info 'Dataset', _datasetName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
@@ -215,7 +214,6 @@ BEGIN
     ---------------------------------------------------
     -- Restore any consumed requested runs
     ---------------------------------------------------
-    --
 
     SELECT request_id
     INTO _requestID
@@ -240,28 +238,28 @@ BEGIN
     ---------------------------------------------------
     -- Delete any entries in t_dataset_info
     ---------------------------------------------------
-    --
+
     DELETE FROM t_dataset_info
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Delete any entries in t_dataset_qc
     ---------------------------------------------------
-    --
+
     DELETE FROM t_dataset_qc
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Delete any entries in t_dataset_scan_types
     ---------------------------------------------------
-    --
+
     DELETE FROM t_dataset_scan_types
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Mark entries in t_dataset_files as Deleted
     ---------------------------------------------------
-    --
+
     UPDATE t_dataset_files
     SET deleted = 1
     WHERE dataset_id = _datasetID;
@@ -269,21 +267,21 @@ BEGIN
     ---------------------------------------------------
     -- Delete rows in t_cached_dataset_instruments
     ---------------------------------------------------
-    --
+
     DELETE from t_cached_dataset_instruments
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Delete any failed jobs in the DMS_Capture database
     ---------------------------------------------------
-    --
+
     DELETE FROM cap.t_tasks
     WHERE Dataset_ID = _datasetID AND State = 5;
 
     ---------------------------------------------------
     -- Update log entries in the DMS_Capture database
     ---------------------------------------------------
-    --
+
     UPDATE cap.t_log_entries
     SET type = 'ErrorAutoFixed'
     WHERE type = 'error' AND
@@ -292,7 +290,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove jobs from cap.t_tasks
     ---------------------------------------------------
-    --
+
     DELETE cap.t_tasks Tasks
     FROM cap.t_tasks_History History
     WHERE Jobs.Dataset_ID = _datasetID AND
@@ -301,7 +299,7 @@ BEGIN
     ---------------------------------------------------
     -- Delete entry from dataset table
     ---------------------------------------------------
-    --
+
     DELETE FROM t_dataset
     WHERE dataset_id = _datasetID;
 

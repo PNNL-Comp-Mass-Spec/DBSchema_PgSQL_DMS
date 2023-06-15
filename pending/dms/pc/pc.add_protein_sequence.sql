@@ -63,7 +63,7 @@ BEGIN
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
-        --
+
         INSERT INTO pc.t_proteins (
             "sequence",
             length,

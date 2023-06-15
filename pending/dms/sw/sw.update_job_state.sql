@@ -160,7 +160,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table to hold state changes
     ---------------------------------------------------
-    --
+
     CREATE TEMP TABLE Tmp_ChangedJobs (
         Job int,
         NewState int,
@@ -187,7 +187,7 @@ BEGIN
     -- Determine what current state of active jobs should be
     -- and get list of the ones that need be changed
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_ChangedJobs( Job,
                                   NewState,
                                   Results_Directory_Name,
@@ -325,7 +325,7 @@ BEGIN
         ---------------------------------------------------
         -- Roll up step completion comments
         ---------------------------------------------------
-        --
+
         --
         SELECT string_agg(Completion_Message, '; ' ORDER BY step)
         INTO _comment
@@ -358,7 +358,7 @@ BEGIN
             ---------------------------------------------------
             -- Update local job state, timestamp (if appropriate), and comment
             ---------------------------------------------------
-            --
+
             UPDATE sw.t_jobs
             Set
                 state = _jobInfo.NewJobStateInBroker,
@@ -387,7 +387,7 @@ BEGIN
         -- Figure out what DMS job state should be
         -- and update it
         ---------------------------------------------------
-        --
+
         _newDMSJobState := CASE _jobInfo.NewJobStateInBroker;
                                     WHEN 2 THEN 2
                                     WHEN 4 THEN 4
@@ -400,7 +400,7 @@ BEGIN
         -- If this job has a data extraction step with message 'No results above threshold',
         -- change the job state to 14=No Export
         ---------------------------------------------------
-        --
+
         If _newDMSJobState = 4 Then
             -- State 4: Complete
             --
@@ -417,7 +417,7 @@ BEGIN
         -- If this job has a DeconTools step with message 'No results in DeconTools Isos file',
         -- change the job state to 14=No Export
         ---------------------------------------------------
-        --
+
         If _newDMSJobState = 4 Then
             -- State 4: Complete
             --
@@ -434,7 +434,7 @@ BEGIN
         -- Decide on the fasta file name to save in job
         -- In addition, check whether the job has a Propagation mode of 1
         ---------------------------------------------------
-        --
+
         If _jobInfo.DatasetID <> 0 Then
 
             SELECT CASE WHEN protein_collection_list = 'na'
@@ -467,7 +467,7 @@ BEGIN
         -- If the DMS job state is 4=complete, but _jobPropagationMode is non-zero,
         -- then change the DMS job state to 14=No Export
         ---------------------------------------------------
-        --
+
         If _newDMSJobState = 4 AND Coalesce(_jobPropagationMode, 0) <> 0 Then
             _newDMSJobState := 14;
         End If;
@@ -475,7 +475,7 @@ BEGIN
         ---------------------------------------------------
         -- Are we enabled for making changes to DMS?
         ---------------------------------------------------
-        --
+
         If Not _bypassDMS AND _jobInDMS And Not _infoOnly Then
         --<c1>
             -- DMS changes enabled, update DMS job state
@@ -527,7 +527,7 @@ BEGIN
                 ---------------------------------------------------
                 -- Save job history
                 ---------------------------------------------------
-                --
+
                 CALL sw.copy_job_to_history (_jobInfo.Job, _jobInfo.NewJobStateInBroker, _message => _message);
             End If;
 
@@ -555,7 +555,7 @@ BEGIN
         ---------------------------------------------------
         -- Preview changes that would be made via the above while loop
         ---------------------------------------------------
-        --
+
         SELECT *
         FROM Tmp_JobStatePreview
         ORDER BY Job
@@ -565,7 +565,7 @@ BEGIN
     -- Look for jobs in DMS that are failed, yet are not failed in sw.t_jobs
     -- Also look for jobs listed as new that are actually in progress
     ---------------------------------------------------
-    --
+
     If _bypassDMS Then
         DROP TABLE Tmp_ChangedJobs;
 

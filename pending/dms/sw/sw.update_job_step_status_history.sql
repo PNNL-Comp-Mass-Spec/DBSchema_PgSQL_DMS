@@ -62,7 +62,7 @@ BEGIN
     -----------------------------------------------------
     -- Lookup the most recent posting time
     -----------------------------------------------------
-    --
+
     SELECT MAX(posting_time)
     INTO _mostRecentPostingTime
     FROM sw.t_job_step_status_history
@@ -83,6 +83,7 @@ BEGIN
         -----------------------------------------------------
         -- Compute the new stats
         -----------------------------------------------------
+
         INSERT INTO Tmp_JobStepStatusHistory  (Posting_Time, step_tool, state, Step_Count)
         SELECT CURRENT_TIMESTAMP As Posting_Time, Tool, State, COUNT(*) AS Step_Count
         FROM sw.t_job_steps

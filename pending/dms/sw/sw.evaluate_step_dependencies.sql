@@ -69,6 +69,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table for processing dependenices
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_DepTable (
         Job int,
         DependentStep int,
@@ -88,7 +89,7 @@ BEGIN
     -- get unevaluated dependencies that target steps
     -- that are finished (skipped or completed)
     ---------------------------------------------------
-    --
+
     INSERT INTO Tmp_DepTable (
         job,
         DependentStep,
@@ -189,7 +190,7 @@ BEGIN
         ---------------------------------------------------
         -- Evaluate dependency condition (if one is defined)
         ---------------------------------------------------
-        --
+
         _triggered := false;
 
         ---------------------------------------------------
@@ -273,7 +274,7 @@ BEGIN
         -- to be input folder for dependent step
         -- unless dependency is 'Enable_Only'
         ---------------------------------------------------
-        --
+
         If _enableOnly = 0 Then
 
             SELECT output_folder_name
@@ -295,7 +296,7 @@ BEGIN
         ---------------------------------------------------
         -- Update state of dependency
         ---------------------------------------------------
-        --
+
         If _infoOnly Then
             RAISE INFO 'Update job %, step % with target step % to have evaluated=1 and triggered= % in table sw.t_job_step_dependencies',
                           _job, _dependentStep, _targetStep, _triggered;
