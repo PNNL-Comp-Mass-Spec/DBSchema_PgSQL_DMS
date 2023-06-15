@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.remove_cr_lf(_text text) RETURNS text
 /****************************************************
 **
 **  Desc:
-**      Removes carriage returns and line feeds from the text
+**      Removes carriage returns and line feeds from the text, replacing them with semicolons
 **      After removing, also trims leading or trailing commas and semicolons
 **
 **  Return value: Updated string

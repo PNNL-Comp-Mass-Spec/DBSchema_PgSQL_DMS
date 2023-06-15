@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.trim_whitespace_and_punctuation(_text text) RE
 **  Return value: Trimmed text
 **
 **  Auth:   mem
-**  Date:   09/11/2020 mem - Initial release (modelled after UDF ScrubWhitespace, aka scrub_whitespace)
+**  Date:   09/11/2020 mem - Initial release (modelled after UDF ScrubWhitespace)
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
 **
