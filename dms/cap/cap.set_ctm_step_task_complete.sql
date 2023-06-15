@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_complete(IN _job integer, IN _
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          08/21/2020 mem - Set _holdoffIntervalMinutes to 60 (or higher) if _retryCount is 0
 **          06/11/2023 mem - Ported to PostgreSQL
+**          06/14/2023 mem - Send true to post_email_alert instead of 1
 **
 *****************************************************/
 DECLARE
@@ -246,7 +247,7 @@ BEGIN
             _message := format('Dataset %s (ID %s): %s',
                                 _stepInfo.DatasetName, _stepInfo.DatasetID, _completionMessage);
 
-            CALL public.post_email_alert ('Error', _message, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
+            CALL public.post_email_alert ('Error', _message, 'Set_CTM_Step_Task_Complete', _recipients => 'admins', _postMessageToLogEntries => true);
 
         ElsIf _completionMessage ILike '%Some of the % spectra have a minimum m/z value larger than the required minimum%' Or
               _completionMessage ILike '%reporter ion peaks likely could not be detected%' Then
@@ -254,7 +255,7 @@ BEGIN
             _message := format('Dataset %s (ID %s): %s',
                                 _stepInfo.DatasetName, _stepInfo.DatasetID, _completionMessage);
 
-            CALL public.post_email_alert ('Warning', _message, 'SetStepTaskComplete', _recipients => 'admins', _postMessageToLogEntries => 1);
+            CALL public.post_email_alert ('Warning', _message, 'Set_CTM_Step_Task_Complete', _recipients => 'admins', _postMessageToLogEntries => true);
         End If;
 
         ---------------------------------------------------
