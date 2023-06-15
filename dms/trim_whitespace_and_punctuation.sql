@@ -11,10 +11,12 @@ CREATE OR REPLACE FUNCTION public.trim_whitespace_and_punctuation(_text text) RE
 **      Removes whitespace (including Cr, Lf, and tab) plus punctuation from the start and end of text
 **      Punctuation characters: period, comma, semicolon, single quote, or double quote
 **
+**      See also public.trim_whitespace()
+**
 **  Return value: Trimmed text
 **
 **  Auth:   mem
-**  Date:   09/11/2020 mem - Initial release (modelled after UDF ScrubWhitespace)
+**  Date:   09/11/2020 mem - Initial release (modelled after UDF ScrubWhitespace, aka scrub_whitespace)
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
 **

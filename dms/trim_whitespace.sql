@@ -1,8 +1,8 @@
 --
--- Name: scrub_whitespace(text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: trim_whitespace(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.scrub_whitespace(_text text) RETURNS text
+CREATE OR REPLACE FUNCTION public.trim_whitespace(_text text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -10,12 +10,16 @@ CREATE OR REPLACE FUNCTION public.scrub_whitespace(_text text) RETURNS text
 **  Desc:
 **      Removes whitespace (including Cr, Lf, and tab) from the start and end of text
 **
-**  Return value: updated text
+**      See also public.trim_whitespace_and_punctuation() which also removes periods, commas, semicolons,
+**      single quotes, and double quotes from the start and end of the text
+**
+**  Return value: Trimmed text
 **
 **  Auth:   mem
 **  Date:   07/01/2014 mem - Initial release
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved words
+**          06/14/2023 mem - Rename from scrub_whitespace to trim_whitespace
 **
 *****************************************************/
 DECLARE
@@ -45,11 +49,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.scrub_whitespace(_text text) OWNER TO d3l243;
+ALTER FUNCTION public.trim_whitespace(_text text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION scrub_whitespace(_text text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION trim_whitespace(_text text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.scrub_whitespace(_text text) IS 'ScrubWhitespace';
+COMMENT ON FUNCTION public.trim_whitespace(_text text) IS 'TrimWhitespace';
 
