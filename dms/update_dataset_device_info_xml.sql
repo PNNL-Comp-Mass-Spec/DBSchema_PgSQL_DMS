@@ -1,8 +1,8 @@
 --
--- Name: update_dataset_device_info_xml(integer, xml, text, text, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: update_dataset_device_info_xml(integer, xml, text, text, boolean, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid integer DEFAULT 0, IN _datasetinfoxml xml DEFAULT NULL::xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _skipvalidation boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid integer DEFAULT 0, IN _datasetinfoxml xml DEFAULT NULL::xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _skipvalidation boolean DEFAULT false, IN _showdatasetinfoonpreview boolean DEFAULT true)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -53,6 +53,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid 
 **  Auth:   mem
 **  Date:   03/01/2020 mem - Initial version
 **          06/13/2023 mem - Ported to PostgreSQL
+**          06/14/2023 mem - Use public.trim_whitespace() to remove leading and trailing whitespace from the device description
+**                         - Add argument _showDatasetInfoOnPreview
 **
 *****************************************************/
 DECLARE
@@ -117,6 +119,7 @@ BEGIN
     _datasetID := Coalesce(_datasetID, 0);
     _infoOnly := Coalesce(_infoOnly, false);
     _skipValidation := Coalesce(_skipValidation, false);
+    _showDatasetInfoOnPreview := Coalesce(_showDatasetInfoOnPreview, true);
 
     If _datasetID > 0 And Not _skipValidation Then
         ---------------------------------------------------
@@ -168,7 +171,7 @@ BEGIN
                xmltable.Device_Model,
                xmltable.Device_Serial_Number,
                xmltable.Device_Software_Version,
-               Trim(Replace(xmltable.Device_Description, chr(10), '')) AS Device_Description
+               public.trim_whitespace(xmltable.Device_Description) AS Device_Description
         FROM ( SELECT _datasetInfoXML As rooted_xml
              ) Src,
              XMLTABLE('//DatasetInfo/AcquisitionInfo/DeviceList/Device'
@@ -215,7 +218,11 @@ BEGIN
         End If;
 
         RAISE INFO '';
-        RAISE INFO 'Dataset ID %: %', _datasetID, Coalesce(_datasetName, '??');
+
+        If _showDatasetInfoOnPreview Then
+            RAISE INFO 'Dataset ID %: %', _datasetID, Coalesce(_datasetName, '??');
+            RAISE INFO '';
+        End If;
 
         _formatSpecifier := '%-25s %-11s %-13s %-30s %-30s %-30s %-30s %-30s';
 
@@ -353,11 +360,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.update_dataset_device_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _skipvalidation boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.update_dataset_device_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _skipvalidation boolean, IN _showdatasetinfoonpreview boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE update_dataset_device_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _skipvalidation boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE update_dataset_device_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _skipvalidation boolean, IN _showdatasetinfoonpreview boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.update_dataset_device_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _skipvalidation boolean) IS 'UpdateDatasetDeviceInfoXML';
+COMMENT ON PROCEDURE public.update_dataset_device_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _skipvalidation boolean, IN _showdatasetinfoonpreview boolean) IS 'UpdateDatasetDeviceInfoXML';
 
