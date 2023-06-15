@@ -12,9 +12,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Sets state of dataset record given by _datasetName
-**      according to given completion code and
-**      adjusts related database entries accordingly.
+**      Determines new dataset state based on completion code,
+**      then calls do_dataset_completion_actions, plus also
+**      cleanup_dataset_comments if the new state is 3
 **
 **  Arguments:
 **    _completionCode   0=success, 1=failed, 2=not ready, 100=success (capture broker), 101=Duplicate dataset files (capture broker)

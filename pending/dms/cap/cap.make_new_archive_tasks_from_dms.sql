@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Add dataset archive tasks from DMS for datsets that are in archive 'New' state
+**      Add dataset archive tasks from DMS for datasets that are in archive 'New' state
 **      and are not already in cap.t_tasks
 **
 **  Arguments:

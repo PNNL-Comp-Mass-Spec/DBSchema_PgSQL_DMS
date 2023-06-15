@@ -12,8 +12,8 @@ AS $$
 **
 **  Desc:
 **      Gets Collection State Name for given CollectionID
-        Returns state 0 if the _collectionID does not exist
 **
+**      Set _stateName to 'Unknown' if the _collectionID does not exist
 **
 **  Auth:   kja
 **  Date:   08/04/2005

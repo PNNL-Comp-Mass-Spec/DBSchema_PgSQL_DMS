@@ -13,8 +13,7 @@ AS $$
 **
 **  Desc:
 **      Appends new entries to T_Job_Step_Status_History,
-**      summarizing the number of job steps in each state
-**      in T_Job_Steps
+**      summarizing the number of job steps in each state in T_Job_Steps
 **
 **  Arguments:
 **    _minimumTimeIntervalMinutes                    Set this to 0 to force the addition of new data to T_Job_Step_Status_History

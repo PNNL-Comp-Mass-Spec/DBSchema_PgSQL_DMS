@@ -220,11 +220,6 @@ BEGIN
         End If;
     End If;
 
-    ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-    --
-
 $$;
 
 COMMENT ON PROCEDURE sw.update_job_param_org_db_info_using_data_pkg IS 'UpdateJobParamOrgDbInfoUsingDataPkg';

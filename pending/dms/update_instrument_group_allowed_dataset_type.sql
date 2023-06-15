@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds, updates, or deletes allowed datset type for given instrument group
+**      Adds, updates, or deletes allowed dataset type for given instrument group
 **
 **  Arguments:
 **    _mode   'add' or 'update' or 'delete'
