@@ -50,8 +50,8 @@ BEGIN
 
         SELECT string_agg(CC.Biomaterial_Name, '; ' ORDER BY CC.Biomaterial_Name)
         INTO _biomaterialList
-        FROM T_Experiment_Biomaterial ECC
-             INNER JOIN T_Biomaterial CC
+        FROM t_experiment_biomaterial ECC
+             INNER JOIN t_biomaterial CC
                ON ECC.Biomaterial_ID = CC.Biomaterial_ID
         WHERE ECC.Exp_ID = _expID;
 
@@ -122,11 +122,11 @@ BEGIN
         SELECT ECC.Exp_ID,
                CC.Biomaterial_Name,
                1 As Items
-        FROM T_Experiment_Biomaterial ECC
-             INNER JOIN T_Biomaterial CC
+        FROM t_experiment_biomaterial ECC
+             INNER JOIN t_biomaterial CC
                ON ECC.Biomaterial_ID = CC.Biomaterial_ID
              INNER JOIN ( SELECT Exp_ID
-                          FROM T_Experiment_Biomaterial
+                          FROM t_experiment_biomaterial
                           GROUP BY Exp_ID
                           HAVING COUNT(*) = 1 ) FilterQ
                ON ECC.Exp_ID = FilterQ.Exp_ID;
@@ -152,7 +152,7 @@ BEGIN
 
         INSERT INTO Tmp_AdditionalExperiments (Exp_ID)
         SELECT Exp_ID
-        FROM T_Experiment_Biomaterial
+        FROM t_experiment_biomaterial
         GROUP BY Exp_ID
         HAVING COUNT(*) > 1;
 
@@ -164,8 +164,8 @@ BEGIN
 
             SELECT string_agg(CC.Biomaterial_Name, '; ' ORDER BY CC.Biomaterial_Name)
             INTO _biomaterialList
-            FROM T_Experiment_Biomaterial ECC
-                INNER JOIN T_Biomaterial CC
+            FROM t_experiment_biomaterial ECC
+                INNER JOIN t_biomaterial CC
                 ON ECC.Biomaterial_ID = CC.Biomaterial_ID
             WHERE ECC.Exp_ID = _currentExpID
 

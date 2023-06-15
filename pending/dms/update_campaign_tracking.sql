@@ -126,11 +126,11 @@ BEGIN
                            ToDo: Fix this query
 
          INNER JOIN ( SELECT t_campaign.campaign_id,
-                             COUNT(T_Biomaterial.Biomaterial_ID) AS Cnt,
-                             MAX(T_Biomaterial.Created) AS Most_Recent
+                             COUNT(t_biomaterial.biomaterial_id) AS Cnt,
+                             MAX(t_biomaterial.created) AS Most_Recent
                       FROM t_campaign
-                           INNER JOIN T_Biomaterial
-                             ON t_campaign.campaign_id = T_Biomaterial.Campaign_ID
+                           INNER JOIN t_biomaterial
+                             ON t_campaign.campaign_id = t_biomaterial.campaign_id
                       GROUP BY t_campaign.campaign_id ) AS S
            ON Tmp_CampaignStats.campaign_id = S.campaign_id
 

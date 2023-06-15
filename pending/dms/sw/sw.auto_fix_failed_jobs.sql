@@ -107,7 +107,7 @@ BEGIN
         Else
             -- Change the Propagation Mode to 1 (so that the job will be set to state 14 (No Export)
             --
-            UPDATE public.T_Analysis_Job Target
+            UPDATE public.t_analysis_job Target
             SET Propagation_Mode = 1,
                 State_ID = 2
             FROM Tmp_JobsToFix F
@@ -180,7 +180,7 @@ BEGIN
                   Target.Step = F.Step;
 
             -- Update the job to state 2 and remove the error message
-            UPDATE public.T_Analysis_Job Target
+            UPDATE public.t_analysis_job Target
             SET state_id = 2,
                 Comment = CASE
                                  WHEN Target.Comment LIKE 'Auto predefined%' AND Position(';' In Target.Comment) > 0

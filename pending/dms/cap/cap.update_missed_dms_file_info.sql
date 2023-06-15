@@ -64,7 +64,7 @@ BEGIN
     INSERT INTO Tmp_DatasetsToProcess (dataset_id)
     SELECT DI.dataset_id
     FROM cap.t_dataset_info_xml DI
-         LEFT OUTER JOIN public.T_Dataset DS
+         LEFT OUTER JOIN public.t_dataset DS
            ON DI.dataset_id = DS.dataset_id
     WHERE (DS.File_Info_Last_Modified IS NULL Or _replaceExistingData) And
           DI.ignore = 0;
@@ -78,7 +78,7 @@ BEGIN
                               FROM public.parse_delimited_integer_list ( _datasetIDs, ',' ) )
 
     --------------------------------------------
-    -- Delete any entries that don't exist in public.T_Dataset
+    -- Delete any entries that don't exist in public.t_dataset
     --------------------------------------------
 
     DELETE FROM Tmp_DatasetsToProcess
@@ -95,7 +95,7 @@ BEGIN
         CALL public.post_log_entry('Info', _message, 'Update_Missed_DMS_File_Info', 'cap');
 
         --------------------------------------------
-        -- Delete any entries in cap.t_dataset_info_xml that were cached over 7 days ago and do not exist in public.T_Dataset
+        -- Delete any entries in cap.t_dataset_info_xml that were cached over 7 days ago and do not exist in public.t_dataset
         --------------------------------------------
 
         DELETE FROM cap.t_dataset_info_xml
@@ -132,7 +132,7 @@ BEGIN
                           DS.Scan_Count AS Scan_Count_Old,
                           DS.File_Size_Bytes AS File_Size_Bytes_Old
                   FROM cap.t_dataset_info_xml DI
-                       INNER JOIN public.T_Dataset DS
+                       INNER JOIN public.t_dataset DS
                          ON DI.dataset_id = DS.dataset_id AND
                             DI.cache_date > DS.File_Info_Last_Modified
                   WHERE DI.ignore = 0

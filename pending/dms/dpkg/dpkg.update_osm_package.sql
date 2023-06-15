@@ -68,7 +68,7 @@ BEGIN
             -- 'delete' (mark as inactive) associated file attachments
             ---------------------------------------------------
 
-            UPDATE T_File_Attachment
+            UPDATE t_file_attachment
             SET active = 0
             WHERE Entity_Type = 'osm_package' AND
                   Entity_ID = _osmPackageID;

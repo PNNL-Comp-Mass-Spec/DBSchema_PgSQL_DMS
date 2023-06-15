@@ -106,7 +106,7 @@ BEGIN
 
             SELECT Biomaterial_ID
             INTO _tmpID
-            FROM T_Biomaterial
+            FROM t_biomaterial
             WHERE Biomaterial_Name = _name;
         End If;
 

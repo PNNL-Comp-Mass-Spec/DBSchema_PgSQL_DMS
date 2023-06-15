@@ -362,7 +362,7 @@ BEGIN
 
             If FOUND Then
 
-                INSERT INTO cap.T_Job_Steps( Job,
+                INSERT INTO cap.t_job_steps( Job,
                                              Step_Number,
                                              Step_Tool,
                                              State,
@@ -396,7 +396,7 @@ BEGIN
                        0 AS Holdoff_Interval_Minutes,
                        CURRENT_TIMESTAMP AS Next_Try,
                        0 AS Retry_Count
-                FROM cap.T_Job_Steps_History
+                FROM cap.t_job_steps_history
                 WHERE Job = _captureJob AND
                       Saved = _dateStamp;
 
@@ -432,7 +432,7 @@ BEGIN
 
             If FOUND Then
 
-                INSERT INTO cap.T_Job_Steps( Job,
+                INSERT INTO cap.t_job_steps( Job,
                                              Step_Number,
                                              Step_Tool,
                                              CPU_Load,
@@ -470,10 +470,10 @@ BEGIN
                        Holdoff_Interval_Minutes,
                        CURRENT_TIMESTAMP AS Next_Try,
                        Retry_Count
-                FROM cap.T_Job_Steps
+                FROM cap.t_job_steps
                 WHERE Job = _captureJob
 
-                INSERT INTO cap.T_Job_Step_Dependencies (Job, Step_Number, Target_Step_Number,
+                INSERT INTO cap.t_job_step_dependencies (Job, Step_Number, Target_Step_Number,
                                                          Condition_Test, Test_Value, Evaluated,
                                                          Triggered, Enable_Only)
                 SELECT _captureJobNew AS Job,
@@ -484,7 +484,7 @@ BEGIN
                        Evaluated,
                        Triggered,
                        Enable_Only
-                FROM cap.T_Job_Step_Dependencies
+                FROM cap.t_job_step_dependencies
                 WHERE Job = _captureJob;
 
             End If;

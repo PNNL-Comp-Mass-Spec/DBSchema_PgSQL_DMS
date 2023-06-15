@@ -135,8 +135,8 @@ BEGIN
                J.Owner,
                JPT.ProcessingTimeMinutes,
                J.DataPkgID
-        FROM sw.T_Jobs J
-             INNER JOIN sw.T_Scripts S
+        FROM sw.t_jobs J
+             INNER JOIN sw.t_scripts S
                ON J.Script = S.Script
              INNER JOIN sw..V_Job_Processing_Time JPT
                ON J.Job = JPT.Job
@@ -164,10 +164,10 @@ BEGIN
                J.Owner,
                JPT.ProcessingTimeMinutes,
                J.DataPkgID As DataPackageID
-        FROM sw.T_Jobs J
-             INNER JOIN sw.T_Scripts S
+        FROM sw.t_jobs J
+             INNER JOIN sw.t_scripts S
                ON J.Script = S.Script
-             INNER JOIN sw..V_Job_Processing_Time JPT
+             INNER JOIN sw.v_job_processing_time JPT
                ON J.Job = JPT.Job
         WHERE S.Backfill_to_DMS = 1 AND
               J.job IS NULL AND

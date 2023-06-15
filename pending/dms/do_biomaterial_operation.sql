@@ -65,7 +65,7 @@ BEGIN
 
     SELECT Biomaterial_ID
     INTO _biomaterialID
-    FROM T_Biomaterial
+    FROM t_biomaterial
     WHERE Biomaterial_Name = _biomaterialName;
 
     If Not FOUND Then
@@ -87,7 +87,7 @@ BEGIN
         -- Verify that biomaterial is not used by any experiments
         ---------------------------------------------------
 
-        If Exists (SELECT COUNT(*) FROM T_Experiment_Biomaterial WHERE Biomaterial_ID = _biomaterialID) Then
+        If Exists (SELECT COUNT(*) FROM t_experiment_biomaterial WHERE biomaterial_id = _biomaterialID) Then
             _message := 'Cannot delete biomaterial that is referenced by any experiments';
             RAISE WARNING '%', _message;
 
@@ -99,7 +99,7 @@ BEGIN
         -- Delete the biomaterial
         ---------------------------------------------------
 
-        DELETE FROM T_Biomaterial
+        DELETE FROM t_biomaterial
         WHERE Biomaterial_ID = _biomaterialID
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log

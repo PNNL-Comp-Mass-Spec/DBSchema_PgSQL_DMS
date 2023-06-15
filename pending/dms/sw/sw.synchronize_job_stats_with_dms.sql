@@ -91,7 +91,7 @@ BEGIN
                Abs( extract(epoch FROM (sw.t_jobs.finish - target.Finish)) ) AS FinishDiffSeconds,
                Round(Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.ProcessingTimeMinutes), 2) AS ProcTimeDiffMinutes
         FROM sw.t_jobs
-             INNER JOIN public.T_Analysis_Job Target
+             INNER JOIN public.t_analysis_job Target
                ON sw.t_jobs.job = Target.job
              INNER JOIN Tmp_JobsToProcess JTP
                ON sw.t_jobs.job = JTP.job
@@ -104,12 +104,12 @@ BEGIN
 
     Else
 
-        UPDATE public.T_Analysis_Job
+        UPDATE public.t_analysis_job
         SET target.start = sw.t_jobs.start,
             target.Finish = sw.t_jobs.finish,
             processing_time_minutes = JobProcTime.ProcessingTimeMinutes
         FROM sw.t_jobs
-             INNER JOIN public.T_Analysis_Job Target
+             INNER JOIN public.t_analysis_job Target
                ON sw.t_jobs.job = Target.job
              INNER JOIN Tmp_JobsToProcess JTP
                ON sw.t_jobs.job = JTP.job

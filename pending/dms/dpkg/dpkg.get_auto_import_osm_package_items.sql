@@ -50,12 +50,12 @@ BEGIN
         INSERT INTO Tmp_DataPackageItems (OSM_Package_ID, Item_Type, Item)
         SELECT  DISTINCT _packageID, 'Datasets', TDS.Dataset
         FROM    public.V_Dataset_List_Report_2 AS TDS
-                INNER JOIN T_OSM_Package_Items AS TOPI ON TOPI.Item = TDS.Experiment
+                INNER JOIN t_osm_package_items AS TOPI ON TOPI.Item = TDS.Experiment
         WHERE   ( TOPI.Item_Type = 'Experiments' )
                 AND TOPI.OSM_Package_ID = _packageID
                 AND NOT TDS.Dataset IN (
                     SELECT Item
-                    FROM   T_OSM_Package_Items
+                    FROM   t_osm_package_items
                     WHERE  OSM_Package_ID = _packageID
                     AND Item_Type = 'Datasets'
                 )
@@ -72,12 +72,12 @@ BEGIN
         INSERT INTO Tmp_DataPackageItems (OSM_Package_ID, Item_Type, Item)
         SELECT  DISTINCT _packageID, 'Datasets', Dataset
         FROM    public.V_Dataset_List_Report_2 AS TDS
-                INNER JOIN T_OSM_Package_Items TOPI ON TOPI.Item_ID = TDS.Request
+                INNER JOIN t_osm_package_items TOPI ON TOPI.Item_ID = TDS.Request
         WHERE   TOPI.Item_Type = 'Requested_Runs'
                 AND TOPI.OSM_Package_ID = _packageID
                 AND NOT TDS.Dataset IN (
                     SELECT Item
-                    FROM   T_OSM_Package_Items
+                    FROM   t_osm_package_items
                     WHERE  OSM_Package_ID = _packageID
                     AND Item_Type = 'Datasets'
                 )

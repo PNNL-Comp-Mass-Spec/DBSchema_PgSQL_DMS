@@ -335,9 +335,9 @@ BEGIN
                ('Campaign_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
                ('Campaign_Count', 'Last 30 days', 'SELECT COUNT(*) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
 
-               ('CellCulture_Count', 'All',          'SELECT COUNT(*) FROM T_Biomaterial', false),
-               ('CellCulture_Count', 'Last 7 days',  'SELECT COUNT(*) FROM T_Biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
-               ('CellCulture_Count', 'Last 30 days', 'SELECT COUNT(*) FROM T_Biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
+               ('CellCulture_Count', 'All',          'SELECT COUNT(*) FROM t_biomaterial', false),
+               ('CellCulture_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
+               ('CellCulture_Count', 'Last 30 days', 'SELECT COUNT(*) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
 
                ('Dataset_Count', 'All',          'SELECT COUNT(*) FROM t_dataset', false),
                ('Dataset_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),

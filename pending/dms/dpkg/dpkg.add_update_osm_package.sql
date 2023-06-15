@@ -112,7 +112,7 @@ BEGIN
         -- Mark sample prep requests that exist in the database
         UPDATE Tmp_PrepRequestItems
         SET Valid = true
-        WHERE Item in (SELECT prep_request_id FROM T_Sample_Prep_Request);
+        WHERE Item in (SELECT prep_request_id FROM t_sample_prep_request);
 
         -- Get list of any list items that weren't in the database
         SELECT string_agg(item::text, ', ' ORDER BY item)

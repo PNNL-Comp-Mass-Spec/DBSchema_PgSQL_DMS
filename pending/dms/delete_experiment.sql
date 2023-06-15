@@ -165,10 +165,10 @@ BEGIN
     If _infoOnly Then
         -- ToDo: Show this using RAISE INFO
         SELECT *
-        FROM T_Experiment_Biomaterial
+        FROM t_experiment_biomaterial
         WHERE Exp_ID = _experimentId
     Else
-        DELETE FROM T_Experiment_Biomaterial
+        DELETE FROM t_experiment_biomaterial
         WHERE Exp_ID = _experimentId
     End If;
 

@@ -133,7 +133,7 @@ BEGIN
 
             SELECT _invalidIDs = string_agg(Prep_Request_ID, ',' ORDER BY Prep_Request_ID)
             FROM Tmp_SamplePrepRequests NewIDs
-                 LEFT OUTER JOIN T_Sample_Prep_Request SPR
+                 LEFT OUTER JOIN t_sample_prep_request SPR
                    ON NewIDs.Prep_Request_ID = SPR.ID
             WHERE SPR.ID IS NULL;
 

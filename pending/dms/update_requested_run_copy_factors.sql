@@ -52,7 +52,7 @@ BEGIN
     FROM t_factor
     WHERE t_factor.Type = 'Run_Request' AND
           target_id = _srcRequestID AND
-          Trim(T_Factor.Name) <> '';
+          Trim(t_factor.name) <> '';
 
     -----------------------------------------------------------
     -- Clean out old factors for _destRequest

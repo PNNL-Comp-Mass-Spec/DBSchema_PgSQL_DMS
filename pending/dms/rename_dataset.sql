@@ -455,7 +455,7 @@ BEGIN
 
     INSERT INTO Tmp_JobsToUpdate (Job)
     SELECT Job
-    FROM sw.T_Jobs
+    FROM sw.t_jobs
     WHERE Dataset = _datasetNameOld
     ORDER BY Job
 
@@ -468,7 +468,7 @@ BEGIN
            _datasetNameNew As Dataset_Name_New,
            Dataset_ID,
            Imported
-    FROM sw.T_Jobs
+    FROM sw.t_jobs
     WHERE Job In (Select Job from Tmp_JobsToUpdate)
 
     If Not _infoOnly Then
@@ -480,7 +480,7 @@ BEGIN
             CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetName',       _datasetNameNew, _infoOnly => false);
             CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetFolderName', _datasetNameNew, _infoOnly => false);
 
-            UPDATE sw.T_Jobs
+            UPDATE sw.t_jobs
             Set Dataset = _datasetNameNew
             WHERE Job = _job;
 
@@ -643,7 +643,7 @@ BEGIN
 
         SELECT Output_Folder_Name
         INTO _mzRefineryOutputFolder
-        FROM sw.T_Job_Steps
+        FROM sw.t_job_steps
         WHERE Job = _job AND
               State <> 3 AND
               Step_Tool = 'Mz_Refinery';

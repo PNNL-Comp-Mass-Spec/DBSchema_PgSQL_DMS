@@ -251,8 +251,8 @@ BEGIN
                                                        Biomaterial_ID )
         SELECT CC.Biomaterial_Name,
                CC.Biomaterial_ID
-        FROM T_Experiment_Biomaterial ECC
-             INNER JOIN T_Biomaterial CC
+        FROM t_experiment_biomaterial ECC
+             INNER JOIN t_biomaterial CC
                ON ECC.Biomaterial_ID = CC.Biomaterial_ID
         WHERE ECC.Exp_ID = _parentExperimentID;
 

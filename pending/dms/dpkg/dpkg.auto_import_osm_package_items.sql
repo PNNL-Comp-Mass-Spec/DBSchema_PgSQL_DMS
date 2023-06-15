@@ -47,7 +47,7 @@ BEGIN
 
         INSERT INTO Tmp_OSM_Pkgs ( ID )
         SELECT ID
-        FROM T_OSM_Package
+        FROM t_osm_package
         WHERE State = 'Active';
 
         _callingUser := session_user;

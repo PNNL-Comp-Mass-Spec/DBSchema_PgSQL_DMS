@@ -138,8 +138,8 @@ BEGIN
         WHERE JP.Section In (
                 SELECT unnest(xpath('//sections/section/@name', rooted_xml))::text
                 FROM ( SELECT ('<sections>' || Parameter_Template::text || '</sections>')::xml As rooted_xml
-                       FROM sw.T_Step_Tools
-                       WHERE sw.T_Step_Tools.step_tool = _stepTool
+                       FROM sw.t_step_tools
+                       WHERE sw.t_step_tools.step_tool = _stepTool
                      ) Src
                 )
               AND

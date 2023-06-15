@@ -103,7 +103,7 @@ BEGIN
 
             SELECT COUNT(*)
             INTO _jobCount
-            FROM public.T_Analysis_Job
+            FROM public.t_analysis_job
             WHERE Protein_Collection_List ILIKE _nameFilter;
 
             If _jobCount > 0 Then

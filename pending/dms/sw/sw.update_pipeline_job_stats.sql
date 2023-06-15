@@ -53,11 +53,11 @@ BEGIN
            Extract(year from JH.start) AS Year,
            COUNT(*) AS Jobs
     FROM sw.t_jobs_history JH
-         LEFT OUTER JOIN public.T_Analysis_Job J
+         LEFT OUTER JOIN public.t_analysis_job J
            ON JH.job = J.job
-         LEFT OUTER JOIN public.T_Dataset DS
+         LEFT OUTER JOIN public.t_dataset DS
            ON J.dataset_id = DS.dataset_id
-         LEFT OUTER JOIN public.T_Instrument_Name InstName
+         LEFT OUTER JOIN public.t_instrument_name InstName
            ON DS.instrument_name_ID = InstName.Instrument_ID
     WHERE NOT JH.start IS NULL
     GROUP BY JH.script, Coalesce(InstName.IN_Group, ''), Extract(year from JH.start)

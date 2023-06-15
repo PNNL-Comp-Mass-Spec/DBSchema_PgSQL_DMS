@@ -29,7 +29,7 @@ BEGIN
     -- Use a MERGE Statement to synchronize T_DMS_Organism_DB_Info with V_Protein_Collection_List_Export
     ---------------------------------------------------
 
-    MERGE mts.T_DMS_Organism_DB_Info AS target
+    MERGE mts.t_dms_organism_db_info AS target
     USING (SELECT ID, FileName, Organism, Description, Active,
                 NumProteins, NumResidues, Organism_ID, OrgFile_RowVersion
         FROM mts.V_DMS_Organism_DB_File_Import

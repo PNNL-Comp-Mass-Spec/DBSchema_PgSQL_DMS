@@ -622,7 +622,7 @@ BEGIN
                 SELECT 'Update EUS Proposal comment' AS Item_Type,
                        _comment AS New_Comment,
                        Target.*
-                FROM T_Data_Package_EUS_Proposal Target
+                FROM t_data_package_eus_proposal Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
                           Tmp_DataPackageItems.Identifier = Target.Proposal_ID AND

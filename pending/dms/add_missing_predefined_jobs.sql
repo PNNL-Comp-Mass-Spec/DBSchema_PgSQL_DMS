@@ -173,7 +173,7 @@ BEGIN
     INSERT INTO Tmp_DatasetsToProcess( dataset_id, Process_Dataset )
     SELECT DISTINCT DS.dataset_id, true AS Process_Dataset
     FROM t_dataset DS
-         INNER JOIN T_Dataset_Type_Name DSType
+         INNER JOIN t_dataset_type_name DSType
            ON DSType.dataset_type_id = DS.dataset_type_ID
          INNER JOIN t_instrument_name InstName
            ON DS.instrument_id = InstName.instrument_id

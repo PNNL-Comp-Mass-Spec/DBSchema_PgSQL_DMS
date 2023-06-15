@@ -71,7 +71,7 @@ BEGIN
 
     SELECT Biomaterial_ID
     INTO _biomaterialID
-    FROM T_Biomaterial
+    FROM t_biomaterial
     WHERE Biomaterial_Name = _biomaterialName;
 
     If Not FOUND Then
@@ -96,7 +96,7 @@ BEGIN
         DELETE FROM t_biomaterial_organisms
         WHERE biomaterial_id = _biomaterialID;
 
-        UPDATE T_Biomaterial
+        UPDATE t_biomaterial
         SET Cached_Organism_List = ''
         WHERE Biomaterial_ID = _biomaterialID;
 
@@ -204,7 +204,8 @@ BEGIN
     ---------------------------------------------------
     -- Update Cached_Organism_List
     ---------------------------------------------------
-    UPDATE T_Biomaterial
+
+    UPDATE t_biomaterial
     SET Cached_Organism_List = get_biomaterial_organism_list(_biomaterialID)
     WHERE Biomaterial_ID = _biomaterialID
 

@@ -106,7 +106,7 @@ BEGIN
                 B.Created AS Created
         FROM    t_sample_prep_request SPR
                 -- Remove or update since skipped column: CROSS APPLY public.parse_delimited_list(SPR.Biomaterial_List, ';') TL
-                INNER JOIN T_Biomaterial B ON B.Biomaterial_Name = TL.Item
+                INNER JOIN t_biomaterial B ON B.Biomaterial_Name = TL.Item
         WHERE   SPR.prep_request_id = _samplePrepRequestID
                 -- Remove or update since skipped column: AND SPR.Biomaterial_List <> '(none)'
                 -- Remove or update since skipped column: AND SPR.Biomaterial_List <> ''

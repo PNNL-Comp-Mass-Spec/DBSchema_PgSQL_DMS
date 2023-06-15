@@ -124,7 +124,7 @@ BEGIN
                COUNT(*) AS UseCount
         FROM PUBLIC.V_GetPipelineJobParameters J
         WHERE Job IN ( SELECT Job
-                       FROM dpkg.T_Data_Package_Analysis_Jobs
+                       FROM dpkg.t_data_package_analysis_jobs
                        WHERE Data_Package_ID = _dataPackageID ) AND
               J.OrgDBRequired <> 0
         GROUP BY Organism, OrganismDBName, ProteinCollectionList, ProteinOptionsList

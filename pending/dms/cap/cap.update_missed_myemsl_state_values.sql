@@ -62,7 +62,7 @@ BEGIN
 
     INSERT INTO Tmp_IDsToUpdate(EntityID)
     SELECT DISTINCT LookupQ.dataset_id
-    FROM public.T_Dataset_Archive DA
+    FROM public.t_dataset_archive DA
          INNER JOIN ( SELECT dataset_id
                       FROM cap.t_myemsl_uploads
                       WHERE status_uri_path_id > 1 AND
@@ -90,7 +90,7 @@ BEGIN
             RAISE INFO '%', _message;
         Else
 
-            UPDATE public.T_Dataset_Archive
+            UPDATE public.t_dataset_archive
             SET MyEMSLState = 1
             WHERE AS_Dataset_ID IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
                   MyEMSLState < 1;
@@ -121,7 +121,7 @@ BEGIN
 
     INSERT INTO Tmp_IDsToUpdate(EntityID)
     SELECT DISTINCT T.AJ_JobID
-    FROM public.T_Analysis_Job T
+    FROM public.t_analysis_job T
          INNER JOIN ( SELECT dataset_id,
                              subfolder
            FROM cap.t_myemsl_uploads
@@ -151,7 +151,7 @@ BEGIN
             RAISE INFO '%', _message;
         Else
 
-            UPDATE public.T_Analysis_Job
+            UPDATE public.t_analysis_job
             SET AJ_MyEMSLState = 1
             WHERE AJ_JobID IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
                   AJ_MyEMSLState < 1
@@ -166,7 +166,7 @@ BEGIN
         FROM cap.t_myemsl_uploads U
                ON TS.job = U.job
         WHERE TS.dataset_id IN ( SELECT T.AJ_DatasetID
-                                  FROM public.T_Analysis_Job T
+                                  FROM public.t_analysis_job T
                                        INNER JOIN Tmp_IDsToUpdate U
                                          ON T.AJ_JobID = U.EntityID ) AND
               TS.Tool IN ('ArchiveVerify') AND

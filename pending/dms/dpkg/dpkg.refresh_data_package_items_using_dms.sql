@@ -30,8 +30,8 @@ BEGIN
 
     UPDATE dpkg.t_data_package_datasets
     SET experiment = E.Experiment_Num
-    FROM public.T_Dataset DS INNER JOIN
-         public.T_Experiments E ON DS.Exp_ID = E.Exp_ID AND Target.Experiment <> E.Experiment_Num
+    FROM public.t_dataset DS INNER JOIN
+         public.t_experiments E ON DS.Exp_ID = E.Exp_ID AND Target.Experiment <> E.Experiment_Num
     WHERE Target.Data_Package_ID = _packageID And
           Target.Dataset_ID = DS.Dataset_ID;
     --
@@ -50,8 +50,8 @@ BEGIN
 
     UPDATE dpkg.t_data_package_biomaterial
     SET campaign = C.Campaign_Num
-    FROM public.T_Campaign C INNER JOIN
-        public.T_Cell_Culture CC ON C.Campaign_ID = CC.CC_Campaign_ID INNER JOIN
+    FROM public.t_campaign C INNER JOIN
+        public.t_cell_culture CC ON C.Campaign_ID = CC.CC_Campaign_ID INNER JOIN
         dpkg.t_data_package_biomaterial Target ON CC.CC_ID = Target.biomaterial_id AND C.Campaign_Num <> Target.campaign
     WHERE Target.data_pkg_id = _packageID;
     --

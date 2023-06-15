@@ -110,7 +110,7 @@ BEGIN
                 SUM(CASE WHEN TPKG.Tool = 'MASIC_Finnigan' AND TD.Param_File LIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
                 SUM(CASE WHEN TPKG.Tool LIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
                 SUM(CASE WHEN TPKG.Tool LIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
-            FROM    dpkg.T_Data_Package_Analysis_Jobs AS TPKG
+            FROM    dpkg.t_data_package_analysis_jobs AS TPKG
                     INNER JOIN public.V_Source_Analysis_Job AS TD ON TPKG.Job = TD.Job
             WHERE   ( TPKG.Data_Package_ID = _dataPackageID )
             GROUP BY TPKG.Dataset

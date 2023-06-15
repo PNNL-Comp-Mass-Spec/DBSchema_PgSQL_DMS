@@ -54,7 +54,7 @@ BEGIN
 
     UPDATE Tmp_Experiment_to_Biomaterial_Map Target
     SET Biomaterial_ID = Src.Biomaterial_ID
-    FROM T_Biomaterial Src
+    FROM t_biomaterial Src
     WHERE Src.Biomaterial_Name = Target.Biomaterial_Name
           And Target.Biomaterial_ID Is Null;
 
@@ -77,10 +77,10 @@ BEGIN
     -- Add/remove biomaterial items
     ---------------------------------------------------
 
-    DELETE FROM T_Experiment_Biomaterial
+    DELETE FROM t_experiment_biomaterial
     WHERE Exp_ID = _expID;
 
-    INSERT INTO T_Experiment_Biomaterial (Exp_ID, Biomaterial_ID)
+    INSERT INTO t_experiment_biomaterial (Exp_ID, Biomaterial_ID)
     SELECT DISTINCT _expID As Exp_ID, Biomaterial_ID
     FROM Tmp_Experiment_to_Biomaterial_Map
 

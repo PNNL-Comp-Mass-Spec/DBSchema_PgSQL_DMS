@@ -91,7 +91,7 @@ BEGIN
     -- Does the protein collection exist?
 
     If Not Exists ( SELECT *
-                    FROM pc.T_Protein_Collections
+                    FROM pc.t_protein_collections
                     WHERE protein_collection_id = _proteinCollectionID)
     Then
         _message := format('Protein collection ID not found in T_Protein_Collections: %s', _proteinCollectionID);

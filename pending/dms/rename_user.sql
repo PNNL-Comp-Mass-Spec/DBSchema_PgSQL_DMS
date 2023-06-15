@@ -135,11 +135,11 @@ BEGIN
         WHERE requester_username IN (_oldUserName, _newUserName);
 
         SELECT *
-        FROM dpkg.T_Data_Package
+        FROM dpkg.t_data_package
         WHERE Owner IN (_oldUserName, _newUserName);
 
         SELECT *
-        FROM dpkg.T_Data_Package
+        FROM dpkg.t_data_package
         WHERE Requester IN (_oldUserName, _newUserName);
 
     Else
@@ -156,11 +156,11 @@ BEGIN
         SET requester_username = _newUserName
         WHERE requester_username = _oldUserName;
 
-        UPDATE dpkg.T_Data_Package
+        UPDATE dpkg.t_data_package
         SET Owner = _newUserName
         WHERE Owner = _oldUserName;
 
-        UPDATE dpkg.T_Data_Package
+        UPDATE dpkg.t_data_package
         SET Requester = _newUserName
         WHERE Requester = _oldUserName;
 

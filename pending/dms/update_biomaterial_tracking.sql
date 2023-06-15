@@ -41,7 +41,7 @@ BEGIN
                                        Dataset_Count,
                                        Job_Count )
     SELECT Biomaterial_ID, 0, 0, 0
-    FROM T_Biomaterial;
+    FROM t_biomaterial;
 
     ----------------------------------------------------------
     -- Update experiment count statistics
@@ -64,7 +64,7 @@ BEGIN
 
          INNER JOIN ( SELECT Biomaterial_ID,
                              COUNT(Exp_ID) AS Cnt
-                      FROM T_Experiment_Biomaterial
+                      FROM t_experiment_biomaterial
                       GROUP BY Biomaterial_ID
                      ) AS S
            ON Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID
@@ -88,14 +88,14 @@ BEGIN
 
                            ToDo: Fix this query
 
-         INNER JOIN ( SELECT T_Experiment_Biomaterial.Biomaterial_ID,
+         INNER JOIN ( SELECT t_experiment_biomaterial.biomaterial_id,
                              COUNT(t_dataset.dataset_id) AS Cnt
-                      FROM T_Experiment_Biomaterial
+                      FROM t_experiment_biomaterial
                            INNER JOIN t_experiments
-                             ON T_Experiment_Biomaterial.exp_id = t_experiments.exp_id
+                             ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
                            INNER JOIN t_dataset
                              ON t_experiments.exp_id = t_dataset.exp_id
-                      GROUP BY T_Experiment_Biomaterial.Biomaterial_ID
+                      GROUP BY t_experiment_biomaterial.biomaterial_id
                      ) AS S
            ON Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID
 
@@ -118,23 +118,24 @@ BEGIN
 
                            ToDo: Fix this query
 
-         INNER JOIN ( SELECT T_Experiment_Biomaterial.Biomaterial_ID,
+         INNER JOIN ( SELECT t_experiment_biomaterial.biomaterial_id,
                              COUNT(t_analysis_job.job) AS Cnt
-                      FROM T_Experiment_Biomaterial
+                      FROM t_experiment_biomaterial
                            INNER JOIN t_experiments
-                             ON T_Experiment_Biomaterial.exp_id = t_experiments.exp_id
+                             ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
                            INNER JOIN t_dataset
                              ON t_experiments.exp_id = t_dataset.exp_id
                            INNER JOIN t_analysis_job
                              ON t_dataset.dataset_id = t_analysis_job.dataset_id
-                      GROUP BY T_Experiment_Biomaterial.Biomaterial_ID
+                      GROUP BY t_experiment_biomaterial.biomaterial_id
                      ) AS S
            ON Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID
 
     ----------------------------------------------------------
     -- Update T_Biomaterial_Type_Name using Tmp_Biomaterial_Stats
     ----------------------------------------------------------
-    MERGE INTO T_Biomaterial_Type_Name AS t
+
+    MERGE INTO t_biomaterial_type_name AS t
     USING ( SELECT * FROM Tmp_Biomaterial_Stats
           ) AS s
     ON (t.biomaterial_id = s.biomaterial_id)
@@ -152,7 +153,7 @@ BEGIN
 
     -- Delete rows in T_Biomaterial_Type_Name that are not in Tmp_Biomaterial_Stats
 
-    DELETE FROM T_Biomaterial_Type_Name target
+    DELETE FROM t_biomaterial_type_name target
     WHERE NOT EXISTS (SELECT source.biomaterial_id
                       FROM Tmp_Biomaterial_Stats source
                       WHERE target.biomaterial_id = source.biomaterial_id

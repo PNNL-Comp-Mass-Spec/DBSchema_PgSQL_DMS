@@ -239,7 +239,7 @@ BEGIN
                        'B' AS Item_Type,            -- Biomaterial
                        Container_ID
                        Biomaterial_ID AS Item_ID
-                FROM T_Biomaterial
+                FROM t_biomaterial
                 UNION
                 SELECT experiment AS Item,
                        'E' AS Item_Type,            -- Experiment
@@ -262,7 +262,8 @@ BEGIN
     -- and update material status (if retiring)
     -- for biomaterial items (if any)
     ---------------------------------------------------
-    UPDATE T_Biomaterial
+
+    UPDATE t_biomaterial
     SET Container_ID = CASE
                        WHEN _mode = 'move_material' THEN _contID
                        ELSE Container_ID

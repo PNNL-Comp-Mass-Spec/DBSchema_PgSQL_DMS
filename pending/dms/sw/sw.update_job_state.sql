@@ -443,7 +443,7 @@ BEGIN
                    END,
                    propagation_mode
             INTO _orgDBName, _jobPropagationMode
-            FROM public.T_Analysis_Job
+            FROM public.t_analysis_job
             WHERE job = _jobInfo.Job;
 
             If FOUND Then
@@ -454,7 +454,7 @@ BEGIN
 
             SELECT _jobInfo.OrgDBName, propagation_mode
             INTO _orgDBName, _jobPropagationMode
-            FROM public.T_Analysis_Job
+            FROM public.t_analysis_job
             WHERE job = _jobInfo.Job;
 
             If FOUND Then
@@ -586,7 +586,7 @@ BEGIN
     INSERT INTO Tmp_JobsToReset (job, NewState )
     SELECT DMSJobs.job AS Job,
            J.state AS NewState
-    FROM public.T_Analysis_Job AS DMSJobs
+    FROM public.t_analysis_job AS DMSJobs
          INNER JOIN sw.t_jobs AS J
            ON J.job = DMSJobs.job
     WHERE DMSJobs.state_id = 5 AND
@@ -597,7 +597,7 @@ BEGIN
     INSERT INTO Tmp_JobsToReset (job, NewState )
     SELECT DMSJobs.job AS Job,
            J.state AS NewState
-    FROM public.T_Analysis_Job AS DMSJobs
+    FROM public.t_analysis_job AS DMSJobs
          INNER JOIN sw.t_jobs AS J
            ON J.job = DMSJobs.job
     WHERE DMSJobs.state_id = 1 AND

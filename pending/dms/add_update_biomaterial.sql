@@ -178,7 +178,7 @@ BEGIN
         SELECT Biomaterial_ID,
                Container_ID
         INTO _biomaterialID, _curContainerID
-        FROM T_Biomaterial
+        FROM t_biomaterial
         WHERE Biomaterial_Name = _biomaterialName;
 
         -- Cannot create an entry that already exists
@@ -213,7 +213,7 @@ BEGIN
         --
         SELECT ID
         INTO _typeID
-        FROM T_Biomaterial_Type_Name
+        FROM t_biomaterial_type_name
         WHERE Name = _biomaterialType;
 
         ---------------------------------------------------
@@ -318,7 +318,7 @@ BEGIN
 
         If _mode = 'add' Then
         -- <add>
-            INSERT INTO T_Biomaterial (
+            INSERT INTO t_biomaterial (
                 biomaterial_name,
                 source_name,
                 contact_username,
@@ -354,7 +354,7 @@ BEGIN
 
             SELECT Biomaterial_ID
             INTO _idConfirm
-            FROM T_Biomaterial
+            FROM t_biomaterial
             WHERE Biomaterial_Name = _biomaterialName;
 
             If _biomaterialID <> Coalesce(_idConfirm, _biomaterialID) Then
@@ -397,7 +397,7 @@ BEGIN
         If _mode = 'update' Then
         -- <update>
             --
-            UPDATE T_Biomaterial
+            UPDATE t_biomaterial
             Set
                 Source_Name      = _sourceName,
                 Contact_Username = _contactUsername,

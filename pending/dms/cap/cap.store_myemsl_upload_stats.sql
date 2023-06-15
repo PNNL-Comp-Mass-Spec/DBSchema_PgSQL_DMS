@@ -264,12 +264,13 @@ BEGIN
         -----------------------------------------------
         -- Add a new row to T_MyEMSL_TestUploads
         -----------------------------------------------
-        INSERT INTO T_MyEMSL_TestUploads (  Job, Dataset_ID, Subfolder,
-                                            FileCountNew, FileCountUpdated,
-                                            Bytes, UploadTimeSeconds,
-                                            StatusURI_PathID, Status_Num,
-                                            EUS_InstrumentID, EUS_ProposalID, EUS_UploaderID,
-                                            ErrorCode, Entered )
+
+        INSERT INTO t_myemsl_testuploads ( Job, Dataset_ID, Subfolder,
+                                           FileCountNew, FileCountUpdated,
+                                           Bytes, UploadTimeSeconds,
+                                           StatusURI_PathID, Status_Num,
+                                           EUS_InstrumentID, EUS_ProposalID, EUS_UploaderID,
+                                           ErrorCode, Entered )
         VALUES( _job,
                 _datasetID,
                 _subfolder,

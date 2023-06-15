@@ -351,9 +351,9 @@ BEGIN
                 ---------------------------------------------------
                 -- Deprecated in Summer 2015:
 
-                _currentLocation := 'DELETE T_Analysis_Job_Annotations';
+                _currentLocation := 'DELETE t_analysis_job_annotations';
 
-                DELETE FROM T_Analysis_Job_Annotations target
+                DELETE FROM t_analysis_job_annotations target
                 WHERE EXISTS (SELECT j.job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
                 --
                 _message := format('%sT_Analysis_Job_Annotations, ', _message);
@@ -562,9 +562,9 @@ BEGIN
             /*
                 ---------------------------------------------------
                 -- Deprecated in Summer 2015:
-                _currentLocation := 'DELETE T_Dataset_Annotations';
+                _currentLocation := 'DELETE t_dataset_annotations';
 
-                DELETE FROM T_Dataset_Annotations target
+                DELETE FROM t_dataset_annotations target
                 WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
                 --
                 _message := format('%sT_Dataset_Annotations, ', _message);
@@ -705,9 +705,9 @@ BEGIN
             DELETE FROM Tmp_ExperimentsToDelete target
             WHERE EXISTS (SELECT RR.exp_id FROM t_requested_run RR WHERE target.exp_id = RR.exp_id);
 
-            _currentLocation := 'DELETE T_Experiment_Biomaterial';
+            _currentLocation := 'DELETE t_experiment_biomaterial';
 
-            DELETE FROM T_Experiment_Biomaterial target
+            DELETE FROM t_experiment_biomaterial target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id);
             --
             _message := format('%s t_experiment_biomaterial,', _message);
@@ -835,11 +835,11 @@ BEGIN
                ON Subcat.aux_subcategory_id = Descrip.aux_subcategory_id
              INNER JOIN t_aux_info_value AIVal
                ON Descrip.aux_description_id = AIVal.aux_description_id
-             LEFT OUTER JOIN T_Biomaterial
-               ON AIVal.target_id = T_Biomaterial.Biomaterial_ID
+             LEFT OUTER JOIN t_biomaterial
+               ON AIVal.target_id = t_biomaterial.biomaterial_id
         WHERE AIC.target_type_id = 501 AND
               AIVal.target_id > 0 AND
-              T_Biomaterial.Biomaterial_ID IS NULL
+              t_biomaterial.biomaterial_id IS NULL
         );
     --
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;

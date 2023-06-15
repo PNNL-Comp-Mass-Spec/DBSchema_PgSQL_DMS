@@ -169,9 +169,9 @@ BEGIN
             WHERE Dataset_ID = _datasetID And State = 5
         End If;
 
-        If Exists (SELECT * FROM cap.T_Dataset_Info_XML WHERE Dataset_ID = _datasetID) Then
+        If Exists (SELECT * FROM cap.t_dataset_info_xml WHERE Dataset_ID = _datasetID) Then
             SELECT 'To be deleted' AS Action, *
-            FROM cap.T_Dataset_Info_XML
+            FROM cap.t_dataset_info_xml
             WHERE Dataset_ID = _datasetID
         End If;
 

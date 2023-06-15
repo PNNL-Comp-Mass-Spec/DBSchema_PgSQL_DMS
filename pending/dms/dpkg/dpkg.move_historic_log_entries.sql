@@ -36,7 +36,7 @@ BEGIN
 
     -- Copy entries into the historic log tables
     --
-    INSERT INTO logdms.T_Log_Entries_Data_Package (entry_id, posted_by, Entered, type, message)
+    INSERT INTO logdms.t_log_entries_data_package (entry_id, posted_by, Entered, type, message)
     SELECT entry_id, posted_by, Entered, type, message
     FROM dpkg.t_log_entries
     WHERE Entered < _cutoffDateTime;

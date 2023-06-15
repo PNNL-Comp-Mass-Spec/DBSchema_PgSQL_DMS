@@ -136,7 +136,7 @@ BEGIN
                J.settings_file_name,
                Tool.analysis_tool
         FROM t_analysis_job J
-             INNER JOIN sw.T_Job_Steps JS
+             INNER JOIN sw.t_job_steps JS
          ON J.job = JS.job
              INNER JOIN t_analysis_tool Tool
                ON J.analysis_tool_id = Tool.analysis_tool_id
@@ -163,9 +163,9 @@ BEGIN
                J.settings_file_name,
                Tool.analysis_tool
         FROM t_analysis_job J
-             INNER JOIN sw.T_Job_Steps JS
+             INNER JOIN sw.t_job_steps JS
                ON J.job = JS.job
-             INNER JOIN sw.T_Processor_Status ProcStatus
+             INNER JOIN sw.t_processor_status ProcStatus
                ON JS.Processor = ProcStatus.Processor_Name
              INNER JOIN t_analysis_tool Tool
                ON J.analysis_tool_id = Tool.analysis_tool_id
@@ -418,7 +418,7 @@ BEGIN
 
                         If Not _infoOnly Then
                             -- Reset the step back to state 2=Enabled
-                            UPDATE sw.T_Job_Steps
+                            UPDATE sw.t_job_steps
                             SET State = 2
                             WHERE Job = _job And Step_Number = _step
                         End If;
@@ -432,7 +432,7 @@ BEGIN
                             -- The settings file for this job has changed, thus we must re-generate the job in the pipeline DB
                             -- Note that deletes auto-cascade from T_Jobs to T_Job_Steps, T_Job_Parameters, and T_Job_Step_Dependencies
                             --
-                            DELETE FROM sw.T_Jobs
+                            DELETE FROM sw.t_jobs
                             WHERE Job = _job
 
                             UPDATE t_analysis_job

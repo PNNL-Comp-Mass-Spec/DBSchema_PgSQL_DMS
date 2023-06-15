@@ -57,18 +57,18 @@ BEGIN
     ---------------------------------------------------
     -- Resolve dataset into instrument class
     ---------------------------------------------------
-    --
-    SELECT t_dataset.dataset_id,
-           t_instrument_name.instrument_class,
-           t_instrument_class.requires_preparation,
-           t_dataset.comment
+
+    SELECT DS.dataset_id,
+           InstName.instrument_class,
+           InstClass.requires_preparation,
+           DS.comment
     INTO _datasetID, _instrumentClass, _doPrep, _comment
-    FROM t_dataset
-         INNER JOIN t_instrument_name
-           ON t_dataset.instrument_id = t_instrument_name.instrument_id
-         INNER JOIN t_instrument_class
-           ON t_instrument_name.instrument_class = t_instrument_class.instrument_class
-    WHERE dataset = _datasetName;
+    FROM t_dataset DS
+         INNER JOIN t_instrument_name InstName
+           ON DS.instrument_id = InstName.instrument_id
+         INNER JOIN t_instrument_class InstClass
+           ON InstName.instrument_class = InstClass.instrument_class
+    WHERE DS.Dataset = _datasetName;
 
     ---------------------------------------------------
     -- Define _completionState based on _completionCode

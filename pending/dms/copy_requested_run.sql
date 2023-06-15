@@ -338,7 +338,7 @@ BEGIN
 
     SELECT Batch_ID
     INTO _batchID
-    FROM T_Requested_Run
+    FROM t_requested_run
     WHERE request_id = _requestID;
 
     If _batchID > 0 Then
