@@ -31,12 +31,13 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 **          08/18/2022 mem - Set _ignoreErrors to true when calling post_log_entry
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          05/22/2023 mem - Capitalize reserved words
+**          06/14/2023 mem - Use citext for case-insensitive comparisons
 **
 *****************************************************/
 DECLARE
     _currentTargetTable text := 'Undefined';
     _currentOperation text := 'initializing';
-    _callingUser text := session_user;
+    _callingUser citext := session_user;
     _lastUpdated timestamp;
 
     _sqlState text;
@@ -49,7 +50,7 @@ BEGIN
 
     -- Update entry for _postedBy in t_usage_stats
     --
-    If Not Exists (SELECT posted_by FROM t_usage_stats WHERE posted_by = _postedBy) THEN
+    If Not Exists (SELECT posted_by FROM t_usage_stats WHERE posted_by = _postedBy::citext) THEN
         _currentOperation := 'appending to';
 
         INSERT INTO t_usage_stats (posted_by, last_posting_time, usage_count)
@@ -59,7 +60,7 @@ BEGIN
 
         UPDATE t_usage_stats
         SET last_posting_time = CURRENT_TIMESTAMP, usage_count = usage_count + 1
-        WHERE posted_by = _postedBy;
+        WHERE posted_by = _postedBy::citext;
     End If;
 
     _currentTargetTable := 't_usage_log';
@@ -71,7 +72,7 @@ BEGIN
         SELECT MAX(posting_time)
         INTO _lastUpdated
         FROM t_usage_log
-        WHERE posted_by = _postedBy AND calling_user = _callingUser;
+        WHERE posted_by = _postedBy::citext AND calling_user = _callingUser;
 
         If FOUND Then
             If CURRENT_TIMESTAMP <= _lastUpdated + _minimumUpdateInterval * INTERVAL '1 hour' Then
@@ -87,7 +88,7 @@ BEGIN
             (posted_by, posting_time, message, calling_user, usage_count)
     SELECT _postedBy, CURRENT_TIMESTAMP, _message, _callingUser, stats.usage_count
     FROM t_usage_stats stats
-    WHERE stats.posted_by = _postedBy;
+    WHERE stats.posted_by = _postedBy::citext;
 
 EXCEPTION
     WHEN OTHERS THEN
