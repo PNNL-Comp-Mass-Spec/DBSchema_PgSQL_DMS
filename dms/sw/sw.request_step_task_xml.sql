@@ -158,7 +158,7 @@ DECLARE
     _infoHead text;
     _infoHeadSeparator text;
 
-    _callingProcLocation text := 'Start';
+    _currentLocation text := 'Start';
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -239,7 +239,7 @@ BEGIN
             RAISE INFO '%, Request_Step_Task_XML: Starting; make sure this is a valid processor', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
-        _callingProcLocation := 'Query sw.t_local_processors';
+        _currentLocation := 'Query sw.t_local_processors';
 
         ---------------------------------------------------
         -- Make sure this is a valid processor (and capitalize it according to sw.t_local_processors)
@@ -290,7 +290,7 @@ BEGIN
         ---------------------------------------------------
         --
         If _infoLevel = 0 Then
-            _callingProcLocation := 'Update sw.t_local_processors';
+            _currentLocation := 'Update sw.t_local_processors';
 
             UPDATE sw.t_local_processors
             SET latest_request = CURRENT_TIMESTAMP,
@@ -378,7 +378,7 @@ BEGIN
                 Exceeds_Available_Memory int NOT NULL
             );
 
-            _callingProcLocation := 'Populate Tmp_AvailableProcessorTools';
+            _currentLocation := 'Populate Tmp_AvailableProcessorTools';
 
             INSERT INTO Tmp_AvailableProcessorTools (
                 Processor_Tool_Group, tool_name,
@@ -410,7 +410,7 @@ BEGIN
 
             -- Preview the tools for this processor (as defined in Tmp_AvailableProcessorTools, which we just populated)
 
-            _callingProcLocation := 'Show the tools associated with this processor';
+            _currentLocation := 'Show the tools associated with this processor';
 
             RAISE INFO '';
             RAISE INFO 'Step tools associated with manager %', _processorName;
@@ -533,7 +533,7 @@ BEGIN
 
                     -- Preview RunningRemote tasks on the remote host associated with this manager
 
-                    _callingProcLocation := 'Show running remote tasks';
+                    _currentLocation := 'Show running remote tasks';
 
                     RAISE INFO 'Running remote tasks on the remote host associated with manager %', _processorName;
 
@@ -656,7 +656,7 @@ BEGIN
                          PTGD.enabled > 0 And
                          PTGD.tool_name = 'Results_Transfer') Then
 
-            _callingProcLocation := 'Populate Tmp_CandidateJobSteps: Look for Results_Transfer candidates';
+            _currentLocation := 'Populate Tmp_CandidateJobSteps: Look for Results_Transfer candidates';
 
             -- Look for Results_Transfer candidates
             --
@@ -734,7 +734,7 @@ BEGIN
             LIMIT _candidateJobStepsToRetrieve;
 
             If Not FOUND And _infoLevel <> 0 Then
-                _callingProcLocation := 'Populate Tmp_CandidateJobSteps: Look for Results_Transfer tasks that need to be handled by another storage server';
+                _currentLocation := 'Populate Tmp_CandidateJobSteps: Look for Results_Transfer tasks that need to be handled by another storage server';
 
                 -- Look for results transfer tasks that need to be handled by another storage server
                 --
@@ -815,7 +815,7 @@ BEGIN
         --
         If _useBigBangQuery OR _infoLevel <> 0 Then
 
-            _callingProcLocation := 'Populate Tmp_CandidateJobSteps using all-in-one query';
+            _currentLocation := 'Populate Tmp_CandidateJobSteps using all-in-one query';
 
             -- *********************************************************************************
             -- Big-bang query
@@ -961,7 +961,7 @@ BEGIN
             LIMIT _candidateJobStepsToRetrieve;
 
         Else
-            _callingProcLocation := 'Populate Tmp_CandidateJobSteps using multi-step query';
+            _currentLocation := 'Populate Tmp_CandidateJobSteps using multi-step query';
 
 
 
@@ -1220,7 +1220,7 @@ BEGIN
 
         If _throttleByStartTime Then
 
-            _callingProcLocation := 'Check for servers that need to be throttled';
+            _currentLocation := 'Check for servers that need to be throttled';
 
             If _infoLevel > 1 Then
                 RAISE INFO '%, Request_Step_Task_XML: Check for servers that need to be throttled', public.timestamp_text_immutable(clock_timestamp());
@@ -1339,7 +1339,7 @@ BEGIN
             RAISE INFO '%, Request_Step_Task_XML: Start transaction', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
-        _callingProcLocation := 'Find the best candidate job step';
+        _currentLocation := 'Find the best candidate job step';
 
         ---------------------------------------------------
         -- Get best step candidate in order of preference:
@@ -1377,7 +1377,7 @@ BEGIN
 
         If _jobAssigned AND _infoLevel = 0 Then
 
-            _callingProcLocation := 'Update State and Processor in sw.t_job_steps';
+            _currentLocation := 'Update State and Processor in sw.t_job_steps';
 
             -- Declare _debugMsg text;
             --  _debugMsg := format('Assigned job %s, step %s; remoteInfoID=%s, jobIsRunningRemote=%s, setting Remote_Start to %s'
@@ -1434,7 +1434,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _callingProcLocation, _logError => true);
+                        _callingProcLocation => _currentLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -1451,7 +1451,7 @@ BEGIN
     END;
 
     If _jobAssigned And _infoLevel = 0 Then
-        _callingProcLocation := 'Commit since _jobAssigned is true';
+        _currentLocation := 'Commit since _jobAssigned is true';
         COMMIT;
     End If;
 
@@ -1463,7 +1463,7 @@ BEGIN
 
         If _jobAssigned AND _infoLevel = 0 And _remoteInfoID <= 1 Then
 
-            _callingProcLocation := 'Update CPU loading for this processor''s machine';
+            _currentLocation := 'Update CPU loading for this processor''s machine';
 
             ---------------------------------------------------
             -- Update CPU loading for this processor's machine
@@ -1505,7 +1505,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _callingProcLocation, _logError => true);
+                        _callingProcLocation => _currentLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -1521,7 +1521,7 @@ BEGIN
     END;
 
     If _updatedAvailableCpuCount Then
-        _callingProcLocation := 'Commit since t_machines was updated';
+        _currentLocation := 'Commit since t_machines was updated';
         COMMIT;
     End If;
 
@@ -1529,7 +1529,7 @@ BEGIN
     BEGIN
         If _jobAssigned Then
 
-            _callingProcLocation := 'Update t_job_step_processing_log';
+            _currentLocation := 'Update t_job_step_processing_log';
 
             If _infoLevel = 0 And _jobIsRunningRemote = 0 Then
                 ---------------------------------------------------
@@ -1545,7 +1545,7 @@ BEGIN
                 RAISE INFO '%, Request_Step_Task_XML: Call get_job_step_params_xml', public.timestamp_text_immutable(clock_timestamp());
             End If;
 
-            _callingProcLocation := 'Call sw.get_job_step_params_xml() to obtain job parameters';
+            _currentLocation := 'Call sw.get_job_step_params_xml() to obtain job parameters';
 
             ---------------------------------------------------
             -- Job was assigned; obtain XML job parameters
@@ -1575,7 +1575,7 @@ BEGIN
         ---------------------------------------------------
 
         If _infoLevel > 0 Then
-            _callingProcLocation := 'Preview list of candidate jobs';
+            _currentLocation := 'Preview list of candidate jobs';
 
             If _infoLevel > 1 Then
                 RAISE INFO '%, Request_Step_Task_XML: Preview results', public.timestamp_text_immutable(clock_timestamp());
@@ -1587,13 +1587,13 @@ BEGIN
 
             If Exists (Select * From Tmp_CandidateJobSteps) Then
 
-                _callingProcLocation := 'Show candidate job steps';
+                _currentLocation := 'Show candidate job steps';
 
                 RAISE INFO 'Candidate job steps for %', _processorName;
 
                 _formatSpecifier := '%-10s %-5s %-20s %-6s %-95s %-14s %-14s %-20s %-80s %-15s %-20s';
 
-                _callingProcLocation := 'Show candidate job steps: construct header';
+                _currentLocation := 'Show candidate job steps: construct header';
 
                 _infoHead := format(_formatSpecifier,
                                     'Job',
@@ -1609,7 +1609,7 @@ BEGIN
                                     'Proc_Remote_Info_ID'
                                    );
 
-                _callingProcLocation := 'Show candidate job steps: construct separator';
+                _currentLocation := 'Show candidate job steps: construct separator';
 
                 _infoHeadSeparator := format(_formatSpecifier,
                                             '----------',
@@ -1668,7 +1668,7 @@ BEGIN
                     LIMIT _jobCountToPreview
                 LOOP
 
-                    _callingProcLocation := 'Show candidate job steps: show job';
+                    _currentLocation := 'Show candidate job steps: show job';
 
                     RAISE INFO '%', format(_formatSpecifier,
                                            _jobInfo.Job,
@@ -1701,7 +1701,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _callingProcLocation, _logError => true);
+                        _callingProcLocation => _currentLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

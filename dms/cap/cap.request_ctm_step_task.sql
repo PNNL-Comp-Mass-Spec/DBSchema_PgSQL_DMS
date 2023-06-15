@@ -136,7 +136,7 @@ DECLARE
     _infoHead text;
     _infoHeadSeparator text;
 
-    _callingProcLocation text := 'Start';
+    _currentLocation text := 'Start';
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -195,7 +195,7 @@ BEGIN
             RAISE INFO '%, Request_CTM_Step_Task: Starting; make sure this is a valid processor', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
-        _callingProcLocation := 'Query cap.t_local_processors';
+        _currentLocation := 'Query cap.t_local_processors';
 
         ---------------------------------------------------
         -- Make sure this is a valid processor
@@ -234,7 +234,7 @@ BEGIN
         ---------------------------------------------------
         --
         If _infoLevel = 0 Then
-            _callingProcLocation := 'Update cap.t_local_processors';
+            _currentLocation := 'Update cap.t_local_processors';
 
             UPDATE cap.t_local_processors
             SET latest_request = CURRENT_TIMESTAMP,
@@ -264,7 +264,7 @@ BEGIN
             Processor_Assignment_Applies text
         );
 
-        _callingProcLocation := 'Populate Tmp_AvailableProcessorTools';
+        _currentLocation := 'Populate Tmp_AvailableProcessorTools';
 
         INSERT INTO Tmp_AvailableProcessorTools( Tool_Name,
                                                  Tool_Priority,
@@ -334,7 +334,7 @@ BEGIN
             Available_Capacity int
         );
 
-        _callingProcLocation := 'Populate Tmp_InstrumentLoading';
+        _currentLocation := 'Populate Tmp_InstrumentLoading';
 
         INSERT INTO Tmp_InstrumentLoading( Instrument,
                                            Captures_In_Progress,
@@ -374,7 +374,7 @@ BEGIN
             Assigned_To_Any_Processor int
         );
 
-        _callingProcLocation := 'Populate Tmp_InstrumentProcessor';
+        _currentLocation := 'Populate Tmp_InstrumentProcessor';
 
         INSERT INTO Tmp_InstrumentProcessor( Instrument,
                                              Assigned_To_This_Processor,
@@ -430,7 +430,7 @@ BEGIN
             Tool_Priority int
         );
 
-        _callingProcLocation := 'Populate Tmp_CandidateJobSteps';
+        _currentLocation := 'Populate Tmp_CandidateJobSteps';
 
         ---------------------------------------------------
         -- Get list of viable capture task job steps,
@@ -495,7 +495,7 @@ BEGIN
             RAISE INFO '%, Request_CTM_Step_Task: look for available step', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
-        _callingProcLocation := 'Find best step candidate';
+        _currentLocation := 'Find best step candidate';
 
         BEGIN
             ---------------------------------------------------
@@ -533,7 +533,7 @@ BEGIN
             ---------------------------------------------------
             --
             If _jobAssigned AND _infoLevel = 0 Then
-                _callingProcLocation := 'Update State and Processor in cap.t_task_steps';
+                _currentLocation := 'Update State and Processor in cap.t_task_steps';
 
                 UPDATE cap.t_task_steps
                 SET State = 4,
@@ -556,7 +556,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _callingProcLocation, _logError => true);
+                        _callingProcLocation => _currentLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -575,7 +575,7 @@ BEGIN
     END;
 
     If _jobAssigned And _infoLevel = 0 Then
-        _callingProcLocation := 'Commit since _jobAssigned is true';
+        _currentLocation := 'Commit since _jobAssigned is true';
         COMMIT;
     End If;
 
@@ -599,7 +599,7 @@ BEGIN
                 -- Add entry to T_task_Step_Processing_Log
                 ---------------------------------------------------
 
-                _callingProcLocation := 'Add entry to T_task_Step_Processing_Log';
+                _currentLocation := 'Add entry to T_task_Step_Processing_Log';
 
                 INSERT INTO cap.t_task_step_processing_log (job, step, processor)
                 VALUES (_jobNumber, _step, _processorName);
@@ -613,7 +613,7 @@ BEGIN
             -- Capture task job was assigned; get step parameters
             ---------------------------------------------------
 
-            _callingProcLocation := 'Populate Tmp_JobParamsTable';
+            _currentLocation := 'Populate Tmp_JobParamsTable';
 
             INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
             SELECT Src.Section, Src.Name, Src.Value
@@ -641,7 +641,7 @@ BEGIN
                 RAISE INFO '%, Request_CTM_Step_Task: Preview results', public.timestamp_text_immutable(clock_timestamp());
             End If;
 
-            _callingProcLocation := 'Populate _machineLockedStepTools';
+            _currentLocation := 'Populate _machineLockedStepTools';
 
             SELECT string_agg(step_tool, ', ' ORDER BY step_tool)
             INTO _machineLockedStepTools
@@ -654,7 +654,7 @@ BEGIN
 
             If Exists (Select * From Tmp_CandidateJobSteps) Then
 
-                _callingProcLocation := 'Show candidate job steps';
+                _currentLocation := 'Show candidate job steps';
 
                 RAISE INFO 'Candidate capture task job steps for %', _processorName;
 
@@ -718,7 +718,7 @@ BEGIN
             --
             If _infoLevel >= 2 Then
 
-                _callingProcLocation := 'Show results from request_ctm_step_task_explanation';
+                _currentLocation := 'Show results from request_ctm_step_task_explanation';
 
                 _formatSpecifier := '%-80s %-80s';
 
@@ -776,7 +776,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _callingProcLocation, _logError => true);
+                        _callingProcLocation => _currentLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
