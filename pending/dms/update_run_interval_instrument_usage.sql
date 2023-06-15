@@ -80,11 +80,12 @@ BEGIN
         End If;
 
         -- Lookup the instrument associated with the run interval
-        SELECT instrument INTO _instrumentName
+        SELECT instrument
+        INTO _instrumentName
         FROM t_run_interval
-        WHERE interval_id = _runIntervalId
+        WHERE interval_id = _runIntervalId;
 
-        If _returnCode <> '' OR Coalesce(_instrumentName, '') = '' Then
+        If Not FOUND Then
             _message := format('Run Interval ID %s does not exist; cannot determine the instrument', _runIntervalId);
             RAISE EXCEPTION '%', _message;
         End If;

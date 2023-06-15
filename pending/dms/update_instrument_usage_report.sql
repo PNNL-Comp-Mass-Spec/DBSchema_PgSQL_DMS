@@ -65,9 +65,7 @@ DECLARE
     _monthValue int;
     _yearValue int;
     _badFields text := '';
-    _inst text;
-    _index int := 0;
-    _continue boolean;
+    _currentInstrument text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -108,11 +106,12 @@ BEGIN
     _instrument := Coalesce(_instrument, '');
 
     If _instrument <> '' Then
-        SELECT instrument_id INTO _instrumentID
+        SELECT instrument_id
+        INTO _instrumentID
         FROM t_instrument_name
-        WHERE instrument = _instrument
+        WHERE instrument = _instrument;
 
-        If _instrumentID = 0 Then
+        If Not FOUND Then
             RAISE EXCEPTION 'Instrument not found: "%"', _instrument;
         End If;
     End If;
@@ -398,27 +397,18 @@ BEGIN
                     RAISE EXCEPTION '%', _msg;
                 End If;
             Else
-            --<m>
-                _continue := true;
-
-                WHILE _continue
-                LOOP
-                    _inst := NULL;
-
-                    SELECT Instrument INTO _inst
+                FOR _currentInstrument IN
+                    SELECT Instrument
                     FROM Tmp_Instruments
-                    WHERE Seq > _index
-                    LIMIT 1;
+                    ORDER BY Seq
+                LOOP
+                    CALL update_emsl_instrument_usage_report (_currentInstrument, 0, _endOfMonth, _message => _msg, _returnCode => _returnCode);
 
-                    _index := _index + 1;
+                    If _returnCode <> '' Then
+                        RAISE EXCEPTION '%', _msg;
+                    End If;
 
-                    If _inst IS NULL Then
-                        _continue := false;
-                    Else
-                    --<y>
-                        CALL update_emsl_instrument_usage_report _inst, 0, _endOfMonth, _msg output
-                    End If;  --<y>
-                END LOOP; --<x>
+                END LOOP;
             End If; --<m>
         End If;
 

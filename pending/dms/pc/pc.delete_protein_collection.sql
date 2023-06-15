@@ -64,12 +64,13 @@ BEGIN
         FROM pc.t_protein_collections
         WHERE protein_collection_id = _collectionID;
 
-        SELECT state INTO _stateName
+        SELECT state
+        INTO _stateName
         FROM pc.t_protein_collection_states
         WHERE collection_state_id = _collectionState;
 
-        If _collectionState > 2     Then
-            _message := 'Cannot Delete collection "%s" since it has state %s', _collectionName, _stateName);
+        If _collectionState > 2 Then
+            _message := format('Cannot Delete collection "%s" since it has state %s', _collectionName, _stateName);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5102';

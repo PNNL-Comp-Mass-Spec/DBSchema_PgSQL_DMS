@@ -63,11 +63,12 @@ BEGIN
     _gid := try_cast(_processorGroupID, int);
 
 /*
-    SELECT group_id INTO _gid
+    SELECT group_id
+    INTO _gid
     FROM t_analysis_job_processor_group
-    WHERE (group_name = _processorGroupName)
-    --
-    If _gid = 0 Then
+    WHERE (group_name = _processorGroupName);
+
+    If Not FOUND Then
         _message := 'Processor group could not be found';
         _returnCode := 'U5202';
         RETURN;

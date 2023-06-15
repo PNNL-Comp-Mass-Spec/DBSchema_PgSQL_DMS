@@ -85,13 +85,13 @@ BEGIN
     --
     --
     --
-    SELECT campaign_id, INTO _campaignID
-           _researchTeamID = Coalesce(research_team, 0)
+    SELECT campaign_id,
+           Coalesce(research_team, 0)
+    INTO _campaignID, _researchTeamID
     FROM t_campaign
-    WHERE campaign = _campaignName
+    WHERE campaign = _campaignName;
 
-    --
-    If _campaignID = 0 Then
+    If Not FOUND Then
         _returnCode := 'U5202';
         _message := format('Campaign "%s" is not valid', _campaignName);
         RETURN;
@@ -118,11 +118,12 @@ BEGIN
     ---------------------------------------------------
     --
     --
-    SELECT COUNT(*) INTO _membershipExists
+    SELECT COUNT(*)
+    INTO _membershipExists
     FROM t_research_team_membership
     WHERE team_id = _researchTeamID AND
           role_id = _observerRoleID AND
-          user_id = _userID
+          user_id = _userID;
 
     ---------------------------------------------------
     -- Add / update the user

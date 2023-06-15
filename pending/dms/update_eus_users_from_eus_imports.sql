@@ -14,6 +14,9 @@ AS $$
 **
 **      Obtains data from nexus-prod-db.emsl.pnl.gov using the postgres_fdw foreign data wrapper
 **
+**  Arguments:
+**    _updateUsersOnInactiveProposals   When true, update all proposals in t_eus_proposals, including inactive proposals; however, skips those with state 4 ('no interest')
+**
 **  Auth:   grk
 **  Date:   03/01/2006 grk - Initial version
 **          03/24/2011 mem - Updated to use V_EUS_Import_Proposal_Participants

@@ -52,17 +52,16 @@ BEGIN
         DROP TABLE IF EXISTS sw.T_Tmp_New_Job_Step_Dependencies;
         DROP TABLE IF EXISTS sw.T_Tmp_New_Job_Parameters;
 
-        SELECT * INTO sw.T_Tmp_NewJobs FROM Tmp_Jobs;
-        SELECT * INTO sw.T_Tmp_NewJobSteps FROM Tmp_Job_Steps;
+        SELECT * INTO sw.T_Tmp_NewJobs                FROM Tmp_Jobs;
+        SELECT * INTO sw.T_Tmp_NewJobSteps            FROM Tmp_Job_Steps;
         SELECT * INTO sw.T_Tmp_NewJobStepDependencies FROM Tmp_Job_Step_Dependencies;
-        SELECT * INTO sw.T_Tmp_NewJobParameters FROM Tmp_Job_Parameters;
+        SELECT * INTO sw.T_Tmp_NewJobParameters       FROM Tmp_Job_Parameters;
     End If;
 
     BEGIN
 
         UPDATE sw.t_jobs
-        SET
-            sw.t_jobs.state = Tmp_Jobs.state,
+        SET sw.t_jobs.state = Tmp_Jobs.state,
             sw.t_jobs.results_folder_name = Tmp_Jobs.results_directory_name
         FROM Tmp_Jobs
         WHERE sw.t_jobs.job = Tmp_Jobs.job;

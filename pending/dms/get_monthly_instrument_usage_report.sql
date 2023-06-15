@@ -116,7 +116,8 @@ BEGIN
             -- Auto switch to _eusInstrumentId if needed
             -- Look for EUS Instruments mapped to two or more DMS instruments
 
-            SELECT InstMapping.eus_instrument_id INTO _eusInstrumentId
+            SELECT InstMapping.eus_instrument_id
+            INTO _eusInstrumentId
             FROM t_instrument_name InstName
                  INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                    ON InstName.instrument_id = InstMapping.dms_instrument_id
@@ -127,9 +128,9 @@ BEGIN
                               GROUP BY eus_instrument_id
                               HAVING COUNT(*) > 1 ) LookupQ
                    ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
-            WHERE InstName.instrument = _instrument
+            WHERE InstName.instrument = _instrument;
 
-            If _eusInstrumentId > 0 Then
+            If FOUND Then
                 _processByEUS := true;
             End If;
 

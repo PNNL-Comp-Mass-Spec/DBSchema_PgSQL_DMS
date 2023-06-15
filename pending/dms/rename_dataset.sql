@@ -233,9 +233,10 @@ BEGIN
     End If;
 
     -- Lookup the experiment name for _newExperimentID
-    SELECT experiment INTO _newExperiment
+    SELECT experiment
+    INTO _newExperiment
     FROM t_experiments
-    WHERE exp_id = _newExperimentID
+    WHERE exp_id = _newExperimentID;
 
     If Not _infoOnly Then
         --------------------------------------------

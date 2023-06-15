@@ -89,18 +89,19 @@ BEGIN
         -- Make sure _datasetType is properly capitalized
         ---------------------------------------------------
 
-        SELECT Dataset_Type INTO _datasetType
+        SELECT Dataset_Type
+        INTO _datasetType
         FROM t_dataset_rating_name
-        WHERE Dataset_Type = _datasetType
+        WHERE Dataset_Type = _datasetType;
 
         ---------------------------------------------------
         -- Does an entry already exist?
         ---------------------------------------------------
         --
         If Exists (SELECT instrument_group
-                  FROM t_instrument_group_allowed_ds_type
-                  WHERE instrument_group = _instrumentGroup AND
-                        dataset_type = _datasetType)
+                   FROM t_instrument_group_allowed_ds_type
+                   WHERE instrument_group = _instrumentGroup AND
+                         dataset_type = _datasetType)
         Then
             _itemExists := true;
         Else

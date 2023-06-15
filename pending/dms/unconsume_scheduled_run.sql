@@ -89,7 +89,8 @@ BEGIN
     -- Get datasetID
     ---------------------------------------------------
     --
-    SELECT dataset_id INTO _datasetID
+    SELECT dataset_id
+    INTO _datasetID
     FROM t_dataset
     WHERE dataset = _datasetName;
     --
@@ -131,9 +132,10 @@ BEGIN
     -- Determine the ID of the 'unknown' cart
     ---------------------------------------------------
 
-    SELECT cart_id INTO _newCartID
+    SELECT cart_id
+    INTO _newCartID
     FROM t_lc_cart
-    WHERE cart_name = 'unknown'
+    WHERE cart_name = 'unknown';
 
     If Not FOUND Then
         _warningMessage := 'Could not find the cart named "unknown" in t_lc_cart; the Cart cart_id of the recycled requested run will be left unchanged';
@@ -223,10 +225,10 @@ BEGIN
                         -- Make sure that the original request is not active
                         -- In addition, lookup the dataset ID of the original request
 
-                        SELECT state_name, INTO _originalRequestStatus
-                               _originalRequesetDatasetID = dataset_id
+                        SELECT state_name, dataset_id
+                        INTO _originalRequestStatus, _originalRequesetDatasetID
                         FROM t_requested_run
-                        WHERE request_id = _requestIDOriginal
+                        WHERE request_id = _requestIDOriginal;
 
                         If _originalRequestStatus = 'Active' Then
                             -- The original request is active, don't recycle anything

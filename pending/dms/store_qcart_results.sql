@@ -163,18 +163,20 @@ BEGIN
         End If;
 
         -- Update _datasetID
-        SELECT Dataset_ID INTO _datasetID
-        FROM Tmp_DatasetInfo
+        SELECT Dataset_ID
+        INTO _datasetID
+        FROM Tmp_DatasetInfo;
 
     Else
 
         -- _datasetID was non-zero
         -- Validate the dataset name in Tmp_DatasetInfo against t_dataset
 
-        SELECT DS.dataset_id INTO _datasetIDCheck
+        SELECT DS.dataset_id
+        INTO _datasetIDCheck
         FROM Tmp_DatasetInfo Target
              INNER JOIN t_dataset DS
-             ON Target.Dataset_Name = DS.dataset
+             ON Target.Dataset_Name = DS.dataset;
 
         If _datasetIDCheck <> _datasetID Then
             _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',

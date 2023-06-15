@@ -84,8 +84,8 @@ BEGIN
         -- Validate the inputs
         ----------------------------------------------------------
 
-        _oldWorkPackage := public.scrub_whitespace(_oldWorkPackage);
-        _newWorkPackage := public.scrub_whitespace(_newWorkPackage);
+        _oldWorkPackage := public.trim_whitespace(_oldWorkPackage);
+        _newWorkPackage := public.trim_whitespace(_newWorkPackage);
         _requestedIdList := Coalesce(_requestedIdList, '');
         _message := '';
         _callingUser := Coalesce(_callingUser, '');

@@ -41,7 +41,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _updateCount int := 0;
     _datasetID int := 0;
     _datasetName text := '';
     _toolName citext := '';
@@ -165,19 +164,18 @@ BEGIN
     If _newDMSJobState in (4, 14) AND Not _infoOnly Then
         -- Get the dataset ID, dataset name, and tool name
         --
-        SELECT DS.dataset_id, INTO _datasetID
-               _datasetName = DS.dataset,
-               _toolName    = T.analysis_tool
+        SELECT DS.dataset_id,
+               DS.dataset,
+               T.analysis_tool
+        INTO _datasetID, _datasetName, _toolName
         FROM t_analysis_job J
              INNER JOIN t_dataset DS
                ON J.dataset_id = DS.dataset_id
              INNER JOIN t_analysis_tool T
                ON J.analysis_tool_id = T.analysis_tool_id
         WHERE J.job = _job
-        --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        If _updateCount > 0 Then
+        If FOUND Then
             -- Schedule an archive update
             CALL set_archive_update_required (_datasetName, _message => _message);
 
