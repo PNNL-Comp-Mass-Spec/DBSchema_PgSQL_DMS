@@ -8,7 +8,10 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 /****************************************************
 **
 **  Desc:
-**      Make new entry in t_dataset_archive
+**      Make new entry in t_dataset_archive for the given dataset
+**
+**  Arguments:
+**    _datasetID    Dataset ID
 **
 **  Auth:   grk
 **  Date:   01/26/2001
@@ -26,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/30/2023 mem - Use format() for string concatenation
+**          06/15/2023 mem - Leave _returnCode as '' if the dataset already exists in t_dataset_archive
 **
 *****************************************************/
 DECLARE
@@ -54,7 +58,8 @@ BEGIN
         _message := format('Dataset ID %s is already in t_dataset_archive', _datasetID);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5215';
+        -- Use an empty string for the return code, since do_dataset_completion_actions will rollback the current transaction if the _returnCode is not ''
+        _returnCode := '';
         RETURN;
     End If;
 
@@ -138,26 +143,22 @@ BEGIN
     -- Make entry into archive table
     ---------------------------------------------------
 
-    INSERT INTO t_dataset_archive
-        ( dataset_id,
-          archive_state_id,
-          archive_update_state_id,
-          storage_path_id,
-          archive_date,
-          purge_holdoff_date,
-          purge_policy,
-          purge_priority
-        )
-    VALUES
-        ( _datasetID,
-          1,
-          1,
-          _archivePathID,
-          CURRENT_TIMESTAMP,
-          CURRENT_TIMESTAMP + make_interval(months => _purgeHoldoffMonths),
-          _purgePolicy,
-          _purgePriority
-        );
+    INSERT INTO t_dataset_archive( dataset_id,
+                                   archive_state_id,
+                                   archive_update_state_id,
+                                   storage_path_id,
+                                   archive_date,
+                                   purge_holdoff_date,
+                                   purge_policy,
+                                   purge_priority )
+    VALUES(_datasetID,
+           1,
+           1,
+           _archivePathID,
+           CURRENT_TIMESTAMP,
+           CURRENT_TIMESTAMP + make_interval(months => _purgeHoldoffMonths),
+           _purgePolicy,
+           _purgePriority);
 
 END
 $$;
