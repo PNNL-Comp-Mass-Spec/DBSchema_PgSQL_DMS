@@ -1,20 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs
-(
-    _datasetName text,
-    _callingUser text = '',
-    _analysisToolNameFilter text = '',
-    _excludeDatasetsNotReleased = true,
-    _preventDuplicateJobs boolean = true,
-    _infoOnly boolean = false,
-    INOUT _returnCode text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: schedule_predefined_analysis_jobs(text, text, text, boolean, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text DEFAULT ''::text, IN _analysistoolnamefilter text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _preventduplicatejobs boolean DEFAULT true, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-        Schedules analysis jobs for dataset according to defaults
+**      Schedules analysis jobs for dataset according to defaults
 **
 **  Arguments:
 **    _datasetName                  Dataset name
@@ -42,11 +36,11 @@ AS $$
 **          03/27/2013 mem - No longer storing dataset name in T_Predefined_Analysis_Scheduling_Queue
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/15/2023 mem - Exit the procedure if _datasetName is not found in T_Dataset
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _message text := '';
     _state text := 'New';
     _datasetID int := 0;
 
@@ -55,6 +49,8 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
@@ -80,11 +76,12 @@ BEGIN
         FROM t_dataset
         WHERE dataset = _datasetName;
 
-        If _datasetID = 0 Then
-            _message := 'Could not find ID for dataset';
-            _state := 'Error';
+        If Not FOUND Then
+            _message := format('Could not find ID for dataset %s', _datasetName);
+            RAISE WARNING '%', _message;
 
             -- Leave _returnCode as ''
+            RETURN;
         End If;
 
         ---------------------------------------------------
@@ -94,29 +91,30 @@ BEGIN
 
         If Exists (SELECT * FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND state = 'New') Then
             If _infoOnly Then
-                RAISE INFO 'Skip % since already has a "New" entry in t_predefined_analysis_scheduling_queue', _datasetName;
+                RAISE INFO 'Skip dataset since it already has a "New" entry in t_predefined_analysis_scheduling_queue: %', _datasetName;
             End If;
-        Else
-            If _infoOnly Then
-                RAISE INFO 'Add new row to t_predefined_analysis_scheduling_queue for %', _datasetName
-            Else
-                INSERT INTO t_predefined_analysis_scheduling_queue( dataset_id,;
-                                                                    CALLingUser,
-                                                                    AnalysisToolNameFilter,
-                                                                    ExcludeDatasetsNotReleased,
-                                                                    PreventDuplicateJobs,
-                                                                    State,
-                                                                    Message )
-                VALUES (_datasetID,
-                        _callingUser,
-                        _analysisToolNameFilter,
-                        CASE WHEN _excludeDatasetsNotReleased THEN 1 ELSE 0 End,
-                        CASE WHEN _preventDuplicateJobs       THEN 1 ELSE 0 End,
-                        _state,
-                        _message)
-            End If;
-
+            RETURN;
         End If;
+
+        If _infoOnly Then
+            RAISE INFO 'Would add a new row to t_predefined_analysis_scheduling_queue for %', _datasetName;
+            RETURN;
+        End If;
+
+        INSERT INTO t_predefined_analysis_scheduling_queue( dataset_id,
+                                                            calling_user,
+                                                            analysis_tool_name_filter,
+                                                            exclude_datasets_not_released,
+                                                            prevent_duplicate_jobs,
+                                                            state,
+                                                            message )
+        VALUES (_datasetID,
+                _callingUser,
+                _analysisToolNameFilter,
+                CASE WHEN _excludeDatasetsNotReleased THEN 1 ELSE 0 End,
+                CASE WHEN _preventDuplicateJobs       THEN 1 ELSE 0 End,
+                _state,
+                _message);
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -138,4 +136,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.schedule_predefined_analysis_jobs IS 'SchedulePredefinedAnalyses or SchedulePredefinedAnalysisJobs';
+
+ALTER PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE schedule_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'SchedulePredefinedAnalyses or SchedulePredefinedAnalysisJobs';
+
