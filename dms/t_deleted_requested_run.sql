@@ -106,11 +106,11 @@ ALTER TABLE ONLY public.t_deleted_requested_run
     ADD CONSTRAINT fk_t_deleted_requested_run_t_dataset_type_name FOREIGN KEY (request_type_id) REFERENCES public.t_dataset_type_name(dataset_type_id);
 
 --
--- Name: t_deleted_requested_run fk_t_deleted_requested_run_t_eus_usagetype; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+-- Name: t_deleted_requested_run fk_t_deleted_requested_run_t_eus_usage_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
 ALTER TABLE ONLY public.t_deleted_requested_run
-    ADD CONSTRAINT fk_t_deleted_requested_run_t_eus_usagetype FOREIGN KEY (eus_usage_type_id) REFERENCES public.t_eus_usage_type(eus_usage_type_id);
+    ADD CONSTRAINT fk_t_deleted_requested_run_t_eus_usage_type FOREIGN KEY (eus_usage_type_id) REFERENCES public.t_eus_usage_type(eus_usage_type_id);
 
 --
 -- Name: t_deleted_requested_run fk_t_deleted_requested_run_t_requested_run_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
