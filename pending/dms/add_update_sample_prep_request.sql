@@ -63,7 +63,7 @@ AS $$
 **          07/26/2005 grk - Added stuff for requested personnel
 **          08/09/2005 grk - Widened _sampleNameList
 **          10/12/2005 grk - Added _useSingleLCColumn
-**          10/26/2005 grk - Disallowed change if not in 'New" state
+**          10/26/2005 grk - Disallowed change if not in 'New' state
 **          10/28/2005 grk - Added handling for internal standard
 **          11/01/2005 grk - Rescinded disallowed change in 'New' state
 **          11/11/2005 grk - Added handling for postdigest internal standard

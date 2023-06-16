@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_instrument_usage_by_proposal(IN
 **  Auth:   mem
 **  Date:   12/02/2013 mem - Initial Version
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          02/10/2022 mem - Add new usage type codes added to T_EUS_UsageType on 2021-05-26
+**          02/10/2022 mem - Add new usage type codes added to T_EUS_Usage_Type on 2021-05-26
 **                         - Use the last 12 months for determining usage (previously used last two fiscal years)
 **          01/02/2023 mem - Ported to PostgreSQL
 **
