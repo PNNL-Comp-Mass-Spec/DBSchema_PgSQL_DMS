@@ -169,7 +169,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := format('%s %s updated', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
-    CALL post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Associations', _usageMessage);
+    CALL post_usage_log_entry ('update_analysis_job_processor_group_associations', _usageMessage);
 
     DROP TABLE Tmp_JobList;
 END

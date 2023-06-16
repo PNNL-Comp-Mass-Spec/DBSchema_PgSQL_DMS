@@ -140,7 +140,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := format('User %s', Coalesce(_username, 'NULL'));
-    CALL post_usage_log_entry ('Update_Notification_User_Registration', _usageMessage);
+    CALL post_usage_log_entry ('update_notification_user_registration', _usageMessage);
 
     DROP TABLE Tmp_NotificationOptions;
 END

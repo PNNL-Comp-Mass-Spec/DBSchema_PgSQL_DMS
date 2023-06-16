@@ -603,7 +603,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := '';
-    CALL post_usage_log_entry ('Update_Requested_Run_Factors', _usageMessage);
+    CALL post_usage_log_entry ('update_requested_run_factors', _usageMessage);
 
     DROP TABLE Tmp_FactorInfo;
 END

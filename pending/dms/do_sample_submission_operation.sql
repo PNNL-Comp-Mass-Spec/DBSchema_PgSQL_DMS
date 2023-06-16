@@ -139,7 +139,7 @@ BEGIN
         _usageMessage := format('Performed submission operation for submission ID %s; mode %s; user %s',
                                 _id, _mode, Coalesce(_callingUser, '??'));
 
-        CALL post_usage_log_entry ('Do_Sample_Submission_Operation', _usageMessage, _minimumUpdateInterval => 2);
+        CALL post_usage_log_entry ('do_sample_submission_operation', _usageMessage, _minimumUpdateInterval => 2);
     End If;
 
 END

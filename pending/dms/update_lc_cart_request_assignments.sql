@@ -262,7 +262,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := format('%s requested %s updated', _updateRowCount, public.check_plural(_updateRowCount, 'run', 'runs'));
-    CALL post_usage_log_entry ('Update_LC_Cart_Request_Assignments', _usageMessage);
+    CALL post_usage_log_entry ('update_lc_cart_request_assignments', _usageMessage);
 
     DROP TABLE Tmp_BlockingInfo;
 END

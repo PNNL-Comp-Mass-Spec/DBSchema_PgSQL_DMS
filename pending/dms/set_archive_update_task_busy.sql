@@ -38,7 +38,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := format('Dataset: %s', _datasetName);
-    CALL post_usage_log_entry ('Set_Archive_Update_Task_Busy', _usageMessage);
+    CALL post_usage_log_entry ('set_archive_update_task_busy', _usageMessage);
 
 END
 $$;

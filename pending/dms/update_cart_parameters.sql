@@ -130,7 +130,7 @@ BEGIN
 
     _usageMessage := format('Request %s', _requestID);
 
-    CALL post_usage_log_entry ('Update_Cart_Parameters', _usageMessage);
+    CALL post_usage_log_entry ('update_cart_parameters', _usageMessage);
 
 END
 $$;

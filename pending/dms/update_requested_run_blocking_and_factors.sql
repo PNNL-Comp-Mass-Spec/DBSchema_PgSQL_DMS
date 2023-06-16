@@ -122,7 +122,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := '';
-    CALL post_usage_log_entry ('Update_Requested_Run_Blocking_And_Factors', _usageMessage);
+    CALL post_usage_log_entry ('update_requested_run_blocking_and_factors', _usageMessage);
 
 END
 $$;

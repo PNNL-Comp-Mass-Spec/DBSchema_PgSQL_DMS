@@ -398,7 +398,7 @@ BEGIN
         _usageMessage := format('Created job request %s for %s %s; user %s',
                                 _requestID, _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'), _callingUser);
 
-        CALL post_usage_log_entry ('Create_PSM_Job_Request', _usageMessage, _minimumUpdateInterval => 2);
+        CALL post_usage_log_entry ('create_psm_job_request', _usageMessage, _minimumUpdateInterval => 2);
     End If;
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;

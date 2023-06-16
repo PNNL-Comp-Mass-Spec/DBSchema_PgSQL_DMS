@@ -268,7 +268,7 @@ BEGIN
 
     _usageMessage := format('Campaign: %s', _campaignName);
 
-    CALL post_usage_log_entry ('Update_Research_Team_For_Campaign', _usageMessage);
+    CALL post_usage_log_entry ('update_research_team_for_campaign', _usageMessage);
 
     DROP TABLE Tmp_TeamMembers;
 END

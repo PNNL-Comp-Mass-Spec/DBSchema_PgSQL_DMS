@@ -292,7 +292,7 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        CALL post_usage_log_entry ('Store_QCDM_Results', _usageMessage;);
+        CALL post_usage_log_entry ('store_qcdm_results', _usageMessage;);
     End If;
 
     DROP TABLE Tmp_DatasetInfo;

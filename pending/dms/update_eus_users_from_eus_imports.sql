@@ -272,7 +272,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    CALL post_usage_log_entry ('Update_EUS_Users_From_EUS_Imports', _usageMessage);
+    CALL post_usage_log_entry ('update_eus_users_from_eus_imports', _usageMessage);
 
 END
 $$;

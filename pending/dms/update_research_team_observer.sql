@@ -146,7 +146,7 @@ BEGIN
     _usageMessage := format('Campaign: %s; user: %s; mode: %s',
                             _campaignName, _username, _mode);
 
-    CALL post_usage_log_entry ('Update_Research_Team_Observer', _usageMessage);
+    CALL post_usage_log_entry ('update_research_team_observer', _usageMessage);
 
 END
 $$;

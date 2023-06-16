@@ -106,7 +106,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := format('Source: %s; Target: %s', _srcRequestID, _destRequestID);
-    CALL post_usage_log_entry ('Update_Requested_Run_Copy_Factors', _usageMessage);
+    CALL post_usage_log_entry ('update_requested_run_copy_factors', _usageMessage);
 
     DROP TABLE Tmp_Factors;
 END

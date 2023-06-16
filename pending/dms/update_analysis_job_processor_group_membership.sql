@@ -210,7 +210,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := format('Processor group: %s', _pgid);
-    CALL post_usage_log_entry ('Update_Analysis_Job_Processor_Group_Membership', _usageMessage);
+    CALL post_usage_log_entry ('update_analysis_job_processor_group_membership', _usageMessage);
 
     DROP TABLE Tmp_Processors;
 END

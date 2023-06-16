@@ -166,7 +166,7 @@ BEGIN
 /*
         If Not _infoOnly Then
             _usageMessage := Cast(_locationList As text);
-            CALL post_usage_log_entry ('Update_Material_Locations', _usageMessage);
+            CALL post_usage_log_entry ('update_material_locations', _usageMessage);
         End If;
 */
     EXCEPTION

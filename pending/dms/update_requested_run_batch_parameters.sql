@@ -409,7 +409,7 @@ BEGIN
                 End If;
             End If;
 
-            CALL post_usage_log_entry ('Update_Requested_Run_Batch_Parameters', _usageMessage);
+            CALL post_usage_log_entry ('update_requested_run_batch_parameters', _usageMessage);
 
         EXCEPTION
             WHEN OTHERS THEN

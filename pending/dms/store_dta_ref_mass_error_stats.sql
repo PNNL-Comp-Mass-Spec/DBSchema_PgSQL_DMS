@@ -296,7 +296,7 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        CALL post_usage_log_entry ('Store_DTARef_Mass_Error_Stats', _usageMessage;);
+        CALL post_usage_log_entry ('store_dta_ref_mass_error_stats', _usageMessage;);
     End If;
 
     DROP TABLE Tmp_DatasetInfo;

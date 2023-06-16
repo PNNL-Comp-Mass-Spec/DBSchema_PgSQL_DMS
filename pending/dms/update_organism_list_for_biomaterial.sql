@@ -214,7 +214,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := format('Biomaterial: %s', _biomaterialName);
-    CALL post_usage_log_entry ('Update_Organism_List_For_Biomaterial', _usageMessage);
+    CALL post_usage_log_entry ('update_organism_list_for_biomaterial', _usageMessage);
 
     DROP TABLE Tmp_BiomaterialOrganisms;
 END

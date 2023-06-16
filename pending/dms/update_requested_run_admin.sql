@@ -291,7 +291,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    CALL post_usage_log_entry ('Update_Requested_Run_Admin', _usageMessage);
+    CALL post_usage_log_entry ('update_requested_run_admin', _usageMessage);
 
     DROP TABLE Tmp_Requests;
     DROP TABLE Tmp_ID_Update_List;

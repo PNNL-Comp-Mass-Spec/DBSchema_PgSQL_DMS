@@ -359,7 +359,7 @@ BEGIN
     ---------------------------------------------------
 
     _usageMessage := format('%s %s updated', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets');
-    CALL post_usage_log_entry ('Update_Dataset_Dispositions', _usageMessage);
+    CALL post_usage_log_entry ('update_dataset_dispositions', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
 END
