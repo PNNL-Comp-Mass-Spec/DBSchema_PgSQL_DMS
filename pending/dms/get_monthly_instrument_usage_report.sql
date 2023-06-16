@@ -59,6 +59,7 @@ AS $$
 **          03/17/2022 mem - Update comments and whitespace
 **          05/27/2022 mem - Do not log year or month conversion errors to the database
 **                         - Validate _year, _month, and _outputFormat
+**          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -316,8 +317,8 @@ BEGIN
         SELECT
                 TRI.interval_id,
                 TRI.start,
-                TRI.usage,  -- Examples: 'Maintenance"100%"' or 'UserOnsite"100%", Proposal"50587", PropUser"45631"' or 'User"100%", Proposal"51667", PropUser"48542"'
-                TRI.comment
+                TRI.usage,      -- Examples: '<u Maintenance="100" />' or '<u UserOnsite="100" Proposal="60594" PropUser="60420" />'  or '<u User="100" Proposal="51667" PropUser="48542" />'
+                TRI.comment     -- Examples: 'Maintenance[100%]'       or 'UserOnsite[100%], Proposal[60594], PropUser[60420]'        or 'User[100%], Proposal[51667], PropUser[48542]'
         FROM  t_run_interval TRI
                 INNER JOIN Tmp_InstrumentUsage ON TRI.interval_id = Tmp_InstrumentUsage.Dataset_ID
 
@@ -394,7 +395,7 @@ BEGIN
             Tmp_LongIntervals.Start,
             public.try_cast((xpath('//u/@OtherNotAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
             '' AS Proposal,
-            'UNAVAILABLE' AS Usage,            -- This is defined in t_emsl_instrument_usage_type
+            'UNAVAILABLE' AS Usage,                 -- This is defined in t_emsl_instrument_usage_type
             Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
@@ -405,7 +406,7 @@ BEGIN
             Tmp_LongIntervals.Start,
             public.try_cast((xpath('//u/@StaffNotAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
             '' AS Proposal,
-            'UNAVAIL_STAFF' AS Usage,            -- This is defined in t_emsl_instrument_usage_type
+            'UNAVAIL_STAFF' AS Usage,               -- This is defined in t_emsl_instrument_usage_type
             Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
@@ -417,7 +418,19 @@ BEGIN
             public.try_cast((xpath('//u/@CapDev', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
             (xpath('//u/@Operator', BreakDown))[1]::text AS Operator,
             '' AS Proposal,
-            'CAP_DEV' AS Usage,                    -- This is defined in t_emsl_instrument_usage_type
+            'CAP_DEV' AS Usage,                     -- This is defined in t_emsl_instrument_usage_type
+            Tmp_LongIntervals.Comment
+        FROM Tmp_LongIntervals
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_TrackedInstruments.Dataset_ID;
+
+        INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
+        SELECT
+            Tmp_LongIntervals.Dataset_ID,
+            Tmp_LongIntervals.Start,
+            public.try_cast((xpath('//u/@ResourceOwner', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+            (xpath('//u/@Operator', BreakDown))[1]::text AS Operator,
+            '' AS Proposal,
+            'RESOURCE_OWNER' AS Usage,              -- This is defined in t_emsl_instrument_usage_type
             Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_TrackedInstruments.Dataset_ID;
@@ -428,7 +441,7 @@ BEGIN
             Tmp_TrackedInstruments.Start,
             public.try_cast((xpath('//u/@InstrumentAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
             '' AS Proposal,
-            'AVAILABLE' AS Usage,                -- This is defined in t_emsl_instrument_usage_type
+            'AVAILABLE' AS Usage,                   -- This is defined in t_emsl_instrument_usage_type
             Tmp_TrackedInstruments.Comment
         FROM Tmp_TrackedInstruments
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_TrackedInstruments.Dataset_ID;
@@ -526,6 +539,8 @@ BEGIN
         SET Usage = 'REMOTE'
         WHERE Usage = 'USER_REMOTE'
 
+        -- Starting in FY 24, Usage can also be 'RESOURCE_OWNER'
+
         ---------------------------------------------------
         -- Remove artifacts
         ---------------------------------------------------
@@ -606,7 +621,7 @@ BEGIN
             WHERE Tmp_InstrumentUsage.Type = 'Dataset' AND
                   Tmp_InstrumentUsage.dataset_id = RR.dataset_id;
 
-            -- Get operator user ID for ONSITE and REMOTE intervals
+            -- Get operator user ID for ONSITE, REMOTE, and RESOURCE_OWNER intervals
             UPDATE Tmp_InstrumentUsage
             SET Operator = TEU.PERSON_ID
             FROM t_run_interval TRI
@@ -616,7 +631,7 @@ BEGIN
                    ON TU.hid = TEU.hid
             WHERE TRI.interval_id = Tmp_InstrumentUsage.Dataset_ID AND
                   Tmp_InstrumentUsage.Type = 'interval' AND
-                  Tmp_InstrumentUsage.Usage In ('ONSITE', 'REMOTE');
+                  Tmp_InstrumentUsage.Usage In ('ONSITE', 'REMOTE', 'RESOURCE_OWNER');
 
             -- Output report rows
             --

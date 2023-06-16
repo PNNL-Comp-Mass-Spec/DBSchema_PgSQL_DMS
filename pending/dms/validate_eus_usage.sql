@@ -63,6 +63,7 @@ AS $$
 **          10/13/2021 mem - Use Like when extracting integers
 **                         - Add additional debug messages
 **                         - Use Try_Parse to convert from text to int, since Try_Convert('') gives 0
+**          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -124,6 +125,10 @@ BEGIN
 
     If _eusUsageType::citext Like 'Brok%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'BROKEN';
+    End If;
+
+    If _eusUsageType::citext Like 'Res%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+        _eusUsageType := 'RESOURCE_OWNER';
     End If;
 
     If _eusUsageType::citext Like 'USER_UNKOWN%' Then
@@ -210,6 +215,8 @@ BEGIN
         _eusProposalID := NULL;
         _eusUsersList := '';
     End If;
+
+    _proposalType := '';
 
     If _eusUsageType::citext In ('USER', 'USER_ONSITE', 'USER_REMOTE') Then
     -- <a1>

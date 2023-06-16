@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **          06/17/2022 mem - Ported to PostgreSQL
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          05/29/2023 mem - Use format() for string concatenation
+**          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,11 @@ BEGIN
     WHERE InstUsage.seq = _seq;
 
     If _instrumentUsage.usage = 'CAP_DEV' AND _instrumentUsage.operator is null Then
-        _message := public.append_to_text(_message, 'Capability Development requires an operator', 0, ', ');
+        _message := public.append_to_text(_message, 'Capability Development requires an instrument operator ID', 0, ', ');
+    End If;
+
+    If _instrumentUsage.usage = 'RESOURCE_OWNER' AND _instrumentUsage.operator is null Then
+        _message := public.append_to_text(_message, 'Resource Owner requires an instrument operator ID', 0, ', ');
     End If;
 
     If NOT _instrumentUsage.usage IN ('ONSITE', 'MAINTENANCE') AND Coalesce(_instrumentUsage.comment, '') = '' Then

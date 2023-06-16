@@ -8,19 +8,19 @@ CREATE VIEW public.v_run_interval_detail_report AS
     r.start,
     r."interval",
     r.comment,
-    ((((((((((((((((((((((((((((('UserRemote:'::text || u.user_remote) || '%'::text) ||
+    (((((((((((((((((((((((((((((((('UserRemote:'::text || u.user_remote) || '%'::text) ||
         CASE
-            WHEN (u.user_remote <> '0'::text) THEN ((' (Proposal '::text || u.user_proposal) || ')'::text)
+            WHEN (u.user_remote <> '0'::text) THEN ((' Proposal '::text || u.user_proposal) || ''::text)
             ELSE ''::text
         END) || '|'::text) || 'UserOnsite:'::text) || u.user_onsite) || '%'::text) ||
         CASE
-            WHEN (u.user_onsite <> '0'::text) THEN ((' (Proposal '::text || u.user_proposal) || ')'::text)
+            WHEN (u.user_onsite <> '0'::text) THEN ((' Proposal '::text || u.user_proposal) || ''::text)
             ELSE ''::text
         END) || '|'::text) || 'User:'::text) || u."user") || '%'::text) ||
         CASE
-            WHEN (u."user" <> '0'::text) THEN ((' (Proposal '::text || u.user_proposal) || ')'::text)
+            WHEN (u."user" <> '0'::text) THEN ((' Proposal '::text || u.user_proposal) || ''::text)
             ELSE ''::text
-        END) || '|'::text) || 'Broken:'::text) || u.broken) || '%|'::text) || 'Maintenance:'::text) || u.maintenance) || '%|'::text) || 'StaffNotAvailable:'::text) || u.staff_not_available) || '%|'::text) || 'CapDev:'::text) || u.cap_dev) || '%|'::text) || 'InstrumentAvailable:'::text) || u.instrument_available) || '%'::text) AS usage,
+        END) || '|'::text) || 'Broken:'::text) || u.broken) || '%|'::text) || 'Maintenance:'::text) || u.maintenance) || '%|'::text) || 'StaffNotAvailable:'::text) || u.staff_not_available) || '%|'::text) || 'CapDev:'::text) || u.cap_dev) || '%|'::text) || 'ResourceOwner:'::text) || u.resource_owner) || '%|'::text) || 'InstrumentAvailable:'::text) || u.instrument_available) || '%'::text) AS usage,
     r.entered,
     r.last_affected,
     r.entered_by

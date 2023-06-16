@@ -12,9 +12,10 @@ CREATE VIEW public.v_run_interval_usage AS
     COALESCE(xmlnode.maintenance, '0'::text) AS maintenance,
     COALESCE(xmlnode.staff_not_available, '0'::text) AS staff_not_available,
     COALESCE(xmlnode.cap_dev, '0'::text) AS cap_dev,
+    COALESCE(xmlnode.resource_owner, '0'::text) AS resource_owner,
     COALESCE(xmlnode.instrument_available, '0'::text) AS instrument_available
    FROM public.t_run_interval,
-    LATERAL XMLTABLE(('//u'::text) PASSING (t_run_interval.usage) COLUMNS user_remote text PATH ('@UserRemote'::text), user_onsite text PATH ('@UserOnsite'::text), "user" text PATH ('@User'::text), user_proposal text PATH ('@Proposal'::text), broken text PATH ('@Broken'::text), maintenance text PATH ('@Maintenance'::text), staff_not_available text PATH ('@StaffNotAvailable'::text), cap_dev text PATH ('@CapDev'::text), instrument_available text PATH ('@InstrumentAvailable'::text)) xmlnode
+    LATERAL XMLTABLE(('//u'::text) PASSING (t_run_interval.usage) COLUMNS user_remote text PATH ('@UserRemote'::text), user_onsite text PATH ('@UserOnsite'::text), "user" text PATH ('@User'::text), user_proposal text PATH ('@Proposal'::text), broken text PATH ('@Broken'::text), maintenance text PATH ('@Maintenance'::text), staff_not_available text PATH ('@StaffNotAvailable'::text), cap_dev text PATH ('@CapDev'::text), resource_owner text PATH ('@ResourceOwner'::text), instrument_available text PATH ('@InstrumentAvailable'::text)) xmlnode
   WHERE ((t_run_interval.usage)::text <> ''::text);
 
 

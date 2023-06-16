@@ -26,6 +26,7 @@ AS $$
 **          07/16/2007 grk - Added check for '(lookup)'
 **          08/02/2018 mem - T_Sample_Prep_Request now tracks EUS User ID as an integer
 **          05/25/2021 mem - Change _eusUsageType to USER_REMOTE if the prep request has UsageType USER_REMOTE, even if _eusUsageType is already USER_ONSITE
+**          06/16/2023 mem - Change _eusUsageType to RESOURCE_OWNER if the prep request has UsageType RESOURCE_OWNER and @eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -87,6 +88,12 @@ BEGIN
         _message := format('Changed Usage Type to USER_REMOTE based on Prep Request ID %s', _prepRequestID);
         _eusUsageType := 'USER_REMOTE';
     End If;
+
+    If _usageTypeSamplePrep = 'RESOURCE_OWNER' And _eusUsageType::citext In ('USER', 'USER_ONSITE', 'USER_REMOTE') Then
+        _message := format('Changed Usage Type to RESOURCE_OWNER based on Prep Request ID %s', _prepRequestID);
+        _eusUsageType := 'RESOURCE_OWNER';
+    End If;
+
 END
 $$;
 

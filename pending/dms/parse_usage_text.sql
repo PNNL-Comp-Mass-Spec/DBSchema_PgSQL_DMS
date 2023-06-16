@@ -49,8 +49,9 @@ AS $$
 **                         - Rename temp tables
 **                         - Additional comment cleanup logic
 **          08/29/2017 mem - Direct users to http://prismwiki.pnl.gov/wiki/Long_Interval_Notes
-**          05/25/2021 mem - Add support for usage types UserOnsite and UserRemote
+**          05/25/2021 mem - Add support for usage types 'UserOnsite' and 'UserRemote'
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
+**          06/15/2023 mem - Add support for usage type 'ResourceOwner'
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -145,7 +146,7 @@ BEGIN
         --
         INSERT INTO Tmp_UsageInfo (UsageKey)
         SELECT Trim(Item)
-        FROM public.parse_delimited_list('CapDev, Broken, Maintenance, StaffNotAvailable, OtherNotAvailable, InstrumentAvailable, UserOnsite, UserRemote, Onsite, Remote, User');
+        FROM public.parse_delimited_list('CapDev, Broken, Maintenance, StaffNotAvailable, OtherNotAvailable, InstrumentAvailable, UserOnsite, UserRemote, ResourceOwner, Onsite, Remote, User');
 
         -- Add the non-percentage-based keys to Tmp_UsageInfo
         --

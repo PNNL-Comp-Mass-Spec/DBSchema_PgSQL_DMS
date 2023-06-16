@@ -3,7 +3,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_requested_run
 (
     _dataset text,
     _eusProposalID text = '',
-    _eusUsageType text = 'Cap_Dev',
+    _eusUsageType text = 'CAP_DEV',
     _eusUsersList text = '',
     _infoOnly boolean = true,
     INOUT _message text default '',

@@ -27,6 +27,7 @@ CREATE VIEW public.v_run_interval_list_report AS
     u.maintenance,
     u.staff_not_available,
     u.cap_dev,
+    u.resource_owner,
     u.instrument_available,
     r.entered,
     r.last_affected,
