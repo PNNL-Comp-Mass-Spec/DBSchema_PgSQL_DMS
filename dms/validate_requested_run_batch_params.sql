@@ -38,10 +38,11 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          05/22/2023 mem - Use format() for string concatenation
 **          06/16/2023 mem - Report an error if _mode is 'update' and _batchID is 0
 **                         - Validate instrument group name
+**                         - Use citext for _locked
 **
 *****************************************************/
 DECLARE
-    _locked text;
+    _locked citext;
     _matchCount int;
     _newUsername text;
 
