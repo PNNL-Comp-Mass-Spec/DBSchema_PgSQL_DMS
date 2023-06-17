@@ -63,6 +63,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          06/16/2023 mem - Use named arguments when calling append_to_text()
+**                         - Fix bug reporting number of requested runs that would be associated with the batch
+**                         - Use new column name, owner_user_id
 **
 *****************************************************/
 DECLARE
@@ -76,6 +78,7 @@ DECLARE
     _userID int := 0;
     _firstInvalid text;
     _count int;
+    _countInvalid int;
     _invalidIDs text := null;
     _batchIDConfirm int := 0;
     _debugMsg text;
@@ -83,6 +86,7 @@ DECLARE
     _matchCount int;
     _duplicateBatchID int;
     _duplicateMessage text;
+    _requestedCompletionTimestamp timestamp;
 
     _sqlState text;
     _exceptionMessage text;
@@ -128,7 +132,7 @@ BEGIN
                     _description => _description,
                     _ownerUsername => _ownerUsername,
                     _requestedBatchPriority => _requestedCompletionDate,
-                    _requestedCompletionDate => _batchCompletionDate,
+                    _requestedCompletionDate => '',
                     _justificationHighPriority => _justificationHighPriority,
                     _requestedInstrumentGroup => _requestedInstrumentGroup,
                     _comment => _comment,
@@ -152,7 +156,9 @@ BEGIN
         _description := Coalesce(_description, '');
 
         If char_length(Coalesce(_requestedCompletionDate, '')) = 0 Then
-            _requestedCompletionDate := null;
+            _requestedCompletionTimestamp := null;
+        Else
+            _requestedCompletionTimestamp := public.try_cast(_requestedCompletionDate, null::timestamp);
         End If;
 
         ---------------------------------------------------
@@ -205,7 +211,7 @@ BEGIN
         -- Do all requests in list actually exist?
         --
         SELECT COUNT(*)
-        INTO _count
+        INTO _countInvalid
         FROM Tmp_RequestedRuns
         WHERE NOT (request_id IN
         (
@@ -213,7 +219,7 @@ BEGIN
             FROM t_requested_run)
         );
 
-        If _count > 0 Then
+        If _countInvalid > 0 Then
 
             SELECT string_agg(RequestIDText, ', ' ORDER BY RequestIDText)
             INTO _invalidIDs
@@ -238,6 +244,10 @@ BEGIN
         ---------------------------------------------------
 
         If _mode::citext = 'PreviewAdd' Then
+            SELECT COUNT(*)
+            INTO _count
+            FROM Tmp_RequestedRuns;
+
             _message := format('Would create batch "%s" with %s requested runs', _name, _count);
 
             DROP TABLE Tmp_RequestedRuns;
@@ -253,7 +263,7 @@ BEGIN
             INSERT INTO t_requested_run_batches (
                 batch,
                 description,
-                owner,
+                owner_user_id,
                 locked,
                 requested_batch_priority,
                 actual_batch_priority,
@@ -270,7 +280,7 @@ BEGIN
                 'No',
                 _requestedBatchPriority,
                 'Normal',
-                _requestedCompletionDate,
+                _requestedCompletionTimestamp,
                 _justificationHighPriority,
                 _instrumentGroupToUse,
                 _comment,
@@ -317,9 +327,9 @@ BEGIN
             UPDATE t_requested_run_batches
             SET batch = _name,
                 description = _description,
-                owner = _userID,
+                owner_user_id = _userID,
                 requested_batch_priority = _requestedBatchPriority,
-                requested_completion_date = _requestedCompletionDate,
+                requested_completion_date = _requestedCompletionTimestamp,
                 justification_for_high_priority = _justificationHighPriority,
                 requested_instrument_group = _instrumentGroupToUse,
                 comment = _comment,
@@ -353,8 +363,6 @@ BEGIN
             WHERE request_id IN (Select request_id from Tmp_RequestedRuns) AND
                   Coalesce(batch_id, 0) <> _id;
         End If;
-
-        COMMIT;
 
         If _mode = 'update' Then
             _message := '';
