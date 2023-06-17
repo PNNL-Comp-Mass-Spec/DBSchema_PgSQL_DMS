@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **    _requestedBatchPriority       Requested batch priority
 **    _requestedCompletionDate      Requested completion date
 **    _justificationHighPriority    Justification for high priority
-**    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name; could also contain '(lookup)'
+**    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
 **    _comment                      Batch comment
 **    _batchGroupID                 Input/Output: batch group ID
 **    _batchGroupOrder              Input/Output: batch group order

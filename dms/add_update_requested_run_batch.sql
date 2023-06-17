@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **    _requestedBatchPriority       Batch prioerity
 **    _requestedCompletionDate      Requested completion date
 **    _justificationHighPriority    Justification for high priority
-**    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name; could also contain '(lookup)'
+**    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
 **    _comment                      Batch comment
 **    _batchGroupID                 Batch group ID
 **    _batchGroupOrder              Batch group order
