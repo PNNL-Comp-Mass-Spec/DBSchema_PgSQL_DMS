@@ -270,14 +270,14 @@ BEGIN
                                 WHERE job = _jobID
                             End If;
 
-                            _message := public.append_to_text(_message, 'set job state to "No export"', 0, '; ', 512);
+                            _message := public.append_to_text(_message, 'set job state to "No export"', _delimiter => '; ', _maxlength => 512);
                         Else
                             _msg := format('job state cannot be changed from %s to %s', _currentStateName, _stateName);
-                            _message := public.append_to_text(_message, _msg, 0, '; ', 512);
+                            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 512);
 
                             If _propagationMode = 'Export' And _stateName = 'No export' Then
                                 -- Job propagation mode is Export (0) but user wants to set the state to No export
-                                _message := public.append_to_text(_message, 'to make this change, set the Export Mode to "No Export"', 0, '; ', 512);
+                                _message := public.append_to_text(_message, 'to make this change, set the Export Mode to "No Export"', _delimiter => '; ', _maxlength => 512);
                             End If;
                         End If;
                     End If;
@@ -396,7 +396,7 @@ BEGIN
         End If;
 
         If Coalesce(_warning, '') <> '' Then
-            _comment := public.append_to_text(_comment, _warning, 0, '; ', 512);
+            _comment := public.append_to_text(_comment, _warning, _delimiter => '; ', _maxlength => 512);
 
             If _mode Like 'preview%' Then
                 _message := _warning;

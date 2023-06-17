@@ -317,9 +317,9 @@ BEGIN
         End If;
 
         If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then
-            _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage),        0, '; ', 1024);
+            _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage),        _delimiter => '; ', _maxlength => 1024);
         ElsIf Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And charge_code_state = 0) Then
-            _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage), 0, '; ', 1024);
+            _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage), _delimiter => '; ', _maxlength => 1024);
         End If;
 
         -- Make sure the Work Package is capitalized properly
@@ -746,7 +746,7 @@ BEGIN
 
             If _currentEstimatedAnalysisTimeDays <> _estimatedAnalysisTimeDays And Not _allowUpdateEstimatedAnalysisTime Then
                 _msg := 'Not updating estimated analysis time since user does not have permission';
-                _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+                _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
             End If;
 
             If _batchDefined > 0 Then

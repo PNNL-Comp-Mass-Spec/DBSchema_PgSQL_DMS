@@ -447,9 +447,9 @@ BEGIN
 
                     UPDATE sw.t_job_steps
                     SET state = 7,        -- Holding
-                        completion_message = public.append_to_text(completion_message, _message, 0, '; ', 256)
+                        completion_message = public.append_to_text(completion_message, _message, _delimiter => '; ', _maxlength => 256)
                     WHERE job = _job AND
-                          step = _step
+                          step = _step;
 
                     _message := format('Step %s in job %s %s; will not reset step %s again because this likely represents a problem; this step is now in state "holding"',
                                         _step, _job, _message, _sharedResultStep);

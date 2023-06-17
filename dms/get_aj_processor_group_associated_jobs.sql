@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_group_associated_jobs(_groupi
 **          05/05/2023 mem - Change table alias name
 **          05/24/2023 mem - Use format() for string concatenation
 **          05/30/2023 mem - Use append_to_text() for string concatenation
+**          06/16/2023 mem - Use named arguments when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,7 @@ BEGIN
             GROUP BY AJS.job_state, J.job_state_id) CountQ;
 
         If Coalesce(_resultAppend, '') <> '' Then
-            _result := public.append_to_text(_result, _resultAppend, 0, ', ');
+            _result := public.append_to_text(_result, _resultAppend, _delimiter => ', ');
         End If;
 
     End If;
@@ -75,7 +76,7 @@ BEGIN
             GROUP BY AJS.job_state, J.job_state_id) CountQ;
 
         If Coalesce(_resultAppend, '') <> '' Then
-            _result := public.append_to_text(_result, _resultAppend, 0, ', ');
+            _result := public.append_to_text(_result, _resultAppend, _delimiter => ', ');
         End If;
     End If;
 

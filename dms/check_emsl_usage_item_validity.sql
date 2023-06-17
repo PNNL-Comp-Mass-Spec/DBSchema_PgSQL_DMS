@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          05/29/2023 mem - Use format() for string concatenation
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
+**          06/16/2023 mem - Use named arguments when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -57,23 +58,23 @@ BEGIN
     WHERE InstUsage.seq = _seq;
 
     If _instrumentUsage.usage = 'CAP_DEV' AND _instrumentUsage.operator is null Then
-        _message := public.append_to_text(_message, 'Capability Development requires an instrument operator ID', 0, ', ');
+        _message := public.append_to_text(_message, 'Capability Development requires an instrument operator ID', _delimiter => ', ');
     End If;
 
     If _instrumentUsage.usage = 'RESOURCE_OWNER' AND _instrumentUsage.operator is null Then
-        _message := public.append_to_text(_message, 'Resource Owner requires an instrument operator ID', 0, ', ');
+        _message := public.append_to_text(_message, 'Resource Owner requires an instrument operator ID', _delimiter => ', ');
     End If;
 
     If NOT _instrumentUsage.usage IN ('ONSITE', 'MAINTENANCE') AND Coalesce(_instrumentUsage.comment, '') = '' Then
-        _message := public.append_to_text(_message, 'Missing Comment', 0, ', ');
+        _message := public.append_to_text(_message, 'Missing Comment', _delimiter => ', ');
     End If;
 
     If _instrumentUsage.usage = 'OFFSITE' AND _instrumentUsage.proposal = '' Then
-        _message := public.append_to_text(_message, 'Missing Proposal', 0, ', ');
+        _message := public.append_to_text(_message, 'Missing Proposal', _delimiter => ', ');
     End If;
 
     If _instrumentUsage.usage = 'ONSITE' AND Not _instrumentUsage.proposal similar to '[0-9]%' Then
-        _message := public.append_to_text(_message, 'Preliminary Proposal number', 0, ', ');
+        _message := public.append_to_text(_message, 'Preliminary Proposal number', _delimiter => ', ');
     End If;
 
     SELECT proposal_id as proposalID,
@@ -84,12 +85,12 @@ BEGIN
     WHERE proposal_id = _instrumentUsage.proposal;
 
     If _instrumentUsage.usage = 'ONSITE' AND _proposalInfo.proposalID IS null Then
-        _message := public.append_to_text(_message, 'Proposal number is not in EUS', 0, ', ');
+        _message := public.append_to_text(_message, 'Proposal number is not in EUS', _delimiter => ', ');
     End If;
 
     If NOT _proposalInfo.proposalID IS NULL and _instrumentUsage.usage = 'ONSITE' AND
        NOT (_instrumentUsage.start BETWEEN _proposalInfo.proposalStartDate AND _proposalInfo.proposalEndDate) Then
-        _message := public.append_to_text(_message, 'Run start not between proposal start/end dates', 0, ', ');
+        _message := public.append_to_text(_message, 'Run start not between proposal start/end dates', _delimiter => ', ');
     End If;
 
     If NOT _proposalInfo.proposalID IS NULL Then
@@ -110,7 +111,7 @@ BEGIN
         End If;
 
         If _hits = 0 Then
-            _message := public.append_to_text(_message, 'No users were listed for proposal', 0, ', ');
+            _message := public.append_to_text(_message, 'No users were listed for proposal', _delimiter => ', ');
         End If;
     End If;
 

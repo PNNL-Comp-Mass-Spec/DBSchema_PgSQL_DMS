@@ -439,11 +439,11 @@ BEGIN
                     _newEvaluationMessage := Coalesce(_stepInfo.evaluationMessage, '');
 
                     If _stepInfo.completionCode > 0 Then
-                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion code: %s', _stepInfo.completionCode), 0, '; ', 512);
+                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion code: %s', _stepInfo.completionCode), _delimiter => '; ', _maxlength => 512);
                     End If;
 
                     If Coalesce(_stepInfo.completionMessage, '') <> '' Then
-                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion msg: %s', _stepInfo.completionMessage), 0, '; ', 512);
+                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion msg: %s', _stepInfo.completionMessage), _delimiter => '; ', _maxlength => 512);
                     End If;
 
                     -- This query updates the state to _newState

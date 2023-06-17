@@ -489,7 +489,7 @@ BEGIN
 
                 If _jobCountAdded > 0 Then
                     UPDATE t_analysis_job
-                    SET comment = public.append_to_text(comment, '(missed predefine)', 0, ' ')
+                    SET comment = public.append_to_text(comment, '(missed predefine)', _delimiter => ' ')
                     WHERE dataset_id = _datasetID AND
                           created >= _startDate;
                     --

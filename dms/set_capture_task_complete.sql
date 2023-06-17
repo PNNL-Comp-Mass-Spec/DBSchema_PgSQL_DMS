@@ -156,7 +156,7 @@ BEGIN
 
     If _completionState = 5 And _failureMessage <> '' Then
         -- Add _failureMessage to the dataset comment (If not yet present)
-        _comment := public.append_to_text(_comment, _failureMessage, 0, '; ', 512);
+        _comment := public.append_to_text(_comment, _failureMessage, _delimiter => '; ', _maxlength => 512);
 
         UPDATE t_dataset
         SET comment = _comment

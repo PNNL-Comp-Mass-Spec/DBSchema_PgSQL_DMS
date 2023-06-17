@@ -499,7 +499,7 @@ BEGIN
         End If;
 
         If Coalesce(_msg, '') <> '' Then
-            _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
         End If;
 
         If char_length(Coalesce(_eusUsersList, '')) > 0 Then
@@ -524,9 +524,9 @@ BEGIN
         End If;
 
         If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackageNumber And deactivated = 'Y') Then
-            _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackageNumber),        0, '; ', 1024);
+            _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackageNumber),        _delimiter => '; ', _maxlength => 1024);
         ElsIf Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackageNumber And charge_code_state = 0) Then
-            _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackageNumber), 0, '; ', 1024);
+            _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackageNumber), _delimiter => '; ', _maxlength => 1024);
         End If;
 
         -- Make sure the Work Package is capitalized properly
@@ -764,7 +764,7 @@ BEGIN
 
             If _currentEstimatedPrepTimeDays <> _estimatedPrepTimeDays And Not _allowUpdateEstimatedPrepTime Then
                 _msg := 'Not updating estimated prep time since user is not a sample prep request staff member';
-                _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+                _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
             End If;
 
         End If;

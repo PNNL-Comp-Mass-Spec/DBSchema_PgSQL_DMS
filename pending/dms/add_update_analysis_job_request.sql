@@ -490,7 +490,7 @@ BEGIN
                 _settingsFileName := _autoSupersedeName;
 
                 _msgToAppend := format('Note: Auto-updated the settings file to %s because one or more HMS datasets are included in this job request', _autoSupersedeName);
-                _message := public.append_to_text(_message, _msgToAppend, 0, ';', 512);
+                _message := public.append_to_text(_message, _msgToAppend, _delimiter => ';', _maxlength => 512);
             End If;
         End If;
         */
@@ -534,7 +534,7 @@ BEGIN
                     _msgToAppend := format('%s because one or more QExactive datasets are included in this job request', _msgToAppend);
                 End If;
 
-                _message := public.append_to_text(_message, _msgToAppend, 0, ';', 512);
+                _message := public.append_to_text(_message, _msgToAppend, _delimiter => ';', _maxlength => 512);
             End If;
         End If;
 

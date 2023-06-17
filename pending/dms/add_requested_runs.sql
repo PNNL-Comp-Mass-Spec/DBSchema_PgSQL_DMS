@@ -394,7 +394,7 @@ BEGIN
 
         If char_length(_batchName) > 0 Then
             If _count <= 1 Then
-                _message := public.append_to_text(_message, 'Not creating a batch since did not create multiple requested runs', 0, '; ', 1024);
+                _message := public.append_to_text(_message, 'Not creating a batch since did not create multiple requested runs', _delimiter => '; ', _maxlength => 1024);
             Else
 
                 -- Auto-create a batch for the new requests
@@ -428,7 +428,7 @@ BEGIN
                     End If;
                 End If;
 
-                _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+                _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
             End If;
         End If;
 

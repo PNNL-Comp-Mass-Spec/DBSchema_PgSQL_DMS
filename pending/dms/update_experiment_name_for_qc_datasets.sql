@@ -144,8 +144,8 @@ BEGIN
                DTU.NewExperiment,
                DTU.NewExpID,
                public.append_to_text(DS.comment,
-                        format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
-                        0, ';', 512) As Comment
+                                     format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
+                                     _delimiter => '; ', _maxlength => 512) As Comment
 
         FROM t_dataset DS
              INNER JOIN Tmp_DatasetsToUpdate DTU
@@ -174,8 +174,8 @@ BEGIN
         UPDATE t_dataset
         SET exp_id = DTU.NewExpID,
             comment = public.append_to_text(DS.comment,
-                        format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
-                        0, ';', 512)
+                                            format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
+                                            _delimiter => '; ', _maxlength => 512)
         FROM Tmp_DatasetsToUpdate DTU
         WHERE t_dataset.Dataset_ID = DTU.Dataset_ID;
         --

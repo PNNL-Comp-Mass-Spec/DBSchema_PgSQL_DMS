@@ -224,7 +224,7 @@ BEGIN
             If _tool = '' Then
                 _errMsg := public.append_to_text(_errMsg,
                             format('Data package must have one or more MSGFPlus (or Sequest) jobs; error validating script %s' _scriptName),
-                            0, '; ', 1024);
+                            _delimiter => '; ', _maxlength => 1024);
             End If;
         End If;
 
@@ -235,28 +235,32 @@ BEGIN
 
         If _scriptName IN ('Isobaric_Labeling') Then
             If _deconToolsCountNotOne > 0 Then
-                _errMsg := public.append_to_text(_errMsg,
-                            format('There must be exactly one Decon2LS_V2 job per dataset for script %s', scriptName), 0, '; ', 1024);
+                _errMsg := public.append_to_text(
+                                    _errMsg,
+                                    format('There must be exactly one Decon2LS_V2 job per dataset for script %s', scriptName),
+                                    _delimiter => '; ', _maxlength => 1024);
             End If;
 
             If _masicCountNotOne > 0 Then
-                _errMsg := public.append_to_text(_errMsg,
-                            format('There must be exactly one MASIC_Finnigan job per dataset (and that job must use a param file with ReporterTol in the name) for script %s', scriptName),
-                            0, '; ', 1024);
+                _errMsg := public.append_to_text(
+                                    _errMsg,
+                                    format('There must be exactly one MASIC_Finnigan job per dataset (and that job must use a param file with ReporterTol in the name) for script %s', scriptName),
+                                    _delimiter => '; ', _maxlength => 1024);
             End If;
         End If;
 
         If _scriptName IN ('MAC_iTRAQ', 'MAC_TMT10Plex') Then
             If _masicCountNotOne > 0 Then
-                _errMsg := public.append_to_text(_errMsg,
-                            format('There must be exactly one MASIC_Finnigan job per dataset (and that job must use a param file with ReporterTol in the name) for script %s', scriptName),
-                            0, '; ', 1024);
+                _errMsg := public.append_to_text(
+                                    _errMsg,
+                                    format('There must be exactly one MASIC_Finnigan job per dataset (and that job must use a param file with ReporterTol in the name) for script %s', scriptName),
+                                    _delimiter => '; ', _maxlength => 1024);
             End If;
         End If;
 
         If _scriptName IN ('Global_Label-Free_AMT_Tag') Then
             If _deconToolsCountNotOne > 0 Then
-                _errMsg := public.append_to_text(_errMsg, format('There must be exactly one Decon2LS_V2 job per dataset for script %s', scriptName), 0, '; ', 1024);
+                _errMsg := public.append_to_text(_errMsg, format('There must be exactly one Decon2LS_V2 job per dataset for script %s', scriptName), _delimiter => '; ', _maxlength => 1024);
             End If;
         End If;
 

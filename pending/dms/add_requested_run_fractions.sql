@@ -457,7 +457,7 @@ BEGIN
         End If;
 
         If Coalesce(_msg, '') <> '' Then
-            _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
         End If;
 
         ---------------------------------------------------
@@ -502,14 +502,14 @@ BEGIN
         End If;
 
         If Coalesce(_msg, '') <> '' Then
-            _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
         End If;
 
         _commaPosition := Position(',' In _eusUserID);
 
         If _commaPosition > 1 Then
             _msg := format('Requested runs can only have a single EUS user associated with them; current list: %s', _eusUserID);
-            _message := public.append_to_text(_msg, _message, 0, '; ', 1024);
+            _message := public.append_to_text(_msg, _message, _delimiter => '; ', _maxlength => 1024);
 
             If _raiseErrorOnMultipleEUSUsers Then
                 RAISE EXCEPTION 'Validate_EUS_Usage: %', _message;
@@ -594,9 +594,9 @@ BEGIN
 
         If Not _autoPopulateUserListIfBlank Then
             If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then
-                _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage),        0, '; ', 1024);
+                _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage),        _delimiter => '; ', _maxlength => 1024);
             ElsIf Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And charge_code_state = 0) Then
-                _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage), 0, '; ', 1024);
+                _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage), _delimiter => '; ', _maxlength => 1024);
             End If;
         End If;
 
@@ -667,7 +667,7 @@ BEGIN
             _msg := format('Would create %s requested runs named %s ... %s with instrument group %s and separation group %s',
                             _fractionCount, _firstRequest, _lastRequest, _targetInstrumentGroup, _separationGroup);
 
-            _message := public.append_to_text(_msg, _message, 0, '; ', 1024);
+            _message := public.append_to_text(_msg, _message, _delimiter => '; ', _maxlength => 1024);
         End If;
 
         ---------------------------------------------------
@@ -829,12 +829,12 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
-                    _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+                    _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
                 End If;
             End If;
 
             _msg := format('Created new requested runs based on source request %s creating: %s', _sourceRequestID, _requestIdList);
-            _message := public.append_to_text(_msg, _message, 0, '; ', 1024);
+            _message := public.append_to_text(_msg, _message, _delimiter => '; ', _maxlength => 1024);
 
             CALL post_log_entry ('Normal', _message, 'Add_Requested_Run_Fractions');
 

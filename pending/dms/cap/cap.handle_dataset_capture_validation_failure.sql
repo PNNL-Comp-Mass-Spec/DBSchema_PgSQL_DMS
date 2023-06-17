@@ -137,7 +137,12 @@ BEGIN
 
     If _returnCode = 'U5360' Then
         -- Use special completion code of 101
-        CALL public.set_capture_task_complete (_datasetName, 101, _message => _message, _failureMessage => _message);
+        CALL public.set_capture_task_complete (
+                        _datasetName,
+                        _completionCode => 101,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _failureMessage => _message);
 
         -- Fail out the capture task job with state 14 (Failed, Ignore Job Step States)
         UPDATE cap.t_tasks

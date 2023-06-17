@@ -445,7 +445,7 @@ BEGIN
 
             UPDATE t_analysis_job
             SET comment = CASE WHEN Not _updateOldJobComment THEN Target.comment
-                               ELSE public.append_to_text(Target.comment, format('%s %s', _action, Src.JobId_New), 0, '; ', 512)
+                               ELSE public.append_to_text(Target.comment, format('%s %s', _action, Src.JobId_New), _delimiter => '; ', _maxlength => 512)
                           END,
                 job_state_id = CASE WHEN Not _supersedeOldJob THEN Target.job_state_id
                                     ELSE 14

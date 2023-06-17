@@ -241,7 +241,7 @@ BEGIN
 
                                 _addnlText := format('Not recycling request %s since it is already active', _requestID);
 
-                                _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
+                                _message := public.append_to_text(_message, _addnlText, _delimiter => '; ', _maxlength => 1024);
                             Else
                                 _addnlText := format('Not recycling request %s for dataset %s since the dataset already has an active request (%s)';
                                                         _requestID, _datasetName, _extracted);
@@ -251,7 +251,7 @@ BEGIN
                                 _addnlText := format('Not recycling request %s since the dataset already has an active request (%s)',
                                                         _requestID, _extracted);
 
-                                _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
+                                _message := public.append_to_text(_message, _addnlText, _delimiter => '; ', _maxlength => 1024);
                             End If;
 
                             _requestIDOriginal := 0;
@@ -266,7 +266,7 @@ BEGIN
                 _addnlText := format('Not recycling request %s for dataset %s since it is an AutoRequest',
                                         _requestID, _datasetName);
 
-                _message := public.append_to_text(_message, _addnlText, 0, '; ', 1024);
+                _message := public.append_to_text(_message, _addnlText, _delimiter => '; ', _maxlength => 1024);
             End If;
 
         End If; -- </b3>

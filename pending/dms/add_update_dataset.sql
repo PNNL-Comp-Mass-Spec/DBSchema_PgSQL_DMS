@@ -675,7 +675,7 @@ BEGIN
                             _returnCode => _returnCode);                    -- Output
 
             If _returnCode <> '' Then
-                _comment := public.append_to_text(_comment, 'Error: Default dataset type defined in t_instrument_group is invalid', 0, ' - ', 512);
+                _comment := public.append_to_text(_comment, 'Error: Default dataset type defined in t_instrument_group is invalid', _delimiter => ' - ', _maxlength => 512);
             End If;
         End If;
 
@@ -827,7 +827,7 @@ BEGIN
                 If _requestInstGroup <> _instrumentGroup Then
                     _warning := public.append_to_text(_warning,
                         format('Instrument group for requested run (%s) does not match instrument group for %s (%s)',
-                               _requestInstGroup, _instrumentName, _instrumentGroup), 0, '; ', 512)
+                               _requestInstGroup, _instrumentName, _instrumentGroup), _delimiter => '; ', _maxlength => 512)
                 End If;
             End If;
         End If;
@@ -931,7 +931,7 @@ BEGIN
                 End If;
 
                 If Coalesce(_msg, '') <> '' Then
-                    _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+                    _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
                 End If;
 
                 ---------------------------------------------------
@@ -957,7 +957,7 @@ BEGIN
                 End If;
 
                 If Coalesce(_msg, '') <> '' Then
-                    _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+                    _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
                 End If;
 
             Else
@@ -1354,7 +1354,7 @@ BEGIN
 
                 If Coalesce(_requestID, 0) = 0 Then
                     _warningAddon := 'Dataset is not associated with a requested run; cannot update the LC Cart Name';
-                    _warning := public.append_to_text(_warning, _warningAddon, 0, '; ', 512);
+                    _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ', _maxlength => 512);
                 Else
                     _warningAddon := '';
                     CALL update_cart_parameters (
@@ -1366,7 +1366,7 @@ BEGIN
 
                     If _returnCode <> '' Then
                         _warningAddon := format('Update LC cart name failed: %s', _warningAddon);
-                        _warning := public.append_to_text(_warning, _warningAddon, 0, '; ', 512);
+                        _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ', _maxlength => 512);
                     End If;
                 End If;
             End If;

@@ -339,7 +339,7 @@ BEGIN
                         _returnCode => _returnCode);    -- Output
 
                     If _returnCode <> '' Then
-                        _message := public.append_to_text(_message, _msg, 0, '; ', 512);
+                        _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 512);
                     End If;
 
                     If _maxBatchID <> _minBatchID Then
@@ -349,7 +349,7 @@ BEGIN
                             _returnCode => _returnCode);    -- Output
 
                         If _returnCode <> '' Then
-                            _message := public.append_to_text(_message, _msg, 0, '; ', 512);
+                            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 512);
                         End If;
                     End If;
 

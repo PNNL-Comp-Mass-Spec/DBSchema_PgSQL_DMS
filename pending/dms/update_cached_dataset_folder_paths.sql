@@ -132,7 +132,7 @@ BEGIN
 
         If _matchCount > 0 Then
             _addon := format('%s %s on storage_path_row_version', _matchCount, public.check_plural(_matchCount, 'dataset differs', 'datasets differ'));
-            _message := public.append_to_text(_message, _addon, 0, '; ', 512)
+            _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
 
         End If;
 
@@ -152,7 +152,7 @@ BEGIN
 
         If _matchCount > 0 Then
             _addon := format('%s %s on dataset_row_version', _matchCount, public.check_plural(_matchCount, 'dataset differs', 'datasets differ'));
-            _message := public.append_to_text(_message, _addon, 0, '; ', 512)
+            _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
         End If;
     End If;
 
@@ -309,7 +309,7 @@ BEGIN
 
     If _updateCount > 0 Then
         _addon := format('Updated %s %s in t_cached_dataset_folder_paths', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
-        _message := public.append_to_text(_message, _addon, 0, '; ', 512)
+        _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
 
         -- Call post_log_entry ('Debug', _message, 'Update_Cached_Dataset_Folder_Paths');
     End If;

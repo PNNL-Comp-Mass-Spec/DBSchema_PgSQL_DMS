@@ -102,7 +102,7 @@ BEGIN
 
     If _appendOldJobToComment Then
         _oldJobInfo := format('Compare to job %s', _job);
-        _jobInfo.Comment := public.append_to_text(_jobInfo.Comment, _oldJobInfo, 0, '; ', 512);
+        _jobInfo.Comment := public.append_to_text(_jobInfo.Comment, _oldJobInfo, _delimiter => '; ', _maxlength => 512);
     End If;
 
     If _newSettingsFile <> '' Then

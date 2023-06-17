@@ -219,7 +219,7 @@ BEGIN
 
             If _jobRequestsUpdated > 0 Then
                 _addon := format('%s %s via a merge', _jobRequestsUpdated, public.check_plural(_jobRequestsUpdated, 'job request was updated', 'job requests were updated'));
-                _message := public.append_to_text(_message, _addon, 0, '; ', 512)
+                _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
             End If;
         End If; -- </b>
 

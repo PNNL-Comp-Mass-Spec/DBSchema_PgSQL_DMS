@@ -180,7 +180,7 @@ BEGIN
 
             If _updateCount > 0 Then
                 _addon := format('%s %s via a merge', _updateCount, public.check_plural(_updateCount, 'dataset was updated', 'datasets were updated'));
-                _message := public.append_to_text(_message, _addon, 0, '; ', 512)
+                _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
         End If;
 
     End If;

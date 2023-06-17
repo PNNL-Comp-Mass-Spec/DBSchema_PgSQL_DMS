@@ -62,6 +62,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          05/30/2023 mem - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          06/16/2023 mem - Use named arguments when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -387,7 +388,7 @@ BEGIN
 
                     _duplicateMessage := format('Warning, both this batch and batch %s have batch group order = %s', _duplicateBatchID, _batchGroupOrder);
 
-                    _message := append_to_text(_message, _duplicateMessage, 0, '; ', 512);
+                    _message := append_to_text(_message, _duplicateMessage, _delimiter => '; ', _maxlength => 512);
                 End If;
             End If;
 

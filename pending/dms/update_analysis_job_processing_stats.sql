@@ -112,7 +112,7 @@ BEGIN
                CASE
                    WHEN _newBrokerJobState = 2
                    THEN Comment
-                   ELSE public.append_to_text(comment, _jobCommentAddnl, 0, '; ', 512)
+                   ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
                END AS Comment_New,
                Organism_DB_Name,
                Coalesce(_organismDBName, Organism_DB_Name) AS Organism_DB_Name_New,
@@ -141,7 +141,7 @@ BEGIN
             Assigned_Processor_Name = 'Job_Broker',
             Comment = CASE WHEN _newBrokerJobState = 2
                            THEN Comment
-                           ELSE public.append_to_text(comment, _jobCommentAddnl, 0, '; ', 512)
+                           ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
                       END,
             Organism_DB_Name = Coalesce(_organismDBName, Organism_DB_Name),
             Processing_TimeMinutes = CASE WHEN _newBrokerJobState <> 2

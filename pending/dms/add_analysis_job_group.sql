@@ -511,7 +511,7 @@ BEGIN
         End If;
 
         If Coalesce(_warning, '') <> '' Then
-            _comment := public.append_to_text(_comment, _warning, 0, '; ', 512);
+            _comment := public.append_to_text(_comment, _warning, _delimiter => '; ', _maxlength => 512);
         End If;
 
         ---------------------------------------------------

@@ -116,7 +116,7 @@ BEGIN
     End If;
 
     UPDATE t_dataset
-    SET comment = public.append_to_text(comment, _comment, 0, '; ', 512),
+    SET comment = public.append_to_text(comment, _comment, _delimiter => '; ', _maxlength => 512),
         dataset_state_id = 4,
         dataset_rating_id = -1
     WHERE dataset_id = _datasetID

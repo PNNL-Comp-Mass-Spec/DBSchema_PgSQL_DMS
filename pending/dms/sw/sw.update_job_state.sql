@@ -375,7 +375,7 @@ BEGIN
                 Comment =
                     CASE WHEN _jobInfo.NewJobStateInBroker IN (5) THEN _comment     -- 5=Failed
                     WHEN _jobInfo.NewJobStateInBroker IN (4, 7)                     -- 4=Complete, 7=No Intermediate Files Created
-                    THEN public.append_to_text(Comment, _comment, 0, '; ', 1024)
+                    THEN public.append_to_text(Comment, _comment, _delimiter => '; ', _maxlength => 1024)
                     ELSE Comment
                     END,
                 Runtime_Minutes = _processingTimeMinutes

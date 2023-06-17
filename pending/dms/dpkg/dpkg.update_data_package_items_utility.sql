@@ -196,7 +196,7 @@ BEGIN
                 WHERE ItemType = 'Dataset' And Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%'
 
                 _actionMsg := format('Data packages cannot include placeholder data package datasets; removed "%s"', _datasetsRemoved);
-                _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
             End If;
 
         End If;
@@ -473,7 +473,7 @@ BEGIN
                 If _deleteCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _deleteCount;
                     _actionMsg := format('Deleted %s biomaterial %s', _deleteCount, public.check_plural(_deleteCount, 'item', 'items'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </delete biomaterial>
@@ -504,7 +504,7 @@ BEGIN
                 If _updateCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _updateCount;
                     _actionMsg := format('Updated the comment for %s biomaterial %s', _updateCount, public.check_plural(_updateCount, 'item', 'items'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </comment biomaterial>
@@ -574,7 +574,7 @@ BEGIN
                 If _insertCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _insertCount;
                     _actionMsg := format('Added %s biomaterial %s', _insertCount, public.check_plural(_insertCount, 'item', 'items'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </add biomaterial>
@@ -608,7 +608,7 @@ BEGIN
                 If _deleteCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _deleteCount;
                     _actionMsg := format('Deleted %s EUS %s', _deleteCount, public.check_plural(_deleteCount, 'proposal', 'proposals'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </delete EUS Proposal>
@@ -640,7 +640,7 @@ BEGIN
                 If _updateCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _updateCount;
                     _actionMsg := format('Updated the comment for %s EUS %s', _updateCount, public.check_plural(_updateCount, 'proposal', 'proposals'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </comment EUS Proposals>
@@ -694,7 +694,7 @@ BEGIN
                 If _insertCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _insertCount;
                     _actionMsg := format('Added %s EUS %s', _insertCount, public.check_plural(_insertCount, 'proposal', 'proposals'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </add EUS Proposals>
@@ -729,7 +729,7 @@ BEGIN
                 If _deleteCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _deleteCount;
                     _actionMsg := format('Deleted %s %s', _deleteCount, public.check_plural(_deleteCount, 'experiment', 'experiments');
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </delete experiments>
@@ -762,7 +762,7 @@ BEGIN
                 If _updateCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _updateCount;
                     _actionMsg := format('Updated the comment for %s %s', _updateCount, public.check_plural(_updateCount, 'experiment', 'experiments'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </comment experiments>
@@ -826,7 +826,7 @@ BEGIN
                 If _insertCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _insertCount;
                     _actionMsg := format('Added %s %s', _insertCount, public.check_plural(_insertCount, 'experiment', 'experiments'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </add experiments>
@@ -861,7 +861,7 @@ BEGIN
                 If _deleteCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _deleteCount;
                     _actionMsg := format('Deleted %s %s', _deleteCount, public.check_plural(_deleteCount, 'dataset', 'datasets'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </delete datasets>
@@ -894,7 +894,7 @@ BEGIN
                 If _updateCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _updateCount;
                     _actionMsg := format('Updated the comment for %s %s', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </comment datasets>
@@ -959,7 +959,7 @@ BEGIN
                 If _insertCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _insertCount;
                     _actionMsg := format('Added %s %s', _insertCount, public.check_plural(_insertCount, 'dataset', 'datasets'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </add datasets>
@@ -991,7 +991,7 @@ BEGIN
                 If _deleteCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _deleteCount;
                     _actionMsg := format('Deleted %s analysis %s', _deleteCount, public.check_plural(_deleteCount, 'job', 'jobs'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </delete analysis_jobs>
@@ -1022,7 +1022,7 @@ BEGIN
                 If _updateCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _updateCount;
                     _actionMsg := format('Updated the comment for %s analysis %s', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </comment analysis_jobs>
@@ -1082,7 +1082,7 @@ BEGIN
                 If _insertCount > 0 Then
                     _itemCountChanged := _itemCountChanged + _insertCount;
                     _actionMsg := format('Added %s analysis %s', _insertCount, public.check_plural(_insertCount, 'job', 'jobs'));
-                    _message := public.append_to_text(_message, _actionMsg, 0, ', ', 512);
+                    _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
         End If; -- </add analysis_jobs>

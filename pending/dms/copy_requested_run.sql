@@ -348,7 +348,7 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
-            _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
         End If;
     End If;
 END

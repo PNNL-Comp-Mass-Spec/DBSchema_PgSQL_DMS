@@ -337,7 +337,7 @@ BEGIN
                             _message := public.append_to_text(
                                                 _message,
                                                 format('Proposal %s is superseded by %s', _eusProposalID, _autoSupersedeProposalID),
-                                                0, '; ', 1024)
+                                                _delimiter => '; ', _maxlength => 1024);
 
                             _eusProposalID := _autoSupersedeProposalID;
                         End If;
@@ -390,7 +390,7 @@ BEGIN
                 _message := public.append_to_text(;
                                     _message,
                                     format('Warning: EUS User list was empty; auto-selected user "%s"', _eusUsersList),
-                                    0, '; ', 1024)
+                                    _delimiter => '; ', _maxlength => 1024);
             End If;
         End If;
 
@@ -561,7 +561,7 @@ BEGIN
                 _message := public.append_to_text(;
                                     _message,
                                     format('Warning: Removed users from EUS User list that are not associated with proposal "%s"', _eusProposalID),
-                                    0, '; ', 1024)
+                                    _delimiter => '; ', _maxlength => 1024);
 
             End If; -- </f>
         End If; -- </e>
@@ -597,7 +597,7 @@ BEGIN
                 _msg := 'Warning: campaign has EUS Usage Type USER_REMOTE; the new item should likely also be of type USER_REMOTE';
             End If;
 
-            _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
         End If;
 
         If _eusUsageTypeCampaign::citext = 'USER_ONSITE' And _eusUsageType::citext = 'USER' And _proposalType::citext <> 'Resource Owner' Then
@@ -615,7 +615,7 @@ BEGIN
     End If;
 
     If _usageTypeUpdated > 0 Then
-        _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+        _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
 
         SELECT eus_usage_type_id
         INTO _eusUsageTypeID
@@ -628,7 +628,7 @@ BEGIN
             CALL post_log_entry ('Error', _msg, 'Validate_EUS_Usage');
 
             -- Only append _msg to _message if an error occurs
-            _message := public.append_to_text(_message, _msg, 0, '; ', 1024);
+            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
         End If;
     End If;
 
