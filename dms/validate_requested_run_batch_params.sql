@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Move INTO to new line
 **          05/22/2023 mem - Use format() for string concatenation
+**          06/16/2023 mem - Report an error if _mode is 'update' and _batchID is 0
 **
 *****************************************************/
 DECLARE
@@ -118,7 +119,13 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _mode = 'update' Then
-            --
+
+            If Coalesce(_batchID, 0) = 0 Then
+                _message := 'Cannot update batch; ID must non-zero';
+                _returnCode := 'U5206';
+                RETURN;
+            End If;
+
             SELECT locked
             INTO _locked
             FROM t_requested_run_batches
