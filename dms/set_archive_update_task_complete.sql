@@ -1,22 +1,19 @@
 --
-CREATE OR REPLACE PROCEDURE public.set_archive_update_task_complete
-(
-    _datasetName text,
-    _completionCode int default 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_archive_update_task_complete(text, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.set_archive_update_task_complete(IN _datasetname text, IN _completioncode integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Sets status of task to successful completion or to failed
-**      (according to value of input argument)
+**      Sets archive update state to 4 (Update Complete) in t_dataset_archive if _completionCode is 0
+**      Otherwise, sets archive update state to 4 (Update Failed)
 **
 **  Arguments:
-**    _datasetName                dataset for which archive task is being completed
-**    _completionCode            0->success, 1->failure, anything else ->no intermediate files
+**    _datasetName          Dataset name
+**    _completionCode       Completion code: 0=success, 1=failure, >1 means no intermediate files
 **
 **  Auth:   grk
 **  Date:   12/03/2002
@@ -25,7 +22,7 @@ AS $$
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/16/2014 mem - Now changing archive state to 3 if it is 14
 **          07/09/2022 mem - Tabs to spaces
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -41,18 +38,29 @@ BEGIN
     -- Resolve dataset name to ID and archive state
     ---------------------------------------------------
 
-    _datasetID := 0;
-    _updateState := 0;
-    --
-    SELECT
-        _datasetID = Dataset_ID,
-        _updateState = Update_State
-    FROM V_Dataset_Archive_Ex
-    WHERE Dataset = _datasetName;
+    SELECT dataset_id
+    INTO _datasetID
+    FROM t_dataset
+    WHERE dataset = _datasetName::citext;
 
     If Not FOUND Then
+        _message := format('Dataset %s not found in t_dataset', Coalesce(_datasetName, '??'));
         _returnCode := 'U5220';
-        _message := format('Dataset "%s" not found in V_DatasetArchive_Ex', _datasetName);
+
+        RAISE WARNING '%', _message;
+        RETURN;
+    End If;
+
+    SELECT archive_update_state_id
+    INTO _updateState
+    FROM t_dataset_archive
+    WHERE dataset_id = _datasetID;
+
+    If Not FOUND Then
+        _message := format('Dataset ID %s not found in t_dataset_archive (for dataset %s)', _datasetID, Coalesce(_datasetName, '??'));
+        _returnCode := 'U5221';
+
+        RAISE WARNING '%', _message;
         RETURN;
     End If;
 
@@ -62,7 +70,7 @@ BEGIN
 
     If _updateState <> 3 Then
         _returnCode := 'U5250';
-        _message := format('Archive update state for dataset "%s" is not correct', _datasetName);
+        _message := format('Archive update state is not correct for dataset %s (expecting 3 but actually %s)', _datasetName, _updateState);
         RETURN;
     End If;
 
@@ -115,4 +123,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.set_archive_update_task_complete IS 'SetArchiveUpdateTaskComplete';
+
+ALTER PROCEDURE public.set_archive_update_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_archive_update_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.set_archive_update_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text) IS 'SetArchiveUpdateTaskComplete';
+
