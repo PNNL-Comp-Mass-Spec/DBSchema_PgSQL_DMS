@@ -27,7 +27,7 @@ AS $$
 **          08/10/2018 mem - Call update_dms_file_info_xml to push the dataset info into public.t_dataset_info
 **          11/02/2020 mem - Fix bug validating the dataset name
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -61,7 +61,7 @@ BEGIN
         INTO _datasetName
         FROM cap.t_tasks
         WHERE Dataset_ID = _datasetID AND
-              Script IN ('DatasetCapture', 'IMSDatasetCapture')
+              Script IN ('DatasetCapture', 'IMSDatasetCapture');
 
         If Not FOUND Then
             _message := format('Dataset ID not found: %s', _datasetNameOrID);

@@ -17,36 +17,38 @@ AS $$
 **      or have entered the 'in progress' state,
 **      and update state of capture task job locally and dataset in public.t_dataset accordingly
 **
-**    First step:
-**      Evaluate state of steps for capture task jobs that are in new or busy state,
-**      or in transient state of being resumed or reset, determine what the new
-**      capture task job state should be, and accumulate list of capture task jobs whose new state is different than their
-**      current state.  Only steps for capture task jobs in New or Busy state are considered.
+**      First step:
+**        Evaluate state of steps for capture task jobs that are in new or busy state,
+**        or in transient state of being resumed or reset, determine what the new
+**        capture task job state should be, and accumulate list of capture task jobs whose new state is different than their
+**        current state.  Only steps for capture task jobs in New or Busy state are considered.
 **
-**    Current                 Current                                     New
-**    Capture Task Job        Capture Task Step                           Capture Task Job
-**    State                   States                                      State
-**    -----                   -------                                     ---------
-**    New or Busy             One or more steps failed                    Failed
+**      Current                 Current                                     New
+**      Capture Task Job        Capture Task Step                           Capture Task Job
+**      State                   States                                      State
+**      -----                   -------                                     ---------
+**      New or Busy             One or more steps failed                    Failed
 **
-**    New or Busy             All steps complete (or skipped)             Complete
+**      New or Busy             All steps complete (or skipped)             Complete
 **
-**    New,Busy,Resuming       One or more steps busy                      In Progress
+**      New,Busy,Resuming       One or more steps busy                      In Progress
 **
-**    Failed                  All steps complete (or skipped)             Complete, though only if max Job Step completion time is greater than Finish time in t_tasks
+**      Failed                  All steps complete (or skipped)             Complete, though only if max Job Step completion time is greater than Finish time in t_tasks
 **
-**    Failed                  All steps waiting/enabled/In Progress       In Progress
+**      Failed                  All steps waiting/enabled/In Progress       In Progress
 **
 **
-**    Second step:
-**      Go through list of capture task jobs from first step whose current state must be changed and
-**      take action in broker and DMS as noted.
+**      Second step:
+**        Go through list of capture task jobs from first step whose current state must be changed and
+**        take action in broker and DMS as noted.
 **
 **  Arguments:
 **    _bypassDMS                When true, do not update states in tables in the public schema
 **    _message text             Output message
+**    _returnCode text          Output return code
 **    _maxJobsToProcess         Maximum number of jobs to process
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
+**    _infoOnly                 When true, preview changes
 **
 **  Auth:   grk
 **  Date:   12/15/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -65,7 +67,8 @@ AS $$
 **          01/23/2017 mem - Fix logic bug involving call to copy_task_to_history
 **          06/13/2018 mem - Add comments regarding update_dms_file_info_xml and T_Dataset_Info
 **          06/01/2020 mem - Add support for step state 13 (Inactive)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/13/2023 mem - No longer call update_dms_prep_state
+**          06/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -100,7 +103,9 @@ BEGIN
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     _startTime := CURRENT_TIMESTAMP;
+
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
     End If;
@@ -115,11 +120,11 @@ BEGIN
         Job int,
         OldState int,
         NewState int,
-        Results_Folder_Name text,
-        Dataset_Name text,
+        Results_Folder_Name citext,
+        Dataset_Name citext,
         Dataset_ID int,
-        Script text,
-        Storage_Server text,
+        Script citext,
+        Storage_Server citext,
         Start_New timestamp null,
         Finish_New timestamp null
     );
@@ -233,8 +238,8 @@ BEGIN
          LEFT OUTER JOIN Tmp_ChangedJobs TargetTable
            ON T.Job = TargetTable.Job
     WHERE TargetTable.Job Is Null AND
-          ( (T.Script = 'DatasetArchive' AND T.State = 2 AND DAS.AS_state_ID = 6) OR
-            (T.Script = 'ArchiveUpdate'  AND T.State = 2 AND DAS.AS_update_state_ID = 5) )
+          ( (T.Script = 'DatasetArchive' AND T.State = 2 AND DAS.State_ID = 6) OR
+            (T.Script = 'ArchiveUpdate'  AND T.State = 2 AND DAS.Update_state_ID = 5) );
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -266,7 +271,7 @@ BEGIN
     WHERE State = 5 AND
           Job IN ( SELECT Job FROM cap.t_task_steps where state in (2, 3, 4, 5, 13)) AND
           NOT Job IN (SELECT Job FROM cap.t_task_steps where state = 6) AND
-          NOT Job In (SELECT Job FROM Tmp_ChangedJobs)
+          NOT Job In (SELECT Job FROM Tmp_ChangedJobs);
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -296,7 +301,7 @@ BEGIN
         INTO _jobInfo
         FROM Tmp_ChangedJobs
         WHERE Job > _curJob
-        ORDER BY Job;
+        ORDER BY Job
         LIMIT 1;
 
         If Not FOUND Then
@@ -423,7 +428,6 @@ BEGIN
         ---------------------------------------------------
 
         If Not _bypassDMS AND _jobInfo.Dataset_ID <> 0 Then
-        -- <c>
 
             If _infoOnly Then
                 RAISE INFO 'Call update_dms_dataset_state Job=%, NewJobStater=%', _jobInfo.Job, _jobInfo.NewState;
@@ -442,26 +446,26 @@ BEGIN
                 End If;
             End If;
 
-        End If; -- </c>
+        End If;
 
-        If Not _bypassDMS AND _jobInfo.DatasetID = 0 Then
-        -- <d>
-
-            If _infoOnly Then
-                RAISE INFO 'Call update_dms_prep_state Job=%, NewJobState=%', _jobInfo.Job, _jobInfo.NewState;
-            Else
-                CALL cap.update_dms_prep_state (
-                            _jobInfo.Job,
-                            _jobInfo.Script,
-                            _jobInfo.NewState,
-                            _message => _message,
-                            _returnCode => _returnCode);
-
-                If _returnCode <> '' Then
-                    CALL public.post_log_entry('Error', _message, 'Update_Task_State', 'cap');
-                End If;
-            End If;
-        End If; -- </d>
+        -- Deprecated in June 2023 since update_dms_prep_state only applies to script 'HPLCSequenceCapture', which was never implemented
+        --
+        -- If Not _bypassDMS AND _jobInfo.DatasetID = 0 Then
+        --     If _infoOnly Then
+        --         RAISE INFO 'Call update_dms_prep_state Job=%, NewJobState=%', _jobInfo.Job, _jobInfo.NewState;
+        --     Else
+        --         CALL cap.update_dms_prep_state (
+        --                     _jobInfo.Job,
+        --                     _jobInfo.Script,
+        --                     _jobInfo.NewState,
+        --                     _message => _message,
+        --                     _returnCode => _returnCode);
+        --
+        --         If _returnCode <> '' Then
+        --             CALL public.post_log_entry('Error', _message, 'Update_Task_State', 'cap');
+        --         End If;
+        --     End If;
+        -- End If;
 
         ---------------------------------------------------
         -- Save capture task job in the history tables
@@ -474,7 +478,10 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO 'Call copy_task_to_history Job=%, NewState=%', _jobInfo.Job, _jobInfo.NewState;
             Else
-                CALL cap.copy_task_to_history (_jobInfo.Job, _jobInfo.NewState, _message => _message);
+                CALL cap.copy_task_to_history (
+                            _jobInfo.Job,
+                            _jobInfo.NewState,
+                            _message => _message);      -- Output
             End If;
         End If;
 
@@ -555,4 +562,5 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_task_state IS 'UpdateJobState';
+COMMENT ON PROCEDURE cap.update_task_state IS 'UpdateTaskState Or UpdateJobState';
+

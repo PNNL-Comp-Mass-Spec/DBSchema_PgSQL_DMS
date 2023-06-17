@@ -16,12 +16,14 @@ AS $$
 **      are successfully captured but fail the dataset integrity check
 **      (.Raw file too small, expected files missing, etc).
 **
-**      The procedure marks the dataset state as Inactive,
+**      The procedure sets the dataset state to 4 (Inactive),
 **      changes the rating to -1 = No Data (Blank/bad),
 **      and makes sure a dataset archive entry exists
 **
 **  Arguments:
-**    _comment   If space, period, semicolon, comma, exclamation mark or caret, will not change the dataset comment
+**    _datasetNameOrID  Dataset name or dataset ID
+**    _comment          Text to append to the comment; if a space, period, semicolon, comma, exclamation mark or caret, will not change the dataset comment
+**    _infoOnly         When true, preview updates
 **
 **  Auth:   mem
 **  Date:   04/28/2011 mem - Initial version
@@ -32,13 +34,13 @@ AS $$
 **          05/22/2017 mem - Change _comment to '' if 'Bad .raw file' yet the dataset comment contains 'Cannot convert .D to .UIMF'
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _datasetID int;
     _datasetName text;
-    _existingComment text;
+    _existingComment citext;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -51,16 +53,14 @@ BEGIN
     -- Validate the inputs
     ----------------------------------------
 
-    _datasetNameOrID := Coalesce(_datasetNameOrID, '');
-    _comment := Coalesce(_comment, '');
-
-    If _comment = '' Then
-        _comment := 'Bad dataset';
-    End If;
+    _datasetNameOrID := Trim(Coalesce(_datasetNameOrID, ''));
+    _comment := Trim(Coalesce(_comment, ''));
 
     -- Treat the following characters as meaning "do not update the comment"
-    If _comment in (' ', '.', ';', ',', '!', '^') Then
+    If _comment In (' ', '.', ';', ',', '!', '^') Then
         _comment := '';
+    ElsIf _comment = '' Then
+        _comment := 'Bad dataset';
     End If;
 
     _datasetID := Coalesce(public.try_cast(_datasetNameOrID, null::int), 0);
@@ -70,16 +70,13 @@ BEGIN
         -- Lookup the Dataset Name
         ----------------------------------------
 
-        _datasetID := _datasetNameOrID::int;
-
-        SELECT dataset,
-               comment
+        SELECT dataset, comment
         INTO _datasetName, _existingComment
         FROM t_dataset
         WHERE dataset_id = _datasetID;
 
-        If _datasetName = '' Then
-            _message := format('Dataset ID not found: %s', _datasetNameOrID);
+        If Not FOUND Then
+            _message := format('Dataset ID not found in t_dataset: %s', _datasetNameOrID);
             _returnCode := 'U5201';
             RAISE WARNING '%', _message;
             RETURN;
@@ -92,34 +89,33 @@ BEGIN
 
         _datasetName := _datasetNameOrID;
 
-        SELECT dataset_id,
-               comment
+        SELECT dataset_id, comment
         INTO _datasetID, _existingComment
         FROM t_dataset
-        WHERE (dataset = _datasetName)
+        WHERE dataset = _datasetName::citext;
 
         If _datasetName = '' Then
-            _message := format('Dataset not found: %s', _datasetName);
+            _message := format('Dataset not found in t_dataset: %s', _datasetName);
             _returnCode := 'U5202';
             RAISE WARNING '%', _message;
             RETURN;
         End If;
     End If;
 
-    If _comment = 'Bad .raw file' AND _existingComment LIKE '%Cannot convert .D to .UIMF%' Then
+    If _comment::citext = 'Bad .raw file' AND _existingComment LIKE '%Cannot convert .D to .UIMF%' Then
         _comment := '';
     End If;
 
     If _infoOnly Then
-        RAISE INFO 'Mark dataset ID % As bad: % (%)', _datasetID, _comment, _datasetName;
-        EXIT;
+        RAISE INFO 'Mark dataset ID % as bad: % (%)', _datasetID, _comment, _datasetName;
+        RETURN;
     End If;
 
     UPDATE t_dataset
     SET comment = public.append_to_text(comment, _comment, _delimiter => '; ', _maxlength => 512),
         dataset_state_id = 4,
         dataset_rating_id = -1
-    WHERE dataset_id = _datasetID
+    WHERE dataset_id = _datasetID;
 
     If Not FOUND Then
         _message := format('Unable to update dataset in t_dataset: %s', _datasetName);
@@ -127,7 +123,10 @@ BEGIN
         RAISE INFO '%', _message;
     Else
         -- Also update t_dataset_archive
-        CALL add_archive_dataset _datasetID
+        CALL add_archive_dataset (
+                    _datasetID,
+                    _message,       -- Output
+                    _returnCode);   -- Output
 
         _message := format('Marked dataset As bad: %s', _datasetName);
         RAISE INFO '%', _message;
