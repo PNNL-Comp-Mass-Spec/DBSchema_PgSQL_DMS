@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          05/19/2023 mem - Move INTO to new line
 **          05/22/2023 mem - Use format() for string concatenation
 **          06/16/2023 mem - Report an error if _mode is 'update' and _batchID is 0
+**                         - Validate instrument group name
 **
 *****************************************************/
 DECLARE
@@ -81,6 +82,8 @@ BEGIN
         -- Determine the Instrument Group
         ---------------------------------------------------
 
+        _requestedInstrumentGroup := Trim(Coalesce(_requestedInstrumentGroup, ''));
+
         -- Set the instrument group to _requestedInstrumentGroup for now
         _instrumentGroupToUse := _requestedInstrumentGroup;
 
@@ -90,6 +93,17 @@ BEGIN
             INTO _instrumentGroupToUse
             FROM t_instrument_name
             WHERE instrument = _requestedInstrumentGroup;
+
+            If Not FOUND Then
+                If char_length(_requestedInstrumentGroup) = 0 Then
+                    _message := 'Invalid Instrument Group: empty string';
+                Else
+                    _message := format('Invalid Instrument Group: %s', _requestedInstrumentGroup);
+                End If;
+
+                _returnCode := 'U5203';
+                RETURN;
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -98,7 +112,7 @@ BEGIN
 
         If _requestedBatchPriority = 'High' AND Coalesce(_justificationHighPriority, '') = '' Then
             _message := 'Justification must be entered If high priority is being requested';
-            _returnCode := 'U5203';
+            _returnCode := 'U5204';
             RETURN;
         End If;
 
@@ -111,7 +125,7 @@ BEGIN
         If _mode In ('add', Lower('PreviewAdd')) Then
             If Exists (SELECT * FROM t_requested_run_batches WHERE batch = _name) Then
                 _message := format('Cannot add batch: "%s" already exists in database', _name);
-                _returnCode := 'U5204';
+                _returnCode := 'U5205';
                 RETURN;
             End If;
         End If;
@@ -133,13 +147,13 @@ BEGIN
 
             If Not FOUND Then
                 _message := 'Cannot update: entry does not exist in database';
-                _returnCode := 'U5205';
+                _returnCode := 'U5207';
                 RETURN;
             End If;
 
             If _locked = 'yes' Then
                 _message := 'Cannot update: batch is locked';
-                _returnCode := 'U5206';
+                _returnCode := 'U5208';
                 RETURN;
             End If;
         End If;
@@ -173,7 +187,7 @@ BEGIN
                 _ownerUsername := _newUsername;
             Else
                 _message := format('Could not find entry in database for username "%s"', _ownerUsername);
-                _returnCode := 'U5207';
+                _returnCode := 'U5209';
                 RETURN;
             End If;
         End If;
@@ -189,7 +203,7 @@ BEGIN
 
         If _batchGroupID > 0 And Not Exists (Select * From T_Requested_Run_Batch_Group Where Batch_Group_ID = _batchGroupID) Then
             _message := format('Requested run batch group does not exist: %s', _batchGroupID);
-            _returnCode := 'U5209';
+            _returnCode := 'U5210';
             RETURN;
         End If;
 
