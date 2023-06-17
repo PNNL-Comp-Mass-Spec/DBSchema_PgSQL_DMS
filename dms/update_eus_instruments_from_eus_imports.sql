@@ -154,7 +154,7 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    CALL post_usage_log_entry ('Update_EUS_Instruments_From_EUS_Imports', '');
+    CALL post_usage_log_entry ('update_eus_instruments_from_eus_imports', '');
 END
 $$;
 

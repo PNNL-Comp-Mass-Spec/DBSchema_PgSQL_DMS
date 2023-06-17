@@ -935,7 +935,7 @@ BEGIN
         End If;
 
         If Not _infoOnly Then
-            CALL post_usage_log_entry ('Update_Dataset_File_Info_XML', _usageMessage);
+            CALL post_usage_log_entry ('update_dataset_file_info_xml', _usageMessage);
         End If;
 
         DROP TABLE Tmp_DSInfoTable;

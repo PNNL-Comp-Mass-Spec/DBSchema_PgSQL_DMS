@@ -189,7 +189,7 @@ BEGIN
 
     _usageMessage := format('%s %s updated', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
 
-    CALL post_usage_log_entry ('Update_Analysis_Jobs', _usageMessage);
+    CALL post_usage_log_entry ('update_analysis_jobs', _usageMessage);
 
     If _dropTempTable Then
         DROP TABLE IF EXISTS Tmp_AnalysisJobs;

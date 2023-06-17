@@ -484,7 +484,7 @@ BEGIN
     _usageMessage := format('Updated %s requested %s',
                             _requestCount, public.check_plural(_requestCount, 'run', 'runs'));
 
-    CALL post_usage_log_entry ('Update_Requested_Run_Assignments', _usageMessage);
+    CALL post_usage_log_entry ('update_requested_run_assignments', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_RequestIDs;
 
