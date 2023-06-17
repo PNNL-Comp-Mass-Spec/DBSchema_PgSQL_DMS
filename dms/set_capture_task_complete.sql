@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.set_capture_task_complete
-(
-    _datasetName text,
-    _completionCode int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _failureMessage text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_capture_task_complete(text, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.set_capture_task_complete(IN _datasetname text, IN _completioncode integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _failuremessage text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -17,6 +13,7 @@ AS $$
 **      cleanup_dataset_comments if the new state is 3
 **
 **  Arguments:
+**    _datasetName      Dataset name
 **    _completionCode   0=success, 1=failed, 2=not ready, 100=success (capture broker), 101=Duplicate dataset files (capture broker)
 **
 **  Auth:   grk
@@ -34,6 +31,7 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          06/13/2018 mem - Add support for _completionCode 101
 **          08/08/2018 mem - Add _completionState 14 (Duplicate Dataset Files)
+**          06/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -68,7 +66,15 @@ BEGIN
            ON DS.instrument_id = InstName.instrument_id
          INNER JOIN t_instrument_class InstClass
            ON InstName.instrument_class = InstClass.instrument_class
-    WHERE DS.Dataset = _datasetName;
+    WHERE DS.Dataset = _datasetName::citext;
+
+    If Not FOUND Then
+        _message := format('Dataset %s not found in t_dataset', Coalesce(_datasetName, '??'));
+        _returnCode := 'U5220';
+
+        RAISE WARNING '%', _message;
+        RETURN;
+    End If;
 
     ---------------------------------------------------
     -- Define _completionState based on _completionCode
@@ -76,18 +82,24 @@ BEGIN
 
     If _completionCode = 0 Then
         If _doPrep > 0 Then
-            _completionState := 6; -- received
+            _completionState := 6;  -- Received
         Else
-            _completionState := 3; -- normal completion;
+            _completionState := 3;  -- Normal completion;
         End If;
-    ElsIf _completionCode = 1
-        _completionState := 5; -- capture failed
-    ElsIf _completionCode = 2
-        _completionState := 9; -- dataset not ready
-    ElsIf _completionCode = 100
-        _completionState := 3; -- normal completion
-    ElsIf _completionCode = 101
-        _completionState := 14; -- Duplicate Dataset Files
+    ElsIf _completionCode = 1 Then
+        _completionState := 5;      -- Capture failed
+    ElsIf _completionCode = 2 Then
+        _completionState := 9;      -- Dataset not ready
+    ElsIf _completionCode = 100 Then
+        _completionState := 3;      -- Normal completion
+    ElsIf _completionCode = 101 Then
+        _completionState := 14;     -- Duplicate Dataset Files
+    Else
+        _message := format('Unrecognized completion code: %s', _completionCode);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -102,10 +114,10 @@ BEGIN
               target_state = 1 AND
               (prev_target_state = 2 OR
                prev_target_state = 5) AND
-              target_id = _datasetID
+              target_id = _datasetID;
 
         If _result > _maxRetries Then
-            _completionState := 5; -- capture failed
+            _completionState := 5;  -- Capture failed
             _message := format('Number of capture retries exceeded limit of %s for dataset "%s"', _maxRetries, _datasetName);
 
             CALL post_log_entry ('Error', _message, 'Set_Capture_Task_Complete');
@@ -134,7 +146,11 @@ BEGIN
         -- Dataset successfully captured
         -- Remove error messages of the form Error while copying \\15TFTICR64\data\ ...
 
-        CALL cleanup_dataset_comments (_datasetID, _infoOnly => false);
+        CALL cleanup_dataset_comments (
+                    _datasetID::text,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _infoOnly => false);
 
     End If;
 
@@ -162,4 +178,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.set_capture_task_complete IS 'SetCaptureTaskComplete';
+
+ALTER PROCEDURE public.set_capture_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text, IN _failuremessage text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_capture_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text, IN _failuremessage text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.set_capture_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text, IN _failuremessage text) IS 'SetCaptureTaskComplete';
+
