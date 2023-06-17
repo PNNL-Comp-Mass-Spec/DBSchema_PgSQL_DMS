@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **
 **      The calling table must create table Tmp_AnalysisJobs
 **
-**      CREATE TEMP TABLE Tmp_AnalysisJobs (job int)
+**      CREATE TEMP TABLE Tmp_AnalysisJobs (job int);
 **
 **  Arguments:
 **    _comment                    Text to append to the comment
