@@ -103,7 +103,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
      LEFT JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))
      LEFT JOIN public.v_charge_code_status cc ON ((rr.work_package OPERATOR(public.=) cc.charge_code)))
      LEFT JOIN public.t_dataset_archive_state_name tdasn ON ((da.archive_state_id = tdasn.archive_state_id)))
-     LEFT JOIN public.t_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
+     LEFT JOIN public.t_dataset_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
      LEFT JOIN public.t_lc_cart_configuration cartconfig ON ((ds.cart_config_id = cartconfig.cart_config_id)))
      LEFT JOIN public.t_dataset_files df ON (((df.dataset_id = ds.dataset_id) AND (df.file_size_rank = 1))));
 

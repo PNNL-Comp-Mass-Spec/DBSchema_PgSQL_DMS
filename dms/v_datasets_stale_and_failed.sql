@@ -104,7 +104,7 @@ CREATE VIEW public.v_datasets_stale_and_failed AS
             ((spath.vol_name_client)::text || (spath.storage_path)::text) AS storage_path
            FROM ((((((public.t_dataset_archive da
              JOIN public.t_dataset_archive_state_name dasn ON ((da.archive_state_id = dasn.archive_state_id)))
-             JOIN public.t_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
+             JOIN public.t_dataset_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
              JOIN public.t_dataset ds ON ((da.dataset_id = ds.dataset_id)))
              JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
              JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))

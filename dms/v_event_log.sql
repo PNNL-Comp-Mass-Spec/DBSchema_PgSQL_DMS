@@ -67,7 +67,7 @@ CREATE VIEW public.v_event_log AS
    FROM ((((((((public.t_event_log el
      LEFT JOIN public.t_dataset_rating_name dsrn ON (((el.target_state = dsrn.dataset_rating_id) AND (el.target_type = 8))))
      LEFT JOIN public.t_dataset_state_name dssn ON (((el.target_state = dssn.dataset_state_id) AND (el.target_type = 4))))
-     LEFT JOIN public.t_archive_update_state_name ausn ON (((el.target_state = ausn.archive_update_state_id) AND (el.target_type = 7))))
+     LEFT JOIN public.t_dataset_archive_update_state_name ausn ON (((el.target_state = ausn.archive_update_state_id) AND (el.target_type = 7))))
      LEFT JOIN public.t_dataset_archive_state_name dasn ON (((el.target_state = dasn.archive_state_id) AND (el.target_type = 6))))
      LEFT JOIN public.t_analysis_job_state ajsn ON (((el.target_state = ajsn.job_state_id) AND (el.target_type = 5))))
      LEFT JOIN public.t_data_release_restrictions drr ON (((el.target_state = drr.release_restriction_id) AND (el.target_type = 10))))

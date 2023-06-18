@@ -12,8 +12,8 @@ CREATE VIEW public.v_event_log_archive_list_2 AS
     el.entered AS date
    FROM (((public.t_event_log el
      JOIN public.t_dataset ON ((el.target_id = t_dataset.dataset_id)))
-     JOIN public.t_archive_update_state_name newstate ON ((el.target_state = newstate.archive_update_state_id)))
-     JOIN public.t_archive_update_state_name oldstate ON ((el.prev_target_state = oldstate.archive_update_state_id)))
+     JOIN public.t_dataset_archive_update_state_name newstate ON ((el.target_state = newstate.archive_update_state_id)))
+     JOIN public.t_dataset_archive_update_state_name oldstate ON ((el.prev_target_state = oldstate.archive_update_state_id)))
   WHERE ((el.target_type = 7) AND (el.entered >= (CURRENT_TIMESTAMP - '4 days'::interval)))
 UNION
  SELECT el.event_id,

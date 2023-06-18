@@ -20,7 +20,7 @@ UNION
     da.archive_state_last_affected AS state_date
    FROM ((((public.t_dataset_archive da
      JOIN public.t_dataset_archive_state_name dasn ON ((da.archive_state_id = dasn.archive_state_id)))
-     JOIN public.t_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
+     JOIN public.t_dataset_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
      JOIN public.t_dataset ds ON ((da.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name ON ((ds.instrument_id = t_instrument_name.instrument_id)))
   WHERE ((da.archive_state_last_affected >= (CURRENT_TIMESTAMP - '14 days'::interval)) AND (da.archive_state_id = ANY (ARRAY[2, 6, 8, 13])))
@@ -32,7 +32,7 @@ UNION
     da.archive_update_state_last_affected AS state_date
    FROM ((((public.t_dataset_archive da
      JOIN public.t_dataset_archive_state_name dasn ON ((da.archive_state_id = dasn.archive_state_id)))
-     JOIN public.t_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
+     JOIN public.t_dataset_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
      JOIN public.t_dataset ds ON ((da.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name ON ((ds.instrument_id = t_instrument_name.instrument_id)))
   WHERE ((da.archive_update_state_last_affected >= (CURRENT_TIMESTAMP - '14 days'::interval)) AND (da.archive_update_state_id = ANY (ARRAY[3, 5])));

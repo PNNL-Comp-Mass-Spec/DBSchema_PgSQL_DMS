@@ -8,7 +8,7 @@ CREATE VIEW public.v_archive_list_report AS
     instname.instrument,
     ds.created,
     dasn.archive_state AS state,
-    aus.archive_update_state AS update,
+    ausn.archive_update_state AS update,
     da.archive_date AS entered,
     da.last_update,
     da.last_verify,
@@ -20,7 +20,7 @@ CREATE VIEW public.v_archive_list_report AS
      JOIN public.t_dataset_archive_state_name dasn ON ((da.archive_state_id = dasn.archive_state_id)))
      JOIN public.t_archive_path apath ON ((da.storage_path_id = apath.archive_path_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
-     JOIN public.t_archive_update_state_name aus ON ((da.archive_update_state_id = aus.archive_update_state_id)));
+     JOIN public.t_dataset_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)));
 
 
 ALTER TABLE public.v_archive_list_report OWNER TO d3l243;

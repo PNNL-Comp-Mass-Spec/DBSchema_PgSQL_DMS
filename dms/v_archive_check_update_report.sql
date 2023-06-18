@@ -20,7 +20,7 @@ CREATE VIEW public.v_archive_check_update_report AS
      JOIN public.t_dataset_archive_state_name dasn ON ((da.archive_state_id = dasn.archive_state_id)))
      JOIN public.t_archive_path ap ON ((da.storage_path_id = ap.archive_path_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
-     JOIN public.t_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
+     JOIN public.t_dataset_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)))
      JOIN public.t_storage_path sp ON ((ds.storage_path_id = sp.storage_path_id)))
   WHERE (NOT (da.archive_update_state_id = ANY (ARRAY[4, 6])));
 
