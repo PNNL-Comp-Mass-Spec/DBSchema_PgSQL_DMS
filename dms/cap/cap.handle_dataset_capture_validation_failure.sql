@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure
-(
-    _datasetNameOrID text,
-    _comment text = 'Bad .raw file',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: handle_dataset_capture_validation_failure(text, text, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure(IN _datasetnameorid text, IN _comment text DEFAULT 'Bad .raw file'::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -17,7 +13,7 @@ AS $$
 **      (.Raw file too small, expected files missing, etc).
 **
 **      The procedure changes the capture task job state to 101
-**      then calls public.handle_dataset_capture_validation_failure()
+**      then calls public.handle_dataset_capture_validation_failure_update_dataset_tables()
 **
 **  Auth:   mem
 **  Date:   04/28/2011
@@ -27,7 +23,7 @@ AS $$
 **          08/10/2018 mem - Call update_dms_file_info_xml to push the dataset info into public.t_dataset_info
 **          11/02/2020 mem - Fix bug validating the dataset name
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          06/16/2023 mem - Ported to PostgreSQL
+**          06/17/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -50,6 +46,8 @@ BEGIN
         _comment := 'Bad dataset';
     End If;
 
+    RAISE INFO '';
+
     _datasetID := Coalesce(public.try_cast(_datasetNameOrID, 0), 0);
 
     If _datasetID <> 0 Then
@@ -64,7 +62,7 @@ BEGIN
               Script IN ('DatasetCapture', 'IMSDatasetCapture');
 
         If Not FOUND Then
-            _message := format('Dataset ID not found: %s', _datasetNameOrID);
+            _message := format('Dataset ID not found in cap.t_tasks: %s', _datasetNameOrID);
             _returnCode := 'U5201';
 
             RAISE INFO '%', _message;
@@ -85,7 +83,7 @@ BEGIN
               Script IN ('DatasetCapture', 'IMSDatasetCapture');
 
         If Not FOUND Then
-            _message := format('Dataset not found: %s', _datasetNameOrID);
+            _message := format('Dataset not found in cap.t_tasks: %s', _datasetNameOrID);
             _returnCode := 'U5202';
 
             RAISE INFO '%', _message;
@@ -93,27 +91,25 @@ BEGIN
         End If;
     End If;
 
-    If _returnCode = '' Then
-        -- Make sure the DatasetCapture task has failed
-        SELECT Job
-        INTO _captureJob
-        FROM cap.t_tasks
-        WHERE Dataset_ID = _datasetID AND
-              Script IN ('DatasetCapture', 'IMSDatasetCapture') AND
-              State = 5;
+    -- Make sure the DatasetCapture task has failed
+    SELECT Job
+    INTO _captureJob
+    FROM cap.t_tasks
+    WHERE Dataset_ID = _datasetID AND
+          Script IN ('DatasetCapture', 'IMSDatasetCapture') AND
+          State = 5;
 
-        If Not FOUND Then
-            _message := format('DatasetCapture task for dataset %s is not in State 5; unable to continue', _datasetName);
-            _returnCode := 'U5203';
+    If Not FOUND Then
+        _message := format('DatasetCapture task for dataset %s is not in state 5; unable to continue', _datasetName);
+        _returnCode := 'U5203';
 
-            RAISE INFO '%', _message;
-            RETURN;
-        End If;
+        RAISE INFO '%', _message;
+        RETURN;
     End If;
 
     If _infoOnly Then
 
-        _message := format('Mark dataset %s As bad: %s', _datasetName, _comment);
+        _message := format('Mark dataset as bad: %s (%s)', _comment, _datasetName);
         RAISE INFO '%', _message;
 
         SELECT format('Capture Task Job %s, Dataset_ID %s, Instrument %s, Imported %s',
@@ -133,7 +129,11 @@ BEGIN
 
     -- Call update_dms_file_info_xml to push the dataset info into public.t_dataset_info
     -- If a duplicate dataset is found, _returnCode will be 'U5360'
-    CALL cap.update_dms_file_info_xml (_datasetID, _deleteFromTableOnSuccess => 1, _message => _message, _returnCode => _returnCode);
+    CALL cap.update_dms_file_info_xml (
+                _datasetID,
+                _deleteFromTableOnSuccess => true,
+                _message => _message,
+                _returnCode => _returnCode);
 
     If _returnCode = 'U5360' Then
         -- Use special completion code of 101
@@ -161,15 +161,27 @@ BEGIN
         _returnCode := 'U5204';
         RAISE INFO '%', _message;
     Else
-        -- Mark the dataset as bad in public.t_dataset
-        CALL public.handle_dataset_capture_validation_failure (_datasetID, _comment, _infoOnly, _message => _message, _returnCode => _returnCode);
-
-        _message := format('Marked dataset As bad: %s', _datasetName);
+        _message := format('Marked dataset as bad in cap.t_tasks: %s', _datasetName);
         RAISE INFO '%', _message;
 
+        -- Mark the dataset as bad in public.t_dataset, then add the dataset to public.t_dataset_archive
+        CALL public.handle_dataset_capture_validation_failure_update_dataset_tables (
+                        _datasetID::text,
+                        _comment,
+                        _infoOnly,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode);    -- Output
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE cap.handle_dataset_capture_validation_failure IS 'HandleDatasetCaptureValidationFailure';
+
+ALTER PROCEDURE cap.handle_dataset_capture_validation_failure(IN _datasetnameorid text, IN _comment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE handle_dataset_capture_validation_failure(IN _datasetnameorid text, IN _comment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.handle_dataset_capture_validation_failure(IN _datasetnameorid text, IN _comment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'HandleDatasetCaptureValidationFailure';
+
