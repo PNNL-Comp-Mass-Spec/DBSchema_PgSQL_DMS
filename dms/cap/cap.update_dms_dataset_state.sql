@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.update_dms_dataset_state
-(
-    _job int,
-    _datasetName citext,
-    _datasetID int,
-    _script citext,
-    _storageServerName citext,
-    _newJobStateInBroker int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_dms_dataset_state(integer, public.citext, integer, public.citext, public.citext, integer, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.update_dms_dataset_state(IN _job integer, IN _datasetname public.citext, IN _datasetid integer, IN _script public.citext, IN _storageservername public.citext, IN _newjobstateinbroker integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -35,7 +28,7 @@ AS $$
 **          06/13/2018 mem - Check for error code 53600 (aka 'U5360') returned by update_dms_file_info_xml to indicate a duplicate dataset
 **          08/09/2018 mem - Set the capture task job state to 14 when the error code is 'U5360'
 **          08/17/2021 mem - Remove extra information from Completion messages with warning "Over 10% of the MS/MS spectra have a minimum m/z value larger than the required minimum; reporter ion peaks likely could not be detected"
-**          06/16/2023 mem - Ported to PostgreSQL
+**          06/17/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -50,9 +43,13 @@ BEGIN
     ---------------------------------------------------
 
     If _script = 'DatasetCapture' OR _script = 'IMSDatasetCapture' Then
-        If _newJobStateInBroker in (2, 3, 5) Then
+        If _newJobStateInBroker In (2, 3, 5) Then
              -- Always call in case capture task job completes too quickly for normal update cycle
-            CALL public.set_capture_task_busy (_datasetName, '(broker)', _message => _message);
+            CALL public.set_capture_task_busy (
+                            _datasetName,
+                            _machinename => '(broker)',
+                            _message => _message,
+                            _returnCode => _returnCode);
         End If;
 
         If _newJobStateInBroker = 3 Then
@@ -63,7 +60,11 @@ BEGIN
             -- If a duplicate dataset is found, _returnCode will be 'U5360'
             ---------------------------------------------------
 
-            CALL cap.update_dms_file_info_xml (_datasetID, _deleteFromTableOnSuccess => true, _message => _message, _returnCode => _returnCode);
+            CALL cap.update_dms_file_info_xml (
+                            _datasetID,
+                            _deleteFromTableOnSuccess => true,
+                            _message => _message,
+                            _returnCode => _returnCode);
 
             If _returnCode = 'U5360' Then
                 -- Use special completion code of 101
@@ -99,17 +100,21 @@ BEGIN
             -- First check the Evaluation_Message column
             SELECT TS.Evaluation_Message
             INTO _failureMessage
-            FROM cap.t_task_steps TS inner join
-                 cap.t_tasks T ON TS.Job = T.Job
-            WHERE (TS.Job = _job) AND Coalesce(TS.Evaluation_Message, '') <> '';
+            FROM cap.t_task_steps TS
+                 INNER JOIN cap.t_tasks T
+                   ON TS.Job = T.Job
+            WHERE TS.Job = _job AND
+                  Coalesce(TS.Evaluation_Message, '') <> '';
 
             If Coalesce(_failureMessage, '') = '' Then
                 -- Next check the Completion_Message column
                 SELECT TS.Completion_Message
                 INTO _failureMessage
-                FROM cap.t_task_steps TS inner join
-                     cap.t_tasks T ON TS.Job = T.Job
-                WHERE TS.Job = _job AND Coalesce(TS.Completion_Message, '') <> '';
+                FROM cap.t_task_steps TS
+                     INNER JOIN cap.t_tasks T
+                       ON TS.Job = T.Job
+                WHERE TS.Job = _job AND
+                      Coalesce(TS.Completion_Message, '') <> '';
 
                 -- Auto remove "; To ignore this error, use Exec Add_Update_Job_Parameter"  or
                 --             "; To ignore this error, use Exec add_update_task_parameter" or
@@ -136,17 +141,29 @@ BEGIN
     ---------------------------------------------------
 
     If _script = 'DatasetArchive' Then
-        If _newJobStateInBroker in (2, 3, 5) Then
+        If _newJobStateInBroker In (2, 3, 5) Then
             -- Always call in case capture task job completes too quickly for normal update cycle
-            CALL public.set_archive_task_busy (_datasetName, _storageServerName, _message => _message);
+            CALL public.set_archive_task_busy (
+                            _datasetName,
+                            _storageServerName,
+                            _message => _message,
+                            _returnCode => _returnCode);
         End If;
 
         If _newJobStateInBroker = 3 Then
-            CALL public.set_archive_task_complete (_datasetName, 100, _message => _message); -- using special completion code of 100
+            CALL public.set_archive_task_complete (
+                            _datasetName,
+                            _completionCode => 100,           -- Use special completion code of 100
+                            _message => _message,
+                            _returnCode => _returnCode);
         End If;
 
         If _newJobStateInBroker = 5 Then
-            CALL public.set_archive_task_complete (_datasetName, 1, _message => _message);
+            CALL public.set_archive_task_complete (
+                            _datasetName,
+                            _completionCode => 1,
+                            _message => _message,
+                            _returnCode => _returnCode);
         End If;
     End If;
 
@@ -155,23 +172,41 @@ BEGIN
     ---------------------------------------------------
 
     If _script = 'ArchiveUpdate' Then
-        If _newJobStateInBroker in (2, 3, 5) Then
+        If _newJobStateInBroker In (2, 3, 5) Then
             -- Always call in case capture task job completes too quickly for normal update cycle
-            CALL public.set_archive_update_task_busy (_datasetName, _storageServerName, _message => _message);
+            CALL public.set_archive_update_task_busy (
+                            _datasetName,
+                            _storageServerName,
+                            _message => _message,
+                            _returnCode => _returnCode);
         End If;
 
         If _newJobStateInBroker = 3 Then
-            CALL public.set_archive_update_task_complete (_datasetName, 0, _message => _message);
+            CALL public.set_archive_update_task_complete (
+                            _datasetName,
+                            _completionCode => 0,
+                            _message => _message,
+                            _returnCode => _returnCode);
         End If;
 
         If _newJobStateInBroker = 5 Then
-            CALL public.set_archive_update_task_complete (_datasetName, 1, _message => _message);
+            CALL public.set_archive_update_task_complete (
+                            _datasetName,
+                            _completionCode => 1,
+                            _message => _message,
+                            _returnCode => _returnCode);
         End If;
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_dms_dataset_state IS 'UpdateDMSDatasetState';
 
+ALTER PROCEDURE cap.update_dms_dataset_state(IN _job integer, IN _datasetname public.citext, IN _datasetid integer, IN _script public.citext, IN _storageservername public.citext, IN _newjobstateinbroker integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_dms_dataset_state(IN _job integer, IN _datasetname public.citext, IN _datasetid integer, IN _script public.citext, IN _storageservername public.citext, IN _newjobstateinbroker integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.update_dms_dataset_state(IN _job integer, IN _datasetname public.citext, IN _datasetid integer, IN _script public.citext, IN _storageservername public.citext, IN _newjobstateinbroker integer, INOUT _message text, INOUT _returncode text) IS 'UpdateDMSDatasetState';
 
