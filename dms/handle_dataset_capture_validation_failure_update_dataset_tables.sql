@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.handle_dataset_capture_validation_failure
-(
-    _datasetNameOrID text,
-    _comment text = 'Bad .raw file',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: handle_dataset_capture_validation_failure_update_dataset_tables(text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.handle_dataset_capture_validation_failure_update_dataset_tables(IN _datasetnameorid text, IN _comment text DEFAULT 'Bad .raw file'::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -34,7 +30,7 @@ AS $$
 **          05/22/2017 mem - Change _comment to '' if 'Bad .raw file' yet the dataset comment contains 'Cannot convert .D to .UIMF'
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          06/16/2023 mem - Ported to PostgreSQL
+**          06/17/2023 mem - Ported to PostgreSQL, renaming from handle_dataset_capture_validation_failure to handle_dataset_capture_validation_failure_update_dataset_tables
 **
 *****************************************************/
 DECLARE
@@ -62,6 +58,8 @@ BEGIN
     ElsIf _comment = '' Then
         _comment := 'Bad dataset';
     End If;
+
+    RAISE INFO '';
 
     _datasetID := Coalesce(public.try_cast(_datasetNameOrID, null::int), 0);
 
@@ -94,7 +92,7 @@ BEGIN
         FROM t_dataset
         WHERE dataset = _datasetName::citext;
 
-        If _datasetName = '' Then
+        If Not FOUND Then
             _message := format('Dataset not found in t_dataset: %s', _datasetName);
             _returnCode := 'U5202';
             RAISE WARNING '%', _message;
@@ -102,12 +100,18 @@ BEGIN
         End If;
     End If;
 
-    If _comment::citext = 'Bad .raw file' AND _existingComment LIKE '%Cannot convert .D to .UIMF%' Then
+    If _comment::citext = 'Bad .raw file' And _existingComment ILike '%Cannot convert .D to .UIMF%' Then
         _comment := '';
     End If;
 
     If _infoOnly Then
-        RAISE INFO 'Mark dataset ID % as bad: % (%)', _datasetID, _comment, _datasetName;
+        RAISE INFO 'Mark dataset ID % as bad: % (%)',
+                        _datasetID,
+                        CASE WHEN _comment = ''
+                             THEN 'leave the comment unchanged'
+                             ELSE _comment
+                        END,
+                    _datasetName;
         RETURN;
     End If;
 
@@ -122,13 +126,15 @@ BEGIN
         _returnCode := 'U5203';
         RAISE INFO '%', _message;
     Else
-        -- Also update t_dataset_archive
-        CALL add_archive_dataset (
-                    _datasetID,
-                    _message,       -- Output
-                    _returnCode);   -- Output
+        If Not Exists (SELECT * FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
+            -- Add the dataset to t_dataset_archive
+            CALL add_archive_dataset (
+                        _datasetID,
+                        _message => _message,       -- Output
+                        _returnCode  => _returnCode);   -- Output
+        End If;
 
-        _message := format('Marked dataset As bad: %s', _datasetName);
+        _message := format('Marked dataset as bad in t_dataset: %s', _datasetName);
         RAISE INFO '%', _message;
 
     End If;
@@ -136,4 +142,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.handle_dataset_capture_validation_failure IS 'HandleDatasetCaptureValidationFailure';
+
+ALTER PROCEDURE public.handle_dataset_capture_validation_failure_update_dataset_tables(IN _datasetnameorid text, IN _comment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE handle_dataset_capture_validation_failure_update_dataset_tables(IN _datasetnameorid text, IN _comment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.handle_dataset_capture_validation_failure_update_dataset_tables(IN _datasetnameorid text, IN _comment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'HandleDatasetCaptureValidationFailure';
+
