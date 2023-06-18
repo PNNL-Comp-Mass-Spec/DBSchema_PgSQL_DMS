@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 /****************************************************
 **
 **  Desc:
-**    For a given capture task job, copies the job details, steps,
-**    and parameters to the history tables
+**      For a given capture task job, copies the job details, steps,
+**      and parameters to the history tables
 **
 **  Arguments:
 **    _job                  Capture task job number
