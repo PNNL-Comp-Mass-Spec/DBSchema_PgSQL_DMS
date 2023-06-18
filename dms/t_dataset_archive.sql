@@ -103,13 +103,6 @@ ALTER TABLE ONLY public.t_dataset_archive
     ADD CONSTRAINT fk_t_dataset_archive_t_archive_path FOREIGN KEY (storage_path_id) REFERENCES public.t_archive_path(archive_path_id);
 
 --
--- Name: t_dataset_archive fk_t_dataset_archive_t_archive_update_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
---
-
-ALTER TABLE ONLY public.t_dataset_archive
-    ADD CONSTRAINT fk_t_dataset_archive_t_archive_update_state_name FOREIGN KEY (archive_update_state_id) REFERENCES public.t_archive_update_state_name(archive_update_state_id);
-
---
 -- Name: t_dataset_archive fk_t_dataset_archive_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
@@ -122,6 +115,13 @@ ALTER TABLE ONLY public.t_dataset_archive
 
 ALTER TABLE ONLY public.t_dataset_archive
     ADD CONSTRAINT fk_t_dataset_archive_t_dataset_archive_state_name FOREIGN KEY (archive_state_id) REFERENCES public.t_dataset_archive_state_name(archive_state_id);
+
+--
+-- Name: t_dataset_archive fk_t_dataset_archive_t_dataset_archive_update_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_archive
+    ADD CONSTRAINT fk_t_dataset_archive_t_dataset_archive_update_state_name FOREIGN KEY (archive_update_state_id) REFERENCES public.t_dataset_archive_update_state_name(archive_update_state_id);
 
 --
 -- Name: t_dataset_archive fk_t_dataset_archive_t_myemsl_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

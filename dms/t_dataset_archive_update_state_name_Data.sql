@@ -17,10 +17,10 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: t_archive_update_state_name; Type: TABLE DATA; Schema: public; Owner: d3l243
+-- Data for Name: t_dataset_archive_update_state_name; Type: TABLE DATA; Schema: public; Owner: d3l243
 --
 
-COPY public.t_archive_update_state_name (archive_update_state_id, archive_update_state) FROM stdin;
+COPY public.t_dataset_archive_update_state_name (archive_update_state_id, archive_update_state) FROM stdin;
 0	(none)
 1	New
 2	Update Required
