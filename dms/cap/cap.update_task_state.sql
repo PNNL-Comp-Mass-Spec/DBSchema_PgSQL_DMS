@@ -1,21 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE cap.update_task_state
-(
-    _bypassDMS boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _maxJobsToProcess int = 0,
-    _loopingUpdateInterval int = 5,
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_task_state(boolean, text, text, integer, integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Based on step state, look for capture task jobs that have been completed,
-**      or have entered the 'in progress' state,
-**      and update state of capture task job locally and dataset in public.t_dataset accordingly
+**      Based on step state, look for capture task jobs that have been completed, or have entered the 'in progress' state.
+**      For each, update state of capture task job locally and dataset in public.t_dataset accordingly
 **
 **      First step:
 **        Evaluate state of steps for capture task jobs that are in new or busy state,
@@ -68,7 +62,8 @@ AS $$
 **          06/13/2018 mem - Add comments regarding update_dms_file_info_xml and T_Dataset_Info
 **          06/01/2020 mem - Add support for step state 13 (Inactive)
 **          06/13/2023 mem - No longer call update_dms_prep_state
-**          06/16/2023 mem - Ported to PostgreSQL
+**          06/17/2023 mem - Update if statement to remove conditions that are always true
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -86,7 +81,7 @@ DECLARE
     _lastLogTime timestamp;
     _statusMessage text;
 
-    _formatSpecifier text := '%-10s %-10s %-10s %-20s %-10s %-20s %-20s %-50s';
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
     _infoData text;
@@ -160,44 +155,43 @@ BEGIN
         -- Look at the state of steps for active or failed capture task jobs
         -- and determine what the new state of each capture task job should be
         SELECT
-          T.Job,
-          T.Dataset_ID,
-          T.State As OldState,
-          T.Results_Folder_Name,
-          T.Storage_Server,
-          CASE
-              WHEN JS_Stats.Failed > 0 THEN 5                     -- New capture task job state: Failed
-              WHEN JS_Stats.FinishedOrSkipped = Total THEN 3      -- New capture task job state: Complete
-              WHEN JS_Stats.StartedFinishedOrSkipped > 0 THEN 2   -- New capture task job state: In Progress
-              ELSE T.State
-          END AS NewState,
-          T.Dataset,
-          T.Script
+            T.Job,
+            T.Dataset_ID,
+            T.State As OldState,
+            T.Results_Folder_Name,
+            T.Storage_Server,
+            CASE
+                WHEN JS_Stats.Failed > 0 THEN 5                     -- New capture task job state: Failed
+                WHEN JS_Stats.FinishedOrSkipped = Total THEN 3      -- New capture task job state: Complete
+                WHEN JS_Stats.StartedFinishedOrSkipped > 0 THEN 2   -- New capture task job state: In Progress
+                ELSE T.State
+            END AS NewState,
+            T.Dataset,
+            T.Script
         FROM
-          (
-            -- Count the number of steps for each capture task job
-            -- that are in the busy, finished, or failed states
-            -- (for capture task jobs that are in new, in progress, or resuming state)
-            SELECT
-                TS.Job,
-                COUNT(*) AS Total,
-                SUM(CASE
-                    WHEN TS.State IN (3, 4, 5, 13) THEN 1
-                    ELSE 0
-                    END) AS StartedFinishedOrSkipped,
-                SUM(CASE
-                    WHEN TS.State IN (6) THEN 1
-                    ELSE 0
-                    END) AS Failed,
-                SUM(CASE
-                    WHEN TS.State IN (3, 5, 13) THEN 1
-                    ELSE 0
-                    END) AS FinishedOrSkipped
-            FROM cap.t_task_steps TS
-                 INNER JOIN cap.t_tasks T
-                   ON TS.Job = T.Job
-            WHERE T.State IN (1,2,5,20)     -- Current capture task job state: New, in progress, failed, or resuming
-            GROUP BY TS.Job, T.State
+           (   -- Count the number of steps for each capture task job
+               -- that are in the busy, finished, or failed states
+               -- (for capture task jobs that are in new, in progress, or resuming state)
+               SELECT
+                   TS.Job,
+                   COUNT(*) AS Total,
+                   SUM(CASE
+                       WHEN TS.State IN (3, 4, 5, 13) THEN 1       -- Skipped, Running, Completed, or Inactive
+                       ELSE 0
+                       END) AS StartedFinishedOrSkipped,
+                   SUM(CASE
+                       WHEN TS.State IN (6) THEN 1                 -- Failed
+                       ELSE 0
+                       END) AS Failed,
+                   SUM(CASE
+                       WHEN TS.State IN (3, 5, 13) THEN 1          -- Skipped, Completed, or Inactive
+                       ELSE 0
+                       END) AS FinishedOrSkipped
+               FROM cap.t_task_steps TS
+                    INNER JOIN cap.t_tasks T
+                      ON TS.Job = T.Job
+               WHERE T.State IN (1, 2, 5, 20)     -- Current capture task job state: New, In Progress, Failed, or Resuming
+               GROUP BY TS.Job, T.State
            ) AS JS_Stats
            INNER JOIN cap.t_tasks AS T
              ON JS_Stats.Job = T.Job
@@ -238,8 +232,8 @@ BEGIN
          LEFT OUTER JOIN Tmp_ChangedJobs TargetTable
            ON T.Job = TargetTable.Job
     WHERE TargetTable.Job Is Null AND
-          ( (T.Script = 'DatasetArchive' AND T.State = 2 AND DAS.State_ID = 6) OR
-            (T.Script = 'ArchiveUpdate'  AND T.State = 2 AND DAS.Update_state_ID = 5) );
+          ( (T.Script = 'DatasetArchive' AND T.State = 2 AND DAS.Archive_State_ID = 6) OR
+            (T.Script = 'ArchiveUpdate'  AND T.State = 2 AND DAS.Archive_Update_State_ID = 5) );
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -406,18 +400,15 @@ BEGIN
             ---------------------------------------------------
 
             UPDATE cap.t_tasks
-            Set
-                State = _jobInfo.NewState,
-                Start =
-                    CASE
-                    WHEN _jobInfo.NewState >= 2 THEN Coalesce(_startMin, CURRENT_TIMESTAMP)  -- Capture task job state is 2 or higher
-                    ELSE Start
-                    END,
-                Finish =
-                    CASE
-                    WHEN _jobInfo.NewState IN (3, 5) THEN _finishMax                         -- Capture task job state is 3=Complete or 5=Failed
-                    ELSE Finish
-                    END
+            SET State  = _jobInfo.NewState,
+                Start  = CASE WHEN _jobInfo.NewState >= 2
+                              THEN Coalesce(_startMin, CURRENT_TIMESTAMP)   -- Capture task job state is 2 or higher
+                              ELSE Start
+                         END,
+                Finish = CASE WHEN _jobInfo.NewState IN (3, 5)
+                              THEN _finishMax                               -- Capture task job state is 3=Complete or 5=Failed
+                              ELSE Finish
+                         END
             WHERE Job = _jobInfo.Job;
         End If;
 
@@ -427,7 +418,7 @@ BEGIN
         -- If a duplicate dataset is found, update_dms_dataset_state will change this capture task job's state to 14 in t_tasks
         ---------------------------------------------------
 
-        If Not _bypassDMS AND _jobInfo.Dataset_ID <> 0 Then
+        If Not _bypassDMS And _jobInfo.Dataset_ID <> 0 Then
 
             If _infoOnly Then
                 RAISE INFO 'Call update_dms_dataset_state Job=%, NewJobStater=%', _jobInfo.Job, _jobInfo.NewState;
@@ -450,7 +441,7 @@ BEGIN
 
         -- Deprecated in June 2023 since update_dms_prep_state only applies to script 'HPLCSequenceCapture', which was never implemented
         --
-        -- If Not _bypassDMS AND _jobInfo.DatasetID = 0 Then
+        -- If Not _bypassDMS And _jobInfo.DatasetID = 0 Then
         --     If _infoOnly Then
         --         RAISE INFO 'Call update_dms_prep_state Job=%, NewJobState=%', _jobInfo.Job, _jobInfo.NewState;
         --     Else
@@ -471,9 +462,7 @@ BEGIN
         -- Save capture task job in the history tables
         ---------------------------------------------------
 
-        If _jobInfo.NewState IN (3, 5) AND
-           Not (_jobInfo.OldState = 2 And _jobInfo.NewState = 2) AND
-           Not (_jobInfo.OldState = 5 And _jobInfo.NewState = 2) THEN
+        If _jobInfo.NewState In (3, 5) Then
 
             If _infoOnly Then
                 RAISE INFO 'Call copy_task_to_history Job=%, NewState=%', _jobInfo.Job, _jobInfo.NewState;
@@ -504,6 +493,8 @@ BEGIN
 
         RAISE INFO ' ';
 
+        _formatSpecifier := '%-9s %-9s %-9s %-20s %-10s %-20s %-20s %-80s';
+
         _infoHead := format(_formatSpecifier,
                             'Job',
                             'Old_State',
@@ -516,14 +507,14 @@ BEGIN
                         );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '----------',
-                                     '----------',
-                                     '----------',
+                                     '---------',
+                                     '---------',
+                                     '---------',
                                      '--------------------',
                                      '----------',
                                      '--------------------',
                                      '--------------------',
-                                     '--------------------------------------------------'
+                                     '--------------------------------------------------------------------------------'
                         );
 
         RAISE INFO '%', _infoHead;
@@ -562,5 +553,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_task_state IS 'UpdateTaskState Or UpdateJobState';
+
+ALTER PROCEDURE cap.update_task_state(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_task_state(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.update_task_state(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean) IS 'UpdateTaskState Or UpdateJobState';
 
