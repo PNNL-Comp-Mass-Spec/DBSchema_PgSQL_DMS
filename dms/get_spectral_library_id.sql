@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          06/19/2023 mem - Set _organismDbFile to 'na' when _proteinCollectionList is defined; otherwise, set _proteinCollectionList to 'na' when _organismDbFile is defined
+**                         - Set _returnCode to 'U5225' if an existing spectral library is not found, and _allowAddNew is false
 **
 *****************************************************/
 DECLARE
@@ -350,7 +351,6 @@ BEGIN
                     If _infoOnly Then
                         _message := format('Found existing spectral library ID %s with state 1; would associate source job %s with the creation of spectra library %s',
                                             _libraryId, _dmsSourceJob, _libraryName);
-
                         RETURN;
                     End If;
 
@@ -478,6 +478,10 @@ BEGIN
         If Not _allowAddNew Then
             _message := format('Spectral library not found, and _allowAddNew is false; not creating %s', _libraryName);
             RAISE INFO '%', _message;
+
+            -- The analysis manager looks for return code 'U5225' in class AnalysisResourcesDiaNN
+            _returnCode := 'U5225';
+
             RETURN;
         End If;
 
