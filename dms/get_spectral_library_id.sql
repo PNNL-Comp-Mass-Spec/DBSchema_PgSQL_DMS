@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          05/30/2023 mem - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          06/19/2023 mem - Set _organismDbFile to 'na' when _proteinCollectionList is defined; otherwise, set _proteinCollectionList to 'na' when _organismDbFile is defined
 **
 *****************************************************/
 DECLARE
@@ -172,6 +173,10 @@ BEGIN
         ---------------------------------------------------
 
         If public.validate_na_parameter(_proteinCollectionList, 1) <> 'na' Then
+
+            -- Always set _organismDbFile to 'na' when a protein collection list is defined
+            _organismDbFile := 'na';
+
             _defaultLibraryName := _proteinCollectionList;
 
             -- Lookup the organism associated with the first protein collection in the list
@@ -198,6 +203,10 @@ BEGIN
             End If;
 
         ElsIf public.validate_na_parameter(_organismDbFile, 1) <> 'na' Then
+
+            -- Always set _proteinCollectionList to 'na' when an organism DB file is defined
+            _proteinCollectionList := 'na';
+
             _defaultLibraryName := _organismDbFile;
 
             -- Remove the extension (which should be .fasta)
