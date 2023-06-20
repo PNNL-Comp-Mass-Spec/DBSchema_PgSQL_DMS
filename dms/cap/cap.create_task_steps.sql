@@ -222,9 +222,9 @@ BEGIN
                 VDD.Instrument_Class,
                 VDD.Max_Simultaneous_Captures,
                 VDD.Capture_Subfolder As Capture_Subdirectory
-            FROM
-                cap.t_tasks TJ
-                INNER JOIN cap.V_DMS_Get_Dataset_Definition AS VDD ON TJ.Dataset_ID = VDD.Dataset_ID
+            FROM cap.t_tasks TJ
+                 INNER JOIN cap.V_DMS_Get_Dataset_Definition AS VDD
+                   ON TJ.Dataset_ID = VDD.Dataset_ID
             WHERE TJ.State = 0
             LIMIT _maxJobsToAdd;
             --

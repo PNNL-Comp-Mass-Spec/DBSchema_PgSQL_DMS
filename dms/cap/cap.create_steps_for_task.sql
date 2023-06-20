@@ -51,7 +51,7 @@ BEGIN
     SELECT string_agg(XmlQ.tool, ', ' ORDER BY XmlQ.tool)
     INTO _missingTools
     FROM ( SELECT xmltable.tool
-           FROM ( SELECT _scriptXML As ScriptXML ) Src,
+           FROM ( SELECT _scriptXML AS ScriptXML ) Src,
                 XMLTABLE('//JobScript/Step'
                          PASSING Src.ScriptXML
                          COLUMNS step int PATH '@Number',
@@ -94,7 +94,7 @@ BEGIN
            T.number_of_retries
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _scriptXML As ScriptXML ) Src,
+        FROM ( SELECT _scriptXML AS ScriptXML ) Src,
              XMLTABLE('//JobScript/Step'
                       PASSING Src.ScriptXML
                       COLUMNS step int PATH '@Number',
@@ -127,7 +127,7 @@ BEGIN
         _job AS Job
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _scriptXML As ScriptXML ) Src,
+        FROM ( SELECT _scriptXML AS ScriptXML ) Src,
              XMLTABLE('//JobScript/Step/Depends_On'
                       PASSING Src.ScriptXML
                       COLUMNS step int PATH '../@Number',
