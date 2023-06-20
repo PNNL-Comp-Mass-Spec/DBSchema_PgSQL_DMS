@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scrip
 **          04/02/2023 mem - Rename procedure and functions
 **          05/23/2023 mem - Use format() for string concatenation
 **          06/07/2023 mem - Add Order By to string_agg()
+**          06/19/2023 mem - Fix table alias typo
 **
 *****************************************************/
 DECLARE
@@ -90,8 +91,8 @@ BEGIN
            1 AS State,
            _resultsDirectoryName,
            XmlQ.special_instructions,
-           T.holdoff_interval_minutes,
-           T.number_of_retries
+           ST.holdoff_interval_minutes,
+           ST.number_of_retries
     FROM (
         SELECT xmltable.*
         FROM ( SELECT _scriptXML AS ScriptXML ) Src,
