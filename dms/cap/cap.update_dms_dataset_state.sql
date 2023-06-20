@@ -76,9 +76,9 @@ BEGIN
                                 _failureMessage => _message);
 
                 -- Fail out the capture task job with state 14 (Failed, Ignore Job Step States)
-                Update cap.t_tasks
-                Set State = 14
-                Where Job = _job;
+                UPDATE cap.t_tasks
+                SET State = 14
+                WHERE Job = _job;
             Else
                 -- Use special completion code of 100
                 CALL public.set_capture_task_complete (
