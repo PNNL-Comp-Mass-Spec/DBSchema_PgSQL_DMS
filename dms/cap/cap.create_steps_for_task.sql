@@ -13,6 +13,14 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scrip
 **        Tmp_Job_Steps
 **        Tmp_Job_Step_Dependencies
 **
+**  Arguments:
+**    _job                      Capture task job number
+**    _scriptXML                Capture task script XML
+**    _resultsdirectoryname     Results directory name
+**    _message                  Output: status message
+**    _returnCode               Output: return code
+**    _debugmode                When true, show additional messages
+**
 **  Auth:   grk
 **  Date:   09/05/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          05/25/2011 mem - Removed _priority parameter and removed priority column from t_task_steps

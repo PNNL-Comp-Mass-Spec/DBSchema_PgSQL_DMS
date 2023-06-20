@@ -13,6 +13,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **      as defined by the script for that job
 **
 **  Arguments:
+**    _message                 Output: status message
 **    _debugMode               When setting this to true, you can optionally specify a capture task job using _existingJob to view the steps that would be created for that job
 **    _mode                    Processing mode; the only supported mode for capture task jobs is 'CreateFromImportedJobs'
 **    _existingJob             Only used if _debugMode is true

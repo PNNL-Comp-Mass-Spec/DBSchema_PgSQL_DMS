@@ -18,6 +18,8 @@ AS $$
 **      Creates a new archive update task for the specified dataset and results directory
 **
 **  Arguments:
+**    _datasetName                  Dataset name
+**    _resultsdirectoryname         Results directory name
 **    _allowBlankResultsDirectory   Set to 1 if you need to update the dataset file; the downside is that the archive update will involve a byte-to-byte comparison of all data in both the dataset directory and all subdirectories
 **    _pushDatasetToMyEMSL          Set to 1 to push the dataset to MyEMSL instead of updating the data at \\aurora.emsl.pnl.gov\archive\dmsarch
 **    _pushDatasetRecursive         Set to 1 to recursively push a directory and all subdirectories into MyEMSL

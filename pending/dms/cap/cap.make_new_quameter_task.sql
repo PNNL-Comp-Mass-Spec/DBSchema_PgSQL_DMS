@@ -14,7 +14,8 @@ AS $$
 **      Creates a new Quameter capture task job for the specified dataset
 **
 **  Arguments:
-**    _infoOnly   True to preview the capture task job that would be created
+**    _datasetName      Dataset name
+**    _infoOnly         True to preview the capture task job that would be created
 **
 **  Auth:   mem
 **  Date:   02/22/2013 - Initial version

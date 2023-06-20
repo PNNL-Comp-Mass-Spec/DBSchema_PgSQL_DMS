@@ -17,9 +17,10 @@ AS $$
 **      and are not already in cap.t_tasks
 **
 **  Arguments:
-**    _message                  Output message
+**    _message                  Output: status message
+**    _returnCode               Output: return code
 **    _maxJobsToProcess         Maximum number of jobs to process
-**    _logIntervalThreshold     If this procedure runs longer than this threshold, status messages will be posted to the log
+**    _logIntervalThreshold     If this procedure runs longer than this threshold, status messages will be posted to the log; if 0, enable logging immediately
 **    _loggingEnabled           Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
 **    _infoOnly                 True to preview changes that would be made
 **

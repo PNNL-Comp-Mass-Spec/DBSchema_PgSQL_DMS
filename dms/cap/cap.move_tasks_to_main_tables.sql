@@ -7,12 +7,22 @@ CREATE OR REPLACE PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, I
     AS $$
 /****************************************************
 **
-**  Desc:   Move contents of temporary tables:
-**              Tmp_Jobs
-**              Tmp_Job_Steps
-**              Tmp_Job_Step_Dependencies
-**              Tmp_Job_Parameters
-**          To main database tables
+**  Desc:
+**      Move contents of temporary tables:
+**          Tmp_Jobs
+**          Tmp_Job_Steps
+**          Tmp_Job_Step_Dependencies
+**          Tmp_Job_Parameters
+**      To main database tables
+**
+**  Arguments:
+**    _message      Output: status message
+**    _returnCode   Output: return code
+**    _debugMode    When true, store the contents of the temp tables in the following tables (auto-created if missing)
+**                    cap.t_debug_tmp_jobs
+**                    cap.t_debug_tmp_job_steps
+**                    cap.t_debug_tmp_job_step_dependencies
+**                    cap.t_debug_tmp_job_parameters
 **
 **  Auth:   grk
 **  Date:   02/06/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)

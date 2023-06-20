@@ -17,6 +17,11 @@ CREATE OR REPLACE PROCEDURE cap.finish_task_creation(IN _job integer, INOUT _mes
 **          Tmp_Job_Steps
 **          Tmp_Job_Step_Dependencies
 **
+**  Arguments:
+**    _job          Capture task job number
+**    _message      Output: status message
+**    _debugmode    When true, show additional messages
+**
 **  Auth:   grk
 **  Date:   01/31/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)
 **          03/06/2009 grk - Added code for: Special="Job_Results"

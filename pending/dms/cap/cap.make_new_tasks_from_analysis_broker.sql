@@ -20,13 +20,15 @@ AS $$
 **      Create new ArchiveUpdate tasks for recently completed analysis job broker jobs (in sw.t_jobs)
 **
 **  Arguments:
-**    _infoOnly                                      True to preview the capture task job that would be created
-**    _importWindowDays                              Default to 10 (via T_Default_SP_Params)
-**    _bypassDatasetArchive                          When true, waive the requirement that there be an existing complete dataset archive capture task job in broker; default to true (via T_Default_SP_Params)
-**    _datasetIDFilterMin                            If non-zero, will be used to filter the candidate datasets
-**    _datasetIDFilterMax                            If non-zero, will be used to filter the candidate datasets
-**    _infoOnlyShowsNewJobsOnly                      Set to true to only see new capture task jobs that would trigger new capture tasks; only used if _infoOnly is true
-**    _timeWindowToRequireExisingDatasetArchiveJob   Default to 30 days (via T_Default_SP_Params)
+**    _infoOnly                                     True to preview the capture task job that would be created
+**    _message                                      Output: status message
+**    _returnCode                                   Output: return code
+**    _importWindowDays                             Default to 10 (via T_Default_SP_Params)
+**    _bypassDatasetArchive                         When true, waive the requirement that there be an existing complete dataset archive capture task job in broker; default to true (via T_Default_SP_Params)
+**    _datasetIDFilterMin                           If non-zero, will be used to filter the candidate datasets
+**    _datasetIDFilterMax                           If non-zero, will be used to filter the candidate datasets
+**    _infoOnlyShowsNewJobsOnly                     Set to true to only see new capture task jobs that would trigger new capture tasks; only used if _infoOnly is true
+**    _timeWindowToRequireExisingDatasetArchiveJob  Default to 30 days (via T_Default_SP_Params)
 **
 **  Auth:   grk
 **  Date:   09/11/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

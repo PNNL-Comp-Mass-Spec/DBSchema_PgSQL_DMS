@@ -15,7 +15,8 @@ AS $$
 **      This would typically be used to repeat the demultiplexing of a dataset
 **
 **  Arguments:
-**    _infoOnly   True to preview the capture task job that would be created
+**    _datasetName      Dataset name
+**    _infoOnly         True to preview the capture task job that would be created
 **
 **  Auth:   mem
 **  Date:   08/29/2012 - Initial version
