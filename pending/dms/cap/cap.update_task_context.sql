@@ -131,7 +131,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
-        WHERE processing_step_name 'MakeNewJobsFromAnalysisBroker';
+        WHERE processing_step_name = 'MakeNewJobsFromAnalysisBroker';
 
         If FOUND And_result = 0 Then
             _action := 'Skipping';
@@ -149,7 +149,7 @@ BEGIN
         _currentLocation := 'Call make_new_tasks_from_analysis_broker';
 
         If _result <> 0 Then
-            CALL cap.make_new_tasks_from_analysis_broker (_infoOnly, _message => _message, _loggingEnabled => _loggingEnabled);
+            CALL cap.make_new_tasks_from_analysis_broker (_infoOnly, _message => _message, _returnCode => _returnCode);
         End If;
 
         -- Make New Jobs From DMS
@@ -505,4 +505,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_task_context IS 'UpdateContext';
+COMMENT ON PROCEDURE cap.update_task_context IS 'UpdateTaskContext or UpdateContext';

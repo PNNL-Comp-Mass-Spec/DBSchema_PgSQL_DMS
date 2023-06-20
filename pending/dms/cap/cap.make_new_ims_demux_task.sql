@@ -102,4 +102,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_ims_demux_task IS 'MakeNewIMSDemuxJob';
+COMMENT ON PROCEDURE cap.make_new_ims_demux_task IS 'MakeNewIMSDemuxTask or MakeNewIMSDemuxJob';

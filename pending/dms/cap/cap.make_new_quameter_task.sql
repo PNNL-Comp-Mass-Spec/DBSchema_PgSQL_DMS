@@ -100,4 +100,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_quameter_task IS 'MakeNewQuameterJob';
+COMMENT ON PROCEDURE cap.make_new_quameter_task IS 'MakeNewQuameterTask or MakeNewQuameterJob';

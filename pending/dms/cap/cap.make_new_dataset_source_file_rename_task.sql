@@ -107,4 +107,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_dataset_source_file_rename_task IS 'MakeNewDatasetSourceFileRenameJob';
+COMMENT ON PROCEDURE cap.make_new_dataset_source_file_rename_task IS 'MakeNewDatasetSourceFileRenameTask or MakeNewDatasetSourceFileRenameJob';

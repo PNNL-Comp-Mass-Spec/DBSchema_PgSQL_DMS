@@ -222,4 +222,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_archive_update_task IS 'MakeNewArchiveUpdateJob';
+COMMENT ON PROCEDURE cap.make_new_archive_update_task IS 'MakeNewArchiveUpdateTask or MakeNewArchiveUpdateJob';

@@ -42,4 +42,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_automatic_tasks IS 'MakeNewAutomaticJobs';
+COMMENT ON PROCEDURE cap.make_new_automatic_tasks IS 'MakeNewAutomaticTasks or MakeNewAutomaticJobs';
