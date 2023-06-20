@@ -248,7 +248,7 @@ BEGIN
 
         If _infoLevel > 0 Then
 
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _infoHead := format(_formatSpecifier,
                                 'Processor_Name',

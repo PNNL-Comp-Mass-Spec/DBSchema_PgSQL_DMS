@@ -97,7 +97,7 @@ BEGIN
             -- Preview the new info
             -----------------------------------------
 
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _formatSpecifier := '%-20s %-15s %-35s %-20s %-20s %-15s';
 

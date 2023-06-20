@@ -31,7 +31,7 @@ DECLARE
     _previewJobs record;
 BEGIN
 
-    RAISE INFO ' ';
+    RAISE INFO '';
 
     If Not Exists (
        SELECT *

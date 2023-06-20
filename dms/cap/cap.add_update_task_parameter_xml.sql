@@ -186,7 +186,7 @@ BEGIN
          ) XmlQ;
 
     If _showDebug Then
-        RAISE INFO ' ';
+        RAISE INFO '';
 
         _infoHead := format(_formatSpecifier,
                             'State',
@@ -254,7 +254,7 @@ BEGIN
 
     If _showDebug Then
 
-        RAISE INFO ' ';
+        RAISE INFO '';
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;

@@ -38,7 +38,7 @@ BEGIN
     _message := '';
 
     If _infoOnly Then
-        RAISE INFO ' ';
+        RAISE INFO '';
     End If;
 
     ---------------------------------------------------
@@ -106,7 +106,7 @@ BEGIN
         -- Preview the capture task jobs that would be deleted
         ---------------------------------------------------
 
-        RAISE INFO ' ';
+        RAISE INFO '';
 
         _infoHead := format(_formatSpecifier,
                             'HasDependencies',

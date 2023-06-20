@@ -130,7 +130,7 @@ BEGIN
         If _updateTable Then
             If _infoOnly Then
 
-                RAISE INFO ' ';
+                RAISE INFO '';
 
                 _infoHead := format(_formatSpecifier,
                                     'Posting_Time',

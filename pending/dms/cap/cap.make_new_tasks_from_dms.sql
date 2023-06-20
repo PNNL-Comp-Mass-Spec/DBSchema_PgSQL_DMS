@@ -135,7 +135,7 @@ BEGIN
             WHERE Target.Dataset_ID IS NULL;
 
         Else
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _infoHead := format(_formatSpecifier,
                                 'Script',

@@ -35,7 +35,7 @@ DECLARE
     _factorInfo record;
 BEGIN
 
-    RAISE INFO ' ';
+    RAISE INFO '';
 
     If Not Exists (
        SELECT *

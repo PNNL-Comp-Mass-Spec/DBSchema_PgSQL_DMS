@@ -103,7 +103,7 @@ BEGIN
 
         If _infoOnly Then
 
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _formatSpecifier := '%-10s %-20s %-20s %-20s %-20s %-50s %-50s';
 
@@ -271,7 +271,7 @@ BEGIN
 
         If _infoOnly Then
 
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _formatSpecifier := '%-10s %-50s';
 

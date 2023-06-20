@@ -65,7 +65,7 @@ BEGIN
     GET DIAGNOSTICS _stepCountNoDependencies = ROW_COUNT;
 
     If _debugMode Then
-        RAISE INFO ' ';
+        RAISE INFO '';
         RAISE INFO 'Job % has % % with a dependency and % % without a dependency',
                     _job,
                     _stepCountWithDependencies, public.check_plural(_stepCountWithDependencies, 'step', 'steps'),

@@ -365,7 +365,7 @@ BEGIN
             _jobParamXML := _jobParam::XML;
 
             If _debugMode Then
-                RAISE INFO ' ';
+                RAISE INFO '';
                 RAISE INFO 'JobParamXML: %', _jobParamXML;
 
                 If _logDebugMessages Then

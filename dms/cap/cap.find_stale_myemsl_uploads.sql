@@ -117,7 +117,7 @@ BEGIN
         -- Preview tasks to update
         ---------------------------------------------------
 
-        RAISE INFO ' ';
+        RAISE INFO '';
 
         _infoHead := format(_formatSpecifier,
                             'Age (days)',

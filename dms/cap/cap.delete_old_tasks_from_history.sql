@@ -123,7 +123,7 @@ BEGIN
 
     If _infoOnly Then
 
-        RAISE INFO ' ';
+        RAISE INFO '';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -197,7 +197,7 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        RAISE INFO ' ';
+        RAISE INFO '';
         _message := 'Would delete ';
     Else
         _message := 'Deleted ';

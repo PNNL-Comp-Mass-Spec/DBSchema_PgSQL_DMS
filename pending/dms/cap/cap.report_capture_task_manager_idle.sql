@@ -107,7 +107,7 @@ BEGIN
             -- Preview the running tasks
             --
 
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',

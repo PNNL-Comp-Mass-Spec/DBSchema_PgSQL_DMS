@@ -108,7 +108,7 @@ BEGIN
         If _infoOnly Then
             -- Preview steps that would be updated
 
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',

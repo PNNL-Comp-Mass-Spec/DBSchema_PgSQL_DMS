@@ -38,7 +38,7 @@ DECLARE
     _previewDependencies record;
 BEGIN
 
-    RAISE INFO ' ';
+    RAISE INFO '';
 
     If Not Exists (
        SELECT *
@@ -94,7 +94,7 @@ BEGIN
 
     -- Show contents of Tmp_Job_Step_Dependencies
     --
-    RAISE INFO ' ';
+    RAISE INFO '';
 
     _formatSpecifier := '%-10s %-10s %-20s';
 

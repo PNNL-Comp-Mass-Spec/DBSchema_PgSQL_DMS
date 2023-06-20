@@ -148,7 +148,7 @@ BEGIN
 
         If _infoOnly Then
 
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
@@ -200,7 +200,7 @@ BEGIN
 
             END LOOP;
 
-            RAISE INFO ' ';
+            RAISE INFO '';
             RAISE INFO 'call cap.reset_dependent_task_steps for %', _jobList;
 
         Else

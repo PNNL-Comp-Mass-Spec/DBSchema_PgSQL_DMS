@@ -72,7 +72,7 @@ BEGIN
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     If _debugMode Then
-        RAISE INFO ' ';
+        RAISE INFO '';
     End If;
 
     If Not _mode::citext In ('CreateFromImportedJobs') Then

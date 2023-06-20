@@ -288,7 +288,7 @@ BEGIN
             If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EmslInstrument = 'Y'::citext OR _instrumentInfo.Tracked = 1)) Then
                 If _infoOnly Then
                     RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for Instrument %', _instrument;
-                    RAISE INFO ' ';
+                    RAISE INFO '';
                 End If;
 
                 CONTINUE;

@@ -106,7 +106,7 @@ BEGIN
 
     If _infoOnly Then
 
-        RAISE INFO ' ';
+        RAISE INFO '';
 
         _infoHead := format(_formatSpecifier,
                             'Job',

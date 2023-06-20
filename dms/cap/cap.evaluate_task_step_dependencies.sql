@@ -60,7 +60,7 @@ BEGIN
     End If;
 
     If _showDebug Then
-        RAISE INFO ' ';
+        RAISE INFO '';
     End If;
 
     ---------------------------------------------------

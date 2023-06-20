@@ -491,7 +491,7 @@ BEGIN
 
     If _infoOnly Then
 
-        RAISE INFO ' ';
+        RAISE INFO '';
 
         _formatSpecifier := '%-9s %-9s %-9s %-20s %-10s %-20s %-20s %-80s';
 

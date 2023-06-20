@@ -267,7 +267,7 @@ BEGIN
 
             -- Preview the capture task jobs in Tmp_FailedJobs
 
-            RAISE INFO ' ';
+            RAISE INFO '';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
