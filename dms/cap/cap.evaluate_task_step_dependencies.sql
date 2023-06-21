@@ -12,6 +12,8 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **      and evaluate them
 **
 **  Arguments:
+**    _message                  Output: status message
+**    _returnCode               Output: return code
 **    _maxJobsToProcess         Maximum number of jobs to process (0 to process all)
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
 **    _showDebug                When true, show status messages
@@ -27,10 +29,10 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **          04/02/2023 mem - Rename procedure and functions
 **          04/27/2023 mem - Use boolean for data type name
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          06/20/2023 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
-    _startTime timestamp;
     _lastLogTime timestamp;
     _statusMessage text;
     _rowCountToProcess int;
@@ -51,7 +53,6 @@ BEGIN
 
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
-    _startTime := CURRENT_TIMESTAMP;
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
     _showDebug := Coalesce(_showDebug, false);
 
