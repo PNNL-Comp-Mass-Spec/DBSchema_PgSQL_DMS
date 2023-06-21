@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.make_new_dataset_source_file_rename_task
-(
-    _datasetName text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: make_new_dataset_source_file_rename_task(text, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.make_new_dataset_source_file_rename_task(IN _datasetname text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -20,7 +17,7 @@ AS $$
 **  Auth:   mem
 **  Date:   03/06/2012 mem - Initial version
 **          09/09/2022 mem - Fix typo in message
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -34,9 +31,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
+    _datasetName := Trim(Coalesce(_datasetName, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
-    If _datasetName Is Null Then
+    If _datasetName = '' Then
         _message := 'Dataset name not defined';
         _returnCode := 'U5201';
 
@@ -54,7 +52,7 @@ BEGIN
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _message := format('Dataset not found: %s; unable to continue', _datasetName);
+        _message := format('Dataset not found, unable to continue: %s', _datasetName);
         _returnCode := 'U5202';
 
         RAISE WARNING '%', _message;
@@ -69,11 +67,27 @@ BEGIN
     INTO _jobID
     FROM cap.t_tasks
     WHERE Script = 'SourceFileRename' AND
-          t_tasks.Dataset_ID = _datasetID AND
+          cap.t_tasks.Dataset_ID = _datasetID AND
           State < 3;
 
     If FOUND Then
-        _message := format('Existing pending SourceFileRename capture task job already exists for %s; task %s', _datasetName, _jobID);
+        _message := format('Existing pending SourceFileRename job already exists: job %s for %s', _jobID, _datasetName);
+
+        RAISE INFO '%', _message;
+        RETURN;
+    End If;
+
+    SELECT TS.Job
+    INTO _jobID
+    FROM cap.t_task_steps TS
+         INNER JOIN cap.t_tasks T
+           ON TS.Job = T.Job
+    WHERE T.Dataset_ID = _datasetID AND
+          TS.Tool = 'SourceFileRename' AND
+          TS.State IN (1, 2, 4);
+
+    If FOUND Then
+        _message := format('Existing pending SourceFileRename job step already exists: job %s for %s', _jobID, _datasetName);
 
         RAISE INFO '%', _message;
         RETURN;
@@ -107,4 +121,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_dataset_source_file_rename_task IS 'MakeNewDatasetSourceFileRenameTask or MakeNewDatasetSourceFileRenameJob';
+
+ALTER PROCEDURE cap.make_new_dataset_source_file_rename_task(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE make_new_dataset_source_file_rename_task(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.make_new_dataset_source_file_rename_task(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'MakeNewDatasetSourceFileRenameTask or MakeNewDatasetSourceFileRenameJob';
+

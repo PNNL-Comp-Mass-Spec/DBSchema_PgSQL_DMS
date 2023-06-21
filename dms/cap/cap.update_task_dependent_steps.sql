@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    INOUT _numStepsSkipped int = 0,
-    _infoOnly boolean = false,
-    _maxJobsToProcess int = 0,
-    _loopingUpdateInterval int = 5
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_task_dependent_steps(text, text, integer, boolean, integer, integer); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _numstepsskipped integer DEFAULT 0, IN _infoonly boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -17,19 +12,24 @@ AS $$
 **      and update the state of steps for which all dependencies
 **      have been satisfied
 **
-**    The updated state can be affected by conditions on
-**    conditional dependencies and by whether or not the
-**    step tool produces shared results
+**      The updated state can be affected by conditions on
+**      conditional dependencies and by whether or not the
+**      step tool produces shared results
 **
 **  Arguments:
-**    _loopingUpdateInterval   Seconds between detailed logging while looping through the dependencies
+**    _message                  Output: status message
+**    _returnCode               Output: return code
+**    _numStepsSkipped          Output: number of skipped steps
+**    _infoOnly                 True to preview changes that would be made
+**    _maxJobsToProcess         Maximum number of jobs to process
+**    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
 **
 **  Auth:   grk
 **  Date:   09/05/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          05/25/2011 mem - Now using the Priority column from t_tasks
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          03/10/2015 mem - Now updating t_task_steps.Dependencies if the dependency count listed is lower than that defined in t_task_step_dependencies
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -37,14 +37,9 @@ DECLARE
     _newState int;
 
     _stepInfo record;
-    _dataset text;
-    _datasetID int;
-    _outputFolderName text;
     _candidateStepCount int;
     _numStepsUpdated int;
-    _numCompleted int;
-    _numPending int;
-    _startTime timestamp;
+
     _lastLogTime timestamp;
     _statusMessage text;
     _rowCountToProcess int;
@@ -63,7 +58,6 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
-    _startTime := CURRENT_TIMESTAMP;
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
@@ -86,9 +80,9 @@ BEGIN
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Output_Folder_Name text NULL,
         ProcessingOrder int NULL                    -- We will populate this column after the T_Tmp_Steplist table gets populated
-    )
+    );
 
-    CREATE INDEX IX_StepList_ProcessingOrder ON T_Tmp_Steplist (ProcessingOrder, Job)
+    CREATE INDEX IX_StepList_ProcessingOrder ON T_Tmp_Steplist (ProcessingOrder, Job);
 
     ---------------------------------------------------
     -- Bump up the value for Dependencies in t_task_steps if it is too low
@@ -132,7 +126,7 @@ BEGIN
     WHERE TS.State = 1
     GROUP BY TSD.Job, TSD.Step, TS.Dependencies,
              T.Priority, TS.Tool, TS.Output_Folder_Name
-    HAVING TS.Dependencies = SUM(TSD.Evaluated)
+    HAVING TS.Dependencies = SUM(TSD.Evaluated);
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -156,7 +150,7 @@ BEGIN
          INNER JOIN cap.t_tasks T
            ON TS.Job = T.Job
     WHERE TS.State = 1 AND
-          TS.Dependencies = 0
+          TS.Dependencies = 0;
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -197,22 +191,21 @@ BEGIN
     _lastLogTime := clock_timestamp();
 
     FOR _stepInfo IN
-        SELECT
-            Job,
-            Step,
-            Tool,
-            Total,
-            Evaluated,
-            Triggered,
-            Shared,
-            Signature,
-            Output_Folder_Name,
-            ProcessingOrder
+        SELECT Job,
+               Step,
+               Tool,
+               Total,
+               Evaluated,
+               Triggered,
+               Shared,
+               Signature,
+               Output_Folder_Name,
+               ProcessingOrder
         FROM T_Tmp_Steplist
         ORDER BY ProcessingOrder
     LOOP
         If _stepInfo.Evaluated <> _stepInfo.Total Then
-            Continue;
+            CONTINUE;
         End If;
 
         ---------------------------------------------------
@@ -221,19 +214,8 @@ BEGIN
         ---------------------------------------------------
 
         ---------------------------------------------------
-        -- Get information for this capture task job
-        ---------------------------------------------------
-
-        SELECT
-            _dataset = Dataset,
-            _datasetID = Dataset_ID
-        FROM cap.t_tasks
-        WHERE Job = _stepInfo.Job;
-
-        ---------------------------------------------------
-        -- If any conditional dependencies were triggered,
-        -- new state will be 'Skipped'
-        -- otherwise, new state will be 'Enabled'
+        -- If any conditional dependencies were triggered, new state will be 'Skipped'
+        -- Otherwise, new state will be 'Enabled'
         ---------------------------------------------------
 
         If _stepInfo.Triggered = 0 Then
@@ -251,72 +233,59 @@ BEGIN
             ---------------------------------------------------
 
             If _stepInfo.Shared <> 0 Then
-            --<d>
-                --
-                -- Any standing shared results that match?
-                --
-                _numCompleted := 0;
-                _numPending := 0;
-                --
-                SELECT
-                  _numCompleted = COUNT(*)
-                FROM
-                    T_Shared_Results
-                WHERE
-                    Results_Name = _outputFolderName
-                --
-                If _numCompleted = 0 Then
-                --<h>
-                    -- how many current matching shared results steps are in which states?
-                    --
-                    SELECT
-                        _numCompleted = Coalesce(SUM(CASE WHEN State = 5 THEN 1 ELSE 0 END), 0),
-                        _numPending   = Coalesce(SUM(CASE WHEN State in (2,4) THEN 1 ELSE 0 END), 0)
-                    FROM
-                        cap.t_task_steps
-                    WHERE
-                        Output_Folder_Name = _outputFolderName AND
-                        NOT Output_Folder_Name IS NULL AND
-                        State in (2,4,5)
 
-                    If _numCompleted = 0 Then
+                -- Any standing shared results that match?
+
+                SELECT COUNT(*)
+                INTO _numCompleted
+                FROM T_Shared_Results
+                WHERE Results_Name = _outputFolderName;
+
+                If Coalesce(_numCompleted, 0) = 0 Then
+
+                    -- How many current matching shared results steps are in which states?
+                    --
+                    SELECT Coalesce(SUM(CASE WHEN State = 5 THEN 1 ELSE 0 END), 0),
+                           Coalesce(SUM(CASE WHEN State in (2,4) THEN 1 ELSE 0 END), 0)
+                    INTO _numCompleted, _numPending
+                    FROM cap.t_task_steps
+                    WHERE Output_Folder_Name = _outputFolderName AND
+                          NOT Output_Folder_Name IS NULL AND
+                          State in (2,4,5);
+
+                    If Coalesce(_numCompleted, 0) = 0 Then
                         -- Also check t_task_steps_history for completed, matching shared results steps
-                        --
+
                         -- Old, completed capture task jobs are removed from t_tasks after a set number of days, meaning it's possible
                         -- that the only record of a completed, matching shared results step will be in t_task_steps_history
 
-                        SELECT
-                            _numCompleted = COUNT(*)
-                        FROM
-                            cap.t_task_steps_history
-                        WHERE
-                            Output_Folder_Name = _outputFolderName AND
-                            NOT Output_Folder_Name IS NULL AND
-                            State = 5
+                        SELECT COUNT(*)
+                        INTO _numCompleted
+                        FROM cap.t_task_steps_history
+                        WHERE Output_Folder_Name = _outputFolderName AND
+                              NOT Output_Folder_Name IS NULL AND
+                              State = 5;
 
                     End If;
 
-                    --
                     -- If there were any completed shared results not already in
                     -- standing shared results table, make entry in shared results
-                    --
-                    If _numCompleted > 0 Then
+
+                    If Coalesce(_numCompleted, 0) > 0 Then
                         If _infoOnly Then
                             RAISE INFO ', 'Insert "%" into T_Shared_Results', _outputFolderName;
                         Else
-                            INSERT INTO T_Shared_Results;
+                            INSERT INTO T_Shared_Results (Results_Name)
+                            VALUES (_outputFolderName);
                         End If;
-                                (Results_Name)
-                            VALUES
-                                (_outputFolderName)
                     End If;
-                End If; --<h>
+                End If;
 
                 -- Skip if another step has already created the shared results
                 -- Otherwise, continue waiting if another step is making the shared results
                 --  (the other step will either succeed or fail, and then this step's action will be re-evaluated)
-                --
-                If _numCompleted > 0 Then
+
+                If Coalesce(_numCompleted, 0) > 0 Then
                     _newState := 3; -- 'Skipped'
                 Else
                     If _numPending > 0 Then
@@ -324,7 +293,7 @@ BEGIN
                     End If;
                 End If;
 
-            End If; --<d>
+            End If;
 
          */
 
@@ -333,28 +302,24 @@ BEGIN
         ---------------------------------------------------
 
         If _newState <> 1 Then
-        --<e>
-
             ---------------------------------------------------
             -- Update step state and output folder name
             -- (input folder name is passed through if step is skipped)
             ---------------------------------------------------
 
             If _infoOnly Then
-                RAISE INFO 'Update State in cap.t_task_steps for capture task job %, step %, from 1 to %', _stepInfo.Job, _stepInfo.Step, _newState;
+                RAISE INFO 'Update state in cap.t_task_steps for capture task job %, step %, from 1 to %', _stepInfo.Job, _stepInfo.Step, _newState;
             Else
                 UPDATE cap.t_task_steps
-                SET
-                    State = _newState,
+                SET State = _newState,
                     Output_Folder_Name = CASE
                                              WHEN _newState = 3 AND Coalesce(Input_Folder_Name, '') <> ''
                                              THEN Input_Folder_Name
                                              ELSE Output_Folder_Name
                                          END
-                WHERE
-                    Job = _stepInfo.Job AND
-                    Step = _stepInfo.Step
-                    And State = 1;        -- Assure that we only update steps in state 1=waiting
+                WHERE Job = _stepInfo.Job AND
+                      Step = _stepInfo.Step AND
+                      State = 1;        -- Assure that we only update steps in state 1=waiting
             End If;
 
             _numStepsUpdated := _numStepsUpdated + 1;
@@ -363,13 +328,14 @@ BEGIN
             If _newState = 3 Then
                 _numStepsSkipped := _numStepsSkipped + 1;
             End If;
-        End If; --<e>
+
+        End If;
 
         _rowsProcessed := _rowsProcessed + 1;
 
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := format('... Updating dependent steps: %s / %s', _rowsProcessed, _rowCountToProcess);
-            CALL public.post_log_entry('Progress', _statusMessage, 'Update_Task_Dependent_Steps', 'cap');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Task_Dependent_Steps', 'cap');
 
             _lastLogTime := clock_timestamp();
         End If;
@@ -381,7 +347,7 @@ BEGIN
             WHERE ProcessingOrder <= _stepInfo.ProcessingOrder;
 
             If Coalesce(_matchCount, 0) >= _maxJobsToProcess Then
-                -- Break out of the For loop
+                -- Break out of the for loop
                 EXIT;
             End If;
         End If;
@@ -398,4 +364,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_task_dependent_steps IS 'UpdateDependentSteps';
+
+ALTER PROCEDURE cap.update_task_dependent_steps(INOUT _message text, INOUT _returncode text, INOUT _numstepsskipped integer, IN _infoonly boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_task_dependent_steps(INOUT _message text, INOUT _returncode text, INOUT _numstepsskipped integer, IN _infoonly boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.update_task_dependent_steps(INOUT _message text, INOUT _returncode text, INOUT _numstepsskipped integer, IN _infoonly boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer) IS 'UpdateTaskDependentSteps or UpdateDependentSteps';
+

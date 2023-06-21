@@ -1,28 +1,20 @@
 --
-CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_dms
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _maxJobsToProcess int = 0,
-    _logIntervalThreshold int = 15,
-    _loggingEnabled boolean = false,
-    _infoOnly boolean = false,
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: make_new_tasks_from_dms(text, text, boolean, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_dms(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _loggingenabled boolean DEFAULT false, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Add dataset capture task jobs for datasets in state New in public.t_dataset
 **
 **  Arguments:
-**    _message                 Output message
-**    _maxJobsToProcess        Maximum number of jobs to process
-**    _logIntervalThreshold    If this procedure runs longer than this threshold (in seconds), status messages will be posted to the log
-**    _loggingEnabled          Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
-**    _infoOnly                True to preview changes that would be made
-**    _debugMode               True to see debug messages
+**    _message              Output: status message
+**    _returnCode           Output: return code
+**    _loggingEnabled       Set to true to enable progress logging
+**    _infoOnly             True to preview changes that would be made
 **
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -32,7 +24,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/27/2019 mem - Use get_dataset_capture_priority to determine capture capture task jobs priority using dataset name and instrument group
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -41,7 +33,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _formatSpecifier text := '%-20s %-10s %-10s %-50s';
+    _statusMessage text;
+
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
     _infoData text;
@@ -81,54 +75,35 @@ BEGIN
         ---------------------------------------------------
 
         _infoOnly := Coalesce(_infoOnly, false);
-        _debugMode := Coalesce(_debugMode, false);
-        _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
         _message := '';
 
-        If _maxJobsToProcess <= 0 Then
-            _maxJobsToAddResetOrResume := 1000000;
-        Else
-            _maxJobsToAddResetOrResume := _maxJobsToProcess;
-        End If;
-
-        _startTime := CURRENT_TIMESTAMP;
         _loggingEnabled := Coalesce(_loggingEnabled, false);
-        _logIntervalThreshold := Coalesce(_logIntervalThreshold, 15);
 
-        If _logIntervalThreshold = 0 Then
-            _loggingEnabled := true;
-        End If;
-
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Then
             _statusMessage := 'Entering make_new_tasks_from_dms';
-            CALL public.post_log_entry('Progress', _statusMessage, 'Make_New_Tasks_From_DMS', 'cap');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Make_New_Tasks_From_DMS', 'cap');
         End If;
 
         ---------------------------------------------------
         -- Add new capture task jobs
         ---------------------------------------------------
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
-            _statusMessage := 'Querying DMS';
-            CALL public.post_log_entry('Progress', _statusMessage, 'Make_New_Tasks_From_DMS', 'cap');
-        End If;
-
         If Not _infoOnly Then
 
             INSERT INTO cap.t_tasks( Script,
-                                     comment,
+                                     Comment,
                                      Dataset,
                                      Dataset_ID,
                                      Priority)
             SELECT CASE
-                       WHEN Src.IN_Group = 'IMS' THEN 'IMSDatasetCapture'
+                       WHEN Src.Instrument_Group = 'IMS' THEN 'IMSDatasetCapture'
                        ELSE 'DatasetCapture'
                    END AS Script,
                    '' AS comment,
                    Src.Dataset,
                    Src.Dataset_ID,
-                   cap.get_dataset_capture_priority(Src.Dataset, Src.IN_Group)
+                   cap.get_dataset_capture_priority(Src.Dataset, Src.Instrument_Group)
             FROM cap.V_DMS_Get_New_Datasets Src
                  LEFT OUTER JOIN cap.t_tasks Target
                    ON Src.Dataset_ID = Target.Dataset_ID
@@ -136,6 +111,8 @@ BEGIN
 
         Else
             RAISE INFO '';
+
+            _formatSpecifier := '%-20s %-10s %-8s %-80s';
 
             _infoHead := format(_formatSpecifier,
                                 'Script',
@@ -147,8 +124,8 @@ BEGIN
             _infoHeadSeparator := format(_formatSpecifier,
                                 '--------------------',
                                 '----------',
-                                '----------',
-                                '--------------------------------------------------'
+                                '--------',
+                                '--------------------------------------------------------------------------------'
                             );
 
             RAISE INFO '%', _infoHead;
@@ -156,22 +133,23 @@ BEGIN
 
             FOR _previewData IN
                 SELECT CASE
-                           WHEN Src.IN_Group = 'IMS' THEN 'IMSDatasetCapture'
+                           WHEN Src.Instrument_Group = 'IMS' THEN 'IMSDatasetCapture'
                            ELSE 'DatasetCapture'
                        END AS Script,
                        Src.Dataset_ID,
-                       cap.get_dataset_capture_priority(Src.Dataset, Src.IN_Group) As Priority
-                       Src.Dataset,
+                       cap.get_dataset_capture_priority(Src.Dataset, Src.Instrument_Group) As Priority,
+                       Src.Dataset
                 FROM cap.V_DMS_Get_New_Datasets Src
                      LEFT OUTER JOIN cap.t_tasks Target
                        ON Src.Dataset_ID = Target.Dataset_ID
                 WHERE Target.Dataset_ID IS NULL
+                ORDER BY dataset_id
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.Script,
-                                        _previewData.Dataset_ID,
-                                        _previewData.Priority,
-                                        _previewData.Dataset
+                                    _previewData.Script,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Priority,
+                                    _previewData.Dataset
                                 );
 
                 RAISE INFO '%', _infoData;
@@ -180,9 +158,9 @@ BEGIN
 
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Then
             _statusMessage := 'Exiting';
-            CALL public.post_log_entry('Progress', _statusMessage, 'Make_New_Tasks_From_DMS', 'cap');
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Make_New_Tasks_From_DMS', 'cap');
         End If;
 
     EXCEPTION
@@ -205,4 +183,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_tasks_from_dms IS 'MakeNewJobsFromDMS';
+
+ALTER PROCEDURE cap.make_new_tasks_from_dms(INOUT _message text, INOUT _returncode text, IN _loggingenabled boolean, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE make_new_tasks_from_dms(INOUT _message text, INOUT _returncode text, IN _loggingenabled boolean, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.make_new_tasks_from_dms(INOUT _message text, INOUT _returncode text, IN _loggingenabled boolean, IN _infoonly boolean) IS 'MakeNewTasksFromDMS or MakeNewJobsFromDMS';
+

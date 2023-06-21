@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.make_new_quameter_task
-(
-    _datasetName text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: make_new_quameter_task(text, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.make_new_quameter_task(IN _datasetname text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -18,8 +15,8 @@ AS $$
 **    _infoOnly         True to preview the capture task job that would be created
 **
 **  Auth:   mem
-**  Date:   02/22/2013 - Initial version
-**          12/15/2023 mem - Ported to PostgreSQL
+**  Date:   02/22/2013 mem - Initial version
+**          06/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -33,9 +30,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
+    _datasetName := Trim(Coalesce(_datasetName, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
-    If _datasetName Is Null Then
+    If _datasetName = '' Then
         _message := 'Dataset name not defined';
         _returnCode := 'U5201';
         RETURN;
@@ -51,7 +49,7 @@ BEGIN
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _message := format('Dataset not found: %s; unable to continue', _datasetName);
+        _message := format('Dataset not found, unable to continue: %s', _datasetName);
         _returnCode := 'U5202';
         RETURN;
     End If;
@@ -60,15 +58,18 @@ BEGIN
     -- Make sure a pending or running DatasetQuality capture task job doesn't already exist
     ---------------------------------------------------
 
-    _jobID := 0;
-
     SELECT TS.Job
     INTO _jobID
-    FROM cap.t_task_steps TS inner join cap.t_tasks T ON TS.Job = T.Job
-    WHERE (T.Dataset_ID = _datasetID) AND (TS.Tool = 'DatasetQuality') AND (TS.State IN (1, 2, 4))
+    FROM cap.t_task_steps TS
+         INNER JOIN cap.t_tasks T
+           ON TS.Job = T.Job
+    WHERE T.Dataset_ID = _datasetID AND
+          TS.Tool = 'DatasetQuality' AND
+          TS.State IN (1, 2, 4);
 
-    If _jobID > 0 Then
-        _message := format('Existing pending/running capture task job already exists for %s; job %s', _datasetName, _jobID);
+    If FOUND Then
+        _message := format('Existing pending/running DatasetQuality job step already exists: job %s for %s', _jobID, _datasetName);
+        RAISE INFO '%', _message;
         RETURN;
     End If;
 
@@ -81,12 +82,11 @@ BEGIN
     Else
 
         INSERT INTO cap.t_tasks (Script, Dataset, Dataset_ID, Results_Folder_Name, Comment)
-        SELECT
-            'Quameter' AS Script,
-            _datasetName AS Dataset,
-            _datasetID AS Dataset_ID,
-            '' AS Results_Folder_Name,
-            'Created manually using MakeNewQuameterJob' AS Comment
+        SELECT 'Quameter' AS Script,
+               _datasetName AS Dataset,
+               _datasetID AS Dataset_ID,
+               '' AS Results_Folder_Name,
+               'Created manually using make_new_quameter_task' AS Comment
         RETURNING job
         INTO _jobID;
 
@@ -100,4 +100,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_quameter_task IS 'MakeNewQuameterTask or MakeNewQuameterJob';
+
+ALTER PROCEDURE cap.make_new_quameter_task(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE make_new_quameter_task(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.make_new_quameter_task(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'MakeNewQuameterTask or MakeNewQuameterJob';
+

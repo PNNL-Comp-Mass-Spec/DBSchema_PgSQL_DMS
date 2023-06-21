@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.make_new_archive_update_task
-(
-    _datasetName text,
-    _resultsDirectoryName text = '',
-    _allowBlankResultsDirectory int = 0,
-    _pushDatasetToMyEMSL int = 0,
-    _pushDatasetRecursive int = 0,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: make_new_archive_update_task(text, text, boolean, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.make_new_archive_update_task(IN _datasetname text, IN _resultsdirectoryname text DEFAULT ''::text, IN _allowblankresultsdirectory boolean DEFAULT false, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -20,9 +13,7 @@ AS $$
 **  Arguments:
 **    _datasetName                  Dataset name
 **    _resultsdirectoryname         Results directory name
-**    _allowBlankResultsDirectory   Set to 1 if you need to update the dataset file; the downside is that the archive update will involve a byte-to-byte comparison of all data in both the dataset directory and all subdirectories
-**    _pushDatasetToMyEMSL          Set to 1 to push the dataset to MyEMSL instead of updating the data at \\aurora.emsl.pnl.gov\archive\dmsarch
-**    _pushDatasetRecursive         Set to 1 to recursively push a directory and all subdirectories into MyEMSL
+**    _allowBlankResultsDirectory   Set to true if you need to update the dataset file; the downside is that the archive update will involve a byte-to-byte comparison of all data in both the dataset directory and all subdirectories
 **    _infoOnly                     True to preview the capture task job that would be created
 **
 **  Auth:   mem
@@ -37,7 +28,7 @@ AS $$
 **          03/06/2018 mem - Also look for ArchiveUpdate tasks on hold when checking for an existing archive update task
 **          05/17/2019 mem - Switch from folder to directory
 **          06/27/2019 mem - Default capture task job priority is now 4; higher priority is now 3
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/20/2023 mem - Ported to PostgreSQL, removing parameters _pushDatasetToMyEMSL and _pushDatasetRecursive
 **
 *****************************************************/
 DECLARE
@@ -45,6 +36,10 @@ DECLARE
     _currentProcedure text;
     _nameWithSchema text;
     _authorized boolean;
+
+    _datasetID int;
+    _jobID int;
+    _script text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -80,14 +75,13 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _resultsDirectoryName := Coalesce(_resultsDirectoryName, '');
-        _allowBlankResultsDirectory := Coalesce(_allowBlankResultsDirectory, 0);
-        _pushDatasetToMyEMSL := Coalesce(_pushDatasetToMyEMSL, 0);
-        _pushDatasetRecursive := Coalesce(_pushDatasetRecursive, 0);
+        _datasetName := Trim(Coalesce(_datasetName, ''));
+        _resultsDirectoryName := Trim(Coalesce(_resultsDirectoryName, ''));
+        _allowBlankResultsDirectory := Coalesce(_allowBlankResultsDirectory, false);
         _infoOnly := Coalesce(_infoOnly, false);
         _message := '';
 
-        If _datasetName Is Null Then
+        If _datasetName = '' Then
             _message := 'Dataset name not defined';
             _returnCode := 'U5201';
 
@@ -95,8 +89,8 @@ BEGIN
             RETURN;
         End If;
 
-        If _resultsDirectoryName = '' And _allowBlankResultsDirectory = 0 Then
-            _message := 'Results directory name is blank; to update the Dataset file and all subdirectories, set _allowBlankResultsDirectory to 1';
+        If _resultsDirectoryName = '' And Not _allowBlankResultsDirectory Then
+            _message := 'Results directory name is blank; to update the dataset file and all subdirectories, set _allowBlankResultsDirectory to true';
             _returnCode := 'U5202';
 
             RAISE WARNING '%', _message;
@@ -107,13 +101,13 @@ BEGIN
         -- Validate this dataset and determine its Dataset_ID
         ---------------------------------------------------
 
-        SELECT Dataset_ID
+        SELECT dataset_id
         INTO _datasetID
         FROM public.t_dataset
         WHERE dataset = _datasetName;
 
         If Not FOUND Then
-            _message := format('Dataset not found: %s; unable to continue', _datasetName);
+            _message := format('Dataset not found, unable to continue: %s', _datasetName);
             _returnCode := 'U5203';
 
             RAISE WARNING '%', _message;
@@ -124,38 +118,26 @@ BEGIN
         -- Make sure a pending archive update task doesn't already exist
         ---------------------------------------------------
 
-        _jobID := 0;
-
-        SELECT Job
+        SELECT job
         INTO _jobID
         FROM cap.t_tasks
         WHERE Script = 'ArchiveUpdate' AND
               Dataset_ID = _datasetID AND
-              Coalesce(Results_Folder_Name, '') = _resultsDirectoryName AND
-              State In (1,2,4,7);
+              Coalesce(results_folder_name, '') = _resultsDirectoryName AND
+              State < 3;
 
-        If _jobID > 0 Then
+        If FOUND Then
             If _resultsDirectoryName = '' Then
-                _message := format('Existing pending capture task job already exists for %s and subdirectory %s; task %s',
-                                    _datasetName, _resultsDirectoryName, _jobID);
+                _message := format('Existing pending ArchiveUpdate job already exists: job %s for %s and directory %s', _jobID, _datasetName, _resultsDirectoryName);
             Else
-                _message := format('Existing pending capture task job already exists for %s; task %s',
-                                    _datasetName, _jobID);
+                _message := format('Existing pending ArchiveUpdate job already exists: job %s for %s', _jobID, _datasetName);
             End If;
 
             RAISE INFO '%', _message;
             RETURN;
         End If;
 
-        If _pushDatasetToMyEMSL <> 0 Then
-            If _pushDatasetRecursive <> 0 Then
-                _script := 'MyEMSLDatasetPushRecursive';
-            Else
-                _script := 'MyEMSLDatasetPush';
-            End If;
-        Else
-            _script := 'ArchiveUpdate';
-        End If;
+        _script := 'ArchiveUpdate';
 
         ---------------------------------------------------
         -- Create new Archive Update task for specified dataset
@@ -180,7 +162,7 @@ BEGIN
                    _datasetName AS Dataset,
                    _datasetID AS Dataset_ID,
                    _resultsDirectoryName AS Results_Folder_Name,
-                   'Created manually using Make_New_Archive_Update_Job' AS comment,
+                   'Created manually using make_new_archive_update_task' AS comment,
                    CASE
                        WHEN _resultsDirectoryName = '' THEN 3
                        ELSE 4
@@ -188,7 +170,7 @@ BEGIN
             RETURNING job
             INTO _jobID;
 
-            _message := format('Created capture task job %s for dataset %s', _jobID, _datasetName);
+            _message := format('Created new archive update task %s for dataset %s', _jobID, _datasetName);
 
             If _resultsDirectoryName = '' Then
                 _message := format('%s and all subdirectories', _message);
@@ -222,4 +204,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.make_new_archive_update_task IS 'MakeNewArchiveUpdateTask or MakeNewArchiveUpdateJob';
+
+ALTER PROCEDURE cap.make_new_archive_update_task(IN _datasetname text, IN _resultsdirectoryname text, IN _allowblankresultsdirectory boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE make_new_archive_update_task(IN _datasetname text, IN _resultsdirectoryname text, IN _allowblankresultsdirectory boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.make_new_archive_update_task(IN _datasetname text, IN _resultsdirectoryname text, IN _allowblankresultsdirectory boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'MakeNewArchiveUpdateTask or MakeNewArchiveUpdateJob';
+
