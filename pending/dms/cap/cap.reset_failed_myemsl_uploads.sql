@@ -251,7 +251,7 @@ BEGIN
                                    public.check_plural(_jobCount, 'capture task job ', 'capture task jobs '),
                                    _jobList);
 
-                CALL public.post_log_entry('Error', _message, 'Reset_Failed_MyEMSL_Uploads', 'cap');
+                CALL public.post_log_entry ('Error', _message, 'Reset_Failed_MyEMSL_Uploads', 'cap');
 
                 RAISE INFO '%', _message;
 

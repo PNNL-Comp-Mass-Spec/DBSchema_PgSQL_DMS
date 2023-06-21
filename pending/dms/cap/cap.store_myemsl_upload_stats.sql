@@ -191,7 +191,7 @@ BEGIN
         If _invalidFormat Then
             If Not _infoOnly Then
                 If _errorCode = 0 Then
-                    CALL public.post_log_entry('Error', _logMsg, 'Store_MyEMSL_Upload_Stats';, 'cap');
+                    CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats';, 'cap');
                 End If;
             Else
                 RAISE INFO '%', _logMsg;
@@ -206,7 +206,7 @@ BEGIN
                 _logMsg := format('Unable to resolve StatusURI_Path to URI_PathID for capture task job %s, dataset ID %s: %s', _job, _datasetID, _statusURI_Path);
 
                 If Not _infoOnly Then
-                    CALL public.post_log_entry('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'cap');
+                    CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'cap');
                 Else
                     RAISE INFO '%', _logMsg;
                 End If;

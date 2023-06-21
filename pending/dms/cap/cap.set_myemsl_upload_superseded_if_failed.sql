@@ -153,7 +153,7 @@ BEGIN
 
             _message := format('%s; error code = %s', _message, _returnCode);
 
-            CALL public.post_log_entry('Error', _message, 'Set_MyEMSL_Upload_Superseded_If_Failed', 'cap');
+            CALL public.post_log_entry ('Error', _message, 'Set_MyEMSL_Upload_Superseded_If_Failed', 'cap');
         End If;
 
         DROP TABLE Tmp_StatusNumListTable;

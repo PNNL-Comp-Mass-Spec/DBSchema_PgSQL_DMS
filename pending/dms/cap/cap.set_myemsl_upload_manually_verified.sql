@@ -137,11 +137,11 @@ BEGIN
 
         If _infoOnly Then
 
-            RAISE INFO 'call cap.update_myemsl_state (_datasetID=%, _outputFolderName=''%'', _myEMSLStateNew=%)',
+            RAISE INFO 'Call cap.update_myemsl_state (_datasetID=%, _outputFolderName=''%'', _myEMSLStateNew=%)',
                           _datasetID, _outputFolderName, _myEMSLStateNew;
 
         Else
-            call cap.update_myemsl_state (_datasetID, _outputFolderName, _myEMSLStateNew);
+            CALL cap.update_myemsl_state (_datasetID, _outputFolderName, _myEMSLStateNew);
         End If;
     End If;
 
@@ -164,10 +164,10 @@ BEGIN
 
         If _infoOnly Then
 
-            RAISE INFO 'call set_myemsl_upload_verified _datasetID=%, _statusNumList=''%'', _statusURIList=''%'')',
+            RAISE INFO 'Call set_myemsl_upload_verified _datasetID=%, _statusNumList=''%'', _statusURIList=''%'')',
                           _datasetID, _statusNumList, _statusURIList;
         Else
-            call cap.set_myemsl_upload_verified (_datasetID, _statusNumList, _statusURIList);
+            CALL cap.set_myemsl_upload_verified (_datasetID, _statusNumList, _statusURIList);
         End If;
 
     End If;
@@ -180,7 +180,7 @@ BEGIN
 
         _message := format('%s; error code = %s', _message, _returnCode);
 
-        call public.post_log_entry('Error', _message, 'Set_MyEMSL_Upload_Manually_Verified', 'cap');
+        CALL public.post_log_entry ('Error', _message, 'Set_MyEMSL_Upload_Manually_Verified', 'cap');
     End If;
 
 END
