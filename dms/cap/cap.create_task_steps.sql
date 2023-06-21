@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/12/2023 mem - Rename variables and fix bug with misplaced "And"
 **          05/30/2023 mem - Use format() for string concatenation
+**          06/21/2023 mem - Use Order By when finding tasks with state 0 in cap.t_tasks
 **
 *****************************************************/
 DECLARE
@@ -226,6 +227,7 @@ BEGIN
                  INNER JOIN cap.V_DMS_Get_Dataset_Definition AS VDD
                    ON TJ.Dataset_ID = VDD.Dataset_ID
             WHERE TJ.State = 0
+            ORDER BY TJ.Job
             LIMIT _maxJobsToAdd;
             --
             GET DIAGNOSTICS _insertCount = ROW_COUNT;
