@@ -15,6 +15,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_capture_for_dms_reset_tasks(INOUT _message
 **  Date:   05/25/2011 mem - Initial version
 **          08/16/2017 mem - For capture task jobs with error 'Error running OpenChrom', only reset the DatasetIntegrity step
 **          06/20/2023 mem - Ported to PostgreSQL
+**          06/21/2023 mem - Add missing Drop Table call
 **
 *****************************************************/
 DECLARE
@@ -55,6 +56,8 @@ BEGIN
 
     If Not FOUND Then
         _message := 'No datasets were found needing to retry capture';
+
+        DROP TABLE Tmp_Selected_Jobs;
         RETURN;
     End If;
 
