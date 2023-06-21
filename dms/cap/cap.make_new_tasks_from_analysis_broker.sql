@@ -2,7 +2,7 @@
 -- Name: make_new_tasks_from_analysis_broker(boolean, text, text, integer, boolean, integer, integer, boolean, integer); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _importwindowdays integer DEFAULT NULL::integer, IN _bypassdatasetarchive boolean DEFAULT NULL::boolean, IN _datasetidfiltermin integer DEFAULT NULL::integer, IN _datasetidfiltermax integer DEFAULT NULL::integer, IN _infoonlyshowsnewjobsonly boolean DEFAULT false, IN _timewindowtorequireexisingdatasetarchivejob integer DEFAULT NULL::integer)
+CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _importwindowdays integer DEFAULT NULL::integer, IN _bypassdatasetarchive boolean DEFAULT NULL::boolean, IN _datasetidfiltermin integer DEFAULT NULL::integer, IN _datasetidfiltermax integer DEFAULT NULL::integer, IN _infoonlyshowsnewjobsonly boolean DEFAULT false, IN _timewindowtorequireexistingdatasetarchivejob integer DEFAULT NULL::integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -11,15 +11,15 @@ CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly
 **      Create new ArchiveUpdate tasks for recently completed analysis job broker jobs (in sw.t_jobs)
 **
 **  Arguments:
-**    _infoOnly                                     True to preview the capture task job that would be created
-**    _message                                      Output: status message
-**    _returnCode                                   Output: return code
-**    _importWindowDays                             Default to 10 (via cap.t_default_sp_params)
-**    _bypassDatasetArchive                         When true, waive the requirement that there be an existing complete dataset archive capture task job in broker; default to true (via cap.t_default_sp_params)
-**    _datasetIDFilterMin                           If non-zero, will be used to filter the candidate datasets
-**    _datasetIDFilterMax                           If non-zero, will be used to filter the candidate datasets
-**    _infoOnlyShowsNewJobsOnly                     Set to true to only see new capture task jobs that would trigger new capture tasks; only used if _infoOnly is true
-**    _timeWindowToRequireExisingDatasetArchiveJob  Default to 30 days (via cap.t_default_sp_params)
+**    _infoOnly                                      True to preview the capture task job that would be created
+**    _message                                       Output: status message
+**    _returnCode                                    Output: return code
+**    _importWindowDays                              Default to 10 (via cap.t_default_sp_params)
+**    _bypassDatasetArchive                          When true, waive the requirement that there be an existing complete dataset archive capture task job in broker; default to true (via cap.t_default_sp_params)
+**    _datasetIDFilterMin                            If non-zero, will be used to filter the candidate datasets
+**    _datasetIDFilterMax                            If non-zero, will be used to filter the candidate datasets
+**    _infoOnlyShowsNewJobsOnly                      Set to true to only see new capture task jobs that would trigger new capture tasks; only used if _infoOnly is true
+**    _timeWindowToRequireExistingDatasetArchiveJob  Default to 30 days (via cap.t_default_sp_params)
 **
 **  Auth:   grk
 **  Date:   09/11/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly
 **                         - Now using cap.t_default_sp_params to get default input params from database table
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          06/19/2023 mem - Ported to PostgreSQL
+**          06/20/2023 mem - Fix typo in argument name
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,7 @@ BEGIN
     If Not Found Then
         _message := 'Table cap.t_default_sp_params does not have an entry for make_new_tasks_from_analysis_broker or MakeNewJobsFromAnalysisBroker';
 
-        CALL public.post_log_entry('Error', _message, 'Make_New_Tasks_From_Analysis_Broker', 'cap');
+        CALL public.post_log_entry ('Error', _message, 'Make_New_Tasks_From_Analysis_Broker', 'cap');
 
         DROP TABLE Tmp_Default_Params;
 
@@ -74,20 +75,13 @@ BEGIN
     -- Note that public.try_cast() will convert both '1' and 'true' to true
     ---------------------------------------------------
 
-    -- _importWindowDays
-    _importWindowDays := Coalesce(_importWindowDays, (SELECT public.try_cast(Param_Value, 10) FROM Tmp_Default_Params WHERE param_name = 'importWindowDays'));
+    _importWindowDays     := Coalesce(_importWindowDays,     (SELECT public.try_cast(Param_Value, 10)   FROM Tmp_Default_Params WHERE param_name = 'importWindowDays'));
+    _bypassDatasetArchive := Coalesce(_bypassDatasetArchive, (SELECT public.try_cast(Param_Value, true) FROM Tmp_Default_Params WHERE param_name = 'bypassDatasetArchive'));
+    _datasetIDFilterMin   := Coalesce(_datasetIDFilterMin,   (SELECT public.try_cast(Param_Value, 0)    FROM Tmp_Default_Params WHERE param_name = 'datasetIDFilterMin'));
+    _datasetIDFilterMax   := Coalesce(_datasetIDFilterMax,   (SELECT public.try_cast(Param_Value, 0)    FROM Tmp_Default_Params WHERE param_name = 'datasetIDFilterMax'));
 
-    -- _bypassDatasetArchive
-    _bypassDatasetArchive := Coalesce(_bypassDatasetArchive, (SELECT public.try_cast(Param_Value, true)  FROM Tmp_Default_Params WHERE param_name = 'bypassDatasetArchive'));
-
-    -- _datasetIDFilterMin
-    _datasetIDFilterMin := Coalesce(_datasetIDFilterMin, (SELECT public.try_cast(Param_Value, 0) FROM Tmp_Default_Params WHERE param_name = 'datasetIDFilterMin'));
-
-    -- _datasetIDFilterMax
-    _datasetIDFilterMax := Coalesce(_datasetIDFilterMax, (SELECT public.try_cast(Param_Value, 0) FROM Tmp_Default_Params WHERE param_name = 'datasetIDFilterMax'));
-
-    -- _timeWindowToRequireExisingDatasetArchiveJob
-    _timeWindowToRequireExisingDatasetArchiveJob := Coalesce(_timeWindowToRequireExisingDatasetArchiveJob, (SELECT public.try_cast(Param_Value, 30) FROM Tmp_Default_Params WHERE param_name = 'timeWindowToRequireExisingDatasetArchiveJob'));
+    _timeWindowToRequireExistingDatasetArchiveJob := Coalesce(_timeWindowToRequireExistingDatasetArchiveJob,
+                                                             (SELECT public.try_cast(Param_Value, 30)   FROM Tmp_Default_Params WHERE param_name = 'timeWindowToRequireExistingDatasetArchiveJob'));
 
     ---------------------------------------------------
     -- Create a temporary table to hold capture task jobs from the analysis broker
@@ -124,9 +118,9 @@ BEGIN
     _datasetIDFilterMax := Coalesce(_datasetIDFilterMax, 0);
     _infoOnlyShowsNewJobsOnly := Coalesce(_infoOnlyShowsNewJobsOnly, false);
 
-    _timeWindowToRequireExisingDatasetArchiveJob := Coalesce(_timeWindowToRequireExisingDatasetArchiveJob, 30);
-    If _timeWindowToRequireExisingDatasetArchiveJob < 1 Then
-        _timeWindowToRequireExisingDatasetArchiveJob := 1;
+    _timeWindowToRequireExistingDatasetArchiveJob := Coalesce(_timeWindowToRequireExistingDatasetArchiveJob, 30);
+    If _timeWindowToRequireExistingDatasetArchiveJob < 1 Then
+        _timeWindowToRequireExistingDatasetArchiveJob := 1;
     End If;
 
     ---------------------------------------------------
@@ -168,7 +162,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Find dataset archive tasks that have a recent finish time
-    -- that falls within the _timeWindowToRequireExisingDatasetArchiveJob
+    -- that falls within the _timeWindowToRequireExistingDatasetArchiveJob
     --
     -- For these, mark any for which there is not
     -- a completed DatasetArchive capture task job for the dataset
@@ -178,7 +172,7 @@ BEGIN
 
     UPDATE Tmp_New_Jobs
     SET No_Dataset_Archive = true
-    WHERE Tmp_New_Jobs.Finish >= CURRENT_TIMESTAMP - make_interval(days => _timeWindowToRequireExisingDatasetArchiveJob) AND
+    WHERE Tmp_New_Jobs.Finish >= CURRENT_TIMESTAMP - make_interval(days => _timeWindowToRequireExistingDatasetArchiveJob) AND
           NOT EXISTS ( SELECT Dataset_ID
                        FROM cap.t_tasks
                        WHERE Script = 'DatasetArchive' AND
@@ -224,7 +218,7 @@ BEGIN
     If _infoOnly Then
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-20s %-24s %-24s %-21s %-80s';
+        _formatSpecifier := '%-10s %-20s %-24s %-24s %-21s %-30s %-80s';
 
         _infoHead := format(_formatSpecifier,
                                 'Dataset_ID',
@@ -232,6 +226,7 @@ BEGIN
                                 'Pending_Archive_Update',
                                 'Archive_Update_Current',
                                 'Capture_Task_Needed',
+                                'Results_Folder_Name',
                                 'Dataset'
                             );
 
@@ -241,6 +236,7 @@ BEGIN
                                 '----------------------',
                                 '----------------------',
                                 '-------------------',
+                                '------------------------------',
                                 '--------------------------------------------------------------------------------'
                             );
 
@@ -253,6 +249,7 @@ BEGIN
                    Pending_Archive_Update,
                    Archive_Update_Current,
                    Capture_Task_Needed,
+                   Results_Folder_Name,
                    Dataset
             FROM ( SELECT Dataset_ID,
                           No_Dataset_Archive,
@@ -265,6 +262,7 @@ BEGIN
                               THEN 'Yes'
                               ELSE 'No'
                           END AS Capture_Task_Needed,
+                          Results_Folder_Name,
                           Dataset
                    FROM Tmp_New_Jobs
                    ) LookupQ
@@ -278,6 +276,7 @@ BEGIN
                                     _previewData.Pending_Archive_Update,
                                     _previewData.Archive_Update_Current,
                                     _previewData.Capture_Task_Needed,
+                                    _previewData.Results_Folder_Name,
                                     _previewData.Dataset);
 
             RAISE INFO '%', _infoData;
@@ -286,9 +285,8 @@ BEGIN
 
     Else
         ---------------------------------------------------
-        -- Create new ArchiveUpdate tasks from
-        -- remaining imported
-        -- analysis broker results transfer steps
+        -- Create new ArchiveUpdate tasks from remaining
+        -- imported analysis broker results transfer steps
         ---------------------------------------------------
 
         INSERT INTO cap.t_tasks (Script, Dataset, Dataset_ID, Results_Folder_Name, Comment)
@@ -310,11 +308,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _importwindowdays integer, IN _bypassdatasetarchive boolean, IN _datasetidfiltermin integer, IN _datasetidfiltermax integer, IN _infoonlyshowsnewjobsonly boolean, IN _timewindowtorequireexisingdatasetarchivejob integer) OWNER TO d3l243;
+ALTER PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _importwindowdays integer, IN _bypassdatasetarchive boolean, IN _datasetidfiltermin integer, IN _datasetidfiltermax integer, IN _infoonlyshowsnewjobsonly boolean, IN _timewindowtorequireexistingdatasetarchivejob integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE make_new_tasks_from_analysis_broker(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _importwindowdays integer, IN _bypassdatasetarchive boolean, IN _datasetidfiltermin integer, IN _datasetidfiltermax integer, IN _infoonlyshowsnewjobsonly boolean, IN _timewindowtorequireexisingdatasetarchivejob integer); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE make_new_tasks_from_analysis_broker(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _importwindowdays integer, IN _bypassdatasetarchive boolean, IN _datasetidfiltermin integer, IN _datasetidfiltermax integer, IN _infoonlyshowsnewjobsonly boolean, IN _timewindowtorequireexistingdatasetarchivejob integer); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _importwindowdays integer, IN _bypassdatasetarchive boolean, IN _datasetidfiltermin integer, IN _datasetidfiltermax integer, IN _infoonlyshowsnewjobsonly boolean, IN _timewindowtorequireexisingdatasetarchivejob integer) IS 'MakeNewTasksFromAnalysisBroker or MakeNewJobsFromAnalysisBroker';
+COMMENT ON PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _importwindowdays integer, IN _bypassdatasetarchive boolean, IN _datasetidfiltermin integer, IN _datasetidfiltermax integer, IN _infoonlyshowsnewjobsonly boolean, IN _timewindowtorequireexistingdatasetarchivejob integer) IS 'MakeNewTasksFromAnalysisBroker or MakeNewJobsFromAnalysisBroker';
 
