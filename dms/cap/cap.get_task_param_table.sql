@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          02/09/2023 mem - Switch from Operator_PRN to Operator_Username
 **          06/07/2023 mem - Rename temp table
 **          06/20/2023 mem - Use citext for columns in the output table
+**          06/21/2023 mem - Store instrument raw_data_type in the parameter table
 **
 *****************************************************/
 DECLARE
@@ -166,6 +167,9 @@ BEGIN
                               value   citext PATH '@value'
                               )
          ) XmlQ;
+
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
+    VALUES ('JobParameters', 'RawDataType', _rawDataType);
 
     ---------------------------------------------------
     -- Determine whether calibration should be performed
