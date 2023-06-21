@@ -33,6 +33,7 @@ AS $$
 **          06/13/2018 mem - No longer pass _debugMode to make_new_archive_tasks_from_dms
 **          01/29/2021 mem - No longer pass _maxJobsToProcess to make_new_automatic_tasks
 **          12/15/2023 mem - Ported to PostgreSQL
+**          06/20/2023 mem - Use new step names in cap.t_process_step_control
 **
 *****************************************************/
 DECLARE
@@ -105,7 +106,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
-        WHERE processing_step_name = 'MakeNewAutomaticJobs';
+        WHERE processing_step_name = 'make_new_automatic_tasks';
 
         If FOUND And_result = 0 Then
             _action := 'Skipping';
@@ -131,7 +132,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
-        WHERE processing_step_name = 'MakeNewJobsFromAnalysisBroker';
+        WHERE processing_step_name = 'make_new_tasks_from_analysis_broker';
 
         If FOUND And_result = 0 Then
             _action := 'Skipping';
@@ -157,7 +158,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
-        WHERE processing_step_name = 'MakeNewJobsFromDMS';
+        WHERE processing_step_name = 'make_new_tasks_from_dms';
 
         If FOUND And_result = 0 Then
             _action := 'Skipping';
@@ -191,7 +192,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
-        WHERE processing_step_name = 'MakeNewArchiveJobsFromDMS';
+        WHERE processing_step_name = 'make_new_archive_tasks_from_dms';
 
         If FOUND And_result = 0 Then
             _action := 'Skipping';
@@ -245,7 +246,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
-        WHERE processing_step_name = 'CreateJobSteps';
+        WHERE processing_step_name = 'create_task_steps';
 
         If FOUND And_result = 0 Then
             _action := 'Skipping';
@@ -302,7 +303,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
-        WHERE processing_step_name = 'UpdateStepStates';
+        WHERE processing_step_name = 'update_task_step_states';
 
         If FOUND And_result = 0 Then
             _action := 'Skipping';
@@ -355,7 +356,7 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
-        WHERE processing_step_name = 'UpdateJobState';
+        WHERE processing_step_name = 'update_task_state';
 
         If FOUND And_result = 0 Then
             _action := 'Skipping';
