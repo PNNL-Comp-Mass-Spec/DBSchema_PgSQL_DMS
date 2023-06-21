@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE sw.show_tmp_job_steps_and_job_step_dependencies()
 **      CREATE TEMP TABLE Tmp_Job_Steps (
 **          Job int NOT NULL,
 **          Step int NOT NULL,
-**          Step_Tool citext NOT NULL
+**          Tool citext NOT NULL
 **      );
 **
 **      CREATE TEMP TABLE Tmp_Job_Step_Dependencies (
@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE sw.show_tmp_job_steps_and_job_step_dependencies()
 **
 **  Auth:   mem
 **  Date:   11/30/2022 mem - Initial release
+**          06/21/2023 mem - Use Tool for the step tool column in Tmp_Job_Steps
 **
 *****************************************************/
 DECLARE
@@ -78,14 +79,14 @@ BEGIN
     RAISE INFO '%', _infoHeadSeparator;
 
     FOR _previewSteps IN
-        SELECT Job, Step, Step_Tool
+        SELECT Job, Step, Tool
         FROM Tmp_Job_Steps
         ORDER BY Job, Step
     LOOP
         _infoData := format(_formatSpecifier,
                                 _previewSteps.Job,
                                 _previewSteps.Step,
-                                _previewSteps.Step_Tool
+                                _previewSteps.Tool
                         );
 
         RAISE INFO '%', _infoData;

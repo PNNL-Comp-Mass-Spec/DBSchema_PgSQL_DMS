@@ -200,7 +200,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_Job_Steps (
         Job int NOT NULL,
         Step int NOT NULL,
-        tool citext NOT NULL,
+        Tool citext NOT NULL,
         CPU_Load int NULL,
         Memory_Usage_MB int NULL,
         Dependencies int NULL,

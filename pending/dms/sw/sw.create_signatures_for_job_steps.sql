@@ -21,7 +21,7 @@ AS $$
 **      CREATE TEMP TABLE Tmp_Job_Steps (
 **          Job int NOT NULL,
 **          Step int NOT NULL,
-**          tool text NOT NULL,
+**          Tool text NOT NULL,
 **          Shared_Result_Version int NULL,
 **          Signature int NULL,
 **          Input_Directory_Name text NULL,
