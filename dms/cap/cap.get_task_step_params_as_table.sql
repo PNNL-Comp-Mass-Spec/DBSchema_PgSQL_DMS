@@ -2,7 +2,7 @@
 -- Name: get_task_step_params_as_table(integer, integer, text); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_task_step_params_as_table(_job integer, _step integer, _paramname text DEFAULT ''::text) RETURNS TABLE(section text, name text, value text)
+CREATE OR REPLACE FUNCTION cap.get_task_step_params_as_table(_job integer, _step integer, _paramname text DEFAULT ''::text) RETURNS TABLE(section public.citext, name public.citext, value public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_step_params_as_table(_job integer, _step
 **  Date:   05/05/2010 mem - Initial release
 **          02/12/2020 mem - Add argument _paramName, which can be used to filter the results
 **          06/06/2023 mem - Ported to PostgreSQL
+**          06/20/2023 mem - Use citext for columns in the output table
 **
 *****************************************************/
 DECLARE
@@ -33,9 +34,9 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobParamsTable (
-        Section text,
-        Name text,
-        Value text
+        Section citext,
+        Name citext,
+        Value citext
     );
 
     ---------------------------------------------------

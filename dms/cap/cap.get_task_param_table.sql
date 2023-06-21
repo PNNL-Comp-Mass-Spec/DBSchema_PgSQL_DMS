@@ -2,7 +2,7 @@
 -- Name: get_task_param_table(integer, text, integer, text, text, text, integer, text); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) RETURNS TABLE(job integer, section text, name text, value text)
+CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) RETURNS TABLE(job integer, section public.citext, name public.citext, value public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          09/28/2022 mem - Ported to PostgreSQL
 **          02/09/2023 mem - Switch from Operator_PRN to Operator_Username
 **          06/07/2023 mem - Rename temp table
+**          06/20/2023 mem - Use citext for columns in the output table
 **
 *****************************************************/
 DECLARE
@@ -46,9 +47,9 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Param_Tab(
-        Section text,
-        Name text,
-        Value text
+        Section citext,
+        Name citext,
+        Value citext
     );
 
     ---------------------------------------------------
@@ -250,10 +251,4 @@ $$;
 
 
 ALTER FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) OWNER TO d3l243;
-
---
--- Name: FUNCTION get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text); Type: COMMENT; Schema: cap; Owner: d3l243
---
-
-COMMENT ON FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) IS 'GetTaskParamTable or GetJobParamTable';
 

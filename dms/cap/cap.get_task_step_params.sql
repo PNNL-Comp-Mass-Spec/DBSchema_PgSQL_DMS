@@ -2,7 +2,7 @@
 -- Name: get_task_step_params(integer, integer); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_task_step_params(_job integer, _step integer) RETURNS TABLE(section text, name text, value text)
+CREATE OR REPLACE FUNCTION cap.get_task_step_params(_job integer, _step integer) RETURNS TABLE(section public.citext, name public.citext, value public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_step_params(_job integer, _step integer)
 **          06/12/2018 mem - Now calling Get_Metadata_For_Dataset
 **          05/17/2019 mem - Switch from folder to directory
 **          06/06/2023 mem - Ported to PostgreSQL
+**          06/20/2023 mem - Use citext for columns in the output table
 **
 *****************************************************/
 DECLARE
@@ -30,9 +31,9 @@ DECLARE
 BEGIN
 
     CREATE TEMP TABLE Tmp_Param_Tab (
-        Section text,
-        Name text,
-        Value text
+        Section citext,
+        Name citext,
+        Value citext
     );
 
     ---------------------------------------------------
@@ -157,10 +158,4 @@ $$;
 
 
 ALTER FUNCTION cap.get_task_step_params(_job integer, _step integer) OWNER TO d3l243;
-
---
--- Name: FUNCTION get_task_step_params(_job integer, _step integer); Type: COMMENT; Schema: cap; Owner: d3l243
---
-
-COMMENT ON FUNCTION cap.get_task_step_params(_job integer, _step integer) IS 'GetTaskStepParams or GetJobStepParams';
 
