@@ -187,12 +187,12 @@ BEGIN
         SET Storage_Server = _storageServerNew,
             Instrument = _instrumentNameNew,
             Instrument_Class = _instrumentClassNew
-        WHERE Job = _captureJob And Dataset_ID = _datasetId
+        WHERE Job = _captureJob AND Dataset_ID = _datasetId
 
-        CALL cap.update_parameters_for_job (_captureJob);
+        CALL cap.update_parameters_for_task (_captureJob, _message => _message, _returncode => _returncode);
     Else
         DELETE cap.t_tasks
-        WHERE Job = _captureJob And Dataset_ID = _datasetId
+        WHERE Job = _captureJob AND Dataset_ID = _datasetId
 
         UPDATE t_dataset
         SET dataset_state_id = 1
