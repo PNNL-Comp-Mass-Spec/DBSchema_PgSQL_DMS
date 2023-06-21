@@ -20,6 +20,8 @@ AS $$
 **
 **  Arguments:
 **    _bypassDMS               If false, lookup the bypass mode in cap.t_process_step_control; otherwise, do not update states in tables in the public schema
+**    _infoOnly                True to preview changes that would be made
+**    _maxJobsToProcess        Maximum number of jobs to process
 **    _logIntervalThreshold    If this procedure runs longer than this threshold (in seconds), status messages will be posted to the log
 **    _loggingEnabled          Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
 **    _loopingUpdateInterval   Seconds between detailed logging while looping sets of capture task jobs or steps to process
@@ -32,8 +34,8 @@ AS $$
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          06/13/2018 mem - No longer pass _debugMode to make_new_archive_tasks_from_dms
 **          01/29/2021 mem - No longer pass _maxJobsToProcess to make_new_automatic_tasks
-**          12/15/2023 mem - Ported to PostgreSQL
 **          06/20/2023 mem - Use new step names in cap.t_process_step_control
+**          06/21/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -101,7 +103,7 @@ BEGIN
         -- Call the various procedures for performing updates
         ---------------------------------------------------
 
-        -- Make New Automatic Jobs
+        -- Make New Automatic Tasks
         --
         SELECT enabled
         INTO _result
@@ -127,7 +129,7 @@ BEGIN
             call cap.make_new_automatic_tasks ();
         End If;
 
-        -- Make New Jobs From Analysis Broker
+        -- Make New Tasks From Analysis Broker
         --
         SELECT enabled
         INTO _result
@@ -153,7 +155,7 @@ BEGIN
             CALL cap.make_new_tasks_from_analysis_broker (_infoOnly, _message => _message, _returnCode => _returnCode);
         End If;
 
-        -- Make New Jobs From DMS
+        -- Make New Tasks From DMS
         --
         SELECT enabled
         INTO _result
@@ -178,16 +180,13 @@ BEGIN
         If _result <> 0 And Not _bypassDMS Then
             CALL cap.make_new_tasks_from_dms (
                                     _message => _message,
-                                    _maxJobsToProcess => _maxJobsToProcess,
-                                    _logIntervalThreshold => _logIntervalThreshold,
+                                    _returnCode => _returnCode,
                                     _loggingEnabled => _loggingEnabled,
-                                    _loopingUpdateInterval => _loopingUpdateInterval,
-                                    _infoOnly => _infoOnly,
-                                    _debugMode => _debugMode);
+                                    _infoOnly => _infoOnly);
 
         End If;
 
-        -- Make New Archive Jobs From DMS
+        -- Make New Archive Tasks From DMS
         --
         SELECT enabled
         INTO _result
@@ -212,10 +211,8 @@ BEGIN
         If _result <> 0 And Not _bypassDMS Then
             CALL cap.make_new_archive_tasks_from_dms (
                                     _message => _message,
-                                    _maxJobsToProcess => _maxJobsToProcess,
-                                    _logIntervalThreshold => _logIntervalThreshold,
+                                    _returnCode => _returnCode,
                                     _loggingEnabled => _loggingEnabled,
-                                    _loopingUpdateInterval => _loopingUpdateInterval,
                                     _infoOnly => _infoOnly);
         End If;
 
@@ -447,56 +444,6 @@ BEGIN
 
     COMMIT;
 
-/*
-    -- Part G: Update CPU Loading
-    BEGIN
-
-        SELECT enabled
-        INTO _result
-        FROM cap.t_process_step_control
-        WHERE processing_step_name = 'UpdateCPULoading';
-
-        If FOUND And_result = 0 Then
-            _action := 'Skipping';
-        Else
-            _action := 'Calling';
-            _result := 1;
-        End If;
-
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
-            _loggingEnabled := true;
-            _statusMessage := format('%s UpdateCPULoading', _action);
-            CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Task_Context', 'cap');
-        End If;
-
-        _currentLocation := 'Call update_cpu_loading';
-
-        If _result <> 0 Then
-            CALL cap.update_cpu_loading _message => _message;
-        End If;
-
-    EXCEPTION
-        -- Error caught; log the error, then continue at the next section
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS
-                _sqlState         = returned_sqlstate,
-                _exceptionMessage = message_text,
-                _exceptionDetail  = pg_exception_detail,
-                _exceptionContext = pg_exception_context;
-
-        _message := local_error_handler (
-                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _currentLocation, _logError => Not _infoOnly);
-
-        If Coalesce(_returnCode, '') = '' Then
-            _returnCode := _sqlState;
-        End If;
-
-    END;
-
-    COMMIT;
-
-*/
     If _loggingEnabled Then
         _statusMessage := format('Update context complete: %s seconds elapsed', extract(epoch FROM CURRENT_TIMESTAMP - _startTime));
         CALL public.post_log_entry ('Normal', _statusMessage, 'Update_Task_Context', 'cap');

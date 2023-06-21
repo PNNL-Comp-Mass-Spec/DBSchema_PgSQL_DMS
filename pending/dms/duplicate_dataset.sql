@@ -191,7 +191,7 @@ BEGIN
             -- Could not find entry in database for username _newOperatorUsername
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (
+            CALL public.auto_resolve_name_to_username (
                     _newOperatorUsername,
                     _matchCount => _matchCount,         -- Output
                     _matchingUsername => _newUsername,  -- Output
@@ -334,7 +334,7 @@ BEGIN
 
     _requestName := format('AutoReq_%s', _newDataset);
 
-    CALL add_update_requested_run (
+    CALL public.add_update_requested_run (
             _requestName => _requestName,
             _experimentName => _datasetInfo.ExperimentName,
             _requesterUsername => _datasetInfo.OperUsername,
@@ -374,7 +374,7 @@ BEGIN
     -- Consume the scheduled run
     ---------------------------------------------------
 
-    CALL consume_scheduled_run _datasetID, _requestID, _message => _message
+    CALL public.consume_scheduled_run (_datasetID, _requestID, _message => _message);
     --
     If _returnCode <> '' Then
         ROLLBACK;

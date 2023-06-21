@@ -41,7 +41,7 @@ AS $$
 **          04/04/2006 grk - Increased sized of param file name
 **          04/04/2006 grk - Modified to use Validate_Analysis_Job_Parameters
 **          04/10/2006 grk - Widened size of list argument to 6000 characters
-**          04/11/2006 grk - Modified logic to allow changing name of exising request
+**          04/11/2006 grk - Modified logic to allow changing name of existing request
 **          08/31/2006 grk - Restored apparently missing prior modification http://prismtrac.pnl.gov/trac/ticket/217
 **          10/16/2006 jds - Added support for work package number
 **          10/16/2006 mem - Updated to force _state to 'new' if _mode = 'add'

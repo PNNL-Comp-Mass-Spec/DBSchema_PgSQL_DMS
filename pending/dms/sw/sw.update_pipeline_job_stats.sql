@@ -49,7 +49,7 @@ BEGIN
 
     INSERT INTO Tmp_Pipeline_Job_Stats( script, Instrument_Group, Year, Jobs )
     SELECT JH.script,
-           Coalesce(InstName.IN_Group, '') AS Instrument_Group,
+           Coalesce(InstName.instrument_group, '') AS Instrument_Group,
            Extract(year from JH.start) AS Year,
            COUNT(*) AS Jobs
     FROM sw.t_jobs_history JH
@@ -60,7 +60,7 @@ BEGIN
          LEFT OUTER JOIN public.t_instrument_name InstName
            ON DS.instrument_name_ID = InstName.Instrument_ID
     WHERE NOT JH.start IS NULL
-    GROUP BY JH.script, Coalesce(InstName.IN_Group, ''), Extract(year from JH.start)
+    GROUP BY JH.script, Coalesce(InstName.Instrument_Group, ''), Extract(year from JH.start)
 
     If Not FOUND Then
         _message := 'No rows were added to Tmp_Pipeline_Job_Stats; exiting';
