@@ -40,6 +40,7 @@ AS $$
 **          11/09/2016 mem - Include the storage server name when calling post_log_entry
 **          07/11/2017 mem - Add support for _completionCode = 9 (Previewed purge)
 **          09/09/2022 mem - Use new argument names when calling Make_New_Archive_Update_Job
+**          06/21/2023 mem - Remove parameter _pushDatasetToMyEMSL in call to cap.make_new_archive_update_task
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -143,27 +144,27 @@ Code 6 (Purged all data except QC folder)
     If _completionState < 0 And _completionCode = 0 Then
         -- Success
         --
-        _completionState := 4; -- purged
+        _completionState := 4;      -- Purged
     End If;
 
     If _completionState < 0 And _completionCode = 1 Then
         -- Failed
         --
-        _completionState := 8; -- purge failed
+        _completionState := 8;      -- Purge failed
     End If;
 
     If _completionState < 0 And _completionCode = 2 Then
         -- Update required
         --
-        _completionState := 3   ; -- complete
-        _currentUpdateState := 2; -- Update Required
-        CALL cap.make_new_archive_update_job (_datasetName, _resultsDirectoryName => '', _allowBlankResultsDirectory => true, _pushDatasetToMyEMSL => false, _message => _message);
+        _completionState := 3;      -- Complete
+        _currentUpdateState := 2;   -- Update Required
+        CALL cap.make_new_archive_update_task (_datasetName, _resultsDirectoryName => '', _allowBlankResultsDirectory => true, _message => _message, _returncode => _returncode);
     End If;
 
     If _completionState < 0 And _completionCode = 3 Then
         -- MD5 results file is missing; need to have stageMD5 file created by the DatasetPurgeArchiveHelper
         --
-        _completionState := 3   ; -- complete
+        _completionState := 3   ;   -- Complete
     End If;
 
     If Coalesce(_storageServerName, '') = '' Then
