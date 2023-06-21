@@ -10,12 +10,21 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Copy contents of four temporary tables:
+**      Copy contents of temporary tables:
 **          Tmp_Jobs
 **          Tmp_Job_Steps
 **          Tmp_Job_Step_Dependencies
 **          Tmp_Job_Parameters
 **      To main database tables
+**
+**  Arguments:
+**    _message      Output: status message
+**    _returnCode   Output: return code
+**    _debugMode    When true, store the contents of the temp tables in the following tables (auto-created if missing)
+**                    sw.T_Tmp_New_Jobs
+**                    sw.T_Tmp_New_Job_Steps
+**                    sw.T_Tmp_New_Job_Step_Dependencies
+**                    sw.T_Tmp_New_Job_Parameters
 **
 **  Auth:   grk
 **  Date:   02/06/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)
@@ -52,10 +61,10 @@ BEGIN
         DROP TABLE IF EXISTS sw.T_Tmp_New_Job_Step_Dependencies;
         DROP TABLE IF EXISTS sw.T_Tmp_New_Job_Parameters;
 
-        SELECT * INTO sw.T_Tmp_NewJobs                FROM Tmp_Jobs;
-        SELECT * INTO sw.T_Tmp_NewJobSteps            FROM Tmp_Job_Steps;
-        SELECT * INTO sw.T_Tmp_NewJobStepDependencies FROM Tmp_Job_Step_Dependencies;
-        SELECT * INTO sw.T_Tmp_NewJobParameters       FROM Tmp_Job_Parameters;
+        SELECT * INTO sw.T_Tmp_New_Jobs                  FROM Tmp_Jobs;
+        SELECT * INTO sw.T_Tmp_New_Job_Steps             FROM Tmp_Job_Steps;
+        SELECT * INTO sw.T_Tmp_New_Job_Step_Dependencies FROM Tmp_Job_Step_Dependencies;
+        SELECT * INTO sw.T_Tmp_New_Job_Parameters        FROM Tmp_Job_Parameters;
     End If;
 
     BEGIN
