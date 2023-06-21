@@ -192,7 +192,7 @@ BEGIN
         -- Delete?
         ---------------------------------------------------
 
-        -- CALL Remove_Selected_Jobs 0, _message => _message, 0
+        -- CALL cap.remove_selected_tasks (_infoOnly => false, _message => _message, _returnCode => _returnCode, _logDeletions => false);
 
         ---------------------------------------------------
         -- If we reach this point, action was not implemented

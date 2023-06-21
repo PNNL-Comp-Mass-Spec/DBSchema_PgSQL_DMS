@@ -437,8 +437,8 @@ BEGIN
             FROM Tmp_JobsToUpdate
             ORDER BY Job
         LOOP
-            CALL cap.add_update_job_parameter (_job, 'JobParameters', 'Dataset',   _datasetNameNew, _infoOnly => false);
-            CALL cap.add_update_job_parameter (_job, 'JobParameters', 'Directory', _datasetNameNew, _infoOnly => false);
+            CALL cap.add_update_task_parameter (_job, 'JobParameters', 'Dataset',   _datasetNameNew, _message => _message, _returnCode => _returnCode, _infoOnly => false);
+            CALL cap.add_update_task_parameter (_job, 'JobParameters', 'Directory', _datasetNameNew, _message => _message, _returnCode => _returnCode, _infoOnly => false);
 
             UPDATE cap.t_tasks
             Set Dataset = _datasetNameNew
@@ -477,8 +477,8 @@ BEGIN
             FROM Tmp_JobsToUpdate
             ORDER BY Job
         LOOP
-            CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetName',       _datasetNameNew, _infoOnly => false);
-            CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetFolderName', _datasetNameNew, _infoOnly => false);
+            CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetName',       _datasetNameNew, _message => _message, _returnCode => _returnCode, _infoOnly => false);
+            CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetFolderName', _datasetNameNew, _message => _message, _returnCode => _returnCode, _infoOnly => false);
 
             UPDATE sw.t_jobs
             Set Dataset = _datasetNameNew

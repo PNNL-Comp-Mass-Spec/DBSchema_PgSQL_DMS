@@ -468,7 +468,7 @@ BEGIN
                 --   update_dms_file_info_xml
                 --   update_missed_dms_file_info
 
-                -- Example call stack: update_context -> update_job_state -> update_dms_dataset_state -> update_dms_file_info_xml -> update_dataset_file_info_xml
+                -- Example call stack: cap.update_task_context -> cap.update_task_state -> cap.update_dms_dataset_state -> cap.update_dms_file_info_xml -> public.update_dataset_file_info_xml
 
                 _returnCode := 'U5360';
 

@@ -492,7 +492,7 @@ BEGIN
         End If;
 
         If Coalesce(_captureJobNew, 0) > 0 Then
-            CALL cap.update_parameters_for_job (_captureJobNew)
+            CALL cap.update_parameters_for_task (_captureJobNew, _message => _message, _returnCode => _returnCode);
 
             _jobMessage := format('Created capture task job %s for dataset %s by cloning job %s',
                                     _captureJobNew, _datasetNew, _captureJob

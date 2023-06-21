@@ -75,5 +75,5 @@ ALTER PROCEDURE cap.retry_selected_tasks(INOUT _message text, INOUT _returncode 
 -- Name: PROCEDURE retry_selected_tasks(INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.retry_selected_tasks(INOUT _message text, INOUT _returncode text) IS 'RetrySelectedJobs';
+COMMENT ON PROCEDURE cap.retry_selected_tasks(INOUT _message text, INOUT _returncode text) IS 'RetrySelectedTasks or RetrySelectedJobs';
 

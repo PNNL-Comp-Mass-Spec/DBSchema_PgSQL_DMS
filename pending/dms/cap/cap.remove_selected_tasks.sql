@@ -126,7 +126,7 @@ BEGIN
             WHERE Job = _job;
 
             _message := format('Deleted job %s from t_tasks', _job);
-            CALL public.post_log_entry ('Normal', _message, 'Remove_Selected_Jobs', 'cap');
+            CALL public.post_log_entry ('Normal', _message, 'Remove_Selected_Tasks', 'cap');
 
         END LOOP; -- </c>
 
@@ -144,4 +144,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.remove_selected_tasks IS 'RemoveSelectedJobs';
+COMMENT ON PROCEDURE cap.remove_selected_tasks IS 'RemoveSelectedTasks or RemoveSelectedJobs';
