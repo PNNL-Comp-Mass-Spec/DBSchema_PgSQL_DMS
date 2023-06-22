@@ -75,14 +75,11 @@ BEGIN
     -- Validate input fields
     ---------------------------------------------------
 
-    _description := Coalesce(_description, '');
-    _enabled := Coalesce(_enabled, 'Y');
-    _backfillToDMS := Coalesce(_backfillToDMS, 'Y');
-    _mode := Trim(Lower(Coalesce(_mode, '')));
-
-    _message := '';
-    _returnCode := '';
-    _callingUser := Coalesce(_callingUser, '');
+    _description :=   Trim(Coalesce(_description, ''));
+    _enabled :=       Trim(Upper(Coalesce(_enabled, 'Y')));
+    _backfillToDMS := Trim(Upper(Coalesce(_backfillToDMS, 'Y')));
+    _mode :=          Trim(Lower(Coalesce(_mode, '')));
+    _callingUser :=   Coalesce(_callingUser, '');
 
     If _backfillToDMS = 'Y' Then
         _backFill := 1;

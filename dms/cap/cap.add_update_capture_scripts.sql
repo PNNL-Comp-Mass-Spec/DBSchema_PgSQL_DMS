@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          05/23/2023 mem - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          06/21/2023 mem - Assure that _enabled is uppercase
 **
 *****************************************************/
 DECLARE
@@ -81,9 +82,9 @@ BEGIN
         -- Validate input fields
         ---------------------------------------------------
 
-        _description := Coalesce(_description, '');
-        _enabled := Coalesce(_enabled, 'Y');
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _description := Trim(Coalesce(_description, ''));
+        _enabled :=     Trim(Upper(Coalesce(_enabled, 'Y')));
+        _mode :=        Trim(Lower(Coalesce(_mode, '')));
         _callingUser := Coalesce(_callingUser, '');
 
         If _description = '' Then
@@ -117,7 +118,7 @@ BEGIN
         SELECT script_id
         INTO _scriptId
         FROM cap.t_scripts
-        WHERE script = _script;
+        WHERE script = _script::citext;
         --
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
