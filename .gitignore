@@ -7,3 +7,11 @@ t_schema_change_log_data.sql
 /dms/_User_Mapping_postgres_Server_op_warehouse_fdw.sql
 /dms/_User_Mapping_d3l243_Server_op_warehouse_fdw.sql
 *t_debug_tmp*.sql
+/dms/cap/cap.t_tmp_new_job_parameters.sql
+/dms/cap/cap.t_tmp_new_job_step_dependencies.sql
+/dms/cap/cap.t_tmp_new_job_steps.sql
+/dms/cap/cap.t_tmp_new_jobs.sql
+/dms/sw/sw.t_tmp_new_job_parameters.sql
+/dms/sw/sw.t_tmp_new_job_step_dependencies.sql
+/dms/sw/sw.t_tmp_new_job_steps.sql
+/dms/sw/sw.t_tmp_new_jobs.sql
