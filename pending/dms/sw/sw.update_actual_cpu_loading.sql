@@ -102,6 +102,7 @@ BEGIN
 
     End If; -- </a>
 
+    DROP TABLE Tmp_PendingUpdates;
 END
 $$;
 

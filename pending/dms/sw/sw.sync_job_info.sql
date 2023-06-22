@@ -154,7 +154,6 @@ BEGIN
 --        Set _message = ''
 --    End If;
 
-    DROP TABLE Tmp_UpdateSummary;
 END
 $$;
 

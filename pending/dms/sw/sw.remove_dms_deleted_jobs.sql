@@ -87,10 +87,11 @@ BEGIN
     ---------------------------------------------------
 
     CALL sw.remove_selected_jobs (
-        _infoOnly,
-        _message => _message,
-        _logDeletions => true,
-        _logToConsoleOnly => false);
+                _infoOnly,
+                _message => _message,
+                _returnCode => _returnCode,
+                _logDeletions => true,
+                _logToConsoleOnly => false);
 
     DROP TABLE Tmp_SJL;
 END

@@ -199,7 +199,12 @@ BEGIN
     -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
     ---------------------------------------------------
 
-    CALL sw.create_steps_for_job (_job, _scriptXML, _resultsDirectoryName, _message => _message, _returnCode => _returnCode);
+    CALL sw.create_steps_for_job (
+                _job,
+                _scriptXML,
+                _resultsDirectoryName,
+                _message => _message,
+                _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         _msg := format('Error returned by create_steps_for_job: %s', _returnCode);
@@ -222,12 +227,13 @@ BEGIN
     -- Do special needs for local jobs that target other jobs
     ---------------------------------------------------
 
-    CALL sw.adjust_params_for_local_job
-        _scriptName,
-        _datasetName,
-        _dataPackageID,
-        _jobParamXML OUTPUT,
-        _message => _message
+    CALL sw.adjust_params_for_local_job (
+                _scriptName,
+                _datasetName,
+                _dataPackageID,
+                _jobParamXML => _jobParamXML,   -- Output
+                _message => _message,           -- Output
+                _returnCode => _returnCode);    -- Output
 
     If _debugMode Then
         RAISE INFO '';
@@ -240,12 +246,12 @@ BEGIN
     ---------------------------------------------------
 
     CALL sw.create_signatures_for_job_steps (
-            _job,
-            _jobParamXML,
-            _dataPackageID,
-            _message => _message,
-            _returnCode => _returnCode,
-            _debugMode => _debugMode);
+                _job,
+                _jobParamXML,
+                _dataPackageID,
+                _message => _message,
+                _returnCode => _returnCode,
+                _debugMode => _debugMode);
 
     If _returnCode <> '' Then
         _msg := format('Error returned by create_signatures_for_job_steps: %s', _returnCode);
@@ -278,7 +284,11 @@ BEGIN
     -- Handle any step cloning
     ---------------------------------------------------
 
-    CALL sw.clone_job_step (_job, _jobParamXML, _message => _message, _returnCode => _returnCode);
+    CALL sw.clone_job_step (
+                _job,
+                _jobParamXML,
+                _message => _message,
+                _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         _msg := format('Error returned by clone_job_step: %s', _returnCode);
@@ -334,7 +344,7 @@ BEGIN
                _comment, NULL, _ownerUsername,
                Coalesce(_dataPackageID, 0))
 
-        CALL sw.move_jobs_to_main_tables _message => _message
+        CALL sw.move_jobs_to_main_tables (_message => _message, _returnCode => _returnCode)
 
         CALL alter_entered_by_user ('sw.t_job_events', 'job', _job, _callingUser);
     End If;
@@ -362,12 +372,12 @@ BEGIN
 
         If _dataPackageID > 0 Then
             CALL sw.update_job_param_org_db_info_using_data_pkg (
-                        _job,
-                        _dataPackageID,
-                        _deleteIfInvalid => false,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode,     -- Output
-                        _callingUser => _callingUser);
+                            _job,
+                            _dataPackageID,
+                            _deleteIfInvalid => false,
+                            _message => _message,           -- Output
+                            _returnCode => _returnCode,     -- Output
+                            _callingUser => _callingUser);
         End If;
     End If;
 
@@ -378,14 +388,14 @@ BEGIN
         ---------------------------------------------------
 
         CALL sw.update_job_param_org_db_info_using_data_pkg (
-                _job,
-                _dataPackageID,
-                _deleteIfInvalid => false,
-                _debugMode => true,
-                _scriptNameForDebug => _scriptName,
-                _message => _message,
-                _returnCode => _returnCode,
-                _callingUser => _callingUser);
+                    _job,
+                    _dataPackageID,
+                    _deleteIfInvalid => false,
+                    _debugMode => true,
+                    _scriptNameForDebug => _scriptName,
+                    _message => _message,
+                    _returnCode => _returnCode,
+                    _callingUser => _callingUser);
 
     End If;
 

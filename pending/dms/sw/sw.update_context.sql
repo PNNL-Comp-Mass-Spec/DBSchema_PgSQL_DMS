@@ -7,6 +7,7 @@ CREATE OR REPLACE PROCEDURE sw.update_context
     _loggingEnabled boolean = false,
     _loopingUpdateInterval int = 5,
     _infoOnly boolean = false,
+    _infoLevel int = 0,
     _debugMode boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default ''
@@ -19,12 +20,19 @@ AS $$
 **      Update context under which job steps are assigned
 **
 **  Arguments:
-**    _bypassDMS               False: normal mode; will lookup the bypass mode in T_Process_Step_Control; true: test mode; state of DMS is not affected
-**    _logIntervalThreshold    If this procedure runs longer than this threshold, status messages will be posted to the log
-**    _loggingEnabled          Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
-**    _loopingUpdateInterval   Seconds between detailed logging while looping sets of jobs or steps to process
-**    _infoOnly                True to preview changes that would be made
-**    _debugMode               False for no debugging; true to see debug messages
+**    _bypassDMS                If false, lookup the bypass mode in sw.t_process_step_control; otherwise, do not update states in tables in the public schema
+**    _maxJobsToProcess         Maximum number of jobs to process
+**    _logIntervalThreshold     If this procedure runs longer than this threshold (in seconds), status messages will be posted to the log
+**    _loggingEnabled           Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
+**    _loopingUpdateInterval    Seconds between detailed logging while looping sets of jobs or steps to process
+**    _infoOnly                 True to preview changes that would be made
+**    _infoLevel                When _infoOnly is true, 1 to preview changes, 2 to add new jobs but do not create job steps
+**    _debugMode                When true, show additional information when calling sw.add_new_jobs and sw.create_job_steps (which calls several procedures, including sw.create_steps_for_job, sw.finish_job_creation, and sw.move_jobs_to_main_tables)
+**                              Additionally, sw.move_jobs_to_main_tables stores the contents of the temporary tables in the following tables when _infoOnly is false and _debugMode is true
+**                                sw.T_Tmp_New_Jobs
+**                                sw.T_Tmp_New_Job_Steps
+**                                sw.T_Tmp_New_Job_Step_Dependencies
+**                                sw.T_Tmp_New_Job_Parameters
 **
 **  Auth:   grk
 **  Date:   05/30/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
@@ -70,13 +78,15 @@ BEGIN
         ---------------------------------------------------
 
         _bypassDMS := Coalesce(_bypassDMS, false);
-        _infoOnly := Coalesce(_infoOnly, false);
-        _debugMode := Coalesce(_debugMode, false);
         _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
-        _loggingEnabled := Coalesce(_loggingEnabled, false);
         _logIntervalThreshold := Coalesce(_logIntervalThreshold, 15);
+        _loggingEnabled := Coalesce(_loggingEnabled, false);
         _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+
+        _infoOnly := Coalesce(_infoOnly, false);
+        _infoLevel := Coalesce(_infoLevel, 0);
+        _debugMode := Coalesce(_debugMode, false);
 
         If _logIntervalThreshold = 0 Then
             _loggingEnabled := true;
@@ -90,25 +100,27 @@ BEGIN
         WHERE processing_step_name = 'LogLevel';
 
         -- Set _loggingEnabled if the LogLevel is 2 or higher
-        If Coalesce(_result, 0) >= 2 Then
+        If FOUND And Coalesce(_result, 0) >= 2 Then
             _loggingEnabled := true;
         End If;
 
-        -- See if DMS Updating is disabled in sw.t_process_step_control
         If Not _bypassDMS Then
+
+            -- See if DMS Updating is disabled in sw.t_process_step_control
 
             SELECT enabled
             INTO _result
             FROM sw.t_process_step_control
             WHERE processing_step_name = 'UpdateDMS';
 
-            If Coalesce(_result, 1) = 0 Then
+            If FOUND And Coalesce(_result, 1) = 0 Then
                 _bypassDMS := true;
             End If;
         End If;
 
         ---------------------------------------------------
         -- Call the various procedures for performing updates
+        -- If an option is missing from t_process_step_control, assume the associated procedure should be called
         ---------------------------------------------------
 
         -- Step 1: Remove jobs deleted from DMS
@@ -116,23 +128,29 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'RemoveDMSDeletedJobs';
+        WHERE processing_step_name = 'remove_dms_deleted_jobs';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s Remove_DMS_Deleted_Jobs', _action);
+            _statusMessage := format('%s remove_dms_deleted_jobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call remove_dms_deleted_jobs';
+
         If _result > 0 Then
-            CALL sw.remove_dms_deleted_jobs _bypassDMS, _message => _message, _maxJobsToProcess => _maxJobsToProcess;
+            CALL sw.remove_dms_deleted_jobs (
+                        _bypassDMS,
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _maxJobsToProcess => _maxJobsToProcess;
         End If;
 
         -- Step 2: Add new jobs, hold/resume/reset existing jobs
@@ -140,31 +158,35 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'AddNewJobs';
+        WHERE processing_step_name = 'add_new_jobs';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s AddNewJobs', _action);
+            _statusMessage := format('%s add_new_jobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call add_new_jobs';
+
         If _result > 0 Then
             CALL sw.add_new_jobs (
-                _bypassDMS,
-                _message => _message,
-                _maxJobsToProcess => _maxJobsToProcess,
-                _logIntervalThreshold => _LogIntervalThreshold,
-                _loggingEnabled => _LoggingEnabled,
-                _loopingUpdateInterval => _LoopingUpdateInterval,
-                _infoOnly => _infoOnly,
-                _debugMode => _DebugMode);
+                        _bypassDMS,
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _logIntervalThreshold => _LogIntervalThreshold,
+                        _loggingEnabled => _LoggingEnabled,
+                        _loopingUpdateInterval => _LoopingUpdateInterval,
+                        _infoOnly => _infoOnly,
+                        _infoLevel => _infoLevel,
+                        _debugMode => _DebugMode);
 
         End If;
 
@@ -185,6 +207,11 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_SJL;
+        DROP TABLE IF EXISTS Tmp_DMSJobs;
+        DROP TABLE IF EXISTS Tmp_ResetJobs;
+        DROP TABLE IF EXISTS Tmp_JobsToResumeOrReset;
+        DROP TABLE IF EXISTS Tmp_JobDebugMessages;
     END;
 
     COMMIT;
@@ -197,23 +224,28 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'ImportProcessors';
+        WHERE processing_step_name = 'import_processors';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s ImportProcessors', _action);
+            _statusMessage := format('%s import_processors', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call import_processors';
+
         If _result > 0 Then
-            CALL sw.import_processors (_bypassDMS, _message => _message);
+            CALL sw.import_processors (
+                        _bypassDMS,
+                        _message => _message,
+                        _returnCode => _returnCode);
         End If;
 
         /*
@@ -224,23 +256,25 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'ImportJobProcessors';
+        WHERE processing_step_name = 'import_job_processors';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s Import_Job_Processors', _action);
+            _statusMessage := format('%s import_job_processors', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call import_job_processors';
+
         If _result > 0 Then
-            CALL sw.import_job_processors _bypassDMS, _message => _message;
+            CALL sw.import_job_processors (_bypassDMS, _message => _message, _returnCode => _returnCode);
         End If;
         */
 
@@ -249,23 +283,28 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'SyncJobInfo';
+        WHERE processing_step_name = 'sync_job_info';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s Sync_Job_Info', _action);
+            _statusMessage := format('%s sync_job_info', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call sync_job_info';
+
         If _result > 0 Then
-            CALL sw.sync_job_info _bypassDMS, _message => _message;
+            CALL sw.sync_job_info (
+                        _bypassDMS,
+                        _message => _message,
+                        _returnCode => _returnCode);
         End If;
 
     EXCEPTION
@@ -297,32 +336,35 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'CreateJobSteps';
+        WHERE processing_step_name = 'create_job_steps';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s CreateJobSteps', _action);
+            _statusMessage := format('%s create_job_steps', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call create_job_steps';
+
         If _result > 0 Then
             CALL sw.create_job_steps (
-                    _message => _message,
-                    _returnCode => _returnCode,
-                    _maxJobsToProcess => _maxJobsToProcess,
-                    _logIntervalThreshold => _LogIntervalThreshold,
-                    _loggingEnabled => _LoggingEnabled,
-                    _loopingUpdateInterval => _LoopingUpdateInterval,
-                    _infoOnly => _infoOnly,
-                    _debugMode => _debugMode
-                    );
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _logIntervalThreshold => _logIntervalThreshold,
+                        _loggingEnabled => _loggingEnabled,
+                        _loopingUpdateInterval => _loopingUpdateInterval,
+                        _infoOnly => _infoOnly,
+                        _debugMode => _debugMode);
+
+        End If;
 
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
@@ -341,6 +383,10 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_Jobs;
+        DROP TABLE IF EXISTS Tmp_Job_Steps;
+        DROP TABLE IF EXISTS Tmp_Job_Step_Dependencies;
+        DROP TABLE IF EXISTS Tmp_Job_Parameters;
     END;
 
     COMMIT;
@@ -353,27 +399,30 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'UpdateStepStates';
+        WHERE processing_step_name = 'update_step_states';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s UpdateStepStates', _action);
+            _statusMessage := format('%s update_step_states', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call update_step_states';
+
         If _result > 0 Then
             CALL sw.update_step_states (
-                    _message => _message,
-                    _infoOnly => _infoOnly,
-                    _maxJobsToProcess => _maxJobsToProcess,
-                    _loopingUpdateInterval => _LoopingUpdateInterval);
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _infoOnly => _infoOnly,
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _loopingUpdateInterval => _loopingUpdateInterval);
         End If;
 
     EXCEPTION
@@ -405,28 +454,32 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'UpdateJobState';
+        WHERE processing_step_name = 'update_job_state';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s UpdateJobState', _action);
+            _statusMessage := format('%s update_job_state', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call update_job_state';
+
         If _result > 0 Then
             CALL sw.update_job_state (
-                    _bypassDMS,
-                    _message => _message,
-                    _maxJobsToProcess => _maxJobsToProcess,
-                    _loopingUpdateInterval => _loopingUpdateInterval,
-                    _infoOnly => _infoOnly);
+                        _bypassDMS,
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _loopingUpdateInterval => _loopingUpdateInterval,
+                        _infoOnly => _infoOnly);
+        End If;
 
     EXCEPTION
         -- Error caught; log the error, then continue at the next section
@@ -445,6 +498,9 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_ChangedJobs;
+        DROP TABLE IF EXISTS Tmp_JobsToReset;
+        DROP TABLE IF EXISTS Tmp_JobStatePreview;
     END;
 
     COMMIT;
@@ -457,27 +513,29 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'UpdateCPULoading';
+        WHERE processing_step_name = 'update_cpu_loading';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s UpdateCPULoading', _action);
+            _statusMessage := format('%s update_cpu_loading', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call update_cpu_loading';
+
         If _result > 0 Then
             -- First update actual_cpu_load in sw.t_job_steps
             CALL sw.update_actual_cpu_loading (_infoOnly => false);
 
             -- Now update cpus_available in sw.t_machines
-            CALL sw.update_cpu_loading (_message => _message);
+            CALL sw.update_cpu_loading (_message => _message, _returnCode => _returnCode);
         End If;
 
     EXCEPTION
@@ -497,6 +555,8 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_PendingUpdates;
+        DROP TABLE IF EXISTS Tmp_MachineStats
     END;
 
     COMMIT;
@@ -509,23 +569,28 @@ BEGIN
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
-        WHERE processing_step_name = 'AutoFixFailedJobs';
+        WHERE processing_step_name = 'auto_fix_failed_jobs';
 
-        If _result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
+            _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s AutoFixFailedJobs', _action);
+            _statusMessage := format('%s auto_fix_failed_jobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
         End If;
 
         _currentLocation := 'Call auto_fix_failed_jobs';
+
         If _result > 0 Then
-            CALL sw.auto_fix_failed_jobs (_message => _message => _message, _infoOnly => _infoOnly);
+            CALL sw.auto_fix_failed_jobs (
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _infoOnly => _infoOnly);
         End If;
 
     EXCEPTION
@@ -545,14 +610,13 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_JobsToFix;
     END;
 
     COMMIT;
 
     If _loggingEnabled Then
-        _statusMessage := format('UpdateContext complete: %s seconds elapsed',
-                                 extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold;
-
+        _statusMessage := format('Update context complete: %s seconds elapsed', extract(epoch FROM clock_timestamp() - _startTime);
         CALL public.post_log_entry ('Normal', _statusMessage, 'Update_Context', 'sw');
     End If;
 

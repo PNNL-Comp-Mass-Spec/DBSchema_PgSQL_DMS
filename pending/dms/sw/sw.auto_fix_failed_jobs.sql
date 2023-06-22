@@ -30,7 +30,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_JobsToFix (
         Job int not null,
         Step int not null
-    )
+    );
 
     CREATE INDEX IX_Tmp_JobsToFix_Job ON Tmp_JobsToFix (Job, Step);
 

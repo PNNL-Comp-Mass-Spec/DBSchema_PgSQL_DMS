@@ -5,8 +5,7 @@ CREATE OR REPLACE PROCEDURE sw.create_steps_for_job
     _scriptXML xml,
     _resultsDirectoryName text,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _debugMode boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

@@ -107,6 +107,7 @@ DECLARE
     _startTime timestamp;
     _lastLogTime timestamp;
     _statusMessage text;
+    _createdSelectedJobsTable boolean := false;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -208,7 +209,7 @@ BEGIN
         -- No new or held jobs were found in DMS
 
         If _debugMode Then
-            RAISE INFO 'No New or held jobs found in DMS';
+            RAISE INFO 'No new or held jobs found in DMS';
         End If;
 
         -- Exit this procedure
@@ -239,7 +240,7 @@ BEGIN
     -- Additional temp tables
     CREATE TEMP TABLE Tmp_ResetJobs (
         Job int
-    )
+    );
 
     CREATE INDEX IX_Tmp_ResetJobs_Job ON Tmp_ResetJobs (Job);
 
@@ -247,7 +248,7 @@ BEGIN
         Job int,
         Dataset text,
         FailedJob int
-    )
+    );
 
     CREATE INDEX IX_Tmp_ResumedJobs_Job ON Tmp_JobsToResumeOrReset (Job);
 
@@ -258,7 +259,7 @@ BEGIN
         DMS_State int,
         PipelineState int,
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
-    )
+    );
 
     CREATE INDEX IX_Tmp_JobDebugMessages_Job ON Tmp_JobDebugMessages (Job);
 
@@ -351,21 +352,25 @@ BEGIN
             Else
 
                 ---------------------------------------------------
-                -- Set up and populate temp table and call sproc
+                -- Set up and populate temp table and call procedure
                 -- to delete jobs listed in it
                 ---------------------------------------------------
 
                 CREATE TEMP TABLE Tmp_SJL (Job int);
 
                 CREATE INDEX IX_Tmp_SJL_Job ON Tmp_SJL (Job);
-                --
+
+                _createdSelectedJobsTable := true;
+
                 INSERT INTO SJL (Job)
                 SELECT Job FROM Tmp_ResetJobs
-                --
+
                 CALL sw.remove_selected_jobs (
-                        _infoOnly,
-                        _message => _message,
-                        _logDeletions => false);
+                            _infoOnly,
+                            _message => _message,
+                            _returnCode => _returnCode,
+                            _logDeletions => false,
+                            _logToConsoleOnly => false);
 
             End If;
         End If;
@@ -498,9 +503,6 @@ BEGIN
         End If;
     END;
 
-    -- Commit changes
-    COMMIT;
-
     If _resumeUpdatesRequired Then
 
         ---------------------------------------------------
@@ -530,6 +532,7 @@ BEGIN
             CALL sw.update_job_parameters (
                     _job,
                     _infoOnly => _infoOnly,
+                    _settingsFileOverride => '',
                     _message => _message,           -- Output
                     _returnCode => _returnCode);    -- Output
 
@@ -537,7 +540,15 @@ BEGIN
                 _message := format('Error updating parameters for job %s', _job);
                 CALL public.post_log_entry ('Error', _message, 'Add_New_Jobs', 'sw');
 
+                DROP TABLE Tmp_DMSJobs;
+                DROP TABLE Tmp_ResetJobs;
                 DROP TABLE Tmp_JobsToResumeOrReset;
+                DROP TABLE Tmp_JobDebugMessages;
+
+                If _createdSelectedJobsTable := true; Then
+                    DROP TABLE Tmp_SJL;
+                End If;
+
                 RETURN;
             End If;
 
@@ -545,7 +556,12 @@ BEGIN
             -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
             ---------------------------------------------------
 
-            CALL sw.validate_job_server_info (_job, _useJobParameters => true, _debugMode => _debugMode);
+            CALL sw.validate_job_server_info (
+                        _job,
+                        _useJobParameters => true,
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _debugMode => _debugMode);
 
             _jobsProcessed := _jobsProcessed + 1;
 
@@ -646,9 +662,6 @@ BEGIN
 
         END;
 
-        -- Commit changes
-        COMMIT;
-
     End If;
 
     If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
@@ -662,7 +675,9 @@ BEGIN
     ---------------------------------------------------
 
     If _debugMode Then
+
         -- ToDo: Update this to use Raise Info
+
         SELECT *
         FROM Tmp_JobDebugMessages
         ORDER BY EntryID;
@@ -673,7 +688,7 @@ BEGIN
     DROP TABLE Tmp_JobsToResumeOrReset;
     DROP TABLE Tmp_JobDebugMessages;
 
-    If _jobCountToReset > 0 And Not _debugMode Then
+    If _createdSelectedJobsTable := true; Then
         DROP TABLE Tmp_SJL;
     End If;
 END

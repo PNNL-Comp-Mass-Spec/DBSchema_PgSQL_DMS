@@ -59,20 +59,23 @@ BEGIN
         -- Get unevaluated dependencies for steps that are finished
         -- (skipped or completed)
         --
-        CALL sw.evaluate_step_dependencies ( _message => _message,         -- Output
-                                          _returnCode => _returnCode,   -- Output
-                                          _maxJobsToProcess => _maxJobsToProcess,
-                                          _loopingUpdateInterval => _LoopingUpdateInterval,
-                                          _infoOnly => _infoOnly);
+        CALL sw.evaluate_step_dependencies (
+                        _message => _message,                   -- Output
+                        _returnCode => _returnCode,             -- Output
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _loopingUpdateInterval => _LoopingUpdateInterval,
+                        _infoOnly => _infoOnly);
 
         -- Examine all dependencies for steps in 'Waiting' state
         -- and set state of steps that have them all satisfied
         --
-        CALL sw.update_dependent_steps ( _message => _message,                      -- Output
-                                      _numStepsSkipped => _numStepsSkipped,      -- Output
-                                      _infoOnly => _infoOnly,
-                                      _maxJobsToProcess => _maxJobsToProcess,
-                                      _loopingUpdateInterval => _LoopingUpdateInterval);
+        CALL sw.update_dependent_steps (
+                        _message => _message,                   -- Output
+                        _returnCode => _returnCode,             -- Output
+                        _numStepsSkipped => _numStepsSkipped,   -- Output
+                        _infoOnly => _infoOnly,
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _loopingUpdateInterval => _LoopingUpdateInterval);
 
         -- Repeat if any step states were changed (but only If Not _infoOnly)
         --
