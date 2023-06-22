@@ -95,6 +95,12 @@ CREATE VIEW cap.v_task_steps AS
 ALTER TABLE cap.v_task_steps OWNER TO d3l243;
 
 --
+-- Name: v_task_steps trig_v_task_steps_instead_of_update; Type: TRIGGER; Schema: cap; Owner: d3l243
+--
+
+CREATE TRIGGER trig_v_task_steps_instead_of_update INSTEAD OF UPDATE ON cap.v_task_steps FOR EACH ROW EXECUTE FUNCTION cap.trigfn_v_task_steps_instead_of_update();
+
+--
 -- Name: TABLE v_task_steps; Type: ACL; Schema: cap; Owner: d3l243
 --
 

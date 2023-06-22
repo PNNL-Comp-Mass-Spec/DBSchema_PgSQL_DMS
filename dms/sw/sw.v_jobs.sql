@@ -29,6 +29,12 @@ CREATE VIEW sw.v_jobs AS
 ALTER TABLE sw.v_jobs OWNER TO d3l243;
 
 --
+-- Name: v_jobs trig_v_jobs_instead_of_update; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_v_jobs_instead_of_update INSTEAD OF UPDATE ON sw.v_jobs FOR EACH ROW EXECUTE FUNCTION sw.trigfn_v_jobs_instead_of_update();
+
+--
 -- Name: TABLE v_jobs; Type: ACL; Schema: sw; Owner: d3l243
 --
 

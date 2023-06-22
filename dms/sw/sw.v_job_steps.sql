@@ -138,6 +138,12 @@ ALTER TABLE sw.v_job_steps OWNER TO d3l243;
 COMMENT ON VIEW sw.v_job_steps IS 'We cannot predict runtime for X!Tandem jobs since progress is not properly reported';
 
 --
+-- Name: v_job_steps trig_v_job_steps_instead_of_update; Type: TRIGGER; Schema: sw; Owner: d3l243
+--
+
+CREATE TRIGGER trig_v_job_steps_instead_of_update INSTEAD OF UPDATE ON sw.v_job_steps FOR EACH ROW EXECUTE FUNCTION sw.trigfn_v_job_steps_instead_of_update();
+
+--
 -- Name: TABLE v_job_steps; Type: ACL; Schema: sw; Owner: d3l243
 --
 
