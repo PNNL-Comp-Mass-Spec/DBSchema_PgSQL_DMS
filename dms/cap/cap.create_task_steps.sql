@@ -1,8 +1,8 @@
 --
--- Name: create_task_steps(text, boolean, text, integer, text, integer, integer, boolean, integer, boolean, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: create_task_steps(text, text, boolean, text, integer, text, integer, integer, boolean, integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''::text, IN _debugmode boolean DEFAULT false, IN _mode text DEFAULT 'CreateFromImportedJobs'::text, IN _existingjob integer DEFAULT 0, IN _extensionscriptname text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false, IN _mode text DEFAULT 'CreateFromImportedJobs'::text, IN _existingjob integer DEFAULT 0, IN _extensionscriptname text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          05/12/2023 mem - Rename variables and fix bug with misplaced "And"
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/21/2023 mem - Use Order By when finding tasks with state 0 in cap.t_tasks
+**                         - Do not change _mode to lowercase
 **
 *****************************************************/
 DECLARE
@@ -70,7 +71,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
     _debugMode := Coalesce(_debugMode, false);
     _existingJob := Coalesce(_existingJob, 0);
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _mode := Trim(Coalesce(_mode, ''));
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     If _debugMode Then
@@ -445,11 +446,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE cap.create_task_steps(INOUT _message text, INOUT _returncode text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE create_task_steps(INOUT _message text, INOUT _returncode text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.create_task_steps(INOUT _message text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _returncode text) IS 'CreateTaskSteps or CreateJobSteps';
+COMMENT ON PROCEDURE cap.create_task_steps(INOUT _message text, INOUT _returncode text, IN _debugmode boolean, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean) IS 'CreateTaskSteps or CreateJobSteps';
 
