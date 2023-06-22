@@ -1,18 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.update_task_context
-(
-    _bypassDMS boolean = false,
-    _infoOnly boolean = false,
-    _maxJobsToProcess int = 0,
-    _logIntervalThreshold int = 15,
-    _loggingEnabled boolean = false,
-    _loopingUpdateInterval int = 5,
-    _debugMode boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_task_context(boolean, integer, integer, boolean, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, IN _debugmode boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -20,11 +12,17 @@ AS $$
 **
 **  Arguments:
 **    _bypassDMS               If false, lookup the bypass mode in cap.t_process_step_control; otherwise, do not update states in tables in the public schema
-**    _infoOnly                True to preview changes that would be made
 **    _maxJobsToProcess        Maximum number of jobs to process
 **    _logIntervalThreshold    If this procedure runs longer than this threshold (in seconds), status messages will be posted to the log
 **    _loggingEnabled          Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
 **    _loopingUpdateInterval   Seconds between detailed logging while looping sets of capture task jobs or steps to process
+**    _infoOnly                True to preview changes that would be made
+**    _debugMode               When true, show additional information when calling cap.create_task_steps (which calls cap.create_steps_for_task, cap.finish_task_creation, and cap.move_tasks_to_main_tables)
+**                             Additionally, cap.move_tasks_to_main_tables stores the contents of the temporary tables in the following tables when _infoOnly is false and _debugMode is true
+**                               cap.T_Tmp_New_Jobs
+**                               cap.T_Tmp_New_Job_Steps
+**                               cap.T_Tmp_New_Job_Step_Dependencies
+**                               cap.T_Tmp_New_Job_Parameters
 **
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -54,7 +52,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    -- Part A: Validate inputs, Remove deleted capture task jobs, Add new capture task jobs
+    -- Part A: Validate inputs, remove deleted capture task jobs, add new capture task jobs
     BEGIN
 
         ---------------------------------------------------
@@ -62,13 +60,14 @@ BEGIN
         ---------------------------------------------------
 
         _bypassDMS := Coalesce(_bypassDMS, false);
-        _infoOnly := Coalesce(_infoOnly, false);
-        _debugMode := Coalesce(_debugMode, false);
         _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
-        _loggingEnabled := Coalesce(_loggingEnabled, false);
         _logIntervalThreshold := Coalesce(_logIntervalThreshold, 15);
+        _loggingEnabled := Coalesce(_loggingEnabled, false);
         _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+
+        _infoOnly := Coalesce(_infoOnly, false);
+        _debugMode := Coalesce(_debugMode, false);
 
         If _logIntervalThreshold = 0 Then
             _loggingEnabled := true;
@@ -82,12 +81,13 @@ BEGIN
         WHERE processing_step_name = 'LogLevel';
 
         -- Set _loggingEnabled if the LogLevel is 2 or higher
-        If Coalesce(_result, 0) >= 2 Then
+        If FOUND And Coalesce(_result, 0) >= 2 Then
             _loggingEnabled := true;
         End If;
 
-        -- See if DMS Updating is disabled in cap.t_process_step_control
         If Not _bypassDMS Then
+
+            -- See if DMS Updating is disabled in cap.t_process_step_control
 
             SELECT enabled
             INTO _result
@@ -101,6 +101,7 @@ BEGIN
 
         ---------------------------------------------------
         -- Call the various procedures for performing updates
+        -- If an option is missing from t_process_step_control, assume the associated procedure should be called
         ---------------------------------------------------
 
         -- Make New Automatic Tasks
@@ -110,7 +111,7 @@ BEGIN
         FROM cap.t_process_step_control
         WHERE processing_step_name = 'make_new_automatic_tasks';
 
-        If FOUND And_result = 0 Then
+        If FOUND And _result = 0 Or _bypassDMS Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
@@ -125,8 +126,8 @@ BEGIN
 
         _currentLocation := 'Call make_new_automatic_tasks';
 
-        If _result <> 0 And Not _bypassDMS Then
-            call cap.make_new_automatic_tasks ();
+        If _result > 0 And Not _bypassDMS Then
+            CALL cap.make_new_automatic_tasks (_infoOnly => _infoOnly);
         End If;
 
         -- Make New Tasks From Analysis Broker
@@ -136,7 +137,7 @@ BEGIN
         FROM cap.t_process_step_control
         WHERE processing_step_name = 'make_new_tasks_from_analysis_broker';
 
-        If FOUND And_result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
@@ -151,8 +152,12 @@ BEGIN
 
         _currentLocation := 'Call make_new_tasks_from_analysis_broker';
 
-        If _result <> 0 Then
-            CALL cap.make_new_tasks_from_analysis_broker (_infoOnly, _message => _message, _returnCode => _returnCode);
+        If _result > 0 Then
+            CALL cap.make_new_tasks_from_analysis_broker (
+                        _infoOnly => _infoOnly,
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _infoOnlyShowsNewJobsOnly => true);
         End If;
 
         -- Make New Tasks From DMS
@@ -162,7 +167,7 @@ BEGIN
         FROM cap.t_process_step_control
         WHERE processing_step_name = 'make_new_tasks_from_dms';
 
-        If FOUND And_result = 0 Then
+        If FOUND And _result = 0 Or _bypassDMS Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
@@ -177,12 +182,12 @@ BEGIN
 
         _currentLocation := 'Call make_new_tasks_from_dms';
 
-        If _result <> 0 And Not _bypassDMS Then
+        If _result > 0 And Not _bypassDMS Then
             CALL cap.make_new_tasks_from_dms (
-                                    _message => _message,
-                                    _returnCode => _returnCode,
-                                    _loggingEnabled => _loggingEnabled,
-                                    _infoOnly => _infoOnly);
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _loggingEnabled => _loggingEnabled,
+                        _infoOnly => _infoOnly);
 
         End If;
 
@@ -193,7 +198,7 @@ BEGIN
         FROM cap.t_process_step_control
         WHERE processing_step_name = 'make_new_archive_tasks_from_dms';
 
-        If FOUND And_result = 0 Then
+        If FOUND And _result = 0 Or _bypassDMS Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
@@ -208,12 +213,12 @@ BEGIN
 
         _currentLocation := 'Call make_new_archive_tasks_from_dms';
 
-        If _result <> 0 And Not _bypassDMS Then
+        If _result > 0 And Not _bypassDMS Then
             CALL cap.make_new_archive_tasks_from_dms (
-                                    _message => _message,
-                                    _returnCode => _returnCode,
-                                    _loggingEnabled => _loggingEnabled,
-                                    _infoOnly => _infoOnly);
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _loggingEnabled => _loggingEnabled,
+                        _infoOnly => _infoOnly);
         End If;
 
     EXCEPTION
@@ -233,6 +238,8 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_Default_Params;
+        DROP TABLE IF EXISTS Tmp_New_Jobs;
     END;
 
     COMMIT;
@@ -245,7 +252,7 @@ BEGIN
         FROM cap.t_process_step_control
         WHERE processing_step_name = 'create_task_steps';
 
-        If FOUND And_result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
@@ -260,16 +267,16 @@ BEGIN
 
         _currentLocation := 'Call create_task_steps';
 
-        If _result <> 0 Then
+        If _result > 0 Then
             CALL cap.create_task_steps (
-                                    _message => _message,
-                                    _maxJobsToProcess => _maxJobsToProcess,
-                                    _logIntervalThreshold => _logIntervalThreshold,
-                                    _loggingEnabled => _loggingEnabled,
-                                    _loopingUpdateInterval => _loopingUpdateInterval,
-                                    _infoOnly => _infoOnly,
-                                    _returnCode => _returnCode,
-                                    _debugMode => _debugMode)
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _logIntervalThreshold => _logIntervalThreshold,
+                        _loggingEnabled => _loggingEnabled,
+                        _loopingUpdateInterval => _loopingUpdateInterval,
+                        _infoOnly => _infoOnly,
+                        _debugMode => _debugMode);
 
         End If;
 
@@ -290,6 +297,10 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_Jobs;
+        DROP TABLE IF EXISTS Tmp_Job_Steps;
+        DROP TABLE IF EXISTS Tmp_Job_Step_Dependencies;
+        DROP TABLE IF EXISTS Tmp_Job_Parameters;
     END;
 
     COMMIT;
@@ -302,7 +313,7 @@ BEGIN
         FROM cap.t_process_step_control
         WHERE processing_step_name = 'update_task_step_states';
 
-        If FOUND And_result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
@@ -317,12 +328,13 @@ BEGIN
 
         _currentLocation := 'Call update_task_step_states';
 
-        If _result <> 0 Then
+        If _result > 0 Then
             CALL cap.update_task_step_states (
-                                    _message => _message,
-                                    _infoOnly => _infoOnly,
-                                    _maxJobsToProcess => _maxJobsToProcess,
-                                    _loopingUpdateInterval => _loopingUpdateInterval);
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _infoOnly => _infoOnly,
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _loopingUpdateInterval => _loopingUpdateInterval);
         End If;
 
     EXCEPTION
@@ -342,6 +354,7 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_DepTable;
     END;
 
     COMMIT;
@@ -355,7 +368,7 @@ BEGIN
         FROM cap.t_process_step_control
         WHERE processing_step_name = 'update_task_state';
 
-        If FOUND And_result = 0 Then
+        If FOUND And _result = 0 Then
             _action := 'Skipping';
         Else
             _action := 'Calling';
@@ -370,13 +383,14 @@ BEGIN
 
         _currentLocation := 'Call update_task_state';
 
-        If _result <> 0 Then
+        If _result > 0 Then
             CALL cap.update_task_state (
-                                    _bypassDMS => _bypassDMS,
-                                    _message => _message,
-                                    _maxJobsToProcess => _maxJobsToProcess,
-                                    _loopingUpdateInterval => _loopingUpdateInterval,
-                                    _infoOnly => _infoOnly);
+                        _bypassDMS => _bypassDMS,
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _maxJobsToProcess => _maxJobsToProcess,
+                        _loopingUpdateInterval => _loopingUpdateInterval,
+                        _infoOnly => _infoOnly);
         End If;
 
     EXCEPTION
@@ -396,6 +410,7 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_ChangedJobs;
     END;
 
     COMMIT;
@@ -403,24 +418,27 @@ BEGIN
     -- Part F: Retry capture for datasets that failed capture but for which the dataset state in DMS is 1=New
     BEGIN
 
-        If Not _bypassDMS Then
-            _result := 1;
-            _action := 'Calling';
-        Else
+        If _bypassDMS Then
             _result := 0;
             _action := 'Skipping';
+        Else
+            _result := 1;
+            _action := 'Calling';
         End If;
 
         If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
-            _statusMessage := format('%s RetryCaptureForDMSResetJobs', _action);
+            _statusMessage := format('%s retry_capture_for_dms_reset_tasks', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Task_Context', 'cap');
         End If;
 
         _currentLocation := 'Call retry_capture_for_dms_reset_tasks';
 
-        If _result <> 0 Then
-            CALL cap.retry_capture_for_dms_reset_tasks (_message => _message, _infoOnly => _infoOnly);
+        If _result > 0 Then
+            CALL cap.retry_capture_for_dms_reset_tasks (
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _infoOnly => _infoOnly);
         End If;
 
     EXCEPTION
@@ -440,16 +458,25 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
+        DROP TABLE IF EXISTS Tmp_Selected_Jobs;
     END;
 
     COMMIT;
 
     If _loggingEnabled Then
-        _statusMessage := format('Update context complete: %s seconds elapsed', extract(epoch FROM CURRENT_TIMESTAMP - _startTime));
+        _statusMessage := format('Update context complete: %s seconds elapsed', extract(epoch FROM clock_timestamp() - _startTime));
         CALL public.post_log_entry ('Normal', _statusMessage, 'Update_Task_Context', 'cap');
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_task_context IS 'UpdateTaskContext or UpdateContext';
+
+ALTER PROCEDURE cap.update_task_context(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_task_context(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.update_task_context(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateTaskContext or UpdateContext';
+
