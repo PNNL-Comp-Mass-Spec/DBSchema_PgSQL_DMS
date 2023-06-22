@@ -53,9 +53,10 @@ BEGIN
           T.State = 5 AND
           TS.State = 6;
 
-
     If Not FOUND Then
-        _message := 'No datasets were found needing to retry capture';
+        If _infoOnly Then
+            RAISE INFO 'No datasets were found needing to retry capture';
+        End If;
 
         DROP TABLE Tmp_Selected_Jobs;
         RETURN;
