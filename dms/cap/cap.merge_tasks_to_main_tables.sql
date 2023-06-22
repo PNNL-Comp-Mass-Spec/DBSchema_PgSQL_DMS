@@ -1,11 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.merge_tasks_to_main_tables
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: merge_tasks_to_main_tables(text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.merge_tasks_to_main_tables(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -21,7 +20,7 @@ AS $$
 **          05/25/2011 mem - Removed priority column from t_task_steps
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          05/17/2019 mem - Switch from folder to directory
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/21/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -55,8 +54,7 @@ RETURN;
     ---------------------------------------------------
 
     UPDATE cap.t_tasks Target
-    SET
-        Priority = T.Priority,
+    SET Priority = T.Priority,
         State = T.State,
         Imported = CURRENT_TIMESTAMP,
         Start = CURRENT_TIMESTAMP,
@@ -68,70 +66,57 @@ RETURN;
     -- Add steps for capture task job that currently aren't in main tables
     ---------------------------------------------------
 
-    INSERT INTO cap.t_task_steps (
-        Job,
-        Step,
-        Tool,
-        CPU_Load,
-        Dependencies,
-        State,
-        Input_Folder_Name,
-        Output_Folder_Name,
-        Processor,
-        Holdoff_Interval_Minutes,
-        Retry_Count
-    )
-    SELECT
-        Job,
-        Step,
-        Tool,
-        CPU_Load,
-        Dependencies,
-        State,
-        Input_Directory_Name,
-        Output_Directory_Name,
-        Processor,
-        Holdoff_Interval_Minutes,
-        Retry_Count
+    INSERT INTO cap.t_task_steps( Job,
+                                  Step,
+                                  Tool,
+                                  CPU_Load,
+                                  Dependencies,
+                                  State,
+                                  Input_Folder_Name,
+                                  Output_Folder_Name,
+                                  Processor,
+                                  Holdoff_Interval_Minutes,
+                                  Retry_Count )
+    SELECT Job,
+           Step,
+           Tool,
+           CPU_Load,
+           Dependencies,
+           State,
+           Input_Directory_Name,
+           Output_Directory_Name,
+           Processor,
+           Holdoff_Interval_Minutes,
+           Retry_Count
     FROM Tmp_Job_Steps
-    WHERE NOT EXISTS
-    (
-        SELECT *
-        FROM cap.t_task_steps
-        WHERE
-            cap.t_task_steps.Job = Tmp_Job_Steps.Job and
-            cap.t_task_steps.Step = Tmp_Job_Steps.Step
-    )
+    WHERE NOT EXISTS ( SELECT *
+                       FROM cap.t_task_steps
+                       WHERE cap.t_task_steps.Job = Tmp_Job_Steps.Job
+                             AND
+                             cap.t_task_steps.Step = Tmp_Job_Steps.Step );
 
     ---------------------------------------------------
     -- Add step dependencies for capture task job that currently aren't
     -- in main tables
     ---------------------------------------------------
 
-    INSERT INTO cap.t_task_step_dependencies (
-        Job,
-        Step,
-        Target_Step,
-        Condition_Test,
-        Test_Value,
-        Enable_Only
-    )
-    SELECT
-        Job,
-        Step,
-        Target_Step,
-        Condition_Test,
-        Test_Value,
-        Enable_Only
+    INSERT INTO cap.t_task_step_dependencies( Job,
+                                              Step,
+                                              Target_Step,
+                                              Condition_Test,
+                                              Test_Value,
+                                              Enable_Only )
+    SELECT Job,
+           Step,
+           Target_Step,
+           Condition_Test,
+           Test_Value,
+           Enable_Only
     FROM Tmp_Job_Step_Dependencies
-    WHERE NOT EXISTS
-    (
-        SELECT *
-        FROM cap.t_task_step_dependencies
-        WHERE
-            cap.t_task_step_dependencies.Job = Tmp_Job_Step_Dependencies.Job and
-            cap.t_task_step_dependencies.Step = Tmp_Job_Step_Dependencies.Step
-    )
+    WHERE NOT EXISTS ( SELECT *
+                       FROM cap.t_task_step_dependencies
+                       WHERE cap.t_task_step_dependencies.Job = Tmp_Job_Step_Dependencies.Job AND
+                             cap.t_task_step_dependencies.Step = Tmp_Job_Step_Dependencies.Step );
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -152,5 +137,12 @@ EXCEPTION
 END
 $$;
 
-COMMENT ON PROCEDURE cap.merge_tasks_to_main_tables IS 'MergeJobsToMainTables';
+
+ALTER PROCEDURE cap.merge_tasks_to_main_tables(INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE merge_tasks_to_main_tables(INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.merge_tasks_to_main_tables(INOUT _message text, INOUT _returncode text) IS 'MergeTasksToMainTables or MergeJobsToMainTables';
 
