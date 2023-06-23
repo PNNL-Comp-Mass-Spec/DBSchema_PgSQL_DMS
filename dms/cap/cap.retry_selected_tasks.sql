@@ -11,8 +11,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_selected_tasks(INOUT _message text DEFAULT
 **      Updates capture task jobs in temporary table Tmp_Selected_Jobs (created by the caller)
 **
 **          CREATE TEMP TABLE Tmp_Selected_Jobs (
-**              Job int NOT NULL,
-**              ResetFailedStepsOnly boolean NOT NULL
+**              Job int not null
 **          );
 **
 **      Note: Use procedure cap.update_multiple_capture_tasks to retry a list of capture task jobs
@@ -62,8 +61,7 @@ BEGIN
 
     UPDATE cap.t_tasks
     SET State = 1                           -- 1=new
-    WHERE Job IN ( SELECT Job
-                   FROM Tmp_Selected_Jobs );
+    WHERE Job IN ( SELECT Job FROM Tmp_Selected_Jobs );
 
 END
 $$;
