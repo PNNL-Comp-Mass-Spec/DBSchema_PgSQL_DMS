@@ -42,8 +42,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -221,24 +221,24 @@ BEGIN
         _formatSpecifier := '%-10s %-20s %-24s %-24s %-21s %-30s %-80s';
 
         _infoHead := format(_formatSpecifier,
-                                'Dataset_ID',
-                                'No_Dataset_Archive',
-                                'Pending_Archive_Update',
-                                'Archive_Update_Current',
-                                'Capture_Task_Needed',
-                                'Results_Folder_Name',
-                                'Dataset'
-                            );
+                            'Dataset_ID',
+                            'No_Dataset_Archive',
+                            'Pending_Archive_Update',
+                            'Archive_Update_Current',
+                            'Capture_Task_Needed',
+                            'Results_Folder_Name',
+                            'Dataset'
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '------------------',
-                                '----------------------',
-                                '----------------------',
-                                '-------------------',
-                                '------------------------------',
-                                '--------------------------------------------------------------------------------'
-                            );
+                                     '----------',
+                                     '------------------',
+                                     '----------------------',
+                                     '----------------------',
+                                     '-------------------',
+                                     '------------------------------',
+                                     '--------------------------------------------------------------------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -271,16 +271,16 @@ BEGIN
             ORDER BY Dataset_ID
         LOOP
             _infoData := format(_formatSpecifier,
-                                    _previewData.Dataset_ID,
-                                    _previewData.No_Dataset_Archive,
-                                    _previewData.Pending_Archive_Update,
-                                    _previewData.Archive_Update_Current,
-                                    _previewData.Capture_Task_Needed,
-                                    _previewData.Results_Folder_Name,
-                                    _previewData.Dataset);
+                                _previewData.Dataset_ID,
+                                _previewData.No_Dataset_Archive,
+                                _previewData.Pending_Archive_Update,
+                                _previewData.Archive_Update_Current,
+                                _previewData.Capture_Task_Needed,
+                                _previewData.Results_Folder_Name,
+                                _previewData.Dataset
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
     Else

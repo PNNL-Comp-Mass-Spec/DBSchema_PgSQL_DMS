@@ -32,8 +32,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -90,7 +90,7 @@ BEGIN
                             'Dataset_ID',
                             'Priority',
                             'Dataset'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '--------------',
@@ -98,7 +98,7 @@ BEGIN
                                      '----------',
                                      '--------',
                                      '--------------------------------------------------------------------------------'
-                        );
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -116,15 +116,14 @@ BEGIN
             WHERE Target.Dataset_ID IS NULL
         LOOP
             _infoData := format(_formatSpecifier,
-                                    _previewData.Script,
-                                    _previewData.Comment,
-                                    _previewData.Dataset_ID,
-                                    _previewData.Priority,
-                                    _previewData.Dataset
-                            );
+                                _previewData.Script,
+                                _previewData.Comment,
+                                _previewData.Dataset_ID,
+                                _previewData.Priority,
+                                _previewData.Dataset
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
     End If;

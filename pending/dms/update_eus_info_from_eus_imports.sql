@@ -34,6 +34,7 @@ DECLARE
     _entryID int := 0;
     _statusMessage text := '';
     _usageMessage text := '';
+
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
@@ -116,7 +117,7 @@ BEGIN
                             'Entered',
                             'Type',
                             'Message'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '------------',
@@ -141,12 +142,12 @@ BEGIN
             ORDER BY entry_id
         LOOP
             _infoData := format(_formatSpecifier,
-                        _previewData.EntryID,
-                        _previewData.PostedBy,
-                        _previewData.Entered,
-                        _previewData.Type,
-                        _previewData.Message
-                    );
+                                _previewData.EntryID,
+                                _previewData.PostedBy,
+                                _previewData.Entered,
+                                _previewData.Type,
+                                _previewData.Message
+                               );
 
             RAISE INFO '%', _infoData;
         END LOOP

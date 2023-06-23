@@ -235,7 +235,7 @@ BEGIN
                             'Device_Serial_Number',
                             'Device_Software_Version',
                             'Device_Description'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '-------------------------',
@@ -246,7 +246,7 @@ BEGIN
                                      '------------------------------',
                                      '------------------------------',
                                      '------------------------------'
-                        );
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -284,10 +284,9 @@ BEGIN
                                 _previewData.Serial_Number,
                                 _previewData.Software_Version,
                                 _previewData.Device_Description
-                            );
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
         DROP TABLE Tmp_DatasetDevicesTable;

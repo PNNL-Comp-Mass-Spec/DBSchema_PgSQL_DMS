@@ -40,7 +40,7 @@ BEGIN
                             'Script',
                             'Comment',
                             'Dataset'
-                                );
+                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
@@ -73,7 +73,7 @@ BEGIN
                                 _previewData.Script,
                                 _previewData.Comment,
                                 _previewData.Dataset
-                            );
+                               );
 
             RAISE INFO '%', _infoData;
         END LOOP;

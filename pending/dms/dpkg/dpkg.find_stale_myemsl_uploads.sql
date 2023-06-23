@@ -27,9 +27,10 @@ DECLARE
     _dataPackageList text;
 
  	_formatSpecifier text;
-	_infoHead text;
-	_infoHeadSeparator text;
-    _uploadInfo record;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -97,20 +98,20 @@ BEGIN
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                    '--------------------',
-                                    '----------',
-                                    '----------',
-                                    '----------',
-                                    '--------------------------------------------------------------------------------',
-                                    '------------------------------',
-                                    '------------------------------------------------------------',
-                                    '--------------------'
+                                     '--------------------',
+                                     '----------',
+                                     '----------',
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '------------------------------',
+                                     '------------------------------------------------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
-        FOR _uploadInfo IN
+        FOR _previewData IN
             SELECT format('Stale: %s days old', Round(extract(epoch FROM CURRENT_TIMESTAMP - Stale.Entered) / 86400)) As Message,
                    Uploads.entry_id,
                    Uploads.job,
@@ -124,16 +125,18 @@ BEGIN
                    ON Uploads.Entry_ID = Stale.Entry_ID
             ORDER BY Entry_ID
         LOOP
+            _infoData := format(_formatSpecifier,
+                                _uploadInfo.Message,
+                                _uploadInfo.Entry_ID,
+                                _uploadInfo.Job,
+                                _uploadInfo.Dataset_ID,
+                                _uploadInfo.Dataset,
+                                _uploadInfo.Subfolder,
+                                _uploadInfo.Status_uri,
+                                timestamp_text(_uploadInfo.Entered)
+                               );
 
-            RAISE INFO '%', format(_formatSpecifier,
-                                   _uploadInfo.Message,
-                                   _uploadInfo.Entry_ID,
-                                   _uploadInfo.Job,
-                                   _uploadInfo.Dataset_ID,
-                                   _uploadInfo.Dataset,
-                                   _uploadInfo.Subfolder,
-                                   _uploadInfo.Status_uri,
-                                   timestamp_text(_uploadInfo.Entered));
+            RAISE INFO '%', _infoData;
         END LOOP;
 
         DROP TABLE Tmp_StaleUploads;

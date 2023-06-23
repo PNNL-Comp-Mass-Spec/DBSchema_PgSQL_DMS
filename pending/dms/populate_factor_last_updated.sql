@@ -33,6 +33,7 @@ DECLARE
     _infoHead text;
     _infoHeadSeparator text;
     _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -199,16 +200,16 @@ BEGIN
                             'Name',
                             'Value',
                             'Last_Updated_New'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                            '---------------',
-                            '---------------',
-                            '---------------',
-                            '------------------------------',
-                            '----------------------------------------',
-                            '----------------'
-                        );
+                                     '---------------',
+                                     '---------------',
+                                     '---------------',
+                                     '------------------------------',
+                                     '----------------------------------------',
+                                     '----------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -228,14 +229,16 @@ BEGIN
             WHERE Src.last_updated <> Target.last_updated
             ORDER BY Target.target_id, Target.name
         LOOP
-            RAISE INFO '%', format(_formatSpecifier,
-                                    _previewData.Factor_ID,
-                                    _previewData.Type,
-                                    _previewData.Target_ID,
-                                    _previewData.Name,
-                                    _previewData.Value,
-                                    _previewData.Last_Updated_New
-                                );
+            _infoData := format(_formatSpecifier,
+                                _previewData.Factor_ID,
+                                _previewData.Type,
+                                _previewData.Target_ID,
+                                _previewData.Name,
+                                _previewData.Value,
+                                _previewData.Last_Updated_New
+                               );
+
+            RAISE INFO '%', _infoData;
         END LOOP;
 
     Else

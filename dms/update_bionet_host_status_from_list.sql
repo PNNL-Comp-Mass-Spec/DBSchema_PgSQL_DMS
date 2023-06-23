@@ -32,8 +32,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -108,16 +108,16 @@ BEGIN
                                 'Last_Online',
                                 'New_Last_Online',
                                 'Last_IP'
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '--------------------',
-                                '---------------',
-                                '-----------------------------------',
-                                '--------------------',
-                                '--------------------',
-                                '---------------'
-                            );
+                                         '--------------------',
+                                         '---------------',
+                                         '-----------------------------------',
+                                         '--------------------',
+                                         '--------------------',
+                                         '---------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -151,13 +151,13 @@ BEGIN
                 ORDER BY Src.host
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.Host,
-                                        _previewData.IP,
-                                        _previewData.Warning,
-                                        _previewData.Last_Online,
-                                        _previewData.New_Last_Online,
-                                        _previewData.Last_IP
-                                );
+                                    _previewData.Host,
+                                    _previewData.IP,
+                                    _previewData.Warning,
+                                    _previewData.Last_Online,
+                                    _previewData.New_Last_Online,
+                                    _previewData.Last_IP
+                                   );
 
                 RAISE INFO '%', _infoData;
 

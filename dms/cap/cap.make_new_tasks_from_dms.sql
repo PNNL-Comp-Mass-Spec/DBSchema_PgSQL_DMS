@@ -38,8 +38,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -119,14 +119,14 @@ BEGIN
                                 'Dataset_ID',
                                 'Priority',
                                 'Dataset'
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '--------------------',
-                                '----------',
-                                '--------',
-                                '--------------------------------------------------------------------------------'
-                            );
+                                         '--------------------',
+                                         '----------',
+                                         '--------',
+                                         '--------------------------------------------------------------------------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -150,10 +150,9 @@ BEGIN
                                     _previewData.Dataset_ID,
                                     _previewData.Priority,
                                     _previewData.Dataset
-                                );
+                                   );
 
                 RAISE INFO '%', _infoData;
-
             END LOOP;
 
         End If;

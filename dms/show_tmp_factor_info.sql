@@ -31,8 +31,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
+    _previewData record;
     _infoData text;
-    _factorInfo record;
 BEGIN
 
     RAISE INFO '';
@@ -65,38 +65,37 @@ BEGIN
                         'DatasetID',
                         'RequestID',
                         'UpdateSkipCode'
-                    );
+                       );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                        '----------',
-                        '------------------------------------------------------------',
-                        '----------',
-                        '----------',
-                        '------------',
-                        '------------',
-                        '---------------'
-                    );
+                                 '----------',
+                                 '------------------------------------------------------------',
+                                 '----------',
+                                 '----------',
+                                 '------------',
+                                 '------------',
+                                 '---------------'
+                                );
 
     RAISE INFO '%', _infoHead;
     RAISE INFO '%', _infoHeadSeparator;
 
-    FOR _factorInfo IN
+    FOR _previewData IN
         SELECT Entry_ID, Identifier, Factor, Value, DatasetID, RequestID, UpdateSkipCode
         FROM Tmp_FactorInfo
         ORDER BY Entry_ID
     LOOP
         _infoData := format(_formatSpecifier,
-                                _factorInfo.Entry_ID,
-                                _factorInfo.Identifier,
-                                _factorInfo.Factor,
-                                _factorInfo.Value,
-                                _factorInfo.DatasetID,
-                                _factorInfo.RequestID,
-                                _factorInfo.UpdateSkipCode
-                            );
+                            _previewData.Entry_ID,
+                            _previewData.Identifier,
+                            _previewData.Factor,
+                            _previewData.Value,
+                            _previewData.DatasetID,
+                            _previewData.RequestID,
+                            _previewData.UpdateSkipCode
+                           );
 
         RAISE INFO '%', _infoData;
-
     END LOOP;
 
 END

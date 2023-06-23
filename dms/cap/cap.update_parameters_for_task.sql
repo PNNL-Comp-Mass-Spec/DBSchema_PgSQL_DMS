@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_task(IN _joblist text, INO
 **          04/27/2023 mem - Use boolean for data type name
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          06/23/2023 mem - Use 80 character field width for dataset names
 **
 *****************************************************/
 DECLARE
@@ -53,8 +54,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -105,7 +106,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-20s %-20s %-20s %-20s %-50s %-50s';
+            _formatSpecifier := '%-10s %-20s %-20s %-20s %-20s %-80s %-50s';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
@@ -115,18 +116,17 @@ BEGIN
                                 'Max_Simultaneous_Cap',
                                 'Dataset',
                                 'Capture_Subfolder'
-
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '--------------------',
-                                '--------------------',
-                                '--------------------',
-                                '--------------------',
-                                '--------------------------------------------------',
-                                '--------------------------------------------------'
-                            );
+                                         '----------',
+                                         '--------------------',
+                                         '--------------------',
+                                         '--------------------',
+                                         '--------------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '--------------------------------------------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -146,17 +146,16 @@ BEGIN
 
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.Job,
-                                        _previewData.StorageServer,
-                                        _previewData.Instrument,
-                                        _previewData.InstrumentClass,
-                                        _previewData.MaxSimultaneousCaptures,
-                                        _previewData.Dataset,
-                                        _previewData.CaptureSubfolder
-                                );
+                                    _previewData.Job,
+                                    _previewData.StorageServer,
+                                    _previewData.Instrument,
+                                    _previewData.InstrumentClass,
+                                    _previewData.MaxSimultaneousCaptures,
+                                    _previewData.Dataset,
+                                    _previewData.CaptureSubfolder
+                                   );
 
                 RAISE INFO '%', _infoData;
-
             END LOOP;
 
         Else
@@ -278,12 +277,12 @@ BEGIN
             _infoHead := format(_formatSpecifier,
                                 'Job',
                                 'Parameters'
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '--------------------------------------------------'
-                            );
+                                         '----------',
+                                         '--------------------------------------------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -295,12 +294,11 @@ BEGIN
                 ORDER BY Job
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.Job,
-                                        _previewData.Params
-                                );
+                                    _previewData.Job,
+                                    _previewData.Params
+                                   );
 
                 RAISE INFO '%', _infoData;
-
             END LOOP;
 
         Else

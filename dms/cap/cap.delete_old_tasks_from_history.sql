@@ -33,8 +33,8 @@ DECLARE
     _formatSpecifier text := '%-10s %-20s %-40s';
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
 
@@ -129,13 +129,13 @@ BEGIN
                             'Job',
                             'Saved',
                             'Comment'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                            '----------',
-                            '--------------------',
-                            '----------------------------------------'
-                        );
+                                     '----------',
+                                     '--------------------',
+                                     '----------------------------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -149,38 +149,38 @@ BEGIN
             LIMIT 10
         LOOP
             _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Saved,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        If _jobCountToDelete > 10 Then
+            _infoData := format(_formatSpecifier, '...', '...', '...');
+            RAISE INFO '%', _infoData;
+
+            -- Show the last 10 jobs in Tmp_JobsToDelete
+            --
+            FOR _previewData IN
+                SELECT Job, Saved, 'Preview delete' AS Comment
+                FROM ( SELECT Job, Saved
+                       FROM Tmp_JobsToDelete
+                       ORDER BY Job DESC
+                       LIMIT 10 ) FilterQ
+                ORDER BY Job
+                LIMIT 10
+            LOOP
+                _infoData := format(_formatSpecifier,
                                     _previewData.Job,
                                     _previewData.Saved,
                                     _previewData.Comment
-                            );
+                                   );
 
-            RAISE INFO '%', _infoData;
-
-        END LOOP;
-
-        _infoData := format(_formatSpecifier, '...', '...', '...');
-        RAISE INFO '%', _infoData;
-
-        -- Show the last 10 jobs in Tmp_JobsToDelete
-        --
-        FOR _previewData IN
-            SELECT Job, Saved, 'Preview delete' AS Comment
-            FROM ( SELECT Job, Saved
-                   FROM Tmp_JobsToDelete
-                   ORDER BY Job DESC
-                   LIMIT 10 ) FilterQ
-            ORDER BY Job
-            LIMIT 10
-        LOOP
-            _infoData := format(_formatSpecifier,
-                                    _previewData.Job,
-                                    _previewData.Saved,
-                                    _previewData.Comment
-                            );
-
-            RAISE INFO '%', _infoData;
-
-        END LOOP;
+                RAISE INFO '%', _infoData;
+            END LOOP;
+        End If;
 
     Else
         DELETE FROM cap.t_task_steps_history

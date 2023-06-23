@@ -67,13 +67,13 @@ BEGIN
                         'Job',
                         'Step',
                         'Step_Tool'
-                    );
+                       );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                        '----------',
-                        '----------',
-                        '--------------------'
-                    );
+                                 '----------',
+                                 '----------',
+                                 '--------------------'
+                                );
 
     RAISE INFO '%', _infoHead;
     RAISE INFO '%', _infoHeadSeparator;
@@ -84,13 +84,12 @@ BEGIN
         ORDER BY Job, Step
     LOOP
         _infoData := format(_formatSpecifier,
-                                _previewSteps.Job,
-                                _previewSteps.Step,
-                                _previewSteps.Tool
-                        );
+                            _previewSteps.Job,
+                            _previewSteps.Step,
+                            _previewSteps.Tool
+                           );
 
         RAISE INFO '%', _infoData;
-
     END LOOP;
 
     -- Show contents of Tmp_Job_Step_Dependencies
@@ -103,13 +102,13 @@ BEGIN
                         'Job',
                         'Step',
                         'Target_Step'
-                    );
+                       );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                        '----------',
-                        '----------',
-                        '--------------------'
-                    );
+                                 '----------',
+                                 '----------',
+                                 '--------------------'
+                                );
 
     RAISE INFO '%', _infoHead;
     RAISE INFO '%', _infoHeadSeparator;
@@ -120,13 +119,12 @@ BEGIN
         ORDER BY Job, Step
     LOOP
         _infoData := format(_formatSpecifier,
-                                _previewDependencies.Job,
-                                _previewDependencies.Step,
-                                _previewDependencies.Target_Step
-                        );
+                            _previewDependencies.Job,
+                            _previewDependencies.Step,
+                            _previewDependencies.Target_Step
+                           );
 
         RAISE INFO '%', _infoData;
-
     END LOOP;
 END
 $$;

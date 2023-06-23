@@ -36,8 +36,8 @@ DECLARE
     _formatSpecifier text := '%-20s %-20s %-10s %-10s';
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -137,14 +137,14 @@ BEGIN
                                     'Step_Tool',
                                     'State',
                                     'Step_Count'
-                                );
+                                   );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                    '--------------------',
-                                    '--------------------',
-                                    '----------',
-                                    '----------'
-                                );
+                                             '--------------------',
+                                             '--------------------',
+                                             '----------',
+                                             '----------'
+                                            );
 
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
@@ -155,14 +155,13 @@ BEGIN
                     ORDER BY Step_Tool, State
                 LOOP
                     _infoData := format(_formatSpecifier,
-                                            _previewData.State,
-                                            _previewData.Section,
-                                            _previewData.Name,
-                                            _previewData.Value
-                                    );
+                                        _previewData.State,
+                                        _previewData.Section,
+                                        _previewData.Name,
+                                        _previewData.Value
+                                       );
 
                     RAISE INFO '%', _infoData;
-
                 END LOOP;
 
             Else

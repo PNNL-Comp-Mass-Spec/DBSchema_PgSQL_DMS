@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_orphaned_tasks(IN _infoonly boolean DEFAU
 /****************************************************
 **
 **  Desc:
-**      Delete capture task jobs with state = 0 where the dataset no longer exists in DMS
+**      Delete capture task jobs with state = 0 for datasets that no longer exist in public.t_dataset
 **
 **  Auth:   mem
 **  Date:   05/22/2019 mem - Initial version
@@ -17,14 +17,15 @@ CREATE OR REPLACE PROCEDURE cap.delete_orphaned_tasks(IN _infoonly boolean DEFAU
 **          04/02/2023 mem - Rename procedure and functions
 **          04/27/2023 mem - Use boolean for data type name
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          06/23/2023 mem - Show dataset name last when previewing orphaned capture task jobs
 **
 *****************************************************/
 DECLARE
-    _formatSpecifier text := '%-15s %-10s %-15s %-10s %-15s %-20s %-10s %-50s %-20s';
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 
     _jobCount int;
     _job int;
@@ -108,6 +109,8 @@ BEGIN
 
         RAISE INFO '';
 
+        _formatSpecifier := '%-15s %-10s %-15s %-10s %-15s %-20s %-10s %-25s %-80s';
+
         _infoHead := format(_formatSpecifier,
                             'HasDependencies',
                             'Job',
@@ -116,21 +119,21 @@ BEGIN
                             'State_Name',
                             'Imported',
                             'Dataset_ID',
-                            'Dataset',
-                            'Instrument'
-                        );
+                            'Instrument',
+                            'Dataset'
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                             '---------------',
-                             '----------',
-                             '---------------',
-                             '----------',
-                             '---------------',
-                             '--------------------',
-                             '----------',
-                             '--------------------------------------------------',
-                             '------------------------------'
-                        );
+                                     '---------------',
+                                     '----------',
+                                     '---------------',
+                                     '----------',
+                                     '---------------',
+                                     '--------------------',
+                                     '----------',
+                                     '-----------------------------------',
+                                     '------------------------------------------------------------------------------------------------------------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -145,19 +148,18 @@ BEGIN
             ORDER BY T.Job
         LOOP
             _infoData := format(_formatSpecifier,
-                                    CASE WHEN _previewData.hasDependencies THEN 'Yes' ELSE 'No' End,
-                                    _previewData.job,
-                                    _previewData.script,
-                                    _previewData.state,
-                                    _previewData.state_name,
-                                    _previewData.imported,
-                                    _previewData.dataset_id,
-                                    _previewData.dataset,
-                                    _previewData.instrument
-                            );
+                                CASE WHEN _previewData.hasDependencies THEN 'Yes' ELSE 'No' End,
+                                _previewData.job,
+                                _previewData.script,
+                                _previewData.state,
+                                _previewData.state_name,
+                                _previewData.imported,
+                                _previewData.dataset_id,
+                                _previewData.instrument,
+                                _previewData.dataset
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
     Else
@@ -184,7 +186,7 @@ BEGIN
             WHERE Job = _job;
 
             _logMessage := format('Deleted orphaned %s capture task job %s for dataset %s since no longer defined in DMS',
-                                    _scriptName, _job, _dataset);
+                                  _scriptName, _job, _dataset);
 
             CALL public.post_log_entry ('Normal', _logMessage, 'Delete_Orphaned_Tasks', 'cap');
 

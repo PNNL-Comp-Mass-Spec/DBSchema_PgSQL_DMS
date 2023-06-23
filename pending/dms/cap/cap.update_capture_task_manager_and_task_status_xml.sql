@@ -51,12 +51,11 @@ DECLARE
     _updatedProcessors text;
     _logMessage text;
 
-    _formatSpecifier text := '%-15s %-15s %-20s %-20s %-5s %-11s %-10s %-20s %-20s %-15s %-15s %-10s %-10s %-5s %-50s';
-
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -250,6 +249,8 @@ BEGIN
 
             RAISE INFO '';
 
+            _formatSpecifier := '%-15s %-15s %-20s %-20s %-5s %-11s %-10s %-20s %-20s %-15s %-15s %-10s %-10s %-5s %-80s';
+
             _infoHead := format(_formatSpecifier,
                                 'Processor_Name',
                                 'Mgr_Status',
@@ -266,25 +267,25 @@ BEGIN
                                 'Job',
                                 'Step',
                                 'Dataset'
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '---------------',
-                                '---------------',
-                                '-------------------------',
-                                '-------------------------',
-                                '-----',
-                                '-----------',
-                                '----------',
-                                '--------------------',
-                                '--------------------',
-                                '---------------',
-                                '---------------',
-                                '----------',
-                                '----------',
-                                '-----',
-                                '--------------------------------------------------'
-                            );
+                                         '---------------',
+                                         '---------------',
+                                         '-------------------------',
+                                         '-------------------------',
+                                         '-----',
+                                         '-----------',
+                                         '----------',
+                                         '--------------------',
+                                         '--------------------',
+                                         '---------------',
+                                         '---------------',
+                                         '----------',
+                                         '----------',
+                                         '-----',
+                                         '--------------------------------------------------------------------------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -309,25 +310,24 @@ BEGIN
                 ORDER BY Processor_Name
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.Processor_Name,
-                                        _previewData.Mgr_Status,
-                                        _previewData.Status_Date,
-                                        _previewData.Last_Start_Time,
-                                        _previewData.CPU_Utilization,
-                                        _previewData.Free_Memory_MB,
-                                        _previewData.Process_ID,
-                                        _previewData.Most_Recent_Error_Message,
-                                        _previewData.Step_Tool,
-                                        _previewData.Task_Status,
-                                        _previewData.Duration_Minutes,
-                                        _previewData.Progress,
-                                        _previewData.Job,
-                                        _previewData.Job_Step,
-                                        _previewData.Dataset
-                                );
+                                    _previewData.Processor_Name,
+                                    _previewData.Mgr_Status,
+                                    _previewData.Status_Date,
+                                    _previewData.Last_Start_Time,
+                                    _previewData.CPU_Utilization,
+                                    _previewData.Free_Memory_MB,
+                                    _previewData.Process_ID,
+                                    _previewData.Most_Recent_Error_Message,
+                                    _previewData.Step_Tool,
+                                    _previewData.Task_Status,
+                                    _previewData.Duration_Minutes,
+                                    _previewData.Progress,
+                                    _previewData.Job,
+                                    _previewData.Job_Step,
+                                    _previewData.Dataset
+                                   );
 
                 RAISE INFO '%', _infoData;
-
             END LOOP;
 
         End If;

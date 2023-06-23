@@ -150,6 +150,7 @@ DECLARE
     _associationTypeIgnoreThreshold int := 10;
     _step int := 0;
     _jobIsRunningRemote int := 0;
+
     _toolInfo      record;
     _remoteJobInfo record;
     _jobInfo       record;
@@ -157,6 +158,7 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
+    _infoData text;
 
     _currentLocation text := 'Start';
     _sqlState text;
@@ -435,19 +437,19 @@ BEGIN
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                        '---------------------------------------------',
-                                        '-------------------------',
-                                        '--------',
-                                        '---------------',
-                                        '-------------',
-                                        '----------------',
-                                        '----------',
-                                        '--------------',
-                                        '---------------',
-                                        '----------------',
-                                        '--------------------------',
-                                        '------------------------',
-                                        '---------------------------'
+                                         '---------------------------------------------',
+                                         '-------------------------',
+                                         '--------',
+                                         '---------------',
+                                         '-------------',
+                                         '----------------',
+                                         '----------',
+                                         '--------------',
+                                         '---------------',
+                                         '----------------',
+                                         '--------------------------',
+                                         '------------------------',
+                                         '---------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -478,20 +480,23 @@ BEGIN
                                   WHERE LP.processor_name = _processorName ) MachineQ
                 ORDER BY PT.Tool_Name
             LOOP
-                RAISE INFO '%', format(_formatSpecifier,
-                                       _toolInfo.Processor_Tool_Group,
-                                       _toolInfo.Tool_Name,
-                                       _toolInfo.CPU_Load,
-                                       _toolInfo.Memory_Usage_MB,
-                                       _toolInfo.Tool_Priority,
-                                       _toolInfo.Max_Job_Priority,
-                                       _toolInfo.Total_CPUs,
-                                       _toolInfo.CPUs_Available,
-                                       _toolInfo.Total_Memory_MB,
-                                       _toolInfo.Memory_Available,
-                                       _toolInfo.Exceeds_Available_CPU_Load,
-                                       _toolInfo.Exceeds_Available_Memory,
-                                       _toolInfo.Processor_Does_General_Proc);
+                _infoData := format(_formatSpecifier,
+                                    _toolInfo.Processor_Tool_Group,
+                                    _toolInfo.Tool_Name,
+                                    _toolInfo.CPU_Load,
+                                    _toolInfo.Memory_Usage_MB,
+                                    _toolInfo.Tool_Priority,
+                                    _toolInfo.Max_Job_Priority,
+                                    _toolInfo.Total_CPUs,
+                                    _toolInfo.CPUs_Available,
+                                    _toolInfo.Total_Memory_MB,
+                                    _toolInfo.Memory_Available,
+                                    _toolInfo.Exceeds_Available_CPU_Load,
+                                    _toolInfo.Exceeds_Available_Memory,
+                                    _toolInfo.Processor_Does_General_Proc
+                                   );
+
+                RAISE INFO '%', _infoData;
             END LOOP;
 
             DROP TABLE Tmp_AvailableProcessorTools;
@@ -590,18 +595,21 @@ BEGIN
                               JS.State IN (4, 9)
                         ORDER BY Job, Step
                     LOOP
-                        RAISE INFO '%', format(_formatSpecifier,
-                                               _remoteJobInfo.Remote_Info_ID,
-                                               _remoteJobInfo.Remote_Info,
-                                               _remoteJobInfo.Most_Recent_Job,
-                                               _remoteJobInfo.Last_Used,
-                                               _remoteJobInfo.Max_Running_Job_Steps,
-                                               _remoteJobInfo.Job,
-                                               _remoteJobInfo.StateName,
-                                               _remoteJobInfo.State,
-                                               _remoteJobInfo.Start,
-                                               _remoteJobInfo.Finish,
-                                               _remoteJobInfo.Dataset);
+                        _infoData := format(_formatSpecifier,
+                                            _remoteJobInfo.Remote_Info_ID,
+                                            _remoteJobInfo.Remote_Info,
+                                            _remoteJobInfo.Most_Recent_Job,
+                                            _remoteJobInfo.Last_Used,
+                                            _remoteJobInfo.Max_Running_Job_Steps,
+                                            _remoteJobInfo.Job,
+                                            _remoteJobInfo.StateName,
+                                            _remoteJobInfo.State,
+                                            _remoteJobInfo.Start,
+                                            _remoteJobInfo.Finish,
+                                            _remoteJobInfo.Dataset
+                                           );
+
+                        RAISE INFO '%', _infoData;
                     END LOOP;
 
                 End If;
@@ -1613,17 +1621,17 @@ BEGIN
                 _currentLocation := 'Show candidate job steps: construct separator';
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                            '----------',
-                                            '-----',
-                                            '--------------------',
-                                            '------',
-                                            '-----------------------------------------------------------------------------------------------',
-                                            '--------------',
-                                            '--------------',
-                                            '--------------------',
-                                            '--------------------------------------------------------------------------------',
-                                            '---------------',
-                                            '--------------------'
+                                             '----------',
+                                             '-----',
+                                             '--------------------',
+                                             '------',
+                                             '-----------------------------------------------------------------------------------------------',
+                                             '--------------',
+                                             '--------------',
+                                             '--------------------',
+                                             '--------------------------------------------------------------------------------',
+                                             '---------------',
+                                             '--------------------'
                                             );
 
                 RAISE INFO '%', _infoHead;
@@ -1668,21 +1676,21 @@ BEGIN
                     ORDER BY Seq
                     LIMIT _jobCountToPreview
                 LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _jobInfo.Job,
+                                        _jobInfo.Step,
+                                        _jobInfo.Tool,
+                                        _jobInfo.Seq,
+                                        _jobInfo.Association_Type,
+                                        _jobInfo.Tool_Priority,
+                                        _jobInfo.Job_Priority,
+                                        _jobInfo.Next_Try,
+                                        _jobInfo.Dataset,
+                                        _jobInfo.Remote_Info_ID,
+                                        _remoteInfoID
+                                       );
 
-                    _currentLocation := 'Show candidate job steps: show job';
-
-                    RAISE INFO '%', format(_formatSpecifier,
-                                           _jobInfo.Job,
-                                           _jobInfo.Step,
-                                           _jobInfo.Tool,
-                                           _jobInfo.Seq,
-                                           _jobInfo.Association_Type,
-                                           _jobInfo.Tool_Priority,
-                                           _jobInfo.Job_Priority,
-                                           _jobInfo.Next_Try,
-                                           _jobInfo.Dataset,
-                                           _jobInfo.Remote_Info_ID,
-                                           _remoteInfoID);
+                    RAISE INFO '%', _infoData;
                 END LOOP;
             Else
                 RAISE INFO 'No candidate job steps found for %', _processorName;

@@ -120,16 +120,16 @@ BEGIN
                             'Finish',
                             'Start_New',
                             'Finish_New'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                            '----------',
-                            '----------',
-                            '--------------------',
-                            '--------------------',
-                            '--------------------',
-                            '--------------------'
-                        );
+                                     '----------',
+                                     '----------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -153,10 +153,9 @@ BEGIN
                                 timestamp_text(_previewData.Finish),
                                 timestamp_text(_previewData.StartNew),
                                 timestamp_text(_previewData.FinishNew)
-                            );
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
     Else

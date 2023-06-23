@@ -69,10 +69,11 @@ DECLARE
     _countToUpdate int;
     _countUnchanged int;
 
-    _formatSpecifier text := '%-22s %-15s %-20s %-25s %-25s';
+    _formatSpecifier text;
     _infoHead text;
-    _infoData text;
+    _infoHeadSeparator text;
     _previewData record;
+    _infoData text;
 
     _mgrNames text[];
 
@@ -292,15 +293,28 @@ BEGIN
 
     If _infoOnly Then
 
+        RAISE INFO '';
+
+        _formatSpecifier := '%-22s %-15s %-20s %-25s %-25s';
+
         _infoHead := format(_formatSpecifier,
                             'State Change Preview',
                             'Parameter Name',
                             'Manager Name',
                             'Manager Type',
                             'Enabled (control_from_website=1)'
-                        );
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------------------',
+                                     '---------------',
+                                     '--------------------',
+                                     '-------------------------',
+                                     '-------------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
             SELECT format('%s --> %s', PV.value, _newValue) AS State_Change_Preview,
@@ -320,17 +334,15 @@ BEGIN
                   PV.value <> _newValue AND
                   MT.mgr_type_active > 0
         LOOP
-
             _infoData := format(_formatSpecifier,
-                                    _previewData.State_Change_Preview,
-                                    _previewData.Parameter_Name,
-                                    _previewData.manager_name,
-                                    _previewData.Manager_Type,
-                                    _previewData.control_from_website
-                            );
+                                _previewData.State_Change_Preview,
+                                _previewData.Parameter_Name,
+                                _previewData.manager_name,
+                                _previewData.Manager_Type,
+                                _previewData.control_from_website
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
         _message := format('Would set %s managers to %s; see the Output window for details, or use "FETCH ALL FROM _results"',

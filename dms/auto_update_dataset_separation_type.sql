@@ -28,13 +28,13 @@ DECLARE
     _updateCount int;
     _datasetsProcessed int = 0;
     _datasetsUpdated int = 0;
-    _previewData record;
-    _infoData text;
     _updateInfo record;
 
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -159,9 +159,9 @@ BEGIN
                        );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                                    '-------------------------------------------------------',
-                                    '-------------------------------------------------------',
-                                    '------------'
+                                 '-------------------------------------------------------',
+                                 '-------------------------------------------------------',
+                                 '------------'
                                 );
 
     RAISE INFO '%', _infoHead;
@@ -176,10 +176,9 @@ BEGIN
                             _previewData.SeparationType,
                             _previewData.UpdatedSeparationType,
                             _previewData.UpdateCount
-                        );
+                           );
 
         RAISE INFO '%', _infoData;
-
     END LOOP;
 
     If Not _infoOnly Then

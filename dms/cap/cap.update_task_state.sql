@@ -84,8 +84,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -504,7 +504,7 @@ BEGIN
                             'Start_New',
                             'Finish_New',
                             'Dataset_Name'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '---------',
@@ -515,7 +515,7 @@ BEGIN
                                      '--------------------',
                                      '--------------------',
                                      '--------------------------------------------------------------------------------'
-                        );
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -541,10 +541,9 @@ BEGIN
                                 _previewData.Start_New,
                                 _previewData.Finish_New,
                                 _previewData.Dataset_Name
-                            );
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
     End If;

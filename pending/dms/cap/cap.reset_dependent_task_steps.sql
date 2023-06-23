@@ -33,11 +33,11 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _formatSpecifier text := '%-10s %-10s %-5s %-20s %-10s %-5s %-50s';
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -112,6 +112,8 @@ BEGIN
 
             RAISE INFO '';
 
+            _formatSpecifier := '%-10s %-10s %-5s %-20s %-10s %-5s %-80s';
+
             _infoHead := format(_formatSpecifier,
                                 'Job',
                                 'Dataset_ID',
@@ -123,14 +125,14 @@ BEGIN
                             );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '----------',
-                                '-----',
-                                '--------------------',
-                                '----------',
-                                '-----',
-                                '--------------------------------------------------'
-                            );
+                                         '----------',
+                                         '----------',
+                                         '-----',
+                                         '--------------------',
+                                         '----------',
+                                         '-----',
+                                         '--------------------------------------------------------------------------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -144,17 +146,16 @@ BEGIN
                 ORDER BY TS.Job, TS.Step;
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.job,
-                                        _previewData.dataset_id,
-                                        _previewData.step,
-                                        _previewData.tool,
-                                        _previewData.state_name,
-                                        _previewData.state,
-                                        _previewData.dataset
+                                    _previewData.job,
+                                    _previewData.dataset_id,
+                                    _previewData.step,
+                                    _previewData.tool,
+                                    _previewData.state_name,
+                                    _previewData.state,
+                                    _previewData.dataset
                                    );
 
                 RAISE INFO '%', _infoData;
-
             END LOOP;
 
             DROP TABLE Tmp_Jobs;

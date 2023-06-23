@@ -118,17 +118,17 @@ BEGIN
                                 'State_Name',
                                 'State',
                                 'Dataset'
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '----------',
-                                '-----',
-                                '--------------------',
-                                '----------',
-                                '-----',
-                                '--------------------------------------------------'
-                            );
+                                         '----------',
+                                         '----------',
+                                         '-----',
+                                         '--------------------',
+                                         '----------',
+                                         '-----',
+                                         '--------------------------------------------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -142,17 +142,16 @@ BEGIN
                 ORDER BY JS.Job, JS.Step;
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.job,
-                                        _previewData.dataset_id,
-                                        _previewData.step,
-                                        _previewData.tool,
-                                        _previewData.state_name,
-                                        _previewData.state,
-                                        _previewData.dataset
+                                    _previewData.job,
+                                    _previewData.dataset_id,
+                                    _previewData.step,
+                                    _previewData.tool,
+                                    _previewData.state_name,
+                                    _previewData.state,
+                                    _previewData.dataset
                                    );
 
                 RAISE INFO '%', _infoData;
-
             END LOOP;
 
             DROP TABLE Tmp_Jobs;

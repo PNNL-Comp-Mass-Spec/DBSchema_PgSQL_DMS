@@ -35,11 +35,11 @@ DECLARE
     _skipCount int := 0;
     _jobList text := '';
 
-    _formatSpecifier text := '%-10s %-5s %-20s %-20s %-10s %-20s %-20s';
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -150,6 +150,8 @@ BEGIN
 
             RAISE INFO '';
 
+            _formatSpecifier := '%-10s %-5s %-20s %-20s %-10s %-20s %-20s';
+
             _infoHead := format(_formatSpecifier,
                                 'Job',
                                 'Step',
@@ -161,14 +163,14 @@ BEGIN
                             );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '-----',
-                                '--------------------',
-                                '--------------------',
-                                '---------',
-                                '--------------------',
-                                '--------------------'
-                            );
+                                         '----------',
+                                         '-----',
+                                         '--------------------',
+                                         '--------------------',
+                                         '---------',
+                                         '--------------------',
+                                         '--------------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -187,17 +189,16 @@ BEGIN
                 WHERE Tool IN ('ArchiveUpdate', 'DatasetArchive')
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.Job,
-                                        _previewData.Step,
-                                        _previewData.Tool,
-                                        _previewData.Message,
-                                        _previewData.State,
-                                        _previewData.Start,
-                                        _previewData.Finish
-                                );
+                                    _previewData.Job,
+                                    _previewData.Step,
+                                    _previewData.Tool,
+                                    _previewData.Message,
+                                    _previewData.State,
+                                    _previewData.Start,
+                                    _previewData.Finish
+                                   );
 
                 RAISE INFO '%', _infoData;
-
             END LOOP;
 
             RAISE INFO '';

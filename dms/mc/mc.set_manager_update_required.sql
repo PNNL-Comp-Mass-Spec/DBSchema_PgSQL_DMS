@@ -48,8 +48,9 @@ DECLARE
 
     _formatSpecifier text;
     _infoHead text;
-    _infoData text;
+    _infoHeadSeparator text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -156,6 +157,9 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly THEN
+
+        RAISE INFO '';
+
         _formatSpecifier := '%-10s %-25s %-25s %-15s %-18s %-25s';
 
         _infoHead := format(_formatSpecifier,
@@ -165,9 +169,19 @@ BEGIN
                             'Update Required',
                             'New Update Required',
                             'Last Affected'
-                        );
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '---------------',
+                                     '------------------',
+                                     '-------------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
        _countToUpdate := 0;
 
@@ -184,18 +198,16 @@ BEGIN
             WHERE MP.param_type_id = _paramTypeID
             ORDER BY MP.manager
         LOOP
-
             _infoData := format(_formatSpecifier,
-                                    _previewData.mgr_id,
-                                    _previewData.manager,
-                                    _previewData.param_name,
-                                    _previewData.update_required,
-                                    _previewData.new_update_required,
-                                    _previewData.last_affected
-                            );
+                                _previewData.mgr_id,
+                                _previewData.manager,
+                                _previewData.param_name,
+                                _previewData.update_required,
+                                _previewData.new_update_required,
+                                _previewData.last_affected
+                               );
 
             RAISE INFO '%', _infoData;
-
             _countToUpdate := _countToUpdate + 1;
         END LOOP;
 
@@ -230,6 +242,9 @@ BEGIN
     End If;
 
     If _showTable Then
+
+        RAISE INFO '';
+
         _formatSpecifier := '%-10s %-25s %-25s %-15s %-25s';
 
         _infoHead := format(_formatSpecifier,
@@ -238,9 +253,18 @@ BEGIN
                             'Param Name',
                             'Update Required',
                             'Last Affected'
-                        );
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '---------------',
+                                     '-------------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
             SELECT U.mgr_id,
@@ -253,17 +277,15 @@ BEGIN
                    ON U.mgr_id = MgrList.mgr_id
             ORDER BY U.Manager
         LOOP
-
             _infoData := format(_formatSpecifier,
-                                    _previewData.mgr_id,
-                                    _previewData.manager,
-                                    _previewData.param_name,
-                                    _previewData.update_required,
-                                    _previewData.last_affected
-                            );
+                                _previewData.mgr_id,
+                                _previewData.manager,
+                                _previewData.param_name,
+                                _previewData.update_required,
+                                _previewData.last_affected
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
          _message := format('%s; see the Output window for details', _message);

@@ -34,12 +34,13 @@ DECLARE
     _iteration int := 0;
     _updateCount int;
     _entryCountToLog int := 5;
-    _uploadInfo record;
     _logMessage text;
+    _uploadInfo record;
 
     _formatSpecifier text := '%-12s %-17s %-10s %-10s %-10s %-10s %-15s %-20s';
     _infoHead text;
     _infoHeadSeparator text;
+    _previewData record;
     _infoData text;
 BEGIN
     _message := '';
@@ -128,23 +129,23 @@ BEGIN
                             'New Files',
                             'Updated Files',
                             'Entered'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                            '----------',
-                            '---------------',
-                            '----------',
-                            '----------',
-                            '----------',
-                            '----------',
-                            '--------------',
-                            '--------------------'
-                        );
+                                     '----------',
+                                     '---------------',
+                                     '----------',
+                                     '----------',
+                                     '----------',
+                                     '----------',
+                                     '--------------',
+                                     '--------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
-        FOR _uploadInfo IN
+        FOR _previewData IN
             SELECT Stale.Entered,            -- This is used to compute the age of the upload, in days
                    Stale.RetrySucceeded,
                    Uploads.entry_id,
@@ -158,19 +159,19 @@ BEGIN
             ORDER BY RetrySucceeded Desc, Entry_ID
         LOOP
             _infoData := format(_formatSpecifier,
-                    round(extract(epoch FROM CURRENT_TIMESTAMP - _uploadInfo.Entered) / 86400),  -- Age (days)
-                    CASE WHEN _uploadInfo.RetrySucceeded THEN 'Yes' ELSE 'No' END,
-                    _uploadInfo.entry_id,
-                    _uploadInfo.job,
-                    _uploadInfo.dataset_id,
-                    _uploadInfo.file_count_new,
-                    _uploadInfo.file_count_updated,
-                    timestamp_text(_uploadInfo.entered)
-                );
+                                round(extract(epoch FROM CURRENT_TIMESTAMP - _previewData.Entered) / 86400),  -- Age (days)
+                                CASE WHEN _previewData.RetrySucceeded THEN 'Yes' ELSE 'No' END,
+                                _previewData.entry_id,
+                                _previewData.job,
+                                _previewData.dataset_id,
+                                _previewData.file_count_new,
+                                _previewData.file_count_updated,
+                                timestamp_text(_previewData.entered)
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
+
     Else
 
         ---------------------------------------------------

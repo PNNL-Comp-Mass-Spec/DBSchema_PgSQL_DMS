@@ -27,8 +27,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
+    _previewData record;
     _infoData text;
-    _previewJobs record;
 BEGIN
 
     RAISE INFO '';
@@ -57,30 +57,29 @@ BEGIN
                         'Job',
                         'Script',
                         'Dataset'
-                    );
+                       );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                        '----------',
-                        '---------------',
-                        '----------------------------------------'
-                    );
+                                 '----------',
+                                 '---------------',
+                                 '----------------------------------------'
+                                );
 
     RAISE INFO '%', _infoHead;
     RAISE INFO '%', _infoHeadSeparator;
 
-    FOR _previewJobs IN
+    FOR _previewData IN
         SELECT Job, Script, Dataset
         FROM Tmp_Jobs
         ORDER BY Job
     LOOP
         _infoData := format(_formatSpecifier,
-                                _previewJobs.Job,
-                                _previewJobs.Script,
-                                _previewJobs.Dataset
-                        );
+                            _previewData.Job,
+                            _previewData.Script,
+                            _previewData.Dataset
+                           );
 
         RAISE INFO '%', _infoData;
-
     END LOOP;
 
 END

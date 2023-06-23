@@ -51,10 +51,11 @@ DECLARE
     _managerCount int;
     _paramTypeID int;
 
-    _formatSpecifier text := '%-10s %-10s %-25s %-25s %-15s %-15s %-15s %-15s';
+    _formatSpecifier text;
     _infoHead text;
-    _infoData text;
+    _infoHeadSeparator text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -146,6 +147,10 @@ BEGIN
     END If;
 
     If _infoOnly Then
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-25s %-25s %-15s %-15s %-15s %-15s';
+
         _infoHead := format(_formatSpecifier,
                             'Entry_ID',
                             'Mgr_ID',
@@ -155,9 +160,21 @@ BEGIN
                             'Value',
                             'New Value',
                             'Status'
-                        );
+                            );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '----------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '---------------',
+                                     '---------------',
+                                     '---------------',
+                                     '---------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
             SELECT PV.entry_id,
@@ -209,18 +226,17 @@ BEGIN
             WHERE PV.param_type_id IS NULL
         LOOP
             _infoData := format(_formatSpecifier,
-                                    _previewData.entry_id,
-                                    _previewData.mgr_id,
-                                    _previewData.mgr_name,
-                                    _previewData.param_name,
-                                    _previewData.param_type_id,
-                                    _previewData.value,
-                                    _previewData.NewValue,
-                                    _previewData.Status
-                        );
+                                _previewData.entry_id,
+                                _previewData.mgr_id,
+                                _previewData.mgr_name,
+                                _previewData.param_name,
+                                _previewData.param_type_id,
+                                _previewData.value,
+                                _previewData.NewValue,
+                                _previewData.Status
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
         _message := public.append_to_text(_message, 'See the Output window for details');

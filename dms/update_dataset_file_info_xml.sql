@@ -558,7 +558,7 @@ BEGIN
                                 'File_Size_Bytes',
                                 'Separation_Type',
                                 'Optimal_Separation_Type'
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
                                          '----------',
@@ -597,7 +597,7 @@ BEGIN
                                     _previewData.FileSizeBytes,
                                     _previewData.SeparationType,
                                     _previewData.OptimalSeparationType
-                                    );
+                                   );
 
                 RAISE INFO '%', _infoData;
             END LOOP;
@@ -628,10 +628,10 @@ BEGIN
                 FROM Tmp_ScanTypes
             LOOP
                 _infoData := format(_formatSpecifier,
-                            _previewData.ScanType,
-                            _previewData.ScanCount,
-                            _previewData.ScanFilter
-                        );
+                                    _previewData.ScanType,
+                                    _previewData.ScanCount,
+                                    _previewData.ScanFilter
+                                   );
 
                 RAISE INFO '%', _infoData;
             END LOOP;
@@ -666,11 +666,11 @@ BEGIN
                 ORDER BY Entry_ID
             LOOP
                 _infoData := format(_formatSpecifier,
-                            _previewData.FileHash,
-                            _previewData.FileSize,
-                            _previewData.FileSizeRank,
-                            _previewData.FilePath
-                        );
+                                    _previewData.FileHash,
+                                    _previewData.FileSize,
+                                    _previewData.FileSizeRank,
+                                    _previewData.FilePath
+                                   );
 
                 RAISE INFO '%', _infoData;
             END LOOP;

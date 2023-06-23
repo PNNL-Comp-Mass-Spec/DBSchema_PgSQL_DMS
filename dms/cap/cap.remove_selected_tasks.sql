@@ -69,11 +69,12 @@ BEGIN
         _infoHead := format(_formatSpecifier,
                             'Job',
                             'State'
-                        );
+                           );
+
         _infoHeadSeparator := format(_formatSpecifier,
-                            '----------',
-                            '----------'
-                        );
+                                     '----------',
+                                     '----------'
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -86,10 +87,9 @@ BEGIN
             _infoData := format(_formatSpecifier,
                                 _previewData.Job,
                                 _previewData.State
-                            );
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
         RETURN;

@@ -53,10 +53,11 @@ DECLARE
     _mgrId int := 0;
     _paramTypeId int := 0;
 
-    _formatSpecifier text := '%-22s %-17s %-20s';
+    _formatSpecifier text;
     _infoHead text;
-    _infoData text;
+    _infoHeadSeparator text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -262,13 +263,24 @@ BEGIN
 
     If _infoOnly Then
 
+        RAISE INFO '';
+
+        _formatSpecifier := '%-22s %-17s %-20s';
+
         _infoHead := format(_formatSpecifier,
                             'State Change Preview',
                             'Parameter Name',
                             'Manager Name'
-                        );
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------------------',
+                                     '-----------------',
+                                     '--------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
             SELECT format('%s --> %s', PV.value, _newValue) AS State_Change_Preview,
@@ -287,15 +299,13 @@ BEGIN
                   PV.value <> _newValue AND
                   MT.mgr_type_active > 0
         LOOP
-
             _infoData := format(_formatSpecifier,
-                                    _previewData.State_Change_Preview,
-                                    _previewData.Parameter_Name,
-                                    _previewData.manager_name
-                            );
+                                _previewData.State_Change_Preview,
+                                _previewData.Parameter_Name,
+                                _previewData.manager_name
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
         _message := format('Would set %s %s to have RunJobsRemotely set to %s; see the Output window for details',

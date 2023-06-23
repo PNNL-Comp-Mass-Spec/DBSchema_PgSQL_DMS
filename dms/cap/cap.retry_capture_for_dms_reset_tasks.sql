@@ -23,8 +23,8 @@ DECLARE
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -86,16 +86,16 @@ BEGIN
         _formatSpecifier := '%-23s %-10s %-10s %-5s %-20s %-10s %-5s %-20s %-80s';
 
         _infoHead := format(_formatSpecifier,
-                        'Only_Reset_Failed_Steps',
-                        'Job',
-                        'Dataset_ID',
-                        'Step',
-                        'Tool',
-                        'State_Name',
-                        'State',
-                        'Start',
-                        'Dataset'
-                    );
+                            'Only_Reset_Failed_Steps',
+                            'Job',
+                            'Dataset_ID',
+                            'Step',
+                            'Tool',
+                            'State_Name',
+                            'State',
+                            'Start',
+                            'Dataset'
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '-----------------------',
@@ -107,7 +107,7 @@ BEGIN
                                      '-----',
                                      '--------------------',
                                      '--------------------------------------------------------------------------------'
-                        );
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -122,19 +122,18 @@ BEGIN
             ORDER BY TS.Job, TS.Step
         LOOP
             _infoData := format(_formatSpecifier,
-                                    _previewData.only_reset_failed,
-                                    _previewData.job,
-                                    _previewData.dataset_id,
-                                    _previewData.step,
-                                    _previewData.tool,
-                                    _previewData.state_name,
-                                    _previewData.state,
-                                    _previewData.start,
-                                    _previewData.dataset
-                            );
+                                _previewData.only_reset_failed,
+                                _previewData.job,
+                                _previewData.dataset_id,
+                                _previewData.step,
+                                _previewData.tool,
+                                _previewData.state_name,
+                                _previewData.state,
+                                _previewData.start,
+                                _previewData.dataset
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
         DROP TABLE Tmp_Selected_Jobs;

@@ -47,11 +47,11 @@ DECLARE
     _jobList text := null;
     _jobCount int;
 
-    _formatSpecifier text := '%-10s %-10s %-20s %-40s %-10s %-20s';
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -269,6 +269,8 @@ BEGIN
 
             RAISE INFO '';
 
+            _formatSpecifier := '%-10s %-10s %-20s %-40s %-10s %-20s';
+
             _infoHead := format(_formatSpecifier,
                                 'Job',
                                 'Dataset_ID',
@@ -276,16 +278,16 @@ BEGIN
                                 'Error_Message',
                                 'Skip_Reset',
                                 'Skip_Reason',
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                '----------',
-                                '----------',
-                                '--------------------',
-                                '----------------------------------------',
-                                '----------',
-                                '--------------------'
-                            );
+                                         '----------',
+                                         '----------',
+                                         '--------------------',
+                                         '----------------------------------------',
+                                         '----------',
+                                         '--------------------'
+                                        );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
@@ -296,16 +298,15 @@ BEGIN
                 ORDER BY Job, Subfolder
             LOOP
                 _infoData := format(_formatSpecifier,
-                                        _previewData.Job,
-                                        _previewData.Dataset_ID,
-                                        _previewData.Subfolder,
-                                        _previewData.Error_Message,
-                                        _previewData.SkipResetMode,
-                                        _previewData.SkipReason
-                                );
+                                    _previewData.Job,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Subfolder,
+                                    _previewData.Error_Message,
+                                    _previewData.SkipResetMode,
+                                    _previewData.SkipReason
+                                   );
 
                 RAISE INFO '%', _infoData;
-
             END LOOP;
 
         End If;

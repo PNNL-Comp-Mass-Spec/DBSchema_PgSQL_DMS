@@ -126,11 +126,11 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **
 *****************************************************/
 DECLARE
-    _formatSpecifier text := '%-15s %-20s %-35s %-25s';
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
     _deletedFlag text := 'Deleted Value';
 BEGIN
     ---------------------------------------------------
@@ -186,21 +186,24 @@ BEGIN
          ) XmlQ;
 
     If _showDebug Then
+
         RAISE INFO '';
+
+        _formatSpecifier := '%-15s %-20s %-35s %-25s';
 
         _infoHead := format(_formatSpecifier,
                             'State',
                             'Section',
                             'Name',
                             'Value'
-                        );
+                           );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                            '-----',
-                            '-------',
-                            '----',
-                            '-----'
-                        );
+                                     '---------------',
+                                     '--------------------',
+                                     '-----------------------------------',
+                                     '-------------------------'
+                                    );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
@@ -211,14 +214,13 @@ BEGIN
             ORDER BY Section, Name
         LOOP
             _infoData := format(_formatSpecifier,
-                                    _previewData.State,
-                                    _previewData.Section,
-                                    _previewData.Name,
-                                    _previewData.Value
-                            );
+                                _previewData.State,
+                                _previewData.Section,
+                                _previewData.Name,
+                                _previewData.Value
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
     End If;
@@ -265,16 +267,14 @@ BEGIN
             WHERE State <> 'Unchanged'
             ORDER BY Section, Name
         LOOP
-
             _infoData := format(_formatSpecifier,
-                                    _previewData.State,
-                                    _previewData.Section,
-                                    _previewData.Name,
-                                    _previewData.Value
-                            );
+                                _previewData.State,
+                                _previewData.Section,
+                                _previewData.Name,
+                                _previewData.Value
+                               );
 
             RAISE INFO '%', _infoData;
-
         END LOOP;
 
     End If;
