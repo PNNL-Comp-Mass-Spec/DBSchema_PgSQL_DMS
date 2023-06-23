@@ -1,23 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE cap.remove_old_tasks
-(
-    _intervalDaysForSuccess numeric = 60,
-    _intervalDaysForFail int = 135,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _validateJobStepSuccess boolean
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: remove_old_tasks(integer, integer, boolean, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer DEFAULT 60, IN _intervaldaysforfail integer DEFAULT 135, IN _logdeletions boolean DEFAULT false, IN _maxtaskstoremove integer DEFAULT 0, IN _validatejobstepsuccess boolean DEFAULT false, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
-**  Delete capture task jobs past their expiration date
-**  from the main tables in the database
+**  Desc:
+**      Delete capture task jobs past their expiration date
+**      from the main tables in the database
 **
 **  Arguments:
 **    _intervalDaysForSuccess   Successful capture task jobs must be this old to be deleted (0 -> no deletion)
 **    _intervalDaysForFail      Failed capture task jobs must be this old to be deleted (0 -> no deletion)
+**    _logDeletions             When true, logs each deleted job number in cap.t_log_entries
+**    _maxTasksToRemove         When non-zero, limit the number of tasks deleted to this value (order by job)
+**    _validateJobStepSuccess   When true, do not delete tasks with any Failed, In Progress, or Holding task steps
+**    _infoOnly                 When true, preview the tasks that would be deleted
 **
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -25,17 +25,17 @@ AS $$
 **                         - Now removing capture task jobs with state Complete, Inactive, or Ignore
 **          03/10/2014 mem - Added call to synchronize_task_stats_with_task_steps
 **          01/23/2017 mem - Assure that capture task jobs exist in the history before deleting from t_tasks
-**          08/17/2021 mem - When looking for completed or inactive capture task jobs, use the Start time if Finish is null
+**          08/17/2021 mem - When looking for completed or inactive capture task jobs, use Start time if Finish is null
 **                         - Also look for capture task jobs with state 14 = Failed, Ignore Job Step States
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/22/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _deleteCount int;
-    _saveTime timestamp := CURRENT_TIMESTAMP;
     _cutoffDateTimeForSuccess timestamp;
     _cutoffDateTimeForFail timestamp;
-    _jobInfo record
+    _deleteCount int;
+    _entryIdThreshold int;
+    _jobInfo record;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -45,19 +45,20 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Selected_Jobs (
+        Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Job int not null,
         State int
-    )
+    );
 
-    CREATE INDEX IX_Tmp_Selected_Jobs_Job ON Tmp_Selected_Jobs (Job)
+    CREATE INDEX IX_Tmp_Selected_Jobs_Job ON Tmp_Selected_Jobs (Job);
 
     CREATE TEMP TABLE Tmp_JobsNotInHistory (
         Job int not null,
         State int,
         JobFinish timestamp
-    )
+    );
 
-    CREATE INDEX IX_Tmp_JobsNotInHistory ON Tmp_JobsNotInHistory (Job)
+    CREATE INDEX IX_Tmp_JobsNotInHistory ON Tmp_JobsNotInHistory (Job);
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -71,44 +72,52 @@ BEGIN
         _intervalDaysForFail := 0;
     End If;
 
-    _infoOnly := Coalesce(_infoOnly, false);
+    _logDeletions := Coalesce(_logDeletions, false);
+    _maxTasksToRemove := Coalesce(_maxTasksToRemove, 0);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
-
-    _message := '';
-    _returnCode := '';
+    _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Make sure the capture task job Start and Finish values are up-to-date
     ---------------------------------------------------
 
-    CALL cap.synchronize_task_stats_with_task_steps (_infoOnly => false);
+    CALL cap.synchronize_task_stats_with_task_steps (
+                _infoOnly => false,
+                _completedjobsonly => false,
+                _message => _message);
 
     ---------------------------------------------------
-    -- Add old successful capture task jobs to be removed to list
+    -- Add old, successful capture task jobs to the temp table
     ---------------------------------------------------
 
     If _intervalDaysForSuccess > 0 Then
 
         _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForSuccess);
 
+        If _infoOnly Then
+            RAISE INFO '';
+            RAISE INFO 'Finding capture task jobs with state 3, 4, or 101 and Finish < %', public.timestamp_text(_cutoffDateTimeForSuccess);
+        End If;
+
         INSERT INTO Tmp_Selected_Jobs (Job, State)
         SELECT Job, State
         FROM cap.t_tasks
         WHERE State IN (3, 4, 101) And    -- Complete, Inactive, or Ignore
-              Coalesce(Finish, Start) < _cutoffDateTimeForSuccess;
+              Coalesce(Finish, Start) < _cutoffDateTimeForSuccess
+        ORDER BY job;
 
         If _validateJobStepSuccess Then
-            -- Remove any capture task jobs that have failed, in progress, or holding job steps
+            -- Remove any capture task jobs that have Running, Failed, or Holding job steps
             DELETE FROM Tmp_Selected_Jobs
-            WHERE Job In (SELECT Job
+            WHERE Job In (SELECT TS.Job
                           FROM cap.t_task_steps TS
-                          WHERE NOT TS.State IN (4, 6, 7) AND
+                          WHERE TS.State IN (4, 6, 7) AND
                                 TS.Job = Tmp_Selected_Jobs.Job);
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
             If FOUND Then
-                RAISE INFO 'Warning: Removed % capture task job(s) with one or more steps that were not skipped or complete', _deleteCount;
+                RAISE INFO 'Warning: Removed % capture task % with one or more steps that were not skipped or complete', _deleteCount, public.check_plural(_deleteCount, 'job', 'jobs');
             Else
                 RAISE INFO 'Successful capture task jobs have been confirmed to all have successful (or skipped) steps';
             End If;
@@ -117,17 +126,35 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Add old failed capture task jobs to be removed to list
+    -- Add old, failed capture task jobs to the temp table
     ---------------------------------------------------
 
     If _intervalDaysForFail > 0 Then
         _cutoffDateTimeForFail := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForFail);
 
+        If _infoOnly Then
+            RAISE INFO '';
+            RAISE INFO 'Finding capture task jobs with state 5 or 14      and Finish < %', public.timestamp_text(_cutoffDateTimeForFail);
+        End If;
+
         INSERT INTO Tmp_Selected_Jobs (Job, State)
         SELECT Job, State
         FROM cap.t_tasks
-        WHERE State In (5, 14) AND            -- 'Failed' or 'Failed, Ignore Job Step States'
-              Coalesce(Finish, Start) < _cutoffDateTimeForFail;
+        WHERE State IN (5, 14) AND            -- 'Failed' or 'Failed, Ignore Job Step States'
+              Coalesce(Finish, Start) < _cutoffDateTimeForFail
+        ORDER BY job;
+    End If;
+
+    If _maxTasksToRemove > 0 Then
+        SELECT max(Entry_ID)
+        INTO _entryIdThreshold
+        FROM ( SELECT Entry_ID
+               FROM Tmp_Selected_Jobs
+               ORDER BY job
+               LIMIT _maxTasksToRemove) FilterQ;
+
+        DELETE FROM Tmp_Selected_Jobs
+        WHERE Entry_ID > _entryIdThreshold;
     End If;
 
     ---------------------------------------------------
@@ -144,6 +171,10 @@ BEGIN
     WHERE JH.Job IS NULL;
 
     If Exists (Select * from Tmp_JobsNotInHistory) Then
+
+        If _infoOnly Then
+            RAISE INFO '';
+        End If;
 
         UPDATE Tmp_JobsNotInHistory Target
         SET JobFinish = Coalesce(T.Finish, T.Start, CURRENT_TIMESTAMP)
@@ -173,11 +204,23 @@ BEGIN
     -- Do actual deletion
     ---------------------------------------------------
 
-    CALL cap.remove_selected_tasks (_infoOnly, _message => _message, _logDeletions => false);
+    CALL cap.remove_selected_tasks (
+                _infoOnly,
+                _logDeletions => _logDeletions,
+                _message => _message,
+                _returnCode => _returnCode);
 
     DROP TABLE Tmp_Selected_Jobs;
     DROP TABLE Tmp_JobsNotInHistory;
 END
 $$;
 
-COMMENT ON PROCEDURE cap.remove_old_tasks IS 'RemoveOldJobs';
+
+ALTER PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'RemoveOldTasks or RemoveOldJobs';
+
