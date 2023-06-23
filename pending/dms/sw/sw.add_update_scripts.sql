@@ -83,15 +83,23 @@ BEGIN
 
     If _backfillToDMS = 'Y' Then
         _backFill := 1;
-    Else
+    ElsIf _backfillToDMS = 'N' Then
         _backFill := 0;
+    Else
+        _message := 'BackfillToDMS must be be "Y" or "N"';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
+    Else
+
     End If;
 
     If _description = '' Then
         _message := 'Description cannot be blank';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -99,7 +107,7 @@ BEGIN
         _message := format('Unknown Mode: %s', _mode);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5202';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -118,7 +126,7 @@ BEGIN
         _message := format('Could not find "%s" in database', _script);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5203';
+        _returnCode := 'U5204';
         RETURN;
     End If;
 
@@ -128,7 +136,7 @@ BEGIN
         _message := format('Script "%s" already exists in database', _script);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5204';
+        _returnCode := 'U5205';
         RETURN;
     End If;
 
@@ -162,29 +170,22 @@ BEGIN
             _contents,
             _parameters,
             _fields
-        );
+        )
+        RETURNING script_id
+        INTO _id;
 
         -- If _callingUser is defined, update entered_by in sw.t_scripts_history
-        If char_length(_callingUser) > 0 Then
-            _id := Null;
-            SELECT script_id
-            INTO _id
-            FROM sw.t_scripts
-            WHERE script = _script;
-
-            If Not _id Is Null Then
-                CALL alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
-            End If;
+        If char_length(_callingUser) > 0 And Not _id Is Null Then
+            CALL alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
         End If;
 
-    End If; -- add mode
+    End If;
 
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
 
     If _mode = 'update' Then
-        --
 
         UPDATE sw.t_scripts
         SET
@@ -199,18 +200,18 @@ BEGIN
 
         -- If _callingUser is defined, update entered_by in sw.t_scripts_history
         If char_length(_callingUser) > 0 Then
-            _id := Null;
+
             SELECT script_id
             INTO _id
             FROM sw.t_scripts
             WHERE script = _script;
 
-            If Not _id Is Null Then
+            If FOUND And Not _id Is Null Then
                 CALL alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
             End If;
         End If;
 
-    End If; -- update mode
+    End If;
 
 END
 $$;
