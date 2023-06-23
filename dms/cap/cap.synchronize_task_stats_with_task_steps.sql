@@ -7,8 +7,9 @@ CREATE OR REPLACE PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoo
     AS $$
 /****************************************************
 **
-**  Desc:   Makes sure the capture task job stats (start and finish)
-**          agree with the capture task job steps for each capture task job
+**  Desc:
+**      Makes sure the capture task job start and finish times
+**      agree with the capture task job steps for each capture task job
 **
 **  Auth:   mem
 **  Date:   01/22/2010 mem - Initial version
@@ -18,16 +19,18 @@ CREATE OR REPLACE PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoo
 **          02/02/2023 mem - Update table aliases
 **          05/12/2023 mem - Rename variables
 **          05/29/2023 mem - Use format() for string concatenation
+**          06/22/2023 mem - Add Order By to preview query
 **
 *****************************************************/
 DECLARE
     _insertCount int;
     _updateCount int;
-    _formatSpecifier text := '%-10s %-10s %-20s %-20s %-20s %-20s';
+
+    _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
-    _infoData text;
     _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
 
@@ -47,7 +50,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Find capture task jobs that need to be updated
-    -- When _completedJobsOnly is true, filter on task state 3=complete
+    -- When _completedJobsOnly is true, filter on task state 3 (Complete)
     ---------------------------------------------------
 
     INSERT INTO Tmp_JobsToUpdate ( Job )
@@ -108,6 +111,8 @@ BEGIN
 
         RAISE INFO '';
 
+        _formatSpecifier := '%-10s %-10s %-20s %-20s %-20s %-20s';
+
         _infoHead := format(_formatSpecifier,
                             'Job',
                             'State',
@@ -139,14 +144,15 @@ BEGIN
             FROM cap.t_tasks T
                  INNER JOIN Tmp_JobsToUpdate JTU
                    ON T.Job = JTU.Job
+            ORDER BY T.job
         LOOP
             _infoData := format(_formatSpecifier,
-                                    _previewData.Job,
-                                    _previewData.State,
-                                    timestamp_text(_previewData.Start),
-                                    timestamp_text(_previewData.Finish),
-                                    timestamp_text(_previewData.StartNew),
-                                    timestamp_text(_previewData.FinishNew)
+                                _previewData.Job,
+                                _previewData.State,
+                                timestamp_text(_previewData.Start),
+                                timestamp_text(_previewData.Finish),
+                                timestamp_text(_previewData.StartNew),
+                                timestamp_text(_previewData.FinishNew)
                             );
 
             RAISE INFO '%', _infoData;
