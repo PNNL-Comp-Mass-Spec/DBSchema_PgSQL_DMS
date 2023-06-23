@@ -24,9 +24,9 @@ AS $$
 **
 **  Arguments:
 **    _productionOnly         When 0 then shows all instruments; otherwise limits the report to production instruments only
-**    _campaignIDFilterList   Comma separated list of campaign IDs
+**    _campaignIDFilterList   Comma-separated list of campaign IDs
 **    _eusUsageFilterList     Comma separate list of EUS usage types, from table T_EUS_Usage_Type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER
-**    _instrumentFilterList   Comma separated list of instrument names (% and * wild cards are allowed)
+**    _instrumentFilterList   Comma-separated list of instrument names (% and * wild cards are allowed)
 **    _includeProposalType    When 1, include proposal type in the results
 **    _showDebug              When true, summarize the contents of Tmp_Datasets
 **

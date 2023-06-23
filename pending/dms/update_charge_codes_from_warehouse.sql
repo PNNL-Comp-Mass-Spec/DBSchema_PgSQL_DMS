@@ -19,7 +19,7 @@ AS $$
 **    _infoOnly                 Set to true to preview work package metadata after updates are applied
 **    _updateAll                Set to true to force an update of all rows in T_Charge_Code; by default, filters on charge codes based on Setup_Date and Auth_Amt
 **    _onlyShowChanged          When _infoOnly is true, set this to true to only show new or updated work packages
-**    _explicitChargeCodeList   Comma separated list of Charge codes (work packages) to add to T_Charge_Code regardless of filters.  When used, other charge codes are ignored
+**    _explicitChargeCodeList   Comma-separated list of Charge codes (work packages) to add to T_Charge_Code regardless of filters.  When used, other charge codes are ignored
 **
 **  Auth:   mem
 **  Date:   06/04/2013 mem - Initial version

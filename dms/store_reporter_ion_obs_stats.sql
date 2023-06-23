@@ -12,8 +12,8 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats(IN _job integer,
 **
 **  Arguments:
 **    _reporterIon                Reporter ion name, corresponding to the "label" column in T_Sample_Labelling_Reporter_Ions (e.g. iTRAQ8 or TMT18)
-**    _observationStatsTopNPct    Comma separated list of observation stats, by channel
-**    _medianIntensitiesTopNPct   Comma separated list of median intensity values, by channel
+**    _observationStatsTopNPct    Comma-separated list of observation stats, by channel
+**    _medianIntensitiesTopNPct   Comma-separated list of median intensity values, by channel
 **
 **  Auth:   mem
 **  Date:   07/30/2020 mem - Initial version

@@ -17,7 +17,7 @@ AS $$
 **      Sets jobs in the job list to be associated with the given analysis job processor group
 **
 **  Arguments:
-**    _jobList              Comma separated list of job numbers
+**    _jobList              Comma-separated list of job numbers
 **    _processorGroupID     Processor group ID
 **    _newValue             Ignore for now, may need in future
 **    _mode                 'add', 'replace', 'remove'

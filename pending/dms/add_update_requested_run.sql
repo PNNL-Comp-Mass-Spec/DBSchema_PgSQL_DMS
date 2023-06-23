@@ -48,7 +48,7 @@ AS $$
 **    _batch                         When updating an existing requested run, if this is null or 0, the requested run will be removed from the batch
 **    _block                         When updating an existing requested run, if this is null, Block will be set to 0
 **    _runOrder                      When updating an existing requested run, if this is null, Run_Order will be set to 0
-**    _eusUsersList                  EUS User ID (integer); also supports the form 'Baker, Erin (41136)'. Prior to February 2020, supported a comma separated list of EUS user IDs
+**    _eusUsersList                  EUS User ID (integer); also supports the form 'Baker, Erin (41136)'. Prior to February 2020, supported a comma-separated list of EUS user IDs
 **    _mode                          'add', 'check_add', 'update', 'check_update', or 'add-auto'
 **    _secSep                        Separation group
 **    _status                        'Active', 'Inactive', 'Completed'

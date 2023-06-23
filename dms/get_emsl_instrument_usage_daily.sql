@@ -76,7 +76,7 @@ BEGIN
         Year int null,
         Type citext,
         Users citext null,
-        Operator citext null,        -- Could be a comma separated list of Operator IDs
+        Operator citext null,        -- Could be a comma-separated list of Operator IDs
         Comment citext null
     );
 

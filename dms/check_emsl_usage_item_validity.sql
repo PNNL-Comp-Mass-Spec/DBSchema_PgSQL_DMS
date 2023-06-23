@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **          03/20/2013 mem - Changed from Call_Type to Proposal_Type
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/05/2016 mem - Add one day to the proposal end date
-**          03/17/2017 mem - Only call MakeTableFromList if _users is a comma separated list
+**          03/17/2017 mem - Only call MakeTableFromList if _users is a comma-separated list
 **          04/11/2017 mem - Update for new fields DMS_Inst_ID and Usage_Type
 **          04/17/2020 mem - Updated field name in T_EMSL_Instrument_Usage_Report
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0

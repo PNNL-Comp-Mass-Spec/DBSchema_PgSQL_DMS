@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _dataset
 **     Use a cursor to return the list of jobs that would be created
 **
 **  Arguments:
-**    _datasetList                      Comma separated list of dataset names
+**    _datasetList                      Comma-separated list of dataset names
 **    _excludeDatasetsNotReleased       When true, excludes datasets with a rating of -5 (by default we exclude datasets with a rating < 2 and <> -10)
 **    _createJobsForUnreviewedDatasets  When true, will create jobs for datasets with a rating of -10 using predefines with Trigger_Before_Disposition = 1
 **    _analysisToolNameFilter           If not blank, only considers predefines that match the given tool name (can contain wildcards)

@@ -16,7 +16,7 @@ AS $$
 **      Applies an extension script to a series of jobs
 **
 **  Arguments:
-**    _jobList               Comma separated list of jobs to extend
+**    _jobList               Comma-separated list of jobs to extend
 **    _extensionScriptName   Example: Sequest_Extend_MSGF
 **
 **  Auth:   mem

@@ -11,12 +11,12 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_analysis_tool_list(_processor
 **      Builds delimited list of analysis tools
 **      for given analysis job processor ID
 **
-**  Return value: comma separated list
+**  Return value: comma-separated list
 **
 **  Auth:   grk
 **  Date:   02/23/2007 (Ticket 389)
 **          03/15/2007 mem - Increased size of _result to varchar(4000); now ordering by tool name
-**          03/30/2009 mem - Now using Coalesce to generate the comma separated list
+**          03/30/2009 mem - Now using Coalesce to generate the comma-separated list
 **          06/17/2022 mem - Ported to PostgreSQL
 **          05/19/2023 mem - Remove redundant parentheses
 **

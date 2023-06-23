@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **      the comma-separated list of item IDs
 **
 **  Arguments:
-**    _itemList     Comma separated list of item IDs
+**    _itemList     Comma-separated list of item IDs
 **    _itemType     Item type: Batch_ID, Requested_Run_ID, Dataset_Name, Dataset_ID, Experiment_Name, Experiment_ID, or Data_Package_ID
 **
 **  Example usage:

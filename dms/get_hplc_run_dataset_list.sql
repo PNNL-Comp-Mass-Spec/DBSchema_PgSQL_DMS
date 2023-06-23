@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_hplc_run_dataset_list(_hplcrunid integer, 
 **    _hplcRunId    Prep LC run ID
 **    _returnType   If 'name', return dataset names, otherwise return dataset IDs
 **
-**  Return value: comma separated list of dataset names or dataset IDs
+**  Return value: comma-separated list of dataset names or dataset IDs
 **
 **  Auth:   grk
 **  Date:   09/29/2012

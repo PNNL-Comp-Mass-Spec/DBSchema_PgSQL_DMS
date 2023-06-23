@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **      If _mgrList is blank, then sets it to _cleanupMode for all "Analysis Tool Manager" managers
 **
 **  Arguments:
-**    _mgrList       Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
+**    _mgrList       Comma-separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
 **    _cleanupMode   0 = No auto cleanup, 1 = Attempt auto cleanup once, 2 = Auto cleanup always
 **    _showTable     Set to true to show the cleanup mode for the specified managers
 **

@@ -14,7 +14,7 @@ AS $$
 **      Also updates Instrument_ID
 **
 **  Arguments:
-**    _dataPackageList   '' or 0 to update all data packages, otherwise a comma separated list of data package IDs to update
+**    _dataPackageList   '' or 0 to update all data packages, otherwise a comma-separated list of data package IDs to update
 **
 **  Auth:   mem
 **  Date:   10/18/2016 mem - Initial version

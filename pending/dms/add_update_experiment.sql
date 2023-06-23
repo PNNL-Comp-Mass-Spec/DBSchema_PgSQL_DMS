@@ -41,7 +41,7 @@ AS $$
 **  Arguments:
 **    _experimentId            Input/output; When copying an experiment, this will have the new experiment's ID; this is required if renaming an existing experiment
 **    _experimentName          Experiment name
-**    _referenceCompoundList   Semicolon separated list of reference compound IDs; supports integers, or names of the form 3311:ANFTSQETQGAGK
+**    _referenceCompoundList   Semicolon-separated list of reference compound IDs; supports integers, or names of the form 3311:ANFTSQETQGAGK
 **    _mode                    'add, 'update', 'check_add', 'check_update'
 **
 **  Auth:   grk

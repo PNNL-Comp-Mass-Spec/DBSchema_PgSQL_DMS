@@ -24,7 +24,7 @@ AS $$
 **    _eusPropStateID           1=New, 2=Active, 3=Inactive, 4=No Interest
 **    _eusPropTitle             EUS Proposal Title (aka Project Title)
 **    _eusPropImpDate           Proposal Import Date
-**    _eusUsersList             Comma separated list of EUS Users IDs associated with this proposal
+**    _eusUsersList             Comma-separated list of EUS Users IDs associated with this proposal
 **    _eusProposalType          Proposal type
 **    _autoSupersedeProposalID  EUS Proposal ID to supersede this EUS proposal with if this proposal is closed
 **    _mode                     add or update

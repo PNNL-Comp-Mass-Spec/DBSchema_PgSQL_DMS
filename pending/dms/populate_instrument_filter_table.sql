@@ -19,7 +19,7 @@ AS $$
 **          );
 **
 **  Arguments:
-**    _instrumentFilterList   Comma separated list of instrument names (% and * wild cards are allowed)
+**    _instrumentFilterList   Comma-separated list of instrument names (% and * wild cards are allowed)
 **
 **  Auth:   mem
 **  Date:   07/22/2019 mem - Initial version

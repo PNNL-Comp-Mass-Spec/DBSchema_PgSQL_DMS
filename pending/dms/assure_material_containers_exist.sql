@@ -20,7 +20,7 @@ AS $$
 **      Returns a consolidated list of container names
 **
 **  Arguments:
-**    _containerList        Input / Output: Comma separated list of locations and containers (can be a mix of both)
+**    _containerList        Input / Output: Comma-separated list of locations and containers (can be a mix of both)
 **    _comment              Comment
 **    _type                 Container type: 'Box', 'Bag', or 'Wellplate'
 **    _researcher           Researcher name; supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
@@ -28,7 +28,7 @@ AS $$
 **                          However, if _mode is 'verify_only', will populate a temporary table with items in _containerList, then will exit the procedure without making any changes
 **
 **  Returns:
-**    Comma separated list of container names (via argument _containerList)
+**    Comma-separated list of container names (via argument _containerList)
 **
 **  Auth:   grk
 **  Date:   04/27/2010 grk - Initial release

@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION dpkg.get_data_package_dataset_list(_datapackageid int
 **  Desc:
 **      Builds delimited list of datasets for given data package
 **
-**  Return value: comma separated delimited list
+**  Return value: comma-separated delimited list
 **
 **  Auth:   mem
 **  Date:   10/22/2014 mem - Initial version

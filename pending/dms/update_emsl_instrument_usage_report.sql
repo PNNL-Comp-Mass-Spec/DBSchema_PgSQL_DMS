@@ -125,7 +125,7 @@ BEGIN
         ORDER BY Value;
 
         If Not Exists (Select * from Tmp_DebugReports) Then
-            _message := 'To see debug reports, _message must have a comma separated list of integers';
+            _message := 'To see debug reports, _message must have a comma-separated list of integers';
             RAISE WARNING '%', _message;
         End If;
     End If;

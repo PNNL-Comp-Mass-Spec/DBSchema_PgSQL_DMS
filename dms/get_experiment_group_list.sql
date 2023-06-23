@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_experiment_group_list(_experimentid intege
 **      Builds delimited list of experiment group IDs
 **      for a given experiment
 **
-**  Return value: comma separated list
+**  Return value: comma-separated list
 **
 **  Auth:   mem
 **  Date:   12/16/2011 mem

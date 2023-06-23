@@ -11,9 +11,9 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid in
 **      Builds delimited list of EUS users for given requested run
 **
 **  Arguments:
-**    _mode   'I' for comma separated list of EUS User IDs,       e.g. 36746, 39552
-**            'N' for semicolon separated list of EUS User names, e.g. Adkins, Josh; Wong, Scott
-**            'V' for semicolon separated list of both,           e.g. Adkins, Josh (36746); Wong, Scott (39552)
+**    _mode   'I' for comma-separated list of EUS User IDs,       e.g. 36746, 39552
+**            'N' for semicolon-separated list of EUS User names, e.g. Adkins, Josh; Wong, Scott
+**            'V' for semicolon-separated list of both,           e.g. Adkins, Josh (36746); Wong, Scott (39552)
 **
 **  Auth:   grk
 **  Date:   02/15/2006

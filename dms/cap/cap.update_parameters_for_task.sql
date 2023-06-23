@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_task(IN _joblist text, INO
 **      Re-generates the capture task job parameters, storing in table cap.t_task_parameters
 **
 **  Arguments:
-**    _jobList      Comma separated list of capture task jobs to update
+**    _jobList      Comma-separated list of capture task jobs to update
 **    _infoOnly     When true, show updated values in cap.t_tasks and show the new job parameters
 **
 **  Auth:   grk

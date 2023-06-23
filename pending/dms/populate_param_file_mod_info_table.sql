@@ -198,7 +198,7 @@ BEGIN
     LOOP
 
         -----------------------------------------------------------
-        -- Loop through the entries for _currentColumn, creating a comma separated list
+        -- Loop through the entries for _currentColumn, creating a comma-separated list
         -- of the mods defined for each mod type in each parameter file
         -----------------------------------------------------------
         _continueAppendDescriptions := true;

@@ -43,7 +43,7 @@ AS $$
 **    _instrumentGroup     Instrument group; could also contain '(lookup)'
 **    _workPackage         Work Package; could also contain '(lookup)'
 **    _msType              Run type; could also contain '(lookup)'
-**    _eusUsersList        Comma separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'
+**    _eusUsersList        Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'
 **    _mode                'add' or 'PreviewAdd'
 **    _separationGroup     Separation group; could also contain '(lookup)'
 **    _batchName           If defined, create a new batch for the newly created requested runs

@@ -18,7 +18,7 @@ AS $$
 **
 **  Arguments:
 **    _eusProposalID   Only used for logging
-**    _eusUsersList    Comma separated list of EUS user IDs (integers)
+**    _eusUsersList    Comma-separated list of EUS user IDs (integers)
 **
 **  Auth:   grk
 **  Date:   02/21/2006

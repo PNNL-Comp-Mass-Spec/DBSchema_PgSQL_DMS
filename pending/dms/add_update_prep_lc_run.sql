@@ -30,7 +30,7 @@ AS $$
 **      Adds new or edits existing item in T_Prep_LC_Run
 **
 **  Arguments:
-**    _samplePrepRequests  Typically a single sample prep request ID, but can also be a comma separated list (or blank)
+**    _samplePrepRequests  Typically a single sample prep request ID, but can also be a comma-separated list (or blank)
 **    _mode                'add' or 'update'
 **
 **  Auth:   grk
@@ -106,7 +106,7 @@ BEGIN
             RAISE EXCEPTION 'Prep LC run ID must be a positive integer';
         End If;
 
-        -- Assure that _samplePrepRequests is a comma separated list of integers (or an empty string)
+        -- Assure that _samplePrepRequests is a comma-separated list of integers (or an empty string)
         If _samplePrepRequest Like '%;%' Then
             _samplePrepRequest := Replace(_samplePrepRequest, ';', ',');
         End If;

@@ -14,7 +14,7 @@ AS $$
 **      Updates the user operations defined for the given user
 **
 **  Arguments:
-**    _operationsList   Comma separated separated list of operation names (see table T_User_Operations)
+**    _operationsList   Comma-separated separated list of operation names (see table T_User_Operations)
 **
 **  Auth:   mem
 **  Date:   06/05/2013 mem - Initial version

@@ -38,7 +38,7 @@ AS $$
 **        - Experiment group
 **
 **  Arguments:
-**    _batchIDs             Comma separated list of Requested Run Batch IDs
+**    _batchIDs             Comma-separated list of Requested Run Batch IDs
 **    _dataPackageID        Data Package ID; can be null
 **    _experimentGroupID    Experiment Group ID; can be null
 **    _state                New, On Hold, Analysis in Progress, or Closed

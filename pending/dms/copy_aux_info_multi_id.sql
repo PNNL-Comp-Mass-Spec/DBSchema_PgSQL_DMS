@@ -19,7 +19,7 @@ AS $$
 **
 **  Arguments:
 **    _targetName           'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'; see See T_Aux_Info_Target
-**    _targetEntityIDList   Comma separated list of entity IDs; must all be of the same type
+**    _targetEntityIDList   Comma-separated list of entity IDs; must all be of the same type
 **    _categoryName         'Lysis Method', 'Denaturing Conditions', etc.; see T_Aux_Info_Category; Note: Ignored if _mode = 'copyAll'
 **    _subCategoryName      'Procedure', 'Reagents', etc.; see T_Aux_Info_Subcategory; Note: Ignored if _mode = 'copyAll'
 **    _sourceEntityID       ID of the source to copy information from
@@ -27,7 +27,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   01/27/2003
-**          09/27/2007 mem - Extended CopyAuxInfo to accept a comma separated list of entity IDs to process, rather than a single entity name (Ticket #538)
+**          09/27/2007 mem - Extended CopyAuxInfo to accept a comma-separated list of entity IDs to process, rather than a single entity name (Ticket #538)
 **          06/16/2022 mem - Auto change _targetName from 'Cell Culture' to 'Biomaterial' if T_Aux_Info_Target has an entry for 'Biomaterial
 **          07/06/2022 mem - Use new aux info definition view name
 **          08/15/2022 mem - Use new column names

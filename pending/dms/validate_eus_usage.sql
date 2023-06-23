@@ -28,7 +28,7 @@ AS $$
 **  Arguments:
 **    _eusUsageType                 EUS usage type
 **    _eusProposalID                EUS proposal ID
-**    _eusUsersList                 Comma separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'; does not support 'Baker, Erin'
+**    _eusUsersList                 Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'; does not support 'Baker, Erin'
 **    _eusUsageTypeID               EUS usage type ID (output)
 **    _autoPopulateUserListIfBlank  When true, will auto-populate _eusUsersList if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
 **    _samplePrepRequest            When true, validating EUS fields for a sample prep request

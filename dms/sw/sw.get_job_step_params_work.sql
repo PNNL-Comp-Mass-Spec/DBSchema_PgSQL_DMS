@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_work(_job integer, _step integ
 **
 **  Auth:   mem
 **  Date:   12/04/2009 mem - Extracted code from GetJobStepParams to create this procedure
-**          07/01/2010 mem - Now constructing a comma separated list of shared result folders instead of just returning the first one
+**          07/01/2010 mem - Now constructing a comma-separated list of shared result folders instead of just returning the first one
 **          10/11/2011 grk - Added step input and output folders
 **          01/19/2012 mem - Now adding DataPackageID
 **          07/09/2012 mem - Updated to support the "step" attribute of a "param" element containing Yes and a number, for example 'Yes (3)'

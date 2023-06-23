@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_batch_requested_run_list(_batchid integer)
 **      Builds delimited list of requested runs
 **      associated with the given batch
 **
-**  Return value: Comma separated list
+**  Return value: Comma-separated list
 **
 **  Auth:   grk
 **  Date:   01/11/2006 grk - Initial version

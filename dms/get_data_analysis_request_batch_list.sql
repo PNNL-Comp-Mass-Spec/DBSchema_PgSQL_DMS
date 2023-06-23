@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_data_analysis_request_batch_list(_dataanal
 **      Builds delimited list of batch IDs
 **      associated with the given data analysis request
 **
-**  Return value: comma separated list
+**  Return value: comma-separated list
 **
 **  Auth:   mem
 **  Date:   03/25/2022 mem - Initial version

@@ -21,7 +21,7 @@ AS $$
 **    );
 **
 **  Arguments:
-**    _campaignIDFilterList   Comma separated list of campaign IDs
+**    _campaignIDFilterList   Comma-separated list of campaign IDs
 **
 **  Auth:   mem
 **  Date:   07/22/2019 mem - Initial version

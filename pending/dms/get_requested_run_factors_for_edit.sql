@@ -23,7 +23,7 @@ AS $$
 **      specified by _itemList
 **
 **  Arguments:
-**    _itemList     Comma separated list of item IDs
+**    _itemList     Comma-separated list of item IDs
 **    _itemType     Item type: Batch_ID, Requested_Run_ID, Dataset_Name, Dataset_ID, Experiment_Name, Experiment_ID, or Data_Package_ID
 **    _infoOnly     When true, show the SQL
 **

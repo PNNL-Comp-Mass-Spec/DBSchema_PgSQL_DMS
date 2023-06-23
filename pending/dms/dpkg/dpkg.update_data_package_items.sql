@@ -23,7 +23,7 @@ AS $$
 **  Arguments:
 **    _packageID       Data package ID
 **    _itemType        analysis_jobs, datasets, experiments, biomaterial, or proposals
-**    _itemList        Comma separated list of items
+**    _itemList        Comma-separated list of items
 **    _mode            'add', 'update', 'comment', 'delete'
 **    _removeParents   When 1, remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
 **

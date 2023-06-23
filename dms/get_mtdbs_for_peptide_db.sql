@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_mtdbs_for_peptide_db(_peptidedbname text) 
 **     Builds a delimited list of MTS AMT tag databases
 **     whose source is the specified peptide database
 **
-**  Return value: comma separated list
+**  Return value: comma-separated list
 **
 **  Auth:   mem
 **  Date:   10/18/2012

@@ -80,7 +80,7 @@ BEGIN
         Year int null,
         Type citext,
         Users citext null,
-        Operator citext null,        -- Could be a comma separated list of Operator IDs
+        Operator citext null,        -- Could be a comma-separated list of Operator IDs
         Dataset_ID_Acq_Overlap int null,
         Comment citext null,
         Seq int null

@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid inte
 **  Desc:
 **      Returns list of people for given role for the given campaign
 **
-**  Return value: comma separated list
+**  Return value: comma-separated list
 **
 **  Arguments:
 **    _campaignID   Campaign ID

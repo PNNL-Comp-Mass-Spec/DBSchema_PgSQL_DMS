@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_material_container_campaign_list(_containe
 **      Builds delimited list of campaigns represented
 **      by items in the given container
 **
-**  Return value: comma separated list
+**  Return value: comma-separated list
 **
 **  Arguments:
 **    _containerID  Container ID

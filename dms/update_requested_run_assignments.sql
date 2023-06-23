@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **  Arguments:
 **    _mode           'priority', 'instrumentGroup', 'instrumentGroupIgnoreType', 'assignedInstrument', 'separationGroup', 'datasetType', or 'delete'
 **    _newValue       New instrument group, assigned instrument, separation group, dataset type, or priority
-**    _reqRunIDList   Comma separated list of requested run IDs
+**    _reqRunIDList   Comma-separated list of requested run IDs
 **
 **  Auth:   grk
 **  Date:   01/26/2003

@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **  Arguments:
 **    _allowAddNew                  True if the calling process can create the spectral library if it is missing or has state = 1; false if only checking whether an existing library matches the settings
 **    _dmsSourceJob                 DMS job number to use when the library does not exist, but _allowAddNew is true
-**    _proteinCollectionList        Comma separated list of protein collection names, or 'na' if using a legacy FASTA file
+**    _proteinCollectionList        Comma-separated list of protein collection names, or 'na' if using a legacy FASTA file
 **    _organismDbFile               Legacy FASTA file name, or 'na' if using protein collections
 **    _fragmentIonMzMin             DIA-NN setting for minimum fragment ion m/z
 **    _fragmentIonMzMax             DIA-NN setting for maximum fragment ion m/z
@@ -29,8 +29,8 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **    _precursorChargeMin           DIA-NN setting for minimum precursor charge
 **    _precursorChargeMax           DIA-NN setting for maximum precursor charge
 **    _staticCysCarbamidomethyl     DIA-NN setting for whether static Cys carbamidomethyl (+57.021) is enabled
-**    _staticMods                   Semicolon separated list of static (fixed) mods that DIA-NN will consider
-**    _dynamicMods                  Semicolon separated list of dynamic (variable) mods that DIA-NN will consider
+**    _staticMods                   Semicolon-separated list of static (fixed) mods that DIA-NN will consider
+**    _dynamicMods                  Semicolon-separated list of dynamic (variable) mods that DIA-NN will consider
 **    _maxDynamicMods               DIA-NN setting for maximum number of dynamic mods (per peptide)
 **    _infoOnly                     True to look for the spectral library and update _message, but not update T_Spectral_Library if the library is missing (or in state 1)
 **    _libraryId                    Output: spectral library ID if found an existing library, or assigned ID if a new row was added to T_Spectral_Library

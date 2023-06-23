@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE cap.update_multiple_capture_tasks(IN _joblist text, 
 **      Updates capture task jobs in list
 **
 **  Arguments:
-**    _jobList      Comma separated list of capture task jobs to update
+**    _jobList      Comma-separated list of capture task jobs to update
 **    _action       Action to perform: 'Hold', 'Ignore', 'Release', 'Retry', 'UpdateParameters'
 **    _mode         Mode: 'Update' or 'Preview'
 **

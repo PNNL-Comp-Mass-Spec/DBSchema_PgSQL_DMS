@@ -16,7 +16,7 @@ AS $$
 **      in progress, or completed after the given job step finished
 **
 **  Arguments:
-**    _jobs       List of capture task jobs whose steps should be reset
+**    _jobs       Comma-separated list of capture task jobs whose steps should be reset
 **    _infoOnly   True to preview the changes
 **
 **  Auth:   mem

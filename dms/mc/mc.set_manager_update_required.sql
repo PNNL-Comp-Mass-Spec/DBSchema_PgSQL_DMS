@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **      If _managerList is blank, then sets it to true for all "Analysis Tool Manager" managers
 **
 **  Arguments:
-**    _mgrList      Comma separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
+**    _mgrList      Comma-separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
 **    _showTable    Set to true to show the old and new values using RAISE INFO messages when _infoOnly is false; ignored when _infoOnly is true (since the table output is always shown)
 **    _infoOnly     True to preview changes, false to make changes
 **

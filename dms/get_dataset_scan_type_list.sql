@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_scan_type_list(_datasetid integer)
 **      Builds a delimited list of actual scan types
 **      for the specified dataset
 **
-**  Return value: comma separated list
+**  Return value: comma-separated list
 **
 **  Auth:   mem
 **  Date:   05/13/2010

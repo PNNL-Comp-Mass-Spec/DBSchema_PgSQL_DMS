@@ -19,7 +19,7 @@ AS $$
 **
 **  Arguments:
 **    _mode                       'add' or 'preview'
-**    _jobRequestList             Comma separated list of analysis job requests
+**    _jobRequestList             Comma-separated list of analysis job requests
 **    _priority                   Priority
 **    _associatedProcessorGroup   Processor group name
 **    _propagationMode            'Export' or 'No Export'

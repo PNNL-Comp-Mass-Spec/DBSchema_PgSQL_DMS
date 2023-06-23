@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **      Updates parameters to new values for jobs in list
 **
 **  Arguments:
-**    _jobList                  Comma separated list of job numbers
+**    _jobList                  Comma-separated list of job numbers
 **    _state                    Job state name
 **    _priority                 Processing priority (1, 2, 3, etc.)
 **    _comment                  Text to append to the comment

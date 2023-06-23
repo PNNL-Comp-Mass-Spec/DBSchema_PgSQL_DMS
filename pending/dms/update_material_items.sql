@@ -137,7 +137,7 @@ BEGIN
         -- of material items, if applicable
         ---------------------------------------------------
 
-        -- _itemList is a comma separated list of items of the form Type:ID, for example 'E:8432,E:8434,E:9786'
+        -- _itemList is a comma-separated list of items of the form Type:ID, for example 'E:8432,E:8434,E:9786'
         -- This is a list of three experiments, IDs 8432, 8434, and 9786
 
         INSERT INTO Tmp_Material_Items

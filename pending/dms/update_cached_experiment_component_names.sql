@@ -12,7 +12,7 @@ AS $$
 **
 **  Desc:
 **      Updates T_Cached_Experiment_Components,
-**      which tracks the semicolon separated list of
+**      which tracks the semicolon-separated list of
 **      biomaterial names and reference compound names for each exeriment
 **
 **  Arguments:

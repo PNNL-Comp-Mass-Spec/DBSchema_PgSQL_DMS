@@ -18,8 +18,8 @@ AS $$
 **      For example, see https://ingestdms.my.emsl.pnl.gov/get_state?job_id=1309016
 **
 **  Arguments:
-**    _statusNumList          Comma separated list of status numbers; these must all match the specified DatasetID and they must match the Status entries that the _statusURIList values match
-**    _statusURIList          Comma separated list of status URIs; these must all match the specified DatasetID using V_MyEMSL_Uploads (this is a safety check)
+**    _statusNumList          Comma-separated list of status numbers; these must all match the specified DatasetID and they must match the Status entries that the _statusURIList values match
+**    _statusURIList          Comma-separated list of status URIs; these must all match the specified DatasetID using V_MyEMSL_Uploads (this is a safety check)
 **    _ingestStepsCompleted   Number of ingest steps that were completed for these status nums (assumes that all the status nums completed the same steps)
 **
 **  Auth:   mem

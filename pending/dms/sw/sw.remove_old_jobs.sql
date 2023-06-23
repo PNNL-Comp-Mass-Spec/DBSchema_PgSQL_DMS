@@ -23,7 +23,7 @@ AS $$
 **    _intervalDaysForSuccess   Successful jobs must be this old to be deleted (0 -> no deletion)
 **    _intervalDaysForFail      Failed jobs must be this old to be deleted (0 -> no deletion)
 **    _validateJobStepSuccess   When true, remove any jobs that have failed, in progress, or holding job steps
-**    _jobListOverride          Comma separated list of jobs to remove from T_Jobs, T_Job_Steps, and T_Job_Parameters
+**    _jobListOverride          Comma-separated list of jobs to remove from T_Jobs, T_Job_Steps, and T_Job_Parameters
 **    _logDeletions             When true, logs each deleted job number in sw.T_Log_Entries
 **    _logToConsoleOnly         When _logDeletions is true, optionally set this to true to only show deleted job info in the output console (via RAISE INFO messages)
 **

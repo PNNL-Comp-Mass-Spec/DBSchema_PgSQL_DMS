@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_batch_location_scan(IN _loc
 **  Arguments:
 **    _locationId           Location ID (row in in t_material_locations)
 **    _scanDate             Scan date/time
-**    _batchIdList          Requested run batch IDs (comma separated list)
+**    _batchIdList          Requested run batch IDs (comma-separated list)
 **    _message              Error message (output); empty string if no error
 **    _returnCode           Return code
 **
