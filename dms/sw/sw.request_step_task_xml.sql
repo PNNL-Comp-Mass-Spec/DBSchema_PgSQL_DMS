@@ -118,6 +118,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          03/29/2023 mem - Add support for state 11 (Waiting_For_File)
 **          06/09/2023 mem - Ported to PostgreSQL
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          06/23/2023 mem - Add missing underscore to column Processor_ID
 **
 *****************************************************/
 DECLARE
@@ -280,8 +281,12 @@ BEGIN
             _message := format('Processor not defined in sw.t_local_processors: %s', _processorName);
             _returnCode := _jobNotAvailableErrorCode;
 
-            INSERT INTO sw.t_sp_usage( posted_by, processor_id, calling_user )
-            VALUES('Request_Step_Task_XML', null, format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
+            INSERT INTO sw.t_sp_usage( posted_by,
+                                       processor_id,
+                                       calling_user )
+            VALUES('Request_Step_Task_XML',
+                   NULL,
+                   format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
 
             RETURN;
         End If;
@@ -307,9 +312,9 @@ BEGIN
             End If;
 
             If Not Coalesce(_logSPUsage, false) Then
-                INSERT INTO sw.t_sp_usage ( Posted_By,
-                                            ProcessorID,
-                                            Calling_User )
+                INSERT INTO sw.t_sp_usage ( posted_by,
+                                            processor_id,
+                                            calling_user )
                 VALUES ('Request_Step_Task_XML', _processorID, session_user);
             End If;
 
