@@ -53,7 +53,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _jobs := Coalesce(_jobs, '');
+    _jobs := Trim(Coalesce(_jobs, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _jobs = '' Then
@@ -160,7 +160,7 @@ BEGIN
                                 'State',
                                 'Start',
                                 'Finish'
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
                                          '----------',

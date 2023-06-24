@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Resets managers that report 'flag file' in V_Processor_Status_Warnings_CTM
+**      Resets managers that report 'flag file' in cap.V_Processor_Status_Warnings_CTM
 **
 **  Arguments:
 **    _infoOnly   True to preview the changes

@@ -11,8 +11,8 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Resets entries in t_task_steps and t_task_step_dependencies for the given capture task jobs
-**      for which the capture task job steps that are complete yet depend a job step that is enabled,
+**      For the give capture task jobs, resets entries in t_task_steps and t_task_step_dependencies
+**      for steps that are complete, yet depend on a job step that is enabled,
 **      in progress, or completed after the given job step finished
 **
 **  Arguments:
@@ -53,7 +53,7 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------------------------
 
-        _jobs := Coalesce(_jobs, '');
+        _jobs := Trim(Coalesce(_jobs, ''));
         _infoOnly := Coalesce(_infoOnly, false);
 
         If _jobs = '' Then
@@ -70,12 +70,12 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_Jobs (
             Job int
-        )
+        );
 
         CREATE TEMP TABLE Tmp_JobStepsToReset (
             Job int,
             Step int
-        )
+        );
 
         -----------------------------------------------------------
         -- Parse the capture task job list
@@ -84,7 +84,7 @@ BEGIN
         INSERT INTO Tmp_Jobs (Job)
         SELECT Value
         FROM public.parse_delimited_integer_list(_jobs, ',')
-        ORDER BY Value
+        ORDER BY Value;
 
         -----------------------------------------------------------
         -- Find steps for the given capture task jobs that need to be reset
@@ -122,7 +122,7 @@ BEGIN
                                 'State_Name',
                                 'State',
                                 'Dataset'
-                            );
+                               );
 
             _infoHeadSeparator := format(_formatSpecifier,
                                          '----------',
@@ -214,4 +214,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.reset_dependent_task_steps IS 'ResetDependentJobSteps';
+COMMENT ON PROCEDURE cap.reset_dependent_task_steps IS 'ResetDependentTaskSteps or ResetDependentJobSteps';

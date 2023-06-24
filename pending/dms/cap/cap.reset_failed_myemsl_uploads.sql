@@ -4,7 +4,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads
     _infoOnly boolean = false,
     _maxJobsToReset int = 0,
     _jobListOverride text = '',
-    _resetHoldoffMinutes numeric = 15,
+    _resetHoldoffMinutes int = 15,
     INOUT _message text default '',
     INOUT _returnCode text default ''
 )
@@ -13,8 +13,8 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for failed Dataset Archive or Archive Update tasks with
-**      known error messages. Reset the capture task to try again if _infoOnly is false
+**      Looks for failed Dataset Archive or Archive Update tasks with known error messages
+**      Resets the capture tasks to try again if _infoOnly is false
 **
 **  Arguments:
 **    _infoOnly             True to preview the changes
@@ -70,7 +70,7 @@ BEGIN
 
         _infoOnly := Coalesce(_infoOnly, false);
         _maxJobsToReset := Coalesce(_maxJobsToReset, 0);
-        _jobListOverride := Coalesce(_jobListOverride, '');
+        _jobListOverride := Trim(Coalesce(_jobListOverride, ''));
         _resetHoldoffMinutes := Coalesce(_resetHoldoffMinutes, 15);
 
         -----------------------------------------------------------

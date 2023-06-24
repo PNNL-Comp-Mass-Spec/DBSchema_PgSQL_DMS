@@ -21,7 +21,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Resets failed DatasetQuality step in t_task_steps for the specified capture task jobs
+**      Resets failed DatasetQuality steps in t_task_steps for the specified capture task jobs
 **
 **      Useful for capture task jobs where Quameter encountered an error
 **
@@ -55,7 +55,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _jobs := Coalesce(_jobs, '');
+    _jobs := Trim(Coalesce(_jobs, ''));
     _infoOnly := Coalesce(_infoOnly, false);
     _ignoreQuameterErrors := Coalesce(_ignoreQuameterErrors, true);
 
@@ -214,4 +214,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.retry_quameter_for_tasks IS 'RetryQuameterForJobs';
+COMMENT ON PROCEDURE cap.retry_quameter_for_tasks IS 'RetryQuameterForTasks or RetryQuameterForJobs';
