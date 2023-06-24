@@ -198,9 +198,9 @@ BEGIN
 
     If _infoOnly Then
         RAISE INFO '';
-        _message := 'Would delete ';
+        _message := 'Would delete';
     Else
-        _message := 'Deleted ';
+        _message := 'Deleted';
     End If;
 
     _message := format('%s %s old capture task jobs from the history tables; job number range %s to %s', _message, _jobCountToDelete, _jobFirst, _jobLast);
