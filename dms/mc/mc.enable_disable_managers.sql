@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
 **          05/30/2023 mem - Use format() for string concatenation
+**          06/23/2023 mem - No longer mention "FETCH ALL FROM _results" in the output message
 **
 *****************************************************/
 DECLARE
@@ -267,8 +268,6 @@ BEGIN
             End If;
         End If;
 
-        _message := format('%s; see also "FETCH ALL FROM _results"', _message);
-
         RAISE INFO '%', _message;
 
         Open _results For
@@ -345,7 +344,7 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-        _message := format('Would set %s managers to %s; see the Output window for details, or use "FETCH ALL FROM _results"',
+        _message := format('Would set %s managers to %s; see the Output window for details',
                             _countToUpdate,
                             _activeStateDescription);
 
@@ -402,8 +401,6 @@ BEGIN
             _message := format('%s (%s managers were already %s)', _message, _countUnchanged, _activeStateDescription);
         End If;
     End If;
-
-    _message := format('%s; see also "FETCH ALL FROM _results"', _message);
 
     RAISE INFO '%', _message;
 

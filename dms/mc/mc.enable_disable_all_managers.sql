@@ -23,7 +23,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          -- Disable the Capture Task Managers and the Analysis Tool Managers on Pub-80 through Pub-89
 **          CALL mc.enable_disable_all_managers(
 **                _managerTypeIDList => '15, 11',
-**                _managerNameList => 'Pub-8[0-9]%',
+**                _managerNameList => 'Pub-8[0-1]%',
 **                _enable => false,
 **                _infoOnly => true
 **              );
@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          08/21/2022 mem - Replace temp table with array
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _enable and _infoOnly from integer to boolean
+**          06/23/2023 mem - No longer look for "FETCH ALL FROM _results" in the output message from mc.enable_disable_managers
 **
 *****************************************************/
 DECLARE
@@ -109,9 +110,6 @@ BEGIN
         End If;
 
         If Char_Length(_msg) > 0 Then
-            -- Remove the "see also" message that does not apply when calling enable_disable_managers from this procedure
-            _msg := Replace(_msg, '; see also "FETCH ALL FROM _results"', '');
-
             _message := public.append_to_text(_message, _msg, _delimiter := '; ');
         End If;
 
