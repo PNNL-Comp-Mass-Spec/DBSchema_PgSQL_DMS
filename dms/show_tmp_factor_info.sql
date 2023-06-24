@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.show_tmp_factor_info()
 **
 **  Auth:   mem
 **  Date:   12/13/2022 mem - Initial release
+**          06/23/2023 mem - Increase column widths
 **
 *****************************************************/
 DECLARE
@@ -55,7 +56,7 @@ BEGIN
     -- Show contents of Tmp_FactorInfo
     --
 
-    _formatSpecifier := '%-10s %-60s %-10s %-10s %-12s %-12s %-15s';
+    _formatSpecifier := '%-10s %-80s %-30s %-45s %-12s %-12s %-14s';
 
     _infoHead := format(_formatSpecifier,
                         'Entry_ID',
@@ -69,12 +70,12 @@ BEGIN
 
     _infoHeadSeparator := format(_formatSpecifier,
                                  '----------',
-                                 '------------------------------------------------------------',
-                                 '----------',
-                                 '----------',
+                                 '--------------------------------------------------------------------------------',
+                                 '------------------------------',
+                                 '---------------------------------------------',
                                  '------------',
                                  '------------',
-                                 '---------------'
+                                 '--------------'
                                 );
 
     RAISE INFO '%', _infoHead;
