@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.reset_dependent_task_steps
-(
-    _jobs text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: reset_dependent_task_steps(text, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.reset_dependent_task_steps(IN _jobs text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -29,7 +26,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          07/10/2017 mem - Clear Completion_Code, Completion_Message, Evaluation_Code, & Evaluation_Message when resetting a capture task job step
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/24/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -38,6 +35,8 @@ DECLARE
     _infoHeadSeparator text;
     _previewData record;
     _infoData text;
+    _jobCount int;
+    _stepCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -61,7 +60,7 @@ BEGIN
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
-            RETURN
+            RETURN;
         End If;
 
         -----------------------------------------------------------
@@ -86,6 +85,10 @@ BEGIN
         FROM public.parse_delimited_integer_list(_jobs, ',')
         ORDER BY Value;
 
+        SELECT COUNT(*)
+        INTO _jobCount
+        FROM Tmp_Jobs;
+
         -----------------------------------------------------------
         -- Find steps for the given capture task jobs that need to be reset
         -----------------------------------------------------------
@@ -106,6 +109,18 @@ BEGIN
                           FROM Tmp_Jobs ) AND
               (JS_Target.State IN (0, 1, 2, 4) OR
                JS_Target.Start > TS.Finish);
+
+        If Not FOUND Then
+            _message = format('No job steps were found to reset for %s %s', public.check_plural(_jobCount, 'job', 'jobs'), _jobs);
+
+            DROP TABLE Tmp_Jobs;
+            DROP TABLE Tmp_JobStepsToReset;
+            RETURN;
+        End If;
+
+        SELECT COUNT(*)
+        INTO _stepCount
+        FROM Tmp_JobStepsToReset;
 
         If _infoOnly Then
             -- Preview steps that would be updated
@@ -143,7 +158,7 @@ BEGIN
                      INNER JOIN Tmp_JobStepsToReset JR
                        ON TS.Job = JR.Job AND
                           TS.Step = JR.Step
-                ORDER BY TS.Job, TS.Step;
+                ORDER BY TS.Job, TS.Step
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.job,
@@ -158,16 +173,19 @@ BEGIN
                 RAISE INFO '%', _infoData;
             END LOOP;
 
+            _message = format('Would reset %s %s', _stepCount, public.check_plural(_stepCount, 'job step', 'job steps'));
+
             DROP TABLE Tmp_Jobs;
             DROP TABLE Tmp_JobStepsToReset;
 
             RETURN;
         End If;
 
-        -- Reset evaluated to 0 for the affected steps
+        -- Reset evaluated and triggered to 0 for the affected steps
         --
         UPDATE cap.t_task_step_dependencies TSD
-        SET Evaluated = 0, Triggered = 0
+        SET Evaluated = 0,
+            Triggered = 0
         FROM Tmp_JobStepsToReset JR
         WHERE TSD.Job  = JR.Job AND
               TSD.Step = JR.Step;
@@ -175,7 +193,7 @@ BEGIN
         -- Update the capture task job steps to state Waiting
         --
         UPDATE cap.t_task_steps TS
-        SET State = 1,                    -- 1=waiting
+        SET State = 1,                    -- 1=Waiting
             Tool_Version_ID = 1,          -- 1=Unknown
             Completion_Code = 0,
             Completion_Message = Null,
@@ -185,12 +203,16 @@ BEGIN
         WHERE TS.Job  = JR.Job AND
               TS.Step = JR.Step;
 
-        -- Change the capture task job state from failed to running
+        -- Change the capture task job state from Failed to In Progress
+        --
         UPDATE cap.t_tasks T
         SET State = 2
         FROM Tmp_JobStepsToReset JR
         WHERE T.Job = JR.Job AND
               T.State = 5;
+
+        _message = format('Reset %s %s', _stepCount, public.check_plural(_stepCount, 'job step', 'job steps'));
+
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -214,4 +236,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.reset_dependent_task_steps IS 'ResetDependentTaskSteps or ResetDependentJobSteps';
+
+ALTER PROCEDURE cap.reset_dependent_task_steps(IN _jobs text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE reset_dependent_task_steps(IN _jobs text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.reset_dependent_task_steps(IN _jobs text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'ResetDependentTaskSteps or ResetDependentJobSteps';
+

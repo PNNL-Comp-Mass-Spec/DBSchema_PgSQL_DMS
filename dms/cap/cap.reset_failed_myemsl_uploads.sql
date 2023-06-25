@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads
-(
-    _infoOnly boolean = false,
-    _maxJobsToReset int = 0,
-    _jobListOverride text = '',
-    _resetHoldoffMinutes int = 15,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: reset_failed_myemsl_uploads(boolean, integer, text, integer, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean DEFAULT false, IN _maxjobstoreset integer DEFAULT 0, IN _joblistoverride text DEFAULT ''::text, IN _resetholdoffminutes integer DEFAULT 15, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -18,8 +13,8 @@ AS $$
 **
 **  Arguments:
 **    _infoOnly             True to preview the changes
-**    _maxJobsToReset       Maximum number of jobs to reset
-**    _jobListOverride      Comma-separated list of capture task jobs to reset. Capture task jobs must have a failed step in t_task_steps
+**    _maxJobsToReset       Maximum number of capture task jobs to reset
+**    _jobListOverride      Comma-separated list of jobs to reset; capture task jobs must have a failed step in t_task_steps
 **    _resetHoldoffMinutes  Holdoff time to apply to column Finish
 **
 **  Auth:   mem
@@ -36,7 +31,7 @@ AS $$
 **          12/15/2017 mem - Reset steps with message 'ingest/backend/tasks.py'
 **          03/07/2018 mem - Do not reset the same job/subfolder ingest task more than once
 **          04/29/2020 bcg - Reset steps with message 'ingest/backend/tasks.py'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/25/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -61,9 +56,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-
     BEGIN
-
         -----------------------------------------------------------
         -- Validate the inputs
         -----------------------------------------------------------
@@ -84,15 +77,23 @@ BEGIN
             Error_Message text NULL,
             SkipResetMode int Null,
             SkipReason text NULL
-        )
+        );
 
         -----------------------------------------------------------
         -- Look for failed capture task jobs
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_FailedJobs( Job, Dataset_ID, Subfolder, Error_Message, SkipResetMode )
-        SELECT Job, Dataset_ID, Coalesce(Output_Folder, Input_Folder), MAX(Completion_Message), 0 AS SkipResetMode
-        FROM cap.V_task_Steps
+        INSERT INTO Tmp_FailedJobs( Job,
+                                    Dataset_ID,
+                                    Subfolder,
+                                    Error_Message,
+                                    SkipResetMode )
+        SELECT Job,
+               Dataset_ID,
+               Coalesce(Output_Folder, Input_Folder),
+               MAX(Completion_Message),
+               0 AS SkipResetMode
+        FROM cap.v_task_steps
         WHERE Tool = 'ArchiveVerify' AND
               State = 6 AND
               (Completion_Message LIKE '%ConnectionTimeout%' OR
@@ -107,21 +108,30 @@ BEGIN
         GROUP BY Job, Dataset_ID, Output_Folder, Input_Folder;
 
         If _jobListOverride <> '' Then
-            INSERT INTO Tmp_FailedJobs( Job, Dataset_ID, Subfolder, Error_Message, SkipResetMode )
-            SELECT DISTINCT Value, TS.Dataset_ID, TS.Output_Folder, TS.Completion_Message, 0 AS SkipResetMode
+            INSERT INTO Tmp_FailedJobs( Job,
+                                        Dataset_ID,
+                                        Subfolder,
+                                        Error_Message,
+                                        SkipResetMode )
+            SELECT DISTINCT SrcJobs.Value,
+                            TS.Dataset_ID,
+                            TS.Output_Folder,
+                            TS.Completion_Message,
+                            0 AS SkipResetMode
             FROM public.parse_delimited_integer_list ( _jobListOverride, ',' ) SrcJobs
-                 INNER JOIN cap.V_task_Steps TS
-                   ON SrcJobs.VALUE = TS.Job
+                 INNER JOIN cap.v_task_steps TS
+                   ON SrcJobs.Value = TS.Job
                  LEFT OUTER JOIN Tmp_FailedJobs Target
                    ON TS.Job = Target.Job
-            WHERE TS.Tool LIKE '%archive%' AND
+            WHERE TS.Tool LIKE '%Archive%' AND
                   TS.State = 6 AND
-                  Target.Job Is Null
+                  Target.Job IS NULL;
         End If;
 
         If Not Exists (SELECT * FROM Tmp_FailedJobs) Then
             If _infoOnly Then
-                RAISE INFO 'No failed capture task jobs were found';
+                _message := 'No failed capture task jobs were found';
+                RAISE INFO '%', _message;
             End If;
 
             DROP TABLE Tmp_FailedJobs;
@@ -137,23 +147,22 @@ BEGIN
         SET SkipResetMode = 1,
             SkipReason = 'Upload has failed two or more times'
         FROM ( SELECT U.job,
-                             U.subfolder,
-                             U.file_count_new,
-                             U.file_count_updated,
-                             COUNT(*) AS Attempts
-                      FROM cap.t_myemsl_uploads AS U
-                           INNER JOIN Tmp_FailedJobs
-                             ON U.job = Tmp_FailedJobs.job AND
-                                U.subfolder = Tmp_FailedJobs.subfolder
-                      WHERE U.verified = 0
-                      GROUP BY U.job, U.subfolder, U.file_count_new, U.file_count_updated
-                    ) AttemptQ
+                      U.subfolder,
+                      U.file_count_new,
+                      U.file_count_updated,
+                      COUNT(*) AS Attempts
+               FROM cap.t_myemsl_uploads AS U
+                    INNER JOIN Tmp_FailedJobs
+                      ON U.job = Tmp_FailedJobs.job AND
+                         U.subfolder = Tmp_FailedJobs.subfolder
+               WHERE U.verified = 0
+               GROUP BY U.job, U.subfolder, U.file_count_new, U.file_count_updated
+             ) AttemptQ
         WHERE Target.job = AttemptQ.job AND
               Target.subfolder = AttemptQ.subfolder AND
               AttemptQ.Attempts > 1;
 
-        If Exists (Select * From Tmp_FailedJobs Where SkipResetMode = 1) Then
-        -- <a>
+        If Exists (SELECT * FROM Tmp_FailedJobs WHERE SkipResetMode = 1) Then
             -- Post a log entry about capture task jobs that we are not resetting
             -- Limit the logging to once every 24 hours
 
@@ -165,8 +174,8 @@ BEGIN
             LOOP
                 _logMessage := format('Skipping auto-reset of MyEMSL upload for capture task job %s', _jobInfo.Job);
 
-                If char_length(_skippedSubfolder) > 0 Then
-                    _logMessage := format('%s, subfolder %s', _logMessage, _skippedSubfolder);
+                If char_length(_jobInfo.Subfolder) > 0 Then
+                    _logMessage := format('%s, subfolder %s', _logMessage, _jobInfo.Subfolder);
                 End If;
 
                 _logMessage := format('%s since the upload has already failed 2 or more times', _logMessage);
@@ -177,9 +186,9 @@ BEGIN
                     RAISE INFO '%', _logMessage;
                 End If;
 
-            END LOOP; -- </b>
+            END LOOP;
 
-        End If; -- </a>
+        End If;
 
         -----------------------------------------------------------
         -- Flag any capture task jobs that have a DatasetArchive or ArchiveUpdate step in state 7 (Holding)
@@ -220,20 +229,23 @@ BEGIN
             End If;
 
             RAISE INFO '% % out of % candidate capture task jobs', _verb, _maxJobsToReset, _jobCountAtStart;
-
         End If;
 
-        If Exists (Select * From Tmp_FailedJobs Where SkipResetMode = 0) Then
+        If Exists (SELECT * FROM Tmp_FailedJobs WHERE SkipResetMode = 0) Then
             -----------------------------------------------------------
-            -- Construct a comma-separated list of capture task jobs then call retry_myemsl_upload
+            -- Construct a comma-separated list of capture task jobs, then call retry_myemsl_upload
             -----------------------------------------------------------
 
-            SELECT string_agg(Job::TEXT, ',' ORDER BY Job)
+            SELECT string_agg(Job::text, ',' ORDER BY Job)
             INTO _jobList
             FROM Tmp_FailedJobs
             WHERE SkipResetMode = 0;
 
-            CALL cap.retry_myemsl_upload (_jobs => _jobList, _infoOnly => _infoOnly, _message => _message);
+            CALL cap.retry_myemsl_upload (
+                        _jobs => _jobList,
+                        _infoOnly => _infoOnly,
+                        _message => _message,
+                        _returnCode => _returnCode);
 
             -----------------------------------------------------------
             -- Post a log entry if any capture task jobs were reset
@@ -245,20 +257,20 @@ BEGIN
                 SELECT COUNT(*)
                 INTO  _jobCount
                 FROM Tmp_FailedJobs
-                WHERE SkipResetMode = 0
+                WHERE SkipResetMode = 0;
 
                 _message := format('Warning: Retrying MyEMSL upload for %s %s; for details, see cap.t_myemsl_upload_resets',
-                                   public.check_plural(_jobCount, 'capture task job ', 'capture task jobs '),
+                                    public.check_plural(_jobCount, 'capture task job', 'capture task jobs'),
                                    _jobList);
 
                 CALL public.post_log_entry ('Error', _message, 'Reset_Failed_MyEMSL_Uploads', 'cap');
 
                 RAISE INFO '%', _message;
 
-                INSERT INTO cap.t_myemsl_upload_resets (job, dataset_id, subfolder, Error_Message)
-                SELECT job, dataset_id, subfolder, Error_Message
+                INSERT INTO cap.t_myemsl_upload_resets (Job, Dataset_ID, Subfolder, Error_Message)
+                SELECT Job, Dataset_ID, Subfolder, Error_Message
                 FROM Tmp_FailedJobs
-                WHERE SkipResetMode = 0
+                WHERE SkipResetMode = 0;
 
             End If;
         End If;
@@ -269,7 +281,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-20s %-40s %-10s %-20s';
+            _formatSpecifier := '%-10s %-10s %-30s %-80s %-10s %-20s';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
@@ -277,14 +289,14 @@ BEGIN
                                 'Subfolder',
                                 'Error_Message',
                                 'Skip_Reset',
-                                'Skip_Reason',
+                                'Skip_Reason'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
                                          '----------',
                                          '----------',
-                                         '--------------------',
-                                         '----------------------------------------',
+                                         '------------------------------',
+                                         '--------------------------------------------------------------------------------',
                                          '----------',
                                          '--------------------'
                                         );
@@ -335,4 +347,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.reset_failed_myemsl_uploads IS 'ResetFailedMyEMSLUploads';
+
+ALTER PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean, IN _maxjobstoreset integer, IN _joblistoverride text, IN _resetholdoffminutes integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE reset_failed_myemsl_uploads(IN _infoonly boolean, IN _maxjobstoreset integer, IN _joblistoverride text, IN _resetholdoffminutes integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean, IN _maxjobstoreset integer, IN _joblistoverride text, IN _resetholdoffminutes integer, INOUT _message text, INOUT _returncode text) IS 'ResetFailedMyEMSLUploads';
+
