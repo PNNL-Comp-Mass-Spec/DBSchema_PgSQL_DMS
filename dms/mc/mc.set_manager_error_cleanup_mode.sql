@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
 **          05/30/2023 mem - Use format() for string concatenation
+**          06/24/2023 mem - Use check_plural() to customize preview message
 **
 *****************************************************/
 DECLARE
@@ -155,7 +156,8 @@ BEGIN
 
     If _insertCount <> 0 Then
         _message := format('Added entry for "ManagerErrorCleanupMode" to mc.t_param_value for %s %s',
-                            _insertCount, public.check_plural(_insertCount, 'manager', 'managers'));
+                            _insertCount,
+                            public.check_plural(_insertCount, 'manager', 'managers'));
 
         RAISE INFO '%', _message;
     End If;
@@ -221,9 +223,10 @@ BEGIN
             _countToUpdate := _countToUpdate + 1;
         END LOOP;
 
-        _message := format('Would set ManagerErrorCleanupMode to %s for %s managers; see the Output window for details',
+        _message := format('Would set ManagerErrorCleanupMode to %s for %s %s; see the Output window for details',
                             _cleanupMode,
-                            _countToUpdate);
+                            _countToUpdate,
+                            public.check_plural(_countToUpdate, 'manager', 'managers'));
 
         DROP TABLE Tmp_ManagerList;
         RETURN;
@@ -243,7 +246,9 @@ BEGIN
 
     If _insertCount > 0 Then
         _message := format('Set "ManagerErrorCleanupMode" to %s for %s %s',
-                            _cleanupModeString, _insertCount, public.check_plural(_insertCount, 'manager', 'managers'));
+                            _cleanupModeString,
+                            _insertCount,
+                            public.check_plural(_insertCount, 'manager', 'managers'));
 
         RAISE INFO '%', _message;
     ELSE
