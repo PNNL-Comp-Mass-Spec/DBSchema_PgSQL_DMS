@@ -14,13 +14,11 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the work package for requested runs
-**      from an old value to a new value
+**      Updates the work package for requested runs from an old value to a new value
 **
 **      If _requestedIdList is empty, finds active requested runs that use _oldWorkPackage
 **
-**      If _requestedIdList is defined, finds all requested runs in the list that use _oldWorkPackage
-**      regardless of the state
+**      If _requestedIdList is defined, finds all requested runs in the list that use _oldWorkPackage, regardless of the state
 **
 **      Changes will be logged to T_Log_Entries
 **

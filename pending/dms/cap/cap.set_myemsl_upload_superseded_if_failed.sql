@@ -19,7 +19,7 @@ AS $$
 **      tasks uploaded the same files, the first task failed, but the second task succeeded
 **
 **  Arguments:
-**    _statusNumList          The status numbers in this list must match the specified DatasetID (this is a safety check)
+**    _statusNumList          The status numbers in this comma-separated list must match the specified DatasetID (this is a safety check)
 **    _ingestStepsCompleted   Number of ingest steps that were completed for these status nums (assumes that all the status nums completed the same steps)
 **
 **  Auth:   mem
@@ -71,7 +71,7 @@ BEGIN
         ---------------------------------------------------
 
         _datasetID := Coalesce(_datasetID, 0);
-        _statusNumList := Coalesce(_statusNumList, '');
+        _statusNumList := Trim(Coalesce(_statusNumList, ''));
         _ingestStepsCompleted := Coalesce(_ingestStepsCompleted, 0);
 
         _message := '';
@@ -82,8 +82,8 @@ BEGIN
             RETURN;
         End If;
 
-        If char_length(_statusNumList) = 0 Then
-            _message := '_statusNumList was empty; unable to continue';
+        If _statusNumList = '' Then
+            _message := '_statusNumList is empty; unable to continue';
             _returnCode := 'U5202';
             RETURN;
         End If;
@@ -99,7 +99,7 @@ BEGIN
         INSERT INTO Tmp_StatusNumListTable (Status_Num)
         SELECT DISTINCT Value
         FROM public.parse_delimited_integer_list(_statusNumList, ',')
-        ORDER BY Value
+        ORDER BY Value;
 
         If Not FOUND Then
             _message := 'No status nums were found in _statusNumList; unable to continue';
@@ -110,7 +110,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Make sure the StatusNums in Tmp_StatusNumListTable exist in cap.t_myemsl_uploads
+        -- Make sure the StatusNums in Tmp_StatusNumListTable exist in the status_num column in cap.t_myemsl_uploads
         ---------------------------------------------------
 
         If Exists (SELECT * FROM Tmp_StatusNumListTable SL LEFT OUTER JOIN cap.t_myemsl_uploads MU ON MU.status_num = SL.status_num WHERE MU.entry_id IS NULL) Then
@@ -125,7 +125,7 @@ BEGIN
         -- Make sure the Dataset_ID is correct
         ---------------------------------------------------
 
-        If Exists (Select * FROM cap.t_myemsl_uploads WHERE status_num IN (Select status_num From Tmp_StatusNumListTable) And dataset_id <> _datasetID) Then
+        If Exists (SELECT * FROM cap.t_myemsl_uploads WHERE status_num IN (SELECT status_num FROM Tmp_StatusNumListTable) AND dataset_id <> _datasetID) Then
             _message := format('One or more StatusNums in _statusNumList do not have dataset_id %s in cap.t_myemsl_uploads: %s',
                                 _datasetID, _statusNumList);
             _returnCode := 'U5205';
@@ -136,25 +136,14 @@ BEGIN
 
         ---------------------------------------------------
         -- Perform the update
-        -- Skipping any entries that do not have 0 for ErrorCode or Verified
+        -- Skip any entries that do not have 0 for ErrorCode or Verified
         ---------------------------------------------------
 
         UPDATE cap.t_myemsl_uploads
         SET error_code = 101
         WHERE error_code = 0 AND
               verified = 0 AND
-              status_num IN ( SELECT status_num FROM Tmp_StatusNumListTable )
-
-
-        If _returnCode <> '' Then
-            If _message = '' Then
-                _message := 'Error in set_myemsl_upload_superseded_if_failed';
-            End If;
-
-            _message := format('%s; error code = %s', _message, _returnCode);
-
-            CALL public.post_log_entry ('Error', _message, 'Set_MyEMSL_Upload_Superseded_If_Failed', 'cap');
-        End If;
+              status_num IN ( SELECT status_num FROM Tmp_StatusNumListTable );
 
         DROP TABLE Tmp_StatusNumListTable;
 
