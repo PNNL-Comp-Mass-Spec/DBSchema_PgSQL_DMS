@@ -1,24 +1,20 @@
 --
-CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_verified
-(
-    _datasetID int,
-    _statusNumList text,
-    _statusURIList text,
-    _ingestStepsCompleted int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_myemsl_upload_verified(integer, text, text, integer, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_verified(IN _datasetid integer, IN _statusnumlist text, IN _statusurilist text, IN _ingeststepscompleted integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Marks one or more MyEMSL upload tasks as verified by the MyEMSL ingest process
-**      This procedure should only be called after the MyEMSL Status page shows 'verified' and 'SUCCESS' for step 6
-**      For example, see https://ingestdms.my.emsl.pnl.gov/get_state?job_id=1309016
+**
+**      This procedure should only be called after the MyEMSL Status page includes the text "state": "OK"
+**      For example, see https://ingestdms.my.emsl.pnl.gov/get_state?job_id=2825262
 **
 **  Arguments:
-**    _statusNumList          Comma-separated list of status numbers; these must all match the specified DatasetID and they must match the Status entries that the _statusURIList values match
+**    _statusNumList          Comma-separated list of status numbers; these must all match the specified DatasetID and they must match the cap.t_myemsl_uploads entries that the _statusURIList values match
 **    _statusURIList          Comma-separated list of status URIs; these must all match the specified DatasetID using V_MyEMSL_Uploads (this is a safety check)
 **    _ingestStepsCompleted   Number of ingest steps that were completed for these status nums (assumes that all the status nums completed the same steps)
 **
@@ -29,7 +25,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          07/13/2017 mem - Add parameter _statusURIList (required to avoid conflicts between StatusNums from the old MyEMSL backend vs. transaction IDs from the new backend)
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/26/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -77,8 +73,8 @@ BEGIN
         ---------------------------------------------------
 
         _datasetID := Coalesce(_datasetID, 0);
-        _statusNumList := Coalesce(_statusNumList, '');
-        _statusURIList := Coalesce(_statusURIList, '');
+        _statusNumList := Trim(Coalesce(_statusNumList, ''));
+        _statusURIList := Trim(Coalesce(_statusURIList, ''));
         _ingestStepsCompleted := Coalesce(_ingestStepsCompleted, 0);
 
         _message := '';
@@ -89,13 +85,13 @@ BEGIN
             RETURN;
         End If;
 
-        If char_length(_statusNumList) = 0 Then
+        If _statusNumList = '' Then
             _message := '_statusNumList was empty; unable to continue';
             _returnCode := 'U5202';
             RETURN;
         End If;
 
-        If char_length(_statusURIList) = 0 Then
+        If _statusURIList = '' Then
             _message := '_statusURIList was empty; unable to continue';
             _returnCode := 'U5203';
             RETURN;
@@ -110,7 +106,7 @@ BEGIN
         );
 
         CREATE TEMP TABLE Tmp_StatusURIListTable (
-            Status_URI int NOT NULL
+            Status_URI text NOT NULL
         );
 
         INSERT INTO Tmp_StatusNumListTable (Status_Num)
@@ -179,14 +175,13 @@ BEGIN
         INSERT INTO Tmp_StatusEntryIDsTable (Entry_ID, Dataset_ID)
         SELECT Entry_ID, Dataset_ID
         FROM cap.V_MyEMSL_Uploads
-        WHERE Status_Num IN (Select Status_Num From Tmp_StatusNumListTable) AND
-              Status_URI IN (Select Status_URI From Tmp_StatusURIListTable);
+        WHERE Status_Num IN (SELECT Status_Num FROM Tmp_StatusNumListTable) AND
+              Status_URI IN (SELECT Status_URI FROM Tmp_StatusURIListTable);
 
         GET DIAGNOSTICS _entryIDCount = ROW_COUNT;
 
         If _entryIDCount < _statusURICount Then
-            _message := format('One or more Status URIs do not correspond to a given Status Num in V_MyEMSL_Uploads; see %s and %s',
-                               _statusNumList, _statusURIList;
+            _message := format('One or more Status URIs do not correspond to a given Status Num in V_MyEMSL_Uploads; see %s and %s', _statusNumList, _statusURIList);
             _returnCode := 'U5208';
 
             DROP TABLE Tmp_StatusNumListTable;
@@ -200,8 +195,7 @@ BEGIN
         ---------------------------------------------------
 
         If Exists (Select * FROM Tmp_StatusEntryIDsTable WHERE Dataset_ID <> _datasetID) Then
-            _message := format('One or more Status Nums in _statusNumList do not have Dataset_ID %s in V_MyEMSL_Uploads; see %s and %s',
-                                _datasetID, _statusNumList, _statusURIList);
+            _message := format('One or more Status Nums in _statusNumList do not have Dataset_ID %s in V_MyEMSL_Uploads; see %s and %s', _datasetID, _statusNumList, _statusURIList);
             _returnCode := 'U5209';
 
             DROP TABLE Tmp_StatusNumListTable;
@@ -220,7 +214,7 @@ BEGIN
         SET ingest_steps_completed = _ingestStepsCompleted
         WHERE verified = 1 AND
               entry_id IN ( SELECT entry_id FROM Tmp_StatusEntryIDsTable ) AND
-              (ingest_steps_completed Is Null Or ingest_steps_completed < _ingestStepsCompleted)
+              (ingest_steps_completed Is Null Or ingest_steps_completed < _ingestStepsCompleted);
 
         -- Now update newly verified steps
         --
@@ -228,7 +222,7 @@ BEGIN
         SET verified = 1,
             ingest_steps_completed = _ingestStepsCompleted
         WHERE verified = 0 AND
-              entry_id IN ( SELECT entry_id FROM Tmp_StatusEntryIDsTable )
+              entry_id IN ( SELECT entry_id FROM Tmp_StatusEntryIDsTable );
 
         DROP TABLE Tmp_StatusNumListTable;
         DROP TABLE Tmp_StatusURIListTable;
@@ -258,4 +252,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.set_myemsl_upload_verified IS 'SetMyEMSLUploadVerified';
+
+ALTER PROCEDURE cap.set_myemsl_upload_verified(IN _datasetid integer, IN _statusnumlist text, IN _statusurilist text, IN _ingeststepscompleted integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_myemsl_upload_verified(IN _datasetid integer, IN _statusnumlist text, IN _statusurilist text, IN _ingeststepscompleted integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.set_myemsl_upload_verified(IN _datasetid integer, IN _statusnumlist text, IN _statusurilist text, IN _ingeststepscompleted integer, INOUT _message text, INOUT _returncode text) IS 'SetMyEMSLUploadVerified';
+
