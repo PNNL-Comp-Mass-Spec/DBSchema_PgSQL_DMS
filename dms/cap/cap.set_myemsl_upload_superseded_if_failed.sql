@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_superseded_if_failed
-(
-    _datasetID int,
-    _statusNumList text,
-    _ingestStepsCompleted int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_myemsl_upload_superseded_if_failed(integer, text, integer, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_superseded_if_failed(IN _datasetid integer, IN _statusnumlist text, IN _ingeststepscompleted integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -27,7 +23,9 @@ AS $$
 **          12/18/2014 mem - Added parameter _ingestStepsCompleted
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/27/2023 mem - Update dataset_id validation to support multiple rows in T_MyEMSL_Uploads having the same status_num but different dataset IDs
+**                         - Store _ingestStepsCompleted in cap.t_myemsl_uploads if it is larger than the existing value
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -35,6 +33,8 @@ DECLARE
     _currentProcedure text;
     _nameWithSchema text;
     _authorized boolean;
+
+    _statusNumMismatches text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -65,7 +65,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -73,8 +72,6 @@ BEGIN
         _datasetID := Coalesce(_datasetID, 0);
         _statusNumList := Trim(Coalesce(_statusNumList, ''));
         _ingestStepsCompleted := Coalesce(_ingestStepsCompleted, 0);
-
-        _message := '';
 
         If _datasetID <= 0 Then
             _message := '_datasetID must be positive; unable to continue';
@@ -93,11 +90,12 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_StatusNumListTable (
-            Status_Num int NOT NULL
+            Status_Num int Not Null,
+            Dataset_ID_Validated boolean Not Null
         );
 
-        INSERT INTO Tmp_StatusNumListTable (Status_Num)
-        SELECT DISTINCT Value
+        INSERT INTO Tmp_StatusNumListTable (Status_Num, Dataset_ID_Validated)
+        SELECT DISTINCT Value, false
         FROM public.parse_delimited_integer_list(_statusNumList, ',')
         ORDER BY Value;
 
@@ -125,9 +123,19 @@ BEGIN
         -- Make sure the Dataset_ID is correct
         ---------------------------------------------------
 
-        If Exists (SELECT * FROM cap.t_myemsl_uploads WHERE status_num IN (SELECT status_num FROM Tmp_StatusNumListTable) AND dataset_id <> _datasetID) Then
-            _message := format('One or more StatusNums in _statusNumList do not have dataset_id %s in cap.t_myemsl_uploads: %s',
-                                _datasetID, _statusNumList);
+        UPDATE Tmp_StatusNumListTable Target
+        SET Dataset_ID_Validated = true
+        FROM cap.t_myemsl_uploads MU
+        WHERE MU.dataset_id = _datasetID AND
+              Target.status_num = MU.status_num;
+
+        If Exists (SELECT * FROM Tmp_StatusNumListTable WHERE Not Dataset_ID_Validated) Then
+            SELECT string_agg(status_num::text, ', ')
+            INTO _statusNumMismatches
+            FROM Tmp_StatusNumListTable
+            WHERE Not Dataset_ID_Validated;
+
+            _message := format('One or more StatusNums in _statusNumList do not have dataset_id %s in cap.t_myemsl_uploads: %s', _datasetID, _statusNumMismatches);
             _returnCode := 'U5205';
 
             DROP TABLE Tmp_StatusNumListTable;
@@ -140,9 +148,14 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE cap.t_myemsl_uploads
-        SET error_code = 101
+        SET error_code = 101,
+            ingest_steps_completed = CASE WHEN _ingestStepsCompleted > Coalesce(ingest_steps_completed, 0)
+                                          THEN _ingestStepsCompleted
+                                          ELSE ingest_steps_completed
+                                     END
         WHERE error_code = 0 AND
               verified = 0 AND
+              dataset_id = _datasetID AND
               status_num IN ( SELECT status_num FROM Tmp_StatusNumListTable );
 
         DROP TABLE Tmp_StatusNumListTable;
@@ -168,4 +181,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.set_myemsl_upload_superseded_if_failed IS 'SetMyEMSLUploadSupersededIfFailed';
+
+ALTER PROCEDURE cap.set_myemsl_upload_superseded_if_failed(IN _datasetid integer, IN _statusnumlist text, IN _ingeststepscompleted integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_myemsl_upload_superseded_if_failed(IN _datasetid integer, IN _statusnumlist text, IN _ingeststepscompleted integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.set_myemsl_upload_superseded_if_failed(IN _datasetid integer, IN _statusnumlist text, IN _ingeststepscompleted integer, INOUT _message text, INOUT _returncode text) IS 'SetMyEMSLUploadSupersededIfFailed';
+
