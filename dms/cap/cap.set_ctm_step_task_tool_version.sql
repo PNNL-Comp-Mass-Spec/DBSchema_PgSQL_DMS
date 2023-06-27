@@ -1,26 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_tool_version
-(
-    _job int,
-    _step int,
-    _toolVersionInfo text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_ctm_step_task_tool_version(integer, integer, text, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_tool_version(IN _job integer, IN _step integer, IN _toolversioninfo text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Record the tool version for the given capture task job step
-**      Looks up existing entry in T_Step_Tool_Versions; adds new entry if not defined
+**      Records the tool version for the given capture task job step
+**
+**      Looks for an existing entry in T_Step_Tool_Versions; adds a new entry if not defined
 **
 **  Auth:   mem
 **  Date:   03/12/2012 mem - Initial version (ported from DMS_Pipeline DB)
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/26/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -88,7 +85,7 @@ BEGIN
             ---------------------------------------------------
 
             INSERT INTO cap.t_step_tool_versions (tool_version, entered)
-            VALUES (_toolVersionInfo, CURRENT_TIMESTAMP);
+            VALUES (_toolVersionInfo, CURRENT_TIMESTAMP)
             RETURNING tool_version_id
             INTO _toolVersionID;
 
@@ -141,4 +138,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.set_ctm_step_task_tool_version IS 'SetStepTaskToolVersion';
+
+ALTER PROCEDURE cap.set_ctm_step_task_tool_version(IN _job integer, IN _step integer, IN _toolversioninfo text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_ctm_step_task_tool_version(IN _job integer, IN _step integer, IN _toolversioninfo text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.set_ctm_step_task_tool_version(IN _job integer, IN _step integer, IN _toolversioninfo text, INOUT _message text, INOUT _returncode text) IS 'SetStepTaskToolVersion';
+
