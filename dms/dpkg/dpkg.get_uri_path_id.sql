@@ -1,13 +1,10 @@
 --
--- ToDo: convert this to a function that returns an integer
+-- Name: get_uri_path_id(text, boolean); Type: FUNCTION; Schema: dpkg; Owner: d3l243
 --
-CREATE OR REPLACE PROCEDURE dpkg.get_uri_path_id
-(
-    _uriPath text,
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+
+CREATE OR REPLACE FUNCTION dpkg.get_uri_path_id(_uripath text, _infoonly boolean DEFAULT false) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:   Looks for _uriPath in T_URI_Paths
@@ -18,7 +15,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   04/02/2012 mem - Initial version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/27/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -31,7 +28,9 @@ BEGIN
     SELECT uri_path_id
     INTO _uriPathID
     FROM dpkg.t_uri_paths
-    WHERE uri_path = _uriPath;
+    WHERE uri_path = _uriPath
+    ORDER BY uri_path_id
+    LIMIT 1;
 
     If Not FOUND And Not _infoOnly Then
         ------------------------------------------------
@@ -39,26 +38,35 @@ BEGIN
         -- Add a new entry (use a Merge in case two separate calls are simultaneously made for the same _uriPath)
         ------------------------------------------------
 
-        MERGE dpkg.t_uri_paths AS Target
-        USING ( SELECT _uriPath
-              ) AS Source (URI_Path)
-            ON Source.uri_path = Target.uri_path
-        WHEN NOT MATCHED BY TARGET THEN
+        MERGE INTO dpkg.t_uri_paths AS t
+        USING ( SELECT _uriPath AS URI_Path
+              ) AS s
+        ON ( t.uri_path = s.uri_path )
+        WHEN NOT MATCHED THEN
             INSERT ( uri_path )
-            VALUES ( Source.uri_path )
+            VALUES ( s.URI_Path )
         ;
 
-        -- Now that the merge is complete a match should be found
+        -- Now that the merge is complete, a match should be found
         SELECT uri_path_id
         INTO _uriPathID
         FROM dpkg.t_uri_paths
         WHERE uri_path = _uriPath
+        ORDER BY uri_path_id
+        LIMIT 1;
 
     End If;
 
-    RETURN _uriPathID;
-
+    RETURN Coalesce(_uriPathID, 0);
 END
 $$;
 
-COMMENT ON PROCEDURE dpkg.get_uri_path_id IS 'GetURIPathID';
+
+ALTER FUNCTION dpkg.get_uri_path_id(_uripath text, _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_uri_path_id(_uripath text, _infoonly boolean); Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON FUNCTION dpkg.get_uri_path_id(_uripath text, _infoonly boolean) IS 'GetURIPathID';
+
