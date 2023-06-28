@@ -17,40 +17,36 @@ CREATE OR REPLACE FUNCTION cap.get_uri_path_id(_uripath text, _infoonly boolean 
 **  Date:   04/02/2012 mem - Initial version
 **          09/27/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          06/27/2023 mem - Rename variable
 **
 *****************************************************/
 DECLARE
-    _uri_PathID int;
+    _uriPathID int;
 BEGIN
     ------------------------------------------------
     -- Look for _uriPath in cap.t_uri_paths
     ------------------------------------------------
 
     SELECT uri_path_id
-    INTO _uri_PathID
+    INTO _uriPathID
     FROM cap.t_uri_paths
     WHERE uri_path = _uriPath
     ORDER BY uri_path_id
     LIMIT 1;
 
-    If Not FOUND Then
+    If Not FOUND And Not _infoOnly Then
         ------------------------------------------------
-        -- Match not found
-        -- Add a new entry
+        -- Match not found; add a new entry
         ------------------------------------------------
 
-        If Not _infoOnly Then
-
-            INSERT INTO cap.t_uri_paths (uri_path)
-            VALUES (_uriPath)
-            RETURNING uri_path_id
-            INTO _uri_PathID;
-
-        End If;
+        INSERT INTO cap.t_uri_paths (uri_path)
+        VALUES (_uriPath)
+        RETURNING uri_path_id
+        INTO _uriPathID;
 
     End If;
 
-    RETURN Coalesce(_uri_PathID, 1);
+    RETURN Coalesce(_uriPathID, 1);
 END
 $$;
 
