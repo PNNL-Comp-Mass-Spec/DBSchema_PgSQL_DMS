@@ -396,7 +396,7 @@ BEGIN
            FROM Tmp_FactorInfo
            WHERE Not Factor::citext In ('Dataset ID')      -- Note that factors named 'Dataset ID' and 'Dataset_ID' are removed later in this procedure
           ) LookupQ
-    WHERE PATINDEX('%[^0-9A-Za-z_.]%', Factor) > 0;
+    WHERE Factor SIMILAR TO '%[^0-9A-Za-z_.]%';
 
     If Coalesce(_badFactorNames, '') <> '' Then
         If char_length(_badFactorNames) < 256 Then
