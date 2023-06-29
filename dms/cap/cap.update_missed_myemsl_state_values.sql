@@ -1,18 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE cap.update_missed_myemsl_state_values
-(
-    _windowDays int = 30,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_missed_myemsl_state_values(integer, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.update_missed_myemsl_state_values(IN _windowdays integer DEFAULT 30, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the MyEMSLState values for datasets and/or capture task jobs
-**      that have entries in cap.t_myemsl_uploads, yet have a MyEMSLState value of 0
+**      Updates the MyEMSL State values for datasets and/or analysis jobs
+**      that have entries in cap.t_myemsl_uploads, yet have a MyEMSL_State value of 0
 **
 **      This should normally not be necessary; thus, if any updates are performed,
 **      the procedure logs an error message
@@ -28,12 +25,13 @@ AS $$
 **          12/13/2013 mem - Tweaked log message
 **          02/27/2014 mem - Now updating the appropriate ArchiveUpdate capture task job if the job steps were skipped
 **          03/25/2014 mem - Changed log message type to be a warning
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/29/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _matchCount int;
     _idList text;
+    _jobMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -50,17 +48,17 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Create a temporary table to hold the datasets or capture task jobs that need to be updated
+    -- Create a temporary table to hold the datasets or analysis jobs that need to be updated
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_IDsToUpdate (
         EntityID int NOT NULL
-    )
+    );
 
-    CREATE INDEX IX_Tmp_IDsToUpdate ON Tmp_IDsToUpdate (EntityID)
+    CREATE INDEX IX_Tmp_IDsToUpdate ON Tmp_IDsToUpdate (EntityID);
 
     --------------------------------------------
-    -- Look for datasets that have a value of 0 for MyEMSLState
+    -- Look for datasets that have a value of 0 for MyEMSL_State
     -- and were uploaded to MyEMSL within the last _windowDays days
     --------------------------------------------
 
@@ -74,32 +72,33 @@ BEGIN
                             Coalesce(subfolder, '') = ''
                      ) LookupQ
            ON DA.Dataset_ID = LookupQ.dataset_id
-    WHERE MyEMSL_State < 1;
+    WHERE DA.MyEMSL_State < 1;
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    If _matchCount > 0 Then
+    If _matchCount = 0 Then
+        _jobMessage := '';
+    Else
 
         -- Construct the list of dataset IDs
-        SELECT string_agg(EntityID, ', ' ORDER BY EntityID)
+        SELECT string_agg(EntityID::text, ', ' ORDER BY EntityID)
         INTO _idList
         FROM Tmp_IDsToUpdate;
 
-        _message := format('Found %s %s MyEMSLState set to 1: %s',
-                            _matchCount,
-                            public.check_plural(_matchCount, 'dataset that needs', 'datasets that need'),
-                            _idList);
+        _jobMessage := format('Found %s %s MyEMSL_State set to 1: %s',
+                              _matchCount,
+                              public.check_plural(_matchCount, 'dataset that needs', 'datasets that need'),
+                              _idList);
 
         If _infoOnly Then
-            RAISE INFO '%', _message;
+            RAISE INFO '%', _jobMessage;
         Else
-
             UPDATE public.t_dataset_archive
-            SET MyEMSLState = 1
-            WHERE AS_Dataset_ID IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
-                  MyEMSLState < 1;
+            SET MyEMSL_State = 1
+            WHERE Dataset_ID IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
+                  MyEMSL_State < 1;
 
-            CALL public.post_log_entry ('Warning', _message, 'Update_Missed_MyEMSL_State_Values', 'cap');
+            CALL public.post_log_entry ('Warning', _jobMessage, 'Update_Missed_MyEMSL_State_Values', 'cap');
 
             -- Reset skipped ArchiveVerify steps for the affected datasets
             --
@@ -116,16 +115,16 @@ BEGIN
         End If;
     End If;
 
-    TRUNCATE TABLE Tmp_IDsToUpdate
+    TRUNCATE TABLE Tmp_IDsToUpdate;
 
     --------------------------------------------
-    -- Look for capture task jobs that have a value of 0 for AJ_MyEMSLState
+    -- Look for analysis jobs that have a value of 0 for myemsl_state
     -- and were uploaded to MyEMSL within the last _windowDays days
     --------------------------------------------
 
     INSERT INTO Tmp_IDsToUpdate(EntityID)
-    SELECT DISTINCT T.AJ_JobID
-    FROM public.t_analysis_job T
+    SELECT DISTINCT J.Job
+    FROM public.t_analysis_job J
          INNER JOIN ( SELECT dataset_id,
                              subfolder
            FROM cap.t_myemsl_uploads
@@ -133,49 +132,52 @@ BEGIN
                             entered >= CURRENT_TIMESTAMP - make_interval(days => _windowDays) AND
                             Coalesce(subfolder, '') <> ''
                      ) LookupQ
-           ON T.dataset_id = LookupQ.dataset_id AND
-              T.results_folder_name = LookupQ.subfolder
-    WHERE T.AJ_MyEMSLState < 1;
+           ON J.dataset_id = LookupQ.dataset_id AND
+              J.results_folder_name = LookupQ.subfolder
+    WHERE J.myemsl_state < 1;
      --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    If _matchCount > 0 Then
+    If _matchCount = 0 Then
+        _message := _jobMessage;
+    Else
 
-        -- Construct the list of capture task job IDs
-        SELECT string_agg(EntityID, ', ' ORDER BY EntityID)
+        -- Construct the list of analysis job numbers
+        SELECT string_agg(EntityID::text, ', ' ORDER BY EntityID)
         INTO _idList
         FROM Tmp_IDsToUpdate;
 
-        _message := format('Found %s %s MyEMSLState set to 1: %s',
+        _message := format('Found %s %s MyEMSL_State set to 1: %s',
                             _matchCount,
-                            public.check_plural(_matchCount, 'capture task job that needs', 'capture task jobs that need'),
+                            public.check_plural(_matchCount, 'analysis job that needs', 'analysis jobs that need'),
                             _idList);
 
         If _infoOnly Then
             RAISE INFO '%', _message;
         Else
-
             UPDATE public.t_analysis_job
-            SET AJ_MyEMSLState = 1
-            WHERE AJ_JobID IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
-                  AJ_MyEMSLState < 1
+            SET myemsl_state = 1
+            WHERE job IN (SELECT EntityID FROM Tmp_IDsToUpdate) AND
+                  myemsl_state < 1;
 
             CALL public.post_log_entry ('Warning', _message, 'Update_Missed_MyEMSL_State_Values', 'cap');
+
+            -- Reset skipped ArchiveVerify steps for the datasets associated with the affected analysis jobs
+            --
+            UPDATE cap.t_task_steps
+            SET State = 2
+            FROM cap.t_myemsl_uploads U
+            WHERE cap.t_task_steps.job = U.job AND
+                  U.dataset_id IN ( SELECT J.dataset_id
+                                    FROM public.t_analysis_job J
+                                         INNER JOIN Tmp_IDsToUpdate U
+                                           ON J.job = U.EntityID ) AND
+                  cap.t_task_steps.Tool IN ('ArchiveVerify') AND
+                  cap.t_task_steps.State = 3 AND
+                  U.error_code = 0;
         End If;
 
-        -- Reset skipped ArchiveVerify steps for the datasets associated with the affected capture task jobs
-        --
-        UPDATE cap.t_task_steps
-        SET State = 2
-        FROM cap.t_myemsl_uploads U
-               ON TS.job = U.job
-        WHERE TS.dataset_id IN ( SELECT T.AJ_DatasetID
-                                  FROM public.t_analysis_job T
-                                       INNER JOIN Tmp_IDsToUpdate U
-                                         ON T.AJ_JobID = U.EntityID ) AND
-              TS.Tool IN ('ArchiveVerify') AND
-              TS.State = 3 AND
-              U.error_code = 0
+        _message := public.append_to_text(_jobMessage, _message);
 
     End If;
 
@@ -183,4 +185,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_missed_myemsl_state_values IS 'UpdateMissedMyEMSLStateValues';
+
+ALTER PROCEDURE cap.update_missed_myemsl_state_values(IN _windowdays integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_missed_myemsl_state_values(IN _windowdays integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.update_missed_myemsl_state_values(IN _windowdays integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateMissedMyEMSLStateValues';
+
