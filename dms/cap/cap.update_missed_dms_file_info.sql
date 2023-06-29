@@ -1,21 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info
-(
-    _deleteFromTableOnSuccess boolean = true,
-    _replaceExistingData boolean = false,
-    _datasetIDs text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_missed_dms_file_info(boolean, boolean, text, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableonsuccess boolean DEFAULT true, IN _replaceexistingdata boolean DEFAULT false, IN _datasetids text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Calls update_dataset_file_info_xml for datasets
-**      that have info defined in T_Dataset_Info_XML
-**      yet the dataset has a null value for File_Info_Last_Modified in DMS
+**      Calls public.update_dataset_file_info_xml for datasets that have info defined in cap.t_dataset_info_xml,
+**      yet the dataset has a null value for File_Info_Last_Modified in public.t_dataset_info
+**
+**  Arguments:
+**    _deleteFromTableOnSuccess     When true, delete from cap.t_dataset_info_xml after storing the data in public.t_dataset_info
+**    _replaceExistingData          When true, replace existing data
+**    _datasetIDs                   Comma-separated list of dataset IDs
+**    _message                      Output message
+**    _returnCode                   Return code
+**    _infoOnly                     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   12/19/2011 mem - Initial version
@@ -24,8 +26,9 @@ AS $$
 **          08/02/2016 mem - Continue processing on errors (but log the error)
 **          06/13/2018 mem - Check for error code 53600 (aka 'U5360') returned by update_dms_file_info_xml to indicate a duplicate dataset
 **                         - Add parameter _datasetIDs
-**          08/09/2018 mem - Filter out dataset info XML entries where Ignore is 1
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/09/2018 mem - Filter out dataset info XML entries where Ignore is true (previously 1)
+**          06/28/2023 mem - Fix bug that deleted all rows in the temporary table when _datasetIDs was an empty string
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -42,9 +45,9 @@ BEGIN
     --------------------------------------------
 
     _deleteFromTableOnSuccess := Coalesce(_deleteFromTableOnSuccess, true);
-    _replaceExistingData := Coalesce(_replaceExistingData, false);
-    _datasetIDs := Coalesce(_datasetIDs, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _replaceExistingData      := Coalesce(_replaceExistingData, false);
+    _datasetIDs               := Trim(Coalesce(_datasetIDs, ''));
+    _infoOnly                 := Coalesce(_infoOnly, false);
 
     --------------------------------------------
     -- Create a table to hold datasets to process
@@ -52,12 +55,12 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_DatasetsToProcess (
         Dataset_ID int not null
-    )
+    );
 
-    CREATE INDEX IX_Tmp_DatasetsToProcess ON Tmp_DatasetsToProcess (Dataset_ID)
+    CREATE INDEX IX_Tmp_DatasetsToProcess ON Tmp_DatasetsToProcess (Dataset_ID);
 
     --------------------------------------------
-    -- Look for Datasets with entries in cap.t_dataset_info_xml but null values for File_Info_Last_Modified in DMS
+    -- Look for Datasets with entries in cap.t_dataset_info_xml but null values for File_Info_Last_Modified in cap.t_dataset_info_xml
     -- Alternatively, if _replaceExistingData is true, process all entries in cap.t_dataset_info_xml
     --------------------------------------------
 
@@ -67,15 +70,17 @@ BEGIN
          LEFT OUTER JOIN public.t_dataset DS
            ON DI.dataset_id = DS.dataset_id
     WHERE (DS.File_Info_Last_Modified IS NULL Or _replaceExistingData) And
-          DI.ignore = 0;
+          Not DI.ignore;
 
     --------------------------------------------
     -- Possibly filter on _datasetIDs
     --------------------------------------------
 
-    DELETE Tmp_DatasetsToProcess
-    WHERE NOT Dataset_ID IN ( SELECT Value
-                              FROM public.parse_delimited_integer_list ( _datasetIDs, ',' ) )
+    If _datasetIDs <> '' Then
+        DELETE FROM Tmp_DatasetsToProcess
+        WHERE NOT Dataset_ID IN ( SELECT Value
+                                  FROM public.parse_delimited_integer_list ( _datasetIDs, ',' ) );
+    End If;
 
     --------------------------------------------
     -- Delete any entries that don't exist in public.t_dataset
@@ -89,8 +94,10 @@ BEGIN
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
     If _matchCount > 0 Then
-        _message := format('Ignoring %s %s in cap.t_dataset_info_xml because they do not exist in public.t_dataset',
-                            _matchCount, public.check_plural(_matchCount, 'dataset', 'datasets'));
+        _message := format('Ignoring %s %s in cap.t_dataset_info_xml because %s exist in public.t_dataset',
+                            _matchCount,
+                            public.check_plural(_matchCount, 'dataset', 'datasets'),
+                            public.check_plural(_matchCount, 'it does not', 'they do not'));
 
         CALL public.post_log_entry ('Info', _message, 'Update_Missed_DMS_File_Info', 'cap');
 
@@ -112,9 +119,6 @@ BEGIN
     -- the File_Info_Last_Modified date in T_Dataset
     --------------------------------------------
 
-
-    -- ToDo: Update this to use xpath()
-
     INSERT INTO Tmp_DatasetsToProcess (Dataset_ID)
     SELECT Dataset_ID
            -- , Scan_Count_Old, ScanCountNew
@@ -122,8 +126,8 @@ BEGIN
     FROM ( SELECT dataset_id,
                   Scan_Count_Old,
                   File_Size_Bytes_Old,
-                  ds_info_xml.query('/DatasetInfo/AcquisitionInfo/ScanCount').value('(/ScanCount)[1]', 'int') AS ScanCountNew,
-                  ds_info_xml.query('/DatasetInfo/AcquisitionInfo/FileSizeBytes').value('(/FileSizeBytes)[1]', 'bigint') AS FileSizeBytesNew
+                  public.try_cast((xpath('//DatasetInfo/AcquisitionInfo/ScanCount/text()',     ds_info_xml))[1]::text, 0) AS ScanCountNew,
+                  public.try_cast((xpath('//DatasetInfo/AcquisitionInfo/FileSizeBytes/text()', ds_info_xml))[1]::text, 0::bigint) AS FileSizeBytesNew
             FROM ( SELECT DI.dataset_id,
                           DI.cache_date,
                           DS.File_Info_Last_Modified,
@@ -135,11 +139,11 @@ BEGIN
                        INNER JOIN public.t_dataset DS
                          ON DI.dataset_id = DS.dataset_id AND
                             DI.cache_date > DS.File_Info_Last_Modified
-                  WHERE DI.ignore = 0
+                  WHERE Not DI.ignore
                   ) InnerQ
          ) FilterQ
-    WHERE (ScanCountNew <> Coalesce(Scan_Count_Old, 0)) OR
-          (FileSizeBytesNew <> Coalesce(File_Size_Bytes_Old, 0) AND FileSizeBytesNew > 0);
+    WHERE ScanCountNew <> Coalesce(Scan_Count_Old, 0) OR
+          FileSizeBytesNew <> Coalesce(File_Size_Bytes_Old, 0) AND FileSizeBytesNew > 0;
 
     --------------------------------------------
     -- Process each of the datasets in Tmp_DatasetsToProcess
@@ -158,6 +162,7 @@ BEGIN
                         _infoOnly => _infoOnly);
 
         If Coalesce(_returnCode, '') <> '' Then
+
             If _returnCode = 'U5360' Then
                 -- A duplicate dataset was detected
                 -- An error message will have already been logged in public.t_log_entries, so we can log a warning message here
@@ -167,7 +172,7 @@ BEGIN
             End If;
 
             If Coalesce(_message, '') = '' Then
-                _logMsg := format('update_dms_file_info_xml returned error code %s for DatasetID %s', _returnCode, _datasetID)
+                _logMsg := format('update_dms_file_info_xml returned error code %s for DatasetID %s', _returnCode, _datasetID);
             Else
                 _logMsg := format('update_dms_file_info_xml error: %s', _message);
             End If;
@@ -186,4 +191,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE cap.update_missed_dms_file_info IS 'UpdateMissedDMSFileInfo';
+
+ALTER PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableonsuccess boolean, IN _replaceexistingdata boolean, IN _datasetids text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_missed_dms_file_info(IN _deletefromtableonsuccess boolean, IN _replaceexistingdata boolean, IN _datasetids text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableonsuccess boolean, IN _replaceexistingdata boolean, IN _datasetids text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'UpdateMissedDMSFileInfo';
+
