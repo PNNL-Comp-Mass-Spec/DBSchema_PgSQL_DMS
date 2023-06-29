@@ -467,7 +467,7 @@ BEGIN
                     FROM
                         (    -- Select Good datasets (excluded Bad, Not Released, Unreviewed, etc.)
                             SELECT
-                                I.IN_Name AS Instrument,
+                                I.Instrument,
                                 I.Percent_EMSL_Owned,
                                 DF.Proposal_Type,
                                 COUNT(*) AS Total,                                                        -- Total
@@ -502,7 +502,7 @@ BEGIN
                             UNION
                             -- Select Bad or Not Released datasets
                             SELECT
-                                I.IN_Name AS Instrument,
+                                I.Instrument,
                                 I.Percent_EMSL_Owned,
                                 DF.Proposal_Type,
                                 COUNT(*) AS Total,                                                            -- Total
@@ -618,7 +618,7 @@ BEGIN
                     FROM
                         (    -- Select Good datasets (excluded Bad, Not Released, Unreviewed, etc.)
                             SELECT
-                                I.IN_Name AS Instrument,
+                                I.Instrument,
                                 I.Percent_EMSL_Owned,
                                 COUNT(*) AS Total,                                                        -- Total
                                 0                                                             AS Bad,     -- Bad
@@ -652,7 +652,7 @@ BEGIN
                             UNION
                             -- Select Bad or Not Released datasets
                             SELECT
-                                I.IN_Name AS Instrument,
+                                I.Instrument,
                                 I.Percent_EMSL_Owned,
                                 COUNT(*) AS Total,                                                            -- Total
                                 SUM(CASE WHEN D.Dataset_Name NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,     -- Bad (not blank)

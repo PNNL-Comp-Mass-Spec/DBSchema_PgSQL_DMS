@@ -70,13 +70,12 @@ BEGIN
         -- Delete rows in t_dataset_qc_instruments where the instrument is not in Tmp_Instruments or t_instrument_name
 
         DELETE FROM t_dataset_qc_instruments target
-        WHERE NOT EXISTS (
-            SELECT Inst.instrument
-            FROM t_instrument_name Inst
-                 INNER JOIN Tmp_Instruments
-                   ON Inst.instrument_id = Tmp_Instruments.instrument_id
-            WHERE Inst.Instrument = target.instrument
-        );
+        WHERE NOT EXISTS ( SELECT Inst.instrument
+                           FROM t_instrument_name Inst
+                                INNER JOIN Tmp_Instruments
+                                  ON Inst.instrument_id = Tmp_Instruments.instrument_id
+                           WHERE Inst.Instrument = target.instrument
+                         );
 
     End If;
 

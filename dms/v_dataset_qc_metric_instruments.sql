@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_dataset_qc_metric_instruments AS
- SELECT t_dataset_qc_instruments.in_name AS instrument,
+ SELECT t_dataset_qc_instruments.instrument,
     t_dataset_qc_instruments.instrument_id
    FROM public.t_dataset_qc_instruments;
 

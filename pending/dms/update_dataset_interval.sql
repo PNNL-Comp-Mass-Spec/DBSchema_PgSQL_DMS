@@ -233,7 +233,7 @@ BEGIN
 
             -- ToDo: Show this data using RAISE INFO
 
-            SELECT InstName.IN_name AS Instrument,
+            SELECT InstName.Instrument,
                    DS.Dataset,
                    DS.Dataset_ID,
                    DS.Created,

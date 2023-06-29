@@ -668,7 +668,7 @@ BEGIN
 
                 SELECT 'Add log reference to comment' As Action,
                        InstUsage.seq,
-                       InstName.IN_Name AS Instrument,
+                       InstName.Instrument,
                        comment AS OldComment,
                        get_nearest_preceding_log_entry(InstUsage.seq, false) AS NewComment
                 FROM t_emsl_instrument_usage_report InstUsage
@@ -708,7 +708,7 @@ BEGIN
 
                 SELECT 'Clear maintenance and onsite comments' AS Action,
                        InstUsage.seq,
-                       InstName.IN_Name AS Instrument,
+                       InstName.Instrument,
                        comment AS OldComment,
                        '' AS NewComment
                 FROM t_emsl_instrument_usage_report InstUsage
