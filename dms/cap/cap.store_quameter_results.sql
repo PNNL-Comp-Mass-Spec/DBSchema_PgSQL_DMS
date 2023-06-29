@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE cap.store_quameter_results
-(
-    _datasetID int = 0,
-    _resultsXML xml,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: store_quameter_results(integer, xml, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE cap.store_quameter_results(IN _datasetid integer DEFAULT 0, IN _resultsxml xml DEFAULT '<Quameter_Results></Quameter_Results>'::xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -17,12 +13,15 @@ AS $$
 **  Arguments:
 **    _datasetID    If this value is 0, will determine the dataset name using the contents of _resultsXML
 **    _resultsXML   XML holding the Quameter results for a single dataset
+**    _message      Output message
+**    _returnCode   Return code
+**    _infoOnly     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   09/17/2012 mem - Initial version
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/27/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -59,9 +58,21 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    CALL public.store_quameter_results (_datasetID => _datasetID, _resultsXML => _resultsXML, _message => _message, _infoOnly => _infoOnly);
-
+    CALL public.store_quameter_results (
+                    _datasetID => _datasetID,
+                    _resultsXML => _resultsXML,
+                    _message => _message,
+                    _returnCode => _returnCode,
+                    _infoOnly => _infoOnly);
 END
 $$;
 
-COMMENT ON PROCEDURE cap.store_quameter_results IS 'StoreQuameterResults';
+
+ALTER PROCEDURE cap.store_quameter_results(IN _datasetid integer, IN _resultsxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE store_quameter_results(IN _datasetid integer, IN _resultsxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE cap.store_quameter_results(IN _datasetid integer, IN _resultsxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'StoreQuameterResults';
+
