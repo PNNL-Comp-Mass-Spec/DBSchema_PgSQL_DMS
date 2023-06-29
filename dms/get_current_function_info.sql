@@ -153,7 +153,13 @@ BEGIN
             End If;
 
             -- The following query shows functions with identical names in separate schema
-            -- In DMS, the only matching functions are get_processor_step_tool_list() and several table trigger functions
+            -- Examples include:
+            --   cap.consolidate_log_messages         and sw.consolidate_log_messages
+            --   cap.get_task_script_dot_format_table and sw.get_task_script_dot_format_table
+            --   cap.get_uri_path_id                  and dpkg.get_uri_path_id
+            --   public.manage_job_execution          and sw.manage_job_execution
+            --   cap.store_myemsl_upload_stats        and dpkg.store_myemsl_upload_stats
+            --   cap.store_quameter_results           and public.store_quameter_results
 
             /*
                 SELECT p.proname as Function, min(n.nspname) as First_Schema, max(n.nspname) as Last_Schema

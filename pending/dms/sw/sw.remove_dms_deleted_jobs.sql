@@ -43,14 +43,14 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- Find all jobs present in the Pipeline DB but not present in DMS
-    -- V_DMS_PipelineExistingJob returns a list of all jobs in DMS (regardless of state)
+    -- Find all jobs present in sw.t_jobs but not present in public.t_analysis_job
+    -- sw.v_dms_pipeline_existing_jobs returns a list of all jobs in public.t_analysis_job (regardless of state)
     ---------------------------------------------------
 
     INSERT INTO Tmp_SJL (job, state)
     SELECT job, state
     FROM t_jobs
-    WHERE dataset_id <> 0 AND NOT job IN (SELECT job FROM V_DMS_PipelineExistingJobs);
+    WHERE dataset_id <> 0 AND NOT job IN (SELECT job FROM sw.v_dms_pipeline_existing_jobs);
 
     If Not FOUND Then
         DROP TABLE Tmp_SJL;

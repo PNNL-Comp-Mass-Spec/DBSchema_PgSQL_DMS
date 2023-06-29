@@ -338,7 +338,7 @@ BEGIN
             LIMIT 1;
 
             If Not FOUND Then
-                RAISE INFO 'Unable to create capture job in DMS_Capture since source job not found for dataset %', _dataset;
+                RAISE INFO 'Unable to create capture job in cap.t_tasks since source job not found for dataset %', _dataset;
                 RETURN;
             End If;
 

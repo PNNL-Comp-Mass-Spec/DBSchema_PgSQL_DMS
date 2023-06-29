@@ -82,7 +82,7 @@ BEGIN
             -- Job deletion is allowed since state is 1, 5, or 8 (new, failed, or holding), and no running job steps
             ---------------------------------------------------
 
-            SELECT format('DMS_Pipeline job to be deleted: job %s, state %s, dataset %s', Job, state, dataset)
+            SELECT format('Job to be deleted from sw.t_jobs: job %s, state %s, dataset %s', Job, state, dataset)
             INTO _message
             FROM sw.t_jobs
             WHERE job = _job;
@@ -98,11 +98,11 @@ BEGIN
             WHERE job = _job;
 
             If _jobState IN (2,3,9) Then
-                _skipMessage := 'DMS_Pipeline job will not be deleted; job is in progress';
+                _skipMessage := 'Job will not be deleted from sw.t_jobs; job is in progress';
             ElsIf _jobState IN (4,7,14)
-                _skipMessage := 'DMS_Pipeline job will not be deleted; job completed successfully';
+                _skipMessage := 'Job will not be deleted from sw.t_jobs; job completed successfully';
             Else
-                _skipMessage := 'DMS_Pipeline job will not be deleted; job state is not New, Failed, or Holding';
+                _skipMessage := 'Job will not be deleted from sw.t_jobs; job state is not New, Failed, or Holding';
             End If;
 
             SELECT format('%s: job %s, state %s, dataset %s', _skipMessage, Job, state, dataset)

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_prep_state(IN _job integer, IN _scrip
 /****************************************************
 **
 **  Desc:
-**      Update prep LC state in DMS
+**      Update prep LC state in public.set_prep_lc_task_complete
 **
 **  Auth:   grk
 **  Date:   05/08/2010 grk - Initial Veresion

@@ -187,11 +187,11 @@ BEGIN
             ---------------------------------------------------
 
             If Exists (SELECT * FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State <= 2) Then
-                RAISE EXCEPTION 'Dataset "%" is being processed by the DMS_Capture database; unable to delete', _datasetName;
+                RAISE EXCEPTION 'Dataset "%" is being processed by the capture task pipeline; unable to delete', _datasetName;
             End If;
 
             If Exists (SELECT * FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State > 2) Then
-                RAISE EXCEPTION 'Dataset "%" has been processed by the DMS_Capture database; unable to delete', _datasetName;
+                RAISE EXCEPTION 'Dataset "%" has been processed by the capture task pipeline; unable to delete', _datasetName;
             End If;
 
             ---------------------------------------------------

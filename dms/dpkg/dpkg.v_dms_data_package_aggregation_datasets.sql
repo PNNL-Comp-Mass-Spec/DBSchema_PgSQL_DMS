@@ -42,7 +42,7 @@ ALTER TABLE dpkg.v_dms_data_package_aggregation_datasets OWNER TO d3l243;
 -- Name: VIEW v_dms_data_package_aggregation_datasets; Type: COMMENT; Schema: dpkg; Owner: d3l243
 --
 
-COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_datasets IS 'Note that this view is used by V_DMS_Data_Package_Datasets in DMS_Pipeline, and the PRIDE converter plugin uses that view to retrieve metadata for data package datasets';
+COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_datasets IS 'Note that this view is used by sw.V_DMS_Data_Package_Datasets, and the PRIDE converter plugin uses that view to retrieve metadata for data package datasets';
 
 --
 -- Name: TABLE v_dms_data_package_aggregation_datasets; Type: ACL; Schema: dpkg; Owner: d3l243

@@ -108,7 +108,7 @@ BEGIN
 
             If _jobCount > 0 Then
                 _message := format('Updated state for Protein Collection "%s" from 1 to 3 since %s defined in DMS with this protein collection',
-                                   _proteinCollectionName, _jobCount, public.check_plural(_jobCount, 'job is', 'jobs are'));
+                                   _proteinCollectionName, _jobCount, public.check_plural(_jobCount, 'a job is', 'jobs are'));
 
                 If Not _infoOnly Then
                     _currentLocation := format('Update state for CollectionID %s', _proteinCollectionID);

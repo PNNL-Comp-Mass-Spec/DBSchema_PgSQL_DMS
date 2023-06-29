@@ -12,8 +12,8 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates jobs in DMS5 for jobs that were originally
-**      created in the DMS_Pipeline database
+**      Creates jobs in public.t_analysis_job for jobs that were originally
+**      created in sw.t_jobs
 **
 **  Arguments:
 **    _jobsToProcess   Set to a positive number to process a finite number of jobs
@@ -648,7 +648,7 @@ BEGIN
             -- Do not change a job from State 14 to a State > 4
             ------------------------------------------------
 
-            _currentLocation := 'Synchronize t_analysis_job with back-filled DMS_Pipeline jobs';
+            _currentLocation := 'Synchronize t_analysis_job with back-filled jobs from sw.t_jobs';
 
             MERGE INTO t_analysis_job AS target
             USING ( SELECT PJ.job,

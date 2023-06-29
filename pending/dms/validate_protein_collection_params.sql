@@ -20,7 +20,7 @@ AS $$
 **
 **  Arguments:
 **    _toolName           If blank, will assume _orgDbReqd=1
-**    _protCollNameList   Will raise an error if over 4000 characters long; necessary since the Broker DB (DMS_Pipeline) has a 4000 character limit on analysis job parameter values
+**    _protCollNameList   Will raise an error if over 4000 characters long. This was previously necessary since the Broker DB (DMS_Pipeline) had a 4000 character limit on analysis job parameter values. While likely not true for PostgreSQL, excessively long protein collection name lists could lead to issues.
 **    _ownerUsername      Only required if the user chooses an 'Encrypted' protein collection; as of August 2010 we don't have any encrypted protein collections
 **    _debugMode          If true, will display some debug info
 **

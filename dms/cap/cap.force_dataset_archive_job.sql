@@ -65,7 +65,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Create dataset archive entry in DMS
+    -- Create dataset archive entry in public.t_dataset_archive
     ---------------------------------------------------
 
     CALL public.add_archive_dataset (_datasetID,

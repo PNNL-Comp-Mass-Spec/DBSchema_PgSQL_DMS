@@ -20,9 +20,9 @@ AS $$
 **      Add jobs from DMS that are in 'New' state that aren't
 **      already in table.  Choose script for DMS analysis tool.
 **
-**      Suspend running jobs that now have state 'Holding' in DMS
+**      Suspend running jobs that now have state 'Holding' in public.t_analysis_job
 **
-**      Finally, reset failed or holding jobs that are now state 'New' in DMS
+**      Finally, reset failed or holding jobs that are now state 'New' in public.t_analysis_job
 **
 **  DMS       Broker           Action by broker
 **  Job       Job
@@ -206,10 +206,10 @@ BEGIN
                     WHERE enabled = 'Y' );
 
     If NOT FOUND Then
-        -- No new or held jobs were found in DMS
+        -- No new or held jobs were found in public.t_analysis_job
 
         If _debugMode Then
-            RAISE INFO 'No new or held jobs found in DMS';
+            RAISE INFO 'No new or held jobs found in public.t_analysis_job';
         End If;
 
         -- Exit this procedure
@@ -270,7 +270,7 @@ BEGIN
         -- delete existing job info from database
         ---------------------------------------------------
 
-        -- Find jobs that are complete in the broker, but in state 1=New in DMS
+        -- Find jobs that are complete in the broker, but in state 1=New in public.t_analysis_job
         --
         --
         INSERT INTO Tmp_ResetJobs (job)
@@ -279,7 +279,7 @@ BEGIN
              INNER JOIN sw.t_jobs
                ON T.job = sw.t_jobs.job
         WHERE sw.t_jobs.state = 4 AND            -- Complete in the broker
-              T.state = 1                        -- New in DMS
+              T.state = 1                        -- New in public.t_analysis_job
         --
         GET DIAGNOSTICS _jobCountToReset = ROW_COUNT;
 
@@ -411,12 +411,11 @@ BEGIN
         ---------------------------------------------------
         -- Find jobs to Resume or Reset
         --
-        -- Jobs that are reset in DMS will be in 'new' state, but
-        -- there will be a entry for the job in the local
-        -- table that is in the 'failed' or 'holding' state.
-        -- For all such jobs, set all steps that are in 'failed'
-        -- state to the 'waiting' state and set the job
-        -- state to 'resuming'.
+        -- Jobs that are reset in public.t_analysis_job will be in 'new' state,
+        -- but there will be an entry for the job in sw.t_jobs that is in the 'failed' or 'holding' state
+        --
+        -- For all such jobs, set all steps that are in 'failed' state to the 'waiting' state
+        -- and set the job state to 'resuming'
         ---------------------------------------------------
 
         If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
@@ -485,7 +484,7 @@ BEGIN
             End If;
 
             -- Set local job state to holding for jobs
-            -- that are in holding state in DMS
+            -- that are in holding state in public.t_analysis_job
             --
             UPDATE sw.t_jobs
             SET state = 8                            -- 8=Holding

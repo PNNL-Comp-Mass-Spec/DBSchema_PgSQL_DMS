@@ -415,7 +415,7 @@ BEGIN
 
     COMMIT;
 
-    -- Part F: Retry capture for datasets that failed capture but for which the dataset state in DMS is 1=New
+    -- Part F: Retry capture for datasets that failed capture but for which the dataset state in public.t_dataset is 1=New
     BEGIN
 
         If _bypassDMS Then

@@ -161,8 +161,8 @@ BEGIN
     -- Note: _datasetID needs to be 0
     --
     -- If it is non-zero, the newly created job will get deleted from
-    -- this DB the next time Update_Context runs, since the system will think
-    -- the job no-longer exists in DMS5 and thus should be deleted
+    -- this sw.t_jobs the next time Update_Context runs, since the system will think
+    -- the job no-longer exists in public.t_analysis_job and thus should be deleted
     ---------------------------------------------------
 
     ---------------------------------------------------

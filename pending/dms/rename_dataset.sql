@@ -14,7 +14,7 @@ AS $$
 **
 **  Desc:
 **      Renames a dataset in T_Dataset
-**      Renames associated jobs in the DMS_Capture and DMS_Pipeline databases
+**      Renames associated jobs in cap.t_tasks and sw.t_jobs
 **
 **  Auth:   mem
 **  Date:   01/25/2013 mem - Initial version
@@ -402,7 +402,7 @@ BEGIN
     End If;
 
     --------------------------------------------
-    -- Update jobs in the DMS_Capture database
+    -- Update jobs in cap.t_tasks
     --------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
@@ -429,7 +429,7 @@ BEGIN
 
     If Not _infoOnly Then
         --------------------------------------------
-        -- Update capture task jobs in DMS_Capture
+        -- Update capture task jobs in cap.t_tasks
         --------------------------------------------
 
         FOR _job IN
@@ -448,7 +448,7 @@ BEGIN
     End If;
 
     --------------------------------------------
-    -- Update jobs in the DMS_Pipeline database
+    -- Update jobs in sw.t_jobs
     --------------------------------------------
 
     DELETE FROM Tmp_JobsToUpdate;

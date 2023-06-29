@@ -78,7 +78,7 @@ BEGIN
     End If;
 
     If Coalesce(_dataset, '') <> 'Aggregation' Then
-        _message := format('Job is not an aggregation job; reset this job by updating its state in DMS5: %s', _job);
+        _message := format('Job is not an aggregation job; reset this job by updating its state in public.t_analysis_job: %s', _job);
         RAISE INFO '%', _message;
         RAISE EXCEPTION '%', _message;
     End If;

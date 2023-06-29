@@ -35,7 +35,7 @@ AS $$
 **    _mode                                  Modes: CreateFromImportedJobs, ExtendExistingJob, UpdateExistingJob (rarely used)
 **    _existingJob                           Used if _mode = 'ExtendExistingJob' or _mode = 'UpdateExistingJob'; can also be used when _mode = 'CreateFromImportedJobs' and _debugMode is true
 **    _extensionScriptName                   Only used if _mode = 'ExtendExistingJob'; name of the job script to apply when extending an existing job
-**    _extensionScriptSettingsFileOverride   Only used if _mode = 'ExtendExistingJob'; new settings file to use instead of the one defined in DMS
+**    _extensionScriptSettingsFileOverride   Only used if _mode = 'ExtendExistingJob'; new settings file to use instead of the one defined in public.t_analysis_job
 **    _logIntervalThreshold                  If this procedure runs longer than this threshold, status messages will be posted to the log
 **    _loggingEnabled                        Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
 **    _loopingUpdateInterval                 Seconds between detailed logging while looping through the dependencies
@@ -297,7 +297,7 @@ BEGIN
     End If;
 
     If _mode::citext = 'UpdateExistingJob' Then
-        -- Note: as of April 4, 2011, the 'UpdateExistingJob' mode is not used in the DMS_Pipeline database
+        -- Note: as of April 4, 2011, the 'UpdateExistingJob' mode is not used in the 'sw' schema
         --
         If Not Exists (SELECT job FROM sw.t_jobs Where job = _existingJob) Then
             _message := format('Job %s not found in sw.t_jobs; unable to continue', _existingJob);

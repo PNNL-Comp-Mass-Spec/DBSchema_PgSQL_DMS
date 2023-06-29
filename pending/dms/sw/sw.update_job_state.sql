@@ -14,7 +14,7 @@ AS $$
 **
 **  Desc:
 **      Based on step state, look for jobs that have been completed or have entered the 'in progress' state.
-**      Update state of job locally and in DMS accordingly.
+**      Update state of job in sw.t_jobs and in public.t_analysis_job accordingly.
 **
 **      Processing steps:
 **
@@ -41,7 +41,7 @@ AS $$
 **
 **         New             Action by broker
 **         Broker          - Always set job state in broker to new state
-**         Job             - Roll up step completion messages and append to comment in DMS job
+**         Job             - Roll up step completion messages and append to comment in public.t_analysis_job
 **         State
 **         ------          ---------------------------------------
 **         Failed          Current: Update DMS job state to 'Failed'
@@ -562,7 +562,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Look for jobs in DMS that are failed, yet are not failed in sw.t_jobs
+    -- Look for jobs in public.t_analysis_job that are failed, yet are not failed in sw.t_jobs
     -- Also look for jobs listed as new that are actually in progress
     ---------------------------------------------------
 
@@ -581,7 +581,7 @@ BEGIN
         NewState int not null
     );
 
-    -- Look for jobs that are listed as Failed in DMS, but are in-progress here
+    -- Look for jobs that are listed as Failed in public.t_analysis_job, but are in-progress in sw.t_jobs
     --
     INSERT INTO Tmp_JobsToReset (job, NewState )
     SELECT DMSJobs.job AS Job,
@@ -592,7 +592,7 @@ BEGIN
     WHERE DMSJobs.state_id = 5 AND
           J.state IN (1, 2, 4);
 
-    -- Also look for jobs that are in state New in DMS, but are in-progress here
+    -- Also look for jobs that are in state New in public.t_analysis_job, but are in-progress in sw.t_jobs
     --
     INSERT INTO Tmp_JobsToReset (job, NewState )
     SELECT DMSJobs.job AS Job,

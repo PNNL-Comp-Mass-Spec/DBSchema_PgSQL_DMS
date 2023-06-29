@@ -11,11 +11,11 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Makes sure the job start/end times defined in T_Jobs match those in DMS
-**      Only processes jobs with a state of 4 or 5 in T_Jobs
+**      Makes sure the job start/end times defined in sw.t_jobs match those in public.t_analysis_job
+**      Only processes jobs with a state of 4 or 5 in sw.t_jobs
 **
 **  Arguments:
-**    _jobListToProcess   Jobs to process; if blank, will process all jobs in T_Jobs
+**    _jobListToProcess   Jobs to process; if blank, will process all jobs in sw.t_jobs
 **
 **  Auth:   mem
 **  Date:   02/27/2010 mem - Initial version

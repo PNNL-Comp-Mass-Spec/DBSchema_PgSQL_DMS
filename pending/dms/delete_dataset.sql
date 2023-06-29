@@ -272,14 +272,14 @@ BEGIN
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
-    -- Delete any failed jobs in the DMS_Capture database
+    -- Delete any failed jobs in cap.t_tasks
     ---------------------------------------------------
 
     DELETE FROM cap.t_tasks
     WHERE Dataset_ID = _datasetID AND State = 5;
 
     ---------------------------------------------------
-    -- Update log entries in the DMS_Capture database
+    -- Update log entries in cap.t_log_entries
     ---------------------------------------------------
 
     UPDATE cap.t_log_entries

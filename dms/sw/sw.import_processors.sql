@@ -51,7 +51,7 @@ BEGIN
     WHERE sw.t_local_processors.Processor_Name = VPP.Processor_Name;
 
     ---------------------------------------------------
-    -- Deprecated: disable local copies that are not in DMS
+    -- Deprecated: disable local copies that are not in public.t_analysis_job_processors
     ---------------------------------------------------
 
     -- Update sw.t_local_processors

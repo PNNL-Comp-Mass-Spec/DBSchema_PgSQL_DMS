@@ -211,7 +211,7 @@ BEGIN
 
     -----------------------------------------
     -- Compute the approximate time remaining for the job to finish
-    -- We tack on 0.5 minutes for each uncompleted step, to account for the state machine aspect of the DMS_Pipeline database
+    -- We tack on 0.5 minutes for each uncompleted step, to account for the state machine aspect of sw.t_jobs and sw.t_job_steps
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate

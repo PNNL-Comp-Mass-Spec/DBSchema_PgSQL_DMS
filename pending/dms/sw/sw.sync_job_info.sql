@@ -42,7 +42,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Update archive busy flag for active jobs according to state in DMS
+    -- Update archive busy flag for active jobs according to state in public.t_dataset_archive
     --
     -- Use public.v_get_analysis_jobs_for_archive_busy
     -- to look for jobs that have dataset archive state:
@@ -75,7 +75,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Update priorities for jobs and job steps based on
-    -- the priority defined in DMS
+    -- the priority defined in public.t_analysis_job
     ---------------------------------------------------
 
     UPDATE sw.t_jobs J
@@ -96,7 +96,9 @@ BEGIN
     -- Deprecated in May 2015, then re-enabled in February 2016
     --
     -- Update the processor groups that jobs belong to,
-    -- based on the group membership defined in DMS
+    -- based on the group membership defined in
+    -- public.t_analysis_job_processor_group_associations and
+    -- public.t_analysis_job_processor_group_membership
     ---------------------------------------------------
 
     SELECT COUNT(*)

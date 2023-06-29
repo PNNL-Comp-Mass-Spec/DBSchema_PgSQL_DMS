@@ -14,22 +14,25 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates column Ingest_Steps_Completed for the given MyEMSL ingest task
+**      Updates column Ingest_Steps_Completed in cap.t_myemsl_uploads for the given MyEMSL ingest task
 **
 **      This procedure is called by the ArchiveStatusCheckPlugin in the DMS Capture Manager
 **
 **  Arguments:
-**    _statusNum              The status number must match the specified DatasetID (this is a safety check)
-**    _ingestStepsCompleted   Number of ingest steps that were completed for this entry
-**    _fatalError             True if the ingest failed and the ErrorCode column needs to be set to -1 (if currently 0 or null)
-**    _transactionId          Transaction ID (null or 0 if unknown); starting in July 2017, transactionId and Status_Num should match
+**    _datasetID                Dataset ID
+**    _statusNum                The status number must match the specified DatasetID (this is a safety check)
+**    _ingestStepsCompleted     Number of ingest steps that were completed for this entry
+**    _fatalError               True if the ingest failed and the Error_Code column needs to be set to -1 (if currently 0 or null)
+**    _transactionId            Transaction ID (null or 0 if unknown); starting in July 2017, transactionId and Status_Num should match
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   12/18/2014 mem - Initial version
 **          06/23/2016 mem - Add parameter _fatalError
 **          05/31/2017 mem - Update TransactionID in T_MyEMSL_Uploads using _transactionId
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
-**          07/12/2017 mem - Update TransactionId if null yet Ingest_Steps_Completed and ErrorCode are unchanged
+**          07/12/2017 mem - Update TransactionId if null yet Ingest_Steps_Completed and Error_Code are unchanged
 **          08/01/2017 mem - Use THROW instead of RAISERROR
 **          07/15/2019 mem - Filter on both Status_Num and Dataset_ID when updating T_MyEMSL_Uploads
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
@@ -102,7 +105,7 @@ BEGIN
 
         ---------------------------------------------------
         -- Make sure the Dataset_ID is correct
-        -- Also lookup the current ErrorCode for this upload task
+        -- Also lookup the current error code for this upload task
         ---------------------------------------------------
 
         SELECT error_code

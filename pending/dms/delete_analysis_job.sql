@@ -136,7 +136,7 @@ BEGIN
     End If;
 
     -------------------------------------------------------
-    -- Also delete from the DMS_Pipeline database if the state is New, Failed, or Holding
+    -- Also delete from sw.t_jobs if the state is New, Failed, or Holding
     -- Ignore any jobs with running job steps (though if the step started over 48 hours ago, ignore that job step)
     -------------------------------------------------------
 

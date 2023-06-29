@@ -249,7 +249,6 @@ BEGIN
                         _orderBy := 'ORDER BY Job Desc';
                     End If;
 
-                    -- Note that public.V_Source_Analysis_Job uses V_Source_Analysis_Job in DMS
                     _autoQuerySql := format('SELECT Job FROM public.V_Source_Analysis_Job %s %s LIMIT 1', _whereClause, _orderBy);
 
                     If _previewSql Then

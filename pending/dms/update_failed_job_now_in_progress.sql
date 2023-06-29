@@ -14,10 +14,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates job state to 2 for an analysis job that is now in-progress in the DMS_Pipeline database
+**      Updates job state to 2 for an analysis job that is now in-progress in sw.t_jobs database
 **
-**      Typically used to update jobs listed as Failed in DMS5, but
-**      occasionally updates jobs listed as New
+**      Typically used to update jobs listed as Failed in public.t_analysis_job,
+**      but occasionally updates jobs listed as New
 **
 **  Arguments:
 **    _updateCode   Safety feature to prevent unauthorized job updates

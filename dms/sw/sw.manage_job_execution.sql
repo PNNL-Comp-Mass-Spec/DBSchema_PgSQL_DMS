@@ -170,8 +170,9 @@ BEGIN
         Else
             ---------------------------------------------------
             -- Need to associate jobs with a specific processor group
-            -- Given the complexity of the association, this needs to be done in DMS5,
-            -- and this will happen when manage_job_execution is called
+            --
+            -- Given the complexity of the association, this needs to be done in the public schema tables,
+            -- and this will happen when public.manage_job_execution is called
             ---------------------------------------------------
         End If;
     End If;

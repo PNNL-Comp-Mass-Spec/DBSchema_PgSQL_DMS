@@ -209,7 +209,7 @@ BEGIN
             CALL post_log_entry ('Normal', _message, 'Reset_Failed_Dataset_Capture_Tasks');
 
             ------------------------------------------------
-            -- Look for log entries in DMS_Capture to auto-update
+            -- Look for log entries in cap.t_log_entries to auto-update
             ------------------------------------------------
 
             FOR _datasetName IN

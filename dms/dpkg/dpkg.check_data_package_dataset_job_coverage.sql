@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION dpkg.check_data_package_dataset_job_coverage(_package
 **
 **  Desc:
 **      When _mode is 'PackageJobCount', returns a table of dataset job coverage
-**      For the other two modes, returns a table that lists datasets with missing jobs, either in the data package or in DMS
+**      For the other two modes, returns a table that lists datasets with missing jobs, either in the data package or in public.t_analysis_job
 **
 **  Arguments:
 **    _packageID    Data package ID

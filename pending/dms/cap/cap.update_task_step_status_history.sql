@@ -12,12 +12,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Appends new entries to t_task_step_status_history,
+**      Appends new entries to cap.t_task_step_status_history,
 **      summarizing the number of capture task job steps in each state
 **
 **  Arguments:
-**    _minimumTimeIntervalMinutes                    Set this to 0 to force the addition of new data to t_task_step_status_history
-**    _minimumTimeIntervalMinutesForIdenticalStats   This controls how often identical stats will get added to t_task_step_status_history
+**    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to cap.t_task_step_status_history
+**    _minimumTimeIntervalMinutesForIdenticalStats  This controls how often identical stats will get added to cap.t_task_step_status_history
+**    _message                                      Output message
+**    _returnCode                                   Return code
+**    _infoOnly                                     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   02/05/2016 mem - Initial version (copied from the DMS_Pipeline DB)

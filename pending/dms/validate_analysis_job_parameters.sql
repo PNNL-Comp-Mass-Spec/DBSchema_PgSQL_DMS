@@ -47,7 +47,7 @@ AS $$
 **
 **  Arguments:
 **    _organismDBName     Legacy fasta file; typically 'na'
-**    _protCollNameList   Will raise an error if over 2000 characters long; necessary since the Broker DB (DMS_Pipeline) has a 2000 character limit on analysis job parameter values
+**    _protCollNameList   Will raise an error if over 4000 characters long. This was previously necessary since the Broker DB (DMS_Pipeline) had a 4000 character limit on analysis job parameter values. While likely not true for PostgreSQL, excessively long protein collection name lists could lead to issues.
 **    _mode               Used to tweak the warning if _analysisToolID is not found in T_Analysis_Tool
 **    _allowNewDatasets   When false, all datasets must have state 3 (Complete); when true, will also allow datasets with state 1 or 2 (New or Capture In Progress)
 **

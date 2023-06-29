@@ -12,12 +12,16 @@ AS $$
 **
 **  Desc:
 **      Updates the MyEMSLState values for datasets and/or capture task jobs
-**      that have entries in T_MyEMSL_Uploads yet have
-**      a MyEMSLState value of 0
+**      that have entries in cap.t_myemsl_uploads, yet have a MyEMSLState value of 0
 **
-**      This should normally not be necessary; thus, if any
-**      updates are performed, we will post an error message
-**      to the log
+**      This should normally not be necessary; thus, if any updates are performed,
+**      the procedure logs an error message
+**
+**  Arguments:
+**    _windowDays       Threshold for the entered column in cap.t_myemsl_uploads
+**    _infoOnly         When true, preview updates
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   09/10/2013 mem - Initial version

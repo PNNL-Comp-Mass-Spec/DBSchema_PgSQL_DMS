@@ -8,7 +8,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Validates job and dataset states vs. DMS_Pipeline and DMS_Capture
+**      Validates job and dataset states vs. sw.t_jobs and cap.t_tasks
 **
 **  Auth:   mem
 **  Date:   11/11/2016 mem - Initial Version
@@ -36,13 +36,13 @@ BEGIN
             Dataset_ID int not null,
             State_Old int not null,
             State_New int not null
-        )
+        );
 
         CREATE TEMP TABLE Tmp_Jobs (
             Job int not null,
             State_Old int not null,
             State_New int not null
-        )
+        );
 
         ---------------------------------------------------
         -- Look for datasets with an incorrect state
@@ -50,7 +50,7 @@ BEGIN
 
         _currentLocation := 'Populate Tmp_Datasets';
 
-        -- Find datasets with a complete DatasetCapture task, yet a state of 1 or 2 in DMS5
+        -- Find datasets with a complete DatasetCapture task, yet a state of 1 or 2 in public.t_dataset
         -- Exclude datasets that finished within the last 2 hours
         --
         INSERT INTO Tmp_Datasets (dataset_id, State_Old, State_New)
@@ -71,14 +71,14 @@ BEGIN
 
         _currentLocation := 'Populate Tmp_Jobs';
 
-        -- Find jobs complete in DMS_Pipeline, yet a state of 1, 2, or 8 in DMS5
+        -- Find jobs complete in sw.t_jobs, yet a state of 1, 2, or 8 in public.t_analysis_job
         -- Exclude jobs that finished within the last 2 hours
         --
         INSERT INTO Tmp_Jobs (job, State_Old, State_New)
         SELECT J.job, J.job_state_id, PipelineQ.NewState
         FROM t_analysis_job J
              INNER JOIN ( SELECT job, State AS NewState
-                          FROM S_V_Pipeline_Jobs_ActiveOrComplete
+                          FROM sw.V_Pipeline_Jobs_Active_Or_Complete
                           WHERE State IN (4, 7, 14) AND
                                 Finish < CURRENT_TIMESTAMP - INTERVAL '1 hour'
                         ) PipelineQ
@@ -134,7 +134,7 @@ BEGIN
             INTO _itemList
             FROM Tmp_Datasets;
 
-            _message := format('Updated dataset state for %s dataset %s due to mismatch with DMS_Capture: %s',
+            _message := format('Updated dataset state for %s dataset %s due to mismatch with cap.t_tasks: %s',
                                     _updateCount,
                                     public.check_plural(_updateCount, 'ID', 'IDs'),
                                     _itemList);
@@ -159,7 +159,7 @@ BEGIN
             INTO _itemList
             FROM Tmp_Jobs;
 
-            _message := format('Updated job state for %s %s due to mismatch with DMS_Pipeline: %s',
+            _message := format('Updated job state for %s %s due to mismatch with sw.t_jobs: %s',
                                 _updateCount,
                                 public.check_plural(_updateCount, 'job', 'jobs'),
                                 _itemList);
