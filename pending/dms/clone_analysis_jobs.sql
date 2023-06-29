@@ -117,20 +117,20 @@ BEGIN
         CREATE TEMP TABLE Tmp_NewJobInfo(
             JobId_Old int NOT NULL,
             JobId_New int NOT NULL,
-            AJ_batchID int NOT NULL,
-            AJ_priority int NOT NULL,
-            AJ_analysisToolID int NOT NULL,
-            AJ_parmFileName text NOT NULL,
-            AJ_settingsFileName text NULL,
-            AJ_organismDBName text NULL,
-            AJ_organismID int NOT NULL,
-            AJ_datasetID int NOT NULL,
-            comment text NULL,
-            AJ_owner text NULL,
-            AJ_proteinCollectionList text NULL,
-            AJ_proteinOptionsList text NOT NULL,
-            AJ_requestID int NOT NULL,
-            AJ_propagationMode int NOT NULL
+            Batch_ID int NOT NULL,
+            Priority int NOT NULL,
+            Analysis_Tool_id int NOT NULL,
+            Param_File_Name text NOT NULL,
+            Settings_File_Name text NULL,
+            Organism_DB_Name text NULL,
+            Organism_ID int NOT NULL,
+            Dataset_ID int NOT NULL,
+            Comment text NULL,
+            Owner_Username text NULL,
+            Protein_Collection_List text NULL,
+            Protein_Options_List text NOT NULL,
+            Request_ID int NOT NULL,
+            Propagation_Mode int NOT NULL
         );
 
         CREATE UNIQUE INDEX IX_Tmp_NewJobInfo ON Tmp_NewJobInfo (JobId_New);
@@ -202,7 +202,7 @@ BEGIN
         SELECT param_file_name,
                NumJobs
         INTO _mostCommonParamFile, _jobCountCompare
-        FROM ( SELECT J.param_file_name AS AJ_parmFileName,
+        FROM ( SELECT J.param_file_name AS param_file_name,
                       COUNT(*) AS NumJobs
                FROM Tmp_SourceJobs
                     INNER JOIN t_analysis_job J
@@ -219,10 +219,10 @@ BEGIN
 
             SELECT JobId,
                    Valid,
-                   J.AJ_parmFileName,
-                   J.AJ_settingsFileName,
+                   J.param_file_name,
+                   J.settings_file_name,
                    CASE
-                        WHEN J.AJ_parmFileName = _mostCommonParamFile THEN ''
+                        WHEN J.param_file_name = _mostCommonParamFile THEN ''
                         ELSE 'Mismatched param file'
                    END AS Warning
             FROM Tmp_SourceJobs
@@ -242,7 +242,7 @@ BEGIN
         SELECT settings_file_name,
                NumJobs
         INTO _mostCommonSettingsFile, _jobCountCompare
-        FROM ( SELECT J.settings_file_name AS AJ_settingsFileName,
+        FROM ( SELECT J.settings_file_name AS settings_file_name,
                       COUNT(*) AS NumJobs
                FROM Tmp_SourceJobs
                     INNER JOIN t_analysis_job J
@@ -259,10 +259,10 @@ BEGIN
 
             SELECT JobId,
                    Valid,
-                   J.AJ_parmFileName,
-                   J.AJ_settingsFileName,
+                   J.param_file_name,
+                   J.settings_file_name,
                    CASE
-                       WHEN J.AJ_settingsFileName = _mostCommonSettingsFile THEN ''
+                       WHEN J.settings_file_name = _mostCommonSettingsFile THEN ''
                        ELSE 'Mismatched settings file'
                    END AS Warning
             FROM Tmp_SourceJobs
@@ -362,43 +362,43 @@ BEGIN
         -----------------------------------------
 
         INSERT INTO Tmp_NewJobInfo( JobId_Old,
-                                     JobId_New,
-                                     AJ_batchID,
-                                     AJ_priority,
-                                     AJ_analysisToolID,
-                                     AJ_parmFileName,
-                                     AJ_settingsFileName,
-                                     AJ_organismDBName,
-                                     AJ_organismID,
-                                     AJ_datasetID,
-                                     comment,
-                                     AJ_owner,
-                                     AJ_proteinCollectionList,
-                                     AJ_proteinOptionsList,
-                                     AJ_requestID,
-                                     AJ_propagationMode )
+                                    JobId_New,
+                                    Batch_ID,
+                                    Priority,
+                                    Analysis_tool_ID,
+                                    Param_File_Name,
+                                    Settings_File_Name,
+                                    Organism_DB_Name,
+                                    Organism_ID,
+                                    Dataset_ID,
+                                    Comment,
+                                    Owner_Username,
+                                    Protein_Collection_List,
+                                    Protein_Options_List,
+                                    Request_ID,
+                                    Propagation_Mode )
         SELECT SrcJobs.JobId,
                _newJobIdStart + SrcJobs.RowNum AS JobId_New,
-               0 AS AJ_batchID,
-               J.AJ_priority,
-               J.AJ_analysisToolID,
+               0 AS batch_id,
+               J.priority,
+               J.analysis_tool_id,
                CASE
-                   WHEN Coalesce(_newParamFileName, '') = '' THEN J.AJ_parmFileName
+                   WHEN Coalesce(_newParamFileName, '') = '' THEN J.param_file_name
                    ELSE _newParamFileName
-               END AS AJ_parmFileName,
+               END AS param_file_name,
                CASE
-                   WHEN Coalesce(_newSettingsFileName, '') = '' THEN J.AJ_settingsFileName
+                   WHEN Coalesce(_newSettingsFileName, '') = '' THEN J.settings_file_name
                    ELSE _newSettingsFileName
-               END AS AJ_settingsFileName,
-               J.AJ_organismDBName,
-               J.AJ_organismID,
-               J.AJ_datasetID,
+               END AS settings_file_name,
+               J.organism_db_name,
+               J.organism_id,
+               J.dataset_id,
                format('Rerun of job %s', J.job) AS comment,
-               J.AJ_owner,
+               J.owner_username,
                CASE
-                   WHEN Coalesce(_newProteinCollectionList, '') = '' THEN J.AJ_proteinCollectionList
+                   WHEN Coalesce(_newProteinCollectionList, '') = '' THEN J.protein_collection_list
                    ELSE _newProteinCollectionList
-               END AS AJ_proteinCollectionList,
+               END AS protein_collection_list,
                J.protein_options_list,
                J.request_id,
                J.propagation_mode
@@ -425,13 +425,12 @@ BEGIN
         -----------------------------------------
 
         INSERT INTO t_analysis_job (
-            job, batch_id, AJ_priority, created, analysis_tool_id, AJ_parmFileName, AJ_settingsFileName, AJ_organismDBName,
-            organism_id, dataset_id, comment, AJ_owner, job_state_id, AJ_proteinCollectionList, AJ_proteinOptionsList,
+            job, batch_id, priority, created, analysis_tool_id, param_file_name, settings_file_name, organism_db_name,
+            organism_id, dataset_id, comment, owner_username, job_state_id, protein_collection_list, protein_options_list,
             request_id, propagation_mode)
-        SELECT
-            JobId_New, batch_id, AJ_priority, CURRENT_TIMESTAMP, analysis_tool_id, AJ_parmFileName, AJ_settingsFileName, organism_db_name,
-            organism_id, dataset_id, comment, AJ_owner, 1 AS job_state_id, AJ_proteinCollectionList, AJ_proteinOptionsList,
-            request_id, propagation_mode
+        SELECT JobId_New, Batch_ID, Priority, CURRENT_TIMESTAMP, Analysis_tool_ID, Param_File_Name, Settings_File_Name, Organism_DB_Name,
+               Organism_ID, Dataset_ID, Comment, Owner_Username, 1 AS job_state_id, Protein_Collection_List, Protein_Options_List,
+               Request_ID, Propagation_Mode
         FROM Tmp_NewJobInfo
         ORDER BY JobId_New;
 

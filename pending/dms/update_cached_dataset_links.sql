@@ -167,7 +167,7 @@ BEGIN
                           OrderQ.MasicDirectoryName,
                           Row_Number() OVER ( PARTITION BY OrderQ.DatasetID
                                               ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC ) AS JobRank
-                   FROM ( SELECT J.AJ_DatasetID AS DatasetID,
+                   FROM ( SELECT J.dataset_id AS DatasetID,
                                  J.job AS Job,
                                  J.Results_Folder_Name AS MasicDirectoryName,
                                  CASE
@@ -237,7 +237,7 @@ BEGIN
                                     OrderQ.MasicDirectoryName,
                                     Row_Number() OVER ( PARTITION BY OrderQ.DatasetID
                                                         ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC ) AS JobRank
-                             FROM ( SELECT J.AJ_DatasetID AS DatasetID,
+                             FROM ( SELECT J.dataset_id AS DatasetID,
                                            J.job AS Job,
                                            J.Results_Folder_Name AS MasicDirectoryName,
                                            CASE
