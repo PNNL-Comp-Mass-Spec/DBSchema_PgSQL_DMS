@@ -356,9 +356,9 @@ BEGIN
                 -- to delete jobs listed in it
                 ---------------------------------------------------
 
-                CREATE TEMP TABLE Tmp_SJL (Job int);
+                CREATE TEMP TABLE Tmp_Selected_Jobs (Job int);
 
-                CREATE INDEX IX_Tmp_SJL_Job ON Tmp_SJL (Job);
+                CREATE INDEX IX_Tmp_Selected_Jobs_Job ON Tmp_Selected_Jobs (Job);
 
                 _createdSelectedJobsTable := true;
 
@@ -545,7 +545,7 @@ BEGIN
                 DROP TABLE Tmp_JobDebugMessages;
 
                 If _createdSelectedJobsTable := true; Then
-                    DROP TABLE Tmp_SJL;
+                    DROP TABLE Tmp_Selected_Jobs;
                 End If;
 
                 RETURN;
@@ -688,7 +688,7 @@ BEGIN
     DROP TABLE Tmp_JobDebugMessages;
 
     If _createdSelectedJobsTable := true; Then
-        DROP TABLE Tmp_SJL;
+        DROP TABLE Tmp_Selected_Jobs;
     End If;
 END
 $$;

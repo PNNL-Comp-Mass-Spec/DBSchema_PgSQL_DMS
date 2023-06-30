@@ -37,7 +37,7 @@ BEGIN
     -- Create table to track the list of affected jobs
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_SJL (
+    CREATE TEMP TABLE Tmp_Selected_Jobs (
         Job int,
         State int
     );
@@ -55,19 +55,19 @@ BEGIN
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
 
     ---------------------------------------------------
-    -- Insert specified job to Tmp_SJL
+    -- Insert specified job to Tmp_Selected_Jobs
     ---------------------------------------------------
 
-    INSERT INTO Tmp_SJL
+    INSERT INTO Tmp_Selected_Jobs
     SELECT job, state
     FROM sw.t_jobs
     WHERE job = _job;
 
     If _validateJobStepSuccess Then
         -- Remove any jobs that have failed, in progress, or holding job steps
-        DELETE Tmp_SJL
+        DELETE Tmp_Selected_Jobs
         FROM sw.t_job_steps JS
-        WHERE Tmp_SJL.job = JS.job AND
+        WHERE Tmp_Selected_Jobs.job = JS.job AND
               NOT (JS.state IN (3, 5));
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -90,7 +90,7 @@ BEGIN
             _message => _message,
             _logDeletions => false);
 
-    DROP TABLE Tmp_SJL;
+    DROP TABLE Tmp_Selected_Jobs;
 END
 $$;
 

@@ -37,7 +37,7 @@ BEGIN
     -- Create table to track the list of affected jobs
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_SJL (
+    CREATE TEMP TABLE Tmp_Selected_Jobs (
         Job int,
         State int
     );
@@ -47,37 +47,37 @@ BEGIN
     -- sw.v_dms_pipeline_existing_jobs returns a list of all jobs in public.t_analysis_job (regardless of state)
     ---------------------------------------------------
 
-    INSERT INTO Tmp_SJL (job, state)
+    INSERT INTO Tmp_Selected_Jobs (job, state)
     SELECT job, state
     FROM t_jobs
     WHERE dataset_id <> 0 AND NOT job IN (SELECT job FROM sw.v_dms_pipeline_existing_jobs);
 
     If Not FOUND Then
-        DROP TABLE Tmp_SJL;
+        DROP TABLE Tmp_Selected_Jobs;
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Remove any entries from Tmp_SJL that have a currently running job step
+    -- Remove any entries from Tmp_Selected_Jobs that have a currently running job step
     -- However, ignore job steps that started over 48 hours ago
     ---------------------------------------------------
 
-    DELETE Tmp_SJL
+    DELETE Tmp_Selected_Jobs
     FROM sw.t_job_steps JS
-    WHERE Tmp_SJL.job = JS.job AND
+    WHERE Tmp_Selected_Jobs.job = JS.job AND
           JS.state IN (4,9) AND
           JS.start >= CURRENT_TIMESTAMP - INTERVAL '48 hours';
 
-    If Not Exists (SELECT * FROM Tmp_SJL) Then
-        DROP TABLE Tmp_SJL;
+    If Not Exists (SELECT * FROM Tmp_Selected_Jobs) Then
+        DROP TABLE Tmp_Selected_Jobs;
         RETURN;
     End If;
 
     If _maxJobsToProcess > 0 Then
         -- Limit the number of jobs to delete
-        DELETE FROM Tmp_SJL
+        DELETE FROM Tmp_Selected_Jobs
         WHERE NOT Job IN ( SELECT Job
-                           FROM Tmp_SJL
+                           FROM Tmp_Selected_Jobs
                            ORDER BY Job
                            LIMIT _maxJobsToProcess)
     End If;
@@ -93,7 +93,7 @@ BEGIN
                 _logDeletions => true,
                 _logToConsoleOnly => false);
 
-    DROP TABLE Tmp_SJL;
+    DROP TABLE Tmp_Selected_Jobs;
 END
 $$;
 

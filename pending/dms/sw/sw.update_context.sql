@@ -207,7 +207,7 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
-        DROP TABLE IF EXISTS Tmp_SJL;
+        DROP TABLE IF EXISTS Tmp_Selected_Jobs;
         DROP TABLE IF EXISTS Tmp_DMSJobs;
         DROP TABLE IF EXISTS Tmp_ResetJobs;
         DROP TABLE IF EXISTS Tmp_JobsToResumeOrReset;

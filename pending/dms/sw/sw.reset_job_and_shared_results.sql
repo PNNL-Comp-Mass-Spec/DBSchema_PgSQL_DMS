@@ -81,8 +81,8 @@ BEGIN
             Output_Folder text
         )
 
-        -- This table is used by Remove_Selected_Jobs and must be named Tmp_SJL
-        CREATE TEMP TABLE Tmp_SJL (
+        -- This table is used by Remove_Selected_Jobs and must be named Tmp_Selected_Jobs
+        CREATE TEMP TABLE Tmp_Selected_Jobs (
             Job int,
             State int
         );
@@ -158,11 +158,11 @@ BEGIN
                 _message := 'Match not found in sw.t_shared_results';
             End If;
 
-            TRUNCATE TABLE Tmp_SJL
+            TRUNCATE TABLE Tmp_Selected_Jobs
 
             -- Remove any completed jobs that had this output folder
             -- (the job details should already be in sw.t_job_steps_history)
-            INSERT INTO Tmp_SJL
+            INSERT INTO Tmp_Selected_Jobs
             SELECT V_Job_Steps.job AS JobToDelete, sw.t_jobs.State
             FROM V_Job_Steps INNER JOIN
                 sw.t_jobs ON V_Job_Steps.job = sw.t_jobs.job
@@ -170,7 +170,7 @@ BEGIN
                   V_Job_Steps.state = 5 AND
                   sw.t_jobs.state = 4;
 
-            If Exists (SELECT * FROM Tmp_SJL) Then
+            If Exists (SELECT * FROM Tmp_Selected_Jobs) Then
                 CALL sw.remove_selected_jobs (
                         _infoOnly => false,
                         _message => _removeJobsMessage,
@@ -282,7 +282,7 @@ BEGIN
     END;
 
     DROP TABLE Tmp_SharedResultFolders;
-    DROP TABLE Tmp_SJL;
+    DROP TABLE Tmp_Selected_Jobs;
 END
 $$;
 

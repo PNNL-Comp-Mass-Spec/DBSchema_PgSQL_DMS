@@ -56,12 +56,12 @@ BEGIN
     -- Create table to track the list of affected jobs
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_SJL (
+    CREATE TEMP TABLE Tmp_Selected_Jobs (
         Job int not null,
         State int
     );
 
-    CREATE INDEX IX_Tmp_SJL_Job ON Tmp_SJL (Job);
+    CREATE INDEX IX_Tmp_Selected_Jobs_Job ON Tmp_Selected_Jobs (Job);
 
     CREATE TEMP TABLE Tmp_JobsNotInHistory (
         Job int not null,
@@ -106,7 +106,7 @@ BEGIN
 
         _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForSuccess);
 
-        INSERT INTO Tmp_SJL (job, state)
+        INSERT INTO Tmp_Selected_Jobs (job, state)
         SELECT TOP ( _maxJobsToProcess ) job, state
         FROM sw.t_jobs
         WHERE state IN (4, 7) AND        -- 4=Complete, 7=No Intermediate Files Created
@@ -115,9 +115,9 @@ BEGIN
 
         If _validateJobStepSuccess Then
             -- Remove any jobs that have failed, in progress, or holding job steps
-            DELETE Tmp_SJL
+            DELETE Tmp_Selected_Jobs
             FROM sw.t_job_steps JS
-            WHERE Tmp_SJL.job = JS.job AND
+            WHERE Tmp_Selected_Jobs.job = JS.job AND
                   NOT JS.state IN (3, 5);
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -141,7 +141,7 @@ BEGIN
 
         _cutoffDateTimeForFail := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForFail);
 
-        INSERT INTO Tmp_SJL (job, state)
+        INSERT INTO Tmp_Selected_Jobs (job, state)
         SELECT job,
                state
         FROM sw.t_jobs
@@ -155,13 +155,13 @@ BEGIN
     ---------------------------------------------------
 
     If _jobListOverride <> '' Then
-        INSERT INTO Tmp_SJL (job, state)
+        INSERT INTO Tmp_Selected_Jobs (job, state)
         SELECT job,
                state
         FROM sw.t_jobs
         WHERE job IN ( SELECT DISTINCT VALUE
                        FROM public.parse_delimited_integer_list ( _jobListOverride, ',' ) ) AND
-              NOT job IN ( SELECT job FROM Tmp_SJL )
+              NOT job IN ( SELECT job FROM Tmp_Selected_Jobs )
     End If;
 
     ---------------------------------------------------
@@ -170,11 +170,11 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_JobsNotInHistory (job, state)
-    SELECT Tmp_SJL.job,
-           Tmp_SJL.state
-    FROM Tmp_SJL
+    SELECT Tmp_Selected_Jobs.job,
+           Tmp_Selected_Jobs.state
+    FROM Tmp_Selected_Jobs
          LEFT OUTER JOIN sw.t_jobs_history JH
-           ON Tmp_SJL.job = JH.job
+           ON Tmp_Selected_Jobs.job = JH.job
     WHERE JH.job IS NULL;
 
     If Exists (Select * from Tmp_JobsNotInHistory) Then
@@ -211,7 +211,7 @@ BEGIN
             _logDeletions => _logDeletions,
             _logToConsoleOnly => _logToConsoleOnly);
 
-    DROP TABLE Tmp_SJL;
+    DROP TABLE Tmp_Selected_Jobs;
     DROP TABLE Tmp_JobsNotInHistory;
 END
 $$;
