@@ -1,27 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE sw.remove_selected_jobs
-(
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _logDeletions boolean = false,
-    _logToConsoleOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: remove_selected_jobs(boolean, text, text, boolean, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.remove_selected_jobs(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _logdeletions boolean DEFAULT false, IN _logtoconsoleonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Delete jobs given in temp table Tmp_SJL, which must be populated by the caller
+**      Delete jobs in temp table Tmp_Selected_Jobs (populated by the caller)
 **
-**          CREATE TEMP TABLE Tmp_SJL (
+**          CREATE TEMP TABLE Tmp_Selected_Jobs (
 **              Job int,
 **              State int
 **          );
 **
 **  Arguments:
-**    _infoOnly             When true, don't actually delete, just dump list of jobs that would have been
-**    _logDeletions         When true, logs each deleted job number to T_Log_Entries (but only if _logToConsoleOnly is false)
+**    _infoOnly             When true, don't actually delete, just display the list of jobs that would be deleted
+**    _logDeletions         When true, logs each deleted job number to sw.t_log_entries (but only if _logToConsoleOnly is false)
 **    _logToConsoleOnly     When _logDeletions is true, optionally set this to true to only show deleted job info in the output console (via RAISE INFO messages)
 **
 **  Auth:   grk
@@ -32,13 +28,19 @@ AS $$
 **                         - Now disabling trigger trig_ud_T_Jobs when deleting rows from T_Jobs (required because procedure RemoveOldJobs wraps the call to this procedure with a transaction)
 **          06/16/2014 mem - Now disabling trigger trig_ud_T_Job_Steps when deleting rows from T_Job_Steps
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
-**          12/15/2023 mem - Ported to PostgreSQL
+**          06/29/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _deleteCount int;
     _job int;
-    _numJobs int;
+    _jobCount int;
+    _deleteCount int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -48,23 +50,55 @@ BEGIN
     _logToConsoleOnly := Coalesce(_logToConsoleOnly, false);
 
     ---------------------------------------------------
-    -- Bail If no candidates found
+    -- Bail if no candidates found
     ---------------------------------------------------
 
     SELECT COUNT(*)
-    INTO _numJobs
-    FROM Tmp_SJL;
+    INTO _jobCount
+    FROM Tmp_Selected_Jobs;
 
-    If _numJobs = 0 Then
+    If _jobCount = 0 Then
         RETURN;
     End If;
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        ---------------------------------------------------
+        -- Preview the jobs to be deleted
+        ---------------------------------------------------
 
-        -- ToDo: Show the contents of Tmp_SJL using RAISE INFO
-        SELECT * FROM Tmp_SJL;
+        RAISE INFO '';
+        RAISE INFO 'Previewing the % % that would be deleted', _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'State'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '----------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Job, State
+            FROM Tmp_Selected_Jobs
+            ORDER BY Job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.State
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
         RETURN;
     End If;
 
@@ -78,34 +112,35 @@ BEGIN
     -- were directly dependent upon steps that generated
     -- shared results, and makes sure that their output folder
     -- name is entered into the shared results table
-    --
-    INSERT INTO sw.t_shared_results( results_name )
+
+    INSERT INTO sw.t_shared_results (results_name)
     SELECT DISTINCT JS.output_folder_name
-    FROM sw.t_job_steps AS JS
-        INNER JOIN sw.t_job_step_dependencies AS JSD
-          ON JS.Job = JSD.Job AND
-             JS.Step = JSD.Step
-        INNER JOIN sw.t_job_steps AS JS
-          ON JSD.Job = JS.Job AND
-             JSD.Target_Step = JS.Step
-    WHERE JS.Tool = 'Results_Transfer' AND
-          JS.state = 5 AND
+    FROM sw.t_job_steps AS TransferJS
+         INNER JOIN sw.t_job_step_dependencies AS JSD
+           ON TransferJS.Job = JSD.Job AND
+              TransferJS.Step = JSD.Step
+         INNER JOIN sw.t_job_steps AS JS
+           ON JSD.Job = JS.Job AND
+              JSD.Target_Step = JS.Step
+    WHERE TransferJS.Tool = 'Results_Transfer' AND
+          TransferJS.state = 5 AND
           JS.shared_result_version > 0 AND
           NOT JS.output_folder_name IN ( SELECT results_name
                                          FROM sw.t_shared_results ) AND
-          JS.job IN ( SELECT job
-                      FROM Tmp_SJL );
+          TransferJS.job IN ( SELECT job
+                              FROM Tmp_Selected_Jobs );
 
     ---------------------------------------------------
     -- Delete job dependencies
     ---------------------------------------------------
 
     DELETE FROM sw.t_job_step_dependencies
-    WHERE job IN (SELECT job FROM Tmp_SJL);
+    WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
     --
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
     If _logDeletions Then
+        RAISE INFO '';
         RAISE INFO 'Deleted % % from sw.t_job_step_dependencies', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
     End If;
 
@@ -114,7 +149,7 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM sw.t_job_parameters
-    WHERE job IN (SELECT job FROM Tmp_SJL);
+    WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
     --
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -129,7 +164,7 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM sw.t_job_steps
-    WHERE job IN (SELECT job FROM Tmp_SJL);
+    WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
     --
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -149,19 +184,28 @@ BEGIN
         -- Delete jobs one at a time, posting a log entry for each deleted job
         ---------------------------------------------------
 
+        _deleteCount := 0;
+
         FOR _job IN
             SELECT Job
-            FROM Tmp_SJL
+            FROM Tmp_Selected_Jobs
             ORDER BY Job
         LOOP
 
             DELETE FROM sw.t_jobs
             WHERE job = _job;
 
-            _message := format('Deleted job %s from sw.t_jobs', _job);
-            CALL public.post_log_entry ('Normal', _message, 'Remove_Selected_Jobs', 'sw');
+            If FOUND Then
+                _message := format('Deleted job %s from sw.t_jobs', _job);
+                CALL public.post_log_entry ('Normal', _message, 'Remove_Selected_Jobs', 'sw');
+                _deleteCount := _deleteCount + 1;
+            Else
+                RAISE INFO 'Job % already deleted from sw.t_jobs', _job;
+            End If;
 
         END LOOP;
+
+        RAISE INFO 'Deleted % % from sw.t_jobs', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
 
     Else
 
@@ -172,7 +216,7 @@ BEGIN
         ALTER TABLE sw.t_jobs DISABLE TRIGGER trig_t_jobs_after_delete;
 
         DELETE FROM sw.t_jobs
-        WHERE job IN (SELECT job FROM Tmp_SJL);
+        WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -187,4 +231,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.remove_selected_jobs IS 'RemoveSelectedJobs';
+
+ALTER PROCEDURE sw.remove_selected_jobs(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _logdeletions boolean, IN _logtoconsoleonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE remove_selected_jobs(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _logdeletions boolean, IN _logtoconsoleonly boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.remove_selected_jobs(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _logdeletions boolean, IN _logtoconsoleonly boolean) IS 'RemoveSelectedJobs';
+
