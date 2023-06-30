@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_selected_tasks(IN _infoonly boolean DEFAU
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          06/22/2023 mem - Ported to PostgreSQL
+**          06/29/2023 mem - Disable trigger trig_t_tasks_after_delete on cap.t_tasks when deleting in bulk
 **
 *****************************************************/
 DECLARE
@@ -149,10 +150,14 @@ BEGIN
         -- Delete in bulk
         ---------------------------------------------------
 
+        ALTER TABLE cap.t_tasks DISABLE TRIGGER trig_t_tasks_after_delete;
+
         DELETE FROM cap.t_tasks
         WHERE Job IN (SELECT Job FROM Tmp_Selected_Jobs);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
+
+        ALTER TABLE cap.t_tasks ENABLE TRIGGER trig_t_tasks_after_delete;
 
     End If;
 
