@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_selected_tasks(IN _infoonly boolean DEFAU
 /****************************************************
 **
 **  Desc:
-**      Delete capture task jobs given in temp table Tmp_Selected_Jobs (populated by the caller)
+**      Delete capture task jobs in temp table Tmp_Selected_Jobs (populated by the caller)
 **
 **          CREATE TEMP TABLE Tmp_Selected_Jobs (
 **              Job int not null,
@@ -17,13 +17,14 @@ CREATE OR REPLACE PROCEDURE cap.remove_selected_tasks(IN _infoonly boolean DEFAU
 **
 **  Arguments:
 **    _infoOnly       When true, don't actually delete, just display the list of capture task jobs that would be deleted
-**    _logDeletions   When true, logs each deleted job number in cap.t_log_entries
+**    _logDeletions   When true, logs each deleted job number to cap.t_log_entries
 **
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          06/22/2023 mem - Ported to PostgreSQL
 **          06/29/2023 mem - Disable trigger trig_t_tasks_after_delete on cap.t_tasks when deleting in bulk
+**                         - Update comments and messages
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ BEGIN
     FROM Tmp_Selected_Jobs;
 
     If _jobCount = 0 Then
-       RETURN;
+        RETURN;
     End If;
 
     If _infoOnly Then
@@ -101,24 +102,24 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM cap.t_task_step_dependencies
-    WHERE Job IN (SELECT Job FROM Tmp_Selected_Jobs);
+    WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
 
     ---------------------------------------------------
     -- Delete capture task job parameters
     ---------------------------------------------------
 
     DELETE FROM cap.t_task_parameters
-    WHERE Job IN (SELECT Job FROM Tmp_Selected_Jobs);
+    WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
 
     ---------------------------------------------------
     -- Delete job steps
     ---------------------------------------------------
 
     DELETE FROM cap.t_task_steps
-    WHERE Job IN (SELECT Job FROM Tmp_Selected_Jobs);
+    WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
 
     ---------------------------------------------------
-    -- Delete entries in t_tasks
+    -- Delete entries in cap.t_tasks
     ---------------------------------------------------
 
     If _logDeletions Then
@@ -136,9 +137,9 @@ BEGIN
         LOOP
 
             DELETE FROM cap.t_tasks
-            WHERE Job = _job;
+            WHERE job = _job;
 
-            _message := format('Deleted job %s from t_tasks', _job);
+            _message := format('Deleted job %s from cap.t_tasks', _job);
             CALL public.post_log_entry ('Normal', _message, 'Remove_Selected_Tasks', 'cap');
 
             _deleteCount := _deleteCount + 1;
@@ -153,7 +154,7 @@ BEGIN
         ALTER TABLE cap.t_tasks DISABLE TRIGGER trig_t_tasks_after_delete;
 
         DELETE FROM cap.t_tasks
-        WHERE Job IN (SELECT Job FROM Tmp_Selected_Jobs);
+        WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
