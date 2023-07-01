@@ -260,129 +260,54 @@ BEGIN
         If _operation::citext = 'update' Then
             UPDATE t_emsl_instrument_usage_report
             SET comment = Tmp_Factors.Value
-            FROM t_emsl_instrument_usage_report
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_emsl_instrument_usage_report
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_emsl_instrument_usage_report.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_Factors ON Seq = Identifier
-            WHERE Field = 'Comment'
-
+            FROM Tmp_Factors
+            WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
+                  Field = 'Comment';
+3
             UPDATE t_emsl_instrument_usage_report
             SET proposal = Tmp_Factors.Value
-            FROM t_emsl_instrument_usage_report
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_emsl_instrument_usage_report
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_emsl_instrument_usage_report.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_Factors ON Seq = Identifier
-            WHERE Field = 'Proposal'
+            FROM Tmp_Factors
+            WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
+                 Field = 'Proposal';
 
             UPDATE t_emsl_instrument_usage_report
             SET operator = public.try_cast(Tmp_Factors.Value, null::0)
-            FROM t_emsl_instrument_usage_report
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_emsl_instrument_usage_report
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_emsl_instrument_usage_report.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_Factors ON Seq = Identifier
-            WHERE Field = 'Operator'
+            FROM Tmp_Factors
+            WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
+                Field = 'Operator';
 
             UPDATE t_emsl_instrument_usage_report
             SET users = Tmp_Factors.Value
-            FROM t_emsl_instrument_usage_report
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_emsl_instrument_usage_report
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_emsl_instrument_usage_report.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_Factors ON Seq = Identifier
-            WHERE Field = 'Users'
+            FROM Tmp_Factors
+            WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
+                  Field = 'Users';
 
             UPDATE t_emsl_instrument_usage_report
             SET usage_type_id = InstUsageType.ID
-            FROM t_emsl_instrument_usage_report InstUsage
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_emsl_instrument_usage_report
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_emsl_instrument_usage_report.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_Factors
-                   ON InstUsage.Seq = Tmp_Factors.Identifier
+            FROM Tmp_Factors
                  INNER JOIN t_emsl_instrument_usage_type InstUsageType
                    ON Tmp_Factors.Value = InstUsageType.usage_type
-            WHERE Field = 'Usage'
+            WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
+                  Field = 'Usage';
 
             UPDATE t_emsl_instrument_usage_report
-            SET
-                updated = CURRENT_TIMESTAMP,
+            SET updated = CURRENT_TIMESTAMP,
                 updated_by = _callingUser
-            FROM t_emsl_instrument_usage_report
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_emsl_instrument_usage_report
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_emsl_instrument_usage_report.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-            INNER JOIN Tmp_Factors ON Seq = Identifier
+            FROM Tmp_Factors
+                 WHERE Seq = Identifier;
 
         End If;
 
         If _operation::citext = 'reload' Then
             UPDATE t_emsl_instrument_usage_report
-            SET
-                usage_type_id = Null,
+            SET usage_type_id = Null,
                 proposal = '',
                 users = '',
                 operator = Null,
                 comment = ''
             WHERE _year = year AND
                   _month = month AND
-                  (_instrument = '' OR dms_inst_id = _instrumentID)
+                  (_instrument = '' OR dms_inst_id = _instrumentID);
 
             CALL update_dataset_interval _instrument, _startOfMonth, _endOfMonth, _message => _message
 

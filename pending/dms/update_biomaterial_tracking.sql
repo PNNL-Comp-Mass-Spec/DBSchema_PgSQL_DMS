@@ -49,25 +49,12 @@ BEGIN
 
     UPDATE Tmp_Biomaterial_Stats
     SET Experiment_Count = S.Cnt
-    FROM Tmp_Biomaterial_Stats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT Biomaterial_ID,
-                             COUNT(Exp_ID) AS Cnt
-                      FROM t_experiment_biomaterial
-                      GROUP BY Biomaterial_ID
-                     ) AS S
-           ON Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID
+    FROM ( SELECT Biomaterial_ID,
+                  COUNT(Exp_ID) AS Cnt
+           FROM t_experiment_biomaterial
+           GROUP BY Biomaterial_ID
+          ) AS S
+    WHERE Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID;
 
     ----------------------------------------------------------
     -- Update dataset count statistics
@@ -75,29 +62,16 @@ BEGIN
 
     UPDATE Tmp_Biomaterial_Stats
     SET Dataset_Count = S.Cnt
-    FROM Tmp_Biomaterial_Stats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_experiment_biomaterial.biomaterial_id,
-                             COUNT(t_dataset.dataset_id) AS Cnt
-                      FROM t_experiment_biomaterial
-                           INNER JOIN t_experiments
-                             ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
-                           INNER JOIN t_dataset
-                             ON t_experiments.exp_id = t_dataset.exp_id
-                      GROUP BY t_experiment_biomaterial.biomaterial_id
-                     ) AS S
-           ON Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID
+    FROM ( SELECT t_experiment_biomaterial.biomaterial_id,
+                  COUNT(t_dataset.dataset_id) AS Cnt
+           FROM t_experiment_biomaterial
+                INNER JOIN t_experiments
+                  ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
+                INNER JOIN t_dataset
+                  ON t_experiments.exp_id = t_dataset.exp_id
+           GROUP BY t_experiment_biomaterial.biomaterial_id
+          ) AS S
+     WHERE Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID;
 
     ----------------------------------------------------------
     -- Update analysis count statistics for results table
@@ -105,31 +79,18 @@ BEGIN
 
     UPDATE Tmp_Biomaterial_Stats
     SET Job_Count = S.Cnt
-    FROM Tmp_Biomaterial_Stats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_experiment_biomaterial.biomaterial_id,
-                             COUNT(t_analysis_job.job) AS Cnt
-                      FROM t_experiment_biomaterial
-                           INNER JOIN t_experiments
-                             ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
-                           INNER JOIN t_dataset
-                             ON t_experiments.exp_id = t_dataset.exp_id
-                           INNER JOIN t_analysis_job
-                             ON t_dataset.dataset_id = t_analysis_job.dataset_id
-                      GROUP BY t_experiment_biomaterial.biomaterial_id
-                     ) AS S
-           ON Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID
+    FROM ( SELECT t_experiment_biomaterial.biomaterial_id,
+                  COUNT(t_analysis_job.job) AS Cnt
+           FROM t_experiment_biomaterial
+                INNER JOIN t_experiments
+                  ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
+                INNER JOIN t_dataset
+                  ON t_experiments.exp_id = t_dataset.exp_id
+                INNER JOIN t_analysis_job
+                  ON t_dataset.dataset_id = t_analysis_job.dataset_id
+           GROUP BY t_experiment_biomaterial.biomaterial_id
+          ) AS S
+    WHERE Tmp_Biomaterial_Stats.Biomaterial_ID = S.Biomaterial_ID;
 
     ----------------------------------------------------------
     -- Update T_Biomaterial_Type_Name using Tmp_Biomaterial_Stats

@@ -28,6 +28,12 @@ DECLARE
     _activeStepThreshold int := 25;
     _longRunningThreshold int := 10;
     _updateCount int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

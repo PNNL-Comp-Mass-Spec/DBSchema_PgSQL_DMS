@@ -50,6 +50,12 @@ DECLARE
     _experimentCountTotal int;
     _dups text := '';
     _msg text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

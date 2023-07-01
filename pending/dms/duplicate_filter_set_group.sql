@@ -23,6 +23,12 @@ AS $$
 *****************************************************/
 DECLARE
     _filterCriteriaGroupIDNext int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -75,11 +81,15 @@ BEGIN
     FROM t_filter_set_criteria_groups;
 
     If _infoOnly Then
+
         -- ToDo: Show this data using RAISE INFO
+        
         SELECT _filterCriteriaGroupIDNext AS NewGroupID, Criterion_ID, Criterion_Comparison, Criterion_Value
         FROM t_filter_set_criteria
         WHERE filter_criteria_group_id = _filterCriteriaGroupID
         ORDER BY criterion_id
+
+	    _message := format('Would duplicate Filter Criteria Group %s for Filter Set ID %s', _filterCriteriaGroupID, _filterSetID);
     Else
 
         -- Create a new entry in t_filter_set_criteria_groups
@@ -96,9 +106,9 @@ BEGIN
         WHERE filter_criteria_group_id = _filterCriteriaGroupID
         ORDER BY criterion_id
 
-    End If;
+	    _message := format('Duplicated Filter Criteria Group %s for Filter Set ID %s', _filterCriteriaGroupID, _filterSetID);
 
-    _message := format('Duplicated Filter Criteria Group %s for Filter Set ID %s', _filterCriteriaGroupID, _filterSetID);
+    End If;
 
     RAISE INFO '%', _message;
 

@@ -44,6 +44,12 @@ DECLARE
     _matchIndex int;
     _enteredBy text;
     _enteredByNew text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

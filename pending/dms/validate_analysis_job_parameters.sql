@@ -795,9 +795,24 @@ BEGIN
             RETURN;
         End If;
 
-    -- ToDo: use xpath()
-    --    SELECT (xpath('//item/@key', contents))[1]::text AS KeyName,
-    --       (xpath('//item/@value', contents))[1]::text AS Value
+    -- ToDo: use xpath() or XMLTABLE
+	--
+    --    SELECT (xpath('//sections/section/item/@key', _xml))[1]::text AS SettingName,
+    --           (xpath('//sections/section/item/@value', _xml))[1]::text AS SettingValue
+
+    --    SELECT XmlQ.job, XmlQ.step, XmlQ.section, XmlQ.name, XmlQ.value
+    --    FROM (
+    --        SELECT xmltable.*
+    --        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml As rooted_xml ) Src,
+    --             XMLTABLE('//params/Param'
+    --                      PASSING Src.rooted_xml
+    --                      COLUMNS job int PATH '@Job',
+    --                              step int PATH '@Step_Number',
+    --                              section citext PATH '@Section',
+    --                              name citext PATH '@Name',
+    --                              value citext PATH '@Value')
+    --         ) XmlQ;
+
 
         SELECT SettingValue
         INTO _splitFasta
@@ -819,9 +834,23 @@ BEGIN
             RETURN;
         End If;
 
-    -- ToDo: use xpath()
-    --    SELECT (xpath('//item/@key', contents))[1]::text AS KeyName,
-    --       (xpath('//item/@value', contents))[1]::text AS Value
+    -- ToDo: use xpath() or XMLTABLE
+	--
+    --    SELECT (xpath('//sections/section/item/@key', _xml))[1]::text AS SettingName,
+    --           (xpath('//sections/section/item/@value', _xml))[1]::text AS SettingValue
+
+    --    SELECT XmlQ.job, XmlQ.step, XmlQ.section, XmlQ.name, XmlQ.value
+    --    FROM (
+    --        SELECT xmltable.*
+    --        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml As rooted_xml ) Src,
+    --             XMLTABLE('//params/Param'
+    --                      PASSING Src.rooted_xml
+    --                      COLUMNS job int PATH '@Job',
+    --                              step int PATH '@Step_Number',
+    --                              section citext PATH '@Section',
+    --                              name citext PATH '@Name',
+    --                              value citext PATH '@Value')
+    --         ) XmlQ;
 
         SELECT SettingValue
         INTO _numberOfClonedSteps

@@ -38,6 +38,12 @@ DECLARE
     _instrumentName text;
     _entryID int;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -55,7 +61,7 @@ BEGIN
         instrument text,
         msg text NULL,
         result text NULL
-    )
+    );
 
     _mode := Lower(_mode);
 
@@ -111,7 +117,8 @@ BEGIN
 
         If _mode::citext In ('debug', 'info') Then
 
-            -- ToDo: Preview results
+            -- ToDo: Preview results using RAISE INFO
+            
             SELECT * FROM Tmp_TrackedInstruments
 
         End If;

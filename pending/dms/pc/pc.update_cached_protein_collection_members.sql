@@ -156,21 +156,8 @@ BEGIN
         --
         UPDATE Tmp_ProteinCollections
         SET Processed = 1
-        FROM Tmp_ProteinCollections PC
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE #Tmp_ProteinCollections
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = #Tmp_ProteinCollections.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN Tmp_CurrentIDs C
-               ON C.Protein_Collection_ID = PC.Protein_Collection_ID
+        FROM Tmp_CurrentIDs C
+        WHERE C.Protein_Collection_ID = Tmp_ProteinCollections.Protein_Collection_ID;
 
         SELECT Count(*),
                Min(Protein_Collection_ID),

@@ -39,6 +39,12 @@ DECLARE
     _instrumentID int := 0;
     _usageTypeID int := 0;
     _newUsageTypeID int := 0;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     ---------------------------------------------------
     -- Validate the inputs
@@ -109,7 +115,9 @@ BEGIN
     ---------------------------------------------------
 
     If _doUpdate = 0 Then
+
         -- ToDo: Preview the table rows using RAISE INFO
+
         SELECT *
         FROM Tmp_InstrumentUsageInfo INNER JOIN
              t_emsl_instrument_usage_report TD ON Tmp_InstrumentUsageInfo.seq = TD.seq;

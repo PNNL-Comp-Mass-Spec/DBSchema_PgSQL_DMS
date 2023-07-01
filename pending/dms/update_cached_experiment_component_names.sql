@@ -30,6 +30,12 @@ DECLARE
     _biomaterialList text := null;
     _refCompoundList text := null;
     _currentExpID int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

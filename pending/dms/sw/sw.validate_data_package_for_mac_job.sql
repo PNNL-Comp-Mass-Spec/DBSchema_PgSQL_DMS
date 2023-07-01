@@ -43,6 +43,17 @@ AS $$
 **
 *****************************************************/
 DECLARE
+    _errMsg text = '',
+    _datasetCount int,
+    _deconToolsCountNotOne int,
+    _masicCountNotOne int,
+    _msgfPlusCountExactlyOne int,
+    _msgfPlusCountNotOne int,
+    _msgfPlusCountOneOrMore int,
+    _sequestCountExactlyOne int,
+    _sequestCountNotOne int,
+    _sequestCountOneOrMore int
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -85,52 +96,25 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_DataPackageItems
-        Set
-            Decon2LS_V2 = TargetTable.Decon2LS_V2,
+        SET Decon2LS_V2 = TargetTable.Decon2LS_V2,
             MASIC = TargetTable.MASIC,
             MSGFPlus = TargetTable.MSGFPlus,
             SEQUEST = TargetTable.SEQUEST
-        FROM Tmp_DataPackageItems INNER JOIN
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE Tmp_DataPackageItems
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = Tmp_DataPackageItems.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-        (
-            SELECT
-                TPKG.Dataset,
-                SUM(CASE WHEN TPKG.Tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
-                SUM(CASE WHEN TPKG.Tool = 'MASIC_Finnigan' AND TD.Param_File LIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
-                SUM(CASE WHEN TPKG.Tool LIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
-                SUM(CASE WHEN TPKG.Tool LIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
-            FROM    dpkg.t_data_package_analysis_jobs AS TPKG
-                    INNER JOIN public.V_Source_Analysis_Job AS TD ON TPKG.Job = TD.Job
-            WHERE   ( TPKG.Data_Package_ID = _dataPackageID )
-            GROUP BY TPKG.Dataset
-        ) TargetTable ON Tmp_DataPackageItems.Dataset = TargetTable.Dataset
+        FROM ( SELECT TPKG.Dataset,
+                      SUM(CASE WHEN TPKG.Tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
+                      SUM(CASE WHEN TPKG.Tool = 'MASIC_Finnigan' AND TD.Param_File LIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
+                      SUM(CASE WHEN TPKG.Tool LIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
+                      SUM(CASE WHEN TPKG.Tool LIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
+               FROM dpkg.t_data_package_analysis_jobs AS TPKG
+                    INNER JOIN public.V_Source_Analysis_Job AS TD 
+                      ON TPKG.Job = TD.Job
+               WHERE TPKG.Data_Package_ID = _dataPackageID
+               GROUP BY TPKG.Dataset) TargetTable
+        WHERE Tmp_DataPackageItems.Dataset = TargetTable.Dataset;
 
         ---------------------------------------------------
         -- Assess job/tool coverage of datasets
         ---------------------------------------------------
-
-        Declare
-            _errMsg text = '',
-            _datasetCount int,
-            _deconToolsCountNotOne int,
-            _masicCountNotOne int,
-            _msgfPlusCountExactlyOne int,
-            _msgfPlusCountNotOne int,
-            _msgfPlusCountOneOrMore int,
-            _sequestCountExactlyOne int,
-            _sequestCountNotOne int,
-            _sequestCountOneOrMore int
 
         SELECT COUNT(*)
         INTO _datasetCount

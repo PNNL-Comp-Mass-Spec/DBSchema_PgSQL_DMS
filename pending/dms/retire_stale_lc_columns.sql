@@ -23,6 +23,12 @@ DECLARE
     _updateCount int;
     _usedThresholdMonths int := 9;
     _unusedThresholdMonths int := 24;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

@@ -50,21 +50,9 @@ BEGIN
         --
         UPDATE t_analysis_job
         SET purged = 1
-        FROM t_analysis_job J INNER JOIN
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE t_analysis_job
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = t_analysis_job.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             Tmp_JobList L ON J.job = L.Job
-        WHERE J.purged = 0
+        FROM Tmp_JobList JL
+        WHERE JL.job = t_analysis_job.job AND 
+              t_analysis_job.purged = 0;
 
     End If;
 

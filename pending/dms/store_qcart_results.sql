@@ -42,6 +42,12 @@ DECLARE
     _datasetName text;
     _datasetIDCheck int;
     _usageMessage text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -133,23 +139,10 @@ BEGIN
     If _datasetID = 0 Then
         UPDATE Tmp_DatasetInfo
         SET Dataset_ID = DS.Dataset_ID
-        FROM Tmp_DatasetInfo Target
+        FROM t_dataset DS
+        WHERE Tmp_DatasetInfo.Dataset_Name = DS.dataset;
 
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE Tmp_DatasetInfo
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = Tmp_DatasetInfo.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN t_dataset DS
-               ON Target.Dataset_Name = DS.dataset
-
-        If not FOUND Then
+        If Not FOUND Then
             _message := format('Warning: dataset not found in table t_dataset: %s', _datasetName);
             RAISE WARNING '%', _message;
 

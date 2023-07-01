@@ -20,6 +20,12 @@ DECLARE
     _updateCount int;
     _message text;
     _proposalList text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
 
     ---------------------------------------------------

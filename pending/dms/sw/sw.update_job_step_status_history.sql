@@ -32,6 +32,12 @@ DECLARE
     _identicalStatCount int;
     _updateTable booleahn;
     _mostRecentPostingTime timestamp;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

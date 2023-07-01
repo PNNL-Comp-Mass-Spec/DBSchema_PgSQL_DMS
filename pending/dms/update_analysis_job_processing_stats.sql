@@ -45,6 +45,12 @@ DECLARE
     _datasetName text := '';
     _toolName citext := '';
     _updateCodeExpected int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -92,7 +98,9 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
+        
         -- ToDo: Use RAISE INFO to display the old and new values
+        
         SELECT State_ID,
                _newDMSJobState AS State_ID_New,
                Start,

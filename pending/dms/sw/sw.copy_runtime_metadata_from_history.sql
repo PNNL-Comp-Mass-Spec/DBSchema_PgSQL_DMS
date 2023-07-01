@@ -69,6 +69,12 @@ DECLARE
     _updateCount int;
     _job int;
     _jobStep int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     ---------------------------------------------------
     -- Validate the inputs

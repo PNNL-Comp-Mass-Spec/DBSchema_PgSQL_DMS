@@ -39,6 +39,12 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _jobID int;
     _stateID int;
     _msg text;
@@ -100,7 +106,8 @@ BEGIN
         -- ToDo: Show this using RAISE INFO
         SELECT 'To be deleted' As Action, *
         FROM t_analysis_job
-        WHERE (job = _jobID);
+        WHERE job = _jobID;
+        
         RETURN;
     Else
 

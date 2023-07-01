@@ -78,6 +78,12 @@ DECLARE
     _intervalSum int;
     _percentInUse numeric;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;

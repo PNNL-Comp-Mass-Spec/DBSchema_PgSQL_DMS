@@ -33,14 +33,20 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _sStart text;
-    _s text;
+    _sqlStart text;
+    _sql text;
     _filesProcessed int;
     _paramFileInfo record;
     _updateCount int;
     _modCount int;
     _entryCount int;
     _entryInfo record;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -167,35 +173,36 @@ BEGIN
     -- Populate Tmp_ParamFiles
     -----------------------------------------
 
-    _sStart := 'INSERT INTO Tmp_ParamFiles (Param_File_ID, Param_File_Name, Param_File_Type_ID, Param_File_Type) ';
+    _sqlStart := 'INSERT INTO Tmp_ParamFiles (Param_File_ID, Param_File_Name, Param_File_Type_ID, Param_File_Type)';
 
-    _s := 'SELECT PF.param_file_id, '
-                 'PF.param_file_name, '
-                 'PF.param_file_type_id, '
-                 'PFT.param_file_type '
-          'FROM t_param_files PF INNER JOIN '
-               't_param_file_types PFT ON PF.param_file_type_id = PFT.param_file_type_id INNER JOIN '
-               'Tmp_ParamFileTypeFilter PFTF ON PFT.param_file_type = PFTF.param_file_type';
+    _sql := 'SELECT PF.param_file_id, '
+                   'PF.param_file_name, '
+                   'PF.param_file_type_id, '
+                   'PFT.param_file_type '
+            'FROM t_param_files PF INNER JOIN '
+                 't_param_file_types PFT ON PF.param_file_type_id = PFT.param_file_type_id INNER JOIN '
+                 'Tmp_ParamFileTypeFilter PFTF ON PFT.param_file_type = PFTF.param_file_type';
 
     If _checkValidOnly Then
-        _s := format('%s WHERE PF.Valid <> 0', _s);
+        _sql := format('%s WHERE PF.Valid <> 0', _sql);
     Else
-        _s := format('%s WHERE true, _s)';
+        _sql := format('%s WHERE true', _sql);
     End If;
 
     If char_length(_paramFileNameFilter) > 0 Then
-        _s := format('%s AND (%s)', _s, public.create_like_clause_from_separated_string(_paramFileNameFilter, 'Param_File_Name', ','));
+        _sql := format('%s AND (%s)', _sql, public.create_like_clause_from_separated_string(_paramFileNameFilter, 'Param_File_Name', ','));
     End If;
 
-    _s := format('%s ORDER BY Param_File_Type, Param_File_ID', _s);
+    _sql := format('%s ORDER BY Param_File_Type, Param_File_ID', _sql);
 
     If _previewSql Then
-        RAISE INFO '%', format('%s%s', _sStart, _s);
+        RAISE INFO '%', format('%s %s', _sqlStart, _sql);
 
         -- Populate Tmp_ParamFiles with the first parameter file matching the filters
-        EXECUTE (format('%s%s LIMIT 1', _sStart, _s));
+        EXECUTE (format('%s %s LIMIT 1', _sqlStart, _sql));
 
-
+		-- ToDo: Show this info using RAISE INFO
+		
         FOR _paramFileInfo IN
             SELECT Param_File_ID AS ParamFileID,
                    Param_File_Name AS ParamFileName,
@@ -208,7 +215,7 @@ BEGIN
         END LOOP;
 
     Else
-        EXECUTE (format('%s%s', _sStart, _s));
+        EXECUTE (format('%s %s', _sqlStart, _sql));
     End If;
 
     -----------------------------------------
@@ -517,24 +524,24 @@ BEGIN
                 -- Find all other parameter files that don't have any param entries
                 -----------------------------------------
 
-                _s :=  ' INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)'
-                       ' SELECT PF.param_file_id'
-                       ' FROM t_param_files PF LEFT OUTER JOIN'
-                            ' Tmp_ParamEntries PE ON '
-                            ' PF.param_file_id = PE.param_file_id AND PE.Compare'
-                       ' WHERE PE.param_file_id IS NULL AND '
-                             ' PF.param_file_id <> $1 AND'
-                             ' PF.param_file_type_id = $2';
+                _sql :=  ' INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)'
+                         ' SELECT PF.param_file_id'
+                         ' FROM t_param_files PF LEFT OUTER JOIN'
+                              ' Tmp_ParamEntries PE ON '
+                              ' PF.param_file_id = PE.param_file_id AND PE.Compare'
+                         ' WHERE PE.param_file_id IS NULL AND '
+                               ' PF.param_file_id <> $1 AND'
+                               ' PF.param_file_type_id = $2';
 
                 If _checkValidOnly Then
-                    _s := format('%s AND PF.Valid <> 0', _s);
+                    _sql := format('%s AND PF.Valid <> 0', _sql);
                 End If;
 
                 If _previewSql Then
-                    RAISE INFO '%', _s;
+                    RAISE INFO '%', _sql;
                 Else
-                    EXECUTE _s
-                    USING _paramFileInfo.ParamFileID, _paramFileInfo.ParamFileTypeID
+                    EXECUTE _sql
+                    USING _paramFileInfo.ParamFileID, _paramFileInfo.ParamFileTypeID;
                 End If;
             Else
 

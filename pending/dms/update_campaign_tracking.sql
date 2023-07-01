@@ -79,27 +79,14 @@ BEGIN
                                    WHEN S.Most_Recent > Most_Recent_Activity THEN S.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM Tmp_CampaignStats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_campaign.campaign_id,
-                             COUNT(t_sample_submission.submission_id) AS Cnt,
-                             MAX(t_sample_submission.created) AS Most_Recent
-                      FROM t_campaign
-                           INNER JOIN t_sample_submission
-                             ON t_campaign.campaign_id = t_sample_submission.campaign_id
-                      GROUP BY t_campaign.campaign_id ) AS S
-           ON Tmp_CampaignStats.campaign_id = S.campaign_id
+    FROM ( SELECT t_campaign.campaign_id,
+                  COUNT(t_sample_submission.submission_id) AS Cnt,
+                  MAX(t_sample_submission.created) AS Most_Recent
+           FROM t_campaign
+                INNER JOIN t_sample_submission
+                  ON t_campaign.campaign_id = t_sample_submission.campaign_id
+           GROUP BY t_campaign.campaign_id ) AS S
+    WHERE Tmp_CampaignStats.campaign_id = S.campaign_id;
 
     ----------------------------------------------------------
     -- Update biomaterial statistics
@@ -112,27 +99,14 @@ BEGIN
                                    WHEN S.Most_Recent > Most_Recent_Activity THEN S.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM Tmp_CampaignStats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_campaign.campaign_id,
-                             COUNT(t_biomaterial.biomaterial_id) AS Cnt,
-                             MAX(t_biomaterial.created) AS Most_Recent
-                      FROM t_campaign
-                           INNER JOIN t_biomaterial
-                             ON t_campaign.campaign_id = t_biomaterial.campaign_id
-                      GROUP BY t_campaign.campaign_id ) AS S
-           ON Tmp_CampaignStats.campaign_id = S.campaign_id
+    FROM ( SELECT t_campaign.campaign_id,
+                  COUNT(t_biomaterial.biomaterial_id) AS Cnt,
+                  MAX(t_biomaterial.created) AS Most_Recent
+           FROM t_campaign
+                INNER JOIN t_biomaterial
+                  ON t_campaign.campaign_id = t_biomaterial.campaign_id
+           GROUP BY t_campaign.campaign_id ) AS S
+    WHERE Tmp_CampaignStats.campaign_id = S.campaign_id;
 
     ----------------------------------------------------------
     -- Update experiment statistics
@@ -145,27 +119,14 @@ BEGIN
                                    WHEN S.Most_Recent > Most_Recent_Activity THEN S.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM Tmp_CampaignStats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_campaign.campaign_id,
-                             COUNT(t_experiments.exp_id) AS cnt,
-                             MAX(t_experiments.created) AS Most_Recent
-                      FROM t_campaign
-                           INNER JOIN t_experiments
-                             ON t_campaign.campaign_id = t_experiments.campaign_id
-                      GROUP BY t_campaign.campaign_id ) AS S
-           ON Tmp_CampaignStats.campaign_id = S.campaign_id
+    FROM ( SELECT t_campaign.campaign_id,
+                  COUNT(t_experiments.exp_id) AS cnt,
+                  MAX(t_experiments.created) AS Most_Recent
+           FROM t_campaign
+                INNER JOIN t_experiments
+                  ON t_campaign.campaign_id = t_experiments.campaign_id
+           GROUP BY t_campaign.campaign_id ) AS S
+    WHERE Tmp_CampaignStats.campaign_id = S.campaign_id;
 
     ----------------------------------------------------------
     -- Update dataset statistics
@@ -178,29 +139,16 @@ BEGIN
                                    WHEN S.Most_Recent > Most_Recent_Activity THEN S.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM Tmp_CampaignStats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_campaign.campaign_id,
-                             COUNT(t_dataset.dataset_id) AS Cnt,
-                             MAX(t_dataset.created) AS Most_Recent
-                      FROM t_experiments
-                           INNER JOIN t_dataset
-                             ON t_experiments.exp_id = t_dataset.exp_id
-                           INNER JOIN t_campaign
-                             ON t_experiments.campaign_id = t_campaign.campaign_id
-                      GROUP BY t_campaign.campaign_id ) AS S
-           ON Tmp_CampaignStats.campaign_id = S.campaign_id
+    FROM ( SELECT t_campaign.campaign_id,
+                  COUNT(t_dataset.dataset_id) AS Cnt,
+                  MAX(t_dataset.created) AS Most_Recent
+           FROM t_experiments
+                INNER JOIN t_dataset
+                  ON t_experiments.exp_id = t_dataset.exp_id
+                INNER JOIN t_campaign
+                  ON t_experiments.campaign_id = t_campaign.campaign_id
+           GROUP BY t_campaign.campaign_id ) AS S
+    WHERE Tmp_CampaignStats.campaign_id = S.campaign_id;
 
     ----------------------------------------------------------
     -- Update analysis statistics
@@ -213,31 +161,18 @@ BEGIN
                                    WHEN S.Most_Recent > Most_Recent_Activity THEN S.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM Tmp_CampaignStats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_campaign.campaign_id,
-                             COUNT(t_analysis_job.job) AS Cnt,
-                             MAX(t_analysis_job.created) AS Most_Recent
-                      FROM t_experiments
-                           INNER JOIN t_dataset
-                             ON t_experiments.exp_id = t_dataset.exp_id
-                           INNER JOIN t_analysis_job
-                             ON t_dataset.dataset_id = t_analysis_job.dataset_id
-                           INNER JOIN t_campaign
-                             ON t_experiments.campaign_id = t_campaign.campaign_id
-                      GROUP BY t_campaign.campaign_id ) AS S
-           ON Tmp_CampaignStats.campaign_id = S.campaign_id
+    FROM ( SELECT t_campaign.campaign_id,
+                  COUNT(t_analysis_job.job) AS Cnt,
+                  MAX(t_analysis_job.created) AS Most_Recent
+           FROM t_experiments
+                INNER JOIN t_dataset
+                  ON t_experiments.exp_id = t_dataset.exp_id
+                INNER JOIN t_analysis_job
+                  ON t_dataset.dataset_id = t_analysis_job.dataset_id
+                INNER JOIN t_campaign
+                  ON t_experiments.campaign_id = t_campaign.campaign_id
+           GROUP BY t_campaign.campaign_id ) AS S
+    WHERE Tmp_CampaignStats.campaign_id = S.campaign_id;
 
     ----------------------------------------------------------
     -- Update requested run statistics
@@ -250,27 +185,14 @@ BEGIN
                                    WHEN S.Most_Recent > Most_Recent_Activity THEN S.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM Tmp_CampaignStats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_experiments.campaign_id AS ID,
-                             COUNT(t_requested_run.request_id) AS cnt,
-                             MAX(t_requested_run.created) AS Most_Recent
-                      FROM t_requested_run
-                           INNER JOIN t_experiments
-                             ON t_requested_run.exp_id = t_experiments.exp_id
-                      GROUP BY t_experiments.campaign_id ) AS S
-           ON S.request_id = Tmp_CampaignStats.campaign_id
+    FROM ( SELECT t_experiments.campaign_id AS ID,
+                  COUNT(t_requested_run.request_id) AS cnt,
+                  MAX(t_requested_run.created) AS Most_Recent
+           FROM t_requested_run
+                INNER JOIN t_experiments
+                  ON t_requested_run.exp_id = t_experiments.exp_id
+           GROUP BY t_experiments.campaign_id ) AS S
+    WHERE S.request_id = Tmp_CampaignStats.campaign_id;
 
     ----------------------------------------------------------
     -- Update sample prep statistics
@@ -283,27 +205,14 @@ BEGIN
                                    WHEN S.Most_Recent > Most_Recent_Activity THEN S.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM Tmp_CampaignStats
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE Tmp_CampaignStats
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = Tmp_CampaignStats.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT t_campaign.campaign_id AS ID,
-                             COUNT(t_sample_prep_request.prep_request_id) AS cnt,
-                             MAX(t_sample_prep_request.created) AS Most_Recent
-                      FROM t_sample_prep_request
-                           INNER JOIN t_campaign
-                             ON t_sample_prep_request.campaign = t_campaign.campaign
-                      GROUP BY t_campaign.campaign_id ) AS S
-           ON S.prep_request_id = Tmp_CampaignStats.campaign_id
+    FROM ( SELECT t_campaign.campaign_id AS ID,
+                  COUNT(t_sample_prep_request.prep_request_id) AS cnt,
+                  MAX(t_sample_prep_request.created) AS Most_Recent
+           FROM t_sample_prep_request
+                INNER JOIN t_campaign
+                  ON t_sample_prep_request.campaign = t_campaign.campaign
+           GROUP BY t_campaign.campaign_id ) AS S
+    WHERE S.prep_request_id = Tmp_CampaignStats.campaign_id;
 
     ----------------------------------------------------------
     -- Update Data Package counts
@@ -311,26 +220,13 @@ BEGIN
 
     UPDATE t_campaign_tracking
     SET data_package_count = S.cnt
-    FROM t_campaign_tracking
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE t_campaign_tracking
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = t_campaign_tracking.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN ( SELECT E.campaign_id ID,
-                             COUNT(DISTINCT Data_Package_ID) AS cnt
-                      FROM S_V_Data_Package_Experiments_Export DPE
-                           INNER JOIN t_experiments E
-                             ON E.exp_id = DPE.Experiment_ID
-                      GROUP BY E.campaign_id ) AS S
-           ON S.ID = t_campaign_tracking.campaign_id
+    FROM ( SELECT E.campaign_id ID,
+                  COUNT(DISTINCT Data_Package_ID) AS cnt
+           FROM S_V_Data_Package_Experiments_Export DPE
+                INNER JOIN t_experiments E
+                  ON E.exp_id = DPE.Experiment_ID
+           GROUP BY E.campaign_id ) AS S
+    WHERE S.ID = t_campaign_tracking.campaign_id;
 
     ----------------------------------------------------------
     -- Update t_campaign_tracking using Tmp_CampaignStats

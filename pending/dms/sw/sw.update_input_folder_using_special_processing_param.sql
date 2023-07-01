@@ -35,6 +35,12 @@ DECLARE
     _warningMessage text;
     _actionText text;
     _jobInfo record;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := Coalesce(_message, '');
     _returnCode := '';

@@ -34,6 +34,12 @@ DECLARE
     _startDate timestamp;
     _endDateYear int;
     _endDateWeek int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     -----------------------------------------
     -- Validate the input parameters

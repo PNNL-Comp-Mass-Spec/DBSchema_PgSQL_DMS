@@ -33,6 +33,12 @@ DECLARE
     _monthsSearched int;
     _message text;
     _requestedRunsToUpdate int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
 
     ---------------------------------------------------

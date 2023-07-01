@@ -50,6 +50,12 @@ DECLARE
     _index int := 1;
     _seqIncrement int := 1;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -271,22 +277,9 @@ BEGIN
 
             UPDATE t_run_interval
             SET Interval = Tmp_Durations.Interval
-            FROM t_run_interval target
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_run_interval
-            **   SET ...
-            **   FROM source
-            **   WHERE source.interval_id = t_run_interval.interval_id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN Tmp_Durations
-                   ON target.ID = Tmp_Durations.Dataset_ID
-            WHERE Coalesce(target.Interval, 0) <> Coalesce(Tmp_Durations.Interval, target.Interval, 0)
+            FROM Tmp_Durations
+            WHERE t_run_interval.ID = Tmp_Durations.Dataset_ID AND
+                  Coalesce(target.Interval, 0) <> Coalesce(Tmp_Durations.Interval, target.Interval, 0);
 
             ---------------------------------------------------
             -- Make entries in interval tracking table
@@ -307,7 +300,7 @@ BEGIN
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id
             WHERE NOT Tmp_Durations.dataset_id IN ( SELECT interval_id FROM t_run_interval ) AND
-                  Tmp_Durations.Interval > _maxNormalInterval
+                  Tmp_Durations.Interval > _maxNormalInterval;
 
             ---------------------------------------------------
             -- Delete 'short' long intervals

@@ -82,25 +82,12 @@ BEGIN
     GROUP BY M.machine
     --
     UPDATE sw.t_machines
-    SET cpus_available = M.total_cpus - TX.CPUs_used,
+    SET cpus_available = total_cpus - TX.CPUs_used,
         memory_available = M.total_memory_mb - TX.Memory_Used
-    FROM sw.t_machines M
-
-    /********************************************************************************
-    ** This UPDATE query includes the target table name in the FROM clause
-    ** The WHERE clause needs to have a self join to the target table, for example:
-    **   UPDATE sw.t_machines
-    **   SET ...
-    **   FROM source
-    **   WHERE source.id = sw.t_machines.id;
-    ********************************************************************************/
-
-                           ToDo: Fix this query
-
-         INNER JOIN Tmp_MachineStats AS TX
-           ON TX.Machine = M.Machine
-    WHERE CPUs_Available <> M.Total_CPUs - TX.CPUs_used OR
-          Memory_Available <> M.Total_Memory_MB - TX.Memory_Used
+    FROM Tmp_MachineStats AS TX
+    WHERE TX.Machine = sw.t_machines.machine AND
+          (sw.t_machines.CPUs_Available <> sw.t_machines.Total_CPUs - TX.CPUs_used OR
+           sw.t_machines.Memory_Available <> sw.t_machines.Total_Memory_MB - TX.Memory_Used);
 
     DROP TABLE Tmp_MachineStats;
 END

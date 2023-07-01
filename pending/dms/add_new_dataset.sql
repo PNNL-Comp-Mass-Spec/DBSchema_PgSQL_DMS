@@ -120,6 +120,13 @@ DECLARE
     _runStart            text  := '';
     _runFinish           text  := '';
     _datasetCreatorUsername   text  := '';   -- Username of the person that created the dataset; it is typically only present in trigger files created due to a dataset manually being created by a user
+    
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
 BEGIN
     _message := '';
     _returnCode := '';

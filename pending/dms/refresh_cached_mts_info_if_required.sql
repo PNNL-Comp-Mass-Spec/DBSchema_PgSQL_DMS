@@ -199,20 +199,7 @@ BEGIN
             UPDATE t_mts_pt_dbs_cached
             SET msms_jobs = StatsQ.msms_jobs,
                 sic_jobs = StatsQ.sic_jobs
-            FROM t_mts_pt_dbs_cached Target
-
-            /********************************************************************************
-            ** This UPDATE query includes the target table name in the FROM clause
-            ** The WHERE clause needs to have a self join to the target table, for example:
-            **   UPDATE t_mts_pt_dbs_cached
-            **   SET ...
-            **   FROM source
-            **   WHERE source.id = t_mts_pt_dbs_cached.id;
-            ********************************************************************************/
-
-                                   ToDo: Fix this query
-
-                 INNER JOIN ( SELECT PTDBs.Peptide_DB_Name,
+            FROM  ( SELECT PTDBs.Peptide_DB_Name,
                                      PTDBs.Server_Name,
                                      SUM(CASE WHEN Coalesce(DBJobs.ResultType, '') LIKE '%Peptide_Hit' THEN 1
                                               ELSE 0
@@ -222,28 +209,15 @@ BEGIN
                                              ELSE 0
                                          END) AS SIC_Jobs
                               FROM t_mts_pt_dbs_cached PTDBs
-
-                              /********************************************************************************
-                              ** This UPDATE query includes the target table name in the FROM clause
-                              ** The WHERE clause needs to have a self join to the target table, for example:
-                              **   UPDATE t_mts_pt_dbs_cached
-                              **   SET ...
-                              **   FROM source
-                              **   WHERE source.id = t_mts_pt_dbs_cached.id;
-                              ********************************************************************************/
-
-                                                     ToDo: Fix this query
-
                                    LEFT OUTER JOIN t_mts_pt_db_jobs_cached DBJobs
-                                     ON PTDBs.peptide_db_name = DBJobs.peptide_db_name
-                                        AND
+                                     ON PTDBs.peptide_db_name = DBJobs.peptide_db_name AND
                                         PTDBs.server_name = DBJobs.server_name
                               GROUP BY PTDBs.peptide_db_name, PTDBs.server_name
                             ) StatsQ
-                   ON Target.peptide_db_name = StatsQ.peptide_db_name AND
-                      Target.server_name = StatsQ.server_name
-            WHERE Coalesce(Target.MSMS_Jobs, -1) <> StatsQ.MSMS_Jobs OR
-                  Coalesce(Target.SIC_Jobs, -1)  <> StatsQ.SIC_Jobs
+            WHERE t_mts_pt_dbs_cached.peptide_db_name = StatsQ.peptide_db_name AND
+                  t_mts_pt_dbs_cached.server_name = StatsQ.server_name AND
+                  (Coalesce(Target.MSMS_Jobs, -1) <> StatsQ.MSMS_Jobs OR
+                   Coalesce(Target.SIC_Jobs, -1)  <> StatsQ.SIC_Jobs);
 
             -- Update the Job stats in t_mts_mt_dbs_cached
             --
@@ -270,7 +244,7 @@ BEGIN
             WHERE Target.mt_db_name = StatsQ.mt_db_name AND
                   Target.server_name = StatsQ.server_name AND
                   (Coalesce(Target.MSMS_Jobs, -1) <> StatsQ.MSMS_Jobs OR
-                   Coalesce(Target.MS_Jobs, -1)   <> StatsQ.MS_Jobs)
+                   Coalesce(Target.MS_Jobs, -1)   <> StatsQ.MS_Jobs);
 
         End If;
 

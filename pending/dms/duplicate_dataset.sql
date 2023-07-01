@@ -52,6 +52,12 @@ DECLARE
     _newUsername text;
 
     _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
+    _formatSpecifier text;
 	_infoHead text;
 	_infoHeadSeparator text;
 BEGIN

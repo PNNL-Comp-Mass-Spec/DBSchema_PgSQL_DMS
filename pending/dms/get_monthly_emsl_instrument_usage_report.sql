@@ -49,6 +49,12 @@ DECLARE
     _message text := '';
     _returnCode text := '';
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -137,7 +143,9 @@ BEGIN
                                   FROM Tmp_InstrumentsToProcessByID )
 
         If _infoOnly Then
+            
             -- ToDo: Show the table data using RAISE INFO
+            
             SELECT *
             FROM Tmp_Instruments
             ORDER BY EntryID

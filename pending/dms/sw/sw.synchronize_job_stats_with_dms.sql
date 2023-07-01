@@ -26,6 +26,12 @@ DECLARE
     _insertCount int;
     _updateCount int;
     _defaultDate datetime;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

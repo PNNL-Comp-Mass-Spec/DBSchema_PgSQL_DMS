@@ -26,6 +26,12 @@ AS $$
 **
 *****************************************************/
 DECLARE
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -90,7 +96,8 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Preview results
+        -- ToDo: Preview results using RAISE INFO
+        
         SELECT Source.dataset_id,
                CASE
                WHEN AlreadyWaiting > 0 THEN 'Already in t_predefined_analysis_scheduling_queue with state "New"'

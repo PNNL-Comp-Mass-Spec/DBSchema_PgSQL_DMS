@@ -25,6 +25,12 @@ AS $$
 *****************************************************/
 DECLARE
     _remoteInfoId int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _remoteInfo := Coalesce(_remoteInfo, '');
     _infoOnly := Coalesce(_infoOnly, false);

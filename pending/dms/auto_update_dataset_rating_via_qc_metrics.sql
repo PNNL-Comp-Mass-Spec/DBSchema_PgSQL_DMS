@@ -31,6 +31,12 @@ DECLARE
     _updateCount int;
     _thresholdP_2A int := 250;
     _thresholdP_2C int := 100;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

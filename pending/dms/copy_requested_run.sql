@@ -55,6 +55,12 @@ DECLARE
     _callingUserUnconsume text;
     _batchID int;
     _msg text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -139,7 +145,6 @@ BEGIN
     If _infoOnly Then
 
         -- ToDo: Update this to use RAISE INFO
-
 
         SELECT
             request_id As Source_Request_ID,

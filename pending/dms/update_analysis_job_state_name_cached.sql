@@ -25,6 +25,12 @@ AS $$
 DECLARE
     _jobCount int := 0;
     _usageMessage text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

@@ -46,6 +46,12 @@ DECLARE
     _groupIDOld int;
     _groupCount int;
     _filterCriteriaGroupIDNext int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -103,7 +109,9 @@ BEGIN
     End If;
 
     If _infoOnly Then
+    
         -- ToDo: Show these values using RAISE INFO
+
         SELECT FSC.filter_criteria_group_id,
                FSC.criterion_id,
                FSCN.criterion_name,

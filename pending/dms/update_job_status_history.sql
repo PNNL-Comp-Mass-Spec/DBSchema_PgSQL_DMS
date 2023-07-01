@@ -28,7 +28,6 @@ DECLARE
     _matchCount int := 0;
     _timeIntervalLastUpdateHours real;
     _updateTable boolean;
-    _s text;
 BEGIN
     _message := '';
     _returnCode := '';

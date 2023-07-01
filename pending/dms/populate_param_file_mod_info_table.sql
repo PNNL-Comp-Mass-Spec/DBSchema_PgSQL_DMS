@@ -40,7 +40,7 @@ DECLARE
     _columnHeaderRowID int;
     _continueAppendDescriptions boolean;
     _modTypeFilter text;
-    _s text;
+    _sql text;
     _sqlAddon text;
     _mmd text;
     _massModFilterComparison text;
@@ -94,49 +94,49 @@ BEGIN
     -- Populate Tmp_ParamFileModInfo
     -----------------------------------------------------------
 
-    _s := 'INSERT INTO Tmp_ParamFileModInfo (Param_File_ID, Mod_Entry_ID, ModType, Mod_Description) '
-          'SELECT PFMM.Param_File_ID, PFMM.Mod_Entry_ID, '
-                  'MT.Mod_Type_Synonym || CASE WHEN R.Residue_Symbol IN (''['',''<'') THEN ''_N'' '
-                                        'WHEN R.Residue_Symbol IN ('']'',''>'') THEN ''_C'' '
-                                        'ELSE ''_'' || R.Residue_Symbol '
-                                        'END AS ModType, ';
+    _sql := 'INSERT INTO Tmp_ParamFileModInfo (Param_File_ID, Mod_Entry_ID, ModType, Mod_Description) '
+            'SELECT PFMM.Param_File_ID, PFMM.Mod_Entry_ID, '
+                   'MT.Mod_Type_Synonym || CASE WHEN R.Residue_Symbol IN (''['',''<'') THEN ''_N'' '
+                                          'WHEN R.Residue_Symbol IN ('']'',''>'') THEN ''_C'' '
+                                          'ELSE ''_'' || R.Residue_Symbol '
+                                          'END AS ModType,';
 
     If _showModSymbol <> 0 Then
-        _s := _s || 'Coalesce(Local_Symbol, ''-'') ';
+        _sql := _sql || ' Coalesce(Local_Symbol, ''-'')';
 
         If _showModName <> 0 OR _showModMass <> 0 Then
-            _s := _s || '|| '', '' || ';
+            _sql := _sql || ' || '', '' ||';
         End If;
     End If;
 
     If _showModName <> 0 Then
         If _useModMassAlternativeName = 0 Then
-            _s := _s || 'RTRIM(MCF.Mass_Correction_Tag) ';
+            _sql := _sql || ' RTRIM(MCF.Mass_Correction_Tag)';
         Else
-            _s := _s || 'Coalesce(Alternative_Name, RTRIM(MCF.Mass_Correction_Tag)) ';
+            _sql := _sql || ' Coalesce(Alternative_Name, RTRIM(MCF.Mass_Correction_Tag))';
         End If;
 
         If _showModMass <> 0 Then
-             _s := _s || '|| '' ('' || ';
+             _sql := _sql || ' || '' ('' ||';
         End If;
     End If;
 
     If _showModMass <> 0 Then
-        _s := _s || ' MCF.Monoisotopic_Mass::text';
+        _sql := _sql || ' MCF.Monoisotopic_Mass::text';
         If _showModName <> 0 Then
-             _s := _s || ' || '')''';
+             _sql := _sql || ' || '')''';
         End If;
     End If;
 
-    _s := _s ||     'AS Mod_Description '
-                'FROM Tmp_ParamFileInfo PFI INNER JOIN '
-                     't_param_file_mass_mods PFMM ON PFI.param_file_id = PFMM.param_file_id INNER JOIN '
-                     't_mass_correction_factors MCF ON PFMM.mass_correction_id = MCF.mass_correction_id INNER JOIN '
-                     't_residues R ON PFMM.residue_id = R.residue_id INNER JOIN '
-                     't_modification_types MT ON PFMM.mod_type_symbol = MT.mod_type_symbol INNER JOIN '
-                     't_seq_local_symbols_list LSL ON PFMM.local_symbol_id = LSL.local_symbol_id';
+    _sql := _sql ||     ' AS Mod_Description'
+                ' FROM Tmp_ParamFileInfo PFI INNER JOIN'
+                     ' t_param_file_mass_mods PFMM ON PFI.param_file_id = PFMM.param_file_id INNER JOIN'
+                     ' t_mass_correction_factors MCF ON PFMM.mass_correction_id = MCF.mass_correction_id INNER JOIN'
+                     ' t_residues R ON PFMM.residue_id = R.residue_id INNER JOIN'
+                     ' t_modification_types MT ON PFMM.mod_type_symbol = MT.mod_type_symbol INNER JOIN'
+                     ' t_seq_local_symbols_list LSL ON PFMM.local_symbol_id = LSL.local_symbol_id';
 
-    EXECUTE _s;
+    EXECUTE _sql;
 
     -----------------------------------------------------------
     -- Populate Tmp_ParamFileModResults with the Param File IDs
@@ -174,16 +174,16 @@ BEGIN
     --  have blank, non-Null values for these new columns
     -----------------------------------------------------------
 
-    _s := ' ALTER TABLE Tmp_ParamFileModResults ADD ';
+    _sql := ' ALTER TABLE Tmp_ParamFileModResults ADD ';
 
     SELECT string_agg(format('[%s] text DEFAULT ('''') WITH VALUES ', ModType), ', ' ORDER BY UniqueRowID)
     INTO _sqlAddon
     FROM Tmp_ColumnHeaders;
 
-    _s := format('%s%s', _s, _sqlAddon);
+    _sql := format('%s%s', _sql, _sqlAddon);
 
     -- Execute the Sql to alter the table
-    EXECUTE _s;
+    EXECUTE _sql;
 
     -----------------------------------------------------------
     -- Populate Tmp_ParamFileModResults by looping through
@@ -213,32 +213,32 @@ BEGIN
                     format('WHERE Used = 0 AND %s ', _modTypeFilter)                        ||
                            'GROUP BY Param_File_ID';
 
-            _s := 'UPDATE Tmp_ParamFileModResults '
-                  'SET %I = %I || '
-                             'CASE WHEN char_length(%I) > 0 '
-                             'THEN '', '' '
-                             'ELSE '''' '
-                             'END || SourceQ.Mod_Description '
-                  'FROM Tmp_ParamFileModResults PFMR INNER JOIN ' ||
-                format('(%s) SourceQ ', _mmd)                     ||
-                       'ON PFMR.Param_File_ID = SourceQ.Param_File_ID';
+            _sql := 'UPDATE Tmp_ParamFileModResults '
+                    'SET %I = %I || '
+                               'CASE WHEN char_length(%I) > 0 '
+                               'THEN '', '' '
+                               'ELSE '''' '
+                               'END || SourceQ.Mod_Description '
+                    'FROM Tmp_ParamFileModResults PFMR INNER JOIN ' ||
+                  format('(%s) SourceQ ', _mmd)                     ||
+                         'ON PFMR.Param_File_ID = SourceQ.Param_File_ID';
             --
-            EXECUTE format(_s, _currentColumn, _currentColumn, _currentColumn);
+            EXECUTE format(_sql, _currentColumn, _currentColumn, _currentColumn);
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             If _updateCount = 0 Then
                 _continueAppendDescriptions := false;
             Else
-                _s :=        'UPDATE Tmp_ParamFileModInfo '
-                             'SET Used = 1 '
-                             'FROM Tmp_ParamFileModInfo PFMI INNER JOIN '              ||
-                           format('(%s) SourceQ ', _mmd)                               ||
-                                  'ON PFMI.Param_File_ID = SourceQ.Param_File_ID AND ' ||
-                                     'PFMI.Mod_Description = SourceQ.Mod_Description ' ||
-                      format('WHERE %s', _modTypeFilter);
+                _sql :=        'UPDATE Tmp_ParamFileModInfo '
+                               'SET Used = 1 '
+                               'FROM Tmp_ParamFileModInfo PFMI INNER JOIN '              ||
+                             format('(%s) SourceQ ', _mmd)                               ||
+                                    'ON PFMI.Param_File_ID = SourceQ.Param_File_ID AND ' ||
+                                       'PFMI.Mod_Description = SourceQ.Mod_Description ' ||
+                        format('WHERE %s', _modTypeFilter);
                 --
-                EXECUTE _s;
+                EXECUTE _sql;
 
             End If;
 

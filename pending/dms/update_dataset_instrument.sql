@@ -45,6 +45,12 @@ DECLARE
     _instrumentClassNew text;
     _deleteCaptureJob int := 0;
     _instrumentUpdateTran text := 'Instrument update';
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

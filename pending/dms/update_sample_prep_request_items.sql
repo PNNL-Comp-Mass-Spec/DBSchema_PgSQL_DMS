@@ -35,6 +35,12 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -308,7 +314,9 @@ BEGIN
         End If; --<update>
 
         If _mode = 'debug' Then
+            
             -- ToDo: Update this to use RAISE INFO
+            
             SELECT *
             FROM Tmp_PrepRequestItems
             ORDER BY Marked;

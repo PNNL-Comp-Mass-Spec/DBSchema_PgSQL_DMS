@@ -1,5 +1,5 @@
 --
-CREATE OR REPLACE PROCEDURE public.get_dataset_stats_by_campaign
+CREATE OR REPLACE FUNCTION public.get_dataset_stats_by_campaign
 (
     _mostRecentWeeks int = 20,
     _startDate timestamp = null,
@@ -13,6 +13,19 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_stats_by_campaign
     _previewSql boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default ''
+)
+RETURNS TABLE
+(
+	Campaign citext,
+	Work_Package citext,
+	Pct_EMSL_Funded numeric(3,2),
+	Runtime_Hours numeric(9,1),
+	Datasets int,
+	Building citext,
+	Instrument citext,
+	Request_Min int,
+	Request_Max int,
+	Pct_Total_Runtime numeric(9,3)
 )
 LANGUAGE plpgsql
 AS $$
@@ -100,16 +113,16 @@ BEGIN
     -----------------------------------------
 
     CREATE TEMP TABLE Tmp_CampaignDatasetStats (
-        Campaign text Not Null,
-        WorkPackage text Null,
+        Campaign citext Not Null,
+        WorkPackage citext Null,
         FractionEMSLFunded numeric(3,2) Null,
         RuntimeHours numeric(9,1) Not Null,
         Datasets int Not Null,
-        Building text Not Null,
-        Instrument text Not Null,
+        Building citext Not Null,
+        Instrument citext Not Null,
         RequestMin int Not Null,
-        RequestMax Int Not Null
-    )
+        RequestMax int Not Null
+    );
 
     -----------------------------------------
     -- Construct the query to retrieve the results
@@ -194,10 +207,9 @@ BEGIN
         -- Return the results
         -----------------------------------------
 
-
         -- ToDo: Convert this procedure to a function
 
-
+		RETURN QUERY
         SELECT Campaign,
                WorkPackage AS Work_Package,
                FractionEMSLFunded * 100 As Pct_EMSL_Funded,
@@ -217,5 +229,5 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.get_dataset_stats_by_campaign IS 'GetDatasetStatsByCampaign';
+COMMENT ON FUNCTION public.get_dataset_stats_by_campaign IS 'GetDatasetStatsByCampaign';
 

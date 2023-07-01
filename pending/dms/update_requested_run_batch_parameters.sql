@@ -71,6 +71,12 @@ DECLARE
     _requestIdLast int;
     _msg text;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -167,7 +173,9 @@ BEGIN
             UPDATE Tmp_NewBatchParams SET Parameter = 'Run Order' WHERE Parameter = 'Run_Order';
 
             If _mode = 'debug' Then
+                
                 -- ToDo: convert to RAISE INFO
+                
                 SELECT * FROM Tmp_NewBatchParams
             End If;
 
@@ -223,7 +231,9 @@ BEGIN
         End If;
 
         If _mode = 'debug' Then
+            
             -- ToDo: convert to RAISE INFO
+            
             SELECT * FROM Tmp_NewBatchParams
         End If;
 

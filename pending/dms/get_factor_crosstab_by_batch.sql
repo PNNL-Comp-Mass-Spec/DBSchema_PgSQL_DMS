@@ -5,10 +5,18 @@ CREATE OR REPLACE FUNCTION public.get_factor_crosstab_by_batch
     _nameContains text = '',
     _infoOnly boolean = false
 )
-RETURNS TABLE (
-    x,
-    y,
-    z
+RETURNS TABLE 
+(
+	-- TODO: Return data types
+	
+    sel text, 
+    batch_id, 
+    name, 
+    status, 
+    dataset_id, 
+    request, 
+    block, 
+    run_order
 )
 LANGUAGE plpgsql
 AS $$
@@ -98,6 +106,7 @@ BEGIN
     -----------------------------------------
 
     -- ToDo: Convert this procedure to a function
+    --       However, if the column list varies depending on the batch, instead convert to a procedure that returns results using a cursor
 
     If _infoOnly Then
         RETURN QUERY

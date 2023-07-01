@@ -69,7 +69,7 @@ DECLARE
     _total int := 0;
     _hasUser int := 0;
     _hasProposal int := 0;
-    _s text := '';
+    _sql text := '';
 
     _sqlState text;
     _exceptionMessage text;
@@ -283,10 +283,10 @@ BEGIN
         ---------------------------------------------------
 
         SELECT string_agg(format('%s="%s"', UsageKey, UsageValue, ' ' ORDER BY UsageKey)
-        INTO _s
+        INTO _sql
         FROM Tmp_UsageInfo;
 
-        _usageXML := format('<u %s />', _s);
+        _usageXML := format('<u %s />', _sql);
 
         ---------------------------------------------------
         -- Remove usage text from comment

@@ -13,7 +13,42 @@ CREATE OR REPLACE FUNCTION public.report_production_stats
     _showDebug boolean = false
 )
 RETURNS TABLE (
-    ...
+
+	 -- ToDo: Validate the data types for these columns
+	 
+	instrument citext,
+	total_datasets int,
+	days_in_range numeric,
+	datasets_per_day numeric,
+	blank_datasets int,
+	qc_datasets int,
+	troubleshooting int,
+	bad_datasets int,
+	study_specific_datasets int,
+	study_specific_datasets_per_day numeric,
+	emsl_funded_study_specific_datasets int,
+	ef_study_specific_datasets_per_day numeric,
+	total_acqtimedays numeric,
+	study_specific_acqtimedays numeric,
+	ef_total_acqtimedays numeric,
+	ef_study_specific_acqtimedays numeric,
+	hours_acqtime_per_day numeric,
+	"Inst."
+	pct_inst_emsl_owned numeric,
+	ef_total_datasets numeric,
+	ef_datasets_per_day numeric,
+	ef_blank_datasets numeric,
+	ef_qc_datasets numeric,
+	ef_bad_datasets numeric,
+	pct_blank_datasets numeric,
+	pct_qc_datasets numeric,
+	pct_bad_datasets numeric,
+	pct_reruns numeric,
+	pct_study_specific_datasets numeric,
+	pct_ef_study_specific_datasets numeric,
+	pct_ef_study_specific_by_acqtime numeric,
+	proposal_type citext,
+	inst citext
 )
 LANGUAGE plpgsql
 AS $$
@@ -383,8 +418,6 @@ BEGIN
         ---------------------------------------------------
         -- Generate report
         ---------------------------------------------------
-
--- ToDo: add column names and data types to the "RETURNS TABLE ()" block above
 
         If _includeProposalType > 0 Then
 

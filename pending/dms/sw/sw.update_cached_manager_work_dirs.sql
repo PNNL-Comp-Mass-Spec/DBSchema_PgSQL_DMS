@@ -23,6 +23,12 @@ DECLARE
     _callingProcName text;
     _currentLocation text := 'Start';
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -56,7 +62,7 @@ BEGIN
         INSERT INTO Tmp_MgrWorkDirs (processor_id, processor_name, MgrWorkDir)
         SELECT processor_id,
                processor_name,
-               Replace(MgrWorkDirs.work_dir_admin_share, '\\ServerName\', format('\\%s\', machine)) AS MgrWorkDir
+               Replace(MgrWorkDirs.work_dir_admin_share, '\\\\ServerName\\', format('\\\\%s\\', machine)) AS MgrWorkDir
         FROM mc.V_Mgr_Work_Dir MgrWorkDirs
              INNER JOIN sw.t_local_processors LP
                ON MgrWorkDirs.Mgr_Name = LP.processor_name;

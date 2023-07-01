@@ -26,7 +26,7 @@ DECLARE
     _insertCount int;
     _timeIntervalLastUpdateHours real;
     _updateTable int;
-    _s text;
+    _sql text;
 BEGIN
     _message := '';
     _returnCode := '';

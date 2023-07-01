@@ -22,7 +22,11 @@ AS $$
 **
 *****************************************************/
 DECLARE
-
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -44,14 +48,12 @@ BEGIN
     -- Look for Bruker_DA_Export jobs that failed with error 'No spectra were exported'
     ---------------------------------------------------
 
-    DELETE FROM Tmp_JobsToFix
-
     INSERT INTO Tmp_JobsToFix (job, step)
     SELECT job, step
     FROM sw.t_job_steps
     WHERE tool = 'Bruker_DA_Export' AND
           state IN (6, 16) AND
-          completion_message = 'No spectra were exported'
+          completion_message = 'No spectra were exported';
 
     If FOUND Then
         If _infoOnly Then
@@ -73,7 +75,7 @@ BEGIN
             UPDATE sw.t_job_steps Target
             SET state = 3
             FROM Tmp_JobsToFix F
-            WHERE Target.Job = F.Job
+            WHERE Target.Job = F.Job;
 
         End If;
     End If;
@@ -82,7 +84,7 @@ BEGIN
     -- Look for Formularity or NOMSI jobs that failed with error 'No peaks found'
     ---------------------------------------------------
 
-    DELETE FROM Tmp_JobsToFix
+    DELETE FROM Tmp_JobsToFix;
 
     INSERT INTO Tmp_JobsToFix( job, step )
     SELECT job,

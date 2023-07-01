@@ -72,6 +72,12 @@ DECLARE
     _badCh text;
     _jobFileUpdateCount int := 0;
     _datasetInfoFile text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -213,7 +219,7 @@ BEGIN
     WHERE Dataset_ID = _datasetID;
 
     -- Extract the parent directory path from _datasetFolderPath
-    _lastSlashReverseText := Position('\' In Reverse(_datasetFolderPath));
+    _lastSlashReverseText := Position('\\' In Reverse(_datasetFolderPath));
     _storageServerSharePath := Substring(_datasetFolderPath, 1, char_length(_datasetFolderPath) - _lastSlashReverseText);
 
     -- Lookup acquisition metadata stored in t_requested_run

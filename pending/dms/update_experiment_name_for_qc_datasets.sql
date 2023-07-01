@@ -23,6 +23,12 @@ DECLARE
     _currentExpID int := 0;
     _experiment text;
     _msg text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -103,22 +109,10 @@ BEGIN
 
     UPDATE Tmp_DatasetsToUpdate
     SET Ambiguous = true
-    WHERE Dataset_ID IN ( SELECT Dataset_ID
-                          FROM Tmp_DatasetsToUpdate
-
-                          /********************************************************************************
-                          ** This UPDATE query includes the target table name in the FROM clause
-                          ** The WHERE clause needs to have a self join to the target table, for example:
-                          **   UPDATE Tmp_DatasetsToUpdate
-                          **   SET ...
-                          **   FROM source
-                          **   WHERE source.id = Tmp_DatasetsToUpdate.id;
-                          ********************************************************************************/
-
-                                                 ToDo: Fix this query
-
-                          GROUP BY Dataset_ID
-                          HAVING COUNT(*) > 1 )
+    WHERE Dataset_ID IN ( SELECT DS.Dataset_ID
+                          FROM Tmp_DatasetsToUpdate DS
+                          GROUP BY DS.Dataset_ID
+                          HAVING COUNT(*) > 1 );
 
     If Not Exists (Select * From Tmp_DatasetsToUpdate) Then
         RAISE INFO '%', 'No candidate datasets were found';

@@ -49,6 +49,12 @@ DECLARE
     _rowsProcessed int := 0;
     _lastLogTime timestamp := CURRENT_TIMESTAMP;
     _outputFolderName text := '';
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';

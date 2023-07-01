@@ -33,6 +33,12 @@ DECLARE
     _tempTableJobsToRemove int;
     _jobFirst int;
     _jobLast int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -174,22 +180,6 @@ BEGIN
                 FROM ( SELECT entry_id,
                               Row_Number() OVER ( PARTITION BY machine ORDER BY entry_id DESC ) AS RowRank
                        FROM sw.t_machine_status_history ) RankQ
-
-                       /********************************************************************************
-                       ** This DELETE query includes the target table name in the FROM clause
-                       ** The WHERE clause needs to have a self join to the target table, for example:
-                       **   UPDATE sw.t_machine_status_history
-                       **   SET ...
-                       **   FROM source
-                       **   WHERE source.id = sw.t_machine_status_history.id;
-                       **
-                       ** Delete queries must also include the USING keyword
-                       ** Alternatively, the more standard approach is to rearrange the query to be similar to
-                       **   DELETE FROM sw.t_machine_status_history WHERE id in (SELECT id from ...)
-                       ********************************************************************************/
-
-                                              ToDo: Fix this query
-
                 WHERE RowRank > 1000 )
 
         -- Keep the 500 most recent processing stats values for each processor
@@ -203,22 +193,6 @@ BEGIN
                               step,
                               Row_Number() OVER ( PARTITION BY processor ORDER BY entered DESC ) AS RowRank
                        FROM sw.t_job_step_processing_stats ) RankQ
-
-                       /********************************************************************************
-                       ** This DELETE query includes the target table name in the FROM clause
-                       ** The WHERE clause needs to have a self join to the target table, for example:
-                       **   UPDATE sw.t_job_step_processing_stats
-                       **   SET ...
-                       **   FROM source
-                       **   WHERE source.id = sw.t_job_step_processing_stats.id;
-                       **
-                       ** Delete queries must also include the USING keyword
-                       ** Alternatively, the more standard approach is to rearrange the query to be similar to
-                       **   DELETE FROM sw.t_job_step_processing_stats WHERE id in (SELECT id from ...)
-                       ********************************************************************************/
-
-                                              ToDo: Fix this query
-
                 WHERE RowRank > 500 )
 
     End If;

@@ -19,7 +19,11 @@ AS $$
 **
 *****************************************************/
 DECLARE
-
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     ---------------------------------------------------
     -- Look for actively running Progrunner tasks in sw.t_processor_status
