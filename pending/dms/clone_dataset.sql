@@ -48,13 +48,7 @@ DECLARE
     _captureJobNew int := 0;
     _dateStamp timestamp;
     _jobMessage text;
-
-    _formatSpecifier text;
-    _infoHead text;
-    _infoHeadSeparator text;
-    _previewData record;
-    _infoData text;
-
+]
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -125,20 +119,26 @@ BEGIN
         _eusUsersList := Coalesce(_eusUsersList, '');
 
         -- Lookup the information requred to create a new requested run
+        -- Also look up information required for previewing the cloned dataset
         --
-        SELECT E.experiment As ExperimentName
-               DS.operator_username As OperatorUsername
-               Inst.instrument As InstrumentName
-               RR.work_package As WorkPackage
-               DSType.Dataset_Type As DatasetType                         -- Aka _msType
-               RR.instrument_setting As InstrumentSettings
-               RR.wellplate As Wellplate
-               RR.well As WellNum
-               RR.request_internal_standard As InternalStandard
-               'Automatically created by dataset entry' As Comment
-               RR.eus_proposal_id As EusProposalID
-               EUT.eus_usage_type As EusUsageType
-               RR.separation_group As SecSep
+        SELECT E.experiment As ExperimentName,
+               DS.operator_username As OperatorUsername,
+               DS.capture_subfolder As CaptureSubdirectory,
+               DS.cart_config_id As LcCartConfigID,
+               
+               Inst.instrument As InstrumentName,
+               RR.work_package As WorkPackage,
+               DSType.Dataset_Type As DatasetType,                         -- Aka _msType
+               RR.instrument_setting As InstrumentSettings,
+               RR.wellplate As Wellplate,
+               RR.well As WellNum,
+               RR.request_internal_standard As InternalStandard,
+               'Automatically created by dataset entry' As Comment,
+               RR.eus_proposal_id As EusProposalID,
+               EUT.eus_usage_type As EusUsageType,
+               RR.separation_group As SeparationGroup,
+               lccart.cart_name As LcCartName,
+               lccol.lc_column As LcColumn
         INTO _datasetInfo
         FROM t_dataset DS
              INNER JOIN t_requested_run RR
@@ -151,42 +151,58 @@ BEGIN
                ON DS.dataset_type_ID = DSType.dataset_type_id
              INNER JOIN t_eus_usage_type EUT
                ON RR.eus_usage_type_id = EUT.eus_usage_type_id
+             INNER JOIN t_lc_cart LCCart
+               ON LCCart.cart_id = RR.cart_id
+             INNER JOIN t_lc_column LCCol
+               ON ds.lc_column_id = LCCol.lc_column_id
         WHERE DS.dataset = _dataset;
 
         _requestNameNew := format('AutoReq_%s', _datasetNew);
 
         If _infoOnly Then
-        -- <a>
-            ---------------------------------------------------
+
+            -- ToDo: Use RAISE INFO to show this info
+
             -- Preview the new dataset
-            ---------------------------------------------------
+            
+            RAISE INFO '';
 
-            -- ToDo: Use RAISE INFO to show this info
-
-            SELECT _datasetNew AS Dataset_Name_New, *
+            SELECT *
+            INTO _previewData
             FROM t_dataset
-            WHERE dataset = _dataset;
+            WHERE dataset = _dataset
+            LIMIT 1;
 
-            ---------------------------------------------------
+            RAISE INFO 'Dataset Name:         %', _datasetNew;
+            RAISE INFO 'Experiment Name:      %', _datasetInfo.ExperimentName;
+            RAISE INFO 'Instrument Name:      %', _datasetInfo.InstrumentName                  -- _instrumentName;
+            RAISE INFO 'Capture Subdirectory: %', _datasetInfo.CaptureSubdirectory                  -- _captureSubdirectory;
+            RAISE INFO 'Separation Group:     %', _datasetInfo.SeparationGroup                  -- _separationType;
+            RAISE INFO 'LC Cart Name:         %', _datasetInfo.LcCartName                  -- _lcCartName;
+            RAISE INFO 'LC Cart Config:       %', _datasetInfo.LcCartConfigID                  -- _lcCartConfig;
+            RAISE INFO 'LC Column:            %', _datasetInfo.LcColumn                  -- _lcColumn;
+            RAISE INFO 'Dataset Type:         %', _datasetInfo.DatasetType                  -- _datasetType;
+            RAISE INFO 'Operator Username:    %', _datasetInfo.OperatorUsername                  -- _operatorUsername;
+            RAISE INFO 'Comment:              %', _datasetInfo.Comment                  -- _comment;
+            RAISE INFO 'Interest Rating:      %', _datasetInfo.                  -- _interestRating;
+            RAISE INFO 'DS Creator Username:  %', _datasetInfo.                  -- _datasetCreatorUsername;
+     
+            RAISE INFO '';
+ 
             -- Preview the new requested run
-            ---------------------------------------------------
 
             -- ToDo: Use RAISE INFO to show this info
 
-            SELECT _requestNameNew AS Request_Name_New,
-                   _datasetInfo.ExperimentName AS Experiment,
-                   _datasetInfo.InstrumentName AS Instrument,
-                   _datasetInfo.WorkPackage AS WorkPackage,
-                   _datasetInfo.DatasetType AS Dataset_Type,
-                   _datasetInfo.InstrumentSettings AS Instrument_Settings,
-                   _datasetInfo.Wellplate AS Wellplate,
-                   _datasetInfo.WellNum AS Well_Num,
-                   _datasetInfo.InternalStandard AS Internal_standard,
-                   _datasetInfo.Comment AS Comment,
-                   _datasetInfo.EusProposalID AS EUS_Proposal_ID,
-                   _datasetInfo.EusUsageType AS EUS_UsageType,
-                   _datasetInfo.EusUsersList AS EUS_UsersList,
-                   _datasetInfo.SecSep AS Sec_Sep;
+            RAISE INFO '';
+            RAISE INFO 'New Request Name:     %', _requestNameNew;
+            RAISE INFO 'Instrument Settings:  %', _datasetInfo.InstrumentSettings;
+            RAISE INFO 'Wellplate:            %', _datasetInfo.Wellplate;
+            RAISE INFO 'Well Number:          %', _datasetInfo.WellNum;
+            RAISE INFO 'Internal Standard:    %', _datasetInfo.InternalStandard;
+            RAISE INFO 'Work Package:         %', _datasetInfo.WorkPackage                  -- _workPackage;
+            RAISE INFO 'EMSL UsageType:       %', _datasetInfo.EusUsageType                  -- _emslUsageType;
+            RAISE INFO 'EMSL ProposalID:      %', _datasetInfo.EusProposalID                  -- _emslProposalID;
+            RAISE INFO 'EMSL UsersList:       %', _datasetInfo.                  -- _emslUsersList;
 
             RETURN;
         End If;
@@ -196,7 +212,6 @@ BEGIN
         ---------------------------------------------------
 
         -- Add a new row to t_dataset
-        --
 
         INSERT INTO t_dataset (dataset, operator_username, comment, created, instrument_id, lc_column_id, dataset_type_id,
                                wellplate, well, separation_type, dataset_state_id, last_affected, folder_name, storage_path_ID,
@@ -204,29 +219,29 @@ BEGIN
                                acq_time_start, acq_time_end, scan_count, file_size_bytes, file_info_last_modified, interval_to_next_ds
         )
         SELECT _datasetNew AS Dataset_Name,
-            operator_username,
-            format('Cloned from dataset %s', _dataset) AS Comment,
-            CURRENT_TIMESTAMP AS Created,
-            instrument_id,
-            lc_column_ID,
-            dataset_type_ID,
-            wellplate,
-            well,
-            separation_type,
-            dataset_state_id,
-            CURRENT_TIMESTAMP AS Last_Affected,
-            _datasetNew AS folder_name,
-            storage_path_ID,
-            exp_id,
-            internal_standard_ID,
-            dataset_rating_id,
-            ds_prep_server_name,
-            acq_time_start,
-            acq_time_end,
-            scan_count,
-            file_size_bytes,
-            file_info_last_modified,
-            interval_to_next_ds
+               operator_username,
+               format('Cloned from dataset %s', _dataset) AS Comment,
+               CURRENT_TIMESTAMP AS Created,
+               instrument_id,
+               lc_column_ID,
+               dataset_type_ID,
+               wellplate,
+               well,
+               separation_type,
+               dataset_state_id,
+               CURRENT_TIMESTAMP AS Last_Affected,
+               _datasetNew AS folder_name,
+               storage_path_ID,
+               exp_id,
+               internal_standard_ID,
+               dataset_rating_id,
+               ds_prep_server_name,
+               acq_time_start,
+               acq_time_end,
+               scan_count,
+               file_size_bytes,
+               file_info_last_modified,
+               interval_to_next_ds
         FROM t_dataset
         WHERE dataset = _dataset
         RETURNING dataset_id
@@ -254,7 +269,7 @@ BEGIN
                                 _request => _requestID,         -- Output
                                 _message => _message,           -- Output
                                 _returnCode => _returnCode,     -- Output
-                                _secSep => _datasetInfo.SecSep,
+                                _secSep => _datasetInfo.SeparationGroup,
                                 _mRMAttachment => '',
                                 _status => 'Completed',
                                 _skipTransactionRollback => true,

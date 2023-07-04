@@ -476,10 +476,72 @@ BEGIN
             If _infoOnly Then
 
                 -- ToDo: Update this to use RAISE INFO
-                --
-                SELECT *;
-                FROM Tmp_FailedJobs
-                ORDER BY Job
+
+                RAISE INFO '';
+        
+                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        
+                _infoHead := format(_formatSpecifier,
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg'
+                                   );
+        
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---'
+                                            );
+        
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+        
+                FOR _previewData IN
+                    SELECT Job,
+                           Step_Number,
+                           Step_Tool,
+                           Job_State,
+                           Step_State,
+                           Processor,
+                           Comment,
+                           Job_Finish,
+                           Settings_File,
+                           AnalysisTool,
+                           NewJobState,
+                           NewStepState,
+                           NewComment,
+                           NewSettingsFile,
+                           ResetJob,
+                           RerunAllJobSteps;
+                    FROM Tmp_FailedJobs
+                    ORDER BY Job
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Job,
+                                        _previewData.Step_Number,
+                                        _previewData.Step_Tool,
+                                        _previewData.Job_State,
+                                        _previewData.Step_State,
+                                        _previewData.Processor,
+                                        _previewData.Comment,
+                                        _previewData.Job_Finish,
+                                        _previewData.Settings_File,
+                                        _previewData.AnalysisTool,
+                                        _previewData.NewJobState,
+                                        _previewData.NewStepState,
+                                        _previewData.NewComment,
+                                        _previewData.NewSettingsFile,
+                                        _previewData.ResetJob,
+                                        _previewData.RerunAllJobSteps
+                                       );
+        
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+        
             End If;
 
         End If; -- </a>

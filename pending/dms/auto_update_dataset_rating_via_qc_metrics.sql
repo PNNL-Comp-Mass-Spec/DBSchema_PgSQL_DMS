@@ -91,36 +91,74 @@ BEGIN
           NOT E.experiment LIKE _experimentExclusion;
 
     If _infoOnly Then
+
         -- Preview the datasets that would be updated
+
+        -- ToDo: Show this info using RAISE INFO
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
         _updateCount := 0;
 
-        -- ToDo: Show this info using RAISE INFO
-        --       Increment _updateCount for each dataset shown
+        FOR _previewData IN
+            SELECT C.Campaign,
+                   InstName.Instrument,
+                   DS.Dataset_Created,
+                   DS.Dataset,
+                   DSType.Dataset_Type,
+                   DS.Comment,
+                   DQC.P_2A,
+                   DQC.P_2C
+            FROM t_dataset DS
+                 INNER JOIN Tmp_DatasetsToUpdate U
+                   ON DS.dataset_id = U.dataset_id
+                 INNER JOIN t_instrument_name InstName
+                   ON DS.instrument_id = InstName.instrument_id
+                 INNER JOIN t_dataset_qc DQC
+                   ON DS.dataset_id = DQC.dataset_id
+                 INNER JOIN t_experiments E
+                   ON DS.exp_id = E.exp_id
+                 INNER JOIN t_campaign C
+                   ON E.campaign_id = C.campaign_id
+                 INNER JOIN t_dataset_type_name DSType
+                   ON DS.dataset_type_ID = DSType.dataset_type_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Campaign,
+                                _previewData.Instrument,
+                                _previewData.Dataset_Created,
+                                _previewData.Dataset,
+                                _previewData.Dataset_Type,
+                                _previewData.Comment,
+                                _previewData.P_2A,
+                                _previewData.P_2C
+                               );
 
-        SELECT C.campaign AS Campaign,
-               InstName.instrument AS Instrument,
-               DS.created AS Dataset_Created,
-               DS.dataset AS Dataset,
-               DSType.Dataset_Type AS Dataset_Type,
-               DS.comment AS Comment,
-               DQC.p_2a,
-               DQC.p_2c
-        FROM t_dataset DS
-             INNER JOIN Tmp_DatasetsToUpdate U
-               ON DS.dataset_id = U.dataset_id
-             INNER JOIN t_instrument_name InstName
-               ON DS.instrument_id = InstName.instrument_id
-             INNER JOIN t_dataset_qc DQC
-               ON DS.dataset_id = DQC.dataset_id
-             INNER JOIN t_experiments E
-               ON DS.exp_id = E.exp_id
-             INNER JOIN t_campaign C
-               ON E.campaign_id = C.campaign_id
-             INNER JOIN t_dataset_type_name DSType
-               ON DS.dataset_type_ID = DSType.dataset_type_id
-        --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+            RAISE INFO '%', _infoData;
+            
+            _updateCount := _updateCount + 1;
+        END LOOP;
 
         _message := format('Found %s %s with', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
 
@@ -136,7 +174,7 @@ BEGIN
              INNER JOIN Tmp_DatasetsToUpdate U
                ON DS.dataset_id = U.dataset_id
              INNER JOIN t_dataset_qc DQC
-               ON DS.dataset_id = DQC.dataset_id
+               ON DS.dataset_id = DQC.dataset_id;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

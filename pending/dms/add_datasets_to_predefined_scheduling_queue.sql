@@ -97,24 +97,62 @@ BEGIN
     If _infoOnly Then
 
         -- ToDo: Preview results using RAISE INFO
-        
-        SELECT Source.dataset_id,
-               CASE
-               WHEN AlreadyWaiting > 0 THEN 'Already in t_predefined_analysis_scheduling_queue with state "New"'
-               ELSE CASE
-                    WHEN IsValid = 0 THEN 'Unknown dataset_id'
-                    ELSE ''
-                    End If;
-               END AS Error_Message,
-               _callingUser AS CallingUser,
-               '' AS AnalysisToolNameFilter,
-               'Yes' AS ExcludeDatasetsNotReleased,
-               'Yes' AS PreventDuplicateJobs,
-               'New' AS State
-        FROM Tmp_DatasetsToProcess Source
-             LEFT OUTER JOIN t_dataset DS
-               ON Source.dataset_id = DS.dataset_id;
 
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Source.dataset_id AS DatasetID,
+                   CASE WHEN AlreadyWaiting > 0 
+                        THEN 'Already in t_predefined_analysis_scheduling_queue with state "New"'
+                   ELSE 
+                        CASE WHEN IsValid = 0 
+                             THEN 'Unknown dataset_id'
+                             ELSE ''
+                        END
+                   END AS ErrorMessage,
+                   _callingUser AS CallingUser,
+                   '' AS AnalysisToolNameFilter,
+                   'Yes' AS ExcludeDatasetsNotReleased,
+                   'Yes' AS PreventDuplicateJobs,
+                   'New' AS State
+            FROM Tmp_DatasetsToProcess Source
+                 LEFT OUTER JOIN t_dataset DS
+                   ON Source.dataset_id = DS.dataset_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.DatasetID,
+                                _previewData.ErrorMessage,
+                                _previewData.CallingUser,
+                                _previewData.AnalysisToolNameFilter,
+                                _previewData.ExcludeDatasetsNotReleased,
+                                _previewData.PreventDuplicateJobs
+                                _previewData.State
+                    );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+        
     Else
 
         INSERT INTO t_predefined_analysis_scheduling_queue( dataset_id,

@@ -74,26 +74,65 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        ---------------------------------------------------
         -- Preview the updates
-        ---------------------------------------------------
 
-        SELECT EUP.proposal_id,
-               EUP.numeric_id,
-               EUP.title,
-               EUP.state_id,
-               EUP.proposal_start_date,
-               EUP.proposal_end_date,
-               EUP.proposal_id_auto_supersede,
-               UpdatesQ.Newest_Proposal_ID,
-               EUP_Newest.proposal_start_date AS Newest_Proposal_Start_Date,
-               EUP_Newest.proposal_end_date AS Newest_Proposal_End_Date
-        FROM t_eus_proposals EUP
-             INNER JOIN Tmp_ProposalsToUpdate UpdatesQ
-               ON EUP.proposal_id = UpdatesQ.proposal_id
-             INNER JOIN t_eus_proposals EUP_Newest
-               ON UpdatesQ.Newest_Proposal_ID = EUP_Newest.proposal_id
-        ORDER BY EUP.title;
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT EUP.proposal_id,
+                   EUP.numeric_id,
+                   EUP.title,
+                   EUP.state_id,
+                   EUP.proposal_start_date,
+                   EUP.proposal_end_date,
+                   EUP.proposal_id_auto_supersede,
+                   UpdatesQ.Newest_Proposal_ID,
+                   EUP_Newest.proposal_start_date AS Newest_Proposal_Start_Date,
+                   EUP_Newest.proposal_end_date AS Newest_Proposal_End_Date
+            FROM t_eus_proposals EUP
+                 INNER JOIN Tmp_ProposalsToUpdate UpdatesQ
+                   ON EUP.proposal_id = UpdatesQ.proposal_id
+                 INNER JOIN t_eus_proposals EUP_Newest
+                   ON UpdatesQ.Newest_Proposal_ID = EUP_Newest.proposal_id
+            ORDER BY EUP.title
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Proposal,
+                                _previewData.Numeric,
+                                _previewData.Title,
+                                _previewData.State,
+                                _previewData.Proposal_Start_Date,
+                                _previewData.Proposal_End_Date,
+                                _previewData.Proposal_Auto_Supersede,
+                                _previewData.Newest_Proposal_ID,
+                                _previewData.Newest_Proposal_Start_Date,
+                                _previewData.Newest_Proposal_End_Date
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     Else
         If NOT Exists (SELECT * FROM Tmp_ProposalsToUpdate) Then
             _message := 'No superseded proposals were found; nothing to do';

@@ -137,61 +137,135 @@ BEGIN
 
         -- ToDo: Use Raise Info
 
-        ---------------------------------------------------
         -- Summarize the updates
-        ---------------------------------------------------
 
-        SELECT C.Entry_ID,
-               C.EUSProposal,
-               C.BestWorkPackage,
-               C.MonthsSearched,
-               COUNT(*) AS RequestedRuns,
-               SUM(CASE WHEN FilterQ.work_package = 'none' THEN 1 ELSE 0 END) AS RequestsToUpdate,
-               P.title
-        FROM Tmp_ProposalsToCheck C
-             INNER JOIN ( SELECT request_id,
-                                 request_name,
-                                 created,
-                                 eus_proposal_id,
-                                 work_package
-                          FROM t_requested_run RR
-                          WHERE request_id IN ( SELECT RequestedRunID FROM Tmp_RequestedRunsToUpdate ) OR
-                                (eus_proposal_id IN ( SELECT EUSProposal FROM Tmp_RequestedRunsToUpdate ) AND
-                                 RR.created >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
-                                )
-                        ) FilterQ
-               ON C.EUSProposal = FilterQ.eus_proposal_id
-               INNER JOIN t_eus_proposals P ON P.proposal_id = C.EUSProposal
-        GROUP BY C.Entry_ID, C.EUSProposal, C.BestWorkPackage, C.MonthsSearched, P.title
-        ORDER BY SUM(CASE WHEN FilterQ.work_package = 'none' THEN 1 ELSE 0 END) desc
+        RAISE INFO '';
 
-        ---------------------------------------------------
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT C.Entry_ID,
+                   C.EUSProposal,
+                   C.BestWorkPackage,
+                   C.MonthsSearched,
+                   COUNT(*) AS RequestedRuns,
+                   SUM(CASE WHEN FilterQ.work_package = 'none' THEN 1 ELSE 0 END) AS RequestsToUpdate,
+                   P.title
+            FROM Tmp_ProposalsToCheck C
+                 INNER JOIN ( SELECT request_id,
+                                     request_name,
+                                     created,
+                                     eus_proposal_id,
+                                     work_package
+                              FROM t_requested_run RR
+                              WHERE request_id IN ( SELECT RequestedRunID FROM Tmp_RequestedRunsToUpdate ) OR
+                                    (eus_proposal_id IN ( SELECT EUSProposal FROM Tmp_RequestedRunsToUpdate ) AND
+                                     RR.created >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
+                                    )
+                            ) FilterQ
+                   ON C.EUSProposal = FilterQ.eus_proposal_id
+                   INNER JOIN t_eus_proposals P ON P.proposal_id = C.EUSProposal
+            GROUP BY C.Entry_ID, C.EUSProposal, C.BestWorkPackage, C.MonthsSearched, P.title
+            ORDER BY SUM(CASE WHEN FilterQ.work_package = 'none' THEN 1 ELSE 0 END) DESC
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Entry_ID,
+                                _previewData.EUSProposal,
+                                _previewData.BestWorkPackage,
+                                _previewData.MonthsSearched,
+                                _previewData.RequestedRuns,
+                                _previewData.RequestsToUpdate,
+                                _previewData.Title
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
         -- Show details of the requested runs associated with the EUS Proposals that we will be updating
         -- This list includes both requested runs with a valid work package, and runs with 'none'
-        ---------------------------------------------------
 
-        SELECT C.*,
-               FilterQ.request_name,
-               FilterQ.Created,
-               FilterQ.ID AS RequestedRunID,
-               CASE
-                   WHEN FilterQ.work_package = 'none' THEN format('none --> %s', C.BestWorkPackage)
-                   ELSE FilterQ.work_package
-               END AS work_package
-        FROM Tmp_ProposalsToCheck C
-             INNER JOIN ( SELECT request_id,
-                                 request_name,
-                                 created,
-                                 eus_proposal_id,
-                                 work_package
-                          FROM t_requested_run RR
-                          WHERE request_id IN ( SELECT RequestedRunID FROM Tmp_RequestedRunsToUpdate ) OR
-                                (eus_proposal_id IN ( SELECT EUSProposal FROM Tmp_RequestedRunsToUpdate ) AND
-                                 RR.created >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
-                                )
-                        ) FilterQ
-               ON C.EUSProposal = FilterQ.eus_proposal_id
-        ORDER BY C.EUSProposal, request_name;
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT C.Entry_ID,
+                   C.EUSProposal,
+                   C.BestWorkPackage,
+                   C.MonthsSearched,
+                   FilterQ.Request_Name,
+                   FilterQ.Created,
+                   FilterQ.ID AS RequestedRunID,
+                   CASE
+                       WHEN FilterQ.work_package = 'none' THEN format('none --> %s', C.BestWorkPackage)
+                       ELSE FilterQ.work_package
+                   END AS WorkPackage
+            FROM Tmp_ProposalsToCheck C
+                 INNER JOIN ( SELECT request_id,
+                                     request_name,
+                                     created,
+                                     eus_proposal_id,
+                                     work_package
+                              FROM t_requested_run RR
+                              WHERE request_id IN ( SELECT RequestedRunID FROM Tmp_RequestedRunsToUpdate ) OR
+                                    (eus_proposal_id IN ( SELECT EUSProposal FROM Tmp_RequestedRunsToUpdate ) AND
+                                     RR.created >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
+                                    )
+                            ) FilterQ
+                   ON C.EUSProposal = FilterQ.eus_proposal_id
+            ORDER BY C.EUSProposal, request_name
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Entry_ID,
+                                _previewData.EUSProposal,
+                                _previewData.BestWorkPackage,
+                                _previewData.MonthsSearched,
+                                _previewData.Request_Name,
+                                _previewData.Created,
+                                _previewData.RequestedRunID,
+                                _previewData.WorkPackage
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     End If;
 
@@ -206,40 +280,25 @@ BEGIN
         FROM Tmp_RequestedRunsToUpdate
         GROUP BY EUSProposal, WorkPackage
         ORDER BY EUSProposal
-
     LOOP
 
-            _message := format('Changed the work package from none to %s for %s requested %s with EUS Proposal %s',
-                                _workPackage, _requestedRunsToUpdate, public.check_plural(_requestedRunsToUpdate, 'run', 'runs'), _eusProposal);
+        _message := format('Changed the work package from none to %s for %s requested %s with EUS Proposal %s',
+                            _workPackage, _requestedRunsToUpdate, public.check_plural(_requestedRunsToUpdate, 'run', 'runs'), _eusProposal);
 
-            If _infoOnly Then
-                RAISE INFO '%', _message;
-            Else
+        If _infoOnly Then
+            RAISE INFO '%', _message;
+        Else
 
-                UPDATE t_requested_run
-                SET work_package = _workPackage
-                FROM t_requested_run RR
+            UPDATE t_requested_run
+            SET work_package = _workPackage
+            FROM Tmp_RequestedRunsToUpdate U
+            WHERE t_requested_runrequest_id = U.RequestedRunID AND
+                  U.EUSProposal = _eusProposal;
 
-                /********************************************************************************
-                ** This UPDATE query includes the target table name in the FROM clause
-                ** The WHERE clause needs to have a self join to the target table, for example:
-                **   UPDATE t_requested_run
-                **   SET ...
-                **   FROM source
-                **   WHERE source.request_id = t_requested_run.request_id;
-                ********************************************************************************/
-
-                                       ToDo: Fix this query
-
-                     INNER JOIN Tmp_RequestedRunsToUpdate U
-                       ON RR.request_id = U.RequestedRunID
-                WHERE U.EUSProposal = _eusProposal
-
-                CALL post_log_entry ('Normal', _message, 'Auto_Define_WPs_For_EUS_Requested_Runs');
-
-            End If;
+            CALL post_log_entry ('Normal', _message, 'Auto_Define_WPs_For_EUS_Requested_Runs');
 
         End If;
+
     END LOOP;
 
     DROP TABLE Tmp_ProposalsToCheck;

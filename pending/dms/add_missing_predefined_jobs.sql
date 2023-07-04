@@ -206,24 +206,64 @@ BEGIN
     If _infoOnly And _showDebug AND EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
 
         -- ToDo: Show this using RAISE INFO
+        RAISE INFO '';
 
-        SELECT 'Debug_Output #1' AS Status,
-               InstName.instrument,
-               DS.dataset_id,
-               DS.dataset,
-               DS.created,
-               DS.comment,
-               DS.dataset_state_id,
-               DS.dataset_rating_id,
-               DTP.Process_Dataset
-        FROM Tmp_DatasetsToProcess DTP
-             INNER JOIN t_dataset DS
-               ON DTP.dataset_id = DS.dataset_id
-             INNER JOIN t_instrument_name InstName
-               ON DS.instrument_id = InstName.instrument_id
-             INNER JOIN Tmp_DatasetID_Filter_List FilterList
-               ON FilterList.dataset_id = DTP.dataset_id
-        ORDER BY DS.dataset_id
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT 'Debug_Output #1' AS Status,
+                   InstName.instrument,
+                   DS.dataset_id AS DatasetID,
+                   DS.created,
+                   DS.dataset_state_id AS StateID,
+                   DS.dataset_rating_id AS RatingID,
+                   DTP.Process_Dataset AS Process,
+                   DS.Dataset,
+                   DS.Comment
+            FROM Tmp_DatasetsToProcess DTP
+                 INNER JOIN t_dataset DS
+                   ON DTP.dataset_id = DS.dataset_id
+                 INNER JOIN t_instrument_name InstName
+                   ON DS.instrument_id = InstName.instrument_id
+                 INNER JOIN Tmp_DatasetID_Filter_List FilterList
+                   ON FilterList.dataset_id = DTP.dataset_id
+            ORDER BY DS.dataset_id
+        LOOP
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Status,
+                                _previewData.Instrument,
+                                _previewData.DatasetID,
+                                _previewData.Created,
+                                _previewData.StateID,
+                                _previewData.RatingID,
+                                _previewData.Process,
+                                _previewData.Dataset,
+                                _previewData.Comment
+                    );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     -- Now exclude any datasets that have analysis jobs in t_analysis_job

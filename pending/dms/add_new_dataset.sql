@@ -154,15 +154,15 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Parameters (
-        paramName citext,
-        paramValue text
+        ParamName citext,
+        ParamValue text
     );
 
     ---------------------------------------------------
     -- Populate parameter table from XML parameter description
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Parameters (paramName, paramValue)
+    INSERT INTO Tmp_Parameters (ParamName, ParamValue)
     SELECT XmlQ.name, XmlQ.value
         FROM (
             SELECT xmltable.*
@@ -183,8 +183,40 @@ BEGIN
 
         -- ToDo: Use RAISE INFO to show the values
 
-        SELECT paramName AS Name, paramValue
-        FROM Tmp_Parameters
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT ParamName AS Name, ParamValue
+            FROM Tmp_Parameters
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Name,
+                                _previewData.ParamValue
+                    );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         DROP TABLE Tmp_Parameters;
         RETURN;
@@ -194,115 +226,115 @@ BEGIN
     -- Get arguments from parsed parameters
     ---------------------------------------------------
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _datasetName
     FROM Tmp_Parameters
-    WHERE paramName = 'Dataset Name';
+    WHERE ParamName = 'Dataset Name';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _experimentName
     FROM Tmp_Parameters
-    WHERE paramName = 'Experiment Name';
+    WHERE ParamName = 'Experiment Name';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _instrumentName
     FROM Tmp_Parameters
-    WHERE paramName = 'Instrument Name';
+    WHERE ParamName = 'Instrument Name';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _captureSubdirectory
     FROM Tmp_Parameters
-    WHERE paramName IN ('Capture Subfolder', 'Capture Subdirectory');
+    WHERE ParamName IN ('Capture Subfolder', 'Capture Subdirectory');
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _separationType
     FROM Tmp_Parameters
-    WHERE paramName = 'Separation Type';
+    WHERE ParamName = 'Separation Type';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _lcCartName
     FROM Tmp_Parameters
-    WHERE paramName = 'LC Cart Name';
+    WHERE ParamName = 'LC Cart Name';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _lcCartConfig
     FROM Tmp_Parameters
-    WHERE paramName = 'LC Cart Config';
+    WHERE ParamName = 'LC Cart Config';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _lcColumn
     FROM Tmp_Parameters
-    WHERE paramName = 'LC Column';
+    WHERE ParamName = 'LC Column';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _wellplateName
     FROM Tmp_Parameters
-    WHERE paramName = 'Wellplate Number';
+    WHERE ParamName = 'Wellplate Number';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _wellNumber
     FROM Tmp_Parameters
-    WHERE paramName = 'Well Number';
+    WHERE ParamName = 'Well Number';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _datasetType
     FROM Tmp_Parameters
-    WHERE paramName = 'Dataset Type';
+    WHERE ParamName = 'Dataset Type';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _operatorUsername
     FROM Tmp_Parameters
-    WHERE paramName IN ('Operator (PRN)', 'Username');
+    WHERE ParamName IN ('Operator (PRN)', 'Username');
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _comment
     FROM Tmp_Parameters
-    WHERE paramName = 'Comment';
+    WHERE ParamName = 'Comment';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _interestRating
     FROM Tmp_Parameters
-    WHERE paramName = 'Interest Rating';
+    WHERE ParamName = 'Interest Rating';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _requestID
     FROM Tmp_Parameters
-    WHERE paramName = 'Request';
+    WHERE ParamName = 'Request';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _workPackage
     FROM Tmp_Parameters
-    WHERE paramName = 'Work Package';
+    WHERE ParamName = 'Work Package';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _emslUsageType
     FROM Tmp_Parameters
-    WHERE paramName = 'EMSL Usage Type';
+    WHERE ParamName = 'EMSL Usage Type';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _emslProposalID
     FROM Tmp_Parameters
-    WHERE paramName = 'EMSL Proposal ID';
+    WHERE ParamName = 'EMSL Proposal ID';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _emslUsersList
     FROM Tmp_Parameters
-    WHERE paramName = 'EMSL Users List';
+    WHERE ParamName = 'EMSL Users List';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _runStart
     FROM Tmp_Parameters
-    WHERE paramName = 'Run Start';
+    WHERE ParamName = 'Run Start';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _runFinish
     FROM Tmp_Parameters
-    WHERE paramName = 'Run Finish';
+    WHERE ParamName = 'Run Finish';
 
-    SELECT paramValue
+    SELECT ParamValue
     INTO _datasetCreatorUsername
     FROM Tmp_Parameters
-    WHERE paramName IN ('DS Creator (PRN)', 'DS Creator');
+    WHERE ParamName IN ('DS Creator (PRN)', 'DS Creator');
 
     ---------------------------------------------------
     -- Check for QC or Blank datasets
@@ -444,28 +476,29 @@ BEGIN
     If _mode = 'check_add' OR _mode = 'check_update' Then
         -- Show the parsed values
 
-        RAISE INFO 'DatasetName: %', _datasetName;
-        RAISE INFO 'ExperimentName: %', _experimentName;
-        RAISE INFO 'InstrumentName: %', _instrumentName;
-        RAISE INFO 'CaptureSubdirectory: %', _captureSubdirectory;
-        RAISE INFO 'SeparationType: %', _separationType;
-        RAISE INFO 'LcCartName: %', _lcCartName;
-        RAISE INFO 'LcCartConfig: %', _lcCartConfig;
-        RAISE INFO 'LcColumn: %', _lcColumn;
-        RAISE INFO 'WellplateName: %', _wellplateName;
-        RAISE INFO 'WellNumber: %', _wellNumber;
-        RAISE INFO 'DatasetType: %', _datasetType;
-        RAISE INFO 'OperatorUsername: %', _operatorUsername;
-        RAISE INFO 'Comment: %', _comment;
-        RAISE INFO 'InterestRating: %', _interestRating;
-        RAISE INFO 'RequestID: %', _requestID;
-        RAISE INFO 'WorkPackage: %', _workPackage;
-        RAISE INFO 'EmslUsageType: %', _emslUsageType;
-        RAISE INFO 'EmslProposalID: %', _emslProposalID;
-        RAISE INFO 'EmslUsersList: %', _emslUsersList;
-        RAISE INFO 'RunStart: %', _runStart;
-        RAISE INFO 'RunFinish: %', _runFinish;
-        RAISE INFO 'DatasetCreatorUsername: %', _datasetCreatorUsername;
+        RAISE INFO '';
+        RAISE INFO 'Dataset Name:         %', _datasetName;
+        RAISE INFO 'Experiment Name:      %', _experimentName;
+        RAISE INFO 'Instrument Name:      %', _instrumentName;
+        RAISE INFO 'Capture Subdirectory: %', _captureSubdirectory;
+        RAISE INFO 'Separation Type:      %', _separationType;
+        RAISE INFO 'LC Cart Name:         %', _lcCartName;
+        RAISE INFO 'LC Cart Config:       %', _lcCartConfig;
+        RAISE INFO 'LC Column:            %', _lcColumn;
+        RAISE INFO 'Wellplate Name:       %', _wellplateName;
+        RAISE INFO 'WellNumber:           %', _wellNumber;
+        RAISE INFO 'Dataset Type:         %', _datasetType;
+        RAISE INFO 'Operator Username:    %', _operatorUsername;
+        RAISE INFO 'Comment:              %', _comment;
+        RAISE INFO 'Interest Rating:      %', _interestRating;
+        RAISE INFO 'Request ID:           %', _requestID;
+        RAISE INFO 'Work Package:         %', _workPackage;
+        RAISE INFO 'EMSL UsageType:       %', _emslUsageType;
+        RAISE INFO 'EMSL ProposalID:      %', _emslProposalID;
+        RAISE INFO 'EMSL UsersList:       %', _emslUsersList;
+        RAISE INFO 'Run Start:            %', _runStart;
+        RAISE INFO 'Run Finish:           %', _runFinish;
+        RAISE INFO 'DS Creator Username:  %', _datasetCreatorUsername;
 
         DROP TABLE Tmp_Parameters;
         RETURN;

@@ -230,10 +230,12 @@ BEGIN
                      END
 
         If _mode = 'update' Then
+
             -- Changes are typically only allowed to jobs in 'new', 'failed', or 'holding' state
             -- However, we do allow the job comment or export mode to be updated
-            --
+
             If Not _currentStateID IN (1,5,8,19) Then
+
                 -- Allow the job comment and Export Mode to be updated
 
                 SELECT AJS.job_state,
@@ -416,7 +418,6 @@ BEGIN
         -- Lookup the Dataset ID
         ---------------------------------------------------
 
-        --
         SELECT Dataset_ID
         INTO _datasetID
         FROM Tmp_DatasetInfo
@@ -515,10 +516,35 @@ BEGIN
 
                 -- ToDo: show this info using RAISE INFO
 
+                RAISE INFO '';
+        
+                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        
+                _infoHead := format(_formatSpecifier,
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg'
+                                   );
+        
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---'
+                                            );
+        
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+        
+                FOR _previewData IN
+
                 SELECT format('Preview ', _mode) AS Mode,
-                       _jobID AS job,
-                       _priority AS priority,
-                       CURRENT_TIMESTAMP AS created,
+                       _jobID AS Job,
+                       _priority AS Priority,
+                       CURRENT_TIMESTAMP AS Created,
                        _analysisToolID AS AnalysisToolID,
                        _paramFileName AS ParmFileName,
                        _settingsFileName AS SettingsFileName,
@@ -534,6 +560,31 @@ BEGIN
                        _newStateID AS StateID,
                        _propMode AS PropagationMode,
                        _datasetUnreviewed AS DatasetUnreviewed
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Mode,
+                                        _previewData.Job,
+                                        _previewData.Priority,
+                                        _previewData.Created,
+                                        _previewData.AnalysisToolID,
+                                        _previewData.ParmFileName,
+                                        _previewData.SettingsFileName,
+                                        _previewData.OrganismDBName,
+                                        _previewData.ProteinCollectionList,
+                                        _previewData.ProteinOptionsList,
+                                        _previewData.OrganismID,
+                                        _previewData.DatasetID,
+                                        _previewData.Comment,
+                                        _previewData.SpecialProcessing,
+                                        _previewData.Owner,
+                                        _previewData.BatchID,
+                                        _previewData.StateID,
+                                        _previewData.PropagationMode,
+                                        _previewData.DatasetUnreviewed
+                            );
+        
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
 
@@ -582,9 +633,8 @@ BEGIN
                     CALL alter_event_log_entry_user (5, _jobID, _newStateID, _callingUser);
                 End If;
 
-                ---------------------------------------------------
                 -- Associate job with processor group
-                --
+
                 If _gid <> 0 Then
                     INSERT INTO t_analysis_job_processor_group_associations( job,
                                                                              group_id )
@@ -592,7 +642,7 @@ BEGIN
                 End If;
 
             End If;
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -600,10 +650,8 @@ BEGIN
 
         If _mode = 'update' or _mode = 'reset' Then
 
-            ---------------------------------------------------
             -- Resolve state ID according to mode and state name
-            --
-            --
+
             If _mode = 'reset' Then
                 _updateStateID := 1;
             Else
@@ -629,45 +677,97 @@ BEGIN
 
             -- Is there an existing association between the job
             -- and a processor group?
-            --
-            --
+
             SELECT group_id
             INTO _pgaAssocID
             FROM t_analysis_job_processor_group_associations
             WHERE job = _jobID
 
             If _infoOnly Then
+            
                 -- ToDo: Convert this to RAISE INFO
 
-                SELECT format('Preview %s', _mode) AS Mode,
-                       _jobID AS job,
-                       _priority AS Priority,
-                       created,
-                       _analysisToolID AS AnalysisToolID,
-                       _paramFileName AS ParmFileName,
-                       _settingsFileName AS SettingsFileName,
-                       _organismDBName AS OrganismDBName,
-                       _protCollNameList AS ProteinCollectionList,
-                       _protCollOptionsList AS ProteinOptionsList,
-                       _organismID AS OrganismID,
-                       _datasetID AS DatasetID,
-                      _comment comment,
-                       _specialProcessing AS SpecialProcessing,
-                       _ownerUsername AS Owner,
-                       batch_id,
-                       _updateStateID AS StateID,
-                       CASE WHEN _mode <> 'reset' THEN start ELSE NULL End AS Start,
-                       CASE WHEN _mode <> 'reset' THEN finish ELSE NULL End AS Finish,
-                       _propMode AS PropagationMode,
-                       dataset_unreviewed
-                FROM t_analysis_job
-                WHERE (job = _jobID)
+                RAISE INFO '';
+        
+                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        
+                _infoHead := format(_formatSpecifier,
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg'
+                                   );
+        
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---'
+                                            );
+        
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+        
+                FOR _previewData IN
+                    SELECT format('Preview %s', _mode) AS Mode,
+                           _jobID AS Job,
+                           _priority AS Priority,
+                           Created,
+                           _analysisToolID AS AnalysisToolID,
+                           _paramFileName AS ParmFileName,
+                           _settingsFileName AS SettingsFileName,
+                           _organismDBName AS OrganismDBName,
+                           _protCollNameList AS ProteinCollectionList,
+                           _protCollOptionsList AS ProteinOptionsList,
+                           _organismID AS OrganismID,
+                           _datasetID AS DatasetID,
+                           _comment AS Comment,
+                           _specialProcessing AS SpecialProcessing,
+                           _ownerUsername AS Owner,
+                           batch_id AS BatchID,
+                           _updateStateID AS StateID,
+                           CASE WHEN _mode <> 'reset' THEN start ELSE NULL End AS Start,
+                           CASE WHEN _mode <> 'reset' THEN finish ELSE NULL End AS Finish,
+                           _propMode AS PropagationMode,
+                           dataset_unreviewed AS DatasetUnreviewed
+                    FROM t_analysis_job
+                    WHERE job = _jobID;
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Mode,
+                                        _previewData.Job,
+                                        _previewData.Priority,
+                                        _previewData.Created,
+                                        _previewData.AnalysisToolID,
+                                        _previewData.ParmFileName,
+                                        _previewData.SettingsFileName,
+                                        _previewData.OrganismDBName,
+                                        _previewData.ProteinCollectionList,
+                                        _previewData.ProteinOptionsList,
+                                        _previewData.OrganismID,
+                                        _previewData.DatasetID,
+                                        _previewData.Comment,
+                                        _previewData.SpecialProcessing,
+                                        _previewData.Owner,
+                                        _previewData.BatchID,
+                                        _previewData.StateID,
+                                        _previewData.Start,
+                                        _previewData.Finish,
+                                        _previewData.PropagationMode,
+                                        _previewData.DatasetUnreviewed
+                                       );
+        
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
 
                 ---------------------------------------------------
                 -- Make changes to database
-                --
+                ---------------------------------------------------
+
                 UPDATE t_analysis_job
                 SET
                     priority = _priority,
@@ -693,21 +793,16 @@ BEGIN
                     CALL alter_event_log_entry_user (5, _jobID, _updateStateID, _callingUser);
                 End If;
 
-                ---------------------------------------------------
-                -- Deal with job association with group,
-                ---------------------------------------------------
+]               -- Deal with job association with group,
+                -- If no group is given, but existing association exists for job, delete it
 
-                -- If no group is given, but existing association
-                -- exists for job, delete it
-                --
                 If _gid = 0 Then
                     DELETE FROM t_analysis_job_processor_group_associations
                     WHERE (job = _jobID);
                 End If;
 
-                -- If group is given, and no association for job exists
-                -- create one
-                --
+                -- If group is given, and no association for job exists create one
+
                 If _gid <> 0 and _pgaAssocID = 0 Then
                     INSERT INTO t_analysis_job_processor_group_associations( job,
                                                                              group_id )
@@ -716,9 +811,8 @@ BEGIN
                     _alterEnteredByRequired := true;
                 End If;
 
-                -- If group is given, and an association for job does exist
-                -- update it
-                --
+                -- If group is given, and an association for job does exist update it
+
                 If _gid <> 0 and _pgaAssocID <> 0 and _pgaAssocID <> _gid Then
                     UPDATE t_analysis_job_processor_group_associations
                     SET group_id = _gid,
@@ -737,7 +831,7 @@ BEGIN
                 End If;
             End If;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

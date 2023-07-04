@@ -796,7 +796,7 @@ BEGIN
         End If;
 
     -- ToDo: use xpath() or XMLTABLE
-	--
+    --
     --    SELECT (xpath('//sections/section/item/@key', _xml))[1]::text AS SettingName,
     --           (xpath('//sections/section/item/@value', _xml))[1]::text AS SettingValue
 
@@ -835,7 +835,7 @@ BEGIN
         End If;
 
     -- ToDo: use xpath() or XMLTABLE
-	--
+    --
     --    SELECT (xpath('//sections/section/item/@key', _xml))[1]::text AS SettingName,
     --           (xpath('//sections/section/item/@value', _xml))[1]::text AS SettingValue
 

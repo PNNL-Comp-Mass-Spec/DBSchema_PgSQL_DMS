@@ -180,23 +180,66 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT DS.dataset AS Dataset,
-                   J.job AS Job,
-                   J.request_id AS RequestID,
-                   J.batch_id AS BatchID,
-                   J.priority AS Priority,
-                   U.Ignored,
-                   J.param_file_name,
-                   J.settings_file_name,
-                   J.protein_collection_list AS ProteinCollectionList,
-                   J.organism_db_name AS OrganismDBName,
-                   U.Source
-            FROM t_analysis_job J
-                 INNER JOIN Tmp_JobsToUpdate U
-                   ON J.job = U.job
-                 INNER JOIN t_dataset DS
-                   ON J.dataset_id = DS.dataset_id
-            ORDER BY J.batch_id, J.job
+            RAISE INFO '';
+    
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+    
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+    
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+    
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+    
+            FOR _previewData IN
+                SELECT DS.Dataset,
+                       J.Job,
+                       J.request_id AS RequestID,
+                       J.batch_id AS BatchID,
+                       J.priority AS Priority,
+                       U.Ignored,
+                       J.param_file_name,
+                       J.settings_file_name,
+                       J.protein_collection_list AS ProteinCollectionList,
+                       J.organism_db_name AS OrganismDBName,
+                       U.Source
+                FROM t_analysis_job J
+                     INNER JOIN Tmp_JobsToUpdate U
+                       ON J.job = U.job
+                     INNER JOIN t_dataset DS
+                       ON J.dataset_id = DS.dataset_id
+                ORDER BY J.batch_id, J.job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Dataset,
+                                    _previewData.Job,
+                                    _previewData.RequestID,
+                                    _previewData.BatchID,
+                                    _previewData.Priority,
+                                    _previewData.Ignored,
+                                    _previewData.Param_File_Name,
+                                    _previewData.Settings_File_Name,
+                                    _previewData.ProteinCollectionList,
+                                    _previewData.OrganismDBName,
+                                    _previewData.Source
+
+                        );
+    
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         DROP TABLE Tmp_ProteinCollectionJobs;
