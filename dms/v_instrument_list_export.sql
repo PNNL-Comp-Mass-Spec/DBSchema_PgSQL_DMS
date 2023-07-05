@@ -11,6 +11,7 @@ CREATE VIEW public.v_instrument_list_export AS
     inst.operations_role AS ops_role,
     inst.status,
     inst.instrument_class AS class,
+    inst.instrument_group,
     inst.capture_method AS capture,
     instclass.raw_data_type,
     srcpath.source_path,
