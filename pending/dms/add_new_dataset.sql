@@ -98,29 +98,29 @@ DECLARE
     _xml xml;
     _logMessage text;
 
-    _datasetName         text  := '';
-    _experimentName      text  := '';
-    _instrumentName      text  := '';
-    _captureSubdirectory text  := '';
-    _separationType      text  := '';
-    _lcCartName          text  := '';
-    _lcCartConfig        text  := '';
-    _lcColumn            text  := '';
-    _wellplateName       text  := '';
-    _wellNumber          text  := '';
-    _datasetType         text  := '';
-    _operatorUsername    text  := '';
-    _comment             text  := '';
-    _interestRating      text  := '';
-    _requestID           int   := 0 ;   -- Request ID; this might get updated by add_update_dataset
-    _workPackage         text  := '';
-    _emslUsageType       text  := '';
-    _emslProposalID      text  := '';
-    _emslUsersList       text  := '';
-    _runStart            text  := '';
-    _runFinish           text  := '';
-    _datasetCreatorUsername   text  := '';   -- Username of the person that created the dataset; it is typically only present in trigger files created due to a dataset manually being created by a user
-    
+    _datasetName            text := '';
+    _experimentName         text := '';
+    _instrumentName         text := '';
+    _captureSubdirectory    text := '';
+    _separationType         text := '';
+    _lcCartName             text := '';
+    _lcCartConfig           text := '';
+    _lcColumn               text := '';
+    _wellplateName          text := '';
+    _wellNumber             text := '';
+    _datasetType            text := '';
+    _operatorUsername       text := '';
+    _comment                text := '';
+    _interestRating         text := '';     -- Dataset rating name (tracked by column dataset_rating in t_dataset_rating_name)
+    _requestID              int  := 0 ;     -- Request ID; this might get updated by add_update_dataset
+    _workPackage            text := '';
+    _emslUsageType          text := '';
+    _emslProposalID         text := '';
+    _emslUsersList          text := '';
+    _runStart               text := '';
+    _runFinish              text := '';
+    _datasetCreatorUsername text := '';     -- Username of the person that created the dataset; it is typically only present in trigger files created due to a dataset manually being created by a user
+
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
@@ -213,7 +213,7 @@ BEGIN
             _infoData := format(_formatSpecifier,
                                 _previewData.Name,
                                 _previewData.ParamValue
-                    );
+                               );
 
             RAISE INFO '%', _infoData;
         END LOOP;
@@ -340,21 +340,24 @@ BEGIN
     -- Check for QC or Blank datasets
     ---------------------------------------------------
 
-    If public.Get_Dataset_Priority(_datasetName) > 0 OR
-       public.Get_Dataset_Priority(_experimentName) > 0 OR
+    If public.get_dataset_priority(_datasetName) > 0 OR
+       public.get_dataset_priority(_experimentName) > 0 OR
        (_datasetName LIKE 'Blank%' AND Not _datasetName LIKE '%-bad')
     Then
-        If _interestRating Not In ('Not Released', 'No Interest') And _interestRating Not Like 'No Data%' Then
+        If _interestRating::citext Not In ('Not Released', 'No Interest') And _interestRating Not ILike 'No Data%' Then
             -- Auto set interest rating to 5
-            -- Initially set _interestRating to the text 'Released' but then query
-            -- T_Dataset_Rating_Name for rating 5 in case the rating name has changed
-
-            _interestRating := 'Released';
 
             SELECT dataset_rating
             INTO _interestRating
             FROM t_dataset_rating_name
             WHERE dataset_rating_id = 5;
+
+            If Not FOUND Then
+                RAISE WARNING 'Dataset Rating ID 5 should be ''Released'', but ID 5 was not found in t_dataset_rating_name';
+
+                _interestRating := 'Released';
+            End If;
+
         End If;
     End If;
 

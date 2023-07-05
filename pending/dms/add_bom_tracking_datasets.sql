@@ -120,9 +120,9 @@ BEGIN
             -- ToDo: Preview results using RAISE INFO
 
             RAISE INFO '';
-    
+
             _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-    
+
             _infoHead := format(_formatSpecifier,
                                 'abcdefg',
                                 'abcdefg',
@@ -130,7 +130,7 @@ BEGIN
                                 'abcdefg',
                                 'abcdefg'
                                );
-    
+
             _infoHeadSeparator := format(_formatSpecifier,
                                          '---',
                                          '---',
@@ -138,15 +138,15 @@ BEGIN
                                          '---',
                                          '---'
                                         );
-    
+
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
-    
-            FOR _previewData IN            
+
+            FOR _previewData IN
                 SELECT entry_id,
                        instrument,
-                       msg, 
-                       result 
+                       msg,
+                       result
                 FROM Tmp_TrackedInstruments
             LOOP
                 _infoData := format(_formatSpecifier,
@@ -154,11 +154,11 @@ BEGIN
                                     _previewData.instrument,
                                     _previewData.msg,
                                     _previewData.result
-                        );
-    
+                                   );
+
                 RAISE INFO '%', _infoData;
             END LOOP;
-            
+
         End If;
 
     EXCEPTION

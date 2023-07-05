@@ -156,7 +156,7 @@ BEGIN
     -- Update the old/new priority columns
     --
     UPDATE Tmp_JobsToUpdate Target
-    SET Old_Priority = Cast(J.AJ_Priority AS int),
+    SET Old_Priority = J.Priority::int
         New_Priority = 4
     FROM t_analysis_job J
     WHERE J.job = Target.job;
@@ -181,9 +181,9 @@ BEGIN
             -- ToDo: Update this to use RAISE INFO
 
             RAISE INFO '';
-    
+
             _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-    
+
             _infoHead := format(_formatSpecifier,
                                 'abcdefg',
                                 'abcdefg',
@@ -191,7 +191,7 @@ BEGIN
                                 'abcdefg',
                                 'abcdefg'
                                );
-    
+
             _infoHeadSeparator := format(_formatSpecifier,
                                          '---',
                                          '---',
@@ -199,10 +199,10 @@ BEGIN
                                          '---',
                                          '---'
                                         );
-    
+
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
-    
+
             FOR _previewData IN
                 SELECT DS.Dataset,
                        J.Job,
@@ -234,9 +234,8 @@ BEGIN
                                     _previewData.ProteinCollectionList,
                                     _previewData.OrganismDBName,
                                     _previewData.Source
+                                   );
 
-                        );
-    
                 RAISE INFO '%', _infoData;
             END LOOP;
 

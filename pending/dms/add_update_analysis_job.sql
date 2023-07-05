@@ -517,9 +517,9 @@ BEGIN
                 -- ToDo: show this info using RAISE INFO
 
                 RAISE INFO '';
-        
+
                 _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-        
+
                 _infoHead := format(_formatSpecifier,
                                     'abcdefg',
                                     'abcdefg',
@@ -527,7 +527,7 @@ BEGIN
                                     'abcdefg',
                                     'abcdefg'
                                    );
-        
+
                 _infoHeadSeparator := format(_formatSpecifier,
                                              '---',
                                              '---',
@@ -535,10 +535,10 @@ BEGIN
                                              '---',
                                              '---'
                                             );
-        
+
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
-        
+
                 FOR _previewData IN
 
                 SELECT format('Preview ', _mode) AS Mode,
@@ -581,8 +581,8 @@ BEGIN
                                         _previewData.StateID,
                                         _previewData.PropagationMode,
                                         _previewData.DatasetUnreviewed
-                            );
-        
+                                       );
+
                     RAISE INFO '%', _infoData;
                 END LOOP;
 
@@ -684,13 +684,13 @@ BEGIN
             WHERE job = _jobID
 
             If _infoOnly Then
-            
+
                 -- ToDo: Convert this to RAISE INFO
 
                 RAISE INFO '';
-        
+
                 _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-        
+
                 _infoHead := format(_formatSpecifier,
                                     'abcdefg',
                                     'abcdefg',
@@ -698,7 +698,7 @@ BEGIN
                                     'abcdefg',
                                     'abcdefg'
                                    );
-        
+
                 _infoHeadSeparator := format(_formatSpecifier,
                                              '---',
                                              '---',
@@ -706,10 +706,10 @@ BEGIN
                                              '---',
                                              '---'
                                             );
-        
+
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
-        
+
                 FOR _previewData IN
                     SELECT format('Preview %s', _mode) AS Mode,
                            _jobID AS Job,
@@ -758,7 +758,7 @@ BEGIN
                                         _previewData.PropagationMode,
                                         _previewData.DatasetUnreviewed
                                        );
-        
+
                     RAISE INFO '%', _infoData;
                 END LOOP;
 

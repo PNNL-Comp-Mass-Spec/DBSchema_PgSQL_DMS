@@ -577,12 +577,11 @@ BEGIN
 
                         _currentLocation := format('Add job %s to t_analysis_job using Tmp_Job_Backfill_Details', _jobStr);
 
-                        INSERT INTO t_analysis_job
-                               (job, batch_id, AJ_priority, created, AJ_start, AJ_finish, analysis_tool_id,
-                                AJ_parmFileName, AJ_settingsFileName, organism_db_name, AJ_organismID, dataset_id, comment, AJ_owner,
-                                job_state_id, assigned_processor_name, Results_Folder_Name, protein_collection_list, protein_options_list,
-                                AJ_requestID, propagation_mode, processing_time_minutes, purged)
-                        Select job, BatchID, priority, created, Start, Finish, AnalysisToolID,
+                        INSERT INTO t_analysis_job ( job, batch_id, priority, created, start, finish, analysis_tool_id,
+                                                     param_file_name, settings_file_name, organism_db_name, organism_id, dataset_id, comment, owner_username,
+                                                     job_state_id, assigned_processor_name, results_folder_name, protein_collection_list, protein_options_list,
+                                                     request_id, propagation_mode, processing_time_minutes, purged )
+                        SELECT job, BatchID, priority, created, Start, Finish, AnalysisToolID,
                             ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, comment, owner,
                             StateID, AssignedProcessorName, ResultsFolderName, ProteinCollectionList, ProteinOptionsList,
                             RequestID, PropagationMode, ProcessingTimeMinutes, purged

@@ -206,6 +206,7 @@ BEGIN
     If _infoOnly And _showDebug AND EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
 
         -- ToDo: Show this using RAISE INFO
+
         RAISE INFO '';
 
         _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
@@ -248,7 +249,6 @@ BEGIN
                    ON FilterList.dataset_id = DTP.dataset_id
             ORDER BY DS.dataset_id
         LOOP
-        LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Status,
                                 _previewData.Instrument,
@@ -259,7 +259,7 @@ BEGIN
                                 _previewData.Process,
                                 _previewData.Dataset,
                                 _previewData.Comment
-                    );
+                               );
 
             RAISE INFO '%', _infoData;
         END LOOP;
@@ -285,23 +285,63 @@ BEGIN
 
         -- ToDo: Show this using RAISE INFO
 
-        SELECT 'Debug_Output #2' AS Status,
-               InstName.instrument,
-               DS.dataset_id,
-               DS.dataset,
-               DS.created,
-               DS.comment,
-               DS.dataset_state_id,
-               DS.dataset_rating_id,
-               DTP.Process_Dataset
-        FROM Tmp_DatasetsToProcess DTP
-             INNER JOIN t_dataset DS
-               ON DTP.dataset_id = DS.dataset_id
-             INNER JOIN t_instrument_name InstName
-               ON DS.instrument_id = InstName.instrument_id
-             INNER JOIN Tmp_DatasetID_Filter_List FilterList
-               ON FilterList.dataset_id = DTP.dataset_id
-        ORDER BY DS.dataset_id;
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT 'Debug_Output #2' AS Status,
+                   InstName.instrument,
+                   DS.dataset_id AS DatasetID,
+                   DS.created,
+                   DS.dataset_state_id AS StateID,
+                   DS.dataset_rating_id AS RatingID,
+                   DTP.Process_Dataset AS Process,
+                   DS.dataset,
+                   DS.comment
+            FROM Tmp_DatasetsToProcess DTP
+                 INNER JOIN t_dataset DS
+                   ON DTP.dataset_id = DS.dataset_id
+                 INNER JOIN t_instrument_name InstName
+                   ON DS.instrument_id = InstName.instrument_id
+                 INNER JOIN Tmp_DatasetID_Filter_List FilterList
+                   ON FilterList.dataset_id = DTP.dataset_id
+            ORDER BY DS.dataset_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Status,
+                                _previewData.Instrument,
+                                _previewData.DatasetID,
+                                _previewData.Created,
+                                _previewData.StateID,
+                                _previewData.RatingID,
+                                _previewData.Process,
+                                _previewData.Dataset,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     -- Next, exclude any datasets that have been processed by schedule_predefined_analysis_jobs
@@ -319,23 +359,63 @@ BEGIN
 
         -- ToDo: Show this using RAISE INFO
 
-        SELECT 'Debug_Output #3' AS Status,
-               InstName.instrument,
-               DS.dataset_id,
-               DS.dataset,
-               DS.created,
-               DS.comment,
-               DS.dataset_state_id,
-               DS.dataset_rating_id,
-               DTP.Process_Dataset
-        FROM Tmp_DatasetsToProcess DTP
-             INNER JOIN t_dataset DS
-               ON DTP.dataset_id = DS.dataset_id
-             INNER JOIN t_instrument_name InstName
-               ON DS.instrument_id = InstName.instrument_id
-             INNER JOIN Tmp_DatasetID_Filter_List FilterList
-               ON FilterList.dataset_id = DTP.dataset_id
-        ORDER BY DS.dataset_id;
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT 'Debug_Output #3' AS Status,
+                   InstName.instrument,
+                   DS.dataset_id AS DatasetID,
+                   DS.created,
+                   DS.dataset_state_id AS StateID,
+                   DS.dataset_rating_id AS RatingID,
+                   DTP.Process_Dataset AS Process,
+                   DS.dataset,
+                   DS.comment
+            FROM Tmp_DatasetsToProcess DTP
+                 INNER JOIN t_dataset DS
+                   ON DTP.dataset_id = DS.dataset_id
+                 INNER JOIN t_instrument_name InstName
+                   ON DS.instrument_id = InstName.instrument_id
+                 INNER JOIN Tmp_DatasetID_Filter_List FilterList
+                   ON FilterList.dataset_id = DTP.dataset_id
+            ORDER BY DS.dataset_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Status,
+                                _previewData.Instrument,
+                                _previewData.DatasetID,
+                                _previewData.Created,
+                                _previewData.StateID,
+                                _previewData.RatingID,
+                                _previewData.Process,
+                                _previewData.Dataset,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     If Exists (SELECT * FROM Tmp_DatasetID_Filter_List) Then
@@ -350,25 +430,12 @@ BEGIN
     If _instrumentSkipList <> '' Then
         UPDATE Tmp_DatasetsToProcess
         SET Process_Dataset = false
-        FROM Tmp_DatasetsToProcess Target
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE Tmp_DatasetsToProcess
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = Tmp_DatasetsToProcess.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-         INNER JOIN t_dataset DS
-               ON Target.dataset_id = DS.dataset_id
+        FROM t_dataset DS
              INNER JOIN t_instrument_name InstName
-             ON InstName.instrument_id = DS.instrument_id
+               ON InstName.instrument_id = DS.instrument_id
              INNER JOIN public.parse_delimited_list(_instrumentSkipList) AS ExclusionList
                ON InstName.instrument = ExclusionList.Value;
+        WHERE Tmp_DatasetsToProcess.dataset_id = DS.dataset_id;
     End If;
 
     -- Add dataset _datasetNameIgnoreExistingJobs
@@ -381,42 +448,123 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        SELECT InstName.instrument,
-               DS.dataset_id,
-               DS.dataset,
-               DS.created,
-               DS.comment,
-               DS.dataset_state_id,
-               DS.dataset_rating_id,
-               DTP.Process_Dataset
-        FROM Tmp_DatasetsToProcess DTP
-             INNER JOIN t_dataset DS
-               ON DTP.dataset_id = DS.dataset_id
-             INNER JOIN t_instrument_name InstName
-               ON DS.instrument_id = InstName.instrument_id
-        WHERE DTP.Process_Dataset = true
-        ORDER BY InstName.instrument, DS.dataset_id;
 
-        If _infoOnly And _showDebug Then
+        -- ToDo: Show this using RAISE INFO
 
-            -- ToDo: Show this using RAISE INFO
+        RAISE INFO '';
 
-            SELECT 'Ignored' AS Status,
-                   InstName.instrument,
-                   DS.dataset_id,
-                   DS.dataset,
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT InstName.instrument,
+                   DS.dataset_id AS DatasetID,
                    DS.created,
-                   DS.comment,
-                   DS.dataset_state_id,
-                   DS.dataset_rating_id,
-                   DTP.Process_Dataset
+                   DS.dataset_state_id AS StateID,
+                   DS.dataset_rating_id AS RatingID,
+                   DTP.Process_Dataset AS Process,
+                   DS.dataset,
+                   DS.comment
             FROM Tmp_DatasetsToProcess DTP
                  INNER JOIN t_dataset DS
                    ON DTP.dataset_id = DS.dataset_id
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id
-            WHERE DTP.Process_Dataset = false
-            ORDER BY InstName.instrument, DS.dataset_id;
+            WHERE DTP.Process_Dataset = true
+            ORDER BY InstName.instrument, DS.dataset_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Instrument,
+                                _previewData.DatasetID,
+                                _previewData.Created,
+                                _previewData.StateID,
+                                _previewData.RatingID,
+                                _previewData.Process,
+                                _previewData.Dataset,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        If _infoOnly And _showDebug Then
+
+            -- ToDo: Show this using RAISE INFO
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT 'Ignored' AS Status,
+                       InstName.instrument,
+                       DS.dataset_id AS DatasetID,
+                       DS.created,
+                       DS.dataset_state_id AS StateID,
+                       DS.dataset_rating_id AS RatingID,
+                       DTP.Process_Dataset AS Dataset,
+                       DS.dataset,
+                       DS.comment
+                FROM Tmp_DatasetsToProcess DTP
+                     INNER JOIN t_dataset DS
+                       ON DTP.dataset_id = DS.dataset_id
+                     INNER JOIN t_instrument_name InstName
+                       ON DS.instrument_id = InstName.instrument_id
+                WHERE DTP.Process_Dataset = false
+                ORDER BY InstName.instrument, DS.dataset_id
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Status,
+                                    _previewData.Instrument,
+                                    _previewData.DatasetID,
+                                    _previewData.Created,
+                                    _previewData.StateID,
+                                    _previewData.RatingID,
+                                    _previewData.Process,
+                                    _previewData.Dataset,
+                                    _previewData.Comment
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
     End If;
 

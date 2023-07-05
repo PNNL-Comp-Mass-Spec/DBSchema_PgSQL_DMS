@@ -20,7 +20,11 @@ AS $$
 **      but occasionally updates jobs listed as New
 **
 **  Arguments:
-**    _updateCode   Safety feature to prevent unauthorized job updates
+**    _job                  Job number
+**    _newBrokerJobState    New state of the job in sw.t_jobs
+**    _jobStart             Job start time
+**    _updateCode           Safety feature to prevent unauthorized job updates
+**    _infoOnly             When true, preview updates
 **
 **  Auth:   mem
 **  Date:   02/21/2013 mem - Initial version
@@ -73,27 +77,27 @@ BEGIN
         SELECT job,
                job_state_id,
                2 AS job_state_id_New,
-               AJ_Start,
+               start,
                CASE
                    WHEN _newBrokerJobState >= 2 THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
-                   ELSE AJ_start
-               END AS AJ_Start_New
+                   ELSE start
+               END AS start_new
         FROM t_analysis_job
-        WHERE job = _job
-
-    Else
-
-        -- Perform the update
-        UPDATE t_analysis_job
-        SET job_state_id = 2,
-            start = CASE WHEN _newBrokerJobState >= 2
-                            THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
-                            ELSE AJ_start
-                       END,
-            AJ_AssignedProcessorName = 'Job_Broker'
         WHERE job = _job;
 
+        RETURN;
+
     End If;
+
+    -- Perform the update
+    UPDATE t_analysis_job
+    SET job_state_id = 2,
+        start = CASE WHEN _newBrokerJobState >= 2
+                     THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
+                     ELSE start
+                END,
+        assigned_processor_name = 'Job_Broker'
+    WHERE job = _job;
 
 END
 $$;

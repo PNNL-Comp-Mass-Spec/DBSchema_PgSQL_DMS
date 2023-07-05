@@ -41,12 +41,28 @@ AS $$
 **  Arguments:
 **    _datasetName              Dataset name
 **    _experimentName           Experiment name
+**    _operatorUsername         Instrument operator username
+**    _instrumentName           Instrument name
 **    _msType                   Dataset Type
+**    _lcColumnNum              LC column name
+**    _wellplateName            Wellplate name
+**    _wellNumber               Well number
+**    _secSep                   LC Separation type
+**    _internalStandards        Internal standard names
+**    _comment                  Dataset comment
+**    _rating                   Dataset rating name (aka interest rating)
+**    _lcCartName               LC cart name
+**    _eusProposalID            EUS proposal ID
+**    _eusUsageType             EUS usage type
+**    _eusUsersList             EUS users list
 **    _requestID                Only valid if _mode is 'add', 'check_add', or 'add_trigger'; ignored if _mode is 'update' or 'check_update'
 **    _workPackage              Only valid if _mode is 'add', 'check_add', or 'add_trigger'
 **    _mode                     Can be 'add', 'update', 'bad', 'check_update', 'check_add', 'add_trigger'
-**    _aggregationJobDatase     Set to true when creating an in-silico dataset to associate with an aggregation job
+**    _callingUser              Username of the calling user
+**    _aggregationJobDataset    Set to true when creating an in-silico dataset to associate with an aggregation job
 **    _captureSubfolder         Only used when _mode is 'add' or 'bad'
+**    _lcCartConfig             LC cart config
+**    _logDebugMessages         If true, log debug messages
 **
 **  Auth:   grk
 **  Date:   02/13/2003
@@ -86,7 +102,7 @@ AS $$
 **          05/11/2011 mem - Now calling Get_Instrument_Storage_Path_For_New_Datasets
 **          05/12/2011 mem - Now passing _refDate and _autoSwitchActiveStorage to Get_Instrument_Storage_Path_For_New_Datasets
 **          05/24/2011 mem - Now checking for change of rating from -5, -6, or -7 to 5
-**                         - Now ignoring AJ_DatasetUnreviewed jobs when determining whether or not to call schedule_predefined_analysis_jobs
+**                         - Now ignoring jobs with dataset_unreviewed = 1 when determining whether or not to call schedule_predefined_analysis_jobs
 **          12/12/2011 mem - Updated call to Validate_EUS_Usage to treat _eusUsageType as an input/output parameter
 **          12/14/2011 mem - Now passing _callingUser to Add_Update_Requested_Run and Consume_Scheduled_Run
 **          12/19/2011 mem - Now auto-replacing &quot; with a double-quotation mark in _comment
@@ -402,7 +418,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Resolve id for rating
+        -- Resolve ID for rating
         ---------------------------------------------------
 
         If _mode = 'bad' Then
@@ -1294,19 +1310,19 @@ BEGIN
             End If;
 
             UPDATE t_dataset
-            Set     operator_username = _operatorUsername,
-                    comment = _comment,
-                    dataset_type_ID = _datasetTypeID,
-                    well = _wellNumber,
-                    separation_type = _secSep,
-                    folder_name = _folderName,
-                    exp_id = _experimentID,
-                    dataset_rating_id = _ratingID,
-                    lc_column_ID = _columnID,
-                    wellplate = _wellplateName,
-                    internal_standard_ID = _intStdID,
-                    capture_subfolder = _captureSubfolder,
-                    cart_config_id = _cartConfigID
+            SET operator_username = _operatorUsername,
+                comment = _comment,
+                dataset_type_ID = _datasetTypeID,
+                well = _wellNumber,
+                separation_type = _secSep,
+                folder_name = _folderName,
+                exp_id = _experimentID,
+                dataset_rating_id = _ratingID,
+                lc_column_ID = _columnID,
+                wellplate = _wellplateName,
+                internal_standard_ID = _intStdID,
+                capture_subfolder = _captureSubfolder,
+                cart_config_id = _cartConfigID
             WHERE dataset_id = _datasetID
 
             -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
@@ -1425,7 +1441,7 @@ BEGIN
             ---------------------------------------------------
             -- If rating changed from -5, -6, or -7 to 5, check if any jobs exist for this dataset
             -- If no jobs are found, Call schedule_predefined_analysis_jobs for this dataset
-            -- Skip jobs with AJ_DatasetUnreviewed=1 when looking for existing jobs (these jobs were created before the dataset was dispositioned)
+            -- Skip jobs with dataset_unreviewed = 1 when looking for existing jobs (these jobs were created before the dataset was dispositioned)
             ---------------------------------------------------
 
             If _ratingID >= 2 and Coalesce(_curDSRatingID, -1000) IN (-5, -6, -7) Then

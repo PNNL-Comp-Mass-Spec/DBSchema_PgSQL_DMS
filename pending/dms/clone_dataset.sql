@@ -125,17 +125,18 @@ BEGIN
                DS.operator_username As OperatorUsername,
                DS.capture_subfolder As CaptureSubdirectory,
                DS.cart_config_id As LcCartConfigID,
-               
+               DS.dataset_rating_id As DatasetRatingID,
+               DS.separation_type As SeparationType,
                Inst.instrument As InstrumentName,
-               RR.work_package As WorkPackage,
                DSType.Dataset_Type As DatasetType,                         -- Aka _msType
                RR.instrument_setting As InstrumentSettings,
                RR.wellplate As Wellplate,
                RR.well As WellNum,
                RR.request_internal_standard As InternalStandard,
                'Automatically created by dataset entry' As Comment,
-               RR.eus_proposal_id As EusProposalID,
+               RR.work_package As WorkPackage,
                EUT.eus_usage_type As EusUsageType,
+               RR.eus_proposal_id As EusProposalID,
                RR.separation_group As SeparationGroup,
                lccart.cart_name As LcCartName,
                lccol.lc_column As LcColumn
@@ -161,48 +162,37 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Use RAISE INFO to show this info
-
             -- Preview the new dataset
-            
-            RAISE INFO '';
 
-            SELECT *
-            INTO _previewData
-            FROM t_dataset
-            WHERE dataset = _dataset
-            LIMIT 1;
+            RAISE INFO '';
 
             RAISE INFO 'Dataset Name:         %', _datasetNew;
             RAISE INFO 'Experiment Name:      %', _datasetInfo.ExperimentName;
-            RAISE INFO 'Instrument Name:      %', _datasetInfo.InstrumentName                  -- _instrumentName;
-            RAISE INFO 'Capture Subdirectory: %', _datasetInfo.CaptureSubdirectory                  -- _captureSubdirectory;
-            RAISE INFO 'Separation Group:     %', _datasetInfo.SeparationGroup                  -- _separationType;
-            RAISE INFO 'LC Cart Name:         %', _datasetInfo.LcCartName                  -- _lcCartName;
-            RAISE INFO 'LC Cart Config:       %', _datasetInfo.LcCartConfigID                  -- _lcCartConfig;
-            RAISE INFO 'LC Column:            %', _datasetInfo.LcColumn                  -- _lcColumn;
-            RAISE INFO 'Dataset Type:         %', _datasetInfo.DatasetType                  -- _datasetType;
-            RAISE INFO 'Operator Username:    %', _datasetInfo.OperatorUsername                  -- _operatorUsername;
-            RAISE INFO 'Comment:              %', _datasetInfo.Comment                  -- _comment;
-            RAISE INFO 'Interest Rating:      %', _datasetInfo.                  -- _interestRating;
-            RAISE INFO 'DS Creator Username:  %', _datasetInfo.                  -- _datasetCreatorUsername;
-     
-            RAISE INFO '';
- 
-            -- Preview the new requested run
+            RAISE INFO 'Instrument Name:      %', _datasetInfo.InstrumentName;
+            RAISE INFO 'Capture Subdirectory: %', _datasetInfo.CaptureSubdirectory;
+            RAISE INFO 'Separation Type:      %', _datasetInfo.SeparationType;
+            RAISE INFO 'Dataset Type:         %', _datasetInfo.DatasetType;
+            RAISE INFO 'Operator Username:    %', _datasetInfo.OperatorUsernamel;
+            RAISE INFO 'Comment:              %', _datasetInfo.Comment;
+            RAISE INFO 'Dataset Rating ID:    %', _datasetInfo.DatasetRatingID;
+            RAISE INFO 'Wellplate:            %', _datasetInfo.Wellplate;
+            RAISE INFO 'Well Number:          %', _datasetInfo.WellNum;
+            RAISE INFO 'Internal Standard:    %', _datasetInfo.InternalStandard;
 
-            -- ToDo: Use RAISE INFO to show this info
+            RAISE INFO '';
+
+            -- Preview the new requested run
 
             RAISE INFO '';
             RAISE INFO 'New Request Name:     %', _requestNameNew;
             RAISE INFO 'Instrument Settings:  %', _datasetInfo.InstrumentSettings;
-            RAISE INFO 'Wellplate:            %', _datasetInfo.Wellplate;
-            RAISE INFO 'Well Number:          %', _datasetInfo.WellNum;
-            RAISE INFO 'Internal Standard:    %', _datasetInfo.InternalStandard;
-            RAISE INFO 'Work Package:         %', _datasetInfo.WorkPackage                  -- _workPackage;
-            RAISE INFO 'EMSL UsageType:       %', _datasetInfo.EusUsageType                  -- _emslUsageType;
-            RAISE INFO 'EMSL ProposalID:      %', _datasetInfo.EusProposalID                  -- _emslProposalID;
-            RAISE INFO 'EMSL UsersList:       %', _datasetInfo.                  -- _emslUsersList;
+            RAISE INFO 'Separation Group:     %', _datasetInfo.SeparationGroup;
+            RAISE INFO 'LC Cart Name:         %', _datasetInfo.LcCartName;
+            RAISE INFO 'LC Cart Config:       %', _datasetInfo.LcCartConfigID;
+            RAISE INFO 'LC Column:            %', _datasetInfo.LcColumn;
+            RAISE INFO 'Work Package:         %', _datasetInfo.WorkPackage;
+            RAISE INFO 'EMSL UsageType:       %', _datasetInfo.EusUsageType;
+            RAISE INFO 'EMSL ProposalID:      %', _datasetInfo.EusProposalID;
 
             RETURN;
         End If;

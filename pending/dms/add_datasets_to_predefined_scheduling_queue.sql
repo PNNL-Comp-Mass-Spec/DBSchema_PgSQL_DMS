@@ -123,10 +123,10 @@ BEGIN
 
         FOR _previewData IN
             SELECT Source.dataset_id AS DatasetID,
-                   CASE WHEN AlreadyWaiting > 0 
+                   CASE WHEN AlreadyWaiting > 0
                         THEN 'Already in t_predefined_analysis_scheduling_queue with state "New"'
-                   ELSE 
-                        CASE WHEN IsValid = 0 
+                   ELSE
+                        CASE WHEN IsValid = 0
                              THEN 'Unknown dataset_id'
                              ELSE ''
                         END
@@ -148,11 +148,11 @@ BEGIN
                                 _previewData.ExcludeDatasetsNotReleased,
                                 _previewData.PreventDuplicateJobs
                                 _previewData.State
-                    );
+                               );
 
             RAISE INFO '%', _infoData;
         END LOOP;
-        
+
     Else
 
         INSERT INTO t_predefined_analysis_scheduling_queue( dataset_id,

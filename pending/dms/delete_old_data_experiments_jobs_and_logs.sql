@@ -178,7 +178,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_JobsToDelete (
         Job int not null,
-        AJ_Created timestamp null
+        Created timestamp null
     );
 
     CREATE INDEX IX_Tmp_JobsToDelete ON Tmp_JobsToDelete (Job);

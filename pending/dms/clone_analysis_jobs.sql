@@ -227,8 +227,7 @@ BEGIN
                    Valid,
                    J.param_file_name,
                    J.settings_file_name,
-                   CASE
-                        WHEN J.param_file_name = _mostCommonParamFile THEN ''
+                   CASE WHEN J.param_file_name = _mostCommonParamFile THEN ''
                         ELSE 'Mismatched param file'
                    END AS Warning
             FROM Tmp_SourceJobs
@@ -267,9 +266,8 @@ BEGIN
                    Valid,
                    J.param_file_name,
                    J.settings_file_name,
-                   CASE
-                       WHEN J.settings_file_name = _mostCommonSettingsFile THEN ''
-                       ELSE 'Mismatched settings file'
+                   CASE WHEN J.settings_file_name = _mostCommonSettingsFile THEN ''
+                        ELSE 'Mismatched settings file'
                    END AS Warning
             FROM Tmp_SourceJobs
                  INNER JOIN t_analysis_job J

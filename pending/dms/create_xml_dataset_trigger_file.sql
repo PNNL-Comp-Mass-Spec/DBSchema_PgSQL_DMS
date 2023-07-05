@@ -27,8 +27,8 @@ CREATE OR REPLACE PROCEDURE public.create_xml_dataset_trigger_file
     _runFinish         text,
     _captureSubfolder  text,
     _lcCartConfig      text,
-    INOUT _message      text,
-    INOUT _returnCode   text
+    INOUT _message     text,
+    INOUT _returnCode  text
 )
 LANGUAGE plpgsql
 AS $$
@@ -51,7 +51,7 @@ AS $$
 **    _operatorUsername  Operator Username
 **    _dsCreatorUsername Dataset Creator Username
 **    _comment           Comment
-**    _interestRating    Interest Rating
+**    _interestRating    Interest Rating (aka Dataset Rating Name)
 **    _request           Requested Run ID
 **    _emslUsageType     EUS Usage Type
 **    _emslProposalID    EUS Proposal ID
