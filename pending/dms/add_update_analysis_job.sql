@@ -80,7 +80,7 @@ AS $$
 **          08/26/2010 mem - Added parameter _preventDuplicateJobs
 **          03/29/2011 grk - Added _specialProcessing argument (http://redmine.pnl.gov/issues/304)
 **          04/26/2011 mem - Added parameter _preventDuplicatesIgnoresNoExport
-**          05/24/2011 mem - Now populating column AJ_DatasetUnreviewed when adding new jobs
+**          05/24/2011 mem - Now populating column dataset_unreviewed when adding new jobs
 **          05/03/2012 mem - Added parameter _specialProcessingWaitUntilReady
 **          06/12/2012 mem - Removed unused code related to Archive State in Tmp_DatasetInfo
 **          09/18/2012 mem - Now clearing _organismDBName if _mode='reset' and we're searching a protein collection

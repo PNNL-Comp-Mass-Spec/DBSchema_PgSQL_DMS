@@ -25,9 +25,9 @@ CREATE OR REPLACE FUNCTION public.get_current_manager_activity(_activeonly boole
 **  Auth:   grk
 **  Date:   10/06/2003 grk - Initial version
 **          06/01/2004 grk - Fixed initial population of XT with jobs
-**          06/23/2004 grk - Used AJ_start instead of AJ_finish in default population
+**          06/23/2004 grk - Used start instead of finish in default population
 **          11/04/2004 grk - Widened 'Who' column of XT to match data in some item queries
-**          02/24/2004 grk - Fixed problem with null value for AJ_assignedProcessorName
+**          02/24/2004 grk - Fixed problem with null value for assigned_processor_name
 **          02/09/2007 grk - Added column to note that activity is stale (Ticket #377)
 **          02/27/2007 grk - Fixed prep manager reporting (Ticket #398)
 **          04/04/2008 dac - Changed output sort order to DESC

@@ -32,8 +32,8 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **          04/10/2006 grk - Widened size of list argument to 6000 characters
 **          04/12/2006 grk - Eliminated forcing null for blank assigned processor
 **          06/20/2006 jds - Added support to find/replace text in the comment field
-**          08/02/2006 grk - Clear the Results_Folder_Name, AJ_extractionProcessor,
-**                           AJ_extractionStart, and AJ_extractionFinish fields when resetting a job
+**          08/02/2006 grk - Clear the Results_Folder_Name, extraction_processor,
+**                           extraction_start, and extraction_finish fields when resetting a job
 **          11/15/2006 grk - Add logic for propagation mode (ticket #328)
 **          03/02/2007 grk - Add _associatedProcessorGroup (ticket #393)
 **          03/18/2007 grk - Make _associatedProcessorGroup viable for reset mode (ticket #418)

@@ -70,7 +70,7 @@ AS $$
 **          11/15/2013 mem - Now scrubbing "Buzzard:" out of the comment if there is no other text
 **          06/20/2014 mem - Now removing "Buzzard:" from the end of the comment
 **          12/18/2014 mem - Replaced QC_Shew_1[0-9] with QC_Shew[_-][0-9][0-9]
-**          03/25/2015 mem - Now also checking the dataset's experiment name against Get_Dataset_Priority() to see if we should auto-release the dataset
+**          03/25/2015 mem - Now also checking the dataset's experiment name against get_dataset_priority() to see if we should auto-release the dataset
 **          05/29/2015 mem - Added support for 'Capture Subfolder'
 **          06/22/2015 mem - Now ignoring 'Capture Subfolder' if it is an absolute path to a local drive (e.g. D:\ProteomicsData)
 **          11/21/2016 mem - Added parameter _logDebugMessages

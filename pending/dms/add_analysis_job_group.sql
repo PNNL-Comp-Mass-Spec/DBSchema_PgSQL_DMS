@@ -71,7 +71,7 @@ AS $$
 **          01/31/2011 mem - Expanded _datasetList to varchar(max)
 **          02/24/2011 mem - No longer skipping jobs with state 'No Export' when finding datasets that have existing, matching jobs
 **          03/29/2011 grk - Added _specialProcessing argument (http://redmine.pnl.gov/issues/304)
-**          05/24/2011 mem - Now populating column AJ_DatasetUnreviewed
+**          05/24/2011 mem - Now populating column dataset_unreviewed
 **          06/15/2011 mem - Now ignoring organism, protein collection, and organism DB when looking for existing jobs and the analysis tool does not use an organism database
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
 **          11/08/2012 mem - Now auto-updating _protCollOptionsList to have 'seq_direction=forward' if it contains 'decoy' and the search tool is MSGFPlus (MSGFDB) and the parameter file does not contain 'NoDecoy'
