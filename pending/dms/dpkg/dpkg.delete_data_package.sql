@@ -17,8 +17,6 @@ AS $$
 **            T_Data_Package_Biomaterial
 **            T_Data_Package_EUS_Proposals
 **
-**            Use with caution!
-**
 **  Auth:   mem
 **  Date:   04/08/2016 mem - Initial release
 **          05/18/2016 mem - Log errors to T_Log_Entries
@@ -68,32 +66,84 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ---------------------------------------------------
             -- Preview the data package to be deleted
             ---------------------------------------------------
 
-            SELECT ID,
-                   Name,
-                   Package_Type,
-                   Biomaterial_Count,
-                   Experiment_Count,
-                   EUS_Proposal_Count,
-                   Dataset_Count,
-                   Analysis_Job_Count,
-                   Campaign_Count,
-                   Total_Item_Count,
-                   State,
-                   Share_Path,
-                   Description,
-                   Comment,
-                   Owner,
-                   Requester,
-                   Created,
-                   Last_Modified
-            FROM V_Data_Package_Detail_Report
-            WHERE ID = _packageID
+            RAISE INFO '';
+
+            _formatSpecifier := '%-6s %-60s %-12s %-30s %-30s %-20s %-8s %-18s %-13s %-16s %-16s %-80s %-80s';
+
+            _infoHead := format(_formatSpecifier,
+                                'ID',
+                                'Name',
+                                'Package_Type',
+                                'Owner',
+                                'Requester',
+                                'Created',
+                                'State',
+                                'Analysis_Job_Count',
+                                'Dataset_Count',
+                                'Experiment_Count',
+                                'Total_Item_Count',
+                                'Description',
+                                'Comment'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '------',
+                                         '------------------------------------------------------------',
+                                         '------------',
+                                         '------------------------------',
+                                         '------------------------------',
+                                         '--------------------',
+                                         '--------',
+                                         '------------------',
+                                         '-------------',
+                                         '----------------',
+                                         '----------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '--------------------------------------------------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT ID,
+                       Name,
+                       Package_Type,
+                       Owner,
+                       Requester,
+                       Created,
+                       State,
+                       Analysis_Job_Count,
+                       Dataset_Count,
+                       Experiment_Count,
+                       Total_Item_Count,
+                       Description,
+                       Comment
+                FROM V_Data_Package_Detail_Report
+                WHERE ID = _packageID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.ID,
+                                    _previewData.Name,
+                                    _previewData.Package_Type,
+                                    _previewData.Owner,
+                                    _previewData.Requester,
+                                    _previewData.Created,
+                                    _previewData.State,
+                                    _previewData.Analysis_Job_Count,
+                                    _previewData.Dataset_Count,
+                                    _previewData.Experiment_Count,
+                                    _previewData.Total_Item_Count,
+                                    _previewData.Description,
+                                    _previewData.Comment
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             RETURN;
         End If;

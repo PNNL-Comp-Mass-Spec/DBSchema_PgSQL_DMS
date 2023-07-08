@@ -39,14 +39,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _formatSpecifier text;
-    _infoHead text;
-    _infoHeadSeparator text;
-    _previewData record;
-    _infoData text;
-
     _jobID int;
     _stateID int;
+    _previewData record;
     _msg text;
 BEGIN
     _message := '';
@@ -91,7 +86,7 @@ BEGIN
 
     If Not Exists (SELECT * FROM t_analysis_job WHERE job = _jobID) Then
 
-        _message := format('job not found; nothing to delete: %s', _job);
+        _message := format('Job not found; nothing to delete: %s', _job);
 
         If _infoOnly Then
             RAISE INFO '%', _message;
@@ -103,43 +98,58 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        -- ToDo: Show this using RAISE INFO
-        SELECT 'To be deleted' As Action, *
-        FROM t_analysis_job
+
+        SELECT J.Job,
+               Tool.Analysis_Tool,
+               J.Created AS Created,
+               J.Dataset_ID,
+               DS.Dataset,
+               J.Param_File_Name,
+               J.Settings_File_Name
+        INTO _previewData
+        FROM t_analysis_job J
+             INNER JOIN PUBLIC.t_dataset DS
+               ON J.dataset_id = DS.dataset_id
+             INNER JOIN PUBLIC.t_analysis_tool Tool
+               ON J.analysis_tool_id = Tool.analysis_tool_id
         WHERE job = _jobID;
-        
+
+        RAISE INFO '';
+        RAISE INFO 'To be deleted:';
+        RAISE INFO 'Job %, Tool %, Created %', _previewData.Job, _previewData.Analysis_Tool, _previewData.Created;
+        RAISE INFO 'Dataset ID %: %', _previewData.Dataset_ID, _previewData.Dataset;
+        RAISE INFO 'Parameter file: %', _previewData.Param_File_Name;
+        RAISE INFO 'Settings file:  %', _previewData.Settings_File_Name;
+
         RETURN;
-    Else
+    End If;
 
-        -------------------------------------------------------
-        -- Delete the job from t_reporter_ion_observation_rates (if it exists)
-        -------------------------------------------------------
+    -------------------------------------------------------
+    -- Delete the job from t_reporter_ion_observation_rates (if it exists)
+    -------------------------------------------------------
 
-        DELETE FROM t_reporter_ion_observation_rates
-        WHERE job = _jobID
+    DELETE FROM t_reporter_ion_observation_rates
+    WHERE job = _jobID
 
-        -------------------------------------------------------
-        -- Delete the job from t_analysis_job
-        -------------------------------------------------------
+    -------------------------------------------------------
+    -- Delete the job from t_analysis_job
+    -------------------------------------------------------
 
-        DELETE FROM t_analysis_job
-        WHERE (job = _jobID)
+    DELETE FROM t_analysis_job
+    WHERE (job = _jobID)
 
-        _message := format('Deleted analysis job %s from t_analysis_job', _jobID);
+    _message := format('Deleted analysis job %s from t_analysis_job', _jobID);
 
-        RAISE INFO '%', _message;
+    RAISE INFO '%', _message;
 
-        -------------------------------------------------------
-        -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-        -------------------------------------------------------
+    -------------------------------------------------------
+    -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+    -------------------------------------------------------
 
-        If char_length(_callingUser) > 0 Then
-            _stateID := 0;
+    If char_length(_callingUser) > 0 Then
+        _stateID := 0;
 
-            CALL alter_event_log_entry_user (5, _jobID, _stateID, _callingUser);
-        End If;
-
-        COMMIT;
+        CALL alter_event_log_entry_user (5, _jobID, _stateID, _callingUser);
     End If;
 
     -------------------------------------------------------

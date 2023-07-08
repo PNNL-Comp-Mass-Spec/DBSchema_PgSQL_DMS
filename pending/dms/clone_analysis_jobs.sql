@@ -42,6 +42,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
+    _invalidJobs boolean;
     _result int;
     _newJobIdStart int;
     _jobCount int;
@@ -169,24 +170,53 @@ BEGIN
 
         If Exists (SELECT * FROM Tmp_SourceJobs WHERE Valid = 0) Then
             _message := 'One or more Job IDs are invalid';
-
-            -- ToDo: Use RAISE INFO to show this info
-            Select *
-            FROM Tmp_SourceJobs
-            Order By JobId
-
-            DROP TABLE Tmp_SourceJobs;
-            DROP TABLE Tmp_NewJobInfo;
-            RETURN;
+            _invalidJobs := true;
+        ElsIf Exists (SELECT * FROM Tmp_SourceJobs WHERE NOT StateID IN (4, 14)) Then
+            _message := 'One or more Job IDs are not in state 4 or 14';
+            _invalidJobs := true;
+        Else
+            _invalidJobs := false;
         End If;
 
-        If Exists (SELECT * FROM Tmp_SourceJobs WHERE NOT StateID IN (4, 14)) Then
-            _message := 'One or more Job IDs are not in state 4 or 14';
+        If _invalidJobs Then
 
-            -- ToDo: Use RAISE INFO to show this info
-            SELECT *
-            FROM Tmp_SourceJobs
-            Order By StateID, JobId
+            RAISE INFO '';
+
+            RAISE WARNING '%', _message;
+            RAISE INFO '';
+
+            _formatSpecifier := '%-12s %-5s %-8s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'Valid',
+                                'State_ID'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '------------',
+                                         '-----',
+                                         '--------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT JobId,
+                       Valid,
+                       StateID
+                FROM Tmp_SourceJobs
+                ORDER BY JobId
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.JobId,
+                                    _previewData.Valid,
+                                    _previewData.StateID
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             DROP TABLE Tmp_SourceJobs;
             DROP TABLE Tmp_NewJobInfo;
@@ -218,22 +248,58 @@ BEGIN
         LIMIT 1;
 
         If _jobCountCompare < _jobCount Then
-            _message := 'The source jobs must all have the same parameter file';
-            RAISE WARNING '%', _message;
 
             -- ToDo: Use Raise Info to show this info
 
-            SELECT JobId,
-                   Valid,
-                   J.param_file_name,
-                   J.settings_file_name,
-                   CASE WHEN J.param_file_name = _mostCommonParamFile THEN ''
-                        ELSE 'Mismatched param file'
-                   END AS Warning
-            FROM Tmp_SourceJobs
-                 INNER JOIN t_analysis_job J
-                   ON Tmp_SourceJobs.JobID = J.job
-            ORDER BY CASE WHEN J.param_file_name = _mostCommonParamFile THEN 1 ELSE 0 END, J.job
+            RAISE INFO '';
+
+            _message := 'The source jobs must all have the same parameter file';
+            RAISE WARNING '%', _message;
+
+            _formatSpecifier := '%-12s %-5s %-80s %-60s %-80s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'Valid',
+                                'Param_File_Name',
+                                'Settings_File_Name',
+                                'Warning'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '------------',
+                                         '-----',
+                                         '--------------------------------------------------------------------------------',
+                                         '------------------------------------------------------------',
+                                         '--------------------------------------------------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT JobId,
+                       Valid,
+                       J.param_file_name,
+                       J.settings_file_name,
+                       CASE WHEN J.param_file_name = _mostCommonParamFile THEN ''
+                            ELSE 'Mismatched param file'
+                       END AS Warning
+                FROM Tmp_SourceJobs
+                     INNER JOIN t_analysis_job J
+                       ON Tmp_SourceJobs.JobID = J.job
+                ORDER BY CASE WHEN J.param_file_name = _mostCommonParamFile THEN 1 ELSE 0 END, J.job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.JobId,
+                                    _previewData.Valid,
+                                    _previewData.param_file_name,
+                                    _previewData.settings_file_name,
+                                    _previewData.Warning
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             DROP TABLE Tmp_SourceJobs;
             DROP TABLE Tmp_NewJobInfo;
@@ -257,22 +323,58 @@ BEGIN
         LIMIT 1;
 
         If _jobCountCompare < _jobCount Then
-            _message := 'The source jobs must all have the same settings file';
-            RAISE WARNING '%', _message;
 
             -- ToDo: Use Raise Info to show this info
 
-            SELECT JobId,
-                   Valid,
-                   J.param_file_name,
-                   J.settings_file_name,
-                   CASE WHEN J.settings_file_name = _mostCommonSettingsFile THEN ''
-                        ELSE 'Mismatched settings file'
-                   END AS Warning
-            FROM Tmp_SourceJobs
-                 INNER JOIN t_analysis_job J
-                   ON Tmp_SourceJobs.JobID = J.job
-            ORDER BY CASE WHEN J.settings_file_name = _mostCommonSettingsFile THEN 1 ELSE 0 END, J.job
+            RAISE INFO '';
+
+            _message := 'The source jobs must all have the same settings file';
+            RAISE WARNING '%', _message;
+
+            _formatSpecifier := '%-12s %-5s %-80s %-60s %-80s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'Valid',
+                                'Param_File_Name',
+                                'Settings_File_Name',
+                                'Warning'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '------------',
+                                         '-----',
+                                         '--------------------------------------------------------------------------------',
+                                         '------------------------------------------------------------',
+                                         '--------------------------------------------------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT JobId,
+                       Valid,
+                       J.param_file_name,
+                       J.settings_file_name,
+                       CASE WHEN J.settings_file_name = _mostCommonSettingsFile THEN ''
+                            ELSE 'Mismatched settings file'
+                       END AS Warning
+                FROM Tmp_SourceJobs
+                     INNER JOIN t_analysis_job J
+                       ON Tmp_SourceJobs.JobID = J.job
+                ORDER BY CASE WHEN J.settings_file_name = _mostCommonSettingsFile THEN 1 ELSE 0 END, J.job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.JobId,
+                                    _previewData.Valid,
+                                    _previewData.param_file_name,
+                                    _previewData.settings_file_name,
+                                    _previewData.Warning
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             DROP TABLE Tmp_SourceJobs;
             DROP TABLE Tmp_NewJobInfo;
@@ -413,10 +515,88 @@ BEGIN
         If _infoOnly Then
 
             -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
 
-            SELECT *
-            FROM Tmp_NewJobInfo
-            ORDER BY JobId_New;
+            _formatSpecifier := '%-12s %-12s %-10s %-8s %-8s %-16s %-12s %-80s %-80s %-60s %-11s %-150s %-30s %-16s';
+
+            _infoHead := format(_formatSpecifier,
+                                'JobId_Old',
+                                'JobId_New',
+                                'Request_ID',
+                                'Batch_ID',
+                                'Priority',
+                                'Analysis_Tool_ID',
+                                'Dataset_ID',
+                                'Param_File_Name',
+                                'Settings_File_Name',
+                                'Organism_DB_Name',
+                                'Organism_ID',
+                                'Protein_Collection_List',
+                                'Protein_Options_List',
+                                'Propagation_Mode'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '------------',
+                                         '------------',
+                                         '----------',
+                                         '--------',
+                                         '--------',
+                                         '----------------',
+                                         '------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '------------------------------------------------------------',
+                                         '-----------',
+                                         '------------------------------------------------------------------------------------------------------------------------------------------------------',
+                                         '------------------------------',
+                                         '----------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT JobId_Old,
+                       JobId_New,
+                       Batch_ID,
+                       Priority,
+                       Analysis_Tool_id,
+                       Param_File_Name,
+                       Settings_File_Name,
+                       Organism_DB_Name,
+                       Organism_ID,
+                       Dataset_ID,
+                       Comment,
+                       Owner_Username,
+                       Protein_Collection_List,
+                       Protein_Options_List,
+                       Request_ID,
+                       Propagation_Mode
+                FROM Tmp_NewJobInfo
+                ORDER BY JobId_New;
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.JobId_Old,
+                                    _previewData.JobId_New,
+                                    _previewData.Batch_ID,
+                                    _previewData.Priority,
+                                    _previewData.Analysis_Tool_id,
+                                    _previewData.Param_File_Name,
+                                    _previewData.Settings_File_Name,
+                                    _previewData.Organism_DB_Name,
+                                    _previewData.Organism_ID,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Comment,
+                                    _previewData.Owner_Username,
+                                    _previewData.Protein_Collection_List,
+                                    _previewData.Protein_Options_List,
+                                    _previewData.Request_ID,
+                                    _previewData.Propagation_Mode
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             DROP TABLE Tmp_SourceJobs;
             DROP TABLE Tmp_NewJobInfo;

@@ -217,22 +217,22 @@ BEGIN
     If _infoOnly Then
 
         -- Format info for previewing the dataset that would be created
-        _formatSpecifier := '%-80s %-20s %-15s %-15s';
+        _formatSpecifier := '%-80s %-60s %-20s %-13s %-13s';
 
         _infoHead := format(_formatSpecifier,
                             'Dataset',
                             'Comment',
                             'Created',
                             'Instrument_ID',
-                            'ExperimentID'
+                            'Experiment_ID'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '--------------------------------------------------------------------------------',
+                                     '------------------------------------------------------------',
                                      '--------------------',
-                                     '--------------------',
-                                     '---------------',
-                                     '---------------'
+                                     '-------------',
+                                     '-------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -248,7 +248,7 @@ BEGIN
                               );
 
         -- Format info for previewing the requested run that would be created
-        _formatSpecifier := '%-80s %-60s %-10s %-15s %-10s %-10s %-15s, %-25s';
+        _formatSpecifier := '%-80s %-60s %-10s %-25s %-10s %-10s %-35s, %-30s';
 
         _infoHead := format(_formatSpecifier,
                             'Requested_Run',
@@ -265,11 +265,11 @@ BEGIN
                                      '--------------------------------------------------------------------------------',
                                      '------------------------------------------------------------',
                                      '----------',
-                                     '---------------',
+                                     '-------------------------',
                                      '----------',
                                      '----------',
-                                     '---------------',
-                                     '-------------------------'
+                                     '-----------------------------------',
+                                     '------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -403,7 +403,7 @@ BEGIN
     -- ToDo: Show this using RAISE INFO
     SELECT *
     FROM V_Dataset_Detail_Report_Ex
-    WHERE ID = _datasetID
+    WHERE ID = _datasetID;
 
 END
 $$;

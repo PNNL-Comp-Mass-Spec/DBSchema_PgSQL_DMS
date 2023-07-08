@@ -35,7 +35,7 @@ AS $$
 **    _organismDBName             Legacy FASTA name; 'na' if using protein collections
 **    _ownerUsername              Will get updated to _callingUser if _callingUser is valid
 **    _requestID                  0 if not associated with a request; otherwise, Request ID in T_Analysis_Job_Request
-**    _associatedProcessorGroup   Processor group; deprecated in May 2015
+**    _associatedProcessorGroup   Processor group name; deprecated in May 2015
 **    _propagationMode            'Export', 'No Export'
 **    _mode                       'add' or 'preview'
 **

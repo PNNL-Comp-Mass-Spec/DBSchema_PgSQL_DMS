@@ -47,6 +47,7 @@ DECLARE
     _plexMemberCount int := 0;
     _groupID int := 0;
     _stateID int := 0;
+    _placeholderExpID int;
 
     _formatSpecifier text;
     _infoHead text;
@@ -149,7 +150,6 @@ BEGIN
     -- Can't delete experiment that is mapped to a channel in a plex
     ---------------------------------------------------
 
-    --
     SELECT COUNT(*)
     INTO _plexMemberCount
     FROM t_experiment_plex_members
@@ -163,16 +163,31 @@ BEGIN
         RETURN;
     End If;
 
+    -- Create a temporary table to track the list of items to delete or update
+
+    CREATE TEMPORARY TABLE T_Tmp_Target_Items (
+        Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        Action text,
+        Item_Type text,
+        Item_ID text,
+        Item_Name text,
+        Comment text
+    );
+
     ---------------------------------------------------
     -- Delete any entries for the Experiment from the
     -- biomaterial map table
     ---------------------------------------------------
 
     If _infoOnly Then
-        -- ToDo: Show this using RAISE INFO
-        SELECT *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted',
+               'Experiment Biomaterial Map',
+               Exp_ID,
+               format('Biomaterial ID: %s', Biomaterial_ID),
+               ''
         FROM t_experiment_biomaterial
-        WHERE Exp_ID = _experimentId
+        WHERE Exp_ID = _experimentId;
     Else
         DELETE FROM t_experiment_biomaterial
         WHERE Exp_ID = _experimentId
@@ -190,9 +205,14 @@ BEGIN
 
     If FOUND And _groupID > 0 Then
         If _infoOnly Then
-            SELECT *
+            INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+            SELECT 'To be deleted',
+                   'Experiment Group Member',
+                   exp_id,
+                   format('Group_ID: %s', group_id),
+                   ''
             FROM t_experiment_group_members
-            WHERE exp_id = _experimentId
+            WHERE exp_id = _experimentId;
         Else
             DELETE FROM t_experiment_group_members
             WHERE exp_id = _experimentId
@@ -200,9 +220,7 @@ BEGIN
 
         If Not _infoOnly Then
             -- Update MemberCount
-            --
             CALL update_experiment_group_member_count (_groupID => _groupID);
-
         End If;
     End If;
 
@@ -211,15 +229,29 @@ BEGIN
     -- parent experiment in the experiment groups table
     ---------------------------------------------------
 
+    SELECT exp_id
+    INTO _placeholderExpID
+    FROM t_experiments
+    WHERE experiment = 'Placeholder';
+
+    If Not FOUND Then
+        _message := format('Placeholder experiment not found in t_experiments; unable to delete experiment ID %s', _experimentId);
+        RAISE EXCEPTION '%', _message;
+    End If;
+
     If _infoOnly Then
-        -- ToDo: Show this using RAISE INFO
-        SELECT *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'Change parent_exp_id to Placeholder ID',
+               'Experiment Group',
+               group_id,
+               format('Group type: %s, Name: %s', group_type, Coalesce(group_name, '')),
+               Coalesce(description, '')
         FROM t_experiment_groups
-        WHERE parent_exp_id = _experimentId
+        WHERE parent_exp_id = _experimentId;
     Else
         UPDATE t_experiment_groups
-        SET parent_exp_id = 15
-        WHERE parent_exp_id = _experimentId
+        SET parent_exp_id = _placeholderExpID      -- Associate with the experiment ID of the 'Placeholder' experiment (which should be 15)
+        WHERE parent_exp_id = _experimentId;
     End If;
 
     ---------------------------------------------------
@@ -227,10 +259,14 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
-        -- ToDo: Show this using RAISE INFO
-        SELECT *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted',
+               'Experiment Plex Member',
+               plex_exp_id,
+               format('Channel: %s, Exp_ID %s', channel, exp_id),
+               comment
         FROM t_experiment_plex_members
-        WHERE plex_exp_id = _experimentId
+        WHERE plex_exp_id = _experimentId;
     Else
         DELETE FROM t_experiment_plex_members
         WHERE plex_exp_id = _experimentId
@@ -261,16 +297,65 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
-        SELECT *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted',
+               'Experiment',
+               exp_id,
+               experiment,
+               comment
         FROM t_experiments
-        WHERE exp_id = _experimentId
+        WHERE exp_id = _experimentId;
     Else
         DELETE FROM t_experiments
         WHERE exp_id = _experimentId
     End If;
 
-    -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-    If Not _infoOnly And char_length(_callingUser) > 0 Then
+    If _infoOnly Then
+         -- Show the contents of T_Tmp_Target_Items
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-40s %-28s %-8s %-60s %-60s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Action',
+                            'Item_Type',
+                            'Item_ID',
+                            'Item_Name',
+                            'Comment'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------------------------------------',
+                                     '----------------------------',
+                                     '--------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------------------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Action, Item_Type, Item_ID, Item_Name, Comment
+            FROM T_Tmp_Target_Items
+            ORDER BY Entry_ID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Action,
+                                _previewData.Item_Type,
+                                _previewData.Item_ID,
+                                _previewData.Item_Name,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        DROP TABLE T_Tmp_Target_Items;
+
+    ElsIf char_length(_callingUser) > 0 Then
+        -- Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
 
         CALL alter_event_log_entry_user (3, _experimentId, _stateID, _callingUser);
     End If;

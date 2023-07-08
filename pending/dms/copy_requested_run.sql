@@ -146,44 +146,94 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        SELECT
-            request_id As Source_Request_ID,
-            request_name As Source_Request_Name,
-            _newRequestName As New_Request_Name,
-            _notation As Comment,
-            requester_username,
-            created,                -- Pass along the original request's 'created' date into the new entry
-            instrument_group,
-            request_type_id,
-            instrument_setting,
-            special_instructions,
-            wellplate,
-            well,
-            vialing_conc,
-            vialing_vol,
-            priority,
-            note,
-            exp_id,
-            request_run_start,
-            request_run_finish,
-            request_internal_standard,
-            work_package,
-            batch_id,
-            blocking_factor,
-            block,
-            run_order,
-            eus_proposal_id,
-            eus_usage_type_id,
-            cart_id,
-            cart_config_id,
-            cart_column,
-            separation_group,
-            mrm_attachment,
-            _status,
-            'auto',
-            CASE WHEN Coalesce(_datasetID, 0) = 0 THEN NULL ELSE _datasetID END
-        FROM t_requested_run
-        WHERE request_id = _requestID
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT
+                request_id As Source_Request_ID,
+                request_name As Source_Request_Name,
+                _newRequestName As New_Request_Name,
+                _notation As Comment,
+                requester_username,
+                created,                -- Pass along the original request's 'created' date into the new entry
+                instrument_group,
+                request_type_id,
+                priority,
+                exp_id,
+                request_run_start,
+                request_run_finish,
+                request_internal_standard,
+                work_package,
+                batch_id,
+                blocking_factor,
+                block,
+                run_order,
+                eus_proposal_id,
+                eus_usage_type_id,
+                cart_id,
+                cart_config_id,
+                cart_column,
+                separation_group,
+                _status As State_Name,
+                'auto' As Origin,
+                CASE WHEN Coalesce(_datasetID, 0) = 0 THEN NULL ELSE _datasetID END AS Dataset_ID
+            FROM t_requested_run
+            WHERE request_id = _requestID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Source_Request_ID,
+                                _previewData.Source_Request_Name,
+                                _previewData.New_Request_Name,
+                                _previewData.Comment,
+                                _previewData.Requester_Username,
+                                _previewData.Created,
+                                _previewData.Instrument_Group,
+                                _previewData.Request_Type_Id,
+                                _previewData.Priority,
+                                _previewData.Exp_Id,
+                                _previewData.Request_Run_Start,
+                                _previewData.Request_Run_Finish,
+                                _previewData.Request_Internal_Standard,
+                                _previewData.Work_Package,
+                                _previewData.Batch_Id,
+                                _previewData.Blocking_Factor,
+                                _previewData.Block,
+                                _previewData.Run_Order,
+                                _previewData.Eus_Proposal_Id,
+                                _previewData.Eus_Usage_Type_Id,
+                                _previewData.Cart_Id,
+                                _previewData.Cart_Config_Id,
+                                _previewData.Cart_Column,
+                                _previewData.Separation_Group,
+                                _previewData.State_Name,
+                                _previewData.Origin,
+                                _previewData.Dataset_ID
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
 
         RETURN;
     End If;

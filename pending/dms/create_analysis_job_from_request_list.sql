@@ -14,14 +14,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates analysis jobs for a given list of
-**      analysis job requests
+**      Creates analysis jobs for a given list of analysis job requests
 **
 **  Arguments:
 **    _mode                       'add' or 'preview'
 **    _jobRequestList             Comma-separated list of analysis job requests
 **    _priority                   Priority
-**    _associatedProcessorGroup   Processor group name
+**    _associatedProcessorGroup   Processor group name; deprecated in May 2015
 **    _propagationMode            'Export' or 'No Export'
 **
 **  Auth:   grk
@@ -78,55 +77,55 @@ BEGIN
     -- Get particulars for requests in list
     -------------------------------------------------
     INSERT INTO Tmp_AnalysisJobRequests (
-        requestID,
-        toolName,
-        paramFileName,
-        settingsFileName,
-        organismDBName,
-        organismName,
-        datasetList,
-        comment,
-        specialProcessing,
-        ownerUsername,
-        protCollNameList,
-        protCollOptionsList,
-        stateName
+        RequestID,
+        ToolName,
+        ParamFileName,
+        SettingsFileName,
+        OrganismDBName,
+        OrganismName,
+        DatasetList,
+        Comment,
+        SpecialProcessing,
+        OwnerUsername,
+        ProtCollNameList,
+        ProtCollOptionsList,
+        StateName
     )
     SELECT
-        request_id,
-        analysis_tool,
-        param_file_name,
-        settings_file_name,
-        organism_db_name,
-        organism_name,
-        datasets,
-        comment,
-        special_processing,
-        requester,
-        prot_coll_name_list,
-        prot_coll_options_list,
+        Request_ID,
+        Analysis_Tool,
+        Param_File_Name,
+        Settings_File_Name,
+        Organism_DB_Name,
+        Organism_Name,
+        Datasets,
+        Comment,
+        Special_Processing,
+        Requester,
+        Prot_Coll_Name_List,
+        Prot_Coll_Options_List,
         State
     FROM V_Analysis_Job_Request_Entry
-    WHERE request_id IN (SELECT Value FROM public.parse_delimited_integer_list(_jobRequestList, ','))
+    WHERE Request_ID IN (SELECT Value FROM public.parse_delimited_integer_list(_jobRequestList, ','))
 
     -------------------------------------------------
     -- Temp table to hold results for each request
     -------------------------------------------------
 
     CREATE TEMP TABLE Tmp_RequestResults (
-        requestID int,
-        result int,
-        description text
+        RequestID int,
+        Result int,
+        Description text
     );
 
     -------------------------------------------------
     -- Verify all requests in 'new' state
     -------------------------------------------------
 
-    INSERT INTO Tmp_RequestResults (requestID, result, description)
-    SELECT requestID, -1, 'Request not in state new; unable to process'
+    INSERT INTO Tmp_RequestResults (RequestID, Result, Description)
+    SELECT RequestID, -1, 'Request not in state new; unable to process'
     FROM Tmp_AnalysisJobRequests INNER JOIN
-         t_analysis_job_request AJR ON Tmp_AnalysisJobRequests.requestID = AJR.request_id
+         t_analysis_job_request AJR ON Tmp_AnalysisJobRequests.RequestID = AJR.RequestID
     WHERE AJR.request_state_id <> 1
 
     If FOUND Then
@@ -134,7 +133,7 @@ BEGIN
         -- Remove the invalid rows from Tmp_AnalysisJobRequests
         DELETE Tmp_AnalysisJobRequests
         FROM Tmp_RequestResults
-        WHERE Tmp_AnalysisJobRequests.requestID = Tmp_RequestResults.requestID;
+        WHERE Tmp_AnalysisJobRequests.RequestID = Tmp_RequestResults.RequestID;
     End If;
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
@@ -161,7 +160,7 @@ BEGIN
                    ProtCollNameList,
                    ProtCollOptionsList
             FROM Tmp_AnalysisJobRequests
-            ORDER BY requestID
+            ORDER BY RequestID
         LOOP
             -------------------------------------------------
             -- Check for existing jobs
@@ -218,7 +217,7 @@ BEGIN
             -------------------------------------------------
             -- Keep track of results
             -------------------------------------------------
-            INSERT INTO Tmp_RequestResults (requestID,result,description)
+            INSERT INTO Tmp_RequestResults (RequestID, Result, Description)
             VALUES (_requestID, _result, _message);
 
         END LOOP;
@@ -229,10 +228,40 @@ BEGIN
     -- Report results
     -------------------------------------------------
 
-    -- ToDo: Convert this to RAISE INFO statements
-    SELECT *
-    FROM Tmp_RequestResults
-    ORDER BY requestID
+    RAISE INFO '';
+
+    _formatSpecifier := '%-9s %-6s %-60s';
+
+    _infoHead := format(_formatSpecifier,
+                        'RequestID,',
+                        'Result,',
+                        'Description'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '---------',
+                                 '------',
+                                 '------------------------------------------------------------'
+                                );
+
+    RAISE INFO '%', _infoHead;
+    RAISE INFO '%', _infoHeadSeparator;
+
+    FOR _previewData IN
+        SELECT RequestID,
+               Result,
+               Description
+        FROM Tmp_RequestResults
+    ORDER BY RequestID
+    LOOP
+        _infoData := format(_formatSpecifier,
+                            _previewData.RequestID,
+                            _previewData.Result,
+                            _previewData.Description
+                           );
+
+        RAISE INFO '%', _infoData;
+    END LOOP;
 
     DROP TABLE Tmp_AnalysisJobRequests;
     DROP TABLE Tmp_RequestResults;

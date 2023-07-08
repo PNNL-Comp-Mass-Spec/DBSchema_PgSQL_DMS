@@ -211,8 +211,6 @@ BEGIN
         -- This process cascades up the DMS hierarchy of tracking entities, but not down
         --
         If _mode = 'add' Then
-        -- <add_associated_items>
-
             -- Add datasets to list that are parents of jobs in the list
             -- (and are not already in the list)
             INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
@@ -287,10 +285,12 @@ BEGIN
                 AND NOT EXISTS (
                     SELECT *
                     FROM Tmp_DataPackageItems
-                    WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial' AND Tmp_DataPackageItems.Identifier = TX.Biomaterial_Name AND Tmp_DataPackageItems.DataPackageID = TP.DataPackageID
-                )
+                    WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial' AND
+                          Tmp_DataPackageItems.Identifier = TX.Biomaterial_Name AND
+                          Tmp_DataPackageItems.DataPackageID = TP.DataPackageID
+                );
 
-        End If; -- </add_associated_items>
+        End If;
 
         If _mode = 'delete' And _removeParents > 0 Then
             -- Find Datasets, Experiments, Biomaterial, and Cell Culture items that we can safely delete
@@ -439,11 +439,40 @@ BEGIN
                 RAISE WARNING '_mode should be add, comment, or delete; % is invalid', _mode;
             End If;
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
 
-            SELECT *
-            FROM Tmp_DataPackageItems
-            ORDER BY DataPackageID, ItemType, Identifier;
+            _formatSpecifier := '%-11s %-12s %-80s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Data_Pkg_ID',
+                                'Item_Type',
+                                'Identifier'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '-----------',
+                                         '------------',
+                                         '--------------------------------------------------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT DataPackageID,
+                       ItemType,
+                       Identifier
+                FROM Tmp_DataPackageItems
+                ORDER BY DataPackageID, ItemType, Identifier
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.DataPackageID,
+                                    _previewData.ItemType,
+                                    _previewData.Identifier
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             DROP TABLE Tmp_DatasetIDsToAdd;
             DROP TABLE Tmp_JobsToAddOrDelete;
@@ -455,24 +484,62 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
-        -- <delete biomaterial>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Biomaterial to delete' AS Biomaterial_Msg, Target.*
-                FROM dpkg.t_data_package_biomaterial Target
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                          Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                _formatSpecifier := '%-22s %-11s %-15s %-10s %-80s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Biomaterial_ID',
+                                    'Type',
+                                    'Biomaterial'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '----------------------',
+                                             '-----------',
+                                             '---------------',
+                                             '----------',
+                                             '--------------------------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Delete Biomaterial' AS Action,
+                           Target.Data_Pkg_ID,
+                           Target.Biomaterial_ID,
+                           Target.Type,
+                           Target.Biomaterial
+                    FROM dpkg.t_data_package_biomaterial Target
+                         INNER JOIN Tmp_DataPackageItems
+                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
+                              Tmp_DataPackageItems.Identifier = Target.biomaterial AND
+                              Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                    ORDER BY Target.Data_Pkg_ID, Target.Biomaterial_ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Biomaterial_ID,
+                                        _previewData.Type,
+                                        _previewData.Biomaterial
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 DELETE Target
                 FROM dpkg.t_data_package_biomaterial Target
                      INNER JOIN Tmp_DataPackageItems
                        ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
                           Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                          Tmp_DataPackageItems.ItemType = 'Biomaterial';
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -482,28 +549,73 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </delete biomaterial>
+        End If;
 
         If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
-        -- <comment biomaterial>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Update biomaterial comment' AS Item_Type,
-                       _comment AS New_Comment, *
-                FROM dpkg.t_data_package_biomaterial Target
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                          Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                          Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                _formatSpecifier := '%-22s %-60s %-11s %-15s %-10s %-80s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'New_Comment',
+                                    'Data_Pkg_ID',
+                                    'Biomaterial_ID',
+                                    'Type',
+                                    'Biomaterial',
+                                    'Old_Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '----------------------',
+                                             '------------------------------------------------------------',
+                                             '-----------',
+                                             '---------------',
+                                             '----------',
+                                             '--------------------------------------------------------------------------------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Update Biomaterial Comment' AS Action,
+                           _comment AS New_Comment,
+                           Target.Data_Pkg_ID,
+                           Target.Biomaterial_ID,
+                           Target.Type,
+                           Target.Biomaterial,
+                           Target.package_comment AS Old_Comment
+                    FROM dpkg.t_data_package_biomaterial Target
+                         INNER JOIN Tmp_DataPackageItems
+                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
+                              Tmp_DataPackageItems.Identifier = Target.biomaterial AND
+                              Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                    ORDER BY Target.Data_Pkg_ID, Target.Biomaterial_ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.New_Comment,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Biomaterial_ID,
+                                        _previewData.Type,
+                                        _previewData.Biomaterial,
+                                        _previewData.Old_Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 UPDATE dpkg.t_data_package_biomaterial
                 SET package_comment = _comment
                 FROM Tmp_DataPackageItems Src
                 WHERE Src.DataPackageID = dpkg.t_data_package_biomaterial.Data_Package_ID AND
                       Src.Identifier = dpkg.t_data_package_biomaterial.Name AND
-                      Src.ItemType = 'Biomaterial'
+                      Src.ItemType = 'Biomaterial';
                 --
                 GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -513,11 +625,9 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </comment biomaterial>
+        End If;
 
         If _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Biomaterial') Then
-        -- <add biomaterial>
-
             -- Delete extras
             DELETE FROM Tmp_DataPackageItems target
             WHERE EXISTS
@@ -534,23 +644,61 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
-                                'New Biomaterial' AS Item_Type,
-                                TX.ID,
-                                _comment AS Comment,
-                                TX.Name,
-                                TX.Campaign,
-                                TX.Created,
-                                TX.Type
-                FROM Tmp_DataPackageItems
-                     INNER JOIN V_Biomaterial_List_Report_2 TX
-                       ON Tmp_DataPackageItems.Identifier = TX.Name
+                _formatSpecifier := '%-28s %-11s %-15s %-10s %-80s %-60s %-60s';
 
-                WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Biomaterial_ID',
+                                    'Type',
+                                    'Biomaterial',
+                                    'Campaign',
+                                    'Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '----------------------------',
+                                             '-----------',
+                                             '---------------',
+                                             '----------',
+                                             '--------------------------------------------------------------------------------',
+                                             '------------------------------------------------------------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT DISTINCT 'Add Biomaterial to Data Pkg' As Action,
+                                    Tmp_DataPackageItems.DataPackageID As Data_Pkg_ID,
+                                    TX.ID As Biomaterial_ID,
+                                    TX.Type,
+                                    TX.Name As Biomaterial,
+                                    TX.Campaign,
+                                    _comment AS Comment
+                    FROM Tmp_DataPackageItems
+                         INNER JOIN V_Biomaterial_List_Report_2 TX
+                           ON Tmp_DataPackageItems.Identifier = TX.Name
+                    WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                    ORDER BY Tmp_DataPackageItems.DataPackageID, TX.ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Biomaterial_ID,
+                                        _previewData.Type,
+                                        _previewData.Biomaterial,
+                                        _previewData.Campaign,
+                                        _previewData.Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
-
                 -- Add new items
                 INSERT INTO dpkg.t_data_package_biomaterial(
                     data_pkg_id,
@@ -569,11 +717,10 @@ BEGIN
                     TX.campaign,
                     TX.created,
                     TX.type
-                FROM
-                    Tmp_DataPackageItems
-                    INNER JOIN V_Biomaterial_List_Report_2 TX
-                    ON Tmp_DataPackageItems.Identifier = TX.name
-                WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial'
+                FROM Tmp_DataPackageItems
+                     INNER JOIN V_Biomaterial_List_Report_2 TX
+                       ON Tmp_DataPackageItems.Identifier = TX.name
+                WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial';
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -583,24 +730,54 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </add biomaterial>
+        End If;
 
         ---------------------------------------------------
         -- EUS Proposal operations
         ---------------------------------------------------
 
         If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
-        -- <delete EUS Proposals>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'EUS Proposal to delete' AS EUS_Proposal_Msg, Target.*
-                FROM dpkg.t_data_package_eus_proposals Target
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                          Tmp_DataPackageItems.Identifier = Target.proposal_id AND
-                          Tmp_DataPackageItems.ItemType = 'EUSProposal'
+                _formatSpecifier := '%-20s %-11s %-11s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Proposal_ID'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '--------------------',
+                                             '-----------',
+                                             '-----------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Delete EUS Proposal' AS Action,
+                           Target.Data_Pkg_ID,
+                           Target.Proposal_ID
+                    FROM dpkg.t_data_package_eus_proposals Target
+                         INNER JOIN Tmp_DataPackageItems
+                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
+                              Tmp_DataPackageItems.Identifier = Target.proposal_id AND
+                              Tmp_DataPackageItems.ItemType = 'EUSProposal'
+                    ORDER BY Target.Data_Pkg_ID, Target.Proposal_ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Proposal_ID
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 DELETE Target
                 FROM dpkg.t_data_package_eus_proposals Target
@@ -617,22 +794,58 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </delete EUS Proposal>
+        End If;
 
         If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
-        -- <comment EUS Proposals>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Update EUS Proposal comment' AS Item_Type,
-                       _comment AS New_Comment,
-                       Target.*
-                FROM t_data_package_eus_proposal Target
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
-                          Tmp_DataPackageItems.Identifier = Target.Proposal_ID AND
-                          Tmp_DataPackageItems.ItemType = 'EUSProposal'
+                _formatSpecifier := '%-28s %-60s %-11s %-11s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'New_Comment',
+                                    'Data_Pkg_ID',
+                                    'Proposal_ID',
+                                    'Old_Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '----------------------------',
+                                             '------------------------------------------------------------',
+                                             '-----------',
+                                             '-----------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Update EUS Proposal Comment' AS Action,
+                           _comment AS New_Comment,
+                           Target.Data_Pkg_ID,
+                           Target.Proposal_ID,
+                           Target.package_comment AS Old_Comment
+                    FROM t_data_package_eus_proposals Target
+                         INNER JOIN Tmp_DataPackageItems
+                           ON Tmp_DataPackageItems.DataPackageID = Target.Data_Package_ID AND
+                              Tmp_DataPackageItems.Identifier = Target.Proposal_ID AND
+                              Tmp_DataPackageItems.ItemType = 'EUSProposal'
+                    ORDER BY Target.Data_Pkg_ID, Target.Proposal_ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.New_Comment,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Proposal_ID,
+                                        _previewData.Old_Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 UPDATE dpkg.t_data_package_eus_proposals
                 SET package_comment = _comment
@@ -649,11 +862,9 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </comment EUS Proposals>
+        End If;
 
         If _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'EUSProposal') Then
-        -- <add EUS Proposals>
-
             -- Delete extras
             DELETE FROM Tmp_DataPackageItems target
             WHERE EXISTS
@@ -670,16 +881,51 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
-                                'New EUS Proposal' AS Item_Type,
-                                TX.ID,
-                                _comment AS Comment
-                FROM Tmp_DataPackageItems
-                     INNER JOIN V_EUS_Proposals_List_Report TX
-                       ON Tmp_DataPackageItems.Identifier = TX.ID
-                WHERE Tmp_DataPackageItems.ItemType = 'EUSProposal'
+                _formatSpecifier := '%-30s %-11s %-11s %-90s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Proposal_ID',
+                                    'Proposal',
+                                    'Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '------------------------------',
+                                             '-----------',
+                                             '-----------',
+                                             '------------------------------------------------------------------------------------------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT DISTINCT 'Add EUS Proposal to Data Pkg' As Action,
+                                    Tmp_DataPackageItems.DataPackageID As Data_Pkg_ID,
+                                    TX.ID As Proposal_ID,
+                                    Substring(TX.Title, 1, 90) As Proposal,
+                                    _comment As Comment
+                    FROM Tmp_DataPackageItems
+                         INNER JOIN V_EUS_Proposals_List_Report TX
+                           ON Tmp_DataPackageItems.Identifier = TX.ID
+                    WHERE Tmp_DataPackageItems.ItemType = 'EUSProposal'
+                    ORDER BY Tmp_DataPackageItems.DataPackageID, TX.ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Proposal_ID,
+                                        _previewData.Proposal,
+                                        _previewData.Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
                 -- Add new items
@@ -703,24 +949,57 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </add EUS Proposals>
+        End If;
 
         ---------------------------------------------------
         -- Experiment operations
         ---------------------------------------------------
 
         If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
-        -- <delete experiments>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Experiment to delete' AS Experiment_Msg, Target.*
-                FROM dpkg.t_data_package_experiments Target
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                          Tmp_DataPackageItems.Identifier = Target.experiment AND
-                          Tmp_DataPackageItems.ItemType = 'Experiment'
+                _formatSpecifier := '%-18s %-11s %-13s %-80s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Experiment_ID',
+                                    'Experiment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '------------------',
+                                             '-----------',
+                                             '-------------',
+                                             '--------------------------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Delete Experiment' AS Action,
+                           Target.Data_Pkg_ID,
+                           Target.Experiment_ID,
+                           Target.Experiment
+                    FROM dpkg.t_data_package_experiments Target
+                         INNER JOIN Tmp_DataPackageItems
+                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
+                              Tmp_DataPackageItems.Identifier = Target.experiment AND
+                              Tmp_DataPackageItems.ItemType = 'Experiment'
+                    ORDER BY Target.Data_Pkg_ID, Target.Experiment_ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Experiment_ID,
+                                        _previewData.Experiment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
                 DELETE Target
@@ -738,22 +1017,61 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </delete experiments>
+        End If;
 
         If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
-        -- <comment experiments>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Update experiment comment' AS Item_Type,
-                       _comment AS New_Comment,
-                       Target.*
-                FROM dpkg.t_data_package_experiments Target
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                          Tmp_DataPackageItems.Identifier = Target.experiment AND
-                          Tmp_DataPackageItems.ItemType = 'Experiment'
+                _formatSpecifier := '%-25s %-60s %-11s %-13s %-60s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'New_Comment',
+                                    'Data_Pkg_ID',
+                                    'Experiment_ID',
+                                    'Experiment',
+                                    'Old_Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '-------------------------',
+                                             '------------------------------------------------------------',
+                                             '-----------',
+                                             '-------------',
+                                             '------------------------------------------------------------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Update Experiment Comment' AS Action,
+                           _comment AS New_Comment,
+                           Target.Data_Pkg_ID,
+                           Target.Experiment_ID,
+                           Target.Experiment,
+                           Target.package_comment AS Old_Comment
+                    FROM dpkg.t_data_package_experiments Target
+                         INNER JOIN Tmp_DataPackageItems
+                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
+                              Tmp_DataPackageItems.Identifier = Target.experiment AND
+                              Tmp_DataPackageItems.ItemType = 'Experiment'
+                    ORDER BY Target.Data_Pkg_ID, Target.Experiment_ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.New_Comment,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Experiment_ID,
+                                        _previewData.Experiment,
+                                        _previewData.Old_Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
                 UPDATE dpkg.t_data_package_experiments
@@ -771,11 +1089,9 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </comment experiments>
+        End If;
 
         If _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Experiment') Then
-        -- <add experiments>
-
             -- Delete extras
             DELETE FROM Tmp_DataPackageItems target
             WHERE EXISTS
@@ -792,20 +1108,52 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT DISTINCT
-                    Tmp_DataPackageItems.DataPackageID,
-                    'New Experiment ID' As Item_Type,
-                    TX.ID,
-                    _comment AS Comment,
-                    TX.Experiment,
-                    TX.Created
-                FROM
-                    Tmp_DataPackageItems
-                    INNER JOIN V_Experiment_Detail_Report_Ex TX
-                    ON Tmp_DataPackageItems.Identifier = TX.Experiment
-                WHERE Tmp_DataPackageItems.ItemType = 'Experiment'
+                _formatSpecifier := '%-28s %-11s %-13s %-60s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Experiment_ID',
+                                    'Experiment',
+                                    'Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '----------------------------',
+                                             '-----------',
+                                             '-------------',
+                                             '------------------------------------------------------------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT DISTINCT 'Add Experiment to Data Pkg' As Action,
+                                    Tmp_DataPackageItems.DataPackageID As Data_Pkg_ID,
+                                    TX.ID As Experiment_ID,
+                                    TX.Experiment,
+                                    _comment As Comment
+                    FROM Tmp_DataPackageItems
+                         INNER JOIN V_Experiment_List_Report TX
+                           ON Tmp_DataPackageItems.Identifier = TX.Experiment
+                    WHERE Tmp_DataPackageItems.ItemType = 'Experiment'
+                    ORDER BY Tmp_DataPackageItems.DataPackageID, TX.ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Experiment_ID,
+                                        _previewData.Experiment,
+                                        _previewData.Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 -- Add new items
                 INSERT INTO dpkg.t_data_package_experiments(
@@ -821,10 +1169,9 @@ BEGIN
                     _comment,
                     TX.experiment,
                     TX.created
-                FROM
-                    Tmp_DataPackageItems
-                    INNER JOIN V_Experiment_Detail_Report_Ex TX
-                    ON Tmp_DataPackageItems.Identifier = TX.experiment
+                FROM Tmp_DataPackageItems
+                     INNER JOIN V_Experiment_List_Report TX
+                       ON Tmp_DataPackageItems.Identifier = TX.experiment
                 WHERE Tmp_DataPackageItems.ItemType = 'Experiment'
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
@@ -835,24 +1182,57 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </add experiments>
+        End If;
 
         ---------------------------------------------------
         -- Dataset operations
         ---------------------------------------------------
 
         If _mode = 'delete' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
-        -- <delete datasets>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Dataset to delete' AS Dataset_Msg, Target.*
-                FROM dpkg.t_data_package_datasets Target
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                          Tmp_DataPackageItems.Identifier = Target.dataset AND
-                          Tmp_DataPackageItems.ItemType = 'Dataset'
+                _formatSpecifier := '%-15s %-11s %-10s %-80s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Dataset_ID',
+                                    'Dataset'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---------------',
+                                             '-----------',
+                                             '----------',
+                                             '--------------------------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Delete Dataset' AS Action,
+                           Target.Data_Pkg_ID,
+                           Target.Dataset_ID,
+                           Target.Dataset
+                    FROM dpkg.t_data_package_datasets Target
+                         INNER JOIN Tmp_DataPackageItems
+                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
+                              Tmp_DataPackageItems.Identifier = Target.dataset AND
+                              Tmp_DataPackageItems.ItemType = 'Dataset'
+                    ORDER BY Target.Data_Pkg_ID, Target.Dataset_ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Dataset_ID,
+                                        _previewData.Dataset
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
                 DELETE Target
@@ -870,22 +1250,61 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </delete datasets>
+        End If;
 
         If _mode = 'comment' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
-        -- <comment datasets>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Update dataset comment' AS Item_Type,
-                       _comment AS New_Comment,
-                       Target.*
-                FROM dpkg.t_data_package_datasets Target
-                     INNER JOIN Tmp_DataPackageItems
-                       ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                          Tmp_DataPackageItems.Identifier = Target.dataset AND
-                          Tmp_DataPackageItems.ItemType = 'Dataset'
+                _formatSpecifier := '%-22s %-60s %-11s %-10s %-80s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'New_Comment',
+                                    'Data_Pkg_ID',
+                                    'Dataset_ID',
+                                    'Dataset',
+                                    'Old_Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '----------------------',
+                                             '------------------------------------------------------------',
+                                             '-----------',
+                                             '----------',
+                                             '--------------------------------------------------------------------------------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Update Dataset Comment' AS Action,
+                           _comment AS New_Comment,
+                           Target.Data_Pkg_ID,
+                           Target.Dataset_ID,
+                           Target.Dataset,
+                           Target.package_comment AS Old_Comment
+                    FROM dpkg.t_data_package_datasets Target
+                         INNER JOIN Tmp_DataPackageItems
+                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
+                              Tmp_DataPackageItems.Identifier = Target.dataset AND
+                              Tmp_DataPackageItems.ItemType = 'Dataset'
+                    ORDER BY Target.Data_Pkg_ID, Target.Dataset_ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.New_Comment,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Dataset_ID,
+                                        _previewData.Dataset,
+                                        _previewData.Old_Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
                 UPDATE dpkg.t_data_package_datasets
@@ -903,11 +1322,9 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </comment datasets>
+        End If;
 
         If _mode = 'add' And Exists (Select * From Tmp_DataPackageItems Where ItemType = 'Dataset') Then
-        -- <add datasets>
-
             -- Delete extras
             DELETE FROM Tmp_DataPackageItems target
             WHERE EXISTS
@@ -924,20 +1341,63 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
-                                'New Dataset ID' AS Item_Type,
-                                TX.ID,
-                                _comment AS Comment,
-                                TX.Dataset,
-                                TX.Created,
-                                TX.Experiment,
-                                TX.Instrument
-                FROM Tmp_DataPackageItems
-                     INNER JOIN V_Dataset_List_Report_2 TX
-                       ON Tmp_DataPackageItems.Identifier = TX.Dataset
-                WHERE Tmp_DataPackageItems.ItemType = 'Dataset'
+                _formatSpecifier := '%-25s %-11s %-10s %-80s %-20s %-60s %-30s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Dataset_ID',
+                                    'Dataset',
+                                    'Created',
+                                    'Experiment',
+                                    'Instrument',
+                                    'Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '-------------------------',
+                                             '-----------',
+                                             '----------',
+                                             '--------------------------------------------------------------------------------',
+                                             '--------------------',
+                                             '------------------------------------------------------------',
+                                             '------------------------------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT DISTINCT 'Add Dataset to Data Pkg' AS Action,
+                                    Tmp_DataPackageItems.DataPackageID AS Data_Pkg_ID,
+                                    TX.ID AS Dataset_ID,
+                                    TX.Dataset,
+                                    public.timestamp_text(TX.Created) As Created,
+                                    TX.Experiment,
+                                    TX.Instrument,
+                                    _comment AS Comment
+                    FROM Tmp_DataPackageItems
+                         INNER JOIN V_Dataset_List_Report_2 TX
+                           ON Tmp_DataPackageItems.Identifier = TX.Dataset
+                    WHERE Tmp_DataPackageItems.ItemType = 'Dataset'
+                    ORDER BY Tmp_DataPackageItems.DataPackageID, TX.ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Dataset_ID,
+                                        _previewData.Dataset,
+                                        _previewData.Created,
+                                        _previewData.Experiment,
+                                        _previewData.Instrument
+                                        _previewData.Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
                 -- Add new items
@@ -968,23 +1428,65 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </add datasets>
+        End If;
 
         ---------------------------------------------------
         -- Analysis_job operations
         ---------------------------------------------------
 
         If _mode = 'delete' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
-        -- <delete analysis_jobs>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'job to delete' AS Job_Msg, *
-                FROM dpkg.t_data_package_analysis_jobs Target
-                     INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
-                       ON Target.data_pkg_id = ItemsQ.DataPackageID AND
-                          Target.job = ItemsQ.job
+                _formatSpecifier := '%-20s %-11s %-10s %-35s %-10s %-80s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Job',
+                                    'Tool',
+                                    'Dataset_ID',
+                                    'Dataset'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '--------------------',
+                                             '-----------',
+                                             '----------',
+                                             '-----------------------------------',
+                                             '----------',
+                                             '--------------------------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Delete Analysis Job' AS Action,
+                           Target.Data_Pkg_ID,
+                           Target.Job,
+                           Target.Tool,
+                           Target.Dataset_ID,
+                           Target.Dataset
+                    FROM dpkg.t_data_package_analysis_jobs Target
+                         INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
+                           ON Target.data_pkg_id = ItemsQ.DataPackageID AND
+                              Target.job = ItemsQ.job
+                    ORDER BY Target.Data_Pkg_ID, Target.Job
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Job,
+                                        _previewData.Tool,
+                                        _previewData.Dataset_ID,
+                                        _previewData.Dataset
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 DELETE Target
                 FROM dpkg.t_data_package_analysis_jobs Target
@@ -1000,21 +1502,65 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </delete analysis_jobs>
+        End If;
 
         If _mode = 'comment' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
-        -- <comment analysis_jobs>
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Update job comment' AS Item_Type,
-                       _comment AS New_Comment,
-                       Target.*
-                FROM dpkg.t_data_package_analysis_jobs Target
-                     INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
-                       ON Target.data_pkg_id = ItemsQ.DataPackageID AND
-                          Target.job = ItemsQ.job
+                _formatSpecifier := '%-22s %-60s %-11s %-10s %-35s %-10s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'New_Comment',
+                                    'Data_Pkg_ID',
+                                    'Job',
+                                    'Tool',
+                                    'Dataset_ID',
+                                    'Old_Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------------------',
+                                         '------------------------------------------------------------',
+                                         '-----------',
+                                         '----------',
+                                         '-----------------------------------',
+                                         '----------',
+                                         '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Update Job Comment' AS Action,
+                           _comment AS New_Comment,
+                           Target.Data_Pkg_ID,
+                           Target.Job,
+                           Target.Tool,
+                           Target.Dataset_ID,
+                           Target.package_comment AS Old_Comment
+                    FROM dpkg.t_data_package_analysis_jobs Target
+                         INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
+                           ON Target.data_pkg_id = ItemsQ.DataPackageID AND
+                              Target.job = ItemsQ.job
+                    ORDER BY Target.Data_Pkg_ID, Target.Job
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.New_Comment,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Job,
+                                        _previewData.Tool,
+                                        _previewData.Dataset_ID,
+                                        _previewData.Old_Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 UPDATE Target
                 SET package_comment = _comment
@@ -1031,11 +1577,9 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </comment analysis_jobs>
+        End If;
 
         If _mode = 'add' And Exists (Select * From Tmp_JobsToAddOrDelete) Then
-        -- <add analysis_jobs>
-
             -- Delete extras
             DELETE FROM Tmp_JobsToAddOrDelete Target
             WHERE EXISTS
@@ -1050,18 +1594,58 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT DISTINCT ItemsQ.DataPackageID,
-                                'New Job' AS Item_Type,
-                                TX.Job,
-                                _comment AS Comment,
-                                TX.Created,
-                                TX.Dataset,
-                                TX.Tool
-                FROM V_Analysis_Job_List_Report_2 TX
-                     INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
-                       ON TX.Job = ItemsQ.Job
+                _formatSpecifier := '%-20s %-11s %-10s %-35s %-20s %-80s %-60s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Action',
+                                    'Data_Pkg_ID',
+                                    'Job',
+                                    'Tool',
+                                    'Created',
+                                    'Dataset',
+                                    'Comment'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '--------------------',
+                                             '-----------',
+                                             '----------',
+                                             '-----------------------------------',
+                                             '--------------------',
+                                             '--------------------------------------------------------------------------------',
+                                             '------------------------------------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT DISTINCT 'Add Job to Data Pkg' AS Action,
+                                    ItemsQ.DataPackageID AS Data_Pkg_ID,
+                                    TX.Job,
+                                    TX.Tool
+                                    public.timestamp_text(TX.Created) As Created,
+                                    TX.Dataset,
+                                    _comment AS Comment
+                    FROM V_Analysis_Job_List_Report_2 TX
+                         INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
+                           ON TX.Job = ItemsQ.Job
+                    ORDER BY ItemsQ.DataPackageID, TX.Job
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Data_Pkg_ID,
+                                        _previewData.Job,
+                                        _previewData.Tool,
+                                        _previewData.Created,
+                                        _previewData.Dataset,
+                                        _previewData.Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             Else
                 -- Add new items
@@ -1091,7 +1675,7 @@ BEGIN
                     _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ', _maxlength => 512);
                 End If;
             End If;
-        End If; -- </add analysis_jobs>
+        End If;
 
         ---------------------------------------------------
         -- Update item counts for all data packages in the list

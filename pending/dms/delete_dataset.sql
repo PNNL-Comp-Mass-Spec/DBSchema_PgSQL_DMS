@@ -138,62 +138,166 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        -- Populate a temporary table with the list of items to delete or update
 
-        SELECT 'To be deleted' AS Action, *
-        FROM t_dataset_archive
-        WHERE dataset_id = _datasetID
+        CREATE TEMPORARY TABLE T_Tmp_Target_Items (
+            Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            Action text,
+            Item_Type text,
+            Item_ID text,
+            Item_Name text,
+            Comment text
+        );
 
-        If Exists (SELECT * FROM t_requested_run WHERE dataset_id = _datasetID) Then
-            SELECT CASE WHEN request_name::citext Like 'AutoReq%'
-                        THEN 'To be deleted'
-                        ELSE 'To be marked active'
-                   END AS Action, *
-            FROM t_requested_run
-            WHERE dataset_id = _datasetID
-        End If;
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS Action,
+               'Dataset Archive Info',
+               DS.Dataset_ID,
+               DS.dataset,
+               format('Archive state %s, last affected %s', DA.archive_state_id,
+                 PUBLIC.timestamp_text(DA.archive_state_last_affected))
+        FROM t_dataset_archive DA
+             INNER JOIN t_dataset DS
+               ON DA.dataset_id = DS.dataset_id
+        WHERE DA.dataset_id = _datasetID;
 
-        SELECT 'To be deleted' AS Action, *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT CASE WHEN request_name::citext Like 'AutoReq%'
+                    THEN 'To be deleted'
+                    ELSE 'To be marked active'
+               END AS Action,
+               'Requested Run',
+               Request_ID,
+               Request_Name,
+               format('Experiment ID: %s, Instrument Group: %s', Exp_ID, Instrument_Group)
+        FROM t_requested_run
+        WHERE dataset_id = _datasetID;
+
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS Action,
+               'Dataset Info',
+               Dataset_ID,
+               format('Scan types: %s', scan_types),
+               format('Last affected: %s', last_affected)
         FROM t_dataset_info
-        WHERE dataset_id = _datasetID
+        WHERE dataset_id = _datasetID;
 
-        SELECT 'To be deleted' AS Action, *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS ACTION,
+               'Dataset QC',
+               Dataset_ID,
+               format('Quameter job %s, SMAQC job %s', Coalesce(quameter_job, 0), Coalesce(smaqc_job, 0)),
+               ''
         FROM t_dataset_qc
-        WHERE dataset_id = _datasetID
+        WHERE dataset_id = _datasetID;
 
-        SELECT 'To be deleted' AS Action, *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS Action,
+               'Dataset Scan Type',
+               Entry_ID,
+               Scan_Type,
+               Scan_Filter
         FROM t_dataset_scan_types
-        WHERE dataset_id = _datasetID
+        WHERE dataset_id = _datasetID;
 
-        SELECT 'To be flagged As deleted' AS Action, *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be flagged As deleted' AS Action,
+               'Dataset File',
+               dataset_file_id,
+               file_path,
+               format('Hash: %s', file_hash)
         FROM t_dataset_files
-        WHERE dataset_id = _datasetID
+        WHERE dataset_id = _datasetID;
 
-        If Exists (SELECT * FROM cap.t_tasks WHERE Dataset_ID = _datasetID AND State = 5) Then
-            SELECT 'To be deleted' AS Action, *
-            FROM cap.t_tasks
-            WHERE Dataset_ID = _datasetID And State = 5
-        End If;
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS Action,
+               'Failed Capture Task',
+               job,
+               script,
+               format('State: %s, Imported: %s', State, public.timestamp_text(imported))
+        FROM cap.t_tasks
+        WHERE dataset_id = _datasetID And
+              State = 5;
 
-        If Exists (SELECT * FROM cap.t_dataset_info_xml WHERE Dataset_ID = _datasetID) Then
-            SELECT 'To be deleted' AS Action, *
-            FROM cap.t_dataset_info_xml
-            WHERE Dataset_ID = _datasetID
-        End If;
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS Action,
+               'Dataset Info XML',
+               dataset_id,
+               Substring(ds_info_xml::text, 1, 500),
+               format('Cache date: %s', public.timestamp_text(cache_date))
+        FROM cap.t_dataset_info_xml
+        WHERE dataset_id = _datasetID;
 
-        SELECT 'To be deleted' AS Action, Jobs.*
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS Action,
+               'Capture task',
+               Jobs.job,
+               Jobs.script,
+               format('State: %s, Imported: %s', Jobs.State, public.timestamp_text(Jobs.imported))
         FROM cap.t_tasks Jobs
              INNER JOIN cap.t_tasks_History History
                ON Jobs.Job = History.Job
         WHERE Jobs.Dataset_ID = _datasetID AND
-              NOT History.Job IS NULL
+              NOT History.Job IS NULL;
 
-        SELECT 'To be deleted' AS Action, *
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS Action,
+               'Dataset',
+               Dataset_ID,
+               Dataset,
+               format('Experiment ID: %s, Instrument ID: %s, Created: %s', Exp_ID, Instrument_ID, public.timestamp_text(Created))
         FROM t_dataset
-        WHERE dataset_id = _datasetID
+        WHERE dataset_id = _datasetID;
 
-        RAISE INFO 'Directory to remove: %', _datasetDirectoryPath;
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be manually deleted' As Action,
+               'Dataset Directory',
+               _datasetID,
+               '\\proto-5\share\year\dataset', -- _datasetDirectoryPath,
+               '';
 
+        -- Show the contents of T_Tmp_Target_Items
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-25s %-20s %-8s %-80s %-80s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Action',
+                            'Item_Type',
+                            'Item_ID',
+                            'Item_Name',
+                            'Comment'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '-------------------------',
+                                     '--------------------',
+                                     '--------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Action, Item_Type, Item_ID, Item_Name, Comment
+            FROM T_Tmp_Target_Items
+            ORDER BY Entry_ID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Action,
+                                _previewData.Item_Type,
+                                _previewData.Item_ID,
+                                _previewData.Item_Name,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        DROP TABLE T_Tmp_Target_Items;
         RETURN;
     End If;
 
