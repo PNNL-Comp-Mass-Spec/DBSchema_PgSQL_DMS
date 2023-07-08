@@ -23,7 +23,7 @@ AS $$
 **      Intended to be used with the test copies of the main databases to reduce row counts
 **
 **      To avoid deleting production data, this procedure includes a RETURN call prior to any delete queries
-
+**
 **  Arguments:
 **    _infoOnly                 Change to false to actually perform the deletion
 **    _yearsToRetain            Number of years of data to retain; setting to 4 will delete data more than 4 years old; minimum value is 1
