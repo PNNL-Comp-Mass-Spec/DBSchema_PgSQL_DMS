@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
 **          10/22/2022 mem - Directly pass value to function argument
 **          05/04/2023 mem - Add _returnCode procedure argument
 **          05/10/2023 mem - Fix call to post_log_entry
+**          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -54,14 +55,14 @@ BEGIN
     -- Query the upload stats
     -----------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(entry_id)
     INTO _uploadErrors
     FROM cap.t_myemsl_uploads
     WHERE entered BETWEEN _startDate AND _endDate AND
           bytes > 0 AND
           error_code <> 0;
 
-    SELECT COUNT(*)
+    SELECT COUNT(entry_id)
     INTO _uploadAttempts
     FROM cap.t_myemsl_uploads
     WHERE entered BETWEEN _startDate AND _endDate;
@@ -71,7 +72,7 @@ BEGIN
          _duplicateUploads
     FROM ( SELECT dataset_id,
                   subfolder,
-                  COUNT(*) AS UploadAttempts
+                  COUNT(entry_id) AS UploadAttempts
            FROM cap.t_myemsl_uploads
            WHERE entered BETWEEN _startDate AND _endDate
            GROUP BY dataset_id, subfolder

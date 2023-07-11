@@ -11,14 +11,14 @@ CREATE VIEW sw.v_job_step_processing_stats_daily AS
    FROM ( SELECT EXTRACT(year FROM t_job_step_processing_log.entered) AS theyear,
             EXTRACT(month FROM t_job_step_processing_log.entered) AS themonth,
             EXTRACT(day FROM t_job_step_processing_log.entered) AS theday,
-            count(*) AS job_steps_run
+            count(t_job_step_processing_log.event_id) AS job_steps_run
            FROM sw.t_job_step_processing_log
           GROUP BY (EXTRACT(year FROM t_job_step_processing_log.entered)), (EXTRACT(month FROM t_job_step_processing_log.entered)), (EXTRACT(day FROM t_job_step_processing_log.entered))
         UNION
          SELECT EXTRACT(year FROM t_job_step_processing_log.entered) AS theyear,
             EXTRACT(month FROM t_job_step_processing_log.entered) AS themonth,
             EXTRACT(day FROM t_job_step_processing_log.entered) AS theday,
-            count(*) AS job_steps_run
+            count(t_job_step_processing_log.event_id) AS job_steps_run
            FROM logsw.t_job_step_processing_log
           GROUP BY (EXTRACT(year FROM t_job_step_processing_log.entered)), (EXTRACT(month FROM t_job_step_processing_log.entered)), (EXTRACT(day FROM t_job_step_processing_log.entered))) sourceq
   GROUP BY sourceq.theyear, sourceq.themonth, sourceq.theday;

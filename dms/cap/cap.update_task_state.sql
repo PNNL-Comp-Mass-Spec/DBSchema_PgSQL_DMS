@@ -64,6 +64,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT 
 **          06/13/2023 mem - No longer call update_dms_prep_state
 **          06/17/2023 mem - Update if statement to remove conditions that are always true
 **                         - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(TS.step) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -174,7 +175,7 @@ BEGIN
                -- (for capture task jobs that are in new, in progress, or resuming state)
                SELECT
                    TS.Job,
-                   COUNT(*) AS Total,
+                   COUNT(TS.step) AS Total,
                    SUM(CASE
                        WHEN TS.State IN (3, 4, 5, 13) THEN 1       -- Skipped, Running, Completed, or Inactive
                        ELSE 0

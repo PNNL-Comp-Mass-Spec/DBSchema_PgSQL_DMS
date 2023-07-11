@@ -19,7 +19,8 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_stats(IN _year integer DEFAU
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version
 **          06/28/2023 mem - Add option to filter by year
-***                        - Ported to PostgreSQL
+**                         - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(JH.job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -65,7 +66,7 @@ BEGIN
     SELECT JH.Script,
            Coalesce(InstName.Instrument, '') AS Instrument,
            Extract(year from JH.Start) AS Year,
-           COUNT(*) AS Jobs
+           COUNT(JH.job) AS Jobs
     FROM cap.t_tasks_history JH
          LEFT OUTER JOIN public.t_dataset DS
            ON JH.Dataset_ID = DS.Dataset_ID

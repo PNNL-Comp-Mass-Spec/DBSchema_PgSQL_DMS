@@ -36,7 +36,7 @@ CREATE VIEW public.v_rna_prep_request_detail_report AS
      JOIN public.t_sample_prep_request_state_name sn ON ((spr.state_id = sn.state_id)))
      LEFT JOIN public.t_users qp ON ((spr.requester_username OPERATOR(public.=) qp.username)))
      LEFT JOIN ( SELECT t_sample_prep_request_updates.request_id,
-            count(*) AS updates
+            count(t_sample_prep_request_updates.entry_id) AS updates
            FROM public.t_sample_prep_request_updates
           GROUP BY t_sample_prep_request_updates.request_id) nu ON ((spr.prep_request_id = nu.request_id)))
      LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package OPERATOR(public.=) cc.charge_code)))

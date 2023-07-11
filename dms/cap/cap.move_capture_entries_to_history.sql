@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays
 **          04/02/2023 mem - Rename procedure and functions
 **          04/12/2023 mem - Use new table names
 **          05/13/2023 mem - Rename variables
+**          07/11/2023 mem - Use COUNT(job) and COUNT(entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,9 @@ BEGIN
 
     BEGIN
         If _infoOnly Then
-            SELECT COUNT(*)
+            RAISE INFO '';
+
+            SELECT COUNT(job)
             INTO _matchCount
             FROM cap.t_task_events
             WHERE entered < _cutoffDateTime;
@@ -109,7 +112,7 @@ BEGIN
 
     BEGIN
         If _infoOnly Then
-            SELECT COUNT(*)
+            SELECT COUNT(job)
             INTO _matchCount
             FROM cap.t_task_step_events
             WHERE entered < _cutoffDateTime;
@@ -169,7 +172,7 @@ BEGIN
 
     BEGIN
         If _infoOnly Then
-            SELECT COUNT(*)
+            SELECT COUNT(job)
             INTO _matchCount
             FROM cap.t_task_step_processing_log
             WHERE entered < _cutoffDateTime;
@@ -227,7 +230,7 @@ BEGIN
 
     BEGIN
         If _infoOnly Then
-            SELECT COUNT(*)
+            SELECT COUNT(entry_id)
             INTO _matchCount
             FROM cap.t_log_entries
             WHERE entered < _cutoffDateTime;
@@ -286,16 +289,16 @@ BEGIN
     ----------------------------------------------------------
 
     If _infoOnly Then
-            SELECT COUNT(*)
-            INTO _matchCount
-            FROM cap.t_task_parameters_history
-            WHERE Saved < _cutoffDateTime;
+        SELECT COUNT(job)
+        INTO _matchCount
+        FROM cap.t_task_parameters_history
+        WHERE Saved < _cutoffDateTime;
 
-            If _matchCount > 0 Then
-                RAISE INFO 'Would delete % rows from cap.t_task_parameters_history since saved before %', _matchCount, _dateThreshold;
-            Else
-                RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_parameters_history', 26, ' '), _dateThreshold;
-            End If;
+        If _matchCount > 0 Then
+            RAISE INFO 'Would delete % rows from cap.t_task_parameters_history since saved before %', _matchCount, _dateThreshold;
+        Else
+            RAISE INFO 'All entries in cap.% are newer than %', RPAD('t_task_parameters_history', 26, ' '), _dateThreshold;
+        End If;
 
     Else
         DELETE FROM cap.t_task_parameters_history

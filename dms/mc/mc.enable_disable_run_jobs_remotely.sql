@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          05/22/2023 mem - Use format() for string concatenation
 **          05/25/2023 mem - Simplify calls to RAISE INFO
 **          05/30/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -204,7 +205,7 @@ BEGIN
 
     -- Count the number of managers that need to be updated
     --
-    SELECT COUNT(*)
+    SELECT COUNT(PV.entry_id)
     INTO _countToUpdate
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
@@ -221,7 +222,7 @@ BEGIN
 
     -- Count the number of managers already in the target state
     --
-    SELECT COUNT(*)
+    SELECT COUNT(PV.entry_id)
     INTO _countUnchanged
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT

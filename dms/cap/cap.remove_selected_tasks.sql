@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_selected_tasks(IN _infoonly boolean DEFAU
 **          06/22/2023 mem - Ported to PostgreSQL
 **          06/29/2023 mem - Disable trigger trig_t_tasks_after_delete on cap.t_tasks when deleting in bulk
 **                         - Update comments and messages
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -48,7 +49,7 @@ BEGIN
     -- Bail if no candidates found
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _jobCount
     FROM Tmp_Selected_Jobs;
 

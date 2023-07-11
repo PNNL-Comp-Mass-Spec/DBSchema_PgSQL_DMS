@@ -42,7 +42,7 @@ CREATE VIEW public.v_material_containers_list_report AS
                    FROM public.t_reference_compound
                   WHERE (t_reference_compound.active > 0)) contentsq ON ((contentsq.container_id = mc.container_id)))
              LEFT JOIN ( SELECT t_file_attachment.entity_id,
-                    count(*) AS filecount
+                    count(t_file_attachment.attachment_id) AS filecount
                    FROM public.t_file_attachment
                   WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'material_container'::public.citext) AND (t_file_attachment.active > 0))
                   GROUP BY t_file_attachment.entity_id) tfa ON ((tfa.entity_id OPERATOR(public.=) mc.container)))

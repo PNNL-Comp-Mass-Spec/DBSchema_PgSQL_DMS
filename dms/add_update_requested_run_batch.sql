@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          06/16/2023 mem - Use named arguments when calling append_to_text()
 **                         - Fix bug reporting number of requested runs that would be associated with the batch
 **                         - Use new column name, owner_user_id
+**          07/11/2023 mem - Use COUNT(batch_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -378,7 +379,7 @@ BEGIN
             If Coalesce(_batchGroupID, 0) > 0 Then
 
                 -- Check for batch group order conflicts
-                SELECT Count(*)
+                SELECT COUNT(batch_id)
                 INTO _matchCount
                 FROM T_Requested_Run_Batches
                 WHERE Batch_Group_ID = _batchGroupID AND

@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION pc.trigfn_t_protein_collections_after_update_all() RE
 **
 **  Auth:   mem
 **  Date:   08/01/2022 mem - Initial version
+**          07/11/2023 mem - Use COUNT(protein_collection_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
     INTO _updatedRowCount
     FROM deleted;
 
-    SELECT COUNT(*)
+    SELECT COUNT(protein_collection_id)
     INTO _existingRowCount
     FROM pc.t_protein_collections;
 

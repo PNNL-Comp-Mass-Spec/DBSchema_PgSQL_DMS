@@ -28,7 +28,7 @@ CREATE VIEW sw.v_pipeline_jobs_detail_report AS
      JOIN sw.t_job_state_name jsn ON ((j.state = jsn.job_state_id)))
      JOIN sw.t_job_parameters jp ON ((j.job = jp.job)))
      LEFT JOIN ( SELECT t_job_steps.job,
-            count(*) AS steps
+            count(t_job_steps.step) AS steps
            FROM sw.t_job_steps
           GROUP BY t_job_steps.job) js ON ((j.job = js.job)))
      LEFT JOIN public.t_analysis_job aj ON ((j.job = aj.job)));

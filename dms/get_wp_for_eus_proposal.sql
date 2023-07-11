@@ -18,12 +18,13 @@ CREATE OR REPLACE FUNCTION public.get_wp_for_eus_proposal(_eusproposalid text) R
 **    months_searched   Number of months back that this function searched to find a work package for _eusProposalID; 0 if no match
 **
 **  Example usage:
-**
-**      SELECT * FROM get_wp_for_eus_proposal('12345');
+**      SELECT * FROM get_wp_for_eus_proposal('51735');
+**      SELECT * FROM get_wp_for_eus_proposal('60702');
 **
 **  Auth:   mem
 **  Date:   01/29/2016 mem - Initial Version
 **          10/14/2022 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(RR.request_id) insted of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
                   RR.work_package <> 'none' AND
                   RR.entered >= CURRENT_TIMESTAMP - cast(format('%s months', _monthThreshold) as interval)
             GROUP BY RR.work_package
-            ORDER BY COUNT(*) DESC
+            ORDER BY COUNT(RR.request_id) DESC
             LIMIT 1;
 
             If FOUND Then

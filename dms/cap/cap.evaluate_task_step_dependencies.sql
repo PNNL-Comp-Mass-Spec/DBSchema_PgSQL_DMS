@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **          04/27/2023 mem - Use boolean for data type name
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          06/20/2023 mem - Remove unused variable
+**          07/11/2023 mem - Use COUNT(Job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -141,7 +142,7 @@ BEGIN
     -- Loop though dependencies and evaluate them
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _rowCountToProcess
     FROM Tmp_DepTable;
     --

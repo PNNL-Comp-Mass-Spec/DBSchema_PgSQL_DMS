@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly boolean DEFAULT false)
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          05/12/2023 mem - Rename variables
 **          05/30/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(E.exp_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -45,21 +46,21 @@ BEGIN
 
     INSERT INTO Tmp_UsageStats( Tissue_ID,
                                 Usage_All_Time )
-    SELECT E.Tissue_ID,
-           Count(*) AS Usage_All_Time
+    SELECT E.tissue_id,
+           COUNT(E.exp_id) AS usage_all_time
     FROM public.T_Experiments E
-    WHERE NOT E.Tissue_ID IS NULL
-    GROUP BY E.Tissue_ID;
+    WHERE NOT E.tissue_id IS NULL
+    GROUP BY E.tissue_id;
 
     UPDATE Tmp_UsageStats
-    SET Usage_Last_12_Months = SourceQ.Usage_Last_12_Months
-    FROM ( SELECT E.Tissue_ID AS Tissue_ID,
-                  Count(*) AS Usage_Last_12_Months
-            FROM public.T_Experiments E
-            WHERE NOT E.Tissue_ID IS NULL AND
-                  E.Created >= CURRENT_DATE + INTERVAL '-365 days'
-            GROUP BY E.Tissue_ID ) SourceQ
-    WHERE Tmp_UsageStats.Tissue_ID = SourceQ.Tissue_ID;
+    SET Usage_Last_12_Months = SourceQ.usage_last_12_months
+    FROM ( SELECT E.tissue_id AS tissue_id,
+                  COUNT(E.exp_id) AS usage_last_12_months
+            FROM public.t_experiments E
+            WHERE NOT E.tissue_id IS NULL AND
+                  E.created >= CURRENT_DATE + INTERVAL '-365 days'
+            GROUP BY E.tissue_id ) SourceQ
+    WHERE Tmp_UsageStats.Tissue_ID = SourceQ.tissue_id;
 
     If Not _infoOnly Then
         ---------------------------------------------------

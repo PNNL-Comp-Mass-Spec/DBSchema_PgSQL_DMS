@@ -94,6 +94,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          03/23/2023 mem - Add support for datasets with multiple instrument files with the same name (e.g. 20220105_JL_kpmp_3504 with ser files in eight .d directories)
 **          04/24/2023 mem - Store DIA scan count values
 **          06/14/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(dataset_file_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -422,7 +423,7 @@ BEGIN
                                                MatchingFileCount,
                                                allow_duplicates)
             SELECT DSFiles.dataset_id,
-                   COUNT(*) AS MatchingFiles,
+                   COUNT(dataset_file_id) AS MatchingFiles,
                    false As Allow_Duplicates
             FROM t_dataset_files DSFiles
                  INNER JOIN Tmp_InstrumentFiles NewDSFiles

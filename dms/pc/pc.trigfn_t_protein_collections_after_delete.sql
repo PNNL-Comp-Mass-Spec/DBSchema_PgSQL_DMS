@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION pc.trigfn_t_protein_collections_after_delete() RETURN
 **
 **  Auth:   mem
 **  Date:   08/01/2022 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(protein_collection_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -23,7 +24,7 @@ DECLARE
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    SELECT COUNT(*)
+    SELECT COUNT(protein_collection_id)
     INTO _newRowCount
     FROM pc.t_protein_collections;
 

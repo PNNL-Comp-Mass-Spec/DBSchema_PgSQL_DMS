@@ -43,7 +43,7 @@ CREATE VIEW public.v_material_containers_detail_report AS
                    FROM public.t_reference_compound
                   WHERE (t_reference_compound.active > 0)) contentsq ON ((contentsq.container_id = mc.container_id)))
              LEFT JOIN ( SELECT t_file_attachment.entity_id,
-                    count(*) AS files
+                    count(t_file_attachment.attachment_id) AS files
                    FROM public.t_file_attachment
                   WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'material_container'::public.citext) AND (t_file_attachment.active > 0) AND (t_file_attachment.entity_id OPERATOR(public.<>) ALL (ARRAY['na'::public.citext, 'Staging'::public.citext, 'Met_Staging'::public.citext, '-80_Staging'::public.citext])))
                   GROUP BY t_file_attachment.entity_id) tfa ON ((tfa.entity_id OPERATOR(public.=) mc.container)))

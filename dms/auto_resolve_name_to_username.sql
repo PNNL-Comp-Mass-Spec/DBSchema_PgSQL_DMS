@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.auto_resolve_name_to_username(IN _namesearchs
 **          11/11/2019 mem - Return no matches if _nameSearchSpec is null or an empty string
 **          09/11/2020 mem - Use TrimWhitespaceAndPunctuation to remove trailing whitespace and punctuation
 **          02/14/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(user_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -74,7 +75,7 @@ BEGIN
         _nameSearchSpec := _nameSearchSpec || '%';
     End If;
 
-    SELECT COUNT(*)
+    SELECT COUNT(user_id)
     INTO _matchCount
     FROM t_users
     WHERE name LIKE _nameSearchSpec;
@@ -93,7 +94,7 @@ BEGIN
 
     If _matchCount = 0 Then
         -- Check _nameSearchSpec against the Username column
-        SELECT COUNT(*)
+        SELECT COUNT(user_id)
         INTO _matchCount
         FROM t_users
         WHERE username LIKE _nameSearchSpec;

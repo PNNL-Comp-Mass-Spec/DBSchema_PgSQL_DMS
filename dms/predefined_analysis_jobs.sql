@@ -18,6 +18,10 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **    _createJobsForUnreviewedDatasets  When true, will create jobs for datasets with a rating of -10 using predefines with Trigger_Before_Disposition = 1
 **    _analysisToolNameFilter           If not blank, only considers predefines that match the given tool name (can contain wildcards)
 **
+**  Usage:
+**      SELECT * FROM predefined_analysis_jobs('QC_Mam_23_01-run2_TurboMSMS_09Jun23_Arwen_WBEH');
+**      SELECT * FROM predefined_analysis_jobs('QC_Shew_21_01_10ng_nanoPOTS_26May23_WBEH_50_23_05_02_newSPE_FAIMS_3pt5_r2');
+**
 **  Auth:   grk
 **  Date:   06/23/2005
 **          03/03/2006 mem - Increased size of the AD_datasetNameCriteria and AD_expCommentCriteria fields in temporary table #AD
@@ -59,6 +63,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **          02/08/2023 mem - Switch from PRN to username
 **          02/23/2023 mem - Update procedure name in comments
 **          05/22/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -87,12 +92,8 @@ BEGIN
     _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
 
     ---------------------------------------------------
-    ---------------------------------------------------
     -- Rule selection section
-    ---------------------------------------------------
-    ---------------------------------------------------
-
-    ---------------------------------------------------
+    --
     -- Get evaluation information for this dataset
     ---------------------------------------------------
 
@@ -337,16 +338,12 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    ---------------------------------------------------
     -- Job Creation / Rule Evaluation Section
-    ---------------------------------------------------
-    ---------------------------------------------------
-
-    ---------------------------------------------------
+    --
     -- Get number of existing jobs for dataset
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _existingJobCount
     FROM t_analysis_job
     WHERE dataset_id = _datasetID;

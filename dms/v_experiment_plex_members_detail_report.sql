@@ -36,7 +36,7 @@ CREATE VIEW public.v_experiment_plex_members_detail_report AS
      LEFT JOIN ont.v_bto_id_to_name bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)))
      JOIN public.t_material_containers mc ON ((e.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
-     LEFT JOIN ( SELECT count(*) AS datasets,
+     LEFT JOIN ( SELECT count(t_dataset.dataset_id) AS datasets,
             max(t_dataset.created) AS most_recent_dataset,
             t_dataset.exp_id
            FROM public.t_dataset

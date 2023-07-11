@@ -81,7 +81,7 @@ BEGIN
     End If;
 
     -- Use the following to summarize the various scan_type values in t_dataset_scan_types
-    -- SELECT scan_type, COUNT(*) AS ScanTypeCount
+    -- SELECT scan_type, COUNT(entry_id) AS scan_type_count
     -- FROM t_dataset_scan_types
     -- GROUP BY scan_type
 

@@ -12,7 +12,7 @@ CREATE VIEW pc.v_archived_output_file_protein_collections AS
     pc.collection_name
    FROM (((((pc.t_archived_output_files aof
      JOIN ( SELECT aof_1.archived_file_id,
-            count(*) AS protein_collection_count
+            count(aofc_1.entry_id) AS protein_collection_count
            FROM (pc.t_archived_output_files aof_1
              JOIN pc.t_archived_output_file_collections_xref aofc_1 ON ((aof_1.archived_file_id = aofc_1.archived_file_id)))
           GROUP BY aof_1.archived_file_id) lookupq ON ((aof.archived_file_id = lookupq.archived_file_id)))

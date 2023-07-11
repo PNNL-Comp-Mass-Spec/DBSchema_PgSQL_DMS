@@ -16,7 +16,7 @@ CREATE VIEW public.v_requested_run_batch_group_list_report AS
    FROM ((public.t_requested_run_batch_group bg
      LEFT JOIN public.t_users ON ((bg.owner_user_id = t_users.user_id)))
      LEFT JOIN ( SELECT rrb1.batch_group_id,
-            count(*) AS requests,
+            count(rr1.request_id) AS requests,
             min(rr1.request_id) AS first_request,
             max(rr1.request_id) AS last_request,
             min(rr1.created) AS oldest_request_created

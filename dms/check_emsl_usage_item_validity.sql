@@ -10,7 +10,15 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **  Desc:
 **      Check EMSL usage item validity
 **
-**  Return value: error message
+**  Example Usage:
+**      SELECT *
+**      FROM ( SELECT Src.seq,
+**                    check_emsl_usage_item_validity(Src.seq) AS Result
+**             FROM t_emsl_instrument_usage_report Src
+**             WHERE Src.seq Between 600 AND 1000 or
+**                   Src.seq Between 574291 AND 599883 ) CheckQ
+**      WHERE char_length(CheckQ.Result) > 0
+**      ORDER BY seq;
 **
 **  Auth:   grk
 **  Date:   08/28/2012
@@ -28,6 +36,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **          05/29/2023 mem - Use format() for string concatenation
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **          06/16/2023 mem - Use named arguments when calling append_to_text()
+**          07/11/2023 mem - Use COUNT(proposal_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -104,7 +113,7 @@ BEGIN
                               WHERE proposal_id = _instrumentUsage.proposal ) ProposalUsers
                    ON ProposalUsers.person_id = try_cast(Value, 0);
         Else
-            SELECT COUNT(*)
+            SELECT COUNT(proposal_id)
             INTO _hits
             FROM t_eus_proposal_users
             WHERE proposal_id = _instrumentUsage.proposal And person_id = try_cast(_instrumentUsage.users, 0);

@@ -34,12 +34,13 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_tool(_targetdate ti
 **          06/23/2022 mem - Ported to PostgreSQL
 **                         - Removed argument _processorNameFilter since all jobs are processed by the Job Broker
 **          07/12/2022 mem - Renamed function and added another usage example
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
     _backlog integer;
 BEGIN
-    SELECT count(*)
+    SELECT COUNT(job)
     INTO _backlog
     FROM t_analysis_job
     WHERE extract(epoch FROM (finish - _targetDate)) / 3600.0 >= 0 AND

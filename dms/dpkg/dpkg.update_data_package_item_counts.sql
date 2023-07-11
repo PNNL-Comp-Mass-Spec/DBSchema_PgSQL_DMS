@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_item_counts(IN _packageid i
 **          06/10/2009 grk - Added update for total count
 **          12/31/2013 mem - Added support for EUS Proposals
 **          04/04/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use specific column names with COUNT() instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -35,27 +36,27 @@ BEGIN
     -- Determine the new item counts for this data package
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _jobCount
     FROM dpkg.t_data_package_analysis_jobs
     WHERE data_pkg_id = _packageID;
 
-    SELECT COUNT(*)
+    SELECT COUNT(dataset_id)
     INTO _datasetCount
     FROM dpkg.t_data_package_datasets
     WHERE data_pkg_id = _packageID;
 
-    SELECT COUNT(*)
+    SELECT COUNT(proposal_id)
     INTO _proposalCount
     FROM dpkg.t_data_package_eus_proposals
     WHERE data_pkg_id = _packageID;
 
-    SELECT COUNT(*)
+    SELECT COUNT(experiment_id)
     INTO _experimentCount
     FROM dpkg.t_data_package_experiments
     WHERE data_pkg_id = _packageID;
 
-    SELECT COUNT(*)
+    SELECT COUNT(biomaterial_id)
     INTO _biomaterialCount
     FROM dpkg.t_data_package_biomaterial
     WHERE data_pkg_id = _packageID;

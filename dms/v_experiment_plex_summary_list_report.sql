@@ -7,7 +7,7 @@ CREATE VIEW public.v_experiment_plex_summary_list_report AS
     e.experiment AS plex_experiment,
     c.campaign,
     org.organism,
-    count(*) AS channels,
+    count(plexmembers.channel) AS channels,
     sum(
         CASE
             WHEN (channeltypename.channel_type_name OPERATOR(public.=) 'Reference'::public.citext) THEN 1

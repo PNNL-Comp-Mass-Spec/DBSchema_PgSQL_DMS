@@ -73,7 +73,7 @@ CREATE VIEW public.v_sample_prep_request_list_report AS
      LEFT JOIN public.t_users qp ON ((spr.requester_username OPERATOR(public.=) qp.username)))
      LEFT JOIN public.v_sample_prep_request_queue_times qt ON ((spr.prep_request_id = qt.request_id)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id_value,
-            count(*) AS attachments
+            count(t_file_attachment.attachment_id) AS attachments
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'sample_prep_request'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id_value) ta ON ((spr.prep_request_id = ta.entity_id_value)))

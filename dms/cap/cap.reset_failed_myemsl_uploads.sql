@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean
 **          03/07/2018 mem - Do not reset the same job/subfolder ingest task more than once
 **          04/29/2020 bcg - Reset steps with message 'ingest/backend/tasks.py'
 **          06/25/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(entry_id) and COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -150,7 +151,7 @@ BEGIN
                       U.subfolder,
                       U.file_count_new,
                       U.file_count_updated,
-                      COUNT(*) AS Attempts
+                      COUNT(entry_id) AS Attempts
                FROM cap.t_myemsl_uploads AS U
                     INNER JOIN Tmp_FailedJobs
                       ON U.job = Tmp_FailedJobs.job AND
@@ -207,7 +208,7 @@ BEGIN
         -- Possibly limit the number of capture task jobs to reset
         -----------------------------------------------------------
 
-        SELECT COUNT(*)
+        SELECT COUNT(job)
         INTO _jobCountAtStart
         FROM Tmp_FailedJobs
         WHERE SkipResetMode = 0;
@@ -254,7 +255,7 @@ BEGIN
 
             If Not _infoOnly Then
 
-                SELECT COUNT(*)
+                SELECT COUNT(job)
                 INTO  _jobCount
                 FROM Tmp_FailedJobs
                 WHERE SkipResetMode = 0;

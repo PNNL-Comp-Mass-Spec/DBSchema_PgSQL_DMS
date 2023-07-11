@@ -42,7 +42,7 @@ CREATE VIEW public.v_organism_detail_report AS
              JOIN pc.t_protein_collection_states pcs ON ((t_protein_collections.collection_state_id = pcs.collection_state_id)))) pc ON (((o.organism_id = pc.organism_id) AND (pc.state_name OPERATOR(public.<>) 'Retired'::public.citext))))
      LEFT JOIN ont.t_ncbi_taxonomy_cached ncbi ON ((o.ncbi_taxonomy_id = ncbi.tax_id)))
      LEFT JOIN ( SELECT odf.organism_id,
-            count(*) AS legacy_fasta_files
+            count(odf.org_db_file_id) AS legacy_fasta_files
            FROM public.t_organism_db_file odf
           WHERE ((odf.active > 0) AND (odf.valid > 0))
           GROUP BY odf.organism_id) fastalookupq ON ((o.organism_id = fastalookupq.organism_id)))

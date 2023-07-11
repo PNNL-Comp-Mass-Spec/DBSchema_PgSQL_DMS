@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps(INOUT _message text 
 **          09/24/2014 mem - Rename Job in t_task_step_dependencies
 **          03/10/2015 mem - Now updating t_task_steps.Dependencies if the dependency count listed is lower than that defined in t_task_step_dependencies
 **          06/20/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -93,7 +94,7 @@ BEGIN
     SET Dependencies = CompareQ.Actual_Dependencies
     FROM ( SELECT SD.Job,
                   SD.Step,
-                  COUNT(*) AS Actual_Dependencies
+                  COUNT(job) AS Actual_Dependencies
            FROM cap.t_task_step_dependencies SD
            WHERE SD.Job IN ( SELECT W.Job FROM cap.t_task_steps W WHERE W.State = 1 )   -- State 1=Waiting
            GROUP BY SD.Job, SD.Step
@@ -236,10 +237,10 @@ BEGIN
 
                 -- Any standing shared results that match?
 
-                SELECT COUNT(*)
+                SELECT COUNT(results_name)
                 INTO _numCompleted
-                FROM T_Shared_Results
-                WHERE Results_Name = _outputFolderName;
+                FROM cap.t_shared_results
+                WHERE results_name = _outputFolderName;
 
                 If Coalesce(_numCompleted, 0) = 0 Then
 
@@ -259,7 +260,7 @@ BEGIN
                         -- Old, completed capture task jobs are removed from t_tasks after a set number of days, meaning it's possible
                         -- that the only record of a completed, matching shared results step will be in t_task_steps_history
 
-                        SELECT COUNT(*)
+                        SELECT COUNT(job)
                         INTO _numCompleted
                         FROM cap.t_task_steps_history
                         WHERE Output_Folder_Name = _outputFolderName AND

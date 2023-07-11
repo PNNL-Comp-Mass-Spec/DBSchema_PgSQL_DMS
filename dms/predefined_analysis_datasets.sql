@@ -16,6 +16,11 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **    _previewSql          When true, show queries that would be used
 **    _populateTempTable   When true, populates table T_Tmp_PredefinedAnalysisDatasets with the results (creates the table if it does not yet exist)
 **
+**  Usage:
+**      SELECT * FROM predefined_analysis_datasets(300, _infoonly => true);
+**      SELECT * FROM predefined_analysis_datasets(300, _infoonly => false, _previewSQL => true)
+**      SELECT * FROM predefined_analysis_datasets(300, _infoonly => false)
+**
 **  Auth:   grk
 **  Date:   06/22/2005
 **          03/03/2006 mem - Fixed bug involving evaluation of _datasetNameCriteria
@@ -30,6 +35,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **          06/30/2022 mem - Rename parameter file argument
 **          05/26/2023 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -163,9 +169,9 @@ BEGIN
 
     If _infoOnly Then
 
-        _s := ' SELECT COUNT(*) AS DatasetCount,'
-                      ' MIN(DS_Date) AS Dataset_Date_Min,'
-                      ' MAX(DS_Date) AS Dataset_Date_Max'
+        _s := ' SELECT COUNT(ID) AS DatasetCount,'
+                     ' MIN(DS_Date) AS Dataset_Date_Min,'
+                     ' MAX(DS_Date) AS Dataset_Date_Max'
               ' FROM V_Predefined_Analysis_Dataset_Info' ||
               _sqlWhere;
 

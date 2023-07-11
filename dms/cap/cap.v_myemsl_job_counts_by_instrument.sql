@@ -5,7 +5,7 @@
 CREATE VIEW cap.v_myemsl_job_counts_by_instrument AS
  SELECT t_tasks.instrument,
     round(sum(((((t_myemsl_uploads.bytes)::numeric / 1024.0) / 1024.0) / 1024.0)), 1) AS gb,
-    count(*) AS upload_count
+    count(t_myemsl_uploads.entry_id) AS upload_count
    FROM (cap.t_myemsl_uploads
      JOIN cap.t_tasks ON ((t_myemsl_uploads.job = t_tasks.job)))
   WHERE (t_myemsl_uploads.error_code = 0)

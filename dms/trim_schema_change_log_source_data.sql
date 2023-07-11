@@ -23,7 +23,7 @@ CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infolevel 
 **                      When 2, show all rows
 **
 **  Example usage:
-**      SELECT count(*) FROM trim_schema_change_log_source_data(1);
+**      SELECT COUNT(*) FROM trim_schema_change_log_source_data(1);
 **
 **      SELECT * FROM trim_schema_change_log_source_data(1);
 **      SELECT * FROM trim_schema_change_log_source_data(0);

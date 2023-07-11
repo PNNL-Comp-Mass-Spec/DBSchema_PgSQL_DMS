@@ -14,6 +14,7 @@ CREATE OR REPLACE PROCEDURE cap.set_update_required_for_running_capture_task_man
 **  Auth:   mem
 **  Date:   04/17/2014 mem - Initial release
 **          06/26/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _mgrCount
     FROM cap.t_task_steps
     WHERE State = 4;

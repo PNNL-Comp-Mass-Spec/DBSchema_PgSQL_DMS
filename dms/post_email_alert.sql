@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE public.post_email_alert(IN _type text, IN _message t
 **  Date:   06/14/2018 mem - Initial version
 **          08/26/2022 mem - Fix bug subtracting _duplicateEntryHoldoffHours from the current date/time
 **          06/14/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(email_alert_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -40,7 +41,7 @@ BEGIN
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
 
     If Coalesce(_duplicateEntryHoldoffHours, 0) > 0 Then
-        SELECT COUNT(*)
+        SELECT COUNT(email_alert_id)
         INTO _duplicateRowCount
         FROM t_email_alerts
         WHERE message = _message AND

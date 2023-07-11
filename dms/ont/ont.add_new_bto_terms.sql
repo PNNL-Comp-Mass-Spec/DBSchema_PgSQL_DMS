@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFA
 **          05/22/2023 mem - Capitalize reserved words
 **          05/28/2023 mem - Simplify string concatenation
 **          05/29/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(s.entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -219,11 +220,11 @@ BEGIN
                ON UniqueQTarget.identifier = UniqueQSource.identifier AND
                   UniqueQTarget.term_name = UniqueQSource.term_name
         WHERE UniqueQTarget.identifier IN ( SELECT LookupQ.identifier
-                                             FROM ( SELECT DISTINCT cvbto.identifier, cvbto.term_name
-                                                    FROM ont.t_cv_bto cvbto
-                                                    GROUP BY cvbto.identifier, cvbto.term_name ) LookupQ
-                                             GROUP BY LookupQ.identifier
-                                             HAVING (COUNT(*) > 1) ) AND
+                                            FROM ( SELECT DISTINCT cvbto.identifier, cvbto.term_name
+                                                   FROM ont.t_cv_bto cvbto
+                                                   GROUP BY cvbto.identifier, cvbto.term_name ) LookupQ
+                                            GROUP BY LookupQ.identifier
+                                            HAVING (COUNT(*) > 1) ) AND
               UniqueQSource.identifier IS NULL;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
@@ -330,7 +331,7 @@ BEGIN
 
         UPDATE ont.t_cv_bto t
         SET children = StatsQ.children
-        FROM ( SELECT s.parent_term_id, COUNT(*) As children
+        FROM ( SELECT s.parent_term_id, COUNT(s.entry_id) As children
                FROM ont.t_cv_bto s
                GROUP BY s.parent_term_ID ) StatsQ
         WHERE StatsQ.parent_term_id = t.identifier AND

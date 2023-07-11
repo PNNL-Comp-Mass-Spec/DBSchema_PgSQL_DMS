@@ -23,7 +23,7 @@ CREATE VIEW sw.v_machine_status_last_24_hours AS
           WHERE ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ms.posting_time)::timestamp with time zone)) / 3600.0) <= (24)::numeric)
           GROUP BY ms.machine, ptg.group_name) statusq
      LEFT JOIN ( SELECT lp.machine,
-            count(*) AS jobcount,
+            count(js.tool) AS jobcount,
             public.min(js.tool) AS step_tool_first,
             public.max(js.tool) AS step_tool_last
            FROM (sw.t_local_processors lp

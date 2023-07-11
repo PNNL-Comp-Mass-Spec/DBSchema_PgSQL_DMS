@@ -12,12 +12,13 @@ CREATE OR REPLACE FUNCTION public.get_dataset_pm_task_count(_datasetid integer) 
 **  Auth:   mem
 **  Date:   07/25/2017 mem - Initial version
 **          06/13/2022 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(AJ.job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
     _result int;
 BEGIN
-    SELECT COUNT(*)
+    SELECT COUNT(AJ.job)
     INTO _result
     FROM t_analysis_job AS AJ
         INNER JOIN t_mts_peak_matching_tasks_cached AS PM

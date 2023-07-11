@@ -5,7 +5,7 @@
 CREATE VIEW public.v_datasets_stale_and_failed AS
  WITH jobstepstatus(dataset_id, activesteps, activearchivestatussteps) AS (
          SELECT j.dataset_id,
-            count(*) AS active_steps,
+            count(js.step) AS active_steps,
             sum(
                 CASE
                     WHEN (js.tool OPERATOR(public.=) ANY (ARRAY['ArchiveStatusCheck'::public.citext, 'ArchiveVerify'::public.citext])) THEN 1

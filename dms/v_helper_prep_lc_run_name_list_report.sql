@@ -8,7 +8,7 @@ CREATE VIEW public.v_helper_prep_lc_run_name_list_report AS
             sourceq.usagecount,
             row_number() OVER (ORDER BY sourceq.usagecount DESC, sourceq.prep_run_name) AS usagerank
            FROM ( SELECT t_prep_lc_run.prep_run_name,
-                    count(*) AS usagecount
+                    count(t_prep_lc_run.prep_run_id) AS usagecount
                    FROM public.t_prep_lc_run
                   WHERE (NOT (t_prep_lc_run.prep_run_name IS NULL))
                   GROUP BY t_prep_lc_run.prep_run_name) sourceq) rankq

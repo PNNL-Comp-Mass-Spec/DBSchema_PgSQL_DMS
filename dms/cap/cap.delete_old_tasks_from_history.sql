@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boole
 **          04/02/2023 mem - Rename procedure and functions
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/12/2023 mem - Rename variables
+**          07/11/2023 mem - Use COUNT(Job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -83,7 +84,7 @@ BEGIN
     -- Assure that 250,000 rows will remain in t_tasks_history
     ---------------------------------------------------
 
-    SELECT Count(*)
+    SELECT COUNT(job)
     INTO _currentJobCount
     FROM cap.t_tasks_history;
 
@@ -111,9 +112,9 @@ BEGIN
         End If;
     End If;
 
-    SELECT Count(*),
-           Min(Job),
-           Max(Job)
+    SELECT COUNT(Job),
+           MIN(Job),
+           MAX(Job)
     INTO _jobCountToDelete, _jobFirst, _jobLast
     FROM Tmp_JobsToDelete;
 

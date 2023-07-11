@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_step_status_history(IN _minimumtimei
 **  Auth:   mem
 **  Date:   02/05/2016 mem - Initial version (copied from the DMS_Pipeline DB)
 **          06/29/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -90,7 +91,7 @@ BEGIN
     -----------------------------------------------------
 
     INSERT INTO Tmp_TaskStepStatusHistory (Posting_Time, Step_Tool, State, Step_Count)
-    SELECT CURRENT_TIMESTAMP As Posting_Time, Tool, State, COUNT(*) AS Step_Count
+    SELECT CURRENT_TIMESTAMP As Posting_Time, Tool, State, COUNT(job) AS Step_Count
     FROM cap.t_task_steps
     GROUP BY Tool, State;
     --

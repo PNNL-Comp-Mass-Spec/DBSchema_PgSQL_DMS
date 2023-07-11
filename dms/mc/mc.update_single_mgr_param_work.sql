@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 **                         - Move temporary table drop to the end of the if block
 **          01/31/2023 mem - Use new column names in tables
 **          05/22/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -70,11 +71,11 @@ BEGIN
     -- Count the number of rows that already have this value
     ---------------------------------------------------
 
-    SELECT Count(*)
+    SELECT COUNT(PV.entry_id)
     INTO _rowCountUnchanged
-    FROM mc.t_param_value
-    WHERE entry_id IN (SELECT entry_id FROM Tmp_ParamValueEntriesToUpdate) AND
-          Coalesce(value, '') = _newValue;
+    FROM mc.t_param_value PV
+    WHERE PV.entry_id IN (SELECT entry_id FROM Tmp_ParamValueEntriesToUpdate) AND
+          Coalesce(PV.value, '') = _newValue;
 
     ---------------------------------------------------
     -- Update the values defined in Tmp_ParamValueEntriesToUpdate

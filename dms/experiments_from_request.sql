@@ -13,14 +13,15 @@ CREATE OR REPLACE FUNCTION public.experiments_from_request(_requestid integer) R
 **
 **
 **  Auth:   grk
-**  Date:   6/10/2005
+**  Date:   06/10/2005
 **          06/15/2022 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(exp_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
     _count int;
 BEGIN
-    SELECT COUNT(*)
+    SELECT COUNT(exp_id)
     INTO _count
     FROM t_experiments
     WHERE sample_prep_request_id = _requestID;

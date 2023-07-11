@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_job_steps_after_update_all() RETURNS trig
 **          07/08/2012 mem - Added row counts to the error message
 **          09/11/2015 mem - Added support for the table being empty
 **          08/01/2022 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(step) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ BEGIN
     INTO _updatedRowCount
     FROM deleted;
 
-    SELECT COUNT(*)
+    SELECT COUNT(step)
     INTO _existingRowCount
     FROM sw.t_job_steps;
 

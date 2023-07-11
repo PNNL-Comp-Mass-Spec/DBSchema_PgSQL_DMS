@@ -19,7 +19,7 @@ CREATE VIEW cap.v_tasks_history_detail_report AS
      JOIN cap.t_task_state_name tsn ON ((t.state = tsn.job_state_id)))
      LEFT JOIN cap.t_task_parameters_history jp ON (((t.job = jp.job) AND (jp.most_recent_entry = 1))))
      LEFT JOIN ( SELECT t_task_steps_history.job,
-            count(*) AS steps
+            count(t_task_steps_history.step) AS steps
            FROM cap.t_task_steps_history
           WHERE (t_task_steps_history.most_recent_entry = 1)
           GROUP BY t_task_steps_history.job) ts ON ((t.job = ts.job)))

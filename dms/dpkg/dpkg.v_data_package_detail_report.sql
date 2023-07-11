@@ -35,7 +35,7 @@ CREATE VIEW dpkg.v_data_package_detail_report AS
      LEFT JOIN public.t_users u1 ON ((dp.owner_username OPERATOR(public.=) u1.username)))
      LEFT JOIN public.t_users u2 ON ((dp.requester OPERATOR(public.=) u2.username)))
      LEFT JOIN ( SELECT v_data_package_campaigns_list_report.id,
-            count(*) AS campaigns
+            count(v_data_package_campaigns_list_report.campaign_id) AS campaigns
            FROM dpkg.v_data_package_campaigns_list_report
           GROUP BY v_data_package_campaigns_list_report.id) campaignstats ON ((dp.data_pkg_id = campaignstats.id)));
 

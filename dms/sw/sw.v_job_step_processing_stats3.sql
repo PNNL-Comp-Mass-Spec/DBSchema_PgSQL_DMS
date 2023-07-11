@@ -65,7 +65,7 @@ CREATE VIEW sw.v_job_step_processing_stats3 AS
              JOIN sw.t_job_step_state_name ssn ON ((js.state = ssn.step_state_id))) ON (((jsps.job = js.job) AND (jsps.step = js.step))))) dataq
      JOIN ( SELECT t_job_step_processing_stats.job,
             t_job_step_processing_stats.step,
-            count(*) AS entries
+            count(t_job_step_processing_stats.entry_id) AS entries
            FROM sw.t_job_step_processing_stats
           WHERE (t_job_step_processing_stats.entered >= (CURRENT_TIMESTAMP - '5 days'::interval))
           GROUP BY t_job_step_processing_stats.job, t_job_step_processing_stats.step

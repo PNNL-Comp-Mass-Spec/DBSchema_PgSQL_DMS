@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **          02/15/2023 mem - Add Commit statement
 **          04/02/2023 mem - Rename procedure and functions
 **          05/12/2023 mem - Rename variables
+**          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
         _currentLocation := 'Delete Info and Warn entries';
 
         If _infoOnly Then
-            SELECT COUNT(*)
+            SELECT COUNT(entry_id)
             INTO _matchCount
             FROM cap.t_log_entries
             WHERE (entered < _infoCutoffDateTime) AND

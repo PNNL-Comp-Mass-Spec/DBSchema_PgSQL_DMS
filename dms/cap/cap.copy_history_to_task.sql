@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/22/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -435,7 +436,7 @@ BEGIN
     UPDATE cap.t_task_steps target
     SET Dependencies = CountQ.dependencies
     FROM ( SELECT Step,
-                 COUNT(*) AS dependencies
+                  COUNT(job) AS dependencies
            FROM cap.t_task_step_dependencies
            WHERE Job = _newJob
            GROUP BY Step

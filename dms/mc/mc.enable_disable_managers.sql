@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          05/12/2023 mem - Rename variables
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/23/2023 mem - No longer mention "FETCH ALL FROM _results" in the output message
+**          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -199,7 +200,7 @@ BEGIN
 
     -- Count the number of managers that need to be updated
     --
-    SELECT COUNT(*)
+    SELECT COUNT(PV.entry_id)
     INTO _countToUpdate
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT
@@ -216,7 +217,7 @@ BEGIN
 
     -- Count the number of managers already in the target state
     --
-    SELECT COUNT(*)
+    SELECT COUNT(PV.entry_id)
     INTO _countUnchanged
     FROM mc.t_param_value PV
          INNER JOIN mc.t_param_type PT

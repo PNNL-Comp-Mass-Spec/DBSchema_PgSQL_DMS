@@ -10,7 +10,7 @@ CREATE VIEW sw.v_processor_tool_group_detail_stats AS
     ptgd.tool_name,
     ptgd.priority,
     ptgd.enabled,
-    count(*) AS managers
+    count(lp.processor_name) AS managers
    FROM (((sw.t_machines m
      JOIN sw.t_local_processors lp ON ((m.machine OPERATOR(public.=) lp.machine)))
      JOIN sw.t_processor_tool_groups ptg ON ((m.proc_tool_group_id = ptg.group_id)))

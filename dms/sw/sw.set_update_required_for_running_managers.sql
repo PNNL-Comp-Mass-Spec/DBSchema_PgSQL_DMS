@@ -8,14 +8,14 @@ CREATE OR REPLACE PROCEDURE sw.set_update_required_for_running_managers(IN _info
 /****************************************************
 **
 **  Desc:
-**      Sets ManagerUpdateRequired to True in mc.t_param_value
-**      for currently running managers
+**      Sets ManagerUpdateRequired to True in mc.t_param_value for currently running managers
 **
 **  Auth:   mem
 **  Date:   04/17/2014 mem - Initial release
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/26/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(step) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -54,7 +54,7 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
 
-    SELECT COUNT(*)
+    SELECT COUNT(step)
     INTO _mgrCount
     FROM sw.t_job_steps
     WHERE State = 4;

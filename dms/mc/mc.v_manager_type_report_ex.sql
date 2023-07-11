@@ -10,8 +10,8 @@ CREATE VIEW mc.v_manager_type_report_ex AS
    FROM (mc.t_mgr_types mt
      LEFT JOIN ( SELECT ml.mgr_type_id,
             ml.manager_type,
-            count(*) FILTER (WHERE (ml.active OPERATOR(public.=) 'True'::public.citext)) AS managercountactive,
-            count(*) FILTER (WHERE (ml.active OPERATOR(public.<>) 'True'::public.citext)) AS managercountinactive
+            count(ml.id) FILTER (WHERE (ml.active OPERATOR(public.=) 'True'::public.citext)) AS managercountactive,
+            count(ml.id) FILTER (WHERE (ml.active OPERATOR(public.<>) 'True'::public.citext)) AS managercountinactive
            FROM mc.v_manager_list_by_type ml
           GROUP BY ml.mgr_type_id, ml.manager_type) activemanagersq ON ((mt.mgr_type_id = activemanagersq.mgr_type_id)));
 

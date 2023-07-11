@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE public.check_data_integrity(IN _logerrors boolean DE
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          06/01/2023 mem - Ported to PostgreSQL
 **          06/16/2023 mem - Use named arguments when calling append_to_text()
+**          07/11/2023 mem - Use COUNT(request_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -43,7 +44,7 @@ BEGIN
            FROM t_requested_run
            WHERE NOT dataset_id IS NULL
            GROUP BY dataset_id
-           HAVING COUNT(*) > 1 ) FilterQ;
+           HAVING COUNT(request_id) > 1 ) FilterQ;
 
     If _datasetCount > 0 Then
 

@@ -7,7 +7,7 @@ CREATE VIEW sw.v_processor_step_tool_stats AS
     js.tool AS step_tool,
     EXTRACT(year FROM js.start) AS the_year,
     EXTRACT(month FROM js.start) AS the_month,
-    count(*) AS job_step_count,
+    count(js.step) AS job_step_count,
     dateq.start_max
    FROM (sw.t_job_steps js
      JOIN ( SELECT t_job_steps.processor,

@@ -5,7 +5,7 @@
 CREATE VIEW dpkg.v_data_package_dataset_aggregation_list_report AS
  SELECT t_data_package_analysis_jobs.data_pkg_id AS id,
     t_data_package_analysis_jobs.dataset,
-    count(*) AS jobs
+    count(t_data_package_analysis_jobs.job) AS jobs
    FROM dpkg.t_data_package_analysis_jobs
   GROUP BY t_data_package_analysis_jobs.dataset, t_data_package_analysis_jobs.data_pkg_id;
 

@@ -21,7 +21,7 @@ CREATE VIEW sw.v_job_step_stats AS
             statsq.step_tool,
             max((COALESCE(statsq.secondselapsed1, (0)::numeric) + COALESCE(statsq.secondselapsed2, (0)::numeric))) AS secondselapsedmax,
             sum((COALESCE(statsq.secondselapsed1, (0)::numeric) + COALESCE(statsq.secondselapsed2, (0)::numeric))) AS secondselapsedtotal,
-            count(*) AS jobsteps,
+            count(statsq.state) AS jobsteps,
             sum(
                 CASE
                     WHEN (statsq.state = ANY (ARRAY[3, 5])) THEN 1

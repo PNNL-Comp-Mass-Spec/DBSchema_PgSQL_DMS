@@ -106,6 +106,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          06/07/2023 mem - Renamed _infoOnly to _infoLevel and Ported to PostgreSQL
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          07/11/2023 mem - Use COUNT(TS.job) and COUNT(processor_name) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -340,9 +341,9 @@ BEGIN
                                            Max_Simultaneous_Captures,
                                            Available_Capacity )
         SELECT T.Instrument,
-               COUNT(*) AS Captures_In_Progress,
+               COUNT(TS.job) AS Captures_In_Progress,
                T.Max_Simultaneous_Captures,
-               T.Max_Simultaneous_Captures - COUNT(*) AS Available_Capacity
+               T.Max_Simultaneous_Captures - COUNT(TS.job) AS Available_Capacity
         FROM cap.t_task_steps TS
              INNER JOIN cap.t_step_tools ST
                ON TS.Tool = ST.step_tool
@@ -357,7 +358,7 @@ BEGIN
         -- Is processor assigned to any instrument?
         ---------------------------------------------------
 
-        SELECT COUNT(*)
+        SELECT COUNT(processor_name)
         INTO _processorAssignmentCount
         FROM cap.t_processor_instrument
         WHERE processor_name = _processorName AND

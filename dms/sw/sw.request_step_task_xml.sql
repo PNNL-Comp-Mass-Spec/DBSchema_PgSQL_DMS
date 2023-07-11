@@ -119,6 +119,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          06/09/2023 mem - Ported to PostgreSQL
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          06/23/2023 mem - Add missing underscore to column Processor_ID
+**          07/11/2023 mem - Use COUNT(step) and COUNT(processor) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -524,7 +525,7 @@ BEGIN
                     RAISE INFO '_remoteInfoID is % for %', _remoteInfoID, _remoteInfo;
                 End If;
 
-                SELECT COUNT(*)
+                SELECT COUNT(step)
                 INTO _stepsRunningRemotely
                 FROM sw.t_job_steps
                 WHERE state IN (4, 9) AND remote_info_id = _remoteInfoID;
@@ -1256,7 +1257,7 @@ BEGIN
                            -- Group by storage server
                            -- Only examine steps <= _maxStepNumToThrottle
                            SELECT sw.t_jobs.storage_server,
-                                   COUNT(*) AS Running_Steps_Recently_Started
+                                   COUNT(JS.step) AS Running_Steps_Recently_Started
                            FROM sw.t_job_steps JS
                                INNER JOIN sw.t_jobs
                                    ON JS.job = sw.t_jobs.job
@@ -1323,7 +1324,7 @@ BEGIN
                                                           END)
                 FROM ( SELECT job,
                               MIN(processor) AS Alternate_Processor,
-                              COUNT(*) AS Alternate_Processor_Count
+                              COUNT(processor) AS Alternate_Processor_Count
                        FROM sw.t_local_job_processors
                        WHERE processor <> _processorName
                        GROUP BY job

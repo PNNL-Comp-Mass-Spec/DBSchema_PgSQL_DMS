@@ -6,7 +6,7 @@ CREATE VIEW sw.v_job_step_state_summary_recent AS
  SELECT js.tool AS step_tool,
     js.state,
     ssn.step_state AS state_name,
-    count(*) AS step_count,
+    count(js.step) AS step_count,
     max(js.start) AS start_max
    FROM (sw.t_job_steps js
      JOIN sw.t_job_step_state_name ssn ON ((js.state = ssn.step_state_id)))

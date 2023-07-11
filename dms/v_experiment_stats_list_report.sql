@@ -9,14 +9,14 @@ CREATE VIEW public.v_experiment_stats_list_report AS
     countq.researcher
    FROM ( SELECT EXTRACT(month FROM e.created) AS month,
             EXTRACT(year FROM e.created) AS year,
-            count(*) AS experiments,
+            count(e.exp_id) AS experiments,
             'Total'::public.citext AS researcher
            FROM public.t_experiments e
           GROUP BY (EXTRACT(month FROM e.created)), (EXTRACT(year FROM e.created))
         UNION
          SELECT EXTRACT(month FROM e.created) AS month,
             EXTRACT(year FROM e.created) AS year,
-            count(*) AS experiments,
+            count(e.exp_id) AS experiments,
             u.name AS researcher
            FROM (public.t_experiments e
              JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))

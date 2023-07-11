@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **                         - Fix long-running merge queries by using temp tables to store stats
 **                         - Post a log entry if the runtime exceeds 30 seconds
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          07/11/2023 mem - Use COUNT(RR.request_id) and COUNT(RR.dataset_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -146,10 +147,10 @@ BEGIN
                          ) StatsQ ON BatchQ.batch_id = StatsQ.batch_id
                          LEFT OUTER JOIN
                          ( SELECT RR.batch_id AS batch_id,
-                                  COUNT(*)           AS active_requests,
-                                  MIN(RR.request_id) AS first_active_request,
-                                  MAX(RR.request_id) AS last_active_request,
-                                  MIN(RR.created)    AS oldest_active_request_created
+                                  COUNT(RR.request_id) AS active_requests,
+                                  MIN(RR.request_id)   AS first_active_request,
+                                  MAX(RR.request_id)   AS last_active_request,
+                                  MIN(RR.created)      AS oldest_active_request_created
                            FROM t_requested_run RR
                                 INNER JOIN Tmp_BatchIDs
                                   ON RR.batch_id = Tmp_BatchIDs.batch_id
@@ -216,7 +217,7 @@ BEGIN
                FROM Tmp_BatchIDs
              ) BatchQ
              LEFT OUTER JOIN ( SELECT RR.batch_id AS batch_id,
-                                      Count(*) AS datasets,
+                                      Count(RR.dataset_id) AS datasets,
                                       MIN(QT.days_in_queue) AS min_days_in_queue,
                                       MAX(QT.days_in_queue) AS max_days_in_queue,
                                       MIN(InstName.instrument) AS instrument_first,
@@ -294,7 +295,7 @@ BEGIN
                FROM Tmp_BatchIDs
              ) BatchQ
              LEFT OUTER JOIN ( SELECT RR.batch_id,
-                                      COUNT(*) AS requests,
+                                      COUNT(RR.request_id) AS requests,
                                       MAX(QT.days_in_queue) AS days_in_prep_queue,
                                       SUM(CASE
                                           WHEN ((COALESCE(RR.block, 0) > 0) AND

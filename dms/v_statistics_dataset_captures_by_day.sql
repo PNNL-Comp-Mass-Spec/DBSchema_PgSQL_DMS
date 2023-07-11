@@ -7,7 +7,7 @@ CREATE VIEW public.v_statistics_dataset_captures_by_day AS
     EXTRACT(month FROM ds.created) AS month,
     EXTRACT(day FROM ds.created) AS day,
     (ds.created)::date AS date,
-    count(*) AS datasets_created
+    count(ds.dataset_id) AS datasets_created
    FROM (public.t_dataset ds
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
   WHERE ((instname.instrument OPERATOR(public.!~~) 'External%'::public.citext) AND (instname.instrument OPERATOR(public.!~~) 'Broad%'::public.citext) AND (instname.instrument OPERATOR(public.!~~) 'FHCRC%'::public.citext))

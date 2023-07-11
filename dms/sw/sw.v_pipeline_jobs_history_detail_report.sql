@@ -27,7 +27,7 @@ CREATE VIEW sw.v_pipeline_jobs_history_detail_report AS
      JOIN sw.t_job_state_name jsn ON ((j.state = jsn.job_state_id)))
      LEFT JOIN sw.t_job_parameters_history jp ON (((j.job = jp.job) AND (jp.most_recent_entry = 1))))
      LEFT JOIN ( SELECT t_job_steps_history.job,
-            count(*) AS steps
+            count(t_job_steps_history.step) AS steps
            FROM sw.t_job_steps_history
           WHERE (t_job_steps_history.most_recent_entry = 1)
           GROUP BY t_job_steps_history.job) js ON ((j.job = js.job)))

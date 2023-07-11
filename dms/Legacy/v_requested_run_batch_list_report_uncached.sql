@@ -2,7 +2,7 @@
 -- Name: v_requested_run_batch_list_report; Type: VIEW; Schema: public; Owner: d3l243
 --
 
-CREATE VIEW public.v_requested_run_batch_list_report AS
+CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
  SELECT rrb.batch_id AS id,
     rrb.batch AS name,
     active_req_runs.requests,
@@ -48,7 +48,7 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
      LEFT JOIN ( SELECT rr1.batch_id AS batchid,
             public.min(rr1.separation_group) AS separation_group_first,
             public.max(rr1.separation_group) AS separation_group_last,
-            count(*) AS requests,
+            count(rr1.request_id) AS requests,
             min(rr1.request_id) AS first_request,
             max(rr1.request_id) AS last_request,
             min(rr1.created) AS oldest_request_created
@@ -56,7 +56,7 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
           WHERE (rr1.state_name OPERATOR(public.=) 'Active'::public.citext)
           GROUP BY rr1.batch_id) active_req_runs ON ((active_req_runs.batchid = rrb.batch_id)))
      LEFT JOIN ( SELECT rr2.batch_id AS batchid,
-            count(*) AS runs,
+            count(rr2.request_id) AS runs,
             min(rr2.created) AS oldest_request_created,
             max(qt.days_in_queue) AS max_days_in_queue,
             public.min(instname.instrument) AS instrumentfirst,
@@ -87,12 +87,12 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
   WHERE (rrb.batch_id > 0);
 
 
-ALTER TABLE public.v_requested_run_batch_list_report OWNER TO d3l243;
+ALTER TABLE public.v_requested_run_batch_list_report_uncached OWNER TO d3l243;
 
 --
--- Name: TABLE v_requested_run_batch_list_report; Type: ACL; Schema: public; Owner: d3l243
+-- Name: TABLE v_requested_run_batch_list_report_uncached; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE public.v_requested_run_batch_list_report TO readaccess;
-GRANT SELECT ON TABLE public.v_requested_run_batch_list_report TO writeaccess;
+GRANT SELECT ON TABLE public.v_requested_run_batch_list_report_uncached TO readaccess;
+GRANT SELECT ON TABLE public.v_requested_run_batch_list_report_uncached TO writeaccess;
 

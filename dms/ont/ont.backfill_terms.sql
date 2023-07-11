@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **  Arguments:
 **    _previewRelationshipUpdates   Set to true to preview adding/removing relationships; 0 to actually update relationships
 **
-** Usage:
+**  Usage:
 **      SELECT * FROM ont.backfill_terms  (
 **          _sourceTable => 'ont.t_cv_bto',
 **          _namespace   => 'BrendaTissueOBO',
@@ -37,6 +37,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/29/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(term_pk) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -148,7 +149,7 @@ BEGIN
          INNER JOIN ont.t_term T
            ON S.term_pk = T.term_pk
     GROUP BY T.ontology_id
-    ORDER BY Count(*) DESC
+    ORDER BY COUNT(term_pk) DESC
     LIMIT 1;
 
     If Not _infoOnly Then

@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_jobs_after_delete() RETURNS trigger
 **  Auth:   mem
 **  Date:   07/31/2022 mem - Ported to PostgreSQL
 **          08/01/2022 mem - Prevent deleting all rows in the table
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -24,7 +25,7 @@ DECLARE
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _newRowCount
     FROM sw.t_jobs;
 

@@ -18,12 +18,13 @@ CREATE OR REPLACE FUNCTION public.experiments_from_request_most_recent_ndays(_re
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          06/17/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          07/11/2023 mem - Use COUNT(exp_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
     _count int;
 BEGIN
-    SELECT COUNT(*)
+    SELECT COUNT(exp_id)
     INTO _count
     FROM t_experiments
     WHERE sample_prep_request_id = _requestID AND

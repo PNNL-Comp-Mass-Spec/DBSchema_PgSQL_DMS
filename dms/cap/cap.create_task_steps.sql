@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/21/2023 mem - Use Order By when finding tasks with state 0 in cap.t_tasks
 **                         - Do not change _mode to lowercase
+**          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -236,7 +237,7 @@ BEGIN
             If _infoOnly Then
                 If _insertCount = 0 Then
                     If Exists (SELECT * FROM cap.t_tasks WHERE State = 0) Then
-                        SELECT COUNT(*)
+                        SELECT COUNT(job)
                         INTO _matchCount
                         FROM cap.t_tasks
                         WHERE State = 0 And Dataset_ID > 0;
@@ -299,7 +300,7 @@ BEGIN
     -- Loop through capture task jobs and process them into temp tables
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _jobCountToProcess
     FROM Tmp_Jobs;
 

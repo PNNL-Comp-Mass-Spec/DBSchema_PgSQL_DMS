@@ -4,7 +4,7 @@
 
 CREATE VIEW cap.v_myemsl_upload_stats AS
  SELECT (t_myemsl_uploads.entered)::date AS entered,
-    count(*) AS bundles,
+    count(t_myemsl_uploads.entry_id) AS bundles,
     sum((t_myemsl_uploads.file_count_new + t_myemsl_uploads.file_count_updated)) AS files,
     round(sum(((((t_myemsl_uploads.bytes)::numeric / 1024.0) / 1024.0) / 1024.0)), 5) AS gb
    FROM cap.t_myemsl_uploads

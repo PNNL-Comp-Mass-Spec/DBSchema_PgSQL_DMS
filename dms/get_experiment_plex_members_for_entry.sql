@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_experiment_plex_members_for_entry(_plexexp
 **          11/19/2018 mem - Update column name
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          07/11/2023 mem - Use COUNT(plex_exp_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,8 @@ DECLARE
     _missingTagCount int := 0;
     _channelCount int := 0;
 BEGIN
-    SELECT SUM(CASE WHEN char_length(Coalesce(ReporterIons.tag_name, '')) = 0 THEN 1 ELSE 0 END), Count(*)
+    SELECT SUM(CASE WHEN char_length(Coalesce(ReporterIons.tag_name, '')) = 0 THEN 1 ELSE 0 END),
+           COUNT(plex_exp_id)
     INTO _missingTagCount, _channelCount
     FROM t_experiment_plex_members PlexMembers
         INNER JOIN t_experiments ChannelExperiment

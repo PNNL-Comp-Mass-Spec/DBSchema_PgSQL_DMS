@@ -37,7 +37,7 @@ CREATE VIEW public.v_request_count_by_day AS
                     (EXTRACT(day FROM rr.created))::integer AS d,
                     0 AS request,
                     0 AS history,
-                    count(*) AS datasets
+                    count(rr.dataset_id) AS datasets
                    FROM (public.t_requested_run rr
                      JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))
                   GROUP BY (EXTRACT(year FROM rr.created)), (EXTRACT(month FROM rr.created)), (EXTRACT(day FROM rr.created))) countq

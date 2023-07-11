@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE cap.finish_task_creation(IN _job integer, INOUT _mes
 **          05/17/2019 mem - Switch from folder to directory in temp tables
 **          10/11/2022 mem - Ported to PostgreSQL
 **          02/02/2023 mem - Update table aliases
+**          07/11/2023 mem - Use COUNT(Job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -47,7 +48,7 @@ BEGIN
     UPDATE Tmp_Job_Steps
     SET Dependencies = T.dependencies
     FROM ( SELECT Step,
-                  COUNT(*) AS dependencies
+                  COUNT(Job) AS dependencies
            FROM Tmp_Job_Step_Dependencies
            WHERE Job = _job
            GROUP BY Step

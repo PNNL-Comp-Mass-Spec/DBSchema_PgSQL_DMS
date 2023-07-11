@@ -5,7 +5,7 @@
 CREATE VIEW cap.v_myemsl_upload_stats_monthly AS
  SELECT EXTRACT(year FROM t_myemsl_uploads.entered) AS year,
     EXTRACT(month FROM t_myemsl_uploads.entered) AS month,
-    count(*) AS bundles,
+    count(t_myemsl_uploads.entry_id) AS bundles,
     sum((t_myemsl_uploads.file_count_new + t_myemsl_uploads.file_count_updated)) AS files,
     round(sum((((((t_myemsl_uploads.bytes)::numeric / 1024.0) / 1024.0) / 1024.0) / 1024.0)), 5) AS tb
    FROM cap.t_myemsl_uploads

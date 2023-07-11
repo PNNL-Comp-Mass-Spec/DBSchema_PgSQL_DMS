@@ -15,7 +15,7 @@ CREATE VIEW public.v_statistics_entities_by_year AS
     COALESCE(pivotdata.capture_task_step_tool_started, 0) AS capture_task_step_tool_started
    FROM public.crosstab('SELECT extract(year from Start) AS Year,
              ''analysis_jobs'' AS Item,
-             COUNT(*) AS Items
+             COUNT(job) AS Items
       FROM public.t_analysis_job INNER JOIN
            public.t_analysis_tool
              ON public.t_analysis_job.analysis_tool_id = public.t_analysis_tool.analysis_tool_id
@@ -25,51 +25,51 @@ CREATE VIEW public.v_statistics_entities_by_year AS
       UNION
       SELECT extract(year from Created) AS Year,
              ''datasets'' AS Item,
-             COUNT(*) AS Items
+             COUNT(dataset_id) AS Items
       FROM public.t_dataset
       WHERE dataset_type_ID <> 100   -- Exclude tracking datasets
       GROUP BY extract(year from Created)
       UNION
       SELECT extract(year from Created) AS Year,
              ''prepared_samples'' AS Item,
-             COUNT(*) AS Items
+             COUNT(exp_id) AS Items
       FROM public.t_experiments
       GROUP BY extract(year from Created)
       UNION
       SELECT extract(year from Created) AS Year,
              ''requested_instrument_runs'' AS Item,
-             COUNT(*) AS Items
+             COUNT(request_id) AS Items
       FROM public.t_requested_run
       GROUP BY extract(year from Created)
       UNION
       SELECT extract(year from Created) AS Year,
              ''new_organisms'' AS Item,
-             COUNT(*) AS Items
+             COUNT(organism_id) AS Items
       FROM public.t_organisms
       GROUP BY extract(year from Created)
       UNION
       SELECT extract(year from Created) AS Year,
              ''new_research_campaigns'' AS Item,
-             COUNT(*) AS Items
+             COUNT(campaign_id) AS Items
       FROM public.t_campaign
       GROUP BY extract(year from Created)
       UNION
       SELECT extract(year from Created) AS Year,
              ''data_packages'' AS Item,
-             COUNT(*) AS Items
+             COUNT(data_pkg_id) AS Items
       FROM dpkg.T_Data_Package
       GROUP BY extract(year from Created)
       UNION
       SELECT extract(year from Start) AS Year,
              ''analysis_job_step_tool_started'' AS Item,
-             COUNT(*) AS Items
+             COUNT(job) AS Items
       FROM sw.T_Job_Steps_History
       WHERE NOT Start IS NULL
       GROUP BY extract(year from Start)
       UNION
       SELECT extract(year from Start) AS Year,
              ''capture_task_step_tool_started'' AS Item,
-             COUNT(*) AS Items
+             COUNT(job) AS Items
       FROM cap.T_Task_Steps_History
       WHERE NOT Start IS NULL
       GROUP BY extract(year from Start)

@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_complete(IN _datasetname tex
 **          06/13/2018 mem - Add support for _completionCode 101
 **          08/08/2018 mem - Add _completionState 14 (Duplicate Dataset Files)
 **          06/16/2023 mem - Ported to PostgreSQL
+**          07/11/2023 mem - Use COUNT(event_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -107,7 +108,7 @@ BEGIN
     ---------------------------------------------------
 
     If _completionState = 9 Then
-        SELECT COUNT(*)
+        SELECT COUNT(event_id)
         INTO _result
         FROM t_event_log
         WHERE target_type = 4 AND

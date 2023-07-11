@@ -11,7 +11,7 @@ CREATE VIEW public.v_lc_cart_detail_report AS
    FROM ((public.t_lc_cart cart
      JOIN public.t_lc_cart_state_name cartstate ON ((cart.cart_state_id = cartstate.cart_state_id)))
      LEFT JOIN ( SELECT t_lc_cart_configuration.cart_id,
-            count(*) AS configcount
+            count(t_lc_cart_configuration.cart_config_id) AS configcount
            FROM public.t_lc_cart_configuration
           GROUP BY t_lc_cart_configuration.cart_id) cartconfigq ON ((cartconfigq.cart_id = cart.cart_id)));
 

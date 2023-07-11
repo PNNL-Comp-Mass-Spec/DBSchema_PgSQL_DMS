@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION public.update_charge_code_usage(_infoonly boolean DEF
 **  Date:   06/04/2013 mem - Initial version
 **          05/24/2023 mem - Look for work packages that have non-zero usage values but are not actually in use
 **                         - Ported to PostgreSQL
-**          07/10/2023 mem - Use COUNT(SPR.prep_request_id) and COUNT(RR.request_id)instead of COUNT(*)
+**          07/10/2023 mem - Use COUNT(SPR.prep_request_id) and COUNT(RR.request_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE

@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          05/22/2023 mem - Capitalize reserved words
 **          05/30/2023 mem - Use format() for string concatenation
 **                         - Add back implicit string concatenation
+**          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -92,7 +93,7 @@ BEGIN
 
     If Coalesce(_duplicateEntryHoldoffHours, 0) > 0 Then
         _s := format(
-                'SELECT COUNT(*) '
+                'SELECT COUNT(entry_id) '
                 'FROM %s '
                 'WHERE message = $1 AND '
                      ' type = $2 AND '

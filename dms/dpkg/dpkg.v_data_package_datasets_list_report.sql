@@ -41,7 +41,7 @@ CREATE VIEW dpkg.v_data_package_datasets_list_report AS
      LEFT JOIN public.t_cached_dataset_links dl ON ((ds.dataset_id = dl.dataset_id)))
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
      LEFT JOIN ( SELECT aj.dataset_id,
-            count(*) AS jobs,
+            count(aj.job) AS jobs,
             COALESCE(max(psm_1.total_psms_fdr_filter), max(psm_1.total_psms)) AS max_total_psms,
             COALESCE(max(psm_1.unique_peptides_fdr_filter), max(psm_1.unique_peptides)) AS max_unique_peptides,
             COALESCE(max(psm_1.unique_proteins_fdr_filter), max(psm_1.unique_proteins)) AS max_unique_proteins,

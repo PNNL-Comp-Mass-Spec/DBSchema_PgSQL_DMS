@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.consolidate_log_messages(_messagetype text DEF
 **          10/12/2022 mem - Ported to PostgreSQL
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/25/2023 mem - Simplify call to RAISE WARNING
+**          07/11/2023 mem - Use COUNT(L.entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -81,7 +82,7 @@ BEGIN
         FROM public.t_log_entries L
         WHERE L.type::citext = _messageType::citext
         GROUP BY L.message
-        HAVING Count(*) >= 2;
+        HAVING COUNT(L.entry_id) >= 2;
     Else
         WHILE _retriesRemaining > 0
         LOOP
@@ -91,7 +92,7 @@ BEGIN
             WHERE L.type::citext = _messageType::citext AND
                   L.message::citext LIKE _messageFilter::citext
             GROUP BY L.message
-            HAVING Count(*) >= 2;
+            HAVING COUNT(L.entry_id) >= 2;
 
             If FOUND Or _messageFilter SIMILAR TO '%[%]%' Then
                 _retriesRemaining := 0;
@@ -174,7 +175,7 @@ BEGIN
         --
         GET DIAGNOSTICS _deletedMessageCount = ROW_COUNT;
 
-        SELECT Count(*)
+        SELECT COUNT(*)
         INTO _duplicateMessageCount
         FROM Tmp_DuplicateMessages;
 
