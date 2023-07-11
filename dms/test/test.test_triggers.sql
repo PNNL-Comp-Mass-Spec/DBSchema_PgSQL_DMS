@@ -1,8 +1,8 @@
 --
--- Name: test_triggers(integer, integer, integer, integer); Type: FUNCTION; Schema: test; Owner: d3l243
+-- Name: test_triggers(boolean, boolean, boolean, boolean, boolean); Type: FUNCTION; Schema: test; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION test.test_triggers(_createitems integer DEFAULT 0, _updatestates integer DEFAULT 0, _deleteitems integer DEFAULT 0, _renameitems integer DEFAULT 0) RETURNS TABLE(entry_id integer, item_type text, item_name text, item_id integer, action text, comment text)
+CREATE OR REPLACE FUNCTION test.test_triggers(_createitems boolean DEFAULT false, _updatestates boolean DEFAULT false, _deleteitems boolean DEFAULT false, _renameitems boolean DEFAULT false, _undorenames boolean DEFAULT false) RETURNS TABLE(entry_id integer, item_type text, item_name text, item_id integer, action text, comment text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -17,18 +17,30 @@ CREATE OR REPLACE FUNCTION test.test_triggers(_createitems integer DEFAULT 0, _u
 **        etc.
 **
 **  Arguments:
-**    _createItems      0 to preview items that would be created, 1 to create the items (if they do not yet exist)
-**    _updateStates     When 1, update items states
-**    _deleteItems      When 1, delete existing unit test items
-**    _renameItems      0 to skip item renames,
-**                      1 to rename items from the original name to a new name (an error will be reported if the target item name already exists)
-**                      2 to rename the items back to the original name        (an error will be reported if the target item name already exists)
+**    _createItems      False to preview items that would be created, true to create the items (if they do not yet exist)
+**    _updateStates     When true, update items states
+**    _deleteItems      When true, delete existing unit test items
+**    _renameItems      False to skip item renames, true to rename items (based on _undoRenames); this feature is not implemented
+**    _undoRenames      When false, rename items from the original name to a new name (an error will be reported if the target item name already exists)
+**                      When true,  rename the items back to the original name        (an error will be reported if the target item name already exists)
+**
+**  Usage:
+**      SELECT * FROM test.test_triggers(_createItems => true,  _updateStates => false, _deleteItems => false);
+**      SELECT * FROM test.test_triggers(_createItems => false, _updateStates => true,  _deleteItems => false);
+**      SELECT * FROM test.test_triggers(_createItems => false, _updateStates => false, _deleteItems => true);
+**
+**      SELECT *
+**      FROM V_event_log
+**      WHERE entered >= Current_Date
+**      ORDER BY event_id;
 **
 **  Auth:   mem
 **  Date:   08/09/2022 mem - Initial version
 **          02/08/2023 mem - Switch from PRN to username
 **          04/27/2023 mem - Use boolean for data type name
 **          05/22/2023 mem - Update whitespace
+**          07/11/2023 mem - Change argument flags from integer to boolean
+**                         - Use COUNT(H.entry_id) and COUNT(L.event_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -251,7 +263,7 @@ BEGIN
         _action := 'Verified exists in t_campaign';
         _campaignsFoundOrCreated := true;
 
-    ElsIf _createItems > 0 Then
+    ElsIf _createItems Then
         -- Create the campaigns
         INSERT INTO t_campaign (campaign, project, state)
         SELECT campaign_name, 'Unit tests', 'Active'
@@ -315,7 +327,7 @@ BEGIN
         _action := 'Verified exists in t_experiments';
         _experimentsFoundOrCreated := true;
 
-    ElsIf _createItems > 0 Then
+    ElsIf _createItems Then
         -- Create the experiments
         INSERT INTO t_experiments (experiment, researcher_username, organism_id, campaign_id, labelling)
         SELECT E.experiment_name, _username, _organismID, E.campaign_id, 'None'
@@ -379,7 +391,7 @@ BEGIN
         _action := 'Verified exists in t_dataset';
         _datasetsFoundOrCreated := true;
 
-    ElsIf _createItems > 0 Then
+    ElsIf _createItems Then
         -- Create the datasets
         INSERT INTO t_dataset (dataset, operator_username, instrument_id, exp_id, folder_name, dataset_type_id, lc_column_id, storage_path_id)
         SELECT D.dataset_name, _username, _instrumentID, _experimentID, D.dataset_name, _datasetTypeID, _lcColumnID, _storagePathID
@@ -428,7 +440,7 @@ BEGIN
         _action := 'Verified exists in t_analysis_job';
         _jobsFoundOrCreated := true;
 
-    ElsIf _createItems > 0 Then
+    ElsIf _createItems Then
 
         -- Obtain job numbers
         FOR _datasetID IN
@@ -497,7 +509,7 @@ BEGIN
         _action := 'Verified exists in t_experiment_plex_members';
         _plexMappingFoundOrCreated := true;
 
-    ElsIf _createItems > 0 Then
+    ElsIf _createItems Then
 
         -- Add missing items to t_experiment_plex_members
         INSERT INTO t_experiment_plex_members (plex_exp_id, channel, exp_id, channel_type_id, comment)
@@ -522,7 +534,7 @@ BEGIN
     -- Update item states
     -----------------------------------------------------------------
 
-    If _updateStates > 0 Then
+    If _updateStates Then
         If _campaignsFoundOrCreated Then
             UPDATE t_campaign
             SET state = Case When state = 'Active' Then 'Inactive' Else 'Active' End
@@ -596,7 +608,7 @@ BEGIN
     -- Rename items
     -----------------------------------------------------------------
 
-    If _renameItems > 0 Then
+    If _renameItems Then
         -- ToDo: rename items
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
         VALUES ('ToDo', 'Rename items', 0, 'Rename datasets, experiments, campaigns, etc.');
@@ -606,7 +618,7 @@ BEGIN
     -- Delete items
     -----------------------------------------------------------------
 
-    If _deleteItems > 0 Then
+    If _deleteItems Then
         -- Delete jobs, datasets, experiments, campaigns, etc.
 
         If _plexMappingFoundOrCreated Then
@@ -622,7 +634,7 @@ BEGIN
                 );
 
             If FOUND Then
-                SELECT COUNT(*)
+                SELECT COUNT(H.entry_id)
                 INTO _myRowCount
                 FROM t_experiment_plex_members_history H INNER JOIN
                      T_Tmp_Experiment_Plex_Members PM
@@ -654,7 +666,7 @@ BEGIN
             WHERE job in (select job from T_Tmp_Jobs);
 
             If FOUND Then
-                SELECT COUNT(*)
+                SELECT COUNT(L.event_id)
                 INTO _myRowCount
                 FROM v_event_log L INNER JOIN
                      T_Tmp_Jobs
@@ -686,7 +698,7 @@ BEGIN
             WHERE dataset_id in (select dataset_id from T_Tmp_Datasets);
 
             If FOUND Then
-                SELECT COUNT(*)
+                SELECT COUNT(L.event_id)
                 INTO _myRowCount
                 FROM v_event_log L INNER JOIN
                      T_Tmp_Datasets
@@ -718,7 +730,7 @@ BEGIN
             WHERE exp_id in (select experiment_id from T_Tmp_Experiments);
 
             If FOUND Then
-                SELECT COUNT(*)
+                SELECT COUNT(L.event_id)
                 INTO _myRowCount
                 FROM v_event_log L INNER JOIN
                      T_Tmp_Experiments
@@ -750,7 +762,7 @@ BEGIN
             WHERE campaign_id in (select campaign_id from T_Tmp_Campaigns);
 
             If FOUND Then
-                SELECT COUNT(*)
+                SELECT COUNT(L.event_id)
                 INTO _myRowCount
                 FROM v_event_log L INNER JOIN
                      T_Tmp_Campaigns
@@ -1042,5 +1054,5 @@ END
 $$;
 
 
-ALTER FUNCTION test.test_triggers(_createitems integer, _updatestates integer, _deleteitems integer, _renameitems integer) OWNER TO d3l243;
+ALTER FUNCTION test.test_triggers(_createitems boolean, _updatestates boolean, _deleteitems boolean, _renameitems boolean, _undorenames boolean) OWNER TO d3l243;
 
