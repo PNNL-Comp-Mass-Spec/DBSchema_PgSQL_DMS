@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_delete_all() RETURNS tr
 **
 **  Auth:   mem
 **  Date:   08/01/2022 mem - Ported to PostgreSQL
+**          07/10/2023 mem - Use COUNT(dataset_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -22,7 +23,7 @@ DECLARE
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    SELECT COUNT(*)
+    SELECT COUNT(dataset_id)
     INTO _newRowCount
     FROM t_dataset;
 

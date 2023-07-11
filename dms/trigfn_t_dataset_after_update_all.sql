@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_update_all() RETURNS tr
 **          09/11/2015 mem - Added support for the table being empty
 **          08/01/2022 mem - Ported to PostgreSQL
 **          08/06/2022 mem - Rename transition table to avoid confusion (the OLD and NEW variables are null for statement-level triggers)
+**          07/10/2023 mem - Use COUNT(dataset_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ BEGIN
     INTO _updatedRowCount
     FROM inserted;
 
-    SELECT COUNT(*)
+    SELECT COUNT(dataset_id)
     INTO _existingRowCount
     FROM t_dataset;
 

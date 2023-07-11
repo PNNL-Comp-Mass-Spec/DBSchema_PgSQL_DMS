@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_statistics(INOUT _message text 
 **                         - Add parameter _showRuntimeStats
 **                         - Only update counts if they change
 **          12/31/2022 mem - Ported to PostgreSQL
+**          07/10/2023 mem - Use COUNT(AJ.job) and COUNT(DS.dataset_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -86,7 +87,7 @@ BEGIN
                FROM t_param_files PF
                     LEFT OUTER JOIN ( SELECT AJ.Param_File_Name,
                                              PFT.Param_File_Type_ID,
-                                             COUNT(*) AS JobCount,
+                                             COUNT(AJ.job) AS JobCount,
                                              SUM(CASE
                                                      WHEN AJ.created >= _thresholdOneYear THEN 1
                                                      ELSE 0
@@ -126,7 +127,7 @@ BEGIN
                FROM t_settings_files SF
                     LEFT OUTER JOIN ( SELECT AJ.settings_file_name,
                                              AnTool.analysis_tool,
-                                             COUNT(*) AS JobCount,
+                                             COUNT(AJ.job) AS JobCount,
                                              SUM(CASE
                                                      WHEN AJ.created >= _thresholdOneYear THEN 1
                                                      ELSE 0
@@ -163,7 +164,7 @@ BEGIN
                       Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
                FROM t_lc_cart_configuration LCCart
                     LEFT OUTER JOIN ( SELECT DS.Cart_Config_ID,
-                                             COUNT(*) AS DatasetCount,
+                                             COUNT(DS.dataset_id) AS DatasetCount,
                                              SUM(CASE
                                                      WHEN DS.Created >= _thresholdOneYear THEN 1
                                                      ELSE 0
@@ -200,7 +201,7 @@ BEGIN
                FROM t_instrument_group_allowed_ds_type IGDT
                     LEFT OUTER JOIN ( SELECT InstName.instrument_group,
                                              DTN.Dataset_Type,
-                                             COUNT(*) AS DatasetCount,
+                                             COUNT(DS.dataset_id) AS DatasetCount,
                                              SUM(CASE
                                                      WHEN DS.Created >= _thresholdOneYear THEN 1
                                                      ELSE 0
@@ -270,7 +271,7 @@ BEGIN
                FROM t_cached_instrument_dataset_type_usage IDTU
                     LEFT OUTER JOIN ( SELECT InstName.Instrument_ID,
                                              DTN.Dataset_Type As Dataset_Type,
-                                             COUNT(*) AS DatasetCount,
+                                             COUNT(DS.dataset_id) AS DatasetCount,
                                              SUM(CASE
                                                      WHEN DS.Created >= _thresholdOneYear THEN 1
                                                      ELSE 0
@@ -325,35 +326,35 @@ BEGIN
             UniqueID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
         );
 
-        INSERT INTO Tmp_StatEntries
-        VALUES ('Job_Count', 'All',          'SELECT COUNT(*) FROM t_analysis_job', false),
-               ('Job_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_analysis_job WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
-               ('Job_Count', 'Last 30 days', 'SELECT COUNT(*) FROM t_analysis_job WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
-               ('Job_Count', 'New',          'SELECT COUNT(*) FROM t_analysis_job WHERE job_state_id = 1', false),
+        INSERT INTO Tmp_StatEntries (Category, Label, SQL, UseDecimal)
+        VALUES ('Job_Count', 'All',          'SELECT COUNT(job) FROM t_analysis_job;', false),
+               ('Job_Count', 'Last 7 days',  'SELECT COUNT(job) FROM t_analysis_job WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
+               ('Job_Count', 'Last 30 days', 'SELECT COUNT(job) FROM t_analysis_job WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
+               ('Job_Count', 'New',          'SELECT COUNT(job) FROM t_analysis_job WHERE job_state_id = 1;', false),
 
-               ('Campaign_Count', 'All',          'SELECT COUNT(*) FROM t_campaign', false),
-               ('Campaign_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
-               ('Campaign_Count', 'Last 30 days', 'SELECT COUNT(*) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
+               ('Campaign_Count', 'All',          'SELECT COUNT(campaign_id) FROM t_campaign;', false),
+               ('Campaign_Count', 'Last 7 days',  'SELECT COUNT(campaign_id) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
+               ('Campaign_Count', 'Last 30 days', 'SELECT COUNT(campaign_id) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
 
-               ('CellCulture_Count', 'All',          'SELECT COUNT(*) FROM t_biomaterial', false),
-               ('CellCulture_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
-               ('CellCulture_Count', 'Last 30 days', 'SELECT COUNT(*) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
+               ('CellCulture_Count', 'All',          'SELECT COUNT(biomaterial_id) FROM t_biomaterial;', false),
+               ('CellCulture_Count', 'Last 7 days',  'SELECT COUNT(biomaterial_id) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
+               ('CellCulture_Count', 'Last 30 days', 'SELECT COUNT(biomaterial_id) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
 
-               ('Dataset_Count', 'All',          'SELECT COUNT(*) FROM t_dataset', false),
-               ('Dataset_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
-               ('Dataset_Count', 'Last 30 days', 'SELECT COUNT(*) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
+               ('Dataset_Count', 'All',          'SELECT COUNT(dataset_id) FROM t_dataset;', false),
+               ('Dataset_Count', 'Last 7 days',  'SELECT COUNT(dataset_id) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
+               ('Dataset_Count', 'Last 30 days', 'SELECT COUNT(dataset_id) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
 
-               ('Experiment_Count', 'All',          'SELECT COUNT(*) FROM t_experiments', false),
-               ('Experiment_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_experiments WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
-               ('Experiment_Count', 'Last 30 days', 'SELECT COUNT(*) FROM t_experiments WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
+               ('Experiment_Count', 'All',          'SELECT COUNT(exp_id) FROM t_experiments;', false),
+               ('Experiment_Count', 'Last 7 days',  'SELECT COUNT(exp_id) FROM t_experiments WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
+               ('Experiment_Count', 'Last 30 days', 'SELECT COUNT(exp_id) FROM t_experiments WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
 
-               ('Organism_Count', 'All', 'SELECT COUNT(*) FROM t_organisms', false),
-               ('Organism_Count', 'Last 7 days',  'SELECT COUNT(*) FROM t_organisms WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', false),
-               ('Organism_Count', 'Last 30 days', 'SELECT COUNT(*) FROM t_organisms WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', false),
+               ('Organism_Count', 'All',          'SELECT COUNT(organism_id) FROM t_organisms;', false),
+               ('Organism_Count', 'Last 7 days',  'SELECT COUNT(organism_id) FROM t_organisms WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
+               ('Organism_Count', 'Last 30 days', 'SELECT COUNT(organism_id) FROM t_organisms WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
 
-               ('RawDataTB', 'All',          'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset', true),
-               ('RawDataTB', 'Last 7 days',  'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days''', true),
-               ('RawDataTB', 'Last 30 days', 'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days''', true);
+               ('RawDataTB', 'All',          'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset;', true),
+               ('RawDataTB', 'Last 7 days',  'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', true),
+               ('RawDataTB', 'Last 30 days', 'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', true);
 
         ------------------------------------------------
         -- Use the queries in Tmp_StatEntries to update t_general_statistics

@@ -45,14 +45,14 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)))
      JOIN public.t_material_containers mc ON ((e.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
-     LEFT JOIN ( SELECT count(*) AS datasets,
+     LEFT JOIN ( SELECT count(t_dataset.dataset_id) AS datasets,
             max(t_dataset.created) AS most_recent_dataset,
             t_dataset.exp_id
            FROM public.t_dataset
           GROUP BY t_dataset.exp_id) dscountq ON ((dscountq.exp_id = e.exp_id)))
      LEFT JOIN public.v_factor_count_by_experiment fc ON ((fc.exp_id = e.exp_id)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id,
-            count(*) AS filecount
+            count(t_file_attachment.attachment_id) AS filecount
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'experiment'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id) expfilecount ON ((expfilecount.entity_id OPERATOR(public.=) e.experiment)))
@@ -62,7 +62,7 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
            FROM ((public.t_experiment_group_members egm
              JOIN public.t_experiment_groups eg ON ((egm.group_id = eg.group_id)))
              JOIN ( SELECT t_file_attachment.entity_id,
-                    count(*) AS filecount
+                    count(t_file_attachment.attachment_id) AS filecount
                    FROM public.t_file_attachment
                   WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'experiment_group'::public.citext) AND (t_file_attachment.active > 0))
                   GROUP BY t_file_attachment.entity_id) fa ON ((eg.group_id = (fa.entity_id)::integer)))) expgroupfilecount ON ((expgroupfilecount.exp_id = e.exp_id)))

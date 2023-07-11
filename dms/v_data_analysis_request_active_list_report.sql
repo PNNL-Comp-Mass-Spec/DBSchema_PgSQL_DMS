@@ -43,7 +43,7 @@ CREATE VIEW public.v_data_analysis_request_active_list_report AS
      LEFT JOIN public.t_users u ON ((r.requester_username OPERATOR(public.=) u.username)))
      LEFT JOIN public.v_data_analysis_request_queue_times qt ON ((r.request_id = qt.request_id)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id_value,
-            count(*) AS attachments
+            count(t_file_attachment.attachment_id) AS attachments
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'data_analysis_request'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id_value) ta ON ((r.request_id = ta.entity_id_value)))

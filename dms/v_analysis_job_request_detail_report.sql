@@ -27,10 +27,10 @@ CREATE VIEW public.v_analysis_job_request_detail_report AS
      JOIN public.t_users u ON ((ajr.user_id = u.user_id)))
      JOIN public.t_analysis_job_request_state ars ON ((ajr.request_state_id = ars.request_state_id)))
      JOIN public.t_organisms org ON ((ajr.organism_id = org.organism_id)))
-     LEFT JOIN ( SELECT t_analysis_job.request_id,
-            count(*) AS jobs
-           FROM public.t_analysis_job
-          GROUP BY t_analysis_job.request_id) jobsq ON ((ajr.request_id = jobsq.request_id)));
+     LEFT JOIN ( SELECT j.request_id,
+            count(j.job) AS jobs
+           FROM public.t_analysis_job j
+          GROUP BY j.request_id) jobsq ON ((ajr.request_id = jobsq.request_id)));
 
 
 ALTER TABLE public.v_analysis_job_request_detail_report OWNER TO d3l243;

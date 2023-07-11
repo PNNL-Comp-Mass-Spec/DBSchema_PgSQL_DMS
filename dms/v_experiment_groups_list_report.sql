@@ -18,7 +18,7 @@ CREATE VIEW public.v_experiment_groups_list_report AS
    FROM (((public.t_experiment_groups eg
      JOIN public.t_experiments e ON ((eg.parent_exp_id = e.exp_id)))
      LEFT JOIN ( SELECT (t_file_attachment.entity_id)::integer AS entity_id,
-            count(*) AS attachments
+            count(t_file_attachment.attachment_id) AS attachments
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'experiment_group'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id) ta ON ((eg.group_id = ta.entity_id)))

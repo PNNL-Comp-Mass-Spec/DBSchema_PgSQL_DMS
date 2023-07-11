@@ -90,7 +90,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
      LEFT JOIN public.t_eus_proposals eup ON ((rr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type))) ON ((ds.dataset_id = rr.dataset_id)))
      LEFT JOIN ( SELECT t_analysis_job.dataset_id,
-            count(*) AS jobs
+            count(t_analysis_job.job) AS jobs
            FROM public.t_analysis_job
           GROUP BY t_analysis_job.dataset_id) jobcountq ON ((jobcountq.dataset_id = ds.dataset_id)))
      LEFT JOIN ( SELECT j.dataset_id,

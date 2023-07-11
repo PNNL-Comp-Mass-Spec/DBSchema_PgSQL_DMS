@@ -14,7 +14,7 @@ CREATE VIEW public.v_dataset_purge_stats AS
             EXTRACT(month FROM ds.created) AS month,
             ((('\\'::text || (spath.machine_name)::text) || '\'::text) || (spath.storage_path)::text) AS storage_path,
             instname.instrument,
-            count(*) AS dataset_count,
+            count(ds.dataset_id) AS dataset_count,
             sum(da.instrument_data_purged) AS purged_datasets
            FROM (((public.t_dataset ds
              JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))

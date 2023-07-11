@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_analysis_job_psm_summary_export AS
  SELECT j.dataset_id,
-    count(*) AS jobs,
+    count(j.job) AS jobs,
     COALESCE(max(psm.total_psms_fdr_filter), max(psm.total_psms)) AS max_total_psms,
     COALESCE(max(psm.unique_peptides_fdr_filter), max(psm.unique_peptides)) AS max_unique_peptides,
     COALESCE(max(psm.unique_proteins_fdr_filter), max(psm.unique_proteins)) AS max_unique_proteins,

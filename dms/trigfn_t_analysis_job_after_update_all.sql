@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_after_update_all() RETUR
 **          09/11/2015 mem - Added support for the table being empty
 **          08/01/2022 mem - Ported to PostgreSQL
 **          08/06/2022 mem - Rename transition table to avoid confusion (the OLD variable is null for statement-level triggers)
+**          07/10/2023 mem - Use COUNT(job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ BEGIN
     INTO _updatedRowCount
     FROM inserted;
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _existingRowCount
     FROM t_analysis_job;
 

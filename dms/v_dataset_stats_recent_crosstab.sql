@@ -21,7 +21,7 @@ CREATE VIEW public.v_dataset_stats_recent_crosstab AS
    FROM public.crosstab('SELECT DSN.Dataset_state_ID AS state,
               DSN.dataset_state,
               Instrument.instrument_class,
-              COUNT(*) AS Dataset_Count
+              COUNT(DS.dataset_id) AS Dataset_Count
      FROM public.t_dataset DS
           INNER JOIN public.t_dataset_state_name DSN
             ON DS.dataset_state_id = DSN.Dataset_state_ID

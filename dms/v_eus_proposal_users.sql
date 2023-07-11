@@ -14,7 +14,7 @@ CREATE VIEW public.v_eus_proposal_users AS
      JOIN public.t_eus_users u ON ((pu.person_id = u.person_id)))
      JOIN public.t_eus_proposals p ON ((pu.proposal_id OPERATOR(public.=) p.proposal_id)))
      LEFT JOIN ( SELECT t_sample_prep_request.eus_user_id AS person_id,
-            count(*) AS prep_requests
+            count(t_sample_prep_request.prep_request_id) AS prep_requests
            FROM public.t_sample_prep_request
           WHERE (NOT (t_sample_prep_request.eus_user_id IS NULL))
           GROUP BY t_sample_prep_request.eus_user_id) usageq ON ((u.person_id = usageq.person_id)))

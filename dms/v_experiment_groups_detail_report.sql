@@ -23,7 +23,7 @@ CREATE VIEW public.v_experiment_groups_detail_report AS
      LEFT JOIN public.t_dataset ds ON ((egm.exp_id = ds.exp_id)))
      LEFT JOIN public.t_users u ON ((eg.researcher_username OPERATOR(public.=) u.username)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id,
-            count(*) AS filecount
+            count(t_file_attachment.attachment_id) AS filecount
            FROM public.t_file_attachment
           WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'experiment_group'::public.citext) AND (t_file_attachment.active > 0))
           GROUP BY t_file_attachment.entity_id) fa ON ((eg.group_id = (fa.entity_id)::integer)))

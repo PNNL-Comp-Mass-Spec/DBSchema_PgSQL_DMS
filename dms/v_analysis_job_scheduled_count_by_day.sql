@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_analysis_job_scheduled_count_by_day AS
- SELECT (t_analysis_job.created)::date AS date,
-    count(*) AS number_of_analysis_jobs_scheduled
-   FROM public.t_analysis_job
-  WHERE (t_analysis_job.job_state_id = 4)
-  GROUP BY ((t_analysis_job.created)::date);
+ SELECT (j.created)::date AS date,
+    count(j.job) AS number_of_analysis_jobs_scheduled
+   FROM public.t_analysis_job j
+  WHERE (j.job_state_id = 4)
+  GROUP BY ((j.created)::date);
 
 
 ALTER TABLE public.v_analysis_job_scheduled_count_by_day OWNER TO d3l243;

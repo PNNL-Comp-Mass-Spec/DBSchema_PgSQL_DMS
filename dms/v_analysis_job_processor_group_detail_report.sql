@@ -15,7 +15,7 @@ CREATE VIEW public.v_analysis_job_processor_group_detail_report AS
     public.get_aj_processor_group_associated_jobs(ajpg.group_id, 2) AS associated_jobs
    FROM (public.t_analysis_job_processor_group ajpg
      LEFT JOIN ( SELECT ajpgm.group_id,
-            count(*) AS processor_count
+            count(ajpgm.processor_id) AS processor_count
            FROM public.t_analysis_job_processor_group_membership ajpgm
           GROUP BY ajpgm.group_id) countq ON ((ajpg.group_id = countq.group_id)));
 

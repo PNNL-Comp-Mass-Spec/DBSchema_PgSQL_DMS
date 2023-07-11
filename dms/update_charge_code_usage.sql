@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION public.update_charge_code_usage(_infoonly boolean DEF
 **  Date:   06/04/2013 mem - Initial version
 **          05/24/2023 mem - Look for work packages that have non-zero usage values but are not actually in use
 **                         - Ported to PostgreSQL
+**          07/10/2023 mem - Use COUNT(SPR.prep_request_id) and COUNT(RR.request_id)instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
         WHERE CC.Usage_Sample_Prep > 0 AND
               NOT EXISTS ( SELECT 1
                            FROM ( SELECT CC.Charge_Code,
-                                         COUNT(*) AS SPR_Usage
+                                         COUNT(SPR.prep_request_id) AS SPR_Usage
                                   FROM T_Sample_Prep_Request SPR
                                        INNER JOIN T_Charge_Code CC
                                          ON SPR.Work_Package = CC.Charge_Code
@@ -79,7 +80,7 @@ BEGIN
         WHERE CC.Usage_Requested_Run > 0 AND
               NOT EXISTS ( SELECT 1
                            FROM ( SELECT CC.Charge_Code,
-                                         COUNT(*) AS RR_Usage
+                                         COUNT(request_id) AS RR_Usage
                                   FROM T_Charge_Code CC
                                        INNER JOIN T_Requested_Run RR
                                          ON CC.Charge_Code = RR.Work_Package
@@ -102,7 +103,7 @@ BEGIN
                Coalesce(A.Setup_Date,        B.Setup_Date)        AS Setup_Date
         FROM ( SELECT  CC.charge_code,
                        CC.Usage_Sample_Prep AS Sample_Prep_Usage_Old,
-                       COUNT(*)::int4 AS Sample_Prep_Usage_New,
+                       COUNT(SPR.prep_request_id)::int4 AS Sample_Prep_Usage_New,
                        CC.WBS_Title,
                        CC.Charge_Code_Title,
                        CC.Sub_Account_Title,
@@ -114,7 +115,7 @@ BEGIN
              ) A
              FULL OUTER JOIN ( SELECT  CC.charge_code,
                                        CC.Usage_Requested_Run AS Requested_Run_Usage_Old,
-                                       COUNT(*)::int4 AS Requested_Run_Usage_New,
+                                       COUNT(RR.request_id)::int4 AS Requested_Run_Usage_New,
                                        CC.WBS_Title,
                                        CC.Charge_Code_Title,
                                        CC.Sub_Account_Title,
@@ -143,7 +144,7 @@ BEGIN
                                   WHERE usage_sample_prep > 0 AND
                                         NOT EXISTS ( SELECT 1
                                                      FROM ( SELECT CC.Charge_Code,
-                                                                   COUNT(*) AS SPR_Usage
+                                                                   COUNT(SPR.prep_request_id) AS SPR_Usage
                                                             FROM T_Sample_Prep_Request SPR
                                                                  INNER JOIN T_Charge_Code CC
                                                                    ON SPR.Work_Package = CC.Charge_Code
@@ -178,7 +179,7 @@ BEGIN
                                   WHERE Usage_Requested_Run > 0 AND
                                         NOT EXISTS ( SELECT 1
                                                      FROM ( SELECT CC.Charge_Code,
-                                                                   COUNT(*) AS RR_Usage
+                                                                   COUNT(RR.request_id) AS RR_Usage
                                                             FROM T_Charge_Code CC
                                                                  INNER JOIN T_Requested_Run RR
                                                                    ON CC.Charge_Code = RR.Work_Package
@@ -208,7 +209,7 @@ BEGIN
     UPDATE t_charge_code Target
     SET usage_sample_prep = SPR_Usage
     FROM ( SELECT CC.charge_code,
-                  COUNT(*) AS SPR_Usage
+                  COUNT(SPR.prep_request_id) AS SPR_Usage
            FROM t_sample_prep_request SPR
                INNER JOIN t_charge_code CC
                    ON SPR.work_package = CC.charge_code
@@ -251,7 +252,7 @@ BEGIN
     UPDATE t_charge_code Target
     SET usage_requested_run = RR_Usage
     FROM ( SELECT CC.charge_code,
-                   COUNT(*) AS RR_Usage
+                   COUNT(RR.request_id) AS RR_Usage
            FROM t_charge_code CC
                INNER JOIN t_requested_run RR
                    ON CC.Charge_Code = RR.work_package

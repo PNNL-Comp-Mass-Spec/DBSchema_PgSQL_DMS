@@ -45,7 +45,7 @@ CREATE VIEW public.v_data_analysis_request_detail_report AS
      JOIN public.t_data_analysis_request_state_name sn ON ((r.state = sn.state_id)))
      LEFT JOIN public.t_users u ON ((r.requester_username OPERATOR(public.=) u.username)))
      LEFT JOIN ( SELECT t_data_analysis_request_updates.request_id,
-            count(*) AS updates
+            count(t_data_analysis_request_updates.id) AS updates
            FROM public.t_data_analysis_request_updates
           GROUP BY t_data_analysis_request_updates.request_id) updateq ON ((r.request_id = updateq.request_id)))
      LEFT JOIN public.v_data_analysis_request_queue_times qt ON ((r.request_id = qt.request_id)))

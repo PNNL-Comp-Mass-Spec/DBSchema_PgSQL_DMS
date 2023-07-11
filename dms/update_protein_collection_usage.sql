@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE public.update_protein_collection_usage(INOUT _messag
 **          12/31/2022 mem - Ported to PostgreSQL
 **          05/07/2023 mem - Remove unused variable
 **          05/19/2023 mem - Remove redundant parentheses
+**          07/10/2023 mem - Use COUNT(J.job) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -106,7 +107,7 @@ BEGIN
                       Sum(Job_Usage_Count_Last12Months) AS Job_Usage_Count_Last12Months,
                       MAX(NewestJob) AS Most_Recent_Date
                FROM ( SELECT J.protein_collection_list,
-                             COUNT(*) AS Jobs,
+                             COUNT(J.job) AS Jobs,
                              Sum(CASE WHEN COALESCE(J.created, J.start, J.finish) >= CURRENT_TIMESTAMP - INTERVAL '1 year'
                                       THEN 1
                                       ELSE 0

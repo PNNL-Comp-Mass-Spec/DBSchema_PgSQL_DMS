@@ -85,15 +85,15 @@ CREATE VIEW public.v_analysis_job_detail_report_2 AS
      LEFT JOIN (public.t_analysis_job_processor_group ajpg
      JOIN public.t_analysis_job_processor_group_associations ajpja ON ((ajpg.group_id = ajpja.group_id))) ON ((j.job = ajpja.job)))
      LEFT JOIN ( SELECT t_mts_mt_db_jobs_cached.job,
-            count(*) AS mt_db_count
+            count(t_mts_mt_db_jobs_cached.cached_info_id) AS mt_db_count
            FROM public.t_mts_mt_db_jobs_cached
           GROUP BY t_mts_mt_db_jobs_cached.job) mtsmt ON ((j.job = mtsmt.job)))
      LEFT JOIN ( SELECT t_mts_pt_db_jobs_cached.job,
-            count(*) AS pt_db_count
+            count(t_mts_pt_db_jobs_cached.cached_info_id) AS pt_db_count
            FROM public.t_mts_pt_db_jobs_cached
           GROUP BY t_mts_pt_db_jobs_cached.job) mtspt ON ((j.job = mtspt.job)))
      LEFT JOIN ( SELECT pm.dms_job,
-            count(*) AS pmtasks
+            count(pm.cached_info_id) AS pmtasks
            FROM public.t_mts_peak_matching_tasks_cached pm
           GROUP BY pm.dms_job) pmtaskcountq ON ((pmtaskcountq.dms_job = j.job)))
      LEFT JOIN public.t_dataset_archive da ON ((ds.dataset_id = da.dataset_id)));

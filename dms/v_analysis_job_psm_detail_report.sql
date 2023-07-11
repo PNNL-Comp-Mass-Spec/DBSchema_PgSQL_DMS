@@ -77,15 +77,15 @@ CREATE VIEW public.v_analysis_job_psm_detail_report AS
      JOIN public.t_organisms org ON ((org.organism_id = j.organism_id)))
      JOIN public.t_yes_no ON ((j.dataset_unreviewed = t_yes_no.flag)))
      LEFT JOIN ( SELECT t_mts_mt_db_jobs_cached.job,
-            count(*) AS mt_db_count
+            count(t_mts_mt_db_jobs_cached.cached_info_id) AS mt_db_count
            FROM public.t_mts_mt_db_jobs_cached
           GROUP BY t_mts_mt_db_jobs_cached.job) mtsmt ON ((j.job = mtsmt.job)))
      LEFT JOIN ( SELECT t_mts_pt_db_jobs_cached.job,
-            count(*) AS pt_db_count
+            count(t_mts_pt_db_jobs_cached.cached_info_id) AS pt_db_count
            FROM public.t_mts_pt_db_jobs_cached
           GROUP BY t_mts_pt_db_jobs_cached.job) mtspt ON ((j.job = mtspt.job)))
      LEFT JOIN ( SELECT pm.dms_job,
-            count(*) AS pmtasks
+            count(pm.cached_info_id) AS pmtasks
            FROM public.t_mts_peak_matching_tasks_cached pm
           GROUP BY pm.dms_job) pmtaskcountq ON ((pmtaskcountq.dms_job = j.job)))
      LEFT JOIN public.t_analysis_job_psm_stats psm ON ((j.job = psm.job)))

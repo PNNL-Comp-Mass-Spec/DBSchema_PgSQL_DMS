@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.update_eus_instruments_from_eus_imports(INOUT
 **          05/12/2021 mem - Use new NEXUS-based views
 **          12/30/2022 mem - Ported to PostgreSQL
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
+**          07/10/2023 mem - Use COUNT(eus_instrument_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,7 @@ BEGIN
     BEGIN
         -- Count the number of rows before the merge
         --
-        SELECT COUNT(*)
+        SELECT COUNT(eus_instrument_id)
         INTO _countOld
         FROM t_emsl_instruments;
 
@@ -113,7 +114,7 @@ BEGIN
 
         -- Count the number of rows after the merge
         --
-        SELECT COUNT(*)
+        SELECT COUNT(eus_instrument_id)
         INTO _countNew
         FROM t_emsl_instruments;
 
