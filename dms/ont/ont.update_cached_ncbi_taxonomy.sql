@@ -9,6 +9,14 @@ CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean
 **
 **  Desc:   Updates data in ont.t_ncbi_taxonomy_cached
 **
+**  Arguments:
+**    _deleteExtras     When true, delete extra rows from ont.t_ncbi_taxonomy_cached
+**    _infoonly         When true, preview updates
+**
+**  Usage:
+**      SELECT * FROM ont.update_cached_ncbi_taxonomy(_deleteExtras => false, _infoOnly => true);
+**      SELECT * FROM ont.update_cached_ncbi_taxonomy(_deleteExtras => false, _infoOnly => false);
+**
 **  Auth:   mem
 **  Date:   03/01/2016 mem - Initial version
 **          01/06/2022 mem - Implement support for _infoOnly
@@ -16,6 +24,7 @@ CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Remove redundant parentheses
+**          07/11/2023 mem - Use COUNT(NameList.entry_id) instead of COUNT(*)
 **
 *****************************************************/
 DECLARE
@@ -49,7 +58,7 @@ BEGIN
                     INNER JOIN ont.t_ncbi_taxonomy_nodes Nodes
                       ON NodeNames.tax_id = Nodes.tax_id
                     LEFT OUTER JOIN ( SELECT PrimaryName.tax_id,
-                                             COUNT(*) AS synonyms
+                                             COUNT(NameList.entry_id) AS synonyms
                                       FROM ont.t_ncbi_taxonomy_names NameList
                                            INNER JOIN ont.t_ncbi_taxonomy_names PrimaryName
                                              ON NameList.tax_id = PrimaryName.tax_id AND
@@ -91,7 +100,7 @@ BEGIN
          INNER JOIN ont.t_ncbi_taxonomy_nodes Nodes
            ON NodeNames.tax_id = Nodes.tax_id
          LEFT OUTER JOIN ( SELECT PrimaryName.tax_id,
-                                  COUNT(*) AS synonyms
+                                  COUNT(NameList.entry_id) AS synonyms
                            FROM ont.t_ncbi_taxonomy_names NameList
                                 INNER JOIN ont.t_ncbi_taxonomy_names PrimaryName
                                   ON NameList.tax_id = PrimaryName.tax_id AND

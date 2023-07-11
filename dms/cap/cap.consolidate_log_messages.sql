@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION cap.consolidate_log_messages(_messagetype text DEFAUL
 **    _messageFilter               Optional filter for the message text; will auto-add % wildcards if it does not contain a % and no messages are matched
 **    _keepFirstMessageOnly        When false, keep the first and last message; when true, only keep the first message
 **    _changeErrorsToErrorIgnore   When true, if _messageType is 'Error' will update messages in cap.t_log_entries to have type 'ErrorIgnore' (if duplicates are removed)
+**    _infoOnly                    When true, preview messages that would be consolidated
 **
 **  Usage:
 **

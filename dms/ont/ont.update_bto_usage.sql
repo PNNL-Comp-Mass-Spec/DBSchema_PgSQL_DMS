@@ -9,6 +9,13 @@ CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly boolean DEFAULT false)
 **
 **  Desc:   Updates the usage columns in ont.t_cv_bto
 **
+**  Arguments:
+**    _infoonly         When true, preview updates
+**
+**  Usage:
+**      SELECT * FROM ont.update_bto_usage(_infoOnly => true);
+**      SELECT * FROM ont.update_bto_usage(_infoOnly => false);
+**
 **  Auth:   mem
 **  Date:   11/08/2018 mem - Initial version
 **          04/05/2022 mem - Ported to PostgreSQL
