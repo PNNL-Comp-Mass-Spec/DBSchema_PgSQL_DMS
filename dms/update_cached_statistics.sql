@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_statistics(INOUT _message text 
 **      - Dataset usage stats in T_LC_Cart_Configuration
 **
 **  Arguments:
-**    _previewSql                      When true, preview the SQL used to compile stats for T_General_Statistics
+**    _previewSql                      When true, preview the SQL used to compile stats for T_General_Statistics (ignored if _updateGeneralStatistics is false)
 **    _updateParamSettingsFileCounts   When true, update cached counts in T_Param_Files, T_Settings_Files, T_Cached_Instrument_Dataset_Type_Usage, T_Instrument_Group_Allowed_DS_Type, and T_LC_Cart_Configuration
 **    _updateGeneralStatistics         When true, update T_General_Statistics
 **    _updateJobRequestStatistics      When true, update T_Analysis_Job_Request
@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_statistics(INOUT _message text 
 **                         - Only update counts if they change
 **          12/31/2022 mem - Ported to PostgreSQL
 **          07/10/2023 mem - Use COUNT(AJ.job) and COUNT(DS.dataset_id) instead of COUNT(*)
+**                         - Fix bug referencing a field in a record
 **
 *****************************************************/
 DECLARE
@@ -321,7 +322,7 @@ BEGIN
         CREATE TEMP TABLE Tmp_StatEntries (
             Category text NOT NULL,
             Label text NOT NULL,
-            Sql text NOT NULL,
+            SQL text NOT NULL,
             UseDecimal boolean NOT NULL Default false,
             UniqueID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
         );
@@ -360,16 +361,18 @@ BEGIN
         -- Use the queries in Tmp_StatEntries to update t_general_statistics
         ------------------------------------------------
 
+        RAISE INFO '';
+
         FOR _statEntry IN
             SELECT Category,
                    Label,
-                   Sql,
+                   SQL,
                    UseDecimal
             FROM Tmp_StatEntries
             ORDER BY UniqueID
         LOOP
             If _previewSql Then
-                RAISE INFO '%', _sql;
+                RAISE INFO '%', _statEntry.SQL;
                 CONTINUE;
             End If;
 
