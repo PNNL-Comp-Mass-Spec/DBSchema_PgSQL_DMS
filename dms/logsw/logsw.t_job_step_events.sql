@@ -16,6 +16,13 @@ CREATE TABLE logsw.t_job_step_events (
 ALTER TABLE logsw.t_job_step_events OWNER TO d3l243;
 
 --
+-- Name: t_job_step_events ix_logsw_t_job_step_events_unique_event_id; Type: CONSTRAINT; Schema: logsw; Owner: d3l243
+--
+
+ALTER TABLE ONLY logsw.t_job_step_events
+    ADD CONSTRAINT ix_logsw_t_job_step_events_unique_event_id UNIQUE (event_id);
+
+--
 -- Name: t_job_step_events pk_t_job_step_events; Type: CONSTRAINT; Schema: logsw; Owner: d3l243
 --
 

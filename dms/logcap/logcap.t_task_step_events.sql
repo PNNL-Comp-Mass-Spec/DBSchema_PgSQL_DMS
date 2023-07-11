@@ -30,6 +30,13 @@ ALTER TABLE logcap.t_task_step_events ALTER COLUMN id ADD GENERATED ALWAYS AS ID
 );
 
 --
+-- Name: t_task_step_events ix_logcap_t_task_step_events_unique_event_id; Type: CONSTRAINT; Schema: logcap; Owner: d3l243
+--
+
+ALTER TABLE ONLY logcap.t_task_step_events
+    ADD CONSTRAINT ix_logcap_t_task_step_events_unique_event_id UNIQUE (event_id);
+
+--
 -- Name: t_task_step_events pk_t_task_step_events; Type: CONSTRAINT; Schema: logcap; Owner: d3l243
 --
 

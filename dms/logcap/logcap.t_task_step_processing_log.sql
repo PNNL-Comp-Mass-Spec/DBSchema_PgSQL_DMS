@@ -29,6 +29,13 @@ ALTER TABLE logcap.t_task_step_processing_log ALTER COLUMN id ADD GENERATED ALWA
 );
 
 --
+-- Name: t_task_step_processing_log ix_logcap_t_task_step_processing_log_unique_event_id; Type: CONSTRAINT; Schema: logcap; Owner: d3l243
+--
+
+ALTER TABLE ONLY logcap.t_task_step_processing_log
+    ADD CONSTRAINT ix_logcap_t_task_step_processing_log_unique_event_id UNIQUE (event_id);
+
+--
 -- Name: t_task_step_processing_log pk_t_task_step_processing_log; Type: CONSTRAINT; Schema: logcap; Owner: d3l243
 --
 
