@@ -459,7 +459,10 @@ BEGIN
     End If;
 
     DROP TABLE Tmp_Update_Stats;
-    DROP TABLE Tmp_StatEntries;
+
+    If _updateGeneralStatistics Then
+        DROP TABLE Tmp_StatEntries;
+    End If;
 END
 $$;
 
