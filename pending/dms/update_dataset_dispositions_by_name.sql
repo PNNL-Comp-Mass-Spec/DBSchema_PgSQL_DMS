@@ -113,9 +113,9 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_DatasetsToUpdate
-        SET DatasetID = D.Dataset_ID::text
-        FROM t_dataset D
-        WHERE D.dataset = DatasetName;
+        SET DatasetID = DS.Dataset_ID::text
+        FROM t_dataset DS
+        WHERE DS.dataset = DatasetName;
 
         ---------------------------------------------------
         -- Any datasets not found?

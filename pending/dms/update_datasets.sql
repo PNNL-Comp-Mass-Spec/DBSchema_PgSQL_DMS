@@ -173,7 +173,7 @@ BEGIN
 
         SELECT COUNT(*)
         INTO _datasetCount
-        FROM Tmp_DatasetInfo
+        FROM Tmp_DatasetInfo;
 
         _message := format('Number of affected datasets: %s', _datasetCount);
 

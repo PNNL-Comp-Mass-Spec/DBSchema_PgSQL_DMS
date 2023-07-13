@@ -72,24 +72,24 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DataPackageItems (
-              Dataset_ID int,
-              Dataset text,
-              Decon2LS_V2 int NULL,
-              MASIC int NULL,
-              MSGFPlus int NULL,
-              SEQUEST int NULL
-            )
+          Dataset_ID int,
+          Dataset text,
+          Decon2LS_V2 int NULL,
+          MASIC int NULL,
+          MSGFPlus int NULL,
+          SEQUEST int NULL
+        );
 
         ---------------------------------------------------
         -- Populate with package datasets
         ---------------------------------------------------
 
         INSERT INTO Tmp_DataPackageItems( Dataset_ID,
-                                           Dataset )
+                                          Dataset )
         SELECT DISTINCT Dataset_ID,
                         Dataset
-        FROM dpkg.t_data_package_datasets AS TPKG
-        WHERE (TPKG.Data_Package_ID = _dataPackageID)
+        FROM dpkg.t_data_package_datasets AS DPD
+        WHERE DPD.Data_Package_ID = _dataPackageID;
 
         ---------------------------------------------------
         -- Determine job counts per dataset for required tools
@@ -100,16 +100,17 @@ BEGIN
             MASIC = TargetTable.MASIC,
             MSGFPlus = TargetTable.MSGFPlus,
             SEQUEST = TargetTable.SEQUEST
-        FROM ( SELECT TPKG.Dataset,
-                      SUM(CASE WHEN TPKG.Tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
-                      SUM(CASE WHEN TPKG.Tool = 'MASIC_Finnigan' AND TD.Param_File LIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
-                      SUM(CASE WHEN TPKG.Tool LIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
-                      SUM(CASE WHEN TPKG.Tool LIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
-               FROM dpkg.t_data_package_analysis_jobs AS TPKG
-                    INNER JOIN public.V_Source_Analysis_Job AS TD 
-                      ON TPKG.Job = TD.Job
-               WHERE TPKG.Data_Package_ID = _dataPackageID
-               GROUP BY TPKG.Dataset) TargetTable
+        FROM ( SELECT DPD.Dataset,
+                      SUM(CASE WHEN DPD.Tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
+                      SUM(CASE WHEN DPD.Tool = 'MASIC_Finnigan' AND TD.Param_File LIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
+                      SUM(CASE WHEN DPD.Tool LIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
+                      SUM(CASE WHEN DPD.Tool LIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
+               FROM dpkg.t_data_package_analysis_jobs AS DPD
+                    INNER JOIN public.V_Source_Analysis_Job AS TD
+                      ON DPD.Job = TD.Job
+               WHERE DPD.Data_Package_ID = _dataPackageID
+               GROUP BY DPD.Dataset
+             ) TargetTable
         WHERE Tmp_DataPackageItems.Dataset = TargetTable.Dataset;
 
         ---------------------------------------------------

@@ -17,10 +17,11 @@ AS $$
 **      for given Instrument and month (as dictated via the _endDate parameter)
 **
 **  Arguments:
-**    _instrument        Instrument name to process; leave this blank if processing by EMSL instrument ID
-**    _eusInstrumentId   EMSL instrument ID to process; use this to process instruments like the 12T or the 15T where there are two instrument entries in DMS, yet they both map to the same EUS_Instrument_ID
-**    _endDate           This is used to determine the target year and month; the day of the month does not really matter
-**    _message           Optionally specify debug reports to show, for example '1' or '1,2,3'
+**    _instrument       Instrument name to process; leave this blank if processing by EMSL instrument ID
+**    _eusInstrumentId  EMSL instrument ID to process; use this to process instruments like the 12T or the 15T where there are two instrument entries in DMS, yet they both map to the same EUS_Instrument_ID
+**    _endDate          This is used to determine the target year and month; the day of the month does not really matter
+**    _message          Optionally specify debug reports to show, for example '1' or '1,2,3'
+**    _infoOnly         When true, preview updates
 **
 **  Auth:   grk
 **  Date:   03/21/2012
