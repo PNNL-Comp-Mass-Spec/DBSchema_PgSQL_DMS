@@ -29,6 +29,7 @@ AS $$
 **          09/10/2019 mem - Delete from T_Experiment_Plex_Members if mapped to Plex_Exp_ID
 **                         - Prevent deletion if the experiment is a plex channel in T_Experiment_Plex_Members
 **                         - Add _infoOnly
+**          07/11/2023 mem - Remove duplicate query of T_Requested_Run (unnecessary since T_Requested_Run_History was merged with T_Requested_Run in 2010)
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -130,23 +131,6 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Can't delete experiment that has requested run history
-    ---------------------------------------------------
-
-    SELECT COUNT(*)
-    INTO _rrhCount
-    FROM t_requested_run
-    WHERE (exp_id = _experimentId) AND NOT (dataset_id IS NULL);
-
-    If _rrhCount > 0 Then
-        _message := 'Cannot delete experiment that has associated requested run history';
-        RAISE WARNING '%', _message;
-
-        _returnCode := 'U5203';
-        RETURN;
-    End If;
-
-    ---------------------------------------------------
     -- Can't delete experiment that is mapped to a channel in a plex
     ---------------------------------------------------
 
@@ -159,7 +143,7 @@ BEGIN
         _message := format('Cannot delete experiment that is mapped to a plex channel; see https://dms2.pnl.gov/experiment_plex_members_tsv/report/-/-/-/%s/-/-/-', _experimentName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5204';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
