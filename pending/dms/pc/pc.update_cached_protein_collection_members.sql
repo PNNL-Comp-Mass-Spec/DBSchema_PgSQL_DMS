@@ -2,7 +2,7 @@
 CREATE OR REPLACE PROCEDURE pc.update_cached_protein_collection_members
 (
     _collectionIdFilter int = 0,
-    _updateAll int = 0,
+    _updateAll boolean = false,
     _maxCollectionsToUpdate int = 0,
     INOUT _message text default '',
     INOUT _returnCode text default ''
@@ -12,9 +12,12 @@ AS $$
 /****************************************************
 **
 **  Desc:   Updates the information in T_Protein_Collection_Members_Cached
-**
 **          By default, only adds new protein collections
-**          Set _updateAll to 1 to force an update of all protein collections
+**
+**  Arguments:
+**    _collectionIdFilter       Optional protein collection ID tofilter on
+**    _updateAll                When true, update cached members for all protein collections
+**    _maxCollectionsToUpdate   Maximum number of protein collections to update
 **
 **  Auth:   mem
 **  Date:   06/24/2016 mem - Initial release
@@ -41,7 +44,7 @@ BEGIN
     ---------------------------------------------------
 
     _collectionIdFilter := Coalesce(_collectionIdFilter, 0);
-    _updateAll := Coalesce(_updateAll, 0);
+    _updateAll := Coalesce(_updateAll, false);
     _maxCollectionsToUpdate := Coalesce(_maxCollectionsToUpdate, 0);
 
     ---------------------------------------------------
@@ -51,7 +54,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_ProteinCollections (
         Protein_Collection_ID int NOT NULL,
         NumProteins int NOT NULL,
-        Processed int NOT NULL
+        Processed boolean NOT NULL
     );
 
     CREATE INDEX IX_Tmp_ProteinCollections ON Tmp_ProteinCollections ( Protein_Collection_ID );
@@ -73,11 +76,11 @@ BEGIN
     -- Find protein collections to process
     ---------------------------------------------------
 
-    If _updateAll > 0 Then
+    If _updateAll Then
         -- Reprocess all of the protein collections
         --
         INSERT INTO Tmp_ProteinCollections (protein_collection_id, num_proteins, Processed)
-        SELECT protein_collection_id, num_proteins, 0
+        SELECT protein_collection_id, num_proteins, false
         FROM pc.t_protein_collections;
 
     Else
@@ -86,7 +89,7 @@ BEGIN
         INSERT INTO Tmp_ProteinCollections (protein_collection_id, num_proteins, Processed)
         SELECT PC.protein_collection_id,
                PC.num_proteins,
-               0 As Processed
+               false As Processed
         FROM (SELECT protein_collection_id, num_proteins
               FROM pc.t_protein_collections
               WHERE collection_state_id NOT IN (4)) PC
@@ -125,9 +128,9 @@ BEGIN
         SELECT PC.Protein_Collection_ID
         FROM Tmp_ProteinCollections PC INNER JOIN
             (SELECT Protein_Collection_ID, NumProteins
-            FROM Tmp_ProteinCollections
-            WHERE Processed = 0) SumQ ON SumQ.Protein_Collection_ID <= PC.Protein_Collection_ID
-        WHERE Processed = 0
+             FROM Tmp_ProteinCollections
+             WHERE Not Processed) SumQ ON SumQ.Protein_Collection_ID <= PC.Protein_Collection_ID
+        WHERE Not Processed
         GROUP BY PC.Protein_Collection_ID
         HAVING SUM(SumQ.NumProteins) < 500000;
 
@@ -137,7 +140,7 @@ BEGIN
             INSERT INTO Tmp_CurrentIDs (Protein_Collection_ID)
             SELECT Protein_Collection_ID
             FROM Tmp_ProteinCollections
-            WHERE Processed = 0
+            WHERE Not Processed
             ORDER BY Protein_Collection_ID
             LIMIT 1;
         End If;
@@ -155,7 +158,7 @@ BEGIN
         -- Update the processed flag for the candidates
         --
         UPDATE Tmp_ProteinCollections
-        SET Processed = 1
+        SET Processed = true
         FROM Tmp_CurrentIDs C
         WHERE C.Protein_Collection_ID = Tmp_ProteinCollections.Protein_Collection_ID;
 
