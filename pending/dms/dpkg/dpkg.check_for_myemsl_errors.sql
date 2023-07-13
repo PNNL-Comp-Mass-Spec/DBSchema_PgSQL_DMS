@@ -53,14 +53,14 @@ BEGIN
     -- Query the upload stats
     -----------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(entry_id)
     INTO _uploadErrors
     FROM dpkg.t_myemsl_uploads
     WHERE entered BETWEEN _startDate AND _endDate AND
           bytes > 0 AND
           error_code <> 0;
 
-    SELECT COUNT(*)
+    SELECT COUNT(entry_id)
     INTO _uploadAttempts
     FROM dpkg.t_myemsl_uploads
     WHERE entered BETWEEN _startDate AND _endDate;
@@ -72,11 +72,11 @@ BEGIN
     INTO _dataPkgFolderUploads, _duplicateUploads
     FROM ( SELECT data_pkg_id,
                   subfolder,
-                  COUNT(*) AS UploadAttempts
+                  COUNT(entry_id) AS UploadAttempts
            FROM dpkg.t_myemsl_uploads
            WHERE entered BETWEEN _startDate AND _endDate
            GROUP BY data_pkg_id, subfolder
-         ) UploadsByDataPkgAndFolder
+         ) UploadsByDataPkgAndFolder;
 
     If _uploadAttempts > 0 Then
         _uploadErrorRate := _uploadErrors / _uploadAttempts::float8;

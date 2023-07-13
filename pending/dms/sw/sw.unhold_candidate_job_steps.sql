@@ -43,17 +43,17 @@ BEGIN
     -- Count the number of job steps in state 2 for step tool _stepTool
     -----------------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(step)
     INTO _candidateSteps
-    FROM t_job_steps
+    FROM sw.t_job_steps
     WHERE state IN (2, 9) AND
-          tool = _stepTool;
+          tool = _stepTool::citext;
 
-    SELECT COUNT(*)
+    SELECT COUNT(step)
     INTO _candidatesPlusRunning
-    FROM t_job_steps
+    FROM sw.t_job_steps
     WHERE state In (2, 4, 9) AND
-          tool = _stepTool;
+          tool = _stepTool::citext;
 
     -----------------------------------------------------------
     -- Compute the number of jobs that need to be released (un-held)
@@ -78,7 +78,7 @@ BEGIN
              INNER JOIN ( SELECT CandidateSteps.job, CandidateSteps.step
                           FROM t_job_steps CandidateSteps
                           WHERE CandidateSteps.state = 7 AND
-                                CandidateSteps.tool = _stepTool
+                                CandidateSteps.tool = _stepTool::citext
                           ORDER BY CandidateSteps.job
                           LIMIT _jobsToRelease ) ReleaseQ
                ON sw.t_job_steps.job = ReleaseQ.job AND

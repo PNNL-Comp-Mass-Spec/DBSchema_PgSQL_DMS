@@ -14,12 +14,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates dataset interval and creates entries
-**      for long intervals in the intervals table for
-**      all production instruments
+**      Updates dataset interval and creates entries for long intervals in the intervals table
+**      for all production instruments
 **
 **  Arguments:
-**    _daysToProcess   Also affects whether Update_EMSL_Instrument_Usage_Report is called for previous months
+**    _daysToProcess                Also affects whether Update_EMSL_Instrument_Usage_Report is called for previous months
+**    _updateEMSLInstrumentUsage    When true, call update_emsl_instrument_usage_report() to update T_EMSL_Instrument_Usage_Report
+**    _infoOnly                     When true, preview updates
+**    _previewProcedureCall         When true, preview calls to update_dataset_interval() and update_emsl_instrument_usage_report()
+**    _instrumentsToProcess         Optional comma-separated list of instruments to process
 **
 **  Auth:   grk
 **  Date:   02/09/2012 grk - Initial version
@@ -184,10 +187,10 @@ BEGIN
             FROM public.parse_delimited_list ( _instrumentsToProcess, ',');
 
             INSERT INTO Tmp_Instruments( Instrument,
-                                          EMSL,
-                                          Tracked,
-                                          EUS_Instrument_ID,
-                                          Use_EUS_ID )
+                                         EMSL,
+                                         Tracked,
+                                         EUS_Instrument_ID,
+                                         Use_EUS_ID )
             SELECT InstList.Name,
                    InstList.EUS_Primary_Instrument AS EMSL,
                    InstList.Tracked,
@@ -227,23 +230,26 @@ BEGIN
         UPDATE Tmp_Instruments
         SET Use_EUS_ID = 1
         FROM ( SELECT InstName.instrument,
-                       InstMapping.eus_instrument_id
+                      InstMapping.eus_instrument_id
                FROM t_instrument_name InstName
-                   INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                       ON InstName.instrument_id = InstMapping.dms_instrument_id
-                   INNER JOIN ( SELECT eus_instrument_id
-                                FROM t_instrument_name InstName
-                                       INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                                       ON InstName.instrument_id = InstMapping.dms_instrument_id
-                                WHERE Not eus_instrument_id Is Null
-                                GROUP BY eus_instrument_id
-                                HAVING COUNT(*) > 1
-                              ) LookupQ
-                       ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
+                    INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                      ON InstName.instrument_id = InstMapping.dms_instrument_id
+                    INNER JOIN ( SELECT InstMapping.eus_instrument_id
+                                 FROM t_instrument_name InstName
+                                      INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                                        ON InstName.instrument_id = InstMapping.dms_instrument_id
+                                 WHERE NOT InstMapping.eus_instrument_id Is Null
+                                 GROUP BY InstMapping.eus_instrument_id
+                                 HAVING COUNT(InstName.instrument_id) > 1
+                               ) LookupQ
+                        ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
               ) FilterQ
         WHERE Tmp_Instruments.eus_instrument_id = FilterQ.eus_instrument_id;
 
         If _infoOnly Then
+
+            -- ToDo: Show this using RAISE INFO
+
             SELECT *
             FROM Tmp_Instruments
             ORDER By Instrument

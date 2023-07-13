@@ -99,10 +99,10 @@ BEGIN
     -- Can't delete experiment that has any datasets
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(dataset_id)
     INTO _dsCount
     FROM t_dataset
-    WHERE (exp_id = _experimentId)
+    WHERE exp_id = _experimentId;
 
     If _dsCount > 0 Then
         _message := 'Cannot delete experiment that has associated datasets';
@@ -116,10 +116,10 @@ BEGIN
     -- Can't delete experiment that has a requested run
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(request_id)
     INTO _rrCount
     FROM t_requested_run
-    WHERE (exp_id = _experimentId);
+    WHERE exp_id = _experimentId;
 
     If _rrCount > 0 Then
         _message := 'Cannot delete experiment that has associated requested runs';
@@ -150,10 +150,10 @@ BEGIN
     -- Can't delete experiment that is mapped to a channel in a plex
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(plex_exp_id)
     INTO _plexMemberCount
     FROM t_experiment_plex_members
-    WHERE (exp_id = _experimentId);
+    WHERE exp_id = _experimentId;
 
     If _plexMemberCount > 0 Then
         _message := format('Cannot delete experiment that is mapped to a plex channel; see https://dms2.pnl.gov/experiment_plex_members_tsv/report/-/-/-/%s/-/-/-', _experimentName);

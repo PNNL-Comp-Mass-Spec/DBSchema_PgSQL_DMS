@@ -161,22 +161,22 @@ BEGIN
         -- Find the first and last dataset in the data package
         ---------------------------------------------------
 
-        SELECT Min(dataset),
-               Max(dataset),
-               Count(*)
+        SELECT MIN(dataset),
+               MAX(dataset),
+               COUNT(dataset_id)
         INTO _firstDatasetOrExperiment, _lastDatasetOrExperiment, _datasetOrExperimentCount
         FROM dpkg.t_data_package_datasets
-        WHERE data_pkg_id = _packageID
+        WHERE data_pkg_id = _packageID;
 
         If _datasetOrExperimentCount > 0 Then
             _datasetOrExperiment := 'Datasets';
         Else
-            SELECT Min(experiment),
-                   Max(experiment),
-                   Count(*)
+            SELECT MIN(experiment),
+                   MAX(experiment),
+                   COUNT(experiment_id)
             INTO _firstDatasetOrExperiment, _lastDatasetOrExperiment, _datasetOrExperimentCount
             FROM dpkg.t_data_package_experiments
-            WHERE data_pkg_id = _packageID
+            WHERE data_pkg_id = _packageID;
 
             If _datasetOrExperimentCount > 0 Then
                 _datasetOrExperiment := 'Experiments';

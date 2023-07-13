@@ -84,33 +84,30 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_MatchingJobDatasets(dataset, Jobs, New, Busy, Complete, Failed, Holding)
-    SELECT
-        DS.dataset AS Dataset,
-        COUNT(*) As Jobs,
-        SUM(CASE WHEN AJ.job_state_id IN (1) THEN 1 ELSE 0 END) AS New,
-        SUM(CASE WHEN AJ.job_state_id IN (2, 3, 9, 10, 11, 16, 17) THEN 1 ELSE 0 END) AS Busy,
-        SUM(CASE WHEN AJ.job_state_id IN (4, 14) THEN 1 ELSE 0 END) AS Complete,
-        SUM(CASE WHEN AJ.job_state_id IN (5, 6, 7, 12, 13, 15, 18, 99) THEN 1 ELSE 0 END) AS Failed,
-        SUM(CASE WHEN AJ.job_state_id IN (8) THEN 1 ELSE 0 END) AS Holding
-    FROM
-        t_dataset DS INNER JOIN
-        t_analysis_job AJ ON AJ.dataset_id = DS.dataset_id INNER JOIN
-        t_analysis_tool AJT ON AJ.analysis_tool_id = AJT.analysis_tool_id INNER JOIN
-        t_organisms Org ON AJ.organism_id = Org.organism_id  INNER JOIN
-        -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
-        Tmp_RequestDatasets RD ON RD.dataset = DS.dataset
-    WHERE
-        AJT.analysis_tool = _jobRequestInfo.ToolName AND
-        AJ.param_file_name = _jobRequestInfo.ParamFileName AND
-        AJ.settings_file_name = _jobRequestInfo.SettingsFileName AND
-        ( ( _jobRequestInfo.ProteinCollectionList = 'na' AND AJ.organism_db_name = _jobRequestInfo.OrganismDBName AND
-            Org.organism = Coalesce(_jobRequestInfo.OrganismName, Org.organism)
-          ) OR
-          ( _jobRequestInfo.ProteinCollectionList <> 'na' AND
-            AJ.protein_collection_list = Coalesce(_jobRequestInfo.ProteinCollectionList, AJ.protein_collection_list) AND
-            AJ.protein_options_list = Coalesce(_jobRequestInfo.ProteinOptionsList, AJ.protein_options_list)
+    SELECT DS.dataset AS Dataset,
+           COUNT(AJ.job) As Jobs,
+           SUM(CASE WHEN AJ.job_state_id IN (1) THEN 1 ELSE 0 END) AS New,
+           SUM(CASE WHEN AJ.job_state_id IN (2, 3, 9, 10, 11, 16, 17) THEN 1 ELSE 0 END) AS Busy,
+           SUM(CASE WHEN AJ.job_state_id IN (4, 14) THEN 1 ELSE 0 END) AS Complete,
+           SUM(CASE WHEN AJ.job_state_id IN (5, 6, 7, 12, 13, 15, 18, 99) THEN 1 ELSE 0 END) AS Failed,
+           SUM(CASE WHEN AJ.job_state_id IN (8) THEN 1 ELSE 0 END) AS Holding
+    FROM t_dataset DS INNER JOIN
+         t_analysis_job AJ ON AJ.dataset_id = DS.dataset_id INNER JOIN
+         t_analysis_tool AJT ON AJ.analysis_tool_id = AJT.analysis_tool_id INNER JOIN
+         t_organisms Org ON AJ.organism_id = Org.organism_id  INNER JOIN
+         -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
+         Tmp_RequestDatasets RD ON RD.dataset = DS.dataset
+    WHERE AJT.analysis_tool = _jobRequestInfo.ToolName AND
+          AJ.param_file_name = _jobRequestInfo.ParamFileName AND
+          AJ.settings_file_name = _jobRequestInfo.SettingsFileName AND
+          ( ( _jobRequestInfo.ProteinCollectionList = 'na' AND AJ.organism_db_name = _jobRequestInfo.OrganismDBName AND
+              Org.organism = Coalesce(_jobRequestInfo.OrganismName, Org.organism)
+            ) OR
+            ( _jobRequestInfo.ProteinCollectionList <> 'na' AND
+              AJ.protein_collection_list = Coalesce(_jobRequestInfo.ProteinCollectionList, AJ.protein_collection_list) AND
+              AJ.protein_options_list = Coalesce(_jobRequestInfo.ProteinOptionsList, AJ.protein_options_list)
+            )
           )
-        )
     GROUP BY DS.dataset;
 
     ---------------------------------------------------

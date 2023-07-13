@@ -265,7 +265,7 @@ BEGIN
 
         If _ignoreDatasetChecks = 0 And Exists (Select * FROM t_dataset Where cart_config_id = _id) Then
 
-            SELECT COUNT(*),
+            SELECT COUNT(dataset_id),
                    MAX(dataset_id)
             INTO _datasetCount, _maxDatasetID
             FROM t_dataset

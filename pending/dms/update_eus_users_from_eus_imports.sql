@@ -61,7 +61,7 @@ BEGIN
         -- T_EUS_User with V_NEXUS_Import_Proposal_Participants
         ---------------------------------------------------
 
-        SELECT COUNT(*)
+        SELECT COUNT(person_id)
         INTO _countBeforeMerge
         FROM t_eus_users;
 
@@ -108,7 +108,7 @@ BEGIN
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-        SELECT COUNT(*)
+        SELECT COUNT(person_id)
         INTO _countAfterMerge
         FROM t_eus_users;
 
@@ -153,7 +153,7 @@ BEGIN
         -- T_EUS_User with V_NEXUS_Import_Proposal_Participants
         ---------------------------------------------------
 
-        SELECT COUNT(*)
+        SELECT COUNT(person_id)
         INTO _countBeforeMerge
         FROM t_eus_proposal_users;
 
@@ -180,7 +180,7 @@ BEGIN
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-        SELECT COUNT(*)
+        SELECT COUNT(person_id)
         INTO _countAfterMerge
         FROM t_eus_proposal_users;
 

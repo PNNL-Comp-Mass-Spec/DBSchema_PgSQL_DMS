@@ -142,7 +142,7 @@ BEGIN
                                     EL.target_state = 1 AND
                                     EL.prev_target_state = 5
                               GROUP BY DS.Dataset_ID
-                              HAVING (COUNT(*) > 4) )
+                              HAVING (COUNT(DS.Dataset_ID) > 4) )
 
         If _infoOnly Then
 

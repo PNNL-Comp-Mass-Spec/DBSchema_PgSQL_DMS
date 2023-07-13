@@ -675,7 +675,7 @@ BEGIN
 
                 _jobCountAdded := 0;
 
-                SELECT COUNT(*)
+                SELECT COUNT(job)
                 INTO _jobCountAdded
                 FROM t_analysis_job
                 WHERE dataset_id = _datasetID AND

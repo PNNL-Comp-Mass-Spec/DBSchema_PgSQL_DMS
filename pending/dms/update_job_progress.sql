@@ -60,8 +60,8 @@ BEGIN
         Progress_Old real null,     -- Value between 0 and 100
         Progress_New real null,     -- Value between 0 and 100
         Steps int null,
-        StepsCompleted int null,
-        CurrentRuntime_Minutes real null,
+        Steps_Completed int null,
+        Current_Runtime_Minutes real null,
         Runtime_Predicted_Minutes real null,
         ETA_Minutes real null
     )
@@ -135,23 +135,23 @@ BEGIN
     UPDATE Tmp_JobsToUpdate Target
     SET Progress_New = Source.Progress_Overall,
         Steps = Source.Steps,
-        StepsCompleted = Source.StepsCompleted,
-        CurrentRuntime_Minutes = Source.TotalRuntime_Minutes
+        Steps_Completed = Source.Steps_Completed,
+        Current_Runtime_Minutes = Source.Total_Runtime_Minutes
     FROM ( SELECT ProgressQ.Job,
                   ProgressQ.Steps,
-                  ProgressQ.StepsCompleted,
+                  ProgressQ.Steps_Completed,
                   ProgressQ.WeightedProgressSum / WeightSumQ.WeightSum AS Progress_Overall,
-                  ProgressQ.TotalRuntime_Minutes
+                  ProgressQ.Total_Runtime_Minutes
            FROM ( SELECT JS.Job,
-                         COUNT(*) AS Steps,
-                         SUM(CASE WHEN JS.State IN (3, 5) THEN 1 ELSE 0 END) AS StepsCompleted,
+                         COUNT(JS.step) AS Steps,
+                         SUM(CASE WHEN JS.State IN (3, 5) THEN 1 ELSE 0 END) AS Steps_Completed,
                          SUM(CASE WHEN JS.State = 3 THEN 0
-                                  ELSE JS.Job_Progress * Tools.AvgRuntime_Minutes
+                                  ELSE JS.Job_Progress * Tools.Avg_Runtime_Minutes
                              END) AS WeightedProgressSum,
-                         SUM(RunTime_Minutes) AS TotalRuntime_Minutes
+                         SUM(RunTime_Minutes) AS Total_Runtime_Minutes
                   FROM sw.V_Job_Steps JS
-                       INNER JOIN S_T_Pipeline_Step_Tools Tools
-                         ON JS.Tool = Tools.Name
+                       INNER JOIN sw.t_step_tools Tools
+                         ON JS.Tool = Tools.step_tool
                        INNER JOIN ( SELECT Job
                                     FROM Tmp_JobsToUpdate
                                     WHERE State = 2
@@ -159,10 +159,10 @@ BEGIN
                   GROUP BY JS.Job
                 ) ProgressQ
                 INNER JOIN ( SELECT JS.Job,
-                                    SUM(Tools.AvgRuntime_Minutes) AS WeightSum
+                                    SUM(Tools.Avg_Runtime_Minutes) AS WeightSum
                              FROM sw.V_Job_Steps JS
-                                  INNER JOIN S_T_Pipeline_Step_Tools Tools
-                                    ON JS.Tool = Tools.Name
+                                  INNER JOIN sw.t_step_tools Tools
+                                    ON JS.Tool = Tools.step_tool
                                   INNER JOIN ( SELECT Job
                                                FROM Tmp_JobsToUpdate
                                                WHERE State = 2
@@ -172,7 +172,7 @@ BEGIN
                            ) WeightSumQ
                   ON ProgressQ.Job = WeightSumQ.Job AND
                      WeightSumQ.WeightSum > 0
-                ) Source
+         ) Source
     WHERE Source.Job = Target.Job;
 
     -----------------------------------------
@@ -180,15 +180,15 @@ BEGIN
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
-    SET Runtime_Predicted_Minutes = CurrentRuntime_Minutes / (Progress_New / 100.0)
+    SET Runtime_Predicted_Minutes = Current_Runtime_Minutes / (Progress_New / 100.0)
     WHERE Progress_New > 0 AND
-          CurrentRuntime_Minutes > 0;
+          Current_Runtime_Minutes > 0;
 
     -----------------------------------------
     -- Look for jobs with an active job step that has been running for over 30 minutes
     -- and has a longer Runtime_Predicted_Minutes value than the one estimated using all of the job steps
     --
-    -- The estimated value was computed by weighting on AvgRuntime_Minutes, but if a single step
+    -- The estimated value was computed by weighting on Avg_Runtime_Minutes, but if a single step
     -- is taking a long time, there is no way the overall job will finish earlier than that step will finish;
     --
     -- If this is the case, we update Runtime_Predicted_Minutes to match the predicted runtime of that job step
@@ -198,7 +198,7 @@ BEGIN
     UPDATE Tmp_JobsToUpdate Target
     SET Runtime_Predicted_Minutes = RunningStepsQ.RunTime_Predicted_Minutes,
         Progress_New = CASE WHEN RunningStepsQ.Runtime_Predicted_Minutes > 0
-                            THEN CurrentRuntime_Minutes * 100.0 / RunningStepsQ.Runtime_Predicted_Minutes
+                            THEN Current_Runtime_Minutes * 100.0 / RunningStepsQ.Runtime_Predicted_Minutes
                             ELSE Progress_New
                        END
     FROM ( SELECT JS.Job,
@@ -221,7 +221,7 @@ BEGIN
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
-    SET ETA_Minutes = Runtime_Predicted_Minutes - CurrentRuntime_Minutes + (Steps - StepsCompleted) * 0.5
+    SET ETA_Minutes = Runtime_Predicted_Minutes - Current_Runtime_Minutes + (Steps - Steps_Completed) * 0.5
     WHERE Progress_New > 0;
 
     If _infoOnly Then
@@ -236,8 +236,8 @@ BEGIN
             -- Summarize the changes
             --
             SELECT State,
-                   COUNT(*) AS Jobs,
-                   Sum(CASE
+                   COUNT(job) AS Jobs,
+                   SUM(CASE
                            WHEN Coalesce(Progress_Old, -10) <> Coalesce(Progress_New, -5) THEN 1
                            ELSE 0
                        End If;) AS Changed_Jobs,

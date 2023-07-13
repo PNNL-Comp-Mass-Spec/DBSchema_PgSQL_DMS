@@ -91,7 +91,7 @@ BEGIN
               FROM pc.t_protein_collections
               WHERE collection_state_id NOT IN (4)) PC
              LEFT OUTER JOIN ( SELECT protein_collection_id,
-                                      Count(*) AS CachedProteinCount
+                                      COUNT(reference_id) AS CachedProteinCount
                                FROM pc.t_protein_collection_members_cached
                                GROUP BY protein_collection_id ) CacheQ
                ON PC.protein_collection_id = CacheQ.protein_collection_id
@@ -159,9 +159,9 @@ BEGIN
         FROM Tmp_CurrentIDs C
         WHERE C.Protein_Collection_ID = Tmp_ProteinCollections.Protein_Collection_ID;
 
-        SELECT Count(*),
-               Min(Protein_Collection_ID),
-               Max(Protein_Collection_ID)
+        SELECT COUNT(*),
+               MIN(Protein_Collection_ID),
+               MAX(Protein_Collection_ID)
         INTO _currentRangeCount, _currentRangeStart, _currentRangeEnd
         FROM Tmp_CurrentIDs
 
@@ -259,9 +259,9 @@ BEGIN
         -- Update _collectionCountUpdated
         ---------------------------------------------------
 
-        SELECT Count(*)
+        SELECT COUNT(*)
         INTO _collectionCount
-        FROM Tmp_CurrentIDs
+        FROM Tmp_CurrentIDs;
 
         _collectionCountUpdated := _collectionCountUpdated + _collectionCount;
 
@@ -284,7 +284,7 @@ BEGIN
            StatsQ.NumProteinsNew
     FROM pc.t_protein_collections PC
          INNER JOIN ( SELECT protein_collection_id,
-                             COUNT(*) AS NumProteinsNew
+                             COUNT(reference_id) AS NumProteinsNew
                       FROM pc.t_protein_collection_members_cached
                       GROUP BY protein_collection_id
                     ) StatsQ

@@ -83,7 +83,7 @@ BEGIN
 
         -- Use a MERGE Statement to synchronize t_mts_peak_matching_tasks_cached with S_MTS_Peak_Matching_Tasks
 
-        SELECT COUNT(*)
+        SELECT COUNT(cached_info_id)
         INTO _countBeforeMerge
         FROM t_mts_peak_matching_tasks_cached;
 
@@ -199,7 +199,7 @@ BEGIN
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-        SELECT COUNT(*)
+        SELECT COUNT(cached_info_id)
         INTO _countAfterMerge
         FROM t_mts_pt_db_jobs_cached;
 

@@ -42,11 +42,11 @@ BEGIN
     -- Count the number of job steps in state 2 for step tool _stepTool
     -----------------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(step)
     INTO _candidateSteps
     FROM t_job_steps
     WHERE state = 2 AND
-          tool = _stepTool;
+          tool = _stepTool::citext;
 
     -----------------------------------------------------------
     -- Compute the number of jobs that need to be released (un-held)
@@ -73,7 +73,7 @@ BEGIN
                                     AND
                                     ExtractQ.tool = 'DataExtractor'
                           WHERE JS_MSGF.state = 7 AND
-                                JS_MSGF.tool = _stepTool AND
+                                JS_MSGF.tool = _stepTool::citext AND
                                 ExtractQ.state = 5 AND
                                 ExtractQ.tool_version_id >= 82
                           ORDER BY job DESC

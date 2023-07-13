@@ -293,7 +293,7 @@ BEGIN
             SELECT work_package
             INTO _workPackage
             FROM ( SELECT work_package AS Work_Package,
-                          COUNT(*) AS Requests
+                          COUNT(RR.request_id) AS Requests
                    FROM t_requested_run RR
                         INNER JOIN Tmp_BatchIDs
                           ON RR.batch_id = Tmp_BatchIDs.batch_id
@@ -343,7 +343,7 @@ BEGIN
 
         If _batchDefined > 0 Then
             INSERT INTO Tmp_DatasetCountsByContainerType( ContainerType, ContainerID, SortWeight, DatasetCount )
-            SELECT 'Batch', RR.batch_id, 2 AS SortWeight, COUNT(*) AS DatasetCount
+            SELECT 'Batch', RR.batch_id, 2 AS SortWeight, COUNT(RR.request_id) AS DatasetCount
             FROM t_requested_run RR
                  INNER JOIN Tmp_BatchIDs
                    ON RR.batch_id = Tmp_BatchIDs.batch_id
@@ -352,19 +352,19 @@ BEGIN
 
         If _dataPackageDefined > 0 Then
             INSERT INTO Tmp_DatasetCountsByContainerType( ContainerType, ContainerID, SortWeight, DatasetCount )
-            SELECT 'Data Package', _dataPackageID, 1 As SortWeight, COUNT(DISTINCT D.Dataset_ID) AS DatasetCount
+            SELECT 'Data Package', _dataPackageID, 1 As SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
             FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
-                 INNER JOIN t_dataset D
-                   ON DataPkgDatasets.dataset_id = D.dataset_id
+                 INNER JOIN t_dataset DS
+                   ON DataPkgDatasets.dataset_id = DS.dataset_id
             WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
         End If;
 
         If _experimentGroupDefined > 0 Then
             INSERT INTO Tmp_DatasetCountsByContainerType( ContainerType, ContainerID, SortWeight, DatasetCount )
-            SELECT 'Experiment Group', _experimentGroupID, 3 As SortWeight, COUNT(DISTINCT D.Dataset_ID) AS DatasetCount
+            SELECT 'Experiment Group', _experimentGroupID, 3 As SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
             FROM t_experiment_group_members E
-                 INNER JOIN t_dataset D
-                   ON E.exp_id = D.exp_id
+                 INNER JOIN t_dataset DS
+                   ON E.exp_id = DS.exp_id
             WHERE E.group_id = _experimentGroupID;
         End If;
 
@@ -392,7 +392,7 @@ BEGIN
             _representativeBatchID := _containerID;
 
             -- Use all batches for the dataset count
-            SELECT COUNT(*)
+            SELECT COUNT(RR.dataset_id)
             INTO _datasetCount
             FROM t_requested_run RR
                  INNER JOIN Tmp_BatchIDs
@@ -401,13 +401,13 @@ BEGIN
             SELECT campaign
             INTO _campaign
             FROM ( SELECT C.campaign AS Campaign,
-                          COUNT(*) AS Experiments
-                   FROM t_requested_run R
+                          COUNT(E.exp_id) AS Experiments
+                   FROM t_requested_run RR
                         INNER JOIN t_experiments E
-                          ON R.exp_id = E.exp_id
+                          ON RR.exp_id = E.exp_id
                         INNER JOIN t_campaign C
                           ON E.campaign_id = C.campaign_id
-                   WHERE R.batch_id = _representativeBatchID
+                   WHERE RR.batch_id = _representativeBatchID
                    GROUP BY C.campaign ) StatsQ
             ORDER BY StatsQ.Experiments DESC
             LIMIT 1;
@@ -415,24 +415,24 @@ BEGIN
             SELECT organism
             INTO _organism
             FROM ( SELECT Org.organism AS Organism,
-                          COUNT(*) AS Organisms
-                   FROM t_requested_run R
+                          COUNT(RR.request_id) AS Organisms
+                   FROM t_requested_run RR
                         INNER JOIN t_experiments E
-                          ON R.exp_id = E.exp_id
+                          ON RR.exp_id = E.exp_id
                         INNER JOIN t_organisms Org
                           ON E.organism_id = Org.organism_id
-                   WHERE R.batch_id = _representativeBatchID
+                   WHERE RR.batch_id = _representativeBatchID
                    GROUP BY Org.organism ) StatsQ
             ORDER BY StatsQ.Organisms DESC
             LIMIT 1;
 
             SELECT eus_proposal_id
             INTO _eusProposalID
-            FROM ( SELECT R.eus_proposal_id AS EUS_Proposal_ID,
-                          COUNT(*) AS Requests
-                   FROM t_requested_run R
-                   WHERE R.batch_id = _representativeBatchID
-                   GROUP BY R.eus_proposal_id ) StatsQ
+            FROM ( SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
+                          COUNT(RR.request_id) AS Requests
+                   FROM t_requested_run RR
+                   WHERE RR.batch_id = _representativeBatchID
+                   GROUP BY RR.eus_proposal_id ) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
 
@@ -440,12 +440,12 @@ BEGIN
             SELECT campaign
             INTO _campaign
             FROM ( SELECT C.campaign AS Campaign,
-                          COUNT(*) AS Experiments
+                          COUNT(E.exp_id) AS Experiments
                    FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
-                        INNER JOIN t_dataset D
-                          ON DataPkgDatasets.dataset_id = D.dataset_id
+                        INNER JOIN t_dataset DS
+                          ON DataPkgDatasets.dataset_id = DS.dataset_id
                         INNER JOIN t_experiments E
-                          ON D.exp_id = E.exp_id
+                          ON DS.exp_id = E.exp_id
                         INNER JOIN t_campaign C
                           ON E.campaign_id = C.campaign_id
                    WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
@@ -456,12 +456,12 @@ BEGIN
             SELECT organism
             INTO _organism
             FROM ( SELECT Org.organism AS Organism,
-                          COUNT(*) AS Organisms
+                          COUNT(E.organism_id ) AS Organisms
                    FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
-                        INNER JOIN t_dataset D
-                          ON DataPkgDatasets.dataset_id = D.dataset_id
+                        INNER JOIN t_dataset DS
+                          ON DataPkgDatasets.dataset_id = DS.dataset_id
                         INNER JOIN t_experiments E
-                          ON D.exp_id = E.exp_id
+                          ON DS.exp_id = E.exp_id
                         INNER JOIN t_organisms Org
                           ON E.organism_id = Org.organism_id
                    WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
@@ -471,15 +471,15 @@ BEGIN
 
             SELECT eus_proposal_id
             INTO _eusProposalID
-            FROM ( SELECT R.eus_proposal_id AS EUS_Proposal_ID,
-                          COUNT(*) AS Requests
+            FROM ( SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
+                          COUNT(RR.request_id) AS Requests
                    FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
-                        INNER JOIN t_dataset D
-                          ON DataPkgDatasets.dataset_id = D.dataset_id
-                        INNER JOIN t_requested_run R
-                          ON D.dataset_id = R.dataset_id
+                        INNER JOIN t_dataset DS
+                          ON DataPkgDatasets.dataset_id = DS.dataset_id
+                        INNER JOIN t_requested_run RR
+                          ON DS.dataset_id = RR.dataset_id
                    WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
-                   GROUP BY R.eus_proposal_id ) StatsQ
+                   GROUP BY RR.eus_proposal_id ) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
 
@@ -487,7 +487,7 @@ BEGIN
             SELECT campaign
             INTO _campaign
             FROM ( SELECT C.campaign AS Campaign,
-                          COUNT(*) AS Experiments
+                          COUNT(E.exp_id) AS Experiments
                    FROM t_experiment_group_members EG
                         INNER JOIN t_experiments E
                           ON EG.exp_id = E.exp_id
@@ -501,7 +501,7 @@ BEGIN
             SELECT organism
             INTO _organism
             FROM ( SELECT Org.organism AS Organism,
-                          COUNT(*) AS Organisms
+                          COUNT(E.organism_id) AS Organisms
                    FROM t_experiment_group_members EG
                         INNER JOIN t_experiments E
                           ON EG.exp_id = E.exp_id
@@ -514,17 +514,17 @@ BEGIN
 
             SELECT eus_proposal_id
             INTO _eusProposalID
-            FROM ( SELECT R.eus_proposal_id AS EUS_Proposal_ID,
-                          COUNT(*) AS Requests
+            FROM ( SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
+                          COUNT(RR.request_id) AS Requests
                    FROM t_experiment_group_members EG
                         INNER JOIN t_experiments E
                           ON EG.exp_id = E.exp_id
-                        INNER JOIN t_dataset D
-                          ON E.exp_id = D.dataset_id
-                        INNER JOIN t_requested_run R
-                          ON D.dataset_id = R.dataset_id
+                        INNER JOIN t_dataset DS
+                          ON E.exp_id = DS.dataset_id
+                        INNER JOIN t_requested_run RR
+                          ON DS.dataset_id = RR.dataset_id
                    WHERE EG.group_id = _experimentGroupID
-                   GROUP BY R.eus_proposal_id ) StatsQ
+                   GROUP BY RR.eus_proposal_id ) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
 
@@ -536,7 +536,7 @@ BEGIN
             SELECT batch_id
             INTO _representativeBatchID
             FROM ( SELECT RR.batch_id As Batch_ID,
-                          COUNT(*) AS Requests
+                          COUNT(RR.request_id) AS Requests
                    FROM t_requested_run RR
                         INNER JOIN Tmp_BatchIDs
                           ON RR.batch_id = Tmp_BatchIDs.batch_id

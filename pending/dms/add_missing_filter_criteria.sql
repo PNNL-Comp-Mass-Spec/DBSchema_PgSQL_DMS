@@ -82,14 +82,14 @@ BEGIN
                 ORDER BY criterion_id
             LOOP
 
-                SELECT COUNT(*)
+                SELECT COUNT(FSC.filter_set_criteria_id)
                 INTO _matchCount
                 FROM t_filter_set_criteria FSC INNER JOIN
                      t_filter_set_criteria_groups FSCG ON
                      FSC.filter_criteria_group_id = FSCG.filter_criteria_group_id
                 WHERE FSCG.filter_set_id = _filterSetID AND
-                       FSC.filter_criteria_group_id = _groupID AND
-                       FSC.criterion_id = _criterionID;
+                      FSC.filter_criteria_group_id = _groupID AND
+                      FSC.criterion_id = _criterionID;
 
                 If _matchCount > 0 Then
                     CONTINUE;

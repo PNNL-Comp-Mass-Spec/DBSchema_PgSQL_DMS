@@ -104,7 +104,9 @@ BEGIN
     WHERE Tmp_DatasetInfo.dataset = t_dataset.dataset;
 
     If _showDebugMessages And _showDatasetInfoTable Then
-        -- Update this to use RAISE INFO
+
+        -- ToDo: Update this to use RAISE INFO
+
         SELECT *
         FROM Tmp_DatasetInfo
         ORDER BY Dataset_Name
@@ -114,7 +116,7 @@ BEGIN
     -- Make sure none of the datasets has a rating of -5 (Not Released)
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(Dataset_Name)
     INTO _notReleasedCount
     FROM Tmp_DatasetInfo
     WHERE dataset_rating_id = -5;
@@ -225,13 +227,13 @@ BEGIN
     -- (though this is OK if the tool is MSXML_Gen, MaxQuant, MSFragger, or DiaNN)
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(Dataset_Name)
     INTO _hmsCount
     FROM Tmp_DatasetInfo
-    WHERE Dataset_Type LIKE 'hms%' OR
-          Dataset_Type LIKE 'ims-hms%';
+    WHERE Dataset_Type ILIKE 'HMS%' OR
+          Dataset_Type ILIKE 'IMS-HMS%';
 
-    SELECT COUNT(*)
+    SELECT COUNT(Dataset_Name)
     INTO _msCount
     FROM Tmp_DatasetInfo
     WHERE Dataset_Type LIKE 'MS%' OR

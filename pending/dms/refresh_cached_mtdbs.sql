@@ -55,7 +55,7 @@ BEGIN
 
         _currentLocation := 'Update t_mts_mt_dbs_cached by merging data from S_MTS_MT_DB';
 
-        SELECT COUNT(*)
+        SELECT COUNT(mt_db_id)
         INTO _countBeforeMerge
         FROM t_mts_mt_dbs_cached;
 
@@ -104,7 +104,7 @@ BEGIN
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-        SELECT COUNT(*)
+        SELECT COUNT(mt_db_id)
         INTO _countAfterMerge
         FROM t_mts_mt_dbs_cached;
 

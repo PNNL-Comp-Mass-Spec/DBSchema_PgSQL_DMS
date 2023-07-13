@@ -114,7 +114,7 @@ BEGIN
     -- Is user already an observer?
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(user_id)
     INTO _membershipExists
     FROM t_research_team_membership
     WHERE team_id = _researchTeamID AND

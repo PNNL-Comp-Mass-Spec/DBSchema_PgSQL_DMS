@@ -155,11 +155,11 @@ BEGIN
                   RankQ.EUS_Proposal_ID
            FROM ( SELECT data_pkg_id,
                          EUS_Proposal_ID,
-                         ProposalCount,
-                         Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By ProposalCount DESC ) AS CountRank
+                         Proposal_Count,
+                         Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By Proposal_Count DESC ) AS CountRank
                   FROM ( SELECT DPD.data_pkg_id,
                                 DR.Proposal AS EUS_Proposal_ID,
-                                COUNT(*) AS ProposalCount
+                                COUNT(DR.Proposal) AS Proposal_Count
                          FROM dpkg.t_data_package_datasets DPD
                               INNER JOIN Tmp_DataPackagesToUpdate Src
                                 ON DPD.data_pkg_id = Src.ID
@@ -202,23 +202,23 @@ BEGIN
     UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_Instrument_Name = FilterQ.Instrument
     FROM ( SELECT RankQ.data_pkg_id,
-                             RankQ.instrument
-                      FROM ( SELECT data_pkg_id,
-                                    instrument,
-                                    InstrumentCount,
-                                    Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By InstrumentCount DESC ) AS CountRank
-                             FROM ( SELECT DPD.data_pkg_id,
-                                           DPD.instrument,
-                                           COUNT(*) AS InstrumentCount
-         FROM dpkg.t_data_package_datasets DPD
-                                         INNER JOIN Tmp_DataPackagesToUpdate Src
-                                           ON DPD.data_pkg_id = Src.ID
-                                    WHERE NOT DPD.instrument Is Null
-                                    GROUP BY DPD.data_pkg_id, DPD.instrument
-                                  ) SourceQ
-                           ) RankQ
-                      WHERE RankQ.CountRank = 1
-                     ) FilterQ
+                  RankQ.instrument
+           FROM ( SELECT data_pkg_id,
+                         instrument,
+                         InstrumentCount,
+                         Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By InstrumentCount DESC ) AS CountRank
+                  FROM ( SELECT DPD.data_pkg_id,
+                                DPD.instrument,
+                                COUNT(DPD.instrument) AS InstrumentCount
+                         FROM dpkg.t_data_package_datasets DPD
+                              INNER JOIN Tmp_DataPackagesToUpdate Src
+                                ON DPD.data_pkg_id = Src.ID
+                         WHERE NOT DPD.instrument Is Null
+                         GROUP BY DPD.data_pkg_id, DPD.instrument
+                       ) SourceQ
+                ) RankQ
+           WHERE RankQ.CountRank = 1
+         ) FilterQ
     WHERE Target.ID = FilterQ.data_pkg_id;
 
     ---------------------------------------------------

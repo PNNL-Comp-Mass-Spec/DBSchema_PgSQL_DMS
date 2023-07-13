@@ -134,7 +134,7 @@ BEGIN
              INNER JOIN ( SELECT Exp_ID
                           FROM t_experiment_biomaterial
                           GROUP BY Exp_ID
-                          HAVING COUNT(*) = 1 ) FilterQ
+                          HAVING COUNT(biomaterial_id) = 1 ) FilterQ
                ON ECC.Exp_ID = FilterQ.Exp_ID;
 
         -- Add mapping info for experiments with only one reference compound
@@ -149,7 +149,7 @@ BEGIN
              INNER JOIN ( SELECT exp_id
                           FROM t_experiment_reference_compounds
                           GROUP BY exp_id
-                          HAVING COUNT(*) = 1 ) FilterQ
+                          HAVING COUNT(compound_id) = 1 ) FilterQ
                ON ERC.exp_id = FilterQ.exp_id;
 
         -- Add experiments with multiple biomaterial itesm
@@ -160,7 +160,7 @@ BEGIN
         SELECT Exp_ID
         FROM t_experiment_biomaterial
         GROUP BY Exp_ID
-        HAVING COUNT(*) > 1;
+        HAVING COUNT(biomaterial_id) > 1;
 
         FOR _currentExpID IN
             SELECT Exp_ID
@@ -190,7 +190,7 @@ BEGIN
         SELECT Exp_ID
         FROM t_experiment_reference_compounds
         GROUP BY Exp_ID
-        HAVING COUNT(*) > 1;
+        HAVING COUNT(compound_id) > 1;
 
         FOR _currentExpID IN
             SELECT Exp_ID

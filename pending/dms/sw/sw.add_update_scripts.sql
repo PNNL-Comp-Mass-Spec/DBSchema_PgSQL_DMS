@@ -115,10 +115,10 @@ BEGIN
     -- Is entry already in database?
     ---------------------------------------------------
 
-    SELECT Count(*)
+    SELECT COUNT(script_id)
     INTO _existingRowCount
     FROM sw.t_scripts
-    WHERE script = _script;
+    WHERE script = _script::citext;
 
     -- Cannot update a non-existent entry
     --

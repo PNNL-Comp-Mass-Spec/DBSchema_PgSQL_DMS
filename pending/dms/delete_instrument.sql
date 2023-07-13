@@ -74,7 +74,7 @@ BEGIN
     -- Make sure no datasets exist yet for this instrument
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(dataset_id)
     INTO _existingCount
     FROM t_dataset
     WHERE instrument_id = _instrumentID;

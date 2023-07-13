@@ -239,7 +239,7 @@ BEGIN
                NumJobs
         INTO _mostCommonParamFile, _jobCountCompare
         FROM ( SELECT J.param_file_name AS param_file_name,
-                      COUNT(*) AS NumJobs
+                      COUNT(J.job) AS NumJobs
                FROM Tmp_SourceJobs
                     INNER JOIN t_analysis_job J
                       ON Tmp_SourceJobs.JobID = J.job
@@ -314,7 +314,7 @@ BEGIN
                NumJobs
         INTO _mostCommonSettingsFile, _jobCountCompare
         FROM ( SELECT J.settings_file_name AS settings_file_name,
-                      COUNT(*) AS NumJobs
+                      COUNT(J.job) AS NumJobs
                FROM Tmp_SourceJobs
                     INNER JOIN t_analysis_job J
                       ON Tmp_SourceJobs.JobID = J.job

@@ -130,7 +130,7 @@ BEGIN
                ELSE 0                                                                                             -- Unknown
            END AS Project_Type_ID,
            0 AS Samples,
-           COUNT(*) AS Datasets,
+           COUNT(DS.dataset_id) AS Datasets,
            0 AS Jobs,
            RR.eus_usage_type_id AS EUS_UsageType,
            EUSPro.proposal_type,
@@ -153,7 +153,7 @@ BEGIN
     WHERE DS.created BETWEEN _startDate AND _endDate
     GROUP BY EUSPro.proposal_id, RR.work_package, RR.eus_usage_type_id, EUSPro.Proposal_Type,
              EUSPro.proposal_start_date, EUSPro.proposal_end_date
-    ORDER BY COUNT(*) DESC
+    ORDER BY COUNT(DS.dataset_id) DESC
 
     -----------------------------------------
     -- Find user-initiated analysis jobs started within the date range
@@ -183,7 +183,7 @@ BEGIN
                    END AS Project_Type_ID,
                    0 AS Samples,
                    0 AS Datasets,
-                   COUNT(*) AS Jobs,
+                   COUNT(J.job) AS Jobs,
                    RR.eus_usage_type_id AS EUS_UsageType,
                    EUSPro.proposal_type,
                    MIN(EUSUsers.name_fm) AS Proposal_User,

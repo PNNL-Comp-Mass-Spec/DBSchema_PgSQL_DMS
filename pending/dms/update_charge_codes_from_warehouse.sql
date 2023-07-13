@@ -234,7 +234,7 @@ BEGIN
 
             _currentLocation := 'Merge data';
 
-            SELECT COUNT(*)
+            SELECT COUNT(charge_code)
             INTO _countBeforeMerge
             FROM t_charge_code;
 
@@ -294,7 +294,7 @@ BEGIN
 
             GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-            SELECT COUNT(*)
+            SELECT COUNT(charge_code)
             INTO _countAfterMerge
             FROM t_charge_code;
 

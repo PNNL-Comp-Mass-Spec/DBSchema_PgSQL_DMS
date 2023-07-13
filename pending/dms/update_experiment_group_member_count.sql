@@ -37,12 +37,12 @@ BEGIN
     If _groupID <= 0 Then
 
         UPDATE t_experiment_groups EG
-        SET member_count = LookupQ.member_count
-        FROM ( SELECT group_id, COUNT(*) AS MemberCount
+        SET member_count = LookupQ.MemberCount
+        FROM ( SELECT group_id, COUNT(exp_id) AS MemberCount
                FROM t_experiment_group_members
                GROUP BY group_id) LookupQ
         WHERE EG.group_id = LookupQ.group_id AND
-              EG.MemberCount <> LookupQ.MemberCount;
+              EG.member_count <> LookupQ.MemberCount;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -54,7 +54,7 @@ BEGIN
         End If;
     Else
 
-        SELECT COUNT(*)
+        SELECT COUNT(exp_id)
         INTO _memberCount
         FROM t_experiment_group_members
         WHERE group_id = _groupID

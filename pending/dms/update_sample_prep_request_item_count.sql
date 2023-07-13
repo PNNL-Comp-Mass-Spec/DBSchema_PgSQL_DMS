@@ -29,47 +29,47 @@ DECLARE
     _totalItemCount int := 0;
 BEGIN
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _biomaterialItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID AND item_type = 'biomaterial';
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _sampleSubmissionItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID AND item_type = 'sample_submission';
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _materialContainersItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID AND item_type = 'material_container';
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _experimentGroupItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID AND item_type = 'experiment_group';
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _experimentItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID AND item_type = 'experiment';
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _hpLCRunsItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID AND item_type = 'prep_lc_run';
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _datasetItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID AND item_type = 'dataset';
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _requestedRunItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID AND item_type = 'requested_run';
 
-    SELECT COUNT(*)
+    SELECT COUNT(prep_request_item_id)
     INTO _totalItemCount
     FROM t_sample_prep_request_items
     WHERE prep_request_item_id = _samplePrepRequestID;

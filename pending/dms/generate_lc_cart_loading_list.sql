@@ -155,7 +155,7 @@ BEGIN
 
     SELECT MAX(T.X)
     INTO _maxSamples
-    FROM ( SELECT COUNT(*) AS X
+    FROM ( SELECT COUNT(request) AS X
            FROM Tmp_XR
            GROUP BY col ) T
 
@@ -170,7 +170,7 @@ BEGIN
     LOOP
         -- How many samples in col queue?
         --
-        SELECT COUNT(*)
+        SELECT COUNT(request)
         INTO _qLen
         FROM Tmp_XR
         WHERE col = _col;
@@ -281,7 +281,7 @@ BEGIN
     _dsTypeForBlanks := Null;
 
     SELECT DSType.Dataset_Type,
-           COUNT(*)
+           COUNT(RR.request_id)
     INTO _dsTypeForBlanks, _matchCount
     FROM t_requested_run RR
          INNER JOIN t_dataset_type_name DSType
@@ -289,10 +289,10 @@ BEGIN
          INNER JOIN Tmp_XF
            ON RR.request_id = Tmp_XF.request
     GROUP BY DSType.Dataset_Type
-    ORDER BY COUNT(*) DESC
+    ORDER BY COUNT(RR.request_id) DESC
     LIMIT 1;
 
-    SELECT COUNT(*)
+    SELECT COUNT(RR.request_id)
     INTO _requestCountTotal
     FROM t_requested_run RR
          INNER JOIN Tmp_XF

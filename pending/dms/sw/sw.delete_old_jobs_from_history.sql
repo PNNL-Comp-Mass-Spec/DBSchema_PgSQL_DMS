@@ -56,8 +56,8 @@ BEGIN
     CREATE TEMP TABLE Tmp_JobsToDelete (
         Job   int NOT NULL,
         Saved timestamp NOT NULL,
-        PRIMARY KEY CLUSTERED ( Job, Saved )
-    )
+        PRIMARY KEY ( Job, Saved )
+    );
 
     ---------------------------------------------------
     -- Define the date threshold by subtracting three years from January 1 of this year
@@ -85,7 +85,7 @@ BEGIN
     -- Assure that 250,000 rows will remain in sw.t_jobs_history
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _currentJobCount
     FROM sw.t_jobs_history;
 
@@ -94,7 +94,7 @@ BEGIN
         _tempTableJobsToRemove := _jobHistoryMinimumCount - (_currentJobCount - _jobCountToDelete);
 
         DELETE FROM Tmp_JobsToDelete
-        WHERE Job IN ( SELECT Job
+        WHERE job IN ( SELECT Job
                        FROM Tmp_JobsToDelete
                        ORDER BY Job DESC
                        LIMIT _tempTableJobsToRemove)
@@ -161,17 +161,17 @@ BEGIN
                ON H.entry_id = FilterQ.entry_id
         ORDER BY machine
     Else
-        Delete From sw.t_job_steps_history
-        Where job In (Select job From Tmp_JobsToDelete)
+        DELETE FROM sw.t_job_steps_history
+        WHERE job IN (SELECT job FROM Tmp_JobsToDelete)
 
-        Delete From sw.t_job_step_dependencies_history
-        Where job In (Select job From Tmp_JobsToDelete)
+        DELETE FROM sw.t_job_step_dependencies_history
+        WHERE job IN (SELECT job FROM Tmp_JobsToDelete)
 
-        Delete From sw.t_job_parameters_history
-        Where job In (Select job From Tmp_JobsToDelete)
+        DELETE FROM sw.t_job_parameters_history
+        WHERE job IN (SELECT job FROM Tmp_JobsToDelete)
 
-        Delete From sw.t_jobs_history
-        Where job In (Select job From Tmp_JobsToDelete)
+        DELETE FROM sw.t_jobs_history
+        WHERE job IN (SELECT job FROM Tmp_JobsToDelete)
 
         -- Keep the 1000 most recent status values for each machine
         DELETE sw.t_machine_status_history

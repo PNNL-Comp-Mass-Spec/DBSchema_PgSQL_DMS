@@ -733,11 +733,11 @@ BEGIN
                 'Kansas_metagenome_12902_TrypPig_Bov_2014-11-25.fasta',
                 'HoplandAll_assembled_Tryp_Pig_Bov_2015-04-06.fasta') Then
 
-                SELECT COUNT(*)
+                SELECT COUNT(mod_entry_id)
                 INTO _dynModCount
                 FROM V_Param_File_Mass_Mods
                 WHERE Param_File_Name = _paramFileName AND
-                    Mod_Type_Symbol = 'D';
+                      Mod_Type_Symbol = 'D';
 
                 If Coalesce(_dynModCount, 0) > 1 Then
                     -- Parameter has more than one dynamic mod; this search will take too long

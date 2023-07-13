@@ -69,7 +69,7 @@ BEGIN
     -- Is entry already in database?
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(step_tool_id)
     INTO _existingRowCount
     FROM  sw.t_step_tools
     WHERE step_tool = _name::citext;

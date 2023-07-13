@@ -99,14 +99,14 @@ BEGIN
         End If;
 
         If _experimentID <= 0 Then
-            SELECT COUNT(*),
+            SELECT COUNT(request_id),
                    MIN(request_id)
             INTO _requestMatchCount, _requestID
             FROM t_requested_run
             WHERE request_name LIKE _datasetPrefix || '%' AND
                   state_name = 'Active';
         Else
-            SELECT COUNT(*),
+            SELECT COUNT(request_id),
                    MIN(request_id)
             INTO _requestMatchCount, _requestID
             FROM t_requested_run

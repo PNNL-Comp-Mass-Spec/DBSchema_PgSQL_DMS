@@ -375,12 +375,12 @@ BEGIN
             If _mode = 'add' Then
                 -- Make sure that an existing entry doesn't exist with the same values for Genus, Species, and Strain
 
-                SELECT COUNT(*)
+                SELECT COUNT(organism_id)
                 INTO _matchCount
                 FROM t_organisms
-                WHERE Coalesce(genus, '') = _orgGenus::citext AND
+                WHERE Coalesce(genus, '')   = _orgGenus::citext AND
                       Coalesce(species, '') = _orgSpecies::citext AND
-                      Coalesce(strain, '') = _orgStrain::citext;
+                      Coalesce(strain, '')  = _orgStrain::citext;
 
                 If _matchCount <> 0 AND Not _orgSpecies LIKE '%metagenome' Then
                     RAISE EXCEPTION 'Cannot add: %', _duplicateTaxologyMsg;
@@ -390,12 +390,12 @@ BEGIN
             If _mode = 'update' Then
                 -- Make sure that an existing entry doesn't exist with the same values for Genus, Species, and Strain (ignoring Organism_ID = _id)
 
-                SELECT COUNT(*)
+                SELECT COUNT(organism_id)
                 INTO _matchCount
                 FROM t_organisms
-                WHERE Coalesce(genus, '') = _orgGenus::citext AND
+                WHERE Coalesce(genus, '')   = _orgGenus::citext AND
                       Coalesce(species, '') = _orgSpecies::citext AND
-                      Coalesce(strain, '') = _orgStrain::citext AND
+                      Coalesce(strain, '')  = _orgStrain::citext AND
                       organism_id <> _id;
 
                 If _matchCount <> 0 AND Not _orgSpecies LIKE '%metagenome' Then

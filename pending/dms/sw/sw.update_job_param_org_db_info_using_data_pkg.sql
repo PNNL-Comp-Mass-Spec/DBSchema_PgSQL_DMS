@@ -113,22 +113,23 @@ BEGIN
                                    ProteinCollectionList,
                                    ProteinOptions,
                                    UseCount )
-        SELECT Organism,
+        SELECT J.Organism,
                CASE
-                   WHEN Coalesce(ProteinCollectionList, 'na') <> 'na' AND
-                        Coalesce(ProteinOptionsList, 'na') <> 'na' THEN 'na'
-                   ELSE OrganismDBName
+                   WHEN Coalesce(J.ProteinCollectionList, 'na') <> 'na' AND
+                        Coalesce(J.ProteinOptionsList,    'na') <> 'na'
+                   THEN 'na'
+                   ELSE J.OrganismDBName
                END AS LegacyFastaFileName,
-               ProteinCollectionList,
-               ProteinOptionsList,
-               COUNT(*) AS UseCount
-        FROM PUBLIC.V_GetPipelineJobParameters J
-        WHERE Job IN ( SELECT Job
-                       FROM dpkg.t_data_package_analysis_jobs
-                       WHERE Data_Package_ID = _dataPackageID ) AND
+               J.ProteinCollectionList,
+               J.ProteinOptionsList,
+               COUNT(J.job) AS UseCount
+        FROM public.V_Get_Pipeline_Job_Parameters J
+        WHERE J.Job IN ( SELECT Job
+                         FROM dpkg.t_data_package_analysis_jobs
+                         WHERE Data_Package_ID = _dataPackageID ) AND
               J.OrgDBRequired <> 0
-        GROUP BY Organism, OrganismDBName, ProteinCollectionList, ProteinOptionsList
-        ORDER BY COUNT(*) DESC;
+        GROUP BY J.Organism, J.OrganismDBName, J.ProteinCollectionList, J.ProteinOptionsList
+        ORDER BY COUNT(J.job) DESC;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 

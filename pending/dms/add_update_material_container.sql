@@ -235,14 +235,14 @@ BEGIN
 
         If _curLocationID <> _locationID Then
             --
-            SELECT COUNT(*)
+            SELECT COUNT(container_id)
             INTO _cnt
             FROM t_material_containers
             WHERE location_id = _locationID;
 
             If _limit <= _cnt Then
                 _message := format('Destination location does not have room for another container (moving %s to %s)',
-                                    _container, _location);
+                                   _container, _location);
                 _returnCode := 'U5211';
                 RETURN;
             End If;

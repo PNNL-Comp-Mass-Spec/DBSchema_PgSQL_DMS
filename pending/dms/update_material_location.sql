@@ -129,11 +129,11 @@ BEGIN
 
         If _oldStatus = 'Active' And _status ='Inactive' Then
 
-            SELECT COUNT(*)
+            SELECT COUNT(ML.location_id)
             INTO _activeContainers
             FROM t_material_locations AS ML
                  INNER JOIN t_material_containers AS MC
-                   ON ML.ID = MC.Location_ID
+                   ON ML.location_id = MC.location_id
             WHERE ML.location_id = _locationId AND
                   MC.status = 'Active';
 
@@ -160,7 +160,7 @@ BEGIN
             WHERE location_id = _locationId;
 
             _logMessage := format('Material location status changed from %s to %s by %s for material location %s',
-                                    _oldStatus, _status, _callingUser, _locationTag);
+                                   _oldStatus, _status, _callingUser, _locationTag);
 
             CALL post_log_entry ('Normal', _logMessage, 'Update_Material_Location');
 

@@ -53,10 +53,10 @@ BEGIN
            RankQ.proposal_id AS Newest_ID
     FROM t_eus_proposals EUP
          INNER JOIN ( SELECT title,
-                             COUNT(*) AS Entries
+                             COUNT(proposal_id) AS Entries
                       FROM t_eus_proposals
                       GROUP BY title
-                      HAVING (COUNT(*) > 1) ) DuplicateQ
+                      HAVING (COUNT(proposal_id) > 1) ) DuplicateQ
            ON EUP.title = DuplicateQ.title
          INNER JOIN ( SELECT title,
                              proposal_id,

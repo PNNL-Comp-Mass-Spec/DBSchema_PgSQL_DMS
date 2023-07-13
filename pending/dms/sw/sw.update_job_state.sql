@@ -231,27 +231,27 @@ BEGIN
             -- that are in the busy, finished, or failed states
             SELECT
                 JS.Job,
-                COUNT(*) AS Total,
+                COUNT(JS.step) AS Total,
                 SUM(CASE
-                    WHEN JS.State IN (3,4,5,9) THEN 1
+                    WHEN JS.state IN (3,4,5,9) THEN 1
                     ELSE 0
                     END) AS StartedFinishedOrSkipped,
                 SUM(CASE
-                    WHEN JS.State IN (6,16) THEN 1
+                    WHEN JS.state IN (6,16) THEN 1
                     ELSE 0
                     END) AS Failed,
                 SUM(CASE
-                    WHEN JS.State IN (3,5) THEN 1
+                    WHEN JS.state IN (3,5) THEN 1
                     ELSE 0
                     END) AS FinishedOrSkipped,
                 SUM(CASE
-                    WHEN JS.State = 3 Then 1
+                    WHEN JS.state = 3 Then 1
                     ELSE 0
                     END) AS Skipped
             FROM sw.t_job_steps JS
                  INNER JOIN sw.t_jobs J
                    ON JS.job = J.job
-            WHERE J.state IN (1,2,5,20)    -- job state (not step state!): new, in progress, failed, or resuming state
+            WHERE J.state IN (1, 2, 5, 20)    -- job state (not step state!): new, in progress, failed, or resuming state
             GROUP BY JS.job, J.state
            ) AS JS_Stats
            INNER JOIN sw.t_jobs AS J

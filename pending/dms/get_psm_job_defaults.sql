@@ -132,7 +132,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DatasetInfo (
-        Dataset_Name text,
+        Dataset_Name citext,
         Dataset_ID int NULL,
         Instrument_class text NULL,
         Dataset_State_ID int NULL,
@@ -170,7 +170,7 @@ BEGIN
 
     INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
     SELECT DISTINCT Item
-    FROM public.parse_delimited_list ( _datasets )
+    FROM public.parse_delimited_list ( _datasets );
 
     ---------------------------------------------------
     -- Validate the datasets in Tmp_DatasetInfo
@@ -200,10 +200,10 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_DatasetTypeStats (Dataset_Type, Description, DatasetCount)
-    SELECT DSType.Dataset_Type, DSType.Description, COUNT(*) AS DatasetCount
-    FROM Tmp_DatasetInfo
+    SELECT DSType.Dataset_Type, DSType.Description, COUNT(DSInfo.dataset_id) AS DatasetCount
+    FROM Tmp_DatasetInfo DSInfo
          INNER JOIN t_dataset_type_name DSType
-           ON Tmp_DatasetInfo.Dataset_Type = DSType.Dataset_Type
+           ON DSInfo.Dataset_Type = DSType.Dataset_Type
     GROUP BY DSType.Dataset_Type, DSType.Description
     ORDER BY DSType.Dataset_Type;
 
@@ -218,10 +218,10 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_DatasetLabelingStats (Labeling, DatasetCount)
-    SELECT E.labelling, COUNT(*) AS DatasetCount
-    FROM Tmp_DatasetInfo
+    SELECT E.labelling, COUNT(DSInfo.dataset_id) AS DatasetCount
+    FROM Tmp_DatasetInfo DSInfo
          INNER JOIN t_dataset DS
-           ON Tmp_DatasetInfo.dataset_id = DS.dataset_id
+           ON DSInfo.dataset_id = DS.dataset_id
          INNER JOIN t_experiments E
            ON DS.exp_id = E.exp_id
     GROUP BY E.labelling
@@ -238,10 +238,10 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Organisms (OrganismName, DatasetCount)
-    SELECT O.organism, COUNT(*) AS DatasetCount
-    FROM Tmp_DatasetInfo
+    SELECT O.organism, COUNT(DSInfo.dataset_id) AS DatasetCount
+    FROM Tmp_DatasetInfo DSInfo
          INNER JOIN t_dataset DS
-           ON Tmp_DatasetInfo.dataset_id = DS.dataset_id
+           ON DSInfo.dataset_id = DS.dataset_id
          INNER JOIN t_experiments E
            ON DS.exp_id = E.exp_id
          INNER JOIN t_organisms O
@@ -293,12 +293,12 @@ BEGIN
 
     -- Alkylation
     --
-    SELECT COUNT(*),
+    SELECT COUNT(DSInfo.dataset_id),
            SUM(CASE WHEN alkylation = 'Y' THEN 1 ELSE 0 END)
     INTO _datasetCount, _datasetCountAlkylated
-    FROM Tmp_DatasetInfo
+    FROM Tmp_DatasetInfo DSInfo
          INNER JOIN t_dataset DS
-           ON Tmp_DatasetInfo.dataset_id = DS.dataset_id
+           ON DSInfo.dataset_id = DS.dataset_id
          INNER JOIN t_experiments E
            ON DS.exp_id = E.exp_id;
 
@@ -316,10 +316,10 @@ BEGIN
     --
     SELECT string_agg('Enzyme:%s:%s', CountQ.enzyme_name, CountQ.Datasets, '|' ORDER BY CountQ.enzyme_name)
     INTO _addon
-    FROM (  SELECT Enz.enzyme_name, COUNT(*) As Datasets
-            FROM Tmp_DatasetInfo
+    FROM (  SELECT Enz.enzyme_name, COUNT(DSInfo.dataset_id) As Datasets
+            FROM Tmp_DatasetInfo DSInfo
                  INNER JOIN t_dataset DS
-                   ON Tmp_DatasetInfo.dataset_id = DS.dataset_id
+                   ON DSInfo.dataset_id = DS.dataset_id
                  INNER JOIN t_experiments E
                    ON DS.exp_id = E.exp_id
                  INNER JOIN t_enzymes Enz
@@ -342,10 +342,11 @@ BEGIN
 
     -- Look for phosphorylation
     --
-    SELECT COUNT(*)
+    SELECT COUNT(DSInfo.dataset_id)
     INTO _datasetCountPhospho
-    FROM Tmp_DatasetInfo
-    WHERE Dataset_Name Like '%Phospho%' Or Dataset_Name Like '%NiNTA%';
+    FROM Tmp_DatasetInfo DSInfo
+    WHERE DSInfo.Dataset_Name LIKE '%Phospho%' Or
+          DSInfo.Dataset_Name LIKE '%NiNTA%';
 
     ---------------------------------------------------
     -- Define the default options using the stats on the datasets

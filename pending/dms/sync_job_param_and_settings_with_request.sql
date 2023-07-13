@@ -101,14 +101,14 @@ BEGIN
     FROM ( SELECT request_id,
                 settings_file_name,
                 param_file_name,
-                COUNT(*) AS Jobs
+                COUNT(AJ.job) AS Jobs
             FROM t_analysis_job AJ
             WHERE request_id >= _requestMinimum
             GROUP BY request_id, settings_file_name, param_file_name
         ) A
         INNER JOIN
         ( SELECT request_id,
-                COUNT(*) AS Jobs
+                COUNT(AJ.job) AS Jobs
             FROM t_analysis_job AJ
             WHERE request_id >= _requestMinimum
             GROUP BY request_id

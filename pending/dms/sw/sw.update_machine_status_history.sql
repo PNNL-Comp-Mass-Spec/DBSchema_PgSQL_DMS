@@ -64,13 +64,13 @@ BEGIN
     If _updateTable Then
 
         INSERT INTO sw.t_machine_status_history( posting_time,
-                                      machine,
-                                      processor_count_active,
-                                      free_memory_mb )
+                                                 machine,
+                                                 processor_count_active,
+                                                 free_memory_mb )
         SELECT CURRENT_TIMESTAMP,
                M.machine,
-               COUNT(*) AS Processor_Count_Active,
-               CONVERT(int, MAX(PS.free_memory_mb)) AS Free_Memory_MB
+               COUNT(PS.processor_name) AS Processor_Count_Active,
+               MAX(PS.free_memory_mb)::int AS Free_Memory_MB
         FROM sw.t_processor_status PS
              INNER JOIN sw.t_local_processors LP
                ON PS.processor_name = LP.processor_name
@@ -78,7 +78,7 @@ BEGIN
                ON LP.machine = M.machine
         WHERE PS.status_date > CURRENT_TIMESTAMP - make_interval(hours => _activeProcessWindowHours)
         GROUP BY M.machine
-        ORDER BY M.machine
+        ORDER BY M.machine;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 

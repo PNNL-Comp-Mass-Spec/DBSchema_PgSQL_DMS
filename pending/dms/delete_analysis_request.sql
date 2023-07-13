@@ -73,7 +73,7 @@ BEGIN
     ---------------------------------------------------
 
     --
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _jobCount
     FROM t_analysis_job
     WHERE request_id = _requestID;

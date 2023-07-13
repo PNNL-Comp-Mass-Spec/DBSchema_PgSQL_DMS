@@ -134,14 +134,14 @@ BEGIN
         FROM t_instrument_name InstName
              INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                ON InstName.instrument_id = InstMapping.dms_instrument_id
-             INNER JOIN ( SELECT eus_instrument_id
+             INNER JOIN ( SELECT InstMapping.eus_instrument_id
                           FROM t_instrument_name InstName
                                INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                                  ON InstName.instrument_id = InstMapping.dms_instrument_id
-                          GROUP BY eus_instrument_id
-                          HAVING COUNT(*) > 1 ) LookupQ
+                          GROUP BY InstMapping.eus_instrument_id
+                          HAVING COUNT(InstName.instrument_id) > 1 ) LookupQ
                ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
-        WHERE InstName.instrument = _instrumentName
+        WHERE InstName.instrument = _instrumentName;
 
         If _eusInstrumentId > 0 Then
             INSERT INTO Tmp_Durations (
@@ -166,7 +166,7 @@ BEGIN
             WHERE _startDate <= DS.acq_time_start AND
                   DS.acq_time_start <= _endDate AND
                   InstMapping.eus_instrument_id = _eusInstrumentId
-            ORDER BY DS.acq_time_start
+            ORDER BY DS.acq_time_start;
 
         Else
             INSERT INTO Tmp_Durations (
@@ -189,8 +189,7 @@ BEGIN
             WHERE _startDate <= DS.acq_time_start AND
                   DS.acq_time_start <= _endDate AND
                   InstName.instrument = _instrumentName
-
-            ORDER BY DS.Acq_Time_Start
+            ORDER BY DS.Acq_Time_Start;
         End If;
 
         ---------------------------------------------------

@@ -103,7 +103,7 @@ BEGIN
                Row_Number() OVER ( Partition BY proposal_id ORDER BY Requests DESC ) AS usage_rank
         FROM ( SELECT EUSPro.proposal_id,
                       RR.work_package,
-                      COUNT(*) AS Requests
+                      COUNT(RR.request_id) AS Requests
                FROM t_dataset DS
                     INNER JOIN t_requested_run RR
                       ON DS.dataset_id = RR.dataset_id
@@ -116,7 +116,7 @@ BEGIN
                      ('Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') AND
                      Coalesce(RR.work_package, '') NOT IN ('none', 'na', 'n/a', '')
                GROUP BY EUSPro.proposal_id, work_package
-               ) LookupQ;
+             ) LookupQ;
 
         If _infoOnly Then
 

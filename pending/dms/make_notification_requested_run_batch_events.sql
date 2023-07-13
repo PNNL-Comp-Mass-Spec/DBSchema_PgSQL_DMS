@@ -76,8 +76,8 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_RequestedRunBatches
-    SELECT TB.Batch_ID,
-           COUNT(*) AS Num_Requests,
+    SELECT RRB.Batch_ID,
+           COUNT(RR.request_id) AS Num_Requests,
            SUM(CASE
                    WHEN TD.Dataset_ID IS NULL THEN 0
                    ELSE 1
@@ -92,14 +92,14 @@ BEGIN
                    WHEN TD.dataset_rating_id BETWEEN - 5 AND - 1 THEN TD.Created
                    ELSE _past
                END) AS Latest_Suspect_Dataset
-    FROM t_requested_run_batches AS TB
-         INNER JOIN t_requested_run AS TH
-           ON TH.batch_id = TB.Batch_ID
+    FROM t_requested_run_batches AS RRB
+         INNER JOIN t_requested_run AS RR
+           ON RR.batch_id = RRB.Batch_ID
          LEFT OUTER JOIN t_dataset AS TD
-           ON TD.Dataset_ID = TH.DatasetID
-    WHERE TB.batch_id <> 0 AND
-          TB.created > _threshold
-    GROUP BY TB.batch_id;
+           ON TD.Dataset_ID = RR.DatasetID
+    WHERE RRB.batch_id <> 0 AND
+          RRB.created > _threshold
+    GROUP BY RRB.batch_id;
 
     If _showDebug Then
 
@@ -157,13 +157,13 @@ BEGIN
     CREATE TEMP TABLE Tmp_NewEvents (
         Target_ID int,
         Event_Type int
-    )
+    );
 
     ---------------------------------------------------
     -- Event 'Requested Run Batch Start'
-    -- - Num_Datasets > 0
-    -- - Earliest_Dataset within window
-    -- - 'Requested Run Batch Start' event and TB.ID not already in event table
+    -- * Num_Datasets > 0
+    -- * Earliest_Dataset within window
+    -- * 'Requested Run Batch Start' event and RRB.ID not already in event table
     ---------------------------------------------------
 
     _eventType := 1;
@@ -185,7 +185,7 @@ BEGIN
     -- Event 'Requested Run Batch Finish'
     --- Num_Requests = Num_Datasets
     --- Latest_Dataset within window
-    --- 'Requested Run Batch Finish' event and TB.ID not already in event table
+    --- 'Requested Run Batch Finish' event and RRB.ID not already in event table
     ---------------------------------------------------
 
     _eventType := 2;
@@ -207,7 +207,7 @@ BEGIN
     -- Event 'Requested Run Batch Acq Time Ready'
     --- Num_Requests = Num_Datasets_With_Start_Time
     --- Latest_Dataset within window
-    --- 'Requested Run Batch Acq Time Ready' event and TB.ID not already in event table
+    --- 'Requested Run Batch Acq Time Ready' event and RRB.ID not already in event table
     ---------------------------------------------------
 
     _eventType := 3;

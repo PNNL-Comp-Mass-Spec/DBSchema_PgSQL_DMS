@@ -133,7 +133,7 @@ BEGIN
                    'RR.work_package, '
                    'C.Fraction_EMSL_Funded, '
                    'Cast(Sum(DS.Acq_Length_Minutes) / 60.0 AS numeric(9,1)) AS RuntimeHours, '
-                   'COUNT(*) AS Datasets, '
+                   'COUNT(DS.dataset_id) AS Datasets, '
                    'InstName.Building, ';
 
     If _includeInstrument > 0 Then

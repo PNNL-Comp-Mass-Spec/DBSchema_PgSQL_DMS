@@ -125,7 +125,7 @@ BEGIN
                                INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                                  ON InstName.instrument_id = InstMapping.dms_instrument_id
                           GROUP BY eus_instrument_id
-                          HAVING COUNT(*) > 1 ) LookupQ
+                          HAVING COUNT(InstMapping.dms_instrument_id) > 1 ) LookupQ
                ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
         WHERE InstName.status = 'active' AND
               InstName.operations_role = 'Production'
@@ -143,9 +143,9 @@ BEGIN
                                   FROM Tmp_InstrumentsToProcessByID )
 
         If _infoOnly Then
-            
+
             -- ToDo: Show the table data using RAISE INFO
-            
+
             SELECT *
             FROM Tmp_Instruments
             ORDER BY EntryID

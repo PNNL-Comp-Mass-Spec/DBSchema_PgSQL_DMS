@@ -167,7 +167,7 @@ BEGIN
                    C.EUSProposal,
                    C.BestWorkPackage,
                    C.MonthsSearched,
-                   COUNT(*) AS RequestedRuns,
+                   COUNT(FilterQ.request_id) AS RequestedRuns,
                    SUM(CASE WHEN FilterQ.work_package = 'none' THEN 1 ELSE 0 END) AS RequestsToUpdate,
                    P.title
             FROM Tmp_ProposalsToCheck C

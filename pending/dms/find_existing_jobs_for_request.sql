@@ -51,7 +51,7 @@ BEGIN
     GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
     -- See if t_analysis_job_request_existing_jobs needs to be updated
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _cachedCount
     FROM t_analysis_job_request_existing_jobs
     WHERE request_id = _requestID;
@@ -60,7 +60,7 @@ BEGIN
         RAISE INFO '%', 'Calling update_cached_job_request_existing_jobs due to differing count';
         CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
     Else
-        SELECT COUNT(*)
+        SELECT COUNT(J.job)
         INTO _misMatchCount
         FROM Tmp_ExistingJobs J
              LEFT OUTER JOIN t_analysis_job_request_existing_jobs AJR

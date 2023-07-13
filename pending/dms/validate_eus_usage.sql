@@ -523,18 +523,18 @@ BEGIN
                 -- Auto-remove invalid entries from Tmp_Users
                 --
                 DELETE
-                FROM  Tmp_Users
+                FROM Tmp_Users
                 WHERE
                     CAST(Item As int) NOT IN
                     (
                         SELECT person_id
                         FROM  t_eus_proposal_users
                         WHERE proposal_id = _eusProposalID
-                    )
+                    );
 
                 SELECT COUNT(*)
                 INTO _userCount
-                FROM Tmp_Users
+                FROM Tmp_Users;
 
                 _newUserList := '';
 

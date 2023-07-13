@@ -273,7 +273,7 @@ BEGIN
             RAISE EXCEPTION '%', _message;
         End If;
 
-        SELECT COUNT(*)
+        SELECT COUNT(channel)
         INTO _expectedChannelCount
         FROM t_sample_labelling_reporter_ions
         WHERE label = _experimentLabel;
@@ -286,8 +286,8 @@ BEGIN
             Channel int NOT NULL,
             Exp_ID int NOT NULL,
             Channel_Type_ID int NOT NULL,
-            Comment text Null,
-            ValidExperiment int Not Null
+            Comment text NULL,
+            ValidExperiment int NOT NULL
         );
 
         CREATE UNIQUE INDEX IX_Tmp_Experiment_Plex_Members On Tmp_Experiment_Plex_Members (Channel);
@@ -561,7 +561,7 @@ BEGIN
         -- Check whether we even need to parse the individual parameters
         ---------------------------------------------------
 
-        SELECT COUNT(*)
+        SELECT COUNT(Channel)
         INTO _actualChannelCount
         FROM Tmp_Experiment_Plex_Members;
 
@@ -691,7 +691,7 @@ BEGIN
         -- Update the cached actual chanel count
         ---------------------------------------------------
 
-        SELECT COUNT(*)
+        SELECT COUNT(Channel)
         INTO _actualChannelCount
         FROM Tmp_Experiment_Plex_Members;
 
@@ -704,7 +704,7 @@ BEGIN
         FROM t_experiments E
         WHERE PlexMembers.exp_id = E.exp_id;
 
-        SELECT COUNT(*)
+        SELECT COUNT(ValidExperiment)
         INTO _invalidExperimentCount
         FROM Tmp_Experiment_Plex_Members
         WHERE ValidExperiment = 0;
@@ -803,10 +803,9 @@ BEGIN
                 End If;
 
                 If _mode = 'preview' Then
-                -- <PreviewAddUpdate>
                     _updatedRows := 0;
 
-                    SELECT COUNT(*)
+                    SELECT COUNT(t.plex_exp_id)
                     INTO _updatedRows
                     FROM t_experiment_plex_members t
                          INNER JOIN Tmp_Experiment_Plex_Members s
@@ -822,7 +821,7 @@ BEGIN
                     End If;
 
                     INSERT INTO Tmp_DatabaseUpdates (Message)
-                    VALUES (_actionMessage)
+                    VALUES (_actionMessage);
 
                 Else
 
@@ -874,17 +873,17 @@ BEGIN
             ElsIf _mode = 'preview'
                 SELECT COUNT(*)
                 INTO _targetPlexExperimentCount
-                FROM Tmp_DatabaseUpdates
+                FROM Tmp_DatabaseUpdates;
 
                 SELECT COUNT(*)
                 INTO _targetAddCount
                 FROM Tmp_DatabaseUpdates
-                WHERE Message Like 'Would add %'
+                WHERE Message Like 'Would add %';
 
                 SELECT COUNT(*)
                 INTO _targetUpdateCount
                 FROM Tmp_DatabaseUpdates
-                WHERE Message like 'Would update %'
+                WHERE Message like 'Would update %';
 
                 SELECT Message
                 INTO _message
@@ -896,7 +895,7 @@ BEGIN
 
                     If _targetAddCount = _targetPlexExperimentCount Then
                         -- Adding plex members for all of the target experiments
-                        _message := format('Would add %s channels for Exp_IDs %s', _actualChannelCount,  _expIdList);
+                        _message := format('Would add %s channels for Exp_IDs %s', _actualChannelCount, _expIdList);
                     ElsIf _targetUpdateCount = _targetPlexExperimentCount
                         -- Updating plex members for all of the target experiments
                         _message := format('Would update %s channels for Exp_IDs %s', _updatedRows, _expIdList);

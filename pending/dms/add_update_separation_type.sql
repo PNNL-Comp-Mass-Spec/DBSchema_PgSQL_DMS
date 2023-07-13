@@ -171,16 +171,16 @@ BEGIN
 
         If _ignoreDatasetChecks = 0 And Exists (Select * FROM t_dataset Where separation_type = _sepTypeName) Then
 
-            SELECT COUNT(*),
+            SELECT COUNT(dataset_id),
                    MAX(dataset_id)
             INTO _datasetCount, _maxDatasetID
             FROM t_dataset
-            WHERE separation_type = _id
+            WHERE separation_type = _id;
 
             SELECT dataset
             INTO _datasetName
             FROM t_dataset
-            WHERE dataset_id = _maxDatasetID
+            WHERE dataset_id = _maxDatasetID;
 
             If _datasetCount = 1 Then
                 _datasetDescription := format('dataset %s', _datasetName);

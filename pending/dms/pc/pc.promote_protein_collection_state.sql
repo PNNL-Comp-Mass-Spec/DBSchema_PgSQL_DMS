@@ -101,7 +101,7 @@ BEGIN
 
             _nameFilter := '%' || _proteinCollectionName || '%';
 
-            SELECT COUNT(*)
+            SELECT COUNT(job)
             INTO _jobCount
             FROM public.t_analysis_job
             WHERE Protein_Collection_List ILIKE _nameFilter;

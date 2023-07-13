@@ -202,7 +202,7 @@ BEGIN
         EXECUTE (format('%s %s LIMIT 1', _sqlStart, _sql));
 
 		-- ToDo: Show this info using RAISE INFO
-		
+
         FOR _paramFileInfo IN
             SELECT Param_File_ID AS ParamFileID,
                    Param_File_Name AS ParamFileName,
@@ -397,7 +397,7 @@ BEGIN
             SELECT Compare,
                    Entry_Type,
                    Entry_Specifier,
-                   COUNT(*) AS Entry_Count,
+                   COUNT(param_file_id) AS Entry_Count,
                    MIN(Entry_Value) AS Entry_Value_Min,
                    MAX(Entry_Value) AS Entry_Value_Max
             FROM Tmp_ParamEntries
@@ -407,7 +407,7 @@ BEGIN
             SELECT Compare,
                    Entry_Type,
                    Entry_Specifier,
-                   COUNT(*) AS Entry_Count,
+                   COUNT(param_file_id) AS Entry_Count,
                    MIN(Entry_Value) AS Entry_Value_Min,
                    MAX(Entry_Value) AS Entry_Value_Max
             FROM Tmp_ParamEntries
@@ -488,9 +488,9 @@ BEGIN
                                     ON PFMM.param_file_id = PF.param_file_id
                             WHERE PFMM.param_file_id <> _paramFileInfo.ParamFileID AND
                                   PF.param_file_type_id = _paramFileInfo.ParamFileTypeID AND
-                                  PFMM.param_file_id IN (  SELECT param_file_id
-                                                            FROM Tmp_MassModCounts
-                                                            Where ModCount = _modCount );
+                                  PFMM.param_file_id IN ( SELECT param_file_id
+                                                          FROM Tmp_MassModCounts
+                                                          WHERE ModCount = _modCount );
                         ) B
                 ON A.residue_id = B.residue_id AND
                    A.mass_correction_id = B.mass_correction_id AND

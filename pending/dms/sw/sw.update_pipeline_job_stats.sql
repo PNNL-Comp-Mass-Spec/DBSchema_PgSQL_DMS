@@ -42,12 +42,12 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Pipeline_Job_Stats (
-        Script     text NOT NULL,
+        Script text NOT NULL,
         Instrument_Group text NOT NULL,
-        Year     int NOT NULL,
-        Jobs       int NOT NULL,
-        PRIMARY KEY CLUSTERED ( Script, Instrument_Group, Year )
-    )
+        Year int NOT NULL,
+        Jobs int NOT NULL,
+        PRIMARY KEY ( Script, Instrument_Group, Year )
+    );
 
     ---------------------------------------------------
     -- Summarize jobs by script, instrument group, and year
@@ -57,16 +57,16 @@ BEGIN
     SELECT JH.script,
            Coalesce(InstName.instrument_group, '') AS Instrument_Group,
            Extract(year from JH.start) AS Year,
-           COUNT(*) AS Jobs
+           COUNT(JH.job) AS Jobs
     FROM sw.t_jobs_history JH
          LEFT OUTER JOIN public.t_analysis_job J
            ON JH.job = J.job
          LEFT OUTER JOIN public.t_dataset DS
            ON J.dataset_id = DS.dataset_id
          LEFT OUTER JOIN public.t_instrument_name InstName
-           ON DS.instrument_name_ID = InstName.Instrument_ID
+           ON DS.instrument_ID = InstName.Instrument_ID
     WHERE NOT JH.start IS NULL
-    GROUP BY JH.script, Coalesce(InstName.Instrument_Group, ''), Extract(year from JH.start)
+    GROUP BY JH.script, Coalesce(InstName.Instrument_Group, ''), Extract(year from JH.start);
 
     If Not FOUND Then
         _message := 'No rows were added to Tmp_Pipeline_Job_Stats; exiting';

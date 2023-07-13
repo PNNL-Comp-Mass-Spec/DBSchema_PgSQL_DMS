@@ -37,7 +37,7 @@ BEGIN
         _nameSearchSpec := _nameSearchSpec || '%';
     End If;
 
-    SELECT COUNT(*)
+    SELECT COUNT(organism_id)
     INTO _matchCount
     FROM t_organisms
     WHERE organism LIKE _nameSearchSpec;
@@ -54,7 +54,7 @@ BEGIN
     End If;
 
     If _matchCount = 0 Then
-        SELECT COUNT(*)
+        SELECT COUNT(organism_id)
         INTO _matchCount
         FROM t_organisms
         WHERE short_name LIKE _nameSearchSpec;

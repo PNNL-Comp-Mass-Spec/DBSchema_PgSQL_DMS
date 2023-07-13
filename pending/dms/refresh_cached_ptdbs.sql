@@ -56,7 +56,7 @@ BEGIN
 
         -- Use a MERGE Statement to synchronize t_mts_pt_dbs_cached with S_MTS_PT_DBs
 
-        SELECT COUNT(*)
+        SELECT COUNT(peptide_db_id)
         INTO _countBeforeMerge
         FROM t_mts_pt_dbs_cached;
 
@@ -96,7 +96,7 @@ BEGIN
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-        SELECT COUNT(*)
+        SELECT COUNT(peptide_db_id)
         INTO _countAfterMerge
         FROM t_mts_pt_dbs_cached;
 

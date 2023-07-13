@@ -81,13 +81,13 @@ BEGIN
         Dataset_Count int NOT NULL,
         Experiment_Count int NOT NULL,
         Enzyme_Contaminant_Collection int NOT NULL
-    )
+    );
 
     CREATE TEMP TABLE Tmp_ProteinCollections (
         RowNumberID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Protein_Collection_Name citext NOT NULL,
         Collection_Appended int NOT NULL
-    )
+    );
 
     CREATE TEMP TABLE Tmp_ProteinCollectionsToAdd (
         UniqueID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -95,7 +95,7 @@ BEGIN
         Dataset_Count int NOT NULL,
         Experiment_Count int NOT NULL,
         Enzyme_Contaminant_Collection int NOT NULL
-    )
+    );
 
     --------------------------------------------------------------
     -- Populate Tmp_ProteinCollections with the protein collections in _protCollNameList
@@ -219,7 +219,7 @@ BEGIN
                              Enzyme_Contaminant_Collection )
     SELECT DSIntStd.internal_standard_id,
            ISPM.protein_collection_name,
-           COUNT(*) AS Dataset_Count,
+           COUNT(DS.dataset_id) AS Dataset_Count,
            0 AS Experiment_Count,
            0 AS Enzyme_Contaminant_Collection
     FROM Tmp_DatasetList
@@ -360,7 +360,7 @@ BEGIN
     SELECT COUNT(*)
     INTO _matchCount
     FROM Tmp_ProteinCollections
-    WHERE Protein_Collection_Name IN ('Tryp_Pig_Bov', 'Tryp_Pig')
+    WHERE Protein_Collection_Name IN ('Tryp_Pig_Bov', 'Tryp_Pig');
 
     If _matchCount = 2 Then
         -- The list has two overlapping contaminant collections; remove one of them
@@ -376,7 +376,7 @@ BEGIN
     SELECT COUNT(*)
     INTO _matchCount
     FROM Tmp_ProteinCollections
-    WHERE Protein_Collection_Name IN ('Tryp_Pig_Bov', 'HumanContam')
+    WHERE Protein_Collection_Name IN ('Tryp_Pig_Bov', 'HumanContam');
 
     If _matchCount = 2 Then
         -- The list has two overlapping contaminant collections; remove one of them
@@ -407,14 +407,14 @@ BEGIN
     FROM Tmp_ProteinCollections;
 
     -- Count the total number of datasets and experiments in Tmp_DatasetList
-    SELECT COUNT(*)
+    SELECT COUNT(DS.dataset_id)
            COUNT(DISTINCT E.exp_id)
     INTO _datasetCountTotal, _experimentCountTotal
     FROM Tmp_DatasetList
          INNER JOIN t_dataset DS
            ON Tmp_DatasetList.Dataset_Name = DS.dataset
          INNER JOIN t_experiments E
-           ON DS.exp_id = E.exp_id
+           ON DS.exp_id = E.exp_id;
 
     If Not _showMessages Then
         DROP TABLE Tmp_IntStds;

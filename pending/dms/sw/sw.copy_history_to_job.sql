@@ -270,14 +270,14 @@ BEGIN
         WHERE EXISTS
             (  SELECT 1
                FROM sw.t_job_step_dependencies TSD
-                    INNER JOIN ( SELECT D.Job,
-                                        D.Step
-                                 FROM sw.t_job_step_dependencies D
+                    INNER JOIN ( SELECT JSD.Job,
+                                        JSD.Step
+                                 FROM sw.t_job_step_dependencies JSD
                                       LEFT OUTER JOIN sw.t_job_step_dependencies_history H
-                                        ON D.Job = H.Job AND
-                                           D.Step = H.Step AND
-                                           D.Target_Step = H.Target_Step
-                                 WHERE D.Job = _newJob AND
+                                        ON JSD.Job = H.Job AND
+                                           JSD.Step = H.Step AND
+                                           JSD.Target_Step = H.Target_Step
+                                 WHERE JSD.Job = _newJob AND
                                        H.Job IS NULL
                                 ) DeleteQ
                       ON TSD.Job = DeleteQ.Job AND
@@ -434,7 +434,7 @@ BEGIN
     UPDATE sw.t_job_steps target
     SET dependencies = CountQ.dependencies
     FROM ( SELECT step,
-                 COUNT(*) AS dependencies
+                  COUNT(target_step) AS dependencies
            FROM sw.t_job_step_dependencies
            WHERE job = _job
            GROUP BY step

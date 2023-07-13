@@ -240,7 +240,7 @@ BEGIN
 
         -- Count the number of QExactive datasets
         --
-        SELECT COUNT(*)
+        SELECT COUNT(DS.dataset_id)
         INTO _qExactiveDSCount
         FROM Tmp_DatasetInfo
              INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset = DS.dataset
@@ -250,7 +250,7 @@ BEGIN
 
         -- Count the number of datasets with profile mode MS/MS
         --
-        SELECT COUNT(Distinct DS.dataset_id)
+        SELECT COUNT(DISTINCT DS.dataset_id)
         INTO _profileModeMSnDatasets
         FROM Tmp_DatasetInfo
            INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset = DS.dataset
@@ -329,7 +329,7 @@ BEGIN
              INNER JOIN t_organisms
              ON E.organism_id = t_organisms.organism_id
         GROUP BY t_organisms.organism
-        order BY COUNT(*) DESC
+        ORDER BY COUNT(DS.dataset_id) DESC
         LIMIT 1;
 
         ---------------------------------------------------

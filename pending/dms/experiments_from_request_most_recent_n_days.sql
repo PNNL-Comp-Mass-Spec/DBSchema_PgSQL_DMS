@@ -10,8 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Returns count of number of experiments made
-**      from given sample prep request
+**      Returns count of number of experiments made from given sample prep request
 **
 **      Only includes experiments created within the most recent N days, specified by _days
 **
@@ -25,7 +24,7 @@ AS $$
 DECLARE
     _count int;
 BEGIN
-    SELECT COUNT(*)
+    SELECT COUNT(exp_id)
     INTO _count
     FROM t_experiments
     WHERE sample_prep_request_id = _requestID AND

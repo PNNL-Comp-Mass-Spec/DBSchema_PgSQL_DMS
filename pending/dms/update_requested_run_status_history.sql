@@ -55,7 +55,7 @@ BEGIN
         SELECT CURRENT_TIMESTAMP AS Posting_Time,
                state_id,
                origin,
-               COUNT(*) AS Request_Count,
+               COUNT(request_id) AS Request_Count,
                SUM(CASE WHEN DaysInQueue = 0                THEN 1 ELSE 0 END) AS QueueTime_0Days,
                SUM(CASE WHEN DaysInQueue BETWEEN  1 AND   1 THEN 1 ELSE 0 END) AS QueueTime_1to6Days,
                SUM(CASE WHEN DaysInQueue BETWEEN  7 AND  44 THEN 1 ELSE 0 END) AS QueueTime_7to44Days,
@@ -70,10 +70,10 @@ BEGIN
                     INNER JOIN t_requested_run_state_name RRSN
                       ON RR.state_name = RRSN.state_name
                     LEFT OUTER JOIN V_Requested_Run_Queue_Times QT
-                      ON RR.request_id = QT.RequestedRun_ID
+                      ON RR.request_id = QT.Requested_Run_ID
              ) SourceQ
         GROUP BY state_id, origin
-        ORDER BY state_id, origin
+        ORDER BY state_id, origin;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 

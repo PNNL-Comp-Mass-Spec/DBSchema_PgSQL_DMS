@@ -167,7 +167,7 @@ BEGIN
             -------------------------------------------------
             _existingJobCount := 0;
 
-            SELECT COUNT(*)
+            SELECT COUNT(job)
             INTO _existingJobCount
             FROM t_analysis_job
             WHERE request_id = _requestInfo.RequestID

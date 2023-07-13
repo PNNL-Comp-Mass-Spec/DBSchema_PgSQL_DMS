@@ -155,11 +155,11 @@ BEGIN
             SELECT dms_inst_id,
                    type,
                    start,
-                   COUNT(*)
+                   COUNT(seq)
             FROM t_emsl_instrument_usage_report
             WHERE dms_inst_id = _dmsInstrumentID
             GROUP BY dms_inst_id, type, start
-            ORDER BY dms_inst_id, type, start
+            ORDER BY dms_inst_id, type, start;
             --
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -183,13 +183,13 @@ BEGIN
             SELECT dms_inst_id,
                    type,
                    start,
-                   COUNT(*)
+                   COUNT(seq)
             FROM t_emsl_instrument_usage_report
             WHERE start >= _startDate AND
                   start < _endDate AND
                   dms_inst_id = _dmsInstrumentID
             GROUP BY dms_inst_id, type, start
-            ORDER BY dms_inst_id, type, start
+            ORDER BY dms_inst_id, type, start;
             --
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 

@@ -126,7 +126,7 @@ BEGIN
     SET dependencies = CompareQ.Actual_Dependencies
     FROM ( SELECT job,
                   step,
-                  COUNT(*) AS Actual_Dependencies
+                  COUNT(target_step) AS Actual_Dependencies
            FROM sw.t_job_step_dependencies
            WHERE job IN ( SELECT job FROM sw.t_job_steps WHERE state = 1 )
            GROUP BY job, step
@@ -242,7 +242,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO _rowCountToProcess
-    FROM Tmp_Steplist
+    FROM Tmp_Steplist;
 
     _rowCountToProcess := Coalesce(_rowCountToProcess, 0);
 
@@ -322,7 +322,7 @@ BEGIN
 
                 -- Any standing shared results that match?
                 --
-                SELECT COUNT(*)
+                SELECT COUNT(results_name)
                 INTO _numCompleted
                 FROM sw.t_shared_results
                 WHERE results_name = _stepInfo.OutputFolderName;
@@ -344,7 +344,7 @@ BEGIN
                         -- Old, completed jobs are removed from sw.t_jobs after a set number of days, meaning it's possible
                         -- that the only record of a completed, matching shared results step will be in sw.t_job_steps_history
 
-                        SELECT COUNT(*)
+                        SELECT COUNT(step)
                         INTO _numCompleted
                         FROM sw.t_job_steps_history
                         WHERE output_folder_name = _stepInfo.OutputFolderName AND
@@ -375,7 +375,7 @@ BEGIN
                     -- If it has, this indicates that the database metadata for this dataset's other jobs indicates that the step can be skipped,
                     -- but a subsequent step is not finding the shared results and they need to be re-generated
 
-                    SELECT COUNT(*)
+                    SELECT COUNT(event_id)
                     INTO _stepSkipCount
                     FROM sw.t_job_step_events
                     WHERE job = _stepInfo.job AND

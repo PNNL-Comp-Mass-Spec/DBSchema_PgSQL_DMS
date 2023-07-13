@@ -86,10 +86,10 @@ BEGIN
     LOOP
 
         INSERT INTO Tmp_DatasetsToUpdate( dataset_id,
-                                           OldExperiment,
-                                           NewExperiment,
-                                           NewExpID,
-                                           Ambiguous )
+                                          OldExperiment,
+                                          NewExperiment,
+                                          NewExpID,
+                                          Ambiguous )
         SELECT DS.dataset_id,
                E.experiment,
                _experiment,
@@ -112,7 +112,7 @@ BEGIN
     WHERE Dataset_ID IN ( SELECT DS.Dataset_ID
                           FROM Tmp_DatasetsToUpdate DS
                           GROUP BY DS.Dataset_ID
-                          HAVING COUNT(*) > 1 );
+                          HAVING COUNT(DS.ID) > 1 );
 
     If Not Exists (Select * From Tmp_DatasetsToUpdate) Then
         RAISE INFO '%', 'No candidate datasets were found';

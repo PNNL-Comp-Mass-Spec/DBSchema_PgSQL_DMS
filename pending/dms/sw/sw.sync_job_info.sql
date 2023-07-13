@@ -101,7 +101,7 @@ BEGIN
     -- public.t_analysis_job_processor_group_membership
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _countBeforeMerge
     FROM sw.t_local_job_processors;
 
@@ -126,7 +126,7 @@ BEGIN
 
     GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-    SELECT COUNT(*)
+    SELECT COUNT(job)
     INTO _countAfterMerge
     FROM sw.t_local_job_processors;
 

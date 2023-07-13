@@ -91,7 +91,7 @@ BEGIN
           organism_db_name = 'na' AND
           NOT protein_collection_list IS NULL
     GROUP BY param_file_name, settings_file_name, protein_collection_list
-    HAVING COUNT(*) > _activeStepThreshold;
+    HAVING COUNT(job) > _activeStepThreshold;
 
     -- Active jobs with similar settings (using organism DBs)
     --
@@ -106,7 +106,7 @@ BEGIN
           organism_db_name <> 'na' AND
           NOT organism_db_name IS NULL
     GROUP BY param_file_name, settings_file_name, organism_db_name
-    HAVING COUNT(*) > _activeStepThreshold;
+    HAVING COUNT(job) > _activeStepThreshold;
 
     -- Batches with active, long-running jobs
     --
@@ -120,7 +120,7 @@ BEGIN
           JS.RunTime_Minutes > 180 AND
           batch_id > 0
     GROUP BY J.batch_id
-    HAVING COUNT(*) > _longRunningThreshold;
+    HAVING COUNT(JS.step) > _longRunningThreshold;
 
     ----------------------------------------------
     -- Add candidate jobs to Tmp_JobsToUpdate

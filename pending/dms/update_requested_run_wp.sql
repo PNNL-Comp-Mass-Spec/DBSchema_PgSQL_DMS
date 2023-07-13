@@ -137,7 +137,7 @@ BEGIN
             SELECT Value
             FROM public.parse_delimited_list (_requestedIdList, ',')
 
-            SELECT COUNT(*)
+            SELECT COUNT(request_id)
             INTO _rrCount
             FROM Tmp_RequestedRunList;
 

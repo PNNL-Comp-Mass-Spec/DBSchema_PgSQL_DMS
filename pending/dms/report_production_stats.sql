@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION public.report_production_stats
 RETURNS TABLE (
 
 	 -- ToDo: Validate the data types for these columns
-	 
+
 	instrument citext,
 	total_datasets int,
 	days_in_range numeric,
@@ -307,7 +307,7 @@ BEGIN
                                       Request_ID,
                                       EMSL_Funded,
                                       Proposal_Type )
-            SELECT D.Dataset_ID,
+            SELECT DS.Dataset_ID,
                    E.EX_campaign_ID,
                    RR.ID,
                    CASE
@@ -319,16 +319,16 @@ BEGIN
                                           -- 'Capacity', 'Staff Time'
                    END AS EMSL_Funded,
                    EUP.Proposal_Type
-            FROM t_dataset D
+            FROM t_dataset DS
                  INNER JOIN t_experiments E
-                   ON E.exp_id = D.exp_id
+                   ON E.exp_id = DS.exp_id
                  INNER JOIN Tmp_InstrumentFilter InstFilter
-                   ON D.instrument_id = InstFilter.instrument_id
+                   ON DS.instrument_id = InstFilter.instrument_id
                  INNER JOIN t_requested_run RR
-                   ON D.dataset_id = RR.dataset_id
+                   ON DS.dataset_id = RR.dataset_id
                  INNER JOIN t_eus_proposals EUP
                    ON RR.eus_proposal_id = EUP.proposal_id
-            WHERE Coalesce(D.acq_time_start, D.created) BETWEEN _stDate AND _eDate
+            WHERE Coalesce(DS.acq_time_start, DS.created) BETWEEN _stDate AND _eDate
                   AND
                   RR.eus_usage_type_id IN ( SELECT Usage_ID
                                             FROM Tmp_EUSUsageFilter );
@@ -342,7 +342,7 @@ BEGIN
                                       Request_ID,
                                       EMSL_Funded,
                                       Proposal_Type )
-            SELECT D.Dataset_ID,
+            SELECT DS.Dataset_ID,
                    E.EX_campaign_ID,
                    RR.ID,
                    CASE
@@ -354,16 +354,16 @@ BEGIN
                                           -- 'Capacity', 'Staff Time'
                    END AS EMSL_Funded,
                    EUP.Proposal_Type
-            FROM t_dataset D
+            FROM t_dataset DS
                  INNER JOIN t_experiments E
-                   ON E.exp_id = D.exp_id
+                   ON E.exp_id = DS.exp_id
                  INNER JOIN Tmp_InstrumentFilter InstFilter
-                   ON D.instrument_id = InstFilter.instrument_id
+                   ON DS.instrument_id = InstFilter.instrument_id
                  LEFT OUTER JOIN t_requested_run RR
-                   ON D.dataset_id = RR.dataset_id
+                   ON DS.dataset_id = RR.dataset_id
                  LEFT OUTER JOIN t_eus_proposals EUP
                    ON RR.eus_proposal_id = EUP.proposal_id
-            WHERE Coalesce(D.acq_time_start, D.created) BETWEEN _stDate AND _eDate;
+            WHERE Coalesce(DS.acq_time_start, DS.created) BETWEEN _stDate AND _eDate;
 
         End If;
 
@@ -373,7 +373,10 @@ BEGIN
             RAISE INFO 'Initial contents of Tmp_Datasets';
 
             FOR _datasetInfo IN
-                SELECT EMSL_Funded As EmslFunded, COUNT(*) As DatasetCount, MIN(Dataset_ID) As IdFirst, MAX(Dataset_ID) As IdLast
+                SELECT EMSL_Funded As EmslFunded,
+                       COUNT(Dataset_ID) As DatasetCount,
+                       MIN(Dataset_ID) As IdFirst,
+                       MAX(Dataset_ID) As IdLast
                 FROM Tmp_Datasets
                 GROUP BY EMSL_Funded
                 ORDER BY EMSL_Funded
@@ -404,7 +407,10 @@ BEGIN
             RAISE INFO 'After updating EMSL_Funded for work packages with SubAccount containing "Wiley Environmental"';
 
             FOR _datasetInfo IN
-                SELECT EMSL_Funded As EmslFunded, COUNT(*) As DatasetCount, MIN(Dataset_ID) As IdFirst, MAX(Dataset_ID) As IdLast
+                SELECT EMSL_Funded As EmslFunded,
+                       COUNT(Dataset_ID) As DatasetCount,
+                       MIN(Dataset_ID) As IdFirst,
+                       MAX(Dataset_ID) As IdLast
                 FROM Tmp_Datasets
                 GROUP BY EMSL_Funded
                 ORDER BY EMSL_Funded
@@ -503,32 +509,32 @@ BEGIN
                                 I.Instrument,
                                 I.Percent_EMSL_Owned,
                                 DF.Proposal_Type,
-                                COUNT(*) AS Total,                                                        -- Total
-                                0                                                             AS Bad,     -- Bad
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END) AS Blank    -- Blank
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'QC%' THEN 1 ELSE 0 END)    AS QC,      -- QC
-                                SUM(D.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,             -- Total time acquiring data, in days
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'Blank%' OR D.Dataset_Name LIKE 'QC%'
-                                         THEN D.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS BadBlankQC_AcqTimeDays,
+                                COUNT(DS.dataset_id) AS Total,                                             -- Total
+                                0 AS Bad,                                                                  -- Bad
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END) AS Blank    -- Blank
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'QC%' THEN 1 ELSE 0 END)    AS QC,      -- QC
+                                SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,             -- Total time acquiring data, in days
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' OR DS.Dataset_Name LIKE 'QC%'
+                                         THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS BadBlankQC_AcqTimeDays,
 
                                 -- EMSL Funded Counts:
                                 SUM(DF.EMSL_Funded) AS EF_Total,                                                           -- EF_Total
                                 0 AS EF_Bad,                                                                               -- EF_Bad
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,    -- EF_Blank
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'QC%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_QC,          -- EF_QC
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN D.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 And (D.Dataset_Name LIKE 'Blank%' OR D.Dataset_Name LIKE 'QC%')
-                                         THEN D.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,   -- EF_Blank
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'QC%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_QC,         -- EF_QC
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 And (DS.Dataset_Name LIKE 'Blank%' OR DS.Dataset_Name LIKE 'QC%')
+                                         THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
                             FROM Tmp_Datasets DF
-                                 INNER JOIN t_dataset D
-                                   ON DF.dataset_id = D.dataset_id
+                                 INNER JOIN t_dataset DS
+                                   ON DF.dataset_id = DS.dataset_id
                                  INNER JOIN t_instrument_name I
-                                   ON D.instrument_id = I.instrument_id
+                                   ON DS.instrument_id = I.instrument_id
                                  INNER JOIN Tmp_CampaignFilter CF
                                    ON CF.Campaign_ID = DF.Campaign_ID
-                            WHERE NOT (D.dataset LIKE 'Bad%' OR
-                                       D.dataset_rating_id IN (- 1, - 2, - 5) OR
-                                       D.dataset_state_id = 4) AND
+                            WHERE NOT (DS.dataset LIKE 'Bad%' OR
+                                       DS.dataset_rating_id IN (- 1, - 2, - 5) OR
+                                       DS.dataset_state_id = 4) AND
                                   (I.operations_role = 'Production' OR
                                    _productionOnly = 0)
                             GROUP BY I.instrument, I.percent_emsl_owned
@@ -538,30 +544,30 @@ BEGIN
                                 I.Instrument,
                                 I.Percent_EMSL_Owned,
                                 DF.Proposal_Type,
-                                COUNT(*) AS Total,                                                            -- Total
-                                SUM(CASE WHEN D.Dataset_Name NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,     -- Bad (not blank)
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END)     AS Blank,   -- Bad Blank; will be counted as a blank
-                                0                                                                 AS QC,      -- Bad QC; simply counted as Bad
-                                SUM(D.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,                 -- Total time acquiring data, in days
-                                SUM(D.Acq_Length_Minutes / 60.0 / 24.0) AS BadBlankQC_AcqTimeDays,
+                                COUNT(DS.dataset_id) AS Total,                                                -- Total
+                                SUM(CASE WHEN DS.Dataset_Name NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,    -- Bad (not blank)
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END)     AS Blank,  -- Bad Blank; will be counted as a blank
+                                0 AS QC,                                                                      -- Bad QC; simply counted as Bad
+                                SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,                -- Total time acquiring data, in days
+                                SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS BadBlankQC_AcqTimeDays,
 
                                 -- EMSL Funded Counts:
                                 SUM(DF.EMSL_Funded) AS EF_Total,                                                      -- EF_Total
-                                SUM(CASE WHEN D.dataset NOT LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Bad,  -- EF_Bad (not blank)
-                                SUM(CASE WHEN D.dataset LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,    -- Bad EF_Blank; will be counted as a blank
-                                0                                                                     AS EF_QC,       -- Bad EF_QC; simply counted as 'Bad'
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN D.acq_length_minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN D.acq_length_minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
+                                SUM(CASE WHEN DS.dataset NOT LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Bad, -- EF_Bad (not blank)
+                                SUM(CASE WHEN DS.dataset LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,   -- Bad EF_Blank; will be counted as a blank
+                                0 AS EF_QC,                                                                           -- Bad EF_QC; simply counted as 'Bad'
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN DS.acq_length_minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN DS.acq_length_minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
                             FROM Tmp_Datasets DF
-                                 INNER JOIN t_dataset D
-                                   ON DF.dataset_id = D.dataset_id
+                                 INNER JOIN t_dataset DS
+                                   ON DF.dataset_id = DS.dataset_id
                                  INNER JOIN t_instrument_name I
-                                   ON D.instrument_id = I.instrument_id
+                                   ON DS.instrument_id = I.instrument_id
                                  INNER JOIN Tmp_CampaignFilter CF
                                    ON CF.Campaign_ID = DF.Campaign_ID
-                            WHERE (D.dataset LIKE 'Bad%' OR
-                                   D.dataset_rating_id IN (- 1, - 2, - 5) OR
-                                   D.dataset_state_id = 4) AND
+                            WHERE (DS.dataset LIKE 'Bad%' OR
+                                   DS.dataset_rating_id IN (- 1, - 2, - 5) OR
+                                   DS.dataset_state_id = 4) AND
                                   (I.operations_role = 'Production' OR
                                    _productionOnly = 0)
                             GROUP BY I.instrument, I.percent_emsl_owned, DF.Proposal_Type
@@ -653,32 +659,32 @@ BEGIN
                             SELECT
                                 I.Instrument,
                                 I.Percent_EMSL_Owned,
-                                COUNT(*) AS Total,                                                        -- Total
-                                0                                                             AS Bad,     -- Bad
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END) AS Blank    -- Blank
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'QC%' THEN 1 ELSE 0 END)    AS QC,      -- QC
-                                SUM(D.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,             -- Total time acquiring data, in days
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'Blank%' OR D.Dataset_Name LIKE 'QC%'
-                                         THEN D.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS BadBlankQC_AcqTimeDays,
+                                COUNT(DS.dataset_id) AS Total,                                             -- Total
+                                0 AS Bad,                                                                  -- Bad
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END) AS Blank    -- Blank
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'QC%' THEN 1 ELSE 0 END)    AS QC,      -- QC
+                                SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,             -- Total time acquiring data, in days
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' OR DS.Dataset_Name LIKE 'QC%'
+                                         THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS BadBlankQC_AcqTimeDays,
 
                                 -- EMSL Funded Counts:
                                 SUM(DF.EMSL_Funded) AS EF_Total,                                                           -- EF_Total
                                 0 AS EF_Bad,                                                                               -- EF_Bad
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,    -- EF_Blank
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'QC%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_QC,          -- EF_QC
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN D.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 And (D.Dataset_Name LIKE 'Blank%' OR D.Dataset_Name LIKE 'QC%')
-                                         THEN D.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,   -- EF_Blank
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'QC%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_QC,         -- EF_QC
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 And (DS.Dataset_Name LIKE 'Blank%' OR DS.Dataset_Name LIKE 'QC%')
+                                         THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
                             FROM Tmp_Datasets DF
-                                 INNER JOIN t_dataset D
-                                   ON DF.dataset_id = D.dataset_id
+                                 INNER JOIN t_dataset DS
+                                   ON DF.dataset_id = DS.dataset_id
                                  INNER JOIN t_instrument_name I
-                                   ON D.instrument_id = I.instrument_id
+                                   ON DS.instrument_id = I.instrument_id
                                  INNER JOIN Tmp_CampaignFilter CF
                                    ON CF.Campaign_ID = DF.Campaign_ID
-                            WHERE NOT (D.dataset LIKE 'Bad%' OR
-                                       D.dataset_rating_id IN (- 1, - 2, - 5) OR
-                                       D.dataset_state_id = 4) AND
+                            WHERE NOT (DS.dataset LIKE 'Bad%' OR
+                                       DS.dataset_rating_id IN (- 1, - 2, - 5) OR
+                                       DS.dataset_state_id = 4) AND
                                   (I.operations_role = 'Production' OR
                                    _productionOnly = 0)
                             GROUP BY I.instrument, I.percent_emsl_owned
@@ -687,30 +693,30 @@ BEGIN
                             SELECT
                                 I.Instrument,
                                 I.Percent_EMSL_Owned,
-                                COUNT(*) AS Total,                                                            -- Total
-                                SUM(CASE WHEN D.Dataset_Name NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,     -- Bad (not blank)
-                                SUM(CASE WHEN D.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END)     AS Blank,   -- Bad Blank; will be counted as a blank
-                                0                                                                 AS QC,      -- Bad QC; simply counted as Bad
-                                SUM(D.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,                 -- Total time acquiring data, in days
-                                SUM(D.Acq_Length_Minutes / 60.0 / 24.0) AS BadBlankQC_AcqTimeDays,
+                                COUNT(DS.dataset_id) AS Total,                                                 -- Total
+                                SUM(CASE WHEN DS.Dataset_Name NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,     -- Bad (not blank)
+                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END)     AS Blank,   -- Bad Blank; will be counted as a blank
+                                0 AS QC,                                                                       -- Bad QC; simply counted as Bad
+                                SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,                 -- Total time acquiring data, in days
+                                SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS BadBlankQC_AcqTimeDays,
 
                                 -- EMSL Funded Counts:
                                 SUM(DF.EMSL_Funded) AS EF_Total,                                                      -- EF_Total
-                                SUM(CASE WHEN D.dataset NOT LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Bad,  -- EF_Bad (not blank)
-                                SUM(CASE WHEN D.dataset LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,    -- Bad EF_Blank; will be counted as a blank
-                                0                                                                     AS EF_QC,       -- Bad EF_QC; simply counted as 'Bad'
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN D.acq_length_minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN D.acq_length_minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
+                                SUM(CASE WHEN DS.dataset NOT LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Bad, -- EF_Bad (not blank)
+                                SUM(CASE WHEN DS.dataset LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,   -- Bad EF_Blank; will be counted as a blank
+                                0 AS EF_QC,                                                                           -- Bad EF_QC; simply counted as 'Bad'
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN DS.acq_length_minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 THEN DS.acq_length_minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
                             FROM Tmp_Datasets DF
-                                 INNER JOIN t_dataset D
-                                   ON DF.dataset_id = D.dataset_id
+                                 INNER JOIN t_dataset DS
+                                   ON DF.dataset_id = DS.dataset_id
                                  INNER JOIN t_instrument_name I
-                                   ON D.instrument_id = I.instrument_id
+                                   ON DS.instrument_id = I.instrument_id
                                  INNER JOIN Tmp_CampaignFilter CF
                                    ON CF.Campaign_ID = DF.Campaign_ID
-                            WHERE (D.dataset LIKE 'Bad%' OR
-                                   D.dataset_rating_id IN (- 1, - 2, - 5) OR
-                                   D.dataset_state_id = 4) AND
+                            WHERE (DS.dataset LIKE 'Bad%' OR
+                                   DS.dataset_rating_id IN (- 1, - 2, - 5) OR
+                                   DS.dataset_state_id = 4) AND
                                   (I.operations_role = 'Production' OR
                                    _productionOnly = 0)
                             GROUP BY I.instrument, I.percent_emsl_owned

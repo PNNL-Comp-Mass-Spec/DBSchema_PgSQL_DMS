@@ -62,7 +62,7 @@ BEGIN
 
     INSERT INTO Tmp_ProteinCollectionList (ProteinCollectionName)
     SELECT Value
-    FROM public.parse_delimited_list(_proteinCollectionList, ',')
+    FROM public.parse_delimited_list(_proteinCollectionList, ',');
 
     -----------------------------------------------------
     -- Count the number of protein collection names present
@@ -73,7 +73,7 @@ BEGIN
 
     SELECT MIN(ProteinCollectionName), COUNT(*)
     INTO _proteinCollectionName, _proteinCollectionCount
-    FROM Tmp_ProteinCollectionList
+    FROM Tmp_ProteinCollectionList;
 
     If _proteinCollectionCount < 1 Then
         _message := 'Could not find any entries in Tmp_ProteinCollectionList; this is unexpected';
@@ -101,7 +101,7 @@ BEGIN
               WHERE PC.collection_name = _proteinCollectionName AND AOF.creation_options = _creationOptions
             )
     GROUP BY AOF.archived_file_id
-    HAVING COUNT(*) = _proteinCollectionCount
+    HAVING COUNT(*) = _proteinCollectionCount;
 
     If Not FOUND Then
         _message := 'Warning: Could not find any archived output files';

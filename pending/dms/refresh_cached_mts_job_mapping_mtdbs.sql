@@ -58,14 +58,14 @@ BEGIN
         (SELECT J.CachedInfo_ID
          FROM t_mts_mt_db_jobs_cached J
               INNER JOIN ( SELECT server_name,
-                           mt_db_name,
-                           job,
-                           result_type,
-                           MIN(cached_info_id) AS MinID
-                    FROM t_mts_mt_db_jobs_cached
-                    GROUP BY Server_Name, MT_DB_Name, Job, ResultType
-                    HAVING COUNT(*) > 1
-                  ) DupQ
+                                  mt_db_name,
+                                  job,
+                                  result_type,
+                                  MIN(cached_info_id) AS MinID
+                           FROM t_mts_mt_db_jobs_cached
+                           GROUP BY Server_Name, MT_DB_Name, Job, ResultType
+                           HAVING COUNT(cached_info_id) > 1
+                         ) DupQ
                ON J.Server_Name = DupQ.Server_Name AND
                   J.MT_DB_Name = DupQ.MT_DB_Name AND
                   J.Job = DupQ.Job AND
@@ -112,7 +112,7 @@ BEGIN
 
         -- Use a MERGE Statement to synchronize t_mts_mt_db_jobs_cached with S_MTS_Analysis_Job_to_MT_DB_Map
 
-        SELECT COUNT(*)
+        SELECT COUNT(cached_info_id)
         INTO _countBeforeMerge
         FROM t_mts_mt_db_jobs_cached;
 
@@ -141,7 +141,7 @@ BEGIN
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-        SELECT COUNT(*)
+        SELECT COUNT(cached_info_id)
         INTO _countAfterMerge
         FROM t_mts_mt_db_jobs_cached;
 

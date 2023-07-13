@@ -99,8 +99,7 @@ BEGIN
     -- Populate temporary table from container list
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Material_Container_List
-        (ID, Name, Location, ItemCount, Status, Type)
+    INSERT INTO Tmp_Material_Container_List (ID, Name, Location, ItemCount, Status, Type)
     SELECT Container_ID,
            Container,
            Location,
@@ -109,7 +108,7 @@ BEGIN
            Type
     FROM V_Material_Container_Item_Stats
     WHERE Container_ID IN ( SELECT Value
-                   FROM public.parse_delimited_list ( _containerList ) );
+                            FROM public.parse_delimited_list ( _containerList ) );
     --
     GET DIAGNOSTICS _numContainers = ROW_COUNT;
 
@@ -204,7 +203,7 @@ BEGIN
     -- Determine whether or not any containers have contents
     ---------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(ID)
     INTO _nonEmptyContainerCount
     FROM Tmp_Material_Container_List
     WHERE ItemCount > 0;

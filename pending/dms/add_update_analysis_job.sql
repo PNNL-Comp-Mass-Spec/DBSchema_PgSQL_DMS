@@ -435,8 +435,8 @@ BEGIN
                 -- If it does, do not add another job
                 ---------------------------------------------------
 
-                SELECT COUNT(*),
-                       MAX(job)
+                SELECT COUNT(AJ.job),
+                       MAX(AJ.job)
                 INTO _existingJobCount, _existingMatchingJob
                 FROM
                     t_dataset DS INNER JOIN

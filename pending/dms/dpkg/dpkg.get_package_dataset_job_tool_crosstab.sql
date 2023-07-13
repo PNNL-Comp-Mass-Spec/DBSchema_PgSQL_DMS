@@ -56,7 +56,7 @@ BEGIN
         );
 
         ---------------------------------------------------
-        -- get list of package datasets
+        -- Get list of package datasets
         ---------------------------------------------------
 
         INSERT INTO Tmp_Datasets( dataset,
@@ -64,18 +64,19 @@ BEGIN
         SELECT DISTINCT dataset,
                         _dataPackageID
         FROM dpkg.t_data_package_datasets
-        WHERE data_pkg_id = _dataPackageID
+        WHERE data_pkg_id = _dataPackageID;
 
         -- Update job counts
         UPDATE Tmp_Datasets
         SET Jobs = TX.Total
         FROM (
-                SELECT dataset, COUNT(*) AS Total
+                SELECT dataset,
+                       COUNT(job) AS Total
                 FROM dpkg.t_data_package_analysis_jobs
                 WHERE data_pkg_id = _dataPackageID
                 GROUP BY dataset
              ) CountQ
-        WHERE ON CountQ.dataset = Tmp_Datasets.dataset
+        WHERE ON CountQ.dataset = Tmp_Datasets.dataset;
 
         ---------------------------------------------------
         -- Get list of tools covered by package jobs
@@ -84,7 +85,7 @@ BEGIN
         INSERT INTO Tmp_Tools ( tool )
         SELECT DISTINCT tool
         FROM dpkg.t_data_package_analysis_jobs
-        WHERE data_pkg_id = _dataPackageID
+        WHERE data_pkg_id = _dataPackageID;
 
         ---------------------------------------------------
         -- Add columns to temp dataset table for each tool
@@ -112,9 +113,11 @@ BEGIN
             DELETE FROM Tmp_Scratch
 
             INSERT INTO Tmp_Scratch ( dataset, Total )
-            SELECT dataset, COUNT(*) AS Total
+            SELECT dataset,
+                   COUNT(job) AS Total
             FROM dpkg.t_data_package_analysis_jobs
-            WHERE data_pkg_id = _dataPackageID AND tool = _colName
+            WHERE data_pkg_id = _dataPackageID AND
+                  tool = _colName
             GROUP BY dataset;
 
             _sql := format('UPDATE Tmp_Datasets SET %I = TX.Total FROM Tmp_Datasets INNER JOIN Tmp_Scratch TX ON TX.Dataset = Tmp_Datasets.Dataset', _colName);

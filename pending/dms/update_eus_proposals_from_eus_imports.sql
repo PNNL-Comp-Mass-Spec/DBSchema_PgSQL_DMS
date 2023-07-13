@@ -54,7 +54,7 @@ BEGIN
         -- t_eus_proposals with V_NEXUS_Import_Proposals
         ---------------------------------------------------
 
-        SELECT COUNT(*)
+        SELECT COUNT(proposal_id)
         INTO _countBeforeMerge
         FROM t_eus_proposals;
 
@@ -97,7 +97,7 @@ BEGIN
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-        SELECT COUNT(*)
+        SELECT COUNT(proposal_id)
         INTO _countAfterMerge
         FROM t_eus_proposals;
 
