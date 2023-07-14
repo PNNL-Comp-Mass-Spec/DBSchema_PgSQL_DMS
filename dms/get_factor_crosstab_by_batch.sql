@@ -8,17 +8,20 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_batch(IN _batchid inte
 /****************************************************
 **
 **  Desc:
-**      Returns the factors associated with the run requests in the specified batch
+**      Returns the factors associated with the requested runs in the specified batch
 **
 **      This is used by https://dms2.pnl.gov/requested_run_batch_blocking/param
 **
 **  Arguments:
 **    _batchID          Batch ID
-**    _nameContains     Request name filter
-**    _infoOnly         When True, show the SQL used to display the factors associated with requested runs in the batch
+**    _nameContains     Requested run name filter
+**    _infoOnly         When True, show the SQL used to display the factors associated with the requested runs in the batch
 **
 **  Use this to view the data returned by the _results cursor
-**  Note that this will result in an error if the batch is not found, or if not of the requested runs for the batch includes the text specified by _nameContains
+**
+**  Note that this will result in an error if the batch is not found,
+**  or if none of the requested runs for the batch has a name
+**  that includes the text in _nameContains
 **
 **      BEGIN;
 **          CALL public.get_factor_crosstab_by_batch (
@@ -130,7 +133,7 @@ BEGIN
     );
 
     -----------------------------------------
-    -- Populate Tmp_RequestIDs with the requests that correspond to batch _batchID
+    -- Populate Tmp_RequestIDs with the requested runs in batch _batchID
     -----------------------------------------
 
     INSERT INTO Tmp_RequestIDs (Request)
@@ -169,13 +172,12 @@ BEGIN
 
     If _infoOnly Then
         RAISE INFO '%', _sql;
-
     Else
         Open _results For
             EXECUTE _sql;
     End If;
 
-    -- Do not drop Tmp_RequestIDs or Tmp_Factors, since the cursor needs to access them
+    -- Do not drop Tmp_RequestIDs or Tmp_Factors, since the cursor accesses them
 
     RETURN;
 EXCEPTION
