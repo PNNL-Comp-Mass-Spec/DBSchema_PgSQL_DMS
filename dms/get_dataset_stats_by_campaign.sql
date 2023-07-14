@@ -1,34 +1,10 @@
 --
-CREATE OR REPLACE FUNCTION public.get_dataset_stats_by_campaign
-(
-    _mostRecentWeeks int = 20,
-    _startDate timestamp = null,
-    _endDate timestamp = null,
-    _includeInstrument int = 0,
-    _excludeQCAndBlankWithoutWP int = 1,
-    _excludeAllQCAndBlank int = 0,
-    _campaignNameFilter text = '',
-    _campaignNameExclude text = '',
-    _instrumentBuilding text = '',
-    _previewSql boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-RETURNS TABLE
-(
-	Campaign citext,
-	Work_Package citext,
-	Pct_EMSL_Funded numeric(3,2),
-	Runtime_Hours numeric(9,1),
-	Datasets int,
-	Building citext,
-	Instrument citext,
-	Request_Min int,
-	Request_Max int,
-	Pct_Total_Runtime numeric(9,3)
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_dataset_stats_by_campaign(integer, timestamp without time zone, timestamp without time zone, integer, integer, integer, text, text, text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION public.get_dataset_stats_by_campaign(_mostrecentweeks integer DEFAULT 20, _startdate timestamp without time zone DEFAULT NULL::timestamp without time zone, _enddate timestamp without time zone DEFAULT NULL::timestamp without time zone, _includeinstrument integer DEFAULT 0, _excludeqcandblankwithoutwp integer DEFAULT 1, _excludeallqcandblank integer DEFAULT 0, _campaignnamefilter text DEFAULT ''::text, _campaignnameexclude text DEFAULT ''::text, _instrumentbuilding text DEFAULT ''::text, _previewsql boolean DEFAULT false) RETURNS TABLE(campaign public.citext, work_package public.citext, pct_emsl_funded numeric, runtime_hours numeric, datasets integer, building public.citext, instrument public.citext, request_min integer, request_max integer, pct_total_runtime numeric)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -43,7 +19,7 @@ AS $$
 **  Date:   06/07/2019 mem - Initial release
 **          06/10/2019 mem - Add parameters _excludeQCAndBlankWithoutWP, _campaignNameExclude, and _instrumentBuilding
 **          03/24/2020 mem - Add parameter _excludeAllQCAndBlank
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/13/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -53,8 +29,6 @@ DECLARE
     _optionalBuildingNot text := '';
     _totalRuntimeHours real;
 BEGIN
-    _message := '';
-    _returnCode := '';
 
     -----------------------------------------
     -- Validate the inputs
@@ -68,6 +42,10 @@ BEGIN
     _campaignNameExclude := Coalesce(_campaignNameExclude, '');
     _instrumentBuilding := Coalesce(_instrumentBuilding, '');
     _previewSql := Coalesce(_previewSql, false);
+
+    If _previewSql Then
+        RAISE INFO '';
+    End If;
 
     If _mostRecentWeeks < 1 Then
         _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '20 weeks');
@@ -114,37 +92,37 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_CampaignDatasetStats (
         Campaign citext Not Null,
-        WorkPackage citext Null,
+        Work_Package citext Null,
         FractionEMSLFunded numeric(3,2) Null,
-        RuntimeHours numeric(9,1) Not Null,
+        Runtime_Hours numeric(9,1) Not Null,
         Datasets int Not Null,
         Building citext Not Null,
         Instrument citext Not Null,
-        RequestMin int Not Null,
-        RequestMax int Not Null
+        Request_Min int Not Null,
+        Request_Max int Not Null
     );
 
     -----------------------------------------
     -- Construct the query to retrieve the results
     -----------------------------------------
 
-    _sql := 'INSERT INTO Tmp_CampaignDatasetStats (Campaign, WorkPackage, FractionEMSLFunded, RuntimeHours, Datasets, Building, Instrument, RequestMin, RequestMax) '
+    _sql := 'INSERT INTO Tmp_CampaignDatasetStats (Campaign, Work_Package, FractionEMSLFunded, Runtime_Hours, Datasets, Building, Instrument, Request_Min, Request_Max) '
             'SELECT C.Campaign, '
                    'RR.work_package, '
                    'C.Fraction_EMSL_Funded, '
-                   'Cast(Sum(DS.Acq_Length_Minutes) / 60.0 AS numeric(9,1)) AS RuntimeHours, '
+                   'Cast(Sum(DS.Acq_Length_Minutes) / 60.0 AS numeric(9,1)) AS Runtime_Hours, '
                    'COUNT(DS.dataset_id) AS Datasets, '
                    'InstName.Building, ';
 
     If _includeInstrument > 0 Then
-        _sql := _sql || 'InstName.instrument As Instrument, ';
+        _sql := _sql || 'InstName.instrument, ';
     Else
         _sql := _sql || ''''' As Instrument, ';
     End If;
 
     _sql := _sql ||
-                   'MIN(RR.request_id) AS RequestMin, '
-                   'MAX(RR.request_id) AS RequestMax '
+                   'MIN(RR.request_id) AS Request_Min, '
+                   'MAX(RR.request_id) AS Request_Max '
             'FROM t_dataset DS '
                  'INNER JOIN t_experiments E ON DS.exp_id = E.exp_id '
                  'INNER JOIN t_campaign C ON E.campaign_id = C.campaign_id '
@@ -152,9 +130,9 @@ BEGIN
                  'INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id ';
 
     If _mostRecentWeeks > 0 Then
-        _sql := _sql || format('WHERE DS.DateSortKey > CURRENT_TIMESTAMP - INTERVAL ''%s weeks''', _mostRecentWeeks);
+        _sql := _sql || format('WHERE DS.Date_Sort_Key > CURRENT_TIMESTAMP - INTERVAL ''%s weeks''', _mostRecentWeeks);
     Else
-        _sql := _sql || format('WHERE DS.DateSortKey BETWEEN ''%s'' AND ''%s''', _startDate, _endDate;
+        _sql := _sql || format('WHERE DS.Date_Sort_Key BETWEEN ''%s'' AND ''%s''', _startDate, _endDate);
     End If;
 
     If _campaignNameFilter <> '' Then
@@ -180,7 +158,7 @@ BEGIN
                         ' AND NOT C.Campaign IN (''Blank'', ''DataUpload'', ''DMS_Pipeline_Jobs'', ''Tracking'') ';
     End If;
 
-    _sql := _sql || ' GROUP BY Campaign, RR.work_package, C.CM_Fraction_EMSL_Funded, InstName.Building';
+    _sql := _sql || ' GROUP BY Campaign, RR.work_package, C.Fraction_EMSL_Funded, InstName.Building';
 
     If _includeInstrument > 0 Then
         _sql := _sql ||    ', InstName.instrument';
@@ -199,29 +177,27 @@ BEGIN
         -- Determine the total runtime
         -----------------------------------------
 
-        SELECT Sum(RuntimeHours)
+        SELECT Sum(Src.Runtime_Hours)
         INTO _totalRuntimeHours
-        FROM Tmp_CampaignDatasetStats AS StatsQ
+        FROM Tmp_CampaignDatasetStats Src;
 
         -----------------------------------------
         -- Return the results
         -----------------------------------------
 
-        -- ToDo: Convert this procedure to a function
-
-		RETURN QUERY
-        SELECT Campaign,
-               WorkPackage AS Work_Package,
-               FractionEMSLFunded * 100 As Pct_EMSL_Funded,
-               RuntimeHours AS Runtime_Hours,
-               Datasets,
-               Building,
-               Instrument,
-               RequestMin AS Request_Min,
-               RequestMax AS Request_Max,
-               (RuntimeHours / _totalRuntimeHours * 100)::numeric(9,3)) AS Pct_Total_Runtime
-        FROM Tmp_CampaignDatasetStats
-        ORDER BY RuntimeHours DESC
+        RETURN QUERY
+        SELECT Src.Campaign,
+               Src.Work_Package,
+               Src.FractionEMSLFunded * 100 As Pct_EMSL_Funded,
+               Src.Runtime_Hours,
+               Src.Datasets,
+               Src.Building,
+               Src.Instrument,
+               Src.Request_Min,
+               Src.Request_Max,
+               (Src.Runtime_Hours / _totalRuntimeHours * 100)::numeric(9,3) AS Pct_Total_Runtime
+        FROM Tmp_CampaignDatasetStats Src
+        ORDER BY Src.Runtime_Hours DESC;
 
     End If;
 
@@ -229,5 +205,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON FUNCTION public.get_dataset_stats_by_campaign IS 'GetDatasetStatsByCampaign';
+
+ALTER FUNCTION public.get_dataset_stats_by_campaign(_mostrecentweeks integer, _startdate timestamp without time zone, _enddate timestamp without time zone, _includeinstrument integer, _excludeqcandblankwithoutwp integer, _excludeallqcandblank integer, _campaignnamefilter text, _campaignnameexclude text, _instrumentbuilding text, _previewsql boolean) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_dataset_stats_by_campaign(_mostrecentweeks integer, _startdate timestamp without time zone, _enddate timestamp without time zone, _includeinstrument integer, _excludeqcandblankwithoutwp integer, _excludeallqcandblank integer, _campaignnamefilter text, _campaignnameexclude text, _instrumentbuilding text, _previewsql boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_dataset_stats_by_campaign(_mostrecentweeks integer, _startdate timestamp without time zone, _enddate timestamp without time zone, _includeinstrument integer, _excludeqcandblankwithoutwp integer, _excludeallqcandblank integer, _campaignnamefilter text, _campaignnameexclude text, _instrumentbuilding text, _previewsql boolean) IS 'GetDatasetStatsByCampaign';
 
