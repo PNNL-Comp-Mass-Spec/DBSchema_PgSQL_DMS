@@ -104,16 +104,16 @@ CREATE INDEX ix_t_dataset_dataset_id_created_storage_path_id_include ON public.t
 CREATE INDEX ix_t_dataset_dataset_id_exp_id ON public.t_dataset USING btree (dataset_id, exp_id);
 
 --
--- Name: ix_t_dataset_dataset_id_include_dataset_instrument_name_id; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_dataset_dataset_id_include_dataset_instrument_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_dataset_dataset_id_include_dataset_instrument_name_id ON public.t_dataset USING btree (dataset_id) INCLUDE (dataset, instrument_id);
+CREATE INDEX ix_t_dataset_dataset_id_include_dataset_instrument_id ON public.t_dataset USING btree (dataset_id) INCLUDE (dataset, instrument_id);
 
 --
--- Name: ix_t_dataset_dataset_id_instrument_name_id_storage_path_id; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_dataset_dataset_id_instrument_id_storage_path_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_dataset_dataset_id_instrument_name_id_storage_path_id ON public.t_dataset USING btree (dataset_id, instrument_id, storage_path_id);
+CREATE INDEX ix_t_dataset_dataset_id_instrument_id_storage_path_id ON public.t_dataset USING btree (dataset_id, instrument_id, storage_path_id);
 
 --
 -- Name: ix_t_dataset_date_sort_key; Type: INDEX; Schema: public; Owner: d3l243
@@ -128,10 +128,10 @@ CREATE INDEX ix_t_dataset_date_sort_key ON public.t_dataset USING btree (date_so
 CREATE INDEX ix_t_dataset_exp_id ON public.t_dataset USING btree (exp_id);
 
 --
--- Name: ix_t_dataset_id_created_exp_id_spath_id_instrument_name_id; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_dataset_id_created_exp_id_spath_id_instrument_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_dataset_id_created_exp_id_spath_id_instrument_name_id ON public.t_dataset USING btree (dataset_id, created, exp_id, storage_path_id, instrument_id);
+CREATE INDEX ix_t_dataset_id_created_exp_id_spath_id_instrument_id ON public.t_dataset USING btree (dataset_id, created, exp_id, storage_path_id, instrument_id);
 
 --
 -- Name: ix_t_dataset_inst_name_id_dataset_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
@@ -140,22 +140,22 @@ CREATE INDEX ix_t_dataset_id_created_exp_id_spath_id_instrument_name_id ON publi
 CREATE INDEX ix_t_dataset_inst_name_id_dataset_dataset_id ON public.t_dataset USING btree (instrument_id, dataset, dataset_id);
 
 --
+-- Name: ix_t_dataset_instrument_id_acq_time_start_include_dataset; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_dataset_instrument_id_acq_time_start_include_dataset ON public.t_dataset USING btree (instrument_id, acq_time_start) INCLUDE (dataset_id, dataset_rating_id);
+
+--
 -- Name: ix_t_dataset_instrument_id_state_id_include_dataset_name_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
 CREATE INDEX ix_t_dataset_instrument_id_state_id_include_dataset_name_id ON public.t_dataset USING btree (instrument_id, dataset_state_id) INCLUDE (dataset, dataset_id);
 
 --
--- Name: ix_t_dataset_instrument_name_id_acq_time_start_include_dataset; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_dataset_instrument_id_type_id_include_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_dataset_instrument_name_id_acq_time_start_include_dataset ON public.t_dataset USING btree (instrument_id, acq_time_start) INCLUDE (dataset_id, dataset_rating_id);
-
---
--- Name: ix_t_dataset_instrument_name_id_type_id_include_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
---
-
-CREATE INDEX ix_t_dataset_instrument_name_id_type_id_include_dataset_id ON public.t_dataset USING btree (instrument_id, dataset_type_id) INCLUDE (dataset_id);
+CREATE INDEX ix_t_dataset_instrument_id_type_id_include_dataset_id ON public.t_dataset USING btree (instrument_id, dataset_type_id) INCLUDE (dataset_id);
 
 --
 -- Name: ix_t_dataset_lc_column_id; Type: INDEX; Schema: public; Owner: d3l243
@@ -182,10 +182,10 @@ CREATE INDEX ix_t_dataset_sec_sep ON public.t_dataset USING btree (separation_ty
 CREATE INDEX ix_t_dataset_state_id ON public.t_dataset USING btree (dataset_state_id);
 
 --
--- Name: ix_t_dataset_storage_path_id_created_instrument_name_id_rating; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_dataset_storage_path_id_created_instrument_id_rating; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_dataset_storage_path_id_created_instrument_name_id_rating ON public.t_dataset USING btree (storage_path_id, created, instrument_id, dataset_rating_id, dataset_id);
+CREATE INDEX ix_t_dataset_storage_path_id_created_instrument_id_rating ON public.t_dataset USING btree (storage_path_id, created, instrument_id, dataset_rating_id, dataset_id);
 
 --
 -- Name: t_dataset trig_t_dataset_after_delete_all; Type: TRIGGER; Schema: public; Owner: d3l243
