@@ -92,7 +92,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_InstrumentUsageInfo (
         Seq int
-    )
+    );
 
     ---------------------------------------------------
     -- Get keys to affected items
@@ -118,9 +118,69 @@ BEGIN
 
         -- ToDo: Preview the table rows using RAISE INFO
 
-        SELECT *
-        FROM Tmp_InstrumentUsageInfo INNER JOIN
-             t_emsl_instrument_usage_report TD ON Tmp_InstrumentUsageInfo.seq = TD.seq;
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT R.seq,
+                   R.emsl_inst_id,
+                   R.dms_inst_id,
+                   R.type,
+                   R.start,
+                   R.minutes,
+                   R.proposal,
+                   R.usage_type_id,
+                   R.users,
+                   R.operator,
+                   R.comment,
+                   R.year,
+                   R.month,
+                   R.dataset_id,
+                   R.dataset_id_acq_overlap
+            FROM Tmp_InstrumentUsageInfo
+                 INNER JOIN t_emsl_instrument_usage_report R
+                   ON Tmp_InstrumentUsageInfo.seq = R.seq
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.seq,
+                                _previewData.emsl_inst_id,
+                                _previewData.dms_inst_id,
+                                _previewData.type,
+                                _previewData.start,
+                                _previewData.minutes,
+                                _previewData.proposal,
+                                _previewData.usage_type_id,
+                                _previewData.users,
+                                _previewData.operator,
+                                _previewData.comment,
+                                _previewData.year,
+                                _previewData.month,
+                                _previewData.dataset_id,
+                                _previewData.dataset_id_acq_overlap
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         DROP TABLE Tmp_InstrumentUsageInfo;
         RETURN;

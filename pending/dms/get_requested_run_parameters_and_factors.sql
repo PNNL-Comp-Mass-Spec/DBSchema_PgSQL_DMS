@@ -2,11 +2,11 @@
 CREATE OR REPLACE FUNCTION public.get_requested_run_parameters_and_factors
 (
     _itemList TEXT,
-    _infoOnly boolean = false)
-RETURNS TABLE (
-    x
-    y
-    z
+    _infoOnly boolean = false,
+    INOUT _results refcursor DEFAULT '_results'::refcursor,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
+
 )
 LANGUAGE plpgsql
 AS $$
@@ -16,6 +16,24 @@ AS $$
 **      Returns the run parameters and factors associated with the run requests in the input list
 **
 **      This is used by http://dms2.pnl.gov/requested_run_batch_blocking/grid
+**
+**  Arguments:
+**    _itemList     Comma-separated list of request IDs
+**    _infoOnly     When true, show the SQL
+**
+**  Use this to view the data returned by the _results cursor
+**  Note that this will result in an error if no matching items are found
+**
+**      BEGIN;
+**          CALL public.get_requested_run_parameters_and_factors (
+**              _itemList => '1123361, 1123374, 1147991',
+**              _infoOnly => false
+**          );
+**          FETCH ALL FROM _results;
+**      END;
+**
+**  Alternatively, use an anonymous code block (though it cannot return query results; it can only store them in a table or display them with RAISE INFO)
+**  For an example, see procedure public.get_factor_crosstab_by_batch()
 **
 **  Auth:   grk
 **  Date:   03/28/2013
@@ -27,68 +45,96 @@ AS $$
 DECLARE
     _colList text;
     _sql text;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
+    -----------------------------------------
+    -- Validate the inputs
+    -----------------------------------------
+
+    _infoOnly     := Coalesce(_infoOnly, false);
+
+    If _itemList Is Null Then
+        RAISE WARNING '_itemList is null';
+        RETURN;
+    End If;
+
 
     -----------------------------------------
     -- Temp tables to hold list of requests and factors
     --
-    -- This procedure populates Tmp_Requests
+    -- This procedure populates Tmp_RequestIDs
     -- Procedure make_factor_crosstab_sql will populate Tmp_Factors
     -----------------------------------------
 
-    CREATE TEMP TABLE Tmp_Requests (
+    DROP TABLE IF EXISTS Tmp_RequestIDs;
+    DROP TABLE IF EXISTS Tmp_Factors;
+
+    CREATE TEMP TABLE Tmp_RequestIDs (
         Request int
     );
 
     CREATE TEMP TABLE Tmp_Factors (
         FactorID int,
-        FactorName text NULL
+        FactorName citext NULL
     );
 
     -----------------------------------------
-    -- Populate Tmp_Requests with list of requests
+    -- Populate Tmp_RequestIDs with requested run IDs
     -----------------------------------------
 
-    INSERT INTO Tmp_Requests (Request)
+    INSERT INTO Tmp_RequestIDs (Request)
     SELECT Value
     FROM public.parse_delimited_integer_list(_itemList);
 
     -----------------------------------------
     -- Build the SQL for obtaining the factors for the requests
-    --
-    -- These columns correspond to view V_Requested_Run_Unified_List_Ex
+    -- If the batch has additional factors, they will be shown after the run_order column
     -----------------------------------------
 
     _colList := 'request, name, status, batch, experiment, dataset, instrument, cart, lc_col, block, run_order';
 
-    CALL make_factor_crosstab_sql (_itemList, _colList, _sql => _sql, _viewName => 'V_Requested_Run_Unified_List_Ex');
-
+    SELECT make_factor_crosstab_sql ( _colList, _viewName => 'V_Requested_Run_Unified_List_Ex')
+    INTO _sql;
 
     -----------------------------------------
     -- Return the output table
-    --
     -- Either show the dynamic SQL or execute the SQL and return the results
     -----------------------------------------
 
     If _infoOnly Then
+        RAISE INFO '%', _sql;
 
-         -- ToDo: update these columns
-
-        RETURN QUERY
-        SELECT _sql As sel,
-               0 As batch_id,
-               '' As experiment,
-               '' As dataset,
-               '' As name citext
-               'Preview SQL' As status,
-               0 As request;
     Else
-        RETURN QUERY
-        EXECUTE _sql;
+        Open _results For
+            EXECUTE _sql;
     End If;
 
-    DROP TABLE Tmp_Requests;
-    DROP TABLE Tmp_Factors;
+    -- Do not drop Tmp_RequestIDs or Tmp_Factors, since the cursor needs to access them
+
+    RETURN;
+EXCEPTION
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS
+            _sqlState         = returned_sqlstate,
+            _exceptionMessage = message_text,
+            _exceptionDetail  = pg_exception_detail,
+            _exceptionContext = pg_exception_context;
+
+    _message := local_error_handler (
+                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                    _callingProcLocation => '', _logError => true);
+
+    If Coalesce(_returnCode, '') = '' Then
+        _returnCode := _sqlState;
+    End If;
+
 END
 $$;
 

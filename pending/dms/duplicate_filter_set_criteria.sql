@@ -109,20 +109,55 @@ BEGIN
     End If;
 
     If _infoOnly Then
-    
+
         -- ToDo: Show these values using RAISE INFO
 
-        SELECT FSC.filter_criteria_group_id,
-               FSC.criterion_id,
-               FSCN.criterion_name,
-               FSC.criterion_comparison,
-               FSC.criterion_value
-        FROM t_filter_set_criteria FSC
-             INNER JOIN Tmp_FilterSetGroups FSG
-               ON FSC.filter_criteria_group_id = FSG.Group_ID_Old
-             INNER JOIN t_filter_set_criteria_names FSCN
-               ON FSC.criterion_id = FSCN.criterion_id
-        ORDER BY FSG.Group_ID_Old, criterion_id
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                                );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT FSC.filter_criteria_group_id,
+                   FSC.criterion_id,
+                   FSCN.criterion_name,
+                   FSC.criterion_comparison,
+                   FSC.criterion_value
+            FROM t_filter_set_criteria FSC
+                 INNER JOIN Tmp_FilterSetGroups FSG
+                   ON FSC.filter_criteria_group_id = FSG.Group_ID_Old
+                 INNER JOIN t_filter_set_criteria_names FSCN
+                   ON FSC.criterion_id = FSCN.criterion_id
+            ORDER BY FSG.Group_ID_Old, criterion_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.filter_criteria_group_id,
+                                _previewData.criterion_id,
+                                _previewData.criterion_name,
+                                _previewData.criterion_comparison,
+                                _previewData.criterion_value
+                    );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         RETURN;
     End If;

@@ -1,5 +1,5 @@
 --
-CREATE OR REPLACE PROCEDURE public.find_duplicate_param_files
+CREATE OR REPLACE FUNCTION public.find_duplicate_param_files
 (
     _paramFileNameFilter text = '',
     _paramFileTypeList text = 'MSGFPlus',
@@ -10,6 +10,17 @@ CREATE OR REPLACE PROCEDURE public.find_duplicate_param_files
     _previewSql boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default ''
+)
+RETURNS TABLE
+(
+    Entry_ID int,
+    Param_File_Type text,
+    Param_File_ID_Master int,
+    Param_File_ID_Dup int,
+    param_file_Name_A text,
+    param_file_Name_B text,
+    param_file_Description_A text,
+    param_file_Description_B text
 )
 LANGUAGE plpgsql
 AS $$
@@ -97,7 +108,7 @@ BEGIN
         Entry_Type text,
         Entry_Specifier text,
         Entry_Value text,
-        Compare boolean Default true
+        Compare boolean default true
     );
 
     CREATE INDEX IX_Tmp_ParamEntries_Param_File_ID ON Tmp_ParamEntries (Param_File_ID);
@@ -109,7 +120,7 @@ BEGIN
         Entry_Type text,
         Entry_Specifier text,
         Entry_Value text,
-        Compare boolean Default true
+        Compare boolean default true
     );
 
     CREATE INDEX IX_Tmp_DefaultSequestParamEntries_Entry_ID ON Tmp_DefaultSequestParamEntries (Entry_ID);
@@ -198,20 +209,20 @@ BEGIN
     If _previewSql Then
         RAISE INFO '%', format('%s %s', _sqlStart, _sql);
 
-        -- Populate Tmp_ParamFiles with the first parameter file matching the filters
-        EXECUTE (format('%s %s LIMIT 1', _sqlStart, _sql));
-
-		-- ToDo: Show this info using RAISE INFO
+        -- Populate Tmp_ParamFiles with up to five parameter files matching the filters
+        EXECUTE (format('%s %s LIMIT 5', _sqlStart, _sql));
 
         FOR _paramFileInfo IN
-            SELECT Param_File_ID AS ParamFileID,
-                   Param_File_Name AS ParamFileName,
-                   Param_File_Type_ID AS ParamFileTypeID,
-                   Param_File_Type AS ParamFileType
+            SELECT Param_File_Type AS ParamFileType,
+                   Param_File_ID AS ParamFileID,
+                   Param_File_Name AS ParamFileName
             FROM Tmp_ParamFiles
             ORDER BY Entry_ID
         LOOP
-            RAISE INFO '%', format('%s param file ID %s: %s', _paramFile.ParamFileType, _paramFile.ParamFileID, _paramFile.ParamFileName);
+            RAISE INFO '%', format('%s param file ID %s: %s',
+                                   _paramFileInfo.ParamFileType,
+                                   _paramFileInfo.ParamFileID,
+                                   _paramFileInfo.ParamFileName);
         END LOOP;
 
     Else
@@ -234,7 +245,7 @@ BEGIN
            ON P.param_file_id = MM.param_file_id
     GROUP BY P.param_file_id
 
-    If _paramFileTypeList LIKE '%Sequest%' Then
+    If _paramFileTypeList ILIKE '%Sequest%' Then
     -- <a1>
 
         -----------------------------------------
@@ -334,8 +345,8 @@ BEGIN
             FROM Tmp_ParamEntries
             WHERE NOT Param_File_ID IN ( SELECT Param_File_ID
                                          FROM Tmp_ParamEntries
-                                         WHERE Entry_Type = _entryType AND
-                                               Entry_Specifier = _entrySpecifier );
+                                         WHERE Entry_Type = entryInfo.Type AND
+                                               Entry_Specifier = _entryInfo.Specifier );
 
         END LOOP;
 
@@ -351,7 +362,7 @@ BEGIN
 
         -----------------------------------------
         -- Change Compare to false for entries in Tmp_ParamEntries that correspond to
-        -- Entry_Specifier values in Tmp_DefaultSequestParamEntries that have Compare = 0
+        -- Entry_Specifier values in Tmp_DefaultSequestParamEntries that have Compare = false
         -----------------------------------------
 
         UPDATE Tmp_ParamEntries
@@ -359,9 +370,9 @@ BEGIN
         FROM ( SELECT DISTINCT Entry_Type, Entry_Specifier
                FROM Tmp_DefaultSequestParamEntries
                WHERE Compare = false) LookupQ
-        WHERE PE.Entry_Type = LookupQ.Entry_Type AND
-              PE.Entry_Specifier = LookupQ.Entry_Specifier AND
-              Compare = true;
+        WHERE Tmp_ParamEntries.Entry_Type = LookupQ.Entry_Type AND
+              Tmp_ParamEntries.Entry_Specifier = LookupQ.Entry_Specifier AND
+              Tmp_ParamEntries.Compare = true;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -386,33 +397,66 @@ BEGIN
 
         End If;
 
-        If _previewSql Then
+        If _previewSql And Exists (SELECT * FROM Tmp_ParamEntries) Then
 
-            -- ToDo: Use Raise Info to show this information
+            -- ToDo: Use Raise Info to show the data in Tmp_ParamEntries
 
-            -----------------------------------------
-            -- Display stats on the data in Tmp_ParamEntries
-            -----------------------------------------
+            RAISE INFO '';
 
-            SELECT Compare,
-                   Entry_Type,
-                   Entry_Specifier,
-                   COUNT(param_file_id) AS Entry_Count,
-                   MIN(Entry_Value) AS Entry_Value_Min,
-                   MAX(Entry_Value) AS Entry_Value_Max
-            FROM Tmp_ParamEntries
-            WHERE Compare = true
-            GROUP BY Compare, Entry_Type, Entry_Specifier;
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
 
-            SELECT Compare,
-                   Entry_Type,
-                   Entry_Specifier,
-                   COUNT(param_file_id) AS Entry_Count,
-                   MIN(Entry_Value) AS Entry_Value_Min,
-                   MAX(Entry_Value) AS Entry_Value_Max
-            FROM Tmp_ParamEntries
-            WHERE Compare = false
-            GROUP BY Compare, Entry_Type, Entry_Specifier;
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Compare,
+                       Entry_Type,
+                       Entry_Specifier,
+                       COUNT(param_file_id) AS Entry_Count,
+                       MIN(Entry_Value) AS Entry_Value_Min,
+                       MAX(Entry_Value) AS Entry_Value_Max
+                FROM Tmp_ParamEntries
+                WHERE Compare = true
+                GROUP BY Compare, Entry_Type, Entry_Specifier
+                UNION
+                SELECT Compare,
+                       Entry_Type,
+                       Entry_Specifier,
+                       COUNT(param_file_id) AS Entry_Count,
+                       MIN(Entry_Value) AS Entry_Value_Min,
+                       MAX(Entry_Value) AS Entry_Value_Max
+                FROM Tmp_ParamEntries
+                WHERE Compare = false
+                GROUP BY Compare, Entry_Type, Entry_Specifier
+                ORDER BY Compare Desc, Entry_Type, Entry_Specifier
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Compare,
+                                    _previewData.Entry_Type,
+                                    _previewData.Entry_Specifier,
+                                    _previewData.Entry_Count,
+                                    _previewData.Entry_Value_Min,
+                                    _previewData.Entry_Value_Max
+                        );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If;
     End If; -- </a1>
@@ -613,20 +657,18 @@ BEGIN
     END LOOP;
 
     -----------------------------------------
-    -- Display the results
+    -- Return the results
     -----------------------------------------
 
-    -- ToDo: Convert this procedure to a function
-    --       Likely use RAISE INFO for this query and RETURN QUERY for the UNION query
-
-   SELECT SPF.Entry_ID,
+    RETURN QUERY
+    SELECT SPF.Entry_ID,
            PFInfo.Param_File_Type,
            SPF.Param_File_ID_Master,
            SPF.Param_File_ID_Dup,
-           PFA.param_file_name AS Name_A,
-           PFB.param_file_name AS Name_B,
-           PFA.param_file_description AS Desc_A,
-           PFB.param_file_description AS Desc_B
+           PFA.param_file_name As param_file_Name_A,
+           PFB.param_file_Name As param_file_Name_B,
+           PFA.param_file_Description As param_file_Description_A,
+           PFB.param_file_Description As param_file_Description_B
     FROM Tmp_SimilarParamFiles SPF
          INNER JOIN t_param_files PFA
            ON SPF.Param_File_ID_Master = PFA.param_file_id
@@ -635,26 +677,69 @@ BEGIN
          INNER JOIN Tmp_ParamFiles PFInfo
            ON SPF.Param_File_ID_Master = PFInfo.param_file_id;
 
-    RETURN QUERY
-    SELECT 'Master' AS Param_File_Category,
-           Param_File_ID,
-           Entry_Type,
-           Entry_Specifier,
-           Entry_Value,
-           Compare
-    FROM Tmp_ParamEntries PE
-         INNER JOIN Tmp_SimilarParamFiles SPF
-           ON SPF.Param_File_ID_Master = PE.Param_File_ID
-    UNION
-    SELECT 'Duplicate' AS Param_File_Category,
-           Param_File_ID,
-           Entry_Type,
-           Entry_Specifier,
-           Entry_Value,
-           Compare
-    FROM Tmp_ParamEntries PE
-         INNER JOIN Tmp_SimilarParamFiles SPF
-           ON SPF.Param_File_ID_Dup = PE.Param_File_ID;
+    If Exists (SELECT * FROM Tmp_ParamEntries) Then
+
+        -- ToDo: Use RAISE INFO to show the data in Tmp_ParamEntries (only applies to SEQUEST parameter files)
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT 'Master' AS Param_File_Category,
+                   Param_File_ID,
+                   Entry_Type,
+                   Entry_Specifier,
+                   Entry_Value,
+                   Compare
+            FROM Tmp_ParamEntries PE
+                 INNER JOIN Tmp_SimilarParamFiles SPF
+                   ON SPF.Param_File_ID_Master = PE.Param_File_ID
+            UNION
+            SELECT 'Duplicate' AS Param_File_Category,
+                   Param_File_ID,
+                   Entry_Type,
+                   Entry_Specifier,
+                   Entry_Value,
+                   Compare
+            FROM Tmp_ParamEntries PE
+                 INNER JOIN Tmp_SimilarParamFiles SPF
+                   ON SPF.Param_File_ID_Dup = PE.Param_File_ID
+            ORDER BY Param_File_Category Desc, Param_File_ID, Entry_Type
+
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Param_File_Category,
+                                _previewData.Param_File_ID,
+                                _previewData.Entry_Type,
+                                _previewData.Entry_Specifier,
+                                _previewData.Entry_Value,
+                                _previewData.Compare
+                    );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+    End If;
 
     If char_length(_message) > 0 Then
         RAISE INFO '%', _message;
@@ -671,4 +756,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.find_duplicate_param_files IS 'FindDuplicateParamFiles';
+COMMENT ON FUNCTION public.find_duplicate_param_files IS 'FindDuplicateParamFiles';

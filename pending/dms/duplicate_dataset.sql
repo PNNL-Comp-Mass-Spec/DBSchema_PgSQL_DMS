@@ -51,15 +51,16 @@ DECLARE
     _matchCount int;
     _newUsername text;
 
-    _formatSpecifier text;
-    _infoHead text;
-    _infoHeadSeparator text;
+    _formatSpecifierDS text;
+    _infoHeadDS text;
+    _infoHeadSeparatorDS text;
+
+    _formatSpecifierRR text;
+    _infoHeadRR text;
+    _infoHeadSeparatorRR text;
+
     _previewData record;
     _infoData text;
-
-    _formatSpecifier text;
-	_infoHead text;
-	_infoHeadSeparator text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -128,7 +129,7 @@ BEGIN
     FROM t_dataset D
          INNER JOIN t_experiments E
            ON D.exp_id = E.exp_id
-    WHERE D.dataset = _sourceDataset
+    WHERE D.dataset = _sourceDataset;
 
     If Not FOUND Then
         _message := format('Dataset not found: %s', _sourceDataset);
@@ -154,10 +155,10 @@ BEGIN
     ---------------------------------------------------
 
     SELECT RR.request_id As SourceDatasetRequestID,
-           RR.instrument_group As InstrumentName,
+           RR.instrument_group As InstrumentGroup,
            RR.work_package As WorkPackage,
            RR.instrument_setting As InstrumentSettings,
-           DSType.Dataset_Type As MsType,
+           DSType.Dataset_Type As DatasetType,
            RR.separation_group As SeparationGroup,
            RR.eus_proposal_id As EusProposalID,
            EUT.eus_usage_type As EusUsageType
@@ -167,7 +168,7 @@ BEGIN
            ON RR.request_type_id = DSType.dataset_type_id
          INNER JOIN t_eus_usage_type AS EUT
            ON RR.eus_usage_type_id = EUT.eus_usage_type_id
-    WHERE dataset_id = _datasetInfo.SourceDatasetId
+    WHERE RR.dataset_id = _datasetInfo.SourceDatasetId;
 
     If Not FOUND Then
         _message := 'Source dataset does not have a requested run; use AddMissingRequestedRun to add one';
@@ -212,34 +213,65 @@ BEGIN
                 RETURN;
             End If;
         End If;
-   End If;
+    End If;
+
+    -- Format info for previewing the dataset that would be created, or for showing the newly created dataset
+    _formatSpecifierDS := '%-80s %-60s %-20s %-13s %-13s';
+
+    _infoHeadDS := format(_formatSpecifierDS,
+                        'Dataset',
+                        'Comment',
+                        'Created',
+                        'Instrument_ID',
+                        'Experiment_ID'
+                       );
+
+    _infoHeadSeparatorDS := format(_formatSpecifierDS,
+                                   '--------------------------------------------------------------------------------',
+                                   '------------------------------------------------------------',
+                                   '--------------------',
+                                   '-------------',
+                                   '-------------'
+                                  );
+
+
+    -- Format info for previewing the requested run that would be created, or for showing the newly created requested run
+    _formatSpecifierRR := '%-10s %-80s %-60s %-10s %-25s %-10s %-12s %-35s, %-30s';
+
+    _infoHeadRR := format(_formatSpecifierRR,
+                          'Request_ID',
+                          'Requested_Run',
+                          'Experiment',
+                          'Operator',
+                          'Instrument_Group',
+                          'WP',
+                          'Dataset_Type',
+                          'Sep_Group',
+                          'Comment'
+                         );
+
+    _infoHeadSeparatorRR := format(_formatSpecifierRR,
+                                   '----------',
+                                   '--------------------------------------------------------------------------------',
+                                   '------------------------------------------------------------',
+                                   '----------',
+                                   '-------------------------',
+                                   '----------',
+                                   '------------',
+                                   '-----------------------------------',
+                                   '------------------------------'
+                                  );
+
+
+    _requestName := format('AutoReq_%s', _newDataset);
 
     If _infoOnly Then
 
-        -- Format info for previewing the dataset that would be created
-        _formatSpecifier := '%-80s %-60s %-20s %-13s %-13s';
-
-        _infoHead := format(_formatSpecifier,
-                            'Dataset',
-                            'Comment',
-                            'Created',
-                            'Instrument_ID',
-                            'Experiment_ID'
-                           );
-
-        _infoHeadSeparator := format(_formatSpecifier,
-                                     '--------------------------------------------------------------------------------',
-                                     '------------------------------------------------------------',
-                                     '--------------------',
-                                     '-------------',
-                                     '-------------'
-                                    );
-
-        RAISE INFO '%', _infoHead;
-        RAISE INFO '%', _infoHeadSeparator;
-
         -- Show the dataset that would be created
-        RAISE INFO '%', format(_formatSpecifier,
+        RAISE INFO '';
+        RAISE INFO '%', _infoHeadDS;
+        RAISE INFO '%', _infoHeadSeparatorDS;
+        RAISE INFO '%', format(_formatSpecifierDS,
                                _newDataset,
                                _datasetInfo.Comment,
                                timestamp_text(CURRENT_TIMESTAMP),
@@ -247,42 +279,18 @@ BEGIN
                                _datasetInfo.ExperimentID
                               );
 
-        -- Format info for previewing the requested run that would be created
-        _formatSpecifier := '%-80s %-60s %-10s %-25s %-10s %-10s %-35s, %-30s';
-
-        _infoHead := format(_formatSpecifier,
-                            'Requested_Run',
-                            'Experiment',
-                            'Operator',
-                            'Instrument',
-                            'WP',
-                            'MSType',
-                            'Sep_Group',
-                            'Comment'
-                           );
-
-        _infoHeadSeparator := format(_formatSpecifier,
-                                     '--------------------------------------------------------------------------------',
-                                     '------------------------------------------------------------',
-                                     '----------',
-                                     '-------------------------',
-                                     '----------',
-                                     '----------',
-                                     '-----------------------------------',
-                                     '------------------------------'
-                                    );
-
-        RAISE INFO '%', _infoHead;
-        RAISE INFO '%', _infoHeadSeparator;
-
         -- Show the requested run that would be created
-        RAISE INFO '%', format(_formatSpecifier,
-                               format('AutoReq_%s', _newDataset),
+        RAISE INFO '';
+        RAISE INFO '%', _infoHeadRR;
+        RAISE INFO '%', _infoHeadSeparatorRR;
+        RAISE INFO '%', format(_formatSpecifierRR,
+                               _requestedRunInfo.SourceDatasetRequestID,
+                               _requestName,
                                _datasetInfo.ExperimentName,
                                _datasetInfo.OperatorUsername,
-                               _requestedRunInfo.InstrumentName,
+                               _requestedRunInfo.InstrumentGroup,
                                _requestedRunInfo.WorkPackage,
-                               _requestedRunInfo.MsType,
+                               _requestedRunInfo.DatasetType,
                                _requestedRunInfo.SeparationGroup,
                                'Automatically created by Dataset entry'
 
@@ -338,8 +346,6 @@ BEGIN
     ---------------------------------------------------
     -- Create a requested run
     ---------------------------------------------------
-
-    _requestName := format('AutoReq_%s', _newDataset);
 
     CALL public.add_update_requested_run (
             _requestName => _requestName,
@@ -397,13 +403,70 @@ BEGIN
     -- Update t_cached_dataset_instruments
     CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
+    RAISE INFO '';
     RAISE INFO 'Duplicated dataset %, creating %', _sourceDataset, _newDataset;
     RAISE INFO 'New Dataset ID: %, New Requested Run ID: %', _datasetID, _requestID;
 
-    -- ToDo: Show this using RAISE INFO
-    SELECT *
-    FROM V_Dataset_Detail_Report_Ex
-    WHERE ID = _datasetID;
+    -- Show the dataset that was created
+    RAISE INFO '';
+    RAISE INFO '%', _infoHeadDS;
+    RAISE INFO '%', _infoHeadSeparatorDS;
+
+    FOR _previewData IN
+        SELECT dataset, comment, created, instrument_id, exp_id
+        FROM t_dataset
+        WHERE dataset_id = _datasetID
+    LOOP
+        _infoData := format(_formatSpecifierDS,
+                            _previewData.dataset,
+                            _previewData.comment,
+                            _previewData.created,
+                            _previewData.instrument_id,
+                            _previewData.exp_id
+                           );
+
+        RAISE INFO '%', _infoData;
+    END LOOP;
+
+    -- Show the requested run that was created
+    RAISE INFO '';
+    RAISE INFO '%', _infoHeadRR;
+    RAISE INFO '%', _infoHeadSeparatorRR;
+
+    FOR _previewData IN
+        SELECT RR.request_id,
+               RR.request_name,
+               E.experiment,
+               DS.operator_username,
+               RR.instrument_group,
+               RR.work_package,
+               DSType.dataset_type,
+               RR.separation_group,
+               RR.comment
+        FROM t_requested_run AS RR
+             INNER JOIN t_dataset DS
+               ON DS.dataset_id = RR.dataset_id
+             INNER JOIN t_dataset_type_name AS DSType
+               ON RR.request_type_id = DSType.dataset_type_id
+             INNER JOIN t_eus_usage_type AS EUT
+               ON RR.eus_usage_type_id = EUT.eus_usage_type_id
+             INNER JOIN t_experiments E
+               ON DS.exp_id = E.exp_id
+        WHERE DS.dataset_id = _datasetID
+    LOOP
+        _infoData := format(_formatSpecifierRR,
+                            _previewData.request_id,
+                            _previewData.request_name,
+                            _previewData.experiment,
+                            _previewData.operator_username,
+                            _previewData.instrument_group,
+                            _previewData.work_package,
+                            _previewData.dataset_type,
+                            _previewData.separation_group,
+                            _previewData.comment
+
+        RAISE INFO '%', _infoData;
+    END LOOP;
 
 END
 $$;

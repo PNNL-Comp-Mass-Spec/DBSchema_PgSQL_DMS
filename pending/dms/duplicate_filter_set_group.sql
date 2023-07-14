@@ -83,11 +83,52 @@ BEGIN
     If _infoOnly Then
 
         -- ToDo: Show this data using RAISE INFO
-        
-        SELECT _filterCriteriaGroupIDNext AS NewGroupID, Criterion_ID, Criterion_Comparison, Criterion_Value
-        FROM t_filter_set_criteria
-        WHERE filter_criteria_group_id = _filterCriteriaGroupID
-        ORDER BY criterion_id
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                                );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT _filterCriteriaGroupIDNext AS new_group_id,
+                   FSC.criterion_id,
+                   FSCN.criterion_name,
+                   FSC.criterion_comparison,
+                   FSC.criterion_value
+            FROM t_filter_set_criteria FSC
+                 INNER JOIN t_filter_set_criteria_names FSCN
+                   ON FSC.criterion_id = FSCN.criterion_id
+            WHERE FSC.filter_criteria_group_id = _filterCriteriaGroupID
+            ORDER BY FSC.criterion_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.new_group_id,
+                                _previewData.criterion_id,
+                                _previewData.criterion_name,
+                                _previewData.criterion_comparison,
+                                _previewData.criterion_value
+                    );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
 	    _message := format('Would duplicate Filter Criteria Group %s for Filter Set ID %s', _filterCriteriaGroupID, _filterSetID);
     Else
