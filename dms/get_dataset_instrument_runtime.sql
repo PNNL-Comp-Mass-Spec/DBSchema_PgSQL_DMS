@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          02/07/2012 grk - Added anchoring of long intervals to beginning and end of month.
 **          02/15/2012 mem - Now using T_Dataset.Acq_Length_Minutes
 **          06/08/2012 grk - Added lookup for _maxNormalInterval
-**          04/05/2017 mem - Compute Fraction_EMSL_Funded using EUS usage type (previously computed using CM_Fraction_EMSL_Funded, which is estimated by the user for each campaign)
+**          04/05/2017 mem - Compute Fraction_EMSL_Funded using EUS usage type (previously computed using Fraction_EMSL_Funded, which is estimated by the user for each campaign)
 **          05/16/2022 mem - Add renamed proposal type 'Resource Owner'
 **          05/18/2022 mem - Treat additional proposal types as not EMSL funded
 **          06/19/2022 mem - Ported to PostgreSQL
@@ -346,7 +346,7 @@ BEGIN
             EUS_Usage = EUT.eus_usage_type ,
             EUS_Proposal_Type = EUP.proposal_type ,
             Campaign_ID  = C.Campaign_ID,
-            -- Fraction_EMSL_Funded = C.CM_Fraction_EMSL_Funded,   -- Campaign based estimation of fraction EMSL funded; this has been replaced by the following case statement
+            -- Fraction_EMSL_Funded = C.Fraction_EMSL_Funded,   -- Campaign based estimation of fraction EMSL funded; this has been replaced by the following case statement
             Fraction_EMSL_Funded =
                CASE
                WHEN Coalesce(EUP.Proposal_Type, 'PROPRIETARY')

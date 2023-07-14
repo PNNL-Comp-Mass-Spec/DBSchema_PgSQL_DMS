@@ -88,7 +88,7 @@ AS $$
 **          03/15/2012 mem - Added parameter _eusUsageFilterList
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
-**          04/05/2017 mem - Determine whether a dataset is EMSL funded using EUS usage type (previously used CM_Fraction_EMSL_Funded, which is estimated by the user for each campaign)
+**          04/05/2017 mem - Determine whether a dataset is EMSL funded using EUS usage type (previously used Fraction_EMSL_Funded, which is estimated by the user for each campaign)
 **                         - No longer differentiate reruns or unreviewed
 **                         - Added parameter _instrumentFilterList
 **                         - Changed [% EF Study Specific] to be based on Total instead of EF_Total

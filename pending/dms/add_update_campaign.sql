@@ -57,7 +57,7 @@ AS $$
 **          04/21/2010 grk - Use try-catch for error handling
 **          10/27/2011 mem - Added parameter _fractionEMSLFunded
 **          12/01/2011 mem - Updated _fractionEMSLFunded to be a required value
-**                         - Now calling alter_event_log_entry_user for updates to CM_Fraction_EMSL_Funded or CM_Data_Release_Restrictions
+**                         - Now calling alter_event_log_entry_user for updates to Fraction_EMSL_Funded or Data_Release_Restrictions
 **          10/23/2012 mem - Now validating that _fractionEMSLFunded is a number between 0 and 1 using a real (since conversion of 100 to numeric(3,2) causes an overflow error)
 **          06/02/2015 mem - Replaced IDENT_CURRENT with SCOPE_IDENTITY()
 **          02/23/2016 mem - Add set XACT_ABORT on\
