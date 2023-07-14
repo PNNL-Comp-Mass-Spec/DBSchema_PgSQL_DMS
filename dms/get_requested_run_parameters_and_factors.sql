@@ -1,25 +1,21 @@
 --
-CREATE OR REPLACE FUNCTION public.get_requested_run_parameters_and_factors
-(
-    _itemList TEXT,
-    _infoOnly boolean = false,
-    INOUT _results refcursor DEFAULT '_results'::refcursor,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
+-- Name: get_requested_run_parameters_and_factors(text, boolean, refcursor, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.get_requested_run_parameters_and_factors(IN _itemlist text, IN _infoonly boolean DEFAULT false, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Returns the run parameters and factors associated with the run requests in the input list
+**      Returns the run parameters and factors associated with
+**      the requested runs in the input list
 **
 **      This is used by http://dms2.pnl.gov/requested_run_batch_blocking/grid
 **
 **  Arguments:
 **    _itemList     Comma-separated list of request IDs
-**    _infoOnly     When true, show the SQL
+**    _infoOnly     When true, show the SQL used to display the factors associated with the requested runs in _itemList
 **
 **  Use this to view the data returned by the _results cursor
 **  Note that this will result in an error if no matching items are found
@@ -58,13 +54,12 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------
 
-    _infoOnly     := Coalesce(_infoOnly, false);
+    _infoOnly := Coalesce(_infoOnly, false);
 
     If _itemList Is Null Then
         RAISE WARNING '_itemList is null';
         RETURN;
     End If;
-
 
     -----------------------------------------
     -- Temp tables to hold list of requests and factors
@@ -110,13 +105,12 @@ BEGIN
 
     If _infoOnly Then
         RAISE INFO '%', _sql;
-
     Else
         Open _results For
             EXECUTE _sql;
     End If;
 
-    -- Do not drop Tmp_RequestIDs or Tmp_Factors, since the cursor needs to access them
+    -- Do not drop Tmp_RequestIDs or Tmp_Factors, since the cursor accesses them
 
     RETURN;
 EXCEPTION
@@ -138,4 +132,12 @@ EXCEPTION
 END
 $$;
 
-COMMENT ON PROCEDURE public.get_requested_run_parameters_and_factors IS 'GetRequestedRunParametersAndFactors';
+
+ALTER PROCEDURE public.get_requested_run_parameters_and_factors(IN _itemlist text, IN _infoonly boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE get_requested_run_parameters_and_factors(IN _itemlist text, IN _infoonly boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.get_requested_run_parameters_and_factors(IN _itemlist text, IN _infoonly boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'GetRequestedRunParametersAndFactors';
+

@@ -1,30 +1,38 @@
 --
-CREATE OR REPLACE PROCEDURE public.get_requested_run_factors_for_export
-(
-    _itemList text,
-    _itemType text = 'Batch_ID',
-    INOUT _results refcursor DEFAULT '_results'::refcursor,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_requested_run_factors_for_edit(text, text, boolean, refcursor, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.get_requested_run_factors_for_edit(IN _itemlist text, IN _itemtype text DEFAULT 'Batch_ID'::text, IN _infoonly boolean DEFAULT false, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Returns the factors associated with the run requests given by the itemList
+**      Returns the factors associated with the requested runs
+**      associated with the items specified by _itemList
 **
 **  Arguments:
 **    _itemList     Comma-separated list of item IDs
 **    _itemType     Item type: Batch_ID, Requested_Run_ID, Dataset_Name, Dataset_ID, Experiment_Name, Experiment_ID, or Data_Package_ID
+**    _infoOnly     When true, show the SQL used to display the factors associated with the matching requested runs
 **
 **  Use this to view the data returned by the _results cursor
 **  Note that this will result in an error if no matching items are found
 **
 **      BEGIN;
-**          CALL public.get_requested_run_factors_for_export (
+**          CALL public.get_requested_run_factors_for_edit (
+**              _itemList => '8603, 9066',
+**              _itemType => 'Batch_ID',
+**              _infoOnly => false
+**          );
+**          FETCH ALL FROM _results;
+**      END;
+**
+**      BEGIN;
+**          CALL public.get_requested_run_factors_for_edit (
 **              _itemList => '1123361, 1123374, 1147991',
-**              _itemType =>  'Requested_Run_ID'
+**              _itemType =>  'Requested_Run_ID',
+**              _infoOnly => false
 **          );
 **          FETCH ALL FROM _results;
 **      END;
@@ -33,9 +41,12 @@ AS $$
 **  For an example, see procedure public.get_factor_crosstab_by_batch()
 **
 **  Auth:   grk
-**  Date:   03/22/2010
-**          03/22/2010 grk - Initial release
-**          12/15/2023 mem - Ported to PostgreSQL
+**  Date:   02/20/2010
+**          03/02/2010 grk - Added status field to requested run
+**          03/08/2010 grk - Improved field validation
+**          03/18/2010 grk - Eliminated call to Get_Factor_Crosstab_By_Factor_ID
+**          01/23/2023 mem - Use lowercase column names when querying V_Requested_Run_Unified_List
+**          07/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -54,8 +65,15 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------
 
+    _infoOnly := Coalesce(_infoOnly, false);
+
     If _itemList Is Null Then
         RAISE WARNING '_itemList is null';
+        RETURN;
+    End If;
+
+    If _itemType Is Null Then
+        RAISE WARNING '_itemType is null';
         RETURN;
     End If;
 
@@ -86,38 +104,29 @@ BEGIN
     SELECT request_id
     FROM public.get_requested_runs_from_item_list (_itemList, _itemType);
 
-/*
-    -----------------------------------------
-    -- Filter by request name
-    -----------------------------------------
-
-    DELETE FROM Tmp_RequestIDs Target
-    WHERE NOT EXISTS (
-            SELECT 1
-            FROM t_requested_run RR
-            WHERE RR.request_id = Target.Request AND
-                  RR.request_name LIKE '%' || _nameContains || '%'
-        )
-*/
-
     -----------------------------------------
     -- Build the SQL for obtaining the factors for the requests
-    -- If the batch has additional factors, they will be shown after the run_order column
+    -- If the batch has additional factors, they will be shown after the request column
     -----------------------------------------
 
-    _colList := 'batchid, name, status, request, dataset_id, dataset, experiment, experiment_id, block, run_order ';
+    _colList := ' ''x'' As sel, batch_id, experiment, dataset, name, status, request';
 
-    SELECT make_factor_crosstab_sql ( _colList)
+    SELECT make_factor_crosstab_sql ( _colList )
     INTO _sql;
 
     -----------------------------------------
     -- Return the output table
+    -- Either show the dynamic SQL or execute the SQL and return the results
     -----------------------------------------
 
-    Open _results For
-        EXECUTE _sql;
+    If _infoOnly Then
+        RAISE INFO '%', _sql;
+    Else
+        Open _results For
+            EXECUTE _sql;
+    End If;
 
-    -- Do not drop Tmp_RequestIDs or Tmp_Factors, since the cursor needs to access them
+    -- Do not drop Tmp_RequestIDs or Tmp_Factors, since the cursor accesses them
 
     RETURN;
 EXCEPTION
@@ -139,4 +148,12 @@ EXCEPTION
 END
 $$;
 
-COMMENT ON PROCEDURE public.get_requested_run_factors_for_export IS 'GetRequestedRunFactorsForExport';
+
+ALTER PROCEDURE public.get_requested_run_factors_for_edit(IN _itemlist text, IN _itemtype text, IN _infoonly boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE get_requested_run_factors_for_edit(IN _itemlist text, IN _itemtype text, IN _infoonly boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.get_requested_run_factors_for_edit(IN _itemlist text, IN _itemtype text, IN _infoonly boolean, INOUT _results refcursor, INOUT _message text, INOUT _returncode text) IS 'GetRequestedRunFactorsForEdit';
+
