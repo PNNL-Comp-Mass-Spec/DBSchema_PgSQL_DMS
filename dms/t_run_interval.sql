@@ -18,6 +18,12 @@ CREATE TABLE public.t_run_interval (
 ALTER TABLE public.t_run_interval OWNER TO d3l243;
 
 --
+-- Name: TABLE t_run_interval; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON TABLE public.t_run_interval IS 'Tracks long intervals that follow the acquisition of a dataset; interval_id is the dataset_id of the dataset that was acquired just before a given long interval';
+
+--
 -- Name: t_run_interval pk_t_run_interval; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

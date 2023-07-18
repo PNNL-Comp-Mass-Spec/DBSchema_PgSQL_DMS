@@ -32,7 +32,7 @@ AS $$
 **
 **  Arguments:
 **    _eusInstrumentId   EMSL instrument ID to process; use this to process instruments like the 12T or the 15T where there are two instrument entries in DMS, yet they both map to the same EUS_Instrument_ID
-**    _outputFormat      'details', 'rollup', 'check', 'report'
+**    _outputFormat      'report', 'details', 'rollup', 'check', 'debug1', 'debug2', 'debug3'
 **
 **  Auth:   grk
 **  Date:   03/06/2012
