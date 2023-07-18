@@ -49,11 +49,7 @@ DECLARE
     _message text := '';
     _returnCode text := '';
 
-    _formatSpecifier text;
-    _infoHead text;
-    _infoHeadSeparator text;
-    _previewData record;
-    _infoData text;
+    _previewData text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -99,6 +95,7 @@ BEGIN
     ---------------------------------------------------
     -- Temp table to track DMS instruments that share the same EUS ID
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_InstrumentsToProcessByID (
         EUS_Instrument_ID int NOT NULL,
         Instrument text NOT NULL
@@ -128,7 +125,7 @@ BEGIN
                           HAVING COUNT(InstMapping.dms_instrument_id) > 1 ) LookupQ
                ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
         WHERE InstName.status = 'active' AND
-              InstName.operations_role = 'Production'
+              InstName.operations_role = 'Production';
 
         ---------------------------------------------------
         -- Get list of active production instruments
@@ -140,20 +137,24 @@ BEGIN
         WHERE status = 'active' And
               operations_role = 'Production' And
               NOT instrument IN ( SELECT instrument
-                                  FROM Tmp_InstrumentsToProcessByID )
+                                  FROM Tmp_InstrumentsToProcessByID );
 
         If _infoOnly Then
 
-            -- ToDo: Show the table data using RAISE INFO
+            RAISE INFO '';
 
-            SELECT *
-            FROM Tmp_Instruments
-            ORDER BY EntryID
+            SELECT string_agg(instrument, ', ' ORDER BY instrument)
+            INTO _previewData
+            FROM Tmp_Instruments;
 
-            -- ToDo: Show the table data using RAISE INFO
-            SELECT *
-            FROM Tmp_InstrumentsToProcessByID
-            ORDER BY EUS_Instrument_ID
+            RAISE INFO 'Active production instruments: %', _previewData;
+
+            SELECT string_agg(format('EUS ID %s: %s', EUS_Instrument_ID, Instrument), ', ' ORDER BY EUS_Instrument_ID)
+            INTO _previewData
+            FROM Tmp_InstrumentsToProcessByID;
+
+            RAISE INFO 'Instruments to process by EUS ID: %', _previewData;
+
         End If;
 
         ---------------------------------------------------

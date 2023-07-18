@@ -453,7 +453,7 @@ BEGIN
                                     _previewData.Entry_Count,
                                     _previewData.Entry_Value_Min,
                                     _previewData.Entry_Value_Max
-                        );
+                                   );
 
                 RAISE INFO '%', _infoData;
             END LOOP;
@@ -734,7 +734,7 @@ BEGIN
                                 _previewData.Entry_Specifier,
                                 _previewData.Entry_Value,
                                 _previewData.Compare
-                    );
+                               );
 
             RAISE INFO '%', _infoData;
         END LOOP;

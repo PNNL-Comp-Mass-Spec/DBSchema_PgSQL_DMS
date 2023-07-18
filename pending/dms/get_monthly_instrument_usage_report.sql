@@ -84,6 +84,10 @@ DECLARE
     _previewData record;
     _infoData text;
 
+    _formatSpecifierInstUsage text;
+    _infoHeadInstUsage text;
+    _infoHeadSeparatorInstUsage text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -169,11 +173,11 @@ BEGIN
             Proposal text NULL,
             Usage citext NULL,
             UsageID int NULL,
-            Normal int NULL,
+            Normal int NULL,            -- 1 if a normal interval after a dataset (less than 180 minutes); 0 if a long interval after a dataset
             Comment text NULL,
             Users text NULL,
             Operator text NULL
-        )
+        );
 
         If _instrument = '' AND _eusInstrumentId = 0 Then
             INSERT INTO Tmp_InstrumentUsage (
@@ -224,7 +228,7 @@ BEGIN
                 Usage,
                 Normal
             )
-            SELECT GRTMI.request_id,
+            SELECT GRTMI.id,                -- Dataset_ID
                    'Dataset' AS Type,
                    GRTMI.Time_Start AS Start,
                    GRTMI.Duration,
@@ -235,7 +239,7 @@ BEGIN
                    1
             FROM get_run_tracking_monthly_info_by_id ( _eusInstrumentId, _year, _month, '' ) AS GRTMI
                  LEFT OUTER JOIN t_requested_run AS RR
-                   ON GRTMI.request_id = RR.dataset_id
+                   ON GRTMI.id = RR.dataset_id
                  INNER JOIN t_eus_usage_type EUT
                    ON RR.eus_usage_type_id = EUT.eus_usage_type_id;
 
@@ -312,21 +316,21 @@ BEGIN
               Start timestamp,
               Breakdown XML NULL,
               Comment text NULL
-        )
+        );
 
-        INSERT Into Tmp_LongIntervals (
+        INSERT INTO Tmp_LongIntervals (
             Dataset_ID,
-            start,
+            Start,
             Breakdown,  -- Holds usage description, from t_run_interval.comment
-            comment
+            Comment
         )
-        SELECT
-                TRI.interval_id,
-                TRI.start,
-                TRI.usage,      -- Examples: '<u Maintenance="100" />' or '<u UserOnsite="100" Proposal="60594" PropUser="60420" />'  or '<u User="100" Proposal="51667" PropUser="48542" />'
-                TRI.comment     -- Examples: 'Maintenance[100%]'       or 'UserOnsite[100%], Proposal[60594], PropUser[60420]'        or 'User[100%], Proposal[51667], PropUser[48542]'
-        FROM  t_run_interval TRI
-                INNER JOIN Tmp_InstrumentUsage ON TRI.interval_id = Tmp_InstrumentUsage.Dataset_ID
+        SELECT TRI.interval_id,     -- interval_id is the dataset_id of the dataset that was acquired just before a given long interval
+               TRI.start,
+               TRI.usage,           -- Examples: '<u Maintenance="100" />' or '<u UserOnsite="100" Proposal="60594" PropUser="60420" />'  or '<u User="100" Proposal="51667" PropUser="48542" />'
+               TRI.comment          -- Examples: 'Maintenance[100%]'       or 'UserOnsite[100%], Proposal[60594], PropUser[60420]'        or 'User[100%], Proposal[51667], PropUser[48542]'
+        FROM t_run_interval TRI
+             INNER JOIN Tmp_InstrumentUsage
+               ON TRI.interval_id = Tmp_InstrumentUsage.Dataset_ID;
 
         ---------------------------------------------------
         -- Mark datasets in temp report table
@@ -335,7 +339,8 @@ BEGIN
 
         UPDATE Tmp_InstrumentUsage
         SET Normal = 0
-        WHERE Tmp_InstrumentUsage.Dataset_ID IN (SELECT Dataset_ID FROM Tmp_LongIntervals)
+        FROM Tmp_LongIntervals
+        WHERE Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_id;
 
         ---------------------------------------------------
         -- Make temp table to hold apportioned long interval values
@@ -475,11 +480,57 @@ BEGIN
         -- Get rid of meaningless apportioned long intervals
         ---------------------------------------------------
 
-        DELETE FROM Tmp_ApportionedIntervals WHERE Interval = 0
+        DELETE FROM Tmp_ApportionedIntervals WHERE Interval = 0;
 
         If _outputFormat = 'debug1' Then
+
             -- ToDo: Update this to use RAISE INFO
-            SELECT * FROM Tmp_ApportionedIntervals
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Dataset_ID,
+                       public.timestamp_text(Start) AS Start,
+                       Interval,
+                       Proposal,
+                       Usage,
+                       Comment
+                FROM Tmp_ApportionedIntervals
+                ORDER BY Start
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Start,
+                                    _previewData.Interval,
+                                    _previewData.Proposal,
+                                    _previewData.Usage,
+                                    _previewData.Comment
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         ---------------------------------------------------
@@ -488,7 +539,7 @@ BEGIN
 
         UPDATE Tmp_ApportionedIntervals
         SET Comment = ''
-        WHERE Usage In ('CAP_DEV', 'ONSITE', 'REMOTE')
+        WHERE Usage In ('CAP_DEV', 'ONSITE', 'REMOTE');
 
         ---------------------------------------------------
         -- Add apportioned long intervals to report table
@@ -519,9 +570,76 @@ BEGIN
             Operator
         FROM Tmp_ApportionedIntervals
 
+        If _outputFormat Like 'debug%' Then
+
+            _formatSpecifierInstUsage := '%-10s %-8s %-20s %-8s %-8s %-8s %-11s %-25s %-15s %-8s';
+
+            _infoHeadInstUsage := format(_formatSpecifierInstUsage,
+                                         'Dataset_ID',
+                                         'Type',
+                                         'Start',
+                                         'Duration',
+                                         'Interval',
+                                         'Proposal',
+                                         'Usage',
+                                         'Comment',
+                                         'Users',
+                                         'Operator'
+                                        );
+
+            _infoHeadSeparatorInstUsage := format(_formatSpecifierInstUsage,
+                                                  '----------',
+                                                  '--------',
+                                                  '--------------------',
+                                                  '--------',
+                                                  '--------',
+                                                  '--------',
+                                                  '-----------',
+                                                  '-------------------------',
+                                                  '---------------',
+                                                  '--------'
+                                                 );
+
+        End If;
+
         If _outputFormat = 'debug2' Then
+
             -- ToDo: Update this to use RAISE INFO
-            SELECT * FROM Tmp_InstrumentUsage
+
+            RAISE INFO '';
+            RAISE INFO '%', _infoHeadInstUsage;
+            RAISE INFO '%', _infoHeadSeparatorInstUsage;
+
+            FOR _previewData IN
+                SELECT Dataset_ID,
+                       Type,
+                       Start,
+                       Duration,
+                       Interval,
+                       Proposal,
+                       Usage,
+                       Comment,
+                       Users,
+                       Operator
+                FROM Tmp_InstrumentUsage
+                ORDER BY Start
+            LOOP
+                _infoData := format(_formatSpecifierInstUsage,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Duration,
+                                    _previewData.Interval,
+                                    _previewData.Proposal,
+                                    _previewData.Usage,
+                                    _previewData.Comment,
+                                    _previewData.Users,
+                                    _previewData.Operator
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         ---------------------------------------------------
@@ -530,7 +648,7 @@ BEGIN
 
         UPDATE Tmp_InstrumentUsage
         SET Interval = 0
-        WHERE Type = 'Dataset' AND Normal = 0
+        WHERE Type = 'Dataset' AND Normal = 0;
 
         ---------------------------------------------------
         -- Translate remaining DMS usage categories
@@ -539,11 +657,11 @@ BEGIN
 
         UPDATE Tmp_InstrumentUsage
         SET Usage = 'ONSITE'
-        WHERE Usage In ('USER', 'USER_ONSITE')
+        WHERE Usage In ('USER', 'USER_ONSITE');
 
         UPDATE Tmp_InstrumentUsage
         SET Usage = 'REMOTE'
-        WHERE Usage = 'USER_REMOTE'
+        WHERE Usage = 'USER_REMOTE';
 
         -- Starting in FY 24, Usage can also be 'RESOURCE_OWNER'
 
@@ -560,7 +678,7 @@ BEGIN
         UPDATE Tmp_InstrumentUsage
         SET Duration = Duration + Interval,
             Interval = 0
-        WHERE Type = 'Dataset' AND Normal > 0
+        WHERE Type = 'Dataset' AND Normal > 0;
 
         ---------------------------------------------------
         -- Uncomment to debug
@@ -571,8 +689,43 @@ BEGIN
         ---------------------------------------------------
 
         If _outputFormat = 'debug3' Then
+
             -- ToDo: Update this to use RAISE INFO
-            SELECT * FROM Tmp_InstrumentUsage
+
+            RAISE INFO '';
+            RAISE INFO '%', _infoHeadInstUsage;
+            RAISE INFO '%', _infoHeadSeparatorInstUsage;
+
+            FOR _previewData IN
+                SELECT Dataset_ID,
+                       Type,
+                       Start,
+                       Duration,
+                       Interval,
+                       Proposal,
+                       Usage,
+                       Comment,
+                       Users,
+                       Operator
+                FROM Tmp_InstrumentUsage
+                ORDER BY Start
+            LOOP
+                _infoData := format(_formatSpecifierInstUsage,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Duration,
+                                    _previewData.Interval,
+                                    _previewData.Proposal,
+                                    _previewData.Usage,
+                                    _previewData.Comment,
+                                    _previewData.Users,
+                                    _previewData.Operator
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         ---------------------------------------------------

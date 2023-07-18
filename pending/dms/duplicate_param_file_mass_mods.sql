@@ -194,7 +194,7 @@ BEGIN
                                 _previewData.local_symbol,
                                 _previewData.residue_desc,
                                 _previewData.dest_file_id
-                    );
+                               );
 
             RAISE INFO '%', _infoData;
         END LOOP;
@@ -339,7 +339,7 @@ BEGIN
                             _previewData.local_symbol,
                             _previewData.residue_desc,
                             _previewData.dest_file_id
-                );
+                           );
 
         RAISE INFO '%', _infoData;
     END LOOP;

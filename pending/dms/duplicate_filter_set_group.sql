@@ -125,7 +125,7 @@ BEGIN
                                 _previewData.criterion_name,
                                 _previewData.criterion_comparison,
                                 _previewData.criterion_value
-                    );
+                               );
 
             RAISE INFO '%', _infoData;
         END LOOP;
