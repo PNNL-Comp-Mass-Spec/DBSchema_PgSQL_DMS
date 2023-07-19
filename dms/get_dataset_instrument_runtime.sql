@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          03/20/2023 mem - Treat proposal types 'Capacity' and 'Staff Time' as EMSL funded
 **          05/22/2023 mem - Capitalize reserved words
 **          05/31/2023 mem - Use format() for string concatenation
+**          07/18/2023 mem - Specify column names when returning data from Tmp_TX
 **
 *****************************************************/
 DECLARE
@@ -400,8 +401,26 @@ BEGIN
     End If;
 
     RETURN QUERY
-    SELECT *
-    FROM Tmp_TX;
+    SELECT Src.seq,
+           Src.id,
+           Src.dataset,
+           Src.state,
+           Src.rating,
+           Src.duration,
+           Src."interval",
+           Src.time_start,
+           Src.time_end,
+           Src.request,
+           Src.eus_proposal,
+           Src.eus_usage,
+           Src.eus_proposal_type,
+           Src.work_package,
+           Src.lc_column,
+           Src.instrument,
+           Src.campaign_id,
+           Src.fraction_emsl_funded,
+           Src.campaign_proposals
+    FROM Tmp_TX As Src;
 
     DROP TABLE Tmp_TX;
 END
