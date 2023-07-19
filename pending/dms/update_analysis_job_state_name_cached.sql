@@ -65,20 +65,51 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         ---------------------------------------------------
         -- Preview the jobs
         ---------------------------------------------------
 
-        SELECT AJ.job AS Job,
-               AJ.state_name_cached AS State_Name_Cached,
-               AJDAS.Job_State AS New_State_Name_Cached
-        FROM t_analysis_job AJ INNER JOIN
-             V_Analysis_Job_and_Dataset_Archive_State AJDAS ON AJ.job = AJDAS.job
-        WHERE AJ.job IN (Select job From Tmp_JobsToUpdate);
-        --
-        GET DIAGNOSTICS _jobCount = ROW_COUNT;
+        -- ToDo: Update this to use RAISE INFO
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        _jobCount := 0;
+
+        FOR _previewData IN
+            SELECT AJ.Job,
+                   AJ.State_Name_Cached,
+                   AJDAS.Job_State AS New_State_Name_Cached
+            FROM t_analysis_job AJ INNER JOIN
+                 V_Analysis_Job_and_Dataset_Archive_State AJDAS ON AJ.job = AJDAS.job
+            WHERE AJ.job IN (Select job From Tmp_JobsToUpdate)
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.State_Name_Cached,
+                                _previewData.New_State_Name_Cached
+                               );
+
+            RAISE INFO '%', _infoData;
+
+            _jobCount := _jobCount + 1;
+        END LOOP;
 
         If _jobCount = 0 Then
             _message := 'All jobs have up-to-date cached job state names';

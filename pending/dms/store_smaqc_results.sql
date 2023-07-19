@@ -62,6 +62,12 @@ DECLARE
     _datasetName text;
     _datasetIDCheck int;
     _usageMessage text;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -284,59 +290,228 @@ BEGIN
 
     -----------------------------------------------
     -- Populate Tmp_KnownMetrics using data in Tmp_Measurements
-    -- Use a Pivot to extract out the known columns
+    -- Use a Crosstab to extract out the known columns
     -----------------------------------------------
 
-
-    -- ToDo: Convert the PIVOT query to PostgreSQL syntax
-
-
-    INSERT INTO Tmp_KnownMetrics( Dataset_ID,
-                                  C_1A, C_1B, C_2A, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
-                                  DS_1A, DS_1B, DS_2A, DS_2B, DS_3A, DS_3B,
-                                  IS_1A, IS_1B, IS_2, IS_3A, IS_3B, IS_3C,
-                                  MS1_1, MS1_2A, MS1_2B, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
-                                  MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
-                                  P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
-                                  Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
-                                  MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing
-                                )
+    INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
+                                   C_1A, C_1B, C_2A, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
+                                   DS_1A, DS_1B, DS_2A, DS_2B, DS_3A, DS_3B,
+                                   IS_1A, IS_1B, IS_2, IS_3A, IS_3B, IS_3C,
+                                   MS1_1, MS1_2A, MS1_2B, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
+                                   MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
+                                   P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
+                                   Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
+                                   MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing
+                                 )
     SELECT _datasetID,
-           C_1A, C_1B, C_2A, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
-           DS_1A, DS_1B, DS_2A, DS_2B, DS_3A, DS_3B,
-           IS_1A, IS_1B, IS_2, IS_3A, IS_3B, IS_3C,
-           MS1_1, MS1_2A, MS1_2B, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
-           MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
-           P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
-           Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
-           MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing
-    FROM ( SELECT Name,
-                  Value
-           FROM Tmp_Measurements ) AS SourceTable
-         PIVOT ( MAX(Value)
-                 FOR Name
-                 IN ( [C_1A], [C_1B], [C_2A], [C_2B], [C_3A], [C_3B], [C_4A], [C_4B], [C_4C],
-                      [DS_1A], [DS_1B], [DS_2A], [DS_2B], [DS_3A], [DS_3B],
-                      [IS_1A], [IS_1B], [IS_2], [IS_3A], [IS_3B], [IS_3C],
-                      [MS1_1], [MS1_2A], [MS1_2B], [MS1_3A], [MS1_3B], [MS1_5A], [MS1_5B], [MS1_5C], [MS1_5D],
-                      [MS2_1], [MS2_2], [MS2_3], [MS2_4A], [MS2_4B], [MS2_4C], [MS2_4D],
-                      [P_1A], [P_1B], [P_2A], [P_2B], [P_2C], [P_3], [Phos_2A], [Phos_2C],
-                      [Keratin_2A], [Keratin_2C], [P_4A], [P_4B], [Trypsin_2A], [Trypsin_2C],
-                      [MS2_RepIon_All], [MS2_RepIon_1Missing], [MS2_RepIon_2Missing], [MS2_RepIon_3Missing] ) ) AS PivotData
+           ct."C_1A", ct."C_1B", ct."C_2A", ct."C_2B", ct."C_3A", ct."C_3B", ct."C_4A", ct."C_4B", ct."C_4C",
+           ct."DS_1A", ct."DS_1B", ct."DS_2A", ct."DS_2B", ct."DS_3A", ct."DS_3B",
+           ct."IS_1A", ct."IS_1B", ct."IS_2", ct."IS_3A", ct."IS_3B", ct."IS_3C",
+           ct."MS1_1", ct."MS1_2A", ct."MS1_2B", ct."MS1_3A", ct."MS1_3B", ct."MS1_5A", ct."MS1_5B", ct."MS1_5C", ct."MS1_5D",
+           ct."MS2_1", ct."MS2_2", ct."MS2_3", ct."MS2_4A", ct."MS2_4B", ct."MS2_4C", ct."MS2_4D",
+           ct."P_1A", ct."P_1B", ct."P_2A", ct."P_2B", ct."P_2C", ct."P_3", ct."Phos_2A", ct."Phos_2C",
+           ct."Keratin_2A", ct."Keratin_2C", ct."P_4A", ct."P_4B", ct."Trypsin_2A", ct."Trypsin_2C",
+           ct."MS2_RepIon_All", ct."MS2_RepIon_1Missing", ct."MS2_RepIon_2Missing", ct."MS2_RepIon_3Missing"
+    FROM crosstab(
+       'SELECT 1 As RowID,
+               Name,
+               Value
+        FROM Tmp_Measurements
+        ORDER BY 1,2',
+       $$SELECT unnest('{C_1A, C_1B, C_2A, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
+                         DS_1A, DS_1B, DS_2A, DS_2B, DS_3A, DS_3B,
+                         IS_1A, IS_1B, IS_2, IS_3A, IS_3B, IS_3C,
+                         MS1_1, MS1_2A, MS1_2B, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
+                         MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
+                         P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
+                         Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
+                         MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing}'::text[])$$
+       ) AS ct (RowID int,
+                "C_1A"  float8, "C_1B"   float8, "C_2A"   float8, "C_2B"   float8, "C_3A"   float8, "C_3B"   float8, "C_4A" float8, "C_4B" float8, "C_4C" float8,
+                "DS_1A" float8, "DS_1B"  float8, "DS_2A"  float8, "DS_2B"  float8, "DS_3A"  float8, "DS_3B"  float8,
+                "IS_1A" float8, "IS_1B"  float8, "IS_2"   float8, "IS_3A"  float8, "IS_3B"  float8, "IS_3C"  float8,
+                "MS1_1" float8, "MS1_2A" float8, "MS1_2B" float8, "MS1_3A" float8, "MS1_3B" float8, "MS1_5A" float8, "MS1_5B" float8, "MS1_5C" float8, "MS1_5D" float8,
+                "MS2_1" float8, "MS2_2"  float8, "MS2_3"  float8, "MS2_4A" float8, "MS2_4B" float8, "MS2_4C" float8, "MS2_4D" float8,
+                "P_1A"  float8, "P_1B"   float8, "P_2A"   float8, "P_2B"   float8, "P_2C"   float8, "P_3"    float8, "Phos_2A" float8, "Phos_2C" float8,
+                "Keratin_2A" float8, "Keratin_2C" float8, "P_4A" float8, "P_4B" float8, "Trypsin_2A" float8, "Trypsin_2C" float8,
+                "MS2_RepIon_All" float8, "MS2_RepIon_1Missing" float8, "MS2_RepIon_2Missing" float8, "MS2_RepIon_3Missing" float8);
 
     If _infoOnly Then
+
         -----------------------------------------------
         -- Preview the data, then exit
         -----------------------------------------------
 
-        SELECT *
-        FROM Tmp_DatasetInfo
+        -- ToDo: Preview this data using RAISE INFO
 
-        SELECT *
-        FROM Tmp_Measurements
+        RAISE INFO '';
 
-        SELECT *
-        FROM Tmp_KnownMetrics
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Dataset_ID,
+                   Dataset_Name,
+                   Job,
+                   PSM_Source_Job
+            FROM Tmp_DatasetInfo
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_ID,
+                                _previewData.Dataset_Name,
+                                _previewData.Job,
+                                _previewData.PSM_Source_Job
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Name,
+                   ValueText,
+                   Value
+            FROM Tmp_Measurements
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Name,
+                                _previewData.ValueText,
+                                _previewData.Value
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Dataset_ID,
+                   C_1A, C_1B, C_2A, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
+                   DS_1A, DS_1B, DS_2A, DS_2B, DS_3A, DS_3B,
+                   IS_1A, IS_1B, IS_2, IS_3A, IS_3B, IS_3C,
+                   MS1_1, MS1_2A, MS1_2B, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
+                   MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
+                   P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
+                   Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
+                   MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing
+            FROM Tmp_KnownMetrics
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_ID,
+                                _previewData.C_1A,
+                                _previewData.C_1B,
+                                _previewData.C_2A,
+                                _previewData.C_2B,
+                                _previewData.C_3A,
+                                _previewData.C_3B,
+                                _previewData.C_4A,
+                                _previewData.C_4B,
+                                _previewData.C_4C,
+                                _previewData.DS_1A,
+                                _previewData.DS_1B,
+                                _previewData.DS_2A,
+                                _previewData.DS_2B,
+                                _previewData.DS_3A,
+                                _previewData.DS_3B,
+                                _previewData.IS_1A,
+                                _previewData.IS_1B,
+                                _previewData.IS_2,
+                                _previewData.IS_3A,
+                                _previewData.IS_3B,
+                                _previewData.IS_3C,
+                                _previewData.MS1_1,
+                                _previewData.MS1_2A,
+                                _previewData.MS1_2B,
+                                _previewData.MS1_3A,
+                                _previewData.MS1_3B,
+                                _previewData.MS1_5A,
+                                _previewData.MS1_5B,
+                                _previewData.MS1_5C,
+                                _previewData.MS1_5D,
+                                _previewData.MS2_1,
+                                _previewData.MS2_2,
+                                _previewData.MS2_3,
+                                _previewData.MS2_4A,
+                                _previewData.MS2_4B,
+                                _previewData.MS2_4C,
+                                _previewData.MS2_4D,
+                                _previewData.P_1A,
+                                _previewData.P_1B,
+                                _previewData.P_2A,
+                                _previewData.P_2B,
+                                _previewData.P_2C,
+                                _previewData.P_3,
+                                _previewData.Phos_2A,
+                                _previewData.Phos_2C,
+                                _previewData.Keratin_2A,
+                                _previewData.Keratin_2C,
+                                _previewData.P_4A,
+                                _previewData.P_4B,
+                                _previewData.Trypsin_2A,
+                                _previewData.Trypsin_2C,
+                                _previewData.MS2_RepIon_All,
+                                _previewData.MS2_RepIon_1Missing,
+                                _previewData.MS2_RepIon_2Missing,
+                                _previewData.MS2_RepIon_3Missing
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         DROP TABLE Tmp_DatasetInfo;
         DROP TABLE Tmp_Measurements;

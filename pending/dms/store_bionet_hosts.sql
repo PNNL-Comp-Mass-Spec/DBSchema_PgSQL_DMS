@@ -10,11 +10,12 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Updates the entries in T_Bionet_Hosts
+**  Desc:
+**      Updates the entries in T_Bionet_Hosts
 **
-**  Export the list of computers from DNS on Gigasax
-**  by right clicking Bionet under "Forward Lookup Zones"
-**  and choosing "Export list ..."
+**      Export the list of computers from DNS on Gigasax
+**      by right clicking Bionet under "Forward Lookup Zones"
+**      and choosing "Export list ..."
 **
 **  File format (tab-separated)
 **
@@ -81,7 +82,7 @@ BEGIN
         Value text null
     );
 
-    CREATE UNIQUE INDEX IX_Tmp_Hosts_EntryID ON Tmp_HostData (EntryID);
+    CREATE UNIQUE INDEX IX_Tmp_HostData_EntryID ON Tmp_HostData (EntryID);
 
     CREATE TEMP TABLE Tmp_Hosts (
         Host text not null,
@@ -221,9 +222,46 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        -- Preview the new info
-        SELECT *
-        FROM Tmp_Hosts
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Host,
+                   NameOrIP As Name_or_IP,
+                   IsAlias As Is_Alias,
+                   Instruments
+            FROM Tmp_Hosts
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Host,
+                                _previewData.Name_or_IP,
+                                _previewData.Is_Alias,
+                                _previewData.Instruments
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     Else
         -- Store the host information
 
@@ -248,8 +286,7 @@ BEGIN
         --
         UPDATE t_bionet_hosts Target
         SET alias = Null
-        WHERE NOT EXISTS (SELECT Src.Host AS Alias,
-                                 Src.NameOrIP AS TargetHost
+        WHERE NOT EXISTS (SELECT 1
                           FROM Tmp_Hosts Src
                           WHERE Src.IsAlias And
                                 Target.Host = Src.TargetHost AND

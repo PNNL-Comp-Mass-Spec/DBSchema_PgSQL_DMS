@@ -98,78 +98,126 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
-        
+
         -- ToDo: Use RAISE INFO to display the old and new values
-        
-        SELECT State_ID,
-               _newDMSJobState AS State_ID_New,
-               Start,
-               CASE
-                   WHEN _newBrokerJobState >= 2 THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
-                   ELSE Start
-               END AS Start_New,
-               Finish,
-               CASE
-                   WHEN _newBrokerJobState IN (4, 5) THEN _jobFinish
-                   ELSE Finish
-               END AS Finish_New,
-               Results_Folder_Name,
-               _resultsDirectoryName AS Results_Folder_Name_New,
-               Assigned_Processor_Name,
-               _assignedProcessor AS Assigned_Processor_Name_New,
-               CASE
-                   WHEN _newBrokerJobState = 2
-                   THEN Comment
-                   ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
-               END AS Comment_New,
-               Organism_DB_Name,
-               Coalesce(_organismDBName, Organism_DB_Name) AS Organism_DB_Name_New,
-               Processing_Time_Minutes,
-               CASE
-                   WHEN _newBrokerJobState <> 2 THEN _processingTimeMinutes
-               ELSE Processing_Time_Minutes
-               END AS Processing_Time_Minutes_New
-        FROM t_analysis_job
-        WHERE job = _job;
 
-    Else
 
-        -- Update the values
-        UPDATE t_analysis_job
-        SET job_state_id = _newDMSJobState,
-            start = CASE WHEN _newBrokerJobState >= 2
-                         THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
-                         ELSE Start
-                    END,
-            Finish = CASE WHEN _newBrokerJobState IN (4, 5)
-                          THEN _jobFinish
-                          ELSE Finish
-                     END,
-            Results_Folder_Name = _resultsDirectoryName,
-            Assigned_Processor_Name = 'Job_Broker',
-            Comment = CASE WHEN _newBrokerJobState = 2
-                           THEN Comment
-                           ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
-                      END,
-            Organism_DB_Name = Coalesce(_organismDBName, Organism_DB_Name),
-            Processing_TimeMinutes = CASE WHEN _newBrokerJobState <> 2
-                                          THEN _processingTimeMinutes
-                                          ELSE Processing_TimeMinutes
-                                     END,
-            -- Note: setting Purged to 0 even if job failed since admin might later manually set job to complete and we want Purged to be 0 in that case
-            Purged = CASE WHEN _newBrokerJobState IN (4, 5, 14)
-                          THEN 0
-                          ELSE Purged
-                     END
-        WHERE job = _job;
+        RAISE INFO '';
 
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT State_ID,
+                   _newDMSJobState AS State_ID_New,
+                   Start,
+                   CASE
+                       WHEN _newBrokerJobState >= 2
+                       THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
+                       ELSE Start
+                   END AS Start_New,
+                   Finish,
+                   CASE
+                       WHEN _newBrokerJobState IN (4, 5)
+                       THEN _jobFinish
+                       ELSE Finish
+                   END AS Finish_New,
+                   Results_Folder_Name,
+                   _resultsDirectoryName AS Results_Folder_Name_New,
+                   Assigned_Processor_Name,
+                   _assignedProcessor AS Assigned_Processor_Name_New,
+                   CASE
+                       WHEN _newBrokerJobState = 2
+                       THEN Comment
+                       ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
+                   END AS Comment_New,
+                   Organism_DB_Name,
+                   Coalesce(_organismDBName, Organism_DB_Name) AS Organism_DB_Name_New,
+                   Processing_Time_Minutes,
+                   CASE
+                       WHEN _newBrokerJobState <> 2
+                       THEN _processingTimeMinutes
+                       ELSE Processing_Time_Minutes
+                   END AS Processing_Time_Minutes_New
+            FROM t_analysis_job
+            WHERE job = _job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.State_ID,
+                                _previewData.State_ID_New,
+                                _previewData.Start,
+                                _previewData.Start_New,
+                                _previewData.Finish,
+                                _previewData.Finish_New,
+                                _previewData.Results_Folder_Name,
+                                _previewData.Results_Folder_Name_New,
+                                _previewData.Assigned_Processor_Name,
+                                _previewData.Assigned_Processor_Name_New,
+                                _previewData.Comment_New,
+                                _previewData.Organism_DB_Name,
+                                _previewData.Organism_DB_Name_New,
+                                _previewData.Processing_Time_Minutes,
+                                _previewData.Processing_Time_Minutes_New
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RETURN;
     End If;
+
+    -- Update the values
+    UPDATE t_analysis_job
+    SET job_state_id = _newDMSJobState,
+        start = CASE WHEN _newBrokerJobState >= 2
+                     THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
+                     ELSE Start
+                END,
+        Finish = CASE WHEN _newBrokerJobState IN (4, 5)
+                      THEN _jobFinish
+                      ELSE Finish
+                 END,
+        Results_Folder_Name = _resultsDirectoryName,
+        Assigned_Processor_Name = 'Job_Broker',
+        Comment = CASE WHEN _newBrokerJobState = 2
+                       THEN Comment
+                       ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
+                  END,
+        Organism_DB_Name = Coalesce(_organismDBName, Organism_DB_Name),
+        Processing_TimeMinutes = CASE WHEN _newBrokerJobState <> 2
+                                      THEN _processingTimeMinutes
+                                      ELSE Processing_TimeMinutes
+                                 END,
+        -- Note: setting Purged to 0 even if job failed since admin might later manually set job to complete and we want Purged to be 0 in that case
+        Purged = CASE WHEN _newBrokerJobState IN (4, 5, 14)
+                      THEN 0
+                      ELSE Purged
+                 END
+    WHERE job = _job;
 
     -------------------------------------------------------------------
     -- If Job is Complete or No Export, do some additional tasks
     -------------------------------------------------------------------
 
-    If _newDMSJobState in (4, 14) AND Not _infoOnly Then
+    If _newDMSJobState in (4, 14) Then
         -- Get the dataset ID, dataset name, and tool name
         --
         SELECT DS.dataset_id,
@@ -194,6 +242,7 @@ BEGIN
                 WHERE dataset_id = _datasetID;
             End If;
         End If;
+
     End If;
 
 END

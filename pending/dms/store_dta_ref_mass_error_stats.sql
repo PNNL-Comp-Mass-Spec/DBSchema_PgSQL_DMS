@@ -61,19 +61,19 @@ BEGIN
         Dataset_ID int NULL,
         Dataset_Name text NOT NULL,
         PSM_Source_Job int NULL                -- Analysis job used by DTA_Refinery
-    )
+    );
 
     CREATE TEMP TABLE Tmp_Measurements (
         Name text NOT NULL,
         ValueText text NULL,
         Value float8 NULL   -- Double precision float initially, but values are restricted to -1E+37 to 1E+37 since stored as float4 (aka real)
-    )
+    );
 
     CREATE TEMP TABLE Tmp_KnownMetrics (
         Dataset_ID int NOT NULL,
         Mass_Error_PPM real NULL,
         Mass_Error_PPM_Refined real NULL
-    )
+    );
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -192,7 +192,7 @@ BEGIN
     -- If any of the metrics has a non-numeric value, the Value column will remain Null
     -----------------------------------------------
 
-    UPDATE Tmp_Measurements
+    UPDATE Tmp_Measurements Target
     SET Value = FilterQ.Value
     FROM ( SELECT Name,
                   ValueText,
@@ -213,27 +213,25 @@ BEGIN
 
     -----------------------------------------------
     -- Populate Tmp_KnownMetrics using data in Tmp_Measurements
-    -- Use a Pivot to extract out the known columns
+    -- Use a Crosstab to extract out the known columns
     -----------------------------------------------
-
-
-    -- ToDo: Convert the PIVOT query to PostgreSQL syntax
-
 
     INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
                                    Mass_Error_PPM,
                                    Mass_Error_PPM_Refined
                                  )
     SELECT _datasetID,
-            Mass_Error_PPM,
-            Mass_Error_PPM_Refined
-    FROM ( SELECT Name,
-                  Value
-           FROM Tmp_Measurements ) AS SourceTable
-         PIVOT ( MAX(Value)
-                 FOR Name
-                 IN ( Mass_Error_PPM, Mass_Error_PPM_Refined )
-                ) AS PivotData
+           ct."MassErrorPPM",
+           ct."MassErrorPPM_Refined"
+    FROM crosstab(
+       'SELECT 1 As RowID,
+               Name,
+               Value
+        FROM Tmp_Measurements
+        ORDER BY 1,2',
+       $$SELECT unnest('{MassErrorPPM, MassErrorPPM_Refined}'::text[])$$
+       ) AS ct (RowID int,
+                "MassErrorPPM" float8, "MassErrorPPM_Refined" float8);
 
     If _infoOnly Then
         -----------------------------------------------
@@ -241,14 +239,108 @@ BEGIN
         -----------------------------------------------
 
         -- ToDo: Use RAISE INFO to show the table data
-        SELECT *
-        FROM Tmp_DatasetInfo
 
-        SELECT *
-        FROM Tmp_Measurements
+        RAISE INFO '';
 
-        SELECT *
-        FROM Tmp_KnownMetrics
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Dataset_ID,
+                   Dataset_Name,
+                   PSM_Source_Job
+            FROM Tmp_DatasetInfo
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_ID,
+                                _previewData.Dataset_Name,
+                                _previewData.PSM_Source_Job
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Name,
+                   ValueText,
+                   Value
+            FROM Tmp_Measurements
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Name,
+                                _previewData.ValueText,
+                                _previewData.Value
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Dataset_ID,
+                   Mass_Error_PPM,
+                   Mass_Error_PPM_Refined
+            FROM Tmp_KnownMetrics
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_ID,
+                                _previewData.Mass_Error_PPM,
+                                _previewData.Mass_Error_PPM_Refined
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         DROP TABLE Tmp_DatasetInfo;
         DROP TABLE Tmp_Measurements;

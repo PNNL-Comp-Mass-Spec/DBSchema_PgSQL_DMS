@@ -81,6 +81,14 @@ DECLARE
     _previewData record;
     _infoData text;
 
+    _formatSpecifierStaging text;
+    _infoHeadStaging text;
+    _infoHeadSeparatorStaging text;
+
+    _formatSpecifierInstUsage text;
+    _infoHeadInstUsage text;
+    _infoHeadSeparatorInstUsage text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -266,12 +274,93 @@ BEGIN
         FROM t_emsl_instrument_usage_type InstUsageType
         WHERE Tmp_Staging.Usage = InstUsageType.usage_type;
 
+        _formatSpecifierStaging := '%-10s %-12s %-25s %-11s %-10s %-20s %-7s %-15s %-10s %-10s %-10s %-20s %-4s %-5s %-10s %-13s %-11s %-4s %-8s';
+
+        _infoHeadStaging := format(_formatSpecifierStaging,
+                                   'Staging_ID',
+                                   'EMSL_Inst_ID',
+                                   'Instrument',
+                                   'DMS_Inst_ID',
+                                   'Type',
+                                   'Start',
+                                   'Minutes',
+                                   'Usage',
+                                   'Proposal',
+                                   'Users',
+                                   'Operator',
+                                   'Comment',
+                                   'Year',
+                                   'Month',
+                                   'Dataset_ID',
+                                   'Usage_type_ID',
+                                   'Operator_ID',
+                                   'Mark',
+                                   'Seq'
+                                  );
+
+        _infoHeadSeparatorStaging := format(_formatSpecifierStaging,
+                                     '----------',
+                                     '------------',
+                                     '-------------------------',
+                                     '-----------',
+                                     '----------',
+                                     '--------------------',
+                                     '-------',
+                                     '---------------',
+                                     '----------',
+                                     '----------',
+                                     '----------',
+                                     '--------------------',
+                                     '----',
+                                     '-----',
+                                     '----------',
+                                     '-------------',
+                                     '-----------',
+                                     '----',
+                                     '--------'
+                                    );
+
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 1) Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
+            RAISE INFO '%', _infoHeadStaging;
+            RAISE INFO '%', _infoHeadSeparatorStaging;
 
-            SELECT 'Initial data' As State, *
-            FROM Tmp_Staging;
+            FOR _previewData IN
+                SELECT 'Initial data' As State,
+                       Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
+                       public.timestamp_text(Start) As Start,
+                       Minutes, Usage, Proposal, Users, Operator, Comment,
+                       Year, Month, Dataset_ID, Usage_type_ID, Operator_ID, Mark, Seq
+                FROM Tmp_Staging
+                ORDER BY Staging_ID
+            LOOP
+                _infoData := format(_formatSpecifierStaging,
+                                    _previewData.Staging_ID,
+                                    _previewData.EMSL_Inst_ID,
+                                    _previewData.Instrument,
+                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Minutes,
+                                    _previewData.Usage,
+                                    _previewData.Proposal,
+                                    _previewData.Users,
+                                    _previewData.Operator,
+                                    _previewData.Comment,
+                                    _previewData.Year,
+                                    _previewData.Month,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Usage_type_ID,
+                                    _previewData.Operator_ID,
+                                    _previewData.Mark,
+                                    _previewData.Seq
+
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         ---------------------------------------------------
@@ -286,10 +375,46 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 2) Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
+            RAISE INFO '%', _infoHeadStaging;
+            RAISE INFO '%', _infoHeadSeparatorStaging;
 
-            SELECT 'Mark set to 1' As State, *
-            FROM Tmp_Staging WHERE Mark = 1;
+            FOR _previewData IN
+                SELECT 'Mark set to 1' As State,
+                       Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
+                       public.timestamp_text(Start) As Start,
+                       Minutes, Usage, Proposal, Users, Operator, Comment,
+                       Year, Month, Dataset_ID, Usage_type_ID, Operator_ID, Mark, Seq
+                FROM Tmp_Staging
+                WHERE Mark = 1
+                ORDER BY Staging_ID
+            LOOP
+                _infoData := format(_formatSpecifierStaging,
+                                    _previewData.Staging_ID,
+                                    _previewData.EMSL_Inst_ID,
+                                    _previewData.Instrument,
+                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Minutes,
+                                    _previewData.Usage,
+                                    _previewData.Proposal,
+                                    _previewData.Users,
+                                    _previewData.Operator,
+                                    _previewData.Comment,
+                                    _previewData.Year,
+                                    _previewData.Month,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Usage_type_ID,
+                                    _previewData.Operator_ID,
+                                    _previewData.Mark,
+                                    _previewData.Seq
+
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         ---------------------------------------------------
@@ -324,9 +449,47 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 3) Then
 
-            -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Mark set to 0' As State, * FROM Tmp_Staging WHERE Mark = 0
+            RAISE INFO '';
+            RAISE INFO '%', _infoHeadStaging;
+            RAISE INFO '%', _infoHeadSeparatorStaging;
+
+            FOR _previewData IN
+                SELECT 'Mark set to 0' As State,
+                       Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
+                       public.timestamp_text(Start) As Start,
+                       Minutes, Usage, Proposal, Users, Operator, Comment,
+                       Year, Month, Dataset_ID, Usage_type_ID, Operator_ID, Mark, Seq
+                FROM Tmp_Staging
+                WHERE Mark = 0
+                ORDER BY Staging_ID
+            LOOP
+                _infoData := format(_formatSpecifierStaging,
+                                    _previewData.Staging_ID,
+                                    _previewData.EMSL_Inst_ID,
+                                    _previewData.Instrument,
+                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Minutes,
+                                    _previewData.Usage,
+                                    _previewData.Proposal,
+                                    _previewData.Users,
+                                    _previewData.Operator,
+                                    _previewData.Comment,
+                                    _previewData.Year,
+                                    _previewData.Month,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Usage_type_ID,
+                                    _previewData.Operator_ID,
+                                    _previewData.Mark,
+                                    _previewData.Seq
+
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         ---------------------------------------------------
@@ -379,10 +542,46 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 4) Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
+            RAISE INFO '%', _infoHeadStaging;
+            RAISE INFO '%', _infoHeadSeparatorStaging;
 
-            SELECT 'Comments cleaned' As State, *
-            FROM Tmp_Staging WHERE Mark = 0;
+            FOR _previewData IN
+                SELECT 'Comments cleaned' As State,
+                       Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
+                       public.timestamp_text(Start) As Start,
+                       Minutes, Usage, Proposal, Users, Operator, Comment,
+                       Year, Month, Dataset_ID, Usage_type_ID, Operator_ID, Mark, Seq
+                FROM Tmp_Staging
+                WHERE Mark = 0
+                ORDER BY Staging_ID
+            LOOP
+                _infoData := format(_formatSpecifierStaging,
+                                    _previewData.Staging_ID,
+                                    _previewData.EMSL_Inst_ID,
+                                    _previewData.Instrument,
+                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Minutes,
+                                    _previewData.Usage,
+                                    _previewData.Proposal,
+                                    _previewData.Users,
+                                    _previewData.Operator,
+                                    _previewData.Comment,
+                                    _previewData.Year,
+                                    _previewData.Month,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Usage_type_ID,
+                                    _previewData.Operator_ID,
+                                    _previewData.Mark,
+                                    _previewData.Seq
+
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         ---------------------------------------------------
@@ -395,10 +594,45 @@ BEGIN
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 5) Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
+            RAISE INFO '%', _infoHeadStaging;
+            RAISE INFO '%', _infoHeadSeparatorStaging;
 
-            SELECT 'Intervals' As State, *
-            FROM Tmp_Staging WHERE Type = 'Interval';
+            FOR _previewData IN
+                SELECT 'Intervals' As State,
+                       Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
+                       public.timestamp_text(Start) As Start,
+                       Minutes, Usage, Proposal, Users, Operator, Comment,
+                       Year, Month, Dataset_ID, Usage_type_ID, Operator_ID, Mark, Seq
+                FROM Tmp_Staging
+                WHERE Type = 'Interval';
+                ORDER BY Staging_ID
+            LOOP
+                _infoData := format(_formatSpecifierStaging,
+                                    _previewData.Staging_ID,
+                                    _previewData.EMSL_Inst_ID,
+                                    _previewData.Instrument,
+                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Minutes,
+                                    _previewData.Usage,
+                                    _previewData.Proposal,
+                                    _previewData.Users,
+                                    _previewData.Operator,
+                                    _previewData.Comment,
+                                    _previewData.Year,
+                                    _previewData.Month,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Usage_type_ID,
+                                    _previewData.Operator_ID,
+                                    _previewData.Mark,
+                                    _previewData.Seq
+
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If;
 
@@ -407,45 +641,130 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT Tmp_Staging.start AS Start,
-                   CASE WHEN Coalesce(InstUsage.proposal, '') = '' THEN Tmp_Staging.proposal ELSE InstUsage.proposal END AS Proposal,
-                   -- Remove or update since skipped column: CASE WHEN Coalesce(InstUsage.usage_type, 0) = 0 THEN Tmp_Staging.Usage ELSE InstUsageType.usage_type END AS Usage,
-                   CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END AS Usage_Type_ID,
-                   CASE WHEN Coalesce(InstUsage.users, '') = ''    THEN Tmp_Staging.users ELSE InstUsage.users END AS Users,
-                   CASE WHEN InstUsage.operator Is Null          THEN Tmp_Staging.Operator_ID ELSE InstUsage.operator END AS Operator,
-                   Tmp_Staging.year AS Year,
-                   Tmp_Staging.month AS Month,
-                   CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment END AS Comment
-            FROM t_emsl_instrument_usage_report InstUsage
-                 INNER JOIN Tmp_Staging
-                   ON InstUsage.dataset_id = Tmp_Staging.dataset_id AND
-                      InstUsage.type = Tmp_Staging.type
-                 LEFT OUTER JOIN t_emsl_instrument_usage_type InstUsageType
-                   ON InstUsage.usage_type_id = InstUsageType.usage_type_id
-            WHERE Tmp_Staging.Mark = 1
-            ORDER BY Tmp_Staging.start
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Tmp_Staging.start AS Start,
+                       CASE WHEN Coalesce(InstUsage.proposal, '') = '' THEN Tmp_Staging.proposal ELSE InstUsage.proposal END AS Proposal,
+                       -- Remove or update since skipped column: CASE WHEN Coalesce(InstUsage.usage_type, 0) = 0 THEN Tmp_Staging.Usage ELSE InstUsageType.usage_type END AS Usage,
+                       CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END AS Usage_Type_ID,
+                       CASE WHEN Coalesce(InstUsage.users, '') = ''    THEN Tmp_Staging.users ELSE InstUsage.users END AS Users,
+                       CASE WHEN InstUsage.operator Is Null            THEN Tmp_Staging.Operator_ID ELSE InstUsage.operator END AS Operator,
+                       Tmp_Staging.Year,
+                       Tmp_Staging.Month,
+                       CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment END AS Comment
+                FROM t_emsl_instrument_usage_report InstUsage
+                     INNER JOIN Tmp_Staging
+                       ON InstUsage.dataset_id = Tmp_Staging.dataset_id AND
+                          InstUsage.type = Tmp_Staging.type
+                     LEFT OUTER JOIN t_emsl_instrument_usage_type InstUsageType
+                       ON InstUsage.usage_type_id = InstUsageType.usage_type_id
+                WHERE Tmp_Staging.Mark = 1
+                ORDER BY Tmp_Staging.start
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Start,
+                                    _previewData.Proposal,
+                                    _previewData.Usage,
+                                    _previewData.Usage_Type_ID,
+                                    _previewData.Users,
+                                    _previewData.Operator,
+                                    _previewData.Year,
+                                    _previewData.Month,
+                                    _previewData.Comment
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT EMSL_Inst_ID,
-                   DMS_Inst_ID,
-                   Type,
-                   Start,
-                   Minutes,
-                   Proposal,
-                   Usage,
-                   Usage_Type,
-                   Users,
-                   Operator,
-                   Comment,
-                   Year,
-                   Month,
-                   Dataset_ID,
-                   Operator_ID,
-                   Seq
-            FROM Tmp_Staging
-            WHERE Mark = 0
-            ORDER BY Start, Dataset_ID
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT EMSL_Inst_ID,
+                       DMS_Inst_ID,
+                       Type,
+                       Start,
+                       Minutes,
+                       Proposal,
+                       Usage,
+                       Usage_Type,
+                       Users,
+                       Operator,
+                       Comment,
+                       Year,
+                       Month,
+                       Dataset_ID,
+                       Operator_ID,
+                       Seq
+                FROM Tmp_Staging
+                WHERE Mark = 0
+                ORDER BY Start, Dataset_ID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.EMSL_Inst_ID,
+                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Minutes,
+                                    _previewData.Proposal,
+                                    _previewData.Usage,
+                                    _previewData.Usage_Type,
+                                    _previewData.Users,
+                                    _previewData.Operator,
+                                    _previewData.Comment,
+                                    _previewData.Year,
+                                    _previewData.Month,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Operator_ID,
+                                    _previewData.Seq
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             ---------------------------------------------------
             -- Clean out any 'long intervals' that don't appear
@@ -454,20 +773,44 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT InstUsage.emsl_inst_id,
-                   InstName.instrument AS Instrument,
-                   InstUsage.type,
-                   InstUsage.start,
-                   InstUsage.minutes,
-                   InstUsage.proposal,
-                   InstUsage.usage_type_id,
-                   InstUsage.users,
-                   InstUsage.operator,
-                   InstUsage.comment,
-                   InstUsage.year,
-                   InstUsage.month,
-                   InstUsage.dataset_id,
-                   InstUsage.seq
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+            SELECT InstUsage.EMSL_Inst_ID,
+                   InstName.Instrument,
+                   InstUsage.Type,
+                   InstUsage.Start,
+                   InstUsage.Minutes,
+                   InstUsage.Proposal,
+                   InstUsage.Usage_Type_ID,
+                   InstUsage.Users,
+                   InstUsage.Operator,
+                   InstUsage.Comment,
+                   InstUsage.Year,
+                   InstUsage.Month,
+                   InstUsage.Dataset_ID,
+                   InstUsage.Seq
             FROM t_emsl_instrument_usage_report InstUsage
                  INNER JOIN t_instrument_name InstName
                    ON InstUsage.dms_inst_id = InstName.instrument_id
@@ -476,6 +819,26 @@ BEGIN
                   InstUsage.month = _month AND
                   InstName.instrument = _instrument AND
                   NOT InstUsage.dataset_id IN ( SELECT interval_id FROM t_run_interval )
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.EMSL_Inst_ID,
+                                    _previewData.Instrument,
+                                    _previewData.Type,
+                                    _previewData.Start,
+                                    _previewData.Minutes,
+                                    _previewData.Proposal,
+                                    _previewData.Usage_Type_ID,
+                                    _previewData.Users,
+                                    _previewData.Operator,
+                                    _previewData.Comment,
+                                    _previewData.Year,
+                                    _previewData.Month,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Seq
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If; -- </preview>
 
@@ -509,26 +872,70 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
+                RAISE INFO '';
+
+                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
                 _previewCount := 0;
 
-                SELECT 'Update Row' As Action,
-                        Tmp_Staging.minutes,
-                        Tmp_Staging.start,
-                        CASE WHEN Coalesce(InstUsage.proposal, '') = '' THEN Tmp_Staging.proposal ELSE InstUsage.proposal END As Proposal,
-                        CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END As Usage_Type_ID,
-                        CASE WHEN Coalesce(InstUsage.users, '') = ''    THEN Tmp_Staging.users ELSE InstUsage.users END As Users,
-                        CASE WHEN InstUsage.operator Is Null          THEN Tmp_Staging.operator ELSE InstUsage.operator END As Operator,
-                        Tmp_Staging.year,
-                        Tmp_Staging.month,
-                        CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment End As Comment,
-                        CURRENT_TIMESTAMP As Updated,
-                        _callingUser As CallingUser
-                FROM t_emsl_instrument_usage_report InstUsage
-                        INNER JOIN Tmp_Staging
-                        ON InstUsage.dataset_id = Tmp_Staging.dataset_id AND
-                            InstUsage.type = Tmp_Staging.type
-                WHERE Tmp_Staging.MARK = 1
-                ORDER BY Tmp_Staging.start;
+                FOR _previewData IN
+                    SELECT 'Update Row' As Action,
+                            Tmp_Staging.Minutes,
+                            Tmp_Staging.Start,
+                            CASE WHEN Coalesce(InstUsage.proposal, '') = ''    THEN Tmp_Staging.proposal ELSE InstUsage.proposal END As Proposal,
+                            CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END As Usage_Type_ID,
+                            CASE WHEN Coalesce(InstUsage.users, '') = ''       THEN Tmp_Staging.users ELSE InstUsage.users END As Users,
+                            CASE WHEN InstUsage.operator Is Null               THEN Tmp_Staging.operator ELSE InstUsage.operator END As Operator,
+                            Tmp_Staging.Year,
+                            Tmp_Staging.Month,
+                            CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment End As Comment,
+                            CURRENT_TIMESTAMP As Updated,
+                            _callingUser As Calling_User
+                    FROM t_emsl_instrument_usage_report InstUsage
+                            INNER JOIN Tmp_Staging
+                            ON InstUsage.dataset_id = Tmp_Staging.dataset_id AND
+                                InstUsage.type = Tmp_Staging.type
+                    WHERE Tmp_Staging.mark = 1
+                    ORDER BY Tmp_Staging.start;
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Minutes,
+                                        _previewData.Start,
+                                        _previewData.Proposal,
+                                        _previewData.Usage_Type_ID,
+                                        _previewData.Users,
+                                        _previewData.Operator,
+                                        _previewData.Year,
+                                        _previewData.Month,
+                                        _previewData.Comment,
+                                        _previewData.Updated,
+                                        _previewData.Calling_User
+                                       );
+
+                    RAISE INFO '%', _infoData;
+
+                    _previewCount := _previewCount + 1;
+                END LOOP;
 
                 If _previewCount > 0 Then
                     RAISE INFO 'Would update % rows in t_emsl_instrument_usage_report', _previewCount;
@@ -568,18 +975,49 @@ BEGIN
 
             Else
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
+                RAISE INFO '%', _infoHeadStaging;
+                RAISE INFO '%', _infoHeadSeparatorStaging;
 
                 _previewCount := 0;
 
-                SELECT 'Insert Row' As Action,
-                       EMSL_Inst_ID, DMS_Inst_ID, Type,
-                       Start, Minutes, Proposal, Usage_Type, usage_type_id,
-                       Users, Operator_ID, Comment, Year, Month,
-                       Dataset_ID, _callingUser As UpdatedBy, Seq
-                FROM Tmp_Staging
-                WHERE Mark = 0
-                ORDER BY Start;
+                FOR _previewData IN
+                    SELECT 'Insert Row' As State,
+                           Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
+                           public.timestamp_text(Start) As Start,
+                           Minutes, Usage, Proposal, Users, Operator, Comment,
+                           Year, Month, Dataset_ID, Usage_type_ID, Operator_ID, Mark, Seq
+                    FROM Tmp_Staging
+                    WHERE Type = 'Interval';
+                    ORDER BY Staging_ID
+                LOOP
+                    _infoData := format(_formatSpecifierStaging,
+                                        _previewData.Staging_ID,
+                                        _previewData.EMSL_Inst_ID,
+                                        _previewData.Instrument,
+                                        _previewData.DMS_Inst_ID,
+                                        _previewData.Type,
+                                        _previewData.Start,
+                                        _previewData.Minutes,
+                                        _previewData.Usage,
+                                        _previewData.Proposal,
+                                        _previewData.Users,
+                                        _previewData.Operator,
+                                        _previewData.Comment,
+                                        _previewData.Year,
+                                        _previewData.Month,
+                                        _previewData.Dataset_ID,
+                                        _previewData.Usage_type_ID,
+                                        _previewData.Operator_ID,
+                                        _previewData.Mark,
+                                        _previewData.Seq
+
+                                       );
+
+                    RAISE INFO '%', _infoData;
+
+                    _previewCount := _previewCount + 1;
+                END LOOP;
 
                 If _previewCount > 0 Then
                     RAISE INFO 'Would insert % rows into t_emsl_instrument_usage_report', _previewCount);
@@ -589,6 +1027,24 @@ BEGIN
             ---------------------------------------------------
             -- Clean out short 'long intervals'
             ---------------------------------------------------
+
+            _formatSpecifierInstUsage := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHeadInstUsage := format(_formatSpecifierInstUsage,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparatorInstUsage := format(_formatSpecifierInstUsage,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
 
             If Not _infoOnly Then
                 DELETE FROM t_emsl_instrument_usage_report
@@ -601,16 +1057,58 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
+                RAISE INFO '';
+                RAISE INFO '%', _infoHeadInstUsage;
+                RAISE INFO '%', _infoHeadSeparatorInstUsage;
+
                 _previewCount := 0;
 
-                SELECT 'Delete short "long interval"' AS Action, *
-                FROM t_emsl_instrument_usage_report
-                WHERE dataset_id IN ( SELECT dataset_id
-                                      FROM Tmp_Staging ) AND
-                      type = 'Interval' AND
-                      minutes < _maxNormalInterval
+                FOR _previewData IN
+                    SELECT 'Delete short "long interval"' AS Action,
+                           InstUsage.Seq,
+                           InstUsage.EMSL_Inst_ID,
+                           InstUsage.DMS_Inst_ID,
+                           InstUsage.Type,
+                           public.timestamp_text(InstUsage.start) As Start,
+                           InstUsage.Minutes,
+                           InstUsage.Proposal,
+                           InstUsage.Usage_Type_ID,
+                           InstUsage.Users,
+                           InstUsage.Operator,
+                           InstUsage.Comment,
+                           InstUsage.Year,
+                           InstUsage.Month,
+                           InstUsage.Dataset_ID
+                    FROM t_emsl_instrument_usage_report InstUsage
+                    WHERE InstUsage.dataset_id IN ( SELECT dataset_id
+                                                    FROM Tmp_Staging ) AND
+                          InstUsage.type = 'Interval' AND
+                          InstUsage.minutes < _maxNormalInterval
+                LOOP
+                    _infoData := format(_formatSpecifierInstUsage,
+                                        _previewData.Action,
+                                        _previewData.Seq,
+                                        _previewData.EMSL_Inst_ID,
+                                        _previewData.DMS_Inst_ID,
+                                        _previewData.Type,
+                                        _previewData.Public.timestamp_text(start) As Start,
+                                        _previewData.Minutes,
+                                        _previewData.Proposal,
+                                        _previewData.Usage_Type_ID,
+                                        _previewData.Users,
+                                        _previewData.Operator,
+                                        _previewData.Comment,
+                                        _previewData.Year,
+                                        _previewData.Month,
+                                        _previewData.Dataset_ID
+                                       );
 
-                 If _previewCount > 0 Then
+                    RAISE INFO '%', _infoData;
+
+                    _previewCount := _previewCount + 1;
+                END LOOP;
+
+                If _previewCount > 0 Then
                     RAISE INFO 'Would delete % shorter "long intervals" from t_emsl_instrument_usage_report', _previewCount);
                 End If;
             End If;
@@ -633,18 +1131,59 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
+                RAISE INFO '';
+                RAISE INFO '%', _infoHeadInstUsage;
+                RAISE INFO '%', _infoHeadSeparatorInstUsage;
+
                 _previewCount := 0;
 
-                SELECT 'Delete long "long interval"' AS Action,
-                       InstUsage.*
-                FROM t_emsl_instrument_usage_report InstUsage
-                     INNER JOIN t_instrument_name InstName
-                       ON InstUsage.DMS_Inst_ID = InstName.instrument_id
-                WHERE InstUsage.Type = 'interval' AND
-                      InstUsage.Year = _year AND
-                      InstUsage.Month = _month AND
-                      InstName.instrument = _instrument AND
-                      NOT InstUsage.Dataset_ID IN ( SELECT interval_id FROM t_run_interval );
+                FOR _previewData IN
+                    SELECT 'Delete long "long interval"' AS Action,
+                           InstUsage.Seq,
+                           InstUsage.EMSL_Inst_ID,
+                           InstUsage.DMS_Inst_ID,
+                           InstUsage.Type,
+                           public.timestamp_text(InstUsage.start) As Start,
+                           InstUsage.Minutes,
+                           InstUsage.Proposal,
+                           InstUsage.Usage_Type_ID,
+                           InstUsage.Users,
+                           InstUsage.Operator,
+                           InstUsage.Comment,
+                           InstUsage.Year,
+                           InstUsage.Month,
+                           InstUsage.Dataset_ID
+                    FROM t_emsl_instrument_usage_report InstUsage
+                         INNER JOIN t_instrument_name InstName
+                           ON InstUsage.DMS_Inst_ID = InstName.instrument_id
+                    WHERE InstUsage.Type = 'interval' AND
+                          InstUsage.Year = _year AND
+                          InstUsage.Month = _month AND
+                          InstName.instrument = _instrument AND
+                          NOT InstUsage.Dataset_ID IN ( SELECT interval_id FROM t_run_interval );
+                LOOP
+                    _infoData := format(_formatSpecifierInstUsage,
+                                        _previewData.Action,
+                                        _previewData.Seq,
+                                        _previewData.EMSL_Inst_ID,
+                                        _previewData.DMS_Inst_ID,
+                                        _previewData.Type,
+                                        _previewData.Public.timestamp_text(start) As Start,
+                                        _previewData.Minutes,
+                                        _previewData.Proposal,
+                                        _previewData.Usage_Type_ID,
+                                        _previewData.Users,
+                                        _previewData.Operator,
+                                        _previewData.Comment,
+                                        _previewData.Year,
+                                        _previewData.Month,
+                                        _previewData.Dataset_ID
+                                       );
+
+                    RAISE INFO '%', _infoData;
+
+                    _previewCount := _previewCount + 1;
+                END LOOP;
 
                 If _previewCount > 0 Then
                     RAISE INFO 'Would delete % longer "long intervals" from t_emsl_instrument_usage_report', _previewCount);
@@ -673,21 +1212,56 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
-                SELECT 'Add log reference to comment' As Action,
-                       InstUsage.seq,
-                       InstName.Instrument,
-                       comment AS OldComment,
-                       get_nearest_preceding_log_entry(InstUsage.seq, false) AS NewComment
-                FROM t_emsl_instrument_usage_report InstUsage
-                     INNER JOIN t_instrument_name InstName
-                       ON InstUsage.DMS_Inst_ID = InstName.instrument_id
-                     LEFT OUTER JOIN t_emsl_instrument_usage_type InstUsageType
-                       ON InstUsage.usage_type_id = InstUsageType.usage_type_id
-                WHERE InstUsage.Year = _year AND
-                      InstUsage.Month = _month AND
-                      InstUsage.Type = 'Dataset' AND
-                      Coalesce(InstUsageType.usage_type, '') NOT IN ('MAINTENANCE', 'ONSITE') AND
-                      Coalesce(InstUsage.Comment, '') = '';
+                RAISE INFO '';
+
+                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Add log reference to comment' As Action,
+                           InstUsage.Seq,
+                           InstName.Instrument,
+                           comment AS Old_Comment,
+                           get_nearest_preceding_log_entry(InstUsage.seq, false) AS New_Comment
+                    FROM t_emsl_instrument_usage_report InstUsage
+                         INNER JOIN t_instrument_name InstName
+                           ON InstUsage.DMS_Inst_ID = InstName.instrument_id
+                         LEFT OUTER JOIN t_emsl_instrument_usage_type InstUsageType
+                           ON InstUsage.usage_type_id = InstUsageType.usage_type_id
+                    WHERE InstUsage.Year = _year AND
+                          InstUsage.Month = _month AND
+                          InstUsage.Type = 'Dataset' AND
+                          Coalesce(InstUsageType.usage_type, '') NOT IN ('MAINTENANCE', 'ONSITE') AND
+                          Coalesce(InstUsage.Comment, '') = '';
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Seq,
+                                        _previewData.Instrument,
+                                        _previewData.Old_Comment,
+                                        _previewData.New_Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             End If;
 
@@ -713,21 +1287,56 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
-                SELECT 'Clear maintenance and onsite comments' AS Action,
-                       InstUsage.seq,
-                       InstName.Instrument,
-                       comment AS OldComment,
-                       '' AS NewComment
-                FROM t_emsl_instrument_usage_report InstUsage
-                     INNER JOIN t_emsl_instrument_usage_type InstUsageType
-                       ON InstUsage.usage_type_id = InstUsageType.usage_type_id
-                     INNER JOIN t_instrument_name InstName
-                       ON InstUsage.DMS_Inst_ID = InstName.instrument_id
-                WHERE InstUsageType.usage_type IN ('ONSITE') AND
-                      InstName.instrument = _instrument AND
-                      InstUsage.Year = _year AND
-                      InstUsage.Month = _month AND
-                      (Comment IS NULL OR Coalesce(Comment, '') <> '');
+                RAISE INFO '';
+
+                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Clear maintenance and onsite comments' AS Action,
+                           InstUsage.Seq,
+                           InstName.Instrument,
+                           comment AS Old_Comment,
+                           '' AS New_Comment
+                    FROM t_emsl_instrument_usage_report InstUsage
+                         INNER JOIN t_emsl_instrument_usage_type InstUsageType
+                           ON InstUsage.usage_type_id = InstUsageType.usage_type_id
+                         INNER JOIN t_instrument_name InstName
+                           ON InstUsage.DMS_Inst_ID = InstName.instrument_id
+                    WHERE InstUsageType.usage_type IN ('ONSITE') AND
+                          InstName.instrument = _instrument AND
+                          InstUsage.Year = _year AND
+                          InstUsage.Month = _month AND
+                          (Comment IS NULL OR Coalesce(Comment, '') <> '');
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Action,
+                                        _previewData.Seq,
+                                        _previewData.Instrument,
+                                        _previewData.Old_Comment,
+                                        _previewData.New_Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             End If;
 

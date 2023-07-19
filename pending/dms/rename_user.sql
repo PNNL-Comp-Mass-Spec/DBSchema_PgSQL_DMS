@@ -106,13 +106,58 @@ BEGIN
     Else
 
         If _infoOnly Then
-            RAISE INFO 'Preview of rename from % to %', _oldUserName, _newUserName;
 
             -- ToDo: Update this to use RAISEINFO
 
-            SELECT *
-            FROM t_users
-            WHERE username IN (_oldUserName, _newUserName)
+            RAISE INFO '';
+            RAISE INFO 'Preview user rename from % to %', _oldUserName, _newUserName;
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT user_id,
+                       username,
+                       name,
+                       hid,
+                       status,
+                       email,
+                       public.timestamp_text(created) As created
+                FROM t_users
+                WHERE username IN (_oldUserName, _newUserName)
+                ORDER BY username
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.user_id,
+                                    _previewData.username,
+                                    _previewData.name,
+                                    _previewData.hid,
+                                    _previewData.status,
+                                    _previewData.email,
+                                    _previewData.created
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         Else
             RAISE INFO 'Renaming % to %', _oldUserName, _newUserName;
 
@@ -125,27 +170,112 @@ BEGIN
 
     If _infoOnly Then
 
+        --------------------------------------------
+        -- Show the items owned by _oldUserName or _newUserName
+        --------------------------------------------
+
         -- ToDo: Update these SELECT queries to use RAISE INFO
 
-        SELECT *
-        FROM t_dataset
-        WHERE operator_username IN (_oldUserName, _newUserName);
 
-        SELECT *
-        FROM t_experiments
-        WHERE researcher_username IN (_oldUserName, _newUserName);
+        RAISE INFO '';
 
-        SELECT *
-        FROM t_requested_run
-        WHERE requester_username IN (_oldUserName, _newUserName);
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
 
-        SELECT *
-        FROM dpkg.t_data_package
-        WHERE Owner IN (_oldUserName, _newUserName);
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
 
-        SELECT *
-        FROM dpkg.t_data_package
-        WHERE Requester IN (_oldUserName, _newUserName);
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            WITH owned_entities (Entity, Entity_ID, Entity_Name, Role, Username, Sort, ItemRank) AS
+            (   SELECT 'Dataset' As Entity,
+                       Dataset_ID As Entity_ID,
+                       Dataset As Entity_Name,
+                       'Operator' As Role,
+                       operator_username As Username,
+                       1 As Sort,
+                       Row_Number() Over (Order By Dataset_ID Desc)
+                FROM t_dataset
+                WHERE operator_username IN (_oldUserName, _newUserName);
+                UNION
+                SELECT 'Experiment' As Entity,
+                       Exp_ID As Entity_ID,
+                       Experiment As Entity_Name,
+                       'Researcher' As Role,
+                       researcher_username As Username,
+                       2 As Sort,
+                       Row_Number() Over (Order By Exp_ID Desc)
+                FROM t_experiments
+                WHERE researcher_username IN (_oldUserName, _newUserName);
+                UNION
+                SELECT 'Requested Run' As Entity,
+                       Request_ID As Entity_ID,
+                       Request_Name As Entity_Name,
+                       'Requester' As Role,
+                       requester_username As Username,
+                       3 As Sort,
+                       Row_Number() Over (Order By Request_ID Desc)
+                FROM t_requested_run
+                WHERE requester_username IN (_oldUserName, _newUserName);
+                UNION
+                SELECT 'Data Package Owner' As Entity,
+                       data_pkg_id As Entity_ID,
+                       package_name As Entity_Name,
+                       'Owner' As Role,
+                       owner_username As Username,
+                       4 As Sort,
+                       Row_Number() Over (Order By data_pkg_id Desc)
+                FROM dpkg.t_data_package
+                WHERE owner_username IN (_oldUserName, _newUserName);
+                UNION
+                SELECT 'Data Package Requester' As Entity,
+                       data_pkg_id As Entity_ID,
+                       package_name As Entity_Name,
+                       'Requester' As Role,
+                       Requester As Username,
+                       5 As Sort,
+                       Row_Number() Over (Order By data_pkg_id Desc)
+                FROM dpkg.t_data_package
+                WHERE requester IN (_oldUserName, _newUserName);
+            )
+            SELECT Src.Entity,
+                   Src.Entity_ID,
+                   Src.Entity_Name,
+                   Src.Username,
+                   StatsQ.Total_Items
+            FROM owned_entities Src
+                 INNER JOIN ( SELECT Src.Entity,
+                                     Max(Src.ItemRank) AS TotalItems
+                              FROM owned_entities Src
+                              GROUP BY Src.Entity, Src.Username ) StatsQ
+                   ON Src.Entity = StatsQ.Entity
+            WHERE Src.ItemRank <= 25
+            ORDER BY Src.Sort, Src.Entity_Name
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Entity,
+                                _previewData.Entity_ID,
+                                _previewData.Entity_Name,
+                                _previewData.Username,
+                                _previewData.Total_Items
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     Else
 

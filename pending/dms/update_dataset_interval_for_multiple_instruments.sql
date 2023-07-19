@@ -74,6 +74,12 @@ DECLARE
     _skipInstrument boolean := false;
     _iteration int := 0;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -250,9 +256,51 @@ BEGIN
 
             -- ToDo: Show this using RAISE INFO
 
-            SELECT *
-            FROM Tmp_Instruments
-            ORDER By Instrument
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Entry_ID,
+                       Instrument,
+                       EMSL,
+                       Tracked,
+                       EUS_Instrument_ID,
+                       Use_EUS_ID
+                FROM Tmp_Instruments
+                ORDER By Instrument
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Entry_ID,
+                                    _previewData.Instrument,
+                                    _previewData.EMSL,
+                                    _previewData.Tracked,
+                                    _previewData.EUS_Instrument_ID,
+                                    _previewData.Use_EUS_ID
+
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         ---------------------------------------------------

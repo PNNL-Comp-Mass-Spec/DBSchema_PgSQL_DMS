@@ -152,23 +152,60 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT DS.dataset AS Dataset,
-                DS.dataset_id AS Dataset_ID,
-                Inst.instrument AS Instrument,
-                DS.dataset_state_id AS State,
-                DS.last_affected AS Last_Affected,
-                DS.comment AS Comment,
-                Src.Reset_Comment
-            FROM Tmp_Datasets Src
-                INNER JOIN t_dataset DS
-                ON Src.dataset_id = DS.dataset_id
-                INNER JOIN t_instrument_name Inst
-                ON DS.instrument_id = Inst.instrument_id
-            ORDER BY Inst.instrument, DS.dataset
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+
+                SELECT DS.Dataset,
+                       DS.Dataset_id,
+                       Inst.Instrument,
+                       DS.dataset_state_id AS State,
+                       DS.Last_Affected,
+                       DS.Comment,
+                       Src.Reset_Comment
+                FROM Tmp_Datasets Src
+                    INNER JOIN t_dataset DS
+                    ON Src.dataset_id = DS.dataset_id
+                    INNER JOIN t_instrument_name Inst
+                    ON DS.instrument_id = Inst.instrument_id
+                ORDER BY Inst.instrument, DS.dataset
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Dataset,
+                                    _previewData.Dataset_id,
+                                    _previewData.Instrument,
+                                    _previewData.State,
+                                    _previewData.Last_Affected,
+                                    _previewData.Comment,
+                                    _previewData.Reset_Comment
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             DROP TABLE Tmp_Datasets;
             RETURN;
-
         End If;
 
         ------------------------------------------------

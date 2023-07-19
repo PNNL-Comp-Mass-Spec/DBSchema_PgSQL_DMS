@@ -212,25 +212,23 @@ BEGIN
 
     -----------------------------------------------
     -- Populate Tmp_KnownMetrics using data in Tmp_Measurements
-    -- Use a Pivot to extract out the known columns
+    -- Use a Crosstab to extract out the known columns
     -----------------------------------------------
-
-
-    -- ToDo: Convert the PIVOT query to PostgreSQL syntax
-
 
     INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
                                    QCART
                                  )
     SELECT _datasetID,
-           QCART
-    FROM ( SELECT Name,
-                  Value
-           FROM Tmp_Measurements ) AS SourceTable
-         PIVOT ( MAX(Value)
-                 FOR Name
-                 IN ( QCART )
-                ) AS PivotData
+           ct."QCART",
+    FROM crosstab(
+       'SELECT 1 As RowID,
+               Name,
+               Value
+        FROM Tmp_Measurements
+        ORDER BY 1,2',
+       $$SELECT unnest('{QCART}'::text[])$$
+       ) AS ct (RowID int,
+                "QCART" float8);
 
     If _infoOnly Then
         -----------------------------------------------
@@ -239,14 +237,105 @@ BEGIN
 
         -- ToDo: Preview this data using RAISE INFO
 
-        SELECT *
-        FROM Tmp_DatasetInfo
+        RAISE INFO '';
 
-        SELECT *
-        FROM Tmp_Measurements
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
 
-        SELECT *
-        FROM Tmp_KnownMetrics
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Dataset_ID,
+                   Dataset_Name,
+                   MASIC_Job
+            FROM Tmp_DatasetInfo
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_ID,
+                                _previewData.Dataset_Name,
+                                _previewData.MASIC_Job
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Name,
+                   ValueText,
+                   Value
+            FROM Tmp_Measurements
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Name,
+                                _previewData.ValueText,
+                                _previewData.Value
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Dataset_ID,
+                   QCART
+            FROM Tmp_KnownMetrics
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_ID,
+                                _previewData.QCART
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         DROP TABLE Tmp_DatasetInfo;
         DROP TABLE Tmp_Measurements;

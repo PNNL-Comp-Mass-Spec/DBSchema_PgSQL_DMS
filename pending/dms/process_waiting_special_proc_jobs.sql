@@ -103,8 +103,7 @@ BEGIN
     -- Create a table to track the jobs to update
     ------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_JobsWaiting
-    (
+    CREATE TEMP TABLE Tmp_JobsWaiting (
         Job int not null,
         Last_Affected timestamp null,
         ReadyToProcess boolean null,
@@ -275,9 +274,47 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT *
-            FROM Tmp_JobsWaiting
-            ORDER BY Job
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Job,
+                       Last_Affected,
+                       ReadyToProcess,
+                       Message
+                FROM Tmp_JobsWaiting
+                ORDER BY Job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Last_Affected,
+                                    _previewData.ReadyToProcess,
+                                    _previewData.Message
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
 
         Else
             ------------------------------------------------

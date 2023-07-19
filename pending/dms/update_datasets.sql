@@ -217,30 +217,69 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT Dataset_ID,
-                   Dataset_Name,
-                   dataset_state_id AS StateID,
-                   CASE
-                       WHEN _state <> '[no change]' THEN _stateID
-                       ELSE dataset_state_id
-                   END AS StateID_New,
-                   dataset_rating_id AS RatingID,
-                   CASE
-                       WHEN _rating <> '[no change]' THEN _ratingID
-                       ELSE dataset_rating_id
-                   END AS RatingID_New,
-                   Comment,
-                   CASE
-                       WHEN _comment <> '[no change]' THEN format('%s %s', Comment, _comment)
-                       ELSE Comment
-                   END AS Comment_via_Append,
-                   CASE
-                       WHEN _findText <> '[no change]' AND
-                            _replaceText <> '[no change]' THEN Replace(Comment, _findText, _replaceText)
-                       ELSE Comment
-                   END AS Comment_via_Replace
-            FROM t_dataset
-            WHERE dataset IN ( SELECT Dataset_Name FROM Tmp_DatasetInfo);
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Dataset_ID,
+                       Dataset_Name,
+                       dataset_state_id AS StateID,
+                       CASE
+                           WHEN _state <> '[no change]' THEN _stateID
+                           ELSE dataset_state_id
+                       END AS StateID_New,
+                       dataset_rating_id AS RatingID,
+                       CASE
+                           WHEN _rating <> '[no change]' THEN _ratingID
+                           ELSE dataset_rating_id
+                       END AS RatingID_New,
+                       Comment,
+                       CASE
+                           WHEN _comment <> '[no change]' THEN format('%s %s', Comment, _comment)
+                           ELSE Comment
+                       END AS Comment_via_Append,
+                       CASE
+                           WHEN _findText <> '[no change]' AND
+                                _replaceText <> '[no change]' THEN Replace(Comment, _findText, _replaceText)
+                           ELSE Comment
+                       END AS Comment_via_Replace
+                FROM t_dataset
+                WHERE dataset IN ( SELECT Dataset_Name FROM Tmp_DatasetInfo)
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Dataset_Name,
+                                    _previewData.StateID,
+                                    _previewData.StateID_New,
+                                    _previewData.RatingID,
+                                    _previewData.RatingID_New,
+                                    _previewData.Comment,
+                                    _previewData.Comment_via_Append,
+                                    _previewData.Comment_via_Replace
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If;
 

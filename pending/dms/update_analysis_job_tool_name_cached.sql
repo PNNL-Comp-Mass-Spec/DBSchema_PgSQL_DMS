@@ -48,17 +48,49 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        SELECT AJ.job AS Job,
-               AJ.analysis_tool_cached AS Tool_Name_Cached,
-               AnalysisTool.analysis_tool AS New_Tool_Name_Cached
-        FROM t_analysis_job AJ
-             INNER JOIN t_analysis_tool AnalysisTool
-               ON AJ.analysis_tool_id = AnalysisTool.analysis_tool_id
-        WHERE AJ.job >= _jobStart AND
-              AJ.job <= _jobFinish AND
-              AJ.analysis_tool_cached Is Distinct From AnalysisTool.analysis_tool;
-        --
-        GET DIAGNOSTICS _jobCount = ROW_COUNT;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        _jobCount := 0;
+
+        FOR _previewData IN
+            SELECT AJ.Job,
+                   AJ.analysis_tool_cached AS Tool_Name_Cached,
+                   AnalysisTool.analysis_tool AS New_Tool_Name_Cached
+            FROM t_analysis_job AJ
+                 INNER JOIN t_analysis_tool AnalysisTool
+                   ON AJ.analysis_tool_id = AnalysisTool.analysis_tool_id
+            WHERE AJ.job >= _jobStart AND
+                  AJ.job <= _jobFinish AND
+                  AJ.analysis_tool_cached IS DISTINCT FROM AnalysisTool.analysis_tool
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Tool_Name_Cached,
+                                _previewData.New_Tool_Name_Cached
+                               );
+
+            RAISE INFO '%', _infoData;
+
+            _jobCount := _jobCount + 1;
+        END LOOP;
 
         If _jobCount = 0 Then
             _message := 'All jobs have up-to-date cached analysis tool names';
@@ -73,13 +105,13 @@ BEGIN
         -- Update the specified jobs
         ---------------------------------------------------
 
-        UPDATE t_analysis_job
+        UPDATE t_analysis_job AJ
         SET analysis_tool_cached = Coalesce(AnalysisTool.analysis_tool, '')
-        FROM t_analysis_job AJ INNER JOIN
-             t_analysis_tool AnalysisTool ON AJ.analysis_tool_id = AnalysisTool.analysis_tool_id
+        FROM t_analysis_tool AnalysisTool
         WHERE AJ.job >= _jobStart AND
               AJ.job <= _jobFinish AND
-              Coalesce(analysis_tool_cached, '') <> Coalesce(AnalysisTool.analysis_tool, '')
+              AJ.analysis_tool_id = AnalysisTool.analysis_tool_id AND
+              AJ.analysis_tool_cached IS DISTINCT FROM AnalysisTool.analysis_tool;
         --
         GET DIAGNOSTICS _jobCount = ROW_COUNT;
 

@@ -77,26 +77,60 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ------------------------------------------------
             -- Preview the addition of new datasets
             ------------------------------------------------
 
-            SELECT DS.dataset_id,
-                   DS.instrument_id,
-                   InstName.instrument,
-                   'dataset to add to t_cached_dataset_instruments' As Status
-            FROM t_dataset DS
-                 INNER JOIN t_instrument_name InstName
-                   ON DS.instrument_id = InstName.instrument_id
-                 LEFT OUTER JOIN t_cached_dataset_instruments CachedInst
-                   ON DS.dataset_id = CachedInst.dataset_id
-            WHERE CachedInst.dataset_id IS Null
-            Order By DS.dataset_id
+            -- ToDo: Update this to use RAISE INFO
 
-            If Not FOUND Then
-                Select 'No datasets need to be added to t_cached_dataset_instruments' As Status;
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT DS.Dataset_ID,
+                       DS.Instrument_ID,
+                       InstName.Instrument,
+                       'Dataset to add to t_cached_dataset_instruments' As Status
+                FROM t_dataset DS
+                     INNER JOIN t_instrument_name InstName
+                       ON DS.instrument_id = InstName.instrument_id
+                     LEFT OUTER JOIN t_cached_dataset_instruments CachedInst
+                       ON DS.dataset_id = CachedInst.dataset_id
+                WHERE CachedInst.dataset_id IS Null
+                ORDER BY DS.dataset_id
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Instrument_ID,
+                                    _previewData.Instrument,
+                                    _previewData.Status
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
+            If _matchCount = 0 Then
+                RAISE INFO '';
+                RAISE INFO 'No datasets need to be added to t_cached_dataset_instruments';
             End If;
         Else
             ------------------------------------------------

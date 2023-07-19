@@ -574,7 +574,7 @@ BEGIN
                        Request_ID,
                        Propagation_Mode
                 FROM Tmp_NewJobInfo
-                ORDER BY JobId_New;
+                ORDER BY JobId_New
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.JobId_Old,

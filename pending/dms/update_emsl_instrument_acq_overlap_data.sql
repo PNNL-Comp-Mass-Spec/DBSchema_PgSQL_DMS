@@ -225,8 +225,49 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            Select *
-            From Tmp_DatasetStartTimes
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT ID,
+                       DMS_Inst_ID,
+                       ItemType As Item_Type,
+                       StartTime As Start_Time,
+                       Datasets
+                FROM Tmp_DatasetStartTimes
+                ORDER BY ID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.ID,
+                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Item_Type,
+                                    _previewData.Start_Time,
+                                    _previewData.Datasets
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         FOR _startTimeInfo IN
@@ -327,29 +368,115 @@ BEGIN
 
                 -- ToDo: Update this to use RAISE INFO
 
-                SELECT U.*
-                FROM Tmp_UpdatesToApply U
-                ORDER BY ID
+                RAISE INFO '';
+
+                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT U.ID,
+                           U.DMS_Inst_ID,
+                           U.ItemType As Item_Type,
+                           U.Start,
+                           U.Dataset_ID,
+                           U.Seq,
+                           U.Dataset,
+                           U.Dataset_ID_Acq_Overlap
+                    FROM Tmp_UpdatesToApply U
+                    ORDER BY ID
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.ID,
+                                        _previewData.DMS_Inst_ID,
+                                        _previewData.Item_Type,
+                                        _previewData.Start,
+                                        _previewData.Dataset_ID,
+                                        _previewData.Seq,
+                                        _previewData.Dataset,
+                                        _previewData.Dataset_ID_Acq_Overlap
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             End If;
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT U.ID,
-                   U.dms_inst_id,
-                   U.ItemType,
-                   U.start,
-                   InstUsage.minutes,
-                   U.dataset_id,
-                   U.seq,
-                   U.Dataset,
-                   U.dataset_id_acq_overlap
-            FROM Tmp_UpdatesToApply U
-                 INNER JOIN t_emsl_instrument_usage_report InstUsage
-                   ON U.dataset_id = InstUsage.dataset_id AND
-                      U.start = InstUsage.start AND
-                      U.ItemType = InstUsage.type AND
-                      U.seq = InstUsage.seq
-            ORDER BY ID
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT U.ID,
+                       U.DMS_Inst_ID,
+                       U.ItemType As Item_Type,
+                       U.Start,
+                       InstUsage.Minutes,
+                       U.Dataset_ID,
+                       U.Seq,
+                       U.Dataset,
+                       U.Dataset_ID_Acq_Overlap
+                FROM Tmp_UpdatesToApply U
+                     INNER JOIN t_emsl_instrument_usage_report InstUsage
+                       ON U.dataset_id = InstUsage.dataset_id AND
+                          U.start = InstUsage.start AND
+                          U.ItemType = InstUsage.type AND
+                          U.seq = InstUsage.seq
+                ORDER BY ID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.ID,
+                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Item_Type,
+                                    _previewData.Start,
+                                    _previewData.Minutes,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Seq,
+                                    _previewData.Dataset,
+                                    _previewData.Dataset_ID_Acq_Overlap
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
     EXCEPTION

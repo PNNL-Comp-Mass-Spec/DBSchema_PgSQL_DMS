@@ -151,22 +151,116 @@ BEGIN
 
         -- ToDo: Show this data using RAISE INFO
 
-        SELECT ID,
-               Dataset,
-               Experiment,
-               State,
-               Instrument AS Instrument_Old,
-               _instrumentNameNew AS Instrument_New,
-               _storagePathOld AS Storage_Path_Old,
-               _storagePathNew AS Storage_Path_New,
-               Created
-        FROM V_Dataset_List_Report_2
-        WHERE ID = _datasetId
+        RAISE INFO '';
 
-        SELECT *
-        FROM cap.V_Capture_Job_Steps
-        WHERE Job = _captureJob And
-              Tool = 'DatasetCapture'
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT ID,
+                   Dataset,
+                   Experiment,
+                   State,
+                   Instrument AS Instrument_Old,
+                   _instrumentNameNew AS Instrument_New,
+                   _storagePathOld AS Storage_Path_Old,
+                   _storagePathNew AS Storage_Path_New,
+                   Created
+            FROM V_Dataset_List_Report_2
+            WHERE ID = _datasetId
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.ID,
+                                _previewData.Dataset,
+                                _previewData.Experiment,
+                                _previewData.State,
+                                _previewData.Instrument_Old,
+                                _previewData.Instrument_New,
+                                _previewData.Storage_Path_Old,
+                                _previewData.Storage_Path_New,
+                                _previewData.Created
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Job,
+                   Dataset,
+                   Dataset_ID,
+                   Step,
+                   Script,
+                   Tool,
+                   State_Name,
+                   State,
+                   public.timestamp_text(start)  As Start,
+                   public.timestamp_text(finish) As Finish,
+                   Runtime_Minutes,
+                   Output_Folder,
+                   Instrument
+            FROM cap.V_Task_Steps
+            WHERE Job = _captureJob And
+                  Tool = 'DatasetCapture'
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Dataset,
+                                _previewData.Dataset_ID,
+                                _previewData.Step,
+                                _previewData.Script,
+                                _previewData.Tool,
+                                _previewData.State_Name,
+                                _previewData.State,
+                                _previewData.Start,
+                                _previewData.Finish,
+                                _previewData.Runtime_Minutes,
+                                _previewData.Output_Folder,
+                                _previewData.Instrument
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         RETURN;
     End If;

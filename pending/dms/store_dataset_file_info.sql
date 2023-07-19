@@ -432,14 +432,53 @@ BEGIN
         -- Preview the data, then exit
         -----------------------------------------------
 
+        _updateCount := 0;
+
         If Exists (SELECT * FROM Tmp_HashUpdates) Then
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT *
-            FROM Tmp_HashUpdates;
-            --
-            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT 'Update hash' As Update_Type,
+                       Dataset_ID,
+                       InstFilePath,
+                       InstFileHash
+                FROM Tmp_HashUpdates
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Update_Type,
+                                    _previewData.Dataset_ID,
+                                    _previewData.InstFilePath,
+                                    _previewData.InstFileHash
+                                   );
+
+                RAISE INFO '%', _infoData;
+
+                _updateCount := _updateCount + 1;
+            END LOOP;
 
             _itemsToUpdate := _itemsToUpdate + _updateCount;
         End If;
@@ -448,18 +487,55 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT *
-            FROM Tmp_SizeUpdates;
-            --
-            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT 'Update size' As Update_Type,
+                       Dataset_ID,
+                       InstFilePath,
+                       InstFileSize
+                FROM Tmp_SizeUpdates
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Update_Type,
+                                    _previewData.Dataset_ID,
+                                    _previewData.InstFilePath,
+                                    _previewData.InstFileSize
+                                   );
+
+                RAISE INFO '%', _infoData;
+
+                _updateCount := _updateCount + 1;
+            END LOOP;
 
             _itemsToUpdate := _itemsToUpdate + _updateCount;
+
         End If;
 
         If _itemsToUpdate = 0 Then
             RAISE WARNING 'No valid data was found in _datasetFileInfo';
         End If;
-
 
         DROP TABLE Tmp_FileData;
         DROP TABLE Tmp_DataColumns;
@@ -537,20 +613,91 @@ BEGIN
 
     If Exists (SELECT Dataset_ID FROM Tmp_UpdatedDatasets) Then
 
-        -- ToDo: Show this using RAISE INFO
+        RAISE INFO '';
 
-        SELECT *
-        FROM V_Dataset_Files_List_Report
-        WHERE Dataset_ID In (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
-        Order By Dataset
+        _formatSpecifier := '%-10s %-80s %-80s %-15s %-40s %-25s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Dataset_ID',
+                            'Dataset',
+                            'File_Path',
+                            'File_Size_Bytes',
+                            'File_Hash',
+                            'Instrument'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '---------------',
+                                     '----------------------------------------',
+                                     '-------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Dataset_ID,
+                   Dataset,
+                   File_Path,
+                   File_Size_Bytes,
+                   File_Hash,
+                   Instrument
+            FROM V_Dataset_Files_List_Report
+            WHERE Dataset_ID In (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
+            ORDER BY Dataset
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_ID,
+                                _previewData.Dataset,
+                                _previewData.File_Path,
+                                _previewData.File_Size_Bytes,
+                                _previewData.File_Hash,
+                                _previewData.Instrument
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+
+
     End If;
 
     If Exists (SELECT * FROM Tmp_Warnings) Then
 
-        -- ToDo: Show this using RAISE INFO
-        Select Warning, RowText
-        From Tmp_Warnings
-        Order By EntryID
+        RAISE INFO '';
+
+        _formatSpecifier := '%-100s %-80s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Warning',
+                            'RowText'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------------------------------------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Warning,
+                   RowText
+            FROM Tmp_Warnings
+            ORDER BY EntryID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Warning,
+                                _previewData.RowText
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     ---------------------------------------------------

@@ -117,22 +117,64 @@ BEGIN
         -- Preview the columns that would be retired
         -----------------------------------------------------------
 
-        SELECT LCCol.lc_column_id,
-               LCCol.lc_column,
-               Src.Last_Used,
-               Src.Most_Recent_Dataset,
-               LCCol.created,
-               LCCol.comment,
-               LCCol.packing_mfg,
-               LCCol.packing_type,
-         LCCol.particle_size,
-               LCCol.particle_type,
-               LCCol.column_inner_dia,
-               LCCol.column_outer_dia
-        FROM t_lc_column LCCol
-             INNER JOIN Tmp_LCColumns Src
-               ON LCCol.lc_column_id = Src.lc_column_id
-        ORDER BY  Src.Last_Used, LCCol.lc_column_id
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT LCCol.LC_Column_ID,
+                   LCCol.LC_Column,
+                   Src.Last_Used,
+                   Src.Most_Recent_Dataset,
+                   public.timestamp_text(LCCol.Created) As Created,
+                   LCCol.Comment,
+                   LCCol.Packing_Mfg,
+                   LCCol.Packing_Type,
+                   LCCol.Particle_Size,
+                   LCCol.Particle_Type,
+                   LCCol.Column_Inner_Dia,
+                   LCCol.Column_Outer_Dia
+            FROM t_lc_column LCCol
+                 INNER JOIN Tmp_LCColumns Src
+                   ON LCCol.lc_column_id = Src.lc_column_id
+            ORDER BY Src.Last_Used, LCCol.lc_column_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.LC_Column_ID,
+                                _previewData.LC_Column,
+                                _previewData.Src.Last_Used,
+                                _previewData.Src.Most_Recent_Dataset,
+                                _previewData.Created,
+                                _previewData.Comment,
+                                _previewData.Packing_Mfg,
+                                _previewData.Packing_Type,
+                                _previewData.Particle_Size,
+                                _previewData.Particle_Type,
+                                _previewData.Column_Inner_Dia,
+                                _previewData.Column_Outer_Dia
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     Else
         -----------------------------------------------------------

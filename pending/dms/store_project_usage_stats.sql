@@ -310,36 +310,88 @@ BEGIN
 
         -- ToDo: Show this data using RAISE INFO
 
-        SELECT Stats.Entry_ID,
-               Stats.StartDate,
-               Stats.EndDate,
-               Stats.TheYear,
-               Stats.WeekOfYear,
-               Stats.proposal_id,
-               Stats.work_package,
-               Stats.Proposal_Active,
-               ProjectTypes.project_type_name,
-               Stats.Samples,
-               Stats.Datasets,
-               Stats.Jobs,
-               EUSUsage.eus_usage_type AS UsageType,
-               Stats.proposal_type,
-               Stats.Proposal_User,
-               Proposals.title AS Proposal_Title,
-               Stats.Instrument_First,
-               Stats.Instrument_Last,
-               Stats.JobTool_First,
-               Stats.JobTool_Last,
-               Cast(Proposals.proposal_start_date AS date) AS Proposal_Start_Date,
-               Cast(Proposals.proposal_end_date AS date) AS Proposal_End_Date
-        FROM Tmp_Project_Usage_Stats Stats
-             INNER JOIN t_project_usage_types ProjectTypes
-               ON Stats.project_type_id = ProjectTypes.project_type_id
-             INNER JOIN t_eus_usage_type EUSUsage
-               ON Stats.EUS_UsageType = EUSUsage.eus_usage_type_id
-             LEFT OUTER JOIN t_eus_proposals Proposals
-               ON Stats.proposal_id = Proposals.proposal_id
-        ORDER BY Datasets DESC, Jobs DESC, Samples Desc
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Stats.Entry_ID,
+                   Stats.StartDate,
+                   Stats.EndDate,
+                   Stats.TheYear,
+                   Stats.WeekOfYear,
+                   Stats.Proposal_ID,
+                   Stats.Work_Package,
+                   Stats.Proposal_Active,
+                   ProjectTypes.Project_Type_Name,
+                   Stats.Samples,
+                   Stats.Datasets,
+                   Stats.Jobs,
+                   EUSUsage.eus_usage_type AS Usage_Type,
+                   Stats.Proposal_Type,
+                   Stats.Proposal_User,
+                   Proposals.title AS Proposal_Title,
+                   Stats.Instrument_First,
+                   Stats.Instrument_Last,
+                   Stats.JobTool_First,
+                   Stats.JobTool_Last,
+                   Cast(Proposals.proposal_start_date AS date) AS Proposal_Start_Date,
+                   Cast(Proposals.proposal_end_date AS date) AS Proposal_End_Date
+            FROM Tmp_Project_Usage_Stats Stats
+                 INNER JOIN t_project_usage_types ProjectTypes
+                   ON Stats.project_type_id = ProjectTypes.project_type_id
+                 INNER JOIN t_eus_usage_type EUSUsage
+                   ON Stats.EUS_UsageType = EUSUsage.eus_usage_type_id
+                 LEFT OUTER JOIN t_eus_proposals Proposals
+                   ON Stats.proposal_id = Proposals.proposal_id
+            ORDER BY Datasets DESC, Jobs DESC, Samples DESC
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Entry_ID,
+                                _previewData.StartDate,
+                                _previewData.EndDate,
+                                _previewData.TheYear,
+                                _previewData.WeekOfYear,
+                                _previewData.Proposal_ID,
+                                _previewData.Work_Package,
+                                _previewData.Proposal_Active,
+                                _previewData.Project_Type_Name,
+                                _previewData.Samples,
+                                _previewData.Datasets,
+                                _previewData.Jobs,
+                                _previewData.Usage_Type,
+                                _previewData.Proposal_Type,
+                                _previewData.Proposal_User,
+                                _previewData.Proposal_Title,
+                                _previewData.Instrument_First,
+                                _previewData.Instrument_Last,
+                                _previewData.JobTool_First,
+                                _previewData.JobTool_Last,
+                                _previewData.Proposal_Start_Date,
+                                _previewData.Proposal_End_Date
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     Else
         DELETE FROM t_project_usage_stats

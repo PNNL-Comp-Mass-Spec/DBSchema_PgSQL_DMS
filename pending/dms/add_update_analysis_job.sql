@@ -733,7 +733,7 @@ BEGIN
                            _propMode AS PropagationMode,
                            dataset_unreviewed AS DatasetUnreviewed
                     FROM t_analysis_job
-                    WHERE job = _jobID;
+                    WHERE job = _jobID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Mode,

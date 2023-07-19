@@ -139,7 +139,7 @@ BEGIN
                      INNER JOIN Tmp_JobStepsToReset JR
                        ON JS.Job = JR.Job AND
                           JS.Step = JR.Step
-                ORDER BY JS.Job, JS.Step;
+                ORDER BY JS.Job, JS.Step
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.job,

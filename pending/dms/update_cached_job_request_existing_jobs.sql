@@ -62,42 +62,67 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
 
-            SELECT DISTINCT AJR.request_id AS Request_ID,
-                   CASE
-                       WHEN CachedJobs.request_id IS NULL
-                       THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
-                       ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
-                   END AS Status
-            FROM t_analysis_job_request AJR
-                 LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
-                   ON AJR.request_id = CachedJobs.request_id
-            WHERE AJR.request_id = _requestID
-            ORDER BY AJR.request_id
-        Else
-            MERGE INTO t_analysis_job_request_existing_jobs AS target
-            USING ( SELECT DISTINCT _requestID As Request_ID, Job
-                    FROM get_existing_jobs_matching_job_request(_requestID)
-                  ) AS source
-            ON (target.request_id = source.request_id AND target.job = source.job)
-            -- Note: all of the columns in table t_analysis_job_request_existing_jobs are primary keys or identity columns; there are no updatable columns
-            WHEN NOT MATCHED THEN
-                INSERT (Request_ID, Job)
-                VALUES (source.Request_ID, source.Job);
+            _formatSpecifier := '%-10s %-90s';
 
-            -- Delete rows in t_analysis_job_request_existing_jobs that have Request_ID = _requestID
-            -- but are not in the job list returned by get_existing_jobs_matching_job_request()
+            _infoHead := format(_formatSpecifier,
+                                'Request_ID',
+                                'Status'
+                               );
 
-            DELETE FROM t_analysis_job_request_existing_jobs target
-            WHERE target.Request_ID = _requestID AND
-                  NOT EXISTS (SELECT source.Job
-                              FROM (SELECT DISTINCT Job
-                                    FROM get_existing_jobs_matching_job_request(_requestID)
-                                   ) AS source
-                              WHERE target.job = source.job);
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '------------------------------------------------------------------------------------------'
+                                        );
 
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT DISTINCT AJR.Request_ID,
+                       CASE
+                           WHEN CachedJobs.request_id IS NULL
+                           THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
+                           ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
+                       END AS Status
+                FROM t_analysis_job_request AJR
+                     LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
+                       ON AJR.request_id = CachedJobs.request_id
+                WHERE AJR.request_id = _requestID
+                ORDER BY AJR.request_id
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Request_ID,
+                                    _previewData.Status
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
+            RETURN;
         End If;
+
+        MERGE INTO t_analysis_job_request_existing_jobs AS target
+        USING ( SELECT DISTINCT _requestID As Request_ID, Job
+                FROM get_existing_jobs_matching_job_request(_requestID)
+              ) AS source
+        ON (target.request_id = source.request_id AND target.job = source.job)
+        -- Note: all of the columns in table t_analysis_job_request_existing_jobs are primary keys or identity columns; there are no updatable columns
+        WHEN NOT MATCHED THEN
+            INSERT (Request_ID, Job)
+            VALUES (source.Request_ID, source.Job);
+
+        -- Delete rows in t_analysis_job_request_existing_jobs that have Request_ID = _requestID
+        -- but are not in the job list returned by get_existing_jobs_matching_job_request()
+
+        DELETE FROM t_analysis_job_request_existing_jobs target
+        WHERE target.Request_ID = _requestID AND
+              NOT EXISTS (SELECT source.Job
+                          FROM (SELECT DISTINCT Job
+                                FROM get_existing_jobs_matching_job_request(_requestID)
+                               ) AS source
+                          WHERE target.job = source.job);
 
         RETURN;
     End If;
@@ -111,7 +136,7 @@ BEGIN
         CREATE TEMP TABLE Tmp_RequestsAndExistingJobs (
             Request_ID int NOT NULL,
             Job        int NOT NULL
-        )
+        );
 
         CREATE INDEX IX_TmpRequestsAndExistingJobs ON Tmp_RequestsAndExistingJobs ( Request_ID, Job );
 
@@ -149,86 +174,111 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ------------------------------------------------
             -- Preview the update of cached info
             ------------------------------------------------
 
-            SELECT DISTINCT RJ.request_id AS Request_ID,
-                   CASE
-                       WHEN CachedJobs.request_id IS NULL
-                       THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
-                       ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
-                   END AS Status
-            FROM Tmp_RequestsAndExistingJobs RJ
-                 LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
-                   ON RJ.request_id = CachedJobs.request_id
-            ORDER BY RJ.request_id;
+            RAISE INFO '';
 
-        Else
-        -- <b>
+            _formatSpecifier := '%-10s %-90s';
 
-            ------------------------------------------------
-            -- Count the new number of job requests that are not yet in Tmp_RequestsAndExistingJobs
-            ------------------------------------------------
+            _infoHead := format(_formatSpecifier,
+                                'Request_ID',
+                                'Status'
+                               );
 
-            SELECT COUNT(DISTINCT Src.request_id)
-            INTO _jobRequestsAdded
-            FROM Tmp_RequestsAndExistingJobs Src
-                 LEFT OUTER JOIN t_analysis_job_request_existing_jobs AJRJ
-                   ON Src.request_id = AJRJ.request_id
-            WHERE AJRJ.request_id IS NULL;
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '------------------------------------------------------------------------------------------'
+                                        );
 
-            ------------------------------------------------
-            -- Use a merge statement to add/remove rows from t_analysis_job_request_existing_jobs
-            --
-            -- We must process each request_id separately so that we can
-            -- delete extra rows in t_analysis_job_request_existing_jobs for each request_id
-            ------------------------------------------------
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
 
-            FOR _currentRequestId IN
-                SELECT Request_ID
-                FROM Tmp_RequestsAndExistingJobs
-                ORDER BY Request_ID
+            FOR _previewData IN
+                SELECT DISTINCT RJ.Request_ID,
+                       CASE
+                           WHEN CachedJobs.request_id IS NULL
+                           THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
+                           ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
+                       END AS Status
+                FROM Tmp_RequestsAndExistingJobs RJ
+                     LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
+                       ON RJ.request_id = CachedJobs.request_id
+                ORDER BY RJ.request_id;
             LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Request_ID,
+                                    _previewData.Status
+                                   );
 
-                MERGE INTO t_analysis_job_request_existing_jobs AS target
-                USING ( SELECT DISTINCT _currentRequestId As Request_ID, Job
-                        FROM get_existing_jobs_matching_job_request(_currentRequestId)
-                      ) AS source
-                ON (target.request_id = source.request_id AND target.job = source.job)
-                WHEN NOT MATCHED THEN
-                    INSERT (request_id, job)
-                    VALUES (source.request_id, source.job);
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
-                If FOUND Then
-                    _jobRequestsUpdated := _jobRequestsUpdated + 1;
-                End If;
+            DROP TABLE Tmp_RequestsAndExistingJobs;
+            RETURN;
+        End If;
 
-                -- Delete rows in t_analysis_job_request_existing_jobs that have Request_ID = _currentRequestId
-                -- but are not in the job list returned by get_existing_jobs_matching_job_request()
+        ------------------------------------------------
+        -- Count the new number of job requests that are not yet in Tmp_RequestsAndExistingJobs
+        ------------------------------------------------
 
-                DELETE FROM t_analysis_job_request_existing_jobs target
-                WHERE target.Request_ID = _currentRequestId AND
-                      NOT EXISTS (SELECT source.Job
-                                  FROM (SELECT DISTINCT Job
-                                        FROM get_existing_jobs_matching_job_request(_currentRequestId)
-                                       ) AS source
-                                  WHERE target.job = source.job);
+        SELECT COUNT(DISTINCT Src.request_id)
+        INTO _jobRequestsAdded
+        FROM Tmp_RequestsAndExistingJobs Src
+             LEFT OUTER JOIN t_analysis_job_request_existing_jobs AJRJ
+               ON Src.request_id = AJRJ.request_id
+        WHERE AJRJ.request_id IS NULL;
 
-            END LOOP; -- </c>
+        ------------------------------------------------
+        -- Use a merge statement to add/remove rows from t_analysis_job_request_existing_jobs
+        --
+        -- We must process each request_id separately so that we can
+        -- delete extra rows in t_analysis_job_request_existing_jobs for each request_id
+        ------------------------------------------------
 
-            If _jobRequestsAdded > 0 Then
-                _message := format('%s %s', _jobRequestsAdded, public.check_plural(_jobRequestsAdded, 'job request was added', 'job requests were added'));
+        FOR _currentRequestId IN
+            SELECT Request_ID
+            FROM Tmp_RequestsAndExistingJobs
+            ORDER BY Request_ID
+        LOOP
+
+            MERGE INTO t_analysis_job_request_existing_jobs AS target
+            USING ( SELECT DISTINCT _currentRequestId As Request_ID, Job
+                    FROM get_existing_jobs_matching_job_request(_currentRequestId)
+                  ) AS source
+            ON (target.request_id = source.request_id AND target.job = source.job)
+            WHEN NOT MATCHED THEN
+                INSERT (request_id, job)
+                VALUES (source.request_id, source.job);
+
+            If FOUND Then
+                _jobRequestsUpdated := _jobRequestsUpdated + 1;
             End If;
 
-            If _jobRequestsUpdated > 0 Then
-                _addon := format('%s %s via a merge', _jobRequestsUpdated, public.check_plural(_jobRequestsUpdated, 'job request was updated', 'job requests were updated'));
-                _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
-            End If;
-        End If; -- </b>
+            -- Delete rows in t_analysis_job_request_existing_jobs that have Request_ID = _currentRequestId
+            -- but are not in the job list returned by get_existing_jobs_matching_job_request()
 
+            DELETE FROM t_analysis_job_request_existing_jobs target
+            WHERE target.Request_ID = _currentRequestId AND
+                  NOT EXISTS (SELECT source.Job
+                              FROM (SELECT DISTINCT Job
+                                    FROM get_existing_jobs_matching_job_request(_currentRequestId)
+                                   ) AS source
+                              WHERE target.job = source.job);
+
+        END LOOP; -- </c>
+
+        If _jobRequestsAdded > 0 Then
+            _message := format('%s %s', _jobRequestsAdded, public.check_plural(_jobRequestsAdded, 'job request was added', 'job requests were added'));
+        End If;
+
+        If _jobRequestsUpdated > 0 Then
+            _addon := format('%s %s via a merge', _jobRequestsUpdated, public.check_plural(_jobRequestsUpdated, 'job request was updated', 'job requests were updated'));
+            _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
+        End If;
+
+        DROP TABLE Tmp_RequestsAndExistingJobs;
         RETURN;
     End If;
 
@@ -358,8 +408,6 @@ BEGIN
     End If;
 
     -- CALL post_log_entry ('Debug', _message, 'Update_Cached_Job_Request_Existing_Jobs');
-
-    DROP TABLE Tmp_RequestsAndExistingJobs;
 END
 $$;
 

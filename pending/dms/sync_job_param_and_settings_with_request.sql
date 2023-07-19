@@ -132,25 +132,63 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         -----------------------------------------------------------
         -- Preview the requests that would be updated
         -----------------------------------------------------------
 
-        SELECT Target.request_id AS RequestID,
-               Target.param_file_name AS ParamFileName,
-               Case When Target.param_file_name <> R.ParamFileName Then R.ParamFileName Else '' End As ParamFileNameNew,
-               Target.settings_file_name AS SettingsFileName,
-               Case When Target.settings_file_name <> R.SettingsFileName Then R.SettingsFileName Else '' End As SettingsFileNameNew
-        FROM t_analysis_job_request Target
-             INNER JOIN Tmp_Request_Params R
-               ON Target.request_id = R.RequestID
-        WHERE Target.request_state_id > 1 AND
-              (Target.param_file_name <> R.ParamFileName OR
-               Target.settings_file_name <> R.SettingsFileName)
-        --
-        GET DIAGNOSTICS _matchCount = ROW_COUNT;
+        -- ToDo: Update this to use RAISE INFO
+
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        _matchCount := 0;
+
+        FOR _previewData IN
+            SELECT Target.request_id AS Request_ID,
+                   Target.param_file_name AS Param_File_Name,
+                   CASE WHEN Target.param_file_name <> R.ParamFileName THEN R.ParamFileName ELSE '' END As Param_File_Name_New,
+                   Target.settings_file_name AS Settings_File_Name,
+                   CASE WHEN Target.settings_file_name <> R.SettingsFileName THEN R.SettingsFileName ELSE '' END As Settings_File_Name_New
+            FROM t_analysis_job_request Target
+                 INNER JOIN Tmp_Request_Params R
+                   ON Target.request_id = R.RequestID
+            WHERE Target.request_state_id > 1 AND
+                  (Target.param_file_name <> R.ParamFileName OR
+                   Target.settings_file_name <> R.SettingsFileName)
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Request_ID,
+                                _previewData.Param_File_Name,
+                                _previewData.Param_File_Name_New,
+                                _previewData.Settings_File_Name,
+                                _previewData.Settings_File_Name_New
+                               );
+
+            RAISE INFO '%', _infoData;
+
+            _matchCount := _matchCount + 1;
+        END LOOP;
 
         If _matchCount = 0 Then
             _message := 'All requests are up-to-date';
@@ -160,32 +198,34 @@ BEGIN
         End If;
 
         RAISE INFO '%', _message;
+
+        DROP TABLE Tmp_RequestIDs;
+        DROP TABLE Tmp_Request_Params;
+        RETURN;
+    End If;
+
+    -----------------------------------------------------------
+    -- Update the requests
+    -----------------------------------------------------------
+
+    UPDATE t_analysis_job_request Target
+    SET param_file_name = R.ParamFileName,
+        settings_file_name = R.SettingsFileName
+    FROM Tmp_Request_Params R
+    WHERE Target.request_id = R.RequestID AND
+          Target.request_state_id > 1 AND
+          (Target.param_file_name <> R.ParamFileName OR
+           Target.settings_file_name <> R.SettingsFileName)
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+    If _updateCount = 0 Then
+        _message := 'All requests are up-to-date';
     Else
+        _message := format('Updated the parameter file name and/or settings file name for %s job %s to match the actual jobs',
+                            _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
 
-        -----------------------------------------------------------
-        -- Update the requests
-        -----------------------------------------------------------
-
-        UPDATE t_analysis_job_request Target
-        SET param_file_name = R.ParamFileName,
-            settings_file_name = R.SettingsFileName
-        FROM Tmp_Request_Params R
-        WHERE Target.request_id = R.RequestID AND
-              Target.request_state_id > 1 AND
-              (Target.param_file_name <> R.ParamFileName OR
-               Target.settings_file_name <> R.SettingsFileName)
-        --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
-
-        If _updateCount = 0 Then
-            _message := 'All requests are up-to-date';
-        Else
-            _message := format('Updated the parameter file name and/or settings file name for %s job %s to match the actual jobs',
-                                _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
-
-            CALL post_log_entry ('Normal', _message, 'Sync_Job_Param_And_Settings_With_Request');
-        End If;
-
+        CALL post_log_entry ('Normal', _message, 'Sync_Job_Param_And_Settings_With_Request');
     End If;
 
     DROP TABLE Tmp_RequestIDs;

@@ -77,13 +77,13 @@ BEGIN
 
         END LOOP;
 
+        DROP TABLE Tmp_MatchSpec;
+
     Else
         INSERT INTO Tmp_InstrumentFilter( instrument_id )
         SELECT DISTINCT instrument_id
         FROM t_instrument_name
     End If;
-
-    DROP TABLE Tmp_MatchSpec;
 END
 $$;
 

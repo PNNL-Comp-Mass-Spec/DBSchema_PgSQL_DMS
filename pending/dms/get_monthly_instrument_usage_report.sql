@@ -775,7 +775,7 @@ BEGIN
 
             -- Get operator user ID for datasets
             UPDATE Tmp_InstrumentUsage
-            SET Users = get_requested_run_eus_users_list(RR.ID, 'I')
+            SET Users = get_requested_run_eus_users_list(RR.request_id, 'I')
             FROM t_requested_run RR
             WHERE Tmp_InstrumentUsage.Type = 'Dataset' AND
                   Tmp_InstrumentUsage.dataset_id = RR.dataset_id;

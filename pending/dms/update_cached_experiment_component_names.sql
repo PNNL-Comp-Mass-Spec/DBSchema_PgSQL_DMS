@@ -214,21 +214,56 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ------------------------------------------------
             -- Preview the data that would be merged into t_cached_experiment_components
             ------------------------------------------------
 
-            SELECT ECC.Exp_ID,
-                   ECC.Biomaterial_List,
-                   ECC.Items AS CellCulture_Items,
-                   ERC.Reference_Compound_List,
-                   ERC.Items AS RefCompound_Items
-            FROM Tmp_ExperimentBiomaterial ECC
-                 FULL OUTER JOIN Tmp_ExperimentRefCompounds ERC
-                   ON ECC.Exp_ID = ERC.Exp_ID
-            ORDER BY Coalesce(ECC.Items, ERC.Items), Exp_ID;
+            -- ToDo: Update this to use RAISE INFO
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT ECC.Exp_ID,
+                       ECC.Biomaterial_List,
+                       ECC.Items AS Biomaterial_Count,
+                       ERC.Reference_Compound_List,
+                       ERC.Items AS RefCompound_Count
+                FROM Tmp_ExperimentBiomaterial ECC
+                     FULL OUTER JOIN Tmp_ExperimentRefCompounds ERC
+                       ON ECC.Exp_ID = ERC.Exp_ID
+                ORDER BY Coalesce(ECC.Items, ERC.Items), Exp_ID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Exp_ID,
+                                    _previewData.Biomaterial_List,
+                                    _previewData.Biomaterial_Count,
+                                    _previewData.Reference_Compound_List,
+                                    _previewData.RefCompound_Count
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         Else
             ------------------------------------------------

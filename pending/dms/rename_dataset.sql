@@ -332,40 +332,119 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT dataset_file_id,
-                   dataset_id,
-                   file_path,
-                   REPLACE(file_path, _datasetNameOld, _datasetNameNew) AS File_Path_New,
-                   file_hash
-            FROM t_dataset_files
-            WHERE dataset_id = _datasetID
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT dataset_file_id,
+                       dataset_id,
+                       file_path,
+                       REPLACE(file_path, _datasetNameOld, _datasetNameNew) AS File_Path_New,
+                       file_hash
+                FROM t_dataset_files
+                WHERE dataset_id = _datasetID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.dataset_file_id,
+                                    _previewData.dataset_id,
+                                    _previewData.file_path,
+                                    _previewData.File_Path_New,
+                                    _previewData.file_hash
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
     End If;
 
     If _newRequestedRunID <= 0 Then
         --------------------------------------------
-        -- Show Requested Runs that may need to be updated
+        -- Show Requested Runs that may need to be updated,
+        -- filtering on dataset name matching _datasetNameOld or _datasetNameNew
         --------------------------------------------
 
         -- ToDo: Update this to use RAISE INFO
 
-        SELECT RL.Request,
-               RL.Name,
-               RL.Status,
-               RL.Queue_State
-               RL.origin,
-               RL.Campaign,
-               RL.Experiment,
-               RL.Dataset,
-               RL.Instrument,
-               RR.request_run_start,
-               RR.request_run_finish
-        FROM V_Requested_Run_List_Report_2 RL
-             INNER JOIN t_requested_run RR
-               ON RL.Request = RR.request_id
-        WHERE RL.Dataset IN (_datasetNameOld, _datasetNameNew) OR
-              RL.Name LIKE _experiment || '%'
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT RL.Request,
+                   RL.Name,
+                   RL.Status,
+                   RL.Queue_State
+                   RL.origin,
+                   RL.Campaign,
+                   RL.Experiment,
+                   RL.Dataset,
+                   RL.Instrument,
+                   RR.request_run_start,
+                   RR.request_run_finish
+            FROM V_Requested_Run_List_Report_2 RL
+                 INNER JOIN t_requested_run RR
+                   ON RL.Request = RR.request_id
+            WHERE RL.Dataset IN (_datasetNameOld, _datasetNameNew) OR
+                  RL.Name LIKE _experiment || '%'
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Request,
+                                _previewData.Name,
+                                _previewData.Status,
+                                _previewData.Queue_State,
+                                _previewData.origin,
+                                _previewData.Campaign,
+                                _previewData.Experiment,
+                                _previewData.Dataset,
+                                _previewData.Instrument,
+                                _previewData.request_run_start,
+                                _previewData.request_run_finish
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     Else
 
         If Not _infoOnly And Not _datasetAlreadyRenamed Then
@@ -389,22 +468,69 @@ BEGIN
             WHERE request_id = _newRequestedRunID
         End If;
 
+        --------------------------------------------
+        -- Show Requested Runs that may need to be updated,
+        -- filtering on request_id mbatching _oldRequestedRunID or _newRequestedRunID
+        --------------------------------------------
+
         -- ToDo: Update this to use RAISE INFO
 
-        SELECT RL.Request,
-               RL.Name,
-               RL.Status,
-               RL.origin,
-               RL.Campaign,
-               RL.Experiment,
-               RL.Dataset,
-               RL.Instrument,
-               RR.request_run_start,
-               RR.request_run_finish
-        FROM V_Requested_Run_List_Report_2 RL
-             INNER JOIN t_requested_run RR
-               ON RL.Request = RR.request_id
-        WHERE RL.Request IN (_oldRequestedRunID, _newRequestedRunID)
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT RL.Request,
+                       RL.Name,
+                       RL.Status,
+                       RL.origin,
+                       RL.Campaign,
+                       RL.Experiment,
+                       RL.Dataset,
+                       RL.Instrument,
+                       RR.request_run_start,
+                       RR.request_run_finish
+                FROM V_Requested_Run_List_Report_2 RL
+                     INNER JOIN t_requested_run RR
+                       ON RL.Request = RR.request_id
+                WHERE RL.Request IN (_oldRequestedRunID, _newRequestedRunID)
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Request,
+                                    _previewData.Name,
+                                    _previewData.Status,
+                                    _previewData.origin,
+                                    _previewData.Campaign,
+                                    _previewData.Experiment,
+                                    _previewData.Dataset,
+                                    _previewData.Instrument,
+                                    _previewData.request_run_start,
+                                    _previewData.request_run_finish
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
     End If;
 
     --------------------------------------------
@@ -423,15 +549,54 @@ BEGIN
 
     -- ToDo: Update this to use RAISE INFO
 
-    SELECT Job AS Capture_Task,
-           Script,
-           State,
-           Dataset,
-           _datasetNameNew As Dataset_Name_New,
-           Dataset_ID,
-           Imported
-    FROM cap.t_tasks
-    WHERE Job In (Select Job from Tmp_JobsToUpdate)
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Job AS Capture_Task,
+                       Script,
+                       State,
+                       Dataset,
+                       _datasetNameNew As Dataset_Name_New,
+                       Dataset_ID,
+                       Imported
+                FROM cap.t_tasks
+                WHERE Job In (Select Job from Tmp_JobsToUpdate)
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Capture_Task,
+                                    _previewData.Script,
+                                    _previewData.State,
+                                    _previewData.Dataset,
+                                    _previewData.Dataset_Name_New,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Imported
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
 
     If Not _infoOnly Then
         --------------------------------------------
@@ -467,15 +632,53 @@ BEGIN
 
     -- ToDo: Update this to use RAISE INFO
 
-    SELECT Job AS Pipeline_Job,
-           Script,
-           State,
-           Dataset,
-           _datasetNameNew As Dataset_Name_New,
-           Dataset_ID,
-           Imported
-    FROM sw.t_jobs
-    WHERE Job In (Select Job from Tmp_JobsToUpdate)
+
+    RAISE INFO '';
+
+    _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+    _infoHead := format(_formatSpecifier,
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '---',
+                                 '---',
+                                 '---',
+                                 '---',
+                                 '---'
+                                );
+
+    RAISE INFO '%', _infoHead;
+    RAISE INFO '%', _infoHeadSeparator;
+
+    FOR _previewData IN
+        SELECT Job AS Pipeline_Job,
+               Script,
+               State,
+               Dataset,
+               _datasetNameNew As Dataset_Name_New,
+               Dataset_ID,
+               Imported
+        FROM sw.t_jobs
+        WHERE Job In (Select Job from Tmp_JobsToUpdate)
+    LOOP
+        _infoData := format(_formatSpecifier,
+                            _previewData.Pipeline_Job,
+                            _previewData.Script,
+                            _previewData.State,
+                            _previewData.Dataset,
+                            _previewData.Dataset_Name_New,
+                            _previewData.Dataset_ID,
+                            _previewData.Imported
+                           );
+
+        RAISE INFO '%', _infoData;
+    END LOOP;
 
     If Not _infoOnly Then
         FOR _job IN

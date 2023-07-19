@@ -13,41 +13,33 @@ CREATE OR REPLACE FUNCTION public.report_production_stats
     _showDebug boolean = false
 )
 RETURNS TABLE (
-
-	 -- ToDo: Validate the data types for these columns
-
 	instrument citext,
-	total_datasets int,
-	days_in_range numeric,
+	total_datasets numeric,
+	days_in_range int,
 	datasets_per_day numeric,
-	blank_datasets int,
-	qc_datasets int,
-	troubleshooting int,
-	bad_datasets int,
-	study_specific_datasets int,
+	blank_datasets numeric,
+	qc_datasets numeric,
+	bad_datasets numeric,
+	study_specific_datasets numeric,
 	study_specific_datasets_per_day numeric,
-	emsl_funded_study_specific_datasets int,
+	emsl_funded_study_specific_datasets numeric,
 	ef_study_specific_datasets_per_day numeric,
 	total_acqtimedays numeric,
 	study_specific_acqtimedays numeric,
 	ef_total_acqtimedays numeric,
 	ef_study_specific_acqtimedays numeric,
 	hours_acqtime_per_day numeric,
-	"Inst."
-	pct_inst_emsl_owned numeric,
+	inst_ citext,
+	pct_inst_emsl_owned int,
 	ef_total_datasets numeric,
 	ef_datasets_per_day numeric,
-	ef_blank_datasets numeric,
-	ef_qc_datasets numeric,
-	ef_bad_datasets numeric,
 	pct_blank_datasets numeric,
 	pct_qc_datasets numeric,
 	pct_bad_datasets numeric,
-	pct_reruns numeric,
 	pct_study_specific_datasets numeric,
 	pct_ef_study_specific_datasets numeric,
 	pct_ef_study_specific_by_acqtime numeric,
-	proposal_type citext,
+	proposal_type text,
 	inst citext
 )
 LANGUAGE plpgsql
@@ -58,12 +50,16 @@ AS $$
 **      Generates dataset statistics for production instruments
 **
 **  Arguments:
-**    _productionOnly         When 0 then shows all instruments; otherwise limits the report to production instruments only
-**    _campaignIDFilterList   Comma-separated list of campaign IDs
-**    _eusUsageFilterList     Comma separate list of EUS usage types, from table T_EUS_Usage_Type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER
-**    _instrumentFilterList   Comma-separated list of instrument names (% and * wild cards are allowed)
-**    _includeProposalType    When 1, include proposal type in the results
-**    _showDebug              When true, summarize the contents of Tmp_Datasets
+**    _startDate                Start date (will be converted to the first day of the month); if an empty string, will use 2 weeks before _endDate
+**    _endDate                  End date (will be converted to the first day of the next month); if an empty string, will use today as end date
+**    _productionOnly           When 0 then shows all instruments; otherwise limits the report to production instruments only (operations_role = 'Production')
+**    _campaignIDFilterList     Comma-separated list of campaign IDs
+**    _eusUsageFilterList       Comma separate list of EUS usage types, from table T_EUS_Usage_Type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER
+**    _instrumentFilterList     Comma-separated list of instrument names (% and * wild cards are allowed)
+**    _includeProposalType      When 1, include proposal type in the results
+**    _message                  Status message
+**    _returnCode               Return code
+**    _showDebug                When true, summarize the contents of Tmp_Datasets
 **
 **  Auth:   grk
 **  Date:   02/25/2005
@@ -151,7 +147,10 @@ BEGIN
 
         CREATE UNIQUE INDEX IX_Tmp_CampaignFilter ON Tmp_CampaignFilter (Campaign_ID);
 
-        CALL populate_campaign_filter_table (_campaignIDFilterList, _message => _message, _returnCode => _returnCode);
+        CALL populate_campaign_filter_table (
+                    _campaignIDFilterList,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             If _showDebug Then
@@ -170,11 +169,14 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_InstrumentFilter (
             Instrument_ID int NOT NULL
-        )
+        );
 
         CREATE UNIQUE INDEX IX_Tmp_InstrumentFilter ON Tmp_InstrumentFilter (Instrument_ID);
 
-        CALL populate_instrument_filter_table (_instrumentFilterList, _message => _message, _returnCode => _returnCode);
+        CALL populate_instrument_filter_table (
+                    _instrumentFilterList,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             If _showDebug Then
@@ -195,7 +197,7 @@ BEGIN
         CREATE TEMP TABLE Tmp_EUSUsageFilter (
             Usage_ID int NOT NULL,
             Usage_Name text NOT NULL
-        )
+        );
 
         CREATE INDEX IX_Tmp_EUSUsageFilter ON Tmp_EUSUsageFilter (Usage_ID);
 
@@ -281,7 +283,7 @@ BEGIN
         -- Compute the number of days to be examined
         --------------------------------------------------------------------
 
-        _daysInRange := round(extract(epoch FROM _eDate - _stDate) / 86400);
+        _daysInRange := Round(extract(epoch FROM _eDate - _stDate) / 86400);
 
         --------------------------------------------------------------------
         -- Populate a temporary table with the datasets to use
@@ -307,9 +309,9 @@ BEGIN
                                       Request_ID,
                                       EMSL_Funded,
                                       Proposal_Type )
-            SELECT DS.Dataset_ID,
-                   E.EX_campaign_ID,
-                   RR.ID,
+            SELECT DS.dataset_id,
+                   E.campaign_id,
+                   RR.request_id,
                    CASE
                        WHEN Coalesce(EUP.Proposal_Type, 'PROPRIETARY')
                             IN ('Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') THEN 0  -- Not EMSL Funded
@@ -336,15 +338,15 @@ BEGIN
         Else
             -- Note that this query uses a left outer join against t_requested_run
             -- because datasets acquired before 2006 were not required to have a requested run
-            --
+
             INSERT INTO Tmp_Datasets( Dataset_ID,
                                       Campaign_ID,
                                       Request_ID,
                                       EMSL_Funded,
                                       Proposal_Type )
-            SELECT DS.Dataset_ID,
-                   E.EX_campaign_ID,
-                   RR.ID,
+            SELECT DS.dataset_id,
+                   E.campaign_id,
+                   RR.request_id,
                    CASE
                        WHEN Coalesce(EUP.Proposal_Type, 'PROPRIETARY')
                             IN ('Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') THEN 0  -- Not EMSL Funded
@@ -465,7 +467,6 @@ BEGIN
                 Round(Study_Specific * 100.0 / Total, 1) AS pct_study_specific_datasets,
                 CASE WHEN Total > 0 THEN Round(EF_Study_Specific * 100.0 / Total, 1) ELSE NULL END AS pct_ef_study_specific_datasets,
                 CASE WHEN Total_AcqTimeDays > 0 THEN Round(EF_Total_AcqTimeDays * 100.0 / Total_AcqTimeDays, 1) ELSE NULL END AS pct_ef_study_specific_by_acqtime,
-
                 proposal_type,
                 Instrument AS inst
             FROM (
@@ -511,19 +512,19 @@ BEGIN
                                 DF.Proposal_Type,
                                 COUNT(DS.dataset_id) AS Total,                                             -- Total
                                 0 AS Bad,                                                                  -- Bad
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END) AS Blank    -- Blank
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'QC%' THEN 1 ELSE 0 END)    AS QC,      -- QC
+                                SUM(CASE WHEN DS.Dataset LIKE 'Blank%' THEN 1 ELSE 0 END) AS Blank,   -- Blank
+                                SUM(CASE WHEN DS.Dataset LIKE 'QC%' THEN 1 ELSE 0 END)    AS QC,      -- QC
                                 SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,             -- Total time acquiring data, in days
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' OR DS.Dataset_Name LIKE 'QC%'
+                                SUM(CASE WHEN DS.Dataset LIKE 'Blank%' OR DS.Dataset LIKE 'QC%'
                                          THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS BadBlankQC_AcqTimeDays,
 
                                 -- EMSL Funded Counts:
                                 SUM(DF.EMSL_Funded) AS EF_Total,                                                           -- EF_Total
                                 0 AS EF_Bad,                                                                               -- EF_Bad
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,   -- EF_Blank
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'QC%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_QC,         -- EF_QC
+                                SUM(CASE WHEN DS.Dataset LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,   -- EF_Blank
+                                SUM(CASE WHEN DS.Dataset LIKE 'QC%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_QC,         -- EF_QC
                                 SUM(CASE WHEN DF.EMSL_Funded = 1 THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 And (DS.Dataset_Name LIKE 'Blank%' OR DS.Dataset_Name LIKE 'QC%')
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 And (DS.Dataset LIKE 'Blank%' OR DS.Dataset LIKE 'QC%')
                                          THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
                             FROM Tmp_Datasets DF
                                  INNER JOIN t_dataset DS
@@ -537,7 +538,7 @@ BEGIN
                                        DS.dataset_state_id = 4) AND
                                   (I.operations_role = 'Production' OR
                                    _productionOnly = 0)
-                            GROUP BY I.instrument, I.percent_emsl_owned
+                            GROUP BY I.instrument, I.percent_emsl_owned, DF.Proposal_Type
                             UNION
                             -- Select Bad or Not Released datasets
                             SELECT
@@ -545,8 +546,8 @@ BEGIN
                                 I.Percent_EMSL_Owned,
                                 DF.Proposal_Type,
                                 COUNT(DS.dataset_id) AS Total,                                                -- Total
-                                SUM(CASE WHEN DS.Dataset_Name NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,    -- Bad (not blank)
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END)     AS Blank,  -- Bad Blank; will be counted as a blank
+                                SUM(CASE WHEN DS.Dataset NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,    -- Bad (not blank)
+                                SUM(CASE WHEN DS.Dataset LIKE 'Blank%' THEN 1 ELSE 0 END)     AS Blank,  -- Bad Blank; will be counted as a blank
                                 0 AS QC,                                                                      -- Bad QC; simply counted as Bad
                                 SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,                -- Total time acquiring data, in days
                                 SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS BadBlankQC_AcqTimeDays,
@@ -617,8 +618,7 @@ BEGIN
                 Round(Study_Specific * 100.0 / Total, 1) AS pct_study_specific_datasets,
                 CASE WHEN Total > 0 THEN Round(EF_Study_Specific * 100.0 / Total, 1) ELSE NULL END AS pct_ef_study_specific_datasets,
                 CASE WHEN Total_AcqTimeDays > 0 THEN Round(EF_Total_AcqTimeDays * 100.0 / Total_AcqTimeDays, 1) ELSE NULL END AS pct_ef_study_specific_by_acqtime,
-
-                '' AS proposal_type,
+                ''::citext AS proposal_type,
                 Instrument AS inst
             FROM (
                 SELECT Instrument, Percent_EMSL_Owned,
@@ -661,19 +661,19 @@ BEGIN
                                 I.Percent_EMSL_Owned,
                                 COUNT(DS.dataset_id) AS Total,                                             -- Total
                                 0 AS Bad,                                                                  -- Bad
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END) AS Blank    -- Blank
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'QC%' THEN 1 ELSE 0 END)    AS QC,      -- QC
+                                SUM(CASE WHEN DS.Dataset LIKE 'Blank%' THEN 1 ELSE 0 END) AS Blank,   -- Blank
+                                SUM(CASE WHEN DS.Dataset LIKE 'QC%' THEN 1 ELSE 0 END)    AS QC,      -- QC
                                 SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,             -- Total time acquiring data, in days
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' OR DS.Dataset_Name LIKE 'QC%'
+                                SUM(CASE WHEN DS.Dataset LIKE 'Blank%' OR DS.Dataset LIKE 'QC%'
                                          THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS BadBlankQC_AcqTimeDays,
 
                                 -- EMSL Funded Counts:
                                 SUM(DF.EMSL_Funded) AS EF_Total,                                                           -- EF_Total
                                 0 AS EF_Bad,                                                                               -- EF_Bad
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,   -- EF_Blank
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'QC%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_QC,         -- EF_QC
+                                SUM(CASE WHEN DS.Dataset LIKE 'Blank%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_Blank,   -- EF_Blank
+                                SUM(CASE WHEN DS.Dataset LIKE 'QC%' THEN DF.EMSL_Funded ELSE 0 END) AS EF_QC,         -- EF_QC
                                 SUM(CASE WHEN DF.EMSL_Funded = 1 THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_Total_AcqTimeDays, -- EF Total time acquiring data, in days
-                                SUM(CASE WHEN DF.EMSL_Funded = 1 And (DS.Dataset_Name LIKE 'Blank%' OR DS.Dataset_Name LIKE 'QC%')
+                                SUM(CASE WHEN DF.EMSL_Funded = 1 And (DS.Dataset LIKE 'Blank%' OR DS.Dataset LIKE 'QC%')
                                          THEN DS.Acq_Length_Minutes / 60.0 / 24.0 Else 0 End) AS EF_BadBlankQC_AcqTimeDays
                             FROM Tmp_Datasets DF
                                  INNER JOIN t_dataset DS
@@ -694,8 +694,8 @@ BEGIN
                                 I.Instrument,
                                 I.Percent_EMSL_Owned,
                                 COUNT(DS.dataset_id) AS Total,                                                 -- Total
-                                SUM(CASE WHEN DS.Dataset_Name NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,     -- Bad (not blank)
-                                SUM(CASE WHEN DS.Dataset_Name LIKE 'Blank%' THEN 1 ELSE 0 END)     AS Blank,   -- Bad Blank; will be counted as a blank
+                                SUM(CASE WHEN DS.Dataset NOT LIKE 'Blank%' THEN 1 ELSE 0 END) AS Bad,     -- Bad (not blank)
+                                SUM(CASE WHEN DS.Dataset LIKE 'Blank%' THEN 1 ELSE 0 END)     AS Blank,   -- Bad Blank; will be counted as a blank
                                 0 AS QC,                                                                       -- Bad QC; simply counted as Bad
                                 SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS Total_AcqTimeDays,                 -- Total time acquiring data, in days
                                 SUM(DS.Acq_Length_Minutes / 60.0 / 24.0) AS BadBlankQC_AcqTimeDays,

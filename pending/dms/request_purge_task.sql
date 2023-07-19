@@ -129,8 +129,8 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_PurgeableDatasets (
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        DatasetID  int,
-        MostRecent  timestamp,
+        DatasetID int,
+        MostRecent timestamp,
         Source text,
         StorageServerName text NULL,
         ServerVol text NULL,
@@ -348,33 +348,91 @@ BEGIN
         -- Preview the purge task candidates, then exit
         ---------------------------------------------------
 
-        SELECT Tmp_PurgeableDatasets.*,
-               DFP.dataset,
-               DFP.Dataset_Folder_Path,
-               DFP.Archive_Folder_Path,
-               DA.archive_state_id AS Achive_State_ID,
-               DA.archive_state_last_affected AS Achive_State_Last_Affected,
-               DA.purge_holdoff_date AS Purge_Holdoff_Date,
-               DA.instrument_data_purged AS Instrument_Data_Purged,
-               public.combine_paths(SPath.vol_name_client, SPath.storage_path) AS Storage_Path_Client,
-               public.combine_paths(SPath.vol_name_server, SPath.storage_path) AS Storage_Path_Server,
-               ArchPath.archive_path AS Archive_Path_Unix,
-               DS.folder_name AS Dataset_Folder_Name,
-               DFP.instrument,
-               DFP.Dataset_Created,
-               DFP.Dataset_YearQuarter
-        FROM Tmp_PurgeableDatasets
-             INNER JOIN t_dataset_archive DA
-               ON DA.dataset_id = Tmp_PurgeableDatasets.DatasetID
-             INNER JOIN V_Dataset_Folder_Paths_Ex DFP
-               ON DA.dataset_id = DFP.dataset_id
-             INNER JOIN t_dataset DS
-               ON DS.dataset_id = DA.dataset_id
-             INNER JOIN t_storage_path SPath
-         ON DS.storage_path_id = SPath.storage_path_id
-             INNER JOIN t_archive_path ArchPath
-               ON DA.storage_path_id = ArchPath.AP_path_ID
-        ORDER BY Tmp_PurgeableDatasets.EntryID
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Tmp_PurgeableDatasets.EntryID As Entry_ID,
+                   Tmp_PurgeableDatasets.DatasetID As Dataset_ID,
+                   Tmp_PurgeableDatasets.MostRecent As Most_Recent,
+                   Tmp_PurgeableDatasets.Source,
+                   Tmp_PurgeableDatasets.StorageServerName As Storage_Server,
+                   Tmp_PurgeableDatasets.ServerVol As Server_Vol,
+                   Tmp_PurgeableDatasets.Purge_Priority,
+                   DFP.Dataset,
+                   DFP.Dataset_Folder_Path,
+                   DFP.Archive_Folder_Path,
+                   DA.archive_state_id AS Achive_State_ID,
+                   DA.archive_state_last_affected AS Achive_State_Last_Affected,
+                   DA.purge_holdoff_date AS Purge_Holdoff_Date,
+                   DA.instrument_data_purged AS Instrument_Data_Purged,
+                   public.combine_paths(SPath.vol_name_client, SPath.storage_path) AS Storage_Path_Client,
+                   public.combine_paths(SPath.vol_name_server, SPath.storage_path) AS Storage_Path_Server,
+                   ArchPath.archive_path AS Archive_Path_Unix,
+                   DS.folder_name AS Dataset_Folder_Name,
+                   DFP.Instrument,
+                   DFP.Dataset_Created,
+                   DFP.Dataset_YearQuarter
+            FROM Tmp_PurgeableDatasets
+                 INNER JOIN t_dataset_archive DA
+                   ON DA.dataset_id = Tmp_PurgeableDatasets.DatasetID
+                 INNER JOIN V_Dataset_Folder_Paths_Ex DFP
+                   ON DA.dataset_id = DFP.dataset_id
+                 INNER JOIN t_dataset DS
+                   ON DS.dataset_id = DA.dataset_id
+                 INNER JOIN t_storage_path SPath
+             ON DS.storage_path_id = SPath.storage_path_id
+                 INNER JOIN t_archive_path ArchPath
+                   ON DA.storage_path_id = ArchPath.AP_path_ID
+            ORDER BY Tmp_PurgeableDatasets.EntryID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                    _previewData.Entry_ID,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Most_Recent,
+                                    _previewData.Source,
+                                    _previewData.Storage_Server,
+                                    _previewData.Server_Vol,
+                                    _previewData.Purge_Priority,
+                                    _previewData.Dataset,
+                                    _previewData.Dataset_Folder_Path,
+                                    _previewData.Archive_Folder_Path,
+                                    _previewData.Achive_State_ID,
+                                    _previewData.Achive_State_Last_Affected,
+                                    _previewData.Purge_Holdoff_Date,
+                                    _previewData.Instrument_Data_Purged,
+                                    _previewData.Storage_Path_Client,
+                                    _previewData.Storage_Path_Server,
+                                    _previewData.Archive_Path_Unix,
+                                    _previewData.Dataset_Folder_Name,
+                                    _previewData.Instrument,
+                                    _previewData.Dataset_Created,
+                                    _previewData.Dataset_YearQuarter
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         DROP TABLE Tmp_PurgeableDatasets;
         DROP TABLE Tmp_StorageVolsToSkip;
@@ -467,29 +525,29 @@ BEGIN
     End If;
 
     Open _results For
-        SELECT 'dataset' As Parameter, _datasetInfo.Dataset As Value
+        SELECT 'dataset' As Parameter, _datasetInfo.Dataset::text As Value            -- Yes, the parameter name is lowercase "dataset"
         UNION
-        SELECT 'DatasetID' As Parameter, _datasetInfo.DatasetID As Value
+        SELECT 'DatasetID' As Parameter, _datasetInfo.DatasetID::text As Value
         UNION
-        SELECT 'Folder' As Parameter, _datasetInfo.Folder As Value
+        SELECT 'Folder' As Parameter, _datasetInfo.Folder::text As Value
         UNION
-        SELECT 'StorageVol' As Parameter, _datasetInfo.ServerDisk As Value
+        SELECT 'StorageVol' As Parameter, _datasetInfo.ServerDisk::text As Value
         UNION
-        SELECT 'storagePath' As Parameter, _datasetInfo.StoragePath As Value
+        SELECT 'storagePath' As Parameter, _datasetInfo.StoragePath::text As Value
         UNION
-        SELECT 'StorageVolExternal' As Parameter, _datasetInfo.ServerDiskExternal As Value
+        SELECT 'StorageVolExternal' As Parameter, _datasetInfo.ServerDiskExternal::text As Value
         UNION
-        SELECT 'RawDataType' As Parameter, _datasetInfo.RawDataType As Value
+        SELECT 'RawDataType' As Parameter, _datasetInfo.RawDataType::text As Value
         UNION
-        SELECT 'SambaStoragePath' As Parameter, _datasetInfo.SambaStoragePath As Value
+        SELECT 'SambaStoragePath' As Parameter, _datasetInfo.SambaStoragePath::text As Value
         UNION
-        SELECT 'Instrument' As Parameter, _datasetInfo.Instrument As Value
+        SELECT 'Instrument' As Parameter, _datasetInfo.Instrument::text As Value
         UNION
         SELECT 'DatasetCreated' As Parameter, public.timestamp_text(_datasetInfo.DatasetCreated) As Value
         UNION
-        SELECT 'DatasetYearQuarter' As Parameter, _datasetInfo.DatasetYearQuarter As Value
+        SELECT 'DatasetYearQuarter' As Parameter, _datasetInfo.DatasetYearQuarter::text As Value
         UNION
-        SELECT 'PurgePolicy' As Parameter, _datasetInfo.PurgePolicy As Value;
+        SELECT 'PurgePolicy' As Parameter, _datasetInfo.PurgePolicy::text As Value;
 
     DROP TABLE Tmp_PurgeableDatasets;
     DROP TABLE Tmp_StorageVolsToSkip;

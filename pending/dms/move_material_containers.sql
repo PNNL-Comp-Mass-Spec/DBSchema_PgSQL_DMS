@@ -91,35 +91,35 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_ContainersToProcess (
         Entry_ID     int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1)
-        MC_ID        int NOT NULL,
+        Container_ID int NOT NULL,
         Container    text NOT NULL,
-        Type       text NOT NULL,
+        Type         text NOT NULL,
         Location_ID  int NOT NULL,
         Location_Tag text NOT NULL,
         Shelf        text NOT NULL,
         Rack         text NOT NULL,
         Row          text NOT NULL,
         Col          text NOT NULL
-    )
+    );
 
     CREATE TEMP TABLE Tmp_Move_Status (
         Container_ID     int NOT NULL,
         Container        text NOT NULL,
-        Type           text NOT NULL,
+        Type             text NOT NULL,
         Location_Old     text NOT NULL,
         Location_Current text NOT NULL,
         Location_New     text NOT NULL,
         LocationIDNew    int NOT NULL,
         Status           text NULL
-    )
+    );
 
     ---------------------------------------------------
     -- Populate the table
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ContainersToProcess (MC_ID, container, type, location_id, Location_Tag, Shelf, Rack, Row, Col )
-    SELECT MC.container_id AS MC_ID,
-           MC.container AS Container,
+    INSERT INTO Tmp_ContainersToProcess (Container_ID, container, type, location_id, Location_Tag, Shelf, Rack, Row, Col )
+    SELECT MC.container_id,
+           MC.container,
            MC.type,
            MC.location_id,
            ML.location AS Location_Tag,
@@ -147,8 +147,49 @@ BEGIN
 
     -- ToDo: Show this info using RAISE INFO
 
-    SELECT *
-    FROM Tmp_ContainersToProcess
+    RAISE INFO '';
+
+    _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+    _infoHead := format(_formatSpecifier,
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '---',
+                                 '---',
+                                 '---',
+                                 '---',
+                                 '---'
+                                );
+
+    RAISE INFO '%', _infoHead;
+    RAISE INFO '%', _infoHeadSeparator;
+
+    FOR _previewData IN
+        SELECT Entry_ID,
+               Container_ID,
+               Container,
+               Type,
+               Location_ID,
+               Location_Tag,
+        FROM Tmp_ContainersToProcess
+    LOOP
+        _infoData := format(_formatSpecifier,
+                            _previewData.Entry_ID,
+                            _previewData.Container_ID,
+                            _previewData.Container,
+                            _previewData.Type,
+                            _previewData.Location_ID,
+                            _previewData.Location_Tag
+                           );
+
+        RAISE INFO '%', _infoData;
+    END LOOP;
 
     ---------------------------------------------------
     -- Step through the containers and update their location
@@ -157,20 +198,19 @@ BEGIN
     _continue := true;
 
     FOR _containerInfo In
-        SELECT Entry_ID AS EntryID
-               MC_ID As ContainerID,
+        SELECT Container_ID As ContainerID,
                Container As ContainerName,
-               Location_ID As LocationIDOld,
+               -- Location_ID As LocationIDOld,
                Location_Tag As LocationTagOld,
-               Shelf As ShelfOldText,
-               Rack As RackOldText,
+               -- Shelf As ShelfOldText,
+               -- Rack As RackOldText,
                Row,
                Col
         FROM Tmp_ContainersToProcess
         ORDER BY Entry_ID
 
     LOOP
-        _locationTagNew := format('%s.%s.%s.%s.%s', _freezerTagNew, _shelfNew, _rackNew, _row, _col);
+        _locationTagNew := format('%s.%s.%s.%s.%s', _freezerTagNew, _shelfNew, _rackNew, _containerInfo.Row, _containerInfo.Col);
         _numContainers := 1;
 
         SELECT ml.location_id,
@@ -225,7 +265,7 @@ BEGIN
 
             UPDATE t_material_containers
             SET location_id = _locationIDNew
-            WHERE container_id = _containerID;
+            WHERE container_id = _containerInfo.ContainerID;
 
             INSERT INTO t_material_log (
                 type,
@@ -237,8 +277,8 @@ BEGIN
             )
             VALUES (
                 'move_container',
-                _containerName,
-                _locationTagOld,
+                _containerInfo.ContainerName,
+                _containerInfo.LocationTagOld,
                 _locationTagNew,
                 'pnl\d3l243',
                 'Rearrange after replacing freezer 1206A'
@@ -250,14 +290,14 @@ BEGIN
         SELECT mc.container_id AS Container_ID,
                mc.container,
                mc.type,
-               _locationTagOld AS Location_Old,
+               _containerInfo.LocationTagOld AS Location_Old,
                ml.location AS Location_Current,
                _locationTagNew AS Location_New,
                _locationIDNew AS LocationIDNew,
                _moveStatus
         FROM public.t_material_containers mc
              INNER JOIN public.t_material_locations ml ON mc.location_id = ml.location_id
-        WHERE mc.container_id = _containerID;
+        WHERE mc.container_id = _containerInfo.ContainerID;
 
     END LOOP;
 
@@ -267,7 +307,54 @@ BEGIN
 
     -- ToDo: Show this info using RAISE INFO
 
-    SELECT * FROM Tmp_Move_Status;
+    RAISE INFO '';
+
+    _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+    _infoHead := format(_formatSpecifier,
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg',
+                        'abcdefg'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '---',
+                                 '---',
+                                 '---',
+                                 '---',
+                                 '---'
+                                );
+
+    RAISE INFO '%', _infoHead;
+    RAISE INFO '%', _infoHeadSeparator;
+
+    FOR _previewData IN
+        SELECT Container_ID,
+               Container,
+               Type,
+               Location_Old,
+               Location_Current,
+               Location_New,
+               LocationIDNew,
+               Status
+        FROM Tmp_Move_Status
+        ORDER BY Container_ID
+    LOOP
+        _infoData := format(_formatSpecifier,
+                            _previewData.Container_ID,
+                            _previewData.Container,
+                            _previewData.Type,
+                            _previewData.Location_Old,
+                            _previewData.Location_Current,
+                            _previewData.Location_New,
+                            _previewData.LocationIDNew,
+                            _previewData.Status
+                           );
+
+        RAISE INFO '%', _infoData;
+    END LOOP;
 
     If _message <> '' Then
         RAISE INFO '%', _message;

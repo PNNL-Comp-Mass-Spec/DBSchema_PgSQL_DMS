@@ -326,7 +326,7 @@ BEGIN
     If _idType = 'DatasetID' Then
         -- Identifier is DatasetID
         UPDATE Tmp_FactorInfo
-        SET RequestID = RR.ID,
+        SET RequestID = RR.request_id,
             DatasetID = public.try_cast(Tmp_FactorInfo.Identifier, 0)
         FROM t_requested_run RR
         WHERE public.try_cast(Tmp_FactorInfo.Identifier, 0) = RR.dataset_id;
@@ -336,7 +336,7 @@ BEGIN
     If _idType = 'Dataset' Then
         -- Identifier is Dataset Name
         UPDATE Tmp_FactorInfo
-        SET RequestID = RR.ID,
+        SET RequestID = RR.request_id,
             DatasetID = DS.Dataset_ID
         FROM t_dataset DS
              INNER JOIN t_requested_run RR
@@ -348,7 +348,7 @@ BEGIN
     If _idType = 'Job' Then
         -- Identifier is Job
         UPDATE Tmp_FactorInfo
-        SET RequestID = RR.ID,
+        SET RequestID = RR.request_id,
             DatasetID = DS.Dataset_ID
         FROM t_analysis_job AJ
              INNER JOIN t_dataset DS

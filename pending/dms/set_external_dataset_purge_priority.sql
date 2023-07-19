@@ -52,18 +52,54 @@ BEGIN
 
         -- ToDo: Preview the data using RAISE INFO
 
-        SELECT InstName.instrument AS Instrument,
-               DS.dataset AS Dataset,
-               DS.created AS Dataset_Created,
-               DA.purge_priority AS Purge_Priority,
-               DA.instrument_data_purged AS Instrument_Data_Purged
-        FROM t_dataset DS
-             INNER JOIN t_instrument_name InstName
-               ON DS.instrument_id = InstName.instrument_id
-             INNER JOIN t_dataset_archive DA
-               ON DS.dataset_id = DA.dataset_id
-             INNER JOIN Tmp_DatasetsToUpdate U
-               ON DS.dataset_id = U.dataset_id;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT InstName.Instrument,
+                   DS.Dataset,
+                   public.timestamp_text(DS.created) AS Dataset_Created,
+                   DA.Purge_Priority,
+                   DA.Instrument_Data_Purged
+            FROM t_dataset DS
+                 INNER JOIN t_instrument_name InstName
+                   ON DS.instrument_id = InstName.instrument_id
+                 INNER JOIN t_dataset_archive DA
+                   ON DS.dataset_id = DA.dataset_id
+                 INNER JOIN Tmp_DatasetsToUpdate U
+                   ON DS.dataset_id = U.dataset_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Instrument,
+                                _previewData.Dataset,
+                                _previewData.Dataset_Created,
+                                _previewData.Purge_Priority,
+                                _previewData.Instrument_Data_Purged
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     Else
         UPDATE t_dataset_archive

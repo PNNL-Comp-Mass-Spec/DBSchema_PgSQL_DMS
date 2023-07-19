@@ -69,38 +69,71 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        -- Preview the new info
-        --
-        SELECT Target.Host,
-               Target.Last_Online,
-               Src.MostRecentDataset,
-               CASE WHEN Src.MostRecentDataset > Coalesce(Target.Last_Online, make_date(1970, 1, 1))
-               THEN Src.MostRecentDataset
-               ELSE Null
-               END AS New_Last_Online
-        FROM t_bionet_hosts Target
-             INNER JOIN ( SELECT host,
-                                 MAX(MostRecentDataset) AS MostRecentDataset
-                          FROM Tmp_Hosts
-                          GROUP BY host ) Src
-               ON Target.host = Src.host;
 
-    Else
+        RAISE INFO '';
 
-        -- Update Last_Online
-        --
-        UPDATE t_bionet_hosts Target
-        SET last_online = CASE WHEN Src.MostRecentDataset > Coalesce(Target.last_online, make_date(1970, 1, 1))
-                          THEN Src.MostRecentDataset
-                          ELSE Target.Last_Online
-                          END
-        FROM ( SELECT Host,
-                      MAX(MostRecentDataset) AS MostRecentDataset
-               FROM Tmp_Hosts
-               GROUP BY Host ) Src
-        WHERE Target.Host = Src.Host;
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
 
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Target.Host,
+                   Target.Last_Online,
+                   Src.MostRecentDataset As Most_Recent_Dataset,
+                   CASE WHEN Src.MostRecentDataset > Coalesce(Target.Last_Online, make_date(1970, 1, 1))
+                        THEN Src.MostRecentDataset
+                        ELSE Null
+                   END AS New_Last_Online
+            FROM t_bionet_hosts Target
+                 INNER JOIN ( SELECT host,
+                                     MAX(MostRecentDataset) AS MostRecentDataset
+                              FROM Tmp_Hosts
+                              GROUP BY host ) Src
+                   ON Target.host = Src.host
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Host,
+                                _previewData.Last_Online,
+                                _previewData.Most_Recent_Dataset,
+                                _previewData.New_Last_Online
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        DROP TABLE Tmp_Hosts;
+        RETURN;
     End If;
+
+    -- Update Last_Online
+    --
+    UPDATE t_bionet_hosts Target
+    SET last_online = CASE WHEN Src.MostRecentDataset > Coalesce(Target.last_online, make_date(1970, 1, 1))
+                      THEN Src.MostRecentDataset
+                      ELSE Target.Last_Online
+                      END
+    FROM ( SELECT Host,
+                  MAX(MostRecentDataset) AS MostRecentDataset
+           FROM Tmp_Hosts
+           GROUP BY Host ) Src
+    WHERE Target.Host = Src.Host;
 
     DROP TABLE Tmp_Hosts;
 END

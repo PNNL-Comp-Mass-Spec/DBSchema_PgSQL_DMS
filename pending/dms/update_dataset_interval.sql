@@ -238,78 +238,116 @@ BEGIN
 
             -- ToDo: Show this data using RAISE INFO
 
-            SELECT InstName.Instrument,
-                   DS.Dataset,
-                   DS.Dataset_ID,
-                   DS.Created,
-                   DS.Acq_Time_Start,
-                   Tmp_Durations.Interval AS Interval_to_Next_DS,
-                   CASE
-                       WHEN Interval > _maxNormalInterval THEN 'Yes'
-                       ELSE ''
-                   END AS Long_Interval
-            FROM t_dataset DS
-                 INNER JOIN Tmp_Durations
-                   ON DS.dataset_id = Tmp_Durations.dataset_id
-                 INNER JOIN t_instrument_name InstName
-                   ON DS.instrument_id = InstName.instrument_id
-            ORDER BY CASE
-                         WHEN Interval > _maxNormalInterval THEN 0
-                         ELSE 1
-                     END, DS.Dataset_ID
-        Else
+            RAISE INFO '';
 
-            ---------------------------------------------------
-            -- Update intervals in dataset table
-            ---------------------------------------------------
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
 
-            UPDATE DS
-            SET interval_to_next_ds = Tmp_Durations.Interval
-            FROM t_dataset DS
-                 INNER JOIN Tmp_Durations
-                   ON DS.dataset_id = Tmp_Durations.dataset_id
-            WHERE Coalesce(DS.interval_to_next_ds, 0) <> Coalesce(Tmp_Durations.Interval, DS.interval_to_next_ds, 0)
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
 
-            ---------------------------------------------------
-            -- Update intervals in long interval table
-            ---------------------------------------------------
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
 
-            UPDATE t_run_interval
-            SET Interval = Tmp_Durations.Interval
-            FROM Tmp_Durations
-            WHERE t_run_interval.ID = Tmp_Durations.Dataset_ID AND
-                  Coalesce(target.Interval, 0) <> Coalesce(Tmp_Durations.Interval, target.Interval, 0);
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
 
-            ---------------------------------------------------
-            -- Make entries in interval tracking table
-            -- for long intervals
-            ---------------------------------------------------
+            FOR _previewData IN
+                SELECT InstName.Instrument,
+                       DS.Dataset,
+                       DS.Dataset_ID,
+                       DS.Created,
+                       DS.Acq_Time_Start,
+                       Tmp_Durations.Interval AS Interval_to_Next_DS,
+                       CASE
+                           WHEN Interval > _maxNormalInterval THEN 'Yes'
+                           ELSE ''
+                       END AS Long_Interval
+                FROM t_dataset DS
+                     INNER JOIN Tmp_Durations
+                       ON DS.dataset_id = Tmp_Durations.dataset_id
+                     INNER JOIN t_instrument_name InstName
+                       ON DS.instrument_id = InstName.instrument_id
+                ORDER BY CASE
+                             WHEN Interval > _maxNormalInterval THEN 'Yes'
+                             ELSE ''
+                         END, DS.Dataset_ID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Instrument,
+                                    _previewData.Dataset,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Created,
+                                    _previewData.Acq_Time_Start,
+                                    _previewData.Interval_to_Next_DS,
+                                    _previewData.Long_Interval
+                                   );
 
-            INSERT INTO t_run_interval( interval_id,
-                                        instrument,
-                                        start,
-                                        Interval )
-            SELECT Tmp_Durations.dataset_id,
-                   InstName.instrument,
-                   Tmp_Durations.Time_End,
-                   Tmp_Durations.Interval
-            FROM t_dataset DS
-                 INNER JOIN Tmp_Durations
-                   ON DS.dataset_id = Tmp_Durations.dataset_id
-                 INNER JOIN t_instrument_name InstName
-                   ON DS.instrument_id = InstName.instrument_id
-            WHERE NOT Tmp_Durations.dataset_id IN ( SELECT interval_id FROM t_run_interval ) AND
-                  Tmp_Durations.Interval > _maxNormalInterval;
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
-            ---------------------------------------------------
-            -- Delete 'short' long intervals
-            -- (intervals that are less than threshold)
-            ---------------------------------------------------
-
-            DELETE FROM t_run_interval
-            WHERE interval < _maxNormalInterval;
-
+            DROP TABLE Tmp_Durations;
+            RETURN;
         End If;
+
+        ---------------------------------------------------
+        -- Update intervals in dataset table
+        ---------------------------------------------------
+
+        UPDATE DS
+        SET interval_to_next_ds = Tmp_Durations.Interval
+        FROM t_dataset DS
+             INNER JOIN Tmp_Durations
+               ON DS.dataset_id = Tmp_Durations.dataset_id
+        WHERE Coalesce(DS.interval_to_next_ds, 0) <> Coalesce(Tmp_Durations.Interval, DS.interval_to_next_ds, 0)
+
+        ---------------------------------------------------
+        -- Update intervals in long interval table
+        ---------------------------------------------------
+
+        UPDATE t_run_interval
+        SET Interval = Tmp_Durations.Interval
+        FROM Tmp_Durations
+        WHERE t_run_interval.ID = Tmp_Durations.Dataset_ID AND
+              Coalesce(target.Interval, 0) <> Coalesce(Tmp_Durations.Interval, target.Interval, 0);
+
+        ---------------------------------------------------
+        -- Make entries in interval tracking table
+        -- for long intervals
+        ---------------------------------------------------
+
+        INSERT INTO t_run_interval( interval_id,
+                                    instrument,
+                                    start,
+                                    Interval )
+        SELECT Tmp_Durations.dataset_id,
+               InstName.instrument,
+               Tmp_Durations.Time_End,
+               Tmp_Durations.Interval
+        FROM t_dataset DS
+             INNER JOIN Tmp_Durations
+               ON DS.dataset_id = Tmp_Durations.dataset_id
+             INNER JOIN t_instrument_name InstName
+               ON DS.instrument_id = InstName.instrument_id
+        WHERE NOT Tmp_Durations.dataset_id IN ( SELECT interval_id FROM t_run_interval ) AND
+              Tmp_Durations.Interval > _maxNormalInterval;
+
+        ---------------------------------------------------
+        -- Delete 'short' long intervals
+        -- (intervals that are less than threshold)
+        ---------------------------------------------------
+
+        DELETE FROM t_run_interval
+        WHERE interval < _maxNormalInterval;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -328,7 +366,7 @@ BEGIN
         End If;
     END;
 
-    If _infoOnly and _returnCode <> '' Then
+    If _infoOnly And _returnCode <> '' Then
         RAISE INFO '%', _message;
     End If;
 

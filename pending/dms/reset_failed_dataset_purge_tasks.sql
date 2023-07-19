@@ -72,20 +72,57 @@ BEGIN
 
             -- ToDo: Show the results using RAISE INFO
 
-            SELECT SPath.vol_name_client AS Server,
-                   SPath.instrument AS Instrument,
-                   DS.dataset AS Dataset,
-                   DA.dataset_id AS Dataset_ID,
-                   DA.archive_state_id AS State,
-                   DA.archive_state_last_affected AS Last_Affected
-            FROM t_dataset_archive DA
-                 INNER JOIN t_dataset DS
-                   ON DA.dataset_id = DS.dataset_id
-                 INNER JOIN t_storage_path SPath
-                   ON DS.storage_path_id = SPath.storage_path_id
-            WHERE DA.archive_state_id = 8 AND
-                  DA.archive_state_last_affected < CURRENT_TIMESTAMP - make_interval(hours => _resetHoldoffHours)
-            ORDER BY SPath.vol_name_client, SPath.instrument, DS.dataset
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT SPath.vol_name_client AS Server,
+                       SPath.Instrument,
+                       DS.Dataset,
+                       DA.Dataset_ID,
+                       DA.archive_state_id AS State,
+                       DA.archive_state_last_affected AS Last_Affected
+                FROM t_dataset_archive DA
+                     INNER JOIN t_dataset DS
+                       ON DA.dataset_id = DS.dataset_id
+                     INNER JOIN t_storage_path SPath
+                       ON DS.storage_path_id = SPath.storage_path_id
+                WHERE DA.archive_state_id = 8 AND
+                      DA.archive_state_last_affected < CURRENT_TIMESTAMP - make_interval(hours => _resetHoldoffHours)
+                ORDER BY SPath.vol_name_client, SPath.instrument, DS.dataset
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Server,
+                                    _previewData.Instrument,
+                                    _previewData.Dataset,
+                                    _previewData.Dataset_ID,
+                                    _previewData.State,
+                                    _previewData.Last_Affected
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         Else
             ------------------------------------------------

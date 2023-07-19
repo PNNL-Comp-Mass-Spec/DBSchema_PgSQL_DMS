@@ -59,30 +59,70 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        SELECT AJ.job AS Job,
-               AJ.created AS Created,
-               AJ.analysis_tool_id AS AnalysisToolID,
-               Coalesce(AJ.comment, '') + _holdMessage AS Comment,
-               AJ.job_state_id AS StateID,
-               DS.dataset AS Dataset,
-               DS.created AS Dataset_Created,
-               DFP.Dataset_Folder_Path,
-               DFP.Archive_Folder_Path
-        FROM Tmp_JobsToUpdate JTU
-             INNER JOIN t_analysis_job AJ
-               ON JTU.job = AJ.job AND
-                  AJ.job_state_id = 1
-             INNER JOIN t_dataset DS
-               ON AJ.dataset_id = DS.dataset_id
-             INNER JOIN V_Dataset_Folder_Paths DFP
-               ON DS.dataset_id = DFP.dataset_id
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT AJ.job AS Job,
+                   AJ.created AS Created,
+                   AJ.analysis_tool_id AS AnalysisToolID,
+                   Coalesce(AJ.comment, '') + _holdMessage AS Comment,
+                   AJ.job_state_id AS StateID,
+                   DS.dataset AS Dataset,
+                   DS.created AS Dataset_Created,
+                   DFP.Dataset_Folder_Path,
+                   DFP.Archive_Folder_Path
+            FROM Tmp_JobsToUpdate JTU
+                 INNER JOIN t_analysis_job AJ
+                   ON JTU.job = AJ.job AND
+                      AJ.job_state_id = 1
+                 INNER JOIN t_dataset DS
+                   ON AJ.dataset_id = DS.dataset_id
+                 INNER JOIN V_Dataset_Folder_Paths DFP
+                   ON DS.dataset_id = DFP.dataset_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Created,
+                                _previewData.AnalysisToolID,
+                                _previewData.Comment,
+                                _previewData.StateID,
+                                _previewData.Dataset,
+                                _previewData.Dataset_Created,
+                                _previewData.Dataset_Folder_Path,
+                                _previewData.Archive_Folder_Path
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     Else
         UPDATE t_analysis_job
         SET job_state_id = 8,
             comment = format('%s%s', comment, _holdMessage)
         FROM Tmp_JobsToUpdate JTU
         WHERE JTU.Job = AJ.job AND
-               AJ.job_state_id = 1;
+              AJ.job_state_id = 1;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

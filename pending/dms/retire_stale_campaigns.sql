@@ -71,9 +71,50 @@ BEGIN
         -- Preview the campaigns that would be retired
         -----------------------------------------------------------
 
-        SELECT *
-        FROM Tmp_Campaigns
-        ORDER BY Campaign_ID
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Campaign_ID,
+                   Campaign,
+                   public.timestamp_text(Created) As Created,
+                   public.timestamp_text(Most_Recent_Activity) As Most_Recent_Activity,
+                   public.timestamp_text(Most_Recent_Dataset) As Most_Recent_Dataset,
+                   public.timestamp_text(Most_Recent_Analysis_Job) As Most_Recent_Analysis_Job
+            FROM Tmp_Campaigns
+            ORDER BY Campaign_ID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Campaign_ID,
+                                _previewData.Campaign,
+                                _previewData.Created,
+                                _previewData.Most_Recent_Activity,
+                                _previewData.Most_Recent_Dataset,
+                                _previewData.Most_Recent_Analysis_Job
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
     Else
         -----------------------------------------------------------
         -- Change the campaign states to 'Inactive'
