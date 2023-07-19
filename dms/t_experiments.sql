@@ -57,6 +57,12 @@ ALTER TABLE ONLY public.t_experiments
     ADD CONSTRAINT pk_t_experiments PRIMARY KEY (exp_id);
 
 --
+-- Name: ix_t_experiments_campaign_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_experiments_campaign_id ON public.t_experiments USING btree (campaign_id);
+
+--
 -- Name: ix_t_experiments_campaign_id_exp_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
@@ -69,16 +75,10 @@ CREATE INDEX ix_t_experiments_campaign_id_exp_id ON public.t_experiments USING b
 CREATE INDEX ix_t_experiments_container_id_include_campaign_id ON public.t_experiments USING btree (container_id) INCLUDE (campaign_id);
 
 --
--- Name: ix_t_experiments_ex_campaign_id; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_experiments_created; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_experiments_ex_campaign_id ON public.t_experiments USING btree (campaign_id);
-
---
--- Name: ix_t_experiments_ex_created; Type: INDEX; Schema: public; Owner: d3l243
---
-
-CREATE INDEX ix_t_experiments_ex_created ON public.t_experiments USING btree (created);
+CREATE INDEX ix_t_experiments_created ON public.t_experiments USING btree (created);
 
 --
 -- Name: ix_t_experiments_exp_id_campaign_id_experiment; Type: INDEX; Schema: public; Owner: d3l243
