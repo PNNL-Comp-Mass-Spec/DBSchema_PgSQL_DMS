@@ -38,11 +38,13 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          05/04/2023 mem - Add _returnCode procedure argument
 **          05/22/2023 mem - Capitalize reserved word
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
+**          07/19/2023 mem - Add missing variable declaration
 **
 *****************************************************/
 DECLARE
     _currentSchema text;
     _currentProcedure text;
+    _nameWithSchema text;
     _authorized boolean;
 
     _showDebug boolean;
@@ -59,8 +61,8 @@ BEGIN
 
     _showDebug := Coalesce(_infoOnly, false);
 
-    SELECT schema_name, object_name
-    INTO _currentSchema, _currentProcedure
+    SELECT schema_name, object_name, name_with_schema
+    INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug);
 
     SELECT authorized
