@@ -9,14 +9,14 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **
 **  Desc:
 **      Adds or updates an entry in the XML parameters, returning the updated XML
-**      Alternatively, use _deleteParam=true to delete the given parameter
+**      Alternatively, use _deleteParam => true to delete the given parameter
 **      Note that case is ignored when matching section and parameter names in the XML to _section and _paramName
 **
 **  Arguments:
 **    _xmlParameters    XML parameters (if empty XML or null, this function will create a new XML instance with the specified parameter and value)
-**    _section          Section name, e.g.   JobParameters
-**    _paramName        Parameter name, e.g. SourceJob
-**    _value            Value for parameter _paramName in section _section
+**    _section          Section name, e.g., JobParameters
+**    _paramName        Parameter name, e.g., Instrument_Class
+**    _value            Value for the parameter
 **    _deleteParam      When false, adds/updates the given parameter; when true, deletes the parameter
 **    _showDebug        When true, show the existing parameter names and values, followed by any updated or deleted parameters
 **
@@ -65,7 +65,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **                  'false',
 **                   _deleteParam => false,       -- Optional, defaults to false
 **                   _showDebug => false)         -- Optional, defaults to false
-**               ) UpdateQ ON TaskParams.job = 5493941;
+**               ) UpdateQ ON TaskParams.job = 6016844;
 **
 **      -- Option 2: Use WHERE clause
 **      --
@@ -79,13 +79,13 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **                  'CreateDatasetInfoFile',
 **                  'false')
 **               ) UpdateQ
-**      WHERE TaskParams.job = 5493941;
+**      WHERE TaskParams.job = 6016844;
 **
 **
 **      -- Alternatively, query t_task_parameters to obtain XML parameters for a given capture task job
 **
 **      SELECT parameters::text
-**      FROM cap.t_task_parameters
+**      FROM cap.t_task_parameters_history
 **      WHERE job = 5493935;
 **
 **      -- Next query this function with _showDebug => true and examine the text output
@@ -107,10 +107,19 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **
 **      SELECT *
 **      FROM cap.add_update_task_parameter_xml(
+**          '<Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" /><Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" /><Param Section="DatasetQC" Name="LCMS2DOverviewPlotDivisor" Value="10" /><Param Section="DatasetQC" Name="NewProcessingOption" Value="5" /><Param Section="JobParameters" Name="Dataset" Value="AgilentQQQ_Blank_Pos_MRM_04_20220725" /><Param Section="JobParameters" Name="Dataset_ID" Value="1062716" /><Param Section="JobParameters" Name="Dataset_Type" Value="MRM" /><Param Section="JobParameters" Name="RawDataType" Value="dot_d_folders" /><Param Section="JobParameters" Name="Source_Path" Value="ProteomicsData\" /><Param Section="JobParameters" Name="Source_Vol" Value="\\Agilent_QQQ_04.bionet\" />',
+**          'DatasetQC',
+**          'NewProcessingOption',
+**          'n/a',
+**          _deleteParam => true,
+**          _showDebug => true);
+**
+**      SELECT *, updated_xml::text
+**      FROM cap.add_update_task_parameter_xml(
 **          Null,
-**          'JobParameters',
-**          'Source_Path',
-**          'ProteomicsData',
+**          'DatasetQC',
+**          'NewProcessingOption',
+**          '64',
 **          _showDebug => true);
 **
 **  Auth:   mem
@@ -123,6 +132,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **                         - Report the state as 'Unchanged Value' if the old and new values for the parameter are equivalent
 **          08/27/2022 mem - Change arguments _deleteParam and _showDebug from int to boolean
 **          09/28/2022 mem - Rename temporary table
+**          07/19/2023 mem - Synchronize with sw.add_update_job_parameter_xml
 **
 *****************************************************/
 DECLARE
@@ -133,6 +143,7 @@ DECLARE
     _infoData text;
     _deletedFlag text := 'Deleted Value';
 BEGIN
+
     ---------------------------------------------------
     -- Validate input fields
     ---------------------------------------------------
@@ -169,14 +180,14 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- We must surround the task parameter XML with <params></params> so that the XML will be rooted, as required by XMLTABLE()
+    -- Surround the task parameter XML with <params></params> so that the XML will be rooted, as required by XMLTABLE()
     ---------------------------------------------------
 
     INSERT INTO Tmp_Task_Parameters (Section, Name, Value, State)
     SELECT XmlQ.section, XmlQ.name, XmlQ.value, 'Unchanged'
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml as rooted_xml
+        FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml As rooted_xml
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
@@ -189,7 +200,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-15s %-20s %-35s %-25s';
+        _formatSpecifier := '%-15s %-20s %-35s %-60s';
 
         _infoHead := format(_formatSpecifier,
                             'State',
@@ -202,7 +213,7 @@ BEGIN
                                      '---------------',
                                      '--------------------',
                                      '-----------------------------------',
-                                     '-------------------------'
+                                     '------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -232,7 +243,8 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_Task_Parameters
-        SET Value = _value, State = Case When Value Is Distinct From _value Then 'Updated Value' Else 'Unchanged Value' End
+        SET Value = _value,
+            State = Case When Value Is Distinct From _value Then 'Updated Value' Else 'Unchanged Value' End
         WHERE Section = _section::citext AND
               Name = _paramName::citext;
 
@@ -240,8 +252,8 @@ BEGIN
             -- Match not found; Insert a new parameter
             INSERT INTO Tmp_Task_Parameters(Section, Name, Value, State)
             VALUES (_section, _paramName, _value, 'Added');
-
         End If;
+
     Else
         ---------------------------------------------------
         -- Delete the specified parameter
@@ -257,7 +269,6 @@ BEGIN
     If _showDebug Then
 
         RAISE INFO '';
-
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
