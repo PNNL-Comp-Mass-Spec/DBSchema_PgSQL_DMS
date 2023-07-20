@@ -223,27 +223,8 @@ BEGIN
         RETURN;
     End If;
 
-    -- New or held jobs are available
-    If _debugMode Then
-        INSERT INTO Tmp_JobDebugMessages (Message, Job, Script, DMS_State, PipelineState);
-        SELECT 'New or Held Jobs', J.job, J.script, J.state, T.state
-        FROM Tmp_DMSJobs J
-             LEFT OUTER JOIN sw.t_jobs T
-               ON J.job = T.job
-        ORDER BY job;
-    End If;
+    -- Create additional temp tables
 
-    ---------------------------------------------------
-    -- Find jobs to reset
-    ---------------------------------------------------
-
-    If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
-        _loggingEnabled := true;
-        _statusMessage := 'Finding jobs to reset';
-        CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
-    End If;
-
-    -- Additional temp tables
     CREATE TEMP TABLE Tmp_ResetJobs (
         Job int
     );
@@ -263,29 +244,47 @@ BEGIN
         Job int,
         Script text,
         DMS_State int,
-        PipelineState int,
-        EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
+        Pipeline_State int,
+        Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     );
 
     CREATE INDEX IX_Tmp_JobDebugMessages_Job ON Tmp_JobDebugMessages (Job);
 
-    BEGIN
+    -- New or held jobs are available
+    If _debugMode Then
+        INSERT INTO Tmp_JobDebugMessages (Message, Job, Script, DMS_State, Pipeline_State);
+        SELECT 'New or Held Jobs', J.job, J.script, J.state, T.state
+        FROM Tmp_DMSJobs J
+             LEFT OUTER JOIN sw.t_jobs T
+               ON J.job = T.job
+        ORDER BY job;
+    End If;
 
+    ---------------------------------------------------
+    -- Find jobs to reset
+    ---------------------------------------------------
+
+    If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        _loggingEnabled := true;
+        _statusMessage := 'Finding jobs to reset';
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+    End If;
+
+    BEGIN
         ---------------------------------------------------
         -- Reset job:
         -- delete existing job info from database
         ---------------------------------------------------
 
         -- Find jobs that are complete in the broker, but in state 1=New in public.t_analysis_job
-        --
-        --
+
         INSERT INTO Tmp_ResetJobs (job)
         SELECT T.job
         FROM Tmp_DMSJobs T
              INNER JOIN sw.t_jobs
                ON T.job = sw.t_jobs.job
         WHERE sw.t_jobs.state = 4 AND            -- Complete in the broker
-              T.state = 1                        -- New in public.t_analysis_job
+              T.state = 1;                       -- New in public.t_analysis_job
         --
         GET DIAGNOSTICS _jobCountToReset = ROW_COUNT;
 
@@ -301,7 +300,7 @@ BEGIN
 
         -- It is typically safer to perform a full reset on these jobs (rather than a resume) in case an admin changed the settings file for the job
         -- Exception: LTQ_FTPek and ICR2LS jobs because ICR-2LS runs as the first step and we create checkpoint copies of the .PEK files to allow for a resume
-        --
+
         INSERT INTO Tmp_ResetJobs (job)
         SELECT T.job
         FROM Tmp_DMSJobs T
@@ -344,17 +343,18 @@ BEGIN
             If _maxJobsToProcess > 0 Then
                 -- Limit the number of jobs to reset
                 DELETE FROM Tmp_ResetJobs
-                WHERE NOT Job IN ( SELECT TOP ( _maxJobsToProcess ) Job
-                                FROM Tmp_ResetJobs
-                                ORDER BY Job )
+                WHERE NOT Job IN ( SELECT Job
+                                   FROM Tmp_ResetJobs
+                                   ORDER BY Job
+                                   LIMIT _maxJobsToProcess );
             End If;
 
             If _debugMode Then
-                INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, PipelineState)
+                INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
                 SELECT 'Jobs to Reset', J.job, J.script, J.state, T.state
                 FROM Tmp_ResetJobs R INNER JOIN Tmp_DMSJobs J ON R.job = J.job
                      INNER JOIN sw.t_jobs T ON J.job = T.job
-                ORDER BY job
+                ORDER BY job;
             Else
 
                 ---------------------------------------------------
@@ -369,7 +369,7 @@ BEGIN
                 _createdSelectedJobsTable := true;
 
                 INSERT INTO SJL (Job)
-                SELECT Job FROM Tmp_ResetJobs
+                SELECT Job FROM Tmp_ResetJobs;
 
                 CALL sw.remove_selected_jobs (
                             _infoOnly,
@@ -397,20 +397,19 @@ BEGIN
             -- (only take jobs that have script that is currently active)
             ---------------------------------------------------
 
-            INSERT INTO sw.t_jobs
-                (job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
-                comment, special_processing, storage_server, owner_username, DataPkgID)
-            SELECT TOP (_maxJobsToAddResetOrResume)
-                DJ.job, DJ.priority, DJ.script, 0 As State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
-                DJ.comment, DJ.special_processing, sw.extract_server_name(DJ.transfer_folder_path) AS Storage_Server, DJ.Owner_Username, 0 AS DataPkgID
+            INSERT INTO sw.t_jobs ( job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
+                                    comment, special_processing, storage_server, owner_username, DataPkgID )
+            SELECT DJ.job, DJ.priority, DJ.script, 0 As State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
+                   DJ.comment, DJ.special_processing, sw.extract_server_name(DJ.transfer_folder_path) AS Storage_Server, DJ.Owner_Username, 0 AS DataPkgID
             FROM Tmp_DMSJobs DJ
                  INNER JOIN sw.t_scripts S
                    ON DJ.script = S.script
             WHERE state = 1 AND
-                  job NOT IN ( SELECT job FROM sw.t_jobs ) AND
+                  job NOT IN ( SELECT job
+                               FROM sw.t_jobs ) AND
                   S.enabled = 'Y' AND
                   S.backfill_to_dms = 0
-            ORDER BY job
+            LIMIT _maxJobsToAddResetOrResume;
 
         End If;
 
@@ -431,13 +430,13 @@ BEGIN
         End If;
 
         INSERT INTO Tmp_JobsToResumeOrReset (job, dataset, FailedJob)
-        SELECT TOP ( _maxJobsToAddResetOrResume )
-               J.job,
+        SELECT J.job,
                J.dataset,
                CASE WHEN J.state = 5 THEN 1 ELSE 0 END AS FailedJob
         FROM sw.t_jobs J
         WHERE J.state IN (5, 8) AND                    -- 5=Failed, 8=Holding
-              J.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 1);
+              J.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 1)
+        LIMIT _maxJobsToAddResetOrResume;
         --
         GET DIAGNOSTICS _jobCountToResume = ROW_COUNT;
 
@@ -450,7 +449,7 @@ BEGIN
             -- Resume or reset jobs
 
             If _debugMode Then
-                INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, PipelineState)
+                INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
                 SELECT 'Jobs to Resume', J.job, J.script, J.state, T.state
                 FROM Tmp_JobsToResumeOrReset R
                      INNER JOIN Tmp_DMSJobs J
@@ -464,7 +463,7 @@ BEGIN
         End If;
 
         If _debugMode Then
-            INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, PipelineState)
+            INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
             SELECT 'Jobs to Suspend', J.job, J.script, J.state, T.state
             FROM sw.t_jobs T
                  INNER JOIN Tmp_DMSJobs J
@@ -683,9 +682,52 @@ BEGIN
 
         -- ToDo: Update this to use Raise Info
 
-        SELECT *
-        FROM Tmp_JobDebugMessages
-        ORDER BY EntryID;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Message,
+                   Job,
+                   Script,
+                   DMS_State,
+                   Pipeline_State,
+                   Entry_ID
+            FROM Tmp_JobDebugMessages
+            ORDER BY Entry_ID;
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Message,
+                                _previewData.Job,
+                                _previewData.Script,
+                                _previewData.DMS_State,
+                                _previewData.Pipeline_State,
+                                _previewData.Entry_ID
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     DROP TABLE Tmp_DMSJobs;

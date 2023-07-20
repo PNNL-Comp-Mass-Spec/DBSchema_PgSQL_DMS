@@ -126,37 +126,109 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         ---------------------------------------------------
         -- Preview the updates
         ---------------------------------------------------
 
-        SELECT DS.dataset_id,
-               DS.dataset AS Dataset,
-               DTU.OldExperiment,
-               DTU.NewExperiment,
-               DTU.NewExpID,
-               public.append_to_text(DS.comment,
-                                     format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
-                                     _delimiter => '; ', _maxlength => 512) As Comment
+        -- ToDo: Update this to use RAISE INFO
 
-        FROM t_dataset DS
-             INNER JOIN Tmp_DatasetsToUpdate DTU
-               ON DS.dataset_id = DTU.dataset_id
-        WHERE Not DTU.Ambiguous
-        ORDER BY DTU.NewExperiment, DTU.OldExperiment, dataset_id
+        RAISE INFO '';
 
-        If Exists (Select * From Tmp_DatasetsToUpdate Where Ambiguous) Then
-            SELECT DS.dataset_id,
-                   DS.dataset AS Dataset,
-                   DTU.OldExperiment,
-                   DTU.NewExperiment,
-                   'Ambiguous match' AS "Comment"
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT DS.Dataset_ID,
+                   DS.Dataset,
+                   DTU.OldExperiment As Old_Experiment,
+                   DTU.NewExperiment As New_Experiment,
+                   DTU.NewExpID      As New_Experiment_ID
+                   public.append_to_text(DS.comment,
+                                         format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
+                                         _delimiter => '; ', _maxlength => 512) As Comment
             FROM t_dataset DS
                  INNER JOIN Tmp_DatasetsToUpdate DTU
                    ON DS.dataset_id = DTU.dataset_id
-            WHERE DTU.Ambiguous
+            WHERE Not DTU.Ambiguous
+            ORDER BY DTU.NewExperiment, DTU.OldExperiment, dataset_id
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_ID,
+                                _previewData.Dataset,
+                                _previewData.Old_Experiment,
+                                _previewData.New_Experiment,
+                                _previewData.New_Experiment_ID
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        If Exists (Select * From Tmp_DatasetsToUpdate Where Ambiguous) Then
+
+            -- ToDo: Update this to use RAISE INFO
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT DS.Dataset_ID,
+                       DS.Dataset,
+                       DTU.OldExperiment As Old_Experiment,
+                       DTU.NewExperiment As New_Experiment,
+                       'Ambiguous match' AS Comment
+                FROM t_dataset DS
+                     INNER JOIN Tmp_DatasetsToUpdate DTU
+                       ON DS.dataset_id = DTU.dataset_id
+                WHERE DTU.Ambiguous
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Dataset,
+                                    _previewData.Old_Experiment,
+                                    _previewData.New_Experiment,
+                                    _previewData.Comment
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If;
     Else

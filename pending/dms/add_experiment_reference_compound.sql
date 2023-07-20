@@ -15,11 +15,11 @@ AS $$
 **
 **      The calling procedure must create and populate temporary table Tmp_ExpToRefCompoundMap:
 **
-**          CREATE TABLE Tmp_ExpToRefCompoundMap (
-**              Compound_IDName text not null,
-**              Colon_Pos int null,
-**              Compound_ID int null
-**          )
+**      CREATE TEMP TABLE Tmp_ExpToRefCompoundMap (
+**          Compound_IDName text not null,
+**          Colon_Pos int null,
+**          Compound_ID int null
+**      );
 **
 **  Auth:   mem
 **  Date:   11/29/2017 mem - Initial version

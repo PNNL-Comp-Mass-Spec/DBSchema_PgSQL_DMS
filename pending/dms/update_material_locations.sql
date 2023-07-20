@@ -161,8 +161,53 @@ BEGIN
 
             -- ToDo: Show this using RAISEINFO
 
-            SELECT *
-            FROM t_material_locations;
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Location_ID,
+                       Freezer_Tag,
+                       Location,
+                       Status,
+                       Container_Limit,
+                       Comment,
+                       RFID_Hex_ID,
+                       Barcode
+                FROM t_material_locations;
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Location_ID,
+                                    _previewData.Freezer_Tag,
+                                    _previewData.Location,
+                                    _previewData.Status,
+                                    _previewData.Container_Limit,
+                                    _previewData.Comment,
+                                    _previewData.RFID_Hex_ID,
+                                    _previewData.Barcode
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If;
 

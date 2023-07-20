@@ -131,7 +131,6 @@ DECLARE
     _fileSizeMB numeric;
     _fileSizeGB numeric;
     _dynModCount int := 0;
-    _xml xml;
     _numberOfClonedSteps int := 0;
     _splitFasta text := '';
 BEGIN
@@ -259,7 +258,7 @@ BEGIN
             _message := 'The MSGFPlus tool used concatenated _dta.txt files, which are PNNL-specific. Please use tool MSGFPlus_MzML instead (for example requests, see https://dms2.pnl.gov/analysis_job_request/report/-/-/-/-/StartsWith__MSGFPlus_MzML/-/- )';
         ElsIf _toolName::citext In ('MSGFPlus_SplitFasta', 'MSGFPlus_DTARefinery_SplitFasta')
             _message := 'The MSGFPlus SplitFasta tool used concatenated _dta.txt files, which are PNNL-specific. Please use tool MSGFPlus_MzML instead (for example requests, see https://dms2.pnl.gov/analysis_job_request/report/-/-/-/-/StartsWith__MSGFPlus_MzML_SplitFasta/-/- )';
-        ElsIf _mode = 'reset' And (_toolName Similar To 'MAC[_]%' Or _toolName = 'MaxQuant_DataPkg' Or _toolName = 'MSFragger_DataPkg' Or _toolName = 'DiaNN_DataPkg')
+        ElsIf _mode = 'reset' And (_toolName::citext SIMILAR TO 'MAC[_]%' Or _toolName::citext = 'MaxQuant_DataPkg' Or _toolName::citext = 'MSFragger_DataPkg' Or _toolName::citext = 'DiaNN_DataPkg')
             _message := format('%s %s must be reset by clicking Edit on the Pipeline Job Detail report', _toolName, public.check_plural(_toolName, 'job', 'jobs');
 
             If Coalesce(_job, 0) > 0 Then
@@ -309,7 +308,7 @@ BEGIN
                             FROM t_analysis_tool AnTool
                                  INNER JOIN t_analysis_tool_allowed_instrument_class AIC
                                    ON AnTool.analysis_tool_id = AIC.analysis_tool_id
-                            WHERE AnTool.analysis_tool = _toolName )
+                            WHERE AnTool.analysis_tool = _toolName::citext )
 
     If _datasetList <> '' Then
         _message := format('The instrument class for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
@@ -335,7 +334,7 @@ BEGIN
                                 FROM t_analysis_tool_allowed_dataset_type ADT
                                      INNER JOIN t_analysis_tool Tool
                                        ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                                WHERE Tool.analysis_tool = _toolName );
+                                WHERE Tool.analysis_tool = _toolName::citext );
 
     If _datasetList <> '' Then
         _message := format('The dataset type for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
@@ -402,7 +401,7 @@ BEGIN
                                  INNER JOIN t_analysis_tool ToolList
                                    ON PF.param_file_type_id = ToolList.param_file_type_id
                             WHERE PF.param_file_name = _paramFileName AND
-                                  ToolList.analysis_tool = _toolName
+                                  ToolList.analysis_tool = _toolName::citext
                             )  Then
 
                 SELECT ToolList.analysis_tool
@@ -472,7 +471,7 @@ BEGIN
         If Not Exists ( SELECT *
                         FROM V_Settings_File_Picklist SFP
                         WHERE SFP.File_Name = _settingsFileName AND
-                                SFP.Analysis_Tool = _toolName
+                                SFP.Analysis_Tool = _toolName::citext
                       ) Then
 
             SELECT SFP.analysis_tool
@@ -526,7 +525,7 @@ BEGIN
                      INNER JOIN t_analysis_tool AnTool
                        ON SF.analysis_tool = AnTool.analysis_tool
                 WHERE SF.file_name = _settingsFileName AND
-                      SF.analysis_tool = _toolName;
+                      SF.analysis_tool = _toolName::citext;
 
                 If _showDebugMessages Then
                     RAISE INFO '  _settingsFileName=%', _settingsFileName;
@@ -555,7 +554,7 @@ BEGIN
                     SELECT xmltable.*
                     FROM ( SELECT contents As settings
                            FROM t_settings_files
-                           WHERE file_name = _settingsFileName AND analysis_tool = _toolName
+                           WHERE file_name = _settingsFileName::citext AND analysis_tool = _toolName::citext
                          ) Src,
                          XMLTABLE('//sections/section/item'
                                   PASSING Src.settings
@@ -687,7 +686,7 @@ BEGIN
             End If;
         End If;
 
-        If _toolName Like '%MSGFPlus%' Then
+        If _toolName::citext Like '%MSGFPlus%' Then
             -- Check for a file over 500 MB in size
             If Coalesce(_fileSizeKB, 0) > 500*1024 Or Then
                _organismDBName In (;
@@ -757,7 +756,7 @@ BEGIN
 
             -- If using MS-GF+ and the file is over 600 MB, you must use MSGFPlus_SplitFasta
             If Coalesce(_fileSizeKB, 0) > 600*1024 Then
-                If _toolName Like '%MSGF%' And Not _toolName Like '%SplitFasta%' Then
+                If _toolName::citext Like '%MSGF%' And Not _toolName::citext Like '%SplitFasta%' Then
                     _message := format('Legacy fasta file "%s" is very large (%s); you must use analysis tool MSGFPlus_SplitFasta or MSGFPlus_MzML_SplitFasta',
                                         _organismDBName, _sizeDescription);
 
@@ -775,15 +774,10 @@ BEGIN
 
     End If;
 
-    If _toolName Like '%SplitFasta%' Then
+    If _toolName::citext Like '%SplitFasta%' Then
         -- Assure that the settings file has SplitFasta=True and NumberOfClonedSteps > 1
 
-        SELECT contents
-        INTO _xml
-        FROM t_settings_files
-        WHERE file_name = _settingsFileName;
-
-        If Not FOUND Then
+        If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _settingsFileName) Then
             _message := format('Settings file not found: %s', _settingsFileName);
             _returnCode = 'U5333';
 
@@ -795,34 +789,24 @@ BEGIN
             RETURN;
         End If;
 
-    -- ToDo: use xpath() or XMLTABLE
-    --
-    --    SELECT (xpath('//sections/section/item/@key', _xml))[1]::text AS SettingName,
-    --           (xpath('//sections/section/item/@value', _xml))[1]::text AS SettingValue
-
-    --    SELECT XmlQ.job, XmlQ.step, XmlQ.section, XmlQ.name, XmlQ.value
-    --    FROM (
-    --        SELECT xmltable.*
-    --        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml As rooted_xml ) Src,
-    --             XMLTABLE('//params/Param'
-    --                      PASSING Src.rooted_xml
-    --                      COLUMNS job int PATH '@Job',
-    --                              step int PATH '@Step_Number',
-    --                              section citext PATH '@Section',
-    --                              name citext PATH '@Name',
-    --                              value citext PATH '@Value')
-    --         ) XmlQ;
-
-
-        SELECT SettingValue
+        SELECT XmlQ.value
         INTO _splitFasta
-        FROM ( SELECT b.value('@key', 'text') As SettingName,
-                      b.value('@value', 'text') As SettingValue
-               FROM _xml.nodes('/sections/section/item') As a(b)
-             ) ParseQ
-        WHERE SettingName = 'SplitFasta'
+        FROM (
+            SELECT xmltable.*
+            FROM ( SELECT contents as settings
+                   FROM t_settings_files
+                   WHERE file_name = _settingsFileName
+                 ) Src,
+                 XMLTABLE('//sections/section/item'
+                          PASSING Src.settings
+                          COLUMNS section citext PATH '../@name',
+                                  name    citext PATH '@key',
+                                  value   citext PATH '@value'
+                                  )
+             ) XmlQ
+        WHERE name = 'SplitFasta';
 
-        If Not FOUND Or Coalesce(_splitFasta, 'False') <> 'True' Then
+        If Not FOUND Or Lower(Coalesce(_splitFasta, 'false')) <> 'true' Then
             _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
             _returnCode = 'U5335';
 
@@ -834,33 +818,24 @@ BEGIN
             RETURN;
         End If;
 
-    -- ToDo: use xpath() or XMLTABLE
-    --
-    --    SELECT (xpath('//sections/section/item/@key', _xml))[1]::text AS SettingName,
-    --           (xpath('//sections/section/item/@value', _xml))[1]::text AS SettingValue
-
-    --    SELECT XmlQ.job, XmlQ.step, XmlQ.section, XmlQ.name, XmlQ.value
-    --    FROM (
-    --        SELECT xmltable.*
-    --        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml As rooted_xml ) Src,
-    --             XMLTABLE('//params/Param'
-    --                      PASSING Src.rooted_xml
-    --                      COLUMNS job int PATH '@Job',
-    --                              step int PATH '@Step_Number',
-    --                              section citext PATH '@Section',
-    --                              name citext PATH '@Name',
-    --                              value citext PATH '@Value')
-    --         ) XmlQ;
-
-        SELECT SettingValue
+        SELECT XmlQ.value
         INTO _numberOfClonedSteps
-        From ( SELECT b.value('@key', 'text') As SettingName,
-                      b.value('@value', 'int') As SettingValue
-               FROM _xml.nodes('/sections/section/item') As a(b)
-             ) ParseQ
-        WHERE SettingName = 'NumberOfClonedSteps';
+        FROM (
+            SELECT xmltable.*
+            FROM ( SELECT contents as settings
+                   FROM t_settings_files
+                   WHERE file_name = _settingsFileName
+                 ) Src,
+                 XMLTABLE('//sections/section/item'
+                          PASSING Src.settings
+                          COLUMNS section citext PATH '../@name',
+                                  name    citext PATH '@key',
+                                  value   citext PATH '@value'
+                                  )
+             ) XmlQ
+        WHERE name = 'NumberOfClonedSteps';
 
-        If Not FOUND Or Coalesce(_numberOfClonedSteps, 0) < 1 Then
+        If Not FOUND Or public.try_cast(_numberOfClonedSteps, 0) < 1 Then
             _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
             _returnCode = 'U5336';
 

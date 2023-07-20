@@ -74,16 +74,52 @@ BEGIN
 
         -- ToDo: Show this data using RAISE INFO
 
-        SELECT job,
-               job_state_id,
-               2 AS job_state_id_New,
-               start,
-               CASE
-                   WHEN _newBrokerJobState >= 2 THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
-                   ELSE start
-               END AS start_new
-        FROM t_analysis_job
-        WHERE job = _job;
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+
+            SELECT Job,
+                   Job_State_ID,
+                   2 AS Job_State_ID_New,
+                   Start,
+                   CASE WHEN _newBrokerJobState >= 2
+                        THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
+                        ELSE start
+                   END AS Start_New
+            FROM t_analysis_job
+            WHERE job = _job;
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Job_State_ID,
+                                _previewData.Job_State_ID_New,
+                                _previewData.Start,
+                                _previewData.Start_New
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         RETURN;
 

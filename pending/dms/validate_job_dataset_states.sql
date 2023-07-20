@@ -93,26 +93,97 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             _currentLocation := 'Preview the updates';
 
-            SELECT Src.*,
-                   DS.dataset AS Dataset
-            FROM Tmp_Datasets Src
-                 INNER JOIN t_dataset DS
-                   ON Src.dataset_id = DS.dataset_id
+            RAISE INFO '';
 
-            SELECT Src.*,
-                   T.analysis_tool AS Tool,
-                   DS.dataset AS Dataset
-            FROM Tmp_Jobs Src
-                 INNER JOIN t_analysis_job J
-                   ON Src.job = J.job
-                 INNER JOIN t_analysis_tool T
-                   ON J.analysis_tool_id = T.analysis_tool_id
-                 INNER JOIN t_dataset DS
-                   ON J.dataset_id = DS.dataset_id
+            _formatSpecifier := '%-10s %-9s %-9s %-80s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Dataset_ID',
+                                'State_Old',
+                                'State_New',
+                                'Dataset'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '---------',
+                                         '---------',
+                                         '--------------------------------------------------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Src.Dataset_ID,
+                       Src.State_Old,
+                       Src.State_New,
+                       DS.Dataset
+                FROM Tmp_Datasets Src
+                     INNER JOIN t_dataset DS
+                       ON Src.dataset_id = DS.dataset_id
+                ORDER BY Src.Dataset_ID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Dataset_ID,
+                                    _previewData.State_Old,
+                                    _previewData.State_New,
+                                    _previewData.Dataset
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-9s %-9s %-25s %-80s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'State_Old',
+                                'State_New',
+                                'Tool',
+                                'Dataset'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '---------',
+                                         '---------',
+                                         '-------------------------',
+                                         '--------------------------------------------------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Src.Job,
+                       Src.State_Old,
+                       Src.State_New,
+                       T.analysis_tool AS Tool,
+                       DS.Dataset
+                FROM Tmp_Jobs Src
+                     INNER JOIN t_analysis_job J
+                       ON Src.job = J.job
+                     INNER JOIN t_analysis_tool T
+                       ON J.analysis_tool_id = T.analysis_tool_id
+                     INNER JOIN t_dataset DS
+                       ON J.dataset_id = DS.dataset_id
+                ORDER BY Src.Job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.State_Old,
+                                    _previewData.State_New,
+                                    _previewData.Tool,
+                                    _previewData.Dataset
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             DROP TABLE Tmp_Datasets;
             DROP TABLE Tmp_Jobs;

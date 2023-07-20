@@ -20,14 +20,14 @@ AS $$
 **      The calling procedure must create Tmp_DatasetInfo and populate it with the dataset names;
 **      the remaining columns in the table will be populated by this procedure
 **
-**      CREATE TABLE Tmp_DatasetInfo (
+**      CREATE TEMP TABLE Tmp_DatasetInfo (
 **          Dataset_Name text,
 **          Dataset_ID int NULL,
 **          Instrument_Class text NULL,
 **          Dataset_State_ID int NULL,
 **          Archive_State_ID int NULL,
 **          Dataset_Type text NULL,
-**          dataset_rating_id smallint NULL,
+**          Dataset_Rating_ID smallint NULL,
 **      );
 **
 **  Arguments:
@@ -91,7 +91,7 @@ BEGIN
         Tmp_DatasetInfo.dataset_state_id = t_dataset.dataset_state_id,
         Tmp_DatasetInfo.archive_state_id = Coalesce(t_dataset_archive.archive_state_id, 0),
         Tmp_DatasetInfo.Dataset_Type = t_dataset_rating_name.Dataset_Type,
-        Tmp_DatasetInfo.dataset_rating_id = t_dataset.dataset_rating_id
+        Tmp_DatasetInfo.Dataset_Rating_ID = t_dataset.dataset_rating_id
     FROM t_dataset
          INNER JOIN t_instrument_name
            ON t_dataset.instrument_id = t_instrument_name.instrument_id
@@ -107,9 +107,53 @@ BEGIN
 
         -- ToDo: Update this to use RAISE INFO
 
-        SELECT *
-        FROM Tmp_DatasetInfo
-        ORDER BY Dataset_Name
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Dataset_Name,
+                   Dataset_ID,
+                   Instrument_Class,
+                   Dataset_State_ID,
+                   Archive_State_ID,
+                   Dataset_Type,
+                   Dataset_Rating_ID
+            FROM Tmp_DatasetInfo
+            ORDER BY Dataset_Name
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Dataset_Name,
+                                _previewData.Dataset_ID,
+                                _previewData.Instrument_Class,
+                                _previewData.Dataset_State_ID,
+                                _previewData.Archive_State_ID,
+                                _previewData.Dataset_Type,
+                                _previewData.Dataset_Rating_ID
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     ---------------------------------------------------
@@ -163,8 +207,6 @@ BEGIN
     -- Verify that datasets in list all exist
     ---------------------------------------------------
 
-    _list := null;
-    --
     SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
     INTO _list
     FROM Tmp_DatasetInfo

@@ -74,10 +74,11 @@ BEGIN
 
             SELECT Max(protein_id)
             INTO _proteinIDEnd
-            FROM ( SELECT TOP ( _batchSize ) protein_id
-                FROM pc.t_proteins
-                WHERE protein_id >= _proteinIDStart
-                ORDER BY protein_id
+            FROM ( SELECT protein_id
+                   FROM pc.t_proteins
+                   WHERE protein_id >= _proteinIDStart
+                   ORDER BY protein_id
+                   LIMIT _batchSize
                  ) LookupQ
 
             If Coalesce(_proteinIDEnd, -1) < 0 Then

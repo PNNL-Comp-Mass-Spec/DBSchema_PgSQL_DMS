@@ -113,13 +113,13 @@ BEGIN
 
         FOR _previewData IN
             SELECT format('Stale: %s days old', Round(extract(epoch FROM CURRENT_TIMESTAMP - Stale.Entered) / 86400)) As Message,
-                   Uploads.entry_id,
-                   Uploads.job,
-                   Uploads.dataset_id,
-                   Uploads.dataset,
-                   Uploads.subfolder,
-                   Uploads.status_uri,
-                   Uploads.entered
+                   Uploads.Entry_id,
+                   Uploads.Job,
+                   Uploads.Dataset_id,
+                   Uploads.Dataset,
+                   Uploads.Subfolder,
+                   Uploads.Status_uri,
+                   Uploads.Entered
             FROM V_MyEMSL_Uploads Uploads
                  INNER JOIN Tmp_StaleUploads Stale
                    ON Uploads.Entry_ID = Stale.Entry_ID
@@ -133,7 +133,7 @@ BEGIN
                                 _uploadInfo.Dataset,
                                 _uploadInfo.Subfolder,
                                 _uploadInfo.Status_uri,
-                                timestamp_text(_uploadInfo.Entered)
+                                public.timestamp_text(_uploadInfo.Entered)
                                );
 
             RAISE INFO '%', _infoData;

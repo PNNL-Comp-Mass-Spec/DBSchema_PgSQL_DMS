@@ -103,14 +103,14 @@ BEGIN
         ----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_UserInfo (
-            ID int not null,                    -- User ID
-            U_Name text NULL,           -- Last Name, First Name
-            Email text NULL,            -- E-mail
-            Domain text NULL,            -- PNL
-            NetworkLogin text NULL,      -- Username on the domain
-            PNNL_Payroll text NULL,      -- Payroll number
-            Active text NOT NULL,         -- Y if an active login; N if a former staff member
-            UpdateRequired boolean NOT NULL     -- Initially false; this procedure will set this to true for staff that need to be updated
+            ID int not null,                 -- User ID
+            Name text NULL,                  -- Last Name, First Name
+            Email text NULL,                 -- E-mail
+            Domain text NULL,                -- PNL
+            Network_Login text NULL,         -- Username on the domain
+            PNNL_Payroll text NULL,          -- Payroll number
+            Active text NOT NULL,            -- Y if an active login; N if a former staff member
+            UpdateRequired boolean NOT NULL  -- Initially false; this procedure will set this to true for staff that need to be updated
         )
 
         CREATE INDEX IX_Tmp_UserInfo_ID ON Tmp_UserInfo (ID);
@@ -123,7 +123,7 @@ BEGIN
                                    name,
                                    email,
                                    domain,
-                                   NetworkLogin,
+                                   Network_Login,
                                    PNNL_Payroll,
                                    active,
                                    UpdateRequired )
@@ -148,7 +148,7 @@ BEGIN
                                    name,
                                    email,
                                    domain,
-                                   NetworkLogin,
+                                   Network_Login,
                                    PNNL_Payroll,
                                    active,
                                    UpdateRequired )
@@ -256,8 +256,8 @@ BEGIN
 
             UPDATE t_users U
             SET name = CASE WHEN Coalesce(NameConflicts.Conflict, false)
-                              THEN U.name
-                              ELSE Coalesce(Src.U_Name, U.U_Name) End,
+                            THEN U.name
+                            ELSE Coalesce(Src.Name, U.Name) End,
                 email = Coalesce(Src.email, U.email),
                 domain = Coalesce(Src.domain, U.domain),
                 payroll = Coalesce(Src.PNNL_Payroll, U.payroll),
@@ -279,36 +279,85 @@ BEGIN
 
         Else
 
-            -- ToDo: Update this to use RAISE INFO
-
             ----------------------------------------------------------
             -- Preview the updates
             ----------------------------------------------------------
 
-            SELECT U.name,     Src.name AS Name_New,
-                   U.email,    Src.email AS EMail_New,
-                   U.domain,   Src.domain AS Domain_New,
-                   U.payroll,  Src.PNNL_Payroll AS Payroll_New,
-                   U.username, Src.NetworkLogin AS NetworkLogin_New,
-                   U.active,   Src.active AS Active_New
-            FROM t_users U
-                 INNER JOIN Tmp_UserInfo Src
-                   ON U.user_id = Src.user_id
-            WHERE UpdateRequired
+            -- ToDo: Update this to use RAISE INFO
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT U.Name,
+                       Src.name AS Name_New,
+                       U.Email,
+                       Src.email AS EMail_New,
+                       U.Domain,
+                       Src.domain AS Domain_New,
+                       U.Payroll,
+                       Src.PNNL_Payroll AS Payroll_New,
+                       U.Username,
+                       Src.Network_Login AS Network_Login_New,
+                       U.Active,
+                       Src.active AS Active_New
+                FROM t_users U
+                     INNER JOIN Tmp_UserInfo Src
+                       ON U.user_id = Src.user_id
+                WHERE UpdateRequired
+                ORDER BY U.Name
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Name,
+                                    _previewData.Name_New,
+                                    _previewData.Email,
+                                    _previewData.EMail_New,
+                                    _previewData.Domain,
+                                    _previewData.Domain_New,
+                                    _previewData.Payroll,
+                                    _previewData.Payroll_New,
+                                    _previewData.Username,
+                                    _previewData.NetworkLogin_New,
+                                    _previewData.Active,
+                                    _previewData.Active_New
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If;
 
         CREATE TEMP TABLE Tmp_UserProblems (
             ID int NOT NULL,
             Warning text,
-            NetworkLogin text NULL
+            Network_Login text NULL
         );
 
         ----------------------------------------------------------
         -- Look for users marked for auto-update who were not found in either of the data warehouse views
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_UserProblems (user_id, Warning, NetworkLogin)
+        INSERT INTO Tmp_UserProblems (user_id, Warning, Network_Login)
         SELECT U.user_id,
                'User not found in the Data Warehouse',
                U.username        -- username contains the network login
@@ -337,27 +386,27 @@ BEGIN
         End If;
 
         ----------------------------------------------------------
-        -- Look for users for which Username does not match NetworkLogin
+        -- Look for users for which Username does not match Network_Login
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_UserProblems (user_id, Warning, NetworkLogin)
+        INSERT INTO Tmp_UserProblems (user_id, Warning, Network_Login)
         SELECT U.user_id,
-               'Mismatch between username in DMS and NetworkLogin in Warehouse',
-               Src.NetworkLogin
+               'Mismatch between username in DMS and network login in Warehouse',
+               Src.Network_Login
         FROM t_users U INNER JOIN Tmp_UserInfo Src
                ON U.user_id = Src.user_id
         WHERE U.update = 'y' AND
-              U.username <> Src.NetworkLogin AND
-              Coalesce(Src.NetworkLogin, '') <> ''
+              U.username <> Src.Network_Login AND
+              Coalesce(Src.Network_Login, '') <> ''
         --
         GET DIAGNOSTICS _missingCount = ROW_COUNT;
 
         If Not _infoOnly And _missingCount > 0 Then
-            _message := format('%s with mismatch between username in DMS and NetworkLogin in Warehouse', public.check_plural(_missingCount, 'User', 'Users'));
+            _message := format('%s with mismatch between username in DMS and network login in Warehouse', public.check_plural(_missingCount, 'User', 'Users'));
 
             SELECT string_agg(format('%s <> %s',
                                         Coalesce(U.username, format('??? Undefined username for user_id=%s ???', U.user_id)),
-                                        Coalesce(M.NetworkLogin, '??')),
+                                        Coalesce(M.Network_Login, '??')),
                               ', ' ORDER BY U.user_id)
             INTO _addon
             FROM t_users U
@@ -375,21 +424,63 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT M.Warning,
-                   U.user_id,
-                   Coalesce(U.hid, format('??? Undefined hid for user_id=%s ???', U.user_id)) AS U_HID,
-                   name,
-                   username,
-                   status,
-                   email,
-                   domain,
-                   M.NetworkLogin,
-                   active,
-                   created
-            FROM t_users U
-                 INNER JOIN Tmp_UserProblems M
-                   ON U.user_id = M.user_id
-            ORDER BY U.user_id
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT M.Warning,
+                       U.User_ID,
+                       Coalesce(U.hid, format('??? Undefined hid for user_id=%s ???', U.user_id)) AS HID,
+                       Name,
+                       Username,
+                       Status,
+                       Email,
+                       Domain,
+                       M.Network_Login,
+                       Active,
+                       Created
+                FROM t_users U
+                     INNER JOIN Tmp_UserProblems M
+                       ON U.user_id = M.user_id
+                ORDER BY U.user_id
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Warning,
+                                    _previewData.User_ID,
+                                    _previewData.HID,
+                                    _previewData.Name,
+                                    _previewData.Username,
+                                    _previewData.Status,
+                                    _previewData.Email,
+                                    _previewData.Domain,
+                                    _previewData.Network_Login,
+                                    _previewData.Active,
+                                    _previewData.Created
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
     EXCEPTION

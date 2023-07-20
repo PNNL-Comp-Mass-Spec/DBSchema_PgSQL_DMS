@@ -93,8 +93,8 @@ BEGIN
             Item_Type text,
             Status text,
             Created timestamp,
-            Marked text NOT NULL DEFAULT 'N'        -- all items are initially marked as not being in the database
-        )
+            Marked text NOT NULL DEFAULT 'N'        -- All items are initially flagged with 'N', meaning not being in the database; this is later changed to 'Y' or 'D'
+        );
 
         ---------------------------------------------------
         -- Get items associated with sample prep request
@@ -103,7 +103,7 @@ BEGIN
 
         -- Biomaterial
         --
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, created)
+        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT  SPR.prep_request_id,
                 B.Biomaterial_ID AS Item_ID,
                 TL.Item AS Item_Name,
@@ -119,7 +119,7 @@ BEGIN
 
         -- Experiments
         --
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, created)
+        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT  SPR.prep_request_id,
                 E.exp_id AS Item_ID,
                 E.experiment AS Item_Name,
@@ -132,7 +132,7 @@ BEGIN
 
         -- Experiment groups
         --
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, created)
+        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT DISTINCT
                 SPR.prep_request_id,
                 GM.group_id AS Item_ID,
@@ -148,7 +148,7 @@ BEGIN
 
         -- Material containers
         --
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, created)
+        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT  DISTINCT SPR.prep_request_id,
                 MC.prep_request_id AS Item_ID,
                 MC.container AS Item_Name,
@@ -162,7 +162,7 @@ BEGIN
 
         -- Requested runs
         --
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, created)
+        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT  SPR.prep_request_id,
                 RR.prep_request_id AS Item_ID,
                 RR.request_name AS Item_Name,
@@ -176,7 +176,7 @@ BEGIN
 
         -- Datasets
         --
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, created)
+        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT  SPR.prep_request_id,
                 DS.dataset_id AS Item_ID,
                 DS.dataset AS Item_Name,
@@ -191,7 +191,7 @@ BEGIN
 
         -- HPLC Runs - Reference to sample prep request IDs in comma delimited list in text field
         --
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, created)
+        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT _samplePrepRequestID AS ID,
                Item_ID,
                Item_Name,
@@ -225,17 +225,17 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_PrepRequestItems (prep_request_item_id, item_id, item_type, Marked)
-        SELECT  I.prep_request_item_id,
-                I.item_id,
-                I.item_type,
-                'D' AS Marked
-        FROM    t_sample_prep_request_items I
-        WHERE   prep_request_item_id = _samplePrepRequestID
-                AND NOT EXISTS ( SELECT *
-                                 FROM   Tmp_PrepRequestItems
-                                 WHERE  I.prep_request_item_id = Tmp_PrepRequestItems.prep_request_item_id AND
-                                        I.item_id = Tmp_PrepRequestItems.item_id AND
-                                        I.item_type = Tmp_PrepRequestItems.item_type );
+        SELECT I.prep_request_item_id,
+               I.item_id,
+               I.item_type,
+               'D' AS Marked
+        FROM t_sample_prep_request_items I
+        WHERE prep_request_item_id = _samplePrepRequestID
+              AND NOT EXISTS ( SELECT *
+                               FROM Tmp_PrepRequestItems
+                               WHERE I.prep_request_item_id = Tmp_PrepRequestItems.prep_request_item_id AND
+                                     I.item_id = Tmp_PrepRequestItems.item_id AND
+                                     I.item_type = Tmp_PrepRequestItems.item_type );
 
         ---------------------------------------------------
         -- Update database
@@ -255,15 +255,14 @@ BEGIN
                 status,
                 created
             )
-            SELECT
-                prep_request_item_id,
-                item_id,
-                item_name,
-                item_type,
-                status,
-                created
-            FROM    Tmp_PrepRequestItems
-            WHERE   Marked = 'N';
+            SELECT prep_request_item_id,
+                   item_id,
+                   item_name,
+                   item_type,
+                   status,
+                   created
+            FROM Tmp_PrepRequestItems
+            WHERE Marked = 'N';
 
             ---------------------------------------------------
             -- Clear the status of marked items
@@ -296,13 +295,12 @@ BEGIN
             ---------------------------------------------------
 
             DELETE FROM t_sample_prep_request_items
-            WHERE EXISTS (
-            SELECT  *
-            FROM    Tmp_PrepRequestItems
-            WHERE   t_sample_prep_request_items.prep_request_item_id = Tmp_PrepRequestItems.prep_request_item_id
-                    AND t_sample_prep_request_items.item_id = Tmp_PrepRequestItems.item_id
-                    AND t_sample_prep_request_items.item_type = Tmp_PrepRequestItems.item_type
-                    AND Tmp_PrepRequestItems.Marked = 'D'
+            WHERE EXISTS (SELECT 1
+                          FROM Tmp_PrepRequestItems
+                          WHERE t_sample_prep_request_items.prep_request_item_id = Tmp_PrepRequestItems.prep_request_item_id AND
+                                t_sample_prep_request_items.item_id = Tmp_PrepRequestItems.item_id                           AND
+                                t_sample_prep_request_items.item_type = Tmp_PrepRequestItems.item_type                       AND
+                                Tmp_PrepRequestItems.Marked = 'D'
             );
 
             ---------------------------------------------------
@@ -314,14 +312,56 @@ BEGIN
         End If; --<update>
 
         If _mode = 'debug' Then
-            
-            -- ToDo: Update this to use RAISE INFO
-            
-            SELECT *
-            FROM Tmp_PrepRequestItems
-            ORDER BY Marked;
 
-            RETURN;
+            -- ToDo: Update this to use RAISE INFO
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT ID,
+                       Item_ID,
+                       Item_Name,
+                       Item_Type,
+                       Status,
+                       Created,
+                       Marked
+                FROM Tmp_PrepRequestItems
+                ORDER BY Marked, Item_Type, Item_Name
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.ID,
+                                    _previewData.Item_ID,
+                                    _previewData.Item_Name,
+                                    _previewData.Item_Type,
+                                    _previewData.Status,
+                                    _previewData.Created,
+                                    _previewData.Marked
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
     EXCEPTION

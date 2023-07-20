@@ -3,7 +3,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_wp
 (
     _oldWorkPackage text,
     _newWorkPackage text,
-    _requestedIdList text = '',
+    _requestIdList text = '',
     INOUT _message text default '',
     INOUT _returnCode text default '',
     _callingUser text = '',
@@ -16,14 +16,19 @@ AS $$
 **  Desc:
 **      Updates the work package for requested runs from an old value to a new value
 **
-**      If _requestedIdList is empty, finds active requested runs that use _oldWorkPackage
-**
-**      If _requestedIdList is defined, finds all requested runs in the list that use _oldWorkPackage, regardless of the state
+**      If _requestIdList is empty, finds active requested runs that use _oldWorkPackage
+**      If _requestIdList is defined, finds all requested runs in the list that use _oldWorkPackage, regardless of the state
 **
 **      Changes will be logged to T_Log_Entries
 **
 **  Arguments:
-**    _requestedIdList   Optional: if blank, finds active requested runs; if defined, updates all of the specified request IDs if they use _oldWorkPackage
+**    _oldWorkPackage   Old work package
+**    _newWorkPackage   New work package
+**    _requestIdList    Optional: if blank, finds active requested runs that use _oldWorkPackage; if defined, updates all of the specified requested run IDs if they use _oldWorkPackage (and are active)
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user
+**    _infoOnly         When true, preview updates
 **
 **  Auth:   mem
 **  Date:   07/01/2014 mem - Initial version
@@ -33,6 +38,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/17/2020 mem - Fix typo in error message
+**          07/19/2023 mem - Rename request ID list parameter
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -90,7 +96,7 @@ BEGIN
 
         _oldWorkPackage := public.trim_whitespace(_oldWorkPackage);
         _newWorkPackage := public.trim_whitespace(_newWorkPackage);
-        _requestedIdList := Coalesce(_requestedIdList, '');
+        _requestIdList := Coalesce(_requestIdList, '');
         _message := '';
         _callingUser := Coalesce(_callingUser, '');
         _infoOnly := Coalesce(_infoOnly, false);
@@ -106,6 +112,10 @@ BEGIN
         If _newWorkPackage = '' Then
             RAISE EXCEPTION 'New work package cannot be blank';
         End If;
+
+        -- Uncomment to debug
+        -- _logMessage := 'Updating work package from ' || _OldWorkPackage || ' to ' || _NewWorkPackage || ' for requests: ' || _requestIdList;
+        -- CALL post_log_entry ('Debug', _logMessage, 'update_requested_run_wp');
 
         ----------------------------------------------------------
         -- Create some temporary tables
@@ -129,13 +139,13 @@ BEGIN
         -- Find the Requested Runs to update
         ----------------------------------------------------------
 
-        If _requestedIdList <> '' Then
+        If _requestIdList <> '' Then
 
-            -- Find requested runs using _requestedIdList
+            -- Find requested runs using _requestIdList
             --
             INSERT INTO Tmp_RequestedRunList( request_id )
             SELECT Value
-            FROM public.parse_delimited_list (_requestedIdList, ',')
+            FROM public.parse_delimited_list (_requestIdList, ',')
 
             SELECT COUNT(request_id)
             INTO _rrCount
@@ -237,20 +247,49 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ----------------------------------------------------------
             -- Preview what would be updated
             ----------------------------------------------------------
 
+            RAISE INFO '';
             RAISE INFO '%', _logMessage;
 
-            SELECT request_id,
-                   Request_Name,
-                   work_package AS Old_Work_Package,
-                   _newWorkPackage AS New_Work_Package
-            FROM Tmp_ReqRunsToUpdate
-            ORDER BY ID;
+            _formatSpecifier := '%-10s %-80s %-16s %-16s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Request_ID',
+                                'Request_Name',
+                                'Old_Work_Package',
+                                'New_Work_Package'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '--------------------------------------------------------------------------------',
+                                         '----------------',
+                                         '----------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Request_ID,
+                       Request_Name,
+                       Work_Package AS Old_Work_Package,
+                       _newWorkPackage AS New_Work_Package
+                FROM Tmp_ReqRunsToUpdate
+                ORDER BY ID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Request_ID,
+                                    _previewData.Request_Name,
+                                    _previewData.Old_Work_Package,
+                                    _previewData.New_Work_Package
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             _message := format('Will update work package for %s requested %s from %s to %s',
                                 _previewCount, public.check_plural(_requestCountToUpdate, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);

@@ -422,6 +422,30 @@ BEGIN
         RETURN;
     End If;
 
+    _formatSpecifier := '%-8s %-70s %-15s %-15s %-10s %-10s %-14s %-23s';
+
+    _infoHead := format(_formatSpecifier,
+                        'Entry_ID',
+                        'Identifier',
+                        'Factor',
+                        'Value',
+                        'Dataset_ID',
+                        'Request_ID',
+                        'UpdateSkipCode',
+                        'Comment'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '--------',
+                                 '----------------------------------------------------------------------',
+                                 '---------------',
+                                 '---------------',
+                                 '----------',
+                                 '----------',
+                                 '--------------',
+                                 '-----------------------'
+                                );
+
     -----------------------------------------------------------
     -- Auto-delete data that cannot be a factor
     -- These column names could be present if the user
@@ -437,10 +461,39 @@ BEGIN
 
     If FOUND And _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
-        SELECT *, Case When UpdateSkipCode = 2 Then 'Yes' Else 'No' End As AutoSkip_Invalid_Factor
-        FROM Tmp_FactorInfo
+        FOR _previewData IN
+
+            SELECT Entry_ID
+                   Identifier,
+                   Factor,
+                   Value,
+                   DatasetID AS Dataset_ID,
+                   RequestID AS Request_ID,
+                   UpdateSkipCode,
+                   CASE WHEN UpdateSkipCode = 2
+                        THEN 'Yes'
+                        ELSE 'No'
+                   END As AutoSkip_Invalid_Factor
+            FROM Tmp_FactorInfo
+            ORDER BY Entry_ID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Entry_ID
+                                _previewData.Identifier,
+                                _previewData.Factor,
+                                _previewData.Value,
+                                _previewData.Dataset_ID,
+                                _previewData.Request_ID,
+                                _previewData.UpdateSkipCode,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     End If;
 
@@ -528,11 +581,40 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
-        -- Preview the contents of the Temp table
-        SELECT *
-        FROM Tmp_FactorInfo
+        FOR _previewData IN
+
+            SELECT Entry_ID
+                   Identifier,
+                   Factor,
+                   Value,
+                   DatasetID AS Dataset_ID,
+                   RequestID AS Request_ID,
+                   UpdateSkipCode,
+                   CASE WHEN UpdateSkipCode = 2
+                        THEN 'Yes'
+                        ELSE 'No'
+                   END As AutoSkip_Invalid_Factor
+            FROM Tmp_FactorInfo
+            ORDER BY Entry_ID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Entry_ID
+                                _previewData.Identifier,
+                                _previewData.Factor,
+                                _previewData.Value,
+                                _previewData.Dataset_ID,
+                                _previewData.Request_ID,
+                                _previewData.UpdateSkipCode,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
         RETURN;
     End If;
 

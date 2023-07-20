@@ -72,18 +72,18 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_WPInfo (
             Proposal_ID text not null,
-            work_package text not null,
+            Work_Package text not null,
             Requests int not null,
-            usage_rank int not null
+            Usage_Rank int not null
         );
 
         CREATE INDEX IX_Tmp_WPInfo ON Tmp_WPInfo (Proposal_ID, Work_Package);
 
         CREATE TEMP TABLE Tmp_ReqRunsToUpdate (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            request_id int not null,
-            proposal_id text not null,
-            work_package text not null,
+            Request_ID int not null,
+            Proposal_ID text not null,
+            Work_Package text not null,
             Message text null
         );
 
@@ -93,14 +93,14 @@ BEGIN
         -- Find the Proposal_ID to Work_Package mapping for Requested Runs that have a WP defined
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_WPInfo( proposal_id,
-                                work_package,
+        INSERT INTO Tmp_WPInfo( Proposal_ID,
+                                Work_Package,
                                 Requests,
-                                usage_rank )
-        SELECT proposal_id,
-               work_package,
+                                Usage_Rank )
+        SELECT Proposal_ID,
+               Work_Package,
                Requests,
-               Row_Number() OVER ( Partition BY proposal_id ORDER BY Requests DESC ) AS usage_rank
+               Row_Number() OVER ( Partition BY proposal_id ORDER BY Requests DESC ) AS Usage_Rank
         FROM ( SELECT EUSPro.proposal_id,
                       RR.work_package,
                       COUNT(RR.request_id) AS Requests
@@ -122,16 +122,54 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT *
-            FROM Tmp_WPInfo
-            ORDER BY Proposal_ID, usage_rank Desc
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Proposal_ID,
+                       Work_Package,
+                       Requests,
+                       Usage_Rank
+                FROM Tmp_WPInfo
+                ORDER BY Proposal_ID, Usage_Rank DESC
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Proposal_ID,
+                                    _previewData.Work_Package,
+                                    _previewData.Requests,
+                                    _previewData.Usage_Rank
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         -- Find requested runs to update
         --
-        INSERT INTO Tmp_ReqRunsToUpdate( request_id,
-                                         proposal_id,
-                                         work_package )
+        INSERT INTO Tmp_ReqRunsToUpdate( Request_ID,
+                                         Proposal_ID,
+                                         Work_Package )
         SELECT RR.request_id,
                EUSPro.proposal_id,
                RR.work_package
@@ -143,7 +181,7 @@ BEGIN
              INNER JOIN t_eus_proposals EUSPro
                ON RR.eus_proposal_id = EUSPro.proposal_id
              INNER JOIN Tmp_WPInfo
-               ON EUSPro.proposal_id = Tmp_WPInfo.proposal_id And usage_rank = 1
+               ON EUSPro.proposal_id = Tmp_WPInfo.Proposal_ID And Usage_Rank = 1
         WHERE DS.created BETWEEN CURRENT_TIMESTAMP - make_interval(days => _searchWindowDays) AND CURRENT_TIMESTAMP AND
               EUSPro.proposal_type NOT IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') AND
               Coalesce(RR.work_package, '') IN ('none', 'na', 'n/a', '')
@@ -170,7 +208,7 @@ BEGIN
 
         FOR _proposalID, _rrStart IN
             SELECT Proposal_ID,
-                   request_id
+                   Request_ID
             FROM Tmp_ReqRunsToUpdate
             WHERE Proposal_ID <> _proposalID
             ORDER BY Entry_ID
@@ -179,10 +217,10 @@ BEGIN
             SELECT Work_Package
             INTO _newWP
             FROM Tmp_WPInfo
-            WHERE Proposal_ID = _proposalID AND usage_rank = 1;
+            WHERE Proposal_ID = _proposalID AND Usage_Rank = 1;
 
             If Not FOUND Then
-                _logMessage := format('Logic error; did not find a match for proposal %s and usage_rank 1 in Tmp_WPInfo', _proposalID);
+                _logMessage := format('Logic error; did not find a match for proposal %s and usage rank 1 in Tmp_WPInfo', _proposalID);
                 CALL post_log_entry ('Error', _logMessage , 'Update_EUS_Requested_Run_WP');
                 RETURN;
             End If;
@@ -190,10 +228,10 @@ BEGIN
             TRUNCATE TABLE Tmp_ValuesByCategory;
 
             INSERT INTO Tmp_ValuesByCategory (Category, Value)
-            SELECT 'RR', request_id
+            SELECT 'RR', Request_ID
             FROM Tmp_ReqRunsToUpdate
             WHERE Proposal_ID = _proposalID
-            ORDER BY request_id;
+            ORDER BY Request_ID;
             --
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -234,19 +272,57 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ----------------------------------------------------------
             -- Preview what would be updated
             ----------------------------------------------------------
+
+            RAISE INFO '';
 
             If Exists (Select * from Tmp_ReqRunsToUpdate) Then
 
                 -- ToDo: Update this to use RAISE INFO
 
-                SELECT Src.*
-                FROM Tmp_ReqRunsToUpdate Src
-                ORDER BY Src.Proposal_ID, Src.ID;
+                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg',
+                                    'abcdefg'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---',
+                                             '---'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT Src.Entry_ID,
+                           Src.Request_ID,
+                           Src.Proposal_ID,
+                           Src.Work_Package,
+                           Src.Message
+                    FROM Tmp_ReqRunsToUpdate Src
+                    ORDER BY Src.Proposal_ID, Src.Entry_ID;
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Entry_ID,
+                                        _previewData.Request_ID,
+                                        _previewData.Proposal_ID,
+                                        _previewData.Work_Package,
+                                        _previewData.Message
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 RAISE INFO 'No candidate requested runs were found to update';
             End If;

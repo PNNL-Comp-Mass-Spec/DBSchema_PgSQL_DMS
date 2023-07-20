@@ -226,36 +226,120 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         -----------------------------------------
         -- Preview updated progress
         -----------------------------------------
 
+        -- ToDo: Update this to use RAISE INFO
+
+        RAISE INFO '';
+
         If Not _verbose Then
+
             -- Summarize the changes
-            --
-            SELECT State,
-                   COUNT(job) AS Jobs,
-                   SUM(CASE
-                           WHEN Coalesce(Progress_Old, -10) <> Coalesce(Progress_New, -5) THEN 1
-                           ELSE 0
-                       End If;) AS Changed_Jobs,
-                   MIN(Progress_New) AS Min_NewProgress,
-                   MAX(Progress_New) AS Max_NewProgress
-            FROM Tmp_JobsToUpdate
-            GROUP BY State
-            ORDER BY State;
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT State,
+                       COUNT(job) AS Jobs,
+                       SUM(CASE
+                               WHEN Coalesce(Progress_Old, -10) <> Coalesce(Progress_New, -5) THEN 1
+                               ELSE 0
+                           END) AS Changed_Jobs,
+                       MIN(Progress_New) AS Min_NewProgress,
+                       MAX(Progress_New) AS Max_NewProgress
+                FROM Tmp_JobsToUpdate
+                GROUP BY State
+                ORDER BY State
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.State,
+                                    _previewData.Jobs,
+                                    _previewData.Changed_Jobs,
+                                    _previewData.Min_NewProgress,
+                                    _previewData.Max_NewProgress
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         Else
+
             -- Show all rows in Tmp_JobsToUpdate
-            --
-            SELECT *,
-                   CASE
-                       WHEN Coalesce(Progress_Old, 0) <> Coalesce(Progress_New, 0) THEN 1
-                       ELSE 0
-                   END AS Progress_Changed
-            FROM Tmp_JobsToUpdate
-            ORDER BY Job;
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Job,
+                       State,
+                       Progress_Old,
+                       Progress_New,
+                       Steps,
+                       Steps_Completed,
+                       Current_Runtime_Minutes,
+                       Runtime_Predicted_Minutes,
+                       ETA_Minutes,
+                       CASE
+                           WHEN Coalesce(Progress_Old, 0) <> Coalesce(Progress_New, 0) THEN 'Yes'
+                           ELSE 'No'
+                       END AS Progress_Changed
+                FROM Tmp_JobsToUpdate
+                ORDER BY Job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.State,
+                                    _previewData.Progress_Old,
+                                    _previewData.Progress_New,
+                                    _previewData.Steps,
+                                    _previewData.Steps_Completed,
+                                    _previewData.Current_Runtime_Minutes,
+                                    _previewData.Runtime_Predicted_Minutes,
+                                    _previewData.ETA_Minutes,
+                                    _previewData.Progress_Changed
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If;
 

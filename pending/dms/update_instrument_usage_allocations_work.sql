@@ -14,7 +14,7 @@ AS $$
 **  Desc:
 **      Update requested instrument usage allocation using data in Tmp_Allocation_Operations
 **
-**      CREATE TABLE Tmp_Allocation_Operations (
+**      CREATE TEMP TABLE Tmp_Allocation_Operations (
 **          Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 **          Allocation text null,
 **          InstGroup text null,
@@ -22,11 +22,14 @@ AS $$
 **          Comment text null,
 **          FY int,
 **          Operation text null     -- 'i' -> increment, 'd' -> decrement, anything else -> set
-**      )
-**
+**      );
 **
 **  Arguments:
-**    _infoOnly   Set to true to preview the changes that would be made
+**    _fy               Fiscal year
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user
+**    _infoOnly         When true, preview the changes that would be made
 **
 **  Auth:   grk
 **  Date:   03/30/2012 mem - Factored out of UpdateInstrumentAllocations
@@ -65,8 +68,55 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _infoOnly Then
+
         -- ToDo: Show the data using RAISE INFO
-        SELECT * FROM Tmp_Allocation_Operations
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Entry_ID,
+                   Allocation,
+                   InstGroup,
+                   Proposal,
+                   Comment,
+                   FY,
+                   Operation
+            FROM Tmp_Allocation_Operations
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Entry_ID,
+                                _previewData.Allocation,
+                                _previewData.InstGroup,
+                                _previewData.Proposal,
+                                _previewData.Comment,
+                                _previewData.FY,
+                                _previewData.Operation
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
         RETURN;
     End If;
 

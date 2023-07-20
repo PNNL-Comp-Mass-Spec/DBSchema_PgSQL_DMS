@@ -19,10 +19,17 @@ AS $$
 **      Alternatively, use _deleteParam = true to delete the given parameter
 **
 **  Arguments:
-**    _section       Example: JobParameters
-**    _paramName     Example: SourceJob
-**    _value         value for parameter _paramName in section _section
-**    _deleteParam   When false, adds/updates the given parameter; when true, deletes the parameter
+**    _section          Section name, e.g.,   JobParameters
+**    _paramName        Parameter name, e.g., SourceJob
+**    _value            Value for parameter _paramName in section _section
+**    _deleteParam      When false, adds/updates the given parameter; when true, deletes the parameter
+**
+**
+**  Example usage:
+**
+**      CALL sw.add_update_job_parameter (2177045, 'PeptideSearch', 'ProteinCollectionList', 'M_musculus_UniProt_SPROT_2013_09_2013-09-18', _infoOnly => true);
+**      CALL sw.add_update_job_parameter (2177045, 'PeptideSearch', 'ProteinCollectionList', 'M_musculus_UniProt_SPROT_2013_09_2013-09-18', _infoOnly => false);
+**      CALL sw.add_update_job_parameter (2177045, 'PeptideSearch', 'ProteinCollectionList', 'M_musculus_UniProt_SPROT_2013_09_2013-09-18', _infoOnly => false, _deleteParam => true);
 **
 **  Auth:   mem
 **  Date:   03/22/2011 mem - Initial Version
@@ -40,8 +47,10 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _showDebug boolean;
+    _existingParamsFound boolean = false;
     _xmlParameters xml;
-    _existingParamsFound boolean := false;
+    _results record;
     _dataPkgID int;
 BEGIN
     _message := '';
@@ -51,9 +60,11 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
+    _showDebug := Coalesce(_infoOnly, false);
+
     SELECT schema_name, object_name, name_with_schema
     INTO _currentSchema, _currentProcedure, _nameWithSchema
-    FROM get_current_function_info('<auto>', _showDebug => false);
+    FROM get_current_function_info('<auto>', _showDebug);
 
     SELECT authorized
     INTO _authorized
@@ -68,9 +79,14 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
+    _job := Coalesce(_job, 0);
+    _section := Coalesce(_section, '');
+    _paramName := Coalesce(_paramName, '');
+    _value := Coalesce(_value, '');
+    _deleteParam := Coalesce(_deleteParam, false);
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
@@ -85,28 +101,44 @@ BEGIN
     If FOUND Then
         _existingParamsFound := true;
     Else
-        _message := 'Warning: job not found in sw.t_job_parameters';
+        If Not Exists (Select * FROM sw.t_jobs WHERE job = _job) Then
+            _message := format('Error: job %s not found in sw.t_job_parameters or sw.t_jobs', _job);
+
+            RAISE WARNING '%', _message;
+            RETURN;
+        End If;
+
+        _message := format('Warning: job %s not found in sw.t_job_parameters, but was found in sw.t_jobs; will add a new row to sw.t_job_parameters', _job);
+
         If _infoOnly Then
             RAISE INFO '%', _message;
         End If;
-        _xmlParameters := '';
+
+        _xmlParameters := ''::xml;
     End If;
 
     ---------------------------------------------------
-    -- Call add_update_job_parameter_xml to perform the work
+    -- Use function add_update_job_parameter_xml to update the XML
     ---------------------------------------------------
 
-    CALL sw.add_update_job_parameter_xml (
-            _xmlParameters,                  -- Input/Output
+    SELECT updated_xml, success, message
+    INTO _results
+    FROM sw.add_update_job_parameter_xml (
+            _xmlParameters,
             _section,
             _paramName,
             _value,
             _deleteParam,
-            _message => _message,
-            _infoOnly => _infoOnly
-            );
+            _showDebug => _infoOnly);
 
-    If Not _infoOnly Then
+    _message := _results.message;
+
+    If Not _results.success Then
+        RAISE WARNING 'Function add_update_task_parameter_xml was unable to update the XML for capture task job %: %',
+            _job,
+            Case When Coalesce(_message, '') = '' Then 'Unknown reason' Else _message End;
+
+    ElsIf Not _infoOnly Then
         ---------------------------------------------------
         -- Update sw.t_job_parameters
         -- Note: Ordering by Section name but not by parameter name
@@ -118,12 +150,12 @@ BEGIN
             WHERE job = _job;
         Else
             INSERT INTO sw.t_job_parameters( job, parameters )
-            SELECT _job, _xmlParameters
+            SELECT _job, _xmlParameters;
         End If;
 
         If _paramName = 'DataPackageID' Then
 
-            _dataPkgID := public.try_cast(_Value, 0)
+            _dataPkgID := public.try_cast(_value, 0)
 
             UPDATE sw.t_jobs
             SET data_pkg_id = _dataPkgID

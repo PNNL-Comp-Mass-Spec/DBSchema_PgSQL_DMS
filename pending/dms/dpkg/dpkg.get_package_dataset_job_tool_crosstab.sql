@@ -2,6 +2,7 @@
 CREATE OR REPLACE PROCEDURE dpkg.get_package_dataset_job_tool_crosstab
 (
     _dataPackageID INT,
+    INOUT _results refcursor DEFAULT '_results'::refcursor
     INOUT _message text default '',
     INOUT _returnCode text default '',
     _callingUser text = ''
@@ -41,48 +42,49 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_Tools (
-            tool text
+            Tool text
         );
 
         CREATE TEMP TABLE Tmp_Scratch  (
-            dataset text,
-            total INT
+            Dataset text,
+            Total INT
         );
 
+        DROP TABLE IF EXISTS Tmp_Datasets;
+
         CREATE TEMP TABLE Tmp_Datasets (
-            dataset text,
-            jobs INT NULL,
-            id INT
+            Dataset text,
+            Jobs INT NULL,
+            ID INT
         );
 
         ---------------------------------------------------
         -- Get list of package datasets
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Datasets( dataset,
-                                  id )
+        INSERT INTO Tmp_Datasets( Dataset,
+                                  ID )
         SELECT DISTINCT dataset,
-                        _dataPackageID
+                        data_pkg_id
         FROM dpkg.t_data_package_datasets
         WHERE data_pkg_id = _dataPackageID;
 
         -- Update job counts
         UPDATE Tmp_Datasets
-        SET Jobs = TX.Total
-        FROM (
-                SELECT dataset,
-                       COUNT(job) AS Total
-                FROM dpkg.t_data_package_analysis_jobs
-                WHERE data_pkg_id = _dataPackageID
-                GROUP BY dataset
+        SET Jobs = CountQ.Total
+        FROM ( SELECT dataset,
+                      COUNT(job) AS Total
+               FROM dpkg.t_data_package_analysis_jobs
+               WHERE data_pkg_id = _dataPackageID
+               GROUP BY dataset
              ) CountQ
-        WHERE ON CountQ.dataset = Tmp_Datasets.dataset;
+        WHERE CountQ.dataset = Tmp_Datasets.dataset;
 
         ---------------------------------------------------
         -- Get list of tools covered by package jobs
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Tools ( tool )
+        INSERT INTO Tmp_Tools ( Tool )
         SELECT DISTINCT tool
         FROM dpkg.t_data_package_analysis_jobs
         WHERE data_pkg_id = _dataPackageID;
@@ -92,44 +94,35 @@ BEGIN
         -- and update it with package job count
         ---------------------------------------------------
 
-        WHILE true
+        FOR _colName IN
+            SELECT Tool
+            FROM Tmp_Tools
+            ORDER BY Tool
         LOOP
 
-            SELECT Tool
-            INTO _colName
-            FROM Tmp_Tools
-            LIMIT 1;
+            _sql := format('ALTER TABLE Tmp_Datasets ADD COLUMN %I int NULL', _colName);
+            EXECUTE _sql;
 
-            If Not FOUND Then
-                -- Break out of the while loop
-                EXIT;
-            End If;
+            DELETE FROM Tmp_Scratch;
 
-            DELETE FROM Tmp_Tools WHERE Tool = _colName;
-
-            _sql := format('ALTER TABLE Tmp_Datasets ADD %I INT NULL', _colName);
-            EXEC(_sql);
-
-            DELETE FROM Tmp_Scratch
-
-            INSERT INTO Tmp_Scratch ( dataset, Total )
+            INSERT INTO Tmp_Scratch ( Dataset, Total )
             SELECT dataset,
-                   COUNT(job) AS Total
+                   COUNT(job) AS total
             FROM dpkg.t_data_package_analysis_jobs
             WHERE data_pkg_id = _dataPackageID AND
                   tool = _colName
             GROUP BY dataset;
 
             _sql := format('UPDATE Tmp_Datasets SET %I = TX.Total FROM Tmp_Datasets INNER JOIN Tmp_Scratch TX ON TX.Dataset = Tmp_Datasets.Dataset', _colName);
-            EXEC(_sql)
+            EXECUTE _sql;
 
         END LOOP;
 
-        -- ToDo: Return the results using a cursor, since the number of columns can vary
+        -- Return the results using a cursor, since the number of columns can vary
 
-        RETURN QUERY
-        SELECT *
-        FROM Tmp_Datasets
+        Open _results For
+            SELECT *
+            FROM Tmp_Datasets;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -153,9 +146,9 @@ BEGIN
 
     END;
 
+    -- Do not drop Tmp_Datasets since it is used by the cursor
     DROP TABLE IF EXISTS Tmp_Tools;
     DROP TABLE IF EXISTS Tmp_Scratch;
-    DROP TABLE IF EXISTS Tmp_Datasets
 END
 $$;
 

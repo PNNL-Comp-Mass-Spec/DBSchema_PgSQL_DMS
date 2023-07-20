@@ -130,10 +130,26 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_NewBatchParams (
             Parameter citext,
-            request_id int,
+            Request_ID int,
             Value text,
-            ExistingValue text NULL
-        )
+            Existing_Value text NULL
+        );
+
+        _formatSpecifier := '%-10s %-10s %-15s %-15s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Parameter',
+                            'Request_ID',
+                            'Value',
+                            'Existing_Value'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '----------',
+                                     '---------------',
+                                     '---------------'
+                                    );
 
         If _mode = 'update' OR _mode = 'debug' Then
             -----------------------------------------------------------
@@ -151,7 +167,7 @@ BEGIN
             -- Populate temp table with new parameters
             -----------------------------------------------------------
 
-            INSERT INTO Tmp_NewBatchParams ( Parameter, request_id, Value )
+            INSERT INTO Tmp_NewBatchParams ( Parameter, Request_ID, Value )
             SELECT XmlQ.Parameter, XmlQ.RequestID, XmlQ.Value
             FROM (
                 SELECT xmltable.*
@@ -173,10 +189,29 @@ BEGIN
             UPDATE Tmp_NewBatchParams SET Parameter = 'Run Order' WHERE Parameter = 'Run_Order';
 
             If _mode = 'debug' Then
-                
-                -- ToDo: convert to RAISE INFO
-                
-                SELECT * FROM Tmp_NewBatchParams
+
+                RAISE INFO '';
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT Parameter,
+                           Request_ID,
+                           Value,
+                           Existing_Value
+                    FROM Tmp_NewBatchParams
+                    ORDER BY Request_ID, Parameter
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Parameter,
+                                        _previewData.Request_ID,
+                                        _previewData.Value,
+                                        _previewData.Existing_Value
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             End If;
 
             -----------------------------------------------------------
@@ -184,27 +219,49 @@ BEGIN
             -----------------------------------------------------------
 
             UPDATE Tmp_NewBatchParams
-            SET ExistingValue = CASE
-                                    WHEN Tmp_NewBatchParams.Parameter = 'Block'      THEN Cast(block As Text)
-                                    WHEN Tmp_NewBatchParams.Parameter = 'Run Order'  THEN Cast(run_order As text)
-                                    WHEN Tmp_NewBatchParams.Parameter = 'Status'     THEN state_name
-                                    WHEN Tmp_NewBatchParams.Parameter = 'Instrument' THEN instrument_group
-                                    ELSE ''
-                                END
+            SET Existing_Value = CASE
+                                     WHEN Tmp_NewBatchParams.Parameter = 'Block'      THEN Cast(block As Text)
+                                     WHEN Tmp_NewBatchParams.Parameter = 'Run Order'  THEN Cast(run_order As text)
+                                     WHEN Tmp_NewBatchParams.Parameter = 'Status'     THEN state_name
+                                     WHEN Tmp_NewBatchParams.Parameter = 'Instrument' THEN instrument_group
+                                     ELSE ''
+                                 END
             FROM t_requested_run
-            WHERE Tmp_NewBatchParams.request_id = t_requested_run.request_id;
+            WHERE Tmp_NewBatchParams.Request_ID = t_requested_run.request_id;
 
             -- Store the current cart name
             UPDATE Tmp_NewBatchParams
-            SET ExistingValue = t_lc_cart.cart_name
+            SET Existing_Value = t_lc_cart.cart_name
             FROM t_requested_run
-                   ON Tmp_NewBatchParams.request_id = t_requested_run.request_id
+                   ON Tmp_NewBatchParams.Request_ID = t_requested_run.request_id
                  INNER JOIN t_lc_cart
                    ON t_requested_run.cart_id = t_lc_cart.cart_id
-            WHERE Tmp_NewBatchParams.Parameter = 'Cart'
+            WHERE Tmp_NewBatchParams.Parameter = 'Cart';
 
             If _mode = 'debug' Then
-                SELECT * FROM Tmp_NewBatchParams
+
+                RAISE INFO '';
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT Parameter,
+                           Request_ID,
+                           Value,
+                           Existing_Value
+                    FROM Tmp_NewBatchParams
+                    ORDER BY Request_ID, Parameter
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Parameter,
+                                        _previewData.Request_ID,
+                                        _previewData.Value,
+                                        _previewData.Existing_Value
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             End If;
 
             -----------------------------------------------------------
@@ -212,7 +269,7 @@ BEGIN
             -----------------------------------------------------------
 
             DELETE FROM Tmp_NewBatchParams
-            WHERE Tmp_NewBatchParams.Value = Tmp_NewBatchParams.ExistingValue;
+            WHERE Tmp_NewBatchParams.Value = Tmp_NewBatchParams.Existing_Value;
 
             -----------------------------------------------------------
             -- Validate
@@ -231,10 +288,29 @@ BEGIN
         End If;
 
         If _mode = 'debug' Then
-            
-            -- ToDo: convert to RAISE INFO
-            
-            SELECT * FROM Tmp_NewBatchParams
+
+            RAISE INFO '';
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Parameter,
+                       Request_ID,
+                       Value,
+                       Existing_Value
+                FROM Tmp_NewBatchParams
+                ORDER BY Request_ID, Parameter
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Parameter,
+                                    _previewData.Request_ID,
+                                    _previewData.Value,
+                                    _previewData.Existing_Value
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         -----------------------------------------------------------
@@ -257,19 +333,19 @@ BEGIN
                 SET block = Tmp_NewBatchParams.Value
                 FROM Tmp_NewBatchParams
                 WHERE Tmp_NewBatchParams.Parameter = 'block' AND
-                      Tmp_NewBatchParams.request_id = t_requested_run.request_id;
+                      Tmp_NewBatchParams.Request_ID = t_requested_run.request_id;
 
                 UPDATE t_requested_run
                 SET run_order = Tmp_NewBatchParams.Value
                 FROM Tmp_NewBatchParams
                 WHERE Tmp_NewBatchParams.Parameter = 'Run Order' AND
-                      Tmp_NewBatchParams.request_id = t_requested_run.request_id;
+                      Tmp_NewBatchParams.Request_ID = t_requested_run.request_id;
 
                 UPDATE t_requested_run
                 SET state_name = Tmp_NewBatchParams.Value
                 FROM Tmp_NewBatchParams
                 WHERE Tmp_NewBatchParams.Parameter = 'Status' AND
-                      Tmp_NewBatchParams.request_id = t_requested_run.request_id;
+                      Tmp_NewBatchParams.Request_ID = t_requested_run.request_id;
 
                 UPDATE t_requested_run
                 SET cart_id = t_lc_cart.cart_id
@@ -277,13 +353,13 @@ BEGIN
                      INNER JOIN t_lc_cart
                        ON Tmp_NewBatchParams.Value = t_lc_cart.cart_name
                 WHERE Tmp_NewBatchParams.Parameter = 'Cart' AND
-                      Tmp_NewBatchParams.request_id = t_requested_run.request_id;
+                      Tmp_NewBatchParams.Request_ID = t_requested_run.request_id;
 
                 UPDATE t_requested_run
                 SET instrument_group = Tmp_NewBatchParams.Value
                 FROM Tmp_NewBatchParams
                 WHERE Tmp_NewBatchParams.Parameter = 'Instrument' AND
-                      Tmp_NewBatchParams.request_id = t_requested_run.request_id;
+                      Tmp_NewBatchParams.Request_ID = t_requested_run.request_id;
 
             END;
 
@@ -323,7 +399,7 @@ BEGIN
                 INTO _minBatchID, _maxBatchID
                 FROM Tmp_NewBatchParams Src
                      INNER JOIN t_requested_run RR
-                       ON Src.request_id = RR.request_id;
+                       ON Src.Request_ID = RR.request_id;
 
                 If (_minBatchID > 0 Or _maxBatchID > 0) Then
                     If _minBatchID = _maxBatchID Then
@@ -332,12 +408,12 @@ BEGIN
                         WHERE batch_id = _minBatchID;
                     Else
 
-                        SELECT string_agg(Request::text, ', ' ORDER BY Request)
+                        SELECT string_agg(Request_ID::text, ', ' ORDER BY Request_ID)
                         INTO _requestedRunList
                         FROM Tmp_NewBatchParams;
 
                         _logMessage := format('Requested runs do not all belong to the same batch: %s vs. %s; see requested runs %s',
-                                            _minBatchID, _maxBatchID, _requestedRunList);
+                                              _minBatchID, _maxBatchID, _requestedRunList);
 
                         CALL post_log_entry ('Warning', _logMessage, 'Update_Requested_Run_Batch_Parameters');
                     End If;
@@ -367,8 +443,8 @@ BEGIN
             End If;
 
             If Exists (SELECT * FROM Tmp_NewBatchParams WHERE Parameter = 'Status') Then
+
                 -- Call update_cached_requested_run_eus_users for each entry in Tmp_NewBatchParams
-                --
 
                 FOR _requestID IN
                     SELECT request_id

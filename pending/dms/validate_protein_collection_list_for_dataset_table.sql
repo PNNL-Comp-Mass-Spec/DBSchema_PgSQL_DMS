@@ -17,12 +17,11 @@ AS $$
 **      include protein collections for the internal standards
 **      associated with the datasets listed in temp table Tmp_DatasetList
 **
-**  The calling procedure must create and populate the temporary table
+**      The calling procedure must create and populate the temporary table
 **
-**      CREATE TABLE Tmp_DatasetList (
+**      CREATE TEMP TABLE Tmp_DatasetList (
 **          Dataset_Name text
-**      )
-**
+**      );
 **
 **  Auth:   mem
 **  Date:   11/13/2006 mem - Initial revision (Ticket #320)
@@ -56,6 +55,10 @@ DECLARE
     _infoHeadSeparator text;
     _previewData record;
     _infoData text;
+
+    _formatSpecifierIntStds text;
+    _infoHeadIntStds text;
+    _infoHeadSeparatorIntStds text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -84,7 +87,7 @@ BEGIN
     );
 
     CREATE TEMP TABLE Tmp_ProteinCollections (
-        RowNumberID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Protein_Collection_Name citext NOT NULL,
         Collection_Appended int NOT NULL
     );
@@ -123,18 +126,54 @@ BEGIN
         RAISE INFO 'There were duplicate names in the protein collections list, will auto remove: %', _dups;
 
         DELETE FROM Tmp_ProteinCollections
-        WHERE NOT RowNumberID IN ( SELECT MIN(RowNumberID) AS IDToKeep
-                                   FROM Tmp_ProteinCollections
-                                   GROUP BY Protein_Collection_Name )
+        WHERE NOT Entry_ID IN ( SELECT MIN(Entry_ID) AS IDToKeep
+                                FROM Tmp_ProteinCollections
+                                GROUP BY Protein_Collection_Name )
 
     End If;
 
     If _showDebug Then
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
 
-        SELECT 'Tmp_ProteinCollections' As Table_Name, *
-        FROM Tmp_ProteinCollections
+        _formatSpecifier := '%-10s %-8s %-80s %-19s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Table_Name',
+                            'Entry_ID',
+                            'Protein_Collection_Name',
+                            'Collection_Appended'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '--------',
+                                     '--------------------------------------------------------------------------------',
+                                     '-------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT 'Tmp_ProteinCollections' As Table_Name,
+                   Entry_ID,
+                   Protein_Collection_Name,
+                   Collection_Appended
+            FROM Tmp_ProteinCollections
+            ORDER BY Entry_ID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Table_Name,
+                                _previewData.Entry_ID,
+                                _previewData.Protein_Collection_Name,
+                                _previewData.Collection_Appended
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+
     End If;
 
     --------------------------------------------------------------
@@ -144,10 +183,10 @@ BEGIN
     --------------------------------------------------------------
 
     INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID,
-                            protein_collection_name,
-                            Dataset_Count,
-                            Experiment_Count,
-                            Enzyme_Contaminant_Collection )
+                             Protein_Collection_Name,
+                             Dataset_Count,
+                             Experiment_Count,
+                             Enzyme_Contaminant_Collection )
     SELECT DISTINCT Internal_Std_Mix_ID,
                     protein_collection_name,
                     Dataset_Count,
@@ -169,6 +208,28 @@ BEGIN
             ) LookupQ
     WHERE protein_collection_name <> '';
 
+    _formatSpecifierIntStds := '%-10s %-19s %-80s %-13s %-16s %-30s %-30s';
+
+    _infoHeadIntStds := format(_formatSpecifierIntStds,
+                               'Table_Name',
+                               'Internal_Std_Mix_ID',
+                               'Protein_Collection_Name',
+                               'Dataset_Count',
+                               'Experiment_Count',
+                               'Enzyme_Contaminant_Collection',
+                               'Comment'
+                              );
+
+    _infoHeadSeparatorIntStds := format(_formatSpecifierIntStds,
+                                        '----------',
+                                        '-------------------',
+                                        '--------------------------------------------------------------------------------',
+                                        '-------------',
+                                        '----------------',
+                                        '------------------------------',
+                                        '------------------------------'
+                                       );
+
     If Not Exists (SELECT * FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection > 0) Then
         --------------------------------------------------------------
         -- Nothing was added; no point in looking for protein collections with Includes_Contaminants > 0
@@ -176,10 +237,33 @@ BEGIN
 
         If _showDebug Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
+            RAISE INFO '%', _infoHeadIntStds;
+            RAISE INFO '%', _infoHeadSeparatorIntStds;
 
-            SELECT 'Tmp_IntStds' As Table_Name, *
-            FROM Tmp_IntStds
+            FOR _previewData IN
+                SELECT 'Tmp_IntStds' As Table_Name,
+                       Internal_Std_Mix_ID,
+                       Protein_Collection_Name,
+                       Dataset_Count,
+                       Experiment_Count,
+                       Enzyme_Contaminant_Collection,
+                       '' As Comment
+                FROM Tmp_IntStds
+            LOOP
+                _infoData := format(_formatSpecifierIntStds,
+                                    _previewData.Table_Name,
+                                    _previewData.Internal_Std_Mix_ID,
+                                    _previewData.Protein_Collection_Name,
+                                    _previewData.Dataset_Count,
+                                    _previewData.Experiment_Count,
+                                    _previewData.Enzyme_Contaminant_Collection,
+                                    _previewData.Comment
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
     Else
         --------------------------------------------------------------
@@ -269,10 +353,33 @@ BEGIN
 
     If _showDebug Then
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
+        RAISE INFO '%', _infoHeadIntStds;
+        RAISE INFO '%', _infoHeadSeparatorIntStds;
 
-        SELECT 'Tmp_IntStds' As Table_Name, *
-        FROM Tmp_IntStds
+        FOR _previewData IN
+            SELECT 'Tmp_IntStds' As Table_Name,
+                   Internal_Std_Mix_ID,
+                   Protein_Collection_Name,
+                   Dataset_Count,
+                   Experiment_Count,
+                   Enzyme_Contaminant_Collection,
+                   '' As Comment
+            FROM Tmp_IntStds
+        LOOP
+            _infoData := format(_formatSpecifierIntStds,
+                                _previewData.Table_Name,
+                                _previewData.Internal_Std_Mix_ID,
+                                _previewData.Protein_Collection_Name,
+                                _previewData.Dataset_Count,
+                                _previewData.Experiment_Count,
+                                _previewData.Enzyme_Contaminant_Collection,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     --------------------------------------------------------------
@@ -280,23 +387,48 @@ BEGIN
     -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
     --------------------------------------------------------------
 
-    If Exists ( SELECT * Then
+    If Exists ( SELECT *
                 FROM Tmp_ProteinCollections
                 WHERE Protein_Collection_Name = 'Tryp_Pig_Bov' ) AND
-       EXISTS ( SELECT *
+       Exists ( SELECT *
                 FROM Tmp_IntStds
                 WHERE Protein_Collection_Name = 'HumanContam' ) Then
 
         DELETE FROM Tmp_IntStds
-        WHERE Protein_Collection_Name = 'HumanContam'
+        WHERE Protein_Collection_Name = 'HumanContam';
 
         If _showDebug Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
 
-            If Exists (Select * From Tmp_IntStds) Then
-                SELECT 'Tmp_IntStds' As Table_Name, *, 'After removing HumanContam' As Comment
-                FROM Tmp_IntStds
+            If Exists (SELECT * FROM Tmp_IntStds) Then
+
+                RAISE INFO '%', _infoHeadIntStds;
+                RAISE INFO '%', _infoHeadSeparatorIntStds;
+
+                FOR _previewData IN
+                    SELECT 'Tmp_IntStds' As Table_Name,
+                           Internal_Std_Mix_ID,
+                           Protein_Collection_Name,
+                           Dataset_Count,
+                           Experiment_Count,
+                           Enzyme_Contaminant_Collection,
+                           'After removing HumanContam' As Comment
+                    FROM Tmp_IntStds
+                LOOP
+                    _infoData := format(_formatSpecifierIntStds,
+                                        _previewData.Table_Name,
+                                        _previewData.Internal_Std_Mix_ID,
+                                        _previewData.Protein_Collection_Name,
+                                        _previewData.Dataset_Count,
+                                        _previewData.Experiment_Count,
+                                        _previewData.Enzyme_Contaminant_Collection,
+                                        _previewData.Comment
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
             Else
                 SELECT 'Tmp_IntStds is empty after removing HumanContam' As Comment
             End If;
@@ -325,11 +457,55 @@ BEGIN
 
     If _showDebug Then
 
-        -- ToDo: Show this info using RAISE INFO
-
         If Exists (Select * From Tmp_ProteinCollectionsToAdd) Then
-            SELECT 'Tmp_ProteinCollectionsToAdd' As Table_Name, *
-            FROM Tmp_ProteinCollectionsToAdd
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-8s %-80s %-13s %-16s %-29s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Table_Name',
+                                'UniqueID',
+                                'Protein_Collection_Name',
+                                'Dataset_Count',
+                                'Experiment_Count',
+                                'Enzyme_Contaminant_Collection'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '--------',
+                                         '--------------------------------------------------------------------------------',
+                                         '-------------',
+                                         '----------------',
+                                         '-----------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT 'Tmp_ProteinCollectionsToAdd' As Table_Name,
+                       UniqueID,
+                       Protein_Collection_Name,
+                       Dataset_Count,
+                       Experiment_Count,
+                       Enzyme_Contaminant_Collection
+                FROM Tmp_ProteinCollectionsToAdd
+                ORDER BY Protein_Collection_Name
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Table_Name,
+                                    _previewData.UniqueID,
+                                    _previewData.Protein_Collection_Name,
+                                    _previewData.Dataset_Count,
+                                    _previewData.Experiment_Count,
+                                    _previewData.Enzyme_Contaminant_Collection
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         Else
             RAISE INFO 'Tmp_ProteinCollectionsToAdd is empty';
         End If;
@@ -402,7 +578,7 @@ BEGIN
     --   Internal Standards, Normal Protein Collections, Contaminant collections
     --------------------------------------------------------------
 
-    SELECT string_agg(Protein_Collection_Name, ',' ORDER BY Collection_Appended Asc, RowNumberID Asc)
+    SELECT string_agg(Protein_Collection_Name, ',' ORDER BY Collection_Appended ASC, Entry_ID ASC)
     INTO _protCollNameList
     FROM Tmp_ProteinCollections;
 

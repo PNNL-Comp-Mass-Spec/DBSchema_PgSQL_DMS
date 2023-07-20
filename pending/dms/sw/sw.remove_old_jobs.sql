@@ -107,18 +107,19 @@ BEGIN
         _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForSuccess);
 
         INSERT INTO Tmp_Selected_Jobs (job, state)
-        SELECT TOP ( _maxJobsToProcess ) job, state
+        SELECT job, state
         FROM sw.t_jobs
         WHERE state IN (4, 7) AND        -- 4=Complete, 7=No Intermediate Files Created
               Coalesce(finish, start) < _cutoffDateTimeForSuccess
-        ORDER BY finish;
+        ORDER BY finish
+        LIMIT _maxJobsToProcess;
 
         If _validateJobStepSuccess Then
             -- Remove any jobs that have failed, in progress, or holding job steps
             DELETE Tmp_Selected_Jobs
             FROM sw.t_job_steps JS
             WHERE Tmp_Selected_Jobs.job = JS.job AND
-                  NOT JS.state IN (3, 5);
+                  NOT JS.state IN (3, 5);               -- 3=Skipped, 5=Complete
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -159,7 +160,7 @@ BEGIN
         SELECT job,
                state
         FROM sw.t_jobs
-        WHERE job IN ( SELECT DISTINCT VALUE
+        WHERE job IN ( SELECT DISTINCT Value
                        FROM public.parse_delimited_integer_list ( _jobListOverride, ',' ) ) AND
               NOT job IN ( SELECT job FROM Tmp_Selected_Jobs )
     End If;

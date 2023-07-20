@@ -39,35 +39,70 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         ---------------------------------------------------
         -- Preview the updates
         ---------------------------------------------------
 
-        SELECT E.exp_id,
-               E.last_used,
-               LookupRR.MostRecentUse AS Last_Used_ReqRun,
-               LookupDS.MostRecentUse AS Last_Used_Dataset
-        FROM t_experiments E
-             LEFT OUTER JOIN ( SELECT E.exp_id,
-                                      MAX(CAST(RR.created AS date)) AS MostRecentUse
-                               FROM t_experiments E
-                                    INNER JOIN t_requested_run RR
-                                      ON E.exp_id = RR.exp_id
-                               GROUP BY E.exp_id
-                             ) LookupRR
-               ON E.exp_id = LookupRR.exp_id
-             LEFT OUTER JOIN ( SELECT E.exp_id,
-                                      MAX(CAST(DS.created AS date)) AS MostRecentUse
-                               FROM t_experiments E
-                                    INNER JOIN t_dataset DS
-                                      ON E.exp_id = DS.exp_id
-                               GROUP BY E.exp_id
-                             ) LookupDS
-               ON E.exp_id = LookupDS.exp_id
-        WHERE LookupRR.MostRecentUse > E.last_used OR
-              LookupDS.MostRecentUse > E.last_used
+        -- ToDo: Update this to use RAISE INFO
+
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT E.Exp_ID,
+                   E.Last_Used,
+                   LookupRR.MostRecentUse AS Last_Used_ReqRun,
+                   LookupDS.MostRecentUse AS Last_Used_Dataset
+            FROM t_experiments E
+                 LEFT OUTER JOIN ( SELECT E.exp_id,
+                                          MAX(CAST(RR.created AS date)) AS MostRecentUse
+                                   FROM t_experiments E
+                                        INNER JOIN t_requested_run RR
+                                          ON E.exp_id = RR.exp_id
+                                   GROUP BY E.exp_id
+                                 ) LookupRR
+                   ON E.exp_id = LookupRR.exp_id
+                 LEFT OUTER JOIN ( SELECT E.exp_id,
+                                          MAX(CAST(DS.created AS date)) AS MostRecentUse
+                                   FROM t_experiments E
+                                        INNER JOIN t_dataset DS
+                                          ON E.exp_id = DS.exp_id
+                                   GROUP BY E.exp_id
+                                 ) LookupDS
+                   ON E.exp_id = LookupDS.exp_id
+            WHERE LookupRR.MostRecentUse > E.last_used OR
+                  LookupDS.MostRecentUse > E.last_used
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Exp_ID,
+                                _previewData.Last_Used,
+                                _previewData.Last_Used_ReqRun,
+                                _previewData.Last_Used_Dataset
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         RETURN;
     End If;

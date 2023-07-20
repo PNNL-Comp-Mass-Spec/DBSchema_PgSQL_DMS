@@ -300,8 +300,18 @@ BEGIN
                         _message => _message);              -- Output
 
                 If _paramsUpdated Then
-                    -- ToDo: update this to use XMLAGG(XMLELEMENT(
-                    --       Look for similar capture task code in cap.*
+                    SELECT xml_item, true as Success, '' As message
+                    FROM ( SELECT
+                             XMLAGG(XMLELEMENT(
+                                    NAME "Param",
+                                    XMLATTRIBUTES(
+                                        Section As "Section",
+                                        Name As "Name",
+                                        Value As "Value"))
+                                    ORDER BY Section, Name
+                                   ) AS xml_item
+                           FROM Tmp_Job_Params
+                        ) AS LookupQ;
 
                     _jobParamXML := ( SELECT * FROM Tmp_Job_Params AS Param FOR XML AUTO, TYPE);
                 End If;

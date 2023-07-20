@@ -107,9 +107,9 @@ BEGIN
     -- Remove leading and trailing spaces, and check for nulls
     ---------------------------------------------------
 
-    _eusUsageType := Trim(Coalesce(_eusUsageType, ''));
+    _eusUsageType  := Trim(Coalesce(_eusUsageType, ''));
     _eusProposalID := Trim(Coalesce(_eusProposalID, ''));
-    _eusUsersList := Trim(Coalesce(_eusUsersList, ''));
+    _eusUsersList  := Trim(Coalesce(_eusUsersList, ''));
 
     If _eusUsageType::citext = '(ignore)' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
@@ -241,8 +241,9 @@ BEGIN
         -- Verify EUS proposal ID, get the Numeric_ID value, get the proposal type
         ---------------------------------------------------
 
-        SELECT proposal_type
-        INTO _proposalType
+        SELECT numeric_id,
+               proposal_type
+        INTO _numericID, _proposalType
         FROM t_eus_proposals
         WHERE proposal_id = _eusProposalID
 
@@ -309,7 +310,7 @@ BEGIN
                     Else
                         If Not Exists (SELECT * FROM Tmp_Proposal_Stack) Then
                             INSERT INTO Tmp_Proposal_Stack (Proposal_ID, Numeric_ID)
-                            Values (_eusProposalID, Coalesce(_numericID, 0))
+                            VALUES (_eusProposalID, Coalesce(_numericID, 0))
                         End If;
 
                         SELECT numeric_id
@@ -354,11 +355,41 @@ BEGIN
 
         If _infoOnly AND EXISTS (SELECT * from Tmp_Proposal_Stack) Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
 
-            SELECT *
-            FROM Tmp_Proposal_Stack
-            ORDER BY Entry_ID
+            _formatSpecifier := '%-10s %-11s %-11s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Entry_ID',
+                                'Proposal_ID',
+                                'Numeric_ID'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '-----------',
+                                         '-----------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Entry_ID,
+                       Proposal_ID,
+                       Numeric_ID
+                FROM Tmp_Proposal_Stack
+                ORDER BY Entry_ID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Entry_ID,
+                                    _previewData.Proposal_ID,
+                                    _previewData.Numeric_ID
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         If _eusProposalID <> _originalProposalID Then
