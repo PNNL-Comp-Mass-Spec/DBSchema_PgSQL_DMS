@@ -46,6 +46,7 @@ AS $$
 **          01/28/2022 mem - Call Update_EMSL_Instrument_Usage_Report for both the current month, plus also previous months if _daysToProcess is greater than 15
 **          02/15/2022 mem - Fix major bug decrementing _instrumentUsageMonth when processing multiple instruments
 **                         - Add missing Order By clause
+**          07/21/2023 mem - Look for both 'Y' and '1' when examining the eus_primary_instrument flag (aka EMSL_Primary_Instrument)
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -158,8 +159,8 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_Instruments (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        Instrument text,
-        EMSL text,
+        Instrument citext,
+        EMSL_Primary_Instrument citext,          -- This comes from eus_primary_instrument in table t_emsl_instruments and will be '0', '1', 'N', or 'Y'
         Tracked int,
         EUS_Instrument_ID Int Null,
         Use_EUS_ID int Not Null
@@ -193,12 +194,12 @@ BEGIN
             FROM public.parse_delimited_list ( _instrumentsToProcess, ',');
 
             INSERT INTO Tmp_Instruments( Instrument,
-                                         EMSL,
+                                         EMSL_Primary_Instrument,
                                          Tracked,
                                          EUS_Instrument_ID,
                                          Use_EUS_ID )
             SELECT InstList.Name,
-                   InstList.EUS_Primary_Instrument AS EMSL,
+                   InstList.EUS_Primary_Instrument AS EMSL_Primary_Instrument,
                    InstList.Tracked,
                    InstList.EUS_Instrument_ID,
                    0
@@ -282,7 +283,7 @@ BEGIN
             FOR _previewData IN
                 SELECT Entry_ID,
                        Instrument,
-                       EMSL,
+                       EMSL_Primary_Instrument,
                        Tracked,
                        EUS_Instrument_ID,
                        Use_EUS_ID
@@ -292,7 +293,7 @@ BEGIN
                 _infoData := format(_formatSpecifier,
                                     _previewData.Entry_ID,
                                     _previewData.Instrument,
-                                    _previewData.EMSL,
+                                    _previewData.EMSL_Primary_Instrument,
                                     _previewData.Tracked,
                                     _previewData.EUS_Instrument_ID,
                                     _previewData.Use_EUS_ID
@@ -309,9 +310,9 @@ BEGIN
 
         FOR _instrumentInfo IN
             SELECT Instrument,
-                   EMSL AS EmslInstrument,
+                   EMSL_Primary_Instrument,
                    Tracked,
-                   Use_EUS_ID AS UseEUSid,
+                   Use_EUS_ID,
                    EUS_Instrument_ID AS EusInstrumentId,
                    Entry_ID AS EntryID
             FROM Tmp_Instruments
@@ -339,7 +340,9 @@ BEGIN
                 CALL update_dataset_interval (_instrumentInfo.Instrument, _startDate, _startOfNextMonth, _message => _message, _infoOnly => _infoOnly);
             End If;
 
-            If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EmslInstrument = 'Y'::citext OR _instrumentInfo.Tracked = 1)) Then
+            -- EMSL_Primary_Instrument comes from eus_primary_instrument in table t_emsl_instruments and will be '0', '1', 'N', or 'Y'
+
+            If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EMSL_Primary_Instrument IN ('Y', '1') OR _instrumentInfo.Tracked = 1)) Then
                 If _infoOnly Then
                     RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for Instrument %', _instrument;
                     RAISE INFO '';

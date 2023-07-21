@@ -21,7 +21,7 @@ CREATE VIEW public.v_instrument_tracked AS
    FROM ( SELECT td.instrument AS name,
             ((
                 CASE
-                    WHEN (ti.eus_primary_instrument = 'Y'::bpchar) THEN 'E'::text
+                    WHEN (upper((ti.eus_primary_instrument)::text) = ANY (ARRAY['Y'::text, '1'::text])) THEN 'E'::text
                     ELSE ''::text
                 END ||
                 CASE
@@ -47,7 +47,7 @@ CREATE VIEW public.v_instrument_tracked AS
            FROM ((public.t_emsl_instruments ti
              JOIN public.t_emsl_dms_instrument_mapping tm ON ((ti.eus_instrument_id = tm.eus_instrument_id)))
              RIGHT JOIN public.t_instrument_name td ON ((tm.dms_instrument_id = td.instrument_id)))
-          WHERE (((td.status = 'active'::bpchar) AND (td.operations_role OPERATOR(public.=) 'Production'::public.citext)) OR (td.tracking = 1) OR ((ti.eus_primary_instrument = 'Y'::bpchar) AND (ti.eus_active_sw = 'Y'::bpchar)))) filterq;
+          WHERE (((td.status = 'active'::bpchar) AND (td.operations_role OPERATOR(public.=) 'Production'::public.citext)) OR (td.tracking = 1) OR ((upper((ti.eus_primary_instrument)::text) = ANY (ARRAY['Y'::text, '1'::text])) AND (ti.eus_active_sw = 'Y'::bpchar)))) filterq;
 
 
 ALTER TABLE public.v_instrument_tracked OWNER TO d3l243;
