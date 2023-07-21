@@ -1,29 +1,25 @@
 --
-CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter
-(
-    _job int,
-    _section text,
-    _paramName text,
-    _value text,
-    _deleteParam boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_job_parameter(integer, text, text, text, boolean, text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds or updates an entry in the XML parameters for a given job
-**      Alternatively, use _deleteParam = true to delete the given parameter
+**      Alternatively, use _deleteParam => true to delete the given parameter
 **
 **  Arguments:
+**    _job              Job number
 **    _section          Section name, e.g.,   JobParameters
 **    _paramName        Parameter name, e.g., SourceJob
 **    _value            Value for parameter _paramName in section _section
 **    _deleteParam      When false, adds/updates the given parameter; when true, deletes the parameter
-**
+**    _message          Status message
+**    _returnCode       Return code
+**    _infoOnly         When true, preview changes
 **
 **  Example usage:
 **
@@ -35,10 +31,10 @@ AS $$
 **  Date:   03/22/2011 mem - Initial Version
 **          04/04/2011 mem - Expanded Value to varchar(4000) in Tmp_job_Parameters
 **          01/19/2012 mem - Now using Add_Update_Job_Parameter_XML
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          06/22/2017 mem - If updating DataPackageID, also update T_Jobs
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -146,16 +142,16 @@ BEGIN
 
         If _existingParamsFound Then
             UPDATE sw.t_job_parameters
-            SET parameters = _xmlParameters
+            SET parameters = _results.updated_xml
             WHERE job = _job;
         Else
             INSERT INTO sw.t_job_parameters( job, parameters )
-            SELECT _job, _xmlParameters;
+            VALUES (_job, _results.updated_xml);
         End If;
 
         If _paramName = 'DataPackageID' Then
 
-            _dataPkgID := public.try_cast(_value, 0)
+            _dataPkgID := public.try_cast(_value, 0);
 
             UPDATE sw.t_jobs
             SET data_pkg_id = _dataPkgID
@@ -167,4 +163,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.add_update_job_parameter IS 'AddUpdateJobParameter';
+
+ALTER PROCEDURE sw.add_update_job_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_job_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.add_update_job_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'AddUpdateJobParameter';
+
