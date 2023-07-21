@@ -57,26 +57,32 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-20s %-16s %-20s %-15s %-80s %-20s %-80s %-80s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Job',
+                            'Created',
+                            'Analysis_Tool_ID',
+                            'Comment',
+                            'StateID',
+                            'Dataset',
+                            'Dataset_Created',
+                            'Dataset_Folder_Path',
+                            'Archive_Folder_Path'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '--------------------',
+                                     '----------------',
+                                     '--------------------',
+                                     '---------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -84,12 +90,12 @@ BEGIN
 
         FOR _previewData IN
             SELECT AJ.job AS Job,
-                   AJ.created AS Created,
+                   public.timestamp_text(AJ.created) AS Created,
                    AJ.analysis_tool_id AS AnalysisToolID,
-                   Coalesce(AJ.comment, '') + _holdMessage AS Comment,
+                   Coalesce(AJ.comment, '') || _holdMessage AS Comment,
                    AJ.job_state_id AS StateID,
                    DS.dataset AS Dataset,
-                   DS.created AS Dataset_Created,
+                   public.timestamp_text(DS.created) AS Dataset_Created,
                    DFP.Dataset_Folder_Path,
                    DFP.Archive_Folder_Path
             FROM Tmp_JobsToUpdate JTU

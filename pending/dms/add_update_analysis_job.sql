@@ -414,6 +414,56 @@ BEGIN
 
         _logErrors := true;
 
+        _formatSpecifier := '%-13s %-10s %-8s %-20s %-16s %-60s %-50s %-50s %-80s %-40s %-11s %-10s %-20s %-20s %-10s %-8s %-8s %-20s %-20s %-16s %-18s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Mode',
+                            'Job',
+                            'Priority',
+                            'Created',
+                            'Analysis_Tool_ID',
+                            'Param_File_Name',
+                            'Settings_File_Name',
+                            'Organism_DB_Name',
+                            'Protein_Collection_List',
+                            'Protein_Options_List',
+                            'Organism_ID',
+                            'Dataset_ID',
+                            'Comment',
+                            'Special_Processing',
+                            'Owner',
+                            'Batch_ID',
+                            'State_ID',
+                            'Start',
+                            'Finish',
+                            'Propagation_Mode',
+                            'Dataset_Unreviewed'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '-------------',
+                                     '----------',
+                                     '--------',
+                                     '--------------------',
+                                     '----------------',
+                                     '------------------------------------------------------------',
+                                     '--------------------------------------------------',
+                                     '--------------------------------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '----------------------------------------',
+                                     '-----------',
+                                     '----------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '----------',
+                                     '--------',
+                                     '--------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '----------------',
+                                     '------------------'
+                                    );
+
         ---------------------------------------------------
         -- Lookup the Dataset ID
         ---------------------------------------------------
@@ -514,28 +564,7 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: show this info using RAISE INFO
-
                 RAISE INFO '';
-
-                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-                _infoHead := format(_formatSpecifier,
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg'
-                                   );
-
-                _infoHeadSeparator := format(_formatSpecifier,
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---'
-                                            );
-
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
 
@@ -544,7 +573,7 @@ BEGIN
                 SELECT format('Preview ', _mode) AS Mode,
                        _jobID AS Job,
                        _priority AS Priority,
-                       CURRENT_TIMESTAMP AS Created,
+                       public.timestamp_text(CURRENT_TIMESTAMP) AS Created,
                        _analysisToolID AS AnalysisToolID,
                        _paramFileName AS ParmFileName,
                        _settingsFileName AS SettingsFileName,
@@ -558,6 +587,8 @@ BEGIN
                        _ownerUsername AS Owner,
                        _batchID AS BatchID,
                        _newStateID AS StateID,
+                       '' As Start,
+                       '' As Finish,
                        _propMode AS PropagationMode,
                        _datasetUnreviewed AS DatasetUnreviewed
                 LOOP
@@ -579,6 +610,8 @@ BEGIN
                                         _previewData.Owner,
                                         _previewData.BatchID,
                                         _previewData.StateID,
+                                        _previewData.Start,
+                                        _previewData.Finish,
                                         _previewData.PropagationMode,
                                         _previewData.DatasetUnreviewed
                                        );
@@ -685,28 +718,7 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Convert this to RAISE INFO
-
                 RAISE INFO '';
-
-                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-                _infoHead := format(_formatSpecifier,
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg'
-                                   );
-
-                _infoHeadSeparator := format(_formatSpecifier,
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---'
-                                            );
-
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
 
@@ -714,7 +726,7 @@ BEGIN
                     SELECT format('Preview %s', _mode) AS Mode,
                            _jobID AS Job,
                            _priority AS Priority,
-                           Created,
+                           public.timestamp_text(Created) As Created,
                            _analysisToolID AS AnalysisToolID,
                            _paramFileName AS ParmFileName,
                            _settingsFileName AS SettingsFileName,
@@ -728,8 +740,8 @@ BEGIN
                            _ownerUsername AS Owner,
                            batch_id AS BatchID,
                            _updateStateID AS StateID,
-                           CASE WHEN _mode <> 'reset' THEN start ELSE NULL End AS Start,
-                           CASE WHEN _mode <> 'reset' THEN finish ELSE NULL End AS Finish,
+                           CASE WHEN _mode <> 'reset' THEN public.timestamp_text(start)  ELSE '' End AS Start,
+                           CASE WHEN _mode <> 'reset' THEN public.timestamp_text(finish) ELSE '' End AS Finish,
                            _propMode AS PropagationMode,
                            dataset_unreviewed AS DatasetUnreviewed
                     FROM t_analysis_job
@@ -765,7 +777,7 @@ BEGIN
             Else
 
                 ---------------------------------------------------
-                -- Make changes to database
+                -- Update the database
                 ---------------------------------------------------
 
                 UPDATE t_analysis_job
@@ -783,7 +795,7 @@ BEGIN
                     special_processing = _specialProcessing,
                     owner = _ownerUsername,
                     job_state_id = _updateStateID,
-                    start = CASE WHEN _mode <> 'reset' THEN start ELSE NULL End,
+                    start =  CASE WHEN _mode <> 'reset' THEN start  ELSE NULL End,
                     finish = CASE WHEN _mode <> 'reset' THEN finish ELSE NULL End,
                     propagation_mode = _propMode
                 WHERE (job = _jobID)

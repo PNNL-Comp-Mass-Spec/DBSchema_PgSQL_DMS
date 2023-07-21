@@ -175,39 +175,28 @@ BEGIN
              ) XmlQ;
     WHERE NOT XmlQ.name IS NULL;
 
-    ---------------------------------------------------
-    -- Trap 'parse_only' mode here
-    ---------------------------------------------------
-
     If _mode = 'parse_only' Then
-
-        -- ToDo: Use RAISE INFO to show the values
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-25s %-80s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Name',
+                            'Param_Value'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '-------------------------',
+                                     '--------------------------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT ParamName AS Name, ParamValue
+            SELECT ParamName AS Name,
+                   ParamValue
             FROM Tmp_Parameters
         LOOP
             _infoData := format(_formatSpecifier,

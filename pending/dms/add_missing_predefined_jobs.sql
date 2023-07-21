@@ -121,7 +121,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _infoOnly And _previewOutputType::citext = 'Show Rules'::citext Then
+    If _infoOnly And _previewOutputType::citext = 'Show Rules' Then
         _showRules := true;
     Else
         _showRules := false;
@@ -203,30 +203,35 @@ BEGIN
                                         PA.analysis_tool_name LIKE _analysisToolNameFilter) )
     ORDER BY DS.dataset_id
 
+    _formatSpecifier := '%-15s %-25s %-10s %-20s %-8s %-9s %-7s %-80s %-60s';
+
+    _infoHead := format(_formatSpecifier,
+                        'Status',
+                        'Instrument',
+                        'Dataset_ID',
+                        'Created',
+                        'State_ID',
+                        'Rating_ID',
+                        'Process',
+                        'Dataset',
+                        'Comment'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '---------------',
+                                 '-------------------------',
+                                 '----------',
+                                 '--------------------',
+                                 '--------',
+                                 '---------',
+                                 '-------',
+                                 '--------------------------------------------------------------------------------',
+                                 '------------------------------------------------------------'
+                                );
+
     If _infoOnly And _showDebug AND EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
 
-        -- ToDo: Show this using RAISE INFO
-
         RAISE INFO '';
-
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-        _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
-                           );
-
-        _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
-                                    );
-
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
@@ -234,7 +239,7 @@ BEGIN
             SELECT 'Debug_Output #1' AS Status,
                    InstName.instrument,
                    DS.dataset_id AS DatasetID,
-                   DS.created,
+                   public.timestamp_text(DS.created) AS Created,
                    DS.dataset_state_id AS StateID,
                    DS.dataset_rating_id AS RatingID,
                    DTP.Process_Dataset AS Process,
@@ -283,28 +288,7 @@ BEGIN
 
     If _infoOnly And _showDebug And EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
 
-        -- ToDo: Show this using RAISE INFO
-
         RAISE INFO '';
-
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-        _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
-                           );
-
-        _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
-                                    );
-
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
@@ -312,7 +296,7 @@ BEGIN
             SELECT 'Debug_Output #2' AS Status,
                    InstName.instrument,
                    DS.dataset_id AS DatasetID,
-                   DS.created,
+                   public.timestamp_text(DS.created) AS Created,
                    DS.dataset_state_id AS StateID,
                    DS.dataset_rating_id AS RatingID,
                    DTP.Process_Dataset AS Process,
@@ -357,28 +341,7 @@ BEGIN
 
     If _infoOnly And _showDebug And EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
 
-        -- ToDo: Show this using RAISE INFO
-
         RAISE INFO '';
-
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-        _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
-                           );
-
-        _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
-                                    );
-
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
@@ -386,7 +349,7 @@ BEGIN
             SELECT 'Debug_Output #3' AS Status,
                    InstName.instrument,
                    DS.dataset_id AS DatasetID,
-                   DS.created,
+                   public.timestamp_text(DS.created) AS Created,
                    DS.dataset_state_id AS StateID,
                    DS.dataset_rating_id AS RatingID,
                    DTP.Process_Dataset AS Process,
@@ -449,35 +412,15 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Show this using RAISE INFO
-
         RAISE INFO '';
-
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-        _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
-                           );
-
-        _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
-                                    );
-
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT InstName.instrument,
+            SELECT 'Preview' AS Status,
+                   InstName.instrument,
                    DS.dataset_id AS DatasetID,
-                   DS.created,
+                   public.timestamp_text(DS.created) AS Created,
                    DS.dataset_state_id AS StateID,
                    DS.dataset_rating_id AS RatingID,
                    DTP.Process_Dataset AS Process,
@@ -492,6 +435,7 @@ BEGIN
             ORDER BY InstName.instrument, DS.dataset_id
         LOOP
             _infoData := format(_formatSpecifier,
+                                _previewData.Status,
                                 _previewData.Instrument,
                                 _previewData.DatasetID,
                                 _previewData.Created,
@@ -507,28 +451,7 @@ BEGIN
 
         If _infoOnly And _showDebug Then
 
-            -- ToDo: Show this using RAISE INFO
-
             RAISE INFO '';
-
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-            _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
-                               );
-
-            _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
-                                        );
-
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
@@ -536,7 +459,7 @@ BEGIN
                 SELECT 'Ignored' AS Status,
                        InstName.instrument,
                        DS.dataset_id AS DatasetID,
-                       DS.created,
+                       public.timestamp_text(DS.created) AS Created,
                        DS.dataset_state_id AS StateID,
                        DS.dataset_rating_id AS RatingID,
                        DTP.Process_Dataset AS Dataset,
@@ -583,31 +506,6 @@ BEGIN
         RETURN;
     End If;
 
-    If _infoOnly Then
-        ---------------------------------------------------
-        -- Temporary job holding table for jobs to create
-        ---------------------------------------------------
-
-        CREATE TEMP TABLE Tmp_JobsToCreate (
-            datasetName text,
-            priority text,
-            analysisToolName text,
-            paramFileName text,
-            settingsFileName text,
-            organismDBName text,
-            organismName text,
-            proteinCollectionList text,
-            proteinOptionsList text,
-            ownerUsername text,
-            comment text,
-            associatedProcessorGroup text,
-            numJobs int,
-            propagationMode int,
-            specialProcessing text,
-            ID int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY
-        )
-    End If;
-
     -- Remove any extra datasets from Tmp_DatasetsToProcess
     DELETE FROM Tmp_DatasetsToProcess
     WHERE Not Process_Dataset;
@@ -635,29 +533,277 @@ BEGIN
 
             If _infoOnly And _showRules Then
 
-                _currentLocation := format('Querying predefined_analysis_jobs for %s', _datasetName);
+                -- Show the rules that apply to this dataset
 
-                INSERT INTO Tmp_JobsToCreate (
-                        datasetName, priority, analysisToolName, paramFileName, settingsFileName,
-                        organismDBName, organismName, proteinCollectionList, proteinOptionsList,
-                        ownerUsername, comment, associatedProcessorGroup,
-                        numJobs, propagationMode, specialProcessing)
-                SELECT datasetName, priority, analysisToolName, paramFileName, settingsFileName,
-                       organismDBName, organismName, proteinCollectionList, proteinOptionsList,
-                       ownerUsername, comment, associatedProcessorGroup,
-                       numJobs, propagationMode, specialProcessing
-                FROM predefined_analysis_jobs (
-                            _datasetName,
-                            _raiseErrorMessages => true,
-                            _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-                            _createJobsForUnreviewedDatasets => true,
-                            _analysisToolNameFilter => _analysisToolNameFilter);
+                _currentLocation := format('Showing predefined analysis rules for %s', _datasetName);
 
-                -- ToDo: Show the contents of Tmp_JobsToCreate
+                RAISE INFO '';
+
+                _formatSpecifier := '%-80s %-5s %-5s %-5s %-12s %-8s %-18s %-11s %-10s %-10s %-25s %-25s %-20s %-20s %-20s %-25s %-25s %-30s %-30s %-20s %-30s %-30s %-20s %-20s %-20s %-20s %-20s %-15s %-15s %-30s %-30s %-30s %-60s %-30s %-50s %-50s %-8s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Dataset',
+                                    'Step',
+                                    'Level',
+                                    'Seq',
+                                    'Predefine_ID',
+                                    'Next_Lvl',
+                                    'Trigger_Mode',
+                                    'Export_Mode',
+                                    'Action',
+                                    'Reason',
+                                    'Notes',
+                                    'Analysis_Tool',
+                                    'Instrument_Class_Criteria',
+                                    'Instrument_Criteria',
+                                    'Instrument_Exclusion',
+                                    'Campaign_Criteria',
+                                    'Campaign_Exclusion',
+                                    'Experiment_Criteria',
+                                    'Experiment_Exclusion',
+                                    'Organism_Criteria',
+                                    'Dataset_Criteria',
+                                    'Dataset_Exclusion',
+                                    'Dataset_Type',
+                                    'Exp_Comment_Criteria',
+                                    'Labelling_Inclusion',
+                                    'Labelling_Exclusion',
+                                    'Separation_Type_Criteria',
+                                    'Scan_Count_Min',
+                                    'Scan_Count_Max',
+                                    'Param_File',
+                                    'Settings_File',
+                                    'Organism',
+                                    'Protein_Collections',
+                                    'Protein_Options'
+                                    'Organism_DB'
+                                    'Special_Processing'
+                                    'Priority'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '--------------------------------------------------------------------------------',
+                                             '-----',
+                                             '-----',
+                                             '-----',
+                                             '------------',
+                                             '--------',
+                                             '------------------',
+                                             '-----------',
+                                             '----------',
+                                             '----------',
+                                             '-------------------------',
+                                             '-------------------------',
+                                             '--------------------',
+                                             '--------------------',
+                                             '--------------------',
+                                             '-------------------------',
+                                             '-------------------------',
+                                             '------------------------------',
+                                             '------------------------------',
+                                             '--------------------',
+                                             '------------------------------',
+                                             '------------------------------',
+                                             '--------------------',
+                                             '--------------------',
+                                             '--------------------',
+                                             '--------------------',
+                                             '--------------------',
+                                             '---------------',
+                                             '---------------',
+                                             '------------------------------',
+                                             '------------------------------',
+                                             '------------------------------',
+                                             '------------------------------------------------------------',
+                                             '------------------------------',
+                                             '--------------------------------------------------',
+                                             '--------------------------------------------------',
+                                             '--------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT _datasetName As Dataset,
+                           Step,
+                           Level,
+                           Seq,
+                           Predefine_ID,
+                           Next_Lvl,
+                           Trigger_Mode,
+                           Export_Mode,
+                           Action,
+                           Reason,
+                           Notes,
+                           Analysis_Tool,
+                           Instrument_Class_Criteria,
+                           Instrument_Criteria,
+                           Instrument_Exclusion,
+                           Campaign_Criteria,
+                           Campaign_Exclusion,
+                           Experiment_Criteria,
+                           Experiment_Exclusion,
+                           Organism_Criteria,
+                           Dataset_Criteria,
+                           Dataset_Exclusion,
+                           Dataset_Type,
+                           Exp_Comment_Criteria,
+                           Labelling_Inclusion,
+                           Labelling_Exclusion,
+                           Separation_Type_Criteria,
+                           Scan_Count_Min,
+                           Scan_Count_Max,
+                           Param_File,
+                           Settings_File,
+                           Organism,
+                           Protein_Collections,
+                           Protein_Options,
+                           Organism_DB,
+                           Special_Processing,
+                           Priority
+                    FROM predefined_analysis_rules (
+                                _datasetName,
+                                _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
+                                _analysisToolNameFilter => _analysisToolNameFilter);
+                    ORDER BY Step, Level, Seq
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Dataset,
+                                        _previewData.Step,
+                                        _previewData.Level,
+                                        _previewData.Seq,
+                                        _previewData.Predefine_ID,
+                                        _previewData.Next_Lvl,
+                                        _previewData.Trigger_Mode,
+                                        _previewData.Export_Mode,
+                                        _previewData.Action,
+                                        _previewData.Reason,
+                                        _previewData.Notes,
+                                        _previewData.Analysis_Tool,
+                                        _previewData.Instrument_Class_Criteria,
+                                        _previewData.Instrument_Criteria,
+                                        _previewData.Instrument_Exclusion,
+                                        _previewData.Campaign_Criteria,
+                                        _previewData.Campaign_Exclusion,
+                                        _previewData.Experiment_Criteria,
+                                        _previewData.Experiment_Exclusion,
+                                        _previewData.Organism_Criteria,
+                                        _previewData.Dataset_Criteria,
+                                        _previewData.Dataset_Exclusion,
+                                        _previewData.Dataset_Type,
+                                        _previewData.Exp_Comment_Criteria,
+                                        _previewData.Labelling_Inclusion,
+                                        _previewData.Labelling_Exclusion,
+                                        _previewData.Separation_Type_Criteria,
+                                        _previewData.Scan_Count_Min,
+                                        _previewData.Scan_Count_Max,
+                                        _previewData.Param_File,
+                                        _previewData.Settings_File,
+                                        _previewData.Organism,
+                                        _previewData.Protein_Collections,
+                                        _previewData.Protein_Options,
+                                        _previewData.Organism_DB,
+                                        _previewData.Special_Processing,
+                                        _previewData.Priority
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             ElsIf _infoOnly And Not _showRules Then
 
-                -- ToDo: Call the function that shows the predefined analysis rules that apply to this dataset
+                -- Show the jobs that would be created for this dataset
+
+                _currentLocation := format('Showing predefined analysis jobs for %s', _datasetName);
+
+                RAISE INFO '';
+
+                _formatSpecifier := '%-80s %-8s %-25s %-60s %-50s %-60s %-50s %-80s %-30s %-15s %-20s %-26s %-10s %-16s %-20s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Dataset_Name',
+                                    'Priority',
+                                    'Analysis_Tool_Name',
+                                    'Param_File_Name',
+                                    'Settings_File_Name',
+                                    'Organism_DB_Name',
+                                    'Organism_Name',
+                                    'Protein_Collection_List',
+                                    'Protein_Options_List',
+                                    'Owner_Username',
+                                    'Comment',
+                                    'Associated_Processor_Group',
+                                    'Num_Jobs',
+                                    'Propagation_Mode',
+                                    'Special_Processing'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '--------------------------------------------------------------------------------',
+                                             '--------',
+                                             '-------------------------',
+                                             '------------------------------------------------------------',
+                                             '--------------------------------------------------',
+                                             '------------------------------------------------------------',
+                                             '--------------------------------------------------',
+                                             '--------------------------------------------------------------------------------',
+                                             '------------------------------',
+                                             '---------------',
+                                             '--------------------',
+                                             '--------------------------',
+                                             '----------',
+                                             '----------------',
+                                             '--------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT DatasetName,
+                           Priority,
+                           AnalysisToolName,
+                           ParamFileName,
+                           SettingsFileName,
+                           OrganismDBName,
+                           OrganismName,
+                           ProteinCollectionList,
+                           ProteinOptionsList,
+                           OwnerUsername,
+                           Comment,
+                           AssociatedProcessorGroup,
+                           NumJobs,
+                           PropagationMode,
+                           SpecialProcessing
+                    FROM predefined_analysis_jobs (
+                                _datasetName,
+                                _raiseErrorMessages => true,
+                                _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
+                                _createJobsForUnreviewedDatasets => true,
+                                _analysisToolNameFilter => _analysisToolNameFilter);
+                    ORDER BY DatasetName, AnalysisToolName
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.DatasetName,
+                                        _previewData.Priority,
+                                        _previewData.AnalysisToolName,
+                                        _previewData.ParamFileName,
+                                        _previewData.SettingsFileName,
+                                        _previewData.OrganismDBName,
+                                        _previewData.OrganismName,
+                                        _previewData.ProteinCollectionList,
+                                        _previewData.ProteinOptionsList,
+                                        _previewData.OwnerUsername,
+                                        _previewData.Comment,
+                                        _previewData.AssociatedProcessorGroup,
+                                        _previewData.NumJobs,
+                                        _previewData.PropagationMode,
+                                        _previewData.SpecialProcessing
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
             End If;
 
@@ -744,8 +890,8 @@ BEGIN
 
     If _datasetsProcessed > 0 And Not _infoOnly Then
         _message := format('Added predefined analysis jobs for %s %s (processed %s %s)',
-                            _datasetsWithNewJobs, public.check_plural(_datasetsWithNewJobs, 'dataset', 'datasets'),
-                            _datasetsProcessed,   public.check_plural(_datasetsProcessed,   'dataset', 'datasets'));
+                           _datasetsWithNewJobs, public.check_plural(_datasetsWithNewJobs, 'dataset', 'datasets'),
+                           _datasetsProcessed,   public.check_plural(_datasetsProcessed,   'dataset', 'datasets'));
 
         If _datasetsWithNewJobs > 0 And Not _infoOnly Then
             CALL post_log_entry ('Normal', _message, 'Add_Missing_Predefined_Jobs');

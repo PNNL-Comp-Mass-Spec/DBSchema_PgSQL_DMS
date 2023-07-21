@@ -19,9 +19,8 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Make entries in job steps table and job step
-**      dependency table for each newly added job
-**      according to definition of script for that job
+**      Make entries in job steps table and job step dependency table
+**      for each newly added job according to definition of script for that job
 **
 **    Example usage for debugging:
 **
@@ -29,7 +28,7 @@ AS $$
 **
 **        CALL sw.create_job_steps (_message => _message, 'CreateFromImportedJobs', _existingJob => 555225, _infoOnly => true);
 **
-**        Raise Info '%', _message;
+**        RAISE INFO '%', _message;
 **
 **  Arguments:
 **    _mode                                  Modes: CreateFromImportedJobs, ExtendExistingJob, UpdateExistingJob (rarely used)
@@ -69,6 +68,7 @@ AS $$
 **          03/02/2022 mem - Pass data package ID to CreateSignaturesForJobSteps when dataset ID is 0
 **          02/13/2023 mem - Show contents of temp table Tmp_Jobs when _debugMode is true
 **                         - Add results folder name comment regarding Special="Job_Results"
+**          07/20/2023 mem - Use the correct remote info name when adding the ID=1 row to T_Remote_Info
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -320,45 +320,52 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Make sure sw.t_step_tool_versions as the "Unknown" version (ID=1)
+    -- Make sure sw.t_step_tool_versions has the "Unknown" version (ID=1)
     ---------------------------------------------------
 
-    If Not Exists (Select * from sw.t_step_tool_versions WHERE tool_version_id = 1) Then
+    If Not Exists (SELECT * FROM sw.t_step_tool_versions WHERE tool_version_id = 1) Then
 
-        -- ToDo: Update this to work with PostgreSQL
-        --
-        -- Use OVERRIDING SYSTEM VALUE to insert an explicit value for the identity column, for example:
-        --
-        -- INSERT INTO mc.t_log_entries (entry_id, posted_by, posting_time, type, message)
-        -- OVERRIDING SYSTEM VALUE
-        -- VALUES (12345, 'Test', CURRENT_TIMESTAMP, 'Test', 'message');
-        Set IDENTITY_INSERT sw.t_step_tool_versions ON
+        INSERT INTO sw.t_step_tool_versions (tool_version_id, tool_version, most_recent_job, last_used, entered)
+        OVERRIDING SYSTEM VALUE
+        VALUES (1, 'Unknown', null, null, CURRENT_TIMESTAMP)
+        ON CONFLICT (tool_version_id)
+        DO UPDATE SET
+          tool_version = EXCLUDED.tool_version,
+          most_recent_job = EXCLUDED.most_recent_job,
+          last_used = EXCLUDED.last_used,
+          entered = EXCLUDED.entered;
 
-        Insert Into sw.t_step_tool_versions (tool_version_id, tool_version)
-        Values (1, 'Unknown')
+        -- Set the sequence's current value to the maximum current ID
+        SELECT setval('sw.t_step_tool_versions_tool_version_id_seq', (SELECT MAX(tool_version_id) FROM sw.t_step_tool_versions));
 
-        Set IDENTITY_INSERT sw.t_step_tool_versions OFF
+        -- Preview the ID that will be assigned to the next item
+        SELECT currval('sw.t_step_tool_versions_tool_version_id_seq');
+
     End If;
 
     ---------------------------------------------------
-    -- Make sure sw.t_remote_info as the "Unknown" version (ID=1)
+    -- Make sure sw.t_remote_info has the "None" version (ID=1)
     ---------------------------------------------------
 
-    If Not Exists (Select * from sw.t_remote_info WHERE remote_info_id = 1) Then
+    If Not Exists (SELECT * FROM sw.t_remote_info WHERE remote_info_id = 1) Then
 
-        -- ToDo: Update this to work with PostgreSQL
-        --
-        -- Use OVERRIDING SYSTEM VALUE to insert an explicit value for the identity column, for example:
-        --
-        -- INSERT INTO mc.t_log_entries (entry_id, posted_by, posting_time, type, message)
-        -- OVERRIDING SYSTEM VALUE
-        -- VALUES (12345, 'Test', CURRENT_TIMESTAMP, 'Test', 'message');
-        Set IDENTITY_INSERT sw.t_remote_info ON
+        INSERT INTO sw.t_remote_info (remote_info_id, remote_info, most_recent_job, last_used, entered, max_running_job_steps)
+        OVERRIDING SYSTEM VALUE
+        VALUES (1, 'None', null, null, CURRENT_TIMESTAMP, 0)
+        ON CONFLICT (remote_info_id)
+        DO UPDATE SET
+          remote_info = EXCLUDED.remote_info,
+          most_recent_job = EXCLUDED.most_recent_job,
+          last_used = EXCLUDED.last_used,
+          entered = EXCLUDED.entered,
+          max_running_job_steps = EXCLUDED.max_running_job_steps;
 
-        Insert Into sw.t_remote_info (remote_info_id, remote_info)
-        Values (1, 'Unknown')
+        -- Set the sequence's current value to the maximum current ID
+        SELECT setval('sw.t_remote_info_remote_info_id_seq', (SELECT MAX(remote_info_id) FROM sw.t_remote_info));
 
-        Set IDENTITY_INSERT sw.t_remote_info OFF
+        -- Preview the ID that will be assigned to the next item
+        SELECT currval('sw.t_remote_info_remote_info_id_seq');
+
     End If;
 
     ---------------------------------------------------

@@ -13,7 +13,6 @@ AS $$
 **      Merges data in the temp tables into T_Jobs, T_Job_Steps, etc.
 **      Intended for use with an extension job script
 **
-**
 **  Auth:   grk
 **  Date:   02/06/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
 **          10/22/2010 mem - Added parameter _debugMode
@@ -26,23 +25,29 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _formatSpecifier text;
-    _infoHead text;
-    _infoHeadSeparator text;
-    _previewData record;
-    _infoData text;
+    _job int;
+    _jobParamXML XML;
 BEGIN
     _message := '';
     _returnCode := '';
 
     If _infoOnly Then
 
-        -- ToDo: Show this information using RAISE INFO
+        -- Show contents of Tmp_Jobs
+        --
+        CALL sw.show_tmp_jobs();
 
-        SELECT 'Tmp_Jobs' As Table, * FROM Tmp_Jobs
-        SELECT 'Tmp_Job_Parameters ' As Table, * FROM Tmp_Job_Parameters
+        RAISE INFO '';
 
-        -- No need to output these tables, since procedure Create_Job_Steps will have already displayed them
+        FOR _job, _jobParamXML IN
+            SELECT Job, Parameters
+            INTO _jobParamXML
+            FROM Tmp_Job_Parameters
+        LOOP
+            RAISE INFO 'Parameters for job %: %', _job, _jobParamXML;
+        END LOOP;
+
+        -- No need to output these tables, since procedure Create_Job_Steps will have already displayed them using sw.show_tmp_job_steps_and_job_step_dependencies()
         -- SELECT 'Tmp_Job_Steps ' as Table, * FROM Tmp_Job_Steps
         -- SELECT 'Tmp_Job_Step_Dependencies' as Table, * FROM Tmp_Job_Step_Dependencies
 
@@ -107,11 +112,10 @@ BEGIN
     FROM Tmp_Job_Steps
     WHERE NOT EXISTS
     (
-        SELECT *
+        SELECT job
         FROM sw.t_job_steps
-        WHERE
-            sw.t_job_steps.job = Tmp_Job_Steps.job and
-            sw.t_job_steps.step = Tmp_Job_Steps.step
+        WHERE sw.t_job_steps.job = Tmp_Job_Steps.job AND
+              sw.t_job_steps.step = Tmp_Job_Steps.step
     );
 
     ---------------------------------------------------
@@ -137,11 +141,10 @@ BEGIN
     FROM Tmp_Job_Step_Dependencies
     WHERE NOT EXISTS
     (
-        SELECT *
+        SELECT job
         FROM sw.t_job_step_dependencies
-        WHERE
-            sw.t_job_step_dependencies.job = Tmp_Job_Step_Dependencies.job and
-            sw.t_job_step_dependencies.step = Tmp_Job_Step_Dependencies.step
+        WHERE sw.t_job_step_dependencies.job = Tmp_Job_Step_Dependencies.job AND
+              sw.t_job_step_dependencies.step = Tmp_Job_Step_Dependencies.step
     );
 
 END

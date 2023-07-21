@@ -94,26 +94,30 @@ BEGIN
 
         -- Preview the datasets that would be updated
 
-        -- ToDo: Show this info using RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-40s %-25s %-20s %-80s %-15s %-40s %-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Campaign',
+                            'Instrument',
+                            'Dataset_Created',
+                            'Dataset',
+                            'Dataset_Type',
+                            'Comment',
+                            'P_2A',
+                            'P_2C'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------------------------------------',
+                                     '-------------------------',
+                                     '--------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '---------------',
+                                     '----------------------------------------',
+                                     '----------',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -124,7 +128,7 @@ BEGIN
         FOR _previewData IN
             SELECT C.Campaign,
                    InstName.Instrument,
-                   DS.Dataset_Created,
+                   public.timestamp_text(DS.Dataset_Created),
                    DS.Dataset,
                    DSType.Dataset_Type,
                    DS.Comment,
@@ -156,7 +160,7 @@ BEGIN
                                );
 
             RAISE INFO '%', _infoData;
-            
+
             _updateCount := _updateCount + 1;
         END LOOP;
 

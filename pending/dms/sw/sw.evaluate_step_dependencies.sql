@@ -148,12 +148,61 @@ BEGIN
 
     If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
         -- Preview the steps to process
-        SELECT *
-        FROM Tmp_DepTable
-        ORDER BY SortOrder
+
+        -- ToDo: Update this to use RAISE INFO
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+        _infoHead := format(_formatSpecifier,
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg',
+                            'abcdefg'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---',
+                                     '---'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Job,
+                   DependentStep,
+                   TargetStep,
+                   TargetState,
+                   TargetCompletionCode,
+                   Condition_Test,
+                   Test_Value,
+                   Enable_Only,
+                   SortOrder
+            FROM Tmp_DepTable
+            ORDER BY SortOrder
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.DependentStep,
+                                _previewData.TargetStep,
+                                _previewData.TargetState,
+                                _previewData.TargetCompletionCode,
+                                _previewData.Condition_Test,
+                                _previewData.Test_Value,
+                                _previewData.Enable_Only,
+                                _previewData.SortOrder
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     ---------------------------------------------------

@@ -142,23 +142,28 @@ BEGIN
 
         ---------------------------------------------------
         -- Task was assigned; return parameters in XML format
+        --
+        -- Example XML:
+        -- <Param package="4898" path_local_root="E:\DataPkgs" path_shared_root="\\protoapps\DataPkgs\" path_folder="Public\2023\4898_Agilent_tune_files_acquired_on_20May2021" cmd="add" source_db="DMS_Data_Package" source_table="T_Data_Package"/>
         ---------------------------------------------------
 
-        -- ToDo: update this to use XMLAGG(XMLELEMENT(
-        --       Look for similar capture task code in cap.*
-
-        _parameters := (
-                SELECT source_id AS package,
-                    path_local_root,
-                    path_shared_root,
-                    path_folder,
-                    command AS cmd,
-                    source_db,
-                    source_table
-                FROM sw.t_data_folder_create_queue AS "root"
-                WHERE entry_id = _taskID
-                FOR XML AUTO, ELEMENTS
-            )
+        SELECT xml_item
+        INTO _xmlParameters
+        FROM ( SELECT
+                 XMLAGG(XMLELEMENT(
+                        NAME "Param",
+                        XMLATTRIBUTES(
+                            source_id As "package",
+                            path_local_root As "path_local_root",
+                            path_shared_root As "path_shared_root",
+                            path_folder As "path_folder",
+                            command As "cmd",
+                            source_db As "source_db",
+                            source_table As "source_table"))
+                       ) AS xml_item
+               FROM sw.t_data_folder_create_queue
+               WHERE entry_id = _taskID
+            ) AS LookupQ;
 
         If _infoOnly And char_length(_message) = 0 Then
             _message := format('Task %s would be assigned to %s', _taskID, _processorName);

@@ -75,9 +75,53 @@ BEGIN
 
             -- ToDo: Update this to use RAISE INFO
 
-            SELECT 'Existing item found' As Status, *
-            FROM sw.t_remote_info
-            WHERE remote_info_id = _remoteInfoID
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT 'Existing item found' AS Status,
+                       Remote_Info_ID,
+                       Remote_Info,
+                       Most_Recent_Job,
+                       Last_Used,
+                       Entered,
+                       Max_Running_Job_Steps
+                FROM sw.t_remote_info
+                WHERE remote_info_id = _remoteInfoID
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Status,
+                                    _previewData.Remote_Info_ID,
+                                    _previewData.Remote_Info,
+                                    _previewData.Most_Recent_Job,
+                                    _previewData.Last_Used,
+                                    _previewData.Entered,
+                                    _previewData.Max_Running_Job_Steps
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
     End If;
 

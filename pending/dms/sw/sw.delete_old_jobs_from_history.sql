@@ -124,54 +124,142 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-20s %-15s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'Saved',
+                            'Comment'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '--------------------',
+                                     '---------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
         -- Show the first 10 jobs
-        SELECT Job, Saved, 'Preview delete' As Comment
-        From Tmp_JobsToDelete
-        ORDER By Job
-        LIMIT 10;
+
+        FOR _previewData IN
+            SELECT Job,
+                   public.timestamp_text(Saved) As Saved,
+                   'Preview delete' As Comment
+            From Tmp_JobsToDelete
+            ORDER By Job
+            LIMIT 10;
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Saved,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RAISE INFO '';
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
         -- Show the last 10 jobs
-        SELECT Job, Saved, 'Preview delete' AS Comment
-        FROM ( SELECT Job, Saved
-               FROM Tmp_JobsToDelete
-               ORDER BY Job DESC
-               LIMIT 10) FilterQ
-        ORDER BY Job;
 
-        SELECT H.entry_id,
-               H.posting_time,
-               H.machine,
-               H.processor_count_active,
-               H.free_memory_mb,
-               'First row to be deleted'
-        FROM sw.t_machine_status_history H
-             INNER JOIN ( SELECT machine,
-                                 MIN(entry_id) AS Entry_ID
-                          FROM sw.t_machine_status_history
-                          WHERE entry_id IN
-                                   ( SELECT entry_id
-                                     FROM ( SELECT entry_id,
-                                            Row_Number() OVER ( PARTITION BY machine ORDER BY entry_id DESC ) AS RowRank
-                                            FROM sw.t_machine_status_history ) RankQ
-                                     WHERE RowRank > 1000 )
-                          GROUP BY machine
-                        ) FilterQ
-               ON H.entry_id = FilterQ.entry_id
-        ORDER BY machine
+        FOR _previewData IN
+            SELECT Job,
+                   public.timestamp_text(Saved) As Saved,
+                   'Preview delete' AS Comment
+            FROM ( SELECT Job, Saved
+                   FROM Tmp_JobsToDelete
+                   ORDER BY Job DESC
+                   LIMIT 10) FilterQ
+            ORDER BY Job;
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Saved,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        -- Show the first row to be deleted from t_machine_status_history for each machine
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-20s %-20s %-22s %-14s %-25s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Entry_ID',
+                            'Posting_Time',
+                            'Machine',
+                            'Processor_Count_Active',
+                            'Free_Memory_MB',
+                            'Comment'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '----------------------',
+                                     '--------------',
+                                     '-------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT H.Entry_ID,
+                   H.Posting_Time,
+                   H.Machine,
+                   H.Processor_Count_Active,
+                   H.Free_Memory_MB,
+                   'First row to be deleted' As Comment
+            FROM sw.t_machine_status_history H
+                 INNER JOIN ( SELECT machine,
+                                     MIN(entry_id) AS Entry_ID
+                              FROM sw.t_machine_status_history
+                              WHERE entry_id IN
+                                       ( SELECT entry_id
+                                         FROM ( SELECT entry_id,
+                                                Row_Number() OVER ( PARTITION BY machine ORDER BY entry_id DESC ) AS RowRank
+                                                FROM sw.t_machine_status_history ) RankQ
+                                         WHERE RowRank > 1000 )
+                              GROUP BY machine
+                            ) FilterQ
+                   ON H.entry_id = FilterQ.entry_id
+            ORDER BY machine
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Entry_ID,
+                                _previewData.Posting_Time,
+                                _previewData.Machine,
+                                _previewData.Processor_Count_Active,
+                                _previewData.Free_Memory_MB,
+                                _previewData.Comment
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     Else
         DELETE FROM sw.t_job_steps_history
-        WHERE job IN (SELECT job FROM Tmp_JobsToDelete)
+        WHERE job IN (SELECT job FROM Tmp_JobsToDelete);
 
         DELETE FROM sw.t_job_step_dependencies_history
-        WHERE job IN (SELECT job FROM Tmp_JobsToDelete)
+        WHERE job IN (SELECT job FROM Tmp_JobsToDelete);
 
         DELETE FROM sw.t_job_parameters_history
-        WHERE job IN (SELECT job FROM Tmp_JobsToDelete)
+        WHERE job IN (SELECT job FROM Tmp_JobsToDelete);
 
         DELETE FROM sw.t_jobs_history
-        WHERE job IN (SELECT job FROM Tmp_JobsToDelete)
+        WHERE job IN (SELECT job FROM Tmp_JobsToDelete);
 
         -- Keep the 1000 most recent status values for each machine
         DELETE sw.t_machine_status_history
@@ -180,7 +268,7 @@ BEGIN
                 FROM ( SELECT entry_id,
                               Row_Number() OVER ( PARTITION BY machine ORDER BY entry_id DESC ) AS RowRank
                        FROM sw.t_machine_status_history ) RankQ
-                WHERE RowRank > 1000 )
+                WHERE RowRank > 1000 );
 
         -- Keep the 500 most recent processing stats values for each processor
         DELETE sw.t_job_step_processing_stats
@@ -193,7 +281,7 @@ BEGIN
                               step,
                               Row_Number() OVER ( PARTITION BY processor ORDER BY entered DESC ) AS RowRank
                        FROM sw.t_job_step_processing_stats ) RankQ
-                WHERE RowRank > 500 )
+                WHERE RowRank > 500 );
 
     End If;
 

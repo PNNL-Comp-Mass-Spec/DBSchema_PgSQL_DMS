@@ -24,8 +24,25 @@ AS $$
 **      Create analysis job directly in broker database
 **
 **  Arguments:
-**    _debugMode            When this is true, optionally specify a job using _existingJob to view the steps that would be created for that job
+**    _scriptName           Script name
+**    _datasetName          Dataset name
+**    _priority             Job priority
+**    _jobParamXML          XML job parameters
+**    _comment              Comment to store in t_tasks
+**    _ownerUsername        Owner username
+**    _dataPackageID        Data package id (0 if not applicable)
+**    _debugMode            When true, store the contents of the temp tables in the following tables (auto-created if missing)
+**                            sw.t_debug_tmp_jobs
+**                            sw.t_debug_tmp_job_steps
+**                            sw.t_debug_tmp_job_step_dependencies
+**                            sw.t_debug_tmp_job_parameters
+**                          When _debugMode is true, the new job will not be added to sw.t_jobs
 **    _logDebugMessages     Set to true to log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
+**    _job                  Output: job number
+**    _resultsFolderName    Output: results folder name
+**    _message              Status message
+**    _returnCode           Return code
+**    _returnCode           Calling user
 **
 **  Auth:   grk
 **  Date:   04/13/2010 grk - Initial release
@@ -62,361 +79,457 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _dataPackageID := Coalesce(_dataPackageID, 0);
-    _scriptName := Trim(Coalesce(_scriptName, ''));
+    BEGIN
+        _dataPackageID := Coalesce(_dataPackageID, 0);
+        _scriptName := Trim(Coalesce(_scriptName, ''));
 
-    _debugMode := Coalesce(_debugMode, false);
-    _logDebugMessages := Coalesce(_logDebugMessages, false);
+        _debugMode := Coalesce(_debugMode, false);
+        _logDebugMessages := Coalesce(_logDebugMessages, false);
 
-    If _dataPackageID < 0 Then
-        _dataPackageID := 0;
-    End If;
-
-    ---------------------------------------------------
-    -- Create temporary tables to accumulate job steps,
-    -- job step dependencies, and job parameters for jobs being created
-    ---------------------------------------------------
-
-    CREATE TEMP TABLE Tmp_Jobs (
-        Job int NOT NULL,
-        Priority int NULL,
-        Script text NULL,
-        State int NOT NULL,
-        Dataset text NULL,
-        Dataset_ID int NULL,
-        Results_Directory_Name citext NULL
-    );
-
-    CREATE TEMP TABLE Tmp_Job_Steps (
-        Job int NOT NULL,
-        Step int NOT NULL,
-        Tool text NOT NULL,
-        CPU_Load int NULL,
-        Memory_Usage_MB int NULL,
-        Dependencies int NULL,
-        Shared_Result_Version int NULL,
-        Filter_Version int NULL,
-        Signature int NULL,
-        State int NULL,
-        Input_Directory_Name text NULL,
-        Output_Directory_Name text NULL,
-        Processor text NULL,
-        Special_Instructions text NULL
-    );
-
-    CREATE TEMP TABLE Tmp_Job_Step_Dependencies (
-        Job int NOT NULL,
-        Step int NOT NULL,
-        Target_Step int NOT NULL,
-        Condition_Test text NULL,
-        Test_Value text NULL,
-        Enable_Only int NULL
-    );
-
-    CREATE TEMP TABLE Tmp_Job_Parameters (
-        Job int NOT NULL,
-        Parameters xml NULL
-    );
-
-    ---------------------------------------------------
-    -- Script
-    ---------------------------------------------------
-
-    -- Get contents of script and tag for results directory name
-    --
-    SELECT results_tag
-    INTO _tag
-    FROM sw.t_scripts
-    WHERE script = _scriptName;
-
-    If Not FOUND Then
-        _returnCode := 'U5213';
-        RAISE EXCEPTION 'Script not found in sw.t_scripts: %', Coalesce(_scriptName, '??');
-    End If;
-
-    If _scriptXML Is Null Then
-        _returnCode := 'U5214';
-        RAISE EXCEPTION 'Script XML not defined in the contents field of sw.t_scripts for script %', Coalesce(_scriptName, '??');
-    End If;
-
-    If _scriptName IN ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
-        _returnCode := 'U5215';
-        RAISE EXCEPTION '"Data Package ID" must be positive when using script %', _scriptName
-    End If;
-
-    ---------------------------------------------------
-    -- Obtain new job number (if not debugging)
-    ---------------------------------------------------
-
-    If Not _debugMode Then
-        _job := public.get_new_job_id('Created in broker', false)
-
-        If _job = 0 Then
-            _returnCode := 'U5210';
-            RAISE EXCEPTION 'Could not get a valid job number using get_new_job_id()';
-        End If;
-    End If;
-
-    ---------------------------------------------------
-    -- Note: _datasetID needs to be 0
-    --
-    -- If it is non-zero, the newly created job will get deleted from
-    -- this sw.t_jobs the next time Update_Context runs, since the system will think
-    -- the job no-longer exists in public.t_analysis_job and thus should be deleted
-    ---------------------------------------------------
-
-    ---------------------------------------------------
-    -- Add job to temp table
-    ---------------------------------------------------
-
-    INSERT INTO Tmp_Jobs (Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
-    VALUES (_job, _priority, _scriptName, 1, _datasetName, _datasetID, NULL)
-
-    ---------------------------------------------------
-    -- Construct the results directory name
-    ---------------------------------------------------
-
-    _resultsDirectoryName := sw.get_results_directory_name (_job, _tag);
-
-    If _resultsDirectoryName Is Null Then
-
-        RAISE WARNING 'Get_Results_Directory_Name returned a null string';
-
-        DROP TABLE Tmp_Jobs;
-        DROP TABLE Tmp_Job_Steps;
-        DROP TABLE Tmp_Job_Step_Dependencies;
-        DROP TABLE Tmp_Job_Parameters;
-
-        RETURN;
-    End If;
-
-    UPDATE Tmp_Jobs
-    SET Results_Directory_Name = _resultsDirectoryName
-    WHERE Job = _job;
-
-    ---------------------------------------------------
-    -- Create the basic job structure (steps and dependencies)
-    -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-    ---------------------------------------------------
-
-    CALL sw.create_steps_for_job (
-                _job,
-                _scriptXML,
-                _resultsDirectoryName,
-                _message => _message,
-                _returnCode => _returnCode);
-
-    If _returnCode <> '' Then
-        _msg := format('Error returned by create_steps_for_job: %s', _returnCode);
-
-        If Coalesce(_message, '') <> '' Then
-            _msg := format('%s; %s', _msg, _message);
+        If _dataPackageID < 0 Then
+            _dataPackageID := 0;
         End If;
 
-        RAISE WARNING '%', _msg;
-
-        DROP TABLE Tmp_Jobs;
-        DROP TABLE Tmp_Job_Steps;
-        DROP TABLE Tmp_Job_Step_Dependencies;
-        DROP TABLE Tmp_Job_Parameters;
-
-        RETURN;
-    End If;
-
-    ---------------------------------------------------
-    -- Do special needs for local jobs that target other jobs
-    ---------------------------------------------------
-
-    CALL sw.adjust_params_for_local_job (
-                _scriptName,
-                _datasetName,
-                _dataPackageID,
-                _jobParamXML => _jobParamXML,   -- Output
-                _message => _message,           -- Output
-                _returnCode => _returnCode);    -- Output
-
-    If _debugMode Then
-        RAISE INFO '';
-        RAISE INFO 'Job params after calling adjust_params_for_local_job: %', _jobParamXML;
-    End If;
-
-    ---------------------------------------------------
-    -- Calculate signatures for steps that require them (and also handle shared results directories)
-    -- Details are stored in Tmp_Job_Steps
-    ---------------------------------------------------
-
-    CALL sw.create_signatures_for_job_steps (
-                _job,
-                _jobParamXML,
-                _dataPackageID,
-                _message => _message,
-                _returnCode => _returnCode,
-                _debugMode => _debugMode);
-
-    If _returnCode <> '' Then
-        _msg := format('Error returned by create_signatures_for_job_steps: %s', _returnCode);
-
-        If Coalesce(_message, '') <> '' Then
-            _msg := format('%s; %s', _msg, _message);
+        If _debugMode Then
+            RAISE INFO '';
         End If;
 
-        RAISE WARNING '%', _msg;
+        ---------------------------------------------------
+        -- Create temporary tables to accumulate job steps,
+        -- job step dependencies, and job parameters for jobs being created
+        ---------------------------------------------------
 
-        DROP TABLE Tmp_Jobs;
-        DROP TABLE Tmp_Job_Steps;
-        DROP TABLE Tmp_Job_Step_Dependencies;
-        DROP TABLE Tmp_Job_Parameters;
+        CREATE TEMP TABLE Tmp_Jobs (
+            Job int NOT NULL,
+            Priority int NULL,
+            Script text NULL,
+            State int NOT NULL,
+            Dataset text NULL,
+            Dataset_ID int NULL,
+            Results_Directory_Name citext NULL
+        );
 
-        RETURN;
-    End If;
+        CREATE TEMP TABLE Tmp_Job_Steps (
+            Job int NOT NULL,
+            Step int NOT NULL,
+            Tool text NOT NULL,
+            CPU_Load int NULL,
+            Memory_Usage_MB int NULL,
+            Dependencies int NULL,
+            Shared_Result_Version int NULL,
+            Filter_Version int NULL,
+            Signature int NULL,
+            State int NULL,
+            Input_Directory_Name text NULL,
+            Output_Directory_Name text NULL,
+            Processor text NULL,
+            Special_Instructions text NULL
+        );
 
-    ---------------------------------------------------
-    -- Save job parameters as XML into temp table
-    ---------------------------------------------------
+        CREATE TEMP TABLE Tmp_Job_Step_Dependencies (
+            Job int NOT NULL,
+            Step int NOT NULL,
+            Target_Step int NOT NULL,
+            Condition_Test text NULL,
+            Test_Value text NULL,
+            Enable_Only int NULL
+        );
 
-    -- FUTURE: need to get set of parameters normally provided by Get_Job_Param_Table,
-    -- except for the job specifc ones which need to be provided as initial content of _jobParamXML
-    --
-    INSERT INTO Tmp_Job_Parameters (Job, Parameters)
-    VALUES (_job, _jobParamXML);
+        CREATE TEMP TABLE Tmp_Job_Parameters (
+            Job int NOT NULL,
+            Parameters xml NULL
+        );
 
-    ---------------------------------------------------
-    -- Handle any step cloning
-    ---------------------------------------------------
+        ---------------------------------------------------
+        -- Script
+        ---------------------------------------------------
 
-    CALL sw.clone_job_step (
-                _job,
-                _jobParamXML,
-                _message => _message,
-                _returnCode => _returnCode);
-
-    If _returnCode <> '' Then
-        _msg := format('Error returned by clone_job_step: %s', _returnCode);
-
-        If Coalesce(_message, '') <> '' Then
-            _msg := format('%s; %s', _msg, _message);
-        End If;
-
-        RAISE WARNING '%', _msg;
-
-        DROP TABLE Tmp_Jobs;
-        DROP TABLE Tmp_Job_Steps;
-        DROP TABLE Tmp_Job_Step_Dependencies;
-        DROP TABLE Tmp_Job_Parameters;
-
-        RETURN;
-    End If;
-
-    ---------------------------------------------------
-    -- Update step dependency count (code taken from SP FinishJobCreation)
-    ---------------------------------------------------
-
-    UPDATE Tmp_Job_Steps
-    SET Dependencies = T.dependencies
-    FROM ( SELECT Step,
-                 COUNT(*) AS dependencies
-          FROM Tmp_Job_Step_Dependencies
-          WHERE Job = _job
-          GROUP BY Step ) AS T
-    WHERE T.Step = Tmp_Job_Steps.Step AND
-          Tmp_Job_Steps.Job = _job;
-
-    ---------------------------------------------------
-    -- Move temp tables to main tables
-    ---------------------------------------------------
-
-    If Not _debugMode Then
-        -- move_jobs_to_main_tables procedure requires that the job already be in sw.t_jobs
+        -- Get contents of script and tag for results directory name
         --
-        INSERT INTO sw.t_jobs( job,
-                               priority,
-                               script,
-                               state,
-                               dataset,
-                               dataset_id,
-                               transfer_folder_path,
-                               comment,
-                               storage_server,
-                               owner_username,
-                               data_pkg_id )
-        VALUES(_job, _priority, _scriptName, 1,
-               _datasetName, _datasetID, NULL,
-               _comment, NULL, _ownerUsername,
-               Coalesce(_dataPackageID, 0))
+        SELECT results_tag
+        INTO _tag
+        FROM sw.t_scripts
+        WHERE script = _scriptName;
 
-        CALL sw.move_jobs_to_main_tables (_message => _message, _returnCode => _returnCode)
+        If Not FOUND Then
+            _returnCode := 'U5213';
+            RAISE EXCEPTION 'Script not found in sw.t_scripts: %', Coalesce(_scriptName, '??');
+        End If;
 
-        CALL alter_entered_by_user ('sw.t_job_events', 'job', _job, _callingUser);
-    End If;
+        If _scriptXML Is Null Then
+            _returnCode := 'U5214';
+            RAISE EXCEPTION 'Script XML not defined in the contents field of sw.t_scripts for script %', Coalesce(_scriptName, '??');
+        End If;
 
-    If Not _debugMode Then
-        ---------------------------------------------------
-        -- Populate column transfer_folder_path in sw.t_jobs
-        ---------------------------------------------------
-
-        SELECT Value
-        INTO _transferFolderPath
-        FROM sw.get_job_param_table_local ( _job )
-        WHERE Name = 'TransferFolderPath';
-
-        If Coalesce(_transferFolderPath, '') <> '' Then
-            UPDATE sw.t_jobs
-            SET transfer_folder_path = _transferFolderPath
-            WHERE job = _job
+        If _scriptName IN ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
+            _returnCode := 'U5215';
+            RAISE EXCEPTION '"Data Package ID" must be positive when using script %', _scriptName
         End If;
 
         ---------------------------------------------------
-        -- If a data package is defined, update entries for
-        -- OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList in sw.t_job_parameters
+        -- Obtain new job number (if not debugging)
         ---------------------------------------------------
 
-        If _dataPackageID > 0 Then
-            CALL sw.update_job_param_org_db_info_using_data_pkg (
-                            _job,
-                            _dataPackageID,
-                            _deleteIfInvalid => false,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
-                            _callingUser => _callingUser);
+        If Not _debugMode Then
+            _job := public.get_new_job_id('Created in broker', false)
+
+            If _job = 0 Then
+                _returnCode := 'U5210';
+                RAISE EXCEPTION 'Could not get a valid job number using get_new_job_id()';
+            End If;
         End If;
-    End If;
 
-    If _debugMode And _dataPackageID > 0 Then
-
-        -----------------------------------------------
-        -- Call update_job_param_org_db_info_using_data_pkg with debug mode enabled
+        ---------------------------------------------------
+        -- Note: _datasetID needs to be 0
+        --
+        -- If it is non-zero, the newly created job will get deleted from
+        -- this sw.t_jobs the next time Update_Context runs, since the system will think
+        -- the job no-longer exists in public.t_analysis_job and thus should be deleted
         ---------------------------------------------------
 
-        CALL sw.update_job_param_org_db_info_using_data_pkg (
+        ---------------------------------------------------
+        -- Add job to temp table
+        ---------------------------------------------------
+
+        INSERT INTO Tmp_Jobs (Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
+        VALUES (_job, _priority, _scriptName, 1, _datasetName, _datasetID, NULL)
+
+        ---------------------------------------------------
+        -- Construct the results directory name
+        ---------------------------------------------------
+
+        _resultsDirectoryName := sw.get_results_directory_name (_job, _tag);
+
+        If _resultsDirectoryName Is Null Then
+
+            RAISE WARNING 'Get_Results_Directory_Name returned a null string';
+
+            DROP TABLE Tmp_Jobs;
+            DROP TABLE Tmp_Job_Steps;
+            DROP TABLE Tmp_Job_Step_Dependencies;
+            DROP TABLE Tmp_Job_Parameters;
+
+            RETURN;
+        End If;
+
+        UPDATE Tmp_Jobs
+        SET Results_Directory_Name = _resultsDirectoryName
+        WHERE Job = _job;
+
+        ---------------------------------------------------
+        -- Create the basic job structure (steps and dependencies)
+        -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
+        ---------------------------------------------------
+
+        CALL sw.create_steps_for_job (
                     _job,
+                    _scriptXML,
+                    _resultsDirectoryName,
+                    _message => _message,
+                    _returnCode => _returnCode);
+
+        If _returnCode <> '' Then
+            _msg := format('Error returned by create_steps_for_job: %s', _returnCode);
+
+            If Coalesce(_message, '') <> '' Then
+                _msg := format('%s; %s', _msg, _message);
+            End If;
+
+            RAISE WARNING '%', _msg;
+
+            DROP TABLE Tmp_Jobs;
+            DROP TABLE Tmp_Job_Steps;
+            DROP TABLE Tmp_Job_Step_Dependencies;
+            DROP TABLE Tmp_Job_Parameters;
+
+            RETURN;
+        End If;
+
+        ---------------------------------------------------
+        -- Do special needs for local jobs that target other jobs
+        ---------------------------------------------------
+
+        CALL sw.adjust_params_for_local_job (
+                    _scriptName,
+                    _datasetName,
                     _dataPackageID,
-                    _deleteIfInvalid => false,
-                    _debugMode => true,
-                    _scriptNameForDebug => _scriptName,
+                    _jobParamXML => _jobParamXML,   -- Output
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
+
+        If _debugMode Then
+            RAISE INFO '';
+            RAISE INFO 'Job params after calling adjust_params_for_local_job: %', _jobParamXML;
+        End If;
+
+        ---------------------------------------------------
+        -- Calculate signatures for steps that require them (and also handle shared results directories)
+        -- Details are stored in Tmp_Job_Steps
+        ---------------------------------------------------
+
+        CALL sw.create_signatures_for_job_steps (
+                    _job,
+                    _jobParamXML,
+                    _dataPackageID,
                     _message => _message,
                     _returnCode => _returnCode,
-                    _callingUser => _callingUser);
+                    _debugMode => _debugMode);
 
-    End If;
+        If _returnCode <> '' Then
+            _msg := format('Error returned by create_signatures_for_job_steps: %s', _returnCode);
 
-    If _debugMode Then
+            If Coalesce(_message, '') <> '' Then
+                _msg := format('%s; %s', _msg, _message);
+            End If;
 
-        -- ToDo: Call a shared procedure to preview the contents of these tables using RAISE INFO
+            RAISE WARNING '%', _msg;
 
-        SELECT * FROM Tmp_Jobs
-        SELECT * FROM Tmp_Job_Steps
-        SELECT * FROM Tmp_Job_Step_Dependencies
-        SELECT * FROM Tmp_Job_Parameters
+            DROP TABLE Tmp_Jobs;
+            DROP TABLE Tmp_Job_Steps;
+            DROP TABLE Tmp_Job_Step_Dependencies;
+            DROP TABLE Tmp_Job_Parameters;
 
-        If _logDebugMessages Then
-            CALL public.post_log_entry ('Debug', _jobParamXML::text, 'Make_Local_Job_In_Broker', 'sw');
+            RETURN;
         End If;
-    End If;
 
-    DROP TABLE Tmp_Jobs;
-    DROP TABLE Tmp_Job_Steps;
-    DROP TABLE Tmp_Job_Step_Dependencies;
-    DROP TABLE Tmp_Job_Parameters;
+        ---------------------------------------------------
+        -- Save job parameters as XML into temp table
+        ---------------------------------------------------
+
+        -- FUTURE: need to get set of parameters normally provided by Get_Job_Param_Table,
+        -- except for the job specifc ones which need to be provided as initial content of _jobParamXML
+        --
+        INSERT INTO Tmp_Job_Parameters (Job, Parameters)
+        VALUES (_job, _jobParamXML);
+
+        ---------------------------------------------------
+        -- Handle any step cloning
+        ---------------------------------------------------
+
+        CALL sw.clone_job_step (
+                    _job,
+                    _jobParamXML,
+                    _message => _message,
+                    _returnCode => _returnCode);
+
+        If _returnCode <> '' Then
+            _msg := format('Error returned by clone_job_step: %s', _returnCode);
+
+            If Coalesce(_message, '') <> '' Then
+                _msg := format('%s; %s', _msg, _message);
+            End If;
+
+            RAISE WARNING '%', _msg;
+
+            DROP TABLE Tmp_Jobs;
+            DROP TABLE Tmp_Job_Steps;
+            DROP TABLE Tmp_Job_Step_Dependencies;
+            DROP TABLE Tmp_Job_Parameters;
+
+            RETURN;
+        End If;
+
+        ---------------------------------------------------
+        -- Update step dependency count (code taken from SP FinishJobCreation)
+        ---------------------------------------------------
+
+        UPDATE Tmp_Job_Steps
+        SET Dependencies = T.dependencies
+        FROM ( SELECT Step,
+                     COUNT(*) AS dependencies
+              FROM Tmp_Job_Step_Dependencies
+              WHERE Job = _job
+              GROUP BY Step ) AS T
+        WHERE T.Step = Tmp_Job_Steps.Step AND
+              Tmp_Job_Steps.Job = _job;
+
+        ---------------------------------------------------
+        -- Move temp tables to main tables
+        ---------------------------------------------------
+
+        If Not _debugMode Then
+
+            _currentLocation := 'Add row to sw.t_jobs';
+
+            -- The move_jobs_to_main_tables procedure requires that the job already be in sw.t_jobs
+            --
+            INSERT INTO sw.t_jobs( job,
+                                   priority,
+                                   script,
+                                   state,
+                                   dataset,
+                                   dataset_id,
+                                   transfer_folder_path,
+                                   comment,
+                                   storage_server,
+                                   owner_username,
+                                   data_pkg_id )
+            VALUES( _job,
+                    _priority,
+                    _scriptName,
+                    1,              -- State
+                    _datasetName,
+                    _datasetID,
+                    NULL,           -- Transfer folder path
+                    _comment,
+                    NULL,           -- Storage server
+                    _ownerUsername,
+                    Coalesce(_dataPackageID, 0));
+
+            CALL sw.move_jobs_to_main_tables (_message => _message, _returnCode => _returnCode)
+
+            CALL alter_entered_by_user ('sw.t_job_events', 'job', _job, _callingUser);
+        End If;
+
+        If Not _debugMode Then
+            ---------------------------------------------------
+            -- Populate column transfer_folder_path in sw.t_jobs
+            ---------------------------------------------------
+
+            SELECT Value
+            INTO _transferFolderPath
+            FROM sw.get_job_param_table_local ( _job )
+            WHERE Name = 'TransferFolderPath';
+
+            If Coalesce(_transferFolderPath, '') <> '' Then
+                UPDATE sw.t_jobs
+                SET transfer_folder_path = _transferFolderPath
+                WHERE job = _job
+            End If;
+
+            ---------------------------------------------------
+            -- If a data package is defined, update entries for
+            -- OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList in sw.t_job_parameters
+            ---------------------------------------------------
+
+            If _dataPackageID > 0 Then
+                CALL sw.update_job_param_org_db_info_using_data_pkg (
+                                _job,
+                                _dataPackageID,
+                                _deleteIfInvalid => false,
+                                _message => _message,           -- Output
+                                _returnCode => _returnCode,     -- Output
+                                _callingUser => _callingUser);
+            End If;
+        End If;
+
+        If _debugMode And _dataPackageID > 0 Then
+
+            -----------------------------------------------
+            -- Call update_job_param_org_db_info_using_data_pkg with debug mode enabled
+            ---------------------------------------------------
+
+            CALL sw.update_job_param_org_db_info_using_data_pkg (
+                        _job,
+                        _dataPackageID,
+                        _deleteIfInvalid => false,
+                        _debugMode => true,
+                        _scriptNameForDebug => _scriptName,
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _callingUser => _callingUser);
+
+        End If;
+
+        If _debugMode Then
+
+            _currentLocation := 'Preview the new analysis job';
+
+            -- Tmp_Jobs
+            RAISE INFO 'Storing contents of Tmp_Jobs in table sw.t_debug_tmp_jobs';
+
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_jobs') Then
+                DELETE FROM sw.t_debug_tmp_jobs;
+
+                INSERT INTO sw.t_debug_tmp_jobs(Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
+                SELECT Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name
+                FROM Tmp_Jobs;
+            Else
+                CREATE TABLE sw.t_debug_tmp_jobs AS
+                SELECT Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name
+                FROM Tmp_Jobs;
+            End If;
+
+            -- Tmp_Job_Steps
+            RAISE INFO 'Storing contents of Tmp_Job_Steps in table sw.t_debug_tmp_job_steps';
+
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_steps') Then
+                DELETE FROM sw.t_debug_tmp_job_steps;
+
+                INSERT INTO sw.t_debug_tmp_job_steps (Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State
+                                                      Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions)
+                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State
+                       Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions
+                FROM Tmp_Job_Steps;
+            Else
+                CREATE TABLE sw.t_debug_tmp_job_steps AS
+                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State
+                       Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions
+                FROM Tmp_Job_Steps;
+            End If;
+
+            -- Tmp_Job_Step_Dependencies
+            RAISE INFO 'Storing contents of Tmp_Job_Step_Dependencies in table sw.t_debug_tmp_job_step_dependencies';
+
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_step_dependencies') Then
+                DELETE FROM sw.t_debug_tmp_job_step_dependencies;
+
+                INSERT INTO sw.t_debug_tmp_job_step_dependencies (Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only)
+                SELECT Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only
+                FROM Tmp_Job_Step_Dependencies;
+            Else
+                CREATE TABLE sw.t_debug_tmp_job_step_dependencies AS
+                SELECT Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only
+                FROM Tmp_Job_Step_Dependencies;
+            End If;
+
+            -- Tmp_Job_Parameters
+            RAISE INFO 'Storing contents of Tmp_Job_Parameters in table sw.t_debug_tmp_job_parameters';
+
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_parameters') Then
+                DELETE FROM sw.t_debug_tmp_job_parameters;
+
+                INSERT INTO sw.t_debug_tmp_job_parameters (Job, Parameters)
+                SELECT Job, Parameters
+                FROM Tmp_Job_Parameters;
+            Else
+                CREATE TABLE sw.t_debug_tmp_job_parameters AS
+                SELECT Job, Parameters
+                FROM Tmp_Job_Parameters;
+            End If;
+
+            If _logDebugMessages Then
+                CALL public.post_log_entry ('Debug', _jobParamXML::text, 'Make_Local_Job_In_Broker', 'sw');
+            End If;
+        End If;
+
+        DROP TABLE Tmp_Jobs;
+        DROP TABLE Tmp_Job_Steps;
+        DROP TABLE Tmp_Job_Step_Dependencies;
+        DROP TABLE Tmp_Job_Parameters;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => _currentLocation, _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+
+        DROP TABLE IF EXISTS Tmp_Jobs;
+        DROP TABLE IF EXISTS Tmp_Job_Steps;
+        DROP TABLE IF EXISTS Tmp_Job_Step_Dependencies;
+        DROP TABLE IF EXISTS Tmp_Job_Parameters;
+
+    END;
 END
 $$;
 

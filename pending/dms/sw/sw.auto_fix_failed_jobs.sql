@@ -44,6 +44,44 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
 
+    _formatSpecifier := '%-10s %-80s %-4s %-25s %-20s %-10s %-5s %-20s %-20s %-20s %-15s %-30s %-15s %-30s %-11s';
+
+    _infoHead := format(_formatSpecifier,
+                        'Job',
+                        'Dataset',
+                        'Step',
+                        'Script',
+                        'Tool',
+                        'State_name',
+                        'State',
+                        'Start',
+                        'Finish',
+                        'Processor',
+                        'Completion_Code',
+                        'Completion_Message',
+                        'Evaluation_Code',
+                        'Evaluation_Message',
+                        'Data_Pkg_ID'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '----------',
+                                 '--------------------------------------------------------------------------------',
+                                 '----',
+                                 '-------------------------',
+                                 '--------------------',
+                                 '----------',
+                                 '-----',
+                                 '--------------------',
+                                 '--------------------',
+                                 '--------------------',
+                                 '---------------',
+                                 '------------------------------',
+                                 '---------------',
+                                 '------------------------------',
+                                 '-----------'
+                                );
+
     ---------------------------------------------------
     -- Look for Bruker_DA_Export jobs that failed with error 'No spectra were exported'
     ---------------------------------------------------
@@ -58,14 +96,52 @@ BEGIN
     If FOUND Then
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
 
-            SELECT JS.*
-            FROM V_Job_Steps JS
-                 INNER JOIN Tmp_JobsToFix F
-                   ON JS.Job = F.Job AND
-                      JS.Step = F.Step
-            ORDER BY Job
+            FOR _previewData IN
+                SELECT JS.Job,
+                       JS.Dataset,
+                       JS.Step,
+                       JS.Script,
+                       JS.Tool,
+                       JS.State_name,
+                       JS.State,
+                       public.timestamp_text(JS.Start) As Start,
+                       public.timestamp_text(JS.Finish) As Finish,
+                       JS.Processor,
+                       JS.Completion_Code,
+                       JS.Completion_Message,
+                       JS.Evaluation_Code,
+                       JS.Evaluation_Message,
+                       JS.Data_Pkg_ID
+                FROM V_Job_Steps JS
+                     INNER JOIN Tmp_JobsToFix F
+                       ON JS.Job = F.Job AND
+                          JS.Step = F.Step
+                ORDER BY JS.Job, JS.Step
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Dataset,
+                                    _previewData.Step,
+                                    _previewData.Script,
+                                    _previewData.Tool,
+                                    _previewData.State_name,
+                                    _previewData.State,
+                                    _previewData.Start,
+                                    _previewData.Finish,
+                                    _previewData.Processor,
+                                    _previewData.Completion_Code,
+                                    _previewData.Completion_Message,
+                                    _previewData.Evaluation_Code,
+                                    _previewData.Evaluation_Message,
+                                    _previewData.Data_Pkg_ID
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         Else
             -- We will leave these jobs as 'failed' in T_Analysis_Job since there are no results to track
@@ -97,14 +173,52 @@ BEGIN
     If FOUND Then
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
 
-            SELECT JS.*
-            FROM V_Job_Steps JS
-                 INNER JOIN Tmp_JobsToFix F
-                   ON JS.Job = F.Job AND
-                      JS.Step = F.Step
-            ORDER BY Job
+            FOR _previewData IN
+                SELECT JS.Job,
+                       JS.Dataset,
+                       JS.Step,
+                       JS.Script,
+                       JS.Tool,
+                       JS.State_name,
+                       JS.State,
+                       public.timestamp_text(JS.Start) As Start,
+                       public.timestamp_text(JS.Finish) As Finish,
+                       JS.Processor,
+                       JS.Completion_Code,
+                       JS.Completion_Message,
+                       JS.Evaluation_Code,
+                       JS.Evaluation_Message,
+                       JS.Data_Pkg_ID
+                FROM V_Job_Steps JS
+                     INNER JOIN Tmp_JobsToFix F
+                       ON JS.Job = F.Job AND
+                          JS.Step = F.Step
+                ORDER BY JS.Job, JS.Step
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Dataset,
+                                    _previewData.Step,
+                                    _previewData.Script,
+                                    _previewData.Tool,
+                                    _previewData.State_name,
+                                    _previewData.State,
+                                    _previewData.Start,
+                                    _previewData.Finish,
+                                    _previewData.Processor,
+                                    _previewData.Completion_Code,
+                                    _previewData.Completion_Message,
+                                    _previewData.Evaluation_Code,
+                                    _previewData.Evaluation_Message,
+                                    _previewData.Data_Pkg_ID
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         Else
             -- Change the Propagation Mode to 1 (so that the job will be set to state 14 (No Export)
@@ -153,14 +267,52 @@ BEGIN
     If FOUND Then
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
 
-            SELECT JS.*
-            FROM V_Job_Steps JS
-                 INNER JOIN Tmp_JobsToFix F
-                   ON JS.Job = F.Job AND
-                      JS.Step = F.Step
-            ORDER BY Job
+            FOR _previewData IN
+                SELECT JS.Job,
+                       JS.Dataset,
+                       JS.Step,
+                       JS.Script,
+                       JS.Tool,
+                       JS.State_name,
+                       JS.State,
+                       public.timestamp_text(JS.Start) As Start,
+                       public.timestamp_text(JS.Finish) As Finish,
+                       JS.Processor,
+                       JS.Completion_Code,
+                       JS.Completion_Message,
+                       JS.Evaluation_Code,
+                       JS.Evaluation_Message,
+                       JS.Data_Pkg_ID
+                FROM V_Job_Steps JS
+                     INNER JOIN Tmp_JobsToFix F
+                       ON JS.Job = F.Job AND
+                          JS.Step = F.Step
+                ORDER BY JS.Job, JS.Step
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Dataset,
+                                    _previewData.Step,
+                                    _previewData.Script,
+                                    _previewData.Tool,
+                                    _previewData.State_name,
+                                    _previewData.State,
+                                    _previewData.Start,
+                                    _previewData.Finish,
+                                    _previewData.Processor,
+                                    _previewData.Completion_Code,
+                                    _previewData.Completion_Message,
+                                    _previewData.Evaluation_Code,
+                                    _previewData.Evaluation_Message,
+                                    _previewData.Data_Pkg_ID
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         Else
 

@@ -13,16 +13,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new tracking dataset for the first of the month
-**      for all actively tracked instruments
-**      for the given year and month
+**      Adds new tracking datasets for the beginning of the month (BOM)
+**      for all actively tracked instruments, for the given year and month
 **
 **      If _month is 'next', adds a tracking dataset for the beginning of the next month
 **
 **  Arguments:
-**    _month         current month, if blank
-**    _year          current year, if blank
-**    _mode          'add, 'info' (just show instrument names), or 'debug' (call Add_BOM_Tracking_Dataset and preview tracking datasets)
+**    _month         Month (use the current month if blank)
+**    _year          Year  (use the current year if blank)
+**    _mode          Mode: 'add, 'info' (just show instrument names), or 'debug' (call Add_BOM_Tracking_Dataset and preview tracking datasets)
 **    _callingUser   Ron Moore
 **
 **  Auth:   grk
@@ -117,43 +116,39 @@ BEGIN
 
         If _mode::citext In ('debug', 'info') Then
 
-            -- ToDo: Preview results using RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-10s %-25s %-55s %-10s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Entry_ID',
+                                'Instrument',
+                                'Msg',
+                                'Result'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '----------',
+                                         '-------------------------',
+                                         '-------------------------------------------------------',
+                                         '----------'
                                         );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT entry_id,
-                       instrument,
-                       msg,
-                       result
+                SELECT Entry_ID,
+                       Instrument,
+                       Msg,
+                       Result
                 FROM Tmp_TrackedInstruments
             LOOP
                 _infoData := format(_formatSpecifier,
-                                    _previewData.entry_jd,
-                                    _previewData.instrument,
-                                    _previewData.msg,
-                                    _previewData.result
+                                    _previewData.Entry_ID,
+                                    _previewData.Instrument,
+                                    _previewData.Msg,
+                                    _previewData.Result
                                    );
 
                 RAISE INFO '%', _infoData;

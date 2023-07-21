@@ -147,7 +147,7 @@ BEGIN
            exp_id
     INTO _datasetID, _newExperimentID
     FROM t_dataset
-    WHERE dataset = _datasetNameOld;
+    WHERE dataset = _datasetNameOld::citext;
 
     If Not FOUND Then
         -- Old dataset name not found; perhaps it was already renamed in t_dataset
@@ -155,21 +155,21 @@ BEGIN
                exp_id
         INTO _datasetID, _newExperimentID
         FROM t_dataset
-        WHERE dataset = _datasetNameNew;
+        WHERE dataset = _datasetNameNew::citext;
 
         If FOUND Then
             -- Lookup the experiment for this dataset (using the new name)
             SELECT Experiment
             INTO _experiment
             FROM V_Dataset_Export
-            WHERE Dataset = _datasetNameNew;
+            WHERE Dataset = _datasetNameNew::citext;
 
             _datasetAlreadyRenamed := true;
         End If;
     Else
 
         -- Old dataset name found; make sure the new name is not already in use
-        If Exists (SELECT * FROM t_dataset WHERE dataset = _datasetNameNew) Then
+        If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNameNew::citext) Then
             _message := format('New dataset name already exists; unable to rename %s to %s', _datasetNameOld, _datasetNameNew);
             RETURN;
         End If;
@@ -178,7 +178,7 @@ BEGIN
         SELECT Experiment
         INTO _experiment
         FROM V_Dataset_Export
-        WHERE Dataset = _datasetNameOld;
+        WHERE Dataset = _datasetNameOld::citext;
     End If;
 
     If _datasetID = 0 Then
@@ -223,7 +223,7 @@ BEGIN
     _storageServerSharePath := Substring(_datasetFolderPath, 1, char_length(_datasetFolderPath) - _lastSlashReverseText);
 
     -- Lookup acquisition metadata stored in t_requested_run
-    SELECT request_id As OldRequestedRunID
+    SELECT request_id As OldRequestedRunID,
            request_run_start As RunStart,
            request_run_finish As RunFinish,
            cart_id As CartId,
@@ -249,7 +249,7 @@ BEGIN
         -- Rename the dataset in t_dataset
         --------------------------------------------
 
-        If Not _datasetAlreadyRenamed And Not Exists (Select * from t_dataset WHERE dataset = _datasetNameNew) Then
+        If Not _datasetAlreadyRenamed And Not Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNameNew::citext) Then
             -- Show the old and new values
 
             RETURN QUERY
@@ -268,14 +268,15 @@ BEGIN
             FROM t_dataset DS
                  INNER JOIN t_experiments AS E
                    ON DS.exp_id = E.exp_id
-            WHERE DS.dataset IN (_datasetNameOld, _datasetNameNew)
+            WHERE DS.dataset IN (_datasetNameOld::citext, _datasetNameNew::citext);
 
             -- Rename the dataset and update the experiment ID (if changed)
             UPDATE t_dataset
             SET dataset = _datasetNameNew,
                 folder_name = _datasetNameNew,
                 exp_id = _newExperimentID
-            WHERE dataset_id = _datasetID AND dataset = _datasetNameOld;
+            WHERE dataset_id = _datasetID AND
+                  dataset = _datasetNameOld::citext;
 
             _message := format('rem Renamed dataset "%s" to "%s"', _datasetNameOld, _datasetNameNew);
             RAISE INFO '%', _message;
@@ -284,16 +285,16 @@ BEGIN
         End If;
 
         -- Rename any files in t_dataset_files
-        If Exists (Select * from t_dataset_files WHERE dataset_id = _datasetID) Then
+        If Exists (SELECT dataset_id FROM t_dataset_files WHERE dataset_id = _datasetID) Then
             UPDATE t_dataset_files
-            SET file_path = REPLACE(file_path, _datasetNameOld, _datasetNameNew)
+            SET file_path = REPLACE(file_path, _datasetNameOld::citext, _datasetNameNew::citext)
             WHERE Dataset_ID = _datasetID;
         End If;
 
     Else
 
         -- Preview the changes
-        If Exists (Select * from t_dataset WHERE dataset = _datasetNameNew) Then
+        If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNameNew::citext) Then
             -- The dataset was already renamed
             RETURN QUERY
             SELECT _datasetNameOld  AS Dataset_Name_Old,
@@ -306,7 +307,7 @@ BEGIN
             FROM t_dataset DS
                  INNER JOIN t_experiments AS E
                    ON DS.exp_id = E.exp_id
-            WHERE DS.dataset = _datasetNameNew
+            WHERE DS.dataset = _datasetNameNew::citext
         Else
 
             RETURN QUERY
@@ -325,51 +326,49 @@ BEGIN
             FROM t_dataset DS
                  INNER JOIN t_experiments AS E
                    ON DS.exp_id = E.exp_id
-            WHERE dataset = _datasetNameOld
+            WHERE dataset = _datasetNameOld::citext
         End If;
 
-        If Exists (Select * from t_dataset_files WHERE dataset_id = _datasetID) Then
-
-            -- ToDo: Update this to use RAISE INFO
+        If Exists (SELECT dataset_id FROM t_dataset_files WHERE dataset_id = _datasetID) Then
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-15s %-10s %-80s %-80s %-40s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Dataset_File_ID',
+                                'Dataset_ID',
+                                'File_Path',
+                                'File_Path_New',
+                                'File_Hash'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '---------------',
+                                         '----------',
+                                         '--------------------------------------------------------------------------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '----------------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT dataset_file_id,
-                       dataset_id,
-                       file_path,
-                       REPLACE(file_path, _datasetNameOld, _datasetNameNew) AS File_Path_New,
-                       file_hash
+                SELECT Dataset_File_ID,
+                       Dataset_ID,
+                       File_Path,
+                       REPLACE(file_path, _datasetNameOld::citext, _datasetNameNew::citext) AS File_Path_New,
+                       File_Hash
                 FROM t_dataset_files
                 WHERE dataset_id = _datasetID
             LOOP
                 _infoData := format(_formatSpecifier,
-                                    _previewData.dataset_file_id,
-                                    _previewData.dataset_id,
-                                    _previewData.file_path,
+                                    _previewData.Dataset_File_ID,
+                                    _previewData.Dataset_ID,
+                                    _previewData.File_Path,
                                     _previewData.File_Path_New,
-                                    _previewData.file_hash
+                                    _previewData.File_Hash
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -379,34 +378,44 @@ BEGIN
 
     End If;
 
+    _formatSpecifier := '%-9s %-80s %-10s %-11s %-10s %-50s %-60s %-80s %-25s %-20s %-20s';
+
+    _infoHead := format(_formatSpecifier,
+                        'Request',
+                        'Name',
+                        'Status',
+                        'Queue_State',
+                        'Origin',
+                        'Campaign',
+                        'Experiment',
+                        'Dataset',
+                        'Instrument',
+                        'Request_Run_Start',
+                        'Request_Run_Finish'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '---------',
+                                 '--------------------------------------------------------------------------------',
+                                 '----------',
+                                 '-----------',
+                                 '----------',
+                                 '--------------------------------------------------',
+                                 '------------------------------------------------------------',
+                                 '--------------------------------------------------------------------------------',
+                                 '-------------------------',
+                                 '--------------------',
+                                 '--------------------'
+                                );
+
+
     If _newRequestedRunID <= 0 Then
         --------------------------------------------
         -- Show Requested Runs that may need to be updated,
         -- filtering on dataset name matching _datasetNameOld or _datasetNameNew
         --------------------------------------------
 
-        -- ToDo: Update this to use RAISE INFO
-
         RAISE INFO '';
-
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-        _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
-                           );
-
-        _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
-                                    );
-
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
@@ -415,31 +424,31 @@ BEGIN
                    RL.Name,
                    RL.Status,
                    RL.Queue_State
-                   RL.origin,
+                   RL.Origin,
                    RL.Campaign,
                    RL.Experiment,
                    RL.Dataset,
                    RL.Instrument,
-                   RR.request_run_start,
-                   RR.request_run_finish
+                   public.format_timestamp(RR.request_run_start)  As Request_Run_Start,
+                   public.format_timestamp(RR.request_run_finish) As Request_Run_Finish
             FROM V_Requested_Run_List_Report_2 RL
                  INNER JOIN t_requested_run RR
                    ON RL.Request = RR.request_id
-            WHERE RL.Dataset IN (_datasetNameOld, _datasetNameNew) OR
-                  RL.Name LIKE _experiment || '%'
+            WHERE RL.Dataset IN (_datasetNameOld::citext, _datasetNameNew::citext) OR
+                  RL.Name ILIKE _experiment || '%'
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Request,
                                 _previewData.Name,
                                 _previewData.Status,
                                 _previewData.Queue_State,
-                                _previewData.origin,
+                                _previewData.Origin,
                                 _previewData.Campaign,
                                 _previewData.Experiment,
                                 _previewData.Dataset,
                                 _previewData.Instrument,
-                                _previewData.request_run_start,
-                                _previewData.request_run_finish
+                                _previewData.Request_Run_Start,
+                                _previewData.Request_Run_Finish
                                );
 
             RAISE INFO '%', _infoData;
@@ -470,66 +479,46 @@ BEGIN
 
         --------------------------------------------
         -- Show Requested Runs that may need to be updated,
-        -- filtering on request_id mbatching _oldRequestedRunID or _newRequestedRunID
+        -- filtering on request_id matching _oldRequestedRunID or _newRequestedRunID
         --------------------------------------------
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
 
-
-            RAISE INFO '';
-
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-            _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+        FOR _previewData IN
+            SELECT RL.Request,
+                   RL.Name,
+                   RL.Status,
+                   RL.Queue_State,
+                   RL.Origin,
+                   RL.Campaign,
+                   RL.Experiment,
+                   RL.Dataset,
+                   RL.Instrument,
+                   public.format_timestamp(RR.request_run_start)  As Request_Run_Start,
+                   public.format_timestamp(RR.request_run_finish) As Request_Run_Finish
+            FROM V_Requested_Run_List_Report_2 RL
+                 INNER JOIN t_requested_run RR
+                   ON RL.Request = RR.request_id
+            WHERE RL.Request IN (_oldRequestedRunID, _newRequestedRunID)
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Request,
+                                _previewData.Name,
+                                _previewData.Status,
+                                _previewData.Queue_State,
+                                _previewData.Origin,
+                                _previewData.Campaign,
+                                _previewData.Experiment,
+                                _previewData.Dataset,
+                                _previewData.Instrument,
+                                _previewData.request_run_start,
+                                _previewData.request_run_finish
                                );
 
-            _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
-                                        );
-
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoHeadSeparator;
-
-            FOR _previewData IN
-                SELECT RL.Request,
-                       RL.Name,
-                       RL.Status,
-                       RL.origin,
-                       RL.Campaign,
-                       RL.Experiment,
-                       RL.Dataset,
-                       RL.Instrument,
-                       RR.request_run_start,
-                       RR.request_run_finish
-                FROM V_Requested_Run_List_Report_2 RL
-                     INNER JOIN t_requested_run RR
-                       ON RL.Request = RR.request_id
-                WHERE RL.Request IN (_oldRequestedRunID, _newRequestedRunID)
-            LOOP
-                _infoData := format(_formatSpecifier,
-                                    _previewData.Request,
-                                    _previewData.Name,
-                                    _previewData.Status,
-                                    _previewData.origin,
-                                    _previewData.Campaign,
-                                    _previewData.Experiment,
-                                    _previewData.Dataset,
-                                    _previewData.Instrument,
-                                    _previewData.request_run_start,
-                                    _previewData.request_run_finish
-                                   );
-
-                RAISE INFO '%', _infoData;
-            END LOOP;
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     End If;
 
@@ -544,58 +533,59 @@ BEGIN
     INSERT INTO Tmp_JobsToUpdate (Job)
     SELECT Job
     FROM cap.t_tasks
-    WHERE dataset = _datasetNameOld
+    WHERE dataset = _datasetNameOld::citext
     ORDER BY Job;
 
-    -- ToDo: Update this to use RAISE INFO
+    RAISE INFO '';
 
+    _formatSpecifier := '%-12s %-25s %-5s %-80s %-80s %-10s %-20s';
 
-            RAISE INFO '';
+    _infoHead := format(_formatSpecifier,
+                        'Capture_Task',
+                        'Script',
+                        'State',
+                        'Dataset',
+                        'Dataset_Name_New',
+                        'Dataset_ID',
+                        'Imported'
+                       );
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '------------',
+                                 '-------------------------',
+                                 '-----',
+                                 '--------------------------------------------------------------------------------',
+                                 '--------------------------------------------------------------------------------',
+                                 '----------',
+                                 '--------------------'
+                                );
 
-            _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
-                               );
+    RAISE INFO '%', _infoHead;
+    RAISE INFO '%', _infoHeadSeparator;
 
-            _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
-                                        );
+    FOR _previewData IN
+        SELECT Job AS Capture_Task,
+               Script,
+               State,
+               Dataset,
+               _datasetNameNew As Dataset_Name_New,
+               Dataset_ID,
+               public.timestamp_text(Imported) As Imported
+        FROM cap.t_tasks
+        WHERE Job In (Select Job from Tmp_JobsToUpdate)
+    LOOP
+        _infoData := format(_formatSpecifier,
+                            _previewData.Capture_Task,
+                            _previewData.Script,
+                            _previewData.State,
+                            _previewData.Dataset,
+                            _previewData.Dataset_Name_New,
+                            _previewData.Dataset_ID,
+                            _previewData.Imported
+                           );
 
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoHeadSeparator;
-
-            FOR _previewData IN
-                SELECT Job AS Capture_Task,
-                       Script,
-                       State,
-                       Dataset,
-                       _datasetNameNew As Dataset_Name_New,
-                       Dataset_ID,
-                       Imported
-                FROM cap.t_tasks
-                WHERE Job In (Select Job from Tmp_JobsToUpdate)
-            LOOP
-                _infoData := format(_formatSpecifier,
-                                    _previewData.Capture_Task,
-                                    _previewData.Script,
-                                    _previewData.State,
-                                    _previewData.Dataset,
-                                    _previewData.Dataset_Name_New,
-                                    _previewData.Dataset_ID,
-                                    _previewData.Imported
-                                   );
-
-                RAISE INFO '%', _infoData;
-            END LOOP;
+        RAISE INFO '%', _infoData;
+    END LOOP;
 
 
     If Not _infoOnly Then
@@ -612,7 +602,7 @@ BEGIN
             CALL cap.add_update_task_parameter (_job, 'JobParameters', 'Directory', _datasetNameNew, _message => _message, _returnCode => _returnCode, _infoOnly => false);
 
             UPDATE cap.t_tasks
-            Set Dataset = _datasetNameNew
+            SET Dataset = _datasetNameNew
             WHERE Job = _job;
         END LOOP;
 
@@ -627,30 +617,31 @@ BEGIN
     INSERT INTO Tmp_JobsToUpdate (Job)
     SELECT Job
     FROM sw.t_jobs
-    WHERE Dataset = _datasetNameOld
-    ORDER BY Job
-
-    -- ToDo: Update this to use RAISE INFO
-
+    WHERE Dataset = _datasetNameOld::citext
+    ORDER BY Job;
 
     RAISE INFO '';
 
-    _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+    _formatSpecifier := '%-12s %-25s %-5s %-80s %-80s %-10s %-20s';
 
     _infoHead := format(_formatSpecifier,
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg'
+                        'Pipeline_Job',
+                        'Script',
+                        'State',
+                        'Dataset',
+                        'Dataset_Name_New',
+                        'Dataset_ID',
+                        'Imported'
                        );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                                 '---',
-                                 '---',
-                                 '---',
-                                 '---',
-                                 '---'
+                                 '------------',
+                                 '-------------------------',
+                                 '-----',
+                                 '--------------------------------------------------------------------------------',
+                                 '--------------------------------------------------------------------------------',
+                                 '----------',
+                                 '--------------------'
                                 );
 
     RAISE INFO '%', _infoHead;
@@ -690,7 +681,7 @@ BEGIN
             CALL sw.add_update_job_parameter (_job, 'JobParameters', 'DatasetFolderName', _datasetNameNew, _message => _message, _returnCode => _returnCode, _infoOnly => false);
 
             UPDATE sw.t_jobs
-            Set Dataset = _datasetNameNew
+            SET Dataset = _datasetNameNew
             WHERE Job = _job;
 
         END LOOP;
@@ -726,8 +717,8 @@ BEGIN
     INSERT INTO Tmp_JobsToUpdate (Job)
     SELECT Job
     FROM V_Analysis_Job_Export
-    WHERE Not _infoOnly And Dataset = _datasetNameNew
-          Or  _infoOnly And Dataset = _datasetNameOld
+    WHERE Not _infoOnly And Dataset = _datasetNameNew::citext
+          Or  _infoOnly And Dataset = _datasetNameOld::citext
     ORDER BY Job
 
     _continue := true;
@@ -801,7 +792,7 @@ BEGIN
             End If;
         End If;
 
-        If _jobFileUpdateCount = 0 And Exists (Select * From Tmp_JobsToUpdate) Then
+        If _jobFileUpdateCount = 0 And Exists (SELECT * FROM Tmp_JobsToUpdate) Then
             RAISE INFO '%', 'rem Example commands for renaming job files';
         End If;
 

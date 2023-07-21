@@ -135,28 +135,30 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Use Raise Info
-
         -- Summarize the updates
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-8s %-12s %-17s %-15s %-14s %-18s %-60s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Entry_ID',
+                            'EUS_Proposal',
+                            'Best_Work_Package',
+                            'Months_Searched',
+                            'Requested_Runs',
+                            'Requests_To_Update',
+                            'Title'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------',
+                                     '------------',
+                                     '-----------------',
+                                     '---------------',
+                                     '--------------',
+                                     '------------------',
+                                     '------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -205,22 +207,28 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-8s %-12s %-17s %-15s %-60s %-20s %-16s %-12s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Entry_ID',
+                            'EUS_Proposal',
+                            'Best_Work_Package',
+                            'Months_Searched',
+                            'Request_Name',
+                            'Created',
+                            'Requested_Run_ID',
+                            'Work_Package'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------',
+                                     '------------',
+                                     '-----------------',
+                                     '---------------',
+                                     '------------------------------------------------------------',
+                                     '--------------------',
+                                     '----------------',
+                                     '------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -232,7 +240,7 @@ BEGIN
                    C.BestWorkPackage,
                    C.MonthsSearched,
                    FilterQ.Request_Name,
-                   FilterQ.Created,
+                   public.timestamp_text(FilterQ.Created) AS Created,
                    FilterQ.ID AS RequestedRunID,
                    CASE
                        WHEN FilterQ.work_package = 'none' THEN format('none --> %s', C.BestWorkPackage)

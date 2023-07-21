@@ -20,8 +20,11 @@ AS $$
 **      If _month is 'next', adds a tracking dataset for the beginning of the next month
 **
 **  Arguments:
-**    _mode          'add' or 'debug'
-**    _callingUser   Ron Moore
+**    _month            Month (use the current month if blank)
+**    _year             Year  (use the current year if blank)
+**    _instrumentName   Instrument
+**    _mode             Mode: 'add' or 'debug'
+**    _callingUser      Calling user
 **
 **  Auth:   grk
 **  Date:   12/14/2012
@@ -89,8 +92,8 @@ BEGIN
         ---------------------------------------------------
 
         _now := CURRENT_TIMESTAMP;
-        _mn := Trim(Coalesce(_month, ''));
-        _yr := Trim(Coalesce(_year, ''));
+        _mn := _month;
+        _yr := _year;
 
         If _month = '' OR _month = 'next' Then
             _mn := Extract(month from _now)::text;

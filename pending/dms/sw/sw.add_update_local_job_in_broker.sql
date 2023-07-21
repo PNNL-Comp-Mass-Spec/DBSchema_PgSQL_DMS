@@ -39,10 +39,21 @@ AS $$
 **      <Param Section="PeptideSearch" Name="LegacyFastaFileName" Value="na" />
 **
 **  Arguments:
-**    _jobParam             XML (as text)
-**    _mode                 'add', 'update', 'reset', or 'previewAdd'
-**    _debugMode            Set to true to print debug messages (the new job will not actually be created)
-**    _logDebugMessages     Set to true to log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
+**    _job                      Job number
+**    _scriptName               Pipeline script name
+**    _datasetName              Dataset name
+**    _priority                 Priority
+**    _jobParam                 Job parameter XML (as text)
+**    _comment                  Comment
+**    _ownerUsername            Owner username
+**    _dataPackageID            Data package ID (0 if not applicable)
+**    _resultsDirectoryName     Results directory name
+**    _mode                     'add', 'update', 'reset', or 'previewAdd'
+**    _message                  Status message
+**    _returnCode               Return code
+**    _callingUser              Calling user
+**    _debugMode                Set to true to print debug messages (the new job will not actually be created)
+**    _logDebugMessages         Set to true to log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
 **
 **  Auth:   grk
 **  Date:   08/29/2010 grk - Initial release
@@ -92,6 +103,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _id int := 0;
+    _state int := 0;
     _jobParamXML XML;
     _logErrors boolean := true;
     _result int := 0;
@@ -160,18 +173,14 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Does job exist
+        -- Does job exist?
         ---------------------------------------------------
 
-        Declare
-            _id int = 0,
-            _state int = 0
-        --
-        SELECT
-            _id = job,
-            _state = state
-        FROM t_jobs
-        WHERE job = _job
+        SELECT job,
+               state
+        INTO _id, _state
+        FROM sw.t_jobs
+        WHERE job = _job;
 
         If _mode = 'update' AND _id = 0 Then
             RAISE EXCEPTION 'Cannot update nonexistent job %', _job;
@@ -253,18 +262,20 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-        --<update>
 
             _jobParamXML := _jobParam::XML;
 
             -- Update job and params
-            --
-            UPDATE   t_jobs
-            SET      priority = _priority,
-                     comment = _comment,
-                     owner_username = _ownerUsername,
-                     data_pkg_id = Case When _state IN (1, 4, 5) Then _dataPackageID Else data_pkg_id End
-            WHERE    job = _job
+
+            UPDATE sw.t_jobs
+            SET priority = _priority,
+                comment = _comment,
+                owner_username = _ownerUsername,
+                data_pkg_id = CASE
+                                  WHEN _state IN (1, 4, 5) THEN _dataPackageID
+                                  ELSE data_pkg_id
+                              END
+            WHERE job = _job;
 
             If _state IN (1, 4, 5) And _dataPackageID > 0 Then
                  CREATE TEMP TABLE Tmp_Job_Params (
@@ -320,11 +331,12 @@ BEGIN
             End If;
 
             If _state IN (1, 4, 5) Then
+
                 -- Store the job parameters (as XML) in sw.t_job_parameters
-                --
-                UPDATE   t_job_parameters
-                SET      parameters = _jobParamXML
-                WHERE    job = _job
+
+                UPDATE sw.t_job_parameters
+                SET parameters = _jobParamXML
+                WHERE job = _job;
 
                 ---------------------------------------------------
                 -- Lookup the transfer folder path from the job parameters
@@ -351,26 +363,22 @@ BEGIN
                 End If;
 
                 If _reset = 'Y' Then
-                --<reset>
-
                     CALL sw.reset_aggregation_job (
                             _job,
                             _infoOnly => false,
                             _message => _message);
-
-                End If; --<reset>
+                End If;
             Else
                 _message := 'Only updating priority, comment, and owner since job state is not New, Complete, or Failed';
             End If;
 
-        End If; --</update>
+        End If;
 
         ---------------------------------------------------
         -- Add mode
         ---------------------------------------------------
 
         If _mode::citext in ('add', 'previewAdd') Then
-        --<add>
 
             _jobParamXML := _jobParam::XML;
 
@@ -399,7 +407,7 @@ BEGIN
                     _returnCode => _returnCode,                         -- Output
                     _callingUser => _callingUser);
 
-        End If; --</add>
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

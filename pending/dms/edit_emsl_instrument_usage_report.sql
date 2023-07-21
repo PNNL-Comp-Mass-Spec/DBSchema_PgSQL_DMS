@@ -116,67 +116,86 @@ BEGIN
 
     If _doUpdate = 0 Then
 
-        -- ToDo: Preview the table rows using RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-9s %-12s %-12s %-8s %-20s %-8s %-10s %-13s %-15s %-10s %-20s %-4s %-5s %-10s %-22s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Seq',
+                            'EMSL_Inst_ID',
+                            'DMS_Inst_ID',
+                            'Type',
+                            'Start',
+                            'Minutes',
+                            'Proposal',
+                            'Usage_Type_ID',
+                            'Users',
+                            'Operator',
+                            'Comment',
+                            'Year',
+                            'Month',
+                            'Dataset_ID',
+                            'Dataset_ID_Acq_Overlap'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '---------',
+                                     '------------',
+                                     '------------',
+                                     '--------',
+                                     '--------------------',
+                                     '--------',
+                                     '----------',
+                                     '-------------',
+                                     '---------------',
+                                     '----------',
+                                     '--------------------',
+                                     '----',
+                                     '-----',
+                                     '----------',
+                                     '----------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT R.seq,
-                   R.emsl_inst_id,
-                   R.dms_inst_id,
-                   R.type,
-                   R.start,
-                   R.minutes,
-                   R.proposal,
-                   R.usage_type_id,
-                   R.users,
-                   R.operator,
-                   R.comment,
-                   R.year,
-                   R.month,
-                   R.dataset_id,
-                   R.dataset_id_acq_overlap
-            FROM Tmp_InstrumentUsageInfo
+            SELECT R.Seq,
+                   R.EMSL_Inst_ID,
+                   R.DMS_Inst_ID,
+                   R.Type,
+                   public.timestamp_text(R.Start) As Start,
+                   R.Minutes,
+                   R.Proposal,
+                   R.Usage_Type_ID,
+                   R.Users,
+                   R.Operator,
+                   R.Comment,
+                   R.Year,
+                   R.Month,
+                   R.Dataset_ID,
+                   R.Dataset_ID_Acq_Overlap
+            FROM Tmp_InstrumentUsageInfo InstInfo
                  INNER JOIN t_emsl_instrument_usage_report R
-                   ON Tmp_InstrumentUsageInfo.seq = R.seq
+                   ON InstInfo.seq = R.seq
+            ORDER BY R.seq
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.seq,
-                                _previewData.emsl_inst_id,
-                                _previewData.dms_inst_id,
-                                _previewData.type,
-                                _previewData.start,
-                                _previewData.minutes,
-                                _previewData.proposal,
-                                _previewData.usage_type_id,
-                                _previewData.users,
-                                _previewData.operator,
-                                _previewData.comment,
-                                _previewData.year,
-                                _previewData.month,
-                                _previewData.dataset_id,
-                                _previewData.dataset_id_acq_overlap
+                                _previewData.Seq,
+                                _previewData.EMSL_Inst_ID,
+                                _previewData.DMS_Inst_ID,
+                                _previewData.Type,
+                                _previewData.Start,
+                                _previewData.Minutes,
+                                _previewData.Proposal,
+                                _previewData.Usage_Type_ID,
+                                _previewData.Users,
+                                _previewData.Operator,
+                                _previewData.Comment,
+                                _previewData.Year,
+                                _previewData.Month,
+                                _previewData.Dataset_ID,
+                                _previewData.Dataset_ID_Acq_Overlap
                                );
 
             RAISE INFO '%', _infoData;

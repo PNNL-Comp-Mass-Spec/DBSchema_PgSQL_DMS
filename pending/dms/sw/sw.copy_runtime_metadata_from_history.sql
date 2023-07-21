@@ -281,15 +281,83 @@ BEGIN
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         If _updateCount = 0 Then
-            _message := 'No job steps were updated; this indicates a bug.  Examine the temp table contents';
+            _message := 'No job steps were updated; this indicates a bug. Examine the temp table contents';
 
-            -- ToDo: Update this to use RAISE INFO
+            RAISE INFO '';
 
-            SELECT 'Tmp_Jobs' AS TheTable, *
-            FROM Tmp_Jobs;
+            _formatSpecifier := '%-8s %-10s %-15s %-7s %-80s';
 
-            SELECT 'Tmp_JobStepsToUpdate' AS TheTable, *
-            FROM Tmp_JobStepsToUpdate;
+            _infoHead := format(_formatSpecifier,
+                                'Table',
+                                'Job',
+                                'Update_Required',
+                                'Invalid',
+                                'Comment'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '--------',
+                                         '----------',
+                                         '---------------',
+                                         '-------',
+                                         '--------------------------------------------------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT 'Tmp_Jobs' AS TheTable,
+                        Job,
+                        Update_Required,
+                        Invalid,
+                        Comment
+                FROM Tmp_Jobs
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.TheTable,
+                                    _previewData.Job,
+                                    _previewData.Update_Required,
+                                    _previewData.Invalid,
+                                    _previewData.Comment
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-20s %-10s %-4s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Table',
+                                'Job',
+                                'Step'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '--------------------',
+                                         '----------',
+                                         '----'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT 'Tmp_JobStepsToUpdate' AS TheTable,
+                       Job,
+                       Step
+                FROM Tmp_JobStepsToUpdate
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.TheTable,
+                                    _previewData.Job,
+                                    _previewData.Step
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         End If;
 

@@ -272,26 +272,22 @@ BEGIN
             -- Preview the jobs
             ------------------------------------------------
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-9s %-20s %-16s %-30s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Job',
+                                'Last_Affected',
+                                'Ready_To_Process',
+                                'Message'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '---------',
+                                         '--------------------',
+                                         '----------------',
+                                         '------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -299,7 +295,7 @@ BEGIN
 
             FOR _previewData IN
                 SELECT Job,
-                       Last_Affected,
+                       public.timestamp_text(Last_Affected),
                        ReadyToProcess,
                        Message
                 FROM Tmp_JobsWaiting

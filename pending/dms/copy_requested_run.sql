@@ -144,26 +144,68 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-17s %-60s %-60s %-50s %-18s %-20s %-25s %-15s %-8s %-10s %-20s %-20s %-25s %-12s %-8s %-15s %-6s %-9s %-15s %-17s %-7s %-14s %-20s %-30s %-10s %-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Source_Request_ID',
+                            'Source_Request_Name',
+                            'New_Request_Name',
+                            'Comment',
+                            'Requester_Username',
+                            'Created',
+                            'Instrument_Group',
+                            'Request_Type_Id',
+                            'Priority',
+                            'Exp_Id',
+                            'Request_Run_Start',
+                            'Request_Run_Finish',
+                            'Request_Internal_Standard',
+                            'Work_Package',
+                            'Batch_ID',
+                            'Blocking_Factor',
+                            'Block',
+                            'Run_Order',
+                            'EUS_Proposal_ID',
+                            'EUS_Usage_Type_ID',
+                            'Cart_ID',
+                            'Cart_Config_ID',
+                            'Cart_Column',
+                            'Separation_Group',
+                            'State_Name',
+                            'Origin',
+                            'Dataset_ID'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '-----------------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '--------------------------------------------------',
+                                     '------------------',
+                                     '--------------------',
+                                     '-------------------------',
+                                     '---------------',
+                                     '--------',
+                                     '----------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '-------------------------',
+                                     '------------',
+                                     '--------',
+                                     '---------------',
+                                     '------',
+                                     '---------',
+                                     '---------------',
+                                     '-----------------',
+                                     '-------',
+                                     '--------------',
+                                     '--------------------',
+                                     '------------------------------',
+                                     '----------',
+                                     '----------',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -176,13 +218,13 @@ BEGIN
                 _newRequestName As New_Request_Name,
                 _notation As Comment,
                 requester_username,
-                created,                -- Pass along the original request's 'created' date into the new entry
+                public.timestamp_text(created) As created,      -- Pass along the original request's 'created' date into the new entry
                 instrument_group,
                 request_type_id,
                 priority,
                 exp_id,
-                request_run_start,
-                request_run_finish,
+                public.timestamp_text(request_run_start) As request_run_start,
+                public.timestamp_text(request_run_finish) As request_run_finish,
                 request_internal_standard,
                 work_package,
                 batch_id,
@@ -376,7 +418,6 @@ BEGIN
     SELECT eus_person_id, _newRequestID
     FROM t_requested_run_eus_users
     WHERE request_id = _requestID;
-
 
     ---------------------------------------------------
     -- Make sure that t_active_requested_run_cached_eus_users is up-to-date

@@ -75,7 +75,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _oldUserName = _newUserName Then
+    If _oldUserName::citext = _newUserName::citext Then
         _message := 'Usernames are identical; nothing to do';
         RAISE WARNING '%', _message;
         RETURN;
@@ -85,16 +85,16 @@ BEGIN
     -- Examine t_users
     --------------------------------------------
 
-    If Not Exists (Select * From t_users Where username = _oldUserName) Then
+    If Not Exists (SELECT user_id FROM t_users Where username = _oldUserName::citext) Then
         _message := format('User %s does not exist in t_users; nothing to do', _oldUserName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
-    If Exists (Select * From t_users Where username = _newUserName) Then
+    If Exists (SELECT user_id FROM t_users Where username = _newUserName::citext) Then
         _message := format('Cannot rename %s to %s because the new username already exists in t_users', _oldUserName, _newUserName);
 
-        If Substring(_oldUserName, 1, char_length(_newUserName)) = _newUserName Then
+        If Substring(_oldUserName::citext, 1, char_length(_newUserName)) = _newUserName::citext Then
             _message := format('%s. Will check for required renames in other tables', _message);
             RAISE INFO '%', _message;
         Else
@@ -107,52 +107,54 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISEINFO
-
             RAISE INFO '';
             RAISE INFO 'Preview user rename from % to %', _oldUserName, _newUserName;
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-8s %-10s %-35s %-11s %-10s %-40s %-20s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'User_ID',
+                                'Username',
+                                'Name',
+                                'HID',
+                                'Status',
+                                'Email',
+                                'Created'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '--------',
+                                         '----------',
+                                         '-----------------------------------',
+                                         '-----------',
+                                         '----------',
+                                         '----------------------------------------',
+                                         '--------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT user_id,
-                       username,
-                       name,
-                       hid,
-                       status,
-                       email,
+                SELECT User_ID,
+                       Username,
+                       Name,
+                       HID,
+                       Status,
+                       Email,
                        public.timestamp_text(created) As created
                 FROM t_users
-                WHERE username IN (_oldUserName, _newUserName)
+                WHERE username IN (_oldUserName::citext, _newUserName::citext)
                 ORDER BY username
             LOOP
                 _infoData := format(_formatSpecifier,
-                                    _previewData.user_id,
-                                    _previewData.username,
-                                    _previewData.name,
-                                    _previewData.hid,
-                                    _previewData.status,
-                                    _previewData.email,
-                                    _previewData.created
+                                    _previewData.User_ID,
+                                    _previewData.Username,
+                                    _previewData.Name,
+                                    _previewData.HID,
+                                    _previewData.Status,
+                                    _previewData.Email,
+                                    _previewData.Created
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -163,7 +165,7 @@ BEGIN
 
             UPDATE t_users
             SET username = _newUserName
-            WHERE username = _oldUserName;
+            WHERE username = _oldUserName::citext;
         End If;
 
     End If;
@@ -174,27 +176,24 @@ BEGIN
         -- Show the items owned by _oldUserName or _newUserName
         --------------------------------------------
 
-        -- ToDo: Update these SELECT queries to use RAISE INFO
-
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-25s %-10s %-80s %-10s %-11s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Entity',
+                            'Entity_ID',
+                            'Entity_Name',
+                            'Username',
+                            'Total_Items'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '-------------------------',
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '----------',
+                                     '-----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -210,7 +209,7 @@ BEGIN
                        1 As Sort,
                        Row_Number() Over (Order By Dataset_ID Desc)
                 FROM t_dataset
-                WHERE operator_username IN (_oldUserName, _newUserName);
+                WHERE operator_username IN (_oldUserName::citext, _newUserName::citext)
                 UNION
                 SELECT 'Experiment' As Entity,
                        Exp_ID As Entity_ID,
@@ -220,7 +219,7 @@ BEGIN
                        2 As Sort,
                        Row_Number() Over (Order By Exp_ID Desc)
                 FROM t_experiments
-                WHERE researcher_username IN (_oldUserName, _newUserName);
+                WHERE researcher_username IN (_oldUserName::citext, _newUserName::citext)
                 UNION
                 SELECT 'Requested Run' As Entity,
                        Request_ID As Entity_ID,
@@ -230,7 +229,7 @@ BEGIN
                        3 As Sort,
                        Row_Number() Over (Order By Request_ID Desc)
                 FROM t_requested_run
-                WHERE requester_username IN (_oldUserName, _newUserName);
+                WHERE requester_username IN (_oldUserName::citext, _newUserName::citext)
                 UNION
                 SELECT 'Data Package Owner' As Entity,
                        data_pkg_id As Entity_ID,
@@ -240,7 +239,7 @@ BEGIN
                        4 As Sort,
                        Row_Number() Over (Order By data_pkg_id Desc)
                 FROM dpkg.t_data_package
-                WHERE owner_username IN (_oldUserName, _newUserName);
+                WHERE owner_username IN (_oldUserName::citext, _newUserName::citext)
                 UNION
                 SELECT 'Data Package Requester' As Entity,
                        data_pkg_id As Entity_ID,
@@ -250,7 +249,7 @@ BEGIN
                        5 As Sort,
                        Row_Number() Over (Order By data_pkg_id Desc)
                 FROM dpkg.t_data_package
-                WHERE requester IN (_oldUserName, _newUserName);
+                WHERE requester IN (_oldUserName::citext, _newUserName::citext)
             )
             SELECT Src.Entity,
                    Src.Entity_ID,
@@ -259,7 +258,7 @@ BEGIN
                    StatsQ.Total_Items
             FROM owned_entities Src
                  INNER JOIN ( SELECT Src.Entity,
-                                     Max(Src.ItemRank) AS TotalItems
+                                     Max(Src.ItemRank) AS Total_Items
                               FROM owned_entities Src
                               GROUP BY Src.Entity, Src.Username ) StatsQ
                    ON Src.Entity = StatsQ.Entity
@@ -281,23 +280,23 @@ BEGIN
 
         UPDATE t_dataset
         SET operator_username = _newUserName
-        WHERE operator_username = _oldUserName;
+        WHERE operator_username = _oldUserName::citext;
 
         UPDATE t_experiments
         SET researcher_username = _newUserName
-        WHERE researcher_username = _oldUserName;
+        WHERE researcher_username = _oldUserName::citext;
 
         UPDATE t_requested_run
         SET requester_username = _newUserName
-        WHERE requester_username = _oldUserName;
+        WHERE requester_username = _oldUserName::citext;
 
         UPDATE dpkg.t_data_package
         SET Owner = _newUserName
-        WHERE Owner = _oldUserName;
+        WHERE Owner = _oldUserName::citext;
 
         UPDATE dpkg.t_data_package
         SET Requester = _newUserName
-        WHERE Requester = _oldUserName;
+        WHERE Requester = _oldUserName::citext;
 
     End If;
 

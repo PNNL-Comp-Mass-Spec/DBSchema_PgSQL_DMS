@@ -141,31 +141,33 @@ BEGIN
         Else
             -- Preview the new users
 
-            -- ToDo: Use Raise Info
-
             RAISE INFO '';
-    
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-    
+
+            _formatSpecifier := '%-10s %-10s %-30s %-10s %-17s %-17s %-10s';
+
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Payroll',
+                                'HID',
+                                'LastName_FirstName',
+                                'Network_ID',
+                                'Charge_Code_First',
+                                'Charge_Code_Last',
+                                'DMS_ID'
                                );
-    
+
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '----------',
+                                         '----------',
+                                         '------------------------------',
+                                         '----------',
+                                         '-----------------',
+                                         '-----------------',
+                                         '----------'
                                         );
-    
+
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
-    
+
             FOR _previewData IN
                 SELECT Payroll,
                        HID,
@@ -186,7 +188,7 @@ BEGIN
                                     _previewData.Charge_Code_Last,
                                     _previewData.DMS_ID
                                    );
-    
+
                 RAISE INFO '%', _infoData;
             END LOOP;
 

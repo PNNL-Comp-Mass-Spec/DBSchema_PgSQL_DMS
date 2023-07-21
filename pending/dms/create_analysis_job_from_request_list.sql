@@ -230,16 +230,16 @@ BEGIN
 
     RAISE INFO '';
 
-    _formatSpecifier := '%-9s %-6s %-60s';
+    _formatSpecifier := '%-10s %-6s %-60s';
 
     _infoHead := format(_formatSpecifier,
-                        'RequestID,',
+                        'Request_ID,',
                         'Result,',
                         'Description'
                        );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                                 '---------',
+                                 '----------',
                                  '------',
                                  '------------------------------------------------------------'
                                 );

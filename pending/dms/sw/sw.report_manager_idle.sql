@@ -102,31 +102,107 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         -- Preview the running tasks
-        --
-        SELECT *
-        FROM V_Job_Steps
-        WHERE Processor = _managerName AND State = 4
-        ORDER BY Job, Step
-    Else
-        -- Change task state back to 2 or 9
-        --
-        If _remoteInfoId > 1 Then
-            _newJobState := 9  ; -- RunningRemote
-        Else
-            _newJobState := 2   ; -- Enabled;
-        End If;
 
-        UPDATE sw.t_job_steps
-        SET state = _newJobState
-        WHERE processor = _managerName AND state = 4;
+        _formatSpecifier := '%-10s %-80s %-4s %-25s %-20s %-10s %-5s %-20s %-20s %-20s %-15s %-30s %-15s %-30s %-11s';
 
-        _message := format('Reset step task state back to %s for job %s', _newJobState, _job);
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'Dataset',
+                            'Step',
+                            'Script',
+                            'Tool',
+                            'State_name',
+                            'State',
+                            'Start',
+                            'Finish',
+                            'Processor',
+                            'Completion_Code',
+                            'Completion_Message',
+                            'Evaluation_Code',
+                            'Evaluation_Message',
+                            'Data_Pkg_ID'
+                           );
 
-        CALL public.post_log_entry ('Warning', _message, 'Report_Manager_Idle', 'sw');
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '----',
+                                     '-------------------------',
+                                     '--------------------',
+                                     '----------',
+                                     '-----',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '---------------',
+                                     '------------------------------',
+                                     '---------------',
+                                     '------------------------------',
+                                     '-----------'
+                                    );
+
+        FOR _previewData IN
+            SELECT JS.Job,
+                   JS.Dataset,
+                   JS.Step,
+                   JS.Script,
+                   JS.Tool,
+                   JS.State_name,
+                   JS.State,
+                   public.timestamp_text(JS.Start) As Start,
+                   public.timestamp_text(JS.Finish) As Finish,
+                   JS.Processor,
+                   JS.Completion_Code,
+                   JS.Completion_Message,
+                   JS.Evaluation_Code,
+                   JS.Evaluation_Message,
+                   JS.Data_Pkg_ID
+            FROM V_Job_Steps JS
+            WHERE Processor = _managerName AND State = 4
+            ORDER BY Job, Step
+            ORDER BY JS.Job, JS.Step
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Dataset,
+                                _previewData.Step,
+                                _previewData.Script,
+                                _previewData.Tool,
+                                _previewData.State_name,
+                                _previewData.State,
+                                _previewData.Start,
+                                _previewData.Finish,
+                                _previewData.Processor,
+                                _previewData.Completion_Code,
+                                _previewData.Completion_Message,
+                                _previewData.Evaluation_Code,
+                                _previewData.Evaluation_Message,
+                                _previewData.Data_Pkg_ID
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        RETURN;
+
     End If;
+
+    -- Change task state back to 2 or 9
+    --
+    If _remoteInfoId > 1 Then
+        _newJobState := 9  ; -- RunningRemote
+    Else
+        _newJobState := 2   ; -- Enabled;
+    End If;
+
+    UPDATE sw.t_job_steps
+    SET state = _newJobState
+    WHERE processor = _managerName AND state = 4;
+
+    _message := format('Reset step task state back to %s for job %s', _newJobState, _job);
+
+    CALL public.post_log_entry ('Warning', _message, 'Report_Manager_Idle', 'sw');
 
     ---------------------------------------------------
     -- Exit

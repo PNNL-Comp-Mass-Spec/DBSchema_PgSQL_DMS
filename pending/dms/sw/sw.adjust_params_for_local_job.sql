@@ -154,9 +154,19 @@ BEGIN
     ---------------------------------------------------
 
     If _paramsUpdated Then
-        -- ToDo: convert this to use XMLAGG(XMLELEMENT(
-        --       Look for similar capture task code in cap.*
-        _jobParamXML := ( SELECT * FROM Tmp_Job_Params AS Param FOR XML AUTO, TYPE);
+        SELECT xml_item
+        INTO _jobParamXML
+        FROM ( SELECT
+                 XMLAGG(XMLELEMENT(
+                        NAME "Param",
+                        XMLATTRIBUTES(
+                            section As "Section",
+                            name As "Name",
+                            value As "Value"))
+                        ORDER BY section, name
+                       ) AS xml_item
+               FROM Tmp_Job_Params
+            ) AS LookupQ;
     End If;
 
     DROP TABLE Tmp_Job_Params;

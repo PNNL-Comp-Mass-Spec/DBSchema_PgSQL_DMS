@@ -682,7 +682,6 @@ BEGIN
 
         -- ToDo: Update this to use Raise Info
 
-
         RAISE INFO '';
 
         _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';

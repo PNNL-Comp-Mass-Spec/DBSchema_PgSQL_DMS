@@ -82,37 +82,35 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Show this data using RAISE INFO
-
         RAISE INFO '';
 
         _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
-                                );
+                            'New_Group_ID',
+                            'Criterion_ID',
+                            'Criterion_Name',
+                            'Criterion_Comparison',
+                            'Criterion_Value'
+                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '------------',
+                                     '------------',
+                                     '-------------------------',
+                                     '--------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT _filterCriteriaGroupIDNext AS new_group_id,
-                   FSC.criterion_id,
-                   FSCN.criterion_name,
-                   FSC.criterion_comparison,
-                   FSC.criterion_value
+            SELECT _filterCriteriaGroupIDNext AS New_Group_ID,
+                   FSC.Criterion_ID,
+                   FSCN.Criterion_Name,
+                   FSC.Criterion_Comparison,
+                   FSC.Criterion_Value
             FROM t_filter_set_criteria FSC
                  INNER JOIN t_filter_set_criteria_names FSCN
                    ON FSC.criterion_id = FSCN.criterion_id
@@ -120,11 +118,11 @@ BEGIN
             ORDER BY FSC.criterion_id
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.new_group_id,
-                                _previewData.criterion_id,
-                                _previewData.criterion_name,
-                                _previewData.criterion_comparison,
-                                _previewData.criterion_value
+                                _previewData.New_Group_ID,
+                                _previewData.Criterion_ID,
+                                _previewData.Criterion_Name,
+                                _previewData.Criterion_Comparison,
+                                _previewData.Criterion_Value
                                );
 
             RAISE INFO '%', _infoData;

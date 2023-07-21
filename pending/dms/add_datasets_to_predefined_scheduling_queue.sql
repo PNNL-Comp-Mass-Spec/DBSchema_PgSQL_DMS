@@ -96,26 +96,24 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Preview results using RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-12s %-25s %-30s %-22s %-5s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Calling_User',
+                            'Analysis_Tool_Name_Filter',
+                            'Exclude_Datasets_Not_Released',
+                            'Prevent_Duplicate_Jobs',
+                            'State'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '------------',
+                                     '-------------------------',
+                                     '------------------------------',
+                                     '----------------------',
+                                     '-----'
                                     );
 
         RAISE INFO '%', _infoHead;

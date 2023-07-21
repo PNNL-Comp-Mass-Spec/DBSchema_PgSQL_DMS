@@ -26,7 +26,7 @@ AS $$
 **          Signature int NULL,
 **          Input_Directory_Name text NULL,
 **          Output_Directory_Name text NULL
-**      )
+**      );
 **
 **  Auth:   grk
 **  Date:   01/30/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)
@@ -86,10 +86,54 @@ BEGIN
          ) XmlQ;
 
     If _debugMode Then
-        -- ToDo: Update this to use RAISE INFO
 
-        SELECT 'Tmp_Job_Parameters' As Table, *;
-        FROM Tmp_Job_Parameters
+        RAISE INFO '';
+
+        _formatSpecifier := '%-18s %-10s %-4s %-20s %-30s %-40s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Table',
+                            'Job',
+                            'Step',
+                            'Section',
+                            'Name',
+                            'Value'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '------------------',
+                                     '----------',
+                                     '----',
+                                     '--------------------',
+                                     '------------------------------',
+                                     '----------------------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT 'Tmp_Job_Parameters' As TheTable,
+                   Job,
+                   Step,
+                   Section,
+                   Name,
+                   Value
+            FROM Tmp_Job_Parameters
+            ORDER BY Job, Step
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.TheTable,
+                                _previewData.Job,
+                                _previewData.Step,
+                                _previewData.Section,
+                                _previewData.Name,
+                                _previewData.Value
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     ---------------------------------------------------

@@ -203,33 +203,35 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifierPE := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifierPE := '%-14s %-20s %-15s %-35s %-15s %-25s';
 
             _infoHeadPE := format(_formatSpecifierPE,
-                                  'abcdefg',
-                                  'abcdefg',
-                                  'abcdefg',
-                                  'abcdefg',
-                                  'abcdefg'
+                                  'Param_Entry_ID',
+                                  'Entry_Sequence_Order',
+                                  'Entry_Type',
+                                  'Entry_Specifier',
+                                  'Entry_Value',
+                                  'Destination_Param_File_ID'
                                  );
 
             _infoHeadSeparatorPE := format(_formatSpecifierPE,
-                                           '---',
-                                           '---',
-                                           '---',
-                                           '---',
-                                           '---'
+                                         '--------------',
+                                         '--------------------',
+                                         '---------------',
+                                         '-----------------------------------',
+                                         '---------------',
+                                         '-------------------------'
                                           );
 
             RAISE INFO '%', _infoHeadPE;
             RAISE INFO '%', _infoHeadSeparatorPE;
 
             FOR _previewData IN
-                SELECT PE.param_entry_id,
-                       PE.entry_sequence_order,
-                       PE.entry_type,
-                       PE.entry_specifier,
-                       PE.entry_value,
+                SELECT PE.Param_Entry_ID,
+                       PE.Entry_Sequence_Order,
+                       PE.Entry_Type,
+                       PE.Entry_Specifier,
+                       PE.Entry_Value,
                        _destParamFileID AS Destination_Param_File_ID
                 FROM t_param_entries PE
                 WHERE param_file_id = _sourceParamFileID
@@ -237,11 +239,11 @@ BEGIN
 
             LOOP
                 _infoData := format(_formatSpecifierPE,
-                                    _previewData.param_entry_id,
-                                    _previewData.entry_sequence_order,
-                                    _previewData.entry_type,
-                                    _previewData.entry_specifier,
-                                    _previewData.entry_value,
+                                    _previewData.Param_Entry_ID,
+                                    _previewData.Entry_Sequence_Order,
+                                    _previewData.Entry_Type,
+                                    _previewData.Entry_Specifier,
+                                    _previewData.Entry_Value,
                                     _previewData.Destination_Param_File_ID
                         );
 
@@ -297,7 +299,6 @@ BEGIN
     -----------------------------------------
 
     RAISE INFO '';
-
     RAISE INFO '%', _infoHead;
     RAISE INFO '%', _infoHeadSeparator;
 

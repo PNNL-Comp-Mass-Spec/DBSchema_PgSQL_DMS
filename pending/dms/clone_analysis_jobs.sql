@@ -185,7 +185,7 @@ BEGIN
             RAISE WARNING '%', _message;
             RAISE INFO '';
 
-            _formatSpecifier := '%-12s %-5s %-8s';
+            _formatSpecifier := '%-10s %-5s %-8s';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
@@ -194,7 +194,7 @@ BEGIN
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '------------',
+                                         '----------',
                                          '-----',
                                          '--------'
                                         );
@@ -249,14 +249,12 @@ BEGIN
 
         If _jobCountCompare < _jobCount Then
 
-            -- ToDo: Use Raise Info to show this info
-
             RAISE INFO '';
 
             _message := 'The source jobs must all have the same parameter file';
             RAISE WARNING '%', _message;
 
-            _formatSpecifier := '%-12s %-5s %-80s %-60s %-80s';
+            _formatSpecifier := '%-10s %-5s %-80s %-60s %-80s';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
@@ -267,7 +265,7 @@ BEGIN
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '------------',
+                                         '----------',
                                          '-----',
                                          '--------------------------------------------------------------------------------',
                                          '------------------------------------------------------------',
@@ -324,14 +322,12 @@ BEGIN
 
         If _jobCountCompare < _jobCount Then
 
-            -- ToDo: Use Raise Info to show this info
-
             RAISE INFO '';
 
             _message := 'The source jobs must all have the same settings file';
             RAISE WARNING '%', _message;
 
-            _formatSpecifier := '%-12s %-5s %-80s %-60s %-80s';
+            _formatSpecifier := '%-10s %-5s %-80s %-60s %-80s';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
@@ -342,7 +338,7 @@ BEGIN
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '------------',
+                                         '----------',
                                          '-----',
                                          '--------------------------------------------------------------------------------',
                                          '------------------------------------------------------------',
@@ -514,10 +510,9 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
             RAISE INFO '';
 
-            _formatSpecifier := '%-12s %-12s %-10s %-8s %-8s %-16s %-12s %-80s %-80s %-60s %-11s %-150s %-30s %-16s';
+            _formatSpecifier := '%-10s %-10s %-10s %-8s %-8s %-16s %-12s %-80s %-80s %-60s %-11s %-150s %-30s %-16s';
 
             _infoHead := format(_formatSpecifier,
                                 'JobId_Old',
@@ -537,8 +532,8 @@ BEGIN
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '------------',
-                                         '------------',
+                                         '----------',
+                                         '----------',
                                          '----------',
                                          '--------',
                                          '--------',

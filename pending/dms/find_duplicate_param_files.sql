@@ -246,7 +246,6 @@ BEGIN
     GROUP BY P.param_file_id
 
     If _paramFileTypeList ILIKE '%Sequest%' Then
-    -- <a1>
 
         -----------------------------------------
         -- Populate Tmp_ParamEntries with t_param_entries
@@ -399,26 +398,26 @@ BEGIN
 
         If _previewSql And Exists (SELECT * FROM Tmp_ParamEntries) Then
 
-            -- ToDo: Use Raise Info to show the data in Tmp_ParamEntries
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-7s %-15s %-35s %-11s %-15s %-15s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Compare',
+                                'Entry_Type',
+                                'Entry_Specifier',
+                                'Entry_Count',
+                                'Entry_Value_Min',
+                                'Entry_Value_Max'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '-------',
+                                         '---------------',
+                                         '-----------------------------------',
+                                         '-----------',
+                                         '---------------',
+                                         '---------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -459,7 +458,7 @@ BEGIN
             END LOOP;
 
         End If;
-    End If; -- </a1>
+    End If;
 
     -----------------------------------------
     -- Step through the entries in Tmp_ParamFiles and look for
@@ -679,26 +678,30 @@ BEGIN
 
     If Exists (SELECT * FROM Tmp_ParamEntries) Then
 
-        -- ToDo: Use RAISE INFO to show the data in Tmp_ParamEntries (only applies to SEQUEST parameter files)
+        -- Use RAISE INFO to show the data in Tmp_ParamEntries (only applies to SEQUEST parameter files)
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-19s %-13s %-15s %-35s %-11s %-15s %-15s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Param_File_Category',
+                            'Param_File_ID',
+                            'Entry_Type',
+                            'Entry_Specifier',
+                            'Entry_Count',
+                            'Entry_Value_Min',
+                            'Entry_Value_Max'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '-------------------',
+                                     '-------------',
+                                     '---------------',
+                                     '-----------------------------------',
+                                     '-----------',
+                                     '---------------',
+                                     '---------------'
                                     );
 
         RAISE INFO '%', _infoHead;

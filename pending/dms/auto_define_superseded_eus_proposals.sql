@@ -72,28 +72,36 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         -- Preview the updates
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-10s %-80s %-15s %-20s %-20s %-23s %-18s %-20s %-20s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Proposal',
+                            'Numeric',
+                            'Title',
+                            'State',
+                            'Proposal_Start_Date',
+                            'Proposal_End_Date',
+                            'Proposal_Auto_Supersede',
+                            'Newest_Proposal_ID',
+                            'Newest_Proposal_Start_Date',
+                            'Newest_Proposal_End_Date'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '---------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '-----------------------',
+                                     '------------------',
+                                     '--------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -104,12 +112,12 @@ BEGIN
                    EUP.numeric_id,
                    EUP.title,
                    EUP.state_id,
-                   EUP.proposal_start_date,
-                   EUP.proposal_end_date,
+                   public.timestamp_text(EUP.proposal_start_date) AS proposal_start_date,
+                   public.timestamp_text(EUP.proposal_end_date) AS proposal_end_date,
                    EUP.proposal_id_auto_supersede,
                    UpdatesQ.Newest_Proposal_ID,
-                   EUP_Newest.proposal_start_date AS Newest_Proposal_Start_Date,
-                   EUP_Newest.proposal_end_date AS Newest_Proposal_End_Date
+                   public.timestamp_text(EUP_Newest.proposal_start_date) AS Newest_Proposal_Start_Date,
+                   public.timestamp_text(EUP_Newest.proposal_end_date) AS Newest_Proposal_End_Date
             FROM t_eus_proposals EUP
                  INNER JOIN Tmp_ProposalsToUpdate UpdatesQ
                    ON EUP.proposal_id = UpdatesQ.proposal_id

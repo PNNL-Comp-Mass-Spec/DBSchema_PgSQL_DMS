@@ -256,7 +256,7 @@ BEGIN
                 Usage,
                 Normal
             )
-            SELECT GRTMI.request_id,
+            SELECT GRTMI.id AS Dataset_ID,
                    'Dataset' AS Type,
                    GRTMI.Time_Start AS Start,
                    GRTMI.Duration,
@@ -265,9 +265,9 @@ BEGIN
                    RR.eus_usage_type_id AS UsageID,
                    EUT.eus_usage_type AS Usage,
                    1
-            FROM get_run_tracking_monthly_info ( _instrument, _year, _month, '' ) AS GRTMI
+            FROM get_run_tracking_monthly_info ( 'Lumos03',2023, 1, '' ) AS GRTMI
                  LEFT OUTER JOIN t_requested_run AS RR
-                   ON GRTMI.request_id = RR.dataset_id
+                   ON GRTMI.id = RR.dataset_id
                  INNER JOIN t_eus_usage_type EUT
                    ON RR.eus_usage_type_id = EUT.eus_usage_type_id;
 
@@ -357,16 +357,6 @@ BEGIN
             Operator citext NULL
         );
 
-
-
-        ---------------------------------------------------
-        ---------------------------------------------------
-        -- ToDo: Update the following XML queries to use PostgreSQL syntax
-        ---------------------------------------------------
-        ---------------------------------------------------
-
-
-
         ---------------------------------------------------
         -- Extract long interval apportionments from XML
         -- and use to save apportioned intervals to the temp table
@@ -432,7 +422,7 @@ BEGIN
             'CAP_DEV' AS Usage,                     -- This is defined in t_emsl_instrument_usage_type
             Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_TrackedInstruments.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
         SELECT
@@ -444,26 +434,26 @@ BEGIN
             'RESOURCE_OWNER' AS Usage,              -- This is defined in t_emsl_instrument_usage_type
             Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_TrackedInstruments.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT
-            Tmp_TrackedInstruments.Dataset_ID,
-            Tmp_TrackedInstruments.Start,
+            Tmp_LongIntervals.Dataset_ID,
+            Tmp_LongIntervals.Start,
             public.try_cast((xpath('//u/@InstrumentAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
             '' AS Proposal,
             'AVAILABLE' AS Usage,                   -- This is defined in t_emsl_instrument_usage_type
-            Tmp_TrackedInstruments.Comment
-        FROM Tmp_TrackedInstruments
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_TrackedInstruments.Dataset_ID;
+            Tmp_LongIntervals.Comment
+        FROM Tmp_LongIntervals
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Users, Usage, Comment)
         SELECT
-            Tmp_TrackedInstruments.Dataset_ID,
-            Tmp_TrackedInstruments.Start,
+            Tmp_LongIntervals.Dataset_ID,
+            Tmp_LongIntervals.Start,
             (
-             public.try_cast((xpath('//u/@User', BreakDown))[1]::text, 0.0) |
-             public.try_cast((xpath('//u/@UserRemote', BreakDown))[1]::text, 0.0) |
+             public.try_cast((xpath('//u/@User', BreakDown))[1]::text, 0.0) +
+             public.try_cast((xpath('//u/@UserRemote', BreakDown))[1]::text, 0.0) +
              public.try_cast((xpath('//u/@UserOnsite', BreakDown))[1]::text, 0.0)
             ) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
             (xpath('//u/@Proposal', BreakDown))[1]::text AS Proposal,
@@ -472,9 +462,9 @@ BEGIN
             THEN 'REMOTE'       -- Defined in t_emsl_instrument_usage_type; means we analyzed a sample for a person outside PNNL, typically as part of an EMSL User Project
             ELSE 'ONSITE'       -- Defined in t_emsl_instrument_usage_type; means we analyzed a sample for a PNNL staff member, or for an external collaborator who was actually onsite overseeing the data acquisition
             END AS Usage,
-            Tmp_TrackedInstruments.Comment
-        FROM Tmp_TrackedInstruments
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_TrackedInstruments.Dataset_ID;
+            Tmp_LongIntervals.Comment
+        FROM Tmp_LongIntervals
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         ---------------------------------------------------
         -- Get rid of meaningless apportioned long intervals
@@ -484,26 +474,26 @@ BEGIN
 
         If _outputFormat = 'debug1' Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-10s %-20s %-10s %-10s %-15s %-20s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Dataset_ID',
+                                'Start',
+                                'Interval',
+                                'Proposal',
+                                'Usage',
+                                'Comment'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '----------',
+                                         '--------------------',
+                                         '----------',
+                                         '----------',
+                                         '---------------',
+                                         '--------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -613,7 +603,7 @@ BEGIN
             FOR _previewData IN
                 SELECT Dataset_ID,
                        Type,
-                       Start,
+                       public.timestamp_text(Start) As Start,
                        Duration,
                        Interval,
                        Proposal,
@@ -685,12 +675,10 @@ BEGIN
         --
         -- SELECT * FROM Tmp_InstrumentUsage ORDER BY Start
         -- SELECT * FROM Tmp_ApportionedIntervals ORDER BY Start
-        -- SELECT * FROM Tmp_TrackedInstruments
+        -- SELECT * FROM Tmp_LongIntervals
         ---------------------------------------------------
 
         If _outputFormat = 'debug3' Then
-
-            -- ToDo: Update this to use RAISE INFO
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadInstUsage;
@@ -699,7 +687,7 @@ BEGIN
             FOR _previewData IN
                 SELECT Dataset_ID,
                        Type,
-                       Start,
+                       public.timestamp_text(Start) As Start,
                        Duration,
                        Interval,
                        Proposal,

@@ -475,31 +475,51 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
-
                 RAISE INFO '';
-        
-                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-        
+
+                _formatSpecifier := '%-10s %-11s %-25s %-30s %-16s %-20s %-40s %-20s %-50s %-25s %-30s %-16s %-40s %-50s %-9s %-19s';
+
                 _infoHead := format(_formatSpecifier,
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg'
+                                    'Job',
+                                    'Step_Number',
+                                    'Step_Tool',
+                                    'Job_State',
+                                    'Step_State',
+                                    'Processor',
+                                    'Comment',
+                                    'Job_Finish',
+                                    'Settings_File',
+                                    'Analysis_Tool',
+                                    'New_Job_State',
+                                    'New_Step_State',
+                                    'New_Comment',
+                                    'New_Settings_File',
+                                    'Reset_Job',
+                                    'Rerun_All_Job_Steps'
                                    );
-        
+
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---'
+                                             '----------',
+                                             '-----------',
+                                             '-------------------------',
+                                             '------------------------------',
+                                             '----------------',
+                                             '--------------------',
+                                             '----------------------------------------',
+                                             '--------------------',
+                                             '--------------------------------------------------',
+                                             '-------------------------',
+                                             '------------------------------',
+                                             '----------------',
+                                             '----------------------------------------',
+                                             '--------------------------------------------------',
+                                             '---------',
+                                             '-------------------'
                                             );
-        
+
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
-        
+
                 FOR _previewData IN
                     SELECT Job,
                            Step_Number,
@@ -508,7 +528,7 @@ BEGIN
                            Step_State,
                            Processor,
                            Comment,
-                           Job_Finish,
+                           public.timestamp_text(Job_Finish),
                            Settings_File,
                            AnalysisTool,
                            NewJobState,
@@ -538,10 +558,10 @@ BEGIN
                                         _previewData.ResetJob,
                                         _previewData.RerunAllJobSteps
                                        );
-        
+
                     RAISE INFO '%', _infoData;
                 END LOOP;
-        
+
             End If;
 
         End If; -- </a>

@@ -16,7 +16,12 @@ AS $$
 **      Check input parameters against the definition for the script
 **
 **  Arguments:
-**    _jobParam   Input / output parameter
+**    _jobParam         XML job parameters, as text (input / output parameter)
+**    _scriptName       Script name
+**    _dataPackageID    Data package ID
+**    _message          Status message
+**    _returnCode       Return code
+**    _debugMode        When true, set _debugMode to true when calling pc.validate_protein_collection_params()
 **
 **  Auth:   grk
 **  Date:   10/06/2010 grk - Initial release
@@ -101,9 +106,9 @@ BEGIN
         Section text,
         Name text,
         Value text
-    )
+    );
 
-    _jobParamXML := _jobParam::XML;
+    _jobParamXML := public.try_cast(_jobParam, null::XML);
 
     INSERT INTO Tmp_JobParameters (Section, Name, Value)
     SELECT
@@ -309,10 +314,19 @@ BEGIN
             SET Value = _organismDBName
             WHERE Name = 'LegacyFastaFileName'
 
-            -- ToDo: update this to use XMLAGG(XMLELEMENT(
-            --       Look for similar capture task code in cap.*
-
-            _jobParamXML := ( SELECT * FROM Tmp_JobParameters AS Param FOR XML AUTO, TYPE);
+            SELECT xml_item
+            INTO _jobParamXML
+            FROM ( SELECT
+                     XMLAGG(XMLELEMENT(
+                            NAME "Param",
+                            XMLATTRIBUTES(
+                                section As "Section",
+                                name As "Name",
+                                value As "Value"))
+                            ORDER BY section, name
+                           ) AS xml_item
+                   FROM Tmp_JobParameters
+                ) AS LookupQ;
 
             _jobParam := CAST(_jobParamXML As text);
         End If;

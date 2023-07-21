@@ -129,7 +129,7 @@ BEGIN
            ML.col
     FROM t_material_containers MC
          INNER JOIN t_material_locations ML
-           ON MC.location_id = ML.container_id
+           ON MC.location_id = ML.location_id
     WHERE ML.freezer_tag = _freezerTagOld AND
           ML.shelf = CAST(_shelfOld AS text) AND
           ML.rack = CAST(_rackOld AS text)
@@ -145,26 +145,26 @@ BEGIN
     -- Show the matching containers
     ---------------------------------------------------
 
-    -- ToDo: Show this info using RAISE INFO
-
     RAISE INFO '';
 
-    _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+    _formatSpecifier := '%-8s %-12s %-20s %-10s %-11s %-25s';
 
     _infoHead := format(_formatSpecifier,
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg'
+                        'Entry_ID',
+                        'Container_ID',
+                        'Container',
+                        'Type',
+                        'Location_ID',
+                        'Location_Tag'
                        );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                                 '---',
-                                 '---',
-                                 '---',
-                                 '---',
-                                 '---'
+                                 '--------',
+                                 '------------',
+                                 '--------------------',
+                                 '----------',
+                                 '-----------',
+                                 '-------------------------'
                                 );
 
     RAISE INFO '%', _infoHead;
@@ -305,26 +305,30 @@ BEGIN
     -- Exit
     ---------------------------------------------------
 
-    -- ToDo: Show this info using RAISE INFO
-
     RAISE INFO '';
 
-    _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+    _formatSpecifier := '%-12s %-20s %-10s %-25s %-25s %-25s %-15s %-10s';
 
     _infoHead := format(_formatSpecifier,
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg',
-                        'abcdefg'
+                        'Container_ID',
+                        'Container',
+                        'Type',
+                        'Location_Old',
+                        'Location_Current',
+                        'Location_New',
+                        'Location_ID_New',
+                        'Status'
                        );
 
     _infoHeadSeparator := format(_formatSpecifier,
-                                 '---',
-                                 '---',
-                                 '---',
-                                 '---',
-                                 '---'
+                                 '------------',
+                                 '--------------------',
+                                 '----------',
+                                 '-------------------------',
+                                 '-------------------------',
+                                 '-------------------------',
+                                 '---------------',
+                                 '----------'
                                 );
 
     RAISE INFO '%', _infoHead;

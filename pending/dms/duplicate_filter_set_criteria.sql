@@ -110,37 +110,35 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Show these values using RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-24s %-12s %-25s %-20s %-20s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
-                                );
+                            'Filter_Criteria_Group_ID',
+                            'Criterion_ID',
+                            'Criterion_Name',
+                            'Criterion_Comparison',
+                            'Criterion_Value'
+                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '------------------------',
+                                     '------------',
+                                     '-------------------------',
+                                     '--------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT FSC.filter_criteria_group_id,
-                   FSC.criterion_id,
-                   FSCN.criterion_name,
-                   FSC.criterion_comparison,
-                   FSC.criterion_value
+            SELECT FSC.Filter_Criteria_Group_ID,
+                   FSC.Criterion_ID,
+                   FSCN.Criterion_Name,
+                   FSC.Criterion_Comparison,
+                   FSC.Criterion_Value
             FROM t_filter_set_criteria FSC
                  INNER JOIN Tmp_FilterSetGroups FSG
                    ON FSC.filter_criteria_group_id = FSG.Group_ID_Old
@@ -149,11 +147,11 @@ BEGIN
             ORDER BY FSG.Group_ID_Old, criterion_id
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.filter_criteria_group_id,
-                                _previewData.criterion_id,
-                                _previewData.criterion_name,
-                                _previewData.criterion_comparison,
-                                _previewData.criterion_value
+                                _previewData.Filter_Criteria_Group_ID,
+                                _previewData.Criterion_ID,
+                                _previewData.Criterion_Name,
+                                _previewData.Criterion_Comparison,
+                                _previewData.Criterion_Value
                                );
 
             RAISE INFO '%', _infoData;

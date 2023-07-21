@@ -121,7 +121,7 @@ BEGIN
     INTO _containerInfo
     FROM t_material_containers AS MC
          INNER JOIN t_material_locations AS ML
-           ON MC.location_id = ML.container_id
+           ON MC.location_id = ML.location_id
     WHERE MC.container = _container;
 
     If Not FOUND Then
