@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE pc.add_new_protein_headers
-(
-    _proteinIDStart int = 0,
-    _maxProteinsToProcess int = 0,
-    _infoOnly int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_new_protein_headers(integer, integer, boolean, text, text); Type: PROCEDURE; Schema: pc; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE pc.add_new_protein_headers(IN _proteinidstart integer DEFAULT 0, IN _maxproteinstoprocess integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -16,13 +12,14 @@ AS $$
 **      that is not yet in T_Protein_Headers
 **
 **  Arguments:
-**    _proteinIDStart         If 0, then this will be updated to one more than the maximum Protein_ID value in T_Protein_Headers
-**    _maxProteinsToProcess   Set to a value > 0 to limit the number of proteins processed
+**    _proteinIDStart           If 0, then this will be updated to one more than the maximum Protein_ID value in T_Protein_Headers
+**    _maxProteinsToProcess     Set to a value > 0 to limit the number of proteins processed
+**    _infoOnly                 When true, preview the proteins that would be processed
 **
 **  Auth:   mem
 **  Date:   04/08/2008
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -47,7 +44,7 @@ BEGIN
 
     _proteinIDStart := Coalesce(_proteinIDStart, 0);
     _maxProteinsToProcess := Coalesce(_maxProteinsToProcess, 0);
-    _infoOnly := Coalesce(_infoOnly, 0);
+    _infoOnly := Coalesce(_infoOnly, false);
 
     BEGIN
 
@@ -56,11 +53,16 @@ BEGIN
         If Coalesce(_proteinIDStart, 0) = 0 Then
             -- Lookup the Maximum protein_id value in pc.t_protein_headers
             -- We'll set _proteinIDStart to that value plus 1
-            SELECT Max(protein_id) + 1
+            SELECT MAX(protein_id) + 1
             INTO _proteinIDStart
             FROM pc.t_protein_headers;
 
             _proteinIDStart := Coalesce(_proteinIDStart, 0);
+        End If;
+
+        If _infoOnly Then
+            RAISE INFO '';
+            RAISE INFO 'Initial value for _proteinIDStart: %', _proteinIDStart;
         End If;
 
         --------------------------------------------------------------
@@ -72,28 +74,27 @@ BEGIN
         WHILE true
         LOOP
 
-            SELECT Max(protein_id)
+            SELECT MAX(protein_id)
             INTO _proteinIDEnd
             FROM ( SELECT protein_id
                    FROM pc.t_proteins
                    WHERE protein_id >= _proteinIDStart
                    ORDER BY protein_id
                    LIMIT _batchSize
-                 ) LookupQ
+                 ) LookupQ;
 
             If Coalesce(_proteinIDEnd, -1) < 0 Then
                 -- Break out of the while loop
                 EXIT;
             End If;
 
-            -- <b>
-            If _infoOnly <> 0 Then
+            If _infoOnly Then
                 RAISE INFO '% to %', _proteinIDStart, _proteinIDEnd;
                 _proteinsProcessed := _proteinsProcessed + _batchSize;
             Else
 
                 INSERT INTO pc.t_protein_headers (protein_id, sequence_head)
-                SELECT protein_id, Substring("sequence", 1, 50) AS Sequence_Head
+                SELECT protein_id, Substring(sequence, 1, 50) AS Sequence_Head
                 FROM pc.t_proteins
                 WHERE protein_id >= _proteinIDStart AND protein_id <= _proteinIDEnd;
                 --
@@ -134,4 +135,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE pc.add_new_protein_headers IS 'AddNewProteinHeaders';
+
+ALTER PROCEDURE pc.add_new_protein_headers(IN _proteinidstart integer, IN _maxproteinstoprocess integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_new_protein_headers(IN _proteinidstart integer, IN _maxproteinstoprocess integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE pc.add_new_protein_headers(IN _proteinidstart integer, IN _maxproteinstoprocess integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'AddNewProteinHeaders';
+
