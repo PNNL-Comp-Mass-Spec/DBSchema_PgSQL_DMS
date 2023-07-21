@@ -9,23 +9,27 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **
 **  Desc:
 **      Adds or updates an entry in the XML parameters for a given capture task job
-**      Alternatively, use _deleteParam=true to delete the given parameter
+**      Alternatively, use _deleteParam => true to delete the given parameter
 **
 **  Arguments:
+**    _job              Capture task job number
 **    _section          Section name, e.g.   JobParameters
 **    _paramName        Parameter name, e.g. SourceJob
 **    _value            Value for parameter _paramName in section _section
 **    _deleteParam      When false, adds/updates the given parameter; when true, deletes the parameter
+**    _message          Status message
+**    _returnCode       Return code
+**    _infoOnly         When true, preview changes
 **
 **  Example usage:
 **
-**      CALL cap.add_update_task_parameter (5280268, 'DatasetQC', 'CreateDatasetInfoFile', 'False', _infoOnly => true);
-**      CALL cap.add_update_task_parameter (5280268, 'DatasetQC', 'CreateDatasetInfoFile', 'False', _infoOnly => false);
-**      CALL cap.add_update_task_parameter (5280268, 'DatasetQC', 'CreateDatasetInfoFile', 'True',  _infoOnly => false, _deleteParam => true);
+**      CALL cap.add_update_task_parameter (6016849, 'DatasetQC', 'CreateDatasetInfoFile', 'False', _infoOnly => true);
+**      CALL cap.add_update_task_parameter (6016849, 'DatasetQC', 'CreateDatasetInfoFile', 'False', _infoOnly => false);
+**      CALL cap.add_update_task_parameter (6016849, 'DatasetQC', 'CreateDatasetInfoFile', 'True',  _infoOnly => false, _deleteParam => true);
 **
 **  Auth:   mem
 **  Date:   03/22/2011 mem - Initial Version
-**          04/04/2011 mem - Expanded [Value] to varchar(4000) in _task_Parameters
+**          04/04/2011 mem - Expanded [Value] to varchar(4000) in Tmp_Task_Parameters
 **          01/19/2012 mem - Now using Add_Update_Job_Parameter_XML
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
@@ -77,9 +81,9 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    -----------------------------------------------
+    ---------------------------------------------------
     -- Validate the inputs
-    -----------------------------------------------
+    ---------------------------------------------------
 
     _job := Coalesce(_job, 0);
     _section := Coalesce(_section, '');
@@ -117,7 +121,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Use function_update_task_parameter_xml to update the XML
+    -- Use function add_update_task_parameter_xml to update the XML
     ---------------------------------------------------
 
     SELECT updated_xml, success, message
