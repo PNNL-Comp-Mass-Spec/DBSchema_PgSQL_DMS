@@ -130,26 +130,24 @@ BEGIN
         -- Preview the updates
         ---------------------------------------------------
 
-        -- ToDo: Update this to use RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-80s %-60s %-60s %-17s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Dataset_ID',
+                            'Dataset',
+                            'Old_Experiment',
+                            'New_Experiment',
+                            'New_Experiment_ID'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '-----------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -181,28 +179,26 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-        If Exists (Select * From Tmp_DatasetsToUpdate Where Ambiguous) Then
-
-            -- ToDo: Update this to use RAISE INFO
+        If Exists (SELECT * FROM Tmp_DatasetsToUpdate Where Ambiguous) Then
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-10s %-80s %-60s %-60s %-20s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Dataset_ID',
+                                'Dataset',
+                                'Old_Experiment',
+                                'New_Experiment',
+                                'Comment'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '----------',
+                                         '--------------------------------------------------------------------------------',
+                                         '------------------------------------------------------------',
+                                         '------------------------------------------------------------',
+                                         '--------------------'
                                         );
 
             RAISE INFO '%', _infoHead;

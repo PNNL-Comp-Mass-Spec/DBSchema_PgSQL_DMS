@@ -136,27 +136,24 @@ BEGIN
         -- Preview the requests that would be updated
         -----------------------------------------------------------
 
-        -- ToDo: Update this to use RAISE INFO
-
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-80s %-80s %-60s %-60s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Request_ID',
+                            'Param_File_Name',
+                            'Param_File_Name_New',
+                            'Settings_File_Name',
+                            'Settings_File_Name_New'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;

@@ -50,27 +50,24 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Preview the data using RAISE INFO
-
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-25s %-80s %-20s %-14s %-22s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Instrument',
+                            'Dataset',
+                            'Dataset_Created',
+                            'Purge_Priority',
+                            'Instrument_Data_Purged'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '-------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------',
+                                     '--------------',
+                                     '----------------------'
                                     );
 
         RAISE INFO '%', _infoHead;

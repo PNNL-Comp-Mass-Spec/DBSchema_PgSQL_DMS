@@ -70,27 +70,26 @@ BEGIN
             -- Preview all datasets with an Archive State of 8=Purge Failed
             ------------------------------------------------
 
-            -- ToDo: Show the results using RAISE INFO
-
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-20s %-25s %-80s %-10s %-5s %-20s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Server',
+                                'Instrument',
+                                'Dataset',
+                                'Dataset_ID',
+                                'State',
+                                'Last_Affected'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '--------------------',
+                                         '-------------------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '----------',
+                                         '-----',
+                                         '--------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -102,8 +101,8 @@ BEGIN
                        DS.Dataset,
                        DA.Dataset_ID,
                        DA.archive_state_id AS State,
-                       DA.archive_state_last_affected AS Last_Affected
-                FROM t_dataset_archive DA
+                       public.timestamp_text(DA.archive_state_last_affected) AS Last_Affected
+                FROM  DA
                      INNER JOIN t_dataset DS
                        ON DA.dataset_id = DS.dataset_id
                      INNER JOIN t_storage_path SPath

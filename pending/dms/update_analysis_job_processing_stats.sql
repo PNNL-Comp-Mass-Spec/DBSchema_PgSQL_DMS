@@ -99,27 +99,44 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Use RAISE INFO to display the old and new values
-
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-8s %-12s %-20s %-20s %-20s %-20s %-60s %-60s %-20s %-20s %-30s %-60s %-60s %-23s %-27s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'State_ID',
+                            'State_ID_New',
+                            'Start',
+                            'Start_New',
+                            'Finish',
+                            'Finish_New',
+                            'Results_Folder_Name',
+                            'Results_Folder_Name_New',
+                            'Assigned_Processor_Name',
+                            'Assigned_Processor_Name_New',
+                            'Comment_New',
+                            'Organism_DB_Name',
+                            'Organism_DB_Name_New',
+                            'Processing_Time_Minutes',
+                            'Processing_Time_Minutes_New'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------',
+                                     '------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '------------------------------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '-----------------------',
+                                     '---------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -128,17 +145,17 @@ BEGIN
         FOR _previewData IN
             SELECT State_ID,
                    _newDMSJobState AS State_ID_New,
-                   Start,
+                   public.timestamp_text(Start) AS Start,
                    CASE
                        WHEN _newBrokerJobState >= 2
-                       THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
-                       ELSE Start
+                       THEN public.timestamp_text(Coalesce(_jobStart, CURRENT_TIMESTAMP))
+                       ELSE public.timestamp_text(Start)
                    END AS Start_New,
-                   Finish,
+                   public.timestamp_text(Finish) AS Finish,
                    CASE
                        WHEN _newBrokerJobState IN (4, 5)
-                       THEN _jobFinish
-                       ELSE Finish
+                       THEN public.timestamp_text(_jobFinish)
+                       ELSE public.timestamp_text(Finish)
                    END AS Finish_New,
                    Results_Folder_Name,
                    _resultsDirectoryName AS Results_Folder_Name_New,

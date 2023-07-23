@@ -236,26 +236,28 @@ BEGIN
             -- Preview dataset intervals
             ---------------------------------------------------
 
-            -- ToDo: Show this data using RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-25s %-80s %-10s %-20s %-20s %-19s %-13s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Instrument',
+                                'Dataset',
+                                'Dataset_ID',
+                                'Created',
+                                'Acq_Time_Start',
+                                'Interval_to_Next_DS',
+                                'Long_Interval'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '-------------------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '----------',
+                                         '--------------------',
+                                         '--------------------',
+                                         '-------------------',
+                                         '-------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -265,8 +267,8 @@ BEGIN
                 SELECT InstName.Instrument,
                        DS.Dataset,
                        DS.Dataset_ID,
-                       DS.Created,
-                       DS.Acq_Time_Start,
+                       public.timestamp_text(DS.Created) AS Created,
+                       public.timestamp_text(DS.Acq_Time_Start) AS Acq_Time_Start,
                        Tmp_Durations.Interval AS Interval_to_Next_DS,
                        CASE
                            WHEN Interval > _maxNormalInterval THEN 'Yes'

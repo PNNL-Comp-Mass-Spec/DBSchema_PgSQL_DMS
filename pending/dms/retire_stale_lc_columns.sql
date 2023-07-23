@@ -111,30 +111,42 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         -----------------------------------------------------------
         -- Preview the columns that would be retired
         -----------------------------------------------------------
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-12s %-30s %-20s %-80s %-20s %-50s %-25s %-25s %-13s %-13s %-16s %-16s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'LC_Column_ID',
+                            'LC_Column',
+                            'Src.Last_Used',
+                            'Src.Most_Recent_Dataset',
+                            'Created',
+                            'Comment',
+                            'Packing_Mfg',
+                            'Packing_Type',
+                            'Particle_Size',
+                            'Particle_Type',
+                            'Column_Inner_Dia',
+                            'Column_Outer_Dia'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '------------',
+                                     '------------------------------',
+                                     '--------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------',
+                                     '--------------------------------------------------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '-------------',
+                                     '-------------',
+                                     '----------------',
+                                     '----------------'
                                     );
 
         RAISE INFO '%', _infoHead;

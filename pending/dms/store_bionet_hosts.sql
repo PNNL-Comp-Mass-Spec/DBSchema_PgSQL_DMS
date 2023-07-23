@@ -220,26 +220,22 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-20s %-20s %-8s %-60s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Host',
+                            'Name_or_IP',
+                            'Is_Alias',
+                            'Instruments'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------',
+                                     '------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;

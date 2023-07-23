@@ -238,22 +238,23 @@ BEGIN
         -- Preview the data, then exit
         -----------------------------------------------
 
-        -- ToDo: Preview this data using RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-80s %-10s %-12s';
+
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Dataset_ID',
+                            'Dataset_Name',
+                            'SMAQC_Job',
+                            'Quameter_Job'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '----------',
+                                     '------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -278,18 +279,18 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Name',
+                            'ValueText',
+                            'Value'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '----------',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -312,18 +313,16 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Dataset_ID',
+                            'QCDM'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;

@@ -120,26 +120,22 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-11s %-12s %-8s %-10s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Proposal_ID',
+                                'Work_Package',
+                                'Requests',
+                                'Usage_Rank'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '-----------',
+                                         '------------',
+                                         '--------',
+                                         '----------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -280,24 +276,22 @@ BEGIN
 
             If Exists (Select * from Tmp_ReqRunsToUpdate) Then
 
-                -- ToDo: Update this to use RAISE INFO
-
-                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+                _formatSpecifier := '%-8s %-10s %-11s %-12s %-50s';
 
                 _infoHead := format(_formatSpecifier,
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg'
+                                    'Entry_ID',
+                                    'Request_ID',
+                                    'Proposal_ID',
+                                    'Work_Package',
+                                    'Message'
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---'
+                                             '--------',
+                                             '----------',
+                                             '-----------',
+                                             '------------',
+                                             '--------------------------------------------------'
                                             );
 
                 RAISE INFO '%', _infoHead;

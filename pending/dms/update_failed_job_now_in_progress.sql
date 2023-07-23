@@ -70,45 +70,43 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        -- Display the old and new values
 
-        -- ToDo: Show this data using RAISE INFO
+        -- Display the old and new values
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-9s %-12s %-16s %-20s %-20s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Job',
+                            'Job_State_ID',
+                            'Job_State_ID_New',
+                            'Start',
+                            'Start_New'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '---------',
+                                     '------------',
+                                     '----------------',
+                                     '--------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-
             SELECT Job,
                    Job_State_ID,
                    2 AS Job_State_ID_New,
-                   Start,
+                   public.timestamp_text(Start) AS Start,
                    CASE WHEN _newBrokerJobState >= 2
-                        THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
-                        ELSE start
+                        THEN public.timestamp_text(Coalesce(_jobStart, CURRENT_TIMESTAMP))
+                        ELSE public.timestamp_text(start)
                    END AS Start_New
             FROM t_analysis_job
-            WHERE job = _job;
+            WHERE job = _job
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Job,

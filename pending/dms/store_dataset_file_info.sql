@@ -88,7 +88,7 @@ DECLARE
     _filePath text;
     _existingSize Bigint;
     _existingHash text;
-    _itemsToUpdate int := 0;
+    _itemsToUpdate int;
     _usageMessage text;
 
     _formatSpecifier text;
@@ -374,8 +374,9 @@ BEGIN
         -- Validate that the update is allowed, then cache it
 
         If _fileHash = '' And _fileSizeBytes > 0 Then
-        -- <f>
+
             -- Updating file size
+
             If _updateExisting <> 'Force' Then
                 -- Assure that we're not updating an existing file size
                 _existingSize := 0;
@@ -398,10 +399,10 @@ BEGIN
             INSERT INTO Tmp_SizeUpdates (Dataset_ID, InstFilePath, InstFileSize)
             VALUES (_datasetID, _filePath, _fileSizeBytes);
 
-        End If; -- </f>
+        End If;
 
         If _fileHash <> '' Then
-        -- <g>
+
             If _updateExisting <> 'Force' Then
                 -- Assure that we're not updating an existing file size
                 _existingHash := '';
@@ -423,7 +424,7 @@ BEGIN
 
             INSERT INTO Tmp_HashUpdates (Dataset_ID, InstFilePath, InstFileHash)
             VALUES (_datasetID, _filePath, _fileHash);
-        End If; -- </g>
+        End If;
 
     END LOOP;
 
@@ -432,34 +433,31 @@ BEGIN
         -- Preview the data, then exit
         -----------------------------------------------
 
-        _updateCount := 0;
+        _formatSpecifier := '%-12s %-10s %-80s %-40s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Update_Type',
+                            'Dataset_ID',
+                            'InstFilePath',
+                            'InstFileHash'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '------------',
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '----------------------------------------'
+                                    );
+
+        _itemsToUpdate := 0;
 
         If Exists (SELECT * FROM Tmp_HashUpdates) Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
-
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-            _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
-                               );
-
-            _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
-                                        );
-
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
+
+            _updateCount := 0;
 
             FOR _previewData IN
                 SELECT 'Update hash' As Update_Type,
@@ -467,6 +465,7 @@ BEGIN
                        InstFilePath,
                        InstFileHash
                 FROM Tmp_HashUpdates
+                ORDER BY Dataset_ID
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Update_Type,
@@ -485,30 +484,11 @@ BEGIN
 
         If Exists (SELECT * FROM Tmp_SizeUpdates) Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
-
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-            _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
-                               );
-
-            _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
-                                        );
-
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
+
+            _updateCount := 0;
 
             FOR _previewData IN
                 SELECT 'Update size' As Update_Type,
@@ -516,6 +496,7 @@ BEGIN
                        InstFilePath,
                        InstFileSize
                 FROM Tmp_SizeUpdates
+                ORDER BY Dataset_ID
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Update_Type,
@@ -530,7 +511,6 @@ BEGIN
             END LOOP;
 
             _itemsToUpdate := _itemsToUpdate + _updateCount;
-
         End If;
 
         If _itemsToUpdate = 0 Then
@@ -660,8 +640,6 @@ BEGIN
 
             RAISE INFO '%', _infoData;
         END LOOP;
-
-
 
     End If;
 

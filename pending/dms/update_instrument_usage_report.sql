@@ -252,7 +252,7 @@ BEGIN
                 INSERT INTO Tmp_Instruments (Instrument)
                 SELECT Name
                 FROM V_Instrument_Tracked
-                WHERE Coalesce(EUS_Primary_Instrument, '') = 'Y'
+                WHERE Upper(Coalesce(EUS_Primary_Instrument, '')) IN ('Y', '1')
             End If;
 
         End If; --<b>

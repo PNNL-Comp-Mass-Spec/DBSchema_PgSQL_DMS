@@ -234,26 +234,25 @@ BEGIN
                 "MassErrorPPM" float8, "MassErrorPPM_Refined" float8);
 
     If _infoOnly Then
+
         -----------------------------------------------
         -- Preview the data, then exit
         -----------------------------------------------
 
-        -- ToDo: Use RAISE INFO to show the table data
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-80s %-14s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Dataset_ID',
+                            'Dataset_Name',
+                            'PSM_Source_Job'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -276,18 +275,18 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-25s %-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Name',
+                            'ValueText',
+                            'Value'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '-------------------------',
+                                     '----------',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -310,18 +309,18 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-14s %-22s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Dataset_ID',
+                            'Mass_Error_PPM',
+                            'Mass_Error_PPM_Refined'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '--------------',
+                                     '----------------------'
                                     );
 
         RAISE INFO '%', _infoHead;

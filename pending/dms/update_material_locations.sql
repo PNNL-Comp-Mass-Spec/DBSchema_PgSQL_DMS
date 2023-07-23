@@ -19,6 +19,8 @@ AS $$
 **        <r n="80B.2.na.na.na" i="439" a="Status" v="Active" />
 **        <r n="80B.3.3.na.na" i="558" a="Status" v="Active" />
 **
+**      ("n" is location name and "i" is location_id, though this procedure ignores location_id)
+**
 **  Arguments:
 **    _locationList     Information on material locations to update
 **    _infoOnly         Set to true to preview the changes that would be made
@@ -42,7 +44,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg2 text;
     _xml AS xml;
     _usageMessage text;
 
@@ -97,12 +98,12 @@ BEGIN
         -----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_LocationInfo (
-            Location text,
-            ID text NULL,
+            Location text,      -- Location name, e.g., 2240B.2.na.na.na
+            ID text NULL,       -- Location ID (ignored)
             Action text NULL,
             Value text NULL,
             Old_Value text NULL
-        )
+        );
 
         -----------------------------------------------------------
         -- Convert _locationList to rooted XML
@@ -138,9 +139,9 @@ BEGIN
         -----------------------------------------------------------
 
         UPDATE Tmp_LocationInfo
-        SET Old_Value = TML.status
-        FROM t_material_locations AS TML
-        WHERE TML.location = Tmp_LocationInfo.Location AND
+        SET Old_Value = ML.status
+        FROM t_material_locations AS ML
+        WHERE ML.location = Tmp_LocationInfo.Location AND
               Tmp_LocationInfo.Action = 'status';
 
         -----------------------------------------------------------
@@ -159,41 +160,47 @@ BEGIN
         -----------------------------------------------------------
         If _infoOnly Then
 
-            -- ToDo: Show this using RAISEINFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-11s %-25s %-25s %-10s %-15s %-80s %-25s %-10s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Location_ID',
+                                'Freezer_Tag',
+                                'Location',
+                                'Status',
+                                'Container_Limit',
+                                'Comment',
+                                'RFID_Hex_ID',
+                                'Barcode'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '-----------',
+                                         '-------------------------',
+                                         '-------------------------',
+                                         '----------',
+                                         '---------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '-------------------------',
+                                         '----------'
                                         );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT Location_ID,
-                       Freezer_Tag,
-                       Location,
-                       Status,
-                       Container_Limit,
-                       Comment,
-                       RFID_Hex_ID,
-                       Barcode
-                FROM t_material_locations;
+                SELECT ML.Location_ID,
+                       ML.Freezer_Tag,
+                       ML.Location,
+                       ML.Status,
+                       ML.Container_Limit,
+                       ML.Comment,
+                       ML.RFID_Hex_ID,
+                       ML.Barcode
+                FROM t_material_locations ML
+                     INNER JOIN Tmp_LocationInfo
+                       ON ML.Location = Tmp_LocationInfo.Location
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Location_ID,
@@ -211,15 +218,6 @@ BEGIN
 
         End If;
 
-        ---------------------------------------------------
-        -- Log SP usage
-        ---------------------------------------------------
-/*
-        If Not _infoOnly Then
-            _usageMessage := Cast(_locationList As text);
-            CALL post_usage_log_entry ('update_material_locations', _usageMessage);
-        End If;
-*/
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS

@@ -342,57 +342,83 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         ---------------------------------------------------
         -- Preview the purge task candidates, then exit
         ---------------------------------------------------
 
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-8s %-10s %-20s %-45s %-15s %-10s %-14s %-80s %-80s %-80s %-15s %-26s %-20s %-22s %-60s %-60s %-60s %-80s %-25s %-20s %-20s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Source',
+                            'Storage_Server',
+                            'Server_Vol',
+                            'Purge_Priority',
+                            'Dataset',
+                            'Dataset_Folder_Path',
+                            'Archive_Folder_Path',
+                            'Achive_State_ID',
+                            'Achive_State_Last_Affected',
+                            'Purge_Holdoff_Date',
+                            'Instrument_Data_Purged',
+                            'Storage_Path_Client',
+                            'Storage_Path_Server',
+                            'Archive_Path_Unix',
+                            'Dataset_Folder_Name',
+                            'Instrument',
+                            'Dataset_Created',
+                            'Dataset_YearQuarter'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------',
+                                     '----------',
+                                     '--------------------',
+                                     '---------------------------------------------',
+                                     '---------------',
+                                     '----------',
+                                     '--------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '---------------',
+                                     '--------------------------',
+                                     '--------------------',
+                                     '----------------------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '-------------------------',
+                                     '--------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT Tmp_PurgeableDatasets.EntryID As Entry_ID,
-                   Tmp_PurgeableDatasets.DatasetID As Dataset_ID,
-                   Tmp_PurgeableDatasets.MostRecent As Most_Recent,
+            SELECT Tmp_PurgeableDatasets.EntryID AS Entry_ID,
+                   Tmp_PurgeableDatasets.DatasetID AS Dataset_ID,
+                   public.timestamp_text(Tmp_PurgeableDatasets.MostRecent) AS Most_Recent,
                    Tmp_PurgeableDatasets.Source,
-                   Tmp_PurgeableDatasets.StorageServerName As Storage_Server,
-                   Tmp_PurgeableDatasets.ServerVol As Server_Vol,
+                   Tmp_PurgeableDatasets.StorageServerName AS Storage_Server,
+                   Tmp_PurgeableDatasets.ServerVol AS Server_Vol,
                    Tmp_PurgeableDatasets.Purge_Priority,
                    DFP.Dataset,
                    DFP.Dataset_Folder_Path,
                    DFP.Archive_Folder_Path,
                    DA.archive_state_id AS Achive_State_ID,
-                   DA.archive_state_last_affected AS Achive_State_Last_Affected,
-                   DA.purge_holdoff_date AS Purge_Holdoff_Date,
+                   public.timestamp_text(DA.archive_state_last_affected) AS Achive_State_Last_Affected,
+                   public.timestamp_text(DA.purge_holdoff_date) AS Purge_Holdoff_Date,
                    DA.instrument_data_purged AS Instrument_Data_Purged,
                    public.combine_paths(SPath.vol_name_client, SPath.storage_path) AS Storage_Path_Client,
                    public.combine_paths(SPath.vol_name_server, SPath.storage_path) AS Storage_Path_Server,
                    ArchPath.archive_path AS Archive_Path_Unix,
                    DS.folder_name AS Dataset_Folder_Name,
                    DFP.Instrument,
-                   DFP.Dataset_Created,
+                   public.timestamp_text(DFP.Dataset_Created) AS Dataset_Created,
                    DFP.Dataset_YearQuarter
             FROM Tmp_PurgeableDatasets
                  INNER JOIN t_dataset_archive DA

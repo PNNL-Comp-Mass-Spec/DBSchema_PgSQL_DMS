@@ -150,26 +150,28 @@ BEGIN
             -- Preview the datasets to reset
             ------------------------------------------------
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-80s %-10s %-25s %-5s %-20s %-40s %-40s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Dataset',
+                                'Dataset_id',
+                                'Instrument',
+                                'State',
+                                'Last_Affected',
+                                'Comment',
+                                'Reset_Comment'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '--------------------------------------------------------------------------------',
+                                         '----------',
+                                         '-------------------------',
+                                         '-----',
+                                         '--------------------',
+                                         '----------------------------------------',
+                                         '----------------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -181,7 +183,7 @@ BEGIN
                        DS.Dataset_id,
                        Inst.Instrument,
                        DS.dataset_state_id AS State,
-                       DS.Last_Affected,
+                       public.timestamp_text(DS.Last_Affected) AS Last_Affected,
                        DS.Comment,
                        Src.Reset_Comment
                 FROM Tmp_Datasets Src

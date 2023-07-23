@@ -89,6 +89,10 @@ DECLARE
     _infoHeadInstUsage text;
     _infoHeadSeparatorInstUsage text;
 
+    _formatSpecifierUpdateComment text;
+    _infoHeadUpdateComment text;
+    _infoHeadSeparatorUpdateComment text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -637,35 +641,40 @@ BEGIN
         End If;
 
         If Exists (Select * from Tmp_DebugReports Where Debug_ID = 6) Then
-        -- <preview>
-
-            -- ToDo: Update this to use RAISE INFO
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-20s %-10s %-15s %-13s %-15s %-8s %-4s %-5s %-50s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Start',
+                                'Proposal',
+                                'Usage',
+                                'Usage_Type_ID',
+                                'Users',
+                                'Operator',
+                                'Year',
+                                'Month',
+                                'Comment'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '--------------------',
+                                         '----------',
+                                         '---------------',
+                                         '-------------',
+                                         '---------------',
+                                         '--------',
+                                         '----',
+                                         '-----',
+                                         '--------------------------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT Tmp_Staging.start AS Start,
+                SELECT public.timestamp_text(Tmp_Staging.start) AS Start,
                        CASE WHEN Coalesce(InstUsage.proposal, '') = '' THEN Tmp_Staging.proposal ELSE InstUsage.proposal END AS Proposal,
                        -- Remove or update since skipped column: CASE WHEN Coalesce(InstUsage.usage_type, 0) = 0 THEN Tmp_Staging.Usage ELSE InstUsageType.usage_type END AS Usage,
                        CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END AS Usage_Type_ID,
@@ -698,26 +707,46 @@ BEGIN
                 RAISE INFO '%', _infoData;
             END LOOP;
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-12s %-11s %-10s %-20s %-7s %-10s %-15s %-10s %-15s %-8s %-50s %-4s %-5s %-10s %-11s %-5s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'EMSL_Inst_ID',
+                                'DMS_Inst_ID',
+                                'Type',
+                                'Start',
+                                'Minutes',
+                                'Proposal',
+                                'Usage',
+                                'Usage_Type',
+                                'Users',
+                                'Operator',
+                                'Comment',
+                                'Year',
+                                'Month',
+                                'Dataset_ID',
+                                'Operator_ID',
+                                'Seq'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '------------',
+                                         '-----------',
+                                         '----------',
+                                         '--------------------',
+                                         '-------',
+                                         '----------',
+                                         '---------------',
+                                         '----------',
+                                         '---------------',
+                                         '--------',
+                                         '--------------------------------------------------',
+                                         '----',
+                                         '-----',
+                                         '----------',
+                                         '-----------',
+                                         '-----'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -727,7 +756,7 @@ BEGIN
                 SELECT EMSL_Inst_ID,
                        DMS_Inst_ID,
                        Type,
-                       Start,
+                       public.timestamp_text(Start) AS Start,
                        Minutes,
                        Proposal,
                        Usage,
@@ -771,26 +800,42 @@ BEGIN
             -- in the main interval table
             ---------------------------------------------------
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-12s %-10s %-10s %-20s %-7s %-10s %-13s %-15s %-8s %-50s %-4s %-5s %-10s %-5s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'EMSL_Inst_ID',
+                                'Instrument',
+                                'Type',
+                                'Start',
+                                'Minutes',
+                                'Proposal',
+                                'Usage_Type_ID',
+                                'Users',
+                                'Operator',
+                                'Comment',
+                                'Year',
+                                'Month',
+                                'Dataset_ID',
+                                'Seq'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '------------',
+                                         '----------',
+                                         '----------',
+                                         '--------------------',
+                                         '-------',
+                                         '----------',
+                                         '-------------',
+                                         '---------------',
+                                         '--------',
+                                         '--------------------------------------------------',
+                                         '----',
+                                         '-----',
+                                         '----------',
+                                         '-----'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -800,7 +845,7 @@ BEGIN
             SELECT InstUsage.EMSL_Inst_ID,
                    InstName.Instrument,
                    InstUsage.Type,
-                   InstUsage.Start,
+                   public.timestamp_text(InstUsage.Start) AS Start,
                    InstUsage.Minutes,
                    InstUsage.Proposal,
                    InstUsage.Usage_Type_ID,
@@ -840,7 +885,7 @@ BEGIN
                 RAISE INFO '%', _infoData;
             END LOOP;
 
-        End If; -- </preview>
+        End If;
 
         ---------------------------------------------------
         -- Update existing values in report table from staging table
@@ -870,26 +915,38 @@ BEGIN
 
             Else
 
-                -- ToDo: Update this to use RAISE INFO
-
                 RAISE INFO '';
 
-                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+                _formatSpecifier := '%-10s %-7s %-20s %-10s %-13s %-15s %-8s %-15s %-8s %-50s %-20s %-12s';
 
                 _infoHead := format(_formatSpecifier,
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg'
+                                    'Action',
+                                    'Minutes',
+                                    'Start',
+                                    'Proposal',
+                                    'Usage_Type_ID',
+                                    'Users',
+                                    'Operator',
+                                    'Year',
+                                    'Month',
+                                    'Comment',
+                                    'Updated',
+                                    'Calling_User'
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---'
+                                             '----------',
+                                             '-------',
+                                             '--------------------',
+                                             '----------',
+                                             '-------------',
+                                             '---------------',
+                                             '--------',
+                                             '---------------',
+                                             '--------',
+                                             '--------------------------------------------------',
+                                             '--------------------',
+                                             '------------'
                                             );
 
                 RAISE INFO '%', _infoHead;
@@ -900,7 +957,7 @@ BEGIN
                 FOR _previewData IN
                     SELECT 'Update Row' As Action,
                             Tmp_Staging.Minutes,
-                            Tmp_Staging.Start,
+                            public.timestamp_text(Tmp_Staging.Start) AS STart,
                             CASE WHEN Coalesce(InstUsage.proposal, '') = ''    THEN Tmp_Staging.proposal ELSE InstUsage.proposal END As Proposal,
                             CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END As Usage_Type_ID,
                             CASE WHEN Coalesce(InstUsage.users, '') = ''       THEN Tmp_Staging.users ELSE InstUsage.users END As Users,
@@ -908,7 +965,7 @@ BEGIN
                             Tmp_Staging.Year,
                             Tmp_Staging.Month,
                             CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment End As Comment,
-                            CURRENT_TIMESTAMP As Updated,
+                            public.timestamp_text(CURRENT_TIMESTAMP) As Updated,
                             _callingUser As Calling_User
                     FROM t_emsl_instrument_usage_report InstUsage
                             INNER JOIN Tmp_Staging
@@ -1028,23 +1085,43 @@ BEGIN
             -- Clean out short 'long intervals'
             ---------------------------------------------------
 
-            _formatSpecifierInstUsage := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifierInstUsage := '%-30s %-5s %-12s %-11s %-15s %-20s %-7s %-10s %-13s %-15s %-8s %-50s %-4s %-5s %-10s';
 
             _infoHeadInstUsage := format(_formatSpecifierInstUsage,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Action',
+                                'Seq',
+                                'EMSL_Inst_ID',
+                                'DMS_Inst_ID',
+                                'Type',
+                                'Start',
+                                'Minutes',
+                                'Proposal',
+                                'Usage_Type_ID',
+                                'Users',
+                                'Operator',
+                                'Comment',
+                                'Year',
+                                'Month',
+                                'Dataset_ID'
                                );
 
             _infoHeadSeparatorInstUsage := format(_formatSpecifierInstUsage,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
-                                        );
+                                                  '------------------------------',
+                                                  '-----',
+                                                  '------------',
+                                                  '-----------',
+                                                  '---------------',
+                                                  '--------------------',
+                                                  '-------',
+                                                  '----------',
+                                                  '-------------',
+                                                  '---------------',
+                                                  '--------',
+                                                  '--------------------------------------------------',
+                                                  '----',
+                                                  '-----',
+                                                  '----------'
+                                                 );
 
             If Not _infoOnly Then
                 DELETE FROM t_emsl_instrument_usage_report
@@ -1054,8 +1131,6 @@ BEGIN
                       minutes < _maxNormalInterval;
 
             Else
-
-                -- ToDo: Update this to use RAISE INFO
 
                 RAISE INFO '';
                 RAISE INFO '%', _infoHeadInstUsage;
@@ -1091,7 +1166,7 @@ BEGIN
                                         _previewData.EMSL_Inst_ID,
                                         _previewData.DMS_Inst_ID,
                                         _previewData.Type,
-                                        _previewData.Public.timestamp_text(start) As Start,
+                                        _previewData.Start,
                                         _previewData.Minutes,
                                         _previewData.Proposal,
                                         _previewData.Usage_Type_ID,
@@ -1128,8 +1203,6 @@ BEGIN
                       NOT InstUsage.Dataset_ID IN ( SELECT interval_id FROM t_run_interval );
 
             Else
-
-                -- ToDo: Update this to use RAISE INFO
 
                 RAISE INFO '';
                 RAISE INFO '%', _infoHeadInstUsage;
@@ -1195,6 +1268,25 @@ BEGIN
             -- (ignoring MAINTENANCE and ONSITE entries)
             ---------------------------------------------------
 
+
+            _formatSpecifierUpdateComment := '%-40s %-5s %-25s %-50s %-50s';
+
+            _infoHeadUpdateComment := format(_formatSpecifierUpdateComment,
+                                            'Action',
+                                            'Seq',
+                                            'Instrument',
+                                            'Old_Comment',
+                                            'New_Comment'
+                                            );
+
+            _infoHeadSeparatorUpdateComment := format(_formatSpecifierUpdateComment,
+                                                      '----------------------------------------',
+                                                      '-----',
+                                                      '-------------------------',
+                                                      '--------------------------------------------------',
+                                                      '--------------------------------------------------'
+                                                     );
+
             If Not _infoOnly Then
 
                 UPDATE t_emsl_instrument_usage_report InstUsage
@@ -1210,28 +1302,7 @@ BEGIN
 
             Else
 
-                -- ToDo: Update this to use RAISE INFO
-
                 RAISE INFO '';
-
-                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-                _infoHead := format(_formatSpecifier,
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg'
-                                   );
-
-                _infoHeadSeparator := format(_formatSpecifier,
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---'
-                                            );
-
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
 
@@ -1252,7 +1323,7 @@ BEGIN
                           Coalesce(InstUsageType.usage_type, '') NOT IN ('MAINTENANCE', 'ONSITE') AND
                           Coalesce(InstUsage.Comment, '') = '';
                 LOOP
-                    _infoData := format(_formatSpecifier,
+                    _infoData := format(_formatSpecifierUpdateComment,
                                         _previewData.Action,
                                         _previewData.Seq,
                                         _previewData.Instrument,
@@ -1285,30 +1356,9 @@ BEGIN
 
             Else
 
-                -- ToDo: Update this to use RAISE INFO
-
                 RAISE INFO '';
-
-                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
-
-                _infoHead := format(_formatSpecifier,
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg'
-                                   );
-
-                _infoHeadSeparator := format(_formatSpecifier,
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---'
-                                            );
-
-                RAISE INFO '%', _infoHead;
-                RAISE INFO '%', _infoHeadSeparator;
+                RAISE INFO '%', _infoHeadUpdateComment;
+                RAISE INFO '%', _infoHeadSeparatorUpdateComment;
 
                 FOR _previewData IN
                     SELECT 'Clear maintenance and onsite comments' AS Action,
@@ -1327,7 +1377,7 @@ BEGIN
                           InstUsage.Month = _month AND
                           (Comment IS NULL OR Coalesce(Comment, '') <> '');
                 LOOP
-                    _infoData := format(_formatSpecifier,
+                    _infoData := format(_formatSpecifierUpdateComment,
                                         _previewData.Action,
                                         _previewData.Seq,
                                         _previewData.Instrument,

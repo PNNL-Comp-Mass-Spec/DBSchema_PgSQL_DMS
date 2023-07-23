@@ -51,13 +51,7 @@ DECLARE
     _list text;
     _datasetCount int := 0;
     _ratingID int;
-    _prevDatasetID int;
-    _curDatasetID int := 0;
-    _curDatasetName text := '';
-    _curRatingID int := 0;
-    _curDatasetState int := 0;
-    _curDatasetStateName text := '';
-    _curComment text := '';
+    _datasetInfo record;
     _usageMessage text;
 
     _sqlState text;
@@ -122,7 +116,7 @@ BEGIN
             DatasetID int,
             DatasetName text NULL,
             RatingID int NULL,
-            State int NULL,
+            StateID int NULL,
             Comment text NULL
         );
 
@@ -167,11 +161,11 @@ BEGIN
         UPDATE M
         SET M.RatingID = T.dataset_rating_id,
             M.DatasetName = T.dataset,
-            M.State = dataset_state_id,
+            M.StateID = dataset_state_id,
             M.Comment = Comment
         FROM Tmp_DatasetInfo M
              INNER JOIN t_dataset T
-               ON T.dataset_id = M.DatasetID
+               ON T.dataset_id = M.DatasetID;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -196,38 +190,24 @@ BEGIN
 
     If _mode = 'update' Then
 
-        _prevDatasetID := 0;
-
-        WHILE true
-        LOOP
-            -----------------------------------------------
-            -- Get next dataset ID from temp table
-            --
-            _curDatasetID := 0;
-
+        FOR _datasetInfo IN
             SELECT
-                _curDatasetID = D.DatasetID,
-                _curDatasetName = D.DatasetName,
-                _curRatingID = D.RatingID,
-                _curDatasetState = D.State,
-                _curComment = D.Comment,
-                _curDatasetStateName = DSN.DSS_name
+                D.DatasetID,
+                D.DatasetName,
+                D.RatingID,
+                D.StateID,
+                D.Comment,
+                DSN.dataset_state AS DatasetStateName
             FROM Tmp_DatasetInfo AS D INNER JOIN
-                 t_dataset_rating_name DSN ON D.State = DSN.Dataset_state_ID
-            WHERE D.DatasetID > _prevDatasetID
+                 t_dataset_state_name DSN ON DS.StateID = DSN.dataset_state_id
             ORDER BY D.DatasetID
-            LIMIT 1;
-
-            If Not FOUND Then
-                -- Break out of the while loop
-                EXIT;
-            End If;
+        LOOP
 
             BEGIN
-                If _curDatasetState = 5 Then
-                    -- Do not allow update to rating of 2 or higher when the dataset state is 5 (Capture Failed)
+                If _datasetInfo.StateID = 5 Then
+                    -- Do not allow update to rating of 2 or higher when the dataset state ID is 5 (Capture Failed)
                     If _ratingID >= 2 Then
-                        RAISE EXCEPTION 'Cannot set dataset rating to % for dataset "%" since its state is %', _rating, _curDatasetName, _curDatasetStateName;
+                        RAISE EXCEPTION 'Cannot set dataset rating to % for dataset "%" since its state is %', _rating, _datasetInfo.DatasetName, _datasetInfo.DatasetStateName;
                     End If;
                 End If;
             EXCEPTION
@@ -246,25 +226,25 @@ BEGIN
                     _returnCode := _sqlState;
                 End If;
 
-                -- Break out of the while loop
+                -- Break out of the for loop
                 EXIT;
             END;
 
-            If _curComment <> '' AND _comment <> '' Then
+            If _datasetInfo.Comment <> '' AND _comment <> '' Then
                 -- Append the new comment only if it is not already present
-                If Position(_comment In _curComment) = 0 Then
-                    _curComment := format('%s; %s', _curComment, _comment);
+                If Position(_comment In _datasetInfo.Comment) = 0 Then
+                    _datasetInfo.Comment := format('%s; %s', _datasetInfo.Comment, _comment);
                 End If;
 
-            ElsIf _curComment = '' AND _comment <> '' Then
-                _curComment := _comment;
+            ElsIf _datasetInfo.Comment = '' AND _comment <> '' Then
+                _datasetInfo.Comment := _comment;
 
             End If;
 
             UPDATE t_dataset
-            SET comment = _curComment,
+            SET comment = _datasetInfo.Comment,
                 dataset_rating_id = _ratingID
-            WHERE dataset_id = _curDatasetID;
+            WHERE dataset_id = _datasetInfo.DatasetID;
 
             -----------------------------------------------
             -- Recycle request?
@@ -272,7 +252,7 @@ BEGIN
             If _recycleRequest = 'yes' Then
                 BEGIN
                     CALL unconsume_scheduled_run (
-                            _curDatasetName,
+                            _datasetInfo.DatasetName,
                             _retainHistory => true,
                             _message => _message,           -- Output
                             _returnCode => _returnCode,     -- Output
@@ -298,7 +278,7 @@ BEGIN
                         _returnCode := _sqlState;
                     End If;
 
-                    -- Break out of the while loop
+                    -- Break out of the for loop
                     EXIT;
                 END;
             End If;
@@ -309,10 +289,10 @@ BEGIN
             -- If rating changes from unreviewed to released
             -- and dataset capture is complete
             --
-            If _curRatingID = -10 and _ratingID = 5 AND _curDatasetState IN (3, 4) Then
+            If _datasetInfo.RatingID = -10 and _ratingID = 5 AND _datasetInfo.StateID IN (3, 4) Then
                 -- schedule default analyses for this dataset
                 --
-                CALL schedule_predefined_analysis_jobs (_curDatasetName, _callingUser, _returnCode => _returnCode);
+                CALL schedule_predefined_analysis_jobs (_datasetInfo.DatasetName, _callingUser, _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
                     ROLLBACK;
@@ -322,12 +302,10 @@ BEGIN
 
             End If;
 
-            COMMIT;
-
             BEGIN
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    CALL alter_event_log_entry_user (8, _curDatasetID, _ratingID, _callingUser);
+                    CALL alter_event_log_entry_user (8, _datasetInfo.DatasetID, _ratingID, _callingUser);
                 End If;
             EXCEPTION
                 WHEN OTHERS THEN
@@ -345,11 +323,10 @@ BEGIN
                     _returnCode := _sqlState;
                 End If;
 
-                -- Break out of the while loop
+                -- Break out of the for loop
                 EXIT;
             END;
 
-            _prevDatasetID := _curDatasetID;
         END LOOP;
 
     End If; -- update mode

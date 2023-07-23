@@ -65,30 +65,30 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         -----------------------------------------------------------
         -- Preview the campaigns that would be retired
         -----------------------------------------------------------
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-11s %-50s %-20s %-20s %-20s %-20s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Campaign_ID',
+                            'Campaign',
+                            'Created',
+                            'Most_Recent_Activity',
+                            'Most_Recent_Dataset',
+                            'Most_Recent_Analysis_Job'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '-----------',
+                                     '--------------------------------------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;

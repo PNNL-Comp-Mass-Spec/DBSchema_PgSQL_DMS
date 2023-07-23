@@ -162,8 +162,8 @@ BEGIN
         Instrument citext,
         EMSL_Primary_Instrument citext,          -- This comes from eus_primary_instrument in table t_emsl_instruments and will be '0', '1', 'N', or 'Y'
         Tracked int,
-        EUS_Instrument_ID Int Null,
-        Use_EUS_ID int Not Null
+        EUS_Instrument_ID int Null,
+        Use_EUS_ID boolean Not Null
     );
 
     CREATE TEMP TABLE Tmp_InstrumentFilter (
@@ -202,7 +202,7 @@ BEGIN
                    InstList.EUS_Primary_Instrument AS EMSL_Primary_Instrument,
                    InstList.Tracked,
                    InstList.EUS_Instrument_ID,
-                   0
+                   false
             FROM V_Instrument_Tracked InstList
                  INNER JOIN Tmp_InstrumentFilter InstFilter
                    ON InstList.Name = InstFilter.Instrument
@@ -215,15 +215,15 @@ BEGIN
             ---------------------------------------------------
 
             INSERT INTO Tmp_Instruments( Instrument,
-                                          EMSL,
-                                          Tracked,
-                                          EUS_Instrument_ID,
-                                          Use_EUS_ID )
+                                         EMSL_Primary_Instrument,
+                                         Tracked,
+                                         EUS_Instrument_ID,
+                                         Use_EUS_ID )
             SELECT Name,
-                   EUS_Primary_Instrument AS EMSL,
+                   EUS_Primary_Instrument AS EMSL_Primary_Instrument,
                    Tracked,
                    EUS_Instrument_ID,
-                   0
+                   false
             FROM V_Instrument_Tracked
             ORDER BY Coalesce(EUS_Instrument_ID, 0), Name
 
@@ -235,7 +235,7 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_Instruments
-        SET Use_EUS_ID = 1
+        SET Use_EUS_ID = true
         FROM ( SELECT InstName.instrument,
                       InstMapping.eus_instrument_id
                FROM t_instrument_name InstName
@@ -255,26 +255,26 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Show this using RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-8s %-25s %-23s %-7s %-17s %-10s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Entry_ID',
+                                'Instrument',
+                                'EMSL_Primary_Instrument',
+                                'Tracked',
+                                'EUS_Instrument_ID',
+                                'Use_EUS_ID'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '--------',
+                                         '-------------------------',
+                                         '-----------------------',
+                                         '-------',
+                                         '-----------------',
+                                         '----------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -321,8 +321,8 @@ BEGIN
         LOOP
             _skipInstrument := false;
 
-            If _instrumentInfo.UseEUSid > 0 Then
-                If Exists (Select * From Tmp_EUS_IDs_Processed Where EUS_Instrument_ID = _instrumentInfo.EusInstrumentId) Then
+            If _instrumentInfo.Use_EUS_ID Then
+                If Exists (SELECT * FROM Tmp_EUS_IDs_Processed WHERE EUS_Instrument_ID = _instrumentInfo.EusInstrumentId) Then
                     _skipInstrument := true;
                 Else
                     Insert Into Tmp_EUS_IDs_Processed (EUS_Instrument_ID)
@@ -369,7 +369,7 @@ BEGIN
                 End If;
 
                 If Not _infoOnly Or _infoOnly And Not _previewProcedureCall Then
-                    If _instrumentInfo.UseEUSid > 0 Then
+                    If _instrumentInfo.Use_EUS_ID Then
                         CALL update_emsl_instrument_usage_report ('', _instrumentInfo.EusInstrumentId, _currentInstrumentUsageMonth, _message => _message, _infoOnly => _infoOnly);
                     Else
                         CALL update_emsl_instrument_usage_report (_instrumentInfo.Instrument, 0, _currentInstrumentUsageMonth, _message => _message, _infoOnly => _infoOnly);

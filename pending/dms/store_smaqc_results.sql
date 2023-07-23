@@ -342,24 +342,22 @@ BEGIN
         -- Preview the data, then exit
         -----------------------------------------------
 
-        -- ToDo: Preview this data using RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-80s %-10s %-14s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Dataset_ID',
+                            'Dataset_Name',
+                            'Job',
+                            'PSM_Source_Job'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '--------------------------------------------------------------------------------',
+                                     '----------',
+                                     '--------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -384,18 +382,18 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-20s %-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Name',
+                            'ValueText',
+                            'Value'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------------------',
+                                     '----------',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -418,22 +416,124 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-4s %-4s %-4s %-4s %-4s %-4s %-4s %-4s %-4s %-5s %-5s %-5s %-5s %-5s %-5s %-5s %-5s %-4s %-5s %-5s %-5s %-5s %-6s %-6s %-6s %-6s %-6s %-6s %-6s %-6s %-5s %-5s %-5s %-6s %-6s %-6s %-6s %-4s %-4s %-4s %-4s %-4s %-3s %-7s %-7s %-10s %-10s %-4s %-4s %-10s %-10s %-14s %-19s %-19s %-19s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Dataset_ID',
+                            'C_1A',
+                            'C_1B',
+                            'C_2A',
+                            'C_2B',
+                            'C_3A',
+                            'C_3B',
+                            'C_4A',
+                            'C_4B',
+                            'C_4C',
+                            'DS_1A',
+                            'DS_1B',
+                            'DS_2A',
+                            'DS_2B',
+                            'DS_3A',
+                            'DS_3B',
+                            'IS_1A',
+                            'IS_1B',
+                            'IS_2',
+                            'IS_3A',
+                            'IS_3B',
+                            'IS_3C',
+                            'MS1_1',
+                            'MS1_2A',
+                            'MS1_2B',
+                            'MS1_3A',
+                            'MS1_3B',
+                            'MS1_5A',
+                            'MS1_5B',
+                            'MS1_5C',
+                            'MS1_5D',
+                            'MS2_1',
+                            'MS2_2',
+                            'MS2_3',
+                            'MS2_4A',
+                            'MS2_4B',
+                            'MS2_4C',
+                            'MS2_4D',
+                            'P_1A',
+                            'P_1B',
+                            'P_2A',
+                            'P_2B',
+                            'P_2C',
+                            'P_3',
+                            'Phos_2A',
+                            'Phos_2C',
+                            'Keratin_2A',
+                            'Keratin_2C',
+                            'P_4A',
+                            'P_4B',
+                            'Trypsin_2A',
+                            'Trypsin_2C',
+                            'MS2_RepIon_All',
+                            'MS2_RepIon_1Missing',
+                            'MS2_RepIon_2Missing',
+                            'MS2_RepIon_3Missing'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '-----',
+                                     '-----',
+                                     '-----',
+                                     '-----',
+                                     '-----',
+                                     '-----',
+                                     '-----',
+                                     '-----',
+                                     '----',
+                                     '-----',
+                                     '-----',
+                                     '-----',
+                                     '-----',
+                                     '------',
+                                     '------',
+                                     '------',
+                                     '------',
+                                     '------'
+                                     '------',
+                                     '------',
+                                     '------',
+                                     '-----',
+                                     '-----',
+                                     '-----'
+                                     '------',
+                                     '------'
+                                     '------',
+                                     '------'
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '----',
+                                     '----',
                                      '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '-------',
+                                     '-------'
+                                     '----------',
+                                     '----------',
+                                     '----',
+                                     '----',
+                                     '----------',
+                                     '----------',
+                                     '--------------',
+                                     '-------------------'
+                                     '-------------------',
+                                     '-------------------',
                                     );
 
         RAISE INFO '%', _infoHead;

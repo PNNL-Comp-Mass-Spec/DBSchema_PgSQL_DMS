@@ -69,26 +69,28 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Show the data using RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-8s %-12s %-16s %-10s %-40s %-4s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Entry_ID',
+                            'Allocation',
+                            'Instrument_Group',
+                            'Proposal',
+                            'Comment',
+                            'FY',
+                            'Operation'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------',
+                                     '------------',
+                                     '----------------',
+                                     '----------',
+                                     '----------------------------------------',
+                                     '----',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -97,7 +99,7 @@ BEGIN
         FOR _previewData IN
             SELECT Entry_ID,
                    Allocation,
-                   InstGroup,
+                   InstGroup AS Instrument_Group,
                    Proposal,
                    Comment,
                    FY,
@@ -107,7 +109,7 @@ BEGIN
             _infoData := format(_formatSpecifier,
                                 _previewData.Entry_ID,
                                 _previewData.Allocation,
-                                _previewData.InstGroup,
+                                _previewData.Instrument_Group,
                                 _previewData.Proposal,
                                 _previewData.Comment,
                                 _previewData.FY,

@@ -215,26 +215,32 @@ BEGIN
 
         If _mode = 'preview' Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-10s %-80s %-8s %-12s %-9s %-13s %-60s %-60s %-60s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Dataset_ID',
+                                'Dataset_Name',
+                                'State_ID',
+                                'State_ID_New',
+                                'Rating_ID',
+                                'Rating_ID_New',
+                                'Comment',
+                                'Comment_via_Append',
+                                'Comment_via_Replace'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '----------',
+                                         '--------------------------------------------------------------------------------',
+                                         '--------',
+                                         '------------',
+                                         '---------',
+                                         '-------------',
+                                         '------------------------------------------------------------',
+                                         '------------------------------------------------------------',
+                                         '------------------------------------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -243,16 +249,16 @@ BEGIN
             FOR _previewData IN
                 SELECT Dataset_ID,
                        Dataset_Name,
-                       dataset_state_id AS StateID,
+                       dataset_state_id AS State_ID,
                        CASE
                            WHEN _state <> '[no change]' THEN _stateID
                            ELSE dataset_state_id
-                       END AS StateID_New,
-                       dataset_rating_id AS RatingID,
+                       END AS State_ID_New,
+                       dataset_rating_id AS Rating_ID,
                        CASE
                            WHEN _rating <> '[no change]' THEN _ratingID
                            ELSE dataset_rating_id
-                       END AS RatingID_New,
+                       END AS Rating_ID_New,
                        Comment,
                        CASE
                            WHEN _comment <> '[no change]' THEN format('%s %s', Comment, _comment)
@@ -269,10 +275,10 @@ BEGIN
                 _infoData := format(_formatSpecifier,
                                     _previewData.Dataset_ID,
                                     _previewData.Dataset_Name,
-                                    _previewData.StateID,
-                                    _previewData.StateID_New,
-                                    _previewData.RatingID,
-                                    _previewData.RatingID_New,
+                                    _previewData.State_ID,
+                                    _previewData.State_ID_New,
+                                    _previewData.Rating_ID,
+                                    _previewData.Rating_ID_New,
                                     _previewData.Comment,
                                     _previewData.Comment_via_Append,
                                     _previewData.Comment_via_Replace

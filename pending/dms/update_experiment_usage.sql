@@ -43,27 +43,22 @@ BEGIN
         -- Preview the updates
         ---------------------------------------------------
 
-        -- ToDo: Update this to use RAISE INFO
-
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-9s %-10s %-70s %-80s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Exp_ID',
+                            'Last_Used',
+                            'Last_Used_ReqRun',
+                            'Last_Used_Dataset'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '---------',
+                                     '----------',
+                                     '----------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;

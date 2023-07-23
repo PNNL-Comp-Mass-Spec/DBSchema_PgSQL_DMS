@@ -54,28 +54,27 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _requestID = 1 Then
-        Select '_requestID 1 is a special placeholder request; table t_analysis_job_request_existing_jobs does not track jobs for _requestID 1' As Warning
+        RAISE WARNING '_requestID 1 is a special placeholder request; table t_analysis_job_request_existing_jobs does not track jobs for _requestID 1';
         RETURN;
     End If;
+
+    _formatSpecifier := '%-10s %-90s';
+
+    _infoHead := format(_formatSpecifier,
+                        'Request_ID',
+                        'Status'
+                       );
+
+    _infoHeadSeparator := format(_formatSpecifier,
+                                 '----------',
+                                 '------------------------------------------------------------------------------------------'
+                                );
 
     If _requestID > 0 Then
 
         If _infoOnly Then
 
             RAISE INFO '';
-
-            _formatSpecifier := '%-10s %-90s';
-
-            _infoHead := format(_formatSpecifier,
-                                'Request_ID',
-                                'Status'
-                               );
-
-            _infoHeadSeparator := format(_formatSpecifier,
-                                         '----------',
-                                         '------------------------------------------------------------------------------------------'
-                                        );
-
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
@@ -179,19 +178,6 @@ BEGIN
             ------------------------------------------------
 
             RAISE INFO '';
-
-            _formatSpecifier := '%-10s %-90s';
-
-            _infoHead := format(_formatSpecifier,
-                                'Request_ID',
-                                'Status'
-                               );
-
-            _infoHeadSeparator := format(_formatSpecifier,
-                                         '----------',
-                                         '------------------------------------------------------------------------------------------'
-                                        );
-
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
@@ -290,22 +276,34 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ------------------------------------------------
             -- Preview the addition of new analysis job requests
             ------------------------------------------------
 
-            SELECT AJR.request_id AS Request_ID,
-                   'Analysis job request to add to t_analysis_job_request_existing_jobs' AS Status
-            FROM t_analysis_job_request AJR
-                 LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
-                   ON AJR.request_id = CachedJobs.request_id
-            WHERE AJR.request_id > 1 AND
-                  CachedJobs.request_id IS NULL
-            ORDER BY AJR.request_id
-            --
-            GET DIAGNOSTICS _matchCount = ROW_COUNT;
+            RAISE INFO '';
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            _matchCount := 0;
+
+            FOR _previewData IN
+                SELECT AJR.request_id AS Request_ID,
+                       'Analysis job request to add to t_analysis_job_request_existing_jobs' AS Status
+                FROM t_analysis_job_request AJR
+                     LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
+                       ON AJR.request_id = CachedJobs.request_id
+                WHERE AJR.request_id > 1 AND
+                      CachedJobs.request_id IS NULL
+                ORDER BY AJR.request_id
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Request_ID,
+                                    _previewData.Status
+                                   );
+
+                RAISE INFO '%', _infoData;
+                _matchCount := _matchCount + 1;
+            END LOOP;
 
             If _matchCount = 0 Then
                 RAISE INFO 'No analysis job requests need to be added to t_analysis_job_request_existing_jobs';
@@ -347,24 +345,36 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ------------------------------------------------
             -- Preview the update of cached info
             ------------------------------------------------
 
-            SELECT DISTINCT AJR.request_id AS Request_ID,
-              CASE
-                  WHEN CachedJobs.request_id IS NULL
-                  THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
-                  ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
-              END AS Status
-            FROM t_analysis_job_request AJR
-                 LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
-                   ON AJR.request_id = CachedJobs.request_id
-            ORDER BY AJR.request_id
-            --
-            GET DIAGNOSTICS _matchCount = ROW_COUNT;
+            RAISE INFO '';
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            _matchCount := 0;
+
+            FOR _previewData IN
+                SELECT DISTINCT AJR.request_id AS Request_ID,
+                       CASE
+                           WHEN CachedJobs.request_id IS NULL
+                           THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
+                           ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
+                       END AS Status
+                FROM t_analysis_job_request AJR
+                     LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
+                       ON AJR.request_id = CachedJobs.request_id
+                ORDER BY AJR.request_id
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Request_ID,
+                                    _previewData.Status
+                                   );
+
+                RAISE INFO '%', _infoData;
+                _matchCount := _matchCount + 1;
+            END LOOP;
 
             If _matchCount = 0 Then
                 RAISE INFO 'No data in t_analysis_job_request_existing_jobs needs to be updated';

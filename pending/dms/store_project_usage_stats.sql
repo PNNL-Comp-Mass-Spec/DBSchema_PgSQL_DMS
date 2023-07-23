@@ -308,26 +308,58 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Show this data using RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-20s %-20s %-4s %-12s %-11s %-12s %-15s %-17s %-8s %-8s %-8s %-10s %-13s %-13s %-60s %-25s %-25s %-25s %-25s %-14s %-14s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Entry_ID',
+                            'Start_Date',
+                            'End_Date',
+                            'Year',
+                            'Week_of_Year',
+                            'Proposal_ID',
+                            'Work_Package',
+                            'Proposal_Active',
+                            'Project_Type_Name',
+                            'Samples',
+                            'Datasets',
+                            'Jobs',
+                            'Usage_Type',
+                            'Proposal_Type',
+                            'Proposal_User',
+                            'Proposal_Title',
+                            'Instrument_First',
+                            'Instrument_Last',
+                            'JobTool_First',
+                            'JobTool_Last',
+                            'Proposal_Start',
+                            'Proposal_End'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '----',
+                                     '------------',
+                                     '-----------',
+                                     '------------',
+                                     '---------------',
+                                     '-----------------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '----------',
+                                     '-------------',
+                                     '-------------',
+                                     '------------------------------------------------------------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '--------------',
+                                     '--------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -335,10 +367,10 @@ BEGIN
 
         FOR _previewData IN
             SELECT Stats.Entry_ID,
-                   Stats.StartDate,
-                   Stats.EndDate,
-                   Stats.TheYear,
-                   Stats.WeekOfYear,
+                   public.timestamp_text(Stats.StartDate) AS Start_Date,
+                   public.timestamp_text(Stats.EndDate) AS End_Date,
+                   Stats.TheYear AS Year,
+                   Stats.WeekOfYear As Week_of_Year,
                    Stats.Proposal_ID,
                    Stats.Work_Package,
                    Stats.Proposal_Active,
@@ -354,8 +386,8 @@ BEGIN
                    Stats.Instrument_Last,
                    Stats.JobTool_First,
                    Stats.JobTool_Last,
-                   Cast(Proposals.proposal_start_date AS date) AS Proposal_Start_Date,
-                   Cast(Proposals.proposal_end_date AS date) AS Proposal_End_Date
+                   Proposals.proposal_start_date::date AS Proposal_Start,
+                   Proposals.proposal_end_date::date   AS Proposal_End
             FROM Tmp_Project_Usage_Stats Stats
                  INNER JOIN t_project_usage_types ProjectTypes
                    ON Stats.project_type_id = ProjectTypes.project_type_id
@@ -367,10 +399,10 @@ BEGIN
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Entry_ID,
-                                _previewData.StartDate,
-                                _previewData.EndDate,
-                                _previewData.TheYear,
-                                _previewData.WeekOfYear,
+                                _previewData.Start_Date,
+                                _previewData.End_Date,
+                                _previewData.Year,
+                                _previewData.Week_of_Year,
                                 _previewData.Proposal_ID,
                                 _previewData.Work_Package,
                                 _previewData.Proposal_Active,
@@ -386,8 +418,8 @@ BEGIN
                                 _previewData.Instrument_Last,
                                 _previewData.JobTool_First,
                                 _previewData.JobTool_Last,
-                                _previewData.Proposal_Start_Date,
-                                _previewData.Proposal_End_Date
+                                _previewData.Proposal_Start,
+                                _previewData.Proposal_End
                                );
 
             RAISE INFO '%', _infoData;

@@ -153,22 +153,30 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-9s %-80s %-60s %-20s %-25s %-25s %-80s %-80s %-20s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'ID',
+                            'Dataset',
+                            'Experiment',
+                            'State',
+                            'Instrument_Old',
+                            'Instrument_New',
+                            'Storage_Path_Old',
+                            'Storage_Path_New',
+                            'Created'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '---------',
+                                     '--------------------------------------------------------------------------------',
+                                     '------------------------------------------------------------',
+                                     '--------------------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -183,7 +191,7 @@ BEGIN
                    _instrumentNameNew AS Instrument_New,
                    _storagePathOld AS Storage_Path_Old,
                    _storagePathNew AS Storage_Path_New,
-                   Created
+                   public.timestamp_text(Created) AS Created
             FROM V_Dataset_List_Report_2
             WHERE ID = _datasetId
         LOOP
@@ -204,22 +212,38 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-9s %-80s %-10s %-4s %-25s %-25s %-15s %-5s %-20s %-20s %-15s %-60s %-25s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Job',
+                            'Dataset',
+                            'Dataset_ID',
+                            'Step',
+                            'Script',
+                            'Tool',
+                            'State_Name',
+                            'State',
+                            'Start',
+                            'Finish',
+                            'Runtime_Minutes',
+                            'Output_Folder',
+                            'Instrument'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '---------',
+                                     '--------------------------------------------------------------------------------',
+                                     '----------',
+                                     '----',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '---------------',
+                                     '-----',
+                                     '--------------------',
+                                     '--------------------',
+                                     '---------------',
+                                     '------------------------------------------------------------',
+                                     '-------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;

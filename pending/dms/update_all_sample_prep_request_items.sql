@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Calls update sample prep request items for all active sample prep requests
+**      Calls update_sample_prep_request_items() for all active sample prep requests
 **
 **  Auth:   grk
 **  Date:   07/05/2013 grk - Initial release

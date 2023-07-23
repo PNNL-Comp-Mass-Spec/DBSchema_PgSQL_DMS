@@ -9,7 +9,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Gets Next Available LocalSymbolID for a given paramFileID
+**      Gets next available LocalSymbolID for a given paramFileID
 **
 **  Return values: next available local symbol id
 **

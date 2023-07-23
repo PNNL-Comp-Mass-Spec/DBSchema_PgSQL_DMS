@@ -67,27 +67,22 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-20s %-20s %-20s %-20s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Host',
+                            'Last_Online',
+                            'Most_Recent_Dataset',
+                            'New_Last_Online'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -95,11 +90,11 @@ BEGIN
 
         FOR _previewData IN
             SELECT Target.Host,
-                   Target.Last_Online,
+                   public.timestamp_text(Target.Last_Online) AS Last_Online,
                    Src.MostRecentDataset As Most_Recent_Dataset,
                    CASE WHEN Src.MostRecentDataset > Coalesce(Target.Last_Online, make_date(1970, 1, 1))
-                        THEN Src.MostRecentDataset
-                        ELSE Null
+                        THEN public.timestamp_text(Src.MostRecentDataset)
+                        ELSE ''
                    END AS New_Last_Online
             FROM t_bionet_hosts Target
                  INNER JOIN ( SELECT host,

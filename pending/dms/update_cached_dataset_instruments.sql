@@ -81,25 +81,22 @@ BEGIN
             -- Preview the addition of new datasets
             ------------------------------------------------
 
-            -- ToDo: Update this to use RAISE INFO
-
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-10s %-13s %-25s %-50s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Dataset_ID',
+                                'Instrument_ID',
+                                'Instrument',
+                                'Status'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '----------',
+                                         '-------------',
+                                         '-------------------------',
+                                         '--------------------------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -163,32 +160,68 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             ------------------------------------------------
             -- Preview the update of cached info
             ------------------------------------------------
 
-            SELECT t.dataset_id,
-                   t.instrument_id,
-                   s.instrument_id AS InstID_New,
-                   t.instrument,
-                   s.instrument AS InstName_New,
-                   'dataset to update in t_instrument_name' As Status
-            FROM t_cached_dataset_instruments t
-                 INNER JOIN ( SELECT DS.dataset_id,
-                                     DS.instrument_id AS Instrument_ID,
-                                     InstName.instrument AS Instrument
-                              FROM t_dataset DS
-                                   INNER JOIN t_instrument_name InstName
-                                     ON DS.instrument_id = InstName.instrument_id ) s
-                   ON t.dataset_id = s.dataset_id
-            WHERE t.instrument_id <> s.instrument_id OR
-                  t.instrument <> s.instrument
-            ORDER By t.dataset_id
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-13s %-17s %-15s %-19s %-40s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Dataset_ID',
+                                'Instrument_ID',
+                                'Instrument_ID_New',
+                                'Instrument_Name',
+                                'Instrument_Name_New',
+                                'Status'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '-------------',
+                                         '-----------------',
+                                         '---------------',
+                                         '-------------------',
+                                         '----------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT t.Dataset_ID,
+                       t.Instrument_ID,
+                       s.instrument_id AS Instrument_ID_New,
+                       t.Instrument AS Instrument_Name,
+                       s.instrument AS Instrument_Name_New,
+                       'Dataset to update in t_instrument_name' As Status
+                FROM t_cached_dataset_instruments t
+                     INNER JOIN ( SELECT DS.dataset_id,
+                                         DS.instrument_id AS Instrument_ID,
+                                         InstName.instrument AS Instrument
+                                  FROM t_dataset DS
+                                       INNER JOIN t_instrument_name InstName
+                                         ON DS.instrument_id = InstName.instrument_id ) s
+                       ON t.dataset_id = s.dataset_id
+                WHERE t.instrument_id <> s.instrument_id OR
+                      t.instrument <> s.instrument
+                ORDER By t.dataset_id
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Instrument_ID,
+                                    _previewData.Instrument_ID_New,
+                                    _previewData.Instrument_Name,
+                                    _previewData.Instrument_Name_New,
+                                    _previewData.Status
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             If Not FOUND Then
-                Select 'No data in t_cached_dataset_instruments needs to be updated' As Status;
+                RAISE INFO 'No data in t_cached_dataset_instruments needs to be updated';
             End If;
 
         Else

@@ -46,7 +46,7 @@ BEGIN
 
     _updateUsersOnInactiveProposals := Coalesce(_updateUsersOnInactiveProposals, false);
 
-    -- Lookup the highest entry_id in t_log_entries
+    -- Lookup the most recent entry_id in t_log_entries
     SELECT MAX(entry_id)
     INTO _entryID
     FROM t_log_entries;
@@ -105,8 +105,9 @@ BEGIN
         RAISE INFO 'Return code %: %', _returnCode, Coalesce(_message, '??');
     End If;
 
-    -- Show any new entries to T_Log_Entries
-    If Exists (SELECT * FROM t_log_entries WHERE entry_id > _entryID AND posted_by Like 'Update%EUS%') Then
+    -- Show any new entries in T_Log_Entries
+
+    If Exists (SELECT * FROM t_log_entries WHERE entry_id > _entryID AND posted_by ILike 'Update%EUS%') Then
         RAISE INFO '';
 
         _formatSpecifier := '%-12s %-40s %-20s %-10s %-60s';
@@ -138,7 +139,7 @@ BEGIN
                    Message
             FROM t_log_entries
             WHERE entry_id > _entryID AND
-                  posted_by LIKE 'Update%EUS%'
+                  posted_by ILike 'Update%EUS%'
             ORDER BY entry_id
         LOOP
             _infoData := format(_formatSpecifier,

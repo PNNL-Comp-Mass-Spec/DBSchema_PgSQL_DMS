@@ -230,30 +230,28 @@ BEGIN
         -- Preview updated progress
         -----------------------------------------
 
-        -- ToDo: Update this to use RAISE INFO
-
         RAISE INFO '';
 
         If Not _verbose Then
 
             -- Summarize the changes
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-5s %-5s %-12s %-15s %-15s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'State',
+                                'Jobs',
+                                'Changed_Jobs',
+                                'Min_NewProgress',
+                                'Max_NewProgress'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '-----',
+                                         '-----',
+                                         '------------',
+                                         '---------------',
+                                         '---------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -287,22 +285,32 @@ BEGIN
 
             -- Show all rows in Tmp_JobsToUpdate
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-9s %-5s %-12s %-15s %-5s %-15s %-23s %-25s %-11s %-16s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Job',
+                                'State',
+                                'Progress_Old',
+                                'Progress_New',
+                                'Steps',
+                                'Steps_Completed',
+                                'Current_Runtime_Minutes',
+                                'Runtime_Predicted_Minutes',
+                                'ETA_Minutes',
+                                'Progress_Changed'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '---------',
+                                         '-----',
+                                         '------------',
+                                         '---------------',
+                                         '-----',
+                                         '---------------',
+                                         '-----------------------',
+                                         '-------------------------',
+                                         '-----------',
+                                         '----------------'
                                         );
 
             RAISE INFO '%', _infoHead;

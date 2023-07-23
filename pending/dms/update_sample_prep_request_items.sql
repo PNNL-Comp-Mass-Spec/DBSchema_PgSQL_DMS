@@ -93,7 +93,7 @@ BEGIN
             Item_Type text,
             Status text,
             Created timestamp,
-            Marked text NOT NULL DEFAULT 'N'        -- All items are initially flagged with 'N', meaning not being in the database; this is later changed to 'Y' or 'D'
+            Marked text NOT NULL DEFAULT 'N'        -- All items are initially flagged with 'N', meaning not defined in the database; this is later changed to 'Y' or 'D'
         );
 
         ---------------------------------------------------
@@ -101,21 +101,25 @@ BEGIN
         -- into staging table
         ---------------------------------------------------
 
-        -- Biomaterial
-        --
+        -- Cell_culture: no longer tracked in t_sample_prep_request, as of April 2017, and thus not ported to PostgreSQL
+
+        /*
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
-        SELECT  SPR.prep_request_id,
-                B.Biomaterial_ID AS Item_ID,
-                TL.Item AS Item_Name,
-                'biomaterial' AS Item_Type,
-                B.Material_Active AS Status,
-                B.Created AS Created
-        FROM    t_sample_prep_request SPR
-                -- Remove or update since skipped column: CROSS APPLY public.parse_delimited_list(SPR.Biomaterial_List, ';') TL
-                INNER JOIN t_biomaterial B ON B.Biomaterial_Name = TL.Item
-        WHERE   SPR.prep_request_id = _samplePrepRequestID
-                -- Remove or update since skipped column: AND SPR.Biomaterial_List <> '(none)'
-                -- Remove or update since skipped column: AND SPR.Biomaterial_List <> ''
+        SELECT SPR.prep_request_id,
+               B.Biomaterial_ID AS Item_ID,
+               TL.Item AS Item_Name,
+               'biomaterial' AS Item_Type,
+               B.Material_Active AS Status,
+               B.Created AS Created
+        FROM t_sample_prep_request SPR
+             JOIN LATERAL (
+               SELECT value as Item
+               FROM public.parse_delimited_list ( SPR.Cell_Culture_List, ';' )
+             ) AS TL On true
+             INNER JOIN t_biomaterial B
+               ON B.Biomaterial_Name = TL.Item
+        WHERE SPR.prep_request_id = _samplePrepRequestID;
+        */
 
         -- Experiments
         --
@@ -127,66 +131,77 @@ BEGIN
                 E.material_active AS Status,
                 E.created AS Created
         FROM    t_sample_prep_request SPR
-                INNER JOIN t_experiments E ON SPR.prep_request_id = E.sample_prep_request_id
-        WHERE SPR.prep_request_id = _samplePrepRequestID
+                INNER JOIN t_experiments E
+                  ON SPR.prep_request_id = E.sample_prep_request_id
+        WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- Experiment groups
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
-        SELECT DISTINCT
-                SPR.prep_request_id,
-                GM.group_id AS Item_ID,
-                G.description AS Item_Name,
-                'experiment_group' AS Item_Type,
-                G.group_type AS Status,
-                G.created AS Created
-        FROM    t_sample_prep_request SPR
-                INNER JOIN t_experiments E ON SPR.prep_request_id = E.sample_prep_request_id
-                INNER JOIN t_experiment_group_members GM ON E.exp_id = GM.exp_id
-                INNER JOIN t_experiment_groups G ON GM.group_id = G.group_id
-        WHERE SPR.prep_request_id = _samplePrepRequestID
+        SELECT DISTINCT SPR.prep_request_id,
+                        GM.group_id AS Item_ID,
+                        G.description AS Item_Name,
+                        'experiment_group' AS Item_Type,
+                        G.group_type AS Status,
+                        G.created AS Created
+        FROM t_sample_prep_request SPR
+             INNER JOIN t_experiments E
+               ON SPR.prep_request_id = E.sample_prep_request_id
+             INNER JOIN t_experiment_group_members GM
+               ON E.exp_id = GM.exp_id
+             INNER JOIN t_experiment_groups G
+               ON GM.group_id = G.group_id
+        WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- Material containers
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
-        SELECT  DISTINCT SPR.prep_request_id,
-                MC.prep_request_id AS Item_ID,
-                MC.container AS Item_Name,
-                'material_container' AS Item_Type,
-                MC.status,
-                MC.created
-        FROM    t_sample_prep_request SPR
-                INNER JOIN t_experiments E ON SPR.prep_request_id = E.sample_prep_request_id
-                INNER JOIN t_material_containers MC ON E.container_id = MC.prep_request_id
-        WHERE SPR.prep_request_id = _samplePrepRequestID AND MC.prep_request_id > 1;
+        SELECT DISTINCT SPR.prep_request_id,
+                        MC.prep_request_id AS Item_ID,
+                        MC.container AS Item_Name,
+                        'material_container' AS Item_Type,
+                        MC.status,
+                        MC.created
+        FROM t_sample_prep_request SPR
+             INNER JOIN t_experiments E
+               ON SPR.prep_request_id = E.sample_prep_request_id
+             INNER JOIN t_material_containers MC
+               ON E.container_id = MC.prep_request_id
+        WHERE SPR.prep_request_id = _samplePrepRequestID AND
+              MC.prep_request_id > 1;
 
         -- Requested runs
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
-        SELECT  SPR.prep_request_id,
-                RR.prep_request_id AS Item_ID,
-                RR.request_name AS Item_Name,
-                'requested_run' AS Item_Type,
-                RR.state_name AS Status,
-                RR.created AS Created
-        FROM    t_sample_prep_request SPR
-                INNER JOIN t_experiments E ON SPR.prep_request_id = E.sample_prep_request_id
-                INNER JOIN t_requested_run RR ON E.exp_id = RR.exp_id
+        SELECT SPR.prep_request_id,
+               RR.prep_request_id AS Item_ID,
+               RR.request_name AS Item_Name,
+               'requested_run' AS Item_Type,
+               RR.state_name AS Status,
+               RR.created AS Created
+        FROM t_sample_prep_request SPR
+             INNER JOIN t_experiments E
+               ON SPR.prep_request_id = E.sample_prep_request_id
+             INNER JOIN t_requested_run RR
+               ON E.exp_id = RR.exp_id
         WHERE SPR.prep_request_id = _samplePrepRequestID
 
         -- Datasets
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
-        SELECT  SPR.prep_request_id,
-                DS.dataset_id AS Item_ID,
-                DS.dataset AS Item_Name,
-                'dataset' AS Item_Type,
-                DSN.DSS_name AS Status,
-                DS.created AS Created
-        FROM    t_sample_prep_request SPR
-                INNER JOIN t_experiments E ON SPR.prep_request_id = E.sample_prep_request_id
-                INNER JOIN t_dataset DS ON E.exp_id = DS.exp_id
-                INNER JOIN t_dataset_rating_name DSN ON DS.dataset_state_id = DSN.dataset_state_id
+        SELECT SPR.prep_request_id,
+               DS.dataset_id AS Item_ID,
+               DS.dataset AS Item_Name,
+               'dataset' AS Item_Type,
+               DSN.dataset_state AS Status,
+               DS.created AS Created
+        FROM t_sample_prep_request SPR
+             INNER JOIN t_experiments E
+               ON SPR.prep_request_id = E.sample_prep_request_id
+             INNER JOIN t_dataset DS
+               ON E.exp_id = DS.exp_id
+             INNER JOIN t_dataset_state_name DSN
+               ON DS.dataset_state_id = DSN.dataset_state_id
         WHERE SPR.prep_request_id = _samplePrepRequestID
 
         -- HPLC Runs - Reference to sample prep request IDs in comma delimited list in text field
@@ -204,7 +219,7 @@ BEGIN
                       LCRun.created
                FROM t_prep_lc_run LCRun
                     INNER JOIN LATERAL public.parse_delimited_integer_list(LCRun.sample_prep_requests) As TL On true
-               WHERE sample_prep_requests LIKE '%' || _samplePrepRequestID::text || '%'
+               WHERE sample_prep_requests ILIKE '%' || _samplePrepRequestID::text || '%'
              ) TX
         WHERE TX.SPR_ID = _samplePrepRequestID;
 
@@ -309,30 +324,32 @@ BEGIN
 
             CALL update_sample_prep_request_item_count (_samplePrepRequestID);
 
-        End If; --<update>
+        End If;
 
         If _mode = 'debug' Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-9s %-9s %-80s %-20s %-15s %-20s %-6s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'ID',
+                                'Item_ID',
+                                'Item_Name',
+                                'Item_Type',
+                                'Status',
+                                'Created',
+                                'Marked'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '---------',
+                                         '---------',
+                                         '--------------------------------------------------------------------------------',
+                                         '--------------------',
+                                         '---------------',
+                                         '--------------------',
+                                         '------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -344,7 +361,7 @@ BEGIN
                        Item_Name,
                        Item_Type,
                        Status,
-                       Created,
+                       public.timestamp_text(Created) AS Created,
                        Marked
                 FROM Tmp_PrepRequestItems
                 ORDER BY Marked, Item_Type, Item_Name

@@ -119,15 +119,15 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DatasetStartTimes (
-            ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             DMS_Inst_ID int Not Null,
             ItemType text Not Null,         -- 'Dataset' or 'Interval'
             StartTime timestamp Not Null,
-            Datasets int Null                       -- Number of datasets or number of long intervals with this start time
+            Datasets int Null               -- Number of datasets or number of long intervals with this start time
         )
 
         -- ItemType and Datasets are included here so that they're included in the index, removing the need for a table lookup
-        CREATE UNIQUE INDEX IX_Tmp_DatasetStartTimes_ID_Datasets On Tmp_DatasetStartTimes (ID, ItemType, Datasets);
+        CREATE UNIQUE INDEX IX_Tmp_DatasetStartTimes_ID_Datasets On Tmp_DatasetStartTimes (Entry_ID, ItemType, Datasets);
 
         -- Also create an index that supports StartTime lookup by dataset and type
         CREATE UNIQUE INDEX IX_Tmp_DatasetStartTimes_InstID_StartTime On Tmp_DatasetStartTimes (DMS_Inst_ID, ItemType, StartTime);
@@ -137,7 +137,7 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_UpdatesToApply (
-            ID Int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            Entry_ID Int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             DMS_Inst_ID int Not Null,
             ItemType text Not Null,         -- 'Dataset' or 'Interval'
             Start timestamp Not Null,
@@ -223,43 +223,41 @@ BEGIN
 
         If _infoOnly And _showStartTimes Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-8s %-17s %-10s %-20s %-8s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Entry_ID',
+                                'DMS_Instrument_ID',
+                                'Item_Type',
+                                'Start_Time',
+                                'Datasets'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '--------',
+                                         '-----------------',
+                                         '----------',
+                                         '--------------------',
+                                         '--------'
                                         );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT ID,
-                       DMS_Inst_ID,
+                SELECT Entry_ID,
+                       DMS_Inst_ID AS DMS_Instrument_ID,
                        ItemType As Item_Type,
-                       StartTime As Start_Time,
+                       public.timestamp_text(StartTime_ As Start_Time,
                        Datasets
                 FROM Tmp_DatasetStartTimes
-                ORDER BY ID
+                ORDER BY Entry_ID
             LOOP
                 _infoData := format(_formatSpecifier,
-                                    _previewData.ID,
-                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Entry_ID,
+                                    _previewData.DMS_Instrument_ID,
                                     _previewData.Item_Type,
                                     _previewData.Start_Time,
                                     _previewData.Datasets
@@ -276,7 +274,7 @@ BEGIN
                    StartTime
             FROM Tmp_DatasetStartTimes
             WHERE Datasets > 1
-            ORDER BY ID
+            ORDER BY Entry_ID
         LOOP
 
             -- Find the best dataset ID to represent the group of datasets (or group of intervals) that start at _startTimeInfo.StartTime
@@ -366,46 +364,50 @@ BEGIN
 
             If _showPendingUpdates Then
 
-                -- ToDo: Update this to use RAISE INFO
-
                 RAISE INFO '';
 
-                _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+                _formatSpecifier := '%-8s %-17s %-10s %-20s %-10s %-5s %-80s %-22s';
 
                 _infoHead := format(_formatSpecifier,
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg',
-                                    'abcdefg'
+                                    'Entry_ID',
+                                    'DMS_Instrument_ID',
+                                    'Item_Type',
+                                    'Start',
+                                    'Dataset_ID',
+                                    'Seq',
+                                    'Dataset',
+                                    'Dataset_ID_Acq_Overlap'
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---',
-                                             '---'
+                                             '--------',
+                                             '-----------------',
+                                             '----------',
+                                             '--------------------',
+                                             '----------',
+                                             '-----',
+                                             '--------------------------------------------------------------------------------',
+                                             '----------------------'
                                             );
 
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
 
                 FOR _previewData IN
-                    SELECT U.ID,
-                           U.DMS_Inst_ID,
+                    SELECT U.Entry_ID,
+                           U.DMS_Inst_ID AS DMS_Instrument_ID,
                            U.ItemType As Item_Type,
-                           U.Start,
+                           public.timestamp_text(U.Start) AS Start,
                            U.Dataset_ID,
                            U.Seq,
                            U.Dataset,
                            U.Dataset_ID_Acq_Overlap
                     FROM Tmp_UpdatesToApply U
-                    ORDER BY ID
+                    ORDER BY Entry_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
-                                        _previewData.ID,
-                                        _previewData.DMS_Inst_ID,
+                                        _previewData.Entry_ID,
+                                        _previewData.DMS_Instrument_ID,
                                         _previewData.Item_Type,
                                         _previewData.Start,
                                         _previewData.Dataset_ID,
@@ -419,36 +421,42 @@ BEGIN
 
             End If;
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-8s %-17s %-10s %-20s %-7s %-10s %-5s %-80s %-22s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Entry_ID',
+                                'DMS_Instrument_ID',
+                                'Item_Type',
+                                'Start',
+                                'Minutes',
+                                'Dataset_ID',
+                                'Seq',
+                                'Dataset',
+                                'Dataset_ID_Acq_Overlap'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '--------',
+                                         '-----------------',
+                                         '----------',
+                                         '--------------------',
+                                         '-------',
+                                         '----------',
+                                         '-----',
+                                         '--------------------------------------------------------------------------------',
+                                         '----------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT U.ID,
-                       U.DMS_Inst_ID,
+                SELECT U.Entry_ID,
+                       U.DMS_Inst_ID AS DMS_Instrument_ID,
                        U.ItemType As Item_Type,
-                       U.Start,
+                       public.timestamp_text(U.Start) AS Start,
                        InstUsage.Minutes,
                        U.Dataset_ID,
                        U.Seq,
@@ -460,11 +468,11 @@ BEGIN
                           U.start = InstUsage.start AND
                           U.ItemType = InstUsage.type AND
                           U.seq = InstUsage.seq
-                ORDER BY ID
+                ORDER BY Entry_ID
             LOOP
                 _infoData := format(_formatSpecifier,
-                                    _previewData.ID,
-                                    _previewData.DMS_Inst_ID,
+                                    _previewData.Entry_ID,
+                                    _previewData.DMS_Instrument_ID,
                                     _previewData.Item_Type,
                                     _previewData.Start,
                                     _previewData.Minutes,
