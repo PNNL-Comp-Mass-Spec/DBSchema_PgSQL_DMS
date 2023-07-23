@@ -572,7 +572,7 @@ BEGIN
     UPDATE Tmp_FactorInfo
     SET UpdateSkipCode = 1
     WHERE UpdateSkipCode = 0 AND
-          EXISTS ( SELECT *
+          EXISTS ( SELECT 1
                    FROM t_factor
                    WHERE t_factor.type = 'Run_Request' AND
                          Tmp_FactorInfo.RequestID = t_factor.target_id AND
@@ -624,7 +624,7 @@ BEGIN
 
     DELETE FROM t_factor
     WHERE t_factor.type = 'Run_Request' AND
-          EXISTS ( SELECT *
+          EXISTS ( SELECT 1
                    FROM Tmp_FactorInfo
                    WHERE UpdateSkipCode = 0 AND
                          Tmp_FactorInfo.RequestID = t_factor.target_id AND
@@ -662,7 +662,7 @@ BEGIN
     FROM Tmp_FactorInfo
     WHERE UpdateSkipCode = 0 AND
           Trim(Tmp_FactorInfo.value) <> '' AND
-          NOT EXISTS ( SELECT *
+          NOT EXISTS ( SELECT 1
                        FROM t_factor
                        WHERE Tmp_FactorInfo.RequestID = t_factor.target_id AND
                              Tmp_FactorInfo.Factor = t_factor.name AND

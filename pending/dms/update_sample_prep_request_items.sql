@@ -101,9 +101,8 @@ BEGIN
         -- into staging table
         ---------------------------------------------------
 
-        -- Cell_culture: no longer tracked in t_sample_prep_request, as of April 2017, and thus not ported to PostgreSQL
-
-        /*
+        -- Biomaterial (unused since April 2017, but still tracked)
+        --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                B.Biomaterial_ID AS Item_ID,
@@ -114,25 +113,24 @@ BEGIN
         FROM t_sample_prep_request SPR
              JOIN LATERAL (
                SELECT value as Item
-               FROM public.parse_delimited_list ( SPR.Cell_Culture_List, ';' )
+               FROM public.parse_delimited_list ( SPR.Biomaterial_List, ';' )
              ) AS TL On true
              INNER JOIN t_biomaterial B
                ON B.Biomaterial_Name = TL.Item
         WHERE SPR.prep_request_id = _samplePrepRequestID;
-        */
 
         -- Experiments
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
-        SELECT  SPR.prep_request_id,
-                E.exp_id AS Item_ID,
-                E.experiment AS Item_Name,
-                'experiment' AS Item_Type,
-                E.material_active AS Status,
-                E.created AS Created
-        FROM    t_sample_prep_request SPR
-                INNER JOIN t_experiments E
-                  ON SPR.prep_request_id = E.sample_prep_request_id
+        SELECT SPR.prep_request_id,
+               E.exp_id AS Item_ID,
+               E.experiment AS Item_Name,
+               'experiment' AS Item_Type,
+               E.material_active AS Status,
+               E.created AS Created
+        FROM t_sample_prep_request SPR
+             INNER JOIN t_experiments E
+               ON SPR.prep_request_id = E.sample_prep_request_id
         WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- Experiment groups
@@ -227,12 +225,12 @@ BEGIN
         -- Mark items for update that are already in database
         ---------------------------------------------------
 
-        UPDATE Tmp_PrepRequestItems
+        UPDATE Tmp_PrepRequestItems TPRI
         SET Marked = 'Y'
         FROM t_sample_prep_request_items I
-        WHERE I.prep_request_item_id = Tmp_PrepRequestItems.prep_request_item_id AND
-              I.item_id = Tmp_PrepRequestItems.item_id AND
-              I.item_type = Tmp_PrepRequestItems.item_type;
+        WHERE I.prep_request_item_id = TPRI.prep_request_item_id AND
+              I.item_id = TPRI.item_id AND
+              I.item_type = TPRI.item_type;
 
         ---------------------------------------------------
         -- Mark items for delete that are already in database
@@ -246,11 +244,11 @@ BEGIN
                'D' AS Marked
         FROM t_sample_prep_request_items I
         WHERE prep_request_item_id = _samplePrepRequestID
-              AND NOT EXISTS ( SELECT *
-                               FROM Tmp_PrepRequestItems
-                               WHERE I.prep_request_item_id = Tmp_PrepRequestItems.prep_request_item_id AND
-                                     I.item_id = Tmp_PrepRequestItems.item_id AND
-                                     I.item_type = Tmp_PrepRequestItems.item_type );
+              AND NOT EXISTS ( SELECT 1
+                               FROM Tmp_PrepRequestItems TPRI
+                               WHERE I.prep_request_item_id = TPRI.prep_request_item_id AND
+                                     I.item_id = TPRI.item_id AND
+                                     I.item_type = TPRI.item_type );
 
         ---------------------------------------------------
         -- Update database
@@ -285,25 +283,25 @@ BEGIN
 
             UPDATE t_sample_prep_request_items
             SET Status = ''
-            FROM Tmp_PrepRequestItems
-            WHERE I.ID = Tmp_PrepRequestItems.ID AND
-                  I.Item_ID = Tmp_PrepRequestItems.Item_ID AND
-                  I.Item_Type = Tmp_PrepRequestItems.Item_Type AND
-                  Tmp_PrepRequestItems.Marked = 'Y' And char_length(Coalesce(I.Status, '')) > 0;
+            FROM Tmp_PrepRequestItems TPRI
+            WHERE I.ID = TPRI.ID AND
+                  I.Item_ID = TPRI.Item_ID AND
+                  I.Item_Type = TPRI.Item_Type AND
+                  TPRI.Marked = 'Y' And char_length(Coalesce(I.Status, '')) > 0;
 
             ---------------------------------------------------
             -- Update the Created date for marked items (if not correct)
             ---------------------------------------------------
 
             UPDATE t_sample_prep_request_items I
-            SET created = Tmp_PrepRequestItems.created
-            FROM Tmp_PrepRequestItems ITM
-            WHERE I.ID = ITM.ID AND
-                  I.Item_ID = ITM.Item_ID AND
-                  I.Item_Type = ITM.Item_Type AND
-                  ITM.Marked = 'Y' AND
-                  ( I.Created Is Null And Not ITM.Created Is Null OR
-                    I.Created <> ITM.Created);
+            SET created = TPRI.created
+            FROM Tmp_PrepRequestItems TPRI
+            WHERE I.ID = TPRI.ID AND
+                  I.Item_ID = TPRI.Item_ID AND
+                  I.Item_Type = TPRI.Item_Type AND
+                  TPRI.Marked = 'Y' AND
+                  ( I.Created Is Null And Not TPRI.Created Is Null OR
+                    I.Created <> TPRI.Created);
 
             ---------------------------------------------------
             -- Delete marked items from database
@@ -311,11 +309,11 @@ BEGIN
 
             DELETE FROM t_sample_prep_request_items
             WHERE EXISTS (SELECT 1
-                          FROM Tmp_PrepRequestItems
-                          WHERE t_sample_prep_request_items.prep_request_item_id = Tmp_PrepRequestItems.prep_request_item_id AND
-                                t_sample_prep_request_items.item_id = Tmp_PrepRequestItems.item_id                           AND
-                                t_sample_prep_request_items.item_type = Tmp_PrepRequestItems.item_type                       AND
-                                Tmp_PrepRequestItems.Marked = 'D'
+                          FROM Tmp_PrepRequestItems TPRI
+                          WHERE t_sample_prep_request_items.prep_request_item_id = TPRI.prep_request_item_id AND
+                                t_sample_prep_request_items.item_id = TPRI.item_id                           AND
+                                t_sample_prep_request_items.item_type = TPRI.item_type                       AND
+                                TPRI.Marked = 'D'
             );
 
             ---------------------------------------------------

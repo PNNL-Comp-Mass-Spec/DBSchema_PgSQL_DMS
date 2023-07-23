@@ -128,24 +128,110 @@ BEGIN
         _folderLikeClause := _tag || '%';
 
         If _infoOnly Then
-            -- ToDo: Preview the job steps using RAISE INFO
 
             -- Show job steps
-            SELECT job, step, output_folder_name As Output_Folder_Old, _resultsDirectoryName As Output_Folder_New
-            FROM sw.t_job_steps
-            WHERE job = _job And (state <> 1 OR input_folder_name Like _folderLikeClause OR  Output_Folder_Name Like _folderLikeClause)
-            ORDER BY step
+
+            -- ToDo: Show this using RAISE INFO
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Job,
+                       Step,
+                       output_folder_name As Output_Folder_Old,
+                       _resultsDirectoryName As Output_Folder_New
+                FROM sw.t_job_steps
+                WHERE job = _job And (state <> 1 OR input_folder_name Like _folderLikeClause OR  Output_Folder_Name Like _folderLikeClause)
+                ORDER BY step
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Step,
+                                    _previewData.Output_Folder_Old,
+                                    _previewData.Output_Folder_New
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             -- Show dependencies
-            SELECT *,
-                    CASE
-                        WHEN Evaluated <> 0 OR
-                            Triggered <> 0 THEN 'Dependency will be reset'
-                        ELSE ''
-                    END AS Message
-            FROM sw.t_job_step_dependencies
-            WHERE job = _job
-            ORDER BY step;
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+
+            _infoHead := format(_formatSpecifier,
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg',
+                                'abcdefg'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---',
+                                         '---'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Job,
+                       Step,
+                       Target_Step,
+                       Condition_Test,
+                       Test_Value,
+                       Evaluated,
+                       Triggered,
+                       Enable_Only,
+                       CASE
+                           WHEN Evaluated <> 0 OR
+                                Triggered <> 0 THEN 'Dependency will be reset'
+                           ELSE ''
+                       END AS Message
+                FROM sw.t_job_step_dependencies
+                WHERE job = _job
+                ORDER BY step
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Step,
+                                    _previewData.Target_Step,
+                                    _previewData.Condition_Test,
+                                    _previewData.Test_Value,
+                                    _previewData.Evaluated,
+                                    _previewData.Triggered,
+                                    _previewData.Enable_Only,
+                                    _previewData.Message
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         Else
 

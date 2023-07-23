@@ -187,20 +187,63 @@ BEGIN
     If _infoOnly Then
         -- Preview the next _taskCountToPreview available tasks
 
-        -- ToDo: Update this to use RAISE INFO
 
-        SELECT  source_db,
-                source_table
-                entry_id,
-                source_id,
-                path_local_root,
-                path_shared_root,
-                path_folder,
-                command
-        FROM sw.t_data_folder_create_queue
-        WHERE state = 1
-        ORDER BY entry_id
-        LIMIT _taskCountToPreview;
+        RAISE INFO '';
+
+        _formatSpecifier := '%-16s %-14s %-9s %-9s %-15s %-50s %-130s %-7s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Source_DB',
+                            'Source_Table',
+                            'Entry_ID',
+                            'Source_ID',
+                            'Path_Local_Root',
+                            'Path_Shared_Root',
+                            'Path_Folder',
+                            'Command'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------------',
+                                     '--------------',
+                                     '---------',
+                                     '---------',
+                                     '---------------',
+                                     '--------------------------------------------------',
+                                     '----------------------------------------------------------------------------------------------------------------------------------',
+                                     '-------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Source_DB,
+                   Source_Table
+                   Entry_ID,
+                   Source_ID,
+                   Path_Local_Root,
+                   Path_Shared_Root,
+                   Path_Folder,
+                   Command
+            FROM sw.t_data_folder_create_queue
+            WHERE state = 1
+            ORDER BY entry_id
+            LIMIT _taskCountToPreview
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Source_DB,
+                                _previewData.Source_Table,
+                                _previewData.Entry_ID,
+                                _previewData.Source_ID,
+                                _previewData.Path_Local_Root,
+                                _previewData.Path_Shared_Root,
+                                _previewData.Path_Folder,
+                                _previewData.Command
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     End If;
 

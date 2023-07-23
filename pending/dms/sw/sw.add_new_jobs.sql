@@ -674,32 +674,28 @@ BEGIN
         CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
     End If;
 
-    ---------------------------------------------------
-    -- Exit
-    ---------------------------------------------------
-
     If _debugMode Then
-
-        -- ToDo: Update this to use Raise Info
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-20s %-9s %-35s %-9s %-14s %-8s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Message',
+                            'Job',
+                            'Script',
+                            'DMS_State',
+                            'Pipeline_State',
+                            'Entry_ID'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '--------------------',
+                                     '---------',
+                                     '-----------------------------------',
+                                     '---------',
+                                     '--------------',
+                                     '--------'
                                     );
 
         RAISE INFO '%', _infoHead;

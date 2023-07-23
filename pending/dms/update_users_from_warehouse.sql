@@ -107,7 +107,7 @@ BEGIN
             Name text NULL,                  -- Last Name, First Name
             Email text NULL,                 -- E-mail
             Domain text NULL,                -- PNL
-            Network_Login text NULL,         -- Username on the domain
+            Username text NULL,              -- Username on the domain
             PNNL_Payroll text NULL,          -- Payroll number
             Active text NOT NULL,            -- Y if an active login; N if a former staff member
             UpdateRequired boolean NOT NULL  -- Initially false; this procedure will set this to true for staff that need to be updated
@@ -123,7 +123,7 @@ BEGIN
                                    name,
                                    email,
                                    domain,
-                                   Network_Login,
+                                   Username,
                                    PNNL_Payroll,
                                    active,
                                    UpdateRequired )
@@ -131,7 +131,7 @@ BEGIN
                PREFERRED_NAME_FM,
                INTERNET_EMAIL_ADDRESS,
                NETWORK_DOMAIN,
-               NETWORK_ID,
+               NETWORK_ID,              -- Username
                PNNL_PAY_NO,
                Coalesce(ACTIVE_SW, 'N') AS Active,
                false AS UpdateRequired
@@ -148,7 +148,7 @@ BEGIN
                                    name,
                                    email,
                                    domain,
-                                   Network_Login,
+                                   Username,
                                    PNNL_Payroll,
                                    active,
                                    UpdateRequired )
@@ -156,7 +156,7 @@ BEGIN
                format('%s, %s', Src.last_name, Src.pref_first_name),
                Src.internet_address,
                NetworkInfo.NETWORK_DOMAIN,
-               NetworkInfo.NETWORK_ID,
+               NetworkInfo.NETWORK_ID,          -- Username
                NULL AS PNNL_Payroll,
                Coalesce(Src.pnl_maintained_sw, 'N') AS Active,
                false AS UpdateRequired
@@ -283,26 +283,38 @@ BEGIN
             -- Preview the updates
             ----------------------------------------------------------
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-40s %-40s %-40s %-40s %-6s %-10s %-7s %-11s %-10s %-12s %-6s %-10s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Name',
+                                'Name_New',
+                                'Email',
+                                'Email_New',
+                                'Domain',
+                                'Domain_New',
+                                'Payroll',
+                                'Payroll_New',
+                                'Username',
+                                'Username_New',
+                                'Active',
+                                'Active_New'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '----------------------------------------',
+                                         '----------------------------------------',
+                                         '----------------------------------------',
+                                         '----------------------------------------',
+                                         '------',
+                                         '----------',
+                                         '-------',
+                                         '-----------',
+                                         '----------',
+                                         '------------',
+                                         '------',
+                                         '----------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -312,13 +324,13 @@ BEGIN
                 SELECT U.Name,
                        Src.name AS Name_New,
                        U.Email,
-                       Src.email AS EMail_New,
+                       Src.email AS Email_New,
                        U.Domain,
                        Src.domain AS Domain_New,
                        U.Payroll,
                        Src.PNNL_Payroll AS Payroll_New,
                        U.Username,
-                       Src.Network_Login AS Network_Login_New,
+                       Src.Username AS Username_New,
                        U.Active,
                        Src.active AS Active_New
                 FROM t_users U
@@ -331,13 +343,13 @@ BEGIN
                                     _previewData.Name,
                                     _previewData.Name_New,
                                     _previewData.Email,
-                                    _previewData.EMail_New,
+                                    _previewData.Email_New,
                                     _previewData.Domain,
                                     _previewData.Domain_New,
                                     _previewData.Payroll,
                                     _previewData.Payroll_New,
                                     _previewData.Username,
-                                    _previewData.NetworkLogin_New,
+                                    _previewData.Username_New,
                                     _previewData.Active,
                                     _previewData.Active_New
                                    );
@@ -350,14 +362,14 @@ BEGIN
         CREATE TEMP TABLE Tmp_UserProblems (
             ID int NOT NULL,
             Warning text,
-            Network_Login text NULL
+            Username text NULL
         );
 
         ----------------------------------------------------------
         -- Look for users marked for auto-update who were not found in either of the data warehouse views
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_UserProblems (user_id, Warning, Network_Login)
+        INSERT INTO Tmp_UserProblems (user_id, Warning, Username)
         SELECT U.user_id,
                'User not found in the Data Warehouse',
                U.username        -- username contains the network login
@@ -386,18 +398,18 @@ BEGIN
         End If;
 
         ----------------------------------------------------------
-        -- Look for users for which Username does not match Network_Login
+        -- Look for users for which t_users.Username does not match Tmp_UserInfo.Username
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_UserProblems (user_id, Warning, Network_Login)
+        INSERT INTO Tmp_UserProblems (user_id, Warning, Username)
         SELECT U.user_id,
                'Mismatch between username in DMS and network login in Warehouse',
-               Src.Network_Login
+               Src.Username
         FROM t_users U INNER JOIN Tmp_UserInfo Src
                ON U.user_id = Src.user_id
         WHERE U.update = 'y' AND
-              U.username <> Src.Network_Login AND
-              Coalesce(Src.Network_Login, '') <> ''
+              U.username <> Src.Username AND
+              Coalesce(Src.Username, '') <> ''
         --
         GET DIAGNOSTICS _missingCount = ROW_COUNT;
 
@@ -406,7 +418,7 @@ BEGIN
 
             SELECT string_agg(format('%s <> %s',
                                         Coalesce(U.username, format('??? Undefined username for user_id=%s ???', U.user_id)),
-                                        Coalesce(M.Network_Login, '??')),
+                                        Coalesce(M.Username, '??')),
                               ', ' ORDER BY U.user_id)
             INTO _addon
             FROM t_users U
@@ -422,26 +434,36 @@ BEGIN
 
         If _infoOnly And Exists (SELECT * from Tmp_UserProblems) Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-65s %-7s %-11s %-40s %-10s %-8s %-40s %-6s %-12s %-6s %-20s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Warning',
+                                'User_ID',
+                                'HID',
+                                'Name',
+                                'Username',
+                                'Status',
+                                'Email',
+                                'Domain',
+                                'Username_Alt',
+                                'Active',
+                                'Created'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '-----------------------------------------------------------------',
+                                         '-------',
+                                         '-----------',
+                                         '----------------------------------------',
+                                         '----------',
+                                         '--------',
+                                         '----------------------------------------',
+                                         '------',
+                                         '------------',
+                                         '------',
+                                         '--------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -456,9 +478,9 @@ BEGIN
                        Status,
                        Email,
                        Domain,
-                       M.Network_Login,
+                       M.Username AS Username_Alt,
                        Active,
-                       Created
+                       public.timestamp_text(Created) AS Created
                 FROM t_users U
                      INNER JOIN Tmp_UserProblems M
                        ON U.user_id = M.user_id
@@ -473,7 +495,7 @@ BEGIN
                                     _previewData.Status,
                                     _previewData.Email,
                                     _previewData.Domain,
-                                    _previewData.Network_Login,
+                                    _previewData.Username_Alt,
                                     _previewData.Active,
                                     _previewData.Created
                                    );

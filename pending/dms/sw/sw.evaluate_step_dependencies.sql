@@ -78,17 +78,17 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_DepTable (
         Job int,
-        DependentStep int,
-        TargetStep int,
-        TargetState int,
-        TargetCompletionCode int,
+        Dependent_Step int,
+        Target_Step int,
+        Target_State int,
+        Target_Completion_Code int,
         Condition_Test text,
         Test_Value text,
         Enable_Only int,
-        SortOrder int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
+        Sort_Order int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     )
 
-    CREATE INDEX IX_Tmp_DepTable_SortOrder ON Tmp_DepTable (SortOrder);
+    CREATE INDEX IX_Tmp_DepTable_Sort_Order ON Tmp_DepTable (Sort_Order);
 
     ---------------------------------------------------
     -- For steps that are waiting,
@@ -98,19 +98,19 @@ BEGIN
 
     INSERT INTO Tmp_DepTable (
         job,
-        DependentStep,
-        TargetStep,
-        TargetState,
-        TargetCompletionCode,
+        Dependent_Step,
+        Target_Step,
+        Target_State,
+        Target_Completion_Code,
         condition_test,
         test_value,
         enable_only
     )
     SELECT JS.job,
-           JSD.step AS DependentStep,
-           JS.step AS TargetStep,
-           JS.state AS TargetState,
-           JS.completion_code AS TargetCompletionCode,
+           JSD.step AS Dependent_Step,
+           JS.step AS Target_Step,
+           JS.state AS Target_State,
+           JS.completion_code AS Target_Completion_Code,
            JSD.condition_test,
            JSD.test_value,
            JSD.enable_only
@@ -150,26 +150,32 @@ BEGIN
 
         -- Preview the steps to process
 
-        -- ToDo: Update this to use RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-9s %-14s %-11s %-12s %-22s %-15s %-10s %-11s %-10s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Job',
+                            'Dependent_Step',
+                            'Target_Step',
+                            'Target_State',
+                            'Target_Completion_Code',
+                            'Condition_Test',
+                            'Test_Value',
+                            'Enable_Only',
+                            'Sort_Order'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '---------',
+                                     '--------------',
+                                     '-----------',
+                                     '------------',
+                                     '----------------------',
+                                     '---------------',
+                                     '----------',
+                                     '-----------',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -177,27 +183,27 @@ BEGIN
 
         FOR _previewData IN
             SELECT Job,
-                   DependentStep,
-                   TargetStep,
-                   TargetState,
-                   TargetCompletionCode,
+                   Dependent_Step,
+                   Target_Step,
+                   Target_State,
+                   Target_Completion_Code,
                    Condition_Test,
                    Test_Value,
                    Enable_Only,
-                   SortOrder
+                   Sort_Order
             FROM Tmp_DepTable
-            ORDER BY SortOrder
+            ORDER BY Sort_Order
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Job,
-                                _previewData.DependentStep,
-                                _previewData.TargetStep,
-                                _previewData.TargetState,
-                                _previewData.TargetCompletionCode,
+                                _previewData.Dependent_Step,
+                                _previewData.Target_Step,
+                                _previewData.Target_State,
+                                _previewData.Target_Completion_Code,
                                 _previewData.Condition_Test,
                                 _previewData.Test_Value,
                                 _previewData.Enable_Only,
-                                _previewData.SortOrder
+                                _previewData.Sort_Order
                                );
 
             RAISE INFO '%', _infoData;
@@ -223,19 +229,19 @@ BEGIN
         -- Get next step dependency
         ---------------------------------------------------
 
-        SELECT SortOrder,
+        SELECT Sort_Order,
                Job,
-               DependentStep,
-               TargetStep,
-               TargetState,
-               TargetCompletionCode,
+               Dependent_Step,
+               Target_Step,
+               Target_State,
+               Target_Completion_Code,
                Condition_Test,
                Test_Value,
                Enable_Only
         INTO _sortOrder, _job, _dependentStep, _targetStep, _targetState, _targetCompletionCode, _condition_Test, _testValue, _enableOnly
         FROM Tmp_DepTable
-        WHERE SortOrder > _sortOrder
-        ORDER BY SortOrder
+        WHERE Sort_Order > _sortOrder
+        ORDER BY Sort_Order
         LIMIT 1;
 
         If Not FOUND Then

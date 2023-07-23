@@ -73,26 +73,28 @@ BEGIN
     Else
         If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-20s %-14s %-11s %-15s %-20s %-20s %-21s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Status',
+                                'Remote_Info_ID',
+                                'Remote_Info',
+                                'Most_Recent_Job',
+                                'Last_Used',
+                                'Entered',
+                                'Max_Running_Job_Steps'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '--------------------',
+                                         '--------------',
+                                         '-----------',
+                                         '---------------',
+                                         '--------------------',
+                                         '--------------------',
+                                         '---------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -103,8 +105,8 @@ BEGIN
                        Remote_Info_ID,
                        Remote_Info,
                        Most_Recent_Job,
-                       Last_Used,
-                       Entered,
+                       public.timestamp_text(Last_Used) AS Last_Used,
+                       public.timestamp_text(Entered) AS Entered,
                        Max_Running_Job_Steps
                 FROM sw.t_remote_info
                 WHERE remote_info_id = _remoteInfoID
