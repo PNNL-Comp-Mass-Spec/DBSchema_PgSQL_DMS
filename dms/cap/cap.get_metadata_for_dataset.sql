@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION cap.get_metadata_for_dataset(_datasetname text) RETUR
 **          02/08/2023 mem - Switch from PRN to Username
 **          02/27/2023 mem - Capitalize XML element names
 **          05/29/2023 mem - Use format() for string concatenation
+**          07/23/2023 mem - Use new alias names for table
 **
 *****************************************************/
 DECLARE
@@ -60,7 +61,7 @@ BEGIN
            E.labelling AS ExperimentLabelling,
            Coalesce(E.reason, '') AS ExperimentReason,
            Coalesce(E.lab_notebook_ref, '') AS ExperimentLabNotebook,
-           Coalesce(CCE.biomaterial_list, '') AS BiomaterialList,       -- Cell_Culture_List
+           Coalesce(CEC.biomaterial_list, '') AS BiomaterialList,       -- Cell_Culture_List
            Coalesce(L.Reporter_Mz_Min, 0) AS LabellingReporterMzMin,
            Coalesce(L.Reporter_Mz_Max, 0) AS LabellingReporterMzMax,
            C.campaign AS Campaign,
@@ -87,8 +88,8 @@ BEGIN
            ON E.labelling = L.Label
          LEFT OUTER JOIN T_LC_Column AS LCCol
           ON DS.lc_column_ID = LCCol.lc_column_ID
-         LEFT OUTER JOIN T_Cached_Experiment_Components CCE
-           ON E.Exp_ID = CCE.Exp_ID
+         LEFT OUTER JOIN T_Cached_Experiment_Components CEC
+           ON E.Exp_ID = CEC.Exp_ID
          LEFT OUTER JOIN T_LC_Cart AS LCCart
                          INNER JOIN T_Requested_Run AS RR
                            ON LCCart.cart_id = RR.cart_id

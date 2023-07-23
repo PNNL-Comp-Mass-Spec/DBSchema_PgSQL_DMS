@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names(IN _
 **          01/04/2018 mem - Now caching reference compounds using the ID_Name field (which is of the form Compound_ID:Compound_Name)
 **          11/26/2022 mem - Rename parameter to _biomaterialList
 **          07/21/2023 mem - Ported to PostgreSQL
+**          07/23/2023 mem - Use new alias names for tables
 **
 *****************************************************/
 DECLARE
@@ -50,12 +51,12 @@ BEGIN
         -- Processing a single experiment
         ------------------------------------------------
 
-        SELECT string_agg(CC.Biomaterial_Name, '; ' ORDER BY CC.Biomaterial_Name)
+        SELECT string_agg(B.Biomaterial_Name, '; ' ORDER BY B.Biomaterial_Name)
         INTO _biomaterialList
-        FROM t_experiment_biomaterial ECC
-             INNER JOIN t_biomaterial CC
-               ON ECC.Biomaterial_ID = CC.Biomaterial_ID
-        WHERE ECC.Exp_ID = _expID;
+        FROM t_experiment_biomaterial ExpBiomaterial
+             INNER JOIN t_biomaterial B
+               ON ExpBiomaterial.Biomaterial_ID = B.Biomaterial_ID
+        WHERE ExpBiomaterial.Exp_ID = _expID;
 
         SELECT string_agg(RC.id_name, '; ' ORDER BY RC.id_name)
         INTO _refCompoundList
@@ -123,17 +124,17 @@ BEGIN
     -- Add mapping info for experiments with only one biomaterial
     --
     INSERT INTO Tmp_ExperimentBiomaterial (Exp_ID, Biomaterial_List, Items)
-    SELECT ECC.Exp_ID,
-           CC.Biomaterial_Name,
+    SELECT ExpBiomaterial.Exp_ID,
+           B.Biomaterial_Name,
            1 As Items
-    FROM t_experiment_biomaterial ECC
-         INNER JOIN t_biomaterial CC
-           ON ECC.Biomaterial_ID = CC.Biomaterial_ID
+    FROM t_experiment_biomaterial ExpBiomaterial
+         INNER JOIN t_biomaterial B
+           ON ExpBiomaterial.Biomaterial_ID = B.Biomaterial_ID
          INNER JOIN ( SELECT Exp_ID
                       FROM t_experiment_biomaterial
                       GROUP BY Exp_ID
                       HAVING COUNT(biomaterial_id) = 1 ) FilterQ
-           ON ECC.Exp_ID = FilterQ.Exp_ID;
+           ON ExpBiomaterial.Exp_ID = FilterQ.Exp_ID;
 
     -- Add mapping info for experiments with only one reference compound
     --
@@ -166,12 +167,12 @@ BEGIN
         ORDER BY Exp_ID
     LOOP
 
-        SELECT string_agg(CC.Biomaterial_Name, '; ' ORDER BY CC.Biomaterial_Name)
+        SELECT string_agg(B.Biomaterial_Name, '; ' ORDER BY B.Biomaterial_Name)
         INTO _biomaterialList
-        FROM t_experiment_biomaterial ECC
-            INNER JOIN t_biomaterial CC
-            ON ECC.Biomaterial_ID = CC.Biomaterial_ID
-        WHERE ECC.Exp_ID = _currentExpID;
+        FROM t_experiment_biomaterial ExpBiomaterial
+            INNER JOIN t_biomaterial B
+            ON ExpBiomaterial.Biomaterial_ID = B.Biomaterial_ID
+        WHERE ExpBiomaterial.Exp_ID = _currentExpID;
 
         _matchCount := array_length(string_to_array(_biomaterialList, ';'), 1);
 
@@ -242,15 +243,15 @@ BEGIN
         -- Show the first 20 items
 
         FOR _previewData IN
-            SELECT ECC.Exp_ID,
-                   ECC.Biomaterial_List,
-                   ECC.Items AS Biomaterial_Count,
+            SELECT ExpBiomaterial.Exp_ID,
+                   ExpBiomaterial.Biomaterial_List,
+                   ExpBiomaterial.Items AS Biomaterial_Count,
                    ERC.Reference_Compound_List,
                    ERC.Items AS Reference_Compound_Count
-            FROM Tmp_ExperimentBiomaterial ECC
+            FROM Tmp_ExperimentBiomaterial ExpBiomaterial
                  FULL OUTER JOIN Tmp_ExperimentRefCompounds ERC
-                   ON ECC.Exp_ID = ERC.Exp_ID
-            ORDER BY Coalesce(ECC.Items, ERC.Items), Exp_ID
+                   ON ExpBiomaterial.Exp_ID = ERC.Exp_ID
+            ORDER BY Coalesce(ExpBiomaterial.Items, ERC.Items), Exp_ID
             LIMIT 20
         LOOP
             _infoData := format(_formatSpecifier,
