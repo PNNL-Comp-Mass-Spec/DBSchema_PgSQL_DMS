@@ -81,14 +81,44 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
 
-        SELECT Script,
-               Instrument_Group,
-               Year,
-               Jobs
-        FROM Tmp_Pipeline_Job_Stats
-        ORDER BY Script, Instrument_Group, Year
+        _formatSpecifier := '%-35s %-25s %-4s %-6s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Script',
+                            'Instrument_Group',
+                            'Year',
+                            'Jobs'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '-----------------------------------',
+                                     '-------------------------',
+                                     '----',
+                                     '------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Script,
+                   Instrument_Group,
+                   Year,
+                   Jobs
+            FROM Tmp_Pipeline_Job_Stats
+            ORDER BY Script, Instrument_Group, Year
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Script,
+                                _previewData.Instrument_Group
+                                _previewData.Year,
+                                _previewData.Jobs
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         DROP TABLE Tmp_Pipeline_Job_Stats;
         RETURN;

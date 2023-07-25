@@ -137,61 +137,93 @@ BEGIN
          ) E ON C.step_number = E.step_number;
 
     If _overlapCount > 0 Then
-        _message := format('One or more steps overlap between scripts "%s" and "%s"', _currentScript, _extensionScriptName);
-
-        -- ToDo: Show the conflicts using RAISE INFO
 
         -- Show the conflicting steps
-        WITH ConflictQ (step_number)
-        AS ( SELECT C.step_number
-             FROM ( SELECT xmltable.step_number
-                    FROM ( SELECT _currentScriptXML AS rooted_xml
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-35s %-11s %-25s %-8s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Script',
+                            'Step_Number',
+                            'Step_Tool',
+                            'Conflict'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '-----------------------------------',
+                                     '-----------',
+                                     '-------------------------',
+                                     '--------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            WITH ConflictQ (step_number)
+            AS ( SELECT C.step_number
+                 FROM ( SELECT xmltable.step_number
+                        FROM ( SELECT _currentScriptXML AS rooted_xml
+                             ) Src,
+                             XMLTABLE('//JobScript/Step'
+                                      PASSING Src.rooted_xml
+                                      COLUMNS step_number int PATH '@Number')
+                      ) C
+                      INNER JOIN
+                      ( SELECT xmltable.step_number
+                        FROM ( SELECT _extensionScriptXML AS rooted_xml
+                             ) Src,
+                             XMLTABLE('//JobScript/Step'
+                                      PASSING Src.rooted_xml
+                                      COLUMNS step_number int PATH '@Number')
+                      ) E ON C.step_number = E.step_number
+            )
+            SELECT ScriptSteps.Script,
+                   ScriptSteps.Step_Number,
+                   ScriptSteps.Step_Tool,
+                   CASE WHEN ConflictQ.Step_Number Is Null THEN 0 ELSE 1 END As Conflict
+            FROM (
+                    SELECT _currentScript AS Script,
+                           xmltable.step_number,
+                           xmltable.step_tool
+                    FROM ( _currentScript AS rooted_xml
                          ) Src,
                          XMLTABLE('//JobScript/Step'
                                   PASSING Src.rooted_xml
-                                  COLUMNS step_number int PATH '@Number')
-                  ) C
-                  INNER JOIN
-                  ( SELECT xmltable.step_number
-                    FROM ( SELECT _extensionScriptXML AS rooted_xml
+                                  COLUMNS step_number int PATH '@Number',
+                                          step_tool   citext PATH '@Tool')
+                ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.step_number = ConflictQ.step_number
+            UNION
+            SELECT  ScriptSteps.Script,
+                    ScriptSteps.Step_Number,
+                    ScriptSteps.Step_Tool,
+                    CASE WHEN ConflictQ.Step_Number Is Null THEN 0 ELSE 1 END As Conflict
+            FROM (
+                    SELECT _extensionScriptName AS Script,
+                           xmltable.step_number,
+                           xmltable.step_tool
+                    FROM ( _extensionScriptName AS rooted_xml
                          ) Src,
                          XMLTABLE('//JobScript/Step'
                                   PASSING Src.rooted_xml
-                                  COLUMNS step_number int PATH '@Number')
-                  ) E ON C.step_number = E.step_number
-        )
-        SELECT ScriptSteps.Script,
-               ScriptSteps.Step_Number,
-               ScriptSteps.Step_Tool,
-               CASE WHEN ConflictQ.Step_Number Is Null THEN 0 ELSE 1 END As Conflict
-        FROM (
-                SELECT _currentScript AS Script,
-                       xmltable.step_number,
-                       xmltable.step_tool
-                FROM ( _currentScript AS rooted_xml
-                     ) Src,
-                     XMLTABLE('//JobScript/Step'
-                              PASSING Src.rooted_xml
-                              COLUMNS step_number int PATH '@Number',
-                                      step_tool   citext PATH '@Tool')
-            ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.step_number = ConflictQ.step_number
-        UNION
-        SELECT  ScriptSteps.Script,
-                ScriptSteps.Step_Number,
-                ScriptSteps.Step_Tool,
-                CASE WHEN ConflictQ.Step_Number Is Null THEN 0 ELSE 1 END As Conflict
-        FROM (
-                SELECT _extensionScriptName AS Script,
-                       xmltable.step_number,
-                       xmltable.step_tool
-                FROM ( _extensionScriptName AS rooted_xml
-                     ) Src,
-                     XMLTABLE('//JobScript/Step'
-                              PASSING Src.rooted_xml
-                              COLUMNS step_number int PATH '@Number',
-                                      step_tool   citext PATH '@Tool')
-            ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.Step_Number = ConflictQ.Step_Number
-        ORDER BY Script, Step_Number;
+                                  COLUMNS step_number int PATH '@Number',
+                                          step_tool   citext PATH '@Tool')
+                ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.Step_Number = ConflictQ.Step_Number
+            ORDER BY Script, Step_Number
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Script,
+                                _previewData.Step_Number,
+                                _previewData.Step_Tool,
+                                _previewData.Conflict
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        _message := format('One or more steps overlap between scripts "%s" and "%s"', _currentScript, _extensionScriptName);
 
         RAISE WARNING '%', _message;
 

@@ -594,8 +594,6 @@ BEGIN
 
         If _outputFormat = 'debug2' Then
 
-            -- ToDo: Update this to use RAISE INFO
-
             RAISE INFO '';
             RAISE INFO '%', _infoHeadInstUsage;
             RAISE INFO '%', _infoHeadSeparatorInstUsage;

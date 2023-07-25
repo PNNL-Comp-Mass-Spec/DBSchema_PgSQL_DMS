@@ -38,8 +38,8 @@ BEGIN
 ]
     CREATE TEMP TABLE Tmp_JobsToUpdate (
         Job int,
-        StartNew timestamp Null,
-        FinishNew timestamp Null
+        Start_New timestamp Null,
+        Finish_New timestamp Null
     )
 
     CREATE UNIQUE INDEX IX_Tmp_JobsToUpdate ON Tmp_JobsToUpdate (Job);
@@ -67,8 +67,8 @@ BEGIN
     GROUP BY J.job;
 
     UPDATE Tmp_JobsToUpdate
-    SET StartNew = SourceQ.Step_Start,
-        FinishNew = SourceQ.Step_Finish
+    SET Start_New = SourceQ.Step_Start,
+        Finish_New = SourceQ.Step_Finish
     FROM ( SELECT J.job,
                   MIN(JS.start) AS Step_Start,
                   MAX(JS.finish) AS Step_Finish
@@ -82,41 +82,66 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
 
-        SELECT J.Job,
-               J.state,
-               J.start,
-               J.finish,
-               JTU.StartNew,
-               JTU.FinishNew
-        FROM sw.t_jobs J
-             INNER JOIN Tmp_JobsToUpdate JTU
-               ON J.job = JTU.job
+        _formatSpecifier := '%-9s %-5s %-20s %-20s %-20s %-20s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'State',
+                            'Start',
+                            'Finish',
+                            'Start_New',
+                            'Finish_New'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------',
+                                     '-----',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT J.Job,
+                   J.State,
+                   public.timestamp_text(J.Start)        AS Start,
+                   public.timestamp_text(J.Finish)       AS Finish,
+                   public.timestamp_text(JTU.Start_New)  AS Start_New,
+                   public.timestamp_text(JTU.Finish_New) AS Finish_New
+            FROM sw.t_jobs J
+                 INNER JOIN Tmp_JobsToUpdate JTU
+                   ON J.job = JTU.job
+            ORDER BY J.job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.State,
+                                _previewData.Start,
+                                _previewData.Finish,
+                                _previewData.Start_New,
+                                _previewData.Finish_New
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     Else
 
         ---------------------------------------------------
         -- Update the Start/Finish times
         ---------------------------------------------------
 
-        UPDATE sw.t_jobs
-        SET start = JTU.StartNew,
-            finish = JTU.FinishNew
-        FROM sw.t_jobs J
-
-        /********************************************************************************
-        ** This UPDATE query includes the target table name in the FROM clause
-        ** The WHERE clause needs to have a self join to the target table, for example:
-        **   UPDATE sw.t_jobs
-        **   SET ...
-        **   FROM source
-        **   WHERE source.id = sw.t_jobs.id;
-        ********************************************************************************/
-
-                               ToDo: Fix this query
-
-             INNER JOIN Tmp_JobsToUpdate JTU
-               ON J.Job = JTU.Job
+        UPDATE sw.t_jobs J
+        SET start = JTU.Start_New,
+            finish = JTU.Finish_New
+        FROM Tmp_JobsToUpdate JTU
+        WHERE J.Job = JTU.Job;
 
     End If;
 

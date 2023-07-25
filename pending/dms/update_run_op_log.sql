@@ -105,14 +105,18 @@ BEGIN
             statusID int null
         )
 
-        INSERT INTO Tmp_RequestedRunUsageInfo
-            (request, usage, proposal, emsl_user)
-        SELECT
-            xmlNode.value('@request', 'text') request,
-            xmlNode.value('@usage', 'text') usage,
-            xmlNode.value('@proposal', 'text') proposal,
-            xmlNode.value('@user', 'text') emsl_user
-        FROM _xml.nodes('//run') AS R(xmlNode);
+        INSERT INTO Tmp_RequestedRunUsageInfo (request, usage, proposal, emsl_user)
+        SELECT XmlQ.request, XmlQ.usage, XmlQ.proposal, XmlQ.emsl_user
+        FROM (
+            SELECT xmltable.*
+            FROM ( SELECT ('<updates>' || _xml::text || '</updates>')::xml as rooted_xml ) Src,
+                 XMLTABLE('//updates/run'
+                          PASSING Src.rooted_xml
+                          COLUMNS request int PATH '@request',
+                                  usage citext PATH '@usage',
+                                  proposal citext PATH '@proposal',
+                                  emsl_user citext PATH '@user')
+             ) XmlQ;
 
         -- Get current status of request (needed for change log updating)
         --
@@ -133,12 +137,16 @@ BEGIN
             note text
         )
 
-        INSERT INTO Tmp_IntervalUpdates
-            (id, note)
-        SELECT
-            xmlNode.value('@id', 'text') request,
-            xmlNode.value('@note', 'text') note
-        FROM _xml.nodes('//interval') AS R(xmlNode);
+        INSERT INTO Tmp_IntervalUpdates (id, note)
+        SELECT XmlQ.request, XmlQ.note
+        FROM (
+            SELECT xmltable.*
+            FROM ( SELECT ('<updates>' || _xml::text || '</updates>')::xml as rooted_xml ) Src,
+                 XMLTABLE('//updates/interval'
+                          PASSING Src.rooted_xml
+                          COLUMNS request citext PATH '@id',
+                                  note citext PATH '@note')
+             ) XmlQ;
 
         -----------------------------------------------------------
         -- Loop through requested run changes

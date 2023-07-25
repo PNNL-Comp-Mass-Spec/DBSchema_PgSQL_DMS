@@ -64,18 +64,47 @@ BEGIN
     SET New_CPU_Load = 255
     WHERE New_CPU_Load > 255;
 
-    If Exists (Select * From Tmp_PendingUpdates) Then
+    If Not Exists (Select * From Tmp_PendingUpdates) Then
+        DROP TABLE Tmp_PendingUpdates;
+        RETURN;
+    End If;
 
-        ---------------------------------------------------
-        -- Preview the results or update sw.t_job_steps
-        ---------------------------------------------------
+    ---------------------------------------------------
+    -- Preview the results or update sw.t_job_steps
+    ---------------------------------------------------
 
-        If _infoOnly Then
+    If _infoOnly Then
 
-            -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
 
+        _formatSpecifier := '%-9s %-4s %-25s %-15s %-12s %-20s %-8s %-15s %-12s %-80s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Processor',
+                            'CPU_Load',
+                            'Actual_CPU_Load',
+                            'New_CPU_Load',
+                            'Dataset'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------',
+                                     '----',
+                                     '-------------------------',
+                                     '---------------',
+                                     '------------',
+                                     '--------------------',
+                                     '--------',
+                                     '---------------',
+                                     '------------',
+                                     '--------------------------------------------------------------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
             SELECT JS.Job,
-                   JS.Dataset,
                    JS.Step,
                    JS.Tool,
                    JS.RunTime_Minutes,
@@ -83,28 +112,43 @@ BEGIN
                    JS.Processor,
                    JS.CPU_Load,
                    JS.Actual_CPU_Load,
-                   U.New_CPU_Load
+                   U.New_CPU_Load,
+                   JS.Dataset
             FROM Tmp_PendingUpdates U
                  INNER JOIN V_Job_Steps JS
                    ON U.Job = JS.Job AND
                       U.Step = JS.Step AND
                       U.Processor_Name = JS.Processor
-            ORDER BY JS.Tool, JS.Job;
+            ORDER BY JS.Tool, JS.Job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Step,
+                                _previewData.Tool,
+                                _previewData.RunTime_Minutes,
+                                _previewData.Job_Progress,
+                                _previewData.Processor,
+                                _previewData.CPU_Load,
+                                _previewData.Actual_CPU_Load,
+                                _previewData.New_CPU_Load,
+                                _previewData.Dataset
+                               );
 
-        Else
-            UPDATE sw.t_job_steps
-            SET actual_cpu_load = U.New_CPU_Load
-            FROM Tmp_PendingUpdates U
-                 INNER JOIN sw.t_job_steps JS
-                   ON U.job = JS.job AND
-                      U.step = JS.step AND
-                      U.Processor_Name = JS.processor
-            WHERE JS.actual_cpu_load <> U.New_CPU_Load OR
-                  JS.actual_cpu_load IS NULL;
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
-        End If;
+    Else
+        UPDATE sw.t_job_steps
+        SET actual_cpu_load = U.New_CPU_Load
+        FROM Tmp_PendingUpdates U
+             INNER JOIN sw.t_job_steps JS
+               ON U.job = JS.job AND
+                  U.step = JS.step AND
+                  U.Processor_Name = JS.processor
+        WHERE JS.actual_cpu_load <> U.New_CPU_Load OR
+              JS.actual_cpu_load IS NULL;
 
-    End If; -- </a>
+    End If;
 
     DROP TABLE Tmp_PendingUpdates;
 END

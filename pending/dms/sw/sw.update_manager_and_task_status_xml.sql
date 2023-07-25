@@ -277,7 +277,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-15s %-15s %-15s %-20s %-20s %-5s %-11s %-10s %-20s %-20s %-15s %-15s %-15s %-15s %-9s %-50s %-25s %-10s %-10s %-80s';
+            _formatSpecifier := '%-20s %-15s %-15s %-20s %-20s %-5s %-11s %-10s %-20s %-20s %-15s %-15s %-15s %-15s %-9s %-50s %-25s %-10s %-10s %-80s';
 
             _infoHead := format(_formatSpecifier,
                                 'Processor_Name',
@@ -303,7 +303,7 @@ BEGIN
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '--------------',
+                                         '-------------------',
                                          '--------------',
                                          '--------------',
                                          '-------------------',
@@ -332,8 +332,8 @@ BEGIN
                 SELECT Processor_Name,
                        Remote_Manager,
                        Mgr_Status,
-                       Status_Date,
-                       Last_Start_Time,
+                       Status_Date,         -- Text-based date/time (from _managerStatusXML)
+                       Last_Start_Time,     -- Text-based date/time (from _managerStatusXML)
                        CPU_Utilization,
                        Free_Memory_MB,
                        Process_ID,

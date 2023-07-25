@@ -3,7 +3,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_job_and_shared_results
 (
     _job int,
     _sharedResultFolderName text = '',
-    _resetJob int = 0,
+    _resetJob boolean = false,
     _infoOnly boolean = true,
     INOUT _message text default '',
     INOUT _returnCode text default ''
@@ -20,7 +20,7 @@ AS $$
 **  Arguments:
 **    _job                      Job that needs to be rerun, including re-generating the shared results
 **    _sharedResultFolderName   If blank, will be auto-determined for the given job
-**    _resetJob                 Will automatically reset the job if 1, otherwise, you must manually reset the job
+**    _resetJob                 Will automatically reset the job if true, otherwise, you must manually reset the job
 **    _infoOnly                 True to preview the changes
 **
 **  Auth:   mem
@@ -129,30 +129,120 @@ BEGIN
 
             If _infoOnly Then
 
-                -- ToDo: Update this to use RAISE INFO
+                RAISE INFO '';
 
-                SELECT 'Delete from sw.t_shared_results' As Message, *
-                FROM sw.t_shared_results
-                WHERE results_name = _outputFolder;
+                _formatSpecifier := '%-35s %-40s %-20s';
 
-                SELECT 'Remove job from sw.t_jobs, but leave in sw.t_jobs_history' As Message,
-                       V_Job_Steps.job AS JobToRemoveFromTJobs,
-                       sw.t_jobs.state AS Job_State
-                FROM V_Job_Steps
-                     INNER JOIN sw.t_jobs
-                       ON V_Job_Steps.job = sw.t_jobs.job
-                WHERE V_Job_Steps.Output_Folder = _outputFolder AND
-                      V_Job_Steps.state = 5 AND
-                      sw.t_jobs.state = 4;
+                _infoHead := format(_formatSpecifier,
+                                    'Message',
+                                    'Results_Name',
+                                    'Created'
+                                   );
 
-                SELECT 'Update sw.t_job_steps_history' As Message, Output_Folder_Name, format('%s_BAD', Output_Folder_Name) As Output_Folder_Name_New
-                FROM sw.t_job_steps_history
-                WHERE output_folder_name = _outputFolder AND state = 5;
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '-----------------------------------',
+                                             '----------------------------------------',
+                                             '--------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Delete from sw.t_shared_results' AS Message,
+                           Results_Name,
+                           public.timestamp_text(Created) AS Created
+                    FROM sw.t_shared_results
+                    WHERE results_name = _outputFolder
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Message,
+                                        _previewData.Results_Name,
+                                        _previewData.Created
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
+                RAISE INFO '';
+
+                _formatSpecifier := '%-60s %-25s %-9s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Message',
+                                    'Job_To_Remove_From_T_Jobs',
+                                    'Job_State'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '------------------------------------------------------------',
+                                             '-------------------------',
+                                             '---------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Remove job from sw.t_jobs, but leave in sw.t_jobs_history' As Message,
+                           V_Job_Steps.job AS Job_To_Remove_From_T_Jobs,
+                           sw.t_jobs.state AS Job_State
+                    FROM V_Job_Steps
+                         INNER JOIN sw.t_jobs
+                           ON V_Job_Steps.job = sw.t_jobs.job
+                    WHERE V_Job_Steps.Output_Folder = _outputFolder AND
+                          V_Job_Steps.state = 5 AND
+                          sw.t_jobs.state = 4
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Message,
+                                        _previewData.Job_To_Remove_From_T_Jobs,
+                                        _previewData.Job_State
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
+
+                RAISE INFO '';
+
+                _formatSpecifier := '%-30s %-30s %-30s';
+
+                _infoHead := format(_formatSpecifier,
+                                    'Message',
+                                    'Output_Folder_Name',
+                                    'Output_Folder_Name_New'
+                                   );
+
+                _infoHeadSeparator := format(_formatSpecifier,
+                                             '------------------------------',
+                                             '------------------------------',
+                                             '------------------------------'
+                                            );
+
+                RAISE INFO '%', _infoHead;
+                RAISE INFO '%', _infoHeadSeparator;
+
+                FOR _previewData IN
+                    SELECT 'Update sw.t_job_steps_history' As Message,
+                           Output_Folder_Name,
+                           format('%s_BAD', Output_Folder_Name) As Output_Folder_Name_New
+                    FROM sw.t_job_steps_history
+                    WHERE output_folder_name = _outputFolder AND state = 5
+                LOOP
+                    _infoData := format(_formatSpecifier,
+                                        _previewData.Message,
+                                        _previewData.Output_Folder_Name,
+                                        _previewData.Output_Folder_Name_New
+                                       );
+
+                    RAISE INFO '%', _infoData;
+                END LOOP;
 
                 CONTINUE;
             End If;
 
             -- Remove from sw.t_shared_results
+
             DELETE FROM sw.t_shared_results
             WHERE results_name = _outputFolder;
             --
@@ -164,10 +254,11 @@ BEGIN
                 _message := 'Match not found in sw.t_shared_results';
             End If;
 
-            TRUNCATE TABLE Tmp_Selected_Jobs
+            TRUNCATE TABLE Tmp_Selected_Jobs;
 
             -- Remove any completed jobs that had this output folder
             -- (the job details should already be in sw.t_job_steps_history)
+
             INSERT INTO Tmp_Selected_Jobs
             SELECT V_Job_Steps.job AS JobToDelete, sw.t_jobs.State
             FROM V_Job_Steps INNER JOIN
@@ -233,42 +324,99 @@ BEGIN
 
         END LOOP;
 
-        If _resetJob <> 0 Then
-            If _infoOnly Then
+        If Not _resetJob Then
+            DROP TABLE Tmp_SharedResultFolders;
+            DROP TABLE Tmp_Selected_Jobs;
+            RETURN;
+        End If;
 
-                -- ToDo: Update this to use RAISE INFO
+        If _infoOnly Then
 
-                SELECT *,
+            RAISE INFO '';
+
+            _formatSpecifier := '%-9s %-4s %-11s %-15s %-10s %-9s %-9s %-11s %-25s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'Step',
+                                'Target_Step',
+                                'Condition_Test',
+                                'Test_Value',
+                                'Evaluated',
+                                'Triggered',
+                                'Enable_Only',
+                                'Message'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---------',
+                                         '----',
+                                         '-----------',
+                                         '---------------',
+                                         '----------',
+                                         '---------',
+                                         '---------',
+                                         '-----------',
+                                         '-------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Job,
+                       Step,
+                       Target_Step,
+                       Condition_Test,
+                       Test_Value,
+                       Evaluated,
+                       Triggered,
+                       Enable_Only,
                        CASE
                            WHEN Evaluated <> 0 OR
                                 Triggered <> 0 THEN 'Dependency will be reset'
                            ELSE ''
                        END AS Message
                 FROM sw.t_job_step_dependencies
-                WHERE job = _job;
+                WHERE job = _job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Step,
+                                    _previewData.Target_Step,
+                                    _previewData.Condition_Test
+                                    _previewData.Test_Value,
+                                    _previewData.Evaluated,
+                                    _previewData.Triggered,
+                                    _previewData.Enable_Only,
+                                    _previewData.Message
+                                   );
 
-            Else
-                -- Reset the job (but don't delete it from the tables, and don't use Remove_Selected_Jobs since it would update sw.t_shared_results)
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
-                -- Reset dependencies
-                UPDATE sw.t_job_step_dependencies
-                SET evaluated = 0, triggered = 0
-                WHERE job = _job;
-
-                UPDATE sw.t_job_steps
-                SET state = 1,                    -- 1=waiting
-                    tool_version_id = 1,        -- 1=Unknown
-                    next_try = CURRENT_TIMESTAMP,
-                    remote_info_id = 1            -- 1=Unknown
-                WHERE job = _job AND state <> 1
-
-                UPDATE sw.t_jobs
-                SET state = 1
-                WHERE job = _job AND state <> 1
-
-            End If;
-
+            DROP TABLE Tmp_SharedResultFolders;
+            DROP TABLE Tmp_Selected_Jobs;
+            RETURN;
         End If;
+
+        -- Reset the job (but don't delete it from the tables, and don't use Remove_Selected_Jobs since it would update sw.t_shared_results)
+
+        -- Reset dependencies
+        UPDATE sw.t_job_step_dependencies
+        SET evaluated = 0, triggered = 0
+        WHERE job = _job;
+
+        UPDATE sw.t_job_steps
+        SET state = 1,                    -- 1=waiting
+            tool_version_id = 1,        -- 1=Unknown
+            next_try = CURRENT_TIMESTAMP,
+            remote_info_id = 1            -- 1=Unknown
+        WHERE job = _job AND state <> 1
+
+        UPDATE sw.t_jobs
+        SET state = 1
+        WHERE job = _job AND state <> 1
 
     EXCEPTION
         WHEN OTHERS THEN

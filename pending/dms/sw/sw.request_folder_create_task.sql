@@ -185,8 +185,8 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
-        -- Preview the next _taskCountToPreview available tasks
 
+        -- Preview the next _taskCountToPreview available tasks
 
         RAISE INFO '';
 

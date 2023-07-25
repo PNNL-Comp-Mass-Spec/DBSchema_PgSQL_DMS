@@ -87,16 +87,20 @@ BEGIN
         Name text,
         Value text NULL,
         Reqd citext NULL
-    )
+    );
 
     INSERT INTO Tmp_ParamDefinition (Section, Name, Value, Reqd)
-    SELECT
-        xmlNode.value('@Section', 'text') Section,
-        xmlNode.value('@Name', 'text') Name,
-        xmlNode.value('@Value', 'text') VALUE,
-        Coalesce(xmlNode.value('@Reqd', 'text'), 'No') As Reqd
-    FROM
-        _paramDefinition.nodes('//Param') AS R(xmlNode)
+    SELECT _job AS Job, XmlQ.section, XmlQ.name, XmlQ.value, Coalesce(XmlQ.required, 'No') AS Requied
+    FROM (
+        SELECT xmltable.*
+        FROM ( SELECT ('<params>' || _paramDefinition::text || '</params>')::xml as rooted_xml ) Src,
+             XMLTABLE('//params/Param'
+                      PASSING Src.rooted_xml
+                      COLUMNS section  citext PATH '@Section',
+                              name     citext PATH '@Name',
+                              value    citext PATH '@Value',
+                              required citext PATH '@Reqd')
+         ) XmlQ;
 
     ---------------------------------------------------
     -- Extract input parameters into temp table
@@ -111,12 +115,16 @@ BEGIN
     _jobParamXML := public.try_cast(_jobParam, null::XML);
 
     INSERT INTO Tmp_JobParameters (Section, Name, Value)
-    SELECT
-        xmlNode.value('@Section', 'text') Section,
-        xmlNode.value('@Name', 'text') Name,
-        xmlNode.value('@Value', 'text') Value
-    FROM
-        _jobParamXML.nodes('//Param') AS R(xmlNode)
+    SELECT XmlQ.section, XmlQ.name, XmlQ.value
+    FROM (
+        SELECT xmltable.*
+        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml as rooted_xml ) Src,
+             XMLTABLE('//params/Param'
+                      PASSING Src.rooted_xml
+                      COLUMNS section citext PATH '@Section',
+                              name citext PATH '@Name',
+                              value citext PATH '@Value')
+         ) XmlQ;
 
     ---------------------------------------------------
     -- Cross check to make sure required parameters are defined in Tmp_JobParameters (populated using _paramInput)

@@ -100,22 +100,22 @@ BEGIN
         Job int,
         Step int,
         Tool text,
-        Priority int,                                -- Holds Job priority
+        Priority int,                               -- Holds Job priority
         Total int,
         Evaluated int,
         Triggered int,
         Shared int,
         Signature int,
-        EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Output_Folder_Name text NULL,
         Completion_Code int NULL,
         Completion_Message text NULL,
         Evaluation_Code int NULL,
         Evaluation_Message text NULL,
-        ProcessingOrder int NULL                    -- We will populate this column after the Tmp_Steplist table gets populated
+        Processing_Order int NULL                   -- We will populate this column after the Tmp_Steplist table gets populated
     );
 
-    CREATE INDEX IX_StepList_ProcessingOrder ON Tmp_Steplist (ProcessingOrder, Job);
+    CREATE INDEX IX_StepList_Processing_Order ON Tmp_Steplist (Processing_Order, Job);
 
     ---------------------------------------------------
     -- Bump up the value for dependencies in sw.t_job_steps if it is too low
@@ -213,25 +213,109 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Populate the ProcessingOrder column in Tmp_Steplist
+    -- Populate the Processing_Order column in Tmp_Steplist
     -- Sorting by Priority so that shared steps will tend to be enabled for higher priority jobs first
     ---------------------------------------------------
 
     UPDATE Tmp_Steplist TargetQ
-    SET ProcessingOrder = LookupQ.ProcessingOrder
-    FROM ( SELECT EntryID,
-                  Row_Number() OVER ( ORDER BY Priority, Job ) AS ProcessingOrder
+    SET Processing_Order = LookupQ.Processing_Order
+    FROM ( SELECT Entry_ID,
+                  Row_Number() OVER ( ORDER BY Priority, Job ) AS Processing_Order
            FROM Tmp_Steplist
          ) LookupQ
-    WHERE TargetQ.EntryID = LookupQ.EntryID;
+    WHERE TargetQ.Entry_ID = LookupQ.Entry_ID;
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
 
-        SELECT *
-        FROM Tmp_Steplist
-        ORDER BY ProcessingOrder;
+        RAISE INFO '';
+
+        _formatSpecifier := '%-9s %-4s %-25s %-8s %-5s %-9s %-9s %-6s %-9s %-8s %-30s %-15s %-30s %-15s %-30s %-16s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'Step',
+                            'Tool',
+                            'Priority',
+                            'Total',
+                            'Evaluated',
+                            'Triggered',
+                            'Shared',
+                            'Signature',
+                            'Entry_ID',
+                            'Output_Folder_Name',
+                            'Completion_Code',
+                            'Completion_Message',
+                            'Evaluation_Code',
+                            'Evaluation_Message',
+                            'Processing_Order'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------',
+                                     '----',
+                                     '-------------------------',
+                                     '--------',
+                                     '-----',
+                                     '---------',
+                                     '---------',
+                                     '------',
+                                     '---------',
+                                     '--------',
+                                     '------------------------------',
+                                     '---------------',
+                                     '------------------------------',
+                                     '---------------',
+                                     '------------------------------',
+                                     '----------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+
+            SELECT Job,
+                   Step,
+                   Tool,
+                   Priority,
+                   Total,
+                   Evaluated,
+                   Triggered,
+                   Shared,
+                   Signature,
+                   Entry_ID,
+                   Output_Folder_Name,
+                   Completion_Code,
+                   Completion_Message,
+                   Evaluation_Code,
+                   Evaluation_Message,
+                   Processing_Order
+            FROM Tmp_Steplist
+            ORDER BY Processing_Order
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Step,
+                                _previewData.Tool,
+                                _previewData.Priority,
+                                _previewData.Total,
+                                _previewData.Evaluated,
+                                _previewData.Triggered,
+                                _previewData.Shared,
+                                _previewData.Signature,
+                                _previewData.Entry_ID,
+                                _previewData.Output_Folder_Name,
+                                _previewData.Completion_Code,
+                                _previewData.Completion_Message,
+                                _previewData.Evaluation_Code,
+                                _previewData.Evaluation_Message,
+                                _previewData.Processing_Order
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     ---------------------------------------------------
@@ -246,12 +330,7 @@ BEGIN
 
     _rowCountToProcess := Coalesce(_rowCountToProcess, 0);
 
-    WHILE true
-    LOOP
-        ---------------------------------------------------
-        -- Get next step in scratch list
-        ---------------------------------------------------
-
+    FOR _stepInfo IN
         SELECT
             Job,
             Step,
@@ -262,21 +341,15 @@ BEGIN
             Shared,
             Signature,
             Output_Folder_Name As OutputFolderName,
-            ProcessingOrder,
+            Processing_Order,
             Completion_Code As CompletionCode,
             Completion_Message As CompletionMessage,
             Evaluation_Code As EvaluationCode,
             Evaluation_Message As EvaluationMessage
         INTO _stepInfo
         FROM Tmp_Steplist
-        WHERE ProcessingOrder > _processingOrder
-        ORDER BY ProcessingOrder
-        LIMIT 1;
-
-        If Not FOUND Then
-            -- Break out of the loop
-            EXIT;
-        End If;
+        ORDER BY Processing_Order
+    LOOP
 
         ---------------------------------------------------
         -- Job step obtained, process it
@@ -505,10 +578,10 @@ BEGIN
             SELECT COUNT(DISTINCT Job)
             INTO _jobCount
             FROM Tmp_Steplist
-            WHERE ProcessingOrder <= _processingOrder;
+            WHERE Processing_Order <= _stepInfo.Processing_Order;
 
             If Coalesce(_jobCount, 0) >= _maxJobsToProcess Then
-                -- Break out of the While Loop
+                -- Break out of the For Loop
                 EXIT;
             End If;
         End If;

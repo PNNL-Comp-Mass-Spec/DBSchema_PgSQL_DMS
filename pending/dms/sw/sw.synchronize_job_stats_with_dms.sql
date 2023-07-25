@@ -84,29 +84,77 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
+        RAISE INFO '';
 
-        SELECT sw.t_jobs.job,
-               Target.start AS Start,
-               sw.t_jobs.start AS StartNew,
-               Target.finish AS Finish,
-               sw.t_jobs.finish AS FinishNew,
-               Target.processing_time_minutes AS ProcTimeMinutes,
-               JobProcTime.ProcessingTimeMinutes AS ProcTimeMinutesNew,
-               Abs( extract(epoch FROM (sw.t_jobs.start - target.start)) ) AS StartDiffSeconds,
-               Abs( extract(epoch FROM (sw.t_jobs.finish - target.Finish)) ) AS FinishDiffSeconds,
-               Round(Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.ProcessingTimeMinutes), 2) AS ProcTimeDiffMinutes
-        FROM sw.t_jobs
-             INNER JOIN public.t_analysis_job Target
-               ON sw.t_jobs.job = Target.job
-             INNER JOIN Tmp_JobsToProcess JTP
-               ON sw.t_jobs.job = JTP.job
-             INNER JOIN V_Job_Processing_Time JobProcTime
-               ON sw.t_jobs.job = JobProcTime.job
-        WHERE Abs( extract(epoch FROM (sw.t_jobs.start - Coalesce(Target.start, _defaultDate))) )   > 1 OR
-              Abs( extract(epoch FROM (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1
-              Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.ProcessingTimeMinutes)  > 0.1
-        ORDER BY sw.t_jobs.job
+        _formatSpecifier := '%-9s %-20s %-20s %-20s %-20s %-17s %-21s %-18s %-19s %-22s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'Start',
+                            'Start_New',
+                            'Finish',
+                            'Finish_New',
+                            'Proc_Time_Minutes',
+                            'Proc_Time_Minutes_New',
+                            'Start_Diff_Seconds',
+                            'Finish_Diff_Seconds',
+                            'Proc_Time_Diff_Minutes'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '-----------------',
+                                     '---------------------',
+                                     '------------------',
+                                     '-------------------',
+                                     '----------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT sw.t_jobs.Job,
+                   public.timestamp_text(Target.start) AS Start,
+                   public.timestamp_text(sw.t_jobs.start) AS Start_New,
+                   public.timestamp_text(Target.finish) AS Finish,
+                   public.timestamp_text(sw.t_jobs.finish) AS Finish_New,
+                   Target.processing_time_minutes AS Proc_Time_Minutes,
+                   JobProcTime.ProcessingTimeMinutes AS Proc_Time_Minutes_New,
+                   Abs(extract(epoch FROM (sw.t_jobs.start  - target.start))  ) AS Start_Diff_Seconds,
+                   Abs(extract(epoch FROM (sw.t_jobs.finish - target.Finish)) ) AS Finish_Diff_Seconds,
+                   Round(Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.ProcessingTimeMinutes), 2) AS Proc_Time_Diff_Minutes
+            FROM sw.t_jobs
+                 INNER JOIN public.t_analysis_job Target
+                   ON sw.t_jobs.job = Target.job
+                 INNER JOIN Tmp_JobsToProcess JTP
+                   ON sw.t_jobs.job = JTP.job
+                 INNER JOIN V_Job_Processing_Time JobProcTime
+                   ON sw.t_jobs.job = JobProcTime.job
+            WHERE Abs(extract(epoch FROM (sw.t_jobs.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
+                  Abs(extract(epoch FROM (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1
+                  Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.ProcessingTimeMinutes) > 0.1    -- Processing time differs by more than 6 seconds
+            ORDER BY sw.t_jobs.job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Start,
+                                _previewData.Start_New,
+                                _previewData.Finish,
+                                _previewData.Finish_New,
+                                _previewData.Proc_Time_Minutes,
+                                _previewData.Proc_Time_Minutes_New,
+                                _previewData.Start_Diff_Seconds,
+                                _previewData.Finish_Diff_Seconds,
+                                _previewData.Proc_Time_Diff_Minutes
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
     Else
 
@@ -121,9 +169,9 @@ BEGIN
                ON sw.t_jobs.job = JTP.job
              INNER JOIN sw.V_Job_Processing_Time JobProcTime
                ON sw.t_jobs.job = JobProcTime.job
-        WHERE Abs( extract(epoch FROM (sw.t_jobs.start - Coalesce(Target.start, _defaultDate))) )   > 1 OR
-              Abs( extract(epoch FROM (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1
-              Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.ProcessingTimeMinutes)  > 0.1
+        WHERE Abs(extract(epoch FROM (sw.t_jobs.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR  -- Start or Finish times differ by more than 1 second
+              Abs(extract(epoch FROM (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1
+              Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.ProcessingTimeMinutes) > 0.1   -- Processing time differs by more than 6 seconds
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

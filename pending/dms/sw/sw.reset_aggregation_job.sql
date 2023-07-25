@@ -131,26 +131,22 @@ BEGIN
 
             -- Show job steps
 
-            -- ToDo: Show this using RAISE INFO
-
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-9s %-4s %-30s %-30s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Job',
+                                'Step',
+                                'Output_Folder_Name',
+                                'Output_Folder_Name_New'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '---------',
+                                         '----',
+                                         '------------------------------',
+                                         '------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -159,8 +155,8 @@ BEGIN
             FOR _previewData IN
                 SELECT Job,
                        Step,
-                       output_folder_name As Output_Folder_Old,
-                       _resultsDirectoryName As Output_Folder_New
+                       Output_Folder_Name,
+                       _resultsDirectoryName As Output_Folder_Name_New
                 FROM sw.t_job_steps
                 WHERE job = _job And (state <> 1 OR input_folder_name Like _folderLikeClause OR  Output_Folder_Name Like _folderLikeClause)
                 ORDER BY step
@@ -168,8 +164,8 @@ BEGIN
                 _infoData := format(_formatSpecifier,
                                     _previewData.Job,
                                     _previewData.Step,
-                                    _previewData.Output_Folder_Old,
-                                    _previewData.Output_Folder_New
+                                    _previewData.Output_Folder_Name,
+                                    _previewData.Output_Folder_Name_New
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -179,22 +175,30 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+            _formatSpecifier := '%-9s %-4s %-11s %-15s %-10s %-9s %-9s %-11s %-25s';
 
             _infoHead := format(_formatSpecifier,
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg',
-                                'abcdefg'
+                                'Job',
+                                'Step',
+                                'Target_Step',
+                                'Condition_Test',
+                                'Test_Value',
+                                'Evaluated',
+                                'Triggered',
+                                'Enable_Only',
+                                'Message'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---',
-                                         '---'
+                                         '---------',
+                                         '----',
+                                         '-----------',
+                                         '---------------',
+                                         '----------',
+                                         '---------',
+                                         '---------',
+                                         '-----------',
+                                         '-------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -271,32 +275,126 @@ BEGIN
 
         If _infoOnly Then
 
-            -- ToDo: Preview the job steps using RAISE INFO
-
             -- Show job steps that would be reset
-            SELECT job,
-                   step,
-                   state AS State_Current,
-                   1 AS State_New
-            FROM sw.t_job_steps
-            WHERE job = _job AND
-                  state IN (6, 7)
-            ORDER BY step;
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-9s %-4s %-13s %-9s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'Step',
+                                'State_Current',
+                                'State_New'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---------',
+                                         '----',
+                                         '-------------',
+                                         '---------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Job,
+                       Step,
+                       State AS State_Current,
+                       1 AS State_New
+                FROM sw.t_job_steps
+                WHERE job = _job AND
+                      state IN (6, 7)
+                ORDER BY step
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Step,
+                                    _previewData.State_Current,
+                                    _previewData.State_New
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
             -- Show dependencies
-            SELECT *,
-                   CASE
-                       WHEN JS.State IN (6, 7) AND
-                            (Evaluated <> 0 OR
-                             Triggered <> 0) THEN 'Dependency will be reset'
-                       ELSE ''
-                   END AS Message
-            FROM sw.t_job_step_dependencies JSD
-                 INNER JOIN sw.t_job_steps JS
-                   ON JSD.step = JS.step AND
-                      JSD.job = JS.job
-            WHERE JSD.job = _job
-            ORDER BY JSD.step;
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-9s %-4s %-25s %-5s %-11s %-15s %-10s %-9s %-9s %-11s %-25s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'Step',
+                                'Tool',
+                                'State',
+                                'Target_Step',
+                                'Condition_Test',
+                                'Test_Value',
+                                'Evaluated',
+                                'Triggered',
+                                'Enable_Only',
+                                'Message'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---------',
+                                         '----',
+                                         '-------------------------',
+                                         '-----',
+                                         '-----------',
+                                         '---------------',
+                                         '----------',
+                                         '---------',
+                                         '---------',
+                                         '-----------',
+                                         '-------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT JS.Job,
+                       JS.Step,
+                       JS.Tool,
+                       JS.State,
+                       JSD.Target_Step,
+                       JSD.Condition_Test,
+                       JSD.Test_Value,
+                       JSD.Evaluated,
+                       JSD.Triggered,
+                       JSD.Enable_Only,
+                       CASE
+                           WHEN JS.State IN (6, 7) AND
+                                (Evaluated <> 0 OR
+                                 Triggered <> 0) THEN 'Dependency will be reset'
+                           ELSE ''
+                       END AS Message
+                FROM sw.t_job_step_dependencies JSD
+                     INNER JOIN sw.t_job_steps JS
+                       ON JSD.step = JS.step AND
+                          JSD.job = JS.job
+                WHERE JSD.job = _job
+                ORDER BY JSD.step
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Step,
+                                    _previewData.Tool,
+                                    _previewData.State,
+                                    _previewData.Target_Step,
+                                    _previewData.Condition_Test,
+                                    _previewData.Test_Value,
+                                    _previewData.Evaluated,
+                                    _previewData.Triggered,
+                                    _previewData.Enable_Only,
+                                    _previewData.Message
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
 
         Else
 

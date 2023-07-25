@@ -149,8 +149,6 @@ BEGIN
         FROM V_Storage_List_Report
         WHERE ID = _storagePathIdNew
 
-        -- ToDo: Show this data using RAISE INFO
-
         RAISE INFO '';
 
         _formatSpecifier := '%-9s %-80s %-60s %-20s %-25s %-25s %-80s %-80s %-20s';

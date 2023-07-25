@@ -116,7 +116,6 @@ AS $$
 *****************************************************/
 DECLARE
     _insertCount int;
-    _previousJob int;
     _jobInfo record;
     _jobCountToProcess int;
     _jobsProcessed int;
@@ -152,6 +151,7 @@ BEGIN
 
     _startTime := CURRENT_TIMESTAMP;
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
     End If;
@@ -181,8 +181,8 @@ BEGIN
     If _infoOnly Then
         CREATE TEMP TABLE Tmp_JobStatePreview (
             Job int,
-            OldState int,
-            NewState int
+            Old_State int,
+            New_State int
         );
 
         CREATE INDEX IX_Tmp_JobStatePreview_Job ON Tmp_JobStatePreview (Job);
@@ -268,28 +268,17 @@ BEGIN
 
     _jobsProcessed := 0;
     _lastLogTime := clock_timestamp();
-    _previousJob := -1;
 
-    WHILE true
-    LOOP
-        SELECT
-            Job,
-            NewState As NewJobStateInBroker,
-            Results_Directory_Name As ResultsDirectoryName,
-            Organism_DB_Name As OrgDBName
-            Dataset_ID As DatasetID
+    FOR _jobInfo IN
+        SELECT Job,
+               NewState AS NewJobStateInBroker,
+               Results_Directory_Name AS ResultsDirectoryName,
+               Organism_DB_Name AS OrgDBName
+               Dataset_ID AS DatasetID
         INTO _jobInfo
         FROM Tmp_ChangedJobs
-        WHERE
-            Job > _previousJob
         ORDER BY Job
-        LIMIT 1;
-
-        If Not FOUND Then
-            -- Break out of the while loop
-            EXIT;
-        End If;
-
+    LOOP
         ---------------------------------------------------
         -- Examine the steps for this job to determine actual start/End times
         ---------------------------------------------------
@@ -354,7 +343,7 @@ BEGIN
 
         If _infoOnly Then
 
-            INSERT INTO Tmp_JobStatePreview (job, OldState, NewState)
+            INSERT INTO Tmp_JobStatePreview (job, Old_State, New_State)
             SELECT job, state, _jobInfo.NewJobStateInBroker
             FROM sw.t_jobs
             WHERE job = _jobInfo.Job;
@@ -366,24 +355,22 @@ BEGIN
             ---------------------------------------------------
 
             UPDATE sw.t_jobs
-            Set
+            SET
                 state = _jobInfo.NewJobStateInBroker,
-                start =
-                    CASE WHEN _jobInfo.NewJobStateInBroker >= 2                     -- job state is 2 or higher
-                    THEN Coalesce(_startMin, CURRENT_TIMESTAMP)
-                    ELSE Start
-                    End If;,
-                Finish =
-                    CASE WHEN _jobInfo.NewJobStateInBroker IN (4, 5, 7)             -- 4=Complete, 5=Failed, 7=No Intermediate Files Created
-                    THEN _finishMax
-                    ELSE Finish
-                    END LOOP;,
-                Comment =
-                    CASE WHEN _jobInfo.NewJobStateInBroker IN (5) THEN _comment     -- 5=Failed
-                    WHEN _jobInfo.NewJobStateInBroker IN (4, 7)                     -- 4=Complete, 7=No Intermediate Files Created
-                    THEN public.append_to_text(Comment, _comment, _delimiter => '; ', _maxlength => 1024)
-                    ELSE Comment
-                    END,
+                start = CASE WHEN _jobInfo.NewJobStateInBroker >= 2                     -- job state is 2 or higher
+                             THEN Coalesce(_startMin, CURRENT_TIMESTAMP)
+                             ELSE Start
+                        END,
+                Finish = CASE WHEN _jobInfo.NewJobStateInBroker IN (4, 5, 7)            -- 4=Complete, 5=Failed, 7=No Intermediate Files Created
+                              THEN _finishMax
+                              ELSE Finish
+                         END,
+                Comment = CASE WHEN _jobInfo.NewJobStateInBroker IN (5)                 -- 5=Failed
+                                 THEN _comment
+                               WHEN _jobInfo.NewJobStateInBroker IN (4, 7)              -- 4=Complete, 7=No Intermediate Files Created
+                                 THEN public.append_to_text(Comment, _comment, _delimiter => '; ', _maxlength => 1024)
+                               ELSE Comment
+                          END,
                 Runtime_Minutes = _processingTimeMinutes
             WHERE Job = _jobInfo.Job
 
@@ -394,13 +381,11 @@ BEGIN
         -- and update it
         ---------------------------------------------------
 
-        _newDMSJobState := CASE _jobInfo.NewJobStateInBroker;
-                                    WHEN 2 THEN 2
-                                    WHEN 4 THEN 4
-                                    WHEN 5 THEN 5
-                                    WHEN 7 THEN 7
-                                    Else 99
-                           END;
+        If _jobInfo.NewJobStateInBroker IN (2, 4, 5, 7) Then
+            _newDMSJobState := _jobInfo.NewJobStateInBroker;
+        Else
+            _newDMSJobState := 99;
+        End If;
 
         ---------------------------------------------------
         -- If this job has a data extraction step with message 'No results above threshold',
@@ -483,7 +468,6 @@ BEGIN
         ---------------------------------------------------
 
         If Not _bypassDMS AND _jobInDMS And Not _infoOnly Then
-        --<c1>
             -- DMS changes enabled, update DMS job state
 
             -- Uncomment to debug
@@ -526,7 +510,7 @@ BEGIN
                 CALL public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');
             End If;
 
-        End If; --</c1>
+        End If;
 
         If Not _infoOnly Then
             If _jobInfo.NewJobStateInBroker IN (4,5) Then
@@ -548,7 +532,7 @@ BEGIN
         End If;
 
         If _maxJobsToProcess > 0 And _jobsProcessed >= _maxJobsToProcess Then
-            -- Break out of the while loop
+            -- Break out of the for loop
             EXIT
         End If;
 
@@ -556,15 +540,45 @@ BEGIN
 
     If _infoOnly Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         ---------------------------------------------------
-        -- Preview changes that would be made via the above while loop
+        -- Preview changes that would be made via the above for loop
         ---------------------------------------------------
 
-        SELECT *
-        FROM Tmp_JobStatePreview
-        ORDER BY Job
+        RAISE INFO '';
+
+        _formatSpecifier := '%-9s %-9s %-9s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'Old_State',
+                            'New_State'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------',
+                                     '---------',
+                                     '---------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Job,
+                   Old_State,
+                   New_State
+            FROM Tmp_JobStatePreview
+            ORDER BY Job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Old_State,
+                                _previewData.New_State
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     ---------------------------------------------------
@@ -622,7 +636,7 @@ BEGIN
     CREATE INDEX IX_Tmp_JobsToReset ON Tmp_JobsToReset (Job);
 
     FOR _jobInfo IN
-        SELECT Job, MAX(NewState) As NewJobStateInBroker
+        SELECT Job, MAX(NewState) AS NewJobStateInBroker
         FROM Tmp_JobsToReset
         GROUP BY Job
         ORDER BY Job

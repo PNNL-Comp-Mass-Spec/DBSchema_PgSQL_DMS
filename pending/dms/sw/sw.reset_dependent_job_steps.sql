@@ -35,6 +35,12 @@ AS $$
 DECLARE
     _jobResetTran text := 'DependentJobStepReset';
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -95,8 +101,7 @@ BEGIN
                ON JS.job = sw.t_job_step_dependencies.job AND
                   JS.step = sw.t_job_step_dependencies.step
              INNER JOIN sw.t_job_steps JS_Target
-               ON sw.t_job_step_dependencies.job = JS_Target.job
-                  AND
+               ON sw.t_job_step_dependencies.job = JS_Target.job AND
                   sw.t_job_step_dependencies.target_step = JS_Target.step
         WHERE JS.state >= 2 AND
               JS.state Not In (3, 7) AND
@@ -106,9 +111,12 @@ BEGIN
                JS_Target.start > JS.finish);
 
         If _infoOnly Then
+
             -- Preview steps that would be updated
 
             RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-10s %-4s %-25s %-10s %-5s %-80s';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
@@ -123,18 +131,24 @@ BEGIN
             _infoHeadSeparator := format(_formatSpecifier,
                                          '----------',
                                          '----------',
-                                         '-----',
-                                         '--------------------',
+                                         '----',
+                                         '-------------------------',
                                          '----------',
                                          '-----',
-                                         '--------------------------------------------------'
+                                         '--------------------------------------------------------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT JS.job, JS.dataset_id, JS.step, JS.tool, JS.state_name, JS.state, JS.dataset
+                SELECT JS.Job,
+                       JS.Dataset_ID,
+                       JS.Step,
+                       JS.Tool,
+                       JS.State_name,
+                       JS.State,
+                       JS.Dataset
                 FROM sw.V_job_steps JS
                      INNER JOIN Tmp_JobStepsToReset JR
                        ON JS.Job = JR.Job AND
@@ -142,13 +156,13 @@ BEGIN
                 ORDER BY JS.Job, JS.Step
             LOOP
                 _infoData := format(_formatSpecifier,
-                                    _previewData.job,
-                                    _previewData.dataset_id,
-                                    _previewData.step,
-                                    _previewData.tool,
-                                    _previewData.state_name,
-                                    _previewData.state,
-                                    _previewData.dataset
+                                    _previewData.Job,
+                                    _previewData.Dataset_ID,
+                                    _previewData.Step,
+                                    _previewData.Tool,
+                                    _previewData.State_name,
+                                    _previewData.State,
+                                    _previewData.Dataset
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -156,7 +170,6 @@ BEGIN
 
             DROP TABLE Tmp_Jobs;
             DROP TABLE Tmp_JobStepsToReset;
-
             RETURN;
 
         End If;

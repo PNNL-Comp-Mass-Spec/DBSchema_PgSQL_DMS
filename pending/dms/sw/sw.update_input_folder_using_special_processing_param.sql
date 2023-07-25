@@ -67,6 +67,7 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
+
     _infoOnly := Coalesce(_infoOnly, false);
     _showResultsMode := Coalesce(_showResultsMode, 2);
 
@@ -143,12 +144,44 @@ BEGIN
 
     If Not Exists (SELECT * FROM Tmp_Source_Job_Folders) Then
         If _showResultsMode = 2 Then
+
             -- Nothing to do; simply display the contents of Tmp_JobList
 
-            -- ToDo: show the data using RAISE INFO
-            SELECT *
-            FROM Tmp_JobList
-            ORDER BY Job
+            RAISE INFO '';
+
+            _formatSpecifier := '%-9s %-40s %-40s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Job',
+                                'Script',
+                                'Message'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '---------',
+                                         '----------------------------------------',
+                                         '----------------------------------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Job,
+                       Script,
+                       Message
+                FROM Tmp_JobList
+                ORDER BY Job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Job,
+                                    _previewData.Script,
+                                    _previewData.Message
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
         End If;
 
         DROP TABLE Tmp_JobList;
@@ -214,17 +247,60 @@ BEGIN
     WHERE JL.Job = SJF.Job AND Coalesce(SJF.SourceJobResultsFolder, '') <> '';
 
     If _showResultsMode > 0 Then
-        -- ToDo: show the data using RAISE INFO
 
-        SELECT JL.*,
-            SJF.Step,
-            SJF.SourceJob,
-            SJF.SourceJobResultsFolder,
-            SJF.WarningMessage
-        FROM Tmp_JobList JL
-            LEFT OUTER JOIN Tmp_Source_Job_Folders SJF
-            ON JL.Job = SJF.Job
-        ORDER BY Job
+        RAISE INFO '';
+
+        _formatSpecifier := '%-9s %-40s %-40s %-4s %-10s %-25s %-100s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'Script',
+                            'Message',
+                            'Step',
+                            'Source_Job',
+                            'Source_Job_Results_Folder',
+                            'Warning_Message'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------',
+                                     '----------------------------------------',
+                                     '----------------------------------------',
+                                     '----',
+                                     '----------',
+                                     '-------------------------',
+                                     '----------------------------------------------------------------------------------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT JL.Job,
+                   JL.Script,
+                   JL.Message,
+                   SJF.Step,
+                   SJF.SourceJob AS Source_Job,
+                   SJF.SourceJobResultsFolder AS Source_Job_Results_Folder,
+                   SJF.WarningMessage AS Warning_Message
+            FROM Tmp_JobList JL
+                LEFT OUTER JOIN Tmp_Source_Job_Folders SJF
+                ON JL.Job = SJF.Job
+            ORDER BY Job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Script,
+                                _previewData.Message,
+                                _previewData.Step,
+                                _previewData.Source_Job,
+                                _previewData.Source_Job_Results_Folder,
+                                _previewData.Warning_Message
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     DROP TABLE Tmp_JobList;

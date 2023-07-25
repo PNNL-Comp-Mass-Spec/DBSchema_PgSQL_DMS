@@ -105,50 +105,52 @@ BEGIN
 
     If _showDebugMessages And _showDatasetInfoTable Then
 
-        -- ToDo: Update this to use RAISE INFO
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-10s %-25s %-16s %-16s %-25s %-17s %-80s';
 
         _infoHead := format(_formatSpecifier,
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg',
-                            'abcdefg'
+                            'Dataset_ID',
+                            'Instrument_Class',
+                            'Dataset_State_ID',
+                            'Archive_State_ID',
+                            'Dataset_Type',
+                            'Dataset_Rating_ID',
+                            'Dataset'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---',
-                                     '---'
+                                     '----------',
+                                     '-------------------------',
+                                     '----------------',
+                                     '----------------',
+                                     '-------------------------',
+                                     '-----------------',
+                                     '--------------------------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT Dataset_Name,
-                   Dataset_ID,
+            SELECT Dataset_ID,
                    Instrument_Class,
                    Dataset_State_ID,
                    Archive_State_ID,
                    Dataset_Type,
-                   Dataset_Rating_ID
+                   Dataset_Rating_ID,
+                   Dataset_Name AS Dataset
             FROM Tmp_DatasetInfo
             ORDER BY Dataset_Name
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.Dataset_Name,
                                 _previewData.Dataset_ID,
                                 _previewData.Instrument_Class,
                                 _previewData.Dataset_State_ID,
                                 _previewData.Archive_State_ID,
                                 _previewData.Dataset_Type,
-                                _previewData.Dataset_Rating_ID
+                                _previewData.Dataset_Rating_ID,
+                                _previewData.Dataset
                                );
 
             RAISE INFO '%', _infoData;

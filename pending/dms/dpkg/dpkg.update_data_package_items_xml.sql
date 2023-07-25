@@ -102,13 +102,17 @@ BEGIN
         _xml := _paramListXML;
 
         INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
-        SELECT
-            xmlNode.value('@pkg', 'int') Package,
-            xmlNode.value('@type', 'text') ItemType,
-            xmlNode.value('@id', 'text') Identifier
-        FROM _xml.nodes('//item') AS R(xmlNode)
+        SELECT XmlQ.Package, XmlQ.ItemType, XmlQ.Identifier
+        FROM (
+            SELECT xmltable.*
+            FROM ( SELECT ('<items>' || _xml::text || '</items>')::xml as rooted_xml ) Src,
+                 XMLTABLE('//items/item'
+                          PASSING Src.rooted_xml
+                          COLUMNS Package int PATH '@pkg',
+                                  ItemType citext PATH '@type',
+                                  Identifier citext PATH '@id')
+             ) XmlQ;
 
-        ---------------------------------------------------
         CALL update_data_package_items_utility (
                                 _comment,
                                 _mode,
